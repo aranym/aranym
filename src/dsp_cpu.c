@@ -3287,10 +3287,10 @@ static void dsp_pm_8(void)
 		tmp_parmove_type[1]=0;
 	} else {
 		/* Read S2 */
-		if ((numreg1==DSP_REG_A) || (numreg1==DSP_REG_B)) {
-			dsp_pm_read_accu24(numreg1, &tmp_parmove_src[1][1]);
+		if ((numreg2==DSP_REG_A) || (numreg2==DSP_REG_B)) {
+			dsp_pm_read_accu24(numreg2, &tmp_parmove_src[1][1]);
 		} else {
-			tmp_parmove_src[1][1]=dsp_core->registers[numreg1];
+			tmp_parmove_src[1][1]=dsp_core->registers[numreg2];
 		}
 
 		tmp_parmove_dest[1][1].dsp_address=dummy2;
