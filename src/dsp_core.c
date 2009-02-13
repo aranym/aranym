@@ -29,6 +29,8 @@
 #include "dsp_core.h"
 #include "dsp_cpu.h"
 
+/*--- Defines ---*/
+
 #ifndef M_PI
 #define M_PI	3.141592653589793238462643383279502
 #endif
@@ -42,6 +44,15 @@
 
 /* Execute DSP instructions till the DSP waits for a read/write */
 #define DSP_HOST_FORCEEXEC 1
+
+/*--- Functions prototypes ---*/
+
+static void lockMutexNull(dsp_core_t *dsp_core);
+static void lockMutexThread(dsp_core_t *dsp_core);
+static void unlockMutexNull(dsp_core_t *dsp_core);
+static void unlockMutexThread(dsp_core_t *dsp_core);
+
+/*--- Functions ---*/
 
 /* Init DSP emulation */
 void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
@@ -126,6 +137,13 @@ void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
 	dsp_core->mutex = NULL;
 
 	dsp_core->use_thread = use_thread;
+	if (use_thread) {
+		dsp_core->unlockMutex = unlockMutexThread;
+		dsp_core->lockMutex = lockMutexThread;
+	} else {
+		dsp_core->unlockMutex = unlockMutexNull;
+		dsp_core->lockMutex = lockMutexNull;
+	}
 	dsp_core->running = 0;
 }
 
@@ -224,6 +242,25 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	} else {
 		dsp56k_init_cpu(dsp_core);
 	}
+}
+
+/* Lock/unlock mutex functions */
+static void lockMutexNull(dsp_core_t *dsp_core)
+{
+}
+
+static void lockMutexThread(dsp_core_t *dsp_core)
+{
+	SDL_LockMutex(dsp_core->mutex);
+}
+
+static void unlockMutexNull(dsp_core_t *dsp_core)
+{
+}
+
+static void unlockMutexThread(dsp_core_t *dsp_core)
+{
+	SDL_UnlockMutex(dsp_core->mutex);
 }
 
 /* Force execution of DSP instructions, till cpu has read/written host port
@@ -375,7 +412,7 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 	}
 #endif
 
-	SDL_LockMutex(dsp_core->mutex);
+	dsp_core->lockMutex(dsp_core);
 	Uint8 value = dsp_core->hostport[addr];
 	if (addr == CPU_HOST_RXL) {
 		dsp_core_hostport_cpuread(dsp_core);
@@ -386,7 +423,7 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 #endif
 		SDL_SemPost(dsp_core->semaphore);
 	}
-	SDL_UnlockMutex(dsp_core->mutex);
+	dsp_core->unlockMutex(dsp_core);
 
 	return value;
 }
@@ -403,7 +440,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 	}
 #endif
 
-	SDL_LockMutex(dsp_core->mutex);
+	dsp_core->lockMutex(dsp_core);
 	switch(addr) {
 		case CPU_HOST_ICR:
 			dsp_core->hostport[CPU_HOST_ICR]=value & 0xfb;
@@ -460,7 +497,7 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 			}
 			break;
 	}
-	SDL_UnlockMutex(dsp_core->mutex);
+	dsp_core->unlockMutex(dsp_core);
 }
 
 /*

@@ -100,7 +100,9 @@ extern "C" {
 #define DSP_INTERRUPT_FAST      0x1
 #define DSP_INTERRUPT_LONG      0x2
 
-typedef struct {
+typedef struct dsp_core_s dsp_core_t;
+
+struct dsp_core_s {
 	SDL_Thread	*thread;	/* Thread in which DSP emulation runs */
 	SDL_sem		*semaphore;	/* Semaphore used to pause/unpause thread */
 	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
@@ -143,8 +145,11 @@ typedef struct {
 	Uint16	interrupt_state;
 	Uint32  interrupt_instr_fetch;
 	Uint32  interrupt_save_pc;
-	
-} dsp_core_t;
+
+	/* Lock/unlock mutex */
+	void	(*lockMutex)(dsp_core_t *_this);
+	void	(*unlockMutex)(dsp_core_t *_this);
+};
 
 /* Emulator call these to init/stop/reset DSP emulation */
 void dsp_core_init(dsp_core_t *dsp_core, int use_thread);

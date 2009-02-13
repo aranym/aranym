@@ -944,10 +944,10 @@ static Uint32 dsp_hi_interrupts(void)
 	     (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HCP)))
 	{
 		/* Clear HC and HCP interrupt */
-		SDL_LockMutex(dsp_core->mutex);
+		dsp_core->lockMutex(dsp_core);
 		dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff - (1<<DSP_HOST_HSR_HCP);
 		dsp_core->hostport[CPU_HOST_CVR] &= 0xff - (1<<CPU_HOST_CVR_HC);  
-		SDL_UnlockMutex(dsp_core->mutex);
+		dsp_core->unlockMutex(dsp_core);
 
 		dsp_core->interrupt_instr_fetch = dsp_core->hostport[CPU_HOST_CVR] & BITMASK(5);
 		dsp_core->interrupt_instr_fetch *= 2;	
@@ -961,9 +961,9 @@ static Uint32 dsp_hi_interrupts(void)
 	else if ( (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HRIE)) &&
 		  (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF)))
 	{
-		SDL_LockMutex(dsp_core->mutex);
+		dsp_core->lockMutex(dsp_core);
 		dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HRDF);
-		SDL_UnlockMutex(dsp_core->mutex);
+		dsp_core->unlockMutex(dsp_core);
 
 		dsp_core->interrupt_instr_fetch = 0x0020;
 		ipl_to_raise = ipl_hi;
@@ -976,9 +976,9 @@ static Uint32 dsp_hi_interrupts(void)
 	else if ( (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HTIE)) &&
 		  ((dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE))==0))
 	{
-		SDL_LockMutex(dsp_core->mutex);
+		dsp_core->lockMutex(dsp_core);
 		dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] &= 0xff-(1<<DSP_HOST_HSR_HTDE);
-		SDL_UnlockMutex(dsp_core->mutex);
+		dsp_core->unlockMutex(dsp_core);
 
 		dsp_core->interrupt_instr_fetch = 0x0022;
 		ipl_to_raise = ipl_hi;
@@ -1163,12 +1163,12 @@ static Uint32 read_memory(int space, Uint16 address)
 			if (address >= 0xffc0) {
 				Uint32 value;
 
-				SDL_LockMutex(dsp_core->mutex);
+				dsp_core->lockMutex(dsp_core);
 				if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
 					dsp_core_hostport_dspread(dsp_core);
 				}
 				value = dsp_core->periph[space][address-0xffc0] & BITMASK(24);
-				SDL_UnlockMutex(dsp_core->mutex);
+				dsp_core->unlockMutex(dsp_core);
 
 				return value;
 			}
@@ -1212,7 +1212,7 @@ static void write_memory_raw(int space, Uint32 address, Uint32 value)
 			}
 			/* Peripheral space ? */
 			if ((address >= 0xffc0) && (address <= 0xffff)) {
-				SDL_LockMutex(dsp_core->mutex);
+				dsp_core->lockMutex(dsp_core);
 				switch(address-0xffc0) {
 					case DSP_HOST_HTX:
 						dsp_core->periph[space][DSP_HOST_HTX] = value;
@@ -1234,7 +1234,7 @@ static void write_memory_raw(int space, Uint32 address, Uint32 value)
 						dsp_core->periph[space][address-0xffc0] = value;
 						break;
 				}
-				SDL_UnlockMutex(dsp_core->mutex);
+				dsp_core->unlockMutex(dsp_core);
 				return;
 			}
 			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
