@@ -24,6 +24,9 @@
 #include "cpu_emulation.h"
 #include "memory.h"
 #include "dsp.h"
+#if DSP_EMULATION
+# include "dsp_cpu.h"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -47,6 +50,16 @@ void DSP::reset(void)
 {
 #if DSP_EMULATION
 	dsp_core_reset(&dsp_core);
+#endif
+}
+
+/* Exec some DSP instructions */
+void DSP::exec_insts(int num_inst)
+{
+#if DSP_EMULATION
+	while (dsp_core.running && (num_inst-->0)) {
+		dsp56k_execute_instruction();
+	}
 #endif
 }
 

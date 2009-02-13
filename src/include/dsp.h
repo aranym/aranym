@@ -38,6 +38,7 @@ class DSP : public BASE_IO
 		virtual uint8 handleRead(memptr addr);
 		virtual void handleWrite(memptr, uint8);
 
+		void exec_insts(int num_inst);
 #if DSP_EMULATION
 	private:
 		dsp_core_t dsp_core;

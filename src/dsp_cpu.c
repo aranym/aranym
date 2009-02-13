@@ -613,7 +613,7 @@ int dsp56k_exec_thread(void *th_dsp_core)
 	start_time = SDL_GetTicks();
 	num_inst = 0;
 	while(dsp_core->running) {
-		dsp_execute_instruction();
+		dsp56k_execute_instruction();
 #if DSP_COUNT_IPS
 		++num_inst;
 		if ((num_inst & 63) == 0) {
@@ -634,14 +634,7 @@ int dsp56k_exec_thread(void *th_dsp_core)
 	return 0;
 }
 
-void dsp56k_exec_insts(int num_inst)
-{
-	while (dsp_core->running && (num_inst-->0)) {
-		dsp_execute_instruction();
-	}
-}
-
-static void dsp_execute_instruction(void)
+void dsp56k_execute_instruction(void)
 {
 	Uint32 value;
 
