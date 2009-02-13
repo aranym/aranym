@@ -63,9 +63,7 @@ void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
 	fprintf(stderr, "Dsp: core init\n");
 #endif
 
-	memset(dsp_core->ram, 0,sizeof(dsp_core->ram));
-	memset(dsp_core->ramint, 0,sizeof(dsp_core->ramint));
-	memset((Uint8 *) dsp_core->hostport, 0,sizeof(dsp_core->hostport));
+	memset(dsp_core, 0, sizeof(dsp_core_t));
 
 	/* Initialize Y:rom[0x0100-0x01ff] with a sin table */
 	for (i=0;i<256;i++) {
@@ -132,10 +130,6 @@ void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
 		}
 	}
 	
-	dsp_core->thread = NULL;
-	dsp_core->semaphore = NULL;
-	dsp_core->mutex = NULL;
-
 	dsp_core->use_thread = use_thread;
 	if (use_thread) {
 		dsp_core->unlockMutex = unlockMutexThread;
@@ -144,7 +138,6 @@ void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
 		dsp_core->unlockMutex = unlockMutexNull;
 		dsp_core->lockMutex = lockMutexNull;
 	}
-	dsp_core->running = 0;
 }
 
 /* Shutdown DSP emulation */
@@ -229,13 +222,13 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 #endif
 
 	/* Create thread, semaphore, mutex if needed */
-	if (dsp_core->semaphore == NULL) {
-		dsp_core->semaphore = SDL_CreateSemaphore(0);
-	}
-	if (dsp_core->mutex == NULL) {
-		dsp_core->mutex = SDL_CreateMutex();
-	}
 	if (dsp_core->use_thread) {
+		if (dsp_core->semaphore == NULL) {
+			dsp_core->semaphore = SDL_CreateSemaphore(0);
+		}
+		if (dsp_core->mutex == NULL) {
+			dsp_core->mutex = SDL_CreateMutex();
+		}
 		if (dsp_core->thread == NULL) {
 			dsp_core->thread = SDL_CreateThread(dsp56k_exec_thread, dsp_core);
 		}
@@ -271,6 +264,10 @@ static void unlockMutexThread(dsp_core_t *dsp_core)
 static void dsp_core_force_exec(dsp_core_t *dsp_core)
 {
 	Uint32 start = SDL_GetTicks();
+
+	if (!dsp_core->use_thread) {
+		return;
+	}
 
 	while (dsp_core->running						/* DSP thread running */
 		&& (SDL_SemValue(dsp_core->semaphore)!=0)	/* and executing instructions */
@@ -421,7 +418,9 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 #if DSP_DISASM_STATE
 		fprintf(stderr, "Dsp: WAIT_HOSTREAD done\n");
 #endif
-		SDL_SemPost(dsp_core->semaphore);
+		if (dsp_core->use_thread) {
+			SDL_SemPost(dsp_core->semaphore);
+		}
 	}
 	dsp_core->unlockMutex(dsp_core);
 
@@ -484,7 +483,9 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 					fprintf(stderr, "Dsp: WAIT_BOOTSTRAP done\n");
 #endif
 					dsp_core->running = 1;
-					SDL_SemPost(dsp_core->semaphore);
+					if (dsp_core->use_thread) {
+						SDL_SemPost(dsp_core->semaphore);
+					}
 				}		
 			} else {
 				dsp_core_hostport_cpuwrite(dsp_core);
@@ -493,7 +494,9 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 #if DSP_DISASM_STATE
 				fprintf(stderr, "Dsp: WAIT_HOSTWRITE done\n");
 #endif
-				SDL_SemPost(dsp_core->semaphore);
+				if (dsp_core->use_thread) {
+					SDL_SemPost(dsp_core->semaphore);
+				}
 			}
 			break;
 	}
