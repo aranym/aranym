@@ -1312,7 +1312,9 @@ static void dsp_stack_push(Uint32 curpc, Uint32 cursr)
 #if DSP_DISASM_STATE
 		fprintf(stderr, "Dsp: Stack error (overflow)\n");
 #endif
-		SDL_SemWait(dsp_core->semaphore);
+		if (dsp_core->use_thread) {
+			SDL_SemWait(dsp_core->semaphore);
+		}
 		return;
 	}
 
@@ -1331,7 +1333,9 @@ static void dsp_stack_pop(Uint32 *newpc, Uint32 *newsr)
 #if DSP_DISASM_STATE
 		fprintf(stderr, "Dsp: Stack error (underflow)\n");
 #endif
-		SDL_SemWait(dsp_core->semaphore);
+		if (dsp_core->use_thread) {
+			SDL_SemWait(dsp_core->semaphore);
+		}
 		return;
 	}
 
@@ -2144,7 +2148,9 @@ static void dsp_jclr(void)
 #if DSP_DISASM_STATE
 					fprintf(stderr, "Dsp: WAIT_HOSTWRITE\n");
 #endif
-					SDL_SemWait(dsp_core->semaphore);
+					if (dsp_core->use_thread) {
+						SDL_SemWait(dsp_core->semaphore);
+					}
 				}
 
 				/* Wait for host to read */
@@ -2152,7 +2158,9 @@ static void dsp_jclr(void)
 #if DSP_DISASM_STATE
 					fprintf(stderr, "Dsp: WAIT_HOSTREAD\n");
 #endif
-					SDL_SemWait(dsp_core->semaphore);
+					if (dsp_core->use_thread) {
+						SDL_SemWait(dsp_core->semaphore);
+					}
 				}
 			}
 		}
@@ -2183,7 +2191,9 @@ static void dsp_jmp(void)
 #if DSP_DISASM_STATE
 		fprintf(stderr, "Dsp: JMP instruction, infinite loop\n");
 #endif
-		SDL_SemWait(dsp_core->semaphore);
+		if (dsp_core->use_thread) {
+			SDL_SemWait(dsp_core->semaphore);
+		}
 		return;
 	}
 
@@ -2830,7 +2840,9 @@ static void dsp_stop(void)
 #if DSP_DISASM_STATE
 	fprintf(stderr, "Dsp: STOP instruction\n");
 #endif
-	SDL_SemWait(dsp_core->semaphore);
+	if (dsp_core->use_thread) {
+		SDL_SemWait(dsp_core->semaphore);
+	}
 }
 
 static void dsp_swi(void)
@@ -2888,7 +2900,9 @@ static void dsp_wait(void)
 #if DSP_DISASM_STATE
 	fprintf(stderr, "Dsp: WAIT instruction\n");
 #endif
-	SDL_SemWait(dsp_core->semaphore);
+	if (dsp_core->use_thread) {
+		SDL_SemWait(dsp_core->semaphore);
+	}
 }
 
 /**********************************
