@@ -407,7 +407,9 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 		fprintf(stderr, "Dsp: WAIT_HOSTREAD done\n");
 #endif
 		if (dsp_core->use_thread) {
-			SDL_SemPost(dsp_core->semaphore);
+			if (SDL_SemValue(dsp_core->semaphore)==0) {
+				SDL_SemPost(dsp_core->semaphore);
+			}
 		}
 	}
 	dsp_core->unlockMutex(dsp_core);
@@ -442,6 +444,12 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 			/* if bit 7=1, host command */
 			if (value & (1<<7)) {
 				dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] |= 1<<DSP_HOST_HSR_HCP;
+				/* Wake up DSP if needed */
+				if (dsp_core->use_thread) {
+					if (SDL_SemValue(dsp_core->semaphore)==0) {
+						SDL_SemPost(dsp_core->semaphore);
+					}
+				}
 			}
 			break;
 		case CPU_HOST_ISR:
@@ -472,7 +480,9 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 #endif
 					dsp_core->running = 1;
 					if (dsp_core->use_thread) {
-						SDL_SemPost(dsp_core->semaphore);
+						if (SDL_SemValue(dsp_core->semaphore)==0) {
+							SDL_SemPost(dsp_core->semaphore);
+						}
 					}
 				}		
 			} else {
@@ -483,7 +493,9 @@ void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 				fprintf(stderr, "Dsp: WAIT_HOSTWRITE done\n");
 #endif
 				if (dsp_core->use_thread) {
-					SDL_SemPost(dsp_core->semaphore);
+					if (SDL_SemValue(dsp_core->semaphore)==0) {
+						SDL_SemPost(dsp_core->semaphore);
+					}
 				}
 			}
 			break;
