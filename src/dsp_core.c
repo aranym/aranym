@@ -217,8 +217,12 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	if (dsp_core->mutex == NULL) {
 		dsp_core->mutex = SDL_CreateMutex();
 	}
-	if ((dsp_core->thread == NULL) && dsp_core->use_thread) {
-		dsp_core->thread = SDL_CreateThread(dsp56k_do_execute, dsp_core);
+	if (dsp_core->use_thread) {
+		if (dsp_core->thread == NULL) {
+			dsp_core->thread = SDL_CreateThread(dsp56k_exec_thread, dsp_core);
+		}
+	} else {
+		dsp56k_init_cpu(dsp_core);
 	}
 }
 

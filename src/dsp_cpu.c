@@ -591,11 +591,16 @@ static int registers_mask[64]={
 /* Yep, feel lazy, so put it there */
 static dsp_core_t *dsp_core;
 
-int dsp56k_do_execute(void *th_dsp_core)
+void dsp56k_init_cpu(void *th_dsp_core)
+{
+	dsp_core = th_dsp_core;
+}
+
+int dsp56k_exec_thread(void *th_dsp_core)
 {
 	Uint32 start_time, num_inst;
 
-	dsp_core = th_dsp_core;
+	dsp56k_init_cpu(th_dsp_core);
 #ifdef DSP_DISASM
 	dsp56k_disasm_init(dsp_core);
 #endif
@@ -627,6 +632,13 @@ int dsp56k_do_execute(void *th_dsp_core)
 	fprintf(stderr, "Dsp: SHUTDOWN\n");
 #endif
 	return 0;
+}
+
+void dsp56k_exec_insts(int num_inst)
+{
+	while (dsp_core->running && (num_inst-->0)) {
+		dsp_execute_instruction();
+	}
 }
 
 static void dsp_execute_instruction(void)
