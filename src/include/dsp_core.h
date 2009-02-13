@@ -105,6 +105,8 @@ typedef struct {
 	SDL_sem		*semaphore;	/* Semaphore used to pause/unpause thread */
 	SDL_mutex	*mutex;		/* Mutex for read/writes through host port */
 
+	int	use_thread;	/* Threaded emulation ? */
+
 	/* DSP executing instructions ? */
 	volatile int running;
 
@@ -145,7 +147,7 @@ typedef struct {
 } dsp_core_t;
 
 /* Emulator call these to init/stop/reset DSP emulation */
-void dsp_core_init(dsp_core_t *dsp_core);
+void dsp_core_init(dsp_core_t *dsp_core, int use_thread);
 void dsp_core_shutdown(dsp_core_t *dsp_core);
 void dsp_core_reset(dsp_core_t *dsp_core);
 

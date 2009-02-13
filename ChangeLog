@@ -1,3 +1,7 @@
+2009/02/13 - Patrice
+- dsp56k: Add flag to run with/without thread (Hatari DSP runs without thread).
+
+
 2009/02/11 - Patrice
 - dsp56k: More fixes from Laurent Sallafranque.
   disasm: Avoid repeating n times same instruction.

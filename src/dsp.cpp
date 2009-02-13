@@ -31,7 +31,7 @@
 DSP::DSP(memptr address, uint32 size) : BASE_IO(address, size)
 {
 #if DSP_EMULATION
-	dsp_core_init(&dsp_core);
+	dsp_core_init(&dsp_core, 1 /* use_thread */);
 #endif
 }
 

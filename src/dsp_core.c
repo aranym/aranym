@@ -44,7 +44,7 @@
 #define DSP_HOST_FORCEEXEC 1
 
 /* Init DSP emulation */
-void dsp_core_init(dsp_core_t *dsp_core)
+void dsp_core_init(dsp_core_t *dsp_core, int use_thread)
 {
 	int i;
 
@@ -125,6 +125,7 @@ void dsp_core_init(dsp_core_t *dsp_core)
 	dsp_core->semaphore = NULL;
 	dsp_core->mutex = NULL;
 
+	dsp_core->use_thread = use_thread;
 	dsp_core->running = 0;
 }
 
@@ -216,7 +217,7 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	if (dsp_core->mutex == NULL) {
 		dsp_core->mutex = SDL_CreateMutex();
 	}
-	if (dsp_core->thread == NULL) {
+	if ((dsp_core->thread == NULL) && dsp_core->use_thread) {
 		dsp_core->thread = SDL_CreateThread(dsp56k_do_execute, dsp_core);
 	}
 }
