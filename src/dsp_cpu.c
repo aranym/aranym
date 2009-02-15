@@ -64,7 +64,7 @@
 static Uint32 cur_inst_len;	/* =0:jump, >0:increment */
 
 /* Current instruction */
-static Uint32 cur_inst;		
+static Uint32 cur_inst;
 
 /* Parallel move temp data */
 typedef union {
@@ -88,7 +88,6 @@ static Uint32 pc_on_rep;
 
 typedef void (*dsp_emul_t)(void);
 
-static void dsp_execute_instruction(void);
 static void dsp_postexecute_update_pc(void);
 static void dsp_postexecute_interrupts(void);
 static Uint32 dsp_hi_interrupts(void);
@@ -755,7 +754,7 @@ static void dsp_postexecute_update_pc(void)
 
 static void dsp_postexecute_interrupts(void)
 {
-	Uint32 ipl, ipl_to_raise, ipl_hi, ipl_ssi, ipl_sci, value, instr1, instr2;
+	Uint32 ipl, ipl_to_raise, ipl_hi, ipl_ssi, ipl_sci, instr1, instr2;
 	Uint32 ipl_order[3], i;
 
 	/* REP is not interruptible */
@@ -795,8 +794,10 @@ static void dsp_postexecute_interrupts(void)
 		dsp_core->swi_inter=0;
 		dsp_core->interrupt_instr_fetch = 0x0006;
 		ipl_to_raise = 3;
+#if DSP_DISASM_INTER
+		fprintf(stderr, "Dsp: Interrupt: Swi\n");
+#endif	
 	}
-
 	/* Level 2 and above interruptions */
 	else {
 		ipl = (dsp_core->registers[DSP_REG_SR]>>DSP_SR_I0) & BITMASK(2);
@@ -933,7 +934,7 @@ static Uint32 dsp_hi_interrupts(void)
 	Uint32 ipl_hi = (dsp_core->periph[DSP_SPACE_X][DSP_IPR]>>10) & BITMASK(2);
 
 	/* Host command, interrupt p:((hostport[CPU_HOST_CVR] & 31)<<1) */
-      	if ( (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HCIE)) &&
+	if ( (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HCR] & (1<<DSP_HOST_HCR_HCIE)) &&
 	     (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HCP)))
 	{
 		/* Clear HC and HCP interrupt */
@@ -1213,7 +1214,7 @@ static void write_memory_raw(int space, Uint32 address, Uint32 value)
 						dsp_core_hostport_dspwrite(dsp_core);
 						break;
 					case DSP_HOST_HCR:
-						dsp_core->periph[space][DSP_HOST_HCR] = value;
+						dsp_core->periph[DSP_SPACE_X][DSP_HOST_HCR] = value;
 						/* Set HF3 and HF2 accordingly on the host side */
 						dsp_core->hostport[CPU_HOST_ISR] &=
 							BITMASK(8)-((1<<CPU_HOST_ISR_HF3)|(1<<CPU_HOST_ISR_HF2));
@@ -1224,7 +1225,7 @@ static void write_memory_raw(int space, Uint32 address, Uint32 value)
 						/* Read only */
 						break;
 					default:
-						dsp_core->periph[space][address-0xffc0] = value;
+						dsp_core->periph[DSP_SPACE_X][address-0xffc0] = value;
 						break;
 				}
 				dsp_core->unlockMutex(dsp_core);
@@ -2842,9 +2843,6 @@ static void dsp_swi(void)
 {
 	/* Raise interrupt p:0x0006 */
 	dsp_core->swi_inter = 1;
-#if DSP_DISASM_INTER
-	fprintf(stderr, "Dsp: Interrupt: Swi\n");
-#endif
 }
 
 static void dsp_tcc(void)
@@ -3432,7 +3430,7 @@ static void dsp_pm_8(void)
 	Uint32 numreg1, numreg2;
 	Uint32 value, dummy1, dummy2;
 /*
-	1wmm eeff WrrM MRRR x:ea,D1		y:ea,D2	
+	1wmm eeff WrrM MRRR 			x:ea,D1		y:ea,D2	
 						x:ea,D1		S2,y:ea
 						S1,x:ea		y:ea,D2
 						S1,x:ea		S2,y:ea
@@ -3685,7 +3683,7 @@ static Uint16 dsp_sub56(Uint32 *source, Uint32 *dest)
 		if (dest_save[1] < source[1]) {
 			carry = 1;
 		} else if (dest_save[1] == source[1]) {
-			if (dest_save[2] < source[2]){
+			if (dest_save[2] < source[2]) {
 				carry = 1;
 			}
 		}

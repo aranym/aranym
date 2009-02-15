@@ -40,7 +40,7 @@
 /* More disasm infos, if wanted */
 #define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
 #define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
-#define DSP_DISASM_STATE 0		/* State changes */
+#define DSP_DISASM_STATE 0	/* State changes */
 
 /* Execute DSP instructions till the DSP waits for a read/write */
 #define DSP_HOST_FORCEEXEC 0
@@ -183,7 +183,7 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 	dsp_core_shutdown(dsp_core);
 
 	/* Memory */
-	memset(dsp_core->periph, 0,sizeof(dsp_core->periph));
+	memset((void*)dsp_core->periph, 0,sizeof(dsp_core->periph));
 	memset(dsp_core->stack, 0,sizeof(dsp_core->stack));
 	memset(dsp_core->registers, 0,sizeof(dsp_core->registers));
 
@@ -292,9 +292,11 @@ static void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core)
 /* Host port transfer ? (dsp->host) */
 void dsp_core_dsp2host(dsp_core_t *dsp_core)
 {
+	/* RXDF = 1 ==> host hasn't read the last value yet */
 	if (dsp_core->hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_RXDF)) {
 		return;
 	}
+	/* HTDE = 1 ==> nothing to tranfert from DSP port */
 	if (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE)) {
 		return;
 	}
@@ -317,9 +319,12 @@ void dsp_core_dsp2host(dsp_core_t *dsp_core)
 /* Host port transfer ? (host->dsp) */
 void dsp_core_host2dsp(dsp_core_t *dsp_core)
 {
+	/* TXDE = 1 ==> nothing to tranfert from host port */
 	if (dsp_core->hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_TXDE)) {
 		return;
 	}
+	
+	/* HRDF = 1 ==> DSP hasn't read the last value yet */
 	if (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HRDF)) {
 		return;
 	}
@@ -387,6 +392,8 @@ static void dsp_core_hostport_cpuwrite(dsp_core_t *dsp_core)
 
 Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 {
+	Uint8 value;
+
 #if 0 /* DSP_HOST_FORCEEXEC */
 	switch(addr) {
 		case CPU_HOST_RXH:
@@ -398,7 +405,7 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 #endif
 
 	dsp_core->lockMutex(dsp_core);
-	Uint8 value = dsp_core->hostport[addr];
+	value = dsp_core->hostport[addr];
 	if (addr == CPU_HOST_RXL) {
 		dsp_core_hostport_cpuread(dsp_core);
 
