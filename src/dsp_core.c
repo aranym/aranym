@@ -42,9 +42,6 @@
 #define DSP_DISASM_HOSTWRITE 0	/* Host->Dsp transfer */
 #define DSP_DISASM_STATE 0	/* State changes */
 
-/* Execute DSP instructions till the DSP waits for a read/write */
-#define DSP_HOST_FORCEEXEC 0
-
 /*--- Functions prototypes ---*/
 
 static void lockMutexNull(dsp_core_t *dsp_core);
@@ -286,27 +283,7 @@ static void resumeThreadThread(dsp_core_t *dsp_core)
 	}
 }
 
-/* Force execution of DSP instructions, till cpu has read/written host port
-	Should not be needed at all, as it slows down host cpu emulation
-*/
-
-#if DSP_HOST_FORCEEXEC
-static void dsp_core_force_exec(dsp_core_t *dsp_core)
-{
-	Uint32 start = SDL_GetTicks();
-
-	if (!dsp_core->use_thread) {
-		return;
-	}
-
-	while (dsp_core->running						/* DSP thread running */
-		&& (SDL_SemValue(dsp_core->semaphore)!=0)	/* and executing instructions */
-		&& (SDL_GetTicks()-start<200))
-	{
-		SDL_Delay(1);
-	}
-}
-#endif
+/* CPU<->DSP Host interface transfers */
 
 static void dsp_core_hostport_update_trdy(dsp_core_t *dsp_core)
 {
@@ -424,16 +401,6 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 {
 	Uint8 value;
 
-#if 0 /* DSP_HOST_FORCEEXEC */
-	switch(addr) {
-		case CPU_HOST_RXH:
-		case CPU_HOST_RXM:
-		case CPU_HOST_RXL:
-			dsp_core_force_exec(dsp_core);
-			break;
-	}
-#endif
-
 	dsp_core->lockMutex(dsp_core);
 	value = dsp_core->hostport[addr];
 	if (addr == CPU_HOST_RXL) {
@@ -452,16 +419,6 @@ Uint8 dsp_core_read_host(dsp_core_t *dsp_core, int addr)
 
 void dsp_core_write_host(dsp_core_t *dsp_core, int addr, Uint8 value)
 {
-#if DSP_HOST_FORCEEXEC
-	switch(addr) {
-		case CPU_HOST_TXH:
-		case CPU_HOST_TXM:
-		case CPU_HOST_TXL:
-			dsp_core_force_exec(dsp_core);
-			break;
-	}
-#endif
-
 	dsp_core->lockMutex(dsp_core);
 	switch(addr) {
 		case CPU_HOST_ICR:
