@@ -149,6 +149,10 @@ struct dsp_core_s {
 	/* Lock/unlock mutex */
 	void	(*lockMutex)(dsp_core_t *_this);
 	void	(*unlockMutex)(dsp_core_t *_this);
+
+	/* Pause/unpause thread */
+	void	(*pauseThread)(dsp_core_t *_this);
+	void	(*resumeThread)(dsp_core_t *_this);
 };
 
 /* Emulator call these to init/stop/reset DSP emulation */

@@ -1,3 +1,8 @@
+2009/02/17 - Patrice
+- dsp56k: Use function pointers to manage mutex and semaphore, to easily switch
+  between threaded and non threaded emulation at runtime.
+
+
 2009/02/13 - Patrice
 - dsp56k: Add flag to run with/without thread (Hatari DSP runs without thread).
 
