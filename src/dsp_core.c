@@ -156,9 +156,7 @@ void dsp_core_shutdown(dsp_core_t *dsp_core)
 	dsp_core->running = 0;
 
 	if (dsp_core->thread) {
-		if (SDL_SemValue(dsp_core->semaphore)==0) {
-			SDL_SemPost(dsp_core->semaphore);
-		}
+		dsp_core->resumeThread(dsp_core);
 		SDL_WaitThread(dsp_core->thread, NULL);
 		dsp_core->thread = NULL;
 	}
