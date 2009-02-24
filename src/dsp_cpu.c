@@ -504,8 +504,8 @@ static dsp_emul_t opcodes_movec[8]={
 	dsp_movec_reg,
 
 	dsp_movec_aa,
-	dsp_movec_imm,
 	dsp_movec_ea,
+	dsp_movec_imm,
 	dsp_movec_imm
 };
 
@@ -2391,9 +2391,8 @@ static void dsp_movec(void)
 {
 	Uint32 value;
 
-	value = ((cur_inst>>16) & 1)<<2;
-	value |= ((cur_inst>>14) & 1)<<1;
-	value |= (cur_inst>>7) & 1;
+	value = (cur_inst>>14) & 0x101;
+	value |= (cur_inst>>6)&(1<<1);
 
 	opcodes_movec[value]();
 }
@@ -2406,7 +2405,7 @@ static void dsp_movec_reg(void)
 	/* S2,D1 */
 
 	numreg2 = (cur_inst>>8) & BITMASK(6);
-	numreg1 = (cur_inst & BITMASK(5))|0x20;
+	numreg1 = cur_inst & BITMASK(6);
 
 	if (cur_inst & (1<<15)) {
 		/* Write D1 */
@@ -2444,7 +2443,7 @@ static void dsp_movec_aa(void)
 	/* y:aa,D1 */
 	/* S1,y:aa */
 
-	numreg = (cur_inst & BITMASK(5))|0x20;
+	numreg = cur_inst & BITMASK(6);
 	addr = (cur_inst>>8) & BITMASK(6);
 	memspace = (cur_inst>>6) & 1;
 
@@ -2466,7 +2465,7 @@ static void dsp_movec_imm(void)
 
 	/* #xx,D1 */
 
-	numreg = (cur_inst & BITMASK(5))|0x20;
+	numreg = cur_inst & BITMASK(6);
 	dsp_core->registers[numreg] = (cur_inst>>8) & BITMASK(8);
 }
 
@@ -2481,7 +2480,7 @@ static void dsp_movec_ea(void)
 	/* S1,y:ea */
 	/* #xxxx,D1 */
 
-	numreg = (cur_inst & BITMASK(5))|0x20;
+	numreg = cur_inst & BITMASK(6);
 	ea_mode = (cur_inst>>8) & BITMASK(6);
 	memspace = (cur_inst>>6) & 1;
 
