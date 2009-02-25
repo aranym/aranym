@@ -2339,7 +2339,7 @@ static void dsp_movec(void)
 {
 	Uint32 value;
 
-	value = (cur_inst>>14) & 0x101;
+	value = (cur_inst>>14) & 5;
 	value |= (cur_inst>>6)&(1<<1);
 
 	opcodes_movec[value]();
