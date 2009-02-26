@@ -633,6 +633,17 @@ static const char *registers_lmove[8]={
 	"ba"
 };
 
+static int disasm_registers_lmove[8][2]={
+	{DSP_REG_A1,DSP_REG_A0},	/* A10 */
+	{DSP_REG_B1,DSP_REG_B0},	/* B10 */
+	{DSP_REG_X1,DSP_REG_X0},	/* X */
+	{DSP_REG_Y1,DSP_REG_Y0},	/* Y */
+	{DSP_REG_A,DSP_REG_A},		/* A */
+	{DSP_REG_B,DSP_REG_B},		/* B */
+	{DSP_REG_A,DSP_REG_B},		/* AB */
+	{DSP_REG_B,DSP_REG_A}		/* BA */
+};
+
 static const char *ea_names[9]={
 	"(r%d)-n%d",	/* 000xxx */
 	"(r%d)+n%d",	/* 001xxx */
@@ -2240,7 +2251,8 @@ static void dsp_pm_4(void)
 		if (cur_inst & (1<<15)) {
 			/* Write D */
 
-			registers_changed[value]=1;
+			registers_changed[disasm_registers_lmove[value][0]]=1;
+			registers_changed[disasm_registers_lmove[value][1]]=1;
 			if (retour) {
 				sprintf(parallelmove_name, "#%s,%s", addr_name, registers_lmove[value]);
 			} else {
