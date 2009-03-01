@@ -1,3 +1,8 @@
+2009/03/01 - Patrice
+- dsp56k: More fixes from Laurent Sallafranque.
+  RND instruction properly used with scaling modes.
+
+
 2009/02/24 - Patrice
 - dsp56k: Cleanups, small optimisation for MOVEC, remove SCI emulation (useless
   on Falcon).

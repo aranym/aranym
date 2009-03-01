@@ -3689,30 +3689,44 @@ static void dsp_mul56(Uint32 source1, Uint32 source2, Uint32 *dest)
 
 static void dsp_rnd56(Uint32 *dest)
 {
-	Uint32 value;
+	Uint32 rnd_const[3];
 
-	/* Round D */
+	rnd_const[0] = 0;
 
-	value = dest[2] & BITMASK(24);
-	if (value==0x800000) {
-		if (dest[1] & 1) {
-			++dest[1];
-			if ((dest[1]>>24) & BITMASK(8)) {
-				++dest[0];
-				dest[0] &= BITMASK(8);
-				dest[1] &= BITMASK(24);
-			}
+	/* Scaling mode S0 */
+	if (dsp_core->registers[DSP_REG_SR] & DSP_SR_S0) {
+		rnd_const[1] = 1;
+		rnd_const[2] = 0;
+		dsp_add56(rnd_const, dest);
+
+		if ((dest[2]==0) && ((dest[1] & 1) == 0)) {
+			dest[1] &= (0xffffff - 0x3);
 		}
-	} else if (value>0x800000) {
-		++dest[1];
-		if ((dest[1]>>24) & BITMASK(8)) {
-			++dest[0];
-			dest[0] &= BITMASK(8);
-			dest[1] &= BITMASK(24);
-		}
+		dest[1] &= 0xfffffe;
+		dest[2]=0;
 	}
+	/* Scaling mode S1 */
+	else if (dsp_core->registers[DSP_REG_SR] & DSP_SR_S1) {
+		rnd_const[1] = 0;
+		rnd_const[2] = (1<<22);
+		dsp_add56(rnd_const, dest);
+   
+		if ((dest[2] & 0x7fffff) == 0){
+			dest[2] = 0;
+		}
+		dest[2] &= 0x800000;
+	}
+	/* No Scaling */
+	else {
+		rnd_const[1] = 0;
+		rnd_const[2] = (1<<23);
+		dsp_add56(rnd_const, dest);
 
-	dest[2]=0;
+		if (dest[2] == 0) {
+			dest[1] &= 0xfffffe;
+		}
+		dest[2]=0;
+	}
 }
 
 /**********************************
@@ -4484,8 +4498,6 @@ static void dsp_rnd(void)
 	dsp_core->registers[DSP_REG_A2+numreg] = dest[0];
 	dsp_core->registers[DSP_REG_A1+numreg] = dest[1];
 	dsp_core->registers[DSP_REG_A0+numreg] = dest[2];
-
-	dsp_core->registers[DSP_REG_SR] &= BITMASK(16)-(1<<DSP_SR_V);
 
 	dsp_ccr_extension(&dest[0], &dest[1]);
 	dsp_ccr_unnormalized(&dest[0], &dest[1]);
