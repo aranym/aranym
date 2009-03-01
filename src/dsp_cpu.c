@@ -3694,7 +3694,7 @@ static void dsp_rnd56(Uint32 *dest)
 	rnd_const[0] = 0;
 
 	/* Scaling mode S0 */
-	if (dsp_core->registers[DSP_REG_SR] & DSP_SR_S0) {
+	if (dsp_core->registers[DSP_REG_SR] & (1<<DSP_SR_S0)) {
 		rnd_const[1] = 1;
 		rnd_const[2] = 0;
 		dsp_add56(rnd_const, dest);
@@ -3706,7 +3706,7 @@ static void dsp_rnd56(Uint32 *dest)
 		dest[2]=0;
 	}
 	/* Scaling mode S1 */
-	else if (dsp_core->registers[DSP_REG_SR] & DSP_SR_S1) {
+	else if (dsp_core->registers[DSP_REG_SR] & (1<<DSP_SR_S1)) {
 		rnd_const[1] = 0;
 		rnd_const[2] = (1<<22);
 		dsp_add56(rnd_const, dest);
