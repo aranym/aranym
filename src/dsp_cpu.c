@@ -649,7 +649,7 @@ void dsp56k_execute_instruction(void)
 	cur_inst_len = 1;
 
 	value = (cur_inst >> 16) & BITMASK(8);
-	if (value< 0x10) {
+	if ((value < 0x10) && ((cur_inst & 0xfe4000) != 0x080000)) {
 		opcodes8h[value]();
 	} else {
 		dsp_parmove_read();
