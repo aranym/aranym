@@ -1,3 +1,7 @@
+2009/03/09 - Patrice
+- dsp56k: Simplify read/write memory functions, thanks to Eero Tamminen.
+
+
 2009/03/01 - Patrice
 - dsp56k: More fixes from Laurent Sallafranque.
   RND instruction properly used with scaling modes.

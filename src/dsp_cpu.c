@@ -97,6 +97,7 @@ static void dsp_ccr_unnormalized(Uint32 *reg0, Uint32 *reg1);
 static void dsp_ccr_negative(Uint32 *reg0);
 static void dsp_ccr_zero(Uint32 *reg0, Uint32 *reg1, Uint32 *reg2);
 
+static inline Uint32 read_memory_p(Uint16 address);
 static Uint32 read_memory(int space, Uint16 address);
 static void write_memory_raw(int space, Uint16 address, Uint32 value);
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
@@ -645,7 +646,7 @@ void dsp56k_execute_instruction(void)
 #endif
 
 	/* Decode and execute current instruction */
-	cur_inst = read_memory(DSP_SPACE_P, dsp_core->pc);
+	cur_inst = read_memory_p(dsp_core->pc);
 	cur_inst_len = 1;
 
 	value = (cur_inst >> 16) & BITMASK(8);
@@ -836,8 +837,8 @@ static void dsp_postexecute_interrupts(void)
 		fprintf(stderr, "Dsp: IPL: %08x    IPH_HI: %08x \n", ipl, ipl_hi);
 
 		/* Read of the 2 vectored instructions to determine if it's a fast or long interrupt */
-		instr1 = read_memory(DSP_SPACE_P, dsp_core->interrupt_instr_fetch);
-		instr2 = read_memory(DSP_SPACE_P, dsp_core->interrupt_instr_fetch+1);
+		instr1 = read_memory_p(dsp_core->interrupt_instr_fetch);
+		instr2 = read_memory_p(dsp_core->interrupt_instr_fetch+1);
 		dsp_core->interrupt_state = DSP_INTERRUPT_FAST;
 
 		if (((instr1 >> 16) & BITMASK(8)) == 0xd) {
@@ -1047,86 +1048,85 @@ static void dsp_ccr_zero(Uint32 *reg0, Uint32 *reg1, Uint32 *reg2)
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 static Uint32 read_memory_disasm(int space, Uint16 address)
 {
-	switch(space) {
-		case DSP_SPACE_X:
-		case DSP_SPACE_Y:
-			/* Internal RAM? */
-			if (address<0x100) {
-				return dsp_core->ramint[space][address] & BITMASK(24);
-			}
-			/* Internal ROM? */
-			if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
-				(address<0x200)) {
-				return dsp_core->rom[space][address] & BITMASK(24);
-			}
-			/* Peripheral address ? */
-			if (address >= 0xffc0) {
-				return dsp_core->periph[space][address-0xffc0] & BITMASK(24);
-			}
-			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
-			if (space == DSP_SPACE_X) {
-				address += DSP_RAMSIZE>>1;
-			}
-			/* Falcon: External RAM, map X,Y to P */
-			space = DSP_SPACE_P;
-			break;
-		case DSP_SPACE_P:
-			/* Internal RAM? */
-			if (address<0x200) {
-				return dsp_core->ramint[DSP_SPACE_P][address] & BITMASK(24);
-			}
-			break;
+	/* Internal RAM ? */
+	if (address<0x100) {
+		return dsp_core->ramint[space][address] & BITMASK(24);
 	}
 
-	/* External RAM, mask address to available ram size */
-	return dsp_core->ram[space][address & (DSP_RAMSIZE-1)] & BITMASK(24);
+	if (space==DSP_SPACE_P) {
+		return read_memory_p(address);
+	}
+
+	/* Internal ROM? */
+	if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
+		(address<0x200)) {
+		return dsp_core->rom[space][address] & BITMASK(24);
+	}
+
+	/* Peripheral address ? */
+	if (address >= 0xffc0) {
+		return dsp_core->periph[space][address-0xffc0] & BITMASK(24);
+	}
+
+	/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
+	if (space == DSP_SPACE_X) {
+		address += DSP_RAMSIZE>>1;
+	}
+
+	/* Falcon: External RAM, finally map X,Y to P */
+	return dsp_core->ram[DSP_SPACE_P][address & (DSP_RAMSIZE-1)] & BITMASK(24);
 }
 #endif
 
-static Uint32 read_memory(int space, Uint16 address)
+static inline Uint32 read_memory_p(Uint16 address)
 {
-	switch(space) {
-		case DSP_SPACE_X:
-		case DSP_SPACE_Y:
-			/* Internal RAM ?*/
-			if (address<0x100) {
-				return dsp_core->ramint[space][address] & BITMASK(24);
-			}
-			/* Internal ROM ?*/
-			if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
-				(address<0x200)) {
-				return dsp_core->rom[space][address] & BITMASK(24);
-			}
-			/* Peripheral address ? */
-			if (address >= 0xffc0) {
-				Uint32 value;
-
-				dsp_core->lockMutex(dsp_core);
-				if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
-					dsp_core_hostport_dspread(dsp_core);
-				}
-				value = dsp_core->periph[space][address-0xffc0] & BITMASK(24);
-				dsp_core->unlockMutex(dsp_core);
-
-				return value;
-			}
-			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
-			if (space == DSP_SPACE_X) {
-				address += DSP_RAMSIZE>>1;
-			}
-			/* Falcon: External RAM, map X,Y to P */
-			space = DSP_SPACE_P;
-			break;
-		case DSP_SPACE_P:
-			/* Internal RAM ?*/
-			if (address<0x200) {
-				return dsp_core->ramint[DSP_SPACE_P][address] & BITMASK(24);
-			}
-			break;
+	/* Internal RAM ? */
+	if (address<0x200) {
+		return dsp_core->ramint[DSP_SPACE_P][address] & BITMASK(24);
 	}
 
 	/* External RAM, mask address to available ram size */
-	return dsp_core->ram[space][address & (DSP_RAMSIZE-1)] & BITMASK(24);
+	return dsp_core->ram[DSP_SPACE_P][address & (DSP_RAMSIZE-1)] & BITMASK(24);
+}
+
+static Uint32 read_memory(int space, Uint16 address)
+{
+	/* Internal RAM ? */
+	if (address<0x100) {
+		return dsp_core->ramint[space][address] & BITMASK(24);
+	}
+
+	if (space==DSP_SPACE_P) {
+		return read_memory_p(address);
+	}
+
+	/* Internal ROM ?*/
+	if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
+		(address<0x200)) {
+		return dsp_core->rom[space][address] & BITMASK(24);
+	}
+
+	/* Peripheral address ? */
+	if (address >= 0xffc0) {
+		Uint32 value;
+
+		dsp_core->lockMutex(dsp_core);
+		if ((space==DSP_SPACE_X) && (address==0xffc0+DSP_HOST_HRX)) {
+			dsp_core_hostport_dspread(dsp_core);
+		}
+		value = dsp_core->periph[space][address-0xffc0] & BITMASK(24);
+		dsp_core->unlockMutex(dsp_core);
+
+		return value;
+	}
+
+	/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
+	if (space == DSP_SPACE_X) {
+		address += DSP_RAMSIZE>>1;
+	}
+
+	/* Falcon: External RAM, finally map X,Y to P */
+	return dsp_core->ram[DSP_SPACE_P][address & (DSP_RAMSIZE-1)] & BITMASK(24);
 }
 
 /* Note: MACRO write_memory defined to either write_memory_raw or write_memory_disasm */
@@ -1134,13 +1134,14 @@ static void write_memory_raw(int space, Uint16 address, Uint32 value)
 {
 	value &= BITMASK(24);
 
+	/* Internal RAM ? */
+	if (address<0x100) {
+		dsp_core->ramint[space][address] = value;
+		return;
+	}
+
 	switch(space) {
 		case DSP_SPACE_X:
-			/* Internal RAM ? */
-			if (address<0x100) {
-				dsp_core->ramint[DSP_SPACE_X][address] = value;
-				return;
-			}
 			/* Internal ROM ?*/
 			if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
 				(address<0x200)) {
@@ -1175,18 +1176,9 @@ static void write_memory_raw(int space, Uint16 address, Uint32 value)
 				return;
 			}
 			/* Falcon: External RAM, map X to upper 16K of matching space in Y,P */
-			if (space == DSP_SPACE_X) {
-				address += DSP_RAMSIZE>>1;
-			}
-			/* Falcon: External RAM, map X to P */
-			space = DSP_SPACE_P;
+			address += DSP_RAMSIZE>>1;
 			break;
 		case DSP_SPACE_Y:
-			/* Internal RAM ? */
-			if (address<0x100) {
-				dsp_core->ramint[DSP_SPACE_Y][address] = value;
-				return;
-			}
 			/* Internal ROM ?*/
 			if ((dsp_core->registers[DSP_REG_OMR] & (1<<DSP_OMR_DE)) &&
 				(address<0x200)) {
@@ -1198,11 +1190,9 @@ static void write_memory_raw(int space, Uint16 address, Uint32 value)
 				dsp_core->periph[DSP_SPACE_Y][address-0xffc0] = value;
 				return;
 			}
-			/* Falcon: External RAM, map Y to P */
-			space = DSP_SPACE_P;
 			break;
 		case DSP_SPACE_P:
-			/* Internal RAM ?*/
+			/* Internal RAM ? */
 			if (address<0x200) {
 				dsp_core->ramint[DSP_SPACE_P][address] = value;
 				return;
@@ -1210,8 +1200,8 @@ static void write_memory_raw(int space, Uint16 address, Uint32 value)
 			break;
 	}
 
-	/* External RAM, mask address to available ram size */
-	dsp_core->ram[space][address & (DSP_RAMSIZE-1)] = value;
+	/* Falcon: External RAM, map X,Y to P */
+	dsp_core->ram[DSP_SPACE_P][address & (DSP_RAMSIZE-1)] = value;
 }
 
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
@@ -1426,7 +1416,7 @@ static int dsp_calc_ea(Uint32 ea_mode, Uint32 *dst_addr)
 			break;
 		case 6:
 			/* aa */
-			*dst_addr = read_memory(DSP_SPACE_P,dsp_core->pc+1);
+			*dst_addr = read_memory_p(dsp_core->pc+1);
 			cur_inst_len++;
 			if (numreg != 0) {
 				return 1; /* immediate value */
@@ -1916,7 +1906,7 @@ static void dsp_do(void)
 
 	dsp_stack_push(dsp_core->registers[DSP_REG_LA], dsp_core->registers[DSP_REG_LC]);
 
-	dsp_core->registers[DSP_REG_LA] = read_memory(DSP_SPACE_P, dsp_core->pc+1) & BITMASK(16);
+	dsp_core->registers[DSP_REG_LA] = read_memory_p(dsp_core->pc+1) & BITMASK(16);
 	cur_inst_len++;
 
 	dsp_stack_push(dsp_core->pc+cur_inst_len, dsp_core->registers[DSP_REG_SR]);
@@ -2056,7 +2046,7 @@ static void dsp_jclr(void)
 	if ((value & (1<<numbit))==0) {
 		int pollingLoop, i;
 
-		newpc = read_memory(DSP_SPACE_P, dsp_core->pc+1);
+		newpc = read_memory_p(dsp_core->pc+1);
 
 		/* Polling loop if jump to same PC as current JCLR instruction */
 		pollingLoop = (newpc == dsp_core->pc);
@@ -2064,7 +2054,7 @@ static void dsp_jclr(void)
 			/* or if only NOPs from jump address to current JCLR instruction */
 			pollingLoop = 1;
 			for (i=newpc; i<dsp_core->pc; i++) {
-				if (read_memory(DSP_SPACE_P, i) != 0) {
+				if (read_memory_p(i) != 0) {
 					pollingLoop=0;
 					break;
 				}			
@@ -2072,8 +2062,8 @@ static void dsp_jclr(void)
 		}
 		if (!pollingLoop && (newpc+2 == dsp_core->pc)) {
 			/* or programs that re-set host port operation (Papa was a bladerunner/Eko) */
-			pollingLoop = (read_memory(DSP_SPACE_P, newpc) == 0x08f4a0)	/* movep #0x000001,x:0xffe0 */
-				&& (read_memory(DSP_SPACE_P, newpc+1) == 0x000001);
+			pollingLoop = (read_memory_p(newpc) == 0x08f4a0)	/* movep #0x000001,x:0xffe0 */
+				&& (read_memory_p(newpc+1) == 0x000001);
 		}
 
 		if (pollingLoop) {
@@ -2192,7 +2182,7 @@ static void dsp_jsclr(void)
 	if ((value & (1<<numbit))==0) {
 		dsp_stack_push(dsp_core->pc+cur_inst_len, dsp_core->registers[DSP_REG_SR]);
 
-		newpc = read_memory(DSP_SPACE_P, dsp_core->pc+1);
+		newpc = read_memory_p(dsp_core->pc+1);
 		dsp_core->pc = newpc;
 		cur_inst_len = 0;
 	} 
@@ -2235,7 +2225,7 @@ static void dsp_jset(void)
 
 	++cur_inst_len;
 	if (value & (1<<numbit)) {
-		newpc = read_memory(DSP_SPACE_P, dsp_core->pc+1);
+		newpc = read_memory_p(dsp_core->pc+1);
 
 		dsp_core->pc = newpc;
 		cur_inst_len=0;
@@ -2301,7 +2291,7 @@ static void dsp_jsset(void)
 	if (value & (1<<numbit)) {
 		dsp_stack_push(dsp_core->pc+cur_inst_len, dsp_core->registers[DSP_REG_SR]);
 
-		newpc = read_memory(DSP_SPACE_P, dsp_core->pc+1);
+		newpc = read_memory_p(dsp_core->pc+1);
 		dsp_core->pc = newpc;
 		cur_inst_len = 0;
 	} 
@@ -2474,7 +2464,7 @@ static void dsp_movem(void)
 		/* Write D */
 
 		if ((numreg == DSP_REG_A) || (numreg == DSP_REG_B)) {
-			value = read_memory(DSP_SPACE_P, addr);
+			value = read_memory_p(addr);
 			dsp_core->registers[DSP_REG_A2+(numreg & 1)] = 0;
 			if (value & (1<<23)) {
 				dsp_core->registers[DSP_REG_A2+(numreg & 1)] = 0xff;
@@ -2482,7 +2472,7 @@ static void dsp_movem(void)
 			dsp_core->registers[DSP_REG_A1+(numreg & 1)] = value & BITMASK(24);
 			dsp_core->registers[DSP_REG_A0+(numreg & 1)] = 0;
 		} else {
-			dsp_core->registers[numreg] = read_memory(DSP_SPACE_P, addr);
+			dsp_core->registers[numreg] = read_memory_p(addr);
 			dsp_core->registers[numreg] &= BITMASK(registers_mask[numreg]);
 		}
 	} else {
@@ -2562,7 +2552,7 @@ static void dsp_movep_1(void)
 
 	if (cur_inst & (1<<15)) {
 		/* Write pp */
-		write_memory(memspace, xyaddr, read_memory(DSP_SPACE_P, paddr));
+		write_memory(memspace, xyaddr, read_memory_p(paddr));
 	} else {
 		/* Read pp */
 		write_memory(DSP_SPACE_P, paddr, read_memory(memspace, xyaddr));
