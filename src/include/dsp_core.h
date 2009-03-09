@@ -96,6 +96,14 @@ extern "C" {
 #define DSP_HOST_HSR_HF1	0x04
 #define DSP_HOST_HSR_DMA	0x07
 
+#define DSP_SSI_CRB_TIE		0xe
+#define DSP_SSI_CRB_RIE		0xf
+
+#define DSP_SSI_SR_TUE		0x4
+#define DSP_SSI_SR_ROE		0x5
+#define DSP_SSI_SR_TDF		0x6
+#define DSP_SSI_SR_RDF		0x7
+
 #define DSP_INTERRUPT_NONE      0x0
 #define DSP_INTERRUPT_FAST      0x1
 #define DSP_INTERRUPT_LONG      0x2
