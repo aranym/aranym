@@ -766,7 +766,6 @@ static void dsp_postexecute_interrupts(void)
 		if (dsp_core->pc >= dsp_core->interrupt_instr_fetch+2) {
 			dsp_core->interrupt_instr_fetch = -1;
 			dsp_core->interrupt_state = DSP_INTERRUPT_NONE;
-			dsp_core->pc = dsp_core->interrupt_save_pc;
 			if (dsp_core->pc == dsp_core->interrupt_instr_fetch+2) {
 				dsp_core->pc = dsp_core->interrupt_save_pc;
 			}
