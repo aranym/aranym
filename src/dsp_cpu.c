@@ -3020,8 +3020,9 @@ static void dsp_pm_0(void)
 	tmp_parmove_dest[1][1].host_pointer=&dsp_core->registers[DSP_REG_A1+numreg];
 	tmp_parmove_dest[1][2].host_pointer=&dsp_core->registers[DSP_REG_A0+numreg];
 
-	tmp_parmove_start[1] = 0;
-	tmp_parmove_len[1] = 3;
+	tmp_parmove_start[1]=0;
+	tmp_parmove_len[1]=3;
+	tmp_parmove_type[1]=0;
 }
 
 static void dsp_pm_1(void)
