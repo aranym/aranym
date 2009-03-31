@@ -263,6 +263,6 @@ void fpuop_scc(uae_u32 opcode, uae_u32 extra) REGPARAM;
 /* Floating-point system control operations */
 void fpuop_save(uae_u32 opcode) REGPARAM;
 void fpuop_restore(uae_u32 opcode) REGPARAM;
-void fpuop_trapcc(uae_u32 opcode, uaecptr oldpc) REGPARAM;
+void fpuop_trapcc(uae_u32 opcode, uaecptr oldpc, uae_u32 extra) REGPARAM;
 
 #endif /* FPU_CORE_H */

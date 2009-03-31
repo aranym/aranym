@@ -2213,12 +2213,15 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tfpuop_scc(opcode, extra);\n");
 	break;
      case i_FTRAPcc:
+	sync_m68k_pc ();
+	start_brace ();
 	printf ("\tuaecptr oldpc = m68k_getpc();\n");
+	printf ("\tuae_u16 extra = %s;\n", gen_nextiword());
 	if (curi->smode != am_unknown && curi->smode != am_illg)
 	    genamode (curi->smode, "srcreg", curi->size, "dummy", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	sync_m68k_pc ();
 	swap_opcode ();
-	printf ("\tfpuop_trapcc(opcode, oldpc);\n");
+	printf ("\tfpuop_trapcc(opcode, oldpc, extra);\n");
 	break;
      case i_FBcc:
 	sync_m68k_pc ();

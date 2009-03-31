@@ -1,6 +1,7 @@
 2009/03/31 - Andreas
 - gencpu.c: Correct exception setup for trapping insns. Thanks for hint
   to Guillaume Tello.
+- fpu_{x86,uae,ieee}.cpp: Fix decoding of FTRAPcc insn.
 
 
 2009/03/09 - Patrice

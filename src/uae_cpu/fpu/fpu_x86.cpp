@@ -3089,11 +3089,11 @@ PUBLIC void REGPARAM2 FFPU fpuop_scc(uae_u32 opcode, uae_u32 extra)
   }
 }
 
-PUBLIC void REGPARAM2 FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc)
+PUBLIC void REGPARAM2 FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc, uae_u32 extra)
 {
   int cc;
 
-  D(bug("ftrapcc_opp %X at %08lx\r\n", (uae_u32)opcode, m68k_getpc ()));
+  D(bug("ftrapcc_opp %X, %X at %08lx\r\n", (uae_u32)opcode, (uae_u32)extra, m68k_getpc ()));
 
 #if I3_ON_FTRAPCC
 #error "FIXME: _asm int 3"
@@ -3101,7 +3101,7 @@ PUBLIC void REGPARAM2 FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc)
 #endif
 
 	// This must be broken.
-  cc = fpp_cond(opcode, opcode & 0x3f);
+  cc = fpp_cond(opcode, extra & 0x3f);
 
   if (cc < 0) {
 		m68k_setpc (oldpc);

@@ -1059,11 +1059,11 @@ void FFPU fpuop_scc(uae_u32 opcode, uae_u32 extra)
 		put_byte(ad, cc ? 0xff : 0x00);
 }
 
-void FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc)
+void FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc, uae_u32 extra)
 {
-	fpu_debug(("ftrapcc_opp %X at %08lx\n", (uae_u32)opcode, m68k_getpc ()));
+	fpu_debug(("ftrapcc_opp %X, %X at %08lx\n", (uae_u32)opcode, (uae_u32)extra, m68k_getpc ()));
 	
-	int cc = fpp_cond(opcode & 0x3f);
+	int cc = fpp_cond(extra & 0x3f);
 	if (cc == -1) {
 		m68k_setpc (oldpc);
 		op_illg (opcode);
