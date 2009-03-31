@@ -1,3 +1,7 @@
+2009/03/31 - Andreas
+- gencpu.c: Correct exception setup for trapping insns.
+
+
 2009/03/09 - Patrice
 - dsp56k: Simplify read/write memory functions, thanks to Eero Tamminen.
 
@@ -51,7 +55,7 @@
     accessory is finished (and XaAES gets appl_tplay implementation). After
     this the AutoGrabMouse config will no longer be needed.
   - added ARAnyM SDL mouse cursor (simple white arrow, to be improved), this
-    is to be easily distinguishable from the Atari GEM mouse cursor (for 
+    is to be easily distinguishable from the Atari GEM mouse cursor (for
     some unknown reason the standard SDL mouse cursor is identical to Atari
     GEM mouse cursor so you never knew if you had input grabbed or not).
   - probably managed to remove the warnings about weird mouse motion
@@ -366,7 +370,7 @@ Reworked audio DMA emulation:
   directory
 
 - aranym.icns: new icon file
-  
+
 
 2008/01/30 - Petr
 - aranym.spec: SDL_image added to "Requires" and "BuildRequires"
@@ -448,7 +452,7 @@ Reworked audio DMA emulation:
 
 - parameters: new command line switch -k <ISO country code> for setting up
   the NVRAM keyboard layout.
- 
+
 
 2008/01/23 - Petr
 - dlgPartition.cpp: added missing PartID edit field
@@ -505,49 +509,49 @@ Reworked audio DMA emulation:
 
 
 2008/01/07 - Stefan
-- darwin/Makefile: There was an error in the generation of the config_tmp.h 
-  file, I used '>' for redirecting the first three lines instead of '>>', thus 
+- darwin/Makefile: There was an error in the generation of the config_tmp.h
+  file, I used '>' for redirecting the first three lines instead of '>>', thus
   of course the first two lines where lost.
 
-- darwin/aranym.xcodeproj/project.pbxproj: Removed some orphan file references. 
-  
+- darwin/aranym.xcodeproj/project.pbxproj: Removed some orphan file references.
+
 
 2008/01/07 - Stefan
 - darwin/Makefile: Fixed a dependency problem between the depend targets and
-  the config.h file. Now an intermediate file config_tmp.h is generated, which 
-  the depend targets copy into config.h. The config_tmp.h now has an inclusion 
+  the config.h file. Now an intermediate file config_tmp.h is generated, which
+  the depend targets copy into config.h. The config_tmp.h now has an inclusion
   guard and just includes either the config_i386.h or config_ppc.h file.
-  
+
 
 2008/01/06 - Stefan
-- Makefile.in: Changed CPU_TYPE to ARCH to have a more consistent naming. 
-  Removed -I$(top_srcdir) from CPPFLAGS as it is not needed any more. Added 
-  $(builddir)/ to version_date.h. Added missing $(top_srcdir)/ to ChangeLog. 
-  Added DEPEND to use architecture dependent depend files. Commented out the 
-  makefile definiton with WORD and WORDS, as we now have architecture specific 
-  depend files. Instead now makefile is defined to $(builddir)/Makefile. 
+- Makefile.in: Changed CPU_TYPE to ARCH to have a more consistent naming.
+  Removed -I$(top_srcdir) from CPPFLAGS as it is not needed any more. Added
+  $(builddir)/ to version_date.h. Added missing $(top_srcdir)/ to ChangeLog.
+  Added DEPEND to use architecture dependent depend files. Commented out the
+  makefile definiton with WORD and WORDS, as we now have architecture specific
+  depend files. Instead now makefile is defined to $(builddir)/Makefile.
 
-- darwin/Makefile: Added targets depend{,_i386,_ppc} to generate dependencies 
-  and distclean{,_i386,_ppc} to have clean and distclean targets similar to 
-  the Makefile. Changed usage of make again to use the -C option. Thus now the 
-  targets are build in the same way then for other systems. This has been 
-  necessary because the builddir now is fixed to "." and can't be changed. On 
+- darwin/Makefile: Added targets depend{,_i386,_ppc} to generate dependencies
+  and distclean{,_i386,_ppc} to have clean and distclean targets similar to
+  the Makefile. Changed usage of make again to use the -C option. Thus now the
+  targets are build in the same way then for other systems. This has been
+  necessary because the builddir now is fixed to "." and can't be changed. On
   the other hand it's possible now, as we have the dependencies in other files.
 
-- configure.ac: Added the option -mmacosx-version-min to ISYSROOT, this should 
-  fix the build on Leopard without the crt1.o workaround. Changed the srcdir 
+- configure.ac: Added the option -mmacosx-version-min to ISYSROOT, this should
+  fix the build on Leopard without the crt1.o workaround. Changed the srcdir
   for darwin back to ".", as now make is used with the -C option.
 
 - INSTALL: Fixed the path description to the executable.
 
-- mfp.cpp: Commented out the panicbug "mfp_do_interrupt called when another 
-  higher priority interrupt is running", as it is issued continuously when 
+- mfp.cpp: Commented out the panicbug "mfp_do_interrupt called when another
+  higher priority interrupt is running", as it is issued continuously when
   MagiC runs.
 
-- ndebug.{cpp,h}: Added issavettyvalid and thus fixed ndebug in case the 
+- ndebug.{cpp,h}: Added issavettyvalid and thus fixed ndebug in case the
   terminal is not supporting tcgetattr().
 
-- darwin/aranym.xcodeproj/project.pbxproj: Updated the Xcode project file to 
+- darwin/aranym.xcodeproj/project.pbxproj: Updated the Xcode project file to
   contain new files and to use SCM/CVS. Also cleaned up some settings.
 
 
@@ -599,17 +603,17 @@ Reworked audio DMA emulation:
 
 
 2008/01/01 - Jens
-- Makefile.in - Additional Include path, else the darwin build doesn't 
+- Makefile.in - Additional Include path, else the darwin build doesn't
   find config.h (may be an issue with MACOSX 10.5)
 
 - parameters.cpp - Default search for logo in application bundle
   on MacOS
 
-- input.cpp - don't use mouse grabing if setup gui is open, because the 
+- input.cpp - don't use mouse grabing if setup gui is open, because the
   mouse was hidden and was not usable in the Setup GUI
 
-- xcodeproj - SDL Image added, copy logo from data to application bundle. 
-  Debugging disabled, because NDEBUG is not working, if Aranym is started 
+- xcodeproj - SDL Image added, copy logo from data to application bundle.
+  Debugging disabled, because NDEBUG is not working, if Aranym is started
   from an application bundle in Leopard (tcgetattr = -1)
 
 - logo.png - added because it is necessary for the application bundle
@@ -734,28 +738,28 @@ Reworked audio DMA emulation:
 
 
 2007/12/09 - Stefan
-- darwin/Makefile: The architecture dependend binaries were build inside the 
-  darwin directory, but for the universal binary they were taken from the main 
-  directory ($(makedir)) and the universal binary got stored there, too. For 
-  the application bundle then a universal binary was taken from the darwin 
-  folder again. The build didn't fail if there still were older binaries at 
+- darwin/Makefile: The architecture dependend binaries were build inside the
+  darwin directory, but for the universal binary they were taken from the main
+  directory ($(makedir)) and the universal binary got stored there, too. For
+  the application bundle then a universal binary was taken from the darwin
+  folder again. The build didn't fail if there still were older binaries at
   both locations. Anyway the application bundle contained a wrong binary.
 
 - darwin/aranym.xcodeprj: As now the application bundle is build again as
-  src/Unix/darwin/ARAnyM.app, the XCode project doesn't need a custom location 
+  src/Unix/darwin/ARAnyM.app, the XCode project doesn't need a custom location
   for the build product directory any more.
 
-- Makefile.in: For the target mostlyclean now instead of TARGET both APP and 
+- Makefile.in: For the target mostlyclean now instead of TARGET both APP and
   APP_BUNLDE will be deleted.
 
 - src/dyngl.c: Fixed compiler warning about unused parameter.
 
 - src/Unix/aratapif.c: Fixed compiler warning about type mismatch.
 
-- src/uae_cpu/compiler/compemu_support.cpp: Fixed compiler warnings about type 
+- src/uae_cpu/compiler/compemu_support.cpp: Fixed compiler warnings about type
   mismatches.
 
-- src/uae_cpu/compiler/codegen_x86.cpp: Fixed compiler warning about type 
+- src/uae_cpu/compiler/codegen_x86.cpp: Fixed compiler warning about type
   mismatch.
 
 - src/natfeat/nfosmesa.h: Fixed return type of name() method.
@@ -770,9 +774,9 @@ Reworked audio DMA emulation:
 2007/12/08 - Stefan
 - darwin/Makefile: Fixed the Makefile to allow a direct jump to errors in Xcode.
 
-- Makefile.in: Added $(makefile) to hold the name of the current Makefile. This 
-  is needed for depend to append the dependencies to the right file. Added 
-  $(makedir) to hold the path to the config.h and other files. This is needed 
+- Makefile.in: Added $(makefile) to hold the name of the current Makefile. This
+  is needed for depend to append the dependencies to the right file. Added
+  $(makedir) to hold the path to the config.h and other files. This is needed
   because for the darwin target make is started from a different folder.
 
 - configure.ac: Added again a srcdir definition for darwin.
@@ -909,7 +913,7 @@ Reworked audio DMA emulation:
 - host_surface: New base class that will hold SDL_Surface used also for texture
   with OpenGL renderer.
 
-	
+
 2007/11/25 - Andreas
 - configure.ac: Don't clobber srcdir.
 - Makefile.in: append src to srcdir here.
@@ -920,7 +924,7 @@ Reworked audio DMA emulation:
   configure.ac, Makefile.in: adapted for new paths
   install-sh, config.*, acinclude.m4, autogen.sh: just copied
   Simply run "./autogen.sh", "./configure && make" in the top-level dir now.
-  
+
 - SDL-GUI fonts: 8x8 font (font8.h) replaced by 8x16 font (font.h)
 - sdlgui.cpp: try to load "font" file from the ARAnyM config folder. Fall back
   to hardwired 8x16 font if not successful.
@@ -991,7 +995,7 @@ Reworked audio DMA emulation:
 2007/09/21 - Philipp
 - MacAranym.xcodeproj/project.pbxproj: Fixed project to compile again.
 - ethernet_darwin.cpp: fixed reference to hostscreen
-- nfjpeg.cpp: Enabled conditional compilation by adding a check for 
+- nfjpeg.cpp: Enabled conditional compilation by adding a check for
   NFJPEG_SUPPORT. This file is now always included in the darwin project.
 
 
@@ -1022,31 +1026,31 @@ Reworked audio DMA emulation:
 
 
 2007/09/09 - Stefan
-- darwin/Makefile: Removed dependency of ppc target from config_i386.h and the 
+- darwin/Makefile: Removed dependency of ppc target from config_i386.h and the
   dependency of i386 target from config_ppc.h.
 
 
 2007/09/07 - Philipp
 - Corrected handling of --enable-ctrlkey in configure.ac and
   input.cpp (currently only supported by Darwin / Mac OS X target).
-- MacOSX/MacAranym.xcodeproj: Removed (once again) dependency to SDL_image 
+- MacOSX/MacAranym.xcodeproj: Removed (once again) dependency to SDL_image
   Framework.
 
 
 2007/09/02 - Stefan
 - darwin/busybee.icns: Again another version of the busybee icon.
 
-- darwin/busybee112-glossy.xcf: Added gimp file which I use to create the 
+- darwin/busybee112-glossy.xcf: Added gimp file which I use to create the
   busybee icon.
 
-- darwin/Makefile: New targets universal, i386 and ppc to choose the binary type 
-  of ARAnyM. The ppc target now should also allow to build ARAnyM on Mac OS X 
-  10.3.9. Fixed an error that the Makefile_ppc or Makefile_i386 is older than 
+- darwin/Makefile: New targets universal, i386 and ppc to choose the binary type
+  of ARAnyM. The ppc target now should also allow to build ARAnyM on Mac OS X
+  10.3.9. Fixed an error that the Makefile_ppc or Makefile_i386 is older than
   its dependencies.
 
 - INSTALL: Added description for darwin port.
 
-- Unix/Makefile.in: Removed support for .mm, as .M has already been used for 
+- Unix/Makefile.in: Removed support for .mm, as .M has already been used for
   C++/Objective C mixed files. We should stick to one extension.
 
 - MacOSX/MacAranym.xcodeproj: Updated XCode project file.
@@ -1057,16 +1061,16 @@ Reworked audio DMA emulation:
 
 - aratapif.c: Made it compile on Mac OS X.
 
-- darwin/ethernet_darwin.cpp: Changed executeScriptAsRoot() to use 
+- darwin/ethernet_darwin.cpp: Changed executeScriptAsRoot() to use
   Host::getDataFolder().
 
-- darwin/German.lproj/InfoPlist.strings: Added this file to allow further 
+- darwin/German.lproj/InfoPlist.strings: Added this file to allow further
   localisations.
 
 - codegen_x86.cpp: Solved a compiler warning due to an unused local variable.
 
-- sigsegv_darwin_x86.cpp: Solved a compiler warning inside 
-  catch_exception_raise(), the return value krc now is initialized with 
+- sigsegv_darwin_x86.cpp: Solved a compiler warning inside
+  catch_exception_raise(), the return value krc now is initialized with
   KERN_SUCCESS.
 
 
@@ -1123,34 +1127,34 @@ Reworked audio DMA emulation:
 
 - darwin/German.lproj: Tags set on menu entries
 
-- darwin/Makefile: Fix to make it 10.3.9 compatible (code for modifying 
+- darwin/Makefile: Fix to make it 10.3.9 compatible (code for modifying
   config_ppc.h taken from the xcodeproj)
 
-- darwin/ethernet_darwin.cpp: If it is started as fullscreen application, 
-  leave the fullscreen mode before opening the authorization dialog. After 
-  initialization reenter fullscreen mode. Added Authorization Service 
-  to ask for the user password for starting up the ethernet connection. 
+- darwin/ethernet_darwin.cpp: If it is started as fullscreen application,
+  leave the fullscreen mode before opening the authorization dialog. After
+  initialization reenter fullscreen mode. Added Authorization Service
+  to ask for the user password for starting up the ethernet connection.
   Location of aratapif.sh changed to "~/Library/Application Support/ARAnyM"
 
-- darwin/Readme_ethernet.txt: Updated information for installation of the 
+- darwin/Readme_ethernet.txt: Updated information for installation of the
   ethernet on Mac.
 
-- darwin/sigsegv_darwin_x86.cpp: Commented a enum value to reduce warnings 
+- darwin/sigsegv_darwin_x86.cpp: Commented a enum value to reduce warnings
   during compilation.
 
-- darwin/SDLHotkeysRefresh.mm: New code interacting as an interface between 
-  the cpp code and the Objective-C code of the MAC part that updates the menu 
+- darwin/SDLHotkeysRefresh.mm: New code interacting as an interface between
+  the cpp code and the Objective-C code of the MAC part that updates the menu
   shortcuts.
 
 - gui-osx/German.lproj: Added german version
 
-- gui-osx/English.lproj: added tags for the different menu entries. For a list 
+- gui-osx/English.lproj: added tags for the different menu entries. For a list
   of the used tags see darwin/SDLHotkeysRefresh.mm
 
 - MacOSX/Readme.rtf: JIT/Ethernet comment changed
 
-- MacOSX/MacAranym.xcodeproj: changed that the configure is running twice for 
-  each target, to make sure that the config file is generated correctly for 
+- MacOSX/MacAranym.xcodeproj: changed that the configure is running twice for
+  each target, to make sure that the config file is generated correctly for
   the target. Added Security.Framework.
 
 - configure.ac: Fixed a typo using vblupdates; added Security.Framework;
@@ -1158,68 +1162,68 @@ Reworked audio DMA emulation:
 
 - input.cpp: Fixed getting modifier if it is pushed by a Menu key
 
-- gui-sdl/dlgMain.cpp/main_unix.cpp: Call refreshHotkeys() on Mac to update 
+- gui-sdl/dlgMain.cpp/main_unix.cpp: Call refreshHotkeys() on Mac to update
   the key shortcuts in the screen menu bar
 
-- Makefile.in: Added compilation rules for .mm files. Fixed bundle creation 
+- Makefile.in: Added compilation rules for .mm files. Fixed bundle creation
   copying frameworks if SDL_image.framework is not available it fails before.
 
 
 2007/08/19 Stefan
 - darwin/busybee.icns: I made a new glossy busy bee icon.
 
-- darwin/aranym.xcodeproj: Little fix so that the compiler finds the 
+- darwin/aranym.xcodeproj: Little fix so that the compiler finds the
   executable.
 
 
 2007/08/16 Stefan
-- darwin/host_filesys_darwin.M: Added this file now containing the file system 
+- darwin/host_filesys_darwin.M: Added this file now containing the file system
   functions.
 
-- darwin/parameters_darwin.cpp: Renamed it from .M to .cpp, as of the split-off 
+- darwin/parameters_darwin.cpp: Renamed it from .M to .cpp, as of the split-off
   of darwin/host_filesys_datwin.M there's no Objective C code any longer.
 
-- darwin/English.lproj/aranym.nib, darwin/German.lproj/aranym.nib: Added some 
+- darwin/English.lproj/aranym.nib, darwin/German.lproj/aranym.nib: Added some
   more menu items to control ARAnyM.
 
-- darwin/SDL.M, darwin/SDL.h: Added functionality to recognise configuration 
-  files or bundle names passed to ARAnyM at startup due to a double-click on 
+- darwin/SDL.M, darwin/SDL.h: Added functionality to recognise configuration
+  files or bundle names passed to ARAnyM at startup due to a double-click on
   either one. Solved a problem on terminating ARAnyM.
 
-- darwin/Info.plist: Added information to start ARAnyM via double-click on 
-  files with the extension ".ARAnyMCFG" or ".amcfg". Added information to 
-  define a bundle folder with the extension ".ARAnyMVM" or ".amvm". Such a 
-  bundle then can contain disk images, ROMs, a config file and also other 
-  stuff. A bundel is treated by the Finder like a single file. A double-click 
-  on such a bundle now starts ARAnyM, which then looks for an 
+- darwin/Info.plist: Added information to start ARAnyM via double-click on
+  files with the extension ".ARAnyMCFG" or ".amcfg". Added information to
+  define a bundle folder with the extension ".ARAnyMVM" or ".amvm". Such a
+  bundle then can contain disk images, ROMs, a config file and also other
+  stuff. A bundel is treated by the Finder like a single file. A double-click
+  on such a bundle now starts ARAnyM, which then looks for an
   "org.aranym.amcfg" or usual "config" file to use.
 
 - darwin/araynm.pbproj: As this file is not in use any more, I now removed it.
 
-- darwin/aranym.xcodeproj: Added an XCode project instead. It mainly just 
-  relies on the darwin/Makefile. 
+- darwin/aranym.xcodeproj: Added an XCode project instead. It mainly just
+  relies on the darwin/Makefile.
 
-- Unix/Makefile.in: The new XCode project sets its working path to the darwin 
-  folder. To gain from the XCode features, I adapted the Unix/Makefile.in that 
+- Unix/Makefile.in: The new XCode project sets its working path to the darwin
+  folder. To gain from the XCode features, I adapted the Unix/Makefile.in that
   from within the darwin folder make -f ../Makefile_ppc can be started.
 
-- darwin/Makefile: Little changes were necessary to start the autogen.sh, 
+- darwin/Makefile: Little changes were necessary to start the autogen.sh,
   configure and make depend separately from within the darwin folder.
 
-- configure.ac: Changed the default config file name according the new 
-  extension to "org.aranym.acfg". Added a new configuration switch to select 
-  either the control or meta key or both to emulate the control key. Added 
-  darwin/host_filesys_darwin.M and darwin/parameters_darwin.cpp to EXTRASYSSRC 
-  and removed darwin/parameters_darwin.M instead. Changed the srcdir variable 
+- configure.ac: Changed the default config file name according the new
+  extension to "org.aranym.acfg". Added a new configuration switch to select
+  either the control or meta key or both to emulate the control key. Added
+  darwin/host_filesys_darwin.M and darwin/parameters_darwin.cpp to EXTRASYSSRC
+  and removed darwin/parameters_darwin.M instead. Changed the srcdir variable
   to ".." to get the make system working comfortably form within XCode.
 
-- input.cpp: Using the new defines to decide for control or meta key to map the 
+- input.cpp: Using the new defines to decide for control or meta key to map the
   the emulated control key.
 
-- Unix/config.h: Also here I added the new control key defines 
+- Unix/config.h: Also here I added the new control key defines
   MAP_META_TO_CONTROL and MAP_CONTROL_TO_CONTROL.
 
-- INSTALL: Added a more detailed description of how to build ARAnyM for Mac OS 
+- INSTALL: Added a more detailed description of how to build ARAnyM for Mac OS
   X.
 
 - uae_cpu/compiler/codegen_x86.cpp: Removed some easy compiler warnings.
@@ -1228,7 +1232,7 @@ Reworked audio DMA emulation:
 
 - Unix/vm_alloc.cpp: Removed some easy compiler warnings.
 
-- uae_cpu/compiler/gencomp.c: Removed some unused functions and thus some 
+- uae_cpu/compiler/gencomp.c: Removed some unused functions and thus some
   compiler warnings.
 
 
@@ -1242,18 +1246,18 @@ Reworked audio DMA emulation:
 
 
 2007/08/12 Jens
-- hostscreen.cpp: Introduces new option to have delayed screen updates via 
-  SDL_UpdateRects. This is necessary to have a fluently updated screen on the 
-  Mac in windowed mode (see 
-  http://www.libsdl.org/faq.php?action=listentries&category=7#68). It may be 
+- hostscreen.cpp: Introduces new option to have delayed screen updates via
+  SDL_UpdateRects. This is necessary to have a fluently updated screen on the
+  Mac in windowed mode (see
+  http://www.libsdl.org/faq.php?action=listentries&category=7#68). It may be
   useful on some other systems too.
 
 - configure.ac: New option --enable-vblupdates for delayed updates
 
 - darwin/Makefile: add parameter --enable-vblupdates
 
-- main_unix.cpp: Changed calculation for the mirror space address. It should 
-  work in 64 Bit now too, it should be the correct address if all related 
+- main_unix.cpp: Changed calculation for the mirror space address. It should
+  work in 64 Bit now too, it should be the correct address if all related
   address calculation is done in 32 Bit.
 
 
@@ -1262,7 +1266,7 @@ Reworked audio DMA emulation:
 
 - darwin/aratapif.sh: A shell script version of aratapif
 
-- darwin/Readme_ethernet.txt: A short description of setting up ethernet on the 
+- darwin/Readme_ethernet.txt: A short description of setting up ethernet on the
   Mac
 
 - darwin/Makefile: add parameter --enable-ethernet
@@ -1316,9 +1320,9 @@ Reworked audio DMA emulation:
 - configure.ac: added parameter --with-classicconfig for classic configuration
   files and pointed to sigsegv_darwin_x86.cpp for JIT version.
 
-- src/Unix/MacOSX/MacAranym.xcodeproj/project.pbxproj: added new target 
-  MacAranym JIT and modified the other targets to keep their local parameter 
-  inside itself. Also a packaging JIT target is introduced with is a simple 
+- src/Unix/MacOSX/MacAranym.xcodeproj/project.pbxproj: added new target
+  MacAranym JIT and modified the other targets to keep their local parameter
+  inside itself. Also a packaging JIT target is introduced with is a simple
   clone of the normal packaging target.
 
 
@@ -1329,10 +1333,10 @@ Reworked audio DMA emulation:
 2007/07/22 - Stefan
 - include/toserror.h: Added TOS_ENAMETOOLONG with value -86.
 
-- natfeat/hostfs.h, natfeat/hostfs.cpp: Implemented xfs_readlabel(). From the 
-  hostRoot path the last folder name is used as the label. If for any reason 
+- natfeat/hostfs.h, natfeat/hostfs.cpp: Implemented xfs_readlabel(). From the
+  hostRoot path the last folder name is used as the label. If for any reason
   this is not possible (e.g. hostRoot is "/"), then a default label "HOSTFS"
-  will be used. This now enables MAGXDESK, which uses Dreadlabel(), to open 
+  will be used. This now enables MAGXDESK, which uses Dreadlabel(), to open
   hostfs volumes.
 
 
@@ -1360,27 +1364,27 @@ Reworked audio DMA emulation:
 
 - nfosmesa.cpp: Removed unnecessary inclusion of GL/OSMesa.h.
 
-- nfosmesa.h: Added conditional definition of GLAPI and GLAPIENTRY to solve a 
-  clash of /usr/X11R6/include/GL/gl.h and 
+- nfosmesa.h: Added conditional definition of GLAPI and GLAPIENTRY to solve a
+  clash of /usr/X11R6/include/GL/gl.h and
   /System/Library/Frameworks/OpenGL.framework/Headers/gl.h on Mac OS X.
 
-- nfvdi_opengl.h: Removed unnecessary inclusion of glu.h, as this is done 
-  above already by including SDL_opengl.h. Moved inclusion of parameters.h 
-  before SDL header files to solve a header file clash when using OSMesa on Mac 
+- nfvdi_opengl.h: Removed unnecessary inclusion of glu.h, as this is done
+  above already by including SDL_opengl.h. Moved inclusion of parameters.h
+  before SDL header files to solve a header file clash when using OSMesa on Mac
   OS X.
 
-- nfvdi_opengl.cpp: Removed unnecessary inclusion of glu.h, as this is done 
-  above already by including SDL_opengl.h. Removed unnecessary inclusion of 
+- nfvdi_opengl.cpp: Removed unnecessary inclusion of glu.h, as this is done
+  above already by including SDL_opengl.h. Removed unnecessary inclusion of
   parameters.h and SDL_opengl.h, which is done already by nfvdi_opengl.h.
 
-- sigsegv_xbsd.cpp: Solved a compiler waring about unused parameter x in 
+- sigsegv_xbsd.cpp: Solved a compiler waring about unused parameter x in
   function segfault_vec().
 
 - compemu_fpp.cpp: Solved lots of compiler warings regarding unused parameters
-  and variables. Some warnings regarding signed/unsigned comparations still 
+  and variables. Some warnings regarding signed/unsigned comparations still
   exist.
 
-- compemu_support.cpp: Solved lots of compiler warings regarding unused 
+- compemu_support.cpp: Solved lots of compiler warings regarding unused
   parameters, variables and functions.
 
 - sysdeps.h: Checking for __STDC__ as well as for __cplusplus, as in ISO C++
@@ -1388,30 +1392,30 @@ Reworked audio DMA emulation:
 
 - acinclude.m4: Slightly changed the check for framework locations.
 
-- configure.ac: Added ARCHFLAGS, CPU_TYPE and GENSRCS to support the build of an 
-  universal binary for darwin. For darwin also ISYSROOT is therefore needed. 
-  Splited generated from existing source files into GENCPUSRCS and GENJITSRCS to 
-  not include them into dependency generation. Reactivated darwin defines. 
-  Cleaned up the usage of preprocessor (CPPFLAGS) and compiler flags (CFLAGS, 
-  CXXFLAGS). Added general JIT support for darwin. Fixed an error in check for 
-  WANT_SIGSEGV_GOTO. Added a default include path for OSMesa support on darwin. 
+- configure.ac: Added ARCHFLAGS, CPU_TYPE and GENSRCS to support the build of an
+  universal binary for darwin. For darwin also ISYSROOT is therefore needed.
+  Splited generated from existing source files into GENCPUSRCS and GENJITSRCS to
+  not include them into dependency generation. Reactivated darwin defines.
+  Cleaned up the usage of preprocessor (CPPFLAGS) and compiler flags (CFLAGS,
+  CXXFLAGS). Added general JIT support for darwin. Fixed an error in check for
+  WANT_SIGSEGV_GOTO. Added a default include path for OSMesa support on darwin.
 
-- Makefile.in:  Fixed the VPATH. Cleaned up the usage of preprocessor (CPPFLAGS) 
-  and compiler flags (CFLAGS, CXXFLAGS). Fixed the source file name cfgopts.c 
-  into cfgopts.cpp. Changed the icon for darwin to busybee.icns. Added CPU_TYPE, 
-  ACHFLAGS, GENCPUSRCS, GEN_DIR and a new target APP_ARCH to support an 
-  universal binary build for darwin. The tools build68k, gencpu, gencomp and 
-  cpuopti get always compiled for the host CPU (thus without the ARCHFLAGS), as 
-  they build executables to generate source files to compile for the target CPU 
-  again. GEN_DIR and now also OBJ_DIR depend on the target CPU and are used to 
-  store PPC and i386 generated and object files separately. The clean target has 
-  been adjusted accordingly. Changed target depend to make it also working on 
-  Mac OS X, where makedepend is not available. Now CXX is used with option -MM 
-  to generate the depedencies. This should now work on all systems. To not get 
-  error messages for not existing files, generated source files are now listed 
+- Makefile.in:  Fixed the VPATH. Cleaned up the usage of preprocessor (CPPFLAGS)
+  and compiler flags (CFLAGS, CXXFLAGS). Fixed the source file name cfgopts.c
+  into cfgopts.cpp. Changed the icon for darwin to busybee.icns. Added CPU_TYPE,
+  ACHFLAGS, GENCPUSRCS, GEN_DIR and a new target APP_ARCH to support an
+  universal binary build for darwin. The tools build68k, gencpu, gencomp and
+  cpuopti get always compiled for the host CPU (thus without the ARCHFLAGS), as
+  they build executables to generate source files to compile for the target CPU
+  again. GEN_DIR and now also OBJ_DIR depend on the target CPU and are used to
+  store PPC and i386 generated and object files separately. The clean target has
+  been adjusted accordingly. Changed target depend to make it also working on
+  Mac OS X, where makedepend is not available. Now CXX is used with option -MM
+  to generate the depedencies. This should now work on all systems. To not get
+  error messages for not existing files, generated source files are now listed
   in GENCPUSRCS and excluded from dependency generation.
 
-- darwin/Makefile: Added this new Makefile to allow an easy setup for the PPC 
+- darwin/Makefile: Added this new Makefile to allow an easy setup for the PPC
   and i386 parts and to finally  generate an universal binary of both.
 
 - darwin/busybee.icns: Added a new icon.
@@ -1420,14 +1424,14 @@ Reworked audio DMA emulation:
 
 - bootos_linux.cpp: Resolved a double definition of PAGE_SIZE.
 
-- cdrom.cpp: solved compiler warning by removing OpenDrive(). Inside 
-  cdrom_interface::insert_cdrom() masterPort now is initialized with 0 instead 
+- cdrom.cpp: solved compiler warning by removing OpenDrive(). Inside
+  cdrom_interface::insert_cdrom() masterPort now is initialized with 0 instead
   of NULL to remove a compiler warning and omit a cast.
 
-- input.cpp: Added a check on define SWAP_CNTRL_AND_META_KEY in keysymToAtari() 
+- input.cpp: Added a check on define SWAP_CNTRL_AND_META_KEY in keysymToAtari()
   to swap them or not.
 
-- ndebug.cpp: Put a cast to long double for an fprintf() argument inside 
+- ndebug.cpp: Put a cast to long double for an fprintf() argument inside
   ndebug::m68k_print() to remove a compiler warning.
 
 - darwin/Info.plist: Updated version, date and link to the homepage.
@@ -1436,7 +1440,7 @@ Reworked audio DMA emulation:
 
 - darwin/SDLMain.M: Cleaned up a little.
 
-- darwin/SDLMain.h: Added methods applicationDidFinishLaunching and 
+- darwin/SDLMain.h: Added methods applicationDidFinishLaunching and
   applicationWillTerminate.
 
 
@@ -1448,7 +1452,7 @@ Reworked audio DMA emulation:
   affects anything but be careful.
 
 - ata.cpp: fixed sector counter overflow for 255 sectors per track
-  
+
 
 2007/07/11 - Petr
 - gui-sdl/dlgDisk.cpp: check for 8 GB barrier (16383/16/63 C/H/S) - thanks
@@ -1512,11 +1516,11 @@ Reworked audio DMA emulation:
 - nfvdi_soft.cpp: mfdb.fd_stand extension meanings changed to be bit flags
   (instead of 0x100 being a value itself as was before used for fVDI
   antialiased fonts):
-                  0x0100 chunky expandArea
-                  0x1000 fd_wdwidth contains number of bytes instead ofwords
+		  0x0100 chunky expandArea
+		  0x1000 fd_wdwidth contains number of bytes instead ofwords
   Those are used in the aranymfb I have implemented for Linux-m68k (patch
   to be published).
- 
+
 
 2007/04/02 - Petr
 - videl.cpp: a fix from hatari by Thothy: ST-Shifter register is byte wide
@@ -1525,7 +1529,7 @@ Reworked audio DMA emulation:
 
 2007/03/29 - Petr commiting patch by Roman
 - cpummu.cpp: the writeback data was written to the wrong location
-              as the pointer was modified.
+	      as the pointer was modified.
 
 
 2007/03/18 - Andreas
@@ -1559,7 +1563,7 @@ Reworked audio DMA emulation:
 
 2007/02/04 - milan
 - JITc: 33 bit addressing hack removed, other 64-bit fixes (CMOV, SAHF),
-        code based synced with Basilisk II
+	code based synced with Basilisk II
 
 - distributed dispatcher removed, not used at all
 
@@ -1608,7 +1612,7 @@ Reworked audio DMA emulation:
   always on Mac OS X. A new framework aware way of testing has to be found.
   Removed modification of CFLAGS, CXXFLAGS and LIBS after SDL check.
 
-- Makefile.in: Added references to SDL_CFLAGS, SDL_CXXFLAGS and SDL_LIBS 
+- Makefile.in: Added references to SDL_CFLAGS, SDL_CXXFLAGS and SDL_LIBS
   variables to corresponding CFLAGS, CXXFLAGS and LIBS.
 
 - parameters.cpp: bugfixes concerning loading and saving of Path_Tag variables.
@@ -1639,14 +1643,14 @@ Reworked audio DMA emulation:
 
 
 2006/12/14 - Philipp
-- Changed use of compiler defined CPU macros __i386__, __x86_64__, __powerpc__ 
+- Changed use of compiler defined CPU macros __i386__, __x86_64__, __powerpc__
   to their corresponding CPU_i386, CPU_x86_64, CPU_powerpc macros. This is a
-  necessary step for cross-compilation, as some CPU sources are automatically 
+  necessary step for cross-compilation, as some CPU sources are automatically
   produced (build68k, gencpu). They should take the target CPU type into account
   and not the CPU type of the current host!
 
 - cfgopts.cpp: When saving the configuration on a Mac OS X system, the temporary
-  file is created in /tmp instead of the current directory (path to 
+  file is created in /tmp instead of the current directory (path to
   application), as this directory is in general not writable on Mac OS X.
   This option could also be enabled for other Unix based systems.
 
@@ -1671,7 +1675,7 @@ Reworked audio DMA emulation:
 
 
 2006/12/05 - Philipp
-- nfvdi_opengl.cpp: Fix of not-endianness-aware alpha channel clearing, which 
+- nfvdi_opengl.cpp: Fix of not-endianness-aware alpha channel clearing, which
   made Kronos fail to detect screen format on Mac OS X with OpenGL fVDI driver
   enabled.
 
@@ -1684,7 +1688,7 @@ Reworked audio DMA emulation:
 
 
 2006/11/27 - Petr
-- natfeat/ethernet.cpp, parameters.*: "MAC=aa:bb:cc:dd:ee:ff" added to 
+- natfeat/ethernet.cpp, parameters.*: "MAC=aa:bb:cc:dd:ee:ff" added to
   [ETHx] section of config file - set your desired MAC Address freely now.
 
 
@@ -1791,7 +1795,7 @@ Reworked audio DMA emulation:
 - newcpu.cpp: "usp" register dump added to flight recorder
 - debug.cpp: ignore_irq set to 1 by default (don't trace interrupt routines)
 - ndebug.cpp: deactivate_debugger on 'g' (so you can enter debugger again).
-              this breaks breakpoints support
+	      this breaks breakpoints support
 
 
 2006/10/22 - Petr
@@ -1854,7 +1858,7 @@ Reworked audio DMA emulation:
   example) this would at least let the user control their desktop...
 
 - Unix/cygwin/parameters_cygwin.cpp: getHomeFolder() and getDataFolder()
-  ignore Cygwin environment now. Home is in Windows user's home (usually 
+  ignore Cygwin environment now. Home is in Windows user's home (usually
   somewhere below Documents and Settings), data is where the ARAnyM's
   executable resides.
   Based on patch by Blaine Brysh (bbrysh at shaw.ca). Thanks.
@@ -1948,8 +1952,8 @@ Reworked audio DMA emulation:
 
 
 2006/08/29 - Philipp
-- Repaired Mac OS X project file. Now compiles under Xcode 1.5 and can be 
-  upgraded to Xcode 2.4 (by ignoring the "path empty" error message). 
+- Repaired Mac OS X project file. Now compiles under Xcode 1.5 and can be
+  upgraded to Xcode 2.4 (by ignoring the "path empty" error message).
   Some changes as suggested by Francois. Slight reorganization. Added README.txt
   Still has to be tested in relation to previous binary releases.
 
@@ -1970,7 +1974,7 @@ Reworked audio DMA emulation:
 	Left Apple + f = Toggle fullscreen mode
 
   As you see, I wrote "Left Apple" because you can't define a hotkey to use
-  "any" Apple key. This is a limitation of the current way how hotkeys are 
+  "any" Apple key. This is a limitation of the current way how hotkeys are
   defined.
 
 
@@ -1978,11 +1982,11 @@ Reworked audio DMA emulation:
 - Various smaller corrections:
    cdrom.cpp: Corrected some compiler warnings and include statements for OS X
    cfgopts.h: Added C++ compiler check to avoid compile errors when included
-              from Objective C files.
-   parameters.h: Added C++ compiler check and removed parse error when included 
-              from Objective C files.
+	      from Objective C files.
+   parameters.h: Added C++ compiler check and removed parse error when included
+	      from Objective C files.
    compemu_support.cpp, sysdeps.h: added correct PowerPC detection on Mac OS X
-              systems.
+	      systems.
 
 - hostscreen.h: Fixed p2c routine for big endian, colors are now correct.
 
@@ -2047,7 +2051,7 @@ Reworked audio DMA emulation:
 
 2006/06/01 - johan
 - hostscreen.h: Major speedup for bitplane to chunky conversion.
-                Deactivated on big endian CPUs due to bit order differences.
+		Deactivated on big endian CPUs due to bit order differences.
 
 
 2006/05/30 - Andreas
@@ -2061,7 +2065,7 @@ Reworked audio DMA emulation:
 
 
 2006/05/08 - milan
-- JITc: cleaning, sync with BII 
+- JITc: cleaning, sync with BII
 
 
 2006/05/05 - Petr
@@ -2110,8 +2114,8 @@ Reworked audio DMA emulation:
 
   E.g. this boots directly without even showing the bootmenu:
   Bootstrap = ~/mint/freemint/sys/.compile_arad/mintarad.prg
-  BootstrapArgs = DEBUG_LEVEL=1 BOOT_DELAY=0 MEM_PROT=NO 
-  BootDrive = C 
+  BootstrapArgs = DEBUG_LEVEL=1 BOOT_DELAY=0 MEM_PROT=NO
+  BootDrive = C
 
 
 2006/03/27 - Standa
@@ -2132,7 +2136,7 @@ Reworked audio DMA emulation:
 
 2006/02/26 - Standa
 - nfvdi_soft: the remaining logical operations implemented for the
-  8bit alpha expand. Adjusted to work in all TC (16bit-32bit) modes. 
+  8bit alpha expand. Adjusted to work in all TC (16bit-32bit) modes.
 
 
 2006/02/21 - Standa
@@ -2173,7 +2177,7 @@ Reworked audio DMA emulation:
   Two new [GLOBAL] section config entries introduced:
   Bootstrap = path/to/the/kernel
   BootDrive = X
- 
+
 
 2006/02/08 - Patrice
 - Merged bootos_linux and lilo.
@@ -2350,13 +2354,13 @@ Reworked audio DMA emulation:
 2005/11/14 - Stefan
 - ChangeLog: Updated ChangeLog with missing informations.
 - aranym.html: Updated documentation of MaxOS X specific parts.
-- configure.ac: Changed name for configurations files to 
+- configure.ac: Changed name for configurations files to
   org.atari.aranym.conf, org.atari.aranym.nvram and org.atari.aranym.keymap.
-- input.cpp: removed unneded "#ifdef darwin" for command and control key 
+- input.cpp: removed unneded "#ifdef darwin" for command and control key
   change, the function was already specific to darwin.
 - nfvdi_opengl.h: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
 - nfvdi_opengl.cpp: Changed include of GL/glu.h to OpenGL/glu.h for darwin.
-- hostscreen.cpp: Changed include of GL/glu.h to OpenGL/glu.h and GL/glext.h 
+- hostscreen.cpp: Changed include of GL/glu.h to OpenGL/glu.h and GL/glext.h
   to OpenGL/glext.h for darwin.
 
 
@@ -2368,49 +2372,49 @@ Reworked audio DMA emulation:
 
 
 2005/11/8 - Stefan
-- Makefile.in: Removed building of ARAnyM.app/Contents/ARAnyM data folder, 
-  in order to give precedence to Library/Application Support/ARAnyM by 
+- Makefile.in: Removed building of ARAnyM.app/Contents/ARAnyM data folder,
+  in order to give precedence to Library/Application Support/ARAnyM by
   default
 - configure.ac: Fixed typing error of SDLMain.M file.
 
 
 2005/11/7 - Stefan
-- Makefile.in: Added targets to build an application bundle for MacOS X. 
-  Added suffixes .m and .M to also compile Objective C and Objective C++ 
+- Makefile.in: Added targets to build an application bundle for MacOS X.
+  Added suffixes .m and .M to also compile Objective C and Objective C++
   sources, which are needed to build the darwin port.
-- configure.ac: Splited  EXTRASYSSRCS and DEFINES for darwin with fink and 
-  without. Without fink now the source files parameters_darwin.M and 
-  SDLMain.M below src/Unix/darwin/ get compiled and the defines now include 
-  ARANYMCONFIG, ARANYMNVRAM, ARANYMKEYMAP and ARANMYHOME. For darwin without 
-  fink now also the target changed to APP_BUNDLE in order to build an 
-  executable MacOS X application bundle. 
-- autogen.sh: Added -I $PWD to aclocal command. This solves trouble with 
-  missing macro definitions from sdl.m4, if this file is just copied into the 
+- configure.ac: Splited  EXTRASYSSRCS and DEFINES for darwin with fink and
+  without. Without fink now the source files parameters_darwin.M and
+  SDLMain.M below src/Unix/darwin/ get compiled and the defines now include
+  ARANYMCONFIG, ARANYMNVRAM, ARANYMKEYMAP and ARANMYHOME. For darwin without
+  fink now also the target changed to APP_BUNDLE in order to build an
+  executable MacOS X application bundle.
+- autogen.sh: Added -I $PWD to aclocal command. This solves trouble with
+  missing macro definitions from sdl.m4, if this file is just copied into the
   same directory.
-- parameters.h: Put #ifndef around the definitions of ARANYMCONFIG, 
-  ARANYMNVRAM, ARANYMKEYMAP to be able to define their values via 
+- parameters.h: Put #ifndef around the definitions of ARANYMCONFIG,
+  ARANYMNVRAM, ARANYMKEYMAP to be able to define their values via
   configure.ac.
-- input.cpp: Switched behaviour of command and control keys for darwin. So 
-  under MacOS X normal shortcuts are done as usual with the apple key also for 
+- input.cpp: Switched behaviour of command and control keys for darwin. So
+  under MacOS X normal shortcuts are done as usual with the apple key also for
   Atari/GEM applications.
-- parameters_darwin.M: Objective C code to define versions of the functions 
-  getHomeFolder(), getConfFolder() and getDataFolder(). They return usual 
-  MacOS X pathes like ~/Library/Preferences/ and  ~/Library/Application 
-  Support/ARAnyM or a path inside the bundle itself for the configuration 
+- parameters_darwin.M: Objective C code to define versions of the functions
+  getHomeFolder(), getConfFolder() and getDataFolder(). They return usual
+  MacOS X pathes like ~/Library/Preferences/ and  ~/Library/Application
+  Support/ARAnyM or a path inside the bundle itself for the configuration
   files.
-- Info.plist: Updated version informations to 0.9.1alpha. With each official 
-  release the version information should be updated. Can this be done 
+- Info.plist: Updated version informations to 0.9.1alpha. With each official
+  release the version information should be updated. Can this be done
   automatically by the build system?
-- SDLMain.M: Completely cleaned up the source code and removed unnecessary 
+- SDLMain.M: Completely cleaned up the source code and removed unnecessary
   parts.
-- English.lproj/aranym.nib: Renamed the resource file from SDLmain.nib to 
-  aranym.nib. Made changes to connect menu entries to according functions in 
+- English.lproj/aranym.nib: Renamed the resource file from SDLmain.nib to
+  aranym.nib. Made changes to connect menu entries to according functions in
   SDLMain.M.
 - German.lproj/aranym.nib: Made a german port of the resources.
-- aranym.pbproj: Updated the XCode project to compile also with the changed 
+- aranym.pbproj: Updated the XCode project to compile also with the changed
   Makefile.
 - memory.h: Removed unnecessary define of do_get_real_address for darwin port.
-- fpu_uae.cpp: Added some defines and using a namespace to overcome 
+- fpu_uae.cpp: Added some defines and using a namespace to overcome
   compatibility problems with names inside cmath and cstdio.
 
 
@@ -2458,7 +2462,7 @@ Reworked audio DMA emulation:
 
 
 2005/10/13 - Petr (& Standa :-)
-- natfeat/ethernet.{cpp,h}: wildly modified to allow handling more 
+- natfeat/ethernet.{cpp,h}: wildly modified to allow handling more
   ethernet devices at once.
 
 - atari/network/ethernet/ethernet_nfapi: NFAPI version increased (XIF_IRQ is
@@ -2534,7 +2538,7 @@ Reworked audio DMA emulation:
     is visible though on the files).
 
   . NF API extended (the version is 0.4 now): You will need to use older
-    aranym build to update the drivers and after that boot using the 
+    aranym build to update the drivers and after that boot using the
     CVS aranym binary to be able to mount drives properly.
 
 - hostfs.(h|cpp):
@@ -2642,7 +2646,7 @@ Reworked audio DMA emulation:
   Notice: nfaudio now uses cvt buffer always for copying the sound data
   from Atari to host - even when there is no conversion needed...
 
-- videl.cpp, fvdidrv.cpp, natfeat/{nfjpeg, nfcdrom_sdl, nfcdrom_linux}: 
+- videl.cpp, fvdidrv.cpp, natfeat/{nfjpeg, nfcdrom_sdl, nfcdrom_linux}:
   TODO: needs to be modified to not use Atari2HostAddr, see above.
 
 - natfeat/nf_basicset.cpp: just renamed memcpy functions
@@ -2777,10 +2781,10 @@ Reworked audio DMA emulation:
 
 2005/07/10 - Johan
 - nfvdi_*: Made the base class capable of polygon filling.
-           OpenGL driver makes use of that for now because of
-           problems with the current polygon tesselation code.
-           Software driver still uses its own polygon filler,
-           but the support routines are now in the base class.
+	   OpenGL driver makes use of that for now because of
+	   problems with the current polygon tesselation code.
+	   Software driver still uses its own polygon filler,
+	   but the support routines are now in the base class.
 
 2005/07/10 - milan
 - src/Unix/configure.ac: typo
@@ -2811,7 +2815,7 @@ Reworked audio DMA emulation:
 
 2005/06/20 - milan
 - configure.ac: needed size of LMA increased to 16 MB, should solve problem on
-                some systems with autodetection
+		some systems with autodetection
 
 
 2005/06/17 - Patrice
@@ -2820,7 +2824,7 @@ Reworked audio DMA emulation:
 
 
 2005/06/16 - Patrice
-- nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl 
+- nfosmesa: Reworked interface to host, can use a MiNT device (to write) ioctl
   or NF interface. On the Atari side, parameters are no more stacked twice.
 
 
@@ -2882,7 +2886,7 @@ Reworked audio DMA emulation:
 2005/06/03 - Patrice
 - NF audio: close SDL audio device on exit. Closing it on Atari reset event
   hangs ARAnyM on my system, more investigation needed.
-- main.cpp, Unix/main_unix.cpp: SDL_Quit() was called twice: once in ExitAll() 
+- main.cpp, Unix/main_unix.cpp: SDL_Quit() was called twice: once in ExitAll()
   and once at exit().
 
 
@@ -3338,7 +3342,7 @@ libGL library ARAnyM will use.
 
 2005/01/12 - milan
 - all files: "unused varible" GCC warnings can be viewed with
-             ./configure --enable-full-debug
+	     ./configure --enable-full-debug
 	     a few other warnings gone
 
 
@@ -3419,7 +3423,7 @@ libGL library ARAnyM will use.
 2005/01/06 - Petr
 - mfp.cpp: Laurent (STonC author whose code has been used for ARAnyM
   MFP emulation) identified copy&rename_variables&paste error.
-  Fixing that finally made the setGPIPbit() working (has been waiting 
+  Fixing that finally made the setGPIPbit() working (has been waiting
   for the fix since ARAnyM version 0.1.4! :-O )
 
 - ikbd.cpp: Laurent pointed out that IKBD should not access the MFP
@@ -3473,12 +3477,12 @@ libGL library ARAnyM will use.
   programs, many NeHe tutorials using SDL (not all, due to disabled extensions);
   for pure Atari software: kronos, tinygl test programs. Added the osmesa.ldg for
   testers.
-  
+
 
 2004/12/11 - Patrice
 - hostscreen.cpp: move one update function using OpenGL from .h to .cpp, needed
   for compiling for OSMesa.
-  
+
 - NF: Add Natfeat OSMesa rendering support for Atari applications using host
   CPU (highly experimental!).
 
@@ -3534,9 +3538,9 @@ libGL library ARAnyM will use.
 
 
 2004/10/31 - Petr
-- Carlo provided a new keyboard translation routine that translate directly 
+- Carlo provided a new keyboard translation routine that translate directly
   mac scancodes into atari scancodes: all keys are translated correctly.
-  SDL routine translate mac scancodes in their internal codes but for 
+  SDL routine translate mac scancodes in their internal codes but for
   some keys the translation is incorrect.
 
 - fVDI driver (aranym.sys) has finally been recompiled.
@@ -3565,7 +3569,7 @@ libGL library ARAnyM will use.
 - hostscreen.cpp, videl.cpp, parameters.cpp: create a specific section in the
   configuration file for autozoom. You can now choose to want a constant host
   screen size for whatever the Atari screen size is.
-  
+
   Note about FVDI: it is not aware of this "fixed size", using a bigger size
   than FVDI's one is OK, but the display is not centered. Using a smaller size
   is buggy, so don't do it!
@@ -3697,7 +3701,7 @@ libGL library ARAnyM will use.
 
 2004/07/28 - milan
 - newcpu.cpp: removing "patch" from 2002/09/28 (PureC hack), it can be enabled
-              with configure script
+	      with configure script
 
 - debuggers: switch 'I' modified, debugger can ignore interupt mode
 
@@ -3715,7 +3719,7 @@ libGL library ARAnyM will use.
 
 
 2004/07/20 - Xavier
-- Unix/configure.ac: 
+- Unix/configure.ac:
   - checks for direct, real and fixed addressing availability made more
     accurate.
   - direct, real and fixed addressing allowed on Cygwin.
@@ -4464,7 +4468,7 @@ libGL library ARAnyM will use.
 
 - parameters.cpp,h: loading and saving of config file from GUI works now.
 
-- main.cpp: fixed scary bug - how could this work this morning? Use the 
+- main.cpp: fixed scary bug - how could this work this morning? Use the
   GUI timer thread _before_ the actual 200 Hz timer thread is started...
 
 
@@ -4491,7 +4495,7 @@ libGL library ARAnyM will use.
   May seem unnecessary at first but helps when the screen resolution is
   changed and dialogs need to be redrawn at different positions.
 
-- input.cpp: cleaned up the way the GUI is open 
+- input.cpp: cleaned up the way the GUI is open
 
 - main.cpp: prepare for the initial GUI popup
 
@@ -4514,7 +4518,7 @@ libGL library ARAnyM will use.
 * tagged as ARANYM_0_8_4_ALPHA
 
 2003/12/24 - Petr
-- hostscreen.cpp: blendBackgrounds() added. This function updates the 
+- hostscreen.cpp: blendBackgrounds() added. This function updates the
   background of active GUI with the running ARAnyM screen contents.
   I played with SDL_SRCALPHA etc. to make the background a bit greyed out
   or something but haven't succeeded.
@@ -4530,7 +4534,7 @@ libGL library ARAnyM will use.
 
 - changed DATADIR to ARANYM_DATADIR to make mingw and cygwin happy (not
   conflicting with their system headers).
-  
+
 
 2003/12/17 - Petr
 - parameters.cpp: "GUIfont" config option added (as promised). Most of
@@ -4545,9 +4549,9 @@ libGL library ARAnyM will use.
 
 
 2003/12/16 - Petr
-- mfp.cpp: initializing the internal variables suddenly fixed all the 
+- mfp.cpp: initializing the internal variables suddenly fixed all the
   weird problems I had with booting the aranym since I converted the HW
-  classes to dynamically created objects. So it's finally solved. 
+  classes to dynamically created objects. So it's finally solved.
 
 
 2003/12/16 - Xavier
@@ -4598,7 +4602,7 @@ libGL library ARAnyM will use.
   " Fxattr() now returns the (uint32)MAPVOIDPTO32( fc->index ) instead
     of the host OS' statBuf.st_ino. This is a problem IMO due to that
     the fc->index might change on releaseCookie()/dupCookie(). Proposals?"
-  proved wrong. Rolling it back. 
+  proved wrong. Rolling it back.
 
 
 2003/11/28 - Petr
@@ -4660,10 +4664,10 @@ libGL library ARAnyM will use.
 2003/11/23 - stefanq
 - added darwin folder containing all necessary files to make a Mac OS X
   port of aranym
-- Makefile.in: added option -r to target APP_LIB, wich is necessary for 
+- Makefile.in: added option -r to target APP_LIB, wich is necessary for
   darwin.
 - configure.ac: corrected the pathes for frameworks for darwin
-- input.cpp: added some #ifdef OS_darwin to reflect some differences in 
+- input.cpp: added some #ifdef OS_darwin to reflect some differences in
   the keyboard layout of Apple computers.
 - parameters.cpp: changed a %d inside an fprintf() call to %lu to prevent
   a compiler warning.
@@ -4726,7 +4730,7 @@ libGL library ARAnyM will use.
 
 
 2003/10/06 - milan
-- nfcdrom: another cleanup (destructors) 
+- nfcdrom: another cleanup (destructors)
 
 
 2003/10/06 - milan
@@ -4800,7 +4804,7 @@ libGL library ARAnyM will use.
 - Added NF CD-ROM BOS driver. Very simple Atari CD player programs work, but
   some ioctls are still not implemented correctly, and for the moment not
   usable for iso9660 fs access, and only for Linux.
-  
+
 
 2003/09/15 - STanda
 - --enable-realstop added to the configure options (default=yes and implies
@@ -4863,10 +4867,10 @@ libGL library ARAnyM will use.
 
 2003/08/05 - milan
 - autogen.sh, configure.ac: cleaning, free patch from Guy Harrison for MAKE,
-                            xeys problem solved
+			    xeys problem solved
 
 - configure.ac, lilo.cpp: zlib & lilo support standardized
-                          nightmare -> bobek transfer
+			  nightmare -> bobek transfer
 
 - Makefile.in: make depend for linux corrected
 
@@ -4946,7 +4950,7 @@ libGL library ARAnyM will use.
 
 2003/06/10 - milan
 - emul_op: new instruction 0x71ff (OP_DEBUGGER) starts debugger if available
-           new instructions 0x71fX (OP_MONX) display CPU registers
+	   new instructions 0x71fX (OP_MONX) display CPU registers
 
 
 2003/06/01 - milan
@@ -5083,7 +5087,7 @@ libGL library ARAnyM will use.
 
 - parameters.cpp: cleanup in getConf/DataFilename(). Now uses 'callbacks'
   for obtaining the folder path. These callbacks are defined for Unix
-  and for Cygwin so far (Cygwin needs a different handling). Hacks 
+  and for Cygwin so far (Cygwin needs a different handling). Hacks
   with "--datadir=/" removed completely. Thanks to Xavier for the Win32
   related information and ideas.
 
@@ -5319,7 +5323,7 @@ libGL library ARAnyM will use.
 2003/03/12 - milan
 - list of supported OS updated
 
-- Makefile.in: diskimage cleaning 
+- Makefile.in: diskimage cleaning
 
 
 2003/03/11 - STanda
@@ -5445,13 +5449,13 @@ libGL library ARAnyM will use.
 2003/02/12 - STanda
 - tools/createdisk: rewritten into 'sh' syntax and tested on
   Solaris/HPUX/FreeBSD (all due to the clarity of the FreeBSD distribution
-  requested) 
+  requested)
   * you can create image of whatever size and pretty fast (we are using
     lseek() there now and so on ext2 you can create and image file bigger
     than your available space ;))
   * You need not to use the mbrdata file if you don't need it. See the usage
     notes for more.
-  
+
 
 2003/02/09 - patrice
 - ikbd.cpp: corrected SendMouseMotion() which don't modify the buttons variable
@@ -5491,14 +5495,14 @@ libGL library ARAnyM will use.
 
 2003/01/16 - milan
 - configure.ac: support for large files (>2GB)
-                corrected support for OpenGL
+		corrected support for OpenGL
 
 
 2003/01/15 - STanda
 
 - fVDI: The drawMouse() hot_x/hot_y are stripped to 4 bits.
 =       The m68k driver had a bug in the parameter passing for drawMouse()
-        so DO NOT FORGET to update your disk images.
+	so DO NOT FORGET to update your disk images.
 
 
 2003/01/14 - STanda
@@ -5507,7 +5511,7 @@ libGL library ARAnyM will use.
   The mouse color should be OK again. And... EmuTOS works with
   fVDI since now.
 
- 
+
 2003/01/12 - Petr
 
 - natfeat/atari_example.c improved (using function pointers now)
@@ -5661,7 +5665,7 @@ libGL library ARAnyM will use.
 - sync with BasiliskII CVS
 
 - JIT compiler: NOP filler based on binutils (default)
-                Gwenole added some checks
+		Gwenole added some checks
 
 - Mac OS X: some small corrections
 
@@ -5672,7 +5676,7 @@ libGL library ARAnyM will use.
 - sync with BasiliskII CVS
 
 - JIT compiler: tune_alignment as configuration feature (TuneAlignment)
-                new management of blockinfos
+		new management of blockinfos
 
 - cpuotpi "disabled" - not used now, needs reimplementig
 
@@ -5692,7 +5696,7 @@ libGL library ARAnyM will use.
 
 2002/10/09 - milan
 - sigsegv_linux.cpp: x86 F6 instructions was badly decoded. NOT8, NEG8, IDIV8,
-                     MUL8, IMUL8 implemented, TEST8 corrected
+		     MUL8, IMUL8 implemented, TEST8 corrected
 
 2002/10/08 - Petr (version 0.6.5-beta)
 - the major arch change in version 0.6.0 has been reverted. CPU is running
@@ -5806,7 +5810,7 @@ libGL library ARAnyM will use.
   just loops (waits for 10ms, executes 'invoke200HzInterrupt' and loops back).
 
   Advantages:
-  - VIDEL screen redraw runs in the main SDL thread - that should make 
+  - VIDEL screen redraw runs in the main SDL thread - that should make
     many host operating systems happier (please report)
   - immediate reaction to hotkeys (Quit, GUI etc)
   - same (or even higher) speed as previously (82 kdhrystones on XP 1G7+)
@@ -5832,14 +5836,14 @@ libGL library ARAnyM will use.
 - cpuopti.c, compemu_support.cpp: workaround for gcc 3.x
 
 - tools/memory.h.patch: for a bit better access to HW space for JIT compiler,
-                        unofficial!
+			unofficial!
 
 
 2002/09/10 - milan
 - autoconf 2.53+ needed now
 
 - ndebug.cpp, newcpu.cpp: ISO C++ forbids assignment of arrays, so Patrice's
-                          patch completed
+			  patch completed
 
 
 2002/09/07 - Petr (commiting for milan)
@@ -5877,10 +5881,10 @@ libGL library ARAnyM will use.
 - hardware.cpp: in_handler handled in all HW_SIGSEGV configurations
 
 - ata.cpp, ide.cpp: real 32-bit access, word swap added for I/O operations,
-                    io write to 0xf00005 handled (error register)
+		    io write to 0xf00005 handled (error register)
 
 - uae_cpu/newcpu.cpp: jump table for distributed dispatcher generated
-                      corretcly on little endian platforms now
+		      corretcly on little endian platforms now
 
 
 2002/08/13 - Petr
@@ -5945,7 +5949,7 @@ libGL library ARAnyM will use.
 - Some internal fixes and cleanups in the native part of the driver.
 - New binaries for both the fVDI engine and the m68k part of the driver
   are needed, and are also checked in.
-  
+
 
 2002/08/02 - Petr
 - EmuTOS loading fixed again - it can be any (>0) size now.
@@ -6003,7 +6007,7 @@ libGL library ARAnyM will use.
 
 - OS loading changed: first TOS 4.04 is tried and if fails then EmuTOS
   is tried. If even that fails (which should not since we include EmuTOS
-  in ARAnyM binary distribution now) then a warning and an advice for 
+  in ARAnyM binary distribution now) then a warning and an advice for
   obtaining the EmuTOS is displayed.
 
 - the window mover now displays an advice for pressing the Pause key
@@ -6034,7 +6038,7 @@ libGL library ARAnyM will use.
 
 
 2002/07/16 - Petr
-- fixed pretty scary bug in yamaha.cpp. As a direct result PARCP started 
+- fixed pretty scary bug in yamaha.cpp. As a direct result PARCP started
   working reliably.
 
 
@@ -6153,7 +6157,7 @@ libGL library ARAnyM will use.
   You might want to try them to test whether they work as the previous
   ones.
 - atari/fvdi/utility/fvdicout: The Ptermres should be now filled with
-  a correct value IMHO. 
+  a correct value IMHO.
 
 
 2002/05/20 - Heiko Achilles
@@ -6200,13 +6204,13 @@ libGL library ARAnyM will use.
   It needed only a slide changes in TosWin2 sources. This should not
   be the final solution. The real one would by to implement the vt52
   emulation into the fVDI engine itself which is on the TODO list in
-  the fVDI remainings. 
+  the fVDI remainings.
   Using this I don't have problems here with TOS applications here.
   It needs to be started after the VDI initialization (e.g. from the
   desktop). There might be some code to initialize the VDI later in it.
 - AraEther made compilable. nearly no code check or test done.
 
- 
+
 2002/04/21 - milan
 - header files reform
 - distributed dispatcher rewroted
@@ -6265,7 +6269,7 @@ libGL library ARAnyM will use.
   history! ;)
 
 - ExtFs namespace method/function recognition doesn't work under
-  FreeMiNT because mintbind.h are only macros..... The names were changed 
+  FreeMiNT because mintbind.h are only macros..... The names were changed
   to have the ExtFs suffix.
 
 
@@ -6657,7 +6661,7 @@ libGL library ARAnyM will use.
 - The aranymfs config file setting finished (thanks to Petr)
 - fVDI driver doesn't destroy palette setting on resolution change
   The SDL_SetVideoMode clears the palette setting -> the palette is stored
-  and restored after change (hostscreen.cpp/setWindowSize()) 
+  and restored after change (hostscreen.cpp/setWindowSize())
 - the driver has also correct 8bit inverse color handling.
 - up and running
 
@@ -6767,7 +6771,7 @@ libGL library ARAnyM will use.
 
 
 2001/12/16 - Petr
-- check_ram_boundary() takes an additional parameter that sets the size 
+- check_ram_boundary() takes an additional parameter that sets the size
   of memory access. Now finally all memory accesses are checked and nothing
   can escape from ARAnyM allocated memory.
 
@@ -6792,7 +6796,7 @@ libGL library ARAnyM will use.
 
 - The SDL_WarpMouse is now called after the HWInit() (actualy SDL_SetVideoMode)
   where doesn't cause floating point exceptions and aranym crashes in fbcon.
- 
+
 
 2001/12/07 - Petr
 - first two long words (addresses 0..7) are readonly now like on real Atari.
@@ -6836,7 +6840,7 @@ libGL library ARAnyM will use.
 
 2001/11/30 - Johan Klockars <rand@cd.chalmers.se> && STanda
 - fVDI: improved and made fit into fVDI CVS repository directory structure.
-  General speedup of line and polygon drawing. 
+  General speedup of line and polygon drawing.
   New copy of m68k part sources. Since now you should use the aranym.sys.bz2
   m68k binary along with current aranym CVS sources.
   The old m68k part source will be removed later.
@@ -7067,9 +7071,9 @@ libGL library ARAnyM will use.
 
 2001/10/19 - STanda
 - fVDI: The driver updated to work with FVDI.PRG beta. This beta enables
-        e.g. the monochrome images in ST-Guide and fixes many bugs.
-        There is still a bug in new line clipping, but I just don't have
-        time to fix it now. I know exactly what is the problem.
+	e.g. the monochrome images in ST-Guide and fixes many bugs.
+	There is still a bug in new line clipping, but I just don't have
+	time to fix it now. I know exactly what is the problem.
 
 
 2001/10/18 - Petr
@@ -7080,18 +7084,18 @@ libGL library ARAnyM will use.
 
 2001/10/17 - STanda
 - README The sophics.cz replaced by atari.org for http access. The ftp
-         and email addresses was left. (I don't know wheter aranym@atari.org
-         works and the ftp must stay @sophics, the absolute path problems)
+	 and email addresses was left. (I don't know wheter aranym@atari.org
+	 works and the ftp must stay @sophics, the absolute path problems)
 - ExtFs: Small bug fix. The Fsfirst&next returns the . and .. dirs too.
-         (according to Julian Reschke's advice)
+	 (according to Julian Reschke's advice)
 - Tools: The changes that were made and uploaded to Petr's ftp are in CVS now
-         The README was modified a bit.
+	 The README was modified a bit.
 
 
 2001/10/16 - STanda
 - fVDI:  The segfault bug in gfxLineColor removed.
 - VIDEL: The 16, 24 and 32 destBpp are supported when #define SUPPORT_MULTIPLEDESTBPP
-         in videl.cpp (the SDL surface depth setting is in hostscreen.cpp).
+	 in videl.cpp (the SDL surface depth setting is in hostscreen.cpp).
 
 
 2001/10/16 - milan
@@ -7101,7 +7105,7 @@ libGL library ARAnyM will use.
 
 2001/10/16 - STanda
 - fVDI: The driver should be working now in TC (I finally got the Thing
-        executed and looking correctly)
+	executed and looking correctly)
 
 
 2001/10/09 - milan

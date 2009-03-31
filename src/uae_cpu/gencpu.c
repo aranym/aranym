@@ -1345,8 +1345,9 @@ static void gen_opcode (unsigned long int opcode)
 	m68k_pc_offset = 0;
 	break;
      case i_TRAPV:
+	printf ("\tuaecptr oldpc = m68k_getpc();\n");
 	sync_m68k_pc ();
-	printf ("\tif (GET_VFLG) { Exception(7,m68k_getpc()); goto %s; }\n", endlabelstr);
+	printf ("\tif (GET_VFLG) { Exception(7,oldpc); goto %s; }\n", endlabelstr);
 	need_endlabel = 1;
 	break;
      case i_RTR:
@@ -2066,14 +2067,14 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\top_illg(opcode);\n");
 	break;
      case i_TRAPcc:
+	printf ("\tuaecptr oldpc = m68k_getpc();\n");
 	if (curi->smode != am_unknown && curi->smode != am_illg)
 	    genamode (curi->smode, "srcreg", curi->size, "dummy", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	printf ("\tif (cctrue(%d)) { Exception(7,m68k_getpc()); goto %s; }\n", curi->cc, endlabelstr);
+	sync_m68k_pc ();
+	printf ("\tif (cctrue(%d)) { Exception(7,oldpc); goto %s; }\n", curi->cc, endlabelstr);
 	need_endlabel = 1;
 	break;
      case i_DIVL:
-	sync_m68k_pc ();
-	start_brace ();
 	printf ("\tuaecptr oldpc = m68k_getpc();\n");
 	genamode (curi->smode, "srcreg", curi->size, "extra", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
 	genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
@@ -2212,8 +2213,6 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tfpuop_scc(opcode, extra);\n");
 	break;
      case i_FTRAPcc:
-	sync_m68k_pc ();
-	start_brace ();
 	printf ("\tuaecptr oldpc = m68k_getpc();\n");
 	if (curi->smode != am_unknown && curi->smode != am_illg)
 	    genamode (curi->smode, "srcreg", curi->size, "dummy", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
