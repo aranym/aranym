@@ -1,5 +1,6 @@
 2009/03/31 - Andreas
-- gencpu.c: Correct exception setup for trapping insns.
+- gencpu.c: Correct exception setup for trapping insns. Thanks for hint
+  to Guillaume Tello.
 
 
 2009/03/09 - Patrice
