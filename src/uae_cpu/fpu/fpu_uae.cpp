@@ -1223,7 +1223,7 @@ PRIVATE inline int FFPU fpp_cond(int condition)
 #if 0
 	return fpcctrue(condition);
 #else
-	switch (condition) {
+	switch (condition & 0x1f) {
 	case 0x00:	CONDRET("False",0);
 	case 0x01:	CONDRET("Equal",Z);
 	case 0x02:	CONDRET("Ordered Greater Than",!(NaN || Z || N));

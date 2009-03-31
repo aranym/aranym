@@ -2944,7 +2944,7 @@ PRIVATE int FFPU fpp_cond(uae_u32 opcode, int condition)
 #define I				((x86_status_word & (SW_Z_I_NAN_MASK)) == (SW_I))
 #define NotANumber		((x86_status_word & (SW_Z_I_NAN_MASK)) == SW_NAN)
 
-  switch (condition) {
+  switch (condition & 0x1f) {
 		// Common Tests, no BSUN
     case 0x01:
 			CONDRET("Equal",Z);
