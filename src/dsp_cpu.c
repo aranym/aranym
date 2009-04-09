@@ -764,11 +764,11 @@ static void dsp_postexecute_interrupts(void)
 	if (dsp_core->interrupt_state == DSP_INTERRUPT_FAST) {
 		/* Did we execute the 2-inst interrupt of the vector ? */
 		if (dsp_core->pc >= dsp_core->interrupt_instr_fetch+2) {
-			dsp_core->interrupt_instr_fetch = -1;
-			dsp_core->interrupt_state = DSP_INTERRUPT_NONE;
 			if (dsp_core->pc == dsp_core->interrupt_instr_fetch+2) {
 				dsp_core->pc = dsp_core->interrupt_save_pc;
 			}
+			dsp_core->interrupt_instr_fetch = -1;
+			dsp_core->interrupt_state = DSP_INTERRUPT_NONE;
 			dsp_core->interrupt_save_pc = -1;
 		}
 		return;
