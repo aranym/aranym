@@ -516,11 +516,11 @@ int DlgDisk::processDialogCdi0(void)
 		if (File_Exists(cdi_path)) {
 			dlgAlert = (DlgAlert *) DlgAlertOpen("File Exists. Overwrite?", ALERT_OKCANCEL);
 			SDLGui_Open(dlgAlert);
-		}
-		else {
+			state = STATE_CDI1;
+		} else {
 			dlgAlert = NULL;
+			retval = processDialogCdi1();
 		}
-		state = STATE_CDI1;
 	}
 
 	return retval;

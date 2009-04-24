@@ -1,3 +1,7 @@
+2009/04/24 - Patrice
+- gui: Fix wait for event after generating disk image, if no confirmation needed.
+
+
 2009/03/31 - Andreas
 - gencpu.c: Correct exception setup for trapping insns. Thanks for hint
   to Guillaume Tello.
