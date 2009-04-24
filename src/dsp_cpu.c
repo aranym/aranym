@@ -2102,6 +2102,9 @@ static void dsp_jclr(void)
 		case 3:
 			/* jclr #n,R,p:xx */
 			numreg = value;
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
+			}
 			value = dsp_core->registers[numreg];
 			addr = 0xffff0000; /* invalid address */
 			memspace = 0xffff0000; /* invalid memspace */
@@ -2241,6 +2244,9 @@ static void dsp_jsclr(void)
 		case 3:
 			/* jsclr #n,R,p:xx */
 			numreg = value;
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
+			}
 			value = dsp_core->registers[numreg];
 			break;
 	}
@@ -2286,6 +2292,9 @@ static void dsp_jset(void)
 		case 3:
 			/* jset #n,R,p:xx */
 			numreg = value;
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
+			}
 			value = dsp_core->registers[numreg];
 			break;
 	}
@@ -2350,6 +2359,9 @@ static void dsp_jsset(void)
 		case 3:
 			/* jsset #n,R,p:xx */
 			numreg = value;
+			if ((numreg==DSP_REG_A) || (numreg==DSP_REG_B)) {
+				numreg = DSP_REG_A1+(numreg & 1);
+			}
 			value = dsp_core->registers[numreg];
 			break;
 	}
