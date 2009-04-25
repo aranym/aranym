@@ -1,3 +1,29 @@
+2009/04/25 - version 0.9.8beta released
+
+ o CPU: fixed TRAPcc and FTRAPcc instructions (for Guillaume's mplayer :-)
+ o VIDEL: pixel precise horizontal scrolling implemented
+ o fixed BUSY signal handling on the parallel port
+ o fixed mouse grab/ungrab/autograb (see below)
+ o added new ARAnyM mouse cursor (white arrow)
+ o added middle mouse button handling (in Eiffel mode)
+ o added suport for reversing mouse Y-axis in IKBD (used in Linux-m68k)
+ o fixed many DSP56001 instructions
+ o fixed NFJPEG on 64bit hosts
+ o fixed several NF drivers to work under FreeMiNT (not rely on __NF cookie)
+ o buggy JIT-FPU was disabled. Now FPU is precise though slower in JIT mode
+
+ Mouse grab/ungrab/autograb has changed: first, ungrabbing when leaving
+ ARAnyM window was fixed (issue with autograb on the window border).
+ Then, ARAnyM got a new mouse cursor (white one) so you can recognize
+ now when the mouse is grabbed (the cursor pointer is black in TOS)
+ and when it's not (the cursor pointer is white now).
+ At last, mouse autograb upon entering ARAnyM window was disabled until
+ we can ensure the Atari mouse cursor is positioned in sync with host
+ mouse cursor (will require Atari OS support, probably in a form
+ of aranym.acc and AES implementing appl_tplay).
+ Also the "AutoGrabMouse" config option has been removed.
+
+
 2008/11/08 - version 0.9.7beta released
 
  Mostly small fixes at various places plus a lot of work went into

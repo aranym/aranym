@@ -1,10 +1,16 @@
+2009/04/25 - Petr
+- README, NEWS, TODO, version.h: updated for a new release
+
+
 2009/04/24 - Patrice
-- gui: Fix wait for event after generating disk image, if no confirmation needed.
+- gui-sdl/dlgDisk.cpp: Fix wait for event after generating disk image
+  if no confirmation needed.
 
 
 2009/03/31 - Andreas
 - gencpu.c: Correct exception setup for trapping insns. Thanks for hint
   to Guillaume Tello.
+
 - fpu_{x86,uae,ieee}.cpp: Fix decoding of FTRAPcc insn.  Don't raise
   illegal insn exception on unknown condition codes, they merely give
   unexpected results.
