@@ -29,6 +29,7 @@ class AudioConv {
 		Uint8 *tmpBuf;
 		int srcRate, srcChan, srcOffset, srcSkip;
 		int dstRate, tmpBufLen;
+		int volume;
 
 		int rescaleFreq8(Uint8 *source, int *src_len, Uint8 *dest, int dst_len);
 		int rescaleFreq16(Uint16 *source, int *src_len, Uint16 *dest, int dst_len);
@@ -41,6 +42,7 @@ class AudioConv {
 			int src_offset, int src_skip,
 			Uint16 dst_fmt, Uint8 dst_chan, int dst_rate);
 		void doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_len);
+		void setVolume(int newVolume);
 };
 
 #endif /* AUDIOCONV_H */

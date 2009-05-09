@@ -77,5 +77,3 @@ that particular programmer but rather who is author of the idea :-)
 
 - patrice: fvdi aranym.sys driver (m68k side) must follow the host surface
   R,G,B,A organization.
-
-- patrice: audio conversion class: add volume setting.

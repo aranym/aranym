@@ -24,7 +24,8 @@
 #include "debug.h"
 
 AudioConv::AudioConv(void)
-	: tmpBuf(NULL), srcRate(0), srcChan(0), srcOffset(0), srcSkip(0), dstRate(0), tmpBufLen(0)
+	: tmpBuf(NULL), srcRate(0), srcChan(0), srcOffset(0), srcSkip(0),
+	dstRate(0), tmpBufLen(0), volume(SDL_MIX_MAXVOLUME)
 {
 }
 
@@ -155,10 +156,15 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 	cvt.len = dstConvertedLen;
 	SDL_ConvertAudio(&cvt);
 
-	SDL_MixAudio(dest, cvt.buf, cvt.len_cvt, SDL_MIX_MAXVOLUME);
+	SDL_MixAudio(dest, cvt.buf, cvt.len_cvt, volume);
 
 	/* Set converted length */
 	*dst_len = cvt.len_cvt;
 
 	D(bug("audioconv: to 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
+}
+
+void AudioConv::setVolume(int newVolume)
+{
+	volume = newVolume;
 }
