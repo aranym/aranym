@@ -1,5 +1,6 @@
 2009/05/09 - Patrice
 - Add volume setting to audio conversion.
+- NfAudio: Use audio conversion class.
 
 
 *** CVS tagged as ARANYM_0_9_8_BETA
