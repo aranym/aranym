@@ -88,6 +88,7 @@ AUDIODriver::~AUDIODriver()
 void AUDIODriver::reset()
 {
 	playing = SDL_AUDIO_STOPPED;
+	AudioParameters.buffer = NULL;
 	AudioParameters.len = 0;
 	locked = false;
 }
