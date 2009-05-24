@@ -1,3 +1,7 @@
+2009/05/24 - Patrice
+- NfAudio: Only triggers interrupt once m68k buffer is filled.
+
+
 2009/05/09 - Patrice
 - Add volume setting to audio conversion.
 - NfAudio: Use audio conversion class.
