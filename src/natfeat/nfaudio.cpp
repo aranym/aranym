@@ -41,6 +41,7 @@
 extern "C" {
 	static SDL_audiostatus playing;
 	static AudioConv *audioConv;
+	static uint32	start_replay, current_replay, end_replay;
 
 	static void audio_callback(void *userdata, uint8 * stream, int len)
 	{
@@ -52,13 +53,31 @@ extern "C" {
 			return;
 		}
 
-		int src_len = ATARI_BUF_SIZE;
-		int dst_len = len;
+		Uint8 *dest = stream;
+		int dest_len = len;
+		int trigger_interrupt = 0;
 
-		audioConv->doConversion(Atari2HostAddr(par->buffer), &src_len, stream, &dst_len);
-		par->len = src_len;
+		while (dest_len>0) {
+			int src_len = end_replay-current_replay;
+			int dst_len = dest_len;
 
-		TriggerInt5();		// Audio is at interrupt level 5
+			audioConv->doConversion(Atari2HostAddr(current_replay), &src_len, dest, &dst_len);
+
+			dest_len -= dst_len;
+			dest += dst_len;
+			current_replay += src_len;
+
+			/* End of audio frame ? */
+			if (current_replay<end_replay)
+				continue;
+
+			trigger_interrupt = 1;
+			current_replay = start_replay;	/* wrap to start of buffer */
+		}
+
+		if (trigger_interrupt) {
+			TriggerInt5();		// Audio is at interrupt level 5
+		}
 	}
 };
 
@@ -88,6 +107,7 @@ AUDIODriver::~AUDIODriver()
 void AUDIODriver::reset()
 {
 	playing = SDL_AUDIO_STOPPED;
+	start_replay = current_replay = end_replay = 0;
 	AudioParameters.buffer = NULL;
 	AudioParameters.len = 0;
 	locked = false;
@@ -131,7 +151,9 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 					host->audio.obtained.freq);
 				AudioParameters.buffer = getParameter(4);
 				AudioParameters.freq = src_freq;
-				AudioParameters.len = 0;
+				AudioParameters.len = ATARI_BUF_SIZE;
+				start_replay = current_replay = AudioParameters.buffer;
+				end_replay = start_replay + ATARI_BUF_SIZE;
 				playing = SDL_AUDIO_PAUSED;
 				SDL_UnlockAudio();
 				ret = (uint16)getParameter(1);
