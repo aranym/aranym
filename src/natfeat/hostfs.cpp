@@ -2560,9 +2560,9 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 void HostFs::freeMounts()
 {
-	for(MountMap::iterator it = mounts.begin(); it != mounts.end(); it++) {
+	for(MountMap::iterator it = mounts.begin(); it != mounts.end(); ) {
 		delete it->second;
-		mounts.erase(it);
+		mounts.erase(it++);
 	}
 }
 
