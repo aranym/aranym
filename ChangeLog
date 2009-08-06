@@ -330,7 +330,7 @@
 
 
 2008/07/20 - Patrice
-- mmu: Wrong check for address in TTR or not, reported by Fran�ois Revol, who
+- mmu: Wrong check for address in TTR or not, reported by François Revol, who
   tries to port Haiku (BeOS clone) to Atari.
 
 
@@ -2073,7 +2073,7 @@ Reworked audio DMA emulation:
 
 2006/06/25 - Petr
 - hostscreen.cpp: ignore window positioning on OS_darwin - that one does not
-  offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donz�, thanks.
+  offer any SDL_SysWMinfo struct. Patch suggested by Philipp Donzé, thanks.
 
 
 2006/06/05 - johan
@@ -5579,7 +5579,7 @@ libGL library ARAnyM will use.
 
 
 2002/12/29 - Petr
-- videl: S�bastien Briais sent a patch that allows virtual screen on VIDEL
+- videl: Sébastien Briais sent a patch that allows virtual screen on VIDEL
   by emulating the 'linewidth' and 'lineoffset' VIDEL registers.
 
 - videl: the 'od_posledni_zmeny' variable translated to English, at last.
