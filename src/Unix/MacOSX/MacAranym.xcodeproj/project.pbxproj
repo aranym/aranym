@@ -13,7 +13,7 @@
 			buildPhases = (
 				17BCD8A20B20FFC200432CE1 /* CopyFiles */,
 				B4E213CC0C5BA71A00138A7F /* CopyFiles */,
-				17AAB2A80B20A8150016FB8D /* ShellScript */,
+				17AAB2A80B20A8150016FB8D /* Create Diskimage */,
 			);
 			dependencies = (
 				17D10CA80C401D940083E7F2 /* PBXTargetDependency */,
@@ -40,7 +40,6 @@
 		1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
 		1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		1736B1110C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
-		1736B1130C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
 		1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		17398E120B21048100A9B4DB /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
@@ -1566,7 +1565,6 @@
 			files = (
 				B449DA020D2A922C005F0CC6 /* logo.png in Resources */,
 				1736B1110C70ED5900C56FAF /* aranym.icns in Resources */,
-				1736B1130C70ED5900C56FAF /* Info.plist in Resources */,
 				B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1574,19 +1572,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		17AAB2A80B20A8150016FB8D /* ShellScript */ = {
+		17AAB2A80B20A8150016FB8D /* Create Diskimage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Create Diskimage";
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/aranym-*-macosx.dmg",
+				"$(SHARED_DERIVED_FILE_DIR)/aranym_version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create \"$DMGNAME\" -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
+			shellScript = "VERSION=`\"$SHARED_DERIVED_FILE_DIR/aranym_version\" | awk '{FS=\" \"}{print $2}'`\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx\"\nVERSION=`echo \"-$VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create \"$DMGNAME\" -ov -volname \"MacAranym $VERSION\" -srcfolder . -format UDZO\nexit $?";
+			showEnvVarsInLog = 0;
 		};
 		17AAB3240B20AF440016FB8D /* Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1638,10 +1639,11 @@
 			name = "Set correct ARAnyM version";
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+				"$(SHARED_DERIVED_FILE_DIR)/aranym_version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			shellScript = "if [ ! -f \"$SHARED_DERIVED_FILE_DIR/aranym_version\" ]; then\n  mkdir -p \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n  cd \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n\n  cat > aranym_version.c <<EOF\n#include \"version.h\"\n\nint main() {\n  puts(VERSION_STRING);\n  return 0;\n}\nEOF\n  gcc -o aranym_version aranym_version.c \"-I$SOURCE_DIR/include\" \"-I$DERIVED_FILES_DIR\" || exit 1\nfi\n\n\"$SHARED_DERIVED_FILE_DIR/aranym_version\" || exit 1\n\nVERSION=`\"$SHARED_DERIVED_FILE_DIR/aranym_version\" | awk '{FS=\" \"}{print $2}'`\n\n\n\necho \"Setting Aranym version in info.plist to $VERSION\"\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\" || exit 1\n  if [ -f \"$PLIST_NEW\" ]; then \n    #mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		17AF061110401EDD007839B5 /* Set correct ARAnyM version */ = {
@@ -1654,10 +1656,11 @@
 			name = "Set correct ARAnyM version";
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+				"$(SHARED_DERIVED_FILE_DIR)/aranym_version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			shellScript = "if [ ! -f \"$SHARED_DERIVED_FILE_DIR/aranym_version\" ]; then\n  mkdir -p \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n  cd \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n\n  cat > aranym_version.c <<EOF\n#include \"version.h\"\n\nint main() {\n  puts(VERSION_STRING);\n  return 0;\n}\nEOF\n  gcc -o aranym_version aranym_version.c \"-I$SOURCE_DIR/include\" \"-I$DERIVED_FILES_DIR\" || exit 1\nfi\n\n\"$SHARED_DERIVED_FILE_DIR/aranym_version\" || exit 1\n\nVERSION=`\"$SHARED_DERIVED_FILE_DIR/aranym_version\" | awk '{FS=\" \"}{print $2}'`\n\n\n\necho \"Setting Aranym version in info.plist to $VERSION\"\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\" || exit 1\n  if [ -f \"$PLIST_NEW\" ]; then \n    #mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		17AF0613104020E8007839B5 /* Set correct ARAnyM version */ = {
@@ -1670,10 +1673,11 @@
 			name = "Set correct ARAnyM version";
 			outputPaths = (
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+				"$(SHARED_DERIVED_FILE_DIR)/aranym_version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			shellScript = "if [ ! -f \"$SHARED_DERIVED_FILE_DIR/aranym_version\" ]; then\n  mkdir -p \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n  cd \"$SHARED_DERIVED_FILE_DIR\"  || exit 1\n\n  cat > aranym_version.c <<EOF\n#include \"version.h\"\n\nint main() {\n  puts(VERSION_STRING);\n  return 0;\n}\nEOF\n  gcc -o aranym_version aranym_version.c \"-I$SOURCE_DIR/include\" \"-I$DERIVED_FILES_DIR\" || exit 1\nfi\n\n\"$SHARED_DERIVED_FILE_DIR/aranym_version\" || exit 1\n\nVERSION=`\"$SHARED_DERIVED_FILE_DIR/aranym_version\" | awk '{FS=\" \"}{print $2}'`\n\n\n\necho \"Setting Aranym version in info.plist to $VERSION\"\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\" || exit 1\n  if [ -f \"$PLIST_NEW\" ]; then \n    #mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		17BCD7890B20F64F00432CE1 /* Run configure */ = {
