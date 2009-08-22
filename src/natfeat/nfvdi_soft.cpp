@@ -47,6 +47,11 @@ static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 
 SoftVdiDriver::SoftVdiDriver()
 {
+	const SDL_version *version = SDL_Linked_Version();
+
+	/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
+	sdl_buggy_blitsurface = (SDL_VERSIONNUM(version->major, version->minor, version->patch) >= SDL_VERSIONNUM(1,2,10))
+		&& (SDL_VERSIONNUM(version->major, version->minor, version->patch) <= SDL_VERSIONNUM(1,2,13));
 }
 
 SoftVdiDriver::~SoftVdiDriver()
@@ -1824,15 +1829,47 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 	SDL_Rect dstrect;
 	SDL_Surface *sdl_surf = surface->getSdlSurface();
 
-	srcrect.x = sx;
-	srcrect.y = sy;
-	dstrect.x = dx;
-	dstrect.y = dy;
-	srcrect.w = dstrect.w = w;
-	srcrect.h = dstrect.h = h;
+	if (sdl_buggy_blitsurface) {
+		SDL_Surface *a_surf;
+		
+		a_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h,
+			sdl_surf->format->BitsPerPixel, sdl_surf->format->Rmask,
+			sdl_surf->format->Gmask, sdl_surf->format->Bmask,
+			sdl_surf->format->Amask);
+   
+		if (a_surf) {
+			if (sdl_surf->format->BitsPerPixel<=8) {
+				SDL_SetPalette(a_surf, SDL_LOGPAL,
+					sdl_surf->format->palette->colors, 0, 256);
+			}
 
-	SDL_BlitSurface(sdl_surf, &srcrect, sdl_surf, &dstrect);
+			srcrect.x = sx;
+			srcrect.y = sy;
+			dstrect.x = 0;
+			dstrect.y = 0;
+			srcrect.w = dstrect.w = w;
+			srcrect.h = dstrect.h = h;
+			SDL_BlitSurface(sdl_surf, &srcrect, a_surf, &dstrect);
 
+			srcrect.x = 0;
+			srcrect.y = 0;
+			dstrect.x = dx;
+			dstrect.y = dy;
+			SDL_BlitSurface(a_surf, &srcrect, sdl_surf, &dstrect);
+
+			SDL_FreeSurface(a_surf);
+		}
+	} else {
+		srcrect.x = sx;
+		srcrect.y = sy;
+		dstrect.x = dx;
+		dstrect.y = dy;
+		srcrect.w = dstrect.w = w;
+		srcrect.h = dstrect.h = h;
+
+		SDL_BlitSurface(sdl_surf, &srcrect, sdl_surf, &dstrect);
+	}
+		
 	surface->setDirtyRect(dx,dy,w,h);
 }
 

@@ -1,3 +1,8 @@
+2009/08/22 - Patrice
+- nfvdi_soft: Add workaround for buggy SDL versions for blitting inside same
+  surface.
+
+
 2009/07/19 - Petr
 - hostfs.cpp: fixed a possible crash when calling std::map->erase(). Thanks
   to David Binderman (for posting to Novell BTS) and David Bolt (for letting

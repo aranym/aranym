@@ -110,6 +110,9 @@ class SoftVdiDriver : public VdiDriver
 			uint32 fgColor, uint32 bgColor, uint16 logOp );
 		void gfxVLineColor( int16 x, int16 y1, int16 y2,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp );
+
+		/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
+		int sdl_buggy_blitsurface;
 };
 
 #endif /* NFVDI_SOFT_H */
