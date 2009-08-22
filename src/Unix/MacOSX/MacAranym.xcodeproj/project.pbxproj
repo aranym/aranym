@@ -36,10 +36,8 @@
 		171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
 		171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
 		1736B1070C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
-		1736B1090C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
 		1736B10B0C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
-		1736B10E0C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
 		1736B1100C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		1736B1110C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
 		1736B1130C70ED5900C56FAF /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1736B1000C70ED5900C56FAF /* Info.plist */; };
@@ -500,7 +498,7 @@
 		1734DB140ABCA354001A746E /* config_ppc.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_ppc.h; path = build/MacAranym.build/config_ppc.h; sourceTree = "<group>"; };
 		1734DB150ABCA3AB001A746E /* config_i386.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = config_i386.h; path = build/MacAranym.build/config_i386.h; sourceTree = "<group>"; };
 		1736B0FD0C70ED5900C56FAF /* aranym.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = aranym.icns; sourceTree = "<group>"; };
-		1736B1000C70ED5900C56FAF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		1736B1000C70ED5900C56FAF /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1736B1010C70ED5900C56FAF /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		1736B1020C70ED5900C56FAF /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
@@ -829,7 +827,7 @@
 		B4844A6C0C7BA262003FE2D2 /* aranym2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = aranym2.icns; path = darwin/aranym2.icns; sourceTree = "<group>"; };
 		B4844A6D0C7BA262003FE2D2 /* busybee.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = busybee.icns; path = darwin/busybee.icns; sourceTree = "<group>"; };
 		B4844A6E0C7BA262003FE2D2 /* host_filesys_darwin.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = host_filesys_darwin.M; path = darwin/host_filesys_darwin.M; sourceTree = "<group>"; };
-		B4844A6F0C7BA262003FE2D2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; name = Info.plist; path = darwin/Info.plist; sourceTree = "<group>"; };
+		B4844A6F0C7BA262003FE2D2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = darwin/Info.plist; sourceTree = "<group>"; };
 		B4844A700C7BA262003FE2D2 /* parameters_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = parameters_darwin.cpp; path = darwin/parameters_darwin.cpp; sourceTree = "<group>"; };
 		B4844A710C7BA262003FE2D2 /* PkgInfo */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = PkgInfo; path = darwin/PkgInfo; sourceTree = "<group>"; };
 		B4844A720C7BA262003FE2D2 /* sdl.m4 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = sdl.m4; path = darwin/sdl.m4; sourceTree = "<group>"; };
@@ -1465,6 +1463,7 @@
 				17BCD7DB0B20F64F00432CE1 /* Frameworks */,
 				17BCD7E00B20F64F00432CE1 /* Resources */,
 				17BCD7E30B20F64F00432CE1 /* Copy Frameworks into .app bundle */,
+				17AF061110401EDD007839B5 /* Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -1486,6 +1485,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				002F39FD09D0883400EBEB88 /* Copy Frameworks into .app bundle */,
+				17AF05D91040117E007839B5 /* Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -1507,6 +1507,7 @@
 				B439AC8D0C5B2FD00046EFC9 /* Frameworks */,
 				B439AC920C5B2FD00046EFC9 /* Resources */,
 				B439AC950C5B2FD00046EFC9 /* Copy Frameworks into .app bundle */,
+				17AF0613104020E8007839B5 /* Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -1545,7 +1546,6 @@
 			files = (
 				B449DA030D2A9234005F0CC6 /* logo.png in Resources */,
 				1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */,
-				1736B10E0C70ED5900C56FAF /* Info.plist in Resources */,
 				B428FAF80C7BA7100039CA66 /* aranym.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1556,7 +1556,6 @@
 			files = (
 				B449DA010D2A9222005F0CC6 /* logo.png in Resources */,
 				1736B1070C70ED5900C56FAF /* aranym.icns in Resources */,
-				1736B1090C70ED5900C56FAF /* Info.plist in Resources */,
 				B428FAF90C7BA7100039CA66 /* aranym.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1587,7 +1586,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create $DMGNAME -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
+			shellScript = "cd \"$TARGET_BUILD_DIR/aranym-xxx-macosx/DOC\"\necho \"Processing text files...\"\nDATE=`date '+%Y\\/%m\\/%d'`\nmv COPYING ..\ncat README.rtf \\\n\t| sed \"s/(\\*VERSION\\*)/$CURRENT_PROJECT_VERSION/g\" \\\n\t| sed \"s/(\\*DATE\\*)/$DATE/g\" \\\n\t> ../README.rtf\nrm README.rtf\n\ncd \"$TARGET_BUILD_DIR/aranym-xxx-macosx\"\nVERSION=`echo \"-$CURRENT_PROJECT_VERSION\" | sed 's/ //g;s/-//g'`\nDMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx.dmg\necho \"Building disk image $DMGNAME...\"\nhdiutil create \"$DMGNAME\" -ov -volname \"MacAranym $CURRENT_PROJECT_VERSION\" -srcfolder . -format UDZO\nexit $?";
 		};
 		17AAB3240B20AF440016FB8D /* Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1607,6 +1606,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\t\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		17AAB32E0B20AFF50016FB8D /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1626,6 +1626,55 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\n\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
+			showEnvVarsInLog = 0;
+		};
+		17AF05D91040117E007839B5 /* Set correct ARAnyM version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set correct ARAnyM version";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		17AF061110401EDD007839B5 /* Set correct ARAnyM version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set correct ARAnyM version";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		17AF0613104020E8007839B5 /* Set correct ARAnyM version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set correct ARAnyM version";
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "VERSION=`\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\" --version 2>&1 | head -n 1 | awk '{FS=\" \"}{print $2}'`\n\necho \"Setting Aranym version to $VERSION\"\n\nPLIST=$TARGET_BUILD_DIR/$INFOPLIST_PATH\nPLIST_NEW=$PLIST.new\nPLIST_OLD=$PLIST.old\n\nif [ -f \"$PLIST\" ]; then\n  cat \"$PLIST\" | sed \"s/\\#\\#VERSION\\#\\#/$VERSION/\" > \"$PLIST_NEW\"\n  if [ -f \"$PLIST_NEW\" ]; then \n    mv \"$PLIST\" \"$PLIST_OLD\"\n    mv \"$PLIST_NEW\" \"$PLIST\"\n  else\n    echo \"Error: Update failed\"\n    echo \"  PLIST file: $PLIST\"\n    echo \"  VERSION: $VERSION\"\n    exit 1\n  fi\nelse\n  echo \"Error: unable to update version description in PLIST: \"\n  echo \"  missing $PLIST\"\n  exit 1\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 		17BCD7890B20F64F00432CE1 /* Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1645,6 +1694,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		17BCD78A0B20F64F00432CE1 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1664,6 +1714,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\n\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu.cpp cpuemu_*.cpp cputbl.h cpustbl.cpp Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
+			showEnvVarsInLog = 0;
 		};
 		B439AC300C5B2FD00046EFC9 /* Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1683,6 +1734,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#################### CONFIGURE SYSTEM ################\n# Check if configure script has to be run\necho \"Checking configure options: $CONFIGURE_OPTIONS\"\nOPTIONS_FILE=$TARGET_TEMP_DIR/configure_options\nFILE_CONTENT=`cat \"$OPTIONS_FILE\" 2>/dev/null`\nif [ \\( -f \"$OPTIONS_FILE\" \\) -a \\( \"$FILE_CONTENT\" == \"$CONFIGURE_OPTIONS\" \\) ]; then\n\techo \"config.h still valid\"\t\n\texit 0\nfi\n\necho \"Running configure script\"\n\n# Check if PROJECT_DIR variable is set (Xcode 2.x)\nif [ -z \"$PROJECT_DIR\" ]; then\n\techo '$PROJECT_DIR was not declared. Setting variable:'\n\told_dir=$PWD\n\tcd \"$BUILD_DIR/..\"\n\texport PROJECT_DIR=\"$PWD\"\n\tcd $old_dir\n\techo \"\t\\$PROJECT_DIR = $PROJECT_DIR\"\n\techo\nfi\n\n# Make sure makedepend can be found\nexport PATH=\"$PATH:/usr/X11R6/bin\"\n\n# Make sure SDL.m4 can be found\nexport ACLOCAL_FLAGS=\"-I $PROJECT_DIR/../darwin\"\n\n# Make sure SDL.framework can be found\nexport LDFLAGS=-F$PROJECT_DIR\nexport DYLD_FRAMEWORK_PATH=$PROJECT_DIR\n\nCHANGELOG_FILE=$SOURCE_DIR/../ChangeLog\nVERSIONDATE_FILE=$DERIVED_FILES_DIR/version_date.h\n\nmkdir -p \"$DERIVED_FILES_DIR\"\n\n\ncd \"$SOURCE_DIR/..\"\n\n# Remove old files\nrm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null\n\n# Generate configure script\nif [ -f autogen.sh ]; then\n\texport NO_CONFIGURE=yes\n\t./autogen.sh\nfi\n\n# Configure system for all build architectures\necho \"\" > \"$DERIVED_FILES_DIR/config.h\"\nfor ARCH in $ARCHS ; do\n\tCPU_TYPE=$(eval echo $(echo \\$CPU_TYPE_$ARCH))\n\techo \"Running $CONFIG_EXEC for $ARCH architecture / $CPU_TYPE\"\n\t./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin || exit 1\n\n\tif [ \"$ARCH\" = \"ppc\" ]; then\n\t\t# 10.3.9 compatibility:\n\t\tcat config.h | sed 's/#define HAVE_SYS_STATVFS_H 1/\\/* #undef HAVE_SYS_STATVFS_H *\\//' > config_$ARCH.h\n\t\trm config.h\n\telse\n\t\tmv config.h config_$ARCH.h\n\tfi\n\tcat  >> \"$DERIVED_FILES_DIR/config.h\" << EOF\n#ifdef $CPU_TYPE\n#include \"config_$ARCH.h\"\n#endif\n\nEOF\n\tmv config_$ARCH.h \"$DERIVED_FILES_DIR\"\ndone\nmv Makefile \"$DERIVED_FILES_DIR\"\n\n# Create version_date.h\necho '/* generated from ChangeLog */' > $VERSIONDATE_FILE\ngrep -m 1 '^20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]' $CHANGELOG_FILE | sed 's/^\\(20[0-9][0-9]\\/[0-9]*\\/[0-9]*\\).*/#define VERSION_DATE \"\\1\"/;q'  >> $VERSIONDATE_FILE\n\n# Remember configure options for next script execution\nmkdir -p \"$TARGET_TEMP_DIR\" 2>/dev/null\necho \"$CONFIGURE_OPTIONS\" > \"$OPTIONS_FILE\"\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		B439AC310C5B2FD00046EFC9 /* Build CPU source files */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1702,6 +1754,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "########################## BUILD CPU EMULATION CORE ##########################\nmkdir -p \"$DERIVED_FILES_DIR\" && cd \"$DERIVED_FILES_DIR\" || exit 1\nTRANSFERRED=`rsync -pogt --stats cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\" \\\n\t\t\t\t2>/dev/null | grep \"transferred:\"| awk '{print $5}'`\nRET=$?\necho \"$TRANSFERRED files transferred. (Return code $RET)\"\nif [ \"$RET\" -eq 0 -a \"$TRANSFERRED\" -eq 0 ]; then\n\texit 0\nfi\n\necho ; echo \"Building CPU definition...\"\n\ncd \"$TEMP_FILES_DIR\" \necho \"Compile build68k\"\ngcc -o build68k \"$SOURCE_DIR/uae_cpu/build68k.c\" && \\\n\t(./build68k < \"$SOURCE_DIR/uae_cpu/table68k\" > \"$DERIVED_FILES_DIR/cpudefs.cpp\") || exit 1\n\necho \"Compile & Execute gencomp\"\ng++ -DCPU_i386 -DUSE_JIT=1 -DFULLMMU -DUSE_JIT_FPU=1 \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencomp \\\n\t\t\"$SOURCE_DIR/uae_cpu/compiler/gencomp.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencomp || exit 1\nmv compemu.cpp compstbl.cpp comptbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Loop through Architectures\"\nfor CURRENT_ARCH in $ARCHS ; do\n\techo ; echo \"Building CPU emulation core... $CURRENT_ARCH\"\n\tg++ -DUSE_JIT=1 -DUSE_JIT_FPU=1 `echo \"-DCPU_$CURRENT_ARCH\" | sed s/ppc/powerpc/` \"-I$DERIVED_FILES_DIR\" \"-I$SOURCE_DIR/Unix\" \"-I$SOURCE_DIR/uae_cpu\" -o gencpu \\\n\t\t\"$SOURCE_DIR/uae_cpu/gencpu.c\" \"$SOURCE_DIR/uae_cpu/readcpu.cpp\" \"$DERIVED_FILES_DIR/cpudefs.cpp\" && \\\n\t\t./gencpu || exit 1\n\tmv cpuemu.cpp \"$DERIVED_FILES_DIR/cpuemu_$CURRENT_ARCH.cpp\"\ndone\nmv cpustbl.cpp cputbl.h \"$DERIVED_FILES_DIR\" || exit 1\n\necho \"Building $DERIVED_FILES_DIR/cpuemu.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu.cpp\"\n#ifdef CPU_i386\n#include \"cpuemu_i386.cpp\"\n#endif\n#ifdef CPU_powerpc\n#include \"cpuemu_ppc.cpp\"\n#endif\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpustbl_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpustbl_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpustbl.cpp\"\nEOF\n\necho \"Building $DERIVED_FILES_DIR/cpuemu_nf.cpp\"\ncat << EOF > \"$DERIVED_FILES_DIR/cpuemu_nf.cpp\"\n\t#define NOFLAGS\n\t#include \"cpuemu.cpp\"\nEOF\n\ncd \"$DERIVED_FILES_DIR\"\nmkdir -p \"$PROJECT_TEMP_DIR\"\nrsync -pogt cpudefs.cpp cpuemu*.cpp cputbl.h cpustbl*.cpp compemu.cpp compstbl.cpp comptbl.h Makefile config*.h \"$PROJECT_TEMP_DIR\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2103,10 +2156,10 @@
 			buildSettings = {
 				ARCHS = ppc;
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" ";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes --enable-debug=no";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
+				CURRENT_PROJECT_VERSION = "##VERSION##";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2159,10 +2212,10 @@
 					i386,
 				);
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" ";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-ethernet=yes --enable-vblupdates=yes --enable-debug=no";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
+				CURRENT_PROJECT_VERSION = "##VERSION##";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2290,10 +2343,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" ";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-opengl --enable-vblupdates=yes";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
-				CURRENT_PROJECT_VERSION = "0.9.7beta+CVS";
+				CURRENT_PROJECT_VERSION = "##VERSION##";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
