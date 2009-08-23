@@ -1,3 +1,7 @@
+2009/08/24 - Philipp
+- nfvdi_soft: Fixed some redrawing problems with 'soft' NfVDI in bitdepths < 32
+
+
 2009/08/22 - Patrice
 - nfvdi_soft: Add workaround for buggy SDL versions for blitting inside same
   surface. See http://bugzilla.libsdl.org/show_bug.cgi?id=699 for more info

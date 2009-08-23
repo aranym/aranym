@@ -1540,13 +1540,17 @@ uint32 SoftVdiDriver::hsGetPixel( int x, int y )
 	switch(bpp) {
 		case 1:
 			color = (uint32)(*(uint8 *)p);
+			break;
 		case 2:
 			color = (uint32)(*(uint16 *)p);
+			break;
 		case 3:
 			// FIXME maybe some & problems? and endian
 			color = getBpp24Pixel( p );
+			break;
 		case 4:
 			color = *(uint32 *)p;
+			break;
 	} /* switch */
 
 	return color;
