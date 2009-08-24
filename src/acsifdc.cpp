@@ -1,7 +1,7 @@
 /*
  * acsifdc.cpp - Atari floppy emulation code
  *
- * Copyright (c) 2001-2005 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -246,28 +246,33 @@ void ACSIFDC::set_floppy_geometry()
 	if (drive_fd > 0)
 	{
 		unsigned char buf[512];
+		bool valid = true;	// suppose the bootsector data is valid
+		int sectors = 0;
 
 		// read bootsector
 		lseek(drive_fd, 0, SEEK_SET);
-		read(drive_fd, buf, sizeof(buf));
+		if (read(drive_fd, buf, sizeof(buf)) == sizeof(buf)) {
+			// detect floppy geometry from bootsector data
+			sectors=(buf[20]<<8)|buf[19];
+			secsize=(buf[12]<<8)|buf[11];
+			spt=buf[24];
+			sides=buf[26];
 
-		// detect floppy geometry from bootsector data
-		int sectors=(buf[20]<<8)|buf[19];
-		secsize=(buf[12]<<8)|buf[11];
-		spt=buf[24];
-		sides=buf[26];
-		bool valid = true;	// suppose the bootsector data is valid
-
-		// check validity of data
-		if (secsize <= 0 || sectors <= 0 || spt <=0 || sides <= 0) {
-			// data is obviously invalid (probably unformatted disk)
-			valid = false;
+			// check validity of data
+			if (secsize <= 0 || sectors <= 0 || spt <=0 || sides <= 0) {
+				// data is obviously invalid (probably unformatted disk)
+				valid = false;
+			}
+			else {
+				tracks = sectors / spt / sides;
+				// check if all sectors are on the tracks
+				if ((sides * spt * tracks) != sectors)
+					valid = false;
+			}
 		}
 		else {
-			tracks = sectors / spt / sides;
-			// check if all sectors are on the tracks
-			if ((sides * spt * tracks) != sectors)
-				valid = false;
+			panicbug("FDC A: error reading boot sector");
+			valid = false;
 		}
 
 		if (! valid) {
@@ -275,12 +280,10 @@ void ACSIFDC::set_floppy_geometry()
 			secsize = SECSIZE;
 			sides = SIDES;
 
-			// for any 80 track floppy compute the sector per track
+			// for a 80 track floppy compute the sector per track, otherwise assume HD floppy
 			off_t disk_size = lseek(drive_fd, 0, SEEK_END);
-			if (disk_size % (secsize * sides * TRACKS) == 0)
-				spt = (disk_size / secsize / sides / TRACKS);
-			else // non-standard number of tracks?
-				spt = SPT; // assume HD floppy
+			size_t bpt = (secsize * sides * TRACKS);
+			spt = ((disk_size / bpt) && !(disk_size % bpt)) ? (disk_size / bpt) : SPT;
 
 			sectors = spt * sides * TRACKS;
 		}
