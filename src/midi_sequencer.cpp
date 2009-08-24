@@ -1,7 +1,7 @@
 /*
 	Atari MIDI emulation, output to sequencer device
 
-	ARAnyM (C) 2005-2006 Patrice Mandin
+	ARAnyM (C) 2005-2009 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ MidiSequencer::MidiSequencer(memptr addr, uint32 size) : MIDI(addr, size)
 
 	fd = open(bx_options.midi.sequencer, O_WRONLY, 0664);
 	if (fd<0) {
-		fprintf(stderr, "midi_sequencer: Can not open %s\n", bx_options.midi.sequencer); 
+		panicbug("midi_sequencer: Can not open %s", bx_options.midi.sequencer); 
 	}
 }
 
@@ -74,6 +74,10 @@ void MidiSequencer::WriteData(uae_u8 value)
 
 	if (fd>=0) {
 		packet[1] = value;	
-		write(fd, packet, sizeof(packet));
+		if (write(fd, packet, sizeof(packet)) != sizeof(packet)) {
+			panicbug("midi_sequencer: error writing");
+		}
 	}
 }
+
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:

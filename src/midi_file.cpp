@@ -1,7 +1,7 @@
 /*
 	Atari MIDI emulation, output to file
 
-	ARAnyM (C) 2005-2006 Patrice Mandin
+	ARAnyM (C) 2005-2009 Patrice Mandin
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -66,10 +66,10 @@ void MidiFile::WriteData(uae_u8 value)
 	D(bug("midi_file: WriteData(0x%02x)",value));
 
 	if (fd>=0) {
-		write(fd, &value, 1);
+		if (write(fd, &value, 1) != 1) {
+			panicbug("midi_file: error writing");
+		}
 	}
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
