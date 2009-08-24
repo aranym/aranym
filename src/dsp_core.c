@@ -2,7 +2,7 @@
 	DSP M56001 emulation
 	Host/Emulator <-> DSP glue
 
-	(C) 2003-2008 ARAnyM developer team
+	(C) 2003-2009 ARAnyM developer team
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -36,6 +36,11 @@
 #endif
 
 #define DEBUG 0
+#if DEBUG
+#  define DUNUSED(x)
+#else
+#  define DUNUSED(x)	((void)x)
+#endif
 
 /* More disasm infos, if wanted */
 #define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
@@ -244,6 +249,7 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 /* Lock/unlock mutex functions */
 static void lockMutexNull(dsp_core_t *dsp_core)
 {
+	DUNUSED(dsp_core);
 }
 
 static void lockMutexThread(dsp_core_t *dsp_core)
@@ -253,6 +259,7 @@ static void lockMutexThread(dsp_core_t *dsp_core)
 
 static void unlockMutexNull(dsp_core_t *dsp_core)
 {
+	DUNUSED(dsp_core);
 }
 
 static void unlockMutexThread(dsp_core_t *dsp_core)
@@ -262,6 +269,7 @@ static void unlockMutexThread(dsp_core_t *dsp_core)
 
 static void pauseThreadNull(dsp_core_t *dsp_core)
 {
+	DUNUSED(dsp_core);
 }
 
 static void pauseThreadThread(dsp_core_t *dsp_core)
@@ -271,6 +279,7 @@ static void pauseThreadThread(dsp_core_t *dsp_core)
 
 static void resumeThreadNull(dsp_core_t *dsp_core)
 {
+	DUNUSED(dsp_core);
 }
 
 static void resumeThreadThread(dsp_core_t *dsp_core)

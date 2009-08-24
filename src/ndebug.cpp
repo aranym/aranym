@@ -1,7 +1,7 @@
 /*
  * ndebug.cpp - new ARAnyM fullscreen debugger
  *
- * Copyright (c) 2001-2006 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Milan Jurik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -38,6 +38,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cerrno>
+#include <assert.h>
 
 #ifndef HAVE_GNU_SOURCE
 
@@ -236,8 +237,8 @@ void ndebug::warn_print(FILE * f)
 	for (unsigned int i = 0; i < get_warnlen(); i++) {
 		ar = (actualrow + i) % dbsize;
 		if (dbbuffer[ar] != NULL
-			&& (((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend))
-			|| (dbstart > dbend) && (i < dbsize))) {
+			&& ((((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend)) || (dbstart > dbend))
+				&& (i < dbsize))) {
 			fprintf(f, "%-*.*s", rowlen, rowlen, dbbuffer[ar]);
 		} else {
 			for (unsigned int j = 0; j < rowlen; j++)
@@ -275,9 +276,9 @@ void ndebug::m68k_print(FILE * f)
 			(unsigned long) m68k_areg(regs, 7),
 			(unsigned long) m68k_dreg(regs, 3),
 			(unsigned long) m68k_dreg(regs, 7), (unsigned long) regs.vbr);
-	fprintf(f, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d           TC=%04x\n",
+	fprintf(f, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%ld C=%ld           TC=%04x\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
-	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG,
+	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, GET_VFLG, GET_CFLG,
 	    		   (unsigned int) ((((int) regs.mmu_enabled) << 15) |
 				(((int) regs.mmu_pagesize_8k) << 14)));
 
@@ -330,9 +331,11 @@ void ndebug::showHelp(FILE *f)
 }
 
 void ndebug::set_Ax(char **inl) {
-	char reg;
-	if (more_params(inl)) if ((reg = readhex(inl)) < 8)
-		if (more_params(inl)) m68k_areg(regs, reg) = readhex(inl);
+	int reg;
+	if (more_params(inl))
+		if ((reg = readhex(inl)) < 8)
+			if (more_params(inl))
+				m68k_areg(regs, reg) = readhex(inl);
 }
 
 void ndebug::set_Dx(char **inl) {
@@ -426,8 +429,8 @@ void ndebug::errorintofile(FILE *, char **inl) {
         for (unsigned int i = 0; i < dbsize; i++) {
 		ar = (dbstart + i) % dbsize;
 		if (dbbuffer[ar] != NULL
-			&& (((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend))
-			|| (dbstart > dbend) && (i < dbsize))) {
+			&& ((((dbstart <= dbend) && (ar >= dbstart) && (ar <= dbend)) || (dbstart > dbend))
+				&& (i < dbsize))) {
 			fprintf(fp, "%s\n", dbbuffer[ar]);
 		}
 	}
@@ -960,7 +963,7 @@ int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 					fflush(stderr);
 					newm68k_disasm(f, daddr, &nxdis, count);
 					tcsetattr(0, TCSAFLUSH, &newtty);
-					read(0, buffer, sizeof(buffer));
+					assert(read(0, buffer, sizeof(buffer)) >= 0);
 					break;
 				case 'm':
 					maddr = nxmem;
@@ -970,7 +973,7 @@ int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 					fflush(stderr);
 					dumpmem(f, maddr, &nxmem, count);
 					tcsetattr(0, TCSAFLUSH, &newtty);
-					read(0, buffer, sizeof(buffer));
+					assert(read(0, buffer, sizeof(buffer)) >= 0);
 					break;
 				case 'T':
 					maddr = nxmem;

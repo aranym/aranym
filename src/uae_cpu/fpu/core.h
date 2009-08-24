@@ -228,7 +228,7 @@ struct fpu_t {
 extern fpu_t fpu;
 
 /* Return the address of a particular register */
-inline fpu_register * const fpu_register_address(int i)
+inline fpu_register * fpu_register_address(int i)
 	{ return &fpu.registers[i]; }
 
 /* Dump functions for m68k_dumpstate */

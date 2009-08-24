@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <assert.h>
 
 static FILE *tablef;
 static int nextch = 0;
@@ -249,7 +250,7 @@ int main()
 	if (nextch != ':')
 	    abort();
 
-	fgets(opcstr, 250, tablef);
+	assert(fgets(opcstr, 250, tablef) != NULL);
 	getnextch();
 	{
 	    int j;

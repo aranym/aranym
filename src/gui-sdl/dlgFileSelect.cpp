@@ -1,7 +1,7 @@
 /*
  * dlgFileselect.cpp - dialog for selecting files (fileselector box)
  *
- * Copyright (c) 2003-2007 ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2003-2009 ARAnyM dev team (see AUTHORS)
  *
  * originally taken from the hatari project, thanks Thothy!
  *
@@ -27,6 +27,7 @@
 #include "sdlgui.h"
 #include "file.h"
 #include "dlgFileSelect.h"
+#include <assert.h>
 
 #define DEBUG 0
 #include "debug.h"
@@ -189,7 +190,7 @@ DlgFileSelect::DlgFileSelect(SGOBJ *dlg, char *new_path_and_name, bool bAllowNew
 	/* Prepare the path and filename variables */
 	File_splitpath(path_and_name, file_path, file_fname, NULL);
 	if (strlen(file_path) == 0) {
-		getcwd(file_path, sizeof(file_path));
+		assert(getcwd(file_path, sizeof(file_path)) != NULL);
 		File_AddSlashToEndFileName(file_path);
 	}
 	File_ShrinkName(dlgpath, file_path, sizeof(dlgpath)-1);
@@ -425,3 +426,6 @@ Dialog *DlgFileSelectOpen(char *path_and_name, bool bAllowNew)
 {
 	return new DlgFileSelect(fsdlg, path_and_name, bAllowNew);
 }
+
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
+

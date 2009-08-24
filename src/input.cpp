@@ -967,7 +967,9 @@ static void process_mouse_event(const SDL_Event &event)
 static void process_active_event(const SDL_Event &event)
 {
 	int state = event.active.state;
+#if DEBUG
 	uint32 ticks = SDL_GetTicks();
+#endif
 
 	if (state & SDL_APPACTIVE) {
 		D(bug("%d: ARAnyM window is being %s", ticks, event.active.gain ? "restored" : "minimized"));
