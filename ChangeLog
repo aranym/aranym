@@ -1,3 +1,15 @@
+2009/08/24 - Petr
+- acsifdc.cpp: handle possible error reading the bootsector (also quiets
+  GCC warning)
+
+- midi_{file,sequencer}.cpp: print an error if writing fails (also quiets
+  GCC warning)
+
+- dsp_core.cpp, input.cpp, ndebug.cpp, dlgFileSelect.cpp, hostfs.cpp, 
+  uae_cpu/build68k.c, uae_cpu/gencpu.c, fpu/core.h, fpu/flags.h: quiet
+  GCC warning
+
+
 2009/08/24 - Philipp
 - nfvdi_soft: Fixed some redrawing problems with 'soft' NfVDI in bitdepths < 32
 

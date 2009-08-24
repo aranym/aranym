@@ -1,7 +1,7 @@
 /*
  * hostfs.cpp - HostFS routines
  *
- * Copyright (c) 2001-2008 STanda of ARAnyM development team (see AUTHORS)
+ * Copyright (c) 2001-2009 STanda of ARAnyM development team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -22,6 +22,7 @@
  */
 
 #include "sysdeps.h"
+#include <assert.h>
 
 #ifdef HOSTFS_SUPPORT
 
@@ -1677,15 +1678,15 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 		if ( slash > target ) {
 			// if relative then we need an absolute path here
 			char currdir[MAXPATHNAMELEN];
-			getcwd(currdir, sizeof(currdir));
+			assert(getcwd(currdir, sizeof(currdir)) != NULL);
 
 			char abspath[MAXPATHNAMELEN];
 			strncpy(abspath, target, slash-target);
 			abspath[slash-target] = '\0';
-			chdir(abspath);
-			getcwd(abspath, sizeof(abspath));
+			assert(chdir(abspath) == 0);
+			assert(getcwd(abspath, sizeof(abspath)) != NULL);
 
-			chdir(currdir);
+			assert(chdir(currdir) == 0);
 
 			strncat(abspath, slash-1, MAXPATHNAMELEN-strlen(abspath));
 			strncpy(target, abspath, len);
