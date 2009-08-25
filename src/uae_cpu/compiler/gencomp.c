@@ -4,7 +4,7 @@
  *  Based on work Copyright 1995, 1996 Bernd Schmidt
  *  Changes for UAE-JIT Copyright 2000 Bernd Meyer
  *
- *  Adaptation for ARAnyM, copyright 2001-2005
+ *  Adaptation for ARAnyM, copyright 2001-2009
  *    Milan Jurik
  * 
  *  Adaptation for Basilisk II and improvements, copyright 2000-2005
@@ -117,7 +117,7 @@ read_counts (void)
     file = fopen ("frequent.68k", "r");
     if (file)
     {
-	fscanf (file, "Total: %lu\n", &total);
+	assert(fscanf (file, "Total: %lu\n", &total) == 1);
 	while (fscanf (file, "%lx: %lu %s\n", &opcode, &count, name) == 3)
 	{
 	    opcode_next_clev[nr] = 4;
@@ -241,7 +241,7 @@ gen_nextibyte (void)
     long_opcode=1;
     return buffer;
 }
-
+/*
 static void
 swap_opcode (void)
 {
@@ -249,7 +249,7 @@ swap_opcode (void)
 	comprintf("\topcode = do_byteswap_16(opcode);\n");
 	comprintf("#endif\n");
 }
-
+*/
 static void 
 sync_m68k_pc (void)
 {
@@ -2954,7 +2954,7 @@ main ()
 
     headerfile = fopen ("comptbl.h", "wb");
     stblfile = fopen ("compstbl.cpp", "wb");
-    freopen ("compemu.cpp", "wb", stdout);
+    assert(freopen ("compemu.cpp", "wb", stdout) != NULL);
 
     generate_includes (stdout);
     generate_includes (stblfile);

@@ -534,24 +534,24 @@ static void segfault_vec(int, CONTEXT_TYPE CONTEXT_NAME) {
 			case INSTR_DIV8:
 				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
-				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
+				CONTEXT_EAX = (CONTEXT_EAX & 0xffff0000) + ((pom1 / pom2) << 8) + (pom1 / pom2);
 				break;
 			case INSTR_IDIV8:
 				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
-				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
+				CONTEXT_EAX = (CONTEXT_EAX & 0xffff0000) + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
 				break;
 			case INSTR_MUL8:
 				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + pom1 * pom2;
+				CONTEXT_EAX = (CONTEXT_EAX & 0xffff0000) + pom1 * pom2;
 				if ((CONTEXT_EAX & 0xff00) == 0) CONTEXT_EFLAGS &= 0xfffffbfe;	// CF + OF
 					else CONTEXT_EFLAGS |= 0x401;
 				break;
 			case INSTR_IMUL8:
 				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (uae_s8)pom1 * (uae_s8)pom2;
+				CONTEXT_EAX = (CONTEXT_EAX & 0xffff0000) + (uae_s8)pom1 * (uae_s8)pom2;
 				if ((CONTEXT_EAX & 0xff00) == 0) CONTEXT_EFLAGS &= 0xfffffbfe;	// CF + OF
 					else CONTEXT_EFLAGS |= 0x401;
 				break;

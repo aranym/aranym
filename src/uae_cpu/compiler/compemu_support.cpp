@@ -1,7 +1,7 @@
 /*
  * compiler/compemu_support.cpp - Core dynamic translation engine
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2009 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -1218,8 +1218,9 @@ static inline void log_dump(void)
 	}
   }
   for (i = 0; i < VREGS; i++) {
-	if (vstate[i] == L_UNNEEDED)
+	if (vstate[i] == L_UNNEEDED) {
 	  D(panicbug("Virt %d: UNNEEDED", i));
+	}
   }
 }
 
@@ -5296,8 +5297,9 @@ void freescratch(void)
 {
     int i;
     for (i=0;i<N_REGS;i++)
-	if (live.nat[i].locked && i!=4)
+	if (live.nat[i].locked && i!=4) {
 	    D(panicbug("Warning! %d is locked",i));
+	}
 
     for (i=0;i<VREGS;i++)
 	if (live.state[i].needflush==NF_SCRATCH) {
@@ -7039,3 +7041,4 @@ setjmpagain:
     	goto setjmpagain;
     }
 }
+

@@ -1,3 +1,8 @@
+2009/08/25 - Petr
+- ndebug.cpp, linux/sigsegv_linux_x86.cpp, compiler/compemu_support.cpp,
+  compiler/gencomp.c: quiet GCC warnings
+
+
 2009/08/25 - Andreas
 - aranym.desktop: Fix Categories entry.
 
