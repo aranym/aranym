@@ -241,7 +241,8 @@ gen_nextibyte (void)
     long_opcode=1;
     return buffer;
 }
-/*
+
+#ifdef WORDS_BIGENDIAN
 static void
 swap_opcode (void)
 {
@@ -249,7 +250,8 @@ swap_opcode (void)
 	comprintf("\topcode = do_byteswap_16(opcode);\n");
 	comprintf("#endif\n");
 }
-*/
+#endif
+
 static void 
 sync_m68k_pc (void)
 {
