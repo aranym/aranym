@@ -1,3 +1,8 @@
+2009/08/27 - Petr
+- input.cpp: Philipp says positioning the cursor at -1 offset when releasing
+  mouse causes troubles on Win and OSX thus the offset code is disabled.
+
+
 2009/08/25 - Petr
 - ndebug.cpp, linux/sigsegv_linux_x86.cpp, compiler/compemu_support.cpp,
   compiler/gencomp.c: quiet GCC warnings

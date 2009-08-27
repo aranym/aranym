@@ -284,6 +284,12 @@ void releaseTheMouse()
 		// set the host mouse pointer to the expected place
 		// but move it in the original direction by 1 pixel
 		// to avoid an immediate and very annoying autograb...
+
+		// Update 20090827: the code below causes troubles on Windows
+		// and Mac OSX. Apparently asking the SDL to position mouse
+		// at a negative offset is not supported across all architectures.
+		// Anyway, since there is no autograb this code can be disabled.
+/*
 		if (x == 0) {
 			x = -1;
 		}
@@ -294,6 +300,7 @@ void releaseTheMouse()
 			x++;
 			y++;
 		}
+*/
 		SDL_WarpMouse(x, y);
 	}
 }
