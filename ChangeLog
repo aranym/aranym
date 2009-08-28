@@ -1,6 +1,8 @@
 2009/08/27 - Petr
-- input.cpp: Philipp says positioning the cursor at -1 offset when releasing
-  mouse causes troubles on Win and OSX thus the offset code is disabled.
+- input.cpp: Vicent + Philipp report that positioning the cursor
+  at -1 offset when releasing mouse grab causes troubles on Win and OSX
+  thus the offset code is disabled. It wasn't needed anyway as the mouse
+  autograb is disabled now.
 
 
 2009/08/25 - Petr
