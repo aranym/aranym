@@ -242,7 +242,7 @@ gen_nextibyte (void)
     return buffer;
 }
 
-#ifdef WORDS_BIGENDIAN
+#ifdef USE_JIT_FPU
 static void
 swap_opcode (void)
 {
