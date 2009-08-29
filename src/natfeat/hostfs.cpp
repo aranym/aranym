@@ -1038,8 +1038,9 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 			closedir( dh );
 	}
 #ifdef DEBUG_FILENAMETRANSFORMATION
-	else
+	else {
 		DFNAME(bug(" (stat OK)"));
+	}
 #endif
 
 	return true;
@@ -1657,7 +1658,7 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 				*slash != '\\' ) ;
 
 		// get the path part (in front of the slash)
-		// and prepend it to the link taget (if fits)
+		// and prepend it to the link target (if fits)
 		int plen = slash - pathname + 1;
 		if ( plen && plen + (int)strlen(target) <= len ) {
 			memmove( target + plen, target, strlen(target)+1 );	
@@ -2087,10 +2088,33 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 	ExtDrive *drv = findDrive(dir, target);
 	if ( drv ) {
 		int len = strlen( drv->hostRoot );
-		strcpy( fpathName, drv->mountPoint );
-		if ( target[ len ] != '/' )
-			strcat( fpathName, "/" );
-		strcat( fpathName, &target[ len ] );
+		// check to see if both link and its target are on the same GEMDOS drive
+		if ( drv == findDrive(dir, fpathName) ) {
+			// return a relative path of the symlink:
+			// first find out the common part of the path
+			int cl = len;
+			while(fpathName[cl] == target[cl]) cl++;
+			// now count the remaining depth of the source
+			D2(bug("HOSTFS: fs_readlink relative: source '%s' and dest '%s'", fpathName+cl, target+cl));
+			int srcdepth = 0;
+			for(int i=strlen(fpathName); i>=cl; i--) {
+				if (fpathName[i] == '/' || fpathName[i] == '\\')
+					srcdepth++;
+			}
+			// prepend as many "../" as is the source depth
+			*fpathName = '\0';
+			for(int i=0; i<srcdepth; i++)
+				strcat(fpathName, "../");
+			D2(bug("HOSTFS: fs_readlink relative: prepend '%s'", fpathName));
+			// at last append the destination
+			strcat( fpathName, target + len + 1 );
+		}
+		else {
+			strcpy( fpathName, drv->mountPoint );
+			if ( target[ len ] != '/' )
+				strcat( fpathName, "/" );
+			strcat( fpathName, &target[ len ] );
+		}
 	} else {
 		strcpy( fpathName, target );
 	}

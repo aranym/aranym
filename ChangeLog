@@ -1,4 +1,9 @@
 2009/08/29 - Petr
+- natfeat/hostfs.cpp: symlinks with both link and target on the same
+  GEMDOS drive are now returned as relative (to please Vincent :-)
+
+
+2009/08/28 - Petr
 - natfeat/hostfs.cpp: Vincent found out that an invalid hostFS symlink
   breaks the readdir() because it calls stat() and fails eventually.
   Changing it to 'lstat()' fixes it. Also the lstat() for finding out
