@@ -1766,9 +1766,20 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		cookie2Pathname(&dirh->fc, dirEntry->d_name, fpathName);
 
 		struct stat statBuf;
-		if ( stat(fpathName, &statBuf) )
+		if ( lstat(fpathName, &statBuf) )
 			return errnoHost2Mint(errno,TOS_EFILNF);
 
+		/* Vincent identified that the above lstat is used just for finding out
+		   the st_ino though the same inode number should already be in the
+		   dirEntry struct. I don't know why lstat() (originally stat() but that
+		   one was failing for invalid host symlinks) was used instead of
+		   fetching the value from dirEntry directly so I am adding a check here
+		   that will be watching whether the lstat's inode number ever differs
+		   from the dirEntry one. When we are sure they are always identical
+		   we can remove the whole lstat call */
+		if (dirEntry->d_ino != statBuf.st_ino) {
+			panicbug("HostFS: d_ino != st_ino! %d vs %d on '%s'", dirEntry->d_ino, statBuf.st_ino, fpathName);
+		}
 		WriteInt32( (uint32)buff, statBuf.st_ino );
 		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
 	} else {

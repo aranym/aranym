@@ -1,3 +1,11 @@
+2009/08/29 - Petr
+- natfeat/hostfs.cpp: Vincent found out that an invalid hostFS symlink
+  breaks the readdir() because it calls stat() and fails eventually.
+  Changing it to 'lstat()' fixes it. Also the lstat() for finding out
+  the inode number might be completely unnecessary. Watch out for
+  "d_ino != st_ino" panic message when using HostFS...
+
+
 2009/08/27 - Petr
 - input.cpp: Vicent + Philipp report that positioning the cursor
   at -1 offset when releasing mouse grab causes troubles on Win and OSX
