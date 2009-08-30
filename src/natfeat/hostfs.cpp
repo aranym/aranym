@@ -1779,7 +1779,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		   from the dirEntry one. When we are sure they are always identical
 		   we can remove the whole lstat call */
 		if (dirEntry->d_ino != statBuf.st_ino) {
-			panicbug("HostFS: d_ino != st_ino! %d vs %d on '%s'", dirEntry->d_ino, statBuf.st_ino, fpathName);
+			panicbug("HOSTFS: xfs_readdir d_ino(%lld) != st_ino(%lld) for '%s'", dirEntry->d_ino, statBuf.st_ino, fpathName);
 		}
 		WriteInt32( (uint32)buff, statBuf.st_ino );
 		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
@@ -2042,6 +2042,8 @@ int32 HostFs::xfs_getdev( XfsCookie *fc, memptr devspecial )
 
 HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
 {
+	D(bug("HOSTFS:findDrive(%s)", pathname));
+
 	// absolute FreeMiNT's link stored in the HOSTFS
 	if ( pathname[0] && pathname[1] == ':' )
 		return NULL;
@@ -2056,18 +2058,24 @@ HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
 			 !strncmp( it->second->hostRoot, pathname, hrLen ) ) )
 	{
 		// preference failed -> search all
+		D(bug("HOSTFS:findDrive(%s) - not found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 		it = mounts.begin();
 		while (it != mounts.end()) {
+			D(bug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 			hrLen = strlen( it->second->hostRoot );
 			if ( hrLen <= toNmLen &&
-				 !strncmp( it->second->hostRoot, pathname, hrLen ) )
+				 !strncmp( it->second->hostRoot, pathname, hrLen ) ) {
+				D(bug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 				break;
+			}
 			it++;
 		}
 	}
 
 	if ( it != mounts.end() )
 		return it->second;
+
+	D(bug("HOSTFS:findDrive(%s) - not found!)", pathname));
 	return NULL;
 }
 
