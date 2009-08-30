@@ -1,3 +1,29 @@
+2009/08/30 - Petr
+- natfeat/hostfs.cpp changes and bugfixes:
+  1) hostRoot must contain an absolute filepath, otherwise findDrive()
+     fails when searching for a symlink target and that makes all symlinks
+     appearing as normal files (due to a feature of converting symlinks
+     pointing outside of mapped paths to real files - a controversial
+     thing to say the least (read FreeMiNT mailing list archive)).
+     Used realpath() for converting the hostRoot, hopefully it works
+     everywhere.
+
+  2) xfs_readdir() now uses the inodes from dirEntries instead of lstat.
+     Let's see if anything breaks. From my testing the dirEntry->d_ino
+     differs from statBuf.st_ino only if the file is a mount point
+     on the host and then the d_ino contains a "better" number than the
+     st_ino, IMHO (st_ino is 1 or 2 in such case).
+
+  3) host_readlink() converts relative symlinks to absolute ones. Don't
+     know if it's necessary but I've used the realpath() for that instead
+     of original implementation consisting of chdir() + getcwd().
+
+  4) actually since the hostRoot is absolute filepath I think the
+     host_readlink() will always get an absolute 'pathname' so the
+     double conversion of the target to absolute path is unnecessary.
+     realpath() removed.
+
+
 2009/08/30 - Andreas
 - cpummu.cpp: correct handling of indirect descriptors during table
   lookup, there are no bits beside the PDT and the descriptor address.
