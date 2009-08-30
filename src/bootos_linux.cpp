@@ -364,7 +364,9 @@ void *LinuxBootOs::loadFile(char *filename, unsigned long *length)
 		*length += unc_len;
 		unc_len = gzread(handle, buffer, MAXREAD_BLOCK_SIZE);
 	}
-	gzseek(handle, 0, SEEK_SET); 	
+	// Avoid gzseek, it is often broken with LFS which we enable by
+	// default
+	gzrewind(handle);
 	D(bug("lilo: uncompressing '%s'", filename));
 	D(bug("lilo:  uncompressed length: %d bytes", *length));
 

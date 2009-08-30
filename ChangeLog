@@ -2,6 +2,7 @@
 - cpummu.cpp: correct handling of indirect descriptors during table
   lookup, there are no bits beside the PDT and the descriptor address.
   Reported by Toni Wilen.
+- bootos_linux.cpp: avoid often broken gzseek
 
 
 2009/08/29 - Petr
