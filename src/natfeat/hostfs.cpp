@@ -22,7 +22,6 @@
  */
 
 #include "sysdeps.h"
-#include <assert.h>
 
 #ifdef HOSTFS_SUPPORT
 
@@ -1663,13 +1662,17 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 		if ( plen && plen + (int)strlen(target) <= len ) {
 			memmove( target + plen, target, strlen(target)+1 );	
 			memmove( target, pathname, plen );
-		} else {
+		}
+		else {
 			panicbug( "HOSTFS: host_readlink: relative link doesn't fit the len '%s'\n", target );
 			errno = ENOMEM;
 			return NULL;
 		}
 
 		// find the last dirseparator
+		// PS 090830: this is a very lame method of detecting whether there is a path
+		// separator somewhere in the middle of the 'target'. Why not strrchr? And isn't
+		// this information already stored in the 'plen' var?!?
 		slash = &target[strlen(target)];
 		while ( --slash >= target &&
 				*slash != '/' &&
@@ -1678,19 +1681,12 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 
 		if ( slash > target ) {
 			// if relative then we need an absolute path here
-			char currdir[MAXPATHNAMELEN];
-			assert(getcwd(currdir, sizeof(currdir)) != NULL);
-
-			char abspath[MAXPATHNAMELEN];
-			strncpy(abspath, target, slash-target);
-			abspath[slash-target] = '\0';
-			assert(chdir(abspath) == 0);
-			assert(getcwd(abspath, sizeof(abspath)) != NULL);
-
-			assert(chdir(currdir) == 0);
-
-			strncat(abspath, slash-1, MAXPATHNAMELEN-strlen(abspath));
-			strncpy(target, abspath, len);
+			// PS 090830: I think the path is always absolute since I've made
+			// the hostRoot an absolute path today. With a relative hostRoot
+			// the findDrive() was failing in certain cases...
+			char tmp[PATH_MAX];
+			strncpy(target, realpath(target, tmp), len);
+			target[len-1] = '\0';
 		}
 	}
 
@@ -1766,22 +1762,12 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 		char fpathName[MAXPATHNAMELEN];
 		cookie2Pathname(&dirh->fc, dirEntry->d_name, fpathName);
 
+/*
 		struct stat statBuf;
 		if ( lstat(fpathName, &statBuf) )
 			return errnoHost2Mint(errno,TOS_EFILNF);
-
-		/* Vincent identified that the above lstat is used just for finding out
-		   the st_ino though the same inode number should already be in the
-		   dirEntry struct. I don't know why lstat() (originally stat() but that
-		   one was failing for invalid host symlinks) was used instead of
-		   fetching the value from dirEntry directly so I am adding a check here
-		   that will be watching whether the lstat's inode number ever differs
-		   from the dirEntry one. When we are sure they are always identical
-		   we can remove the whole lstat call */
-		if (dirEntry->d_ino != statBuf.st_ino) {
-			panicbug("HOSTFS: xfs_readdir d_ino(%lld) != st_ino(%lld) for '%s'", dirEntry->d_ino, statBuf.st_ino, fpathName);
-		}
-		WriteInt32( (uint32)buff, statBuf.st_ino );
+*/
+		WriteInt32( (uint32)buff, dirEntry->d_ino /* statBuf.st_ino */ );
 		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
@@ -2058,27 +2044,27 @@ HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
 			 !strncmp( it->second->hostRoot, pathname, hrLen ) ) )
 	{
 		// preference failed -> search all
-		panicbug("HOSTFS:findDrive(%s) - NOT FOUND on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
+		D2(bug("HOSTFS:findDrive(%s) - NOT FOUND on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 		it = mounts.begin();
 		while (it != mounts.end()) {
-			panicbug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
+			D2(bug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 			hrLen = strlen( it->second->hostRoot );
 			if ( hrLen <= toNmLen &&
 				 !strncmp( it->second->hostRoot, pathname, hrLen ) ) {
-				panicbug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
+				D(bug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 				break;
 			}
 			it++;
 		}
 	}
 	else {
-		panicbug("HOSTFS:findDrive(%s) found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
+		D2(bug("HOSTFS:findDrive(%s) found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
 	}
 
 	if ( it != mounts.end() )
 		return it->second;
 
-	panicbug("HOSTFS:findDrive(%s) NOT FOUND!)", pathname);
+	D(bug("HOSTFS:findDrive(%s) NOT FOUND!)", pathname));
 	return NULL;
 }
 
@@ -2543,7 +2529,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
 	if (dnum >= 0 && dnum < maxdnum) {
-		drv->hostRoot = strdup( bx_options.aranymfs[dnum].rootPath );
+		drv->hostRoot = realpath( bx_options.aranymfs[dnum].rootPath, NULL );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	} else {
 		dnum = -1; // invalidate dnum
@@ -2553,9 +2539,11 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		char fhostroot[MAXPATHNAMELEN];
 		Atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
 
-		drv->hostRoot = strdup( fhostroot );
+		drv->hostRoot = realpath( fhostroot, NULL );
 		drv->halfSensitive = halfSensitive;
 	}
+
+/* --- realpath resolves symlinks so the following code is unnecesary ---
 
 	// if hostRoot is a symlink then follow it
 	struct stat statBuf;
@@ -2566,7 +2554,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 			drv->hostRoot = strdup( target );
 		}
 	}
-
+*/
 	// no rootPath -> do not map the drive
 	if ( !strlen(drv->hostRoot) ) {
 		delete drv;
