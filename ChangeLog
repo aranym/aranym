@@ -1,3 +1,9 @@
+2009/08/30 - Andreas
+- cpummu.cpp: correct handling of indirect descriptors during table
+  lookup, there are no bits beside the PDT and the descriptor address.
+  Reported by Toni Wilen.
+
+
 2009/08/29 - Petr
 - natfeat/hostfs.cpp: symlinks with both link and target on the same
   GEMDOS drive are now returned as relative (to please Vincent :-)

@@ -454,9 +454,8 @@ uaecptr mmu_translate(uaecptr addr, int super, int data, int write)
 static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write)
 {
 	uae_u32 desc, desc_addr, wp;
-	int i, indirect;
+	int i;
 
-	indirect = 0;
 	wp = 0;
 	desc = super ? regs.srp : regs.urp;
 
@@ -494,24 +493,15 @@ static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write
 		desc_addr = (desc & MMU_PTR_PAGE_ADDR_MASK_4) | i;
 	}
 
-get_page_descriptor:
 	desc = phys_get_long(desc_addr);
-	if ((desc & 1) == 0) {
-		if ((desc & 2) == 0) {
-			D(bug("MMU: invalid page descriptor log=%08lx desc=%08lx @%08lx", addr, desc, desc_addr));
-			return desc;
-		}
+	if ((desc & 3) == 2) {
 		/* indirect */
-		if (indirect) {
-			D(bug("MMU: double indirect descriptor log=%lx descriptor @ %lx", addr, desc_addr));
-			return desc;
-		}
-		wp |= desc;
-		if ((desc & MMU_DES_USED) == 0)
-			phys_put_long(desc_addr, desc | MMU_DES_USED);
 		desc_addr = desc & MMU_PAGE_INDIRECT_MASK;
-		indirect = 1;
-		goto get_page_descriptor;
+		desc = phys_get_long(desc_addr);
+	}
+	if ((desc & 1) == 0) {
+		D(bug("MMU: invalid page descriptor log=%08lx desc=%08lx @%08lx", addr, desc, desc_addr));
+		return desc;
 	}
 
 	desc |= wp & MMU_DES_WP;
