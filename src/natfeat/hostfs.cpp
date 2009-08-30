@@ -1668,7 +1668,14 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 			errno = ENOMEM;
 			return NULL;
 		}
+
+		// convert to real path (example: "/tmp/../file" -> "/file")
+		char tmp[PATH_MAX];
+		strncpy(target, realpath(target, tmp), len);
+		target[len-1] = '\0';
 	}
+
+	D(bug("host_readlink(%s, %s)", pathname, target));
 
 	return target;
 }
