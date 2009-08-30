@@ -2058,24 +2058,27 @@ HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
 			 !strncmp( it->second->hostRoot, pathname, hrLen ) ) )
 	{
 		// preference failed -> search all
-		D(bug("HOSTFS:findDrive(%s) - not found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
+		panicbug("HOSTFS:findDrive(%s) - NOT FOUND on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
 		it = mounts.begin();
 		while (it != mounts.end()) {
-			D(bug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
+			panicbug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
 			hrLen = strlen( it->second->hostRoot );
 			if ( hrLen <= toNmLen &&
 				 !strncmp( it->second->hostRoot, pathname, hrLen ) ) {
-				D(bug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
+				panicbug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
 				break;
 			}
 			it++;
 		}
 	}
+	else {
+		panicbug("HOSTFS:findDrive(%s) found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot);
+	}
 
 	if ( it != mounts.end() )
 		return it->second;
 
-	D(bug("HOSTFS:findDrive(%s) - not found!)", pathname));
+	panicbug("HOSTFS:findDrive(%s) NOT FOUND!)", pathname);
 	return NULL;
 }
 
