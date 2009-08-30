@@ -1648,7 +1648,7 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 	// put the trailing \0
 	target[rv] = '\0';
 
-	// relative host fs symlinks
+	// relative host fs symlinks are converted to absolute ones (why?? PS 090830)
 	if ( target[0] != '/' && target[0] != '\\' && target[1] != ':' ) {
 		// find the last dirseparator
 		const char *slash = &pathname[strlen(pathname)];
@@ -1667,26 +1667,6 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 			panicbug( "HOSTFS: host_readlink: relative link doesn't fit the len '%s'\n", target );
 			errno = ENOMEM;
 			return NULL;
-		}
-
-		// find the last dirseparator
-		// PS 090830: this is a very lame method of detecting whether there is a path
-		// separator somewhere in the middle of the 'target'. Why not strrchr? And isn't
-		// this information already stored in the 'plen' var?!?
-		slash = &target[strlen(target)];
-		while ( --slash >= target &&
-				*slash != '/' &&
-				*slash != '\\' ) ;
-		slash++;
-
-		if ( slash > target ) {
-			// if relative then we need an absolute path here
-			// PS 090830: I think the path is always absolute since I've made
-			// the hostRoot an absolute path today. With a relative hostRoot
-			// the findDrive() was failing in certain cases...
-			char tmp[PATH_MAX];
-			strncpy(target, realpath(target, tmp), len);
-			target[len-1] = '\0';
 		}
 	}
 
