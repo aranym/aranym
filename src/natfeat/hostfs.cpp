@@ -61,6 +61,20 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
+#ifndef HAVE_CANONICALIZE_FILE_NAME
+char *canonicalize_file_name(const char *filename)
+{
+#ifdef PATH_MAX
+	int path_max = PATH_MAX;
+#else
+	int path_max = pathconf(filename, _PC_PATH_MAX);
+	if (path_max <= 0)
+		path_max = 4096;
+#endif
+	return realpath(filename, (char *)malloc(path_max));
+}
+#endif
+
 // TODO FIXME the following POSIX emulation for MINGW32/WinAPI should be moved elsewhere...
 #ifdef __MINGW32__
 #define S_IXOTH	0
@@ -121,9 +135,7 @@ int statfs(const char *path, struct statfs *buf)
 
   errno = 0;
 
-  // FIXME add realpath (the strcpy is just a hack!)
-  // realpath(path, resolved_path);
-  strcpy(resolved_path, path);
+  realpath(path, resolved_path);
 
   long sectors_per_cluster, bytes_per_sector;
   if(!GetDiskFreeSpaceA(resolved_path, (DWORD *)&sectors_per_cluster,
@@ -1670,9 +1682,10 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 		}
 
 		// convert to real path (example: "/tmp/../file" -> "/file")
-		char tmp[PATH_MAX];
-		strncpy(target, realpath(target, tmp), len);
+		char *tmp = canonicalize_file_name(target);
+		strncpy(target, tmp, len);
 		target[len-1] = '\0';
+		free(tmp);
 	}
 
 	D(bug("host_readlink(%s, %s)", pathname, target));
@@ -2516,7 +2529,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
 	if (dnum >= 0 && dnum < maxdnum) {
-		drv->hostRoot = realpath( bx_options.aranymfs[dnum].rootPath, NULL );
+		drv->hostRoot = canonicalize_file_name( bx_options.aranymfs[dnum].rootPath );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	} else {
 		dnum = -1; // invalidate dnum
@@ -2526,7 +2539,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		char fhostroot[MAXPATHNAMELEN];
 		Atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
 
-		drv->hostRoot = realpath( fhostroot, NULL );
+		drv->hostRoot = canonicalize_file_name( fhostroot );
 		drv->halfSensitive = halfSensitive;
 	}
 
