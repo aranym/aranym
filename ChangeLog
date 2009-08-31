@@ -1,3 +1,11 @@
+2009/08/31 - Petr
+- natfeat/hostfs.cpp: realpath() with GNU extension that allows passing in
+  NULL instead of a preallocated buffer and which fails on Mac OSX was
+  changed to canonicalize_file_name() that was reimplemented for platforms
+  where it's undefined. The configure.ac has yet to be updated with check
+  for this.
+
+
 2009/08/30 - Petr
 - natfeat/hostfs.cpp changes and bugfixes:
   1) hostRoot must contain an absolute filepath, otherwise findDrive()
