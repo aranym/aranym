@@ -2093,7 +2093,10 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 			// return a relative path of the symlink:
 			// first find out the common part of the path
 			int cl = len;
-			while(fpathName[cl] == target[cl]) cl++;
+			while(fpathName[cl] && fpathName[cl] == target[cl]) ++cl;
+			while(cl > 0 && fpathName[cl] !='/' && fpathName[cl] != '\\') --cl;
+			++cl;
+
 			// now count the remaining depth of the source
 			D2(bug("HOSTFS: fs_readlink relative: source '%s' and dest '%s'", fpathName+cl, target+cl));
 			int srcdepth = 0;
@@ -2107,7 +2110,7 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 				strcat(fpathName, "../");
 			D2(bug("HOSTFS: fs_readlink relative: prepend '%s'", fpathName));
 			// at last append the destination
-			strcat( fpathName, target + len + 1 );
+			strcat( fpathName, target + cl );
 		}
 		else {
 			strcpy( fpathName, drv->mountPoint );
