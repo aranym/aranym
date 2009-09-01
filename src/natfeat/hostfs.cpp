@@ -71,7 +71,10 @@ char *canonicalize_file_name(const char *filename)
 	if (path_max <= 0)
 		path_max = 4096;
 #endif
-	return realpath(filename, (char *)malloc(path_max));
+	char *tmp = (char *)malloc(path_max);
+	char *resolved = strdup(realpath(filename, tmp));
+	free(tmp);
+	return resolved;
 }
 #endif
 
