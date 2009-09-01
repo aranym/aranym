@@ -1,3 +1,8 @@
+2009/09/01 - Petr
+- natfeat/hostfs.cpp: the conversion from absolute to relative symlinks
+  (added recently) was broken. Fixed.
+
+
 2009/08/31 - Petr
 - natfeat/hostfs.cpp: realpath() with GNU extension that allows passing in
   NULL instead of a preallocated buffer and which fails on Mac OSX was
