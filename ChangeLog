@@ -1,3 +1,8 @@
+2009/09/03 - Patrice
+- nfaudio: Revert back to 0.9.8 version. Zmagxsnd.prg assumes 44100 KHz stereo
+  16 bits device, so you must set this configuration in Aranym config file.
+
+
 2009/09/03 - Philipp
 - Fixed ALT+mouse click problem by setting environment variable 
   SDL_HAS3BUTTONMOUSE in input.cpp InputInit for MacAranym.

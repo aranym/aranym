@@ -25,8 +25,6 @@
 #include "cpu_emulation.h"
 #include "nfaudio.h"
 #include "host.h"
-#include "host_audio.h"
-#include "audio_conv.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -35,81 +33,78 @@
 #include <cstring>
 #include <SDL.h>
 
-/* Zmagxsnd buffer size on Atari side */
-#define ATARI_BUF_SIZE 4096
-
 extern "C" {
 	static SDL_audiostatus playing;
-	static AudioConv *audioConv;
-	static uint32	start_replay, current_replay, end_replay;
+	static SDL_AudioCVT	cvt;
+	static uint32 cvt_buf_len;
 
 	static void audio_callback(void *userdata, uint8 * stream, int len)
 	{
-		if (playing!=SDL_AUDIO_PLAYING)
+		if ((playing!=SDL_AUDIO_PLAYING) || (!userdata))
 			return;
 
 		AUDIOPAR *par = (AUDIOPAR *)userdata;
-		if (!par->buffer) {
+
+		if (!par->buffer)
 			return;
+
+		uint8 *buffer = Atari2HostAddr(par->buffer);
+
+		if (cvt.needed) {
+			/* Convert Atari audio to host audio */
+			par->len = (uint32 ) (len / cvt.len_ratio);
+
+			/* Current buffer too small ? */
+			if (cvt_buf_len<par->len) {
+				if (cvt.buf) {
+					free(cvt.buf);
+					cvt.buf=NULL;
+				}
+			}
+
+			/* Allocate needed buffer */
+			if (cvt.buf==NULL) {
+				cvt.buf=(uint8 *)malloc(par->len);
+				cvt_buf_len = par->len;
+			}
+
+			memcpy(cvt.buf, buffer, par->len);
+			cvt.len = par->len;
+			SDL_ConvertAudio(&cvt);
+			SDL_MixAudio(stream, cvt.buf, len, par->volume);
+		} else {
+			par->len = len;
+			SDL_MixAudio(stream, buffer, len, par->volume);
 		}
 
-		Uint8 *dest = stream;
-		int dest_len = len;
-		int trigger_interrupt = 0;
-
-		while (dest_len>0) {
-			int src_len = end_replay-current_replay;
-			int dst_len = dest_len;
-
-			audioConv->doConversion(Atari2HostAddr(current_replay), &src_len, dest, &dst_len);
-
-			dest_len -= dst_len;
-			dest += dst_len;
-			current_replay += src_len;
-
-			/* End of audio frame ? */
-			if (current_replay<end_replay)
-				continue;
-
-			trigger_interrupt = 1;
-			current_replay = start_replay;	/* wrap to start of buffer */
-		}
-
-		if (trigger_interrupt) {
-			TriggerInt5();		// Audio is at interrupt level 5
-		}
+		TriggerInt5();		// Audio is at interrupt level 5
 	}
 };
 
 AUDIODriver::AUDIODriver()
 {
-	SDL_LockAudio();
-	audioConv = new AudioConv();
-	SDL_UnlockAudio();
-
+	cvt.buf = NULL;
+	cvt_buf_len = 0;
 	reset();
-
 	host->audio.AddCallback(audio_callback, &AudioParameters);
 }
 
 AUDIODriver::~AUDIODriver()
 {
 	host->audio.RemoveCallback(audio_callback);
-
-	SDL_LockAudio();
-	delete audioConv;
-	audioConv = NULL;
-	SDL_UnlockAudio();
-
 	reset();
 }
 
 void AUDIODriver::reset()
 {
 	playing = SDL_AUDIO_STOPPED;
-	start_replay = current_replay = end_replay = 0;
-	AudioParameters.buffer = NULL;
+	AudioParameters.buffer = 0;
 	AudioParameters.len = 0;
+	AudioParameters.volume = SDL_MIX_MAXVOLUME;
+	if (cvt.buf) {
+		free(cvt.buf);
+		cvt.buf = NULL;
+	}
 	locked = false;
 }
 
@@ -134,30 +129,21 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 			D(bug("Audio: Version"));
 			ret = 0x0061;
 			break;
-		case 1:		// OpenAudio(int freq, int format, int channels, int length, void *buffer)
-			{
-				Uint16 src_fmt = getParameter(1);
-				int src_chans = getParameter(2);
-				int src_freq = getParameter(0);
-				int skip = ((src_fmt & 0xff)>>3)*src_chans;
-
-				D(bug("Audio: OpenAudio: 0x%08x, format 0x%04x, chans %d, freq %d Hz",
-					getParameter(4), src_fmt, src_chans, src_freq
-				));
-
-				SDL_LockAudio();
-				audioConv->setConversion(src_fmt, src_chans, src_freq, 0, skip,
-					host->audio.obtained.format, host->audio.obtained.channels,
-					host->audio.obtained.freq);
-				AudioParameters.buffer = getParameter(4);
-				AudioParameters.freq = src_freq;
-				AudioParameters.len = ATARI_BUF_SIZE;
-				start_replay = current_replay = AudioParameters.buffer;
-				end_replay = start_replay + ATARI_BUF_SIZE;
-				playing = SDL_AUDIO_PAUSED;
-				SDL_UnlockAudio();
-				ret = (uint16)getParameter(1);
-			}
+		case 1:					// OpenAudio:
+			D(bug("Audio: OpenAudio: 0x%08x", getParameter(4)));
+			SDL_BuildAudioCVT(&cvt,
+				(uint16)getParameter(1),
+				(uint8)getParameter(2),
+				getParameter(0),
+				host->audio.obtained.format,
+				host->audio.obtained.channels,
+				host->audio.obtained.freq
+			);
+			AudioParameters.buffer = getParameter(4);
+			AudioParameters.freq = getParameter(0);
+			AudioParameters.len = 0;
+			playing = SDL_AUDIO_PAUSED;
+			ret = (uint16)getParameter(1);
 			break;
 
 		case 2:					// CloseAudio
@@ -167,7 +153,11 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 
 		case 3:					// PauseAudio
 			D(bug("Audio: PauseAudio: %d", getParameter(0)));
-			playing = ((getParameter(0)==0) ? SDL_AUDIO_PLAYING : SDL_AUDIO_PAUSED);
+			if (getParameter(0)==0) {
+				playing = SDL_AUDIO_PLAYING;
+			} else {
+				playing = SDL_AUDIO_PAUSED;
+			}
 			break;
 
 		case 4:					// AudioStatus
@@ -176,10 +166,8 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 			break;
 
 		case 5:					// AudioVolume
-			D(bug("Audio: AudioVolume: %d", (uint16)getParameter(0)));
-			SDL_LockAudio();
-			audioConv->setVolume((uint16)getParameter(0));
-			SDL_UnlockAudio();
+			AudioParameters.volume = (uint16)getParameter(0);
+			D(bug("Audio: AudioVolume: %d", AudioParameters.volume));
 			break;
 
 		case 6:					// LockAudio         
