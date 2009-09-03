@@ -1,3 +1,8 @@
+2009/09/03 - Petr
+- include/input.h: add SDLK_MODE to allowed ARAnyM hotkey modifiers.
+- gui-sdl/dlgHotkeys.cpp: SDLK_MODE is shown as "MO"
+
+
 2009/09/01 - Petr
 - natfeat/hostfs.cpp: the conversion from absolute to relative symlinks
   (added recently) was broken. Fixed.

@@ -117,6 +117,7 @@ char *displayKeysym(SDL_keysym keysym, char *buffer)
 	if (mods & KMOD_RALT) strcat(buffer, "RA+");
 	if (mods & KMOD_LMETA) strcat(buffer, "LM+");
 	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
+	if (mods & KMOD_MODE) strcat(buffer, "MO+");
 	if (keysym.sym) {
 		strcat(buffer, SDL_GetKeyName(keysym.sym));
 	} else {

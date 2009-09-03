@@ -7,7 +7,7 @@
 
 #include <SDL.h>
 
-#define HOTKEYS_MOD_MASK	(KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_META)
+#define HOTKEYS_MOD_MASK	(KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_META | KMOD_MODE)
 
 void InputInit();
 void InputReset();
