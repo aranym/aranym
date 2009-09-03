@@ -206,6 +206,11 @@ void InputInit()
 	// capslockState (yes, 'false' is correct)
 	capslockState = false;
 
+#ifdef OS_darwin
+	// Make sure ALT+click is not interpreted as SDL_MIDDLE_BUTTON
+	SDL_putenv("SDL_HAS3BUTTONMOUSE=1");
+#endif
+	
 	/* Open joysticks */
 	OPEN_JOYSTICK(bx_options.joysticks.ikbd0, ARANYM_JOY_IKBD0);
 	OPEN_JOYSTICK(bx_options.joysticks.ikbd1, ARANYM_JOY_IKBD1);
