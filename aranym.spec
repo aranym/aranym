@@ -1,7 +1,7 @@
 # generic defines used by all distributions.
 #
 %define name	aranym
-%define ver	0.9.8beta
+%define ver	0.9.9beta
 %define _rel	1
 %define copy	GPL
 %define joy Petr Stehlik <pstehlik@sophics.cz>
@@ -103,7 +103,8 @@ BuildRoot:	/var/tmp/%{name}-root
 
 %description
 ARAnyM is a software only TOS clone - a virtual machine that allows you
-to run TOS/FreeMiNT/MagiC operating systems and TOS/GEM applications.
+to run TOS, EmuTOS, FreeMiNT, MagiC and Linux-m68k operating systems
+and their applications.
 
 Authors:
 Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik, Johan Klockars,
@@ -238,6 +239,9 @@ desktop-file-install \
 %endif
 
 %changelog
+* Sat Sep 04 2009 Petr Stehlik <pstehlik@sophics.cz>
+New ARAnyM release.
+
 * Sat Apr 25 2009 Petr Stehlik <pstehlik@sophics.cz>
 New ARAnyM release.
 
