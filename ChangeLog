@@ -1,5 +1,10 @@
+2009/09/04 - Petr
+- configure.ac: added check for canonicalize_file_name()
+- README, NEWS, tools/build_cygwin.sh: usual updates for a new release
+
+
 2009/09/03 - Patrice
-- nfaudio: Revert back to 0.9.8 version. Zmagxsnd.prg assumes 44100 KHz stereo
+- nfaudio: Revert back to 0.9.8 version. Zmagxsnd.prg assumes 44100 Hz stereo
   16 bits device, so you must set this configuration in Aranym config file.
 
 
@@ -55,6 +60,7 @@
 - cpummu.cpp: correct handling of indirect descriptors during table
   lookup, there are no bits beside the PDT and the descriptor address.
   Reported by Toni Wilen.
+
 - bootos_linux.cpp: avoid often broken gzseek
 
 

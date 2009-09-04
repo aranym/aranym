@@ -1,3 +1,25 @@
+2009/09/05 - version 0.9.9beta released
+
+ This time mostly bugfixes:
+
+ o fixed possible crash in HostFS when quitting ARAnyM (not serious)
+ o fixed possible crash due to bug in libSDL up to v1.2.13 (very serious)
+ o fixed some redrawing problems in 8 and 16 color depths with soft NfVDI
+ o fixed all compile time warnings and Categories entry in aranym.desktop
+ o fixed weirdness when mouse pointer was leaving the window on Win and OSX
+ o fixed problem with invalid HostFS symlink breaking directory list
+ o improvement: HostFS symlinks are now shown as relative if possible 
+ o fixed indirect descriptors handling in MMU
+ o fixed HostFS symlinks for certain path configurations
+ o added Mode key in the set of ARAnyM hotkey modifiers
+ o fixed Alt+mouse click problem on Mac OSX
+
+ If you found ARAnyM crashing previously when moving windows around
+ or doing any other activity where VDI had to blit screen areas then
+ please upgrade to this version ASAP. We've added a workaround for
+ a serious bug in the libSDL that is causing the weird ARAnyM crashes.
+
+
 2009/04/25 - version 0.9.8beta released
 
  o CPU: fixed TRAPcc and FTRAPcc instructions (for Guillaume's mplayer :-)

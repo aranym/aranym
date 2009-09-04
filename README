@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.8beta released on 2009/04/25
+      version 0.9.9beta released on 2009/09/05
 
 
  1) License
@@ -44,7 +44,7 @@ where TOS/GEM applications could continue to live forever.
    o extended keyboard and mouse support (including mouse wheel)
    o direct access to host file system via BetaDOS and MiNT xfs drivers
    o networking using ethernet emulation with a driver for MiNT-Net
-   o TOS 4.04, EmuTOS or Linux-m68k as the boot operating system
+   o TOS 4.04, EmuTOS, MagiC or Linux-m68k as the boot operating system
    o runs with FreeMiNT, MagiC, and any other operating system that runs
      also on real Atari computer.
    o Native CD-ROM access (under Linux, other OS: audio CD only), without
