@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Easy ARAnyM compilation under Cygwin
-# (c) 2003-2007 Xavier Joubert for the ARAnyM team
+# (c) 2003-2009 Xavier Joubert for the ARAnyM team
 #
 #
 # This script allows to easily build ARAnyM under Cygwin. The problem
@@ -45,7 +45,7 @@
 # Any parameter given to build-cygwin.sh will be transmitted to ARAnyM's
 # configure script, so you can run "./build-cygwin.sh --enable-fullmmu"
 # if you want to build with MMU support. Run
-# "aranym-build/src/Unix/configure --help" after first build for a list
+# "aranym-build/configure --help" after first build for a list
 # of configure options for ARAnyM.
 #
 # If you happen to modify some sources, you can run "./build-cygwin.sh"
@@ -77,7 +77,7 @@
 
 #----------------------------------------------
 # Edit this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.12
+SDL_SOURCES=${PWD}/SDL-1.2.13
 SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.6
 ARANYM_SOURCES=${PWD}/aranym
 #----------------------------------------------
