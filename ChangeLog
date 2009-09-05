@@ -1,10 +1,18 @@
 
-*** CVS tagged as ARANYM_0_9_9_BETA
+*** CVS tagged as ARANYM_0_9_9
+
+2009/09/05 - Petr
+- natfeat/hostfs.cpp: fixed crash when hostRoot path is empty (happens
+  when BetaDOS maps a drive but ARAnyM config does not). Thanks for
+  bug report to Petr Stehlik junior :-)
+
 
 2009/09/05 - Petr
 - input.cpp: Right Shift was not detected properly at startup. Thanks for
   indirect bug report to Vincent :-)
 
+
+*** CVS tagged as ARANYM_0_9_9_BETA
 
 2009/09/04 - Petr
 - configure.ac: added check for canonicalize_file_name()

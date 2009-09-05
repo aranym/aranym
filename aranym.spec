@@ -239,7 +239,7 @@ desktop-file-install \
 %endif
 
 %changelog
-* Sat Sep 04 2009 Petr Stehlik <pstehlik@sophics.cz>
+* Sat Sep 05 2009 Petr Stehlik <pstehlik@sophics.cz>
 New ARAnyM release.
 
 * Sat Apr 25 2009 Petr Stehlik <pstehlik@sophics.cz>
