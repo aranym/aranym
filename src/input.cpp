@@ -482,6 +482,7 @@ static int findScanCodeOffset(SDL_keysym keysym)
 		case SDLK_n:	offset = scanPC - 0x31; break;
 		case SDLK_m:	offset = scanPC - 0x32; break;
 		case SDLK_CAPSLOCK:	offset = scanPC - 0x3a; break;
+		case SDLK_RSHIFT:	offset = scanPC - 0x36; break;
 		case SDLK_LSHIFT:	offset = scanPC - 0x2a; break;
 		case SDLK_LCTRL:	offset = scanPC - 0x1d; break;
 		case SDLK_LALT:	offset = scanPC - 0x38; break;
@@ -498,7 +499,7 @@ static int findScanCodeOffset(SDL_keysym keysym)
 		default:	break;
 	}
 	if (offset != UNDEFINED_OFFSET) {
-		printf("Detected scancode offset = %d (key: '%s' with scancode $%02x)\n", offset, SDL_GetKeyName(keysym.sym), scanPC);
+		panicbug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC);
 	}
 
 	return offset;
