@@ -13,11 +13,12 @@
  o fixed HostFS symlinks for certain path configurations
  o added Mode key in the set of ARAnyM hotkey modifiers
  o fixed Alt+mouse click problem on Mac OSX
+ o fixed Right Shift detection upon startup
 
  If you found ARAnyM crashing previously when moving windows around
  or doing any other activity where VDI had to blit screen areas then
  please upgrade to this version ASAP. We've added a workaround for
- a serious bug in the libSDL that is causing the weird ARAnyM crashes.
+ a serious bug in the libSDL that was causing these weird ARAnyM crashes.
 
 
 2009/04/25 - version 0.9.8beta released

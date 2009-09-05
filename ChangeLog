@@ -1,6 +1,11 @@
 
 *** CVS tagged as ARANYM_0_9_9_BETA
 
+2009/09/05 - Petr
+- input.cpp: Right Shift was not detected properly at startup. Thanks for
+  indirect bug report to Vincent :-)
+
+
 2009/09/04 - Petr
 - configure.ac: added check for canonicalize_file_name()
 - README, NEWS, tools/build_cygwin.sh: usual updates for a new release
