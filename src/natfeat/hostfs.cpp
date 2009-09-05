@@ -2537,7 +2537,8 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	if (dnum >= 0 && dnum < maxdnum) {
 		drv->hostRoot = canonicalize_file_name( bx_options.aranymfs[dnum].rootPath );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
-	} else {
+	}
+	else {
 		dnum = -1; // invalidate dnum
 
 		// no [HOSTFS] match -> map to the passed mountpoint
@@ -2549,20 +2550,8 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		drv->halfSensitive = halfSensitive;
 	}
 
-/* --- realpath resolves symlinks so the following code is unnecesary ---
-
-	// if hostRoot is a symlink then follow it
-	struct stat statBuf;
-	while ( !lstat(drv->hostRoot, &statBuf) && S_ISLNK(statBuf.st_mode) ) {
-		char target[MAXPATHNAMELEN];
-		if (host_readlink(drv->hostRoot,target,sizeof(target)-1)) {
-			free( drv->hostRoot );
-			drv->hostRoot = strdup( target );
-		}
-	}
-*/
 	// no rootPath -> do not map the drive
-	if ( !strlen(drv->hostRoot) ) {
+	if ( drv->hostRoot == NULL || !strlen(drv->hostRoot) ) {
 		delete drv;
 		return TOS_EPTHNF;
 	}
