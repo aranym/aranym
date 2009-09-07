@@ -1,6 +1,11 @@
 
 *** CVS tagged as ARANYM_0_9_9
 
+2009/09/07 - Petr
+- aranym.spec: should create menu entries for aranym-jit and aranym-mmu
+  as well. Improved by David Bolt, our RPM packages maintainer.
+
+
 2009/09/05 - Petr
 - natfeat/hostfs.cpp: fixed crash when hostRoot path is empty (happens
   when BetaDOS maps a drive but ARAnyM config does not). Thanks for
