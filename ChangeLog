@@ -1,3 +1,6 @@
+2009/09/07 - Petr
+- ndebug.cpp: quiet 64-bit GCC printf warnings
+
 
 *** CVS tagged as ARANYM_0_9_9
 
