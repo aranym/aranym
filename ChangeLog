@@ -1,3 +1,8 @@
+2009/09/08 - Petr
+- natfeat/hotfs.cpp: fixed two crashes if realpath or canonicalize_file_name
+  return NULL (= invalid file/symlink)
+
+
 2009/09/07 - Petr
 - ndebug.cpp: quiet 64-bit GCC printf warnings
 

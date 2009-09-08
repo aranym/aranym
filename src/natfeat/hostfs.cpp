@@ -72,7 +72,8 @@ char *canonicalize_file_name(const char *filename)
 		path_max = 4096;
 #endif
 	char *tmp = (char *)malloc(path_max);
-	char *resolved = strdup(realpath(filename, tmp));
+	char *realp = realpath(filename, tmp);
+	char *resolved = (realp != NULL) ? strdup(realp) : NULL;
 	free(tmp);
 	return resolved;
 }
@@ -1686,6 +1687,8 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 
 		// convert to real path (example: "/tmp/../file" -> "/file")
 		char *tmp = canonicalize_file_name(target);
+		if (tmp == NULL)
+			return NULL;
 		strncpy(target, tmp, len);
 		target[len-1] = '\0';
 		free(tmp);
