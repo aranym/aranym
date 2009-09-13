@@ -352,9 +352,9 @@ union fpu_extended_shape {
 };
 #endif
 
-// Declare and initialize a pointer to a shape of the requested FP type
-#define fp_declare_init_shape(psvar, rfvar, ftype) \
-	fpu_ ## ftype ## _shape * psvar = (fpu_ ## ftype ## _shape *)( &rfvar )
+// Declare a shape of the requested FP type
+#define fp_declare_init_shape(psvar, ftype) \
+	fpu_ ## ftype ## _shape psvar
 
 /* -------------------------------------------------------------------------- */
 /* --- Extra Math Functions                                               --- */
@@ -372,26 +372,29 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 {
 #ifdef BRANCHES_ARE_EXPENSIVE
 #ifndef USE_LONG_DOUBLE
-	fp_declare_init_shape(sxp, r, double);
-	uae_s32 hx = sxp->parts.msw;
-	uae_s32 lx = sxp->parts.lsw;
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	uae_s32 hx = sxp.parts.msw;
+	uae_s32 lx = sxp.parts.lsw;
 	hx &= 0x7fffffff;
 	hx |= (uae_u32)(lx | (-lx)) >> 31;
 	hx = 0x7ff00000 - hx;
 	return (int)(((uae_u32)hx) >> 31);
 #elif USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	uae_s64 hx = sxp->parts64.msw;
-	uae_s64 lx = sxp->parts64.lsw;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	uae_s64 hx = sxp.parts64.msw;
+	uae_s64 lx = sxp.parts64.lsw;
 	hx &= 0x7fffffffffffffffLL;
 	hx |= (uae_u64)(lx | (-lx)) >> 63;
 	hx = 0x7fff000000000000LL - hx;
 	return (int)((uae_u64)hx >> 63);
 #else
-	fp_declare_init_shape(sxp, r, extended);
-	uae_s32 se = sxp->parts.sign_exponent;
-	uae_s32 hx = sxp->parts.msw;
-	uae_s32 lx = sxp->parts.lsw;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	uae_s32 se = sxp.parts.sign_exponent;
+	uae_s32 hx = sxp.parts.msw;
+	uae_s32 lx = sxp.parts.lsw;
 	se = (se & 0x7fff) << 1;
 	lx |= hx & 0x7fffffff;
 	se |= (uae_u32)(lx | (-lx)) >> 31;
@@ -401,17 +404,19 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 #endif
 #else
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	return	(sxp->ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	return	(sxp.ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
 #else
-	fp_declare_init_shape(sxp, r, double);
-	return	(sxp->ieee_nan.exponent == FP_DOUBLE_EXP_MAX)
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	return	(sxp.ieee_nan.exponent == FP_DOUBLE_EXP_MAX)
 #endif
-		&&	(sxp->ieee_nan.mantissa0 != 0)
-		&&	(sxp->ieee_nan.mantissa1 != 0)
+		&&	(sxp.ieee_nan.mantissa0 != 0)
+		&&	(sxp.ieee_nan.mantissa1 != 0)
 #ifdef USE_QUAD_DOUBLE
-		&&	(sxp->ieee_nan.mantissa2 != 0)
-		&&	(sxp->ieee_nan.mantissa3 != 0)
+		&&	(sxp.ieee_nan.mantissa2 != 0)
+		&&	(sxp.ieee_nan.mantissa3 != 0)
 #endif
 		;
 #endif
@@ -428,24 +433,27 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 {
 #ifdef BRANCHES_ARE_EXPENSIVE
 #ifndef USE_LONG_DOUBLE
-	fp_declare_init_shape(sxp, r, double);
-	uae_s32 hx = sxp->parts.msw;
-	uae_s32 lx = sxp->parts.lsw;
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	uae_s32 hx = sxp.parts.msw;
+	uae_s32 lx = sxp.parts.lsw;
 	lx |= (hx & 0x7fffffff) ^ 0x7ff00000;
 	lx |= -lx;
 	return ~(lx >> 31) & (hx >> 30);
 #elif USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	uae_s64 hx = sxp->parts64.msw;
-	uae_s64 lx = sxp->parts64.lsw;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	uae_s64 hx = sxp.parts64.msw;
+	uae_s64 lx = sxp.parts64.lsw;
 	lx |= (hx & 0x7fffffffffffffffLL) ^ 0x7fff000000000000LL;
 	lx |= -lx;
 	return ~(lx >> 63) & (hx >> 62);
 #else
-	fp_declare_init_shape(sxp, r, extended);
-	uae_s32 se = sxp->parts.sign_exponent;
-	uae_s32 hx = sxp->parts.msw;
-	uae_s32 lx = sxp->parts.lsw;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	uae_s32 se = sxp.parts.sign_exponent;
+	uae_s32 hx = sxp.parts.msw;
+	uae_s32 lx = sxp.parts.lsw;
 	/* This additional ^ 0x80000000 is necessary because in Intel's
 	   internal representation of the implicit one is explicit.
 	   NOTE: anyway, this is equivalent to & 0x7fffffff in that case.  */
@@ -460,17 +468,19 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 #endif
 #else
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	return	(sxp->ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	return	(sxp.ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
 #else
-	fp_declare_init_shape(sxp, r, double);
-	return	(sxp->ieee_nan.exponent == FP_DOUBLE_EXP_MAX)
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	return	(sxp.ieee_nan.exponent == FP_DOUBLE_EXP_MAX)
 #endif
-		&&	(sxp->ieee_nan.mantissa0 == 0)
-		&&	(sxp->ieee_nan.mantissa1 == 0)
+		&&	(sxp.ieee_nan.mantissa0 == 0)
+		&&	(sxp.ieee_nan.mantissa1 == 0)
 #ifdef USE_QUAD_DOUBLE
-		&&	(sxp->ieee_nan.mantissa2 == 0)
-		&&	(sxp->ieee_nan.mantissa3 == 0)
+		&&	(sxp.ieee_nan.mantissa2 == 0)
+		&&	(sxp.ieee_nan.mantissa3 == 0)
 #endif
 		;
 #endif
@@ -482,11 +492,12 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 PRIVATE inline bool FFPU fp_do_isneg(fpu_register const & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
+	fp_declare_init_shape(sxp, extended);
 #else
-	fp_declare_init_shape(sxp, r, double);
+	fp_declare_init_shape(sxp, double);
 #endif
-	return sxp->ieee.negative;
+	sxp.value = r;
+	return sxp.ieee.negative;
 }
 
 #undef iszero
@@ -496,16 +507,17 @@ PRIVATE inline bool FFPU fp_do_iszero(fpu_register const & r)
 {
 	// TODO: BRANCHES_ARE_EXPENSIVE
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
+	fp_declare_init_shape(sxp, extended);
 #else
-	fp_declare_init_shape(sxp, r, double);
+	fp_declare_init_shape(sxp, double);
 #endif
-	return	(sxp->ieee.exponent == 0)
-		&&	(sxp->ieee.mantissa0 == 0)
-		&&	(sxp->ieee.mantissa1 == 0)
+	sxp.value = r;
+	return	(sxp.ieee.exponent == 0)
+		&&	(sxp.ieee.mantissa0 == 0)
+		&&	(sxp.ieee.mantissa1 == 0)
 #ifdef USE_QUAD_DOUBLE
-		&&	(sxp->ieee.mantissa2 == 0)
-		&&	(sxp->ieee.mantissa3 == 0)
+		&&	(sxp.ieee.mantissa2 == 0)
+		&&	(sxp.ieee.mantissa3 == 0)
 #endif
 		;
 }
@@ -532,18 +544,20 @@ PRIVATE inline void FFPU make_nan(fpu_register & r)
 {
 	// FIXME: is that correct ?
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	sxp->ieee.exponent	= FP_EXTENDED_EXP_MAX;
-	sxp->ieee.mantissa0	= 0xffffffff;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	sxp.ieee.exponent	= FP_EXTENDED_EXP_MAX;
+	sxp.ieee.mantissa0	= 0xffffffff;
 #else
-	fp_declare_init_shape(sxp, r, double);
-	sxp->ieee.exponent	= FP_DOUBLE_EXP_MAX;
-	sxp->ieee.mantissa0	= 0xfffff;
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	sxp.ieee.exponent	= FP_DOUBLE_EXP_MAX;
+	sxp.ieee.mantissa0	= 0xfffff;
 #endif
-	sxp->ieee.mantissa1	= 0xffffffff;
+	sxp.ieee.mantissa1	= 0xffffffff;
 #ifdef USE_QUAD_DOUBLE
-	sxp->ieee.mantissa2	= 0xffffffff;
-	sxp->ieee.mantissa3	= 0xffffffff;
+	sxp.ieee.mantissa2	= 0xffffffff;
+	sxp.ieee.mantissa3	= 0xffffffff;
 #endif
 }
 
@@ -553,18 +567,19 @@ PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
 	r = +0.0;
 #else
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
+	fp_declare_init_shape(sxp, extended);
 #else
-	fp_declare_init_shape(sxp, r, double);
+	fp_declare_init_shape(sxp, double);
 #endif
-	sxp->ieee.negative	= 0;
-	sxp->ieee.exponent	= 0;
-	sxp->ieee.mantissa0	= 0;
-	sxp->ieee.mantissa1	= 0;
+	sxp.ieee.negative	= 0;
+	sxp.ieee.exponent	= 0;
+	sxp.ieee.mantissa0	= 0;
+	sxp.ieee.mantissa1	= 0;
 #ifdef USE_QUAD_DOUBLE
-	sxp->ieee.mantissa2	= 0;
-	sxp->ieee.mantissa3	= 0;
+	sxp.ieee.mantissa2	= 0;
+	sxp.ieee.mantissa3	= 0;
 #endif
+	r = sxp.value;
 #endif
 }
 
@@ -574,65 +589,70 @@ PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
 	r = -0.0;
 #else
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
+	fp_declare_init_shape(sxp, extended);
 #else
-	fp_declare_init_shape(sxp, r, double);
+	fp_declare_init_shape(sxp, double);
 #endif
-	sxp->ieee.negative	= 1;
-	sxp->ieee.exponent	= 0;
-	sxp->ieee.mantissa0	= 0;
-	sxp->ieee.mantissa1	= 0;
+	sxp.ieee.negative	= 1;
+	sxp.ieee.exponent	= 0;
+	sxp.ieee.mantissa0	= 0;
+	sxp.ieee.mantissa1	= 0;
 #ifdef USE_QUAD_DOUBLE
-	sxp->ieee.mantissa2	= 0;
-	sxp->ieee.mantissa3	= 0;
+	sxp.ieee.mantissa2	= 0;
+	sxp.ieee.mantissa3	= 0;
 #endif
+	r = sxp.value;
 #endif
 }
 
 PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	sxp->ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
+	fp_declare_init_shape(sxp, extended);
+	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
 #else
-	fp_declare_init_shape(sxp, r, double);
-	sxp->ieee_nan.exponent	= FP_DOUBLE_EXP_MAX;
+	fp_declare_init_shape(sxp, double);
+	sxp.ieee_nan.exponent	= FP_DOUBLE_EXP_MAX;
 #endif
-	sxp->ieee_nan.negative	= 0;
-	sxp->ieee_nan.mantissa0	= 0;
-	sxp->ieee_nan.mantissa1	= 0;
+	sxp.ieee_nan.negative	= 0;
+	sxp.ieee_nan.mantissa0	= 0;
+	sxp.ieee_nan.mantissa1	= 0;
 #ifdef USE_QUAD_DOUBLE
-	sxp->ieee_nan.mantissa2 = 0;
-	sxp->ieee_nan.mantissa3 = 0;
+	sxp.ieee_nan.mantissa2 = 0;
+	sxp.ieee_nan.mantissa3 = 0;
 #endif
+	r = sxp.value;
 }
 
 PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	sxp->ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
+	fp_declare_init_shape(sxp, extended);
+	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
 #else
-	fp_declare_init_shape(sxp, r, double);
-	sxp->ieee_nan.exponent	= FP_DOUBLE_EXP_MAX;
+	fp_declare_init_shape(sxp, double);
+	sxp.ieee_nan.exponent	= FP_DOUBLE_EXP_MAX;
 #endif
-	sxp->ieee_nan.negative	= 1;
-	sxp->ieee_nan.mantissa0	= 0;
-	sxp->ieee_nan.mantissa1	= 0;
+	sxp.ieee_nan.negative	= 1;
+	sxp.ieee_nan.mantissa0	= 0;
+	sxp.ieee_nan.mantissa1	= 0;
 #ifdef USE_QUAD_DOUBLE
-	sxp->ieee_nan.mantissa2 = 0;
-	sxp->ieee_nan.mantissa3 = 0;
+	sxp.ieee_nan.mantissa2 = 0;
+	sxp.ieee_nan.mantissa3 = 0;
 #endif
+	r = sxp.value;
 }
 
 PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	return ((int) sxp->ieee.exponent - FP_EXTENDED_EXP_BIAS);
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	return ((int) sxp.ieee.exponent - FP_EXTENDED_EXP_BIAS);
 #else
-	fp_declare_init_shape(sxp, r, double);
-	return ((int) sxp->ieee.exponent - FP_DOUBLE_EXP_BIAS);
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	return ((int) sxp.ieee.exponent - FP_DOUBLE_EXP_BIAS);
 #endif
 }
 
@@ -640,12 +660,15 @@ PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, r, extended);
-	sxp->ieee.exponent = FP_EXTENDED_EXP_BIAS;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = r;
+	sxp.ieee.exponent = FP_EXTENDED_EXP_BIAS;
 #else
-	fp_declare_init_shape(sxp, r, double);
-	sxp->ieee.exponent = FP_DOUBLE_EXP_BIAS;
+	fp_declare_init_shape(sxp, double);
+	sxp.value = r;
+	sxp.ieee.exponent = FP_DOUBLE_EXP_BIAS;
 #endif
+	r = sxp.value;
 }
 
 // The sign of the quotient is the exclusive-OR of the sign bits
@@ -653,13 +676,15 @@ PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_register const & rb)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sap, ra, extended);
-	fp_declare_init_shape(sbp, rb, extended);
+	fp_declare_init_shape(sap, extended);
+	fp_declare_init_shape(sbp, extended);
 #else
-	fp_declare_init_shape(sap, ra, double);
-	fp_declare_init_shape(sbp, rb, double);
+	fp_declare_init_shape(sap, double);
+	fp_declare_init_shape(sbp, double);
 #endif
-	return ((sap->ieee.negative ^ sbp->ieee.negative) ? FPSR_QUOTIENT_SIGN : 0);
+	sap.value = ra;
+	sbp.value = rb;
+	return ((sap.ieee.negative ^ sbp.ieee.negative) ? FPSR_QUOTIENT_SIGN : 0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -945,16 +970,19 @@ PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 PRIVATE inline fpu_extended fp_do_sgn1(fpu_extended x)
 {
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-	fp_declare_init_shape(sxp, x, extended);
-	sxp->ieee_nan.exponent	= FP_EXTENDED_EXP_MAX>>1;
-	sxp->ieee_nan.one		= 1;
+	fp_declare_init_shape(sxp, extended);
+	sxp.value = x;
+	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX>>1;
+	sxp.ieee_nan.one		= 1;
 #else
-	fp_declare_init_shape(sxp, x, double);
-	sxp->ieee_nan.exponent  = FP_DOUBLE_EXP_MAX>>1;
+	fp_declare_init_shape(sxp, double);
+	sxp.value = x;
+	sxp.ieee_nan.exponent  = FP_DOUBLE_EXP_MAX>>1;
 #endif
-	sxp->ieee_nan.quiet_nan	= 0;
-	sxp->ieee_nan.mantissa0	= 0;
-	sxp->ieee_nan.mantissa1	= 0;
+	sxp.ieee_nan.quiet_nan	= 0;
+	sxp.ieee_nan.mantissa0	= 0;
+	sxp.ieee_nan.mantissa1	= 0;
+	x = sxp.value;
 	return x;
 }
 

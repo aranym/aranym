@@ -238,10 +238,10 @@ PRIVATE inline fpu_register FFPU round_to_nearest(fpu_register const & x)
 
 PRIVATE inline bool FFPU do_isnan(fpu_register const & r)
 {
-	fpu_register_parts const *p = (fpu_register_parts const *)&r;
-	if ((p->parts[FHI] & 0x7FF00000) == 0x7FF00000) {
+	fpu_register_parts const p = { r };
+	if ((p.parts[FHI] & 0x7FF00000) == 0x7FF00000) {
 		// logical or is faster here.
-		if ((p->parts[FHI] & 0x000FFFFF) || p->parts[FLO]) {
+		if ((p.parts[FHI] & 0x000FFFFF) || p.parts[FLO]) {
 			return true;
 		}
 	}
@@ -254,8 +254,8 @@ PRIVATE inline bool FFPU do_isnan(fpu_register const & r)
 
 PRIVATE inline bool FFPU do_isinf(fpu_register const & r)
 {
-	fpu_register_parts const *p = (fpu_register_parts const *)&r;
-	if ((p->parts[FHI] & 0x7FF00000) == 0x7FF00000 && p->parts[FLO] == 0) {
+	fpu_register_parts const p = { r };
+	if ((p.parts[FHI] & 0x7FF00000) == 0x7FF00000 && p.parts[FLO] == 0) {
 		return true;
 	}
 	return false;
@@ -267,8 +267,8 @@ PRIVATE inline bool FFPU do_isinf(fpu_register const & r)
 
 PRIVATE inline bool FFPU do_isneg(fpu_register const & r)
 {
-	fpu_register_parts const *p = (fpu_register_parts const *)&r;
-	return ((p->parts[FHI] & 0x80000000) != 0);
+	fpu_register_parts const p = { r };
+	return ((p.parts[FHI] & 0x80000000) != 0);
 }
 
 #ifndef HAVE_ISZERO
@@ -277,8 +277,8 @@ PRIVATE inline bool FFPU do_isneg(fpu_register const & r)
 
 PRIVATE inline bool FFPU do_iszero(fpu_register const & r)
 {
-	fpu_register_parts const *p = (fpu_register_parts const *)&r;
-	return (((p->parts[FHI] & 0x7FF00000) == 0) && p->parts[FLO] == 0);
+	fpu_register_parts const p = { r };
+	return (((p.parts[FHI] & 0x7FF00000) == 0) && p.parts[FLO] == 0);
 }
 
 // May be optimized for particular processors
@@ -314,75 +314,83 @@ PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 
 PRIVATE inline void FFPU make_nan(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FLO] = 0xffffffff;
-	p->parts[FHI] = 0x7fffffff;
+	fpu_register_parts p;
+	p.parts[FLO] = 0xffffffff;
+	p.parts[FHI] = 0x7fffffff;
+	r = p.val;
 }
 
 PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FLO] = p->parts[FHI] = 0;
+	fpu_register_parts p;
+	p.parts[FLO] = p.parts[FHI] = 0;
+	r = p.val;
 }
 
 PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FLO] = 0;
-	p->parts[FHI] = 0x80000000;
+	fpu_register_parts p;
+	p.parts[FLO] = 0;
+	p.parts[FHI] = 0x80000000;
+	r = p.val;
 }
 
 PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FLO] = 0;
-	p->parts[FHI] = 0x7FF00000;
+	fpu_register_parts p;
+	p.parts[FLO] = 0;
+	p.parts[FHI] = 0x7FF00000;
+	r = p.val;
 }
 
 PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FLO] = 0;
-	p->parts[FHI] = 0xFFF00000;
+	fpu_register_parts p;
+	p.parts[FLO] = 0;
+	p.parts[FHI] = 0xFFF00000;
+	r = p.val;
 }
 
 PRIVATE inline void FFPU fast_scale(fpu_register & r, int add)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	int exp = (p->parts[FHI] & 0x7FF00000) >> 20;
+	fpu_register_parts p = { r };
+	int exp = (p.parts[FHI] & 0x7FF00000) >> 20;
 	// TODO: overflow flags
 	exp += add;
 	if(exp >= 2047) {
 		make_inf_positive(r);
+		return;
 	} else if(exp < 0) {
 		// keep sign (+/- 0)
-		p->parts[FHI] &= 0x80000000;
+		p.parts[FHI] &= 0x80000000;
 	} else {
-		p->parts[FHI] = (p->parts[FHI] & 0x800FFFFF) | ((uae_u32)exp << 20);
+		p.parts[FHI] = (p.parts[FHI] & 0x800FFFFF) | ((uae_u32)exp << 20);
 	}
+	r = p.val;
 }
 
 PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 {
-	fpu_register_parts const *p = (fpu_register_parts const *)&r;
-	int exp = (p->parts[FHI] & 0x7FF00000) >> 20;
+	fpu_register_parts const p = { r };
+	int exp = (p.parts[FHI] & 0x7FF00000) >> 20;
 	return( exp - 1023 );
 }
 
 // Normalize to range 1..2
 PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 {
-	fpu_register_parts *p = (fpu_register_parts *)&r;
-	p->parts[FHI] = (p->parts[FHI] & 0x800FFFFF) | 0x3FF00000;
+	fpu_register_parts p = { r };
+	p.parts[FHI] = (p.parts[FHI] & 0x800FFFFF) | 0x3FF00000;
+	r = p.val;
 }
 
 // The sign of the quotient is the exclusive-OR of the sign bits
 // of the source and destination operands.
 PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_register const & rb)
 {
-	fpu_register_parts const *a = (fpu_register_parts const *)&ra;
-	fpu_register_parts const *b = (fpu_register_parts const *)&rb;
-	return (((a->parts[FHI] ^ b->parts[FHI]) & 0x80000000) ? FPSR_QUOTIENT_SIGN : 0);
+	fpu_register_parts const a = { ra };
+	fpu_register_parts const b = { rb };
+	return (((a.parts[FHI] ^ b.parts[FHI]) & 0x80000000) ? FPSR_QUOTIENT_SIGN : 0);
 }
 
 // Quotient Byte is loaded with the sign and least significant
@@ -400,13 +408,15 @@ PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 		return (0.0);
 	
 	fpu_register result;
-	fpu_register_parts * p = (fpu_register_parts *)&result;
+	fpu_register_parts p;
 
 	uae_u32 sign = (value & 0x80000000);
 	uae_u32 exp  = ((value & 0x7F800000) >> 23) + 1023 - 127;
 
-	p->parts[FLO] = value << 29;
-	p->parts[FHI] = sign | (exp << 20) | ((value & 0x007FFFFF) >> 3);
+	p.parts[FLO] = value << 29;
+	p.parts[FHI] = sign | (exp << 20) | ((value & 0x007FFFFF) >> 3);
+
+	result = p.val;
 
 	fpu_debug(("make_single (%X) = %.04f\n",value,(double)result));
 	
@@ -420,10 +430,10 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 		return 0;
 	
 	uae_u32 result;
-	fpu_register_parts const *p = (fpu_register_parts const *)&src;
+	fpu_register_parts const p = { src };
 
-	uae_u32 sign = (p->parts[FHI] & 0x80000000);
-	uae_u32 exp  = (p->parts[FHI] & 0x7FF00000) >> 20;
+	uae_u32 sign = (p.parts[FHI] & 0x80000000);
+	uae_u32 exp  = (p.parts[FHI] & 0x7FF00000) >> 20;
 
 	if(exp + 127 < 1023) {
 		exp = 0;
@@ -433,7 +443,7 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 		exp = exp + 127 - 1023;
 	}
 
-	result = sign | (exp << 23) | ((p->parts[FHI] & 0x000FFFFF) << 3) | (p->parts[FLO] >> 29);
+	result = sign | (exp << 23) | ((p.parts[FHI] & 0x000FFFFF) << 3) | (p.parts[FLO] >> 29);
 
 	fpu_debug(("extract_single (%.04f) = %X\n",(double)src,result));
 
@@ -447,7 +457,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 		return 0.0;
 	
 	fpu_register result;
-	fpu_register_parts *p = (fpu_register_parts *)&result;
+	fpu_register_parts p;
 
 	uae_u32 sign =  wrd1 & 0x80000000;
 	uae_u32 exp  = (wrd1 >> 16) & 0x7fff;
@@ -485,8 +495,10 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 	}
 
 	// drop the explicit integer bit.
-	p->parts[FLO] = (wrd2 << 21) | (wrd3 >> 11);
-	p->parts[FHI] = sign | (exp << 20) | ((wrd2 & 0x7FFFFFFF) >> 11);
+	p.parts[FLO] = (wrd2 << 21) | (wrd3 >> 11);
+	p.parts[FHI] = sign | (exp << 20) | ((wrd2 & 0x7FFFFFFF) >> 11);
+
+	result = p.val;
 
 	fpu_debug(("make_extended (%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(double)result));
 
@@ -530,11 +542,13 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 	}
 
 	// drop the explicit integer bit.
-	fpu_register_parts *p = (fpu_register_parts *)&result;
-	p->parts[FLO] = (wrd2 << 21) | (wrd3 >> 11);
-	p->parts[FHI] = sign | (exp << 20) | ((wrd2 & 0x7FFFFFFF) >> 11);
+	fpu_register_parts p;
+	p.parts[FLO] = (wrd2 << 21) | (wrd3 >> 11);
+	p.parts[FHI] = sign | (exp << 20) | ((wrd2 & 0x7FFFFFFF) >> 11);
 
-	fpu_debug(("make_extended (%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(float)(*(double *)p)));
+	result = p.val;
+
+	fpu_debug(("make_extended (%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(double)result));
 }
 
 // from_exten
@@ -547,13 +561,13 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 		return;
 	}
 
-	fpu_register_parts const *p = (fpu_register_parts const *)&src;
+	fpu_register_parts const p = { src };
 	
-	fpu_debug(("extract_extended (%X,%X)\n",p[FLO],p[FHI]));
+	fpu_debug(("extract_extended (%X,%X)\n",p.parts[FLO],p.parts[FHI]));
 
-	uae_u32 sign =  p->parts[FHI] & 0x80000000;
+	uae_u32 sign =  p.parts[FHI] & 0x80000000;
 
-	uae_u32 exp  = ((p->parts[FHI] >> 20) & 0x7ff);
+	uae_u32 exp  = ((p.parts[FHI] >> 20) & 0x7ff);
 	// Check for maximum
 	if(exp == 0x7FF) {
 		exp = 0x7FFF;
@@ -563,8 +577,8 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 
 	*wrd1 = sign | (exp << 16);
 	// always set the explicit integer bit.
-	*wrd2 = 0x80000000 | ((p->parts[FHI] & 0x000FFFFF) << 11) | ((p->parts[FLO] & 0xFFE00000) >> 21);
-	*wrd3 = p->parts[FLO] << 11;
+	*wrd2 = 0x80000000 | ((p.parts[FHI] & 0x000FFFFF) << 11) | ((p.parts[FLO] & 0xFFE00000) >> 21);
+	*wrd3 = p.parts[FLO] << 11;
 
 	fpu_debug(("extract_extended (%.04f) = %X,%X,%X\n",(double)src,*wrd1,*wrd2,*wrd3));
 }
@@ -576,9 +590,11 @@ PRIVATE inline fpu_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
 		return 0.0;
 	
 	fpu_register result;
-	fpu_register_parts *p = (fpu_register_parts *)&result;
-	p->parts[FLO] = wrd2;
-	p->parts[FHI] = wrd1;
+	fpu_register_parts p;
+	p.parts[FLO] = wrd2;
+	p.parts[FHI] = wrd1;
+
+	result = p.val;
 
 	fpu_debug(("make_double (%X,%X) = %.04f\n",wrd1,wrd2,(double)result));
 
@@ -596,9 +612,9 @@ PRIVATE inline void FFPU extract_double(fpu_register const & src,
 		return;
   }
 */
-	fpu_register_parts const *p = (fpu_register_parts const *)&src;
-	*wrd2 = p->parts[FLO];
-	*wrd1 = p->parts[FHI];
+	fpu_register_parts const p = { src };
+	*wrd2 = p.parts[FLO];
+	*wrd1 = p.parts[FHI];
 
 	fpu_debug(("extract_double (%.04f) = %X,%X\n",(double)src,*wrd1,*wrd2));
 }

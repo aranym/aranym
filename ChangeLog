@@ -1,3 +1,8 @@
+2009/09/13 - Andreas
+- uae_cpu/fpu/{fpu_ieee.cpp,fpu_uae.cpp,mathlib.h}: remove strict aliasing
+  violations.
+
+
 2009/09/08 - Petr
 - natfeat/hotfs.cpp: fixed two crashes if realpath or canonicalize_file_name
   return NULL (= invalid file/symlink)

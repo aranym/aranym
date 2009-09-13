@@ -218,10 +218,11 @@ PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 	// Use a single, otherwise some checks for NaN, Inf, Zero would have to
 	// be performed
 	fpu_single result = 0;
-	fp_declare_init_shape(srp, result, single);
-	srp->ieee.negative	= (value >> 31) & 1;
-	srp->ieee.exponent	= (value >> 23) & FP_SINGLE_EXP_MAX;
-	srp->ieee.mantissa	= value & 0x007fffff;
+	fp_declare_init_shape(srp, single);
+	srp.ieee.negative	= (value >> 31) & 1;
+	srp.ieee.exponent	= (value >> 23) & FP_SINGLE_EXP_MAX;
+	srp.ieee.mantissa	= value & 0x007fffff;
+	result = srp.value;
 	fpu_debug(("make_single (%X) = %.04f\n",value,(double)result));
 	return result;
 #elif 0 /* Original code */
@@ -248,10 +249,11 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 {
 #if 1
 	fpu_single input = (fpu_single) src;
-	fp_declare_init_shape(sip, input, single);
-	uae_u32 result	= (sip->ieee.negative << 31)
-					| (sip->ieee.exponent << 23)
-					| sip->ieee.mantissa;
+	fp_declare_init_shape(sip, single);
+	sip.value = input;
+	uae_u32 result	= (sip.ieee.negative << 31)
+					| (sip.ieee.exponent << 23)
+					| sip.ieee.mantissa;
 	fpu_debug(("extract_single (%.04f) = %X\n",(double)src,result));
 	return result;
 #elif 0 /* Original code */
@@ -302,19 +304,20 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 			make_inf_negative(result);
 		return result;
 	}
-	fp_declare_init_shape(srp, result, extended);
-	srp->ieee.negative  = (wrd1 >> 31) & 1;
-	srp->ieee.exponent  = (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
-	srp->ieee.mantissa0 = (wrd2 >> 16) & 0xffff;
-	srp->ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
-	srp->ieee.mantissa2 = (wrd3 & 0xffff) << 16;
-	srp->ieee.mantissa3 = 0;
+	fp_declare_init_shape(srp, extended);
+	srp.ieee.negative  = (wrd1 >> 31) & 1;
+	srp.ieee.exponent  = (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
+	srp.ieee.mantissa0 = (wrd2 >> 16) & 0xffff;
+	srp.ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
+	srp.ieee.mantissa2 = (wrd3 & 0xffff) << 16;
+	srp.ieee.mantissa3 = 0;
 #elif USE_LONG_DOUBLE
-	fp_declare_init_shape(srp, result, extended);
-	srp->ieee.negative	= (wrd1 >> 31) & 1;
-	srp->ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
-	srp->ieee.mantissa0	= wrd2;
-	srp->ieee.mantissa1	= wrd3;
+	fp_declare_init_shape(srp, extended);
+	srp.ieee.negative	= (wrd1 >> 31) & 1;
+	srp.ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
+	srp.ieee.mantissa0	= wrd2;
+	srp.ieee.mantissa1	= wrd3;
+	
 #else
 	uae_u32 sgn = (wrd1 >> 31) & 1;
 	uae_u32 exp = (wrd1 >> 16) & 0x7fff;
@@ -343,13 +346,14 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 	else
 		exp += FP_DOUBLE_EXP_BIAS - FP_EXTENDED_EXP_BIAS;
 	
-	fp_declare_init_shape(srp, result, double);
-	srp->ieee.negative  = sgn;
-	srp->ieee.exponent  = exp;
+	fp_declare_init_shape(srp, double);
+	srp.ieee.negative  = sgn;
+	srp.ieee.exponent  = exp;
 	// drop the explicit integer bit
-	srp->ieee.mantissa0 = (wrd2 & 0x7fffffff) >> 11;
-	srp->ieee.mantissa1 = (wrd2 << 21) | (wrd3 >> 11);
+	srp.ieee.mantissa0 = (wrd2 & 0x7fffffff) >> 11;
+	srp.ieee.mantissa1 = (wrd2 << 21) | (wrd3 >> 11);
 #endif
+	result = srp.value;
 	fpu_debug(("make_extended (%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(double)result));
 	return result;
 }
@@ -385,19 +389,19 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 			make_inf_negative(result);
 		return;
 	}
-	fp_declare_init_shape(srp, result, extended);
-	srp->ieee.negative  = (wrd1 >> 31) & 1;
-	srp->ieee.exponent  = (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
-	srp->ieee.mantissa0 = (wrd2 >> 16) & 0xffff;
-	srp->ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
-	srp->ieee.mantissa2 = (wrd3 & 0xffff) << 16;
-	srp->ieee.mantissa3 = 0;
+	fp_declare_init_shape(srp, extended);
+	srp.ieee.negative  = (wrd1 >> 31) & 1;
+	srp.ieee.exponent  = (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
+	srp.ieee.mantissa0 = (wrd2 >> 16) & 0xffff;
+	srp.ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
+	srp.ieee.mantissa2 = (wrd3 & 0xffff) << 16;
+	srp.ieee.mantissa3 = 0;
 #elif USE_LONG_DOUBLE
-	fp_declare_init_shape(srp, result, extended);
-	srp->ieee.negative	= (wrd1 >> 31) & 1;
-	srp->ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
-	srp->ieee.mantissa0	= wrd2;
-	srp->ieee.mantissa1	= wrd3;
+	fp_declare_init_shape(srp, extended);
+	srp.ieee.negative	= (wrd1 >> 31) & 1;
+	srp.ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
+	srp.ieee.mantissa0	= wrd2;
+	srp.ieee.mantissa1	= wrd3;
 #else
 	uae_u32 exp = (wrd1 >> 16) & 0x7fff;
 	if (exp < FP_EXTENDED_EXP_BIAS - FP_DOUBLE_EXP_BIAS)
@@ -407,13 +411,14 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 	else
 		exp += FP_DOUBLE_EXP_BIAS - FP_EXTENDED_EXP_BIAS;
 	
-	fp_declare_init_shape(srp, result, double);
-	srp->ieee.negative  = (wrd1 >> 31) & 1;
-	srp->ieee.exponent  = exp;
+	fp_declare_init_shape(srp, double);
+	srp.ieee.negative  = (wrd1 >> 31) & 1;
+	srp.ieee.exponent  = exp;
 	// drop the explicit integer bit
-	srp->ieee.mantissa0 = (wrd2 & 0x7fffffff) >> 11;
-	srp->ieee.mantissa1 = (wrd2 << 21) | (wrd3 >> 11);
+	srp.ieee.mantissa0 = (wrd2 & 0x7fffffff) >> 11;
+	srp.ieee.mantissa1 = (wrd2 << 21) | (wrd3 >> 11);
 #endif
+	result = srp.value;
 	fpu_debug(("make_extended (%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(double)result));
 }
 
@@ -428,39 +433,41 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 	}
 #if USE_QUAD_DOUBLE
 	// FIXME: deal with denormals?
-	fp_declare_init_shape(srp, src, extended);
-	*wrd1 = (srp->ieee.negative << 31) | (srp->ieee.exponent << 16);
+	fp_declare_init_shape(srp, extended);
+	srp.value = src;
+	*wrd1 = (srp.ieee.negative << 31) | (srp.ieee.exponent << 16);
 	// always set the explicit integer bit.
-	*wrd2 = 0x80000000 | (srp->ieee.mantissa0 << 15) | ((srp->ieee.mantissa1 & 0xfffe0000) >> 17);
-	*wrd3 = (srp->ieee.mantissa1 << 15) | ((srp->ieee.mantissa2 & 0xfffe0000) >> 17);
+	*wrd2 = 0x80000000 | (srp.ieee.mantissa0 << 15) | ((srp.ieee.mantissa1 & 0xfffe0000) >> 17);
+	*wrd3 = (srp.ieee.mantissa1 << 15) | ((srp.ieee.mantissa2 & 0xfffe0000) >> 17);
 #elif USE_LONG_DOUBLE
-	fpu_register_parts const *p = (fpu_register_parts const *)&src;
+	fpu_register_parts p = { src };
 #ifdef WORDS_BIGENDIAN
-	*wrd1 = p->parts[0];
-	*wrd2 = p->parts[1];
-	*wrd3 = p->parts[2];
+	*wrd1 = p.parts[0];
+	*wrd2 = p.parts[1];
+	*wrd3 = p.parts[2];
 #else
-	*wrd3 = p->parts[0];
-	*wrd2 = p->parts[1];
-	*wrd1 = (p->parts[2] & 0xffff) << 16;
+	*wrd3 = p.parts[0];
+	*wrd2 = p.parts[1];
+	*wrd1 = (p.parts[2] & 0xffff) << 16;
 #endif
 #else
-	fp_declare_init_shape(srp, src, double);
+	fp_declare_init_shape(srp, double);
+	srp.value = src;
 	fpu_debug(("extract_extended (%d,%d,%X,%X)\n",
-			   srp->ieee.negative , srp->ieee.exponent,
-			   srp->ieee.mantissa0, srp->ieee.mantissa1));
+			   srp.ieee.negative , srp.ieee.exponent,
+			   srp.ieee.mantissa0, srp.ieee.mantissa1));
 
-	uae_u32 exp = srp->ieee.exponent;
+	uae_u32 exp = srp.ieee.exponent;
 
 	if (exp == FP_DOUBLE_EXP_MAX)
 		exp = FP_EXTENDED_EXP_MAX;
 	else
 		exp += FP_EXTENDED_EXP_BIAS - FP_DOUBLE_EXP_BIAS;
 
-	*wrd1 = (srp->ieee.negative << 31) | (exp << 16);
+	*wrd1 = (srp.ieee.negative << 31) | (exp << 16);
 	// always set the explicit integer bit.
-	*wrd2 = 0x80000000 | (srp->ieee.mantissa0 << 11) | ((srp->ieee.mantissa1 & 0xffe00000) >> 21);
-	*wrd3 = srp->ieee.mantissa1 << 11;
+	*wrd2 = 0x80000000 | (srp.ieee.mantissa0 << 11) | ((srp.ieee.mantissa1 & 0xffe00000) >> 21);
+	*wrd3 = srp.ieee.mantissa1 << 11;
 #endif
 	fpu_debug(("extract_extended (%.04f) = %X,%X,%X\n",(double)src,*wrd1,*wrd2,*wrd3));
 }
@@ -2043,18 +2050,22 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				// Here (int) cast is okay.
 				int scale_factor = (int)fp_round_to_zero(src);
 #if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
-				fp_declare_init_shape(sxp, FPU registers[reg], extended);
-				sxp->ieee.exponent += scale_factor;
+				fp_declare_init_shape(sxp, extended);
+				sxp.value = FPU registers[reg];
+				sxp.ieee.exponent += scale_factor;
+				FPU registers[reg] = sxp.value;
 #else
-				fp_declare_init_shape(sxp, FPU registers[reg], double);
-				uae_u32 exp = sxp->ieee.exponent + scale_factor;
+				fp_declare_init_shape(sxp, double);
+				sxp.value = FPU registers[reg];
+				uae_u32 exp = sxp.ieee.exponent + scale_factor;
 				if (exp < FP_EXTENDED_EXP_BIAS - FP_DOUBLE_EXP_BIAS)
 					exp = 0;
 				else if (exp > FP_EXTENDED_EXP_BIAS + FP_DOUBLE_EXP_BIAS)
 					exp = FP_DOUBLE_EXP_MAX;
 				else
 					exp += FP_DOUBLE_EXP_BIAS - FP_EXTENDED_EXP_BIAS;
-				sxp->ieee.exponent = exp;
+				sxp.ieee.exponent = exp;
+				FPU registers[reg] = sxp.value;
 #endif
 			}
 			else if (fl_source.infinity) {
