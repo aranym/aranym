@@ -1,3 +1,8 @@
+2009/09/21 - Philipp
+- clipbrd_darwin.M: Clipboard NatFeat support for Mac OS X implemented.
+- nfclipbrd.cpp: Buffering of clipboard content implemented.
+
+
 2009/09/20 - Philipp
 - Xcode project: fix building of Universal Binaries when compiling on PPC
 - configure.ac: fix script generation when cross-compiling

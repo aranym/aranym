@@ -28,7 +28,19 @@
 
 class ClipbrdNatFeat : public NF_Base
 {
+private:
+	bool is_read;
+	char *clip_buf;
+	int32 clip_len;
+	
 public:
+	ClipbrdNatFeat() 
+	{
+		is_read = false;
+		clip_buf = NULL;
+		clip_len = 0;
+	}
+	
 	const char *name() { return "CLIPBRD"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);

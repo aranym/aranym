@@ -236,6 +236,9 @@
 		17EC08D70ECB82B200100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
 		17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
 		17EC08D90ECB82BA00100ED7 /* joypads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17EC080A0ECB774200100ED7 /* joypads.cpp */; };
+		17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
+		17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
+		17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B41F6DAA0C646F0E00868C14 /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 		B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
@@ -801,6 +804,7 @@
 		17EC08050ECB76FD00100ED7 /* joypads.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = joypads.h; sourceTree = "<group>"; };
 		17EC080A0ECB774200100ED7 /* joypads.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = joypads.cpp; path = ../../joypads.cpp; sourceTree = "<group>"; };
 		17EC08D20ECB829E00100ED7 /* audio_conv.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = audio_conv.cpp; path = ../../audio_conv.cpp; sourceTree = "<group>"; };
+		17F10C631066C16500BDE380 /* clipbrd_darwin.M */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = clipbrd_darwin.M; path = darwin/clipbrd_darwin.M; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1428,6 +1432,7 @@
 				B4844A6B0C7BA262003FE2D2 /* aranym.icns */,
 				B4844A6C0C7BA262003FE2D2 /* aranym2.icns */,
 				B4844A6D0C7BA262003FE2D2 /* busybee.icns */,
+				17F10C631066C16500BDE380 /* clipbrd_darwin.M */,
 				B4844A6E0C7BA262003FE2D2 /* host_filesys_darwin.M */,
 				B4844A6F0C7BA262003FE2D2 /* Info.plist */,
 				B4844A700C7BA262003FE2D2 /* parameters_darwin.cpp */,
@@ -1618,9 +1623,6 @@
 			);
 			name = "Build CPU source files";
 			outputPaths = (
-				"$(PROJECT_TEMP_DIR)/cpudefs.cpp",
-				"$(PROJECT_TEMP_DIR)/cpustbl.cpp",
-				"$(PROJECT_TEMP_DIR)/cputbl.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1709,9 +1711,6 @@
 			);
 			name = "Build CPU source files";
 			outputPaths = (
-				"$(PROJECT_TEMP_DIR)/cpustbl.cpp",
-				"$(PROJECT_TEMP_DIR)/cpudefs.cpp",
-				"$(PROJECT_TEMP_DIR)/cputbl.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1752,12 +1751,6 @@
 			);
 			name = "Build CPU source files";
 			outputPaths = (
-				"$(PROJECT_TEMP_DIR)/cpustbl.cpp",
-				"$(PROJECT_TEMP_DIR)/cpudefs.cpp",
-				"$(PROJECT_TEMP_DIR)/compemu.cpp",
-				"$(PROJECT_TEMP_DIR)/compstbl.cpp",
-				"$(PROJECT_TEMP_DIR)/comptbl.h",
-				"$(PROJECT_TEMP_DIR)/cputbl.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1873,6 +1866,7 @@
 				17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */,
 				17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */,
+				17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1981,6 +1975,7 @@
 				17EC07E40ECB762900100ED7 /* dsp_cpu.c in Sources */,
 				17EC08D30ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D70ECB82B200100ED7 /* joypads.cpp in Sources */,
+				17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2097,6 +2092,7 @@
 				17EC07ED0ECB762900100ED7 /* dsp_disasm.c in Sources */,
 				17EC08D50ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D90ECB82BA00100ED7 /* joypads.cpp in Sources */,
+				17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2165,7 +2161,7 @@
 				ARCHS = ppc;
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no --enable-nfclipbrd";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
@@ -2222,7 +2218,7 @@
 				);
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no --enable-nfclipbrd";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
@@ -2354,7 +2350,7 @@
 			buildSettings = {
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history --enable-nfclipbrd";
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
