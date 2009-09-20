@@ -374,7 +374,7 @@ AC_CACHE_CHECK([for __wchar_t],
   )
   AC_LANG_RESTORE
 ])
-AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, "$ac_cv_wchar_t", [Define if wchar_t is present])
+AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, $ac_cv_wchar_t, [Define if wchar_t is present])
 
 if [[ "x$OS_TYPE" = "xdarwin" ]]; then
   if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
@@ -407,7 +407,7 @@ else
     )
   ])
 fi
-AC_TRANSLATE_DEFINE(ENABLE_TUNTAP, "$ac_cv_tun_tap_support",
+AC_TRANSLATE_DEFINE(ENABLE_TUNTAP, $ac_cv_tun_tap_support,
   [Define if your system supports TUN/TAP devices.])
   
 dnl Various checks if the system supports vm_allocate() and the like functions.
@@ -416,7 +416,7 @@ if [[ "x$ac_cv_func_vm_allocate" = "xyes" -a "x$ac_cv_func_vm_deallocate" = "xye
       "x$ac_cv_func_vm_protect" = "xyes" ]]; then
   have_mach_vm=yes
 fi
-AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, $have_mach_vm,
   [Define if your system has a working vm_allocate()-based memory allocator.])
 
 case "$host_os" in
@@ -464,7 +464,7 @@ if [[ "x$have_mach_vm" = "xyes" ]]; then
     *no) have_mach_vm=no;;
   esac
 fi
-AC_TRANSLATE_DEFINE(HAVE_MACH_VM, "$have_mach_vm",
+AC_TRANSLATE_DEFINE(HAVE_MACH_VM, $have_mach_vm,
   [Define if your system has a working vm_allocate()-based memory allocator.])
 
 fi dnl HAVE_MACH_VM
@@ -478,7 +478,7 @@ if [[ "x$ac_cv_func_mmap" = "xyes" -a "x$ac_cv_func_munmap" = "xyes" -a \
     have_mmap_vm=yes
   fi
 fi
-AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, "$have_mmap_vm",
+AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm,
   [Define if your system has a working mmap()-based memory allocator.])
 
 dnl Check that mmap() and associated functions work.
@@ -501,7 +501,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANON],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, "$ac_cv_mmap_anon",
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, $ac_cv_mmap_anon,
   [Define if <sys/mman.h> defines MAP_ANON and mmap()'ing with MAP_ANON works.])
 
 AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
@@ -520,7 +520,7 @@ AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, "$ac_cv_mmap_anonymous",
+AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, $ac_cv_mmap_anonymous,
   [Define if <sys/mman.h> defines MAP_ANONYMOUS and mmap()'ing with MAP_ANONYMOUS works.])
 
 AC_CACHE_CHECK([whether mprotect works],
@@ -585,7 +585,7 @@ AC_CACHE_CHECK([whether POSIX shared memory is working],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_POSIX_SHM, "$ac_cv_have_posix_shm",
+AC_TRANSLATE_DEFINE(HAVE_POSIX_SHM, $ac_cv_have_posix_shm,
   [Define if your system supports POSIX shared memory.])
 
 dnl Check if we have working 33-bit memory addressing
@@ -638,7 +638,7 @@ AC_CACHE_CHECK([whether signal handlers need to be reinstalled],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(SIGNAL_NEED_REINSTALL, "$ac_cv_signal_need_reinstall",
+AC_TRANSLATE_DEFINE(SIGNAL_NEED_REINSTALL, $ac_cv_signal_need_reinstall,
   [Define if your system requires signals to be reinstalled.])
 
 dnl Check if sigaction handlers need to be reinstalled
@@ -672,7 +672,7 @@ AC_CACHE_CHECK([whether sigaction handlers need to be reinstalled],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(SIGACTION_NEED_REINSTALL, "$ac_cv_sigaction_need_reinstall",
+AC_TRANSLATE_DEFINE(SIGACTION_NEED_REINSTALL, $ac_cv_sigaction_need_reinstall,
   [Define if your system requires sigactions to be reinstalled.])
 
 dnl Check if we have vasprintf (_GNU_SOURCE)
@@ -694,7 +694,7 @@ AC_CACHE_CHECK([for vasprintf],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, "$ac_cv_have_vasprintf",
+AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, $ac_cv_have_vasprintf,
   [Define if your system support GNU SOURCEs (vasprintf function)])
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
@@ -718,7 +718,7 @@ AC_CACHE_CHECK([for sighandler_t],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, "$ac_cv_have_sighandler_t",
+AC_TRANSLATE_DEFINE(HAVE_SIGHANDLER_T, $ac_cv_have_sighandler_t,
   [Define if <signal.h> doesn't define sighandler_t])
 
 dnl Check if we have getopt_long
@@ -739,7 +739,7 @@ AC_CACHE_CHECK([for getopt_long],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, "$ac_cv_have_getopt_long")
+AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, $ac_cv_have_getopt_long)
 
 if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
   SYSSRCS="$SYSSRCS Unix/getopt_init.c Unix/getopt1.c Unix/getopt.c"
@@ -1227,7 +1227,7 @@ dnl Use 33-bit memory addressing?
 if [[ "$ac_cv_have_33bit_addressing:$WANT_33BIT_ADDRESSING" = "yes:yes" ]]; then
   use_33bit_addressing=yes
 fi
-AC_TRANSLATE_DEFINE(USE_33BIT_ADDRESSING, "$use_33bit_addressing",
+AC_TRANSLATE_DEFINE(USE_33BIT_ADDRESSING, $use_33bit_addressing,
   [Define to use 33-bit memory addressing on 64-bit JIT capable systems.])
 
 dnl Select appropriate FPU source.

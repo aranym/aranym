@@ -29,7 +29,7 @@
 class ClipbrdNatFeat : public NF_Base
 {
 public:
-	char *name() { return "CLIPBRD"; }
+	const char *name() { return "CLIPBRD"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 

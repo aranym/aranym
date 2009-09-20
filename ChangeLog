@@ -1,3 +1,11 @@
+2009/09/20 - Philipp
+- Xcode project: fix building of Universal Binaries when compiling on PPC
+- configure.ac: fix script generation when cross-compiling
+  ("[: too many arguments" errors)
+- nfclipbrd.h: remove warning 
+  overriding 'virtual const char* NF_Base::name()'
+
+
 2009/09/13 - Andreas
 - uae_cpu/fpu/{fpu_ieee.cpp,fpu_uae.cpp,mathlib.h}: remove strict aliasing
   violations.
