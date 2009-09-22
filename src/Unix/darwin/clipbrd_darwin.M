@@ -25,8 +25,9 @@
 #include "debug.h"
 #include <Cocoa/Cocoa.h>
 
+int init_aclip() { return 0; }
 
-char *read_aclip(int32 *len)
+char *read_aclip(size_t *len)
 {
 	char* clip_buf;
 	int clip_len;
@@ -72,7 +73,7 @@ char *read_aclip(int32 *len)
 }
 
 
-void write_aclip(char* clip_buf, int32 clip_len)
+void write_aclip(char* clip_buf, size_t clip_len)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	NSPasteboard* paste_board;

@@ -24,7 +24,9 @@
 #include <windows.h>
 #undef WIN32
 
-void write_aclip(char *data, int len)
+int init_aclip() { return 0; }
+
+void write_aclip(char *data, size_t len)
 {
 	HGLOBAL clipdata;
 	void *lock;
@@ -50,7 +52,7 @@ void write_aclip(char *data, int len)
 		GlobalFree(clipdata);
 }
 
-char * read_aclip( int *len)
+char * read_aclip( size_t *len)
 {
 	static SDL_SysWMinfo pInfo;
 	SDL_GetWMInfo(&pInfo);
