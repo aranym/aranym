@@ -25,11 +25,9 @@
 #include "nfclipbrd.h"
 #include "nfclipbrd_nfapi.h"
 
-
-/* possible FIXME: generalize for all OSes -> make C++ Clipboard class? */
-void init_aclip();
+int init_aclip();
 void write_aclip(char *data, size_t len);
-void read_aclip(char **data, size_t *len);
+char * read_aclip(size_t *len);
 
 #define DEBUG 0
 #include "debug.h"
@@ -57,7 +55,9 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 
 void ClipbrdNatFeat::reset()
 {
-	init_aclip();
+	if (init_aclip() < 0) {
+		; // TODO disable clipboard
+	}
 }
 
 int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
@@ -71,7 +71,7 @@ int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 		clip_buf = NULL;
 	}
 	if (is_read) {
-		read_aclip(&clip_buf, &clip_len);
+		clip_buf = read_aclip(&clip_len);
 		if (!clip_buf) {
 			clip_len = 0;
 		}
