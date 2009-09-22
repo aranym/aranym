@@ -1,7 +1,7 @@
 /*
  * nfclipbrd.cpp - NatFeat Clipboard
  *
- * Copyright (c) 2006 Standa Opichal of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2006-2009 Standa Opichal of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -26,16 +26,14 @@
 #include "nfclipbrd_nfapi.h"
 
 
-/* from Unix/cygwin/clipbrd_cygwin.cpp
- * FIXME: generalize for all OSes -> make C++ Clipboarc class? */
-void write_aclip(char *data, int len);
-char * read_aclip(int *len);
+/* possible FIXME: generalize for all OSes -> make C++ Clipboard class? */
+void init_aclip();
+void write_aclip(char *data, size_t len);
+void read_aclip(char **data, size_t *len);
 
-
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
-// load a TOS executable to the designated address
 int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 {
 	switch(fncode) {
@@ -52,25 +50,28 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 		case CLIP_WRITE:
 			return write( getParameter(0), getParameter(1), getParameter(2), getParameter(3) );
 
-		default:;
-				return -1;
+		default:
+			return -1;
 	}
+}
+
+void ClipbrdNatFeat::reset()
+{
+	init_aclip();
 }
 
 int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 {
-	(void)id;
+	DUNUSED(id);
 	D(bug("clipbrd: open id=%ld mode=%ld", id, mode));
-	is_read = mode == 1;
+	is_read = (mode == 1);
 	clip_len = 0;
-	if (clip_buf) 
-	{
+	if (clip_buf) {
 		delete clip_buf;
 		clip_buf = NULL;
 	}
-	if (is_read) 
-	{
-		clip_buf = read_aclip(&clip_len);
+	if (is_read) {
+		read_aclip(&clip_buf, &clip_len);
 		if (!clip_buf) {
 			clip_len = 0;
 		}
@@ -80,11 +81,10 @@ int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 
 int32 ClipbrdNatFeat::close(uint32 id)
 {
-	(void)id;
+	DUNUSED(id);
 	D(bug("clipbrd: close id=%ld", id));
-	if (clip_buf) 
-	{
-		if (!is_read && clip_len>0) {
+	if (clip_buf) {
+		if (!is_read && clip_len > 0) {
 			write_aclip(clip_buf, clip_len);
 		}
 		delete clip_buf;
@@ -95,28 +95,28 @@ int32 ClipbrdNatFeat::close(uint32 id)
 
 int32 ClipbrdNatFeat::read(uint32 id, memptr buff, uint32 size, uint32 pos)
 {
-	(void)id;
-	int len = clip_len-pos>size ? size : clip_len-pos;
+	DUNUSED(id);
+	int len = (clip_len - pos > size) ? size : clip_len - pos;
 	D(bug("clipbrd: read pos=%ld, len=%ld", pos, len));
 
 
-	if ( clip_buf ) {
-		if ( len < 0 ) len = 0; 
-		if ( len ) Host2Atari_memcpy(buff, clip_buf + pos, len);
+	if (clip_buf) {
+		if (len < 0) len = 0; 
+		else if (len) Host2Atari_memcpy(buff, clip_buf + pos, len);
 	}
 	return len;
 }
 
 int32 ClipbrdNatFeat::write(uint32 id, memptr buff, uint32 len, uint32 pos)
 {
-	(void)id;
+	DUNUSED(id);
 	D(bug("clipbrd: write pos=%ld, len=%d", pos, len));
 
-	int newlen = pos+len;
+	size_t newlen = pos + len;
 	char *newbuf = new char[newlen];
 
-	if ( clip_buf ) {
-		memcpy( newbuf, clip_buf, clip_len > newlen ? pos : clip_len);
+	if (clip_buf) {
+		memcpy(newbuf, clip_buf, (clip_len > newlen) ? pos : clip_len);
 		delete clip_buf;
 	}
 	clip_buf = newbuf;
@@ -134,6 +134,4 @@ int32 ClipbrdNatFeat::write(uint32 id, memptr buff, uint32 len, uint32 pos)
 	return len;
 }
 
-/*
-vim:ts=4:sw=4:
-*/
+// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
