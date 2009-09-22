@@ -91,8 +91,9 @@ void write_aclip(char *src, size_t srclen)
 	Unlock_Display();
 }
 
-void read_aclip(char **dst, size_t *dstlen)
+char * read_aclip(size_t *dstlen)
 {
+	char *dst = NULL;
 	*dstlen = 0;
 
 	Window owner;
@@ -101,7 +102,6 @@ void read_aclip(char **dst, size_t *dstlen)
 	int seln_format;
 	unsigned long nbytes;
 	unsigned long overflow;
-	char *src;
 
 	Lock_Display();
 	owner = XGetSelectionOwner(SDL_Display, XA_PRIMARY);
@@ -131,21 +131,23 @@ void read_aclip(char **dst, size_t *dstlen)
 			}
 		}
 	}
+
+	char *src;
 	Lock_Display();
 	if ( XGetWindowProperty(SDL_Display, owner, selection, 0, INT_MAX/4,
 	                        False, XA_STRING, &seln_type, &seln_format,
 	                        &nbytes, &overflow, (unsigned char **)&src) == Success ) {
 		if ( seln_type == XA_STRING ) {
+			dst = new char[nbytes+1];
+			memcpy(dst, src, nbytes);
+			dst[nbytes] = '\0';
 			*dstlen = nbytes;
-			*dst = new char[*dstlen];
-			if ( *dst == NULL )
-				*dstlen = 0;
-			else
-				strncpy(*dst, src, nbytes);
 		}
 		XFree(src);
 	}
 	Unlock_Display();
+
+	return dst;
 }
 
 static int clipboard_filter(const SDL_Event *event)
@@ -203,7 +205,7 @@ static int clipboard_filter(const SDL_Event *event)
 #else /* X11_SCRAP */
 int init_aclip() { return -1; }
 void write_aclip(char *src, size_t srclen) { }
-void read_aclip(char **dst, size_t *dstlen) { *dst = NULL; *dstlen = 0; }
+char * read_aclip(size_t *dstlen) { return NULL; }
 #endif /* X11_SCRAP */
 
 // don't remove this modeline with intended formatting for vim:ts=4:sw=4:
