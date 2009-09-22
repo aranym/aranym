@@ -1,8 +1,8 @@
 2009/09/22 - Petr
-- configure.ac: enable Clipbard support by default
 - clipbrd_x11.cpp: Clipboard NatFeat support for X11 implemented.
-- nfclipbrd.cpp: read_aclip() buffer allocated internally,
-  init_aclip() added, minor code formatting.
+- nfclipbrd.cpp: init_aclip() added, minor code formatting.
+- clipbrd_cygwin, clipbrd_darwin: added init_aclip() dummy definition.
+- configure.ac: enable Clipbard support by default.
 
 
 2009/09/21 - Philipp
