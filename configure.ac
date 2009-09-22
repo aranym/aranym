@@ -88,7 +88,7 @@ AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa 
 
 AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
-AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=no)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=no])
+AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=no)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
 
 AC_ARG_ENABLE(nfvdi,           [  --enable-nfvdi          enable NatFeat VDI (default=yes)], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
 
@@ -1570,13 +1570,17 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 	if [[ "x$OS_TYPE" = "xcygwin" ]]; then
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use MS-Windows Clipboard])
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-    	SYSSRCS="$SYSSRCS Unix/cygwin/clipbrd_cygwin.cpp"
+		SYSSRCS="$SYSSRCS Unix/cygwin/clipbrd_cygwin.cpp"
 	elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use Mac OS X clipboard])
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-    	SYSSRCS="$SYSSRCS Unix/darwin/clipbrd_darwin.M"
+ 		SYSSRCS="$SYSSRCS Unix/darwin/clipbrd_darwin.M"
 	else
-        AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use X11 clipboard])
+		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
+		SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
+		LIBS="$LIBS -lX11"
+dnl     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
 	fi
 fi
 

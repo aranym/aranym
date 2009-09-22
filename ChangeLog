@@ -1,3 +1,10 @@
+2009/09/22 - Petr
+- configure.ac: enable Clipbard support by default
+- clipbrd_x11.cpp: Clipboard NatFeat support for X11 implemented.
+- nfclipbrd.cpp: read_aclip() buffer allocated internally,
+  init_aclip() added, minor code formatting.
+
+
 2009/09/21 - Philipp
 - clipbrd_darwin.M: Clipboard NatFeat support for Mac OS X implemented.
 - nfclipbrd.cpp: Buffering of clipboard content implemented.
@@ -7,6 +14,7 @@
 - Xcode project: fix building of Universal Binaries when compiling on PPC
 - configure.ac: fix script generation when cross-compiling
   ("[: too many arguments" errors)
+
 - nfclipbrd.h: remove warning 
   overriding 'virtual const char* NF_Base::name()'
 
