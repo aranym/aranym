@@ -29,7 +29,7 @@ int init_aclip();
 void write_aclip(char *data, size_t len);
 char * read_aclip(size_t *len);
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 int32 ClipbrdNatFeat::dispatch(uint32 fncode)
