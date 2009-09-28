@@ -1,3 +1,7 @@
+2009/09/21 - Philipp
+- clipbrd_darwin.M: character set conversion for standard Atari mapping.
+
+
 2009/09/22 - Petr
 - clipbrd_x11.cpp: Clipboard NatFeat support for X11 implemented.
 - nfclipbrd.cpp: init_aclip() added, minor code formatting.
@@ -14,7 +18,6 @@
 - Xcode project: fix building of Universal Binaries when compiling on PPC
 - configure.ac: fix script generation when cross-compiling
   ("[: too many arguments" errors)
-
 - nfclipbrd.h: remove warning 
   overriding 'virtual const char* NF_Base::name()'
 

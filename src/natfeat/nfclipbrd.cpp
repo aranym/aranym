@@ -29,7 +29,7 @@ int init_aclip();
 void write_aclip(char *data, size_t len);
 char * read_aclip(size_t *len);
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 int32 ClipbrdNatFeat::dispatch(uint32 fncode)
@@ -55,6 +55,7 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 
 void ClipbrdNatFeat::reset()
 {
+	D(bug("clipbrd: reset"));
 	if (init_aclip() < 0) {
 		; // TODO disable clipboard
 	}
