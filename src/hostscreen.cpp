@@ -478,21 +478,31 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
 	} else {
 		int dirty_w = hsurf->getDirtyWidth();
-		/*int dirty_h = hsurf->getDirtyHeight();*/
-		for (int y=0; y<height>>4; y++) {
-			for (int x=0; x<width>>4; x++) {
+		int dirty_h = hsurf->getDirtyHeight();
+		for (int y=0; y<dirty_h; y++) {
+			int num_lines = height - (y<<4);
+			if (num_lines>16) {
+				num_lines=16;
+			}
+
+			for (int x=0; x<dirty_w; x++) {
+				int num_cols = width - (x<<4);
+				if (num_cols>16) {
+					num_cols=16;
+				}
+
 				if (dirtyRects[y * dirty_w + x]) {
 					SDL_Rect src, dst;
 
 					src.x = src_rect.x + (x<<4);
 					src.y = src_rect.y + (y<<4);
-					src.w = (1<<4);
-					src.h = (1<<4);
+					src.w = num_cols;
+					src.h = num_lines;
 
 					dst.x = dst_rect.x + (x<<4);
 					dst.y = dst_rect.y + (y<<4);
-					dst.w = (1<<4);
-					dst.h = (1<<4);
+					dst.w = num_cols;
+					dst.h = num_lines;
 
 					SDL_BlitSurface(sdl_surf, &src, screen, &dst);
 
