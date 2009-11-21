@@ -43,6 +43,8 @@ class VIDEL : public BASE_IO
 		void refreshPalette(void);
 		void refreshScreen(void);
 
+		void updateAspect(void);
+
 	public:
 		VIDEL(memptr, uint32);
 		virtual ~VIDEL(void);
@@ -53,6 +55,8 @@ class VIDEL : public BASE_IO
 
 		virtual HostSurface *getSurface(void);
 		virtual void forceRefresh(void);
+
+		int aspect_x, aspect_y;
 };
 
 #endif /* VIDEL_H */

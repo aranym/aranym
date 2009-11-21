@@ -67,6 +67,7 @@ VIDEL::~VIDEL(void)
 
 void VIDEL::reset(void)
 {
+	aspect_x = aspect_y = 1;
 	updatePalette = false;
 }
 
@@ -109,6 +110,10 @@ void VIDEL::handleWrite(uint32 addr, uint8 value)
 			BASE_IO::handleWrite(HW+0x60, 0);
 		}
 	}
+
+	if ((addr & ~1) == HW+0xc2) {
+		updateAspect();
+	}
 }
 
 /*--- Private functions ---*/
@@ -134,6 +139,50 @@ bool VIDEL::useStPalette(void)
 	}
 
 	return useStPal;
+}
+
+void VIDEL::updateAspect(void)
+{
+	int vco = handleReadW(HW + 0xc2);
+
+	switch((vco>>2) & 3) {
+		case 0:
+			aspect_x = 4;
+			break;
+		case 1:
+			aspect_x = 2;
+			break;
+		case 2:
+			aspect_x = 1;
+			break;
+	}
+
+	switch (vco & 3) {
+		case 0:
+			/* No interlace, no doubling */
+			aspect_y = 2;
+			break;
+		case 1:
+			/* No interlace, Doubling */
+			aspect_y = 4;
+			break;
+		case 2:
+			/* Interlace, no doubling */
+			aspect_y = 1;
+			break;
+		case 3:
+			/* Interlace, Doubling */
+			aspect_y = 2;
+			break;
+	}
+
+	if (bx_options.video.monitor == 1) {
+		/* rvb */
+		aspect_x >>= 1;
+	} else {
+		/* vga */
+		aspect_y >>= 1;
+	}
 }
 
 /*--- Protected functions ---*/

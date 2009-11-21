@@ -75,6 +75,7 @@ HostSurface *VidelZoom::getSurface(void)
 
 	int hostWidth = host->video->getWidth();
 	int hostHeight = host->video->getHeight();
+	int autozoom_enabled = bx_options.autozoom.enabled;
 
 	zoomWidth = hostWidth;
 	zoomHeight = hostHeight;
@@ -84,11 +85,15 @@ HostSurface *VidelZoom::getSurface(void)
 			int coefy = hostHeight / videlHeight;
 			zoomWidth = videlWidth * coefx;
 			zoomHeight = videlHeight * coefy;
+		} else if ((aspect_x>1) || (aspect_y>1)) {
+			zoomWidth = videlWidth * aspect_x;
+			zoomHeight = videlHeight * aspect_y;
+			autozoom_enabled = 1;
 		}
 	}
 
 	/* Return non zoomed surface if correct size, or zoom not suitable */
-	if (bx_options.opengl.enabled || !bx_options.autozoom.enabled ||
+	if (bx_options.opengl.enabled || !autozoom_enabled ||
 		((zoomWidth==videlWidth) && (zoomHeight==videlHeight))) {
 		return videl_hsurf;
 	}

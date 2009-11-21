@@ -1,3 +1,8 @@
+2009/11/21 - Patrice
+- videl, videl_zoom: Use autozoom feature to correct aspect ratio of Atari
+screen when pixel shape is not squared (320x400, 640x200 modes for example).
+
+
 2009/09/21 - Philipp
 - clipbrd_darwin.M: character set conversion for standard Atari mapping.
 
