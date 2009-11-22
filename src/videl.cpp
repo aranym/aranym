@@ -179,6 +179,10 @@ void VIDEL::updateAspect(void)
 	if (bx_options.video.monitor == 1) {
 		/* rvb */
 		aspect_x >>= 1;
+		if (aspect_x == 0) {
+			aspect_x = 1;
+			aspect_y <<= 1;
+		}
 	} else {
 		/* vga */
 		aspect_y >>= 1;
