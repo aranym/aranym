@@ -2161,6 +2161,7 @@
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no --enable-nfclipbrd";
+				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
@@ -2218,6 +2219,7 @@
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-debug=no --enable-nfclipbrd";
+				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
@@ -2350,6 +2352,7 @@
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history --enable-nfclipbrd";
+				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
