@@ -186,6 +186,10 @@ void VIDEL::updateAspect(void)
 	} else {
 		/* vga */
 		aspect_y >>= 1;
+		if (aspect_y == 0) {
+			aspect_y = 1;
+			aspect_x <<= 1;
+		}
 	}
 }
 
