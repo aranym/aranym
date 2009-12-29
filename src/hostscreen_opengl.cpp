@@ -72,7 +72,10 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 
 	int i, gl_bpp[4]={0,16,24,32}, screenFlags;
 
-	screenFlags = SDL_OPENGL|SDL_RESIZABLE;
+	screenFlags = SDL_OPENGL;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
 	if (bx_options.video.fullscreen) {
 		screenFlags |= SDL_FULLSCREEN;
 	}

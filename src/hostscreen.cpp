@@ -130,7 +130,10 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		height=MIN_HEIGHT;
 	}
 
-	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE|SDL_RESIZABLE;
+	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
 	if (bx_options.video.fullscreen) {
 		screenFlags |= SDL_FULLSCREEN;
 	}

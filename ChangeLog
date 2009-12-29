@@ -1,3 +1,7 @@
+2009/12/29 - Patrice
+- Disable resizable window, if we set a fixed size in configuration file.
+
+
 2009/11/21 - Patrice
 - videl, videl_zoom: Use autozoom feature to correct aspect ratio of Atari
 screen when pixel shape is not squared (320x400, 640x200 modes for example).
