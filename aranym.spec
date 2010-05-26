@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.9
+%define ver			0.9.10
 
 #
 #
@@ -145,8 +145,10 @@
 %endif
 
 
+# move the icons into a standardised location
+#
 %if 0%{?!_icondir:1}
-%define	_icondir		%{_datadir}/pixmaps/
+%define	_icondir		%{_datadir}/icons/hicolor/
 %endif
 
 
@@ -188,8 +190,10 @@ License:		GPLv2
 Summary:		32-bit Atari personal computer (Falcon030/TT030) virtual machine
 URL:			http://aranym.org/
 Group:			%{group}
-Source0:		http://prdownloads.sourceforge.net/aranym/%{name}-%{version}.tar.gz
+Source0:		http://prdownloads.sourceforge.net/aranym/%{name}_%{version}.orig.tar.gz
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Requires:		hicolor-icon-theme
+BuildRequires:		hicolor-icon-theme
 BuildRequires:		desktop-file-utils
 BuildRequires:		gcc-c++
 #Patch0:			aranym-0.9.7beta-desktop.patch
@@ -253,8 +257,10 @@ install -m 755 aranym-jit %{buildroot}%{_bindir}
 # add a desktop menu entry
 #
 mkdir -p %{buildroot}/%{_datadir}/applications
-mkdir -p %{buildroot}/%{_icondir}
-install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym.png
+mkdir -p %{buildroot}/%{_icondir}/32x32/apps
+mkdir -p %{buildroot}/%{_icondir}/48x48/apps
+install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/32x32/apps/aranym.png
+install -m 644 contrib/icon-48.png %{buildroot}/%{_icondir}/48x48/apps/aranym.png
 
 %if %{my_suse}
 install -m 644 contrib/%{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
@@ -276,7 +282,6 @@ desktop-file-install                                    \
 %endif
 
 %ifarch %ix86
-#install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym-jit.png
 
 %if %{my_suse}
 sed -e "s/Exec=aranym/Exec=aranym-jit/g" \
@@ -292,7 +297,6 @@ sed -e "s/Exec=aranym/Exec=aranym-jit/g" \
 %{__rm} %{buildroot}/%{_mandir}/man1/%{name}-jit.1*
 %endif
 
-#install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/aranym-mmu.png
 
 %if %{my_suse}
 sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
@@ -330,7 +334,8 @@ sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
 %{_mandir}/man1/aratapif.1*
 %{_datadir}/%{name}
 %{_docdir}/%{name}
-%{_icondir}/%{name}.png
+%{_icondir}/32x32/apps/%{name}.png
+%{_icondir}/48x48/apps/%{name}.png
 %{_datadir}/applications/*%{name}.desktop
 %{_bindir}/aratapif
 %{_bindir}/aranym
@@ -352,6 +357,11 @@ sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
 
 
 %changelog
+* Wed May 26 2010 Petr Stehlik <pstehlik@sophics.cz> 0.9.10
+New ARAnyM release.
+Icons moved to icons dir.
+Source archive filename follows Debian convention.
+
 * Sat Sep 05 2009 Petr Stehlik <pstehlik@sophics.cz> 0.9.9
 New ARAnyM release.
 
