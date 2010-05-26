@@ -28,11 +28,11 @@
 
 #define VER_MAJOR	0
 #define VER_MINOR	9
-#define VER_MICRO	9
+#define VER_MICRO	10
 
 #ifndef VER_STATUS
-//#define VER_STATUS
-#define VER_STATUS	"+" CVS_DATE
+#define VER_STATUS
+//#define VER_STATUS	"+" CVS_DATE
 //#define VER_STATUS	"alpha"
 //#define VER_STATUS	"beta"
 //#define VER_STATUS	"beta+" CVS_DATE
