@@ -136,37 +136,35 @@ void HostSurface::resize(int new_width, int new_height,
 		clip_h = new_height;
 	}
 
-	if (!recreateSurface) {
-		return;
-	}
+	if (recreateSurface) {
+		memset(&pixelFormat, 0, sizeof(SDL_PixelFormat));
 
-	memset(&pixelFormat, 0, sizeof(SDL_PixelFormat));
+		if (surface) {
+			/* Save pixel format */
+			memcpy(&pixelFormat, surface->format, sizeof(SDL_PixelFormat));
 
-	if (surface) {
-		/* Save pixel format */
-		memcpy(&pixelFormat, surface->format, sizeof(SDL_PixelFormat));
+			/* Save palette ? */
+			if ((surface->format->BitsPerPixel==8) && surface->format->palette) {
+				int i;
 
-		/* Save palette ? */
-		if ((surface->format->BitsPerPixel==8) && surface->format->palette) {
-			int i;
-
-			for (i=0; i<surface->format->palette->ncolors; i++) {
-				palette[i].r = surface->format->palette->colors[i].r;
-				palette[i].g = surface->format->palette->colors[i].g;
-				palette[i].b = surface->format->palette->colors[i].b;
+				for (i=0; i<surface->format->palette->ncolors; i++) {
+					palette[i].r = surface->format->palette->colors[i].r;
+					palette[i].g = surface->format->palette->colors[i].g;
+					palette[i].b = surface->format->palette->colors[i].b;
+				}
+				restore_palette = SDL_TRUE;
 			}
-			restore_palette = SDL_TRUE;
+
+			SDL_FreeSurface(surface);
+		} else {
+			pixelFormat.BitsPerPixel = 8;
 		}
 
-		SDL_FreeSurface(surface);
-	} else {
-		pixelFormat.BitsPerPixel = 8;
-	}
+		surface = createSdlSurface(surf_width,surf_height, &pixelFormat);
 
-	surface = createSdlSurface(surf_width,surf_height, &pixelFormat);
-
-	if (restore_palette) {
-		setPalette(palette, 0, 256);
+		if (restore_palette) {
+			setPalette(palette, 0, 256);
+		}
 	}
 
 	resizeDirty(clip_w, clip_h);

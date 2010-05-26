@@ -1,3 +1,8 @@
+2010/05/26 - Patrice
+- HostSurface: Even if we do not recreate a new surface on resize, we must still
+update the width and height of the dirty rectangle list. 
+
+
 2009/12/29 - Patrice
 - Disable resizable window, if we set a fixed size in configuration file.
 
