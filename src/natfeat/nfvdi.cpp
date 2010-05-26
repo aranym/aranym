@@ -903,7 +903,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		default:
 			{ // do the mangling for bitplanes. TOS<->VDI color conversions implemented.
 				uint8 color[16];
-				uint16 bitplanePixels[8];
+				uint16 bitplanePixels[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // initialized just to quiet GCC warning
 
 				for(uint16 j = 0; j < h; j++) {
 					D2(fprintf(stderr, "fVDI: bmp:"));
