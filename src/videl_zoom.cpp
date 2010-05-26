@@ -20,6 +20,7 @@
 
 #include <SDL.h>
 #include <SDL_endian.h>
+#include <math.h>
 
 #include "sysdeps.h"
 #include "parameters.h"
@@ -80,11 +81,23 @@ HostSurface *VidelZoom::getSurface(void)
 	zoomWidth = hostWidth;
 	zoomHeight = hostHeight;
 	if ((hostWidth>=videlWidth) && (hostHeight>=videlHeight)) {
-		if (bx_options.autozoom.integercoefs) {
-			int coefx = hostWidth / videlWidth;
-			int coefy = hostHeight / videlHeight;
-			zoomWidth = videlWidth * coefx;
-			zoomHeight = videlHeight * coefy;
+		if (autozoom_enabled) {
+			float coefx, coefy;
+			coefx = (float) hostWidth / (videlWidth * aspect_x);
+			coefy = (float) hostHeight / (videlHeight * aspect_y);
+			if (bx_options.autozoom.integercoefs) {
+				/* Integer coefs */
+				coefx = trunc(coefx);
+				coefy = trunc(coefy);
+			}
+			/* Keep aspect ratio by using smallest coef */
+			if (coefx < coefy) {
+				coefy = coefx;					
+			} else {
+				coefx = coefy;
+			}
+			zoomWidth = videlWidth * aspect_x * coefx;
+			zoomHeight = videlHeight * aspect_y * coefy;
 		} else if ((aspect_x>1) || (aspect_y>1)) {
 			zoomWidth = videlWidth * aspect_x;
 			zoomHeight = videlHeight * aspect_y;

@@ -1,6 +1,8 @@
 2010/05/26 - Patrice
 - HostSurface: Even if we do not recreate a new surface on resize, we must still
-update the width and height of the dirty rectangle list. 
+  update the width and height of the dirty rectangle list. 
+- VidelZoom: Keep Atari aspect ratio also when using autozoom, with or without
+  integer coefs.
 
 
 2009/12/29 - Patrice
