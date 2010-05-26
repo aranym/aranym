@@ -1,3 +1,16 @@
+2010/05/26 - version 0.9.10 released
+
+ New feature: GEM clipboard support that allows you to pass data between
+ GEM clipboard and the host one (MS Windows, Mac OS X and X Window System).
+ You just need to install nfclipbrd driver.
+
+ Also couple of important bugfixes:
+
+ o fixed two nasty crashes in HostFS (related to recent symlink fixes)
+ o fixed Xcode building universal binaries on PPC
+ o VIDEL autozoom feature with correct aspect ratio for non-square pixels
+
+
 2009/09/05 - version 0.9.9 released
 
  This time mostly bugfixes:
