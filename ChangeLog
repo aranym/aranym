@@ -2,6 +2,7 @@
 
 2010/05/27 - Petr
 - README, NEWS, aranym.spec: updated for release
+- Makefile.in: fixed version_date.h generation
 
 
 2010/05/26 - Patrice
