@@ -1,8 +1,10 @@
-2010/05/26 - version 0.9.10 released
+2010/05/27 - version 0.9.10 released
 
  New feature: GEM clipboard support that allows you to pass data between
  GEM clipboard and the host one (MS Windows, Mac OS X and X Window System).
- You just need to install nfclipbrd driver.
+ It's currently implemented in FreeMiNT only and uses its aranym.xfs
+ virtual filesystem (U:\host\clipbrd). Please see setup instructions
+ in http://wiki.aranym.org/gem_clipbrd
 
  Also couple of important bugfixes:
 

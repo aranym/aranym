@@ -1,6 +1,13 @@
+*** CVS tagged as ARANYM_0_9_10
+
+2010/05/27 - Petr
+- README, NEWS, aranym.spec: updated for release
+
+
 2010/05/26 - Patrice
 - HostSurface: Even if we do not recreate a new surface on resize, we must still
   update the width and height of the dirty rectangle list. 
+
 - VidelZoom: Keep Atari aspect ratio also when using autozoom, with or without
   integer coefs.
 
