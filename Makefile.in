@@ -120,6 +120,9 @@ SRCS = main.cpp \
 	parameters.cpp \
 	romdiff.cpp \
 	rtc.cpp \
+	serial.cpp \
+	serial_port.cpp \
+	scc.cpp \
 	tools.cpp \
 	videl.cpp \
 	videl_zoom.cpp \

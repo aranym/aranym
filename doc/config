@@ -291,3 +291,8 @@ JoypadAButtons = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 JoypadBButtons = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 # Example for Saitek P990, only KP2,5,0 not available
 #JoypadAButtons = 9 3 0 13 12 14 6 15 7 4 16 5 8 2 1 10 11
+
+
+[SERIAL]
+# SCC emulation: Linux serial port device driver
+Serport = /dev/ttyS0

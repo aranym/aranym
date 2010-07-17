@@ -2,7 +2,7 @@
  * cpu_emulation.h - CPU interface
  *
  * Copyright (c) 2001-2005 Milan Jurik of ARAnyM dev team (see AUTHORS)
- * 
+ *
  * Inspired by Christian Bauer's Basilisk II
  *
  * This file is part of the ARAnyM project which builds a new and powerful
@@ -76,7 +76,7 @@ static inline void WriteAtariInt8(memptr addr, uint8 b) {phys_put_byte(addr, b);
 // Direct access to allocated memory
 // Ignores HW checks, so that be carefull
 // Read/WriteHWMemIntXX
-// 
+//
 static inline uint32 ReadHWMemInt32(memptr addr) {return do_get_mem_long((uae_u32 *)phys_get_real_address(addr));}
 static inline uint16 ReadHWMemInt16(memptr addr) {return do_get_mem_word((uae_u16 *)phys_get_real_address(addr));}
 static inline uint8 ReadHWMemInt8(memptr addr) {return do_get_mem_byte((uae_u8 *)phys_get_real_address(addr));}
@@ -89,7 +89,7 @@ static inline void WriteHWMemInt8(memptr addr, uint8 b) {do_put_mem_byte((uae_u8
 // For SW operations
 // Only data space
 // Read/WriteIntXX
-// 
+//
 static inline uint32 ReadInt32(memptr addr) {return get_long(addr);}
 static inline uint16 ReadInt16(memptr addr) {return get_word(addr);}
 static inline uint8 ReadInt8(memptr addr) {return get_byte(addr);}
@@ -155,10 +155,12 @@ extern void Quit680x0(void);	// Quit 680x0
 
 // Interrupt functions
 extern int MFPdoInterrupt(void);
+extern int SCCdoInterrupt(void);
 extern void TriggerInternalIRQ(void);
 extern void TriggerInt3(void);		// Trigger interrupt level 3
 extern void TriggerVBL(void);		// Trigger interrupt level 4
 extern void TriggerInt5(void);		// Trigger interrupt level 5
+extern void TriggerSCC(bool);		// Trigger interrupt level 5
 extern void TriggerMFP(bool);		// Trigger interrupt level 6
 extern void TriggerNMI(void);		// Trigger interrupt level 7
 

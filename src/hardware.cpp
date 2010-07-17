@@ -59,6 +59,7 @@ ARADATA *aradata;
 AUDIODMA *audiodma;
 CROSSBAR *crossbar;
 JOYPADS *joypads;
+SCC *scc;
 
 enum {iMFP = 0, iMMU, iIKBD, iMIDI, iFDC, iRTC, iIDE, iDSP, iBLITTER, iVIDEL,
 	  iYAMAHA, iARADATA, iAUDIODMA, iCROSSBAR, iSCC, iCARTRIDGE, iJOYPADS,
@@ -91,7 +92,7 @@ void HWInit()
 	arhw[iCROSSBAR] = crossbar = new CROSSBAR(0xff8930, 0x14);
 	arhw[iJOYPADS] = joypads = new JOYPADS(0xff9200, 0x24);
 
-	arhw[iSCC] = new BASE_IO(0xff8c80, 0x16);
+	arhw[iSCC] = scc = new SCC(0xff8c81, 8);
 	arhw[iCARTRIDGE] = new BASE_IO(0xfa0000, 0x20000);
 }
 //	{"DMA/SCSI", 0xff8700, 0x16, &fake_io},
@@ -138,6 +139,7 @@ IDE *getIDE()		{ return ide; }
 AUDIODMA *getAUDIODMA()	{ return audiodma; }
 CROSSBAR *getCROSSBAR()	{ return crossbar; }
 JOYPADS *getJOYPADS()	{ return joypads; }
+SCC* getSCC()	{ return scc; }
 
 uae_u32 HWget_l (uaecptr addr) {
 	D(bug("HWget_l %x <- %s at %08x", addr, debug_print_IO(addr), showPC()));

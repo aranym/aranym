@@ -2,7 +2,7 @@
  * aranym_glue.cpp - CPU interface
  *
  * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
- * 
+ *
  * Inspired by Christian Bauer's Basilisk II
  *
  * This file is part of the ARAnyM project which builds a new and powerful
@@ -198,6 +198,11 @@ int MFPdoInterrupt(void)
 	return getMFP()->doInterrupt();
 }
 
+int SCCdoInterrupt(void)
+{
+	return getSCC()->doInterrupt();
+}
+
 /*
  *  Trigger interrupts
  */
@@ -219,6 +224,14 @@ void TriggerVBL(void)
 void TriggerInt5(void)
 {
 	SPCFLAGS_SET( SPCFLAG_INT5 );
+}
+
+void TriggerSCC(bool enable)
+{
+	if (enable)
+		SPCFLAGS_SET( SPCFLAG_SCC );
+	else
+		SPCFLAGS_CLEAR( SPCFLAG_SCC );
 }
 
 void TriggerMFP(bool enable)

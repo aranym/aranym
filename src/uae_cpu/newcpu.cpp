@@ -2,7 +2,7 @@
  * newcpu.cpp - CPU emulation
  *
  * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
- * 
+ *
  * Inspired by Christian Bauer's Basilisk II
  *
  * This file is part of the ARAnyM project which builds a new and powerful
@@ -962,6 +962,16 @@ static void Interrupt(int nr)
     // regs.spcflags |= SPCFLAG_INT; (disabled by joy)
 }
 
+static void SCCInterrupt(int nr)
+{
+    // fprintf(stderr, "CPU: in SCCInterrupt\n");
+    lastint_regs = regs;
+    lastint_no = 5;// ex 5
+    Exception(nr, 0);
+
+    regs.intmask = 5;// ex 5
+}
+
 static void MFPInterrupt(int nr)
 {
     // fprintf(stderr, "CPU: in MFPInterrupt\n");
@@ -1343,7 +1353,7 @@ void m68k_emulop(uae_u32 opcode)
 {
 	struct M68kRegisters r;
 	int i;
-	
+
 	for (i=0; i<8; i++) {
 		r.d[i] = m68k_dreg(regs, i);
 		r.a[i] = m68k_areg(regs, i);
@@ -1500,7 +1510,7 @@ static void do_trace (void)
 
 #define SERVE_VBL_MFP(resetStop)							\
 {															\
-	if (SPCFLAGS_TEST( SPCFLAG_INT3|SPCFLAG_VBL|SPCFLAG_INT5|SPCFLAG_MFP )) {		\
+	if (SPCFLAGS_TEST( SPCFLAG_INT3|SPCFLAG_VBL|SPCFLAG_INT5|SPCFLAG_SCC|SPCFLAG_MFP )) {		\
 		if (SPCFLAGS_TEST( SPCFLAG_INT3 )) {					\
 			if (3 > regs.intmask) {							\
 				Interrupt(3);								\
@@ -1528,6 +1538,20 @@ static void do_trace (void)
 					SPCFLAGS_CLEAR( SPCFLAG_STOP );			\
 			}												\
 		}													\
+		if (SPCFLAGS_TEST( SPCFLAG_SCC )) {					\
+			if (5 > regs.intmask) {						\
+				int vector_number=SCCdoInterrupt();			\
+				if(vector_number){					\
+					 SCCInterrupt(vector_number);	        	\
+					regs.stopped = 0;				\
+					SPCFLAGS_CLEAR( SPCFLAG_SCC);		\
+					if (resetStop)					\
+						SPCFLAGS_CLEAR( SPCFLAG_STOP );		\
+				}							\
+				else							\
+					SPCFLAGS_CLEAR( SPCFLAG_SCC );		\
+			}								\
+		}									\
 		if (SPCFLAGS_TEST( SPCFLAG_MFP )) {					\
 			if (6 > regs.intmask) {							\
 				int vector_number = MFPdoInterrupt();		\
@@ -1558,7 +1582,7 @@ int m68k_do_specialties(void)
 #ifdef USE_JIT
 	// Block was compiled
 	SPCFLAGS_CLEAR( SPCFLAG_JIT_END_COMPILE );
-	
+
 	// Retain the request to get out of compiled code until
 	// we reached the toplevel execution, i.e. the one that
 	// can compile then run compiled code. This also means
@@ -1584,7 +1608,7 @@ int m68k_do_specialties(void)
 
 	SERVE_VBL_MFP(false);
 
-/*  
+/*
 // do not understand the INT vs DOINT stuff so I disabled it (joy)
 	if (regs.spcflags & SPCFLAG_INT) {
 		regs.spcflags &= ~SPCFLAG_INT;
@@ -1605,7 +1629,7 @@ void m68k_do_execute (void)
     uae_u32 opcode;
 #ifdef DISDIP
     if (SETJMP(loop_env)) return;
-#endif	    
+#endif
     for (;;) {
 	regs.fault_pc = pc = m68k_getpc();
 #ifdef FULL_HISTORY

@@ -209,6 +209,11 @@ typedef struct {
 	char parport[256];
 } bx_parallel_options_t;
 
+// Serial port options
+typedef struct {
+	char serport[256];
+} bx_serial_options_t;
+
 // Keyboard and mouse
 typedef struct {
   bool wheel_eiffel;	// eiffel compatible scancodes for mouse wheel
@@ -268,6 +273,7 @@ typedef struct {
   bx_autozoom_options_t	autozoom;
   bx_nfosmesa_options_t	osmesa;
   bx_parallel_options_t parallel;
+  bx_serial_options_t serial;
   bx_natfeat_options_t natfeats;
   bx_nfvdi_options_t	nfvdi;
   bx_audio_options_t	audio;

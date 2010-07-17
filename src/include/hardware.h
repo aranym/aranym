@@ -38,8 +38,11 @@
 #include "audio_dma.h"
 #include "audio_crossbar.h"
 #include "joypads.h"
+#include "scc.h"
 
 extern Parallel *parallel;
+
+extern Serial *serial;
 
 extern uae_u32 vram_addr;
 
@@ -59,6 +62,7 @@ IDE *getIDE(void);
 AUDIODMA *getAUDIODMA(void);
 CROSSBAR *getCROSSBAR(void);
 JOYPADS *getJOYPADS(void);
+SCC *getSCC(void);
 
 extern uae_u32 HWget_l(uaecptr addr);
 extern uae_u16 HWget_w(uaecptr addr);

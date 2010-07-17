@@ -202,10 +202,14 @@ void invoke200HzInterrupt()
 	int milliseconds = (count * ms_ticks);
 	lastTicks += milliseconds;
 
+
 #ifdef DEBUGGER
 	if (!debugging || irqindebug)
 #endif
+	{
 		getMFP()->IRQ(5, count);
+		getSCC()->IRQ();	/* jc: after or before getMFP does not change anything */
+	}
 
 #define VBL_MS	20
 	static int VBL_counter = 0;
