@@ -99,6 +99,8 @@ uint8 SCC::handleRead(memptr addr)
 				scc_regs[16]=temp&0xFF;// define CTS(5), TBE(2) and RBF=RCA(0)
 				RR3=RR3M&(temp>>8);// define RxIP(2), TxIP(1) and ExtIP(0)
 			}
+			else{scc_regs[0]=4;if(scc_regs[9]==0x20)RR3|=0x8;}
+
 		 	value=scc_regs[set2];// not yet defined for channel A
 		 break;
 		 case 2:// not really useful (RR2 seems unaccessed...)
@@ -126,7 +128,7 @@ uint8 SCC::handleRead(memptr addr)
 		  }
 		 break;
 		 case 3:
-		   value=(set2)?RR3:0; //access on A channel only
+		   value=(set2)?0:RR3; //access on A channel only
 		 break;
 		 case 4:// RR0
 			value=scc_regs[set2];
@@ -246,10 +248,31 @@ void SCC::handleWrite(memptr addr, uint8 value)
 				 }
 				 else if(active_reg==12){// new baud rate
 					serial->setBaud(value);// set baud rate according only to LSB byte (ignore MSB (WR13))
-					// normally, we should calculate it from the actual clock source (PCLK or other) and
-					// the 16 bit constant
-					// but we choose a more simple solution, replacing some unused low baud rates with high ones
-					// 115200, 57600, 38400 : see serial_port.cpp
+					// NB : to be recoded correctly : normally, we have to pass a 16 bit value (WR13<<8+WR12) but
+					// WR13 is not yet defined (LSB written first...). We also have to set the baud rate according
+					// to clock source (WR11) and clock mode (WR4)
+					// We choose a more simple solution, replacing some baud rates by more useful values.
+					// we tried to be more or less compatible with HSMODEM (see below)
+/*
+Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
+19200		 19200					19200	   19200
+9600		  9600					9600		9600
+4800		  4800					4800		4800
+3600		  3600					57600	   57600
+2400		  2400					2400		2400
+2000		  2000					38400	   38400
+1800		  1800					1800		1800
+1200		  1200					1200	   57600
+600			   600					600			1800
+300			   300					300			1800
+200			230400					230400	  230400
+150			115200					150		   115200
+134			 57600					115200	   57600
+110			 38400					110		   38400
+75			153600					75		      75
+50			 76800					50		      50
+
+*/
 				 }
 				 else if(active_reg==15){// external status int control
 					if(value&1)panicbug("SCC WR7 prime not yet processed\n");
@@ -278,9 +301,10 @@ void SCC::IRQ(void)
 {
 	uint16 temp;
 	temp=serial->getStatus();
+	if(scc_regs[9]==0x20)temp|=0x800; // fake ExtStatusChange for HSMODEM install
 	scc_regs[16]=temp&0xFF;// RR0B
 	RR3=RR3M&(temp>>8);
-	if((RR3)&&((scc_regs[9]&0xF)==9))
+	if((RR3)&&((scc_regs[9]&0xB)==9))
 		TriggerSCC(true);
 }
 

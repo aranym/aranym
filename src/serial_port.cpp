@@ -39,7 +39,7 @@ Serialport::Serialport(void)
 {
 	D(bug("Serialport: interface created"));
 	handle = open(bx_options.serial.serport,O_RDWR|O_NDELAY|O_NONBLOCK);/* Raw mode */
-// /dev/ttyS0 by default or /dev/ttyUSB0 : see Serport in ./aranym/config [SERIAL]
+	// /dev/ttyS0 by default or /dev/ttyUSB0 : see Serport in ./aranym/config [SERIAL]
 	if (handle<0) {
 		panicbug("Serialport: Can not open device %s", bx_options.serial.serport);
 		return;
@@ -96,29 +96,38 @@ void Serialport::setBaud(uint8 value)
 	if (handle>=0) {
 		struct termios options;
 		tcgetattr(handle,&options);
-//printf("setBaud LSB value=$%x\n",value);
+
 		switch(value){
 			case 0xd0: // 1200
 			cfsetspeed(&options,B1200);
 			break;
+			case 0xfe:// HSMODEM
+			panicbug("ambiguous: 1800 could be also 600 or 300 baud");
 			case 0x8a: // 1800
 			cfsetspeed(&options,B1800);
 			break;
+			case 0xe4:// HSMODEM
 			case 0x7c: // remap 2000 into 38400 bauds
 			cfsetspeed(&options,B38400);
 			break;
+			case 0xbe: // HSMODEM
 			case 0x67: // 2400
 			cfsetspeed(&options,B2400);
 			break;
+			case 0x7e:
+			panicbug("ambiguous: 57600 could be also 1200 baud");
 			case 0x44: // remap 3600 into 57600
-			cfsetspeed(&options,B38400);
+			cfsetspeed(&options,B57600);
 			break;
+			case 0x5e: // HSMODEM
 			case 0x32: // 4800
 			cfsetspeed(&options,B4800);
 			break;
+			case 0x2e: //HSMODEM
 			case 0x18: // 9600
 			cfsetspeed(&options,B9600);
 			break;
+			case 0x16: // HSMODEM
 			case 0xb: // 19200
 			cfsetspeed(&options,B19200);
 			break;
@@ -131,18 +140,34 @@ void Serialport::setBaud(uint8 value)
 			case 0x8c: // 150
 			cfsetspeed(&options,B150);
 			break;
+			case 0x4d: // remap 134 into 115200
+			cfsetspeed(&options,B115200);
+			break;
 			case 0xee: // 110
 			cfsetspeed(&options,B110);
 			break;
+			case 1: // HSMODEM 153600 not done
 			case 0x1a: // 75
 			cfsetspeed(&options,B75);
 			break;
+			case 4: // HSMODEM 76800 not done
 			case 0xa8: // 50
 			cfsetspeed(&options,B50);
 			break;
-
-			default: // remap 134 into 115200 bauds !...
+			case 0:// remap 200 into 230400 (HSMODEM)
+			cfsetspeed(&options,B230400);
+			break;
+			case 2:// remap 150 into 115200 (HSMODEM)
 			cfsetspeed(&options,B115200);
+			break;
+			case 6:// remap 134 into 57600 (HSMODEM)
+			cfsetspeed(&options,B57600);
+			break;
+			case 0xa:// remap 110 into 38400 (HSMODEM)
+			cfsetspeed(&options,B38400);
+			break;
+			default:
+			panicbug("unregistred baud value $%x\n",value);
 			break;
 		}
 		options.c_cflag|=(CLOCAL | CREAD);//
@@ -175,7 +200,6 @@ uint16 Serialport::getStatus()
 	uint16 diff;
 	int status=0;
 	int nbchar=0;
-
 	value=0;
 	D(bug("Serialport: getBusy"));
 	if (handle>=0) {
