@@ -30,7 +30,9 @@
 #include "parameters.h"
 
 #include "serial.h"
+#ifdef ENABLE_SERIALUNIX
 #include "serial_port.h"
+#endif
 
 #include "dsp.h"
 
@@ -40,7 +42,11 @@
 
 SCC::SCC(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
+#ifdef ENABLE_SERIALUNIX
 	serial = new Serialport;
+#else
+	serial = new Serial;
+#endif
 	reset();
 }
 

@@ -1631,6 +1631,13 @@ if test "x$OS_TYPE" = "xlinux"; then
 	MIDISEQSRCS="midi_sequencer.cpp"
 fi
 
+dnl Serial port support
+
+if test "x$ac_cv_header_termios_h" = "xyes" -a "x$ac_cv_header_sys_ioctl_h" = "xyes"; then
+	AC_DEFINE([ENABLE_SERIALUNIX], 1, [Define if you want to use /dev/ttyXXX access for serial port])
+	SERIALSRCS="serialport.cpp"
+fi
+
 dnl Data directory
 
 APP=aranym
@@ -1679,6 +1686,7 @@ AC_SUBST(NFVDISRCS)
 AC_SUBST(NFCLIPBOARDSRCS)
 AC_SUBST(PARALLELX86SRCS)
 AC_SUBST(PARALLELPARPORTSRCS)
+AC_SUBST(SERIALSRCS)
 AC_SUBST(GUISDLSRCS)
 AC_SUBST(DYNGLSRCS)
 AC_SUBST(DBGSP)
