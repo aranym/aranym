@@ -1,3 +1,7 @@
+2010/07/20 - Patrice
+- Check availability of realpath() function, lacking on some Mingw flavours.
+
+
 2010/07/17 - Patrice
 - Preliminary SCC emulation for serial port, written by Jean Conter.
 

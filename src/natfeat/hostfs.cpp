@@ -71,11 +71,16 @@ char *canonicalize_file_name(const char *filename)
 	if (path_max <= 0)
 		path_max = 4096;
 #endif
+
+#ifdef HAVE_REALPATH
 	char *tmp = (char *)malloc(path_max);
 	char *realp = realpath(filename, tmp);
 	char *resolved = (realp != NULL) ? strdup(realp) : NULL;
 	free(tmp);
 	return resolved;
+#else
+	return (filename ? strdup(filename) : NULL);
+#endif
 }
 #endif
 
@@ -139,8 +144,12 @@ int statfs(const char *path, struct statfs *buf)
 
   errno = 0;
 
-  realpath(path, resolved_path);
-
+#ifdef HAVE_REALPATH
+	realpath(path, resolved_path);
+#else
+	strncpy(resolved_path, path, MAX_PATH);
+#endif
+  
   long sectors_per_cluster, bytes_per_sector;
   if(!GetDiskFreeSpaceA(resolved_path, (DWORD *)&sectors_per_cluster,
                         (DWORD *)&bytes_per_sector, (DWORD *)&buf->f_bavail,
