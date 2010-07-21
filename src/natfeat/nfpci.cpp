@@ -42,7 +42,7 @@ char *PciDriver::name()
 
 bool PciDriver::isSuperOnly()
 {
-	return true;
+	return false;
 }
 
 int32 PciDriver::dispatch(uint32 fncode)
