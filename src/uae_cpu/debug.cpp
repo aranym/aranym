@@ -1,7 +1,7 @@
 /*
  * debug.cpp - CPU debugger
  *
- * Copyright (c) 2001-2006 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2010 Milan Jurik of ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Bernd Schmidt's UAE
  *
@@ -33,7 +33,6 @@
 
 #include "sysdeps.h"
 
-#include "config.h"
 #include "memory.h"
 #include "newcpu.h"
 #include "debug.h"

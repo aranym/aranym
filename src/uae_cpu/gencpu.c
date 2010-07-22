@@ -1,7 +1,7 @@
 /*
  * gencpu.c - m68k emulation generator
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2009 ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -1414,11 +1414,7 @@ static void gen_opcode (unsigned long int opcode)
 	}
 	printf ("\tm68k_incpc ((uae_s32)src + 2);\n");
 	fill_prefetch_0 ();
-#ifdef DISDIP
-	printf ("\tgoto %s;\n", endlabelstr);
-#else
 	printf ("return;\n");
-#endif
 	printf ("didnt_jump_%lx:;\n", opcode);
 	need_endlabel = 1;
 	break;
@@ -1450,11 +1446,7 @@ static void gen_opcode (unsigned long int opcode)
 	}
 	printf ("\t\t\tm68k_incpc((uae_s32)offs + 2);\n");
 	fill_prefetch_0 ();
-#ifdef DISDIP
-	printf ("\tgoto %s;\n", endlabelstr);
-#else
 	printf ("return;\n");
-#endif
 	printf ("\t\t}\n");
 	printf ("\t}\n");
 	need_endlabel = 1;
@@ -2410,30 +2402,13 @@ static void generate_one_opcode (int rp)
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
     
-#ifdef DISDIP
-    printf ("void REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opc) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
-    printf ("\tuae_u32 pc;\n");
-    printf ("\tif (initial) {\n");
-    printf ("\t\topcode = opc;\n");
-    printf ("\t\talloca(1000);\n");
-    printf ("\t\tgoto op_%lx_%d_lab;\n", opcode, postfix);
-    printf ("\t}\n");
-    printf ("\top_smalltbl_0_lab[opc] = &&op_%lx_%d_lab;\n", opcode, postfix);
-    printf ("\treturn;\n");
-    printf ("op_%lx_%d_lab: /* %s */\n", opcode, postfix, lookuptab[i].name);
-    printf ("\t{\n");
-#if 0
-    printf ("\tprintf(\"%%08x: %lx -> %%lx\\n\", m68k_getpc(), opcode);\n", opcode);
-#endif
-#else
     printf ("void REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
-	printf ("\tcpuop_begin();\n");
-#endif
+    printf ("\tcpuop_begin();\n");
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
 	   codes at all is the same as the "ff" variant, so we don't need the "nf"
 	   variant to be compiled since it is mapped to the "ff" variant in the
 	   smalltbl. */
-	if (table68k[opcode].flagdead == 0)
+    if (table68k[opcode].flagdead == 0)
 	printf ("#ifndef NOFLAGS\n");
 
     switch (table68k[opcode].stype) {
@@ -2557,31 +2532,7 @@ static void generate_one_opcode (int rp)
 	printf ("%s: ;\n", endlabelstr);
     if (table68k[opcode].flagdead == 0)
 	printf ("\n#endif\n");
-#ifdef DISDIP
-    printf ("\tif (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {\n");
-    printf ("\t\tif (m68k_do_specialties())\n");
-    printf ("\t\t\tLONGJMP(loop_env, 1);\n");
-    printf ("\t}\n");
-    printf ("\tpc = m68k_getpc();\n");
-#ifndef FULLMMU
-#if ARAM_PAGE_CHECK
-    printf ("\tif (((pc ^ pc_page) > ARAM_PAGE_MASK)) {\n");
-    printf ("\t\tcheck_ram_boundary(pc, 2, false);\n");
-    printf ("\t\tpc_page = pc;\n");
-    printf ("\t\tpc_offset = (uae_u32)get_real_address(pc, 0, sz_word) - pc;\n");
-    printf ("\t}\n");
-#else /* ARAM_PAGE_CHECK */
-    printf ("\tcheck_ram_boundary(pc, 2, false);\n");
-#endif /* ARAM_PAGE_CHECK */
-#endif /* !FULLMMU */
-    printf ("\topcode = GET_OPCODE;}\n");
-#if 0
-    printf ("\tprintf(\"%%lx 0x%%08x 0x%%08x\\n\", opcode, op_smalltbl_0_lab,op_smalltbl_0_lab[opcode]);\n");
-#endif
-    printf ("\tgoto *op_smalltbl_0_lab[opcode];\n\n");
-#else /* DISDIP */
     printf ("\tcpuop_end();\n");
-#endif /* DISDIP */
     printf ("}\n");
     opcode_next_clev[rp] = next_cpu_level;
     opcode_last_postfix[rp] = postfix;
@@ -2621,9 +2572,6 @@ static void generate_func (void)
 	        "#define PART_7 1\n"
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
-#ifdef DISDIP
-	printf ("uae_u32 opcode;\n\n");
-#endif
 	rp = 0;
 	for(j=1;j<=8;++j) {
 		int k = (j*nr_cpuop_funcs)/8;

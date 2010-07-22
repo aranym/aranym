@@ -1,7 +1,7 @@
 /*
  * parameters.cpp - parameter init/load/save code
  *
- * Copyright (c) 2001-2008 ARAnyM developer team (see AUTHORS)
+ * Copyright (c) 2001-2010 ARAnyM developer team (see AUTHORS)
  *
  * Authors:
  *  MJ		Milan Jurik
@@ -27,7 +27,6 @@
 
 
 #include "sysdeps.h"
-#include "config.h"
 #include "parameters.h"
 #include "tools.h"		// for safe_strncpy()
 #include "host.h"

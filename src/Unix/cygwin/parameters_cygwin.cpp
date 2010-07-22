@@ -1,7 +1,7 @@
 /*
  * parameters_cygwin.cpp - parameters specific for Cygwin build
  *
- * Copyright (c) 2001-2006 ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2010 ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -22,7 +22,6 @@
  */
 
 #include "sysdeps.h"
-#include "config.h"
 #include "tools.h"
 #include "parameters.h"
 #include "host_filesys.h"

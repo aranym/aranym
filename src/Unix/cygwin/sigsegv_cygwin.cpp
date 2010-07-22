@@ -3,9 +3,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#define SIGSEGV_HANDLER_GOTO 0
-#define FULL_SIGSEGV_HANDLER_GOTO 0
-
 #ifdef USE_JIT
 extern void compiler_status();
 # ifdef JIT_DEBUG
@@ -104,12 +101,6 @@ int in_handler = 0;
 /******************************************************************************/
 
 #if (CPU_i386)
-
-/* instruction jump table */
-#if FULL_SIGSEGV_HANDLER_GOTO
-static void *sigsegvjmptbl[256];
-static bool sigsegvjmptbl_set = false;
-#endif
 
 enum instruction_t {
 	INSTR_UNKNOWN,
@@ -243,9 +234,6 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 	int pom1, pom2 = 0;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
-#if SIGSEGV_HANDLER_GOTO
-	void *ssvjmp = &&label_INSTR_UNKNOWN;
-#endif
 
 #if 1
 	if (in_handler > 0) {
@@ -254,14 +242,6 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 	}
 #endif
 	in_handler += 1;
-
-#if FULL_SIGSEGV_HANDLER_GOTO
-	if (!sigsegvjmptbl_set) {
-		for (int i = 0; i < 256; i++)
-			sigsegvjmptbl[i] = &&label_INSTR_UNKNOWN;
-		sigsegvjmptbl[CASE_INSTR_ADD8] = &&label_INSTR_ADD8_L;
-	}
-#endif
 
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
@@ -286,48 +266,32 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 		case CASE_INSTR_ADD8MR:
 			D(panicbug("ADD m8, r8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_ADD8_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_ADD8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case CASE_INSTR_ADD8RM:
 			D(panicbug("ADD r8, m8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_ADD8_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_ADD8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case CASE_INSTR_OR8MR:
 			D(panicbug("OR m8, r8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_OR8_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_OR8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case CASE_INSTR_OR8RM:
 			D(panicbug("OR r8, m8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_OR8_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_OR8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
@@ -335,35 +299,23 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 			switch (addr_instr[1]) {
 				case CASE_INSTR_MOVZX8RM:
 					D(panicbug("MOVZX r32, m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_MOVZX8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVZX8;
-#endif
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
 				case CASE_INSTR_MOVZX16RM:
 					D(panicbug("MOVZX r32, m16"));
 					size = 2;
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_MOVZX16_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVZX16;
-#endif
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
 				case CASE_INSTR_MOVSX8RM:
 					D(panicbug("MOVSX r32, m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_MOVSX8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MOVSX8;
-#endif
 					reg = (addr_instr[2] >> 3 ) & 7;
 					len += 3 + get_instr_size_add(addr_instr + 2);
 					break;
@@ -372,36 +324,24 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 		case 0x22:
 			D(panicbug("AND r8, m8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_AND8_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_AND8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x3a:
 			D(panicbug("CMP r8, m8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_CMP8_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_CMP8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x80:
 			D(panicbug("OR m8, imm8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_ORIMM8_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_ORIMM8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			// imm = addr_instr[3];
 			switch(addr_instr[1] & 0x07) {
@@ -420,58 +360,38 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 		case 0x8a:
 			D(panicbug("MOV r8, m8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOV8_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_MOV8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x8b:
 			D(panicbug("MOV r32, m32"));
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOV32_L;
-#else
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_MOV32;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x88:
 			D(panicbug("MOV m8, r8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOV8_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_MOV8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x89:
 			D(panicbug("MOV m32, r32"));
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOV32_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_MOV32;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0xc6:
 			D(panicbug("MOV m8, imm8"));
 			size = 1;
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOVIMM8_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_MOVIMM8;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			switch(addr_instr[1] & 0x07) {
 				case 0: imm = addr_instr[2]; break;
@@ -489,12 +409,8 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 			break;
 		case 0xc7:
 			D(panicbug("MOV m32, imm32"));
-#if SIGSEGV_HANDLER_GOTO
-			ssvjmp = &&label_INSTR_MOVIMM32_S;
-#else
 			transfer_type = TYPE_STORE;
 			instruction = INSTR_MOVIMM32;
-#endif
 			reg = (addr_instr[1] >> 3) & 7;
 			if (size == 2) {
 				imm = ((uae_u16)addr_instr[7] << 8) + addr_instr[6];
@@ -510,33 +426,21 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 			switch (addr_instr[1] & 0x07) {
 				case 0:
 					D(panicbug("TEST m8, imm8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_TESTIMM8_S;
-#else
 					transfer_type = TYPE_STORE;
 					instruction = INSTR_TESTIMM8;
-#endif
 					imm = addr_instr[2];
 					len += 3 + get_instr_size_add(addr_instr + 1);
 					break;
 				case 2:
 					D(panicbug("NOT m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_NOT8_S;
-#else
 					transfer_type = TYPE_STORE;
 					instruction = INSTR_NOT8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 				case 3:
 					D(panicbug("NEG m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_NEG8_S;
-#else
 					transfer_type = TYPE_STORE;
 					instruction = INSTR_NEG8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 #if 0
@@ -558,43 +462,27 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 #else
 				case 4:
 					D(panicbug("MUL m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_MUL8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_MUL8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 				case 5:
 					D(panicbug("IMUL m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_IMUL8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_IMUL8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 #endif
 				case 6:
 					D(panicbug("DIV m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_DIV8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_DIV8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 				case 7:
 					D(panicbug("IDIV m8"));
-#if SIGSEGV_HANDLER_GOTO
-					ssvjmp = &&label_INSTR_IDIV8_L;
-#else
 					transfer_type = TYPE_LOAD;
 					instruction = INSTR_IDIV8;
-#endif
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
 				default:
@@ -605,9 +493,6 @@ static inline void handle_access_fault(CONTEXT_TYPE CONTEXT_NAME, memptr faultad
 			}
 			break;
 		default:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_UNKNOWN:
-#endif
 			instruction = INSTR_UNKNOWN;
 			unknown_instruction(instr);
 			abort();
@@ -623,122 +508,65 @@ label_INSTR_UNKNOWN:
 
 	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
 
-#if SIGSEGV_HANDLER_GOTO
-	goto *ssvjmp;
-#endif
 	if (transfer_type == TYPE_LOAD) {
 		D2(panicbug("LOAD instruction %X", instruction));
 		switch (instruction) {
 			case INSTR_MOVZX16:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVZX16_L:
-#endif
 				*((uae_u32 *)preg) = 0;
 				*((uae_u16 *)preg) = SDL_SwapBE16((uae_u16)HWget_w(addr));
 				break;
 			case INSTR_MOV8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV8_L:
-#endif
 				*((uae_u8 *)preg) = HWget_b(addr);
 				break;
 			case INSTR_MOV32:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_L:
-#endif
 				if (size == 4) {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_4_L:
-#endif
 					*((uae_u32 *)preg) = SDL_SwapBE32(HWget_l(addr));
 				} else {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_2_L:
-#endif
 					*((uae_u16 *)preg) = SDL_SwapBE16(HWget_w(addr));
 				}
 				break;
 			case INSTR_OR8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_OR8_L:
-#endif
 				*((uae_u8 *)preg) |= HWget_b(addr);
 				set_eflags(*((uae_u8 *)preg), CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_AND8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_AND8_L:
-#endif
 				*((uae_u8 *)preg) &= HWget_b(addr);
 				imm = *((uae_u8 *)preg);
 				set_eflags(*((uae_u8 *)preg), CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_MOVZX8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVZX8_L:
-#endif
 				if (size == 4) {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVZX8_4_L:
-#endif
 					*((uae_u32 *)preg) = (uae_u8)HWget_b(addr);
 				} else {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVZX8_2_L:
-#endif
 					*((uae_u16 *)preg) = (uae_u8)HWget_b(addr);
 				}
 				break;
 			case INSTR_MOVSX8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVSX8_L:
-#endif
 				if (size == 4) {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVSX8_4_L:
-#endif
 					*((uae_s32 *)preg) = (uae_s8)HWget_b(addr);
 				} else {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVSX8_2_L:
-#endif
 					*((uae_s16 *)preg) = (uae_s8)HWget_b(addr);
 				}
 				break;
 			case INSTR_ADD8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_ADD8_L:
-#endif
 				*((uae_u8 *)preg) += HWget_b(addr);
 				break;
 			case INSTR_CMP8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_CMP8_L:
-#endif
 				imm = *((uae_u8 *)preg);
 				imm -= HWget_b(addr);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_DIV8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_DIV8_L:
-#endif
 				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
 				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
 				break;
 			case INSTR_IDIV8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_IDIV8_L:
-#endif
 				pom1 = CONTEXT_EAX & 0xffff;
 				pom2 = HWget_b(addr);
 				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
 				break;
 			case INSTR_MUL8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MUL8_L:
-#endif
 				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
 				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + pom1 * pom2;
@@ -746,9 +574,6 @@ label_INSTR_MUL8_L:
 					else CONTEXT_EFLAGS |= 0x401;
 				break;
 			case INSTR_IMUL8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_IMUL8_L:
-#endif
 				pom1 = CONTEXT_EAX & 0xff;
 				pom2 = HWget_b(addr);
 				CONTEXT_EAX = CONTEXT_EAX & 0xffff0000 + (uae_s8)pom1 * (uae_s8)pom2;
@@ -761,106 +586,61 @@ label_INSTR_IMUL8_L:
 		D2(panicbug("WRITE instruction %X", instruction));
 		switch (instruction) {
 			case INSTR_MOV8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV8_S:
-#endif
 				D2(panicbug("MOV value = $%x\n", *((uae_u8 *)preg)));
 				HWput_b(addr, *((uae_u8 *)preg));
 				break;
 			case INSTR_MOV32:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_S:
-#endif
 				if (size == 4) {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_4_S:
-#endif
 				D2(panicbug("before 1"));
 					HWput_l(addr, SDL_SwapBE32(*((uae_u32 *)preg)));
 				D2(panicbug("after 1"));
 				} else {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOV32_2_S:
-#endif
 				D2(panicbug("before 2"));
 					HWput_w(addr, SDL_SwapBE16(*((uae_u16 *)preg)));
 				D2(panicbug("after 2"));
 				}
 				break;
 			case INSTR_AND8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_AND8_S:
-#endif
 				imm = HWget_b(addr);
 				imm &= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_ADD8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_ADD8_S:
-#endif
 				imm = HWget_b(addr);
 				imm += *((uae_u8 *)preg);
 				HWput_b(addr, imm);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_OR8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_OR8_S:
-#endif
 				imm = HWget_b(addr);
 				imm |= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_ORIMM8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_ORIMM8_S:
-#endif
 				imm |= HWget_b(addr);
 				HWput_b(addr, imm);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_MOVIMM8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVIMM8_S:
-#endif
 				HWput_b(addr, (uae_u8)imm);
 				break;
 			case INSTR_MOVIMM32:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVIMM32_S:
-#endif
 				if (size == 4) {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVIMM32_4_S:
-#endif
 					HWput_l(addr, (uae_u32)imm);
 				} else {
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_MOVIMM32_2_S:
-#endif
 					HWput_w(addr, (uae_u16)imm);
 				}
 				break;
 			case INSTR_TESTIMM8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_TESTIMM8_S:
-#endif
 				imm &= HWget_b(addr);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
 				break;
 			case INSTR_NOT8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_NOT8_S:
-#endif
 				HWput_b(addr, ~(uae_u8)HWget_b(addr));
 				break;
 			case INSTR_NEG8:
-#if SIGSEGV_HANDLER_GOTO
-label_INSTR_NEG8_S:
-#endif
 				imm = ~(uae_u8)HWget_b(addr) + 1;
 				HWput_b(addr, imm);
 				set_eflags(imm, CONTEXT_ADDR, TYPE_BYTE);
@@ -921,11 +701,6 @@ static void segfault_vec(int x, struct sigcontext sc) {
 
 void install_sigsegv() {
 	signal(SIGSEGV, (sighandler_t)segfault_vec);
-#if FULL_SIGSEGV_HANDLER_GOTO
-	struct sigcontext sc;
-	segfault_vec(0, sc);
-	sigsegvjmptbl_set = true;
-#endif
 }
 
 #endif /* OS_linux */

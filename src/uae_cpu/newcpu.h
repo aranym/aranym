@@ -1,7 +1,7 @@
 /*
  * newcpu.h - CPU emulation
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2009 ARAnyM dev team (see AUTHORS)
  * 
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -285,12 +285,6 @@ extern void m68k_enter_debugger(void);
 extern int m68k_do_specialties(void);
 extern void m68k_instr_set(void);
 
-#ifdef DISDIP
-extern JMP_BUF loop_env;
-
-extern uae_u32 opcode;
-#endif
-
 /* Opcode of faulting instruction */
 extern uae_u16 last_op_for_exception_3;
 /* PC at fault time */
@@ -307,11 +301,6 @@ extern struct cputbl op_smalltbl_0_ff[];
 # define FLIGHT_RECORDER 0
 #else
 extern void m68k_record_step(uaecptr, int);
-#endif
-
-#ifdef DISDIP
-extern bool initial;
-extern void *op_smalltbl_0_lab[];
 #endif
 
 extern void m68k_do_execute(void);

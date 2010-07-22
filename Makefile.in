@@ -11,6 +11,7 @@ prefix = @prefix@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 datadir = @datadir@
+datarootdir = @datarootdir@
 mandir = @mandir@
 man1dir = $(mandir)/man1
 docdir = $(prefix)/share/doc

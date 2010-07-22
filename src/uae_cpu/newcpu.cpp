@@ -1,7 +1,8 @@
 /*
  * newcpu.cpp - CPU emulation
  *
- * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2010 ARAnyM dev team (see AUTHORS)
+ * 
  *
  * Inspired by Christian Bauer's Basilisk II
  *
@@ -66,23 +67,12 @@ struct flag_struct regflags;
 #ifdef EXCEPTIONS_VIA_LONGJMP
 JMP_BUF excep_env;
 #endif
-#ifdef DISDIP
-JMP_BUF loop_env;
-#endif
 /* Opcode of faulting instruction */
 uae_u16 last_op_for_exception_3;
 /* PC at fault time */
 uaecptr last_addr_for_exception_3;
 /* Address that generated the exception */
 uaecptr last_fault_for_exception_3;
-
-#ifdef DISDIP
-/* Is opcode label table initialized?*/
-bool initial;
-
-/* Jump table */
-void *op_smalltbl_0_lab[65536];
-#endif
 
 int areg_byteinc[] = { 1,1,1,1,1,1,1,2 };
 int imm8_table[] = { 8,1,2,3,4,5,6,7 };
@@ -251,15 +241,6 @@ static void build_cpufunctbl (void)
 	if (tbl[i].specific)
 	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
     }
-#ifdef DISDIP
-    for (opcode = 0; opcode < 65536; opcode++)
-	(*cpufunctbl[opcode])(opcode);
-#if 0
-    for (opcode = 0; opcode < 65536; opcode++)
-	panicbug("%lx 0x%08x", opcode, op_smalltbl_0_lab[opcode]);
-#endif
-    initial = true;
-#endif
 }
 
 void init_m68k (void)
@@ -1418,22 +1399,7 @@ void m68k_natfeat_call(void)
 	MakeFromSR();
 }
 
-#ifdef DISDIP
-void REGPARAM2 op_illg (uae_u32 opc)
-{
-	uae_u32 xpc;
-	if (initial) {
-		opcode = opc;
-		goto op_illg_lab;
-	}
-	opc = cft_map(opc);
-	op_smalltbl_0_lab[opc] = &&op_illg_lab;
-	return;
-op_illg_lab:
-	opcode = cft_map(opcode);
-#else
 void REGPARAM2 op_illg (uae_u32 opcode)
-#endif
 {
 #if DEBUG
 	uaecptr pc = m68k_getpc ();
@@ -1441,20 +1407,12 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 
 	if ((opcode & 0xF000) == 0xA000) {
 	Exception(0xA,0);
-#ifdef DISDIP
-	LONGJMP(loop_env, 0);
-#else
 	return;
-#endif
 	}
 
 	if ((opcode & 0xF000) == 0xF000) {
 	Exception(0xB,0);
-#ifdef DISDIP
-	LONGJMP(loop_env, 0);
-#else
 	return;
-#endif
 	}
 
 	D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
@@ -1463,12 +1421,7 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 #endif
 
 	Exception (4,0);
-#ifdef DISDIP
-}
-	LONGJMP(loop_env, 0);
-#else
 	return;
-#endif
 }
 
 static uaecptr last_trace_ad = 0;
@@ -1627,9 +1580,6 @@ void m68k_do_execute (void)
 {
     uae_u32 pc;
     uae_u32 opcode;
-#ifdef DISDIP
-    if (SETJMP(loop_env)) return;
-#endif
     for (;;) {
 	regs.fault_pc = pc = m68k_getpc();
 #ifdef FULL_HISTORY
@@ -1663,13 +1613,6 @@ void m68k_do_execute (void)
 	(*cpufunctbl[opcode])(opcode);
 	cpu_check_ticks();
 	regs.fault_pc = m68k_getpc();
-
-#ifndef DISDIP
-	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
-	    if (m68k_do_specialties())
-		return;
-	}
-#endif
     }
 }
 

@@ -162,8 +162,6 @@ AC_ARG_ENABLE(jit-fpu,
 
 AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers (default=no)], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-AC_ARG_ENABLE(disdip,          [  --enable-disdip         enable distributed dispatcher (default=no)], [WANT_DIS_DIP=$enableval], [WANT_DIS_DIP=no])
-
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
 AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
@@ -1119,27 +1117,11 @@ if [[ "x$HAVE_GCC27" = "xyes" ]]; then
   fi
 fi
 
-dnl Distributed dispatcher eliminates pipeline stall
-dnl It needs computed gotos (supported by GNU C++)
-dnl DODO - test for computed gotos
-if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-  DEFINES="$DEFINES -DDISDIP"
-fi
-
-dnl And also remove functions calls costs
-if [[ "x$WANT_SIGSEGV_GOTO" = "xyes" ]]; then
-  AC_DEFINE(SIGSEGV_HANDLER_GOTO, 1, [Define if you want computed gotos for sigsegv handler])
-fi
-
 dnl Select appropriate CPU source and REGPARAM define.
 CPUSRCS=
 GENCPUSRCS=
 ASM_OPTIMIZATIONS=none
-if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-	GENCPUSRCS="cpuemu.cpp"
-else
-	GENCPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
-fi
+GENCPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
 
 dnl gb-- JITSRCS and GENJITSRCS will be emptied later if the JIT is not available
 dnl gb-- Other platforms should define their own set of noflags file variants
@@ -1153,11 +1135,7 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS=i386
     DEFINES="$DEFINES -DX86_ASSEMBLY -DOPTIMIZED_FLAGS -DSAHF_SETO_PROFITABLE"
-#    if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-#      GENCPUSRCS="cpufast.s"
-#    else
-#      GENCPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
-#    fi
+#    GENCPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
      GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
 #    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
@@ -1367,13 +1345,6 @@ if [[ "x$HAVE_OFAST" = "xyes" ]]; then
   CXXFLAGS="`echo $CXXFLAGS | sed -e 's/-g//g'` -Ofast"
   CXXFLAGS="-LANG:std $CXXFLAGS"
   LDFLAGS="$LDFLAGS -ipa"
-fi
-
-dnl For computed gotos it is necessary no-gcse
-if [[ "x$WANT_DIS_DIP" = "xyes" ]]; then
-  if [[ "x$HAVE_GCC27" = "xyes" ]]; then
-    CXXFLAGS="$CXXFLAGS -fno-gcse"
-  fi
 fi
 
 dnl Check for SDL
@@ -1635,7 +1606,7 @@ dnl Serial port support
 
 if test "x$ac_cv_header_termios_h" = "xyes" -a "x$ac_cv_header_sys_ioctl_h" = "xyes"; then
 	AC_DEFINE([ENABLE_SERIALUNIX], 1, [Define if you want to use /dev/ttyXXX access for serial port])
-	SERIALSRCS="serialport.cpp"
+	SERIALSRCS="serial_port.cpp"
 fi
 
 dnl Data directory
@@ -1725,7 +1696,6 @@ echo Linux /dev/rtc source timer ............ : $WANT_RTCTIMER
 echo Real STOP implementation ............... : $WANT_REALSTOP
 echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
-echo Distributed dispatcher ................. : $WANT_DIS_DIP
 echo Debugger ............................... : $WHICH_DEBUG
 echo Check memory ........................... : $MEMORY_CHECK
 echo First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K
