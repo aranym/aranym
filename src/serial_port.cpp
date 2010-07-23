@@ -93,89 +93,100 @@ void Serialport::setData(uint8 value)
 void Serialport::setBaud(uint8 value)
 {
 	D(bug("Serialport: setBaud"));
-	if (handle>=0) {
-		struct termios options;
-		tcgetattr(handle,&options);
 
-		switch(value){
-			case 0xd0: // 1200
-			cfsetspeed(&options,B1200);
+	if (handle<0)
+		return;
+
+	speed_t new_speed = B0;
+
+	switch(value){
+		case 0xd0: // 1200
+			new_speed = B1200;
 			break;
-			case 0xfe:// HSMODEM
+		case 0xfe:// HSMODEM
 			panicbug("ambiguous: 1800 could be also 600 or 300 baud");
-			case 0x8a: // 1800
-			cfsetspeed(&options,B1800);
+		case 0x8a: // 1800
+			new_speed = B1800;
 			break;
-			case 0xe4:// HSMODEM
-			case 0x7c: // remap 2000 into 38400 bauds
-			cfsetspeed(&options,B38400);
+		case 0xe4:// HSMODEM
+		case 0x7c: // remap 2000 into 38400 bauds
+			new_speed = B38400;
 			break;
-			case 0xbe: // HSMODEM
-			case 0x67: // 2400
-			cfsetspeed(&options,B2400);
+		case 0xbe: // HSMODEM
+		case 0x67: // 2400
+			new_speed = B2400;
 			break;
-			case 0x7e:
+		case 0x7e:
 			panicbug("ambiguous: 57600 could be also 1200 baud");
-			case 0x44: // remap 3600 into 57600
-			cfsetspeed(&options,B57600);
+		case 0x44: // remap 3600 into 57600
+			new_speed = B57600;
 			break;
-			case 0x5e: // HSMODEM
-			case 0x32: // 4800
-			cfsetspeed(&options,B4800);
+		case 0x5e: // HSMODEM
+		case 0x32: // 4800
+			new_speed = B4800;
 			break;
-			case 0x2e: //HSMODEM
-			case 0x18: // 9600
-			cfsetspeed(&options,B9600);
+		case 0x2e: //HSMODEM
+		case 0x18: // 9600
+			new_speed = B9600;
 			break;
-			case 0x16: // HSMODEM
-			case 0xb: // 19200
-			cfsetspeed(&options,B19200);
+		case 0x16: // HSMODEM
+		case 0xb: // 19200
+			new_speed = B19200;
 			break;
-			case 0xa1: // 600
-			cfsetspeed(&options,B600);
+		case 0xa1: // 600
+			new_speed = B600;
 			break;
-			case 0x45: // 300
-			cfsetspeed(&options,B300);
+		case 0x45: // 300
+			new_speed = B300;
 			break;
-			case 0x8c: // 150
-			cfsetspeed(&options,B150);
+		case 0x8c: // 150
+			new_speed = B150;
 			break;
-			case 0x4d: // remap 134 into 115200
-			cfsetspeed(&options,B115200);
+		case 0x4d: // remap 134 into 115200
+			new_speed = B115200;
 			break;
-			case 0xee: // 110
-			cfsetspeed(&options,B110);
+		case 0xee: // 110
+			new_speed = B110;
 			break;
-			case 1: // HSMODEM 153600 not done
-			case 0x1a: // 75
-			cfsetspeed(&options,B75);
+		case 1: // HSMODEM 153600 not done
+		case 0x1a: // 75
+			new_speed = B75;
 			break;
-			case 4: // HSMODEM 76800 not done
-			case 0xa8: // 50
-			cfsetspeed(&options,B50);
+		case 4: // HSMODEM 76800 not done
+		case 0xa8: // 50
+			new_speed = B50;
 			break;
-			case 0:// remap 200 into 230400 (HSMODEM)
-			cfsetspeed(&options,B230400);
+		case 0:// remap 200 into 230400 (HSMODEM)
+			new_speed = B230400;
 			break;
-			case 2:// remap 150 into 115200 (HSMODEM)
-			cfsetspeed(&options,B115200);
+		case 2:// remap 150 into 115200 (HSMODEM)
+			new_speed = B115200;
 			break;
-			case 6:// remap 134 into 57600 (HSMODEM)
-			cfsetspeed(&options,B57600);
+		case 6:// remap 134 into 57600 (HSMODEM)
+			new_speed = B57600;
 			break;
-			case 0xa:// remap 110 into 38400 (HSMODEM)
-			cfsetspeed(&options,B38400);
+		case 0xa:// remap 110 into 38400 (HSMODEM)
+			new_speed = B38400;
 			break;
-			default:
+		default:
 			panicbug("unregistred baud value $%x\n",value);
 			break;
-		}
-		options.c_cflag|=(CLOCAL | CREAD);//
-		options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);// raw input
-		options.c_iflag &= ~(ICRNL);// CR is not CR+LF
-
-		tcsetattr(handle,TCSANOW,&options);
 	}
+
+	if (new_speed == B0)
+		return;
+
+	struct termios options;
+	tcgetattr(handle,&options);
+
+	cfsetispeed(&options, new_speed);
+	cfsetospeed(&options, new_speed);
+
+	options.c_cflag|=(CLOCAL | CREAD);//
+	options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);// raw input
+	options.c_iflag &= ~(ICRNL);// CR is not CR+LF
+
+	tcsetattr(handle,TCSANOW,&options);
 }
 
 void Serialport::setRTSDTR(uint8 value)
