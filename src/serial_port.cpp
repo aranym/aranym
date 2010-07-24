@@ -238,14 +238,19 @@ uint16 Serialport::getTBE() // not suited to serial USB
 {
 	uint16 value=0;
 	int status=0;
-		if (ioctl(handle,TIOCSERGETLSR,&status)<0){// OK with ttyS0, not OK with ttyUSB0
-			//panicbug("Serialport: Can't get LSR");
-			value|=(1<<TBE);// only for serial USB
-		}
-		else if(status&TIOCSER_TEMT) {value=(1<<TBE);// this is a real TBE for ttyS0
-			if((oldTBE&(1<<TBE))==0){value|=0x200;}// TBE rise=>TxIP (based on real TBE)
-		}
-		oldTBE=value;
-		return value;
+	
+#if defined(TIOCSERGETLSR) && defined(TIOCSER_TEMT)
+	if (ioctl(handle,TIOCSERGETLSR,&status)<0){// OK with ttyS0, not OK with ttyUSB0
+		//panicbug("Serialport: Can't get LSR");
+		value|=(1<<TBE);// only for serial USB
+	} else if(status&TIOCSER_TEMT) {
+		value=(1<<TBE);// this is a real TBE for ttyS0
+		if ((oldTBE&(1<<TBE))==0) {
+			value|=0x200;
+		}// TBE rise=>TxIP (based on real TBE)
+	}
+#endif
 
+	oldTBE=value;
+	return value;
 }
