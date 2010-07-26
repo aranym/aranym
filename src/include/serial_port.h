@@ -37,9 +37,10 @@ class Serialport: public Serial
 		
 		uint8 getData();
 		void setData(uint8 value);
-		void setBaud(uint8 value);
+		void setBaud(uint32 value);
 		uint16 getStatus();
-		void setRTSDTR(uint8 value);
+		void setRTS(bool value);
+		void setDTR(bool value);
 };
 
 #endif /* SERIAL_PORT_H */

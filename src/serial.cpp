@@ -43,14 +43,6 @@ void Serial::reset(void)
 	D(bug("serial: reset"));
 }
 
-/*
-void Serial::setDirection(bool out)
-{
-	DUNUSED(out);
-	D(bug("serial: setDirection"));
-}
-*/
-
 uint8 Serial::getData()
 {
 	D(bug("serial: getData"));
@@ -63,7 +55,7 @@ void Serial::setData(uint8 value)
 	D(bug("serial: setData"));
 }
 
-void Serial::setBaud(uint8 value)
+void Serial::setBaud(uint32 value)
 {
 	DUNUSED(value);
 	D(bug("serial: setBaud"));
@@ -75,18 +67,23 @@ uint16 Serial::getStatus()
 	return 0;
 }
 
-void Serial::setRTSDTR(uint8 value)
+void Serial::setRTS(bool value)
 {
-	D(bug("serial: setRTSDTR"));
+	DUNUSED(value);
+	D(bug("serial: setRTS"));
 }
 
+void Serial::setDTR(bool value)
+{
+	DUNUSED(value);
+	D(bug("serial: setDTR"));
+}
 
 uint16 Serial::getTBE()
 {
 	D(bug("serial: getTBE"));
 	return 0;
 }
-
 
 /*
 vim:ts=4:sw=4:

@@ -182,6 +182,7 @@ uint8 SCC::handleRead(memptr addr)
 void SCC::handleWrite(memptr addr, uint8 value)
 {
 	int i,set2;
+	uint32 BaudRate;
 	addr -= getHWoffset();
 	set2=(addr>=4)?16:0;// channel B
 	switch(addr) {
@@ -243,7 +244,8 @@ void SCC::handleWrite(memptr addr, uint8 value)
 					}
 				 }
 				 else if(active_reg==5){// Transmit parameter and control
-					serial->setRTSDTR(value);
+					serial->setRTS(value&2);
+					serial->setDTR(value&128);
 					// Tx character format & Tx CRC would be selected also here (8 bits/char and no CRC assumed)
 				 }
 				 else if(active_reg==9){// Master interrupt control (common for both channels)
@@ -252,39 +254,145 @@ void SCC::handleWrite(memptr addr, uint8 value)
 					if(value&0x80){channelAreset();}
 					//  set or clear SCC flag accordingly (see later)
 				 }
-				 else if(active_reg==12){// new baud rate
-					serial->setBaud(value);// set baud rate according only to LSB byte (ignore MSB (WR13))
-					// NB : to be recoded correctly : normally, we have to pass a 16 bit value (WR13<<8+WR12) but
-					// WR13 is not yet defined (LSB written first...). We also have to set the baud rate according
+				 else if(active_reg==13){// set baud rate according to WR13 and WR12
+					// Normally we have to set the baud rate according
 					// to clock source (WR11) and clock mode (WR4)
-					// We choose a more simple solution, replacing some baud rates by more useful values.
+					// In fact, we choose the baud rate from the value stored in WR12 & WR13
+					// Note: we assume that WR13 is always written last (after WR12)
 					// we tried to be more or less compatible with HSMODEM (see below)
-/*
-Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
-19200		 19200					19200	   19200
-9600		  9600					9600		9600
-4800		  4800					4800		4800
-3600		  3600					57600	   57600
-2400		  2400					2400		2400
-2000		  2000					38400	   38400
-1800		  1800					1800		1800
-1200		  1200					1200	   57600
-600			   600					600			1800
-300			   300					300			1800
-200			230400					230400	  230400
-150			115200					150		   115200
-134			 57600					115200	   57600
-110			 38400					110		   38400
-75			153600					75		      75
-50			 76800					50		      50
+					// 75 and 50 bauds are preserved because 153600 and 76800 were not available
+					// 3600 and 2000 were also unavailable and are remapped to 57600 and 38400 respectively
+					BaudRate=0;
+					switch (value){
+						case 0:
+							switch (scc_regs[12+set2]){
+								case 0://HSMODEM for 200 mapped to 230400
+									BaudRate=230400;
+								break;
+								case 2://HSMODEM for 150 mapped to 115200
+									BaudRate=115200;
+								break;
+								case 6://HSMODEM for 134 mapped to 57600
+								case 0x7e://HSMODEM for 3600 remapped to 57600
+								case 0x44://normal for 3600 remapped to 57600
+									BaudRate=57600;
+								break;
+								case 0xa://HSMODEM for 110 mapped to 38400
+								case 0xe4://HSMODEM for 2000 remapped to 38400
+								case 0x7c://normal for 2000 remapped to 38400
+									BaudRate=38400;
+								break;
+								case 0x16://HSMODEM for 19200
+								case 0xb:// normal for 19200
+									BaudRate=19200;
+								break;
+								case 0x2e://HSMODEM for 9600
+								case 0x18://normal for 9600
+									BaudRate=9600;
+								break;
+								case 0x5e://HSMODEM for 4800
+								case 0x32://normal for 4800
+									BaudRate=4800;
+								break;
+								case 0xbe://HSMODEM for 2400
+								case 0x67://normal
+									BaudRate=2400;
+								break;
+								case 0xfe://HSMODEM for 1800
+								case 0x8a://normal for 1800
+									BaudRate=1800;
+								break;
+								case 0xd0://normal for 1200
+									BaudRate=1200;
+								break;
+								case 1://HSMODEM for 75 kept to 75
+									BaudRate=75;
+								break;
+								case 4://HSMODEM for 50 kept to 50
+									BaudRate=50;
+								break;
+								default:
+									panicbug("unexpected LSB constant for baud rate");
+								break;
+							}
+						break;
+						case 1:
+							switch(scc_regs[12+set2]){
+								case 0xa1://normal for 600
+									BaudRate=600;
+								break;
+								case 0x7e://HSMODEM for 1200
+									BaudRate=1200;
+								break;
+							}
+						break;
+						case 2:
+							if(scc_regs[12+set2]==0xfe)BaudRate=600;//HSMODEM
+						break;
+						case 3:
+							if(scc_regs[12+set2]==0x45)BaudRate=300;//normal
+						break;
+						case 4:
+							if(scc_regs[12+set2]==0xe8)BaudRate=200;//normal
+						break;
+						case 5:
+							if(scc_regs[12+set2]==0xfe)BaudRate=300;//HSMODEM
+						break;
+						case 6:
+							if(scc_regs[12+set2]==0x8c)BaudRate=150;//normal
+						break;
+						case 7:
+							if(scc_regs[12+set2]==0x4d)BaudRate=134;//normal
+						break;
+						case 8:
+							if(scc_regs[12+set2]==0xee)BaudRate=110;//normal
+						break;
+						case 0xd:
+							if(scc_regs[12+set2]==0x1a)BaudRate=75;//normal
+						break;
+						case 0x13:
+							if(scc_regs[12+set2]==0xa8)BaudRate=50;//normal
+						break;
+						case 0xff://HSMODEM dummy value->silently ignored
+						break;
+						default:
+							panicbug("unexpected MSB constant for baud rate");
+						break;
+					}
+					if(BaudRate)serial->setBaud(BaudRate);// set only if defined
+
+/* summary of baud rates:
+
+Rsconf		Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
+0		   19200		 19200				   19200	   19200
+1			9600		  9600					9600		9600
+2			4800		  4800					4800		4800
+3			3600		  3600				   57600	   57600
+4			2400		  2400					2400		2400
+5			2000		  2000				   38400	   38400
+6			1800		  1800					1800		1800
+7			1200		  1200					1200	    1200
+8			 600		   600					 600		 600
+9			 300		   300					 300		 300
+
+10			 200		230400					 200	  230400
+11			 150		115200					 150	  115200
+12			 134		 57600					 134	   57600
+13			 110		 38400					 110	   38400
+14			  75		153600					  75		  75
+15			  50		 76800					  50		  50
 
 */
+
+
 				 }
 				 else if(active_reg==15){// external status int control
-					if(value&1)panicbug("SCC WR7 prime not yet processed\n");
+					if(value&1)
+						panicbug("SCC WR7 prime not yet processed\n");
 				 }
 
-				 if( (active_reg==1)||(active_reg==2)||(active_reg==9))TriggerSCC((RR3&RR3M) && ((0xB&scc_regs[9])==9)); // set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
+				 if( (active_reg==1)||(active_reg==2)||(active_reg==9))
+				 	TriggerSCC((RR3&RR3M) && ((0xB&scc_regs[9])==9)); // set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
 				 active_reg=0;// next access for RR0 or WR0
 				break;
 			}
@@ -307,7 +415,8 @@ void SCC::IRQ(void)
 {
 	uint16 temp;
 	temp=serial->getStatus();
-	if(scc_regs[9]==0x20)temp|=0x800; // fake ExtStatusChange for HSMODEM install
+	if(scc_regs[9]==0x20)
+		temp|=0x800; // fake ExtStatusChange for HSMODEM install
 	scc_regs[16]=temp&0xFF;// RR0B
 	RR3=RR3M&(temp>>8);
 	if((RR3)&&((scc_regs[9]&0xB)==9))
@@ -321,38 +430,40 @@ int SCC::doInterrupt()
 	int vector;
 	uint8 i;
 	for(i = 0x20 ; i ; i>>=1) { // highest priority first
-		if(RR3 & i & RR3M)break ;
+		if(RR3 & i & RR3M)
+			break ;
 	}
 	vector = scc_regs[2];//WR2 = base of vectored interrupts for SCC
-	if((scc_regs[9]&3)==0)return vector;// no status included in vector
-	if((scc_regs[9]&0x32)!=0){//shouldn't happen with TOS, (to be completed if needed)
-        panicbug( "unexpected WR9 contents \n");
+	if((scc_regs[9]&3)==0)
+		return vector;// no status included in vector
+	if((scc_regs[9]&0x32)!=0) { //shouldn't happen with TOS, (to be completed if needed)
+        	panicbug( "unexpected WR9 contents \n");
 		// no Soft IACK, Status Low control bit expected, no NV
 		return 0;
 	}
-	switch(i){
-	 case 0: /* this shouldn't happen :-) */
-        panicbug( "scc_do_interrupt called with no pending interrupt\n") ;
-		vector=0;// cancel
-        break;
-	case 1:
-		vector|=2;// Ch B Ext/status change
+	switch(i) {
+		case 0: /* this shouldn't happen :-) */
+			panicbug( "scc_do_interrupt called with no pending interrupt\n") ;
+			vector=0;// cancel
+			break;
+		case 1:
+			vector|=2;// Ch B Ext/status change
+			break;
+		case 2:
+			break;// Ch B Transmit buffer Empty
+		case 4:
+			vector|=4;// Ch B Receive Char available
+			break;
+		case 8:
+			vector|=0xA;// Ch A Ext/status change
+			break;
+		case 16:
+			vector|=8;// Ch A Transmit Buffer Empty
+			break;
+		case 32:
+			vector|=0xC;// Ch A Receive Char available
 		break;
-	case 2:
-		break;// Ch B Transmit buffer Empty
-	case 4:
-		vector|=4;// Ch B Receive Char available
-		break;
-	case 8:
-		vector|=0xA;// Ch A Ext/status change
-		break;
-	case 16:
-		vector|=8;// Ch A Transmit Buffer Empty
-		break;
-	case 32:
-		vector|=0xC;// Ch A Receive Char available
-		break;
-	// special receive condition not yet processed
+		// special receive condition not yet processed
 	}
 #if 0
         panicbug( "SCC::doInterrupt : vector %d\n", vector) ;

@@ -90,7 +90,7 @@ void Serialport::setData(uint8 value)
 	}
 }
 
-void Serialport::setBaud(uint8 value)
+void Serialport::setBaud(uint32 value)
 {
 	D(bug("Serialport: setBaud"));
 
@@ -100,77 +100,25 @@ void Serialport::setBaud(uint8 value)
 	speed_t new_speed = B0;
 
 	switch(value){
-		case 0xd0: // 1200
-			new_speed = B1200;
-			break;
-		case 0xfe:// HSMODEM
-			panicbug("ambiguous: 1800 could be also 600 or 300 baud");
-		case 0x8a: // 1800
-			new_speed = B1800;
-			break;
-		case 0xe4:// HSMODEM
-		case 0x7c: // remap 2000 into 38400 bauds
-			new_speed = B38400;
-			break;
-		case 0xbe: // HSMODEM
-		case 0x67: // 2400
-			new_speed = B2400;
-			break;
-		case 0x7e:
-			panicbug("ambiguous: 57600 could be also 1200 baud");
-		case 0x44: // remap 3600 into 57600
-			new_speed = B57600;
-			break;
-		case 0x5e: // HSMODEM
-		case 0x32: // 4800
-			new_speed = B4800;
-			break;
-		case 0x2e: //HSMODEM
-		case 0x18: // 9600
-			new_speed = B9600;
-			break;
-		case 0x16: // HSMODEM
-		case 0xb: // 19200
-			new_speed = B19200;
-			break;
-		case 0xa1: // 600
-			new_speed = B600;
-			break;
-		case 0x45: // 300
-			new_speed = B300;
-			break;
-		case 0x8c: // 150
-			new_speed = B150;
-			break;
-		case 0x4d: // remap 134 into 115200
-			new_speed = B115200;
-			break;
-		case 0xee: // 110
-			new_speed = B110;
-			break;
-		case 1: // HSMODEM 153600 not done
-		case 0x1a: // 75
-			new_speed = B75;
-			break;
-		case 4: // HSMODEM 76800 not done
-		case 0xa8: // 50
-			new_speed = B50;
-			break;
-		case 0:// remap 200 into 230400 (HSMODEM)
-			new_speed = B230400;
-			break;
-		case 2:// remap 150 into 115200 (HSMODEM)
-			new_speed = B115200;
-			break;
-		case 6:// remap 134 into 57600 (HSMODEM)
-			new_speed = B57600;
-			break;
-		case 0xa:// remap 110 into 38400 (HSMODEM)
-			new_speed = B38400;
-			break;
-		default:
-			panicbug("unregistred baud value $%x\n",value);
-			break;
+		case 230400:	new_speed = B230400;	break;
+		case 115200:	new_speed = B115200;	break;
+		case 57600:	new_speed = B57600;	break;
+		case 38400:	new_speed = B38400;	break;
+		case 19200:	new_speed = B19200;	break;
+		case 9600:	new_speed = B9600;	break;
+		case 4800:	new_speed = B4800;	break;
+		case 2400:	new_speed = B2400;	break;
+		case 1800:	new_speed = B1800;	break;
+		case 1200:	new_speed = B1200;	break;
+		case 600:	new_speed = B600;	break;
+		case 300:	new_speed = B300;	break;
+		case 200:	new_speed = B200;	break;
+		case 150:	new_speed = B150;	break;
+		case 134:	new_speed = B134;	break;
+		case 110:	new_speed = B110;	break;
+		case 75:	new_speed = B75;	break;
+		case 50:	new_speed = B50;	break;
+		default:	panicbug("unregistered baud value $%x\n",value);	break;
 	}
 
 	if (new_speed == B0)
@@ -189,6 +137,35 @@ void Serialport::setBaud(uint8 value)
 	tcsetattr(handle,TCSANOW,&options);
 }
 
+void Serialport::setRTS(bool value)
+{
+	int status=0;
+
+	if (handle>=0) {
+		if(ioctl(handle,TIOCMGET,&status)<0){
+			panicbug("Serialport: Can't get status");
+		}
+		if(value)status|=TIOCM_RTS;
+		else status&=~TIOCM_RTS;
+		ioctl(handle,TIOCMSET,&status);
+	}
+}
+
+void Serialport::setDTR(bool value)
+{
+	int status=0;
+
+	if (handle>=0) {
+		if(ioctl(handle,TIOCMGET,&status)<0){
+			panicbug("Serialport: Can't get status");
+		}
+		if(value)status|=TIOCM_DTR;
+		else status&=~TIOCM_DTR;
+		ioctl(handle,TIOCMSET,&status);
+	}
+}
+
+/*
 void Serialport::setRTSDTR(uint8 value)
 {
 	int status=0;
@@ -204,6 +181,7 @@ void Serialport::setRTSDTR(uint8 value)
 		ioctl(handle,TIOCMSET,&status);
 	}
 }
+*/
 
 uint16 Serialport::getStatus()
 {
@@ -212,7 +190,7 @@ uint16 Serialport::getStatus()
 	int status=0;
 	int nbchar=0;
 	value=0;
-	D(bug("Serialport: getBusy"));
+	D(bug("Serialport: getStatus"));
 	if (handle>=0) {
 		if (ioctl(handle,FIONREAD,&nbchar)<0){
 			panicbug("Serialport: Can't get input fifo count");
