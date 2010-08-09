@@ -1613,6 +1613,11 @@ void m68k_do_execute (void)
 	(*cpufunctbl[opcode])(opcode);
 	cpu_check_ticks();
 	regs.fault_pc = m68k_getpc();
+
+	if (SPCFLAGS_TEST(SPCFLAG_ALL_BUT_EXEC_RETURN)) {
+		if (m68k_do_specialties())
+			return;
+	}
     }
 }
 
