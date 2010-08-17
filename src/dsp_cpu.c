@@ -1268,11 +1268,12 @@ static void write_memory_raw(int space, Uint16 address, Uint32 value)
 #if defined(DSP_DISASM) && (DSP_DISASM_MEM==1)
 static void write_memory_disasm(int space, Uint16 address, Uint32 value)
 {
+	Uint32 curvalue;
 	Uint8 space_c = 'p';
 
 	value &= BITMASK(24);
 
-	Uint32 curvalue = read_memory_disasm(space, address);
+	curvalue = read_memory_disasm(space, address);
 
 	write_memory_raw(space,address,value);
 
