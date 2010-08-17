@@ -177,7 +177,7 @@ case "$host_os" in
   cygwin*)	OS_TYPE=cygwin;;
   irix*)	OS_TYPE=irix;;
   mint*)	OS_TYPE=mint;;
-  beos*)	OS_TYPE=beos;;
+  beos*|haiku*)	OS_TYPE=beos;;
   mingw*)	OS_TYPE=mingw;;
   *)		OS_TYPE=`echo $host_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
 esac
@@ -352,7 +352,7 @@ case "$host_os" in
 		ARANYM_CHECK_FRAMEWORK(Security, [#include <Security/Security.h>])
 	fi
 	;;
-  beos*)
+  beos*|haiku*)
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/beos/cdrom_beos.cpp Unix/host_filesys_unix.cpp"
     CPPFLAGS="$CPPFLAGS -I\$(srcdir)/Unix/beos"
     ;;

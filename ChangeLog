@@ -1,3 +1,6 @@
+2010/08/17 - Patrice
+- Consider Haiku as a BeOS target, from François Revol.
+
 2010/08/09 - milan
 - newcpu.cpp: fix wrong removal of code
 
