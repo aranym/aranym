@@ -197,10 +197,10 @@ case "$host_cpu" in
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch i386"
 		case "$host_os" in
-			darwin[89]*)	ISYSROOT="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk";;
-			darwin10*)	ISYSROOT="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk";;
+			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk";;
+			darwin10* )	ISYSROOT="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk";;
 			*)
-				AC_MSG_ERROR([Sorry, unknown Darwin version.])
+				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
 		esac
 		dnl Add the ARCHFLAGS here to let configure check for the target and not host capabilities.
