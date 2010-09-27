@@ -120,6 +120,10 @@ static struct option const long_options[] =
 #define EMUTOS_FILENAME		"etos512k.img"
 #define FREEMINT_FILENAME	"mintara.prg"
 
+#ifndef DEFAULT_SERIAL
+#define DEFAULT_SERIAL "/dev/ttyS0"
+#endif
+
 char *program_name;		// set by main()
 
 #ifdef SDL_GUI
@@ -757,7 +761,7 @@ struct Config_Tag serial_conf[]={
 };
 
 void preset_serial() {
-  safe_strncpy(SERIAL_CONF(serport), "/dev/ttyS0", sizeof(SERIAL_CONF(serport)));
+  safe_strncpy(SERIAL_CONF(serport), DEFAULT_SERIAL, sizeof(SERIAL_CONF(serport)));
 }
 
 void postload_serial() {
