@@ -34,6 +34,9 @@
 #ifndef HAVE_FSEEKO
 #  define fseeko(a,b,c)	fseek(a,b,c)
 #endif
+#ifdef __BEOS__
+extern "C" int fseeko(FILE *stream, off_t offset, int whence);
+#endif
 
 #include <SDL_endian.h>
 

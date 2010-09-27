@@ -91,7 +91,7 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
      p->d_ino = d->d_ino;
      p->d_reclen = d->d_reclen;
      /*p->d_namlen = d->d_namlen;*/
-     bcopy(d->d_name, p->d_name, p->d_reclen + 1);
+     memmove(d->d_name, p->d_name, p->d_reclen + 1);
 
      /*
       * Check to make sure the array has space left and

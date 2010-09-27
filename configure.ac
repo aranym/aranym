@@ -360,6 +360,8 @@ case "$host_os" in
   beos*|haiku*)
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/beos/cdrom_beos.cpp Unix/host_filesys_unix.cpp"
     CPPFLAGS="$CPPFLAGS -I\$(srcdir)/Unix/beos"
+    WANT_UNIXSERIALPORT=no
+    ac_cv_tun_tap_support=no
     ;;
   *)
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp"

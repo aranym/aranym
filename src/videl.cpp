@@ -19,6 +19,7 @@
 */
 
 #include <SDL.h>
+#include <SDL_endian.h>
 
 #include "sysdeps.h"
 #include "hardware.h"

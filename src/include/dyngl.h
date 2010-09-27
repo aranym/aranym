@@ -21,6 +21,8 @@
 #ifndef DYNGL_H
 #define DYNGL_H 1
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

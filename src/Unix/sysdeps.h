@@ -85,6 +85,11 @@
 
 #endif
 
+#ifdef OS_beos
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 #ifdef MACOSX_support
 
 #include <Carbon/Carbon.h>
@@ -485,6 +490,9 @@ extern CFBundleRef mainBundle;
 # define JMP_BUF	jmp_buf
 #endif
 
+#if __GNUC__ < 3
+# define __builtin_expect(foo,bar) (foo)
+#endif
 #define likely(x)	__builtin_expect(!!(x), 1)
 #define unlikely(x)	__builtin_expect(!!(x), 0)
 #define ALWAYS_INLINE	inline __attribute__((always_inline))

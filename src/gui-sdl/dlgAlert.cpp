@@ -21,6 +21,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <string.h>
+#include <stdlib.h>
+
 #include "sysdeps.h"
 #include "sdlgui.h"
 #include "dlgAlert.h"

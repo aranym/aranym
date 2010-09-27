@@ -24,6 +24,7 @@
 #endif
 
 #include <SDL.h>
+#include <SDL_endian.h>
 #include <vector>
 
 #include "dirty_rects.h"

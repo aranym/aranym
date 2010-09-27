@@ -316,7 +316,9 @@ bool ACSIFDC::insert_floppy()
 #ifdef HAVE_O_FSYNC
 			| O_FSYNC
 #else
+# ifdef O_SYNC
 			| O_SYNC
+# endif
 #endif
 #ifdef O_BINARY
 			| O_BINARY

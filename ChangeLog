@@ -1,3 +1,6 @@
+2010/09/27 - Patrice
+- BeOS: Fixes for missing includes, defines, and default configuration; from François Revol.
+
 2010/08/27 - David Gálvez
 - USB NatFeat support
 
@@ -28,7 +31,7 @@
 
 2010/05/26 - Patrice
 - HostSurface: Even if we do not recreate a new surface on resize, we must still
-  update the width and height of the dirty rectangle list. 
+  update the width and height of the dirty rectangle list.
 
 - VidelZoom: Keep Atari aspect ratio also when using autozoom, with or without
   integer coefs.
@@ -63,7 +66,7 @@ screen when pixel shape is not squared (320x400, 640x200 modes for example).
 - Xcode project: fix building of Universal Binaries when compiling on PPC
 - configure.ac: fix script generation when cross-compiling
   ("[: too many arguments" errors)
-- nfclipbrd.h: remove warning 
+- nfclipbrd.h: remove warning
   overriding 'virtual const char* NF_Base::name()'
 
 
@@ -112,7 +115,7 @@ screen when pixel shape is not squared (320x400, 640x200 modes for example).
 
 
 2009/09/03 - Philipp
-- Fixed ALT+mouse click problem by setting environment variable 
+- Fixed ALT+mouse click problem by setting environment variable
   SDL_HAS3BUTTONMOUSE in input.cpp InputInit for MacAranym.
 
 

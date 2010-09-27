@@ -19,6 +19,8 @@
 */
 
 #include <SDL.h>
+#include <string.h>
+
 #include "dirty_rects.h"
 
 /*--- Constructor/destructor ---*/
