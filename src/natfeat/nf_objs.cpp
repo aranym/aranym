@@ -58,6 +58,9 @@
 # include "nfclipbrd.h"
 #endif
 
+#ifdef USBHOST_SUPPORT
+# include "usbhost.h"
+#endif
 /* add your NatFeat class definition here */
 
 /*--- Defines ---*/
@@ -136,6 +139,10 @@ void NFCreate(void)
 
 #ifdef NFCLIPBRD_SUPPORT
 	NFAdd(new ClipbrdNatFeat);
+#endif
+
+#ifdef USBHOST_SUPPORT
+	NFAdd(new USBHost);
 #endif
 	/* add your NatFeat object declaration here */
 }

@@ -84,6 +84,8 @@ AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM 
 
 AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (default=no)], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
 
+AC_ARG_ENABLE(usbhost,         [  --enable-usbhost        enable NatFeat USB (default=no)], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
+
 AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa (default=no)], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
 
 AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
@@ -234,6 +236,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
+AC_PATH_PROG(PKG_CONFIG, pkg-config, [AC_MSG_ERROR([pkg-config not found.])])
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -1452,6 +1455,28 @@ else
 	have_zlib="not required"
 fi
 
+dnl Check for libusb-1.0
+WITH_USBHOST="no"
+if test "x$WANT_USBHOST" = "xyes"; then
+  # Search using pkg-config
+    if test "x$PKG_CONFIG" != "x"; then
+      PKG_CHECK_MODULES([LIBUSB], [libusb-1.0], [WITH_USBHOST="yes"], [WITH_USBHOST="no"])
+    fi
+   
+  # Search the library and headers directly
+    if test "x$WITH_USBHOST" = "xno"; then
+      AC_CHECK_HEADER(libusb-1.0/libusb.h, [], [AC_MSG_ERROR([The libusb headers are missing])])
+      AC_CHECK_LIB(usb-1.0, libusb_init, [], [AC_MSG_ERROR([The libusb library is missing])])
+
+      LIBUSB_LIBS="-lusb-1.0"
+      WITH_USBHOST="yes"
+    fi
+
+    if test "x$WITH_USBHOST" = "xno"; then
+      AC_MSG_ERROR([libusb is mandatory for usb support])
+    fi
+fi
+
 dnl Linux loader
 
 if [[ "x$WANT_LILO" = "xyes" ]]; then
@@ -1491,6 +1516,15 @@ if [[ "x$WANT_NFPCI" = "xyes" ]]; then
 			AC_MSG_ERROR([*** NatFeats PCI not supported by this OS ***])
 			;;
 	esac
+fi
+
+dnl Natfeat USB driver
+
+USBHOSTSRCS=""
+if [[ "x$WANT_USBHOST" = "xyes" -a "x$WITH_USBHOST" = "xyes" ]]; then
+	AC_DEFINE([USBHOST_SUPPORT], 1, [Define if you want to use host USB driver])
+		USBHOSTSRCS="natfeat/usbhost.cpp"
+		LIBS="$LIBS $LIBUSB_LIBS"
 fi
 
 dnl Natfeat OSMesa driver
@@ -1657,6 +1691,7 @@ AC_SUBST(DSPSRCS)
 AC_SUBST(MIDISEQSRCS)
 AC_SUBST(NFCDROMSRCS)
 AC_SUBST(NFPCISRCS)
+AC_SUBST(USBHOSTSRCS)
 AC_SUBST(NFOSMESASRCS)
 AC_SUBST(NFJPEGSRCS)
 AC_SUBST(NFVDISRCS)
@@ -1715,8 +1750,10 @@ echo GUI .................................... : $WANT_SDLGUI
 echo OpenGL ................................. : $WANT_OPENGL
 echo Linux-m68k loader ...................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
+echo libusb-1.0.............................. : $WITH_USBHOST
 echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
+echo NatFeat USB driver ..................... : $WANT_USBHOST
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
 echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
 echo NatFeat Clipboard ...................... : $WANT_NFCLIPBRD
