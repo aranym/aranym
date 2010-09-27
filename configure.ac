@@ -106,6 +106,8 @@ AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw ac
 
 AC_ARG_ENABLE(parport,         [  --enable-parport        enable Linux /dev/parport access for parallel port (default=yes)], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
 
+AC_ARG_ENABLE(serialport,      [  --enable-serialport     enable Unix /dev/ttySn serial port support (default=yes)], [WANT_UNIXSERIALPORT=$enableval], [WANT_UNIXSERIALPORT=yes])
+
 AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
 
 AC_ARG_WITH(classicconfig,     [  --with-classicconfig	  Use Classic config names on MacOSX (default=no)], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
@@ -1644,9 +1646,14 @@ fi
 
 dnl Serial port support
 
-if test "x$ac_cv_header_termios_h" = "xyes" -a "x$ac_cv_header_sys_ioctl_h" = "xyes"; then
-	AC_DEFINE([ENABLE_SERIALUNIX], 1, [Define if you want to use /dev/ttyXXX access for serial port])
-	SERIALSRCS="serial_port.cpp"
+SERIALSRCS=""
+if test "x$WANT_UNIXSERIALPORT" = "xyes" ; then
+	if test "x$ac_cv_header_termios_h" = "xyes" -a "x$ac_cv_header_sys_ioctl_h" = "xyes"; then
+		AC_DEFINE([ENABLE_SERIALUNIX], 1, [Define if you want to use /dev/ttyXXX access for serial port])
+		SERIALSRCS="serial_port.cpp"
+	else
+		WANT_UNIXSERIALPORT="no"
+	fi
 fi
 
 dnl Data directory
@@ -1761,6 +1768,7 @@ echo NatFeat VDI driver ..................... : $WANT_NFVDI
 echo Exception per second limiter ........... : $WANT_EPSLIMITER
 echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
 echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
+echo Unix /dev/ttySn for serial port......... : $WANT_UNIXSERIALPORT
 echo Use C++ exceptions for m68k exceptions.. : $WANT_CXX_EXCEPTIONS
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
