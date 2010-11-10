@@ -1,3 +1,7 @@
+2010/11/10 - Andreas
+- fpu_*.cpp: don't modify registers before reading fp value from memory.
+- cpummu.c: fix initialising mmu register.
+
 2010/09/27 - Patrice
 - BeOS: Fixes for missing includes, defines, and default configuration; from François Revol.
 

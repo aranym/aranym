@@ -2616,11 +2616,9 @@ PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src
 			break;
     case 3:
 			ad = m68k_areg (regs, reg);
-			m68k_areg (regs, reg) += reg == 7 ? sz2[size] : sz1[size];
 			break;
     case 4:
-			m68k_areg (regs, reg) -= reg == 7 ? sz2[size] : sz1[size];
-			ad = m68k_areg (regs, reg);
+			ad = m68k_areg (regs, reg) - (reg == 7 ? sz2[size] : sz1[size]);
 			break;
     case 5:
 			ad = m68k_areg (regs, reg) + (uae_s32) (uae_s16) next_iword();
@@ -2718,6 +2716,15 @@ PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src
     default:
 			return 0;
   }
+
+	switch (mode) {
+	case 3:
+		m68k_areg (regs, reg) += reg == 7 ? sz2[size] : sz1[size];
+		break;
+	case 4:
+		m68k_areg (regs, reg) -= reg == 7 ? sz2[size] : sz1[size];
+		break;
+	}
 
 	// D(bug("get_fp_value result = %.04f\r\n",(float)src));
 
