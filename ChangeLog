@@ -1,3 +1,6 @@
+2010/11/20 - Patrice
+- videl: refresh palette when switching from true color to bitplane mode, from François Revol.
+
 2010/11/10 - Andreas
 - fpu_*.cpp: don't modify registers before reading fp value from memory.
 - cpummu.c: fix initialising mmu register.

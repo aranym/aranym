@@ -294,6 +294,10 @@ HostSurface *VIDEL::getSurface(void)
 		memset(crcList, 0, sizeof(Uint32)*crcWidth*crcHeight);
 	}
 
+	/* Refresh surface palette if switching from true color to bitplane mode */
+	if ((prevVidelBpp == 16) && (bpp != 16))
+		updatePalette = true;
+
 	prevVidelWidth = width;
 	prevVidelHeight = height;
 	prevVidelBpp = bpp;
