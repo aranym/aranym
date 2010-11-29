@@ -358,6 +358,11 @@ case "$host_os" in
 	fi
 	;;
   beos*|haiku*)
+    dnl Find tools needed to add resources
+    AC_PATH_PROG(BEOS_XRES, xres, [AC_MSG_ERROR([xres not found.])])
+    AC_PATH_PROG(BEOS_RC, rc, [AC_MSG_ERROR([rc not found.])])
+    AC_PATH_PROG(BEOS_SETVERSION, setversion, [AC_MSG_ERROR([setversion not found.])])
+
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/beos/cdrom_beos.cpp Unix/host_filesys_unix.cpp"
     CPPFLAGS="$CPPFLAGS -I\$(srcdir)/Unix/beos"
     WANT_UNIXSERIALPORT=no
