@@ -2166,7 +2166,7 @@ static void dsp_jclr(void)
 
 static void dsp_jmp(void)
 {
-	Uint32 newpc;
+	Uint32 newpc = dsp_core->pc;
 
 	switch((cur_inst >> 16) & BITMASK(8)) {
 		case 0x0a:
