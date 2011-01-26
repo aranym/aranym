@@ -59,6 +59,16 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		return;
 	}
 
+	int i, gl_bpp[4]={0,16,24,32}, screenFlags;
+
+	screenFlags = SDL_OPENGL;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
 		height = bx_options.autozoom.height;
@@ -70,14 +80,11 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		height=MIN_HEIGHT;
 	}
 
-	int i, gl_bpp[4]={0,16,24,32}, screenFlags;
-
-	screenFlags = SDL_OPENGL;
-	if (!bx_options.autozoom.fixedsize) {
-		screenFlags |= SDL_RESIZABLE;
-	}
-	if (bx_options.video.fullscreen) {
-		screenFlags |= SDL_FULLSCREEN;
+	/* Use current fullscreen mode ? */
+	if (bx_options.video.fullscreen && bx_options.autozoom.fixedsize
+	    && (bx_options.autozoom.width==0) && (bx_options.autozoom.height==0))
+	{
+		width = height = 0;
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,5);

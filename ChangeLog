@@ -1,3 +1,6 @@
+2011/01/26 - Patrice
+- Use current fullscreen mode size if fixed size is 0x0.
+
 2010/11/26 - Patrice, contributed by François Revol
 - Add resource file for Haiku and BeOS.
 

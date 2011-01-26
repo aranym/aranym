@@ -215,6 +215,8 @@ Enabled = No
 IntegerCoefs = No
 
 # Use a fixed host screen size whenever the Atari screen size changes
+#  If in fullscreen, you can set FixedSize=Yes Width=0 and Height=0
+#  to use current host video mode
 FixedSize = No
 
 # Width of host screen if fixed size

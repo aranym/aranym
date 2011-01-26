@@ -120,6 +120,14 @@ void HostScreen::toggleFullScreen(void)
 
 void HostScreen::setVideoMode(int width, int height, int bpp)
 {
+	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
 		height = bx_options.autozoom.height;
@@ -131,12 +139,11 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		height=MIN_HEIGHT;
 	}
 
-	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
-	if (!bx_options.autozoom.fixedsize) {
-		screenFlags |= SDL_RESIZABLE;
-	}
-	if (bx_options.video.fullscreen) {
-		screenFlags |= SDL_FULLSCREEN;
+	/* Use current fullscreen mode ? */
+	if (bx_options.video.fullscreen && bx_options.autozoom.fixedsize
+	    && (bx_options.autozoom.width==0) && (bx_options.autozoom.height==0))
+	{
+		width = height = 0;
 	}
 
 	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);

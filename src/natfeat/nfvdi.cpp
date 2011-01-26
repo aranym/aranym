@@ -389,6 +389,12 @@ void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
 		height = bx_options.autozoom.height;
+		if (bx_options.video.fullscreen && (bx_options.autozoom.width == 0)
+		  && (bx_options.autozoom.height == 0))
+		{
+			width = host->video->getWidth();
+			height = host->video->getHeight();
+		}
 	}
 
 	if (width<64) {
