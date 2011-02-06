@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.10
+%define ver			0.9.11
 
 #
 #
