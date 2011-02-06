@@ -1,31 +1,48 @@
+*** CVS tagged as ARANYM_0_9_11
+
+2011/02/06 - Petr
+- version.h: version++
+- gui-sdl/dlgMain.cpp: print current version in the ABOUT dialog
+- README, NEWS, TODO, aranym.spec, tools/export: updated for release
+
+
 2011/01/26 - Patrice
 - Use current fullscreen mode size if fixed size is 0x0.
+
 
 2010/11/26 - Patrice, contributed by François Revol
 - Add resource file for Haiku and BeOS.
 
+
 2010/11/20 - Patrice, contributed by François Revol
 - videl: refresh palette when switching from true color to bitplane mode.
+
 
 2010/11/10 - Andreas
 - fpu_*.cpp: don't modify registers before reading fp value from memory.
 - cpummu.c: fix initialising mmu register.
 
+
 2010/09/27 - Patrice, contributed by François Revol
 - BeOS: Fixes for missing includes, defines, and default configuration.
+
 
 2010/08/27 - David Gálvez
 - USB NatFeat support
 
+
 2010/08/17 - Patrice, contributed by François Revol
 - Consider Haiku as a BeOS target.
+
 
 2010/08/09 - milan
 - newcpu.cpp: fix wrong removal of code
 
+
 2010/07/22 - milan
 - use macro guard around config.h (contributed by Benoît Tuduri)
 - removal of distributed dispatcher
+
 
 2010/07/20 - Patrice
 - Check availability of realpath() function, lacking on some Mingw flavours.

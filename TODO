@@ -21,12 +21,6 @@ TODO in TOS patches and utilities:
 - separate mouse driver from Clocky and make it NatFeat based
 - finish and publish TOS XHDI disk driver
 
-TODO in ARAnyM source code itself:
-- add proper copyright header to every edited file (see main.cpp)
-- remove RCS keywords (they complicate comparing and merging of revisions)
-- clean up, tidy up. Indent. Comment. Document.
-
-
 Some hot ideas (before they get forgotten)
 ------------------------------------------
 
@@ -39,18 +33,6 @@ that particular programmer but rather who is author of the idea :-)
        URL could help?
        http://tldp.org/HOWTO/Ethernet-Bridge-netfilter-HOWTO-3.html#ss3.1
 
-- Petr: Clipboard sharing between host and atari. Some URLs for inspiration:
-  http://www.idata.sk/~robo/mpcb/
-  http://www.freedesktop.org/standards/clipboards.txt
-
-  Basic idea: C:\CLIPBRD\SCRAP.TXT is copied to CLIPBOARD on X11 host
-  and vice-versa (during input focus changes).
-
-  Extra cool idea: PRIMARY selection on X11 could be stored to IKBD buffer
-  directly so it would simulate typing.
-
-- Petr: emulating a serial port compatible with MiNT/HSMODEM
-
 - Petr: extend the config file routines to save also some comments above
   each head section. Example:
 
@@ -58,9 +40,6 @@ that particular programmer but rather who is author of the idea :-)
   # hotkey = keycode : modifiers
   # where keycode and modifiers are defined in SDL_keysym.h
   [HOTKEYS]
-
-- Milan: distributed dispatcher for JIT compiler sigsegv handler
-  UPDATE: partially done, slower :-(
 
 - Milan: SIGINT ndebug problem solution
 

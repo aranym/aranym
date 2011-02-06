@@ -1,6 +1,6 @@
 
       ARAnyM (Atari Running on Any Machine)
-      version 0.9.10 released on 2010/05/27
+      version 0.9.11 released on 2011/02/06
 
 
  1) License
@@ -37,7 +37,7 @@ where TOS/GEM applications could continue to live forever.
    o 68040 CPU (including MMU040)
    o 68040 and 68881/2 FPU
    o 14 MB ST-RAM and up to 3824 MB (configurable) of FastRAM
-   o VIDEL, Blitter, MFP, ACIA, IKBD for highest possible compatibility
+   o VIDEL, Blitter, MFP, SCC, ACIA, IKBD for highest possible compatibility
    o Sound (compatible with Atari Falcon DMA Sound)
    o Atari floppy DD/HD for connecting floppy image or real floppy drive
    o two IDE channels for connecting disk images, harddrives or CD-ROMs
@@ -49,6 +49,7 @@ where TOS/GEM applications could continue to live forever.
      also on real Atari computer.
    o Native CD-ROM access (under Linux, other OS: audio CD only), without
      scsi/ide/whatsoever emulation
+   o USB and PCI NatFeat support for developing Atari drivers on ARAnyM
 
 Important: ARAnyM is not finished. Consider this to be a beta version
 and a work-in-progress. Sorry for incomplete and confusing documentation.

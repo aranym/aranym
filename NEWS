@@ -1,3 +1,12 @@
+2011/02/06 - version 0.9.11 released
+
+ New features: SCC serial port emulation and USB NatFeat support.
+ BeOS/Haiku port: fixes and improvements.
+ MMU emulation: fix for initialization and FPU registers.
+ Video: fix (refresh palette when switching from true color to bitplane
+ mode) and an improvement (use current fullscreen size if fixed size is 0x0).
+
+
 2010/05/27 - version 0.9.10 released
 
  New feature: GEM clipboard support that allows you to pass data between
