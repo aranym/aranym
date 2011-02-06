@@ -25,6 +25,7 @@
 #include "file.h"
 #include "parameters.h"			// load/saveSettings()
 #include "tools.h"
+#include "version.h"
 #include "sdlgui.h"
 #include "dlgFileSelect.h"
 #include "dlgMain.h"
@@ -97,8 +98,8 @@ SGOBJ maindlg[] = {
 };
 
 static const char *ABOUT_TEXT =
-"               ARAnyM\n"
-"               ======\n"
+"            " VERSION_STRING "\n"
+"            =============\n"
 "\n"
 "ARAnyM as an Open Source project has\n"
 "been developed by a loosely knit team\n"
