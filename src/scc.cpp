@@ -158,7 +158,7 @@ uint8 SCC::handleRead(memptr addr)
 		 break;
 
 		 default:// RR5,RR6,RR7,RR10,RR14 not processed
-		  panicbug("scc : unprocessed read address=$%x *********\n",active_reg);
+		  D(bug("scc : unprocessed read address=$%x *********\n",active_reg));
 		  value=0;
 		 break;
 		}
@@ -171,7 +171,7 @@ uint8 SCC::handleRead(memptr addr)
 		  value=scc_regs[8+16];
 	  break;
 	  default:
-		 panicbug("scc : illegal read address=$%x\n",addr);
+		 D(bug("scc : illegal read address=$%x\n",addr));
 	  break;
 	}
 	active_reg=0;// next access for RR0 or WR0
@@ -312,7 +312,7 @@ void SCC::handleWrite(memptr addr, uint8 value)
 									BaudRate=50;
 								break;
 								default:
-									panicbug("unexpected LSB constant for baud rate");
+									D(bug("unexpected LSB constant for baud rate"));
 								break;
 							}
 						break;
@@ -356,7 +356,7 @@ void SCC::handleWrite(memptr addr, uint8 value)
 						case 0xff://HSMODEM dummy value->silently ignored
 						break;
 						default:
-							panicbug("unexpected MSB constant for baud rate");
+							D(bug("unexpected MSB constant for baud rate"));
 						break;
 					}
 					if(BaudRate)serial->setBaud(BaudRate);// set only if defined
@@ -388,7 +388,7 @@ Rsconf		Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
 				 }
 				 else if(active_reg==15){// external status int control
 					if(value&1)
-						panicbug("SCC WR7 prime not yet processed\n");
+						D(bug("SCC WR7 prime not yet processed\n"));
 				 }
 
 				 if( (active_reg==1)||(active_reg==2)||(active_reg==9))
@@ -404,7 +404,7 @@ Rsconf		Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
 			serial->setData(value);
 		break;
 		default:
-                panicbug( "scc : illegal write address =$%x\n",addr) ;
+	                D(bug( "scc : illegal write address =$%x\n",addr));
 		break;
 	}
 
@@ -437,13 +437,13 @@ int SCC::doInterrupt()
 	if((scc_regs[9]&3)==0)
 		return vector;// no status included in vector
 	if((scc_regs[9]&0x32)!=0) { //shouldn't happen with TOS, (to be completed if needed)
-        	panicbug( "unexpected WR9 contents \n");
+        	D(bug( "unexpected WR9 contents \n"));
 		// no Soft IACK, Status Low control bit expected, no NV
 		return 0;
 	}
 	switch(i) {
 		case 0: /* this shouldn't happen :-) */
-			panicbug( "scc_do_interrupt called with no pending interrupt\n") ;
+			D(bug( "scc_do_interrupt called with no pending interrupt\n"));
 			vector=0;// cancel
 			break;
 		case 1:
@@ -466,7 +466,7 @@ int SCC::doInterrupt()
 		// special receive condition not yet processed
 	}
 #if 0
-        panicbug( "SCC::doInterrupt : vector %d\n", vector) ;
+        D(bug( "SCC::doInterrupt : vector %d\n", vector));
 #endif
         return vector ;
 }

@@ -41,7 +41,7 @@ Serialport::Serialport(void)
 	handle = open(bx_options.serial.serport,O_RDWR|O_NDELAY|O_NONBLOCK);/* Raw mode */
 	// /dev/ttyS0 by default or /dev/ttyUSB0 : see Serport in ./aranym/config [SERIAL]
 	if (handle<0) {
-		panicbug("Serialport: Can not open device %s", bx_options.serial.serport);
+		D(bug("Serialport: Can not open device %s", bx_options.serial.serport));
 		return;
 	}
 }
@@ -70,7 +70,7 @@ uint8 Serialport::getData()
 	if (handle>=0) {
 		nb=read(handle,&value,1);
 		if(nb<0){
-			panicbug("Serialport: impossible to get data");
+			D(bug("Serialport: impossible to get data"));
 		}
 	}
 	return value;
@@ -81,7 +81,7 @@ void Serialport::setData(uint8 value)
 	int nb;
 	D(bug("Serialport: setData"));
 	if (handle>=0) {
-		//while((getTBE()&4)==0); nb=write(handle,&value,1); if(nb<0)panicbug("Serialport: setdata problem");
+		//while((getTBE()&4)==0); nb=write(handle,&value,1); if(nb<0) D(bug("Serialport: setdata problem"));
 		// NB: wait for TBE before single write cancelled (not available with USB)
 		// and replaced by the following do while (add a timeout if necessary)
 		do{
@@ -118,7 +118,7 @@ void Serialport::setBaud(uint32 value)
 		case 110:	new_speed = B110;	break;
 		case 75:	new_speed = B75;	break;
 		case 50:	new_speed = B50;	break;
-		default:	panicbug("unregistered baud value $%x\n",value);	break;
+		default:	D(bug("unregistered baud value $%x\n",value));	break;
 	}
 
 	if (new_speed == B0)
@@ -143,7 +143,7 @@ void Serialport::setRTS(bool value)
 
 	if (handle>=0) {
 		if(ioctl(handle,TIOCMGET,&status)<0){
-			panicbug("Serialport: Can't get status");
+			D(bug("Serialport: Can't get status"));
 		}
 		if(value)status|=TIOCM_RTS;
 		else status&=~TIOCM_RTS;
@@ -157,7 +157,7 @@ void Serialport::setDTR(bool value)
 
 	if (handle>=0) {
 		if(ioctl(handle,TIOCMGET,&status)<0){
-			panicbug("Serialport: Can't get status");
+			D(bug("Serialport: Can't get status"));
 		}
 		if(value)status|=TIOCM_DTR;
 		else status&=~TIOCM_DTR;
@@ -172,7 +172,7 @@ void Serialport::setRTSDTR(uint8 value)
 
 	if (handle>=0) {
 		if(ioctl(handle,TIOCMGET,&status)<0){
-			panicbug("Serialport: Can't get status");
+			D(bug("Serialport: Can't get status"));
 		}
 		if(value&2)status|=TIOCM_RTS;
 		else status&=~TIOCM_RTS;
@@ -193,14 +193,14 @@ uint16 Serialport::getStatus()
 	D(bug("Serialport: getStatus"));
 	if (handle>=0) {
 		if (ioctl(handle,FIONREAD,&nbchar)<0){
-			panicbug("Serialport: Can't get input fifo count");
+			D(bug("Serialport: Can't get input fifo count"));
 		}
 		getSCC()->charcount=nbchar;// to optimize input (see UGLY in scc.cpp)
 		if(nbchar>0) value=0x0401;// RxIC+RBF
 		value|=getTBE();// TxIC
 		value|=(1<<TBE);// fake TBE to optimize output (for ttyS0)
 		if(ioctl(handle,TIOCMGET,&status)<0){
-			panicbug("Serialport: Can't get status");
+			D(bug("Serialport: Can't get status"));
 		}
 		if(status&TIOCM_CTS)value|=(1<<CTS);
 	}
@@ -219,7 +219,7 @@ uint16 Serialport::getTBE() // not suited to serial USB
 	
 #if defined(TIOCSERGETLSR) && defined(TIOCSER_TEMT)
 	if (ioctl(handle,TIOCSERGETLSR,&status)<0){// OK with ttyS0, not OK with ttyUSB0
-		//panicbug("Serialport: Can't get LSR");
+		//D(bug("Serialport: Can't get LSR"));
 		value|=(1<<TBE);// only for serial USB
 	} else if(status&TIOCSER_TEMT) {
 		value=(1<<TBE);// this is a real TBE for ttyS0
