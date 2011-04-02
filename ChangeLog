@@ -1,3 +1,7 @@
+2011/04/02 - milan
+
+- src/natfeat/hostfs.cpp, src/gui-sdl/file.cpp, src/ndebug.cpp: fix memleaks
+
 *** CVS tagged as ARANYM_0_9_11
 
 2011/02/06 - Petr

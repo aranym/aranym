@@ -51,7 +51,7 @@ int alphasort(const void *d1, const void *d2)
 */
 int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const struct dirent *), int (*dcomp) (const void *, const void *))
 {
-  register struct dirent *d, *p, **names;
+  register struct dirent *d, *p, **names, **pnames;
   register size_t nitems;
   struct stat stb;
   unsigned long arraysz;
@@ -85,8 +85,10 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
       */
 
      p = (struct dirent *)malloc(DIRSIZ(d));
-     if (p == NULL)
+     if (p == NULL) {
+       free(names);
        return(-1);
+     }
 
      p->d_ino = d->d_ino;
      p->d_reclen = d->d_reclen;
@@ -100,14 +102,21 @@ int scandir(const char *dirname, struct dirent ***namelist, int(*select) (const 
 
      if (++nitems >= arraysz) {
 
-       if (fstat(DIRHANDLE, &stb) < 0)
+       if (fstat(DIRHANDLE, &stb) < 0) {
+         free(names);
+         free(p);
          return(-1);     /* just might have grown */
+       }
 
        arraysz = stb.st_size / 12;
 
-       names = (struct dirent **)realloc((char *)names, arraysz * sizeof(struct dirent *));
-       if (names == NULL)
+       pnames = (struct dirent **)realloc((char *)names, arraysz * sizeof(struct dirent *));
+       if (pnames == NULL) {
+         free(names);
+         free(p);
          return(-1);
+       }
+       names = pnames;
      }
 
      names[nitems-1] = p;

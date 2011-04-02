@@ -1315,6 +1315,7 @@ char *ndebug::dectobin (uae_u32 val)
 		s[0] = val % 2 + '0';
 		val /= 2;
 		strcpy(s + 1, ps);
+		free(ps);
 	}
 	return s;
 }

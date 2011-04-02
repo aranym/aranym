@@ -1771,8 +1771,10 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	if ( dirh->flags == 0 ) {
 		D(bug("HOSTFS: fs_readdir (%s, %d)", (char*)dirEntry->d_name, len ));
 
-		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 )
+		if ( (uint16)len < strlen( dirEntry->d_name ) + 4 ) {
+			delete newFsFile;
 			return TOS_ERANGE;
+		}
 
 		char fpathName[MAXPATHNAMELEN];
 		cookie2Pathname(&dirh->fc, dirEntry->d_name, fpathName);
@@ -1790,8 +1792,10 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 
 		D(bug("HOSTFS: fs_readdir (%s -> %s, %d)", (char*)dirEntry->d_name, (char*)truncFileName, len ));
 
-		if ( (uint16)len < strlen( truncFileName ) )
+		if ( (uint16)len < strlen( truncFileName ) ) {
+			delete newFsFile;
 			return TOS_ERANGE;
+		}
 
 		Host2AtariSafeStrncpy( buff, truncFileName, len );
 	}
@@ -2203,20 +2207,22 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		D(bug( "HOSTFS: fs_lookup stat: %s", fpathName ));
 
 		struct stat statBuf;
-		if ( lstat( fpathName, &statBuf ) )
+		if ( lstat( fpathName, &statBuf ) ) {
+			delete newFsFile;
 			return errnoHost2Mint( errno, TOS_EFILNF );
+		}
 
 		MAPNEWVOIDP( newFsFile );
 		newFsFile->name = strdup(fname);
-        newFsFile->refCount = 1;
-        newFsFile->childCount = 0;
-        dir->index->childCount++; /* same as: new->parent->childcnt++ */
-    }
+		newFsFile->refCount = 1;
+		newFsFile->childCount = 0;
+		dir->index->childCount++; /* same as: new->parent->childcnt++ */
+	}
 
-    *fc = *dir;
-    fc->index = newFsFile;
+	*fc = *dir;
+	fc->index = newFsFile;
 
-    return TOS_E_OK;
+	return TOS_E_OK;
 }
 
 
