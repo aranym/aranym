@@ -346,9 +346,15 @@ int vm_get_page_size(void)
    - TEST_VM_PROT_* program slices actually succeeds when a crash occurs
    - TEST_VM_MAP_ANON* program slices succeeds when it could be compiled
 */
+#include <signal.h>
+void handler(int sig)
+{
+	exit(2);
+}
 int main(void)
 {
 	vm_init();
+	signal(SIGSEGV, &handler);
 	
 #define page_align(address) ((char *)((unsigned long)(address) & -page_size))
 	const unsigned long page_size = vm_get_page_size();
