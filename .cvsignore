@@ -1,6 +1,10 @@
 autom4te.cache
+.depend
 gen_i386
 obj_i386
+depend_x86_64
+gen_x86_64
+obj_x86_64
 Makefile
 aclocal.m4
 aranym
