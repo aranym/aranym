@@ -1,9 +1,8 @@
 2011/04/25 - François Revol
-
 - src/Unix/vm_alloc.cpp: avoid crashing in mprotect() configure test
+- src/Unix/beos/clipbrd_beos.cpp, configure.ac: NF Clipboard for BeOS
 
 2011/04/02 - milan
-
 - src/natfeat/hostfs.cpp, src/gui-sdl/file.cpp, src/ndebug.cpp: fix memleaks
 
 *** CVS tagged as ARANYM_0_9_11
