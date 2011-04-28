@@ -90,7 +90,7 @@ AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa 
 
 AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
-AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=no)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
+AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=yes)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
 
 AC_ARG_ENABLE(nfvdi,           [  --enable-nfvdi          enable NatFeat VDI (default=yes)], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
 
@@ -1583,7 +1583,7 @@ if [[ "x$WANT_NFVDI" = "xyes" ]]; then
 	fi
 fi
 
-dnl Natfeat Clipboard driver (so far Windows only)
+dnl Natfeat Clipboard driver
 
 NFCLIPBOARDSRCS=""
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
@@ -1595,12 +1595,21 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use Mac OS X clipboard])
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
  		SYSSRCS="$SYSSRCS Unix/darwin/clipbrd_darwin.M"
-	else
-		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use X11 clipboard])
+	elif [[ "x$OS_TYPE" = "xbeos" -o "x$OS_TYPE" = "xhaiku" ]]; then
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use BeOS clipboard])
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-		SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
-		LIBS="$LIBS -lX11"
-dnl     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
+ 		SYSSRCS="$SYSSRCS Unix/beos/clipbrd_beos.cpp"
+		LIBS="$LIBS -lbe"
+	else
+		AC_CHECK_LIB(X11, XOpenDisplay)
+		if [[ "x$avc_cv_lib_x11" = "xyes" ]]; then
+			AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use X11 clipboard])
+			NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
+			SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
+			LIBS="$LIBS -lX11"
+		else
+		     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
+		fi
 	fi
 fi
 
