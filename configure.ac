@@ -1602,7 +1602,7 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		LIBS="$LIBS -lbe"
 	else
 		AC_CHECK_LIB(X11, XOpenDisplay)
-		if [[ "x$avc_cv_lib_x11" = "xyes" ]]; then
+		if [[ "x$ac_cv_lib_X11_XOpenDisplay" = "xyes" ]]; then
 			AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use X11 clipboard])
 			NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
 			SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
