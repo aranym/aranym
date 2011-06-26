@@ -38,7 +38,6 @@ class VIDEL : public BASE_IO
 		Uint32 getVramAddress(void);
 		int getWidth(void);
 		int getHeight(void);
-		int getBpp(void);
 
 		void refreshPalette(void);
 		void refreshScreen(void);
@@ -55,6 +54,7 @@ class VIDEL : public BASE_IO
 
 		virtual HostSurface *getSurface(void);
 		virtual void forceRefresh(void);
+		virtual int getBpp(void);
 
 		int aspect_x, aspect_y;
 };

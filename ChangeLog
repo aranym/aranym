@@ -1,3 +1,7 @@
+2011/06/26 - Rodolphe Pineau
+- Fix a videl fucntion access if blitter code use memmove
+- fix the uint64 define for Mac OS X
+
 2011/04/25 - François Revol
 - src/Unix/vm_alloc.cpp: avoid crashing in mprotect() configure test
 - src/Unix/beos/clipbrd_beos.cpp, configure.ac: NF Clipboard for BeOS
