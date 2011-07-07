@@ -327,7 +327,7 @@ static int keyboardTable[0x80] = {
 /*48-4f*/ 0x7E, -1, 0x4E, 0x7B, -1, 0x7C, 0x45, -1,
 /*50-57*/ 0x7D, -1, 0x77, 0x75, -1, -1, -1, -1,
 /*58-5f*/ -1, -1, -1, -1, -1, -1, -1, -1,
-/*60-67*/ 0x32, 0x6F, 0x72, -1 /* NumLock */ , 0x51, 0x4B, 0x43, 0x59,
+/*60-67*/ 0x32, 0x6F, 0x67, -1 /* NumLock */ , 0x51, 0x4B, 0x43, 0x59,
 /*68-6f*/ 0x5B, 0x5C, 0x56, 0x57, 0x58, 0x53, 0x54, 0x55,
 /*70-77*/ 0x52, 0x41, 0x4C, -1, -1, -1, -1, -1,
 /*78-7f*/ -1, -1, -1, -1, -1, -1, -1, -1
@@ -372,11 +372,12 @@ static int keysymToAtari(SDL_keysym keysym)
 	}
 	for (int i = 0; i < 0x73; i++) {
 		if (keyboardTable[i] == sym) {
-//			panicbug ("scancode mac:%x - scancode atari: %x", keysym.scancode, i);
+			//panicbug ("scancode mac:%x - scancode atari: %x", keysym.scancode, i);
 			return i;
 		}
 	}
-
+	panicbug ("scancode mac:%x is not mapped", keysym.scancode);
+	
 	return 0;	/* invalid scancode */
 }
 #endif /* KEYSYM_MACSCANCODE */
