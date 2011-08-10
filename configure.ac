@@ -203,6 +203,7 @@ case "$host_cpu" in
 		case "$host_os" in
 			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk";;
 			darwin10* )	ISYSROOT="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk";;
+			darwin11* )	ISYSROOT="-mmacosx-version-min=10.6 -isysroot /Developer/SDKs/MacOSX10.6.sdk";;
 			*)
 				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
@@ -239,6 +240,11 @@ AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PATH_PROG(PKG_CONFIG, pkg-config, [AC_MSG_ERROR([pkg-config not found.])])
+# if pkg-config does not exist: add a pseudo module check to ensure configure can run without failure
+if test "x$PKG_CONFIG" != "x"; then
+    AC_DEFUN([PKG_CHECK_MODULES], [AC_MSG_NOTICE([Skipping unsupported check])]) 
+    AC_MSG_NOTICE([Pseudo pkg-check-modules function defined])
+fi
 
 dnl Checks for header files.
 AC_HEADER_STDC
