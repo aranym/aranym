@@ -1,5 +1,15 @@
+2011/08/14 - Philipp
+- Changed Xcode project to be compatible with Xcode 4 while staying compatible with older Xcode versions
+- Simplified and unified Xcode project building
+- Removed warnings
+
+2011/08/10 - Philipp
+- configure.ac added pseudo function when pkg-config is not existent.
+- Xcode project: set project root correctly
+
+
 2011/06/26 - Rodolphe Pineau
-- Fix a videl fucntion access if blitter code use memmove
+- Fix a videl function access if blitter code use memmove
 - fix the uint64 define for Mac OS X
 
 2011/04/25 - François Revol
