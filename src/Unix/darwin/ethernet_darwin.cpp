@@ -188,10 +188,10 @@ bool TunTapEthernetHandler::open() {
 			bx_options.ethernet[ethX].ip_host,
 			bx_options.ethernet[ethX].ip_atari,
 			bx_options.ethernet[ethX].netmask,
-			TAP_MTU, NULL
+			(char *)TAP_MTU, NULL
 		};
 
-		int result = executeScriptAsRoot( TAP_INIT, args );
+		int result = executeScriptAsRoot( (char *)TAP_INIT, args );
 		if (result != 0) {
 			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, result);
 		}

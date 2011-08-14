@@ -131,7 +131,7 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 	{
 		currentPath = [[currentPath stringByExpandingTildeInPath] stringByStandardizingPath];
 		[fileManager fileExistsAtPath: currentPath isDirectory: &isDirectory];
-		[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN];
+		[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN encoding: NSUTF8StringEncoding];
 		printf("--> %s %d\n", gAranymFilesDirectory, isDirectory);
 		
 		if (isDirectory)
@@ -144,7 +144,7 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 		currentPath = [[[searchPaths objectAtIndex: 0] stringByExpandingTildeInPath] stringByStandardizingPath];
 
 	//	 store this path, convert it to a C string and copy into buffer
-	[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN];
+	[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN encoding: NSUTF8StringEncoding];
 }
 
 

@@ -42,7 +42,7 @@ static void refreshMenuItem(SDL_keysym keysym, int itemTag)
 		NSMenuItem *popupmenu = [menu itemAtIndex:i];	
 		NSMenuItem *menuitem = [[popupmenu submenu]itemWithTag:itemTag];
 		if (menuitem != NULL) {
-			[menuitem setKeyEquivalent: [NSString stringWithCString:(const char *)SDL_GetKeyName(keysym.sym)]];
+			[menuitem setKeyEquivalent: [NSString stringWithCString:(const char *)SDL_GetKeyName(keysym.sym) encoding: NSUTF8StringEncoding]];
 			[menuitem setKeyEquivalentModifierMask: getRefreshModifier(keysym.mod)];
 			[menu itemChanged:menuitem];
 			return;

@@ -208,7 +208,7 @@ void InputInit()
 
 #ifdef OS_darwin
 	// Make sure ALT+click is not interpreted as SDL_MIDDLE_BUTTON
-	SDL_putenv("SDL_HAS3BUTTONMOUSE=1");
+	SDL_putenv((char*)"SDL_HAS3BUTTONMOUSE=1");
 #endif
 	
 	/* Open joysticks */
