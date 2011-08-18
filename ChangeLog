@@ -1,3 +1,7 @@
+2011/08/18 - Andreas
+- src/natfeat/nfosmesa.cpp: Fixed an aliasing issue
+
+
 2011/08/14 - Philipp
 - Changed Xcode project to be compatible with Xcode 4 while staying compatible with older Xcode versions
 - Simplified and unified Xcode project building
