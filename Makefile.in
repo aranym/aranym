@@ -359,40 +359,40 @@ mrproper: distclean
 	rm -f $(top_srcdir)/aclocal.m4 $(builddir)/configure $(top_srcdir)/config.h.in
 
 bindistdirs:
-	$(SHELL) $(srcdir)/../mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
+	$(SHELL) $(top_srcdir)/mkinstalldirs tmpdist tmpdist$(bindir) tmpdist$(man1dir) tmpdist$(datadir)/$(APP) tmpdist$(datadir)/$(APP)/atari tmpdist$(datadir)/$(APP)/atari/hostfs tmpdist$(datadir)/$(APP)/atari/nfcdrom tmpdist$(datadir)/$(APP)/atari/nfjpeg tmpdist$(datadir)/$(APP)/atari/nfosmesa tmpdist$(datadir)/$(APP)/atari/network tmpdist$(datadir)/$(APP)/atari/tools tmpdist$(datadir)/$(APP)/atari/sound tmpdist$(docdir)/$(APP)
 
-bindist: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(APP_IFC).1 bindistdirs
+bindist: $(APP) $(TAPIF) $(top_srcdir)/doc/$(APP).1 $(top_srcdir)/doc/$(APP)-jit.1 $(top_srcdir)/doc/$(APP)-mmu.1 $(top_srcdir)/doc/$(APP_IFC).1 bindistdirs
 	$(INSTALL_PROGRAM) $(APP) tmpdist$(bindir)/$(APP)
 	if [ "x$(APP_IFC)" = "x$(TAPIF)" ]; then \
 	$(INSTALL_PROGRAM) $(APP_IFC) tmpdist$(bindir)/$(APP_IFC);\
-	$(INSTALL_DATA) doc/$(APP_IFC).1 tmpdist$(man1dir)/$(APP_IFC).1 ;\
+	$(INSTALL_DATA) $(top_srcdir)/doc/$(APP_IFC).1 tmpdist$(man1dir)/$(APP_IFC).1 ;\
 	fi
-	$(INSTALL_DATA) doc/$(APP).1 tmpdist$(man1dir)/$(APP).1
-	$(INSTALL_DATA) doc/$(APP)-jit.1 tmpdist$(man1dir)/$(APP)-jit.1
-	$(INSTALL_DATA) doc/$(APP)-mmu.1 tmpdist$(man1dir)/$(APP)-mmu.1
-	$(INSTALL_DATA) $(srcdir)/../ChangeLog tmpdist$(docdir)/$(APP)/changelog
-	$(INSTALL_DATA) $(srcdir)/../TODO tmpdist$(docdir)/$(APP)/TODO
-	$(INSTALL_DATA) $(srcdir)/../AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
-	$(INSTALL_DATA) $(srcdir)/../NEWS tmpdist$(docdir)/$(APP)/NEWS
-	$(INSTALL_DATA) $(srcdir)/../README tmpdist$(docdir)/$(APP)/README
-	$(INSTALL_DATA) $(srcdir)/../FAQ tmpdist$(docdir)/$(APP)/FAQ
-	$(INSTALL_DATA) $(srcdir)/../COPYING tmpdist$(docdir)/$(APP)/COPYING
-	$(INSTALL_DATA) $(srcdir)/../BUGS tmpdist$(docdir)/$(APP)/BUGS
-	$(INSTALL_DATA) $(srcdir)/../INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
-	$(INSTALL_DATA) $(srcdir)/../doc/config tmpdist$(docdir)/$(APP)/config
-	$(INSTALL_DATA) $(srcdir)/../atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
-	$(INSTALL_DATA) $(srcdir)/../atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
-	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
-	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
-	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
-	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
-	$(INSTALL) $(srcdir)/../tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
-	$(INSTALL) $(srcdir)/../tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
-	$(INSTALL_DATA) $(srcdir)/../atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
-	$(INSTALL_DATA) $(srcdir)/../atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) $(srcdir)/../atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
-	$(INSTALL_DATA) $(srcdir)/../data/wm_icon.bmp tmpdist$(datadir)/$(APP)/wm_icon.bmp
-	$(INSTALL_DATA) $(srcdir)/../data/logo.png tmpdist$(datadir)/$(APP)/logo.png
+	$(INSTALL_DATA) $(top_srcdir)/doc/$(APP).1 tmpdist$(man1dir)/$(APP).1
+	$(INSTALL_DATA) $(top_srcdir)/doc/$(APP)-jit.1 tmpdist$(man1dir)/$(APP)-jit.1
+	$(INSTALL_DATA) $(top_srcdir)/doc/$(APP)-mmu.1 tmpdist$(man1dir)/$(APP)-mmu.1
+	$(INSTALL_DATA) $(top_srcdir)/ChangeLog tmpdist$(docdir)/$(APP)/changelog
+	$(INSTALL_DATA) $(top_srcdir)/TODO tmpdist$(docdir)/$(APP)/TODO
+	$(INSTALL_DATA) $(top_srcdir)/AUTHORS tmpdist$(docdir)/$(APP)/AUTHORS
+	$(INSTALL_DATA) $(top_srcdir)/NEWS tmpdist$(docdir)/$(APP)/NEWS
+	$(INSTALL_DATA) $(top_srcdir)/README tmpdist$(docdir)/$(APP)/README
+	$(INSTALL_DATA) $(top_srcdir)/FAQ tmpdist$(docdir)/$(APP)/FAQ
+	$(INSTALL_DATA) $(top_srcdir)/COPYING tmpdist$(docdir)/$(APP)/COPYING
+	$(INSTALL_DATA) $(top_srcdir)/BUGS tmpdist$(docdir)/$(APP)/BUGS
+	$(INSTALL_DATA) $(top_srcdir)/INSTALL tmpdist$(docdir)/$(APP)/INSTALL	
+	$(INSTALL_DATA) $(top_srcdir)/doc/config tmpdist$(docdir)/$(APP)/config
+	$(INSTALL_DATA) $(top_srcdir)/atari/newdesk.inf tmpdist$(datadir)/$(APP)/atari/newdesk.inf
+	$(INSTALL_DATA) $(top_srcdir)/atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
+	$(INSTALL) $(top_srcdir)/tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
+	$(INSTALL) $(top_srcdir)/tools/floppy.sh tmpdist$(datadir)/$(APP)/floppy.sh
+	$(INSTALL_DATA) $(top_srcdir)/atari/tools/README tmpdist$(datadir)/$(APP)/atari/tools/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/tools/pc101us.kbd.bz2 tmpdist$(datadir)/$(APP)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(top_srcdir)/atari/sound/README tmpdist$(datadir)/$(APP)/atari/sound/README
+	$(INSTALL_DATA) $(top_srcdir)/data/wm_icon.bmp tmpdist$(datadir)/$(APP)/wm_icon.bmp
+	$(INSTALL_DATA) $(top_srcdir)/data/logo.png tmpdist$(datadir)/$(APP)/logo.png
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(APP).tar.gz *
 	rm -rf tmpdist
