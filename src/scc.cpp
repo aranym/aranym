@@ -387,8 +387,9 @@ Rsconf		Falcon		Falcon(+HSMODEM)	    Aranym	  Aranym(+HSMODEM)
 
 				 }
 				 else if(active_reg==15){// external status int control
-					if(value&1)
+					if(value&1) {
 						D(bug("SCC WR7 prime not yet processed\n"));
+					}
 				 }
 
 				 if( (active_reg==1)||(active_reg==2)||(active_reg==9))
