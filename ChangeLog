@@ -1,3 +1,7 @@
+2011/08/29 - Patrice
+- Add silent build rules
+
+
 2011/08/18 - Andreas
 - src/natfeat/nfosmesa.cpp: Fixed an aliasing issue
 

@@ -9,6 +9,17 @@ AC_CONFIG_HEADER(config.h)
 dnl Canonical system information.
 AC_CANONICAL_HOST
 
+dnl Silent rules
+
+AC_ARG_ENABLE(silent-rules,
+AC_HELP_STRING([--enable-silent-rules], [Enable silent build [[default=yes]]]),
+              , enable_silent_rules=yes)
+AM_DEFAULT_VERBOSITY=1
+if test x$enable_silent_rules = xyes; then
+	AM_DEFAULT_VERBOSITY=0
+fi
+AC_SUBST(AM_DEFAULT_VERBOSITY)
+
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support (default=yes)], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
