@@ -250,12 +250,8 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
-AC_PATH_PROG(PKG_CONFIG, pkg-config, [AC_MSG_ERROR([pkg-config not found.])])
-# if pkg-config does not exist: add a pseudo module check to ensure configure can run without failure
-if test "x$PKG_CONFIG" != "x"; then
-    AC_DEFUN([PKG_CHECK_MODULES], [AC_MSG_NOTICE([Skipping unsupported check])]) 
-    AC_MSG_NOTICE([Pseudo pkg-check-modules function defined])
-fi
+PKG_PROG_PKG_CONFIG
+m4_ifndef([PKG_CHECK_MODULES], [AC_DEFUN([PKG_CHECK_MODULES])])
 
 dnl Checks for header files.
 AC_HEADER_STDC
