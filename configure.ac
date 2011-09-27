@@ -1423,20 +1423,25 @@ fi
 
 dnl Add OpenGL ?
 if test "x$WANT_OPENGL" = "xyes"; then
-	AC_MSG_CHECKING(for OpenGL support)
 	have_opengl="no"
 	GL_LIBS=""
-	case "$host" in
-		*-*-cygwin* | *-*-mingw*)
-			GL_LIBS="-lopengl32"
-			;;
-		*-*-darwin*)
-			GL_LIBS="-Wl,-framework,OpenGL"
-			;;
-		*)
-			GL_LIBS="-lGL"
-			;;
-	esac
+	if test "x$PKG_CONFIG" != "x"; then
+		PKG_CHECK_MODULES([GL], [gl])
+	fi
+	if test "x$GL_LIBS" = "x"; then	
+		case "$host" in
+			*-*-cygwin* | *-*-mingw*)
+				GL_LIBS="-lopengl32"
+				;;
+			*-*-darwin*)
+				GL_LIBS="-Wl,-framework,OpenGL"
+				;;
+			*)
+				GL_LIBS="-lGL"
+				;;
+		esac
+	fi
+	AC_MSG_CHECKING(for OpenGL support)
 	tmp_cflags=$CFLAGS
 	tmp_libs=$LIBS
 	CFLAGS="$CFLAGS $SDL_CFLAGS"
