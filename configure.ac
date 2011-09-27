@@ -1458,16 +1458,6 @@ if test "x$WANT_OPENGL" = "xyes"; then
 	else
 		WANT_OPENGL="no"
 	fi
-
-dnl	MDL_HAVE_OPENGL
-dnl	if test "x$have_GL" = "xyes"; then
-dnl		AC_DEFINE([ENABLE_OPENGL], 1, [Define if using OpenGL])
-dnl		CFLAGS="$CFLAGS $GL_CFLAGS"
-dnl		CXXFLAGS="$CXXFLAGS $GL_CFLAGS"
-dnl		LIBS="$LIBS $GL_LIBS"
-dnl	else
-dnl		WANT_OPENGL="no"
-dnl	fi
 fi
 
 dnl Check for zlib
