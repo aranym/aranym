@@ -1550,8 +1550,12 @@ NFOSMESASRCS=""
 if test "x$WANT_NFOSMESA" = "xyes"; then
 	AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
 	NFOSMESASRCS="natfeat/nfosmesa.cpp"
-	if test "x$WITH_MESAINC" != "xno"; then
-		CPPFLAGS="$CPPFLAGS -I$WITH_MESAINC"
+	OSMESA_CFLAGS=""
+	if test "x$PKG_CONFIG" != "x"; then
+		PKG_CHECK_MODULES([OSMESA], [osmesa])
+	fi
+	if test "x$OSMESA_CFLAGS" != "x"; then
+		CPPFLAGS="$CPPFLAGS $OSMESA_CFLAGS"
 	else
 		case "$host_os" in
 			dnl For darwin the OSMesa include path is by default not defined
