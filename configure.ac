@@ -1463,10 +1463,11 @@ fi
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
-	CHECK_ZLIB()
-
+	if test "x$PKG_CONFIG" != "x"; then
+		PKG_CHECK_MODULES([ZLIB], [zlib], [have_zlib=yes], [have_zlib=no])
+	fi
 	if [[ "x$have_zlib" = "xyes" ]]; then
-		LIBS="$LIBS -lz"
+		AC_DEFINE([HAVE_ZLIB], 1, [Define if zlib enabled])
 	fi
 else
 	have_zlib="not required"
@@ -1738,6 +1739,8 @@ AC_SUBST(ARCHFLAGS)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 AC_SUBST(BUNDLE_FRAMEWORKS)
+AC_SUBST(ZLIB_CFLAGS)
+AC_SUBST(ZLIB_LIBS)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
