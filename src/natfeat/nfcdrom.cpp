@@ -63,7 +63,7 @@ typedef struct {
 	unsigned short status;
 	unsigned long reserved[2];
 	char name[32];
-} __attribute__((packed)) metados_bos_header_t;
+} metados_bos_header_t;
 
 /*--- Constructor/desctructor ---*/
 

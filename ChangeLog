@@ -1,3 +1,8 @@
+2011/11/03 - Patrice
+- nfcdrom: Use proper sized types when compiling for 64 bits. Remove useless
+  __attribute__((packed)) attribute.
+
+
 2011/08/29 - Patrice
 - Add silent build rules
 

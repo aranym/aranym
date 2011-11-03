@@ -41,19 +41,19 @@
 struct atari_cdrom_audioctrl
 {
 	/* input parameters */
-	short	set;    /* 0 == inquire only */
+	Uint16	set;    /* 0 == inquire only */
 
 	/* input/output parameters */
 	struct {
 		unsigned char selection;
-        unsigned char volume;
-    } channel[4];
-} __attribute__((packed));
+		unsigned char volume;
+	} channel[4];
+};
 
 typedef struct {
-    unsigned char	audiostatus;
-    unsigned char	mcn[23];
-} __attribute__((packed)) atari_mcn_t;
+	unsigned char	audiostatus;
+	unsigned char	mcn[23];
+} atari_mcn_t;
 
 /*--- Public functions ---*/
 

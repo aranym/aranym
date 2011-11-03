@@ -40,12 +40,12 @@
 typedef struct {
 	unsigned char count;
 	unsigned char first;
-} __attribute__((packed)) metados_bos_tracks_t;
+} metados_bos_tracks_t;
 
 typedef struct {
 	unsigned char	cdth_trk0;      /* start track */
 	unsigned char	cdth_trk1;      /* end track */
-} __attribute__((packed)) atari_cdromtochdr_t;
+} atari_cdromtochdr_t;
 
 typedef struct  {
 	/* input parameters */
@@ -63,24 +63,24 @@ typedef struct  {
                                     bit 2: data track,
                                     bit 3: four channel */
 #endif
-    unsigned char	cdte_datamode;		/* currently not set */
-	unsigned short	dummy;	/* PM: what is this for ? */
-	unsigned long	cdte_addr;			/* track start */
-} __attribute__((packed)) atari_cdromtocentry_t;
+	unsigned char	cdte_datamode;		/* currently not set */
+	Uint16	dummy;	/* PM: what is this for ? */
+	Uint32	cdte_addr;			/* track start */
+} atari_cdromtocentry_t;
 
 typedef struct {	/* TOC entry for MetaGetToc() function */
 	unsigned char track;
 	unsigned char minute;
 	unsigned char second;
 	unsigned char frame;
-} __attribute__((packed)) atari_tocentry_t;
+} atari_tocentry_t;
 
 typedef struct {	/* Discinfo for MetaDiscInfo() function */
 	unsigned char disctype, first, last, current;
 	atari_tocentry_t	relative, absolute, end;
 	unsigned char index, reserved1[3];
-	unsigned long reserved2[123];
-} __attribute__((packed)) atari_discinfo_t;
+	Uint32	reserved2[123];
+} atari_discinfo_t;
 
 typedef struct {
 	/* input parameters */
@@ -88,17 +88,17 @@ typedef struct {
     
 	/* output parameters */
 	unsigned char	cdsc_audiostatus;	/* see below */
-    unsigned char	cdsc_resvd;	/* reserved */
+	unsigned char	cdsc_resvd;	/* reserved */
 	unsigned char	cdsc_info;
 #if 0
     unsigned	cdsc_adr:	4;	/* in info field */
     unsigned	cdsc_ctrl:	4;	/* in info field */
 #endif
-    unsigned char	cdsc_trk;	/* current track */
-    unsigned char	cdsc_ind;	/* current index */
-	unsigned long	cdsc_absaddr;	/* absolute address */
-	unsigned long	cdsc_reladdr;	/* track relative address */
-} __attribute__((packed)) atari_cdromsubchnl_t;
+	unsigned char	cdsc_trk;	/* current track */
+	unsigned char	cdsc_ind;	/* current index */
+	Uint32	cdsc_absaddr;	/* absolute address */
+	Uint32	cdsc_reladdr;	/* track relative address */
+} atari_cdromsubchnl_t;
 
 /*--- Class ---*/
 
