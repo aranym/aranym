@@ -28,6 +28,11 @@
 			ret = OSMesaGetColorBuffer(getStackedParameter(0),(GLint *)Atari2HostAddr(getStackedParameter(1)),(GLint *)Atari2HostAddr(getStackedParameter(2)),(GLint *)Atari2HostAddr(getStackedParameter(3)),(void **)Atari2HostAddr(getStackedParameter(4)));
 			break;
 		case NFOSMESA_OSMESAGETPROCADDRESS:
+			/* FIXME: Native side do not need this */
+#if SIZEOF_VOID_P > 4
+			ret = NULL;
+#else
 			ret = (int32) OSMesaGetProcAddress((const char *)Atari2HostAddr(getStackedParameter(0)));
+#endif
 			break;
 /* Functions generated: 10 */
