@@ -91,8 +91,6 @@ AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default
 
 AC_ARG_WITH(mesa-headers,      [  --with-mesa-headers     Path to Mesa header files], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
 
-AC_ARG_ENABLE(nfcdrom,         [  --enable-nfcdrom        enable NatFeat CD-ROM (default=yes)], [WANT_NFCDROM=$enableval], [WANT_NFCDROM=yes])
-
 AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (default=no)], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
 
 AC_ARG_ENABLE(usbhost,         [  --enable-usbhost        enable NatFeat USB (default=no)], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
@@ -1507,17 +1505,15 @@ fi
 
 dnl Natfeat CD-ROM driver
 
-NFCDROMSRCS=""
-if [[ "x$WANT_NFCDROM" = "xyes" ]]; then
-	AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
-	NFCDROMSRCS="natfeat/nfcdrom.cpp"
-	case "$host_os" in
-		linux*)
-			NFCDROMSRCS="$NFCDROMSRCS natfeat/nfcdrom_linux.cpp"
-			AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
-			;;
-	esac
-fi
+AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
+NFCDROM_DRIVER="sdl"
+case "$host_os" in
+	linux*)
+		NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
+		AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
+		NFCDROM_DRIVER="linux,$NFCDROM_DRIVER"
+		;;
+esac
 
 dnl Natfeat PCI driver
 
@@ -1783,7 +1779,7 @@ echo OpenGL ................................. : $WANT_OPENGL
 echo Linux-m68k loader ...................... : $WANT_LILO
 echo Zlib ................................... : $have_zlib
 echo libusb-1.0.............................. : $WITH_USBHOST
-echo NatFeat CD-ROM driver .................. : $WANT_NFCDROM
+echo NatFeat CD-ROM driver .................. : $NFCDROM_DRIVER
 echo NatFeat PCI driver ..................... : $WANT_NFPCI
 echo NatFeat USB driver ..................... : $WANT_USBHOST
 echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA

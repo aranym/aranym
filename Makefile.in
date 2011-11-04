@@ -139,6 +139,7 @@ SRCS = main.cpp \
 	natfeat/nfbootstrap.cpp \
 	natfeat/nf_basicset.cpp \
 	natfeat/debugprintf.cpp \
+	natfeat/nfcdrom.cpp \
 	$(MIDISEQSRCS) \
 	$(NFCDROMSRCS) \
 	$(NFPCISRCS) \

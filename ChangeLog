@@ -1,6 +1,7 @@
 2011/11/03 - Patrice
 - nfcdrom: Use proper sized types when compiling for 64 bits. Remove useless
-  __attribute__((packed)) attribute.
+  __attribute__((packed)) attribute. Always enable nfcdrom, using SDL as
+  default backend.
 
 
 2011/08/29 - Patrice
