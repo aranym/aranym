@@ -42,7 +42,7 @@ typedef struct {
 	long (*setsongtime)(unsigned short dummy, unsigned long start_msf, unsigned long end_msf);
 	long (*gettoc)(unsigned short dummy, metatocentry_t *tocheader);
 	long (*discinfo)(metadiscinfo_t *discinfo);
-} __attribute__((packed)) metados_bosfunctions_t;
+} metados_bosfunctions_t;
 
 typedef struct {
 	void *next;
@@ -54,6 +54,6 @@ typedef struct {
 	unsigned short status;
 	unsigned long reserved[2];
 	char name[METADOS_BOSDEVICE_NAMELEN];
-} __attribute__((packed)) metados_bosheader_t;
+} metados_bosheader_t;
 
 #endif /* _METADOS_BOS_H */

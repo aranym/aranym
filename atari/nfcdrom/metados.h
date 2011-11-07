@@ -91,42 +91,42 @@ typedef struct {
 	unsigned short version;
 	unsigned long magic;
 	char *log2phys;
-} __attribute__((packed)) metainfo_t;
+} metainfo_t;
 
 typedef struct {
 	unsigned long drives_map;
 	char *version;
 	unsigned long reserved;		
 	metainfo_t *info;
-} __attribute__((packed)) metainit_t;
+} metainit_t;
 
 typedef struct {
 	char *name;
 	unsigned long reserved[3];
-} __attribute__((packed)) metaopen_t;
+} metaopen_t;
 
 typedef struct {
 	char ext_status[32];
-} __attribute__((packed)) metastatus_t;
+} metastatus_t;
 
 typedef struct {
 	unsigned char count;
 	unsigned char first;
-} __attribute__((packed)) metatracks_t;
+} metatracks_t;
 
 typedef struct {	/* TOC entry for MetaGetToc() function */
 	unsigned char track;
 	unsigned char minute;
 	unsigned char second;
 	unsigned char frame;
-} __attribute__((packed)) metatocentry_t;
+} metatocentry_t;
 
 typedef struct {
 	unsigned char reserved;
 	unsigned char minute;
 	unsigned char second;
 	unsigned char frame;
-} __attribute__((packed)) metadisc_msf_t;
+} metadisc_msf_t;
 
 typedef struct {	/* Discinfo for MetaDiscInfo() function */
 	unsigned char disctype, first, last, current;
@@ -135,6 +135,6 @@ typedef struct {	/* Discinfo for MetaDiscInfo() function */
 	metadisc_msf_t	end;
 	unsigned char index, reserved1[3];
 	unsigned long reserved2[123];
-} __attribute__((packed)) metadiscinfo_t;
+} metadiscinfo_t;
 
 #endif /* _METADOS_H */
