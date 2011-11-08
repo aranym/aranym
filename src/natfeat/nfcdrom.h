@@ -100,6 +100,22 @@ typedef struct {
 	Uint32	cdsc_reladdr;	/* track relative address */
 } atari_cdromsubchnl_t;
 
+typedef struct {
+	/* input parameters */
+	Uint16	set;    /* 0 == inquire only */
+
+	/* input/output parameters */
+	struct {
+		unsigned char selection;
+		unsigned char volume;
+	} channel[4];
+} atari_cdrom_audioctrl_t;
+
+typedef struct {
+	unsigned char	audiostatus;
+	unsigned char	mcn[23];
+} atari_mcn_t;
+
 /*--- Class ---*/
 
 class CdromDriver : public NF_Base

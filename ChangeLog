@@ -1,3 +1,8 @@
+2011/11/08 - Patrice
+- nfcdrom_linux: Small 64 bit fixes. Move Atari CD-ROM related stuff to generic
+  header.
+
+
 2011/11/03 - Patrice
 - nfcdrom: Use proper sized types when compiling for 64 bits. Remove useless
   __attribute__((packed)) attribute. Always enable nfcdrom, using SDL as

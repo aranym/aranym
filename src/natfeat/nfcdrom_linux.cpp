@@ -36,25 +36,6 @@
 
 #define NFCD_NAME	"nf:cdrom:linux: "
 
-/*--- Types ---*/
-
-struct atari_cdrom_audioctrl
-{
-	/* input parameters */
-	Uint16	set;    /* 0 == inquire only */
-
-	/* input/output parameters */
-	struct {
-		unsigned char selection;
-		unsigned char volume;
-	} channel[4];
-};
-
-typedef struct {
-	unsigned char	audiostatus;
-	unsigned char	mcn[23];
-} atari_mcn_t;
-
 /*--- Public functions ---*/
 
 CdromDriverLinux::CdromDriverLinux()
@@ -295,14 +276,14 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 		case CDROMVOLCTRL:
 			{
 				struct cdrom_volctrl volctrl;
-				struct atari_cdrom_audioctrl *atari_audioctrl;
+				atari_cdrom_audioctrl_t *atari_audioctrl;
 
 				if (opcode == (('C'<<8)|0x0a)) {
 					break;
 				}
 
 				/* CDROMAUDIOCTRL function emulation */
-				atari_audioctrl = (atari_cdrom_audioctrl *) Atari2HostAddr(buffer);
+				atari_audioctrl = (atari_cdrom_audioctrl_t *) Atari2HostAddr(buffer);
 				errorcode=EINVFN;
 
 				D(bug(NFCD_NAME " Ioctl(CDROMAUDIOCTRL,0x%04x)", atari_audioctrl->set));
@@ -385,9 +366,9 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 		case CDROMMULTISESSION:
 			{
 				struct cdrom_multisession cd_ms;
-				unsigned long *atari_addr;
+				Uint32 *atari_addr;
 
-				atari_addr = (unsigned long *) Atari2HostAddr(buffer);
+				atari_addr = (Uint32 *) Atari2HostAddr(buffer);
 				cd_ms.xa_flag = 1;
 				cd_ms.addr_format = CDROM_LBA;
 				errorcode = ioctl(drive_handles[drive], new_opcode, &cd_ms);
