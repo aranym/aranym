@@ -104,29 +104,29 @@ uint16 CdromDriverLinux::AtariToLinuxIoctl(uint16 opcode)
 {
 	uint16 new_opcode;
 
-	if ((opcode<(('C'<<8)|0x00)) || (opcode>(('C'<<8)|0x14))) {
+	if ((opcode<ATARI_CDROMREADOFFSET) || (opcode>ATARI_CDROMGETTISRC)) {
 		return 0xffff;
 	}
 
 	new_opcode = opcode;
 	switch(opcode) {
-		case (('C'<<8)|0x00):
+		case ATARI_CDROMREADOFFSET:
 			new_opcode = CDROMMULTISESSION;
 			break;
-		case (('C'<<8)|0x0e):
-		case (('C'<<8)|0x0f):
+		case ATARI_CDROMPREVENTREMOVAL:
+		case ATARI_CDROMALLOWREMOVAL:
 			new_opcode = CDROM_LOCKDOOR;
 			break;
-		case (('C'<<8)|0x10):
+		case ATARI_CDROMAUDIOCTRL:
 			new_opcode = CDROMVOLCTRL;
 			break;
-		case (('C'<<8)|0x14):
+		case ATARI_CDROMGETTISRC:
 			new_opcode = 0xffff;
 			break;
-		case (('C'<<8)|0x11):
+		case ATARI_CDROMREADDA:
 			new_opcode = CDROMREADRAW;
 			break;
-		case (('C'<<8)|0x13):
+		case ATARI_CDROMGETMCN:
 			new_opcode = CDROM_GET_MCN;
 			break;
 		default:
@@ -278,7 +278,7 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				struct cdrom_volctrl volctrl;
 				atari_cdrom_audioctrl_t *atari_audioctrl;
 
-				if (opcode == (('C'<<8)|0x0a)) {
+				if (opcode == ATARI_CDROMVOLCTRL) {
 					break;
 				}
 
