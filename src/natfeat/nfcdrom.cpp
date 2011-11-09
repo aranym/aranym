@@ -54,15 +54,15 @@
 /*--- Types ---*/
 
 typedef struct {
-	unsigned long next;	/* (void *) for Atari */
-	unsigned long attrib;
-	unsigned short phys_letter;
-	unsigned short dma_channel;
-	unsigned short sub_device;
-	unsigned long functions;	/* (void *) for Atari */
-	unsigned short status;
-	unsigned long reserved[2];
-	char name[32];
+	Uint32 next;	/* (void *) for Atari */
+	Uint32 attrib;
+	Uint16 phys_letter;
+	Uint16 dma_channel;
+	Uint16 sub_device;
+	Uint32 functions;	/* (void *) for Atari */
+	Uint16 status;
+	Uint32 reserved[2];
+	Uint8 name[32];
 } metados_bos_header_t;
 
 /*--- Constructor/desctructor ---*/
