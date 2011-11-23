@@ -22,6 +22,7 @@
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfcdrom.h"
+#include "nfcdrom_atari.h"
 #include "../../atari/nfcdrom/nfcdrom_nfapi.h"
 
 #define DEBUG 0
@@ -35,35 +36,7 @@
 
 #define NFCD_NAME	"nf:cdrom: "
 
-#define EINVFN -32
-
 #define CDROM_LEADOUT	0xaa
-
-/* CD-ROM address types (cdrom_tocentry.cdte_format) */
-#define	CDROM_LBA 0x01 /* "logical block": first frame is #0 */
-#define	CDROM_MSF 0x02 /* "minute-second-frame": binary, not bcd here! */
-
-/* audio states (from SCSI-2, but seen with other drives, too) */
-#define	CDROM_AUDIO_INVALID	0x00	/* audio status not supported */
-#define	CDROM_AUDIO_PLAY	0x11	/* audio play operation in progress */
-#define	CDROM_AUDIO_PAUSED	0x12	/* audio play operation paused */
-#define	CDROM_AUDIO_COMPLETED	0x13	/* audio play successfully completed */
-#define	CDROM_AUDIO_ERROR	0x14	/* audio play stopped due to error */
-#define	CDROM_AUDIO_NO_STATUS	0x15	/* no current audio status to return */
-
-/*--- Types ---*/
-
-typedef struct {
-	Uint32 next;	/* (void *) for Atari */
-	Uint32 attrib;
-	Uint16 phys_letter;
-	Uint16 dma_channel;
-	Uint16 sub_device;
-	Uint32 functions;	/* (void *) for Atari */
-	Uint16 status;
-	Uint32 reserved[2];
-	Uint8 name[32];
-} metados_bos_header_t;
 
 /*--- Constructor/desctructor ---*/
 

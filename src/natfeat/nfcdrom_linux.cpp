@@ -27,6 +27,7 @@
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfcdrom.h"
+#include "nfcdrom_atari.h"
 #include "nfcdrom_linux.h"
 
 #define DEBUG 0
