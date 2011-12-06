@@ -134,6 +134,23 @@ typedef struct {
 	unsigned char	mcn[23];
 } atari_mcn_t;
 
+typedef struct {
+	Uint32	cdread_lba;	/* logical block address */
+	Uint32	cdread_bufaddr;	/* (char *) buffer pointer */
+	Uint32	cdread_buflen;	/* byte count */
+} atari_cdrom_read_t;
+
+typedef struct {
+	/* input parameters */
+	Uint8	tisrc_track;		/* track number */
+
+	/* output parameters */
+
+	Uint8	tisrc_audiostatus;	/* see above */
+	Uint8	tisrc_tisrc[23];	/* Track International Standard
+					   Recording Code (ASCII) */
+} atari_tisrc_t;
+
 /*--- Enums ---*/
 
 /* Atari ioctl */
