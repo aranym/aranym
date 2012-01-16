@@ -29,9 +29,9 @@
 
 
 #include "dialog.h"
+#ifdef USBHOST_SUPPORT
 #include "../natfeat/usbhost.h"
 
-#ifdef USBHOST_SUPPORT
 void enable_buttons(void);
 void disable_buttons(void);	
 
