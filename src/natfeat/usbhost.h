@@ -1,22 +1,25 @@
 /*
-	USB host chip emulation
-
-	ARAnyM (C) 2010 David Gálvez
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ * USB host chip emulation
+ *
+ * Copyright (c) 2012 David Galvez. ARAnyM development team (see AUTHORS).
+ *
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef _USBHOST_H
 #define _USBHOST_H
@@ -27,10 +30,11 @@
 
 #include "nf_base.h"
 #include "../../atari/usbhost/usb.h"
+#include "../gui-sdl/dlgUsb.h"
 
 /*--- definitions ---*/
 
-/* --- USB HUB constants (not OHCI-specific) -------------------- */
+/* --- USB HUB constants -------------------- */
 
 /* destination of request */
 #define RH_INTERFACE               0x01
@@ -71,22 +75,20 @@
 #define RH_C_PORT_OVER_CURRENT     0x13
 #define RH_C_PORT_RESET            0x14
 
-/* wPortStatus bits */
+/* PortStatus */
 #define		RH_PS_CCS	(1 << 0)	/* current connect status */
 #define		RH_PS_PES	(1 << 1)	/* port enable status */
 #define		RH_PS_PSS	(1 << 2)	/* port suspend status */
-#define		RH_PS_POCI	(1 << 3)	/* port over current
-						   indicator */
+#define		RH_PS_POCI	(1 << 3)	/* port over current indicator */
 #define		RH_PS_PRS	(1 << 4)	/* port reset status */
 #define		RH_PS_PPS	(1 << 8)	/* port power status */
 #define		RH_PS_LSDA	(1 << 9)	/* low:1 speed device attached */
 #define		RH_PS_FSDA	(1 << 10)	/* full:0 high:1 speed device attached */
-
-/* wPortChange bits */
-#define		RH_PS_CSC	(1 << 0)	/* connect status change */
-#define		RH_PS_OCIC	(1 << 1)	/* over current indicator
-						   change */
-
+#define		RH_PS_CSC	(1 << 16)	/* connect status change */
+#define		RH_PS_PESC	(1 << 17)	/* port enable status change */
+#define		RH_PS_PSSC	(1 << 18)	/* port suspend statuschange */
+#define		RH_PS_OCIC	(1 << 19)	/* over current indicatorchange */
+#define		RH_PS_PRSC	(1 << 20)	/* port reset status change */
 
 /* Hub features */
 #define RH_C_HUB_LOCAL_POWER       0x00
@@ -100,23 +102,36 @@
 #define RH_NACK                    0x00
 
 
-#define USB_MAX_DEVICE	32
+#define USB_MAX_DEVICE		32
 
 #define NUMBER_OF_PORTS		2
 
 /*--- Types ---*/
+
+/* Devices attached to the Atari */
 typedef struct {
 	uint8 port_number;
 	uint8 device_index;
+	int32 interface;
+	uint16 busy;
 	uint16 wPortStatus;
 	uint16 wPortChange;
-	int32 interface;
 } port_t;
 
 typedef struct {
 	port_t port[NUMBER_OF_PORTS];
 	uint8 number_of_roothub;
 } roothub_t;
+
+/* Devices attached to the Host */
+typedef struct virtual_usbdev {
+	int8 idx_dev;
+	int8 idx_conf;
+	int8 idx_int;	
+	bool virtdev_available;
+	bool connected;
+	int8 port_number;
+} virtual_usbdev_t;
 
 
 /*--- Low level API functions that need to be supported ---*/
@@ -141,22 +156,16 @@ typedef struct {
 class USBHost : public NF_Base
 {
 private:
-	
-	libusb_device **devs;
-	struct libusb_device_handle *devh[USB_MAX_DEVICE];
-	int32 rh_devnum;					/* address of Root Hub endpoint */
+	int32 rh_devnum;			/* address of Root Hub endpoint */
 	int8 total_num_handles;
 
-	roothub_t roothub;
-
-	void print_devs(libusb_device **devs);
+	
 	int32 aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 				   memptr buffer, int32 transfer_len,
 				   devrequest *cmd);
-	int8 check_device(libusb_device *dev, uint8 idx);
-	void fill_port_status(uint8 port_number);
-	int8 claim_device(int8 device_index, int32 interface);
 
+	int32 rh_port_status(memptr rh);
+		
 	int32 usb_lowlevel_init(void);
 	int32 usb_lowlevel_stop(void);
 	int32 submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
@@ -168,7 +177,8 @@ private:
 
 public:
 	USBHost();
-	~USBHost();
+	~USBHost();	
+
 	const char *name() { return "USBHOST"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);

@@ -37,6 +37,7 @@
 #include "dlgPartition.h"
 #include "dlgHotkeys.h"
 #include "dlgDisk.h"
+#include "dlgUsb.h"
 #include "bootos.h" // bootOs ptr
 
 #ifdef OS_darwin
@@ -56,6 +57,7 @@ enum MAINDLG {
 	VIDEO,
 	NETWORK,
 	PARTITIONS,
+	USB,
 	text_conffile,
 	LOAD,
 	SAVE,
@@ -81,7 +83,8 @@ SGOBJ maindlg[] = {
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 3, 18, 1, "Video"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 5, 18, 1, "Networking"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 7, 18, 1, "Partitions"},
-	
+	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 9, 18, 1, "USB"},
+
 	{SGTEXT, 0, 0, 22, 15, 12, 1, "Config file:"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 35, 15, 6, 1, "Load"},
 	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 43, 15, 6, 1, "Save"},
@@ -176,6 +179,9 @@ int DlgMain::processDialog(void)
 			break;
 		case PARTITIONS:
 			SDLGui_Open(DlgPartitionOpen());
+			break;
+		case USB:
+			SDLGui_Open(DlgUsbOpen());
 			break;
 		case LOAD:
 			LoadSettings();

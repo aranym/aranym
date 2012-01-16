@@ -1,3 +1,17 @@
+2012/01/16 - Petr committing patch from David Galvez
+- configure.ac, gui-sdl/dlgMain.cpp: added gui-sdl/dlgUSb.{cpp,h}, a new
+  setup dialog with list of all USB devices attached to the host. Users can
+  claim up to two USB devices that can then be used from the Atari side.
+
+- natfeat/usbhost.{cpp,h}: greatly enhanced: now it's able to claim any
+  device (except hubs) to the host computer. The interfaces of the USB
+  devices are shown as different devices (for example printer with a scanner
+  will be listed as two devices, printer and scanner) so they can be
+  attached to the ARAnyM guest independently.
+
+- atari/usbhost/usbhost_nfapi.h: increased protocol revision
+
+
 2011/11/08 - Patrice
 - nfcdrom_linux: Small 64 bit fixes. Move Atari CD-ROM related stuff to generic
   header.
