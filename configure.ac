@@ -1465,7 +1465,7 @@ if [[ "x$WANT_LILO" = "xyes" ]]; then
 		PKG_CHECK_MODULES([ZLIB], [zlib], [have_zlib=yes], [have_zlib=no])
 	fi
 	if [[ "x$have_zlib" = "xyes" ]]; then
-		AC_DEFINE([HAVE_ZLIB], 1, [Define if zlib enabled])
+		AC_DEFINE([HAVE_LIBZ], 1, [Define if zlib enabled])
 	fi
 else
 	have_zlib="not required"
