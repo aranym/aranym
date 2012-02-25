@@ -1,3 +1,7 @@
+2012/02/24 - Andreas
+- fpu_mpfr.cpp: fpu emulation with mpfr library
+
+
 2012/01/16 - Petr committing patch from David Galvez
 - configure.ac, gui-sdl/dlgMain.cpp: added gui-sdl/dlgUSb.{cpp,h}, a new
   setup dialog with list of all USB devices attached to the host. Users can

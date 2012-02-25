@@ -130,7 +130,8 @@ AC_ARG_ENABLE(fpe,
     ieee)	FPE_CORE_TEST_ORDER="ieee";;
     uae)	FPE_CORE_TEST_ORDER="uae";;
     x86)	FPE_CORE_TEST_ORDER="x86";;
-    *)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, uae, x86, ieee]);;
+    mpfr)	FPE_CORE_TEST_ORDER="mpfr";;
+    *)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, uae, x86, ieee, mpfr]);;
   esac
 ],
 [ FPE_CORE_TEST_ORDER="ieee uae"
@@ -1291,6 +1292,15 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     DEFINES="$DEFINES -DFPU_UAE"
     FPUSRCS="uae_cpu/fpu/fpu_uae.cpp"
     break
+    ;;
+  mpfr)
+    AC_CHECK_LIB(mpfr, mpfr_init, [LIBS="$LIBS -lmpfr -lgmp"], [], [-lgmp])
+    if test $ac_cv_lib_mpfr_mpfr_init = yes; then
+      FPE_CORE="mpfr fpu core"
+      DEFINES="$DEFINES -DFPU_MPFR"
+      FPUSRCS="uae_cpu/fpu/fpu_mpfr.cpp"
+      break
+    fi
     ;;
   *)
     AC_MSG_ERROR([Internal configure.in script error for $fpe fpu core])

@@ -159,6 +159,15 @@ typedef fpu_register	fpu_extended;
 typedef uae_f64			fpu_double;
 typedef uae_f32			fpu_single;
 
+#elif defined(FPU_MPFR)
+
+#include <mpfr.h>
+
+struct fpu_register {
+  mpfr_t f;
+  operator long double ();
+};
+
 #endif
 
 union fpu_register_parts {

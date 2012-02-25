@@ -113,7 +113,8 @@ static inline uae_u32 FFPU get_fpcr(void)
 {
 	uae_u32 rounding_precision	= get_rounding_precision();
 	uae_u32 rounding_mode		= get_rounding_mode();
-	return (rounding_precision | rounding_mode);
+	uae_u32 exception_enable        = FPU fpcr.exception_enable;
+	return (rounding_precision | rounding_mode | exception_enable);
 }
 
 /* Set the floating-point control register from an m68k format */
@@ -122,6 +123,7 @@ static inline void FFPU set_fpcr(uae_u32 new_fpcr)
 	set_rounding_precision		( new_fpcr & FPCR_ROUNDING_PRECISION);
 	set_rounding_mode			( new_fpcr & FPCR_ROUNDING_MODE		);
 	set_host_control_word();
+	FPU fpcr.exception_enable	= new_fpcr & FPCR_EXCEPTION_ENABLE;
 }
 
 /* -------------------------------------------------------------------------- */
