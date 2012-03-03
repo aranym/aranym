@@ -1,5 +1,5 @@
 /*
- * dlgUsb.cpp - USB selction dialog 
+ * dlgUsb.cpp - USB selection dialog
  *
  * Copyright (c) 2012 David Galvez. ARAnyM development team (see AUTHORS).
  *
@@ -67,7 +67,7 @@ enum DLG {
 };
 
 
-/* External functions (usbhost.cpp) */ 
+/* External functions (usbhost.cpp) */
 
 extern int32 usbhost_get_device_list(void);
 extern void usbhost_free_usb_devices(void);
@@ -75,7 +75,7 @@ extern int8 usbhost_claim_device(int8 virtdev_index);
 extern int8 usbhost_release_device(int8 virtdev_index);
 
 
-/* External variables (usbhost.cpp) */ 
+/* External variables (usbhost.cpp) */
 
 extern char product[USB_MAX_DEVICE][MAX_PRODUCT_LENGTH];
 extern int8 number_ports_used;
@@ -113,7 +113,7 @@ static SGOBJ dlg[] =
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 7, 13,1, "Plug/Unplug" },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 9, 13,1, "Plug/Unplug" },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 11, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 13, 13,1, "Plug/Unplug" },	
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 13, 13,1, "Plug/Unplug" },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 15, 13,1, "Plug/Unplug" },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 17, 13,1, "Plug/Unplug" },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 19, 13,1, "Plug/Unplug" },
@@ -147,7 +147,7 @@ int8 check_if_devices_connected(void)
 
 	return 0;
 }
-	
+
 
 void enable_buttons(void)
 {
@@ -156,7 +156,7 @@ void enable_buttons(void)
 	while (i < MAX_NUMBER_VIRT_DEV) {
 		if (virtual_device[i].virtdev_available == true)
 			dlg[PLUG_0 + i].state &= ~SG_DISABLED;
-		i++;	
+		i++;
 	}
 }
 
@@ -173,7 +173,7 @@ void disable_buttons(void)
 }
 
 
-void init_variables(void)
+void reset_buttons_and_state(void)
 {
 	dlg[PLUG_0].state |= SG_DISABLED;
 	dlg[PLUG_1].state |= SG_DISABLED;
@@ -199,6 +199,16 @@ void init_variables(void)
 }
 
 
+void clean_product_strings(void)
+{
+	int8 i = 0;
+
+	while (i < USB_MAX_DEVICE) {
+		product[i][0] = '\0';
+		i++;
+	}
+}
+
 /* Public functions */
 
 int DlgUsb::processDialog(void)
@@ -209,7 +219,7 @@ int DlgUsb::processDialog(void)
 
 	if (state == STATE_MAIN) { /* Process main USB dialog */
 		switch(return_obj) {
-		
+
 			case OK:
 				retval = Dialog::GUI_CLOSE;
 				break;
@@ -219,8 +229,9 @@ int DlgUsb::processDialog(void)
 					state = STATE_ALERT;
 					dlgAlert = (DlgAlert *) DlgAlertOpen(ALERT_TEXT, ALERT_OKCANCEL);
 					SDLGui_Open(dlgAlert);
-				} else {					
-					init_variables();
+				} else {
+					reset_buttons_and_state();
+					clean_product_strings();
 					usbhost_free_usb_devices();
 					usbhost_get_device_list();
 					enable_buttons();
@@ -256,7 +267,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_1].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_2:
 				if (dlg[CONNECTED_2].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -271,7 +282,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_2].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_3:
 				if (dlg[CONNECTED_3].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -286,7 +297,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_3].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_4:
 				if (dlg[CONNECTED_4].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -301,7 +312,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_4].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_5:
 				if (dlg[CONNECTED_5].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -316,7 +327,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_5].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_6:
 				if (dlg[CONNECTED_6].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -331,7 +342,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_6].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_7:
 				if (dlg[CONNECTED_7].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -346,7 +357,7 @@ int DlgUsb::processDialog(void)
 					dlg[CONNECTED_7].state |= SG_DISABLED;
 				}
 				break;
-	
+
 			case PLUG_8:
 				if (dlg[CONNECTED_8].state & SG_DISABLED) {
 					if (usbhost_claim_device(virtdev_idx) == -1)
@@ -366,7 +377,8 @@ int DlgUsb::processDialog(void)
 		state = STATE_MAIN;
 		D(bug("dlgUsb: Process Alert dialog"));
 		if (dlgAlert && dlgAlert->pressedOk()) {
-			init_variables();
+			reset_buttons_and_state();
+			clean_product_strings();
 			usbhost_free_usb_devices();
 			usbhost_get_device_list();
 			enable_buttons();
@@ -384,7 +396,7 @@ DlgUsb::DlgUsb(SGOBJ *dlg)
 	int8 i;
 
 	if (init_flag == false)
-		init_variables();
+		reset_buttons_and_state();
 
 	for (i = 0; i < MAX_NUMBER_VIRT_DEV; i++) {
 		if ((virtual_device[i].virtdev_available == true && number_ports_used <= NUMBER_OF_PORTS) ||
@@ -425,9 +437,9 @@ int DlgUsb::processDialog(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
-	if (return_obj == OK)	
+	if (return_obj == OK)
 		retval = Dialog::GUI_CLOSE;
-				
+
 	return retval;
 }
 
@@ -435,7 +447,7 @@ int DlgUsb::processDialog(void)
 DlgUsb::DlgUsb(SGOBJ *dlg)
 	: Dialog(dlg)
 {
-	
+
 }
 #endif /* USBHOST_SUPPORT */
 
@@ -450,7 +462,7 @@ DlgUsb::~DlgUsb()
 
 void DlgUsb::confirm(void)
 {
-	
+
 }
 
 
