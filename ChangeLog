@@ -1,3 +1,9 @@
+2012/03/07 - Andreas
+- gencpu.c: fix CAS.[BW] emulation bug
+- fpu_mpfr.cpp: fix k factor for FMOVE.P, fix FTST and FSCALE, only set
+  FPIAR when exceptions are raised
+
+
 2012/02/24 - Andreas
 - fpu_mpfr.cpp: fpu emulation with mpfr library
 
