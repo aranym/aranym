@@ -1955,7 +1955,17 @@ static void gen_opcode (unsigned long int opcode)
 	    pop_braces (old_brace_level);
 	    printf ("else");
 	    start_brace ();
-	    printf ("m68k_dreg(regs, rc) = dst;\n");
+	    switch (curi->size) {
+	    case sz_byte:
+		printf ("\tm68k_dreg(regs, rc) = (m68k_dreg(regs, rc) & ~0xff) | (dst & 0xff);\n");
+		break;
+	    case sz_word:
+		printf ("\tm68k_dreg(regs, rc) = (m68k_dreg(regs, rc) & ~0xffff) | (dst & 0xffff);\n");
+		break;
+	    default:
+		printf ("\tm68k_dreg(regs, rc) = dst;\n");
+		break;
+	    }
 	    pop_braces (old_brace_level);
 	}
 	break;
