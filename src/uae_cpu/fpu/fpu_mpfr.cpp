@@ -54,6 +54,7 @@ static mpfr_t fpu_constant_rom[num_fpu_constants];
 // Exceptions generated during execution in addition to the ones
 // maintained by mpfr
 static uae_u32 cur_exceptions;
+static uaecptr cur_instruction_address;
 
 static void
 set_format (int prec)
@@ -517,9 +518,13 @@ update_exceptions ()
     aexc |= FPSR_ACCR_INEX;
   set_accrued_exception (aexc);
 
-  // TODO: raise exceptions
-  // Problem: FPSP040 depends on proper FPU stack frames, it would suffer
-  // undefined behaviour with our dummy FSAVE implementation
+  if ((fpu.fpcr.exception_enable & exc) != 0)
+    {
+      fpu.instruction_address = cur_instruction_address;
+      // TODO: raise exceptions
+      // Problem: FPSP040 depends on proper FPU stack frames, it would suffer
+      // undefined behaviour with our dummy FSAVE implementation
+    }
 }
 
 static void
@@ -941,7 +946,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
       put_long (addr + 8, words[2]);
       break;
     case 3:
-      extract_to_packed (*value, extra & 63, words);
+      extract_to_packed (*value, extra & 0x7f, words);
       put_long (addr, words[0]);
       put_long (addr + 4, words[1]);
       put_long (addr + 8, words[2]);
@@ -958,7 +963,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
       put_byte (addr, extract_to_integer (*value, -128, 127));
       break;
     case 7:
-      extract_to_packed (*value, m68k_dreg (regs, (extra >> 4) & 7) & 63, words);
+      extract_to_packed (*value, m68k_dreg (regs, (extra >> 4) & 7) & 0x7f, words);
       put_long (addr, words[0]);
       put_long (addr + 4, words[1]);
       put_long (addr + 8, words[2]);
@@ -1232,6 +1237,7 @@ do_scale (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
   else if (mpfr_fits_slong_p (value, rnd))
     {
       scale = mpfr_get_si (value, MPFR_RNDZ);
+      mpfr_clear_inexflag ();
       mpfr_mul_2si (value, reg, scale, rnd);
     }
   else
@@ -1393,17 +1399,14 @@ do_ftst (mpfr_t value)
 {
   uae_u32 flags = 0;
 
+  if (mpfr_signbit (value))
+    flags |= FPSR_CCB_NEGATIVE;
   if (mpfr_nan_p (value))
     flags |= FPSR_CCB_NAN;
-  else
-    {
-      if (mpfr_signbit (value))
-	flags |= FPSR_CCB_NEGATIVE;
-      if (mpfr_zero_p (value))
-	flags |= FPSR_CCB_ZERO;
-      else if (mpfr_inf_p (value))
-	flags |= FPSR_CCB_INFINITY;
-    }
+  else if (mpfr_zero_p (value))
+    flags |= FPSR_CCB_ZERO;
+  else if (mpfr_inf_p (value))
+    flags |= FPSR_CCB_INFINITY;
   set_fpccr (flags);
 }
 
@@ -1417,7 +1420,7 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 
   mpfr_clear_flags ();
   cur_exceptions = 0;
-  fpu.instruction_address = m68k_getpc () - 4;
+  cur_instruction_address = m68k_getpc () - 4;
   if ((extra & 0xfc00) == 0x5c00)
     {
       // FMOVECR
