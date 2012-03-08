@@ -1,3 +1,8 @@
+2012/03/08 - Andreas
+- gencpu.c: fix another CAS emulation bug: if the comparison failed the PC
+  was not advanced.  Fix CAS2 to properly update both memory operands.
+
+	
 2012/03/07 - Andreas
 - gencpu.c: fix CAS.[BW] emulation bug
 - fpu_mpfr.cpp: fix k factor for FMOVE.P, fix FTST and FSCALE, only set
