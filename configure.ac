@@ -122,11 +122,16 @@ AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to buil
 AC_ARG_WITH(classicconfig,     [  --with-classicconfig	  Use Classic config names on MacOSX (default=no)], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
 
 dnl FPU emulation core.
+if [[ "x$WANT_MMU" = "xyes" ]]; then
+    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="mpfr ieee aue"
+else
+    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="ieee aue"
+fi
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
 [ case "$enableval" in
     dnl default is always ieee, if architecture has this fp format
-    auto)	FPE_CORE_TEST_ORDER="ieee uae";;
+    auto)	FPE_CORE_TEST_ORDER=$SUGGESTED_AUTO_FPE_CORE_TEST_ORDER;;
     ieee)	FPE_CORE_TEST_ORDER="ieee";;
     uae)	FPE_CORE_TEST_ORDER="uae";;
     x86)	FPE_CORE_TEST_ORDER="x86";;
@@ -134,7 +139,7 @@ AC_ARG_ENABLE(fpe,
     *)		AC_MSG_ERROR([--enable-fpe takes only one of the following values: auto, uae, x86, ieee, mpfr]);;
   esac
 ],
-[ FPE_CORE_TEST_ORDER="ieee uae"
+[ FPE_CORE_TEST_ORDER=$SUGGESTED_AUTO_FPE_CORE_TEST_ORDER
 ])
 
 dnl Addressing modes.
@@ -1471,9 +1476,7 @@ fi
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
-	if test "x$PKG_CONFIG" != "x"; then
-		PKG_CHECK_MODULES([ZLIB], [zlib], [have_zlib=yes], [have_zlib=no])
-	fi
+	AC_CHECK_LIB(z, gzopen, [have_zlib=yes], [have_zlib=no])
 	if [[ "x$have_zlib" = "xyes" ]]; then
 		AC_DEFINE([HAVE_LIBZ], 1, [Define if zlib enabled])
 	fi
