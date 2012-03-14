@@ -1,3 +1,8 @@
+2012/03/14 - Petr
+- configure.ac: ARAnyM with MMU tries to select the new MPFR FPU if available.
+  Also, the check for ZLIB changed from pkg-config to autoconf.
+
+
 2012/03/08 - Andreas
 - gencpu.c: fix another CAS emulation bug: if the comparison failed the PC
   was not advanced.  Fix CAS2 to properly update both memory operands.
@@ -11,6 +16,7 @@
 
 2012/02/24 - Andreas
 - fpu_mpfr.cpp: fpu emulation with mpfr library
+- configure.ac: fixed define HAVE_LIBZ (not HAVE_ZLIB)
 
 
 2012/01/16 - Petr committing patch from David Galvez
