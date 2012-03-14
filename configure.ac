@@ -1259,6 +1259,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     case $ac_cv_c_float_format in
     IEEE*)
       FPE_CORE="IEEE fpu core"
+      AC_DEFINE([USES_FPU_CORE], "IEEE", [FPU core])
       DEFINES="$DEFINES -DFPU_IEEE"
       FPUSRCS="uae_cpu/fpu/fpu_ieee.cpp"
       dnl Math functions not mandated by C99 standard
@@ -1294,6 +1295,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     ;;
   uae)
     FPE_CORE="uae fpu core"
+    AC_DEFINE([USES_FPU_CORE], "UAE", [FPU core])
     DEFINES="$DEFINES -DFPU_UAE"
     FPUSRCS="uae_cpu/fpu/fpu_uae.cpp"
     break
@@ -1302,6 +1304,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     AC_CHECK_LIB(mpfr, mpfr_init, [LIBS="$LIBS -lmpfr -lgmp"], [], [-lgmp])
     if test $ac_cv_lib_mpfr_mpfr_init = yes; then
       FPE_CORE="mpfr fpu core"
+      AC_DEFINE([USES_FPU_CORE], "MPFR", [FPU core])
       DEFINES="$DEFINES -DFPU_MPFR"
       FPUSRCS="uae_cpu/fpu/fpu_mpfr.cpp"
       break
