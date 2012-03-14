@@ -1103,9 +1103,10 @@ void early_cmdline_check(int argc, char **argv) {
 			exit(0);
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
 			// infoprint("%s\n", VERSION_STRING);
-			infoprint("Capabilities:");
-			infoprint("JIT compiler     : %s", (USE_JIT == 1) ? "enabled" : "disabled");
+			infoprint("HW Configuration:");
+			infoprint("CPU JIT compiler : %s", (USE_JIT == 1) ? "enabled" : "disabled");
 			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
+			infoprint("FPU              : %s", USES_FPU_CORE);
 			infoprint("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
 			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");

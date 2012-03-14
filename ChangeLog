@@ -2,6 +2,8 @@
 - configure.ac: ARAnyM with MMU tries to select the new MPFR FPU if available.
   Also, the check for ZLIB changed from pkg-config to autoconf.
 
+- parameters.cpp: "--version" shows what FPU emulation is compiled in.
+
 
 2012/03/08 - Andreas
 - gencpu.c: fix another CAS emulation bug: if the comparison failed the PC
