@@ -5,7 +5,10 @@
 
 - natfeat/nfpci.*: name() is const
 
-- natfeat/nfosmesa.cpp: fix strict aliasing issue in newer GCC
+- natfeat/nfosmesa.cpp: fix strict aliasing issue in newer GCC (twice,
+  thanks to Andreas)
+
+- dsp_cpu.c: initialize some uninitialized variables
 
 
 2012/03/14 - Petr
