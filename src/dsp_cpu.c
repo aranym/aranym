@@ -753,7 +753,7 @@ static void dsp_postexecute_update_pc(void)
 
 static void dsp_postexecute_interrupts(void)
 {
-	Uint32 ipl, ipl_to_raise, value, ipl_hi, ipl_ssi, instr1, instr2;
+	Uint32 ipl = -1, ipl_to_raise, value, ipl_hi = -1, ipl_ssi, instr1, instr2;
 
 	/* REP is not interruptible */
 	if (dsp_core->loop_rep) {
