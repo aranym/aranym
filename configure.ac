@@ -1301,8 +1301,8 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     break
     ;;
   mpfr)
-    AC_CHECK_LIB(mpfr, mpfr_init, [LIBS="$LIBS -lmpfr -lgmp"], [], [-lgmp])
-    if test $ac_cv_lib_mpfr_mpfr_init = yes; then
+    AC_CHECK_LIB(mpfr, mpfr_set_zero, [LIBS="$LIBS -lmpfr -lgmp"], [], [-lgmp])
+    if test $ac_cv_lib_mpfr_mpfr_set_zero = yes; then
       FPE_CORE="mpfr fpu core"
       AC_DEFINE([USES_FPU_CORE], "MPFR", [FPU core])
       DEFINES="$DEFINES -DFPU_MPFR"
@@ -1479,7 +1479,16 @@ fi
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
-	AC_CHECK_LIB(z, gzopen, [have_zlib=yes], [have_zlib=no])
+	# Search using pkg-config
+	if test "x$PKG_CONFIG" != "x"; then
+		PKG_CHECK_MODULES([ZLIB], [zlib], [have_zlib=yes], [have_zlib=no])
+	fi
+
+	# Fallback to autoconf (helps in Ubuntu 10.04 LTS)
+	if [[ "x$have_zlib" = "xno" ]]; then
+		AC_CHECK_LIB(z, gzopen, [have_zlib=yes], [have_zlib=no])
+	fi
+
 	if [[ "x$have_zlib" = "xyes" ]]; then
 		AC_DEFINE([HAVE_LIBZ], 1, [Define if zlib enabled])
 	fi
