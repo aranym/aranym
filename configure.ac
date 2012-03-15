@@ -1440,7 +1440,6 @@ fi
 dnl Add OpenGL ?
 if test "x$WANT_OPENGL" = "xyes"; then
 	have_opengl="no"
-	GL_LIBS=""
 	if test "x$PKG_CONFIG" != "x"; then
 		PKG_CHECK_MODULES([GL], [gl])
 	fi
@@ -1572,7 +1571,6 @@ NFOSMESASRCS=""
 if test "x$WANT_NFOSMESA" = "xyes"; then
 	AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
 	NFOSMESASRCS="natfeat/nfosmesa.cpp"
-	OSMESA_CFLAGS=""
 	if test "x$PKG_CONFIG" != "x"; then
 		PKG_CHECK_MODULES([OSMESA], [osmesa])
 	fi
