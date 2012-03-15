@@ -3,6 +3,10 @@
   Also the mpfr library must be version 3.0+ that has different API
   than previous versions. Checking for mpfr_set_zero ensures that.
 
+- natfeat/nfpci.*: name() is const
+
+- natfeat/nfosmesa.cpp: fix strict aliasing issue in newer GCC
+
 
 2012/03/14 - Petr
 - configure.ac: ARAnyM with MMU tries to select the new MPFR FPU if available.
