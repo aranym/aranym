@@ -95,8 +95,8 @@ class PciDriver : public NF_Base
 		virtual int32 phys_to_virt(memptr phys_cpu_address, memptr data);
 
 	public:
-		char *name();
-		bool isSuperOnly();
+		const char *name() { return "PCI"; }
+		bool isSuperOnly() { return false; }
 		int32 dispatch(uint32 fncode);
 		virtual ~PciDriver() { };
 };

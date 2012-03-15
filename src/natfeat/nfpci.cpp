@@ -35,16 +35,6 @@
 
 /*--- Public functions ---*/
 
-char *PciDriver::name()
-{
-	return "PCI";
-}
-
-bool PciDriver::isSuperOnly()
-{
-	return false;
-}
-
 int32 PciDriver::dispatch(uint32 fncode)
 {
 	int32 ret;
