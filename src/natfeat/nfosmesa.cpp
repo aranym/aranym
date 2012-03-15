@@ -584,16 +584,20 @@ void OSMesaDriver::Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest)
 	}
 }
 
-/*
-GLfloat OSMesaDriver::Atari2HostFloat(Uint32 value)
+static GLfloat Atari2HostFloat(Uint32 value)
 {
-	return value;
+	union {
+		GLfloat f;
+		Uint32 i;
+	} u;
+	u.i = value;
+	return u.f;
 }
-*/
+
 void OSMesaDriver::Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest)
 {
 	for (Uint32 i=0;i<size;i++) {
-		dest[i]=SDL_SwapBE32(src[i]);
+		dest[i]=Atari2HostFloat(SDL_SwapBE32(src[i]));
 	}
 }
 
