@@ -6,6 +6,9 @@ AC_INIT(aranym,0.9,aranym@lists.bobek.cz,aranym)
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 
+dnl Define list of provided Native Features
+PROVIDES_NF="audio bootstrap xhdi"
+
 dnl Canonical system information.
 AC_CANONICAL_HOST
 
@@ -935,10 +938,15 @@ else
   TAPIF=""
 fi
 
+if [[ "x$HAVE_ETHERNET" = "xyes" ]]; then
+  PROVIDES_NF="$PROVIDES_NF ethernet"
+fi
+
 dnl Support for direct access to host's fs
 if [[ "x$WANT_HOSTFS" = "xyes" ]]; then
   SYSSRCS="$SYSSRCS natfeat/hostfs.cpp"
   AC_DEFINE([HOSTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
+  PROVIDES_NF="$PROVIDES_NF hostfs"
 fi
 
 dnl SDL GUI
@@ -1538,6 +1546,7 @@ case "$host_os" in
 		NFCDROM_DRIVER="linux,$NFCDROM_DRIVER"
 		;;
 esac
+PROVIDES_NF="$PROVIDES_NF cdrom($NFCDROM_DRIVER)"
 
 dnl Natfeat PCI driver
 
@@ -1549,9 +1558,11 @@ if [[ "x$WANT_NFPCI" = "xyes" ]]; then
 			NFPCISRCS="natfeat/nfpci.cpp"
 			AC_DEFINE([NFPCI_LINUX_SUPPORT], 1, [Define if you want to use Linux PCI driver])
 			NFPCISRCS="$NFPCISRCS natfeat/nfpci_linux.cpp"
+			PROVIDES_NF="$PROVIDES_NF pci"
 			;;
 		*)
 			AC_MSG_ERROR([*** NatFeats PCI not supported by this OS ***])
+			WANT_NFPCI="no"
 			;;
 	esac
 fi
@@ -1561,8 +1572,9 @@ dnl Natfeat USB driver
 USBHOSTSRCS=""
 if [[ "x$WANT_USBHOST" = "xyes" -a "x$WITH_USBHOST" = "xyes" ]]; then
 	AC_DEFINE([USBHOST_SUPPORT], 1, [Define if you want to use host USB driver])
-		USBHOSTSRCS="natfeat/usbhost.cpp"
-		LIBS="$LIBS $LIBUSB_LIBS"
+	USBHOSTSRCS="natfeat/usbhost.cpp"
+	LIBS="$LIBS $LIBUSB_LIBS"
+	PROVIDES_NF="$PROVIDES_NF usb"
 fi
 
 dnl Natfeat OSMesa driver
@@ -1581,9 +1593,16 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 			dnl For darwin the OSMesa include path is by default not defined
 			darwin*)
 				CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include/"
-			;;
+				;;
+			*)
+				WANT_NFOSMESA="no"
+				;;
 		esac
 	fi
+fi
+
+if [[ "x$WANT_NFOSMESA" = "xyes" ]]; then
+	PROVIDES_NF="$PROVIDES_NF osmesa"
 fi
 
 dnl Natfeat JPEG decoder
@@ -1593,6 +1612,7 @@ if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
 		NFJPEGSRCS="natfeat/nfjpeg.cpp"
+		PROVIDES_NF="$PROVIDES_NF jpeg"
 	else
 		WANT_NFJPEG="no"
 	fi
@@ -1604,9 +1624,12 @@ NFVDISRCS=""
 if [[ "x$WANT_NFVDI" = "xyes" ]]; then
 	AC_DEFINE([NFVDI_SUPPORT], 1, [Define if you want to use NF VDI driver])
 	NFVDISRCS="natfeat/nfvdi.cpp natfeat/nfvdi_soft.cpp"
+	NFVDI_DRIVER="sw"
 	if [[ "x$WANT_OPENGL" = "xyes" ]]; then
 		NFVDISRCS="$NFVDISRCS natfeat/nfvdi_opengl.cpp"
+		NFVDI_DRIVER="opengl,$NFVDI_DRIVER"
 	fi
+	PROVIDES_NF="$PROVIDES_NF vdi($NFVDI_DRIVER)"
 fi
 
 dnl Natfeat Clipboard driver
@@ -1635,8 +1658,13 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 			LIBS="$LIBS -lX11"
 		else
 		     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
+			WANT_NFCLIPBRD="no"
 		fi
 	fi
+fi
+
+if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
+	PROVIDES_NF="$PROVIDES_NF clipboard"
 fi
 
 dnl Exception per second limiter
@@ -1697,6 +1725,8 @@ if test "x$WANT_UNIXSERIALPORT" = "xyes" ; then
 		WANT_UNIXSERIALPORT="no"
 	fi
 fi
+
+AC_DEFINE_UNQUOTED([PROVIDES_NATFEATS], "$PROVIDES_NF", [List of Native Features])
 
 dnl Data directory
 

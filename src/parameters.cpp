@@ -66,20 +66,12 @@
 # define HOSTFS_SUPPORT 0
 #endif
 
-#ifndef NFCDROM_SUPPORT
-# define NFCDROM_SUPPORT 0
+#ifndef USES_FPU_CORE
+# define USES_FPU_CORE "<undefined>"
 #endif
 
-#ifndef NFCDROM_LINUX_SUPPORT
-# define NFCDROM_LINUX_SUPPORT 0
-#endif
-
-#ifndef NFOSMESA_SUPPORT
-# define NFOSMESA_SUPPORT 0
-#endif
-
-#ifndef NFJPEG_SUPPORT
-# define NFJPEG_SUPPORT 0
+#ifndef PROVIDES_NATFEATS
+# define PROVIDES_NATFEATS "<undefined>"
 #endif
 
 static struct option const long_options[] =
@@ -1110,11 +1102,7 @@ void early_cmdline_check(int argc, char **argv) {
 			infoprint("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
 			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
 			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
-			infoprint("HOSTFS support   : %s", (HOSTFS_SUPPORT == 1) ? "enabled" : "disabled");
-			infoprint("Native features:");
-			infoprint(" CD-ROM driver   : %s", (NFCDROM_SUPPORT == 1) ? "enabled" : "disabled");
-			infoprint(" OSMesa rendering: %s", (NFOSMESA_SUPPORT == 1) ? "enabled" : "disabled");
-			infoprint(" JPEG decoder    : %s", (NFJPEG_SUPPORT == 1) ? "enabled" : "disabled");
+			infoprint("Native features  : %s", PROVIDES_NATFEATS);
 
 			exit (0);
 		}

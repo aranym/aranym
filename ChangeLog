@@ -1,3 +1,7 @@
+2012/03/16 - Petr
+- configure.ac, parameters.cpp: list all Native Features that got compiled in
+
+
 2012/03/15 - Petr
 - configure.ac: check for ZLIB is now both by pkg-config and autoconf.
   Also the mpfr library must be version 3.0+ that has different API
