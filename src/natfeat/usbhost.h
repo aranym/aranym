@@ -127,7 +127,7 @@ typedef struct {
 typedef struct virtual_usbdev {
 	int8 idx_dev;
 	int8 idx_conf;
-	int8 idx_int;	
+	int8 idx_interface;	
 	bool virtdev_available;
 	bool connected;
 	int8 port_number;

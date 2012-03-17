@@ -1,3 +1,14 @@
+2012/03/17 - Petr committing patch from David Galvez
+- natfeat/usbhost.{cpp,h}:
+  - Trigger interrupt for "port status change" from a new thread until
+    the driver acknowledges.
+  - Close libusb resources in class deconstructor.
+  - Check inside usb_lowlevel_init function if any usb device is
+    connected and enable "port status change" bit if necessary.
+  - Rename variable idx_int to clearer idx_interface.
+  - Code cleanup.
+
+
 2012/03/16 - Petr
 - configure.ac, parameters.cpp: list all Native Features that got compiled in
 
