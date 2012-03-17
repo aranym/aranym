@@ -47,58 +47,58 @@
 
 class PciDriver : public NF_Base
 {
-	private:
-		int32 get_machine_id(void);
+private:
+	int32 get_machine_id(void);
 
-	protected:
-		virtual int32 find_device(uint32 device_vendor_id, uint32 index);
-		virtual int32 find_classcode(uint32 class_code, uint32 index);
-		virtual	int32 read_config_byte(uint32 device_handle, memptr data, uint32 num_register);
-		virtual	int32 read_config_word(uint32 device_handle, memptr data, uint32 num_register);
-		virtual	int32 read_config_long(uint32 device_handle, memptr data, uint32 num_register);
-		virtual	int32 read_config_byte_fast(uint32 device_handle, uint32 num_register);
-		virtual	int32 read_config_word_fast(uint32 device_handle, uint32 num_register);
-		virtual	int32 read_config_long_fast(uint32 device_handle, uint32 num_register);
-		virtual	int32 write_config_byte(uint32 device_handle, uint32 num_register, uint32 value);
-		virtual	int32 write_config_word(uint32 device_handle, uint32 num_register, uint32 value);
-		virtual	int32 write_config_long(uint32 device_handle, uint32 num_register, uint32 value);
-		virtual	int32 hook_interrupt(uint32 device_handle, memptr data, uint32 parameter);
-		virtual	int32 unhook_interrupt(uint32 device_handle); 
-		virtual	int32 special_cycle(uint32 num_bus, uint32 data); 
+protected:
+	virtual int32 find_device(uint32 device_vendor_id, uint32 index);
+	virtual int32 find_classcode(uint32 class_code, uint32 index);
+	virtual	int32 read_config_byte(uint32 device_handle, memptr data, uint32 num_register);
+	virtual	int32 read_config_word(uint32 device_handle, memptr data, uint32 num_register);
+	virtual	int32 read_config_long(uint32 device_handle, memptr data, uint32 num_register);
+	virtual	int32 read_config_byte_fast(uint32 device_handle, uint32 num_register);
+	virtual	int32 read_config_word_fast(uint32 device_handle, uint32 num_register);
+	virtual	int32 read_config_long_fast(uint32 device_handle, uint32 num_register);
+	virtual	int32 write_config_byte(uint32 device_handle, uint32 num_register, uint32 value);
+	virtual	int32 write_config_word(uint32 device_handle, uint32 num_register, uint32 value);
+	virtual	int32 write_config_long(uint32 device_handle, uint32 num_register, uint32 value);
+	virtual	int32 hook_interrupt(uint32 device_handle, memptr data, uint32 parameter);
+	virtual	int32 unhook_interrupt(uint32 device_handle); 
+	virtual	int32 special_cycle(uint32 num_bus, uint32 data); 
 /* get_routing */
 /* set_interrupt */	
-		virtual	int32 get_resource(uint32 device_handle);
-		virtual	int32 get_card_used(uint32 device_handle, memptr callback);
-		virtual	int32 set_card_used(uint32 device_handle, memptr callback);
-		virtual	int32 read_mem_byte(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		virtual	int32 read_mem_word(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		virtual	int32 read_mem_long(uint32 device_handle, uint32 pci_address, uint32 num_register);
-		virtual	int32 read_mem_byte_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 read_mem_word_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 read_mem_long_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 write_mem_byte(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual	int32 write_mem_word(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual	int32 write_mem_long(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual	int32 read_io_byte(uint32 device_handle, uint32 pci_address, memptr data);
-		virtual	int32 read_io_word(uint32 device_handle, uint32 pci_address, memptr data);
-		virtual	int32 read_io_long(uint32 device_handle, uint32 pci_address, memptr data);
-		virtual	int32 read_io_byte_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 read_io_word_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 read_io_long_fast(uint32 device_handle, uint32 pci_address);
-		virtual	int32 write_io_byte(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual	int32 write_io_word(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual	int32 write_io_long(uint32 device_handle, uint32 pci_address, uint32 value);
-		virtual int32 get_pagesize(void);
-		virtual int32 virt_to_bus(uint32 device_handle, memptr virt_cpu_address, memptr data);
-		virtual int32 bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data);
-		virtual int32 virt_to_phys(memptr virt_cpu_address, memptr data);
-		virtual int32 phys_to_virt(memptr phys_cpu_address, memptr data);
+	virtual	int32 get_resource(uint32 device_handle);
+	virtual	int32 get_card_used(uint32 device_handle, memptr callback);
+	virtual	int32 set_card_used(uint32 device_handle, memptr callback);
+	virtual	int32 read_mem_byte(uint32 device_handle, uint32 pci_address, uint32 num_register);
+	virtual	int32 read_mem_word(uint32 device_handle, uint32 pci_address, uint32 num_register);
+	virtual	int32 read_mem_long(uint32 device_handle, uint32 pci_address, uint32 num_register);
+	virtual	int32 read_mem_byte_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 read_mem_word_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 read_mem_long_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 write_mem_byte(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual	int32 write_mem_word(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual	int32 write_mem_long(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual	int32 read_io_byte(uint32 device_handle, uint32 pci_address, memptr data);
+	virtual	int32 read_io_word(uint32 device_handle, uint32 pci_address, memptr data);
+	virtual	int32 read_io_long(uint32 device_handle, uint32 pci_address, memptr data);
+	virtual	int32 read_io_byte_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 read_io_word_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 read_io_long_fast(uint32 device_handle, uint32 pci_address);
+	virtual	int32 write_io_byte(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual	int32 write_io_word(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual	int32 write_io_long(uint32 device_handle, uint32 pci_address, uint32 value);
+	virtual int32 get_pagesize(void);
+	virtual int32 virt_to_bus(uint32 device_handle, memptr virt_cpu_address, memptr data);
+	virtual int32 bus_to_virt(uint32 device_handle, uint32 pci_address, memptr data);
+	virtual int32 virt_to_phys(memptr virt_cpu_address, memptr data);
+	virtual int32 phys_to_virt(memptr phys_cpu_address, memptr data);
 
-	public:
-		const char *name() { return "PCI"; }
-		bool isSuperOnly() { return false; }
-		int32 dispatch(uint32 fncode);
-		virtual ~PciDriver() { };
+public:
+	const char *name() { return "PCI"; }
+	bool isSuperOnly() { return false; }
+	int32 dispatch(uint32 fncode);
+	virtual ~PciDriver() { };
 };
 
 #endif /* NFPCI_H */
