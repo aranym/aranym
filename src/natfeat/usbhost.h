@@ -178,6 +178,7 @@ private:
 public:
 	USBHost();
 	~USBHost();	
+	void reset();
 
 	const char *name() { return "USBHOST"; }
 	bool isSuperOnly() { return false; }

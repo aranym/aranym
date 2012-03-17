@@ -711,21 +711,10 @@ int32 USBHost::usb_lowlevel_init(void)
 {
 	D(bug("\nUSBHost: usb_lowlevel_init()"));
 
-	int8 i = 0;
-
 	rh_devnum = 0;
 
-	for (i = 0; i < NUMBER_OF_PORTS; i++) {
-		port_status[i] |= (RH_PS_PPS | RH_PS_PES);
-
-		/* It would be better if we can catch reboots
-		 * and enable the status change bit then,
-		 * in the meantime we enable the bit here.
-		 */
-		if (port_status[i] & RH_PS_CCS)
-			port_status[i] |= RH_PS_CSC;
-	}
-
+	reset();
+	
 	return 0;
 }
 
@@ -849,6 +838,26 @@ int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
 
 /*--- Public functions ---*/
 
+/* reset, called upon OS reboot */
+void USBHost::reset()
+{
+	D(bug("USBHost: reset"));
+	
+	int8 i = 0;	
+
+	for (i = 0; i < NUMBER_OF_PORTS; i++) {
+		port_status[i] |= (RH_PS_PPS | RH_PS_PES);
+
+		/* It would be better if we can catch reboots
+		 * and enable the status change bit then,
+		 * in the meantime we enable the bit here.
+		 */
+		if (port_status[i] & RH_PS_CCS)
+			port_status[i] |= RH_PS_CSC;
+	}
+
+	
+}
 /*--- Dispatcher ---*/
 
 int32 USBHost::dispatch(uint32 fncode)

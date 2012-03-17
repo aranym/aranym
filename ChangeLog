@@ -6,6 +6,7 @@
   - Check inside usb_lowlevel_init function if any usb device is
     connected and enable "port status change" bit if necessary.
   - Rename variable idx_int to clearer idx_interface.
+  - use reset() hook
   - Code cleanup.
 
 
