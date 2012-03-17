@@ -13,18 +13,18 @@ typedef struct nf_audio_parameters
 
 class AUDIODriver : public NF_Base
 {
-	private:
-		AUDIOPAR AudioParameters;
-		bool locked;
+private:
+	AUDIOPAR AudioParameters;
+	bool locked;
 
-	public:
-		AUDIODriver();
-		~AUDIODriver();
+public:
+	AUDIODriver();
+	~AUDIODriver();
 
-		const char *name();
-		bool isSuperOnly();
-		void reset();
-		int32 dispatch(uint32 fncode);
+	const char *name() { return "AUDIO"; }
+	bool isSuperOnly() { return true; }
+	void reset();
+	int32 dispatch(uint32 fncode);
 };
 
 #endif /* _AUDIO_H */

@@ -86,60 +86,60 @@ typedef struct {
 
 class OSMesaDriver : public NF_Base
 {
-	protected:
-		/* contexts[0] unused */
-		context_t	contexts[MAX_OSMESA_CONTEXTS+1];
-		int num_contexts, cur_context;
-		void *libosmesa_handle, *libgl_handle;
+protected:
+	/* contexts[0] unused */
+	context_t	contexts[MAX_OSMESA_CONTEXTS+1];
+	int num_contexts, cur_context;
+	void *libosmesa_handle, *libgl_handle;
 
-		/* Some special functions, which need a bit more work */
-		SDL_bool libgl_needed;
-		int OpenLibrary(void);
-		int CloseLibrary(void);
-		void InitPointersGL(void);
-		void InitPointersOSMesa(void);
-		void SelectContext(Uint32 ctx);
-		void ConvertContext(Uint32 ctx);	/* 8 bits per channel */
-		void ConvertContext16(Uint32 ctx);	/* 16 bits per channel */
-		void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
+	/* Some special functions, which need a bit more work */
+	SDL_bool libgl_needed;
+	int OpenLibrary(void);
+	int CloseLibrary(void);
+	void InitPointersGL(void);
+	void InitPointersOSMesa(void);
+	void SelectContext(Uint32 ctx);
+	void ConvertContext(Uint32 ctx);	/* 8 bits per channel */
+	void ConvertContext16(Uint32 ctx);	/* 16 bits per channel */
+	void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
 
-		/* Read parameter on m68k stack */
-		Uint32 *ctx_ptr;	/* Current parameter list */
-		Uint32 getStackedParameter(Uint32 n);
-		float getStackedFloat(Uint32 n);
+	/* Read parameter on m68k stack */
+	Uint32 *ctx_ptr;	/* Current parameter list */
+	Uint32 getStackedParameter(Uint32 n);
+	float getStackedFloat(Uint32 n);
 
-		Uint32 LenglGetString(Uint32 ctx, GLenum name);
-		void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);
+	Uint32 LenglGetString(Uint32 ctx, GLenum name);
+	void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);
 
-		GLdouble Atari2HostDouble(Uint32 high, Uint32 low);
-		void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
-		void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
-		void Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest);
-		void Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest);
+	GLdouble Atari2HostDouble(Uint32 high, Uint32 low);
+	void Atari2HostDoublePtr(Uint32 size, Uint32 *src, GLdouble *dest);
+	void Atari2HostFloatPtr(Uint32 size, Uint32 *src, GLfloat *dest);
+	void Atari2HostIntPtr(Uint32 size, Uint32 *src, GLint *dest);
+	void Atari2HostShortPtr(Uint32 size, Uint16 *src, GLshort *dest);
 
-		Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
-		Uint32 OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, Uint32 sharelist);
-		void OSMesaDestroyContext( Uint32 ctx );
-		GLboolean OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type, GLsizei width, GLsizei height );
-		Uint32 OSMesaGetCurrentContext( void );
-		void OSMesaPixelStore(GLint pname, GLint value );
-		void OSMesaGetIntegerv(GLint pname, GLint *value );
-		GLboolean OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
-		GLboolean OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer );
-		void *OSMesaGetProcAddress( const char *funcName );
+	Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
+	Uint32 OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, Uint32 sharelist);
+	void OSMesaDestroyContext( Uint32 ctx );
+	GLboolean OSMesaMakeCurrent( Uint32 ctx, void *buffer, GLenum type, GLsizei width, GLsizei height );
+	Uint32 OSMesaGetCurrentContext( void );
+	void OSMesaPixelStore(GLint pname, GLint value );
+	void OSMesaGetIntegerv(GLint pname, GLint *value );
+	GLboolean OSMesaGetDepthBuffer( Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
+	GLboolean OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer );
+	void *OSMesaGetProcAddress( const char *funcName );
 
 #include "nfosmesa/proto-gl.h"
 #if NFOSMESA_GLEXT
 # include "nfosmesa/proto-glext.h"
 #endif
 
-	public:
-		const char *name();
-		bool isSuperOnly();
-		int32 dispatch(uint32 fncode);
+public:
+	const char *name() { return "OSMESA"; }
+	bool isSuperOnly() { return false; }
+	int32 dispatch(uint32 fncode);
 
-		OSMesaDriver();
-		virtual ~OSMesaDriver();
+	OSMesaDriver();
+	virtual ~OSMesaDriver();
 };
 
 #endif /* OSMESA_H */

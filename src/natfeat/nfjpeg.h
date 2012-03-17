@@ -46,25 +46,25 @@ typedef struct {
 
 class JpegDriver : public NF_Base
 {
-	private:
-		nfjpeg_image_t	images[MAX_NFJPEG_IMAGES+1];
+private:
+	nfjpeg_image_t	images[MAX_NFJPEG_IMAGES+1];
 
-		int32 open_driver(memptr jpeg_ptr);
-		int32 close_driver(memptr jpeg_ptr);
-		int32 get_image_info(memptr jpeg_ptr);
-		int32 get_image_size(memptr jpeg_ptr);
-		int32 decode_image(memptr jpeg_ptr, uint32 row);
+	int32 open_driver(memptr jpeg_ptr);
+	int32 close_driver(memptr jpeg_ptr);
+	int32 get_image_info(memptr jpeg_ptr);
+	int32 get_image_size(memptr jpeg_ptr);
+	int32 decode_image(memptr jpeg_ptr, uint32 row);
 
-		SDL_bool load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size);
-		void read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, int *b);
+	SDL_bool load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size);
+	void read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, int *b);
 
-	public:
-		JpegDriver();
-		virtual ~JpegDriver();
+public:
+	JpegDriver();
+	virtual ~JpegDriver();
 
-		const char *name();
-		bool isSuperOnly();
-		int32 dispatch(uint32 fncode);
+	const char *name() { return "JPEG"; }
+	bool isSuperOnly() { return false; }
+	int32 dispatch(uint32 fncode);
 };
 
 #endif /* NFJPEG_H */

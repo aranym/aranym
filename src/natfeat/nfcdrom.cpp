@@ -59,16 +59,6 @@ CdromDriver::~CdromDriver(void)
 
 /*--- Public functions ---*/
 
-const char *CdromDriver::name()
-{
-	return "CDROM";
-}
-
-bool CdromDriver::isSuperOnly()
-{
-	return true;
-}
-
 int32 CdromDriver::dispatch(uint32 fncode)
 {
 	int32 ret;

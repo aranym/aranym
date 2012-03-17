@@ -66,16 +66,6 @@ JpegDriver::~JpegDriver()
 
 /*--- Public functions ---*/
 
-const char *JpegDriver::name()
-{
-	return "JPEG";
-}
-
-bool JpegDriver::isSuperOnly()
-{
-	return false;
-}
-
 int32 JpegDriver::dispatch(uint32 fncode)
 {
 	int32 ret;

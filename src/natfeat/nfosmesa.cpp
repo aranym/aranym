@@ -85,16 +85,6 @@ OSMesaDriver::~OSMesaDriver()
 
 /*--- Public functions ---*/
 
-const char *OSMesaDriver::name()
-{
-	return "OSMESA";
-}
-
-bool OSMesaDriver::isSuperOnly()
-{
-	return false;
-}
-
 int32 OSMesaDriver::dispatch(uint32 fncode)
 {
 	int32 ret = 0;

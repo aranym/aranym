@@ -108,16 +108,6 @@ void AUDIODriver::reset()
 	locked = false;
 }
 
-const char *AUDIODriver::name()
-{
-	return "AUDIO";
-}
-
-bool AUDIODriver::isSuperOnly()
-{
-	return true;
-}
-
 int32 AUDIODriver::dispatch(uint32 fncode)
 {
 	int32 ret = 1;

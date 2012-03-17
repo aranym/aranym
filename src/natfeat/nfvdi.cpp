@@ -46,16 +46,6 @@
 
 /*--- Public functions ---*/
 
-const char *VdiDriver::name()
-{
-	return "fVDI";
-}
-
-bool VdiDriver::isSuperOnly()
-{
-	return false;
-}
-
 int32 VdiDriver::dispatch(uint32 fncode)
 {
 	int32 ret = EINVFN;

@@ -32,40 +32,40 @@
 
 class CdromDriver : public NF_Base
 {
-	private:
-		SDL_CD *drive_handles[32];	/* Handle for each possible opened drive */
+private:
+	SDL_CD *drive_handles[32];	/* Handle for each possible opened drive */
 
-	protected:
-		uint32	drives_mask;
+protected:
+	uint32	drives_mask;
 
-		int GetDrive(memptr device);	/* Return drive letter of a metados device */
-		unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
+	int GetDrive(memptr device);	/* Return drive letter of a metados device */
+	unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
 
-		virtual void ScanDrives();
-		virtual int OpenDrive(memptr device);
-		virtual void CloseDrive(int drive);
+	virtual void ScanDrives();
+	virtual int OpenDrive(memptr device);
+	virtual void CloseDrive(int drive);
 
-		int32 cd_open(memptr device, memptr buffer);
-		int32 cd_close(memptr device);
-		virtual int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
-		int32 cd_write(memptr device, memptr buffer, uint32 first, uint32 length);
-		int32 cd_seek(memptr device, uint32 offset);
-		virtual int32 cd_status(memptr device, memptr ext_status);
-		virtual int32 cd_ioctl(memptr device, uint16 opcode, memptr buffer);
-	
-		virtual int32 cd_startaudio(memptr device, uint32 dummy, memptr buffer);
-		virtual int32 cd_stopaudio(memptr device);
-		virtual int32 cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf);
-		virtual int32 cd_gettoc(memptr device, uint32 dummy, memptr buffer);
-		virtual int32 cd_discinfo(memptr device, memptr buffer);
+	int32 cd_open(memptr device, memptr buffer);
+	int32 cd_close(memptr device);
+	virtual int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
+	int32 cd_write(memptr device, memptr buffer, uint32 first, uint32 length);
+	int32 cd_seek(memptr device, uint32 offset);
+	virtual int32 cd_status(memptr device, memptr ext_status);
+	virtual int32 cd_ioctl(memptr device, uint16 opcode, memptr buffer);
 
-	public:
-		CdromDriver(void);
-		virtual ~CdromDriver(void);
+	virtual int32 cd_startaudio(memptr device, uint32 dummy, memptr buffer);
+	virtual int32 cd_stopaudio(memptr device);
+	virtual int32 cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf);
+	virtual int32 cd_gettoc(memptr device, uint32 dummy, memptr buffer);
+	virtual int32 cd_discinfo(memptr device, memptr buffer);
 
-		const char *name();
-		bool isSuperOnly();
-		int32 dispatch(uint32 fncode);
+public:
+	CdromDriver(void);
+	virtual ~CdromDriver(void);
+
+	const char *name() { return "CDROM"; }
+	bool isSuperOnly() { return true; }
+	int32 dispatch(uint32 fncode);
 };
 
 #endif /* NFCDROM_H */
