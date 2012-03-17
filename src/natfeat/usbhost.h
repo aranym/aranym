@@ -181,7 +181,7 @@ public:
 	void reset();
 
 	const char *name() { return "USBHOST"; }
-	bool isSuperOnly() { return false; }
+	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 };
 
