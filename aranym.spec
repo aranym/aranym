@@ -190,12 +190,12 @@ Requires:			SDL >= 1.2.10
 Requires:			SDL_image >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			mpfr >= 3.0.0
-Requires:			libusb-1_0-0 >= 1.0.0
+Requires:			libusb1 >= 1.0.0
 BuildRequires:			SDL-devel >= 1.2.10
 BuildRequires:			SDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			mpfr-devel >= 3.0.0
-BuildRequires:			libusb-1_0-0-devel >= 1.0.0
+BuildRequires:			libusb1-devel >= 1.0.0
 %endif
 
 
