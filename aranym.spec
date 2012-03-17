@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.11
+%define ver			0.9.12
 
 #
 #
@@ -161,23 +161,41 @@
 %if %{my_suse}
 Requires:			SDL >= 1.2.10
 Requires:			SDL_image >= 1.2.5
+Requires:			zlib >= 1.2.3
+Requires:			mpfr >= 3.0.0
+Requires:			libusb-1_0-0 >= 1.0.0
 BuildRequires:			SDL-devel >= 1.2.10
 BuildRequires:			SDL_image-devel >= 1.2.5
+BuildRequires:			zlib-devel >= 1.2.3
+BuildRequires:			mpfr-devel >= 3.0.0
+BuildRequires:			libusb-1_0-0-devel >= 1.0.0
 BuildRequires:			update-desktop-files
 %endif
 
 %if %{my_mandriva}
 Requires:			libSDL >= 1.2.10
 Requires:			libSDL_image >= 1.2.5
-BuildRequires:			libSDL_image-devel >= 1.2.5
+Requires:			zlib >= 1.2.3
+Requires:			libmpfr >= 3.0.0
+Requires:			libusb-1.0_0 >= 1.0.0
 BuildRequires:			libSDL-devel >= 1.2.10
+BuildRequires:			libSDL_image-devel >= 1.2.5
+BuildRequires:			zlib-devel >= 1.2.3
+BuildRequires:			libmpfr-devel >= 3.0.0
+BuildRequires:			libusb-1.0_0 >= 1.0.0
 %endif
 
 %if %{my_fedora}
 Requires:			SDL >= 1.2.10
 Requires:			SDL_image >= 1.2.5
-BuildRequires:			SDL_image-devel >= 1.2.5
+Requires:			zlib >= 1.2.3
+Requires:			mpfr >= 3.0.0
+Requires:			libusb-1_0-0 >= 1.0.0
 BuildRequires:			SDL-devel >= 1.2.10
+BuildRequires:			SDL_image-devel >= 1.2.5
+BuildRequires:			zlib-devel >= 1.2.3
+BuildRequires:			mpfr-devel >= 3.0.0
+BuildRequires:			libusb-1_0-0-devel >= 1.0.0
 %endif
 
 
@@ -218,20 +236,20 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 # JIT only works on i586
 #
 %ifarch %ix86
-%configure --disable-nat-debug --enable-jit-compiler --enable-nfjpeg
+%configure --enable-jit-compiler
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-jit
 %{__make} clean
 %endif
 
-%configure --disable-nat-debug --enable-addressing=direct --enable-fullmmu --enable-lilo --enable-fixed-videoram --enable-nfjpeg
+%configure --enable-fullmmu --enable-lilo --enable-nfpci --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-mmu
 %{__make} clean
 
-%configure --disable-nat-debug --enable-addressing=direct --enable-nfjpeg
+%configure --enable-nfpci --enable-usbhost
 %{__make} depend
 %{__make}
 
@@ -357,6 +375,12 @@ sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
 
 
 %changelog
+* Sat Mar 17 2012 Petr Stehlik <pstehlik@sophics.cz> 0.9.12
+New ARAnyM release.
+New FPU emulation for MMU mode (using MPFR)
+New Native Features enabled (PCI, USB)
+New dependencies (zlib, mpfr, liusb)
+
 * Wed May 26 2010 Petr Stehlik <pstehlik@sophics.cz> 0.9.10
 New ARAnyM release.
 Icons moved to icons dir.
