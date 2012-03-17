@@ -163,12 +163,14 @@ Requires:			SDL >= 1.2.10
 Requires:			SDL_image >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			mpfr >= 3.0.0
-Requires:			libusb-1_0-0 >= 1.0.0
+Requires:			libusb1 >= 1.0.0
+Requires:			mesa-libOSMesa >= 7.9
 BuildRequires:			SDL-devel >= 1.2.10
 BuildRequires:			SDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			mpfr-devel >= 3.0.0
-BuildRequires:			libusb-1_0-0-devel >= 1.0.0
+BuildRequires:			libusb1-devel >= 1.0.0
+BuildRequires:			mesa-libOSMesa-devel >= 7.9
 BuildRequires:			update-desktop-files
 %endif
 
@@ -177,12 +179,14 @@ Requires:			libSDL >= 1.2.10
 Requires:			libSDL_image >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			libmpfr >= 3.0.0
-Requires:			libusb-1.0_0 >= 1.0.0
+Requires:			libusb1 >= 1.0.0
+Requires:			mesa-libOSMesa >= 7.9
 BuildRequires:			libSDL-devel >= 1.2.10
 BuildRequires:			libSDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			libmpfr-devel >= 3.0.0
-BuildRequires:			libusb-1.0_0 >= 1.0.0
+BuildRequires:			libusb1-devel >= 1.0.0
+BuildRequires:			mesa-libOSMesa-devel >= 7.9
 %endif
 
 %if %{my_fedora}
