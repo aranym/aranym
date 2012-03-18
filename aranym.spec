@@ -162,7 +162,7 @@
 Requires:			libSDL-1_2-0 >= 1.2.10
 Requires:			libSDL_image-1_2-0 >= 1.2.5
 Requires:			zlib >= 1.2.3
-Requires:			mpfr4 >= 3.0.0
+Requires:			libmpfr4 >= 3.0.0
 Requires:			libusb-1_0-0 >= 1.0.0
 BuildRequires:			libSDL-devel >= 1.2.10
 BuildRequires:			libSDL_image-devel >= 1.2.5
@@ -170,6 +170,7 @@ BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			mpfr-devel >= 3.0.0
 BuildRequires:			libusb-1_0-devel >= 1.0.0
 BuildRequires:			update-desktop-files
+BuildRequires:			make
 %endif
 
 %if %{my_mandriva}
