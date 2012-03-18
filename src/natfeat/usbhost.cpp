@@ -405,12 +405,10 @@ void print_devs(libusb_device **devs)
 
 int trigger_interrupt(void *)
 {
-	int8 port_number;
-
 	D(bug("USBHost: send interrupt"));
 
 	for (;;) {
-		for (port_number = 0; port_number < NUMBER_OF_PORTS; port_number++) {
+		for (int port_number = 0; port_number < NUMBER_OF_PORTS; port_number++) {
 			if ((port_status[port_number] & RH_PS_CSC)) {
 				TRIGGER_INTERRUPT;
 				D(bug("USBHost: trigger interrupt. port_status[%d] %x", port_number, port_status[port_number]));
@@ -695,9 +693,7 @@ int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 
 int32 USBHost::rh_port_status(memptr rh)
 {
-	uint8 i;
-
-	for (i = 0; i < NUMBER_OF_PORTS; i++) {
+	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
 		WriteInt32(rh + 4 * i, port_status[i]);
 	}
 
@@ -843,23 +839,14 @@ void USBHost::reset()
 {
 	D(bug("USBHost: reset"));
 	
-	int8 i = 0;	
-
-	for (i = 0; i < NUMBER_OF_PORTS; i++) {
+	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
 		port_status[i] |= (RH_PS_PPS | RH_PS_PES);
-
-		/* It would be better if we can catch reboots
-		 * and enable the status change bit then,
-		 * in the meantime we enable the bit here.
-		 */
 		if (port_status[i] & RH_PS_CCS)
 			port_status[i] |= RH_PS_CSC;
 	}
-
-	
 }
-/*--- Dispatcher ---*/
 
+/*--- Dispatcher ---*/
 int32 USBHost::dispatch(uint32 fncode)
 {
 	int32 ret;
