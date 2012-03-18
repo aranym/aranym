@@ -159,18 +159,16 @@
 %define	_docdir			%{_prefix}/share/doc
 
 %if %{my_suse}
-Requires:			SDL >= 1.2.10
-Requires:			SDL_image >= 1.2.5
+Requires:			libSDL-1_2-0 >= 1.2.10
+Requires:			libSDL_image-1_2-0 >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			mpfr >= 3.0.0
-Requires:			libusb1 >= 1.0.0
-Requires:			mesa-libOSMesa >= 7.9
-BuildRequires:			SDL-devel >= 1.2.10
-BuildRequires:			SDL_image-devel >= 1.2.5
+Requires:			libusb-1_0-0 >= 1.0.0
+BuildRequires:			libSDL-devel >= 1.2.10
+BuildRequires:			libSDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			mpfr-devel >= 3.0.0
-BuildRequires:			libusb1-devel >= 1.0.0
-BuildRequires:			mesa-libOSMesa-devel >= 7.9
+BuildRequires:			libusb-1_0-devel >= 1.0.0
 BuildRequires:			update-desktop-files
 %endif
 
@@ -180,13 +178,11 @@ Requires:			libSDL_image >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			libmpfr >= 3.0.0
 Requires:			libusb1 >= 1.0.0
-Requires:			mesa-libOSMesa >= 7.9
 BuildRequires:			libSDL-devel >= 1.2.10
 BuildRequires:			libSDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			libmpfr-devel >= 3.0.0
 BuildRequires:			libusb1-devel >= 1.0.0
-BuildRequires:			mesa-libOSMesa-devel >= 7.9
 %endif
 
 %if %{my_fedora}
@@ -195,13 +191,11 @@ Requires:			SDL_image >= 1.2.5
 Requires:			zlib >= 1.2.3
 Requires:			mpfr >= 3.0.0
 Requires:			libusb1 >= 1.0.0
-Requires:			mesa-libOSMesa >= 7.9
 BuildRequires:			SDL-devel >= 1.2.10
 BuildRequires:			SDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
 BuildRequires:			mpfr-devel >= 3.0.0
 BuildRequires:			libusb1-devel >= 1.0.0
-BuildRequires:			mesa-libOSMesa-devel >= 7.9
 %endif
 
 
@@ -242,20 +236,20 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 # JIT only works on i586
 #
 %ifarch %ix86
-%configure --enable-jit-compiler --enable-nfpci --enable-nfosmesa --enable-usbhost
+%configure --enable-jit-compiler --enable-nfpci --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-jit
 %{__make} clean
 %endif
 
-%configure --enable-fullmmu --enable-lilo --enable-nfpci --enable-nfosmesa --enable-usbhost
+%configure --enable-fullmmu --enable-lilo --enable-nfpci --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-mmu
 %{__make} clean
 
-%configure --enable-nfpci --enable-nfosmesa --enable-usbhost
+%configure --enable-nfpci --enable-usbhost
 %{__make} depend
 %{__make}
 
