@@ -162,7 +162,7 @@
 Requires:			libSDL-1_2-0 >= 1.2.10
 Requires:			libSDL_image-1_2-0 >= 1.2.5
 Requires:			zlib >= 1.2.3
-Requires:			mpfr >= 3.0.0
+Requires:			mpfr4 >= 3.0.0
 Requires:			libusb-1_0-0 >= 1.0.0
 BuildRequires:			libSDL-devel >= 1.2.10
 BuildRequires:			libSDL_image-devel >= 1.2.5
@@ -205,7 +205,7 @@ Name:			aranym
 Version:		%{ver}
 Release:		%{rel}
 License:		GPLv2
-Summary:		32-bit Atari personal computer (Falcon030/TT030) virtual machine
+Summary:		32-bit Atari personal computer (similar to Falcon030 but better) virtual machine
 URL:			http://aranym.org/
 Group:			%{group}
 Source0:		http://prdownloads.sourceforge.net/aranym/%{name}_%{version}.orig.tar.gz
@@ -214,6 +214,7 @@ Requires:		hicolor-icon-theme
 BuildRequires:		hicolor-icon-theme
 BuildRequires:		desktop-file-utils
 BuildRequires:		gcc-c++
+BuildRequires:		make
 #Patch0:			aranym-0.9.7beta-desktop.patch
 
 
