@@ -2,7 +2,7 @@
 - aranym.spec: trying to get the build dependencies right (installed Fedora,
   OpenSuSE and Mandriva and playing with it)
 
-- natfeat/*: moved all name and isSuperOnly to headers for easier grepping.
+- natfeat/*: moved all name and isSuperOnly to headers for easier grepping
 
 - uae_cpu/fpu/flags.h: fix for newer gcc in tfnstsw inline asm parameters
 
@@ -15,7 +15,7 @@
   - Check inside usb_lowlevel_init function if any usb device is
     connected and enable "port status change" bit if necessary.
   - Rename variable idx_int to clearer idx_interface.
-  - use reset() hook
+  - Use reset() function to init port status registers.
   - Code cleanup.
 
 
