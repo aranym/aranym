@@ -1,3 +1,10 @@
+2012/03/18 - version 0.9.12 released
+
+ New feature: MPFR based new precise FPU emulation core.
+ MMU emulation: fix for CAS/CAS2
+ USB NatFeat fully usable: http://wiki.aranym.org/manual#usb
+
+
 2011/02/06 - version 0.9.11 released
 
  New features: SCC serial port emulation and USB NatFeat support.

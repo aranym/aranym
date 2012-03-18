@@ -1,3 +1,12 @@
+2012/03/18 - Petr
+- aranym.spec: trying to get the build dependencies right (installed Fedora,
+  OpenSuSE and Mandriva and playing with it)
+
+- natfeat/*: moved all name and isSuperOnly to headers for easier grepping.
+
+- uae_cpu/fpu/flags.h: fix for newer gcc in tfnstsw inline asm parameters
+
+
 2012/03/17 - Petr committing patch from David Galvez
 - natfeat/usbhost.{cpp,h}:
   - Trigger interrupt for "port status change" from a new thread until
