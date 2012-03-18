@@ -214,7 +214,6 @@ Requires:		hicolor-icon-theme
 BuildRequires:		hicolor-icon-theme
 BuildRequires:		desktop-file-utils
 BuildRequires:		gcc-c++
-BuildRequires:		make
 #Patch0:			aranym-0.9.7beta-desktop.patch
 
 
