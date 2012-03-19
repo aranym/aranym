@@ -36,10 +36,11 @@
 %if 0%{?!mandriva_version:1}
 %define	mandriva_version	%(echo $[%{distversion}/10])
 %endif
-
 %endif
 
-%if 0%{?mandriva_version:1}
+%define is_mandrake %(test -e /etc/mandrake-release && echo 1 || echo 0)
+
+%if 0%{?mandriva_version:1}%{is_mandrake}
 %define	my_mandriva		1
 %define my_vendor		mandriva
 %endif
@@ -174,11 +175,11 @@ BuildRequires:			make
 %endif
 
 %if %{my_mandriva}
-Requires:			libSDL >= 1.2.10
-Requires:			libSDL_image >= 1.2.5
+Requires:			libSDL1.2_0 >= 1.2.10
+Requires:			libSDL_image1.2_0 >= 1.2.5
 Requires:			zlib >= 1.2.3
-Requires:			libmpfr >= 3.0.0
-Requires:			libusb1 >= 1.0.0
+Requires:			libmpfr4 >= 3.0.0
+Requires:			libusb1.0_0 >= 1.0.0
 BuildRequires:			libSDL-devel >= 1.2.10
 BuildRequires:			libSDL_image-devel >= 1.2.5
 BuildRequires:			zlib-devel >= 1.2.3
