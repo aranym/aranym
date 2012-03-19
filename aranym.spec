@@ -31,6 +31,7 @@
 %endif
 
 # if present, use %distversion to find out which Mandriva version is being built
+# define %distversion and %_icondir in your .rpmmacros if build fails
 #
 %if 0%{?distversion:1}
 %if 0%{?!mandriva_version:1}
@@ -38,9 +39,7 @@
 %endif
 %endif
 
-%define is_mandrake %(test -e /etc/mandrake-release && echo 1 || echo 0)
-
-%if 0%{?mandriva_version:1}%{is_mandrake}
+%if 0%{?mandriva_version:1}
 %define	my_mandriva		1
 %define my_vendor		mandriva
 %endif

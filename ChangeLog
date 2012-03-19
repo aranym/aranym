@@ -2,6 +2,7 @@
 - natfeat/{nfpci,nfosmesa}.h: made supervisor only (with Patrice's blessing)
 - aranym.spec: disabled nfpci (Patrice says it's incomplete and should even
   be dropped from the source code completely)
+- Makefile.in: quiet 'make depend'
 
 
 2012/03/18 - Petr
