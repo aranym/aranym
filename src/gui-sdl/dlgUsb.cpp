@@ -72,8 +72,8 @@ enum DLG {
 extern void usbhost_init_libusb(void);
 extern int32 usbhost_get_device_list(void);
 extern void usbhost_free_usb_devices(void);
-extern int usbhost_claim_device(int8 virtdev_index);
-extern int usbhost_release_device(int8 virtdev_index);
+extern int usbhost_claim_device(int virtdev_index);
+extern int usbhost_release_device(int virtdev_index);
 
 
 /* External variables (usbhost.cpp) */

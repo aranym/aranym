@@ -200,7 +200,7 @@ static bool init_flag = false;
 
 /*--- Functions ---*/
 
-void fill_port_status(uint8 port_number, bool connected)
+void fill_port_status(unsigned int port_number, bool connected)
 {
 	D(bug("USBHost: fill_port_status()"));
 
@@ -301,7 +301,7 @@ void usbhost_free_usb_devices(void)
 }
 
 
-int usbhost_claim_device(int8 virtdev_index)
+int usbhost_claim_device(int virtdev_index)
 {
 	D(bug("USBHost: claim_device() %d", virtdev_index));
 
@@ -354,7 +354,7 @@ claim:	r = libusb_claim_interface(devh[dev_index], int_index);
 }
 
 
-int usbhost_release_device(int8 virtdev_index)
+int usbhost_release_device(int virtdev_index)
 {
 	D(bug("USBHost: release_device() %d", virtdev_index));
 
@@ -833,7 +833,7 @@ int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	uint8 endpoint;
 	int32 devnum;
 	int32 transferred;
-	uint8 dev_idx = 0;
+	unsigned int dev_idx = 0;
 	int32 r;
 
 	tmp_usb_device = (struct usb_device *)Atari2HostAddr(usb_device);

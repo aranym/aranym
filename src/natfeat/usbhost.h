@@ -110,8 +110,8 @@
 
 /* Devices attached to the Atari */
 typedef struct {
-	uint8 port_number;
-	uint8 device_index;
+	unsigned int port_number;
+	unsigned int device_index;
 	int32 interface;
 	uint16 busy;
 	uint16 wPortStatus;
@@ -120,17 +120,17 @@ typedef struct {
 
 typedef struct {
 	port_t port[NUMBER_OF_PORTS];
-	uint8 number_of_roothub;
+	unsigned int number_of_roothub;
 } roothub_t;
 
 /* Devices attached to the Host */
 typedef struct virtual_usbdev {
-	int8 idx_dev;
-	int8 idx_conf;
-	int8 idx_interface;	
+	int idx_dev;
+	int idx_conf;
+	int idx_interface;	
 	bool virtdev_available;
 	bool connected;
-	int8 port_number;
+	int port_number;
 } virtual_usbdev_t;
 
 
