@@ -189,14 +189,14 @@ static uint8 root_hub_class_st[] = {
 
 virtual_usbdev_t virtual_device[USB_MAX_DEVICE];
 char product[USB_MAX_DEVICE][MAX_PRODUCT_LENGTH];
-int8 number_ports_used;
+int number_ports_used;
 roothub_t roothub;
 uint32 port_status[NUMBER_OF_PORTS];
 
 static libusb_device **devs;
 static libusb_device *dev;
 static libusb_device_handle *devh[USB_MAX_DEVICE];
-
+static bool init_flag = false;
 
 /*--- Functions ---*/
 
@@ -217,8 +217,8 @@ void fill_port_status(uint8 port_number, bool connected)
 
 int32 usbhost_get_device_list(void)
 {
-	int8 idx_dev = 0, idx_virtdev = 0, idx_interface = 0, idx_conf=0;
-	int8 r;
+	int idx_conf = 0, idx_interface = 0, idx_dev = 0, idx_virtdev = 0;
+	
 	ssize_t cnt;
 	struct libusb_device_descriptor dev_desc;
 	struct libusb_config_descriptor *config_desc;
@@ -229,7 +229,7 @@ int32 usbhost_get_device_list(void)
 		return (int32)cnt;
 
 	while ((dev = devs[idx_dev]) != NULL) {
-		r = libusb_open(dev, &devh[idx_dev]);
+		int r = libusb_open(dev, &devh[idx_dev]);
 		if (r < 0) {
 			D(bug("USBHost: \nFailed to open the device %d\n\r", idx_dev));
 			goto try_another;
@@ -286,7 +286,7 @@ try_another:
 
 void usbhost_free_usb_devices(void)
 {
-	int8 i = 0;
+	int i = 0;
 
 	while (devs[i] != NULL) {
 		if (virtual_device[i].connected)
@@ -301,11 +301,12 @@ void usbhost_free_usb_devices(void)
 }
 
 
-int8 usbhost_claim_device(int8 virtdev_index)
+int usbhost_claim_device(int8 virtdev_index)
 {
 	D(bug("USBHost: claim_device() %d", virtdev_index));
-	int8 r, i;
-	int8 dev_index, int_index;
+
+	int r;
+	int dev_index, int_index;
 
 	dev_index = virtual_device[virtdev_index].idx_dev;
 	int_index = virtual_device[virtdev_index].idx_interface;
@@ -337,7 +338,7 @@ claim:	r = libusb_claim_interface(devh[dev_index], int_index);
 	if (++number_ports_used == NUMBER_OF_PORTS)
 		disable_buttons();
 
-	for (i = 0; i < NUMBER_OF_PORTS; i++) {
+	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
 		if (roothub.port[i].busy == true)
 			continue;
 		roothub.port[i].busy = true;
@@ -353,13 +354,13 @@ claim:	r = libusb_claim_interface(devh[dev_index], int_index);
 }
 
 
-int8 usbhost_release_device(int8 virtdev_index)
+int usbhost_release_device(int8 virtdev_index)
 {
 	D(bug("USBHost: release_device() %d", virtdev_index));
 
-	int8 r;
-	int8 dev_index, int_index;
-	int8 port_number;
+	int r;
+	int dev_index, int_index;
+	int port_number;
 
 	dev_index = virtual_device[virtdev_index].idx_dev;
 	int_index = virtual_device[virtdev_index].idx_interface;
@@ -419,6 +420,35 @@ int trigger_interrupt(void *)
 	}
 
 	return 0;
+}
+
+
+void usbhost_init_libusb(void)
+{
+	number_ports_used = 0;
+
+	if (libusb_init(NULL)) {
+		D(bug("USBHost: Imposible to start libusb"));
+		return;
+	}
+
+	libusb_set_debug(NULL, 3);
+	
+	for (int i = 0; i <= MAX_NUMBER_VIRT_DEV; i++) {
+		virtual_device[i].connected = false;
+		virtual_device[i].virtdev_available = false;
+	}
+
+	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
+		port_status[i] = 0x0000; 	/* Clean before use */
+		roothub.port[i].device_index = 0;
+	}
+
+	SDL_CreateThread(trigger_interrupt, NULL);
+
+	usbhost_get_device_list();
+
+	init_flag = true;	
 }
 
 /*--- Private functions ---*/
@@ -733,7 +763,7 @@ int32 USBHost::submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	uint8 *tempbuff;
 
 	int32 r;
-	uint8 dev_idx = 0;
+	unsigned int dev_idx = 0;
 
 	uint16 bmRType;
 	uint16 bReq;
@@ -906,62 +936,40 @@ int32 USBHost::dispatch(uint32 fncode)
 
 USBHost::USBHost()
 {
-	int8 i = 0;
-
 	D(bug("USBHost: created"));
-
-	number_ports_used = 0;
-
-	if (libusb_init(NULL)) {
-		D(bug("USBHost: Imposible to start libusb"));
-	}
-
-	libusb_set_debug(NULL, 3);
-	
-	for (i = 0; i <= MAX_NUMBER_VIRT_DEV; i++) {
-		virtual_device[i].connected = false;
-		virtual_device[i].virtdev_available = false;
-	}
-
-	for (i = 0; i < NUMBER_OF_PORTS; i++) {
-		port_status[i] = 0x0000; 	/* Clean before use */
-		roothub.port[i].device_index = 0;
-	}
-
-	SDL_CreateThread(trigger_interrupt, NULL);
-
-	usbhost_get_device_list();
 }
 
 
 USBHost::~USBHost()
 {
-	int8 i = total_num_handles - 1;
-	uint8 port_number = 0;
+	int i = total_num_handles - 1;
+	unsigned int port_number = 0;
 
-	while (i >= 0) {
-		D(bug("USBHost: Trying to close device %d \r", i));
-		
-		while (port_number < NUMBER_OF_PORTS) {
-			if (roothub.port[port_number].device_index == i) {
-				if (libusb_release_interface(devh[i], roothub.port[port_number].interface) < 0) {
-					D(bug("USBHost: unable to release device interface"));
+	if (init_flag) {
+		while (i >= 0) {
+			D(bug("USBHost: Trying to close device %d \r", i));
+
+			while (port_number < NUMBER_OF_PORTS) {
+				if (roothub.port[port_number].device_index == i) {
+					if (libusb_release_interface(devh[i], roothub.port[port_number].interface) < 0) {
+						D(bug("USBHost: unable to release device interface"));
+					}
+					if (libusb_attach_kernel_driver(devh[i], roothub.port[port_number].interface) < 0) {
+						D(bug("USBHost: unable to reattach kernel driver to interface"));
+					}
+					break;
 				}
-				if (libusb_attach_kernel_driver(devh[i], roothub.port[port_number].interface) < 0) {
-					D(bug("USBHost: unable to reattach kernel driver to interface"));
-				}
-				break;
+				port_number++;
 			}
-			port_number++;
+			libusb_close(devh[i]);
+			D(bug("USBHost: %d device closed\r", i));
+			i--;
 		}
-		libusb_close(devh[i]);
-		D(bug("USBHost: %d device closed\r", i));
-		i--;
+
+		usbhost_free_usb_devices();
+		libusb_exit(NULL);
 	}
-
-	usbhost_free_usb_devices();
-	libusb_exit(NULL);
-
+	
 	D(bug("USBHost: destroyed"));
 }
 

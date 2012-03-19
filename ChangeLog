@@ -1,13 +1,20 @@
 2012/03/19 - Petr
 - natfeat/{nfpci,nfosmesa}.h: made supervisor only (with Patrice's blessing)
+
 - aranym.spec: disabled nfpci (Patrice says it's incomplete and should even
   be dropped from the source code completely)
+
 - Makefile.in: quiet 'make depend'
+
+- natfeat/usbhost.{cpp,h}: postponed the initialisation of libusb from the
+  class c'tor to the moment when the USB SETUP is invoked for the first time.
+  This saves users that will not use the USB from libusb access errors.
+  Also changed some variables type from int8 to int (both patches by David)
 
 
 2012/03/18 - Petr
 - aranym.spec: trying to get the build dependencies right (installed Fedora,
-  OpenSuSE and Mandriva and playing with it)
+  openSUSE and Mandriva and playing with it)
 - natfeat/*: moved all name and isSuperOnly to headers for easier grepping
 - uae_cpu/fpu/flags.h: fix for newer gcc in tfnstsw inline asm parameters
 

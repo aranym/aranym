@@ -69,22 +69,23 @@ enum DLG {
 
 /* External functions (usbhost.cpp) */
 
+extern void usbhost_init_libusb(void);
 extern int32 usbhost_get_device_list(void);
 extern void usbhost_free_usb_devices(void);
-extern int8 usbhost_claim_device(int8 virtdev_index);
-extern int8 usbhost_release_device(int8 virtdev_index);
+extern int usbhost_claim_device(int8 virtdev_index);
+extern int usbhost_release_device(int8 virtdev_index);
 
 
 /* External variables (usbhost.cpp) */
 
 extern char product[USB_MAX_DEVICE][MAX_PRODUCT_LENGTH];
-extern int8 number_ports_used;
+extern int number_ports_used;
 extern virtual_usbdev_t virtual_device[USB_MAX_DEVICE];
 
 
 /* Static variables */
 
-static int8 init_flag;
+static bool init_flag = false;
 static const char *ALERT_TEXT =
 
 "        !!! ALERT !!!\n"
@@ -135,9 +136,9 @@ static SGOBJ dlg[] =
 
 /* Local functions */
 
-int8 check_if_devices_connected(void)
+int check_if_devices_connected(void)
 {
-	int8 i = 0;
+	int i = 0;
 
 	while (i < MAX_NUMBER_VIRT_DEV) {
 		if (virtual_device[i].connected == true)
@@ -151,7 +152,7 @@ int8 check_if_devices_connected(void)
 
 void enable_buttons(void)
 {
-	int8 i = 0;
+	int i = 0;
 
 	while (i < MAX_NUMBER_VIRT_DEV) {
 		if (virtual_device[i].virtdev_available == true)
@@ -163,7 +164,7 @@ void enable_buttons(void)
 
 void disable_buttons(void)
 {
-	int8 i = 0;
+	int i = 0;
 
 	while (i < MAX_NUMBER_VIRT_DEV) {
 		if (virtual_device[i].connected == false)
@@ -201,7 +202,7 @@ void reset_buttons_and_state(void)
 
 void clean_product_strings(void)
 {
-	int8 i = 0;
+	int i = 0;
 
 	while (i < USB_MAX_DEVICE) {
 		product[i][0] = '\0';
@@ -214,7 +215,7 @@ void clean_product_strings(void)
 int DlgUsb::processDialog(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
-	int8 virtdev_idx = return_obj - PLUG_BUTTON_OFFSET;
+	int virtdev_idx = return_obj - PLUG_BUTTON_OFFSET;
 	int32 r;
 
 	if (state == STATE_MAIN) { /* Process main USB dialog */
@@ -393,12 +394,12 @@ int DlgUsb::processDialog(void)
 DlgUsb::DlgUsb(SGOBJ *dlg)
 	: Dialog(dlg), state(STATE_MAIN)
 {
-	int8 i;
-
-	if (init_flag == false)
+	if (init_flag == false) {
 		reset_buttons_and_state();
+		usbhost_init_libusb();
+	}
 
-	for (i = 0; i < MAX_NUMBER_VIRT_DEV; i++) {
+	for (int i = 0; i < MAX_NUMBER_VIRT_DEV; i++) {
 		if ((virtual_device[i].virtdev_available == true && number_ports_used <= NUMBER_OF_PORTS) ||
 		    (virtual_device[i].connected         == true && number_ports_used >  NUMBER_OF_PORTS)) {
 			dlg[PLUG_0 + i].state &= ~SG_DISABLED;
