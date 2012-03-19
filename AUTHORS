@@ -73,6 +73,8 @@ Andreas Schwab
 - complete PMMU revision and fixing, got Linux/m68k working
 - important IEEE/UAE FPU fixes
 - various configure & build fixes
+- new MPFR FPU core using libmpfr
+- more CPU fixes (CAS, CAS2)
 
 Stefan Kuhr
 - Mac OS X port - many improvements (too many to list them here)
@@ -82,13 +84,18 @@ Stefan Kuhr
 
 Philipp Donze
 - Mac OS X fixes, new project, universal (ppc+intel) binaries
-- various small fixes
+- various small fixes in many places
 
 Jens Heitmann
 - JIT for Mac OS X on Intel
 - ethernet for Mac OS X
 - delayed screen updates
 - 64bit fixes
+
+François Revol
+- resource file for Haiku and BeOS
+- VIDEL refresh palette fix when switching to bitplane mode
+- BeOS NF clipboard support
 
 ---
 

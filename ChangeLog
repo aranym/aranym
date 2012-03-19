@@ -1,3 +1,5 @@
+*** CVS tagged as ARANYM_0_9_12
+
 2012/03/19 - Petr
 - natfeat/{nfpci,nfosmesa}.h: made supervisor only (with Patrice's blessing)
 
@@ -11,11 +13,15 @@
   This saves users that will not use the USB from libusb access errors.
   Also changed some variables type from int8 to int (both patches by David)
 
+- README, NEWS, AUTHORS, version.h: updated for new release
+
 
 2012/03/18 - Petr
 - aranym.spec: trying to get the build dependencies right (installed Fedora,
   openSUSE and Mandriva and playing with it)
+
 - natfeat/*: moved all name and isSuperOnly to headers for easier grepping
+
 - uae_cpu/fpu/flags.h: fix for newer gcc in tfnstsw inline asm parameters
 
 
@@ -124,6 +130,7 @@
 
 2011/04/02 - milan
 - src/natfeat/hostfs.cpp, src/gui-sdl/file.cpp, src/ndebug.cpp: fix memleaks
+
 
 *** CVS tagged as ARANYM_0_9_11
 

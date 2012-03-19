@@ -1,8 +1,35 @@
-2012/03/18 - version 0.9.12 released
+2012/03/19 - version 0.9.12 released
 
- New feature: MPFR based new precise FPU emulation core.
- MMU emulation: fix for CAS/CAS2
- USB NatFeat fully usable: http://wiki.aranym.org/manual#usb
+ New features:
+
+   o MPFR based new precise FPU emulation core. Somewhat slower than the
+     normally used IEEE or UAE FPU emulation cores (about 5 times)
+     but should be totally complete and precise. Enabled in Linux binary
+     MMU builds (aranym-mmu). Hopefully Debian-m68k developers will enjoy it
+     :-)
+
+   o USB NatFeat fully usable: http://wiki.aranym.org/manual#usb
+     With a FreeMiNT driver you can access your USB flash discs from
+     the Atari side easily. First enter the SETUP GUI and plug in
+     the desired USB device. The USB support is compiled in by default
+     in all linux binary packages.
+
+   o NF Clipboard implemented newly for BeOS
+
+   o "aranym --version" will now list the built-in FPU core and also all
+     NatFeats that are compiled in.
+
+ Bugfixes:
+
+   o memleaks in various files
+   o blitter memmove fix
+   o MacOSX project fixes
+   o small 64bit fixes in nfcdrom
+   o aliasing issue fixes (in nfosmesa that is not compiled in)
+   o CPU CAS+CAS2 instructions - several very important fixes!
+   o some little fixes for newer GCCs in various files
+   o RPM spec file updated for Fedora, openSUSE and Mandriva. Give
+     rpmbuild -tb aranym_0.9.12.orig.tar.gz a try!
 
 
 2011/02/06 - version 0.9.11 released
