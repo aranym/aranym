@@ -96,7 +96,7 @@ protected:
 
 public:
 	const char *name() { return "PCI"; }
-	bool isSuperOnly() { return false; }
+	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 	virtual ~PciDriver() { };
 };

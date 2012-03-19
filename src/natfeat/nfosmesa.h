@@ -135,7 +135,7 @@ protected:
 
 public:
 	const char *name() { return "OSMESA"; }
-	bool isSuperOnly() { return false; }
+	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);
 
 	OSMesaDriver();

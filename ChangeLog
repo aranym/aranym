@@ -1,9 +1,13 @@
+2012/03/19 - Petr
+- natfeat/{nfpci,nfosmesa}.h: made supervisor only (with Patrice's blessing)
+- aranym.spec: disabled nfpci (Patrice says it's incomplete and should even
+  be dropped from the source code completely)
+
+
 2012/03/18 - Petr
 - aranym.spec: trying to get the build dependencies right (installed Fedora,
   OpenSuSE and Mandriva and playing with it)
-
 - natfeat/*: moved all name and isSuperOnly to headers for easier grepping
-
 - uae_cpu/fpu/flags.h: fix for newer gcc in tfnstsw inline asm parameters
 
 

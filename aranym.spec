@@ -237,20 +237,20 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 # JIT only works on i586
 #
 %ifarch %ix86
-%configure --enable-jit-compiler --enable-nfpci --enable-usbhost
+%configure --enable-jit-compiler --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-jit
 %{__make} clean
 %endif
 
-%configure --enable-fullmmu --enable-lilo --enable-nfpci --enable-usbhost
+%configure --enable-fullmmu --enable-lilo --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-mmu
 %{__make} clean
 
-%configure --enable-nfpci --enable-usbhost
+%configure --enable-usbhost
 %{__make} depend
 %{__make}
 
