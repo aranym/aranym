@@ -418,10 +418,10 @@ dist: distclean
 	cd $(srcdir)/../../ && GZIP=--best tar chozf $(APP).tar.gz --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore aranym
 
 depend: $(builddir)/version_date.h
-	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' >> $(DEPEND)
-	$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
-	$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(AM_V_CC)$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
+	$(AM_V_CXX)$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' >> $(DEPEND)
+	$(AM_V_CC)$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(AM_V_CXX)$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
 
 $(OBJ_DIR)/%.o : %.c
 	$(AM_V_CC)$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
