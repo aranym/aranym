@@ -1,3 +1,8 @@
+2012/03/20 - Andreas
+- fpu_mpfr.cpp: fix handling of post-increment/pre-decrement in FMOVE to
+  memory in presence of access error exceptions
+
+
 2012/03/20 - Petr
 - contrib/*.desktop: updated description of the aranym.desktop and added
   two new files: aranym-jit.desktop and aranym-mmu.desktop
@@ -22,11 +27,6 @@
   Also changed some variables type from int8 to int (both patches by David)
 
 - README, NEWS, AUTHORS, version.h: updated for new release
-
-
-2012/03/20 - Andreas
-- fpu_mpfr.cpp: fix handling of post-increment/pre-decrement in FMOVE to
-  memory in presence of access error exceptions
 
 
 2012/03/18 - Petr
