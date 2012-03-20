@@ -893,11 +893,9 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
       break;
     case 3:
       addr = m68k_areg (regs, reg);
-      m68k_areg (regs, reg) += reg == 7 ? sz2[size] : sz1[size];
       break;
     case 4:
-      m68k_areg (regs, reg) -= reg == 7 ? sz2[size] : sz1[size];
-      addr = m68k_areg (regs, reg);
+      addr = m68k_areg (regs, reg) - (reg == 7 ? sz2[size] : sz1[size]);
       break;
     case 5:
       addr = m68k_areg (regs, reg) + (uae_s16) next_iword();
@@ -969,6 +967,17 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
       put_long (addr + 8, words[2]);
       break;
     }
+
+  switch (mode)
+    {
+    case 3:
+      m68k_areg (regs, reg) += reg == 7 ? sz2[size] : sz1[size];
+      break;
+    case 4:
+      m68k_areg (regs, reg) -= reg == 7 ? sz2[size] : sz1[size];
+      break;
+    }
+
   update_exceptions ();
   return true;
 }
