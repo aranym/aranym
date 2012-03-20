@@ -1,6 +1,6 @@
 2012/03/20 - Andreas
-- fpu_mpfr.cpp: fix handling of post-increment/pre-decrement in FMOVE to
-  memory in presence of access error exceptions
+- fpu_mpfr.cpp: fix restarting of FPU insns in presence of access error
+  exceptions
 
 
 2012/03/20 - Petr

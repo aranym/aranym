@@ -432,7 +432,7 @@ get_fp_value (uae_u32 opcode, uae_u32 extra, mpfr_t value)
 	  break;
 	case 4:
 	  addr = m68k_getpc ();
-	  m68k_setpc (addr + sz2[size]);
+	  m68k_incpc (sz2[size]);
 	  if (size == 6) // Immediate byte
 	    addr++;
 	  break;
@@ -922,7 +922,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
 	  break;
 	case 4:
 	  addr = m68k_getpc ();
-	  m68k_setpc (addr + sz2[size]);
+	  m68k_incpc (sz2[size]);
 	  break;
 	default:
 	  return false;
