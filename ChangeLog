@@ -1,3 +1,8 @@
+2012/03/20 - Petr
+- contrib/*.desktop: updated description of the aranym.desktop and added
+  two new files: aranym-jit.desktop and aranym-mmu.desktop
+
+
 *** CVS tagged as ARANYM_0_9_12
 
 2012/03/19 - Petr

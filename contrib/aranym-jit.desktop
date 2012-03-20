@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=ARAnyM
-Comment=Virtual Machine for Atari 32-bit applications
-Exec=aranym
+Name=ARAnyM JIT
+Comment=Virtual Machine with JIT CPU compiler for max speed
+Exec=aranym-jit
 Icon=aranym
 Terminal=false
 Type=Application
