@@ -126,9 +126,9 @@ AC_ARG_WITH(classicconfig,     [  --with-classicconfig	  Use Classic config name
 
 dnl FPU emulation core.
 if [[ "x$WANT_MMU" = "xyes" ]]; then
-    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="mpfr ieee aue"
+    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="mpfr ieee uae"
 else
-    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="ieee aue"
+    SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="ieee uae"
 fi
 AC_ARG_ENABLE(fpe,
 [  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
