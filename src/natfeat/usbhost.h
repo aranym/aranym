@@ -110,8 +110,8 @@
 
 /* Devices attached to the Atari */
 typedef struct {
-	unsigned int port_number;
-	unsigned int device_index;
+	int port_number;
+	int device_index;
 	int32 interface;
 	uint16 busy;
 	uint16 wPortStatus;

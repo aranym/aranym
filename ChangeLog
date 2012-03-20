@@ -2,6 +2,9 @@
 - contrib/*.desktop: updated description of the aranym.desktop and added
   two new files: aranym-jit.desktop and aranym-mmu.desktop
 
+- natfeat/usbhost.cpp: fix compiler warning about comparison with different
+  variables types (by David)
+
 
 *** CVS tagged as ARANYM_0_9_12
 
