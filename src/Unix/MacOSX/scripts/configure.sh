@@ -1,5 +1,15 @@
 #!/bin/sh
 
+
+# Check whether DEVELOPER_SDK_DIR is set
+if [ "$DEVELOPER_SDK_DIR"x = "x" ]; then
+    DEVELOPER_SDK_DIR=/Developer/SDKs
+    echo "Set DEVELOPER_SDK_DIR to $DEVELOPER_SDK_DIR"
+else
+    echo "DEVELOPER_SDK_DIR is $DEVELOPER_SDK_DIR"
+fi
+
+
 #################### CONFIGURE SYSTEM ################
 # Check if configure script has to be run
 echo "Checking configure options: $CONFIGURE_OPTIONS"

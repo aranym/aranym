@@ -219,9 +219,9 @@ case "$host_cpu" in
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch i386"
 		case "$host_os" in
-			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk";;
-			darwin10* )	ISYSROOT="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk";;
-			darwin11* )	ISYSROOT="-mmacosx-version-min=10.6 -isysroot /Developer/SDKs/MacOSX10.6.sdk";;
+			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.4u.sdk";;
+			darwin10* )	ISYSROOT="-mmacosx-version-min=10.5 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.5.sdk";;
+			darwin11* )	ISYSROOT="-mmacosx-version-min=10.6 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.6.sdk";;
 			*)
 				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
@@ -258,7 +258,7 @@ AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 PKG_PROG_PKG_CONFIG
-m4_ifndef([PKG_CHECK_MODULES], [AC_DEFUN([PKG_CHECK_MODULES])])
+m4_ifndef([PKG_CHECK_MODULES], [AC_DEFUN([PKG_CHECK_MODULES], [true])])
 
 dnl Checks for header files.
 AC_HEADER_STDC

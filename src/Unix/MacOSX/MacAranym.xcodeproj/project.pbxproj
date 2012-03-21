@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -30,6 +30,9 @@
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
+		1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
+		1717E85C151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
+		1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
 		171B2BD50C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
 		171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
 		171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
@@ -494,6 +497,7 @@
 		170C2B830BB872920026484E /* dyngl_gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl_gl.c; path = ../../dyngl_gl.c; sourceTree = SOURCE_ROOT; };
 		170C2B840BB872920026484E /* dyngl_glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl_glext.c; path = ../../dyngl_glext.c; sourceTree = SOURCE_ROOT; };
 		170C2B850BB872920026484E /* dyngl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl.c; path = ../../dyngl.c; sourceTree = SOURCE_ROOT; };
+		1717E85A151680B900D416FA /* dlgUsb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgUsb.cpp; sourceTree = "<group>"; };
 		171B2BD30C4017C9007D8975 /* dlgOs.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = dlgOs.cpp; sourceTree = "<group>"; };
 		171B2BD40C4017C9007D8975 /* dlgVideo.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = dlgVideo.cpp; sourceTree = "<group>"; };
 		1732BC81124540FF00272489 /* scc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scc.cpp; path = ../../scc.cpp; sourceTree = SOURCE_ROOT; };
@@ -1027,17 +1031,18 @@
 		17798CED0A652B50009733EB /* gui-sdl */ = {
 			isa = PBXGroup;
 			children = (
-				B475E5A60D4FA41500C8607E /* dlgPartition.cpp */,
-				B44B01C40D0744D30017F23B /* dlgKeypress.cpp */,
 				B44B01B00D07443D0017F23B /* dialog.cpp */,
-				B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */,
 				17798CEE0A652B50009733EB /* dlgAlert.cpp */,
 				17798CEF0A652B50009733EB /* dlgDisk.cpp */,
 				17798CF00A652B50009733EB /* dlgFileSelect.cpp */,
 				17798CF10A652B50009733EB /* dlgHotkeys.cpp */,
 				17798CF20A652B50009733EB /* dlgKeyboard.cpp */,
+				B44B01C40D0744D30017F23B /* dlgKeypress.cpp */,
 				17798CF30A652B50009733EB /* dlgMain.cpp */,
+				B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */,
 				171B2BD30C4017C9007D8975 /* dlgOs.cpp */,
+				B475E5A60D4FA41500C8607E /* dlgPartition.cpp */,
+				1717E85A151680B900D416FA /* dlgUsb.cpp */,
 				171B2BD40C4017C9007D8975 /* dlgVideo.cpp */,
 				17798CF40A652B50009733EB /* file.cpp */,
 				17798CF50A652B50009733EB /* file.h */,
@@ -1529,8 +1534,12 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
@@ -1879,6 +1888,7 @@
 				1732BC83124540FF00272489 /* scc.cpp in Sources */,
 				1732BC8A1245412B00272489 /* serial.cpp in Sources */,
 				1732BC8B1245412B00272489 /* serial_port.cpp in Sources */,
+				1717E85C151680B900D416FA /* dlgUsb.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1991,6 +2001,7 @@
 				1732BC82124540FF00272489 /* scc.cpp in Sources */,
 				1732BC881245412B00272489 /* serial.cpp in Sources */,
 				1732BC891245412B00272489 /* serial_port.cpp in Sources */,
+				1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2111,6 +2122,7 @@
 				1732BC84124540FF00272489 /* scc.cpp in Sources */,
 				1732BC8C1245412B00272489 /* serial.cpp in Sources */,
 				1732BC8D1245412B00272489 /* serial_port.cpp in Sources */,
+				1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2179,9 +2191,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2190,9 +2200,9 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				VALID_ARCHS = "ppc i386";
 			};
 			name = "Release G5";
 		};
@@ -2228,7 +2238,6 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2237,9 +2246,9 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				VALID_ARCHS = "ppc i386";
 			};
 			name = Release;
 		};
@@ -2253,7 +2262,6 @@
 		17AAB2AC0B20A8330016FB8D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = Packaging;
 			};
 			name = Release;
@@ -2315,6 +2323,7 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
 				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history --enable-nfclipbrd";
@@ -2329,7 +2338,6 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = 4.2;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2338,17 +2346,16 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				VALID_ARCHS = "ppc i386";
 			};
 			name = Debug;
 		};
 		B439AC980C5B2FD00046EFC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
@@ -2360,8 +2367,7 @@
 		B439AC990C5B2FD00046EFC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
@@ -2373,8 +2379,7 @@
 		B439AC9A0C5B2FD00046EFC9 /* Release G5 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
