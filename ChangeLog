@@ -1,3 +1,12 @@
+2012/03/22 - Petr
+- natfeat/usbhost.cpp: Change the location of the status register cleaning
+  from the function usbhost_init_libusb to the class constructor.
+  This avoids that under some circumstances devices can't be claimed.
+  Patch by David.
+
+- aranym.spec: make use of the new aranym-{jit,mmu}.desktop files
+
+
 2012/03/20 - Andreas
 - fpu_mpfr.cpp: fix restarting of FPU insns in presence of access error
   exceptions
