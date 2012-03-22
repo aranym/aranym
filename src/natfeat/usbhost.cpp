@@ -204,12 +204,12 @@ void fill_port_status(unsigned int port_number, bool connected)
 {
 	D(bug("USBHost: fill_port_status()"));
 
-	port_status[port_number] |= RH_PS_CSC;			/* connect status change */
-
 	if (connected)
 		port_status[port_number] |= RH_PS_CCS;		/* Device attached */
 	else
 		port_status[port_number] &= ~RH_PS_CCS;		/* Device dettached */
+
+	port_status[port_number] |= RH_PS_CSC;			/* connect status change */
 
 	D(bug("USBHost: (After) P%d port_status %x", port_number, port_status[port_number]));
 }
@@ -440,7 +440,6 @@ void usbhost_init_libusb(void)
 	}
 
 	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
-		port_status[i] = 0x0000; 	/* Clean before use */
 		roothub.port[i].device_index = 0;
 	}
 
@@ -868,7 +867,7 @@ int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
 void USBHost::reset()
 {
 	D(bug("USBHost: reset"));
-	
+
 	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
 		port_status[i] |= (RH_PS_PPS | RH_PS_PES);
 		if (port_status[i] & RH_PS_CCS)
@@ -936,6 +935,9 @@ int32 USBHost::dispatch(uint32 fncode)
 
 USBHost::USBHost()
 {
+	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
+		port_status[i] = 0x0000; 	/* Clean before use */
+	}
 	D(bug("USBHost: created"));
 }
 
