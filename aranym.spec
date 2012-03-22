@@ -303,14 +303,11 @@ desktop-file-install                                    \
 %ifarch %ix86
 
 %if %{my_suse}
-sed -e "s/Exec=aranym/Exec=aranym-jit/g" \
- -e "s/Name=ARAnyM/Name=ARAnyM-jit/g" <%{buildroot}/%{_datadir}/applications/%{name}.desktop >%{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
+install -m 644 contrib/%{name}-jit.desktop %{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
 %endif
 
 %if %{my_fedora}%{my_mandriva}
-sed -e "s/Exec=aranym/Exec=aranym-jit/g" \
- -e "s/Name=ARAnyM/Name=ARAnyM-jit/g" <%{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}.desktop \
- >%{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
+install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
 %endif
 %else
 %{__rm} %{buildroot}/%{_mandir}/man1/%{name}-jit.1*
@@ -318,15 +315,11 @@ sed -e "s/Exec=aranym/Exec=aranym-jit/g" \
 
 
 %if %{my_suse}
-sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
- -e "s/Name=ARAnyM/Name=ARAnyM-mmu/g" <%{buildroot}/%{_datadir}/applications/%{name}.desktop \
- >%{buildroot}/%{_datadir}/applications/%{name}-mmu.desktop
+install -m 644 contrib/%{name}-mmu.desktop %{buildroot}/%{_datadir}/applications/%{name}-mmu.desktop
 %endif
 
 %if %{my_fedora}%{my_mandriva}
-sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
- -e "s/Name=ARAnyM/Name=ARAnyM-mmu/g" <%{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}.desktop \
- >%{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}-mmu.desktop
+install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-mmu.desktop
 %endif
 
 
@@ -376,11 +369,14 @@ sed -e "s/Exec=aranym/Exec=aranym-mmu/g" \
 
 
 %changelog
+* XXX XXX XX XXXX Petr Stehlik <pstehlik@sophics.cz> 0.9.13
+Make use of two new desktop files.
+
 * Sat Mar 17 2012 Petr Stehlik <pstehlik@sophics.cz> 0.9.12
 New ARAnyM release.
 New FPU emulation for MMU mode (using MPFR)
 New Native Features enabled (PCI, USB)
-New dependencies (zlib, mpfr, liusb)
+New dependencies (zlib, mpfr, libusb)
 
 * Wed May 26 2010 Petr Stehlik <pstehlik@sophics.cz> 0.9.10
 New ARAnyM release.
