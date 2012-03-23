@@ -281,20 +281,27 @@ mkdir -p %{buildroot}/%{_icondir}/48x48/apps
 install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/32x32/apps/aranym.png
 install -m 644 contrib/icon-48.png %{buildroot}/%{_icondir}/48x48/apps/aranym.png
 
-%if %{my_suse}
+%if %{my_suse}%{my_mandriva}
 install -m 644 contrib/%{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
+%if %{my_suse}
 %suse_update_desktop_file -i %{name}
 %endif
+%if %{my_mandriva}
+desktop-file-install                                    \
+ --delete-original                                      \
+ --dir %{buildroot}%{_datadir}/applications             \
+ --add-category System                                  \
+ --add-category Emulator                                \
+ %{buildroot}/%{_datadir}/applications/%{name}.desktop
+%endif
 
-%if %{my_fedora}%{my_mandriva}
+%if %{my_fedora}
 install -m 644 contrib/%{name}.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}.desktop
 desktop-file-install                                    \
  --delete-original                                      \
  --vendor %{my_vendor}                                  \
  --dir %{buildroot}%{_datadir}/applications             \
-%if %{my_fedora}
  --add-category X-Fedora                                \
-%endif
  --add-category System                                  \
  --add-category Emulator                                \
  %{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}.desktop
@@ -302,11 +309,11 @@ desktop-file-install                                    \
 
 %ifarch %ix86
 
-%if %{my_suse}
+%if %{my_suse}%{my_mandriva}
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
 %endif
 
-%if %{my_fedora}%{my_mandriva}
+%if %{my_fedora}
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
 %endif
 %else
@@ -314,11 +321,11 @@ install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/
 %endif
 
 
-%if %{my_suse}
+%if %{my_suse}%{my_mandriva}
 install -m 644 contrib/%{name}-mmu.desktop %{buildroot}/%{_datadir}/applications/%{name}-mmu.desktop
 %endif
 
-%if %{my_fedora}%{my_mandriva}
+%if %{my_fedora}
 install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-mmu.desktop
 %endif
 
