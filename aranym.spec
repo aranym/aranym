@@ -294,6 +294,7 @@ desktop-file-install                                    \
  --add-category Emulator                                \
  %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %endif
+%endif
 
 %if %{my_fedora}
 install -m 644 contrib/%{name}.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}.desktop
