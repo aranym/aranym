@@ -1,15 +1,11 @@
 # This is the configuration file for SET_MMU.PRG, and must be located in either
 # the root directory of the boot drive or in the autofolder.
 
-# This is the file I use when I want to split the Hades RAM into ST and TT
-# RAM. Copy this file to the root of you boot partition and rename to MMUSETUP.CNF
-# to use it.
-
 # Split RAM into ST and TT RAM
-split_ram=no
+split_ram=yes
 
 # "pagesize" can be either 4k for 4k pages or 8k for ..eh.. 8k pages.
-pagesize=8k
+pagesize=4k
 
 # With the "cacr" variable you set the cacr cpu register.
 # The following are the following flags you can use...
@@ -83,8 +79,7 @@ dtt1=$0
 #
 # IMPORTANT: There *MUST* be an empty line between translation definition blocks!!
 #
-# Since we split the available RAM into ST/TT RAM, we need to first set up the
-# block defining the ST RAM.
+# ST RAM.
 logical=$0
 physical=$0
 size=14*1024*1024
@@ -102,32 +97,27 @@ physical=$00f00000
 size=1024*1024
 pd_flags=c_p
 
-# Then we set up the block that define the TT RAM. I have got a total of 40Mb in
-# my Hades, and when 16Mb are gone ( 14Mb = ST ram, 2Mb lost ) we subtract that
-# from the total amout of RAM available. I use 40-16=24Mb ( I WANT MORE RAM!! )
-# This is the only thing you need to change in this file.
+# Then we set up the block that define the FastRAM
+# Currently it's set to 512 MB (see the size=512*... below)
 logical=$01000000
 physical=$01000000
-size=64*1024*1024
+size=512*1024*1024
 pd_flags=c_wt
 
-# VideoRAM (10 MB)
-#logical=$f0000000
-#physical=$f0000000
-#size=10*1024*1024
-#pd_flags=c_p
-
-# mirror
+# mirror of 24-bit address space with upper 8 bits set
+# mirror of ST-RAM (I doub't it's needed)
 logical=$ff000000
 physical=$ff000000
 size=14*1024*1024
 pd_flags=c_wt
 
+# mirror of TOS ROM (I doub't it's needed)
 logical=$ffe00000
 physical=$ffe00000
 size=1024*1024
 pd_flags=c_p
 
+# mirror of I/O space (the only required thing for backward/ST compatibility)
 logical=$fff00000
 physical=$fff00000
 size=1024*1024
