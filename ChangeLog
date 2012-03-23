@@ -1,3 +1,5 @@
+*** CVS tagged as ARANYM_0_9_13
+
 2012/03/23 - Petr
 - configure.ac: disable strict aliasing for JIT target (thanks to Miro)
 
@@ -6,6 +8,11 @@
 
 - aranym.spec: Mandriva uses desktop files without the vendor prefix
   (with the prefix ARAnyM didn't appear in the list of apps)
+
+- tools/export: modified for the Debian compatible source archive name
+  aranym_V.E.R.orig.tar.gz
+
+- README, NEWS, version.h: updated for new release
 
 
 2012/03/22 - Petr

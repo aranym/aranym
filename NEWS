@@ -1,3 +1,17 @@
+2012/03/23 - version 0.9.13 released
+
+ A couple of important bugfixes accumulated in last few days:
+
+   o USB NatFeat doesn't fail to claim devices in certain cases
+
+   o MPFR FPU got fix for restarting of instructions after access error
+
+   o JIT CPU version should work even when compiled with newer compilers
+
+   o update your mmusetup.cnf in MiNT setup for larger FastRAM (see
+     provided atari/mmusetup.cnf that is set for 512 MB FastRAM now)
+
+
 2012/03/19 - version 0.9.12 released
 
  New features:
