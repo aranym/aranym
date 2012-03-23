@@ -1226,6 +1226,9 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   JITSRCS="$JITSRCS uae_cpu/compiler/compemu_support.cpp"
   DEFINES="$DEFINES -DUSE_JIT=1"
 
+  dnl JIT is buggy with strict-aliasing, it seems (FIXME!)
+  CXXFLAGS="$CXXFLAGS -fno-strict-aliasing"
+
   if [[ "x$WANT_JIT_DEBUG" = "xyes" ]]; then
     DEFINES="$DEFINES -DJIT_DEBUG=1"
   fi

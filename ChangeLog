@@ -1,3 +1,13 @@
+2012/03/23 - Petr
+- configure.ac: disable strict aliasing for JIT target (thanks to Miro)
+
+- atari/mmusetup.cnf: FastRAM enlarged from 64 to 512 MB, removed Hades
+  specific VideoRAM (thanks to Miro Kropacek)
+
+- aranym.spec: Mandriva uses desktop files without the vendor prefix
+  (with the prefix ARAnyM didn't appear in the list of apps)
+
+
 2012/03/22 - Petr
 - natfeat/usbhost.cpp: Change the location of the status register cleaning
   from the function usbhost_init_libusb to the class constructor.
