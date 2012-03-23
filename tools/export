@@ -15,8 +15,8 @@ then
 fi
 #upper case the tag
 TAG=`echo $TAG | tr '[:lower:]' '[:upper:]'`
-FOLDER="aranym-"$VERSION
-FNAME=$FOLDER".tar.gz"
+FOLDER="aranym_"$VERSION
+FNAME=$FOLDER".orig.tar.gz"
 #
 echo "download from CVS? (y/N)"
 read key
