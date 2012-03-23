@@ -376,8 +376,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
-* XXX XXX XX XXXX Petr Stehlik <pstehlik@sophics.cz> 0.9.13
+* Fri Mar 23 2012 Petr Stehlik <pstehlik@sophics.cz>
 Make use of two new desktop files.
+Mandriva desktop files without the vendor prefix.
 
 * Sat Mar 17 2012 Petr Stehlik <pstehlik@sophics.cz> 0.9.12
 New ARAnyM release.
