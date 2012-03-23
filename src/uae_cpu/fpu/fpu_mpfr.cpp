@@ -885,6 +885,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
 	default:
 	  return false;
 	}
+      update_exceptions ();
       return true;
     case 1:
       return false;
