@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.12
+%define ver			0.9.13
 
 #
 #
@@ -377,7 +377,8 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
-* Fri Mar 23 2012 Petr Stehlik <pstehlik@sophics.cz>
+* Fri Mar 23 2012 Petr Stehlik <pstehlik@sophics.cz> 0.9.13
+New ARAnyM release.
 Make use of two new desktop files.
 Mandriva desktop files without the vendor prefix.
 
