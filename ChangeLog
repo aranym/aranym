@@ -1,3 +1,6 @@
+2012/03/24 - Philipp
+- Fix MacAranym JIT: set/enforce deployment target to OS 10.4
+
 2012/03/23 - Andreas
 - fpu_mpfr.cpp: Fix missing fpu exception update
 

@@ -1013,6 +1013,7 @@ forward_exception(mach_port_t thread_port,
  * call this directley. This has to have external C
  * linkage because that is what exc_server expects.
  */
+__attribute__ ((visibility("default")))
 kern_return_t
 catch_exception_raise(mach_port_t /*exception_port*/,
 					  mach_port_t thread,

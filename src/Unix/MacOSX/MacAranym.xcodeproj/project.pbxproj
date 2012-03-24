@@ -18,6 +18,7 @@
 			dependencies = (
 				17D10CA80C401D940083E7F2 /* PBXTargetDependency */,
 				17D10CAA0C401D940083E7F2 /* PBXTargetDependency */,
+				17B1145F151E696B00E4EB0F /* PBXTargetDependency */,
 			);
 			name = Packaging;
 			productName = "Build Release Package";
@@ -146,6 +147,7 @@
 		17AC409E13F1D42F003B4FAD /* cpudefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AC409A13F1D403003B4FAD /* cpudefs.cpp */; };
 		17AC409F13F1D434003B4FAD /* cpuemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AC409C13F1D403003B4FAD /* cpuemu.cpp */; };
 		17AC40A013F1D436003B4FAD /* cpustbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AC409D13F1D403003B4FAD /* cpustbl.cpp */; };
+		17B1146E151E6A4500E4EB0F /* MacAranym JIT IEEE.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT IEEE.app */; };
 		17BCD7DC0B20F64F00432CE1 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		17BCD7DD0B20F64F00432CE1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
@@ -403,6 +405,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		17B1145E151E696B00E4EB0F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B439AC2F0C5B2FD00046EFC9;
+			remoteInfo = "MacAranym JIT IEEE";
+		};
 		17D10CA70C401D940083E7F2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -486,6 +495,7 @@
 				B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */,
 				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
 				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
+				17B1146E151E6A4500E4EB0F /* MacAranym JIT IEEE.app in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2129,6 +2139,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		17B1145F151E696B00E4EB0F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT IEEE */;
+			targetProxy = 17B1145E151E696B00E4EB0F /* PBXContainerItemProxy */;
+		};
 		17D10CA80C401D940083E7F2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8D1107260486CEB800E47090 /* MacAranym */;
@@ -2200,6 +2215,7 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 				VALID_ARCHS = "ppc i386";
@@ -2246,6 +2262,7 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 				VALID_ARCHS = "ppc i386";
@@ -2346,6 +2363,7 @@
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 				VALID_ARCHS = "ppc i386";
