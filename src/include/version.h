@@ -31,8 +31,8 @@
 #define VER_MICRO	13
 
 #ifndef VER_STATUS
-#define VER_STATUS
-//#define VER_STATUS	"+" CVS_DATE
+//#define VER_STATUS
+#define VER_STATUS	"+" CVS_DATE
 //#define VER_STATUS	"alpha"
 //#define VER_STATUS	"beta"
 //#define VER_STATUS	"beta+" CVS_DATE
