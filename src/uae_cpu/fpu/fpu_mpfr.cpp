@@ -869,7 +869,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
       switch (size)
 	{
 	case 0:
-	  m68k_dreg (regs, reg) = extract_to_integer (*value, -0x80000000, 0x7fffffff);
+	  m68k_dreg (regs, reg) = extract_to_integer (*value, -0x7fffffff-1, 0x7fffffff);
 	  break;
 	case 1:
 	  m68k_dreg (regs, reg) = extract_to_single (*value);
@@ -933,7 +933,7 @@ fpuop_fmove_memory (uae_u32 opcode, uae_u32 extra)
   switch (size)
     {
     case 0:
-      put_long (addr, extract_to_integer (*value, -0x80000000, 0x7fffffff));
+      put_long (addr, extract_to_integer (*value, -0x7fffffff-1, 0x7fffffff));
       break;
     case 1:
       put_long (addr, extract_to_single (*value));

@@ -1,3 +1,7 @@
+2012/03/27 - Andreas
+- fpu_mpfr.cpp: Fix range check when converting to long word
+
+
 2012/03/24 - Philipp
 - Fix MacAranym JIT: set/enforce deployment target to OS 10.4
 
