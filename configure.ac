@@ -1516,15 +1516,15 @@ if test "x$WANT_USBHOST" = "xyes"; then
    
   # Search the library and headers directly
     if test "x$WITH_USBHOST" = "xno"; then
-      AC_CHECK_HEADER(libusb-1.0/libusb.h, [], [AC_MSG_ERROR([The libusb headers are missing])])
-      AC_CHECK_LIB(usb-1.0, libusb_init, [], [AC_MSG_ERROR([The libusb library is missing])])
-
-      LIBUSB_LIBS="-lusb-1.0"
-      WITH_USBHOST="yes"
+      AC_CHECK_HEADER(libusb-1.0/libusb.h, [WITH_USBHOST="yes"], [WITH_USBHOST="no"])
+      if test "x$WITH_USBHOST" = "xyes"; then
+        AC_CHECK_LIB(usb-1.0, libusb_init, [], [WITH_USBHOST="no"])
+        LIBUSB_LIBS="-lusb-1.0"
+      fi
     fi
 
     if test "x$WITH_USBHOST" = "xno"; then
-      AC_MSG_ERROR([libusb is mandatory for usb support])
+      AC_MSG_WARN([libusb is missing, USB NF disabled])
     fi
 fi
 
