@@ -1,3 +1,8 @@
+2012/04/05 - Petr
+- configure.ac: don't stop if libusb not found (apparently Debian on kfreebsd
+  has the libusb as a fake package or what so the build was failing there)
+
+
 2012/03/27 - Andreas
 - fpu_mpfr.cpp: Fix range check when converting to long word
 
