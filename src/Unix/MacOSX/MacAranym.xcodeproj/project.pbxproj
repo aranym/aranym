@@ -2207,6 +2207,8 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2253,7 +2255,9 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2355,6 +2359,8 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
