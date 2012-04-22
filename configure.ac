@@ -218,10 +218,14 @@ case "$host_cpu" in
 	HAVE_I386=yes
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch i386"
+        MY_DEVELOPER_DIR=`xcode-select -print-path`
+        if [[ "x$MY_DEVELOPER_DIR" = "x" ]]; then
+            MY_DEVELOPER_DIR=/Developer
+        fi
 		case "$host_os" in
-			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.4u.sdk";;
-			darwin10* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.5.sdk";;
-			darwin11* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.6.sdk";;
+			darwin8* | darwin9* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $MY_DEVELOPER_DIR/SDKs/MacOSX10.4u.sdk";;
+			darwin10* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $MY_DEVELOPER_DIR/SDKs/MacOSX10.5.sdk";;
+			darwin11* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $MY_DEVELOPER_DIR/SDKs/MacOSX10.6.sdk";;
 			*)
 				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
