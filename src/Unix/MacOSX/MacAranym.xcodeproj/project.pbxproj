@@ -2208,7 +2208,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2257,7 +2256,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2347,7 +2345,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "HAVE_CONFIG_H OS_darwin $(CPU_TYPE_$(arch)) MACOSX_support DIRSEPARATOR=\\\"/\\\" _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS _REENTRANT _THREAD_SAFE ENABLE_TUNTAP LOGO_FILENAME=\\\"Contents/Resources/logo.png\\\" $(COMPILE_DEF_$(arch))";
 				COMPILE_DEF_i386 = "UNALIGNED_PROFITABLE REGPARAM=\"__attribute__((regparm(3)))\" X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE";
-				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-full-history --enable-nfclipbrd";
+				CONFIGURE_OPTIONS = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-fullhistory --enable-nfclipbrd";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
@@ -2360,7 +2358,6 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2382,6 +2379,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
@@ -2394,6 +2392,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
@@ -2406,6 +2405,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMPILE_DEFS = "$(inherited) FIXED_ADDRESSING FMEMORY=0x51000000 UNALIGNED_PROFITABLE  X86_ASSEMBLY OPTIMIZED_FLAGS SAHF_SETO_PROFITABLE USE_JIT=1 USE_JIT_FPU=1 HAVE_MACH_VM UAEDEBUG JIT_DEBUG REGPARAM=\"__attribute__((regparm(3)))\"  FPU_IEEE NO_NESTED_SIGSEGV";
 				CONFIGURE_OPTIONS = "$(inherited) --enable-fpe=ieee --enable-jit-compiler";
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = "MacAranym JIT IEEE";
