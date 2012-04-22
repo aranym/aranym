@@ -37,6 +37,13 @@ fi
 # Make sure makedepend can be found
 export PATH="$PATH:/usr/X11R6/bin"
 
+# Make sure autoconf can be found
+( autoconf -version ) > /dev/null 2>&1 || {
+  echo "autoconf not found: appending /opt search locations to PATH (e.g. if MacPorts is used)"
+  export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+}
+
+
 # Make sure SDL.m4 can be found
 export ACLOCAL_FLAGS="-I $PROJECT_DIR/../darwin -I /usr/X11/share/aclocal"
 
@@ -58,17 +65,16 @@ rm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null
 if [ -f autogen.sh ]; then
   export NO_CONFIGURE=yes
   echo "Calling autogen.sh to prepare configure script"
-  ./autogen.sh
+  ./autogen.sh || exit 1
 fi
 
 # Configure system for all build architectures
 echo "" > "$DERIVED_FILES_DIR/config.h"
-UREL=`uname -r`
 for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
   echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE / $UREL"
   echo $PWD
-  ./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-darwin$UREL || exit 1
+  ./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-$OSTYPE || exit 1
 
   if [ "$ARCH" = "ppc" -a "$SDK_NAME" = "macosx10.3.9" ]; then
     # 10.3.9 compatibility:
