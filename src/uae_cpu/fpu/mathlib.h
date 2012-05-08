@@ -959,7 +959,9 @@ PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 				 "f2xm1                     # 2^(fract(x * log2(e))) - 1\n\t"
 				 "fscale                    # 2^(x * log2(e)) - 2^(int(x * log2(e)))\n\t"
 				 : "=t" (value), "=u" (exponent) : "0" (x));
-	__asm__ __volatile__("fscale" : "=t" (temp) : "0" (1.0), "u" (exponent));
+	__asm__ __volatile__("fld1    \n\t"
+                         "fscale  \n\t"
+                         : "=t" (temp) : "u" (exponent));
 	temp -= 1.0;
 	return temp + value ? temp + value : x;
 }
