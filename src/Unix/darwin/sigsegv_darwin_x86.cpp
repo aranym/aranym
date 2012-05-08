@@ -99,6 +99,7 @@ typedef struct _ExceptionPorts {
 #define SIGSEGV_SKIP_INSTRUCTION		powerpc_skip_instruction
 #define SIGSEGV_REGISTER_FILE			(unsigned long *)&state->srr0, (unsigned long *)&state->r0
 #endif
+
 #ifdef __i386__
 #ifdef i386_SAVED_STATE
 #define SIGSEGV_THREAD_STATE_TYPE		struct i386_saved_state
@@ -106,12 +107,24 @@ typedef struct _ExceptionPorts {
 #define SIGSEGV_THREAD_STATE_COUNT		i386_SAVED_STATE_COUNT
 #define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->edi) /* EDI is the first GPR we consider */
 #else
+#ifdef x86_THREAD_STATE32
+/* MacOS X 10.5 or newer introduces the new names and deprecates the old ones */
+#define SIGSEGV_THREAD_STATE_TYPE		x86_thread_state32_t
+#define SIGSEGV_THREAD_STATE_FLAVOR		x86_THREAD_STATE32
+#define SIGSEGV_THREAD_STATE_COUNT		x86_THREAD_STATE32_COUNT
+#define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
+#define SIGSEGV_FAULT_INSTRUCTION		state->__eip
+
+#else
+/* MacOS X 10.4 and below */
 #define SIGSEGV_THREAD_STATE_TYPE		struct i386_thread_state
 #define SIGSEGV_THREAD_STATE_FLAVOR		i386_THREAD_STATE
 #define SIGSEGV_THREAD_STATE_COUNT		i386_THREAD_STATE_COUNT
 #define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
-#endif
 #define SIGSEGV_FAULT_INSTRUCTION		state->eip
+
+#endif
+#endif
 #define SIGSEGV_SKIP_INSTRUCTION		ix86_skip_instruction
 #endif
 
@@ -127,9 +140,9 @@ typedef struct _ExceptionPorts {
 #define SIGSEGV_FAULT_HANDLER_ARGLIST_1	SIGSEGV_FAULT_HANDLER_ARGLIST
 #endif
 
-#define SIGSEGV_MASK_OLD			EXC_MASK_BAD_ACCESS
-#define SIGSEGV_MASK			EXC_MASK_ALL
-#define SIGSEGV_EXCEPTION		EXC_BAD_ACCESS
+#define SIGSEGV_MASK_OLD                EXC_MASK_BAD_ACCESS
+#define SIGSEGV_MASK                    EXC_MASK_ALL
+#define SIGSEGV_EXCEPTION               EXC_BAD_ACCESS
 
 
 enum {
@@ -214,6 +227,27 @@ static char replybuf[MSG_SIZE];
 #define CONTEXT_ATYPE	SIGSEGV_THREAD_STATE_TYPE*
 
 #define CONTEXT_NAME	state
+#ifdef x86_THREAD_STATE32
+#define CONTEXT_EIP		CONTEXT_NAME.__eip
+#define CONTEXT_EFLAGS	CONTEXT_NAME.__eflags;
+#define CONTEXT_EAX		CONTEXT_NAME.__eax
+#define CONTEXT_EBX		CONTEXT_NAME.__ebx
+#define CONTEXT_ECX		CONTEXT_NAME.__ecx
+#define CONTEXT_EDX		CONTEXT_NAME.__edx
+#define CONTEXT_EBP		CONTEXT_NAME.__ebp
+#define CONTEXT_ESI		CONTEXT_NAME.__esi
+#define CONTEXT_EDI		CONTEXT_NAME.__edi
+
+#define CONTEXT_AEIP	CONTEXT_NAME->__eip
+#define CONTEXT_AEFLAGS	CONTEXT_NAME->__eflags
+#define CONTEXT_AEAX	CONTEXT_NAME->__eax
+#define CONTEXT_AEBX	CONTEXT_NAME->__ebx
+#define CONTEXT_AECX	CONTEXT_NAME->__ecx
+#define CONTEXT_AEDX	CONTEXT_NAME->__edx
+#define CONTEXT_AEBP	CONTEXT_NAME->__ebp
+#define CONTEXT_AESI	CONTEXT_NAME->__esi
+#define CONTEXT_AEDI	CONTEXT_NAME->__edi
+#else
 #define CONTEXT_EIP		CONTEXT_NAME.eip
 #define CONTEXT_EFLAGS	CONTEXT_NAME.eflags;
 #define CONTEXT_EAX		CONTEXT_NAME.eax
@@ -233,7 +267,7 @@ static char replybuf[MSG_SIZE];
 #define CONTEXT_AEBP	CONTEXT_NAME->ebp
 #define CONTEXT_AESI	CONTEXT_NAME->esi
 #define CONTEXT_AEDI	CONTEXT_NAME->edi
-
+#endif
 
 int in_handler = 0;
 
@@ -369,6 +403,7 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 {
 	D(panicbug("Catched signal %lx", fault_address));
 
+    
 	uintptr addr = (uintptr)fault_address;
 	uintptr ainstr = (uintptr)fault_instruction;
 	
@@ -869,15 +904,15 @@ static bool handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGLIST_1)
 	sigsegv_address_t fault_instruction = (sigsegv_address_t)SIGSEGV_FAULT_INSTRUCTION;
 
 	D2(panicbug("code:%lx %lx %lx %lx", (long)code[0], (long)code[1], (long)code[2], (long)code[3]));
-	D2(panicbug("regs eax:%lx", state->eax));
-	D2(panicbug("regs ebx:%lx", state->ebx));
-	D2(panicbug("regs ecx:%lx", state->ecx));
-	D2(panicbug("regs edx:%lx", state->edx));
-	D2(panicbug("regs ebp:%lx", state->ebp));
-	D2(panicbug("regs esi:%lx", state->esi));
-	D2(panicbug("regs edi:%lx", state->edi));
-	D2(panicbug("regs eip:%lx", state->eip));
-	D2(panicbug("regs eflags:%lx", state->eflags));
+	D2(panicbug("regs eax:%lx", CONTEXT_AEAX));
+	D2(panicbug("regs ebx:%lx", CONTEXT_AEBX));
+	D2(panicbug("regs ecx:%lx", CONTEXT_AECX));
+	D2(panicbug("regs edx:%lx", CONTEXT_AEDX));
+	D2(panicbug("regs ebp:%lx", CONTEXT_AEBP));
+	D2(panicbug("regs esi:%lx", CONTEXT_AESI));
+	D2(panicbug("regs edi:%lx", CONTEXT_AEDI));
+	D2(panicbug("regs eip:%lx", CONTEXT_AEIP));
+	D2(panicbug("regs eflags:%lx", CONTEXT_AEFLAGS));
 
 	// Call user's handler and reinstall the global handler, if required
 	switch (SIGSEGV_FAULT_HANDLER_INVOKE(fault_address, fault_instruction, state)) {
@@ -906,7 +941,7 @@ static bool handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGLIST_1)
  * We need to forward all exceptions that we do not handle.
  * This is important, there are many exceptions that may be
  * handled by other exception handlers. For example debuggers
- * use exceptions and the exception hander is in another
+ * use exceptions and the exception handler is in another
  * process in such a case. (Timothy J. Wood states in his
  * message to the list that he based this code on that from
  * gdb for Darwin.)
