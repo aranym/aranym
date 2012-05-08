@@ -1,69 +1,73 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf430
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf320
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;\f2\fnil\fcharset0 LucidaGrande;
 }
 {\colortbl;\red255\green255\blue255;\red35\green110\blue37;}
 \vieww18280\viewh18460\viewkind0
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \f0\b\fs28 \cf0 New Xcode project for building universal binaries\
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b0\fs24 \cf0 \
 Finally I'm comitting the Xcode 2.4.1 project I'm using to build Universal binaries of MacAranym. Currently it's not tested if it's working with version before 2.4.1.\
 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b \cf0 What's the difference?
 \b0 \
 What's the difference between this project and the two other projects targeted for Mac OS X?\
 \
-\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\ql\qnatural\pardirnatural
+\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\pardirnatural
 
 \f1\fs20 \cf0 \CocoaLigature0 src/MacOSX/MacAranym.pbproj
 \f2\fs24 \CocoaLigature1 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
-\cf0  is an old Project Builder/Xcode 1.5 project which is hard to maintain, because such an old version of Xcode only runs on Mac OS 10.3.x. Even though this project has been used by Fran\'e7ois LeCoat to build several releases of MacAranym, its existence in CVS has been neglected for a long time and it has hardly been updated. Therefore new Mac OS X developers willing to build MacAranym as a first challenge had to update the project/fix many errors message coming from the build scripts and the outdated project file.\
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
+
+\f0 \cf0  is an old Project Builder/Xcode 1.5 project which is hard to maintain, because such an old version of Xcode only runs on Mac OS 10.3.x. Even though this project has been used by Fran\'e7ois LeCoat to build several releases of MacAranym, its existence in CVS has been neglected for a long time and it has hardly been updated. Therefore new Mac OS X developers willing to build MacAranym as a first challenge had to update the project/fix many errors message coming from the build scripts and the outdated project file.\
 Lately I have fixed the biggest issues, but several others are still existing: the build scripts are rather awkward, e.g. every time the project is built, the configure-script is executed and all sources are recompiled. Further it was not possible to modify the build scripts to produce Universal Binaries while maintaining compatibility to Xcode 1.5.\
-\
-\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\ql\qnatural\pardirnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
+
+\f2 \cf0 \
+\pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\pardirnatural
 
 \f1\fs20 \cf0 \CocoaLigature0 src/Unix/darwin\cf2 /*
 \f2\fs24 \cf0 \CocoaLigature1 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
-\cf0  is a simple Makefile based project and can be used from the command line and included as external target into Xcode. The biggest advantage of this type of project is that it's not necessary to synchronize it with the Linux/cygwin developments as it's using the same build system and scripts. But it's default behavior is not what you would expect from any of the latest MacAranym releases: it's placing the configuration files into the 
-\f1\fs20 \CocoaLigature0 ~/Library/Preferences
-\f2\fs24 \CocoaLigature1  folder and names the files 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.config
-\f2\fs24 \CocoaLigature1 , 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.nvram
-\f2\fs24 \CocoaLigature1  and 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.keymap
-\f2\fs24 \CocoaLigature1 . Further it's reading data files (like ROM) from the 
-\f1\fs20 \CocoaLigature0 ~/Library/Application Support/Aranym
-\f2\fs24 \CocoaLigature1  folder. One would say this is great as it follows Apple guide lines, but it's a real pain as there is no complete configuration GUI, so you still have to edit the config file from time to time. And in this case it's a real pain to search for this 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.config
-\f2\fs24 \CocoaLigature1  configuration file in the Preferences folder!\
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
-\f0 \cf0 \
+\f0 \cf0  is a simple Makefile based project and can be used from the command line and included as external target into Xcode. The biggest advantage of this type of project is that it's not necessary to synchronize it with the Linux/cygwin developments as it's using the same build system and scripts. But it's default behavior is not what you would expect from any of the latest MacAranym releases: it's placing the configuration files into the 
+\f1\fs20 \CocoaLigature0 ~/Library/Preferences
+\f0\fs24 \CocoaLigature1  folder and names the files 
+\f1\fs20 \CocoaLigature0 org.atari.aranym.config
+\f0\fs24 \CocoaLigature1 , 
+\f1\fs20 \CocoaLigature0 org.atari.aranym.nvram
+\f0\fs24 \CocoaLigature1  and 
+\f1\fs20 \CocoaLigature0 org.atari.aranym.keymap
+\f0\fs24 \CocoaLigature1 . Further it's reading data files (like ROM) from the 
+\f1\fs20 \CocoaLigature0 ~/Library/Application Support/Aranym
+\f0\fs24 \CocoaLigature1  folder. One would say this is great as it follows Apple guide lines, but it's a real pain as there is no complete configuration GUI, so you still have to edit the config file from time to time. And in this case it's a tedious to search for this 
+\f1\fs20 \CocoaLigature0 org.atari.aranym.config
+\f0\fs24 \CocoaLigature1  configuration file in the Preferences folder.
+\f2 \
+
+\f0 \
 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b \cf0 What's new?
 \b0 \
 As I still prefer IDEs, I've decided to create a new project for Xcode 2.x which allows creation of Universal Binaries and which is more convenient for developing purposes. It's advantages are:\
-\pard\tx285\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li280\fi-280\ql\qnatural
+\pard\tx285\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li280\fi-280
 \cf0 -	Only three targets: MacAranym, MacAranym MMU and Packaging.\
 -	The build script is intelligent enough to execute configure only if you've changed the configure flags (using the build variable CONFIGURE_OPTIONS which can be set in the project properties)\
 -	The script generates CPU source files which can be used for building Universal Binaries. This needed some adaption all over ARAnyMs source code to make more cross-compilable.\
 -	It's currently maintained :-)\
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 \cf0 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b \cf0 \
 Let's build\
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b0 \cf0 As you've probably already discovered, the new MacAranym project file is located at 
 \f1\fs20 \CocoaLigature0 src/Unix/MacOSX/MacAranym.xcodeproj
@@ -79,19 +83,19 @@ That's it you can start up Xcode with
 \f0\fs24 \CocoaLigature1  and select a target (e.g. MacAranym, MacAranym or a full package) and a build style (Debug for native architecture with all symbols for debugging or Release for universal binaries).\
 \
 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
 \b \cf0 Enabling
 \b0  
 \b native OSMesa software OpenGL rendering (NFOSMESA)
 \b0 \
-\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 \cf0 This feature enables a substantial OpenGL acceleration for Atari applications using the 
 \f1\fs20 osmesa.ldg
 \f0\fs24  or 
 \f1\fs20 tiny.ldg
 \f0\fs24 . as OpenGL framework.\
-\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\ql\qnatural
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560
 \cf0 	1.	Download Mesa GL from its website {\field{\*\fldinst{HYPERLINK "http://mesa3d.org/"}}{\fldrslt http://mesa3d.org}}.\
 	2.	Compile it using the command 
 \f1\fs20 make darwin-fat-all
@@ -105,13 +109,13 @@ That's it you can start up Xcode with
 \f0\fs24  source file to the MacAranym target and (re-)build MacAranym.\
 	4. Copy the 
 \f1\fs20 libGL.1.dylib
-\f2\fs24  and 
+\f0\fs24  and 
 \f1\fs20 libOSMesa.6.dylib
-\f2\fs24  from Mesa GL 
+\f0\fs24  from Mesa GL 
 \f1\fs20 lib
-\f2\fs24  directory into 
+\f0\fs24  directory into 
 \f1\fs20 MacAranym.app/Contents/MacOS/
-\f2\fs24 .\
+\f0\fs24 .\
 	5. Modify your configuration file as below:\
 
 \f1\fs20 			[NFOSMESA]\
@@ -119,16 +123,52 @@ That's it you can start up Xcode with
 			LibGL = libGL.1.dylib\
 			LibOSMesa = libOSMesa.6.dylib
 \f2\fs24 \
-	6.	Install 
+
+\f0 	6.	Install 
 \f1\fs20 osmesa.ldg
-\f2\fs24  and 
+\f0\fs24  and 
 \f1\fs20 nfosmesa.xdd
-\f2\fs24  in your Aranym Atari environment/applications replacing the old dynamic libraries.\
-	7.	Enjoy accelerated Atari OpenGL rendering.\
+\f0\fs24  in your Aranym Atari environment/applications replacing the old dynamic libraries.\
+	7.	Enjoy accelerated Atari OpenGL rendering.
+\f2 \
 
 \f0 \
 \
-\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\ql\qnatural
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
+
+\b \cf0 Enabling
+\b0  
+\b MPFR FPU emulation
+\b0 \
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
+\cf0 This feature enables the use of the more accurate (but less performant) MPFR library for the FPU emulation.\
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560
+\cf0 	1.	Install MPFR using MacPorts ({\field{\*\fldinst{HYPERLINK "http://www.macports.org"}}{\fldrslt http://www.macports.org}}): (this will also install necessary dependencies)\
+
+\f1\fs20 			sudo ports install mpfr +universal\
+
+\f0\fs24 	2.	Edit the MacAranym target: removing the 
+\f1\fs20 fpu_uae.cpp
+\f0\fs24  file and adding the 
+\f1\fs20 fpu_mpfr.cpp
+\f0\fs24  to the "Compile Sources" phase\
+	3.	Edit the targets "Build Settings":\
+			-Modify the CONFIGURE_OPTIONS_TARGET setting 
+\f1\fs20 --enable-fpe="mpfr"
+\f0\fs24 \
+			-Modify the COMPILE_DEFS setting, replacing FPU_UAE by FPU_MPFR\
+			-Add path "
+\f1\fs20 /opt/local/lib
+\f0\fs24 " to the "Library Search Paths" setting\
+			-Add path "
+\f1\fs20 /opt/local/include
+\f0\fs24 " to the "Header Search Paths" setting\
+			-Add path "
+\f1\fs20 -L/opt/local/lib -lmpfr -lgmp
+\f0\fs24 " to the "Other Linker Flags" setting\
+\
+\
+\pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 \cf0 Philipp Donz\'e9\
 2009/03/06\
 }

@@ -1,3 +1,24 @@
+2012/05/08 - Philipp
+- MacAranym.xcodeproj: Support compilation with SDL 1.2.15.
+  The standard Mac OS X deployment target is now 10.6, Intel only.
+  It's still possible to compile binaries with PowerPC and OS 10.5
+  but no more Universal Binaries are going to be built.
+  Build configuration "Release G5" has been removed.
+- MacAranym.xcodeproj: Added new target "MacAranym MMU MPFR" with MPFR FPU 
+  engine enabled. This target needs libgmp and libmpfr from MacPorts.
+  Please checkout the README_Xcode.rtf for more details on how to build.
+- MacAranym.xcodeproj: Renamed "MacAranym JIT IEEE" to "MacAranym JIT" as JIT 
+  already implies IEEE FPU.
+  Further this target has been modified to include always "--enable-jit-fpu".
+- MacAranym.xcodeproj: Clean-up of project global and target specific configure
+  flags (CONFIGURE_OPTIONS_BASE and CONFIGURE_OPTIONS_TARGET).
+  Automatic detection when COMPILE_DEFS do not match what is generated in the
+  Makefile during configure. It is now easier to change configure options on a
+  target and really getting the right stuff compiled.
+- sigsegv_darwin_x86.cpp: Fix compilation of JIT if Mac OS X Deployment target >= 10.5
+- fpu/mathlib.h: fix compilation problem with in fp_do_expm1 inline assembly
+  and LLVM GCC compiler.
+
 2012/05/07 - Philipp
 - dirty_rects.cpp/h: implemented setDirtyLine which calculates the surrounding
   rectangle and adds it to the dirty rectangle list.

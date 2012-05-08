@@ -17,7 +17,7 @@ OPTIONS_FILE=$DERIVED_FILES_DIR/configure_options
 FILE_CONTENT=`cat "$OPTIONS_FILE" 2>/dev/null`
 if [ \( -f "$OPTIONS_FILE" \) -a \( "$FILE_CONTENT" == "$CONFIGURE_OPTIONS" \) ]; then
   echo "Configuration still up-to-date. Skipping reconfiguration."	
-  rsync -pogt "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || exit 1
+  rsync -pogt "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || ( rm "$OPTIONS_FILE" ; exit 1 )
   exit 0
 fi
 
@@ -48,8 +48,11 @@ export PATH="$PATH:/usr/X11R6/bin"
 export ACLOCAL_FLAGS="-I $PROJECT_DIR/../darwin -I /usr/X11/share/aclocal"
 
 # Make sure SDL.framework can be found
-export LDFLAGS=-F$PROJECT_DIR
+export LDFLAGS="-F$PROJECT_DIR"
 export DYLD_FRAMEWORK_PATH=$PROJECT_DIR
+
+# Make sure MPFR is found
+export LDFLAGS="$LDFLAGS -L/opt/local/lib"
 
 if [ ! -d "$DERIVED_FILES_DIR" ]; then
   echo "Creating $DERIVED_FILES_DIR"
@@ -90,12 +93,37 @@ for ARCH in $ARCHS ; do
 #endif
 
 EOF
+
+  # Check whether the COMPILE_DEFS flag is still up-to-date
+  DEFS="`sed -n -e 's/DEFS = \(.*\)/ \1/p' Makefile | sed 's/ -D/ /g'`"
+  echo $COMPILE_DEFS | sed 's/ /\
+/g' | sort > "$DERIVED_FILES_DIR/defs_xcode.txt"
+
+  echo $DEFS | sed 's/ /\
+/g' | sort > "$DERIVED_FILES_DIR/defs_make.txt"
+
+  diff -u "$DERIVED_FILES_DIR/defs_xcode.txt" "$DERIVED_FILES_DIR/defs_make.txt" > "$DERIVED_FILES_DIR/defs_delta.txt"
+  if [ `wc -l < "$DERIVED_FILES_DIR/defs_delta.txt"` -gt 0 ]; then
+    echo "error: Invalid COMPILE_DEFS set in the target build setting."
+    echo "Please add the following flags:"
+    grep -e "^+[^+]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/+//'
+    echo 
+    echo "Please remove the following flags:"
+    grep -e "^-[^-]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/-//'
+    echo
+    echo "Reminder: the following definitions are active for this target"
+    set | grep "COMPILE_DEF"
+    exit 2
+  fi
+
   mv config_$ARCH.h "$DERIVED_FILES_DIR"
   mv Makefile "$DERIVED_FILES_DIR/Makefile_$ARCH"
+
 done
 
 # Remember configure options for next script execution
 echo "$CONFIGURE_OPTIONS" > "$OPTIONS_FILE"
+
 
 echo "Configuration generated:"
 cp "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || exit 1

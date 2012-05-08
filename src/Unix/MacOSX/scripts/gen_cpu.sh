@@ -18,7 +18,7 @@ fi
 # remove old files
 rm -f "$DERIVED_FILES_DIR"/cpu*.*
 
-if [ "x$TARGET_NAME" = "xMacAranym JIT IEEE" ]; then
+if [ "x$TARGET_NAME" = "xMacAranym JIT" ]; then
   IS_JIT_COMPILE="+"
   JIT_ADDITIONAL_FILES="compemu.cpp compstbl.cpp comptbl.h"
   JIT_TARGET=./compemu.cpp
