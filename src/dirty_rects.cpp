@@ -78,7 +78,7 @@ void DirtyRects::setDirtyRect(int x, int y, int w, int h)
 	}
 	y2>>=4;
 	int x1 = x>>4, y1 = y>>4;
-
+    
 	for (y=y1;y<y2;y++) {
 		for(x=x1;x<x2;x++) {
 			if ((x>=0) && (x<dirtyW) && (y>=0) && (y<dirtyH)) {
@@ -87,6 +87,29 @@ void DirtyRects::setDirtyRect(int x, int y, int w, int h)
 		}
 	}
 }
+
+void DirtyRects::setDirtyLine(int x1, int y1, int x2, int y2)
+{
+	int min_x,min_y, max_x, max_y;
+	if (x1<=x2) {
+		min_x=x1;
+		max_x=x2;
+	}
+	else {
+		min_x=x2;
+		max_x=x1;
+	}
+	if (y1<=y2) {
+		min_y=y1;
+		max_y=y2;
+	}
+	else {
+		min_y=y2;
+		max_y=y1;
+	}
+	setDirtyRect(min_x,min_y,max_x-min_x+1,max_y-min_y+1);
+}
+
 
 void DirtyRects::clearDirtyRects(void)
 {

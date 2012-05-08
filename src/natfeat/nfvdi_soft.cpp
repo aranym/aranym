@@ -2170,8 +2170,7 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 			}
 			break;
 	}
-
-	surface->setDirtyRect(x1,y1,x2-x1+1,y2-y1+1);
+	surface->setDirtyLine(x1, y1, x2, y2);
 }
 
 void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
@@ -2312,7 +2311,7 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 			break;
 	}
 
-	surface->setDirtyRect(x1,y,x2-x1+1,1);
+	surface->setDirtyLine(x1, y, x2, y);
 }
 
 void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
@@ -2450,5 +2449,5 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 			break;
 	}
 
-	surface->setDirtyRect(x,y1,1,y2);
+	surface->setDirtyLine(x, y1, x, y2);
 }

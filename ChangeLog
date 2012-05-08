@@ -1,3 +1,11 @@
+2012/05/07 - Philipp
+- dirty_rects.cpp/h: implemented setDirtyLine which calculates the surrounding
+  rectangle and adds it to the dirty rectangle list.
+- nfvdi_soft.cpp: use setDirtyLine instead of setDirtyRect whenever a line is
+  drawn. This fixes redraw glitches whenever a line is not drawn from top left
+  to bottom right.
+
+
 2012/04/05 - Petr
 - configure.ac: don't stop if libusb not found (apparently Debian on kfreebsd
   has the libusb as a fake package or what so the build was failing there)

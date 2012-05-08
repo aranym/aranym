@@ -37,6 +37,7 @@ class DirtyRects
 		void resizeDirty(int width, int height);
 		Uint8 *getDirtyRects(void);
 		void setDirtyRect(int x, int y, int w, int h);
+		void setDirtyLine(int x1, int y1, int x2, int y2);
 		void clearDirtyRects(void);
 		int getDirtyWidth(void);
 		int getDirtyHeight(void);
