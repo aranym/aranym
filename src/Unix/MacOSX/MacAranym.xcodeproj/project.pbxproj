@@ -1894,6 +1894,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ". \"$PROJECT_DIR/scripts/gen_diskimage.sh\"\nexit $?";
+			showEnvVarsInLog = 0;
 		};
 		17AAB3240B20AF440016FB8D /* Script: Run configure */ = {
 			isa = PBXShellScriptBuildPhase;

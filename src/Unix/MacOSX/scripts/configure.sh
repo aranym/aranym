@@ -38,7 +38,7 @@ fi
 export PATH="$PATH:/usr/X11R6/bin"
 
 # Make sure autoconf can be found
-( autoconf -version ) > /dev/null 2>&1 || {
+( autoconf --version ) > /dev/null 2>&1 || {
   echo "autoconf not found: appending /opt search locations to PATH (e.g. if MacPorts is used)"
   export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
 }
