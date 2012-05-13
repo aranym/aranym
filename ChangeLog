@@ -1,3 +1,8 @@
+2012/05/13 - Patrice
+- hostscreen: Merge consecutive dirty blocks to reduce number of update to
+  screen operations.
+
+
 2012/05/08 - Philipp
 - MacAranym.xcodeproj: Support compilation with SDL 1.2.15.
   The standard Mac OS X deployment target is now 10.6, Intel only.
