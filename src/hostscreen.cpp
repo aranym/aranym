@@ -570,22 +570,44 @@ void HostScreen::refreshScreen(void)
 	std::vector<SDL_Rect> update_rects(dirtyW*dirtyH);
 	int i = 0;
 	for (int y=0; y<dirtyH; y++) {
-		for (int x=0; x<dirtyW; x++) {
-			if (dirtyMarker[y * dirtyW + x]) {
-				int maxw = 1<<4, maxh = 1<<4;
-				if (screen->w - (x<<4) < (1<<4)) {
-					maxw = screen->w - (x<<4);
-				}
-				if (screen->h - (y<<4) < (1<<4)) {
-					maxh = screen->h - (y<<4);
-				}
+		int block_w = 0;
+		int block_x = 0;
+		int maxh = 1<<4;
 
-				update_rects[i].x = x<<4;
+		if (screen->h - (y<<4) < (1<<4)) {
+			maxh = screen->h - (y<<4);
+		}
+
+		for (int x=0; x<dirtyW; x++) {
+			int block_update = (x==dirtyW-1);	/* Force update on last column */
+			int maxw = 1<<4;
+
+			if (screen->w - (x<<4) < (1<<4)) {
+				maxw = screen->w - (x<<4);
+			}
+
+			if (dirtyMarker[y * dirtyW + x]) {
+				/* Dirty */
+				if (block_w==0) {
+					/* First dirty block, mark x pos */
+					block_x = x;
+				}
+				block_w += maxw;
+			} else {
+				/* Non dirty, force update of previously merged blocks */
+				block_update = 1;
+			}
+
+			/* Update only if we have a dirty block */
+			if (block_update && (block_w>0)) {
+				update_rects[i].x = block_x<<4;
 				update_rects[i].y = y<<4;
-				update_rects[i].w = maxw;
+				update_rects[i].w = block_w;
 				update_rects[i].h = maxh;
 
 				i++;
+
+				block_w = 0;
 			}
 		}
 	}
