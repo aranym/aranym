@@ -490,34 +490,55 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 	} else {
 		int dirty_w = hsurf->getDirtyWidth();
 		int dirty_h = hsurf->getDirtyHeight();
+
 		for (int y=0; y<dirty_h; y++) {
+			int block_w=0;
+			int block_x=0;
 			int num_lines = height - (y<<4);
+
 			if (num_lines>16) {
 				num_lines=16;
 			}
 
 			for (int x=0; x<dirty_w; x++) {
+				int block_update = (x==dirty_w-1);	/* Force update on last column */
 				int num_cols = width - (x<<4);
+
 				if (num_cols>16) {
 					num_cols=16;
 				}
 
 				if (dirtyRects[y * dirty_w + x]) {
+					/* Dirty */
+					if (block_w==0) {
+						/* First dirty block, mark x pos */
+						block_x = x;
+					}
+					block_w += num_cols;
+				} else {
+					/* Non dirty, force update of previously merged blocks */
+					block_update = 1;
+				}
+
+				/* Update only if we have a dirty block */
+				if (block_update && (block_w>0)) {
 					SDL_Rect src, dst;
 
-					src.x = src_rect.x + (x<<4);
+					src.x = src_rect.x + (block_x<<4);
 					src.y = src_rect.y + (y<<4);
-					src.w = num_cols;
+					src.w = block_w;
 					src.h = num_lines;
 
-					dst.x = dst_rect.x + (x<<4);
+					dst.x = dst_rect.x + (block_x<<4);
 					dst.y = dst_rect.y + (y<<4);
-					dst.w = num_cols;
+					dst.w = block_w;
 					dst.h = num_lines;
 
 					SDL_BlitSurface(sdl_surf, &src, screen, &dst);
 
 					setDirtyRect(dst.x,dst.y,dst.w,dst.h);
+
+					block_w = 0;
 				}
 			}
 		}
