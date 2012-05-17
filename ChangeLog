@@ -1,3 +1,21 @@
+2012/05/17 - Philipp (Based on the patches provided by Olivier Landemarre)
+- nfvdi_soft.cpp: Performance improvements by skipping memory translation
+  if MMU emulation is disabled.
+- dirty_rect.cpp: maintain a surrounding rectangle containing the whole
+  dirtied area.
+- hostscreen.cpp: Two possible modes for updating the atari screen surface 
+  and the host screen surface: "chunky" (as in previous versions, uses 
+  multiple, small rectangular updates) and "single" (which uses one single
+  rectangular update over the whole "dirty" surface)
+- parameters.cpp/dlgVideo.cpp: new boolean "SingleBlitRefresh" 
+  and "SingleBlitComposing" for the video configuration segment. 
+  If set to "Yes" the screen to be composed/screen to be refreshed will be sent
+  in a single BitBlit to the screen/graphics card. If set to "No", only the 
+  dirty screen areas are sent by using multiple BitBlits. 
+  Default is "No".
+  => Checkout what combination gives you the best performance.
+
+
 2012/05/13 - Patrice
 - hostscreen: Merge consecutive dirty blocks to reduce number of update to
   screen operations.
