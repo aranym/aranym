@@ -46,6 +46,9 @@ void DirtyRects::resizeDirty(int width, int height)
 		delete dirtyMarker;
 	}
 
+	areaW = width;
+	areaH = height;
+
 	dirtyW = width>>4;
 	if (width & 15) {
 		dirtyW++;
@@ -58,6 +61,10 @@ void DirtyRects::resizeDirty(int width, int height)
 
 	/* Will refresh everything */
 	memset(dirtyMarker, 1, dirtyW * dirtyH);
+	minDirtX = 0;
+	minDirtY = 0;
+	maxDirtX = areaW-1;
+	maxDirtY = areaH-1;
 }
 
 Uint8 *DirtyRects::getDirtyRects(void)
@@ -67,6 +74,17 @@ Uint8 *DirtyRects::getDirtyRects(void)
 
 void DirtyRects::setDirtyRect(int x, int y, int w, int h)
 {
+	// adjust minDirt and maxDirt points
+	if (x < minDirtX)
+		minDirtX = x & 0xfffffff0;  // rounded down to multiple of 16
+	if (y < minDirtY)
+		minDirtY = y & 0xfffffff0;  // rounded down to multiple of 16
+	if (x+w-1 > maxDirtX)
+		maxDirtX = x+w-1;
+	if (y+h-1 > maxDirtY)
+		maxDirtY = y+h-1;
+
+	// mark affected area in our marker map as dirty
 	int x2 = x+w;
 	if (x2 & 15) {
 		x2 = (x2|15)+1;
@@ -113,8 +131,21 @@ void DirtyRects::setDirtyLine(int x1, int y1, int x2, int y2)
 
 void DirtyRects::clearDirtyRects(void)
 {
+	// clear marker map
 	memset(dirtyMarker, 0, dirtyW * dirtyH);
+
+	// reset dirt points
+	minDirtX = areaW;
+	minDirtY = areaH;
+	maxDirtX = 0;
+	maxDirtY = 0;
 }
+
+bool DirtyRects::hasDirtyRect(void)
+{
+	return minDirtX<=maxDirtX;
+}
+
 
 int DirtyRects::getDirtyWidth(void)
 {
@@ -124,4 +155,24 @@ int DirtyRects::getDirtyWidth(void)
 int DirtyRects::getDirtyHeight(void)
 {
 	return dirtyH;
+}
+
+int DirtyRects::getMinDirtX(void)
+{
+	return minDirtX;
+}
+
+int DirtyRects::getMinDirtY(void)
+{
+	return minDirtY;
+}
+
+int DirtyRects::getMaxDirtX(void)
+{
+	return maxDirtX;
+}
+
+int DirtyRects::getMaxDirtY(void)
+{
+	return maxDirtY;
 }
