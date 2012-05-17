@@ -709,12 +709,20 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 				memptr saddr_base = data + sx * 4;
 				for(int32 j = 0; j < h; j++) {
 					uint32* daddr = daddr_base;
+#ifdef FULLMMU
 					memptr saddr = saddr_base;
+#else
+					uint32 *saddr = (uint32 *)phys_get_real_address(saddr_base);
+#endif
 					daddr_base += sdl_surf->pitch / 4;
 					saddr_base += pitch;
 					for(int32 i = 0; i < w; i++) {
+#ifdef FULLMMU
 						destData = ReadInt32(saddr);
 						saddr += 4;
+#else
+						destData= (uint32) do_get_mem_long(saddr++);
+#endif
 						*daddr++ = destData;
 					}
 				}
@@ -808,6 +816,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 				}
 			break;
 		case 32:
+#ifdef FULLMMU
 			for(int32 j = 0; j < h; j++)
 				for(int32 i = sx; i < sx + w; i++) {
 					uint32 offset = (dx + i - sx) * 4 + (dy + j) * destPitch;
@@ -816,6 +825,35 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 					destData = applyBlitLogOperation(logOp, destData, srcData);
 					WriteInt32(destAddress + offset, destData);
 				}
+#else
+			if (logOp != 3)
+			{
+				for(int32 j = 0; j < h; j++)
+				{
+					uint32 offset = dx*4 + (dy + j) * destPitch;
+					for(int32 i = sx; i < sx + w; i++) {
+						srcData = hsGetPixel(i, sy + j);
+						destData = ReadInt32(destAddress + offset);
+						destData = applyBlitLogOperation(logOp, destData, srcData);
+						WriteInt32(destAddress + offset, destData);
+						offset += 4;
+					}
+				}
+			}
+			else
+			{
+				for(int32 j2 = 0; j2 < h; j2++)
+				{
+					uint32 offset = dx*4 + (dy + j2) * destPitch;
+					uint32 *destaddr = (uint32 *)phys_get_real_address(destAddress + offset);
+					for(int32 i2 = sx; i2 < sx + w; i2++) {
+						srcData = hsGetPixel(i2, sy + j2);
+						do_put_mem_long(destaddr++, srcData);
+						offset += 4;
+					}
+				}
+			}
+#endif
 			break;
 
 		default:
