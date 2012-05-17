@@ -60,6 +60,8 @@ enum VIDEODLG {
 	AUTOZOOM_ON,
 	AZ_INTEGER,
 	AZ_FIXEDSIZE,
+	SINGLE_BLIT_COMPOSING,
+	SINGLE_BLIT_REFRESH,
 	RES_640,
 	RES_800,
 	RES_1024,
@@ -105,6 +107,8 @@ static SGOBJ videodlg[] =
 	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,14, 16,1, "Autozoom enabled" },
 	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,15, 16,1, "Integer coefs" },
 	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,16, 16,1, "Fixed size" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,17, 19,1, "SingleBlitComposing" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,18, 16,1, "SingleBlitRefresh" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,14, 9,1, "640x480" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,15, 9,1, "800x600" },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,16, 10,1, "1024x768" },
@@ -178,6 +182,8 @@ DlgVideo::DlgVideo(SGOBJ *dlg)
 	videodlg[AUTOZOOM_ON].state = autozoom->enabled ? SG_SELECTED:0;
 	videodlg[AZ_INTEGER].state = autozoom->integercoefs ? SG_SELECTED:0;
 	videodlg[AZ_FIXEDSIZE].state = autozoom->fixedsize ? SG_SELECTED:0;
+	videodlg[SINGLE_BLIT_COMPOSING].state = video->single_blit_composing ? SG_SELECTED : 0;
+	videodlg[SINGLE_BLIT_REFRESH].state = video->single_blit_refresh ? SG_SELECTED : 0;
 
 	videodlg[RES_640].state = 0;
 	videodlg[RES_800].state = 0;
@@ -258,6 +264,9 @@ void DlgVideo::confirm(void)
 	autozoom->enabled = videodlg[AUTOZOOM_ON].state & SG_SELECTED;
 	autozoom->integercoefs = videodlg[AZ_INTEGER].state & SG_SELECTED;
 	autozoom->fixedsize = videodlg[AZ_FIXEDSIZE].state & SG_SELECTED;
+
+    video->single_blit_composing = videodlg[SINGLE_BLIT_COMPOSING].state & SG_SELECTED;
+    video->single_blit_refresh = videodlg[SINGLE_BLIT_REFRESH].state & SG_SELECTED;
 
 	if (videodlg[RES_640].state & SG_SELECTED) {
 		autozoom->width = 640;

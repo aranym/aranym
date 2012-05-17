@@ -278,6 +278,8 @@ struct Config_Tag video_conf[]={
 	{ "BootColorDepth", Byte_Tag, &bx_options.video.boot_color_depth, 0, 0},
 	{ "VidelRefresh", Byte_Tag, &bx_options.video.refresh, 0, 0},
 	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor, 0, 0},
+	{ "SingleBlitComposing", Bool_Tag, &bx_options.video.single_blit_composing, 0, 0},
+	{ "SingleBlitRefresh", Bool_Tag, &bx_options.video.single_blit_refresh, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -288,6 +290,8 @@ void preset_video()
   bx_options.video.monitor = -1;			// preserve default NVRAM monitor
   bx_options.video.refresh = 2;				// 25 Hz update
   strcpy(bx_options.video.window_pos, "");	// ARAnyM window position on screen
+  bx_options.video.single_blit_composing = false;	// Use chunky screen composing
+  bx_options.video.single_blit_refresh = false;	// Use chunky screen refreshing
 }
 
 void postload_video()
