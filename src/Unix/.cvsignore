@@ -5,3 +5,4 @@ cpudefs.cpp
 cpuemu.cpp
 cpustbl.cpp
 cputbl.h
+.DS_Store

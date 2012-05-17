@@ -1,3 +1,4 @@
 SDL.framework
 build
 SDL_image.framework
+.DS_Store
