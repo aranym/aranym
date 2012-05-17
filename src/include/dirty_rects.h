@@ -29,6 +29,8 @@ class DirtyRects
 		/* Dirty rectangle list */
 		Uint8 *dirtyMarker;
 		int dirtyW, dirtyH;
+		int areaW, areaH;
+		int minDirtX, minDirtY, maxDirtX, maxDirtY;
 
 	public:
 		DirtyRects(int width = 16, int height = 16);
@@ -39,8 +41,13 @@ class DirtyRects
 		void setDirtyRect(int x, int y, int w, int h);
 		void setDirtyLine(int x1, int y1, int x2, int y2);
 		void clearDirtyRects(void);
+		bool hasDirtyRect(void);
 		int getDirtyWidth(void);
 		int getDirtyHeight(void);
+		int getMinDirtX(void);
+		int getMinDirtY(void);
+		int getMaxDirtX(void);
+		int getMaxDirtY(void);
 };
 
 #endif /* DIRTYRECTS_H */
