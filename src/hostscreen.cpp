@@ -277,7 +277,7 @@ void HostScreen::refreshVidel(void)
 void HostScreen::forceRefreshVidel(void)
 {
 	if (!getVIDEL()) {
-		return;	
+		return;
 	}
 
 	getVIDEL()->forceRefresh();
@@ -487,62 +487,83 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 		SDL_BlitSurface(sdl_surf, &src_rect, screen, &dst_rect);
 
 		setDirtyRect(dst_rect.x,dst_rect.y,dst_rect.w,dst_rect.h);
-	} else {
-		int dirty_w = hsurf->getDirtyWidth();
-		int dirty_h = hsurf->getDirtyHeight();
-
-		for (int y=0; y<dirty_h; y++) {
-			int block_w=0;
-			int block_x=0;
-			int num_lines = height - (y<<4);
-
-			if (num_lines>16) {
-				num_lines=16;
-			}
-
-			for (int x=0; x<dirty_w; x++) {
-				int block_update = (x==dirty_w-1);	/* Force update on last column */
-				int num_cols = width - (x<<4);
-
-				if (num_cols>16) {
-					num_cols=16;
+	} 
+	else if(hsurf->hasDirtyRect()) 
+	{
+		if(bx_options.video.single_blit_composing) {
+			// redraw only using one SDL Blit
+			
+			SDL_Rect src, dst;
+			dst.x = dst_rect.x +  hsurf->getMinDirtX();
+			dst.y = dst_rect.y +  hsurf->getMinDirtY();
+			dst.w = dst_rect.w +  hsurf->getMaxDirtX()-hsurf->getMinDirtX()+1;
+			dst.h = dst_rect.h +  hsurf->getMaxDirtY()-hsurf->getMinDirtY()+1;
+			src.x = src_rect.x +  hsurf->getMinDirtX();
+			src.y = src_rect.y +  hsurf->getMinDirtY();
+			src.w = src_rect.w +  hsurf->getMaxDirtX()-hsurf->getMinDirtX()+1;
+			src.h = src_rect.h +  hsurf->getMaxDirtY()-hsurf->getMinDirtX()+1;
+			
+			SDL_BlitSurface(sdl_surf, &src, screen, &dst);
+			setDirtyRect(dst.x,dst.y,dst.w,dst.h);
+		}
+		else {
+			// Chunky redraw: blit multiple 16x16 rectangles
+			int dirty_w = hsurf->getDirtyWidth();
+			int dirty_h = hsurf->getDirtyHeight();
+			
+			for (int y=0; y<dirty_h; y++) {
+				int block_w=0;
+				int block_x=0;
+				int num_lines = height - (y<<4);
+				
+				if (num_lines>16) {
+					num_lines=16;
 				}
-
-				if (dirtyRects[y * dirty_w + x]) {
-					/* Dirty */
-					if (block_w==0) {
-						/* First dirty block, mark x pos */
-						block_x = x;
+				
+				for (int x=0; x<dirty_w; x++) {
+					int block_update = (x==dirty_w-1);	/* Force update on last column */
+					int num_cols = width - (x<<4);
+					
+					if (num_cols>16) {
+						num_cols=16;
 					}
-					block_w += num_cols;
-				} else {
-					/* Non dirty, force update of previously merged blocks */
-					block_update = 1;
-				}
-
-				/* Update only if we have a dirty block */
-				if (block_update && (block_w>0)) {
-					SDL_Rect src, dst;
-
-					src.x = src_rect.x + (block_x<<4);
-					src.y = src_rect.y + (y<<4);
-					src.w = block_w;
-					src.h = num_lines;
-
-					dst.x = dst_rect.x + (block_x<<4);
-					dst.y = dst_rect.y + (y<<4);
-					dst.w = block_w;
-					dst.h = num_lines;
-
-					SDL_BlitSurface(sdl_surf, &src, screen, &dst);
-
-					setDirtyRect(dst.x,dst.y,dst.w,dst.h);
-
-					block_w = 0;
+					
+					if (dirtyRects[y * dirty_w + x]) {
+						/* Dirty */
+						if (block_w==0) {
+							/* First dirty block, mark x pos */
+							block_x = x;
+						}
+						block_w += num_cols;
+					} else {
+						/* Non dirty, force update of previously merged blocks */
+						block_update = 1;
+					}
+					
+					/* Update only if we have a dirty block */
+					if (block_update && (block_w>0)) {
+						SDL_Rect src, dst;
+						
+						src.x = src_rect.x + (block_x<<4);
+						src.y = src_rect.y + (y<<4);
+						src.w = block_w;
+						src.h = num_lines;
+						
+						dst.x = dst_rect.x + (block_x<<4);
+						dst.y = dst_rect.y + (y<<4);
+						dst.w = block_w;
+						dst.h = num_lines;
+						
+						SDL_BlitSurface(sdl_surf, &src, screen, &dst);
+						
+						setDirtyRect(dst.x,dst.y,dst.w,dst.h);
+						
+						block_w = 0;
+					}
 				}
 			}
 		}
-
+		
 		hsurf->clearDirtyRects();
 	}
 
@@ -566,54 +587,68 @@ void HostScreen::refreshScreen(void)
 		return;
 	}
 
-	/* Only update dirtied rects */
-	std::vector<SDL_Rect> update_rects(dirtyW*dirtyH);
-	int i = 0;
-	for (int y=0; y<dirtyH; y++) {
-		int block_w = 0;
-		int block_x = 0;
-		int maxh = 1<<4;
-
-		if (screen->h - (y<<4) < (1<<4)) {
-			maxh = screen->h - (y<<4);
-		}
-
-		for (int x=0; x<dirtyW; x++) {
-			int block_update = (x==dirtyW-1);	/* Force update on last column */
-			int maxw = 1<<4;
-
-			if (screen->w - (x<<4) < (1<<4)) {
-				maxw = screen->w - (x<<4);
-			}
-
-			if (dirtyMarker[y * dirtyW + x]) {
-				/* Dirty */
-				if (block_w==0) {
-					/* First dirty block, mark x pos */
-					block_x = x;
-				}
-				block_w += maxw;
-			} else {
-				/* Non dirty, force update of previously merged blocks */
-				block_update = 1;
-			}
-
-			/* Update only if we have a dirty block */
-			if (block_update && (block_w>0)) {
-				update_rects[i].x = block_x<<4;
-				update_rects[i].y = y<<4;
-				update_rects[i].w = block_w;
-				update_rects[i].h = maxh;
-
-				i++;
-
-				block_w = 0;
-			}
-		}
+	if(!hasDirtyRect()) 
+		return;
+	
+	if(bx_options.video.single_blit_composing) {
+		/* Only update dirty rect with a single update*/
+		SDL_Rect update_rect;
+		update_rect.x=minDirtX;
+		update_rect.y=minDirtY;
+		update_rect.w=maxDirtX-minDirtX+1;
+		update_rect.h=maxDirtY-minDirtY+1;
+		SDL_UpdateRects(screen, 1, &update_rect);
 	}
-
-	SDL_UpdateRects(screen, i, &update_rects[0]);
-
+	else {
+		// Chunky redraw: blit multiple 16x16 rectangles
+		/* Only update dirtied rects */
+		std::vector<SDL_Rect> update_rects(dirtyW*dirtyH);
+		int i = 0;
+		for (int y=0; y<dirtyH; y++) {
+			int block_w = 0;
+			int block_x = 0;
+			int maxh = 1<<4;
+			
+			if (screen->h - (y<<4) < (1<<4)) {
+				maxh = screen->h - (y<<4);
+			}
+			
+			for (int x=0; x<dirtyW; x++) {
+				int block_update = (x==dirtyW-1);	/* Force update on last column */
+				int maxw = 1<<4;
+				
+				if (screen->w - (x<<4) < (1<<4)) {
+					maxw = screen->w - (x<<4);
+				}
+				
+				if (dirtyMarker[y * dirtyW + x]) {
+					/* Dirty */
+					if (block_w==0) {
+						/* First dirty block, mark x pos */
+						block_x = x;
+					}
+					block_w += maxw;
+				} else {
+					/* Non dirty, force update of previously merged blocks */
+					block_update = 1;
+				}
+				
+				/* Update only if we have a dirty block */
+				if (block_update && (block_w>0)) {
+					update_rects[i].x = block_x<<4;
+					update_rects[i].y = y<<4;
+					update_rects[i].w = block_w;
+					update_rects[i].h = maxh;
+					
+					i++;
+					
+					block_w = 0;
+				}
+			}
+		}
+				
+		SDL_UpdateRects(screen, i, &update_rects[0]);
+	}	
 	clearDirtyRects();
 }
 
