@@ -271,6 +271,7 @@ void HostScreen::clearScreen(void)
 
 void HostScreen::refreshVidel(void)
 {
+	getVIDEL()->forceRefresh();
 	refreshSurface(getVIDEL()->getSurface());
 }
 

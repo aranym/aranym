@@ -1,3 +1,8 @@
+2012/05/20 - Philipp
+- hostscreen.cpp: "enforce VIDEL refresh" was missing => no screen updates 
+  during boot up when no nfVDI was active.
+
+
 2012/05/17 - Philipp (Based on the patches provided by Olivier Landemarre)
 - nfvdi_soft.cpp: Performance improvements by skipping memory translation
   if MMU emulation is disabled.
