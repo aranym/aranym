@@ -20,17 +20,17 @@ static BOOL gCalledAppMainline = FALSE;
 char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 
 
-@interface SDLApplication : NSApplication
+@interface NSApplication (SDLApplication)
 @end
 
-@implementation SDLApplication
+@implementation NSApplication (SDLApplication)
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
 {
-	/* Post a SDL_QUIT event */
-	SDL_Event event;
-	event.type = SDL_QUIT;
-	SDL_PushEvent(&event);
+    /* Post a SDL_QUIT event */
+    SDL_Event event;
+    event.type = SDL_QUIT;
+    SDL_PushEvent(&event);
 }
 @end
 
@@ -202,7 +202,6 @@ int main (int argc, char **argv)
 		gFinderLaunch = NO;
 	}
 
-	[SDLApplication poseAsClass:[NSApplication class]];
 	NSApplicationMain (argc, (const char **)argv);
 
 	return 0;

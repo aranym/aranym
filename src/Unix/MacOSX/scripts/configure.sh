@@ -13,15 +13,32 @@ fi
 #################### CONFIGURE SYSTEM ################
 # Check if configure script has to be run
 echo "Checking configure options: $CONFIGURE_OPTIONS"
-OPTIONS_FILE=$DERIVED_FILES_DIR/configure_options
-FILE_CONTENT=`cat "$OPTIONS_FILE" 2>/dev/null`
-if [ \( -f "$OPTIONS_FILE" \) -a \( "$FILE_CONTENT" == "$CONFIGURE_OPTIONS" \) ]; then
+
+# collect current configuration (CONFIGURE_OPTIONS and COMPILE_DEFS_xyz)
+OPTIONS_FILE_CUR=$BUILD_DIR/configure_options
+echo "" > "$OPTIONS_FILE_CUR"
+for ARCH in $ARCHS ; do
+  COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
+  echo "$COMPILE_DEFS" >> "$OPTIONS_FILE_CUR"
+done
+echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE_CUR"
+FILE_CONTENT_CUR=`cat "$OPTIONS_FILE_CUR" 2>/dev/null`
+
+# collect content of previous script execution
+OPTIONS_FILE_OLD=$DERIVED_FILES_DIR/configure_options
+FILE_CONTENT_OLD=`cat "$OPTIONS_FILE_OLD" 2>/dev/null`
+
+if [ \( -f "$OPTIONS_FILE_OLD" \) -a \( "$FILE_CONTENT_OLD" == "$FILE_CONTENT_CUR" \) ]; then
   echo "Configuration still up-to-date. Skipping reconfiguration."	
   rsync -pogt "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || ( rm "$OPTIONS_FILE" ; exit 1 )
   exit 0
 fi
 
 echo "Running configure script for the following architectures $ARCHS"
+
+# generate a fresh options file
+OPTIONS_FILE="$OPTIONS_FILE_OLD"
+echo "" > "$OPTIONS_FILE"
 
 # Check if PROJECT_DIR variable is set (Xcode 2.x)
 if [ -z "$PROJECT_DIR" ]; then
@@ -75,8 +92,11 @@ fi
 echo "" > "$DERIVED_FILES_DIR/config.h"
 for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
-  echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE / $UREL"
+  COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
+  echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE"
+  echo "COMPILE_DEFS=$COMPILE_DEFS"
   echo $PWD
+
   ./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-$OSTYPE || exit 1
 
   if [ "$ARCH" = "ppc" -a "$SDK_NAME" = "macosx10.3.9" ]; then
@@ -104,14 +124,14 @@ EOF
 
   diff -u "$DERIVED_FILES_DIR/defs_xcode.txt" "$DERIVED_FILES_DIR/defs_make.txt" > "$DERIVED_FILES_DIR/defs_delta.txt"
   if [ `wc -l < "$DERIVED_FILES_DIR/defs_delta.txt"` -gt 0 ]; then
-    echo "error: Invalid COMPILE_DEFS set in the target build setting."
+    echo "error: Invalid COMPILE_DEFS_$ARCH set in the target build setting."
     echo "Please add the following flags:"
     grep -e "^+[^+]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/+//'
     echo 
     echo "Please remove the following flags:"
     grep -e "^-[^-]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/-//'
     echo
-    echo "Reminder: the following definitions are active for this target"
+    echo "Reminder: the following definitions are active for this target & architecture ($ARCH)"
     set | grep "COMPILE_DEF"
     exit 2
   fi
@@ -119,10 +139,11 @@ EOF
   mv config_$ARCH.h "$DERIVED_FILES_DIR"
   mv Makefile "$DERIVED_FILES_DIR/Makefile_$ARCH"
 
+  echo "$COMPILE_DEFS" >> "$OPTIONS_FILE"
 done
 
 # Remember configure options for next script execution
-echo "$CONFIGURE_OPTIONS" > "$OPTIONS_FILE"
+echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE"
 
 
 echo "Configuration generated:"
