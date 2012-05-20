@@ -5,6 +5,8 @@
 - Xcode project: enable X86_64 compilation beside i386 architecture and build
   fat binaries. 64 bit support in SDL is only available as of Mac OS 10.6.
   Therefore on 10.5 only the 32 bit version will run.
+- hostscreen.cpp: fix missing check for "SingleBlitRefresh" configuration in
+  refreshScreen().
 
 
 2012/05/17 - Philipp (Based on the patches provided by Olivier Landemarre)

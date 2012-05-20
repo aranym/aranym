@@ -591,7 +591,7 @@ void HostScreen::refreshScreen(void)
 	if(!hasDirtyRect()) 
 		return;
 	
-	if(bx_options.video.single_blit_composing) {
+	if(bx_options.video.single_blit_refresh) {
 		/* Only update dirty rect with a single update*/
 		SDL_Rect update_rect;
 		update_rect.x=minDirtX;
