@@ -930,8 +930,8 @@ PRIVATE inline fpu_extended fp_do_cos(fpu_extended x)
 
 PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 {
-	fpu_extended value;
-	__asm__ __volatile__("fptan" : "=t" (value), "=u" (value) : "0" (x));
+	fpu_extended value, value2;
+	__asm__ __volatile__("fptan" : "=t" (value2), "=u" (value) : "0" (x));
 	return value;
 }
 #endif /* ACCURATE_SIN_COS_TAN */
@@ -961,7 +961,7 @@ PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 				 : "=t" (value), "=u" (exponent) : "0" (x));
 	__asm__ __volatile__("fld1    \n\t"
                          "fscale  \n\t"
-                         : "=t" (temp) : "u" (exponent));
+                         : "=t" (temp) : "0" (exponent));
 	temp -= 1.0;
 	return temp + value ? temp + value : x;
 }
