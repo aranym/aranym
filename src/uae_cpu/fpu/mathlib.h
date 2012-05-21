@@ -942,7 +942,7 @@ PRIVATE inline fpu_extended fp_do_tan(fpu_extended x)
 // Returns: exp(X) - 1.0
 PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 {
-	fpu_extended value, exponent, temp;
+	fpu_extended value, exponent, temp, temp2;
 	if (isinf(x))
 	{
 		if(isneg(x))
@@ -961,7 +961,7 @@ PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 				 : "=t" (value), "=u" (exponent) : "0" (x));
 	__asm__ __volatile__("fld1    \n\t"
                          "fscale  \n\t"
-                         : "=t" (temp) : "0" (exponent));
+                         : "=t" (temp), "=u" (temp2) : "0" (exponent));
 	temp -= 1.0;
 	return temp + value ? temp + value : x;
 }
