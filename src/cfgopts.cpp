@@ -480,7 +480,7 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 
 	case Byte_Tag:
 		temp = (int)*((char *)(ptr->buf));
-		fprintf(outfile, "%hd\n", temp);
+		fprintf(outfile, "%hd\n", (short)temp);
 		break;
 
 	case Word_Tag:

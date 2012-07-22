@@ -1,3 +1,12 @@
+2012/07/08 - Philipp
+- Source cleanup/remove warnings for compilation with latest LLVM compiler of
+  Xcode 4.5
+- Building on Mac OS 10.7: Do not set "-isysroot" during compilation. Targetting
+  Mac OS 10.5 is still possible without explicitely specifying the SDK to use
+  for compilation. This was only necessary during Universal Binary builds where
+  explicitely the MacOSX10.4u.sdk had to be used to build multi architecture
+  builds.
+
 2012/05/20 - Philipp
 - hostscreen.cpp: "enforce VIDEL refresh" was missing => no screen updates 
   during boot up when no nfVDI was active.
