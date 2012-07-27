@@ -186,6 +186,8 @@ AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code d
 
 AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
+AC_ARG_ENABLE(bpf-ethernet,    [  --enable-bpf-ethernet   enable ethernet card emulation using BPF (default=no)], [WANT_BFP_ETHERNET=$enableval], [WANT_BFP_ETHERNET=no])
+
 AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
@@ -280,6 +282,7 @@ AC_CHECK_HEADERS(linux/if.h linux/if_tun.h net/if.h net/if_tun.h, [], [], [
 #include <sys/socket.h>
 #endif
 ])
+AC_CHECK_HEADERS(net/bpf.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
@@ -422,39 +425,44 @@ AC_CACHE_CHECK([for __wchar_t],
 ])
 AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, $ac_cv_wchar_t, [Define if wchar_t is present])
 
-if [[ "x$OS_TYPE" = "xdarwin" ]]; then
-  if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
-	ac_cv_tun_tap_support=yes
-  else
-	ac_cv_tun_tap_support=no
-  fi
-else
-  dnl Check that the host supports TUN/TAP devices
-  AC_CACHE_CHECK([whether TUN/TAP is supported],
-    ac_cv_tun_tap_support, [
-    AC_TRY_COMPILE([
-      #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
-      #ifdef HAVE_SYS_SOCKET_H
-      #include <sys/socket.h>
-      #endif
-      #include <linux/if.h>
-      #include <linux/if_tun.h>
-      #endif
-      #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
-      #include <net/if.h>
-      #include <net/if_tun.h>
-      #endif
-    ], [
-      struct ifreq ifr;
-      memset(&ifr, 0, sizeof(ifr));
-      ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-    ],
-    ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
-    )
-  ])
-fi
-AC_TRANSLATE_DEFINE(ENABLE_TUNTAP, $ac_cv_tun_tap_support,
-  [Define if your system supports TUN/TAP devices.])
+dnl Check that the host supports TUN/TAP devices
+AC_CACHE_CHECK([whether TUN/TAP is supported],
+  ac_cv_tun_tap_support, [
+  AC_TRY_COMPILE([
+    #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
+    #ifdef HAVE_SYS_SOCKET_H
+    #include <sys/socket.h>
+    #endif
+    #include <linux/if.h>
+    #include <linux/if_tun.h>
+    #endif
+    #if defined(HAVE_NET_IF_H) && defined(HAVE_NET_IF_TUN_H)
+    #include <net/if.h>
+    #include <net/if_tun.h>
+    #endif
+  ], [
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
+  ],
+  ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
+  )
+])
+
+dnl Check that the host supports BPF devices
+AC_CACHE_CHECK([whether BPF is supported],
+  ac_cv_bpf_support, [
+  AC_TRY_COMPILE([
+    #if defined(HAVE_NET_BPF_H)
+    #include <net/bpf.h>
+    #endif
+  ], [
+    struct bpf_program filter;
+  ],
+  ac_cv_bpf_support=yes, ac_cv_bpf_support=no
+  )
+])
+
   
 dnl Various checks if the system supports vm_allocate() and the like functions.
 have_mach_vm=no
@@ -937,6 +945,17 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
+    TAPIF=""
+    HAVE_ETHERNET="yes"
+  elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
+    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    if [[ "x$WANT_BFP_ETHERNET" = "xyes" ]]; then
+      AC_TRANSLATE_DEFINE(ENABLE_BPF, $ac_cv_bpf_support,
+        [Define if your system supports BPF devices.])
+    else
+      AC_MSG_WARN([Ethernet won't work without TunTap driver for Mac OS X. See http://tuntaposx.sourceforge.net/])
+    fi
     SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
     TAPIF=""
     HAVE_ETHERNET="yes"

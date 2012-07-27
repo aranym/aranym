@@ -30,11 +30,12 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		170539151555D457006A6DDE /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		170539161555D457006A6DDE /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
-		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Dynamic Libraries into .app bundle */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
-		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Dynamic Libraries into .app bundle */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
+		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
+		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
+		1717653C15AA2D6B002F920C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
 		1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
 		1717E85C151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
 		1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1717E85A151680B900D416FA /* dlgUsb.cpp */; };
@@ -68,6 +69,13 @@
 		1736B1110C70ED5900C56FAF /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
 		1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 1736B1020C70ED5900C56FAF /* SDLMain.m */; };
 		17398E120B21048100A9B4DB /* README.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17398E110B21048100A9B4DB /* README.rtf */; };
+		17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
+		17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
+		17473D2F15AA0A2700CAEA47 /* bpf_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1415AA07FD00CAEA47 /* bpf_helper.c */; };
+		17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
+		17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
+		17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
+		17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
 		175909560CA453990089CF9F /* dirty_rects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 175909550CA453990089CF9F /* dirty_rects.cpp */; };
@@ -265,6 +273,12 @@
 		17798F5D0A653163009733EB /* dlgHotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CF10A652B50009733EB /* dlgHotkeys.cpp */; };
 		17798F5E0A653166009733EB /* dlgAlert.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798CEE0A652B50009733EB /* dlgAlert.cpp */; };
 		177990520A6538B5009733EB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
+		177A4E0615AA29AC00780D11 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
+		177A4E0815AA29AD00780D11 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
+		177A4E0915AA29AE00780D11 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
+		177A4E0A15AA29BE00780D11 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
+		177A4E0B15AA29BF00780D11 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
+		177A4E0C15AA29C000780D11 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
 		17AAB12C0B206BF20016FB8D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
 		17AAB1320B206C0E0016FB8D /* nfvdi_opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA40A652B51009733EB /* nfvdi_opengl.cpp */; };
 		17AC409E13F1D42F003B4FAD /* cpudefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17AC409A13F1D403003B4FAD /* cpudefs.cpp */; };
@@ -364,6 +378,7 @@
 		17C0AFFF0CBB0A85000D2916 /* logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C0AFFC0CBB0A85000D2916 /* logo.cpp */; };
 		17CDFE620B2196CD001BABB0 /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
 		17D5D2590AC70DBD003D0FE9 /* midi_file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */; };
+		17DA987515BC88EF00D0B5E4 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
 		17EC07E30ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
 		17EC07E40ECB762900100ED7 /* dsp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07E00ECB762900100ED7 /* dsp_cpu.c */; };
 		17EC07E70ECB762900100ED7 /* dsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = 17EC07DF0ECB762900100ED7 /* dsp_core.c */; };
@@ -527,6 +542,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		17473D3315AA0A5D00CAEA47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
+			remoteInfo = bpf_helper;
+		};
+		17473D3815AA0FF400CAEA47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
+			remoteInfo = bpf_helper;
+		};
+		17473D3A15AA0FF800CAEA47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
+			remoteInfo = bpf_helper;
+		};
+		17473D3C15AA0FFA00CAEA47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
+			remoteInfo = bpf_helper;
+		};
 		17B1145E151E696B00E4EB0F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -563,16 +606,59 @@
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		170539191555D5BF006A6DDE /* Copy Dynamic Libraries into .app bundle */ = {
+		170539191555D5BF006A6DDE /* Copy Executables */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Dynamic Libraries into .app bundle */,
-				1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Dynamic Libraries into .app bundle */,
+				17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */,
+				1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */,
+				1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */,
 			);
-			name = "Copy Dynamic Libraries into .app bundle";
+			name = "Copy Executables";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17473D2315AA0A1100CAEA47 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		17473D3515AA0A7500CAEA47 /* Copy Executables */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */,
+			);
+			name = "Copy Executables";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17473D3E15AA103E00CAEA47 /* Copy Executables */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */,
+			);
+			name = "Copy Executables";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		17473D4015AA106700CAEA47 /* Copy Executables */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */,
+			);
+			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1778A4DA1555A8A70005B336 /* Copy Frameworks into .app bundle */ = {
@@ -691,6 +777,12 @@
 		1736B1020C70ED5900C56FAF /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		17398E110B21048100A9B4DB /* README.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README.rtf; sourceTree = "<group>"; };
 		1743987C0B320B480011038E /* README_Xcode.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README_Xcode.rtf; sourceTree = "<group>"; };
+		17473D1415AA07FD00CAEA47 /* bpf_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bpf_helper.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ethernet_macosx.cpp; sourceTree = "<group>"; };
+		17473D1615AA07FD00CAEA47 /* ethernet_macosx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ethernet_macosx.h; sourceTree = "<group>"; };
+		17473D1715AA07FD00CAEA47 /* fd_trans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fd_trans.c; sourceTree = "<group>"; };
+		17473D1815AA07FD00CAEA47 /* fd_trans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fd_trans.h; sourceTree = "<group>"; };
+		17473D2515AA0A1100CAEA47 /* bpf_helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bpf_helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		175909550CA453990089CF9F /* dirty_rects.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dirty_rects.cpp; path = ../../dirty_rects.cpp; sourceTree = SOURCE_ROOT; usesTabs = 1; };
 		1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.6.dylib; path = MesaGL/lib/libOSMesa.6.dylib; sourceTree = "<group>"; };
 		1765B6EE0C91C0BB00DD682B /* tap.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tap.kext; path = tuntap/tap.kext; sourceTree = "<group>"; };
@@ -708,7 +800,7 @@
 		17798CDC0A652B50009733EB /* bootos_linux.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = bootos_linux.cpp; path = ../../bootos_linux.cpp; sourceTree = SOURCE_ROOT; };
 		17798CDD0A652B50009733EB /* bootos_tos.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = bootos_tos.cpp; path = ../../bootos_tos.cpp; sourceTree = SOURCE_ROOT; };
 		17798CDE0A652B50009733EB /* bootos.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = bootos.cpp; path = ../../bootos.cpp; sourceTree = SOURCE_ROOT; };
-		17798CDF0A652B50009733EB /* cdrom.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cdrom.cpp; path = ../../cdrom.cpp; sourceTree = SOURCE_ROOT; };
+		17798CDF0A652B50009733EB /* cdrom.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = cdrom.cpp; path = ../../cdrom.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		17798CE00A652B50009733EB /* cfgopts.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = cfgopts.cpp; path = ../../cfgopts.cpp; sourceTree = SOURCE_ROOT; };
 		17798CE90A652B50009733EB /* dsp.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dsp.cpp; path = ../../dsp.cpp; sourceTree = SOURCE_ROOT; };
 		17798CEA0A652B50009733EB /* emul_op.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = emul_op.cpp; path = ../../emul_op.cpp; sourceTree = SOURCE_ROOT; };
@@ -922,7 +1014,7 @@
 		17798DEC0A652B51009733EB /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = autogen.sh; path = ../../../autogen.sh; sourceTree = SOURCE_ROOT; };
 		17798DF60A652B51009733EB /* config.guess */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = config.guess; path = ../../../config.guess; sourceTree = SOURCE_ROOT; };
 		17798DF90A652B51009733EB /* config.log */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = config.log; path = ../../../config.log; sourceTree = SOURCE_ROOT; };
-		17798DFD0A652B51009733EB /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = configure.ac; path = ../../../configure.ac; sourceTree = SOURCE_ROOT; };
+		17798DFD0A652B51009733EB /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 5; indentWidth = 4; lastKnownFileType = text; name = configure.ac; path = ../../../configure.ac; sourceTree = SOURCE_ROOT; tabWidth = 4; usesTabs = 0; };
 		17798E130A652B51009733EB /* getopt.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = getopt.c; sourceTree = "<group>"; };
 		17798E140A652B51009733EB /* getopt.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = getopt.h; sourceTree = "<group>"; };
 		17798E150A652B51009733EB /* getopt1.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = getopt1.c; sourceTree = "<group>"; };
@@ -970,13 +1062,14 @@
 		17BCD8B70B21004100432CE1 /* TODO */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = TODO; path = ../../../TODO; sourceTree = SOURCE_ROOT; };
 		17BCD8C80B21010C00432CE1 /* config */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = config; path = ../../../doc/config; sourceTree = SOURCE_ROOT; };
 		17C0AFFC0CBB0A85000D2916 /* logo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = logo.cpp; path = ../../logo.cpp; sourceTree = SOURCE_ROOT; };
-		17CF9557156836BE004A7B6C /* config_x86_64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = config_x86_64.h; path = "../../../../../Library/Developer/Xcode/DerivedData/MacAranym-cnqblwsgutzmcvdddmebmaaykiuc/Build/Products/config_x86_64.h"; sourceTree = "<group>"; };
-		17CF9558156836CD004A7B6C /* cpuemu_x86_64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_x86_64.cpp; path = "../../../../../Library/Developer/Xcode/DerivedData/MacAranym-cnqblwsgutzmcvdddmebmaaykiuc/Build/Products/cpuemu_x86_64.cpp"; sourceTree = "<group>"; };
 		17D5D2580AC70DBD003D0FE9 /* midi_file.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = midi_file.cpp; path = ../../midi_file.cpp; sourceTree = SOURCE_ROOT; };
 		17D5D25B0AC70DC6003D0FE9 /* midi_sequencer.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = midi_sequencer.cpp; path = ../../midi_sequencer.cpp; sourceTree = SOURCE_ROOT; };
+		17DA987115BC87FD00D0B5E4 /* config_x86_64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config_x86_64.h; path = ../config_x86_64.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		17DA987215BC87FD00D0B5E4 /* cpuemu_x86_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_x86_64.cpp; path = ../cpuemu_x86_64.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		17DA987315BC87FD00D0B5E4 /* version_date.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = version_date.h; path = ../version_date.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E683EA0C90E38900A8BE0B /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = INSTALL; path = ../../../INSTALL; sourceTree = SOURCE_ROOT; };
-		17E699AC13F3395A00C3B36D /* comptbl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comptbl.h; path = "../../../../../Library/Developer/Xcode/DerivedData/MacAranym-emezrpltlxmgkfflpajbibwufhej/Build/Products/comptbl.h"; sourceTree = "<group>"; };
-		17E699AD13F33A7F00C3B36D /* version_date.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = version_date.h; path = "../../../../../Library/Developer/Xcode/DerivedData/MacAranym-cnqblwsgutzmcvdddmebmaaykiuc/Build/Products/version_date.h"; sourceTree = "<group>"; };
+		17E699AC13F3395A00C3B36D /* comptbl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comptbl.h; path = "../../../../MacAranym-emezrpltlxmgkfflpajbibwufhej/Build/Products/comptbl.h"; sourceTree = BUILT_PRODUCTS_DIR; };
+		17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = README_ethernet.rtf; sourceTree = "<group>"; };
 		17EC07DF0ECB762900100ED7 /* dsp_core.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_core.c; path = ../../dsp_core.c; sourceTree = SOURCE_ROOT; };
 		17EC07E00ECB762900100ED7 /* dsp_cpu.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_cpu.c; path = ../../dsp_cpu.c; sourceTree = SOURCE_ROOT; };
 		17EC07E10ECB762900100ED7 /* dsp_disasm.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dsp_disasm.c; path = ../../dsp_disasm.c; sourceTree = SOURCE_ROOT; };
@@ -1025,6 +1118,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		17473D2215AA0A1100CAEA47 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1717653C15AA2D6B002F920C /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1778A4CF1555A8A70005B336 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1504,6 +1605,11 @@
 		17798E210A652B51009733EB /* MacOSX */ = {
 			isa = PBXGroup;
 			children = (
+				17473D1415AA07FD00CAEA47 /* bpf_helper.c */,
+				17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */,
+				17473D1615AA07FD00CAEA47 /* ethernet_macosx.h */,
+				17473D1715AA07FD00CAEA47 /* fd_trans.c */,
+				17473D1815AA07FD00CAEA47 /* fd_trans.h */,
 				17798E420A652B51009733EB /* parameters_MacOSX.cpp */,
 			);
 			path = MacOSX;
@@ -1540,15 +1646,15 @@
 				17AC409913F1D403003B4FAD /* config.h */,
 				17AC409813F1D403003B4FAD /* config_ppc.h */,
 				173598B713F1E97B00F84DB3 /* config_i386.h */,
-				17CF9557156836BE004A7B6C /* config_x86_64.h */,
-				17E699AD13F33A7F00C3B36D /* version_date.h */,
+				17DA987115BC87FD00D0B5E4 /* config_x86_64.h */,
+				17DA987315BC87FD00D0B5E4 /* version_date.h */,
 				17AC409713F1D403003B4FAD /* cputbl.h */,
 				17AC409A13F1D403003B4FAD /* cpudefs.cpp */,
 				17AC409D13F1D403003B4FAD /* cpustbl.cpp */,
 				17AC409C13F1D403003B4FAD /* cpuemu.cpp */,
 				17AC409B13F1D403003B4FAD /* cpuemu_ppc.cpp */,
 				173598B813F1E97B00F84DB3 /* cpuemu_i386.cpp */,
-				17CF9558156836CD004A7B6C /* cpuemu_x86_64.cpp */,
+				17DA987215BC87FD00D0B5E4 /* cpuemu_x86_64.cpp */,
 				173598F413F1F61300F84DB3 /* cpuemu_nf.cpp */,
 				173598F513F1F61300F84DB3 /* cpustbl_nf.cpp */,
 				17E699AC13F3395A00C3B36D /* comptbl.h */,
@@ -1592,6 +1698,7 @@
 				17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */,
 				B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */,
 				1778A4E21555A8A70005B336 /* MacAranym MMU MPFR.app */,
+				17473D2515AA0A1100CAEA47 /* bpf_helper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1608,6 +1715,7 @@
 				17B276EE0A9F52CF00DD6223 /* ChangeLog */,
 				B449DA000D2A9212005F0CC6 /* logo.png */,
 				1743987C0B320B480011038E /* README_Xcode.rtf */,
+				17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */,
 			);
 			name = MacAranym;
 			sourceTree = "<group>";
@@ -1655,6 +1763,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		17473D2415AA0A1100CAEA47 /* bpf_helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 17473D2C15AA0A1100CAEA47 /* Build configuration list for PBXNativeTarget "bpf_helper" */;
+			buildPhases = (
+				17473D2115AA0A1100CAEA47 /* Sources */,
+				17473D2215AA0A1100CAEA47 /* Frameworks */,
+				17473D2315AA0A1100CAEA47 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = bpf_helper;
+			productName = bpf_helper;
+			productReference = 17473D2515AA0A1100CAEA47 /* bpf_helper */;
+			productType = "com.apple.product-type.tool";
+		};
 		1778A4601555A8A70005B336 /* MacAranym MMU+MPFR */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1778A4DE1555A8A70005B336 /* Build configuration list for PBXNativeTarget "MacAranym MMU+MPFR" */;
@@ -1665,13 +1790,14 @@
 				1778A4CF1555A8A70005B336 /* Frameworks */,
 				1778A4D61555A8A70005B336 /* Resources */,
 				1778A4DA1555A8A70005B336 /* Copy Frameworks into .app bundle */,
-				170539191555D5BF006A6DDE /* Copy Dynamic Libraries into .app bundle */,
+				170539191555D5BF006A6DDE /* Copy Executables */,
 				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
 				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				17473D3915AA0FF400CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym MMU+MPFR";
 			productInstallPath = "$(HOME)/Applications";
@@ -1689,11 +1815,13 @@
 				17BCD7DB0B20F64F00432CE1 /* Frameworks */,
 				17BCD7E00B20F64F00432CE1 /* Resources */,
 				17BCD7E30B20F64F00432CE1 /* Copy Frameworks into .app bundle */,
+				17473D3E15AA103E00CAEA47 /* Copy Executables */,
 				17AF061110401EDD007839B5 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				17473D3D15AA0FFA00CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym MMU";
 			productInstallPath = "$(HOME)/Applications";
@@ -1711,11 +1839,13 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				002F39FD09D0883400EBEB88 /* Copy Frameworks into .app bundle */,
+				17473D3515AA0A7500CAEA47 /* Copy Executables */,
 				17AF05D91040117E007839B5 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				17473D3415AA0A5D00CAEA47 /* PBXTargetDependency */,
 			);
 			name = MacAranym;
 			productInstallPath = "$(HOME)/Applications";
@@ -1733,11 +1863,13 @@
 				B439AC8D0C5B2FD00046EFC9 /* Frameworks */,
 				B439AC920C5B2FD00046EFC9 /* Resources */,
 				B439AC950C5B2FD00046EFC9 /* Copy Frameworks into .app bundle */,
+				17473D4015AA106700CAEA47 /* Copy Executables */,
 				17AF0613104020E8007839B5 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				17473D3B15AA0FF800CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym JIT";
 			productInstallPath = "$(HOME)/Applications";
@@ -1764,11 +1896,12 @@
 			projectDirPath = "";
 			projectRoot = ../../..;
 			targets = (
+				17473D2415AA0A1100CAEA47 /* bpf_helper */,
 				8D1107260486CEB800E47090 /* MacAranym */,
 				17BCD7880B20F64F00432CE1 /* MacAranym MMU */,
 				B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */,
-				17AAB2A90B20A8150016FB8D /* Packaging */,
 				1778A4601555A8A70005B336 /* MacAranym MMU+MPFR */,
+				17AAB2A90B20A8150016FB8D /* Packaging */,
 			);
 		};
 /* End PBXProject section */
@@ -1830,6 +1963,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Fix up dynamic libraries\n\ncd \"$TARGET_BUILD_DIR/$EXECUTABLE_FOLDER_PATH\"\nls -al\n\n# Fixup libmpfr\ninstall_name_tool -change /opt/local/lib/libgmp.dylib @executable_path/libgmp.dylib libmpfr.dylib || exit 1\n\n# Fixup executable\ninstall_name_tool -change /opt/local/lib/libgmp.dylib @executable_path/libgmp.dylib \"$EXECUTABLE_NAME\" || exit 1\ninstall_name_tool -change /opt/local/lib/libmpfr.dylib @executable_path/libmpfr.dylib \"$EXECUTABLE_NAME\" || exit 1\n\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 		1778A4611555A8A70005B336 /* Script: Run configure */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2073,6 +2207,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		17473D2115AA0A1100CAEA47 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17DA987515BC88EF00D0B5E4 /* fd_trans.c in Sources */,
+				17473D2F15AA0A2700CAEA47 /* bpf_helper.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1778A4631555A8A70005B336 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2184,6 +2327,8 @@
 				1778A4CC1555A8A70005B336 /* serial.cpp in Sources */,
 				1778A4CD1555A8A70005B336 /* serial_port.cpp in Sources */,
 				1778A4CE1555A8A70005B336 /* dlgUsb.cpp in Sources */,
+				177A4E0915AA29AE00780D11 /* ethernet_macosx.cpp in Sources */,
+				177A4E0C15AA29C000780D11 /* fd_trans.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2298,6 +2443,8 @@
 				1732BC8A1245412B00272489 /* serial.cpp in Sources */,
 				1732BC8B1245412B00272489 /* serial_port.cpp in Sources */,
 				1717E85C151680B900D416FA /* dlgUsb.cpp in Sources */,
+				177A4E0615AA29AC00780D11 /* ethernet_macosx.cpp in Sources */,
+				177A4E0A15AA29BE00780D11 /* fd_trans.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2411,6 +2558,8 @@
 				1732BC881245412B00272489 /* serial.cpp in Sources */,
 				1732BC891245412B00272489 /* serial_port.cpp in Sources */,
 				1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */,
+				17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */,
+				17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2532,12 +2681,34 @@
 				1732BC8C1245412B00272489 /* serial.cpp in Sources */,
 				1732BC8D1245412B00272489 /* serial_port.cpp in Sources */,
 				1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */,
+				177A4E0815AA29AD00780D11 /* ethernet_macosx.cpp in Sources */,
+				177A4E0B15AA29BF00780D11 /* fd_trans.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		17473D3415AA0A5D00CAEA47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
+			targetProxy = 17473D3315AA0A5D00CAEA47 /* PBXContainerItemProxy */;
+		};
+		17473D3915AA0FF400CAEA47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
+			targetProxy = 17473D3815AA0FF400CAEA47 /* PBXContainerItemProxy */;
+		};
+		17473D3B15AA0FF800CAEA47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
+			targetProxy = 17473D3A15AA0FF800CAEA47 /* PBXContainerItemProxy */;
+		};
+		17473D3D15AA0FFA00CAEA47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
+			targetProxy = 17473D3C15AA0FFA00CAEA47 /* PBXContainerItemProxy */;
+		};
 		17B1145F151E696B00E4EB0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */;
@@ -2597,7 +2768,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
@@ -2625,6 +2796,52 @@
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 				VALID_ARCHS = "ppc i386 x86_64";
+			};
+			name = Release;
+		};
+		17473D2D15AA0A1100CAEA47 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(COMPILE_DEFS_$(arch))";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		17473D2E15AA0A1100CAEA47 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(COMPILE_DEFS_$(arch))";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -2730,7 +2947,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-full-debug --enable-fullhistory";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-full-debug --enable-fullhistory";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
@@ -2789,6 +3006,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		17473D2C15AA0A1100CAEA47 /* Build configuration list for PBXNativeTarget "bpf_helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				17473D2D15AA0A1100CAEA47 /* Debug */,
+				17473D2E15AA0A1100CAEA47 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1778A4DE1555A8A70005B336 /* Build configuration list for PBXNativeTarget "MacAranym MMU+MPFR" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

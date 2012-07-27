@@ -22,6 +22,7 @@ for ARCH in $ARCHS ; do
   echo "$COMPILE_DEFS" >> "$OPTIONS_FILE_CUR"
 done
 echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE_CUR"
+echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE_CUR"
 FILE_CONTENT_CUR=`cat "$OPTIONS_FILE_CUR" 2>/dev/null`
 
 # collect content of previous script execution
@@ -145,6 +146,8 @@ done
 # Remember configure options for next script execution
 echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE"
 
+# Remember configure.ac timestamp
+echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE"
 
 echo "Configuration generated:"
 cp "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || exit 1

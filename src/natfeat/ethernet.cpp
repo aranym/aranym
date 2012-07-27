@@ -43,7 +43,11 @@
 #include "cygwin/ethernet_cygwin.h"
 #else
 #  ifdef OS_darwin
-#  include "../Unix/darwin/ethernet_darwin.h"
+#    ifdef ENABLE_BPF
+#      include "../Unix/MacOSX/ethernet_macosx.h"
+#    else
+#      include "../Unix/darwin/ethernet_darwin.h"
+#    endif
 #  else
 #  include "linux/ethernet_linux.h"
 #  endif

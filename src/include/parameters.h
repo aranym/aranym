@@ -142,7 +142,7 @@ typedef struct {
 
 // Ethernet options
 typedef struct {
-  char type[16];
+  char type[32];
   char tunnel[16];
   char ip_host[16];
   char ip_atari[16];

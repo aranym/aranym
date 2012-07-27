@@ -1,3 +1,15 @@
+2012/07/27 - Philipp
+- Added new option --enable-bpf-ethernet for Mac OS X. This allows using bridged
+  ethernet without installing TunTap kernel extensions. See README_ethernet.rtf.
+- ethernet_macosx.cpp: Berkley Packet Filter (BPF) based ethernet driver
+  for Mac OS X. This driver supports only "bridge" mode, i.e. Aranym 
+  is part of your LAN, with its own IP address.
+- bpf_helper.c,fd_trans.c: a small utility used to do privileged operations
+  like opening a BPF device. When run for the first time it tries to
+  fix the permissions (chown root, chmod ug+s).
+  The file descriptor to the device is then passed using Unix sockets.
+- Added Xcode 4 scheme files: added shared schemes for building the targets
+
 2012/07/08 - Philipp
 - Source cleanup/remove warnings for compilation with latest LLVM compiler of
   Xcode 4.5
