@@ -859,6 +859,13 @@ static void process_mouse_event(const SDL_Event &event)
 					D(bug("Middle mouse button"));
 					getIKBD()->SendKey(0x37 | releaseKeyMask);
 				}
+				else if (clicked) {
+					// ungrab on middle mouse button click
+					if ( bx_options.video.fullscreen )
+						host->video->toggleFullScreen();
+					releaseTheMouse();
+					canGrabMouseAgain = false;	// let it leave our window
+				}
 				return;
 
 			case SDL_BUTTON_WHEELUP:

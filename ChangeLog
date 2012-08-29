@@ -1,31 +1,45 @@
+2012/08/29 - Petr
+- input.cpp: use host middle mouse button for keyboard/mouse ungrab. Works only
+  if Eiffel mouse middle button/wheel mode is not enabled.
+
+
 2012/07/27 - Philipp
 - Added new option --enable-bpf-ethernet for Mac OS X. This allows using bridged
   ethernet without installing TunTap kernel extensions. See README_ethernet.rtf.
+
 - ethernet_macosx.cpp: Berkley Packet Filter (BPF) based ethernet driver
   for Mac OS X. This driver supports only "bridge" mode, i.e. Aranym 
   is part of your LAN, with its own IP address.
+
 - bpf_helper.c,fd_trans.c: a small utility used to do privileged operations
   like opening a BPF device. When run for the first time it tries to
   fix the permissions (chown root, chmod ug+s).
   The file descriptor to the device is then passed using Unix sockets.
+
 - Added Xcode 4 scheme files: added shared schemes for building the targets
+
 
 2012/07/08 - Philipp
 - Source cleanup/remove warnings for compilation with latest LLVM compiler of
   Xcode 4.5
+
 - Building on Mac OS 10.7: Do not set "-isysroot" during compilation. Targetting
   Mac OS 10.5 is still possible without explicitely specifying the SDK to use
   for compilation. This was only necessary during Universal Binary builds where
   explicitely the MacOSX10.4u.sdk had to be used to build multi architecture
   builds.
 
+
 2012/05/20 - Philipp
 - hostscreen.cpp: "enforce VIDEL refresh" was missing => no screen updates 
   during boot up when no nfVDI was active.
+
 - gui-osx/SDLMain.m: Fix "deprecated" warning for "poseAsClass"
+
 - Xcode project: enable X86_64 compilation beside i386 architecture and build
   fat binaries. 64 bit support in SDL is only available as of Mac OS 10.6.
   Therefore on 10.5 only the 32 bit version will run.
+
 - hostscreen.cpp: fix missing check for "SingleBlitRefresh" configuration in
   refreshScreen().
 
@@ -33,12 +47,15 @@
 2012/05/17 - Philipp (Based on the patches provided by Olivier Landemarre)
 - nfvdi_soft.cpp: Performance improvements by skipping memory translation
   if MMU emulation is disabled.
+
 - dirty_rect.cpp: maintain a surrounding rectangle containing the whole
   dirtied area.
+
 - hostscreen.cpp: Two possible modes for updating the atari screen surface 
   and the host screen surface: "chunky" (as in previous versions, uses 
   multiple, small rectangular updates) and "single" (which uses one single
   rectangular update over the whole "dirty" surface)
+
 - parameters.cpp/dlgVideo.cpp: new boolean "SingleBlitRefresh" 
   and "SingleBlitComposing" for the video configuration segment. 
   If set to "Yes" the screen to be composed/screen to be refreshed will be sent
@@ -59,24 +76,31 @@
   It's still possible to compile binaries with PowerPC and OS 10.5
   but no more Universal Binaries are going to be built.
   Build configuration "Release G5" has been removed.
+
 - MacAranym.xcodeproj: Added new target "MacAranym MMU MPFR" with MPFR FPU 
   engine enabled. This target needs libgmp and libmpfr from MacPorts.
   Please checkout the README_Xcode.rtf for more details on how to build.
+
 - MacAranym.xcodeproj: Renamed "MacAranym JIT IEEE" to "MacAranym JIT" as JIT 
   already implies IEEE FPU.
   Further this target has been modified to include always "--enable-jit-fpu".
+
 - MacAranym.xcodeproj: Clean-up of project global and target specific configure
   flags (CONFIGURE_OPTIONS_BASE and CONFIGURE_OPTIONS_TARGET).
   Automatic detection when COMPILE_DEFS do not match what is generated in the
   Makefile during configure. It is now easier to change configure options on a
   target and really getting the right stuff compiled.
+
 - sigsegv_darwin_x86.cpp: Fix compilation of JIT if Mac OS X Deployment target >= 10.5
+
 - fpu/mathlib.h: fix compilation problem with in fp_do_expm1 inline assembly
   and LLVM GCC compiler.
+
 
 2012/05/07 - Philipp
 - dirty_rects.cpp/h: implemented setDirtyLine which calculates the surrounding
   rectangle and adds it to the dirty rectangle list.
+
 - nfvdi_soft.cpp: use setDirtyLine instead of setDirtyRect whenever a line is
   drawn. This fixes redraw glitches whenever a line is not drawn from top left
   to bottom right.
@@ -93,6 +117,7 @@
 
 2012/03/24 - Philipp
 - Fix MacAranym JIT: set/enforce deployment target to OS 10.4
+
 
 2012/03/23 - Andreas
 - fpu_mpfr.cpp: Fix missing fpu exception update
