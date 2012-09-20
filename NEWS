@@ -1,3 +1,20 @@
+2012/09/20 - version 0.9.14 released
+
+ Mac users: check out the new bridged ethernet (see README_ethernet.rtf).
+
+ All users: try out the new Single Blit Composing and Single Blit Refresh
+ modes - they might give you a better video performance.
+
+ There are also many compilation and build fixes for various MacOSX targets
+ and few MPFR FPU fixes.
+
+ And last but not least, there's a neat user requested feature - mouse ungrab
+ (frees your keyboard and mouse from ARAnyM window so you can work in other
+ applications while ARAnyM is running) simply by clicking the host middle
+ mouse button (well, works only if you don't have the Eiffel mouse wheel
+ emulation enabled in settings).
+
+ 
 2012/03/23 - version 0.9.13 released
 
  A couple of important bugfixes accumulated in last few days:

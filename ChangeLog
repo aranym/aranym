@@ -1,3 +1,10 @@
+*** CVS tagged as ARANYM_0_9_14
+
+2012/09/20 - Petr
+- README, NEWS: updated for a new release
+- aranym.spec, version.h, export: increased version to 0.9.14
+
+
 2012/08/29 - Petr
 - input.cpp: use host middle mouse button for keyboard/mouse ungrab. Works only
   if Eiffel mouse middle button/wheel mode is not enabled.
