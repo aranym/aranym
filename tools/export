@@ -58,5 +58,5 @@ fi
 cd aranym
 ./autogen.sh
 make distclean
-cd .. && mv aranym $FOLDER && GZIP=--best tar chozf $FNAME --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore $FOLDER
+cd .. && mv aranym $FOLDER && GZIP=--best tar chzf $FNAME --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore $FOLDER
 
