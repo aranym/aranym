@@ -43,6 +43,7 @@
 		171B2BD60C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
 		171B2BD70C4017C9007D8975 /* dlgOs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD30C4017C9007D8975 /* dlgOs.cpp */; };
 		171B2BD80C4017C9007D8975 /* dlgVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171B2BD40C4017C9007D8975 /* dlgVideo.cpp */; };
+		1730EDFD160F9BDF002EC84E /* README_ethernet.rtf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */; };
 		1732BC82124540FF00272489 /* scc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1732BC81124540FF00272489 /* scc.cpp */; };
 		1732BC83124540FF00272489 /* scc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1732BC81124540FF00272489 /* scc.cpp */; };
 		1732BC84124540FF00272489 /* scc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1732BC81124540FF00272489 /* scc.cpp */; };
@@ -516,9 +517,6 @@
 		B471E7C10D2A88750021DFA7 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B471E7C00D2A88750021DFA7 /* adler32.c */; };
 		B471E7C20D2A88750021DFA7 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B471E7C00D2A88750021DFA7 /* adler32.c */; };
 		B471E7C30D2A88750021DFA7 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B471E7C00D2A88750021DFA7 /* adler32.c */; };
-		B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270880C6BB5D600A1379D /* aratapif.sh */; };
-		B47270910C6BB62700A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
-		B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B47270900C6BB62700A1379D /* README_ethernet.txt */; };
 		B475E5A70D4FA41500C8607E /* dlgPartition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B475E5A60D4FA41500C8607E /* dlgPartition.cpp */; };
 		B475E5A80D4FA41500C8607E /* dlgPartition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B475E5A60D4FA41500C8607E /* dlgPartition.cpp */; };
 		B475E5A90D4FA41500C8607E /* dlgPartition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B475E5A60D4FA41500C8607E /* dlgPartition.cpp */; };
@@ -701,7 +699,6 @@
 				17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */,
 				17BCD8C90B21010C00432CE1 /* config in CopyFiles */,
 				17398E120B21048100A9B4DB /* README.rtf in CopyFiles */,
-				B47270910C6BB62700A1379D /* README_ethernet.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,8 +720,7 @@
 			dstPath = "aranym-xxx-macosx";
 			dstSubfolderSpec = 16;
 			files = (
-				B47272CA0C6BBF1300A1379D /* README_ethernet.txt in CopyFiles */,
-				B47270890C6BB5D600A1379D /* aratapif.sh in CopyFiles */,
+				1730EDFD160F9BDF002EC84E /* README_ethernet.rtf in CopyFiles */,
 				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
 				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
 				17B1146E151E6A4500E4EB0F /* MacAranym JIT.app in CopyFiles */,

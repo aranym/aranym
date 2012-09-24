@@ -53,7 +53,12 @@ if [ -z "$PROJECT_DIR" ]; then
 fi
 
 # Make sure makedepend can be found
-export PATH="$PATH:/usr/X11R6/bin"
+if [ -d /usr/X11R6/bin ]; then
+  export PATH="$PATH:/usr/X11R6/bin"
+fi
+if [ -d /usr/X11/bin ]; then
+  export PATH="$PATH:/usr/X11/bin"
+fi
 
 # Make sure autoconf can be found
 ( autoconf --version ) > /dev/null 2>&1 || {
@@ -63,7 +68,16 @@ export PATH="$PATH:/usr/X11R6/bin"
 
 
 # Make sure SDL.m4 can be found
-export ACLOCAL_FLAGS="-I $PROJECT_DIR/../darwin -I /usr/X11/share/aclocal"
+export ACLOCAL_FLAGS="-I $PROJECT_DIR/../darwin"
+
+# Make sure other AC macros can be found
+if [ -d /usr/X11/share/aclocal ]; then
+  export ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I /usr/X11/share/aclocal"
+fi
+if [ -d /opt/share/aclocal ]; then
+  export ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I /opt/share/aclocal"
+fi
+
 
 # Make sure SDL.framework can be found
 export LDFLAGS="-F$PROJECT_DIR"
@@ -95,8 +109,7 @@ for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
   COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
   echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE"
-  echo "COMPILE_DEFS=$COMPILE_DEFS"
-  echo $PWD
+  echo "Current COMPILE_DEFS=$COMPILE_DEFS"
 
   ./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-$OSTYPE || exit 1
 

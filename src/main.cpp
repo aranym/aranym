@@ -462,7 +462,9 @@ bool InitAll(void)
 	}
 	atexit(SDL_Quit);
 
+#ifndef OS_darwin
 	SetWMIcon();
+#endif
 
 	// set preferred window position
 	const char *wpos = bx_options.video.window_pos;

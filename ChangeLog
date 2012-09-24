@@ -1,3 +1,12 @@
+2012/09/24 - Philipp
+- Xcode 4.5 project/build system: fixes for building with OS X 10.8, changed 
+  packaging DMG to include README_ethernet.rtf instead of TunTap description,
+  adjusted detection of aclocal and makedepend to support usage of MacPorts
+
+- Disabled loading of WMIcon on MacAranym as the correct icon is already bundled
+  with the application.
+  
+
 *** CVS tagged as ARANYM_0_9_14
 
 2012/09/20 - Petr
