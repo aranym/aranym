@@ -99,9 +99,6 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				uint32 buf_size = getParameter(2);	// buffer size
 				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
 
-				if (! ValidAddr(buf_ptr, true, buf_size))
-					BUS_ERROR(buf_ptr);
-
 				// default MAC Address is just made up
 				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
 

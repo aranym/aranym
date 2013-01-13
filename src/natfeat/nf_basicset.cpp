@@ -34,11 +34,6 @@ int32 NF_Name::dispatch(uint32 fncode)
 	uint32 name_maxlen = getParameter(1);
 	D(bug("NF_Name(%p, %d)", name_ptr, name_maxlen));
 
-	// maybe the ValidAddr check is no longer necessary
-	// hopefully the host2AtariSafeStrncpy would throw the bus error?
-	if (! ValidAddr(name_ptr, true, name_maxlen))
-		BUS_ERROR(name_ptr);
-
 	const char *text;
 	switch(fncode) {
 		case 0:/* get_pure_name(char *name, uint32 max_len) */
@@ -83,11 +78,6 @@ int32 NF_StdErr::dispatch(uint32 fncode)
 
 	memptr str_ptr = getParameter(0);
 	D(bug("NF_StdErr(%d, %p)", fncode, str_ptr));
-
-	// maybe the ValidAddr check is no longer necessary
-	// hopefully the atari2HostSafeStrncpy would throw the bus error?
-	if (! ValidAddr(str_ptr, false, 1))
-		BUS_ERROR(str_ptr);
 
 	Atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
 	fputs(buffer, output);
