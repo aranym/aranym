@@ -962,8 +962,8 @@ static void process_mouse_event(const SDL_Event &event)
 	if (xrel || yrel || lastbut != but) {
 #if 1
 		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
-			bug("Reseting weird mouse packet: %d, %d, %d", xrel, yrel, but);
-			xrel = yrel = 0;	// reset the values otherwise ikbd gets crazy
+			D(bug("Resetting suspicious mouse packet: position %dx%d, buttons %d", xrel, yrel, but));
+			xrel = yrel = 0;	// reset the values otherwise ikbd goes crazy
 		}
 #endif
 		getIKBD()->SendMouseMotion(xrel, yrel, but);
