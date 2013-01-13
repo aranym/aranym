@@ -1,3 +1,24 @@
+2013/01/13 - Petr
+- input.cpp: "Reseting weird mouse packet" error message changed to
+  "Resetting suspicious mouse packet" debug message thus it'll no longer
+  annoy you. Thanks to Helmut Karlowski for pointing it out.
+
+- include/natfeats.h: added switch for previously default and dangerous
+  direct LIBC memcpy() to/from guess provided memory pointer. Now it is
+  disabled by default and byte by byte copying routine is used instead
+  (guest programs should no longer be able to kill the whole ARAnyM).
+  It might affect the NatFeats performance negatively so if required
+  set the newly introduced NATFEAT_LIBC_MEMCPY define to 1
+
+  In addition the direct LIBC memcpy() is now guarded by proper pointer check
+  so even if you enable it for speed reasons you should still be relatively
+  safe. Thanks to Thorsten Glaser for providing simple linux user program
+  that was able to kill ARAnyM by issuing NF_NAME NatFeat.
+
+- natfeat/nf_basicset.cpp, natfeat/ethernet.cpp: removed incorrect ValidAddr
+  checks
+
+
 2012/09/24 - Philipp
 - Xcode 4.5 project/build system: fixes for building with OS X 10.8, changed 
   packaging DMG to include README_ethernet.rtf instead of TunTap description,
