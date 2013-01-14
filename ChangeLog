@@ -4,11 +4,11 @@
   annoy you. Thanks to Helmut Karlowski for pointing it out.
 
 - include/natfeats.h: added switch for previously default and dangerous
-  direct LIBC memcpy() to/from guess provided memory pointer. Now it is
+  direct LIBC memcpy() to/from guest provided memory pointer. Now it is
   disabled by default and byte by byte copying routine is used instead
   (guest programs should no longer be able to kill the whole ARAnyM).
   It might affect the NatFeats performance negatively so if required
-  set the newly introduced NATFEAT_LIBC_MEMCPY define to 1
+  set the newly introduced NATFEAT_LIBC_MEMCPY define to 1.
 
   In addition the direct LIBC memcpy() is now guarded by proper pointer check
   so even if you enable it for speed reasons you should still be relatively
@@ -16,7 +16,7 @@
   that was able to kill ARAnyM by issuing NF_NAME NatFeat.
 
 - natfeat/nf_basicset.cpp, natfeat/ethernet.cpp: removed incorrect ValidAddr
-  checks
+  checks.
 
 
 2012/09/24 - Philipp
