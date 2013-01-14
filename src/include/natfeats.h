@@ -37,8 +37,8 @@ extern uint32 nf_getparameter(int);
 // should NatFeats work with physical (not MMU mapped) addresses
 #define NATFEAT_PHYS_ADDR	1
 
-// should NatFeats use direct memcpy() to/from guest provided pointer (dangerous, user program can kill ARAnyM)
-#define NATFEAT_LIBC_MEMCPY	0
+// should NatFeats use direct memcpy() to/from guest provided pointer (fast but less safe)
+#define NATFEAT_LIBC_MEMCPY	1
 
 #if NATFEAT_PHYS_ADDR
 #  define ReadNFInt8	ReadAtariInt8
@@ -59,8 +59,11 @@ extern uint32 nf_getparameter(int);
 static inline void Atari2Host_memcpy(void *_dst, memptr src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(src, false, count))
+	memptr src_end = src + count - 1;
+	if (! ValidAtariAddr(src, false, 1))
 		BUS_ERROR(src);
+	if (! ValidAtariAddr(src_end, false, 1))
+		BUS_ERROR(src_end);
 
 	memcpy(_dst, Atari2HostAddr(src), count);
 #else
@@ -73,8 +76,11 @@ static inline void Atari2Host_memcpy(void *_dst, memptr src, size_t count)
 static inline void Host2Atari_memcpy(memptr dst, const void *_src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(dst, true, count))
+	memptr dst_end = dst + count - 1;
+	if (! ValidAtariAddr(dst, true, 1))
 		BUS_ERROR(dst);
+	if (! ValidAtariAddr(dst_end, true, 1))
+		BUS_ERROR(dst_end);
 
 	memcpy(Atari2HostAddr(dst), _src, count);
 #else
@@ -87,8 +93,11 @@ static inline void Host2Atari_memcpy(memptr dst, const void *_src, size_t count)
 static inline void Atari2HostSafeStrncpy(char *dst, memptr src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(src, false, count))
+	memptr src_end = src + count - 1;
+	if (! ValidAtariAddr(src, false, 1))
 		BUS_ERROR(src);
+	if (! ValidAtariAddr(src_end, false, 1))
+		BUS_ERROR(src_end);
 
 	safe_strncpy(dst, (const char*)Atari2HostAddr(src), count);
 #else
@@ -104,8 +113,11 @@ static inline void Atari2HostSafeStrncpy(char *dst, memptr src, size_t count)
 static inline void Host2AtariSafeStrncpy(memptr dst, const char *src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(dst, true, count))
+	memptr dst_end = dst + count - 1;
+	if (! ValidAtariAddr(dst, true, 1))
 		BUS_ERROR(dst);
+	if (! ValidAtariAddr(dst_end, true, 1))
+		BUS_ERROR(dst_end);
 
 	safe_strncpy((char *)Atari2HostAddr(dst), src, count);
 #else
