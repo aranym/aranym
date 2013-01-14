@@ -56,65 +56,65 @@ extern uint32 nf_getparameter(int);
 #  define WriteNFInt32	WriteInt32
 #endif
 
-static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
+static inline void Atari2Host_memcpy(void *_dst, memptr src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(src, false, n))
+	if (! ValidAtariAddr(src, false, count))
 		BUS_ERROR(src);
 
-	memcpy(dst, Atari2HostAddr(src), n);
+	memcpy(_dst, Atari2HostAddr(src), count);
 #else
-	uint8 *dest = (uint8 *)dst;
-	while ( n-- )
-		*dest++ = (char)ReadNFInt8( (uint32)src++ );
+	uint8 *dst = (uint8 *)_dst;
+	while ( count-- )
+		*dst++ = (char)ReadNFInt8( (uint32)src++ );
 #endif
 }
 
-static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
+static inline void Host2Atari_memcpy(memptr dst, const void *_src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(dest, true, n))
-		BUS_ERROR(dest);
+	if (! ValidAtariAddr(dst, true, count))
+		BUS_ERROR(dst);
 
-	memcpy(Atari2HostAddr(dest), src, n);
+	memcpy(Atari2HostAddr(dst), _src, count);
 #else
-	uint8 *source = (uint8 *)src;
-	while ( n-- )
-		WriteNFInt8( dest++, *source++ );
+	uint8 *src = (uint8 *)_src;
+	while ( count-- )
+		WriteNFInt8( dst++, *src++ );
 #endif
 }
 
-static inline void Atari2HostSafeStrncpy(char *dest, memptr source, size_t count)
+static inline void Atari2HostSafeStrncpy(char *dst, memptr src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(source, false, count))
-		BUS_ERROR(source);
+	if (! ValidAtariAddr(src, false, count))
+		BUS_ERROR(src);
 
-	safe_strncpy(dest, (const char*)Atari2HostAddr(source), count);
+	safe_strncpy(dst, (const char*)Atari2HostAddr(src), count);
 #else
-	while ( count > 1 && (*dest = (char)ReadNFInt8( source++ )) != 0 ) {
+	while ( count > 1 && (*dst = (char)ReadNFInt8( src++ )) != 0 ) {
 		count--;
-		dest++;
+		dst++;
 	}
 	if (count > 0)
-		*dest = '\0';
+		*dst = '\0';
 #endif
 }
 
-static inline void Host2AtariSafeStrncpy(memptr dest, const char *source, size_t count)
+static inline void Host2AtariSafeStrncpy(memptr dst, const char *src, size_t count)
 {
 #if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
-	if (! ValidAtariAddr(dest, true, count))
-		BUS_ERROR(dest);
+	if (! ValidAtariAddr(dst, true, count))
+		BUS_ERROR(dst);
 
-	safe_strncpy((char *)Atari2HostAddr(dest), source, count);
+	safe_strncpy((char *)Atari2HostAddr(dst), src, count);
 #else
-	while ( count > 1 && *source ) {
-		WriteNFInt8( dest++, (uint8)*source++ );
+	while ( count > 1 && *src ) {
+		WriteNFInt8( dst++, (uint8)*src++ );
 		count--;
 	}
 	if (count > 0)
-		WriteNFInt8( dest, 0 );
+		WriteNFInt8( dst, 0 );
 #endif
 }
 #endif /* _NATFEATS_H */
