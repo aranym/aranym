@@ -58,7 +58,7 @@ extern uint32 nf_getparameter(int);
 
 static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
 {
-#if NATFEAT_LIBC_MEMCPY
+#if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
 	if (! ValidAtariAddr(src, false, n))
 		BUS_ERROR(src);
 
@@ -72,7 +72,7 @@ static inline void Atari2Host_memcpy(void *dst, memptr src, size_t n)
 
 static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
 {
-#if NATFEAT_LIBC_MEMCPY
+#if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
 	if (! ValidAtariAddr(dest, true, n))
 		BUS_ERROR(dest);
 
@@ -86,7 +86,7 @@ static inline void Host2Atari_memcpy(memptr dest, const void *src, size_t n)
 
 static inline void Atari2HostSafeStrncpy(char *dest, memptr source, size_t count)
 {
-#if NATFEAT_LIBC_MEMCPY
+#if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
 	if (! ValidAtariAddr(source, false, count))
 		BUS_ERROR(source);
 
@@ -103,7 +103,7 @@ static inline void Atari2HostSafeStrncpy(char *dest, memptr source, size_t count
 
 static inline void Host2AtariSafeStrncpy(memptr dest, const char *source, size_t count)
 {
-#if NATFEAT_LIBC_MEMCPY
+#if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
 	if (! ValidAtariAddr(dest, true, count))
 		BUS_ERROR(dest);
 
