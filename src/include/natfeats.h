@@ -69,7 +69,7 @@ static inline void Atari2Host_memcpy(void *_dst, memptr src, size_t count)
 #else
 	uint8 *dst = (uint8 *)_dst;
 	while ( count-- )
-		*dst++ = (char)ReadNFInt8( (uint32)src++ );
+		*dst++ = (char)ReadNFInt8( src++ );
 #endif
 }
 
