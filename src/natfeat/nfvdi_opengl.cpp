@@ -1247,9 +1247,8 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 	  }
 	}
 
-	int sx, sy, w, h;
+	int sx, w, h;
 	sx = 0;
-	sy = 0;
 	w = ch_w * length;
 	h = ch_h;
 
