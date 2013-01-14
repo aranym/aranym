@@ -1,3 +1,13 @@
+2013/01/14 - Petr
+- include/natfeats.h: added proper check for end of memory block that
+  is to be copied between host and guest using the LIBC memcpy().
+  Re-enabled NATFEAT_LIBC_MEMCPY fast copying in NatFeats because
+  I believe it's relatively safe now when there are checks for
+  begin and end of the Atari memory block. Atari memory is contiguous
+  so when both begin and end of the block is readable/writeable
+  the whole block should be OK to copy by LIBC memcpy.
+
+
 2013/01/13 - Petr
 - input.cpp: "Reseting weird mouse packet" error message changed to
   "Resetting suspicious mouse packet" debug message thus it'll no longer
