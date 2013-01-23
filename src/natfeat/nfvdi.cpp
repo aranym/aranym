@@ -782,7 +782,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return 1;
 	}
 
-	if (host->video->getBpp() == 8) {
+	if (getBpp() == 8) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
