@@ -1,3 +1,17 @@
+2013/01/23 - Petr
+- natfeat/nfvdi.cpp: fixes a bug (sort of a race condition) in NFVDI.
+  When fVDI switches to 32-bit display in VdiDriver::setResolution(),
+  a new HostSurface is created immediately for the VDI driver.
+  Then the video mode change is applied to the host window only on next VBL,
+  in HostScreen::refreshSurface().
+  But in VdiDriver::expandArea(), there was a bogus test:
+    if (host->video->getBpp() == 8) {
+  This was wrong, because the VDI made a test on the host window surface,
+  which would only be correct on next VBL. Found and fixed by Vincent Riviere.
+
+- bootos_emutos.cpp: fix for now correct BCD date format in EmuTOS by Vincent.
+
+
 2013/01/14 - Petr
 - include/natfeats.h: added proper check for end of memory block that
   is to be copied between host and guest using the LIBC memcpy().
