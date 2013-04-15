@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.14
+%define ver			0.9.15
 
 #
 #
@@ -377,6 +377,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
+* Mon Apr 15 2013 Petr Stehlik <pstehlik@sophics.cz> 0.9.15
+New ARAnyM release.
+
 * Fri Mar 23 2012 Petr Stehlik <pstehlik@sophics.cz> 0.9.13
 New ARAnyM release.
 Make use of two new desktop files.

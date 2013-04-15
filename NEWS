@@ -1,14 +1,16 @@
 2013/04/15 - version 0.9.15 released
 
- New features:
+ The main new feature of this release is the seamless mouse integration mode:
 
- o mouse input handling is improved a lot. Now ARAnyM has a seamless mouse
+ o Mouse input handling is improved a lot. Now ARAnyM has a seamless mouse
    integration when new Clocky (2013/04/15) is loaded.
-   There is no need to manually ungrab or grab the mouse.
-   Also mouse grab on left button click now reacts on the first button
+ o There is no need to manually ungrab or grab the mouse.
+ o Also mouse grab on left button click now reacts on the first button
    click everytime (previously only if you had window focus) and the
    host and mouse cursor positions are synced.
-   And the annoying "resetting weird mouse packet" error is gone, too.
+ o And if you ungrab the mouse intentionally then it's not automatically
+   grabbed when the host mouse pointer returns to ARAnyM window.
+ o At last, the annoying "resetting weird mouse packet" error is gone, too.
 
  Bugs fixed:
 
