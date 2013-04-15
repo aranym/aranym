@@ -1,7 +1,7 @@
 /*
  * input.cpp - handling of keyboard/mouse input
  *
- * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2013 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -98,6 +98,7 @@ SDL_Joystick *sdl_joysticks[4]={
 
 static bool grabbedMouse = false;
 static bool hiddenMouse = false;
+static bool canGrabMouseAgain = false;
 static bool capslockState = false;
 static bool ignoreMouseMotionEvent = false;
 static SDL_Cursor *aranym_cursor = NULL;
@@ -241,12 +242,42 @@ void InputExit()
 	SDL_FreeCursor(aranym_cursor);
 }
 
+static int atari_mouse_xpos = -1;
+static int atari_mouse_ypos = -1;
+// remember the current Atari mouse cursor position
+void RememberAtariMouseCursorPosition()
+{
+	if (getARADATA()->isAtariMouseDriver()) {
+		atari_mouse_xpos = getARADATA()->getAtariMouseX();
+		atari_mouse_ypos = getARADATA()->getAtariMouseY();
+		D(bug("Atari mouse cursor pointer left at [%d, %d]", atari_mouse_xpos, atari_mouse_ypos));
+	}
+}
+
+// reposition the Atari mouse cursor to match the host mouse cursor position
+void RestoreAtariMouseCursorPosition()
+{
+	int xpos, ypos;
+	SDL_GetMouseState(&xpos, &ypos);
+	if (atari_mouse_xpos >=0 && atari_mouse_ypos >= 0) {
+		D(bug("Restoring mouse cursor pointer to [%d, %d]", xpos, ypos));
+		getARADATA()->setAtariMousePosition(xpos, ypos);
+		int delta_x = xpos - atari_mouse_xpos;
+		int delta_y = ypos - atari_mouse_ypos;
+		if (delta_x || delta_y) {
+			D(bug("Moving Atari mouse by [%d, %d]", delta_x, delta_y));
+			getIKBD()->SendMouseMotion(delta_x, delta_y, 0);
+		}
+	}
+}
+
 bool grabMouse(bool grab)
 {
 	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
 	if (grab && current != SDL_GRAB_ON) {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 		grabbedMouse = true;
+		canGrabMouseAgain = true;
 		hideMouse(true);
 		ignoreMouseMotionEvent = true;
 	}
@@ -255,6 +286,19 @@ bool grabMouse(bool grab)
 		grabbedMouse = false;
 		hideMouse(false);
 	}
+
+	// show hint in the window caption
+	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
+		char buf[128];
+		char key[80];
+		displayKeysym(bx_options.hotkeys.ungrab, key);
+		snprintf(buf, sizeof(buf), "press [%s] or middle mouse button to release input grab", key);
+		SDL_WM_SetCaption(buf, "ARAnyM");
+	}
+	else {
+		SDL_WM_SetCaption("ARAnyM: no input grab", "ARAnyM");
+	}
+
 	return (current == SDL_GRAB_ON);
 }
 
@@ -264,16 +308,11 @@ void grabTheMouse()
 #if DEBUG
 	int x,y;
 	SDL_GetMouseState(&x, &y);
-	D(bug("Mouse grab at window position [%d,%d]", x, y));
+	D(bug("grabTheMouse: mouse grab at window position [%d,%d]", x, y));
 #endif
+	RestoreAtariMouseCursorPosition();
 	hideMouse(true);
-	if (false) {	// are we able to sync TOS and host mice? 
-		// sync the position of ST mouse with the host mouse cursor position
-	}
-	else {
-		// we got to grab the mouse completely, otherwise they'd be out of sync
-		grabMouse(true);
-	}
+	grabMouse(true);
 }
 
 void releaseTheMouse()
@@ -282,31 +321,8 @@ void releaseTheMouse()
 	grabMouse(false);	// release mouse
 	hideMouse(false);	// show it
 	if (getARADATA()->isAtariMouseDriver()) {
-		int x = getARADATA()->getAtariMouseX(); 
-		int y = getARADATA()->getAtariMouseY();
-		D(bug("Mouse left our window at [%d,%d]", x, y));
-
-		// set the host mouse pointer to the expected place
-		// but move it in the original direction by 1 pixel
-		// to avoid an immediate and very annoying autograb...
-
-		// Update 20090827: the code below causes troubles on Windows
-		// and Mac OSX. Apparently asking the SDL to position mouse
-		// at a negative offset is not supported across all architectures.
-		// Anyway, since there is no autograb this code can be disabled.
-/*
-		if (x == 0) {
-			x = -1;
-		}
-		else if (y == 0) {
-			y = -1;
-		}
-		else {
-			x++;
-			y++;
-		}
-*/
-		SDL_WarpMouse(x, y);
+		RememberAtariMouseCursorPosition();
+		SDL_WarpMouse(atari_mouse_xpos, atari_mouse_ypos);
 	}
 }
 
@@ -577,7 +593,6 @@ static int keysymToAtari(SDL_keysym keysym)
  * Input event checking
  *********************************************************************/
 static bool pendingQuit = false;
-static bool canGrabMouseAgain = true;
 static int but = 0;
 static bool mouseOut = false;
 
@@ -826,7 +841,7 @@ static void process_mouse_event(const SDL_Event &event)
 #endif /* SDL_GUI */
 
 	if (!grabbedMouse) {
-		if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+		if ((event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) && event.button.button == SDL_BUTTON_LEFT) {
 			D(bug("Left mouse click in our window => grab the mouse"));
 			grabTheMouse();
 		}
@@ -1012,20 +1027,24 @@ static void process_active_event(const SDL_Event &event)
 		if (allowMouseGrab) {
 			// if we can grab the mouse automatically
 			// and if the Atari mouse driver works
+			D(bug("Proceed only if AtariMouseDriver is working"));
 			if (getARADATA()->isAtariMouseDriver()) {
 				// if the mouse pointer is leaving our window
 				if (!event.active.gain) {
 					// allow grabbing it when it will be returning
-					canGrabMouseAgain = true;
+					D(bug("Host mouse is indeed leaving us"));
+					if (canGrabMouseAgain) {
+						// RememberAtariMouseCursorPosition();
+					}
 				}
 				// if the mouse pointer is entering our window
 				else {
+					D(bug("Host mouse is returning!"));
 					// if grabbing the mouse is allowed
 					if (canGrabMouseAgain) {
+						D(bug("canGrabMouseAgain allows autograb"));
 						// then grab it
-						/// TODO FIXME
-						/// disabled until proper appl_tplay mouse position syncing is implemented
-						/// grabTheMouse();
+						grabTheMouse();
 					}
 				}
 			}
