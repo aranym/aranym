@@ -1,7 +1,7 @@
 /*
  * ikbd.cpp - IKBD 6301 emulation code
  *
- * Copyright (c) 2001-2009 Petr Stehlik of ARAnyM dev team (see AUTHORS)
+ * Copyright (c) 2001-2013 Petr Stehlik of ARAnyM dev team (see AUTHORS)
  * 
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -35,6 +35,7 @@
 #define DEFAULT_INBUFFERLEN (1<<6)
 #define DEFAULT_OUTBUFFERLEN (1<<4)
 
+#define MOUSE_DELTA_MAX 	63
 #define JOYSTICK_THRESHOLD	16384
 
 /*--- Constructor/destructor of the IKBD class ---*/
@@ -337,31 +338,18 @@ void IKBD::SendMouseMotion(int relx, int rely, int buttons)
 	if (!mouse_enabled)
 		return;
 
-	/* Generate several mouse packets if motion too long */
-	do {
-		int movex, movey;
-		
-		movex = relx;
-		if (movex<-128) {
-			movex=-128;
-			relx += 128;
-		} else if (movex>127) {
-			movex=127;
-			relx -= 127;
-		} else {
-			relx = 0;
-		}
+	if (abs(relx) > 2048 || abs(rely) > 2048) {
+		panicbug("IKBD: ignoring insane mouse motion: [%d, %d]", relx, rely);
+		return;
+	}
 
-		movey = rely;
-		if (movey<-128) {
-			movey=-128;
-			rely += 128;
-		} else if (movey>127) {
-			movey=127;
-			rely -= 127;
-		} else {
-			rely = 0;
-		}
+	// Generate several mouse packets if motion is too long
+	do {
+		int movex = (abs(relx) > MOUSE_DELTA_MAX) ? ( (relx > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : relx;
+		relx -= movex;
+
+		int movey = (abs(rely) > MOUSE_DELTA_MAX) ? ( (rely > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : rely;
+		rely -= movey;
 
 		/* Merge with the previous mouse packet ? */
 		MergeMousePacket(&movex, &movey, buttons);
@@ -371,8 +359,9 @@ void IKBD::SendMouseMotion(int relx, int rely, int buttons)
 		send(0xf8 | (buttons & 3));
 		send(movex);
 		send(yaxis_reversed ? -movey : movey);
+		// panicbug("IKBD: creating mouse packet [%d (%d), %d (%d), %d]", movex, relx, (yaxis_reversed ? -movey : movey), rely, buttons & 3);
 
-	} while (relx && rely);
+	} while (relx || rely);
 }
 
 void IKBD::MergeMousePacket(int *relx, int *rely, int buttons)
@@ -407,11 +396,11 @@ void IKBD::MergeMousePacket(int *relx, int *rely, int buttons)
 
 	/* Check if distances are not too far */
 	distx = *relx + inbuffer[(mouse_inwrite+1) & (inbufferlen-1)];
-	if ((distx<-128) || (distx>127))
+	if (abs(distx) > MOUSE_DELTA_MAX)
 		return;
 
 	disty = *rely + inbuffer[(mouse_inwrite+2) & (inbufferlen-1)];
-	if ((disty<-128) || (disty>127))
+	if (abs(disty) > MOUSE_DELTA_MAX)
 		return;
 
 	/* Replace previous packet */
