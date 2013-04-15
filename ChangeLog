@@ -1,3 +1,9 @@
+2013/04/15 - Petr
+- input.cpp: fixed click to grab input, added proper host<->Atari mouse sync
+- ikbd.cpp: fixed SendMouseMotion() and MergeMousePacket()
+- include/aradata.h: added setAtariMousePosition()
+
+
 2013/01/23 - Petr
 - natfeat/nfvdi.cpp: fixes a bug (sort of a race condition) in NFVDI.
   When fVDI switches to 32-bit display in VdiDriver::setResolution(),

@@ -1,3 +1,23 @@
+2013/04/15 - version 0.9.15 released
+
+ New features:
+
+ o mouse input handling is improved a lot. Now ARAnyM has a seamless mouse
+   integration when new Clocky (2013/04/15) is loaded.
+   There is no need to manually ungrab or grab the mouse.
+   Also mouse grab on left button click now reacts on the first button
+   click everytime (previously only if you had window focus) and the
+   host and mouse cursor positions are synced.
+   And the annoying "resetting weird mouse packet" error is gone, too.
+
+ Bugs fixed:
+
+ o Native Features were missing proper memory overflow checks and bugs
+   in NatFeat drivers could kill the ARAnyM.
+ o NFVDI had a bug (a race condition) in resolution switching.
+ o build date of EmuTOS was decoded improperly
+
+
 2012/09/20 - version 0.9.14 released
 
  Mac users: check out the new bridged ethernet (see README_ethernet.rtf).
