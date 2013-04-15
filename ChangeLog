@@ -1,3 +1,5 @@
+*** CVS tagged as ARANYM_0_9_15
+
 2013/04/15 - Petr
 - input.cpp: fixed click to grab input, added proper host<->Atari mouse sync
 - ikbd.cpp: fixed SendMouseMotion() and MergeMousePacket()
