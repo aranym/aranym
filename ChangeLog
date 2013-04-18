@@ -1,3 +1,8 @@
+2013/04/18 - Philipp
+- natfeat/ethernet.h: Increase MAX_PACKET_SIZE to 9000 to allow enabling
+  Ethernet on systems with MTU bigger than 1514.
+- ethernet_macosx.cpp: Fix memory overflow in BPF driver.
+
 *** CVS tagged as ARANYM_0_9_15
 
 2013/04/15 - Petr

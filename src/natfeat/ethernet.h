@@ -27,7 +27,7 @@
 #include "nf_base.h"
 #include "parameters.h"		// defines MAX_ETH
 
-#define MAX_PACKET_SIZE	1514
+#define MAX_PACKET_SIZE	9000
 
 class ETHERNETDriver : public NF_Base
 {

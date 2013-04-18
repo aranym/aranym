@@ -2,7 +2,7 @@
  * ethernet_macosx.cpp - Mac OS X Ethernet support (via Berkley Packet Filter device)
  *
  * Copyright (c) 2007 ARAnyM dev team (see AUTHORS)
- * 
+ *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
@@ -57,25 +57,25 @@
 #define ETH_HELPER "bpf_helper"
 
 /* BPF filter program:
-    -allow all ARP messages
-	-allow only IP messages for specific IP address
+ -allow all ARP messages
+ -allow only IP messages for specific IP address
  */
 #define ETHERTYPE_IP	0x800
 #define ETHERTYPE_ARP	0x806
 #define IP_ADDR_PLH		0xAAAAAAAA
 
 struct bpf_insn ip_filter[] = {
-BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 //      ld  P[12:2]
-BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_IP, 0, 5),//      jeq 0x800, IP, NOK
-BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 26),                 // IP:  ld  P[26:4]
-BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 2, 0), //      jeq IP_ADDR, OK, 0
-BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 30),                 //      ld  P[30:4]
-BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 0, 1), //      jeq IP_ADDR, OK, NOK
-BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 // OK:  ret -1
-BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 // NOK: ld  P[12:2]
-BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_ARP, 0, 1),//     jeq 0x806, 0, NOK
-BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 //      ret -1
-BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK: ret 0
+	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 //      ld  P[12:2]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_IP, 0, 5),//      jeq 0x800, IP, NOK
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 26),                 // IP:  ld  P[26:4]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 2, 0), //      jeq IP_ADDR, OK, 0
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 30),                 //      ld  P[30:4]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 0, 1), //      jeq IP_ADDR, OK, NOK
+	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 // OK:  ret -1
+	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 // NOK: ld  P[12:2]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_ARP, 0, 1),//     jeq 0x806, 0, NOK
+	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 //      ret -1
+	BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK: ret 0
 };
 
 struct bpf_program filter = {sizeof(ip_filter)/sizeof(struct bpf_insn), &ip_filter[0]};
@@ -122,16 +122,16 @@ struct ip_packet
 void dump_frame(const char *prefix, struct ethernet_frame *frame)
 {
 	unsigned short int frame_type = (frame->type[0]<<8)|frame->type[1];
-	bug("  %s: %02x:%02x:%02x:%02x:%02x:%02x > %02x:%02x:%02x:%02x:%02x:%02x  (Type %04x)", prefix, 
-		   frame->src_addr[0], frame->src_addr[1], frame->src_addr[2], frame->src_addr[3], frame->src_addr[4], frame->src_addr[5],
-		   frame->dst_addr[0], frame->dst_addr[1], frame->dst_addr[2], frame->dst_addr[3], frame->dst_addr[4], frame->dst_addr[5],
-		   frame_type);
+	bug("  %s: %02x:%02x:%02x:%02x:%02x:%02x > %02x:%02x:%02x:%02x:%02x:%02x  (Type %04x)", prefix,
+		frame->src_addr[0], frame->src_addr[1], frame->src_addr[2], frame->src_addr[3], frame->src_addr[4], frame->src_addr[5],
+		frame->dst_addr[0], frame->dst_addr[1], frame->dst_addr[2], frame->dst_addr[3], frame->dst_addr[4], frame->dst_addr[5],
+		frame_type);
 	if (frame_type == 0x0806) {
 		struct arp_packet* arp = (struct arp_packet*) &frame->payload;
-		bug("  %s: ARP packet %d.%d.%d.%d > %d.%d.%d.%d  (Type %04x)", prefix, 
-			   arp->src_ip[0], arp->src_ip[1], arp->src_ip[2], arp->src_ip[3],
-			   arp->dst_ip[0], arp->dst_ip[1], arp->dst_ip[2], arp->dst_ip[3],
-			   (arp->proto_type[0]<<8)|arp->proto_type[1]);
+		bug("  %s: ARP packet %d.%d.%d.%d > %d.%d.%d.%d  (Type %04x)", prefix,
+			arp->src_ip[0], arp->src_ip[1], arp->src_ip[2], arp->src_ip[3],
+			arp->dst_ip[0], arp->dst_ip[1], arp->dst_ip[2], arp->dst_ip[3],
+			(arp->proto_type[0]<<8)|arp->proto_type[1]);
 	}
 	else if (frame_type == 0x0800) {
 		struct ip_packet* ip = (struct ip_packet*) &frame->payload;
@@ -155,22 +155,22 @@ void dump_bpf_buf(const char *prefix, bpf_hdr* bpf_buf)
 	}
 }
 
-bool BPFEthernetHandler::open() 
+bool BPFEthernetHandler::open()
 {
 	// int nonblock = 1;
 	char *type = bx_options.ethernet[ethX].type;
 	char *dev_name = bx_options.ethernet[ethX].tunnel;
-
-	if (strcmp(type, "none") == 0 || strlen(type) == 0) 
+	
+	if (strcmp(type, "none") == 0 || strlen(type) == 0)
 	{
-		return false;	
+		return false;
 	}
-
-	D(bug("BPF(%d): open() type=%s", ethX, type));	
+	
+	D(bug("BPF(%d): open() type=%s", ethX, type));
 	if (strstr(type, "bridge") == NULL )
 	{
 		panicbug("BPF(%d): unsupported type '%s", ethX, type);
-		return false;	
+		return false;
 	}
 	
 	debug = (strstr(type, "debug") != NULL);
@@ -187,19 +187,19 @@ bool BPFEthernetHandler::open()
 	D(bug("BPF(%d): starting helper from <%s>", ethX, exe_path));
 	
 	pid_t pid = fork();
-	if (pid < 0) 
+	if (pid < 0)
 	{
 		panicbug("BPF(%d): ERROR: fork() failed. Ethernet disabled!", ethX);
 		return false;
 	}
-	else if (pid == 0) 
+	else if (pid == 0)
 	{
 		D(bug("BPF(%d): "ETH_HELPER" child running", ethX));
 		sleep(2);
 		int result = execl(exe_path, exe_path, NULL);
 		_exit(result);
 	}
-
+	
 	D(bug("BPF(%d): waiting for "ETH_HELPER" (PID %d) to send file descriptor", ethX, pid));
 	fd = receive_fd();
 	if (fd < 0)
@@ -207,16 +207,16 @@ bool BPFEthernetHandler::open()
 		panicbug("BPF(%d): failed receiving file descriptor from "ETH_HELPER".", ethX, dev_name);
 		return false;
 	}
-
-
+	
+	
 	/******************************************************
 	 Configure BPF device
 	 ******************************************************/
 	// associate with specified interface
-	struct ifreq ifr;	
+	struct ifreq ifr;
 	safe_strncpy(ifr.ifr_name, dev_name, IFNAMSIZ);
 	D(bug("BPF(%d): connecting with device %s", ethX, dev_name));
-	if(ioctl(fd, BIOCSETIF, &ifr) > 0) 
+	if(ioctl(fd, BIOCSETIF, &ifr) > 0)
 	{
 		panicbug("BPF(%d): Failed associating to %s: %s", ethX, dev_name, strerror(errno));
 		::close(fd);
@@ -241,7 +241,7 @@ bool BPFEthernetHandler::open()
 		return false;
 	}
 	D(bug("BPF(%d): buf_len=%d\n", ethX, buf_len));
-	bpf_buf = (struct bpf_hdr*) malloc(buf_len);	
+	bpf_buf = (struct bpf_hdr*) malloc(buf_len);
 	
 	// activate promiscious mode
 	D(bug("BPF(%d): enabling promiscious mode", ethX));
@@ -251,7 +251,7 @@ bool BPFEthernetHandler::open()
 		::close(fd);
 		return false;
 	}
-
+	
 	// activate "header complete" mode
 	D(bug("BPF(%d): enabling header complete mode", ethX));
 	int complete = 1;
@@ -272,7 +272,7 @@ bool BPFEthernetHandler::open()
 		return false;
 	}
 	
-	if (strstr(type, "nofilter") == NULL ) 
+	if (strstr(type, "nofilter") == NULL )
 	{
 		// convert and validate specified IP address
 		in_addr_t ip_addr = inet_addr(bx_options.ethernet[ethX].ip_atari);
@@ -284,10 +284,10 @@ bool BPFEthernetHandler::open()
 		
 		// modify filter program to use specified IP address
 		D(bug("BPF(%d): setting filter program for IP address %s", ethX, bx_options.ethernet[ethX].ip_atari));
-	
+		
 		ip_filter[3].k = ip_addr;
 		ip_filter[5].k = ip_addr;
-	
+		
 		// Enable filter program
 		if(ioctl(fd, BIOCSETF, &filter) == -1)
 		{
@@ -300,28 +300,28 @@ bool BPFEthernetHandler::open()
 	else {
 		bug("BPF(%d): IP filter program skipped", ethX);
 	}
-
+	
 	return true;
 }
 
-bool BPFEthernetHandler::close() 
+bool BPFEthernetHandler::close()
 {
 	D(bug("BPF(%d): close", ethX));
-
+	
 	::close(fd);
-
+	
 	free(bpf_buf);
-
+	
 	return true;
 }
 
-int BPFEthernetHandler::recv(uint8 *buf, int len) 
+int BPFEthernetHandler::recv(uint8 *buf, int len)
 {
 	D(bug("BPF(%d): recv(len=%d)", ethX, len));
 	// Read a packet from the ethernet device, timeout after 2s
 	int res = 0;
 	
-	// Initialize the file descriptor set. 
+	// Initialize the file descriptor set.
 	fd_set set;
 	struct timeval timeout;
 	FD_ZERO (&set);
@@ -341,22 +341,26 @@ int BPFEthernetHandler::recv(uint8 *buf, int len)
 				bug("BPF(%d): recv %d bytes => %d data bytes", ethX, res, bpf_buf->bh_datalen);
 				dump_bpf_buf("recv", bpf_buf);
 			}
-			memcpy(buf, ((char*)bpf_buf + bpf_buf->bh_hdrlen), bpf_buf->bh_datalen);
-			return bpf_buf->bh_datalen;
+			int copy_len = MIN(len,bpf_buf->bh_datalen);
+			memcpy(buf, ((char*)bpf_buf + bpf_buf->bh_hdrlen), copy_len);
+			if (copy_len != bpf_buf->bh_datalen) {
+				bug("BPF(%d): received %d bytes on Host but %d bytes expected by Atari. Packet truncated to %d!", ethX, bpf_buf->bh_datalen, len, copy_len);
+			}
+			return copy_len;
 		}
 	}
 	return res;
 }
 
-int BPFEthernetHandler::send(const uint8 *buf, int len) 
+int BPFEthernetHandler::send(const uint8 *buf, int len)
 {
 	D(bug("BPF(%d): send(len=%d)", ethX, len));
 	int res = -1;
-	if (len > 0) 
+	if (len > 0)
 	{
 		if (debug) {
-		  bug("BPF(%d): send(len=%d)", ethX, len);
-		  dump_frame("send", (struct ethernet_frame*) buf);
+			bug("BPF(%d): send(len=%d)", ethX, len);
+			dump_frame("send", (struct ethernet_frame*) buf);
 		}
 		res = write(fd, buf, len);
 		if (res < 0) D(bug("BPF(%d): WARNING: Couldn't transmit packet", ethX));
