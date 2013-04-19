@@ -56,25 +56,13 @@
 
 #define ETH_HELPER "bpf_helper"
 
-/* BPF filter program:
- -allow all ARP messages
- -allow only IP messages for specific IP address
- */
-#define ETHERTYPE_IP	0x800
-#define ETHERTYPE_ARP	0x806
-#define IP_ADDR_PLH		0xAAAAAAAA
-
+// BPF filter program to ensure only ethernet packets are processed which are destined to Atari MAC
 struct bpf_insn ip_filter[] = {
-	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 //      ld  P[12:2]
-	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_IP, 0, 5),//      jeq 0x800, IP, NOK
-	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 26),                 // IP:  ld  P[26:4]
-	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 2, 0), //      jeq IP_ADDR, OK, 0
-	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 30),                 //      ld  P[30:4]
-	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, IP_ADDR_PLH, 0, 1), //      jeq IP_ADDR, OK, NOK
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 0),                  //      ld  P[0:4]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAAAAAA, 0, 3),	//		jeq destMAC, CONT, NOK
+	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 4),                  // CONT:ld  P[4:2]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAA, 0, 1),		//		jeq destMAC, OK, NOK
 	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 // OK:  ret -1
-	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),                 // NOK: ld  P[12:2]
-	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ETHERTYPE_ARP, 0, 1),//     jeq 0x806, 0, NOK
-	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 //      ret -1
 	BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK: ret 0
 };
 
@@ -141,8 +129,8 @@ void dump_frame(const char *prefix, struct ethernet_frame *frame)
 			ip->dst_ip[0], ip->dst_ip[1], ip->dst_ip[2], ip->dst_ip[3],
 			ip->proto_type, ip->tot_len[0], ip->tot_len[1], tot_len, tot_len - sizeof(ip_packet)+1);
 		
-		for (unsigned char *ptr=&ip->data; ptr<(unsigned char*)&ip->data+tot_len; ptr++)
-			bug(">%*s\n",  tot_len-(sizeof(ip_packet)-1), &ip->data);
+//		for (unsigned char *ptr=&ip->data; ptr<(unsigned char*)&ip->data+tot_len; ptr++)
+//			bug(">%*s\n",  tot_len-(sizeof(ip_packet)-1), &ip->data);
 	}
 }
 
@@ -272,34 +260,44 @@ bool BPFEthernetHandler::open()
 		return false;
 	}
 	
-	if (strstr(type, "nofilter") == NULL )
+	// convert and validate MAC address from configuration
+	// default MAC Address is just made up
+	uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+	
+	// convert user-defined MAC Address from string to 6 bytes array
+	char *mac_text = bx_options.ethernet[ethX].mac_addr;
+	bool format_OK = false;
+	if (strlen(mac_text) == 2*6+5 && (mac_text[2] == ':' || mac_text[2] == '-')) {
+		mac_text[2] = mac_text[5] = mac_text[8] = mac_text[11] = mac_text[14] = ':';
+		int md[6] = {0, 0, 0, 0, 0, 0};
+		int matched = sscanf(mac_text, "%02x:%02x:%02x:%02x:%02x:%02x",
+							 &md[0], &md[1], &md[2], &md[3], &md[4], &md[5]);
+		if (matched == 6) {
+			for(int i=0; i<6; i++)
+				mac_addr[i] = md[i];
+			format_OK = true;
+		}
+	}
+	if (!format_OK) {
+		panicbug("BPF(%d): Invalid MAC address: %s", ethX, mac_text);
+		::close(fd);
+		return false;
+	}
+	
+	// modify filter program to use specified IP address
+	D(bug("BPF(%d): setting filter program for MAC address %s", ethX, mac_text));
+	
+	ip_filter[1].k = (mac_addr[0]<<24) | (mac_addr[1]<<16) | (mac_addr[2]<<8) | mac_addr[3];
+	ip_filter[3].k = (mac_addr[4]<<8) | mac_addr[5];
+	
+	// Enable filter program
+	if(ioctl(fd, BIOCSETF, &filter) == -1)
 	{
-		// convert and validate specified IP address
-		in_addr_t ip_addr = inet_addr(bx_options.ethernet[ethX].ip_atari);
-		if (ip_addr == INADDR_NONE) {
-			panicbug("BPF(%d): Invalid IP address specified: %s", ethX, bx_options.ethernet[ethX].ip_atari);
-			::close(fd);
-			return false;
-		}
-		
-		// modify filter program to use specified IP address
-		D(bug("BPF(%d): setting filter program for IP address %s", ethX, bx_options.ethernet[ethX].ip_atari));
-		
-		ip_filter[3].k = ip_addr;
-		ip_filter[5].k = ip_addr;
-		
-		// Enable filter program
-		if(ioctl(fd, BIOCSETF, &filter) == -1)
-		{
-			panicbug("BPF(%d): Unable to load filter program: %s", ethX, strerror(errno));
-			::close(fd);
-			return false;
-		}
-		bug("BPF(%d): IP filter program loaded", ethX);
+		panicbug("BPF(%d): Unable to load filter program: %s", ethX, strerror(errno));
+		::close(fd);
+		return false;
 	}
-	else {
-		bug("BPF(%d): IP filter program skipped", ethX);
-	}
+	bug("BPF(%d): MAC filter program load", ethX);
 	
 	return true;
 }

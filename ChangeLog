@@ -1,3 +1,9 @@
+2013/04/19 - Philipp
+- ethernet_macosx.cpp: fixed memory leak on Atari side by implementing a 
+  working packet filter which ensures that only valid ethernet frames are 
+  forwarded to the Atari side. Removed the "nofilter" keyword.
+  Thanks to Zorro for pointing me to this severe bug.
+
 2013/04/18 - Philipp
 - natfeat/ethernet.h: Increase MAX_PACKET_SIZE to 9000 to allow enabling
   Ethernet on systems with MTU bigger than 1514.
@@ -9,7 +15,6 @@
 - input.cpp: fixed click to grab input, added proper host<->Atari mouse sync
 - ikbd.cpp: fixed SendMouseMotion() and MergeMousePacket()
 - include/aradata.h: added setAtariMousePosition()
-
 
 2013/01/23 - Petr
 - natfeat/nfvdi.cpp: fixes a bug (sort of a race condition) in NFVDI.
