@@ -1,0 +1,15 @@
+autom4te.cache
+gen_*
+obj_*
+depend_*
+Makefile
+aclocal.m4
+aranym
+aratapif
+config.h
+config.h.in
+config.log
+config.status
+configure
+version_date.h
+.DS_Store
