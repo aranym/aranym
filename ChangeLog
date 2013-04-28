@@ -1,3 +1,7 @@
+2013/04/28 - Andreas
+- uae_cpu/compiler/compemu.h: Avoid conflict with definitions from
+  <byteswap.h>, imported by SDL.
+
 2013/04/19 - Philipp
 - ethernet_macosx.cpp: fixed memory leak on Atari side by implementing a 
   working packet filter which ensures that only valid ethernet frames are 
