@@ -1,3 +1,12 @@
+2013/04/28 - Philipp
+- ethernet_macosx.cpp: BPF packet filtering improvements: added a new filter for
+  multi-cast packets (MAC based) and another filter solely based on the IP
+  address (ARP and IP protocol only).
+  "nofilter" should only be used for debugging, as it causes memory leaks on the
+  Atari/MiNT side and therefore system crashes.
+  Implemented multi-packet reads from BPF device (one read opeation can deliver
+  multiple ethernet frames).
+
 2013/04/28 - Andreas
 - uae_cpu/compiler/compemu.h: Avoid conflict with definitions from
   <byteswap.h>, imported by SDL.

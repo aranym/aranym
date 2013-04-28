@@ -20,12 +20,14 @@ When starting MacAranym with configured ethernet support (i.e. ethernet type
 \f0 ), a helper tool called "bpf_helper" is started to open a /dev/bpf* device which then gives access to the network layer. \
 To do this, the tool requires root privileges and therefore will ask you for an administrator password when it is run for the first time.\
 \
-This implementation has the following limitations:\
+The current implementation has the following limitations:\
 \pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720
-\ls1\ilvl0\cf0 {\listtext	\'95	}Only 
+\ls1\ilvl0\cf0 {\listtext	\'95	}No 
+\f1 tunnel
+\f0  mode (=only 
 \f1 bridge
-\f0  mode supported. I.e. MacAranym is directly connected to the network of your host.\
-{\listtext	\'95	}MAC address configuration does not really work. All packets sent by MacAranym have the same MAC address as the hosts underlying network card.\
+\f0  mode) is supported. I.e. MacAranym is directly connected to the same network of your host.\
+{\listtext	\'95	}All packets sent by MacAranym have the same MAC address as the hosts underlying network card, even though something different is configured.\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 \cf0 \
 To enable ethernet, you'll have modify the config file as follows:\
@@ -44,13 +46,33 @@ MAC = 00:41:45:54:48:30\
 \f3\fs26 \cf0 		\
 
 \f1\fs24 Type\
+\pard\pardeftab720\li1320\fi-183
 
-\f0 	Use 
+\f0 \cf0 Use 
 \f1 bridge
-\f0  to enable ethernet (any other value will disable Ethernet!).\
-	Add 
+\f0  to enable ethernet (any other value will disable Ethernet!). By default this mode will enable the MAC address based packet filter.\
+Add the keyword 
 \f1 debug
-\f0  to enable debugging. Use the Console application to see packets sent/received by MacAranym.\
+\f0  to enable debugging. Start MacAranym from within the Terminal application to see packets sent/received.\
+Add the keyword 
+\f1 nofilter
+\f0  to disable the built-in filter completely. This is for assistance during debugging.  It is not recommended to keep this mode enabled as this results in memory leakage under MiNT.\
+Add the keyword 
+\f1 mcast
+\f0  to enable multi-cast MAC filtering. This mode will pass multi-cast packets to the Atari side.\
+Add the keyword 
+\f1 ip
+\f0  to enable IP based filtering. This mode will pass ARP and IP packets to the Atari side. \
+\
+The keywords 
+\f1 nofilter
+\f0 , 
+\f1 mcast
+\f0  and 
+\f1 ip
+\f0  are all affecting the packet filtering method and therefore cannot be combined.\
+\pard\tx1040\pardeftab720\fi560
+\cf0 \
 
 \f1 Tunnel\
 
@@ -58,21 +80,21 @@ MAC = 00:41:45:54:48:30\
 
 \f1 HostIP\
 
-\f0 	Router giving access to the internet. Check your network settings if you are unsure about it.\
+\f0 	Router giving access to the internet. Check your network settings if you are not sure.\
 
 \f1 AtariIP\
 
-\f0 	Any free IP address which will then be used by MacAranym for sending/receiving IP packets.\
+\f0 	An unused IP address which can be used by MacAranym for sending/receiving IP packets.\
 
 \f1 MAC\
 
-\f0 	MAC address used for MacAranym. \
+\f0 	MAC address used for by MacAranym when sending packets.\
 \pard\pardeftab720
 
 \f1 \cf0 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802
 
-\f0 \cf0 If you don't have a working and up-to-date Atari/ARAnyM setup yet, then go download the {\field{\*\fldinst{HYPERLINK "http://aranym.org/afros.html"}}{\fldrslt AFROS}} 8.12 now. It will let you boot directly to the desktop. With a slight modification of the ethernet configuration (=set your DNS server in 
+\f0 \cf0 If you don't have a working and up-to-date Atari/ARAnyM setup yet, then go download {\field{\*\fldinst{HYPERLINK "http://aranym.org/afros.html"}}{\fldrslt AFROS}} now. It will let you boot directly to the desktop. With a slight modification of the ethernet configuration (=set your DNS server in 
 \f1 /etc/resolv.conf
 \f0 ), you are quickly up and running and able to browse the internet with Highwire!\
 \

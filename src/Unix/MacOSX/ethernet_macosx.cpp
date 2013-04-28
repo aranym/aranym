@@ -56,8 +56,8 @@
 
 #define ETH_HELPER "bpf_helper"
 
-// BPF filter program to ensure only ethernet packets are processed which are destined to Atari MAC
-struct bpf_insn ip_filter[] = {
+// BPF filter program to ensure only ethernet packets are processed which are for configured MAC
+struct bpf_insn bpf_filter_mac_insn[] = {
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 0),                  //      ld  P[0:4]
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAAAAAA, 0, 3),	//		jeq destMAC, CONT, NOK
 	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 4),                  // CONT:ld  P[4:2]
@@ -66,7 +66,41 @@ struct bpf_insn ip_filter[] = {
 	BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK: ret 0
 };
 
-struct bpf_program filter = {sizeof(ip_filter)/sizeof(struct bpf_insn), &ip_filter[0]};
+struct bpf_program bpf_filter_mac = {sizeof(bpf_filter_mac_insn)/sizeof(struct bpf_insn), &bpf_filter_mac_insn[0]};
+
+// BPF filter program to process multicast ethernet and configured MAC address packets
+struct bpf_insn bpf_filter_mcast_insn[] = {
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 0),                  //      ld  P[0:4]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAAAAAA, 0, 2),	//		jeq destMAC, CONT, NOK1
+	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 4),                  // CONT:ld  P[4:2]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAA, 2, 0),		//		jeq destMAC, OK, NOK1
+	BPF_STMT(BPF_LD+BPF_B+BPF_ABS, 0),                  // NOK1:ld  P[0:1]
+	BPF_JUMP(BPF_JMP|BPF_JSET|BPF_K, 0x01, 0, 1),       //      if (A & 1) OK else NOK2
+	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 // OK:  ret -1
+	BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK2:ret 0
+};
+
+struct bpf_program bpf_filter_mcast = {sizeof(bpf_filter_mcast_insn)/sizeof(struct bpf_insn), &bpf_filter_mcast_insn[0]};
+
+// BPF filter program to process ethernet packets if the configured IP address matches
+struct bpf_insn bpf_filter_ip_insn[] = {
+	// Check ethernet protocol (IP and ARP supported)
+	BPF_STMT(BPF_LD+BPF_H+BPF_ABS, 12),					//			ld	P[12:2]
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0x0800, 3, 0),		//			jeq	IP_Type, CONT_IP, CONT
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0x0806, 0, 5),		// CONT:	jeq	IP_Type, CONT_ARP, NOK
+	// Load IP address from offset 38
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 38),                 // CONT_ARP:ld  P[38:4]
+	BPF_JUMP(BPF_JMP+BPF_JA, 1, 1, 1),					//			jmp	COMPARE
+	// Load IP address from offset 30
+	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, 30),                 // CONT_IP:	ld  P[30:4]
+	// Compare value with expected dest IP address
+	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0xAAAAAAAA, 0, 1),	// COMPARE:	jeq destIP, OK, NOK
+	BPF_STMT(BPF_RET+BPF_K, (u_int)-1),                 // OK:		ret -1
+	BPF_STMT(BPF_RET+BPF_K, 0),                         // NOK:		ret 0
+};
+
+struct bpf_program bpf_filter_ip = {sizeof(bpf_filter_ip_insn)/sizeof(struct bpf_insn), &bpf_filter_ip_insn[0]};
+
 
 // Ethernet frame
 struct ethernet_frame
@@ -142,6 +176,13 @@ void dump_bpf_buf(const char *prefix, bpf_hdr* bpf_buf)
 		dump_frame(prefix, (struct ethernet_frame*)((char*)bpf_buf + bpf_buf->bh_hdrlen));
 	}
 }
+
+void BPFEthernetHandler::reset_read_pos()
+{
+	read_len = 0;
+	bpf_packet = NULL;
+}
+
 
 bool BPFEthernetHandler::open()
 {
@@ -260,44 +301,82 @@ bool BPFEthernetHandler::open()
 		return false;
 	}
 	
-	// convert and validate MAC address from configuration
-	// default MAC Address is just made up
-	uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
-	
-	// convert user-defined MAC Address from string to 6 bytes array
-	char *mac_text = bx_options.ethernet[ethX].mac_addr;
-	bool format_OK = false;
-	if (strlen(mac_text) == 2*6+5 && (mac_text[2] == ':' || mac_text[2] == '-')) {
-		mac_text[2] = mac_text[5] = mac_text[8] = mac_text[11] = mac_text[14] = ':';
-		int md[6] = {0, 0, 0, 0, 0, 0};
-		int matched = sscanf(mac_text, "%02x:%02x:%02x:%02x:%02x:%02x",
-							 &md[0], &md[1], &md[2], &md[3], &md[4], &md[5]);
-		if (matched == 6) {
-			for(int i=0; i<6; i++)
-				mac_addr[i] = md[i];
-			format_OK = true;
-		}
-	}
-	if (!format_OK) {
-		panicbug("BPF(%d): Invalid MAC address: %s", ethX, mac_text);
-		::close(fd);
-		return false;
-	}
-	
-	// modify filter program to use specified IP address
-	D(bug("BPF(%d): setting filter program for MAC address %s", ethX, mac_text));
-	
-	ip_filter[1].k = (mac_addr[0]<<24) | (mac_addr[1]<<16) | (mac_addr[2]<<8) | mac_addr[3];
-	ip_filter[3].k = (mac_addr[4]<<8) | mac_addr[5];
-	
-	// Enable filter program
-	if(ioctl(fd, BIOCSETF, &filter) == -1)
+	if (strstr(type, "nofilter") == NULL)
 	{
-		panicbug("BPF(%d): Unable to load filter program: %s", ethX, strerror(errno));
-		::close(fd);
-		return false;
+		// convert and validate MAC address from configuration
+		// default MAC Address is just made up
+		uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+		
+		// convert user-defined MAC Address from string to 6 bytes array
+		char *mac_text = bx_options.ethernet[ethX].mac_addr;
+		bool format_OK = false;
+		if (strlen(mac_text) == 2*6+5 && (mac_text[2] == ':' || mac_text[2] == '-')) {
+			mac_text[2] = mac_text[5] = mac_text[8] = mac_text[11] = mac_text[14] = ':';
+			int md[6] = {0, 0, 0, 0, 0, 0};
+			int matched = sscanf(mac_text, "%02x:%02x:%02x:%02x:%02x:%02x",
+								 &md[0], &md[1], &md[2], &md[3], &md[4], &md[5]);
+			if (matched == 6) {
+				for(int i=0; i<6; i++)
+					mac_addr[i] = md[i];
+				format_OK = true;
+			}
+		}
+		if (!format_OK) {
+			panicbug("BPF(%d): Invalid MAC address: %s", ethX, mac_text);
+			::close(fd);
+			return false;
+		}
+
+		// convert and validate specified IP address
+		uint8 ip_addr[4];
+		if (!inet_pton(AF_INET, bx_options.ethernet[ethX].ip_atari, ip_addr)) {
+			panicbug("BPF(%d): Invalid IP address specified: %s", ethX, bx_options.ethernet[ethX].ip_atari);
+			::close(fd);
+			return false;
+		}
+
+		// modify filter program to use specified IP address
+		D(bug("BPF(%d): setting filter program for MAC address %s", ethX, mac_text));
+		
+		// Select filter program according to chosen options
+		struct bpf_program *filter;
+		if (strstr(type, "mcast")) {
+			filter = &bpf_filter_mcast;
+
+			// patch filter instructions to detect valid MAC address
+			filter->bf_insns[1].k = (mac_addr[0]<<24) | (mac_addr[1]<<16) | (mac_addr[2]<<8) | mac_addr[3];
+			filter->bf_insns[3].k = (mac_addr[4]<<8) | mac_addr[5];
+		}
+		else if (strstr(type, "ip")) {
+			filter = &bpf_filter_ip;
+
+			// patch filter instructions to detect valid IP address
+			filter->bf_insns[6].k = (ip_addr[0]<<24) | (ip_addr[1]<<16) | (ip_addr[2]<<8) | ip_addr[3];
+
+		}
+		else {
+			filter = &bpf_filter_mac;
+			// patch filter instructions to detect valid MAC address
+			filter->bf_insns[1].k = (mac_addr[0]<<24) | (mac_addr[1]<<16) | (mac_addr[2]<<8) | mac_addr[3];
+			filter->bf_insns[3].k = (mac_addr[4]<<8) | mac_addr[5];
+		}
+
+		// Enable filter program
+		if(ioctl(fd, BIOCSETF, filter) == -1)
+		{
+			panicbug("BPF(%d): Unable to load filter program: %s", ethX, strerror(errno));
+			::close(fd);
+			return false;
+		}
+		bug("BPF(%d): filter program load", ethX);
 	}
-	bug("BPF(%d): MAC filter program load", ethX);
+	else {
+		bug("BPF(%d): filter program skipped", ethX);
+	}
+	
+	
+	// Reset bpf buffer read position (for handling multi packet)
+	reset_read_pos();
 	
 	return true;
 }
@@ -305,6 +384,8 @@ bool BPFEthernetHandler::open()
 bool BPFEthernetHandler::close()
 {
 	D(bug("BPF(%d): close", ethX));
+
+	reset_read_pos();
 	
 	::close(fd);
 	
@@ -316,38 +397,88 @@ bool BPFEthernetHandler::close()
 int BPFEthernetHandler::recv(uint8 *buf, int len)
 {
 	D(bug("BPF(%d): recv(len=%d)", ethX, len));
-	// Read a packet from the ethernet device, timeout after 2s
-	int res = 0;
-	
-	// Initialize the file descriptor set.
-	fd_set set;
-	struct timeval timeout;
-	FD_ZERO (&set);
-	FD_SET (fd, &set);
-	
-	// Initialize the timeout data structure.
-	timeout.tv_sec = 2;
-	timeout.tv_usec = 0;
-	
-	// select returns 0 if timeout, 1 if input available, -1 if error.
-	if (select(FD_SETSIZE, &set, NULL, NULL, &timeout) == 1) {
+
+	// No more cached packet in memory?
+	if (bpf_packet == NULL)
+	{
+		// Read a packet from the ethernet device, timeout after 2s
+		// Initialize the file descriptor set.
+		fd_set set;
+		struct timeval timeout;
+		FD_ZERO (&set);
+		FD_SET (fd, &set);
 		
-		res = read(fd, bpf_buf, buf_len);
-		if (res > 0) {
-			D(bug("BPF(%d): recv %d bytes => %d data bytes", ethX, res, bpf_buf->bh_datalen));
+		// Initialize the timeout data structure.
+		timeout.tv_sec = 2;
+		timeout.tv_usec = 0;
+		
+		// select returns 0 if timeout, 1 if input available, -1 if error.
+		if (select(FD_SETSIZE, &set, NULL, NULL, &timeout) == 1)
+		{
+			// Read from BPF device
+			read_len = read(fd, bpf_buf, buf_len);
 			if (debug) {
-				bug("BPF(%d): recv %d bytes => %d data bytes", ethX, res, bpf_buf->bh_datalen);
-				dump_bpf_buf("recv", bpf_buf);
+				bug("BPF(%d): %d bytes read => %d data bytes", ethX, read_len, bpf_buf->bh_datalen);
 			}
-			int copy_len = MIN(len,bpf_buf->bh_datalen);
-			memcpy(buf, ((char*)bpf_buf + bpf_buf->bh_hdrlen), copy_len);
-			if (copy_len != bpf_buf->bh_datalen) {
-				bug("BPF(%d): received %d bytes on Host but %d bytes expected by Atari. Packet truncated to %d!", ethX, bpf_buf->bh_datalen, len, copy_len);
+			if (read_len > 0)
+			{
+				bpf_packet = bpf_buf;
+
+				if (BPF_WORDALIGN(bpf_buf->bh_hdrlen + bpf_buf->bh_caplen) < read_len) {
+					D(bug("BPF(%d): More than one packet received by BPF\n"
+						"   read_len = %d\n"
+						"   bh_hdrlen=%d\n"
+						"   bh_datalen=%d\n"
+						"   bh_caplen=%d\n"
+						,ethX, read_len, bpf_buf->bh_hdrlen, bpf_buf->bh_datalen, bpf_buf->bh_caplen));
+				}
 			}
-			return copy_len;
 		}
 	}
-	return res;
+	else {
+		if (debug) {
+			bug("BPF(%d): using cached %d data bytes from previous read", ethX, read_len);
+		}
+	}
+	
+	char *ptr = (char *)bpf_packet;
+	if (bpf_packet && (ptr < ((char *)bpf_buf + read_len)))
+	{
+		char *frame_start = ptr + bpf_packet->bh_hdrlen;
+		int frame_len = bpf_packet->bh_caplen;
+		
+		ptr += BPF_WORDALIGN(bpf_packet->bh_hdrlen + bpf_packet->bh_caplen);
+		
+		// Copy valid frame data
+		if (frame_len <= len) {
+			if (debug) {
+				bug("BPF(%d): frame length %d bytes", ethX, frame_len);
+				dump_bpf_buf("recv", bpf_packet);
+			}
+			memcpy(buf, frame_start, frame_len);
+		}
+		else {
+			
+			bug("BPF(%d): Host side received %d bytes of data but only %d bytes expected by guest.\n"
+				"There are probably multiple packets in the received %d bytes.\n"
+				"Packet discarded!", ethX, frame_len, len, read_len);
+			bug("BPF(%d): read_len = %d\n"
+				"   bh_hdrlen=%d\n"
+				"   bh_datalen=%d\n"
+				"   bh_caplen=%d\n"
+				,ethX, read_len, bpf_packet->bh_hdrlen, bpf_packet->bh_datalen, bpf_packet->bh_caplen);
+			frame_len = 0;
+		}
+		
+		if (ptr < ((char *)bpf_buf + read_len))
+			bpf_packet = (struct bpf_hdr*)ptr;
+		else
+			bpf_packet = NULL;
+		
+		
+		return frame_len;
+	}
+	return 0;
 }
 
 int BPFEthernetHandler::send(const uint8 *buf, int len)

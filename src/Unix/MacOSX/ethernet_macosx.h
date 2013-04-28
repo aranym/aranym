@@ -34,6 +34,12 @@ class BPFEthernetHandler : public ETHERNETDriver::Handler {
 	int fd;
 	int buf_len;
 	struct bpf_hdr* bpf_buf;
+
+	// variables used for looping over multiple packets
+	int read_len;
+	struct bpf_hdr* bpf_packet;
+	
+	void reset_read_pos();
 	
 public:
 	BPFEthernetHandler(int eth_idx) : Handler(eth_idx) { }
