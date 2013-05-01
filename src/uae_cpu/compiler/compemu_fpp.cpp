@@ -927,7 +927,7 @@ static const fpu_register const_loge_10	= 2.30258509299404568402;
 static const fpu_register power10[]		= {
 	1e0, 1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256
 #if USE_LONG_DOUBLE
-,	1e512, 1e1024, 1e2048, 1e4096
+,	1e512L, 1e1024L, 1e2048L, 1e4096L
 #endif
 };
 
