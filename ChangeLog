@@ -1,10 +1,14 @@
+2013/05/01 - Philipp
+- newcpu.cpp/compemu_fpp.cpp/fpu_ieee.cpu: fixed bugs which were reported as
+  warnings by LLVM.
+
 2013/04/28 - Philipp
 - ethernet_macosx.cpp: BPF packet filtering improvements: added a new filter for
   multi-cast packets (MAC based) and another filter solely based on the IP
   address (ARP and IP protocol only).
   "nofilter" should only be used for debugging, as it causes memory leaks on the
   Atari/MiNT side and therefore system crashes.
-  Implemented multi-packet reads from BPF device (one read opeation can deliver
+  Implemented multi-packet reads from BPF device (one read operation can deliver
   multiple ethernet frames).
 
 2013/04/28 - Andreas
