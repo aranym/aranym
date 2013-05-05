@@ -1,3 +1,7 @@
+2013/05/05 - Philipp
+- MacAranym.xcodeproj: Removed specific compilation flags of bpf_helper target.
+  This should enable error-free compilation with Xcode 3.1.
+
 2013/05/01 - Philipp
 - newcpu.cpp/compemu_fpp.cpp/fpu_ieee.cpu: fixed bugs which were reported as
   warnings by LLVM.
