@@ -71,7 +71,10 @@ int fix_permissions(const char* filename)
 		err_status = AuthorizationExecuteWithPrivileges(auth_ref, "/usr/sbin/chown", 0, exec_args, NULL);
 		if (err_status == errAuthorizationSuccess)
 		{
-			exec_args[0] = "ug+s";
+			int child;
+			wait(&child); // New
+			
+			exec_args[0] = "ug+s,g+x"; // New
 			exec_args[1] = fn_copy;
 			exec_args[2] = NULL;
 			printf("Executing chmod %s %s\n", exec_args[0], exec_args[1]);
@@ -79,6 +82,8 @@ int fix_permissions(const char* filename)
 			if (err_status != errAuthorizationSuccess) 
 			{
 				fprintf(stderr, "Error while executing chmod: %d\n", (int)err_status);
+			} else { 
+				wait(&child); // New
 			}
 		}
 		else 

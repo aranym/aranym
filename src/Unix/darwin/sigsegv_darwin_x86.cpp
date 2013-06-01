@@ -66,6 +66,11 @@ extern "C" {
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 
+#ifdef CPU_i386
+#	undef MACH_EXCEPTION_CODES
+#	define MACH_EXCEPTION_CODES						0
+#endif
+
 extern boolean_t exc_server(mach_msg_header_t *, mach_msg_header_t *);
 extern kern_return_t catch_exception_raise(mach_port_t, mach_port_t,
 	mach_port_t, exception_type_t, exception_data_t, mach_msg_type_number_t);
@@ -162,7 +167,7 @@ enum {
 	X86_REG_EIP = 10,
 	X86_REG_EAX = 0,
 	X86_REG_ECX = 2,
-	X86_REG_EDX = 4,
+	X86_REG_EDX = 3,
 	X86_REG_EBX = 1,
 	X86_REG_ESP = 7,
 	X86_REG_EBP = 6,
@@ -350,11 +355,13 @@ static inline void set_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME, type_size_t t) 
 				else CONTEXT_AEFLAGS &= 0xfffffffe;
 			if (i > 127) CONTEXT_AEFLAGS |= 0x80;			// SF
 				else CONTEXT_AEFLAGS &= 0xffffff7f;
+			break;
 		case TYPE_WORD:
 			if ((i > 65535) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
 				else CONTEXT_AEFLAGS &= 0xfffffffe;
 			if (i > 32767) CONTEXT_AEFLAGS |= 0x80;			// SF
 				else CONTEXT_AEFLAGS &= 0xffffff7f;
+			break;
 		case TYPE_INT:
 			if (i > 2147483647) CONTEXT_AEFLAGS |= 0x80;		// SF
 				else CONTEXT_AEFLAGS &= 0xffffff7f;
@@ -979,6 +986,11 @@ forward_exception(mach_port_t thread_port,
 	port = oldExceptionPorts->handlers[portIndex];
 	behavior = oldExceptionPorts->behaviors[portIndex];
 	flavor = oldExceptionPorts->flavors[portIndex];
+	
+	if (!VALID_THREAD_STATE_FLAVOR(flavor)) {
+		fprintf(stderr, "Invalid thread_state flavor = %d. Not forwarding\n", flavor);
+		return KERN_FAILURE;
+	}
 
 	/*
 	 fprintf(stderr, "forwarding exception, port = 0x%x, behaviour = %d, flavor = %d\n", port, behavior, flavor);
@@ -1017,6 +1029,7 @@ forward_exception(mach_port_t thread_port,
 	  break;
 	default:
 	  panicbug("forward_exception got unknown behavior");
+	  kret = KERN_FAILURE;
 	  break;
 	}
 
@@ -1026,7 +1039,7 @@ forward_exception(mach_port_t thread_port,
 		MACH_CHECK_ERROR (thread_set_state, kret);
 	}
 
-	return KERN_SUCCESS;
+	return kret;
 }
 
 /*
@@ -1052,28 +1065,30 @@ __attribute__ ((visibility("default")))
 kern_return_t
 catch_exception_raise(mach_port_t /*exception_port*/,
 					  mach_port_t thread,
-					  mach_port_t /*task*/,
+					  mach_port_t task,
 					  exception_type_t exception,
 					  exception_data_t code,
 					  mach_msg_type_number_t codeCount)
 {
 	SIGSEGV_THREAD_STATE_TYPE state;
-	kern_return_t krc = KERN_SUCCESS;
+	kern_return_t krc;
 
 	D(panicbug("catch_exception_raise: %d", exception));
 
-	if ((exception == SIGSEGV_EXCEPTION)  && (codeCount >= 2)) {
-		if (handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGS))
-		{
-		D(panicbug("exception handled successfully"));
-		return KERN_SUCCESS;
+	if (exception == EXC_BAD_ACCESS) {
+		switch (code[0]) {
+			case KERN_PROTECTION_FAILURE:
+			case KERN_INVALID_ADDRESS:
+				if (handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGS))
+					return KERN_SUCCESS;
+				break;
 		}
 	}
 
 	// In Mach we do not need to remove the exception handler.
 	// If we forward the exception, eventually some exception handler
 	// will take care of this exception.
-//	krc = forward_exception(thread, task, exception, code, codeCount, &ports);
+	krc = forward_exception(thread, task, exception, code, codeCount, &ports);
 
 	return krc;
 }
@@ -1145,7 +1160,7 @@ static bool sigsegv_do_install_handler(sigsegv_fault_handler_t handler)
 
 	// get the old exception ports
 	ports.maskCount = sizeof (ports.masks) / sizeof (ports.masks[0]);
-	krc = thread_get_exception_ports(mach_thread_self(), SIGSEGV_MASK, ports.masks,
+	krc = thread_get_exception_ports(mach_thread_self(), EXC_MASK_BAD_ACCESS, ports.masks,
  				&ports.maskCount, ports.handlers, ports.behaviors, ports.flavors);
  	if (krc != KERN_SUCCESS) {
  		mach_error("thread_get_exception_ports", krc);
@@ -1170,8 +1185,8 @@ static bool sigsegv_do_install_handler(sigsegv_fault_handler_t handler)
 	// addresses of ra and rb modes (as good an name as any for these
 	// addressing modes) used in PPC instructions, you will need the
 	// GPR state anyway.
-	krc = thread_set_exception_ports(mach_thread_self(), SIGSEGV_MASK, _exceptionPort,
-				EXCEPTION_DEFAULT, SIGSEGV_THREAD_STATE_FLAVOR);
+	krc = thread_set_exception_ports(mach_thread_self(), EXC_MASK_BAD_ACCESS, _exceptionPort,
+				EXCEPTION_DEFAULT | MACH_EXCEPTION_CODES, SIGSEGV_THREAD_STATE_FLAVOR);
 	if (krc != KERN_SUCCESS) {
 		mach_error("thread_set_exception_ports", krc);
 		return false;

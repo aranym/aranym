@@ -1,3 +1,14 @@
+2013/06/01 - Jens
+- bpf_helper.c: Set executable flag in fix permissions and wait for child
+  processes to finish.
+- configure.ac prepared for 64Bit for Fixed addressing vm_alloc on darwin
+- MacAranym.xcodeproj: Fixed Packaging scheme for 32/64 Bit Targets
+- sigsegv_darwin_x86.cpp: added break in set_eflags. (Not sure if the eflags
+  are really relevant)
+- sigsegv_darwin_x86.cpp: Fixed X86_REG_EDX
+- sigsegv_darwin_x86.cpp: Limit to BAD_ACCESS and forward_exception to enable
+  XCode Debugging
+
 2013/05/05 - Philipp
 - MacAranym.xcodeproj: Removed specific compilation flags of bpf_helper target.
   This should enable error-free compilation with Xcode 3.1.
