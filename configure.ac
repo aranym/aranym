@@ -1096,11 +1096,6 @@ for am in $ADDRESSING_TEST_ORDER; do
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_X86_64" = "xyes" ]]; then
-      ADDRESSING_MODE="fixed (0x151000000)"
-      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x151000000"
-      break
-    fi
     if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_I386" ]]; then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"

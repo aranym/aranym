@@ -22,7 +22,7 @@
  * along with ARAnyM; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Last modified: 2007-07-22 Jens Heitmann
+ * Last modified: 2013-06-16 Jens Heitmann
  *
  */
 
@@ -47,7 +47,6 @@ extern void compiler_dumpstate();
 //
 #include <pthread.h>
 
-
 // Address type
 typedef char * sigsegv_address_t;
 
@@ -61,27 +60,63 @@ enum sigsegv_return_t {
 // Define an address that is bound to be invalid for a program counter
 const sigsegv_address_t SIGSEGV_INVALID_PC = (sigsegv_address_t)(-1);
 
-
 extern "C" {
 #include <mach/mach.h>
 #include <mach/mach_error.h>
-
+	
 #ifdef CPU_i386
 #	undef MACH_EXCEPTION_CODES
 #	define MACH_EXCEPTION_CODES						0
+#	define MACH_EXCEPTION_DATA_T					exception_data_t
+#	define MACH_EXCEPTION_DATA_TYPE_T				exception_data_type_t
+#	define MACH_EXC_SERVER							exc_server
+#	define CATCH_MACH_EXCEPTION_RAISE				catch_exception_raise
+#	define MACH_EXCEPTION_RAISE						exception_raise
+#	define MACH_EXCEPTION_RAISE_STATE				exception_raise_state
+#	define MACH_EXCEPTION_RAISE_STATE_IDENTITY		exception_raise_state_identity
+
+#else
+
+#	define MACH_EXCEPTION_DATA_T					mach_exception_data_t
+#	define MACH_EXCEPTION_DATA_TYPE_T				mach_exception_data_type_t
+#	define MACH_EXC_SERVER							mach_exc_server
+#	define CATCH_MACH_EXCEPTION_RAISE				catch_mach_exception_raise
+#	define MACH_EXCEPTION_RAISE						mach_exception_raise
+#	define MACH_EXCEPTION_RAISE_STATE				mach_exception_raise_state
+#	define MACH_EXCEPTION_RAISE_STATE_IDENTITY		mach_exception_raise_state_identity
+
 #endif
 
-extern boolean_t exc_server(mach_msg_header_t *, mach_msg_header_t *);
-extern kern_return_t catch_exception_raise(mach_port_t, mach_port_t,
-	mach_port_t, exception_type_t, exception_data_t, mach_msg_type_number_t);
-extern kern_return_t exception_raise(mach_port_t, mach_port_t, mach_port_t,
-	exception_type_t, exception_data_t, mach_msg_type_number_t);
-extern kern_return_t exception_raise_state(mach_port_t, exception_type_t,
-	exception_data_t, mach_msg_type_number_t, thread_state_flavor_t *,
+	
+// Extern declarations of mach functions
+// dependend on the underlying architecture this are extern declarations
+// for "mach" or "non mach" function names. 64 Bit requieres "mach_xxx"
+//	functions
+//
+extern boolean_t MACH_EXC_SERVER(mach_msg_header_t *, mach_msg_header_t *);
+
+extern kern_return_t CATCH_MACH_EXCEPTION_RAISE(mach_port_t, mach_port_t,
+	mach_port_t, exception_type_t, MACH_EXCEPTION_DATA_T, mach_msg_type_number_t);
+
+extern kern_return_t MACH_EXCEPTION_RAISE(mach_port_t, mach_port_t, mach_port_t,
+	exception_type_t, MACH_EXCEPTION_DATA_T, mach_msg_type_number_t);
+
+extern kern_return_t MACH_EXCEPTION_RAISE_STATE(mach_port_t, exception_type_t,
+	MACH_EXCEPTION_DATA_T, mach_msg_type_number_t, thread_state_flavor_t *,
 	thread_state_t, mach_msg_type_number_t, thread_state_t, mach_msg_type_number_t *);
-extern kern_return_t exception_raise_state_identity(mach_port_t, mach_port_t, mach_port_t,
-	exception_type_t, exception_data_t, mach_msg_type_number_t, thread_state_flavor_t *,
+	
+extern kern_return_t MACH_EXCEPTION_RAISE_STATE_IDENTITY(mach_port_t, mach_port_t, mach_port_t,
+	exception_type_t, MACH_EXCEPTION_DATA_T, mach_msg_type_number_t, thread_state_flavor_t *,
 	thread_state_t, mach_msg_type_number_t, thread_state_t, mach_msg_type_number_t *);
+	
+extern kern_return_t catch_mach_exception_raise_state(mach_port_t,
+	exception_type_t, MACH_EXCEPTION_DATA_T, mach_msg_type_number_t,
+	int *, thread_state_t, mach_msg_type_number_t, thread_state_t, mach_msg_type_number_t *);
+	   
+extern kern_return_t catch_mach_exception_raise_state_identity(mach_port_t,
+	mach_port_t, mach_port_t, exception_type_t, MACH_EXCEPTION_DATA_T, mach_msg_type_number_t,
+    int *, thread_state_t, mach_msg_type_number_t, thread_state_t, mach_msg_type_number_t *);
+
 }
 
 // Could make this dynamic by looking for a result of MIG_ARRAY_TOO_LARGE
@@ -96,61 +131,52 @@ typedef struct _ExceptionPorts {
 	thread_state_flavor_t flavors[HANDLER_COUNT];
 } ExceptionPorts;
 
-#ifdef __ppc__
-#define SIGSEGV_THREAD_STATE_TYPE		ppc_thread_state_t
-#define SIGSEGV_THREAD_STATE_FLAVOR		PPC_THREAD_STATE
-#define SIGSEGV_THREAD_STATE_COUNT		PPC_THREAD_STATE_COUNT
-#define SIGSEGV_FAULT_INSTRUCTION		state->srr0
-#define SIGSEGV_SKIP_INSTRUCTION		powerpc_skip_instruction
-#define SIGSEGV_REGISTER_FILE			(unsigned long *)&state->srr0, (unsigned long *)&state->r0
-#endif
-
-#ifdef __i386__
-#ifdef i386_SAVED_STATE
-#define SIGSEGV_THREAD_STATE_TYPE		struct i386_saved_state
-#define SIGSEGV_THREAD_STATE_FLAVOR		i386_SAVED_STATE
-#define SIGSEGV_THREAD_STATE_COUNT		i386_SAVED_STATE_COUNT
-#define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->edi) /* EDI is the first GPR we consider */
-#else
-#ifdef x86_THREAD_STATE32
+#if (CPU_i386)
+#	define STATE_REGISTER_TYPE	uint32
+#	ifdef i386_SAVED_STATE
+#		define SIGSEGV_THREAD_STATE_TYPE		struct i386_saved_state
+#		define SIGSEGV_THREAD_STATE_FLAVOR		i386_SAVED_STATE
+#		define SIGSEGV_THREAD_STATE_COUNT		i386_SAVED_STATE_COUNT
+#		define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->edi) /* EDI is the first GPR we consider */
+#	else
+#		ifdef x86_THREAD_STATE32
 /* MacOS X 10.5 or newer introduces the new names and deprecates the old ones */
-#define SIGSEGV_THREAD_STATE_TYPE		x86_thread_state32_t
-#define SIGSEGV_THREAD_STATE_FLAVOR		x86_THREAD_STATE32
-#define SIGSEGV_THREAD_STATE_COUNT		x86_THREAD_STATE32_COUNT
-#define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
-#define SIGSEGV_FAULT_INSTRUCTION		state->__eip
+#			define SIGSEGV_THREAD_STATE_TYPE		x86_thread_state32_t
+#			define SIGSEGV_THREAD_STATE_FLAVOR		x86_THREAD_STATE32
+#			define SIGSEGV_THREAD_STATE_COUNT		x86_THREAD_STATE32_COUNT
+#			define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
+#			define SIGSEGV_FAULT_INSTRUCTION		state->__eip
 
-#else
+#		else
 /* MacOS X 10.4 and below */
-#define SIGSEGV_THREAD_STATE_TYPE		struct i386_thread_state
-#define SIGSEGV_THREAD_STATE_FLAVOR		i386_THREAD_STATE
-#define SIGSEGV_THREAD_STATE_COUNT		i386_THREAD_STATE_COUNT
-#define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
-#define SIGSEGV_FAULT_INSTRUCTION		state->eip
+#			define SIGSEGV_THREAD_STATE_TYPE		struct i386_thread_state
+#			define SIGSEGV_THREAD_STATE_FLAVOR		i386_THREAD_STATE
+#			define SIGSEGV_THREAD_STATE_COUNT		i386_THREAD_STATE_COUNT
+#			define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
+#			define SIGSEGV_FAULT_INSTRUCTION		state->eip
 
+#		endif
+#	endif
 #endif
-#endif
-#define SIGSEGV_SKIP_INSTRUCTION		ix86_skip_instruction
+
+#if CPU_x86_64
+#	define STATE_REGISTER_TYPE	uint64
+#	ifdef x86_THREAD_STATE64
+#		define SIGSEGV_THREAD_STATE_TYPE		x86_thread_state64_t
+#		define SIGSEGV_THREAD_STATE_FLAVOR		x86_THREAD_STATE64
+#		define SIGSEGV_THREAD_STATE_COUNT		x86_THREAD_STATE64_COUNT
+#		define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->__rax) /* EAX is the first GPR we consider */
+#		define SIGSEGV_FAULT_INSTRUCTION		state->__rip
+#	endif
 #endif
 
 #define SIGSEGV_ERROR_CODE				KERN_INVALID_ADDRESS
 #define SIGSEGV_ERROR_CODE2				KERN_PROTECTION_FAILURE
 
 #define SIGSEGV_FAULT_ADDRESS			code[1]
-#define SIGSEGV_FAULT_HANDLER_INVOKE(ADDR, IP, REGS)	((code[0] == SIGSEGV_ERROR_CODE2) ? sigsegv_fault_handler(ADDR, IP, REGS) : SIGSEGV_RETURN_FAILURE)
-#define SIGSEGV_FAULT_HANDLER_ARGLIST	mach_port_t thread, exception_data_t code, SIGSEGV_THREAD_STATE_TYPE *state
-#define SIGSEGV_FAULT_HANDLER_ARGS		thread, code, &state
-
-#ifndef SIGSEGV_FAULT_HANDLER_ARGLIST_1
-#define SIGSEGV_FAULT_HANDLER_ARGLIST_1	SIGSEGV_FAULT_HANDLER_ARGLIST
-#endif
-
-#define SIGSEGV_MASK_OLD                EXC_MASK_BAD_ACCESS
-#define SIGSEGV_MASK                    EXC_MASK_ALL
-#define SIGSEGV_EXCEPTION               EXC_BAD_ACCESS
-
 
 enum {
+#if (CPU_i386)
 #ifdef i386_SAVED_STATE
 	// same as FreeBSD (in Open Darwin 8.0.1)
 	X86_REG_EIP = 10,
@@ -174,24 +200,35 @@ enum {
 	X86_REG_ESI = 5,
 	X86_REG_EDI = 4
 #endif
+#else
+#if (CPU_x86_64)
+	X86_REG_R8  = 8,
+	X86_REG_R9  = 9,
+	X86_REG_R10 = 10,
+	X86_REG_R11 = 11,
+	X86_REG_R12 = 12,
+	X86_REG_R13 = 13,
+	X86_REG_R14 = 14,
+	X86_REG_R15 = 15,
+	X86_REG_EDI = 4,
+	X86_REG_ESI = 5,
+	X86_REG_EBP = 6,
+	X86_REG_EBX = 1,
+	X86_REG_EDX = 3,
+	X86_REG_EAX = 0,
+	X86_REG_ECX = 2,
+	X86_REG_ESP = 7,
+	X86_REG_EIP = 16
+#endif
+#endif
 };
 
 // Type of a SIGSEGV handler. Returns boolean expressing successful operation
 typedef sigsegv_return_t (*sigsegv_fault_handler_t)(sigsegv_address_t fault_address, sigsegv_address_t instruction_address,
 										 SIGSEGV_THREAD_STATE_TYPE *state );
 
-// Type of a SIGSEGV state dump function
-typedef void (*sigsegv_state_dumper_t)(sigsegv_address_t fault_address, sigsegv_address_t instruction_address);
-
 // Install a SIGSEGV handler. Returns boolean expressing success
 extern bool sigsegv_install_handler(sigsegv_fault_handler_t handler);
-
-// Remove the user SIGSEGV handler, revert to default behavior
-extern void sigsegv_uninstall_handler(void);
-
-// Set callback function when we cannot handle the fault
-extern void sigsegv_set_dump_state(sigsegv_state_dumper_t handler);
-
 
 enum transfer_type_t {
 	TYPE_UNKNOWN,
@@ -203,6 +240,9 @@ enum type_size_t {
 	TYPE_BYTE,
 	TYPE_WORD,
 	TYPE_INT
+#ifdef CPU_x86_64
+	,TYPE_QUAD
+#endif
 };
 
 // exception handler thread
@@ -216,8 +256,6 @@ static ExceptionPorts ports;
 // User's SIGSEGV handler
 static sigsegv_fault_handler_t sigsegv_fault_handler = 0;
 
-// Function called to dump state if we can't handle the fault
-static sigsegv_state_dumper_t sigsegv_state_dumper = 0;
 
 #define MACH_CHECK_ERROR(name,ret) \
 if (ret != KERN_SUCCESS) { \
@@ -230,9 +268,60 @@ static char msgbuf[MSG_SIZE];
 static char replybuf[MSG_SIZE];
 
 #define CONTEXT_ATYPE	SIGSEGV_THREAD_STATE_TYPE*
-
 #define CONTEXT_NAME	state
+
+#ifdef CPU_x86_64
+
+#define CONTEXT_EIP		CONTEXT_NAME.__rip
+#define CONTEXT_EFLAGS	CONTEXT_NAME.__rflags
+#define CONTEXT_EAX		CONTEXT_NAME.__rax
+#define CONTEXT_EBX		CONTEXT_NAME.__rbx
+#define CONTEXT_ECX		CONTEXT_NAME.__rcx
+#define CONTEXT_EDX		CONTEXT_NAME.__rdx
+#define CONTEXT_EBP		CONTEXT_NAME.__rbp
+#define CONTEXT_ESI		CONTEXT_NAME.__rsi
+#define CONTEXT_EDI		CONTEXT_NAME.__rdi
+
+#define CONTEXT_R8	CONTEXT_NAME.__r8
+#define CONTEXT_R9	CONTEXT_NAME.__r9
+#define CONTEXT_R10	CONTEXT_NAME.__r10
+#define CONTEXT_R11	CONTEXT_NAME.__r11
+#define CONTEXT_R12	CONTEXT_NAME.__r12
+#define CONTEXT_R13	CONTEXT_NAME.__r13
+#define CONTEXT_R14	CONTEXT_NAME.__r14
+#define CONTEXT_R15	CONTEXT_NAME.__r15
+
+#define CONTEXT_CS	CONTEXT_NAME.__cs
+#define CONTEXT_FS	CONTEXT_NAME.__fs
+#define CONTEXT_GS	CONTEXT_NAME.__gs
+
+#define CONTEXT_AEIP	CONTEXT_NAME->__rip
+#define CONTEXT_AEFLAGS	CONTEXT_NAME->__rflags
+#define CONTEXT_AEAX	CONTEXT_NAME->__rax
+#define CONTEXT_AEBX	CONTEXT_NAME->__rbx
+#define CONTEXT_AECX	CONTEXT_NAME->__rcx
+#define CONTEXT_AEDX	CONTEXT_NAME->__rdx
+#define CONTEXT_AEBP	CONTEXT_NAME->__rbp
+#define CONTEXT_AESI	CONTEXT_NAME->__rsi
+#define CONTEXT_AEDI	CONTEXT_NAME->__rdi
+
+#define CONTEXT_AR8	CONTEXT_NAME->__r8
+#define CONTEXT_AR9	CONTEXT_NAME->__r9
+#define CONTEXT_AR10	CONTEXT_NAME->__r10
+#define CONTEXT_AR11	CONTEXT_NAME->__r11
+#define CONTEXT_AR12	CONTEXT_NAME->__r12
+#define CONTEXT_AR13	CONTEXT_NAME->__r13
+#define CONTEXT_AR14	CONTEXT_NAME->__r14
+#define CONTEXT_AR15	CONTEXT_NAME->__r15
+
+#define CONTEXT_ACS	CONTEXT_NAME->__cs
+#define CONTEXT_AFS	CONTEXT_NAME->__fs
+#define CONTEXT_AGS	CONTEXT_NAME->__gs
+
+#else
+
 #ifdef x86_THREAD_STATE32
+
 #define CONTEXT_EIP		CONTEXT_NAME.__eip
 #define CONTEXT_EFLAGS	CONTEXT_NAME.__eflags;
 #define CONTEXT_EAX		CONTEXT_NAME.__eax
@@ -252,7 +341,9 @@ static char replybuf[MSG_SIZE];
 #define CONTEXT_AEBP	CONTEXT_NAME->__ebp
 #define CONTEXT_AESI	CONTEXT_NAME->__esi
 #define CONTEXT_AEDI	CONTEXT_NAME->__edi
+
 #else
+
 #define CONTEXT_EIP		CONTEXT_NAME.eip
 #define CONTEXT_EFLAGS	CONTEXT_NAME.eflags;
 #define CONTEXT_EAX		CONTEXT_NAME.eax
@@ -272,11 +363,13 @@ static char replybuf[MSG_SIZE];
 #define CONTEXT_AEBP	CONTEXT_NAME->ebp
 #define CONTEXT_AESI	CONTEXT_NAME->esi
 #define CONTEXT_AEDI	CONTEXT_NAME->edi
+
+#endif
 #endif
 
 int in_handler = 0;
 
-#if (CPU_i386)
+#if (CPU_i386) || (CPU_x86_64)
 
 /* instruction jump table */
 //i386op_func *cpufunctbl[256];
@@ -301,7 +394,8 @@ enum instruction_t {
 	INSTR_IMUL8,
 	INSTR_NEG8,
 	INSTR_NOT8,
-	INSTR_TESTIMM8
+	INSTR_TESTIMM8,
+	INSTR_XOR8
 };
 
 enum case_instr_t {
@@ -310,6 +404,7 @@ enum case_instr_t {
 	CASE_INSTR_OR8MR	= 0x08,
 	CASE_INSTR_OR8RM	= 0x0a,
 	CASE_INSTR_MOVxX	= 0x0f,
+	CASE_INSTR_XOR8MR	= 0x30,
 	CASE_INSTR_MOVZX8RM	= 0xb6,
 	CASE_INSTR_MOVZX16RM	= 0xb7,
 	CASE_INSTR_MOVSX8RM	= 0xbe
@@ -317,7 +412,7 @@ enum case_instr_t {
 
 static inline int get_instr_size_add(unsigned char *p)
 {
-	int mod = (p[0] >> 6) & 3;
+	int mod = (p[0] & 0xC0);
 	int rm = p[0] & 7;
 	int offset = 0;
 
@@ -326,13 +421,13 @@ static inline int get_instr_size_add(unsigned char *p)
 	case 0: // [reg]
 		if (rm == 5) return 4; // disp32
 		break;
-	case 1: // disp8[reg]
+	case 0x40: // disp8[reg]
 		offset = 1;
 		break;
-	case 2: // disp32[reg]
+	case 0x80: // disp32[reg]
 		offset = 4;
 		break;
-	case 3: // register
+	case 0xc0: // register
 		return 0;
 	}
 	
@@ -347,44 +442,20 @@ static inline int get_instr_size_add(unsigned char *p)
 	return offset;
 }
 
-static inline void set_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME, type_size_t t) {
-/* MJ - AF and OF not tested, also CF for 32 bit */
-	switch (t) {
-		case TYPE_BYTE:
-			if ((i > 255) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
-				else CONTEXT_AEFLAGS &= 0xfffffffe;
-			if (i > 127) CONTEXT_AEFLAGS |= 0x80;			// SF
-				else CONTEXT_AEFLAGS &= 0xffffff7f;
-			break;
-		case TYPE_WORD:
-			if ((i > 65535) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
-				else CONTEXT_AEFLAGS &= 0xfffffffe;
-			if (i > 32767) CONTEXT_AEFLAGS |= 0x80;			// SF
-				else CONTEXT_AEFLAGS &= 0xffffff7f;
-			break;
-		case TYPE_INT:
-			if (i > 2147483647) CONTEXT_AEFLAGS |= 0x80;		// SF
-				else CONTEXT_AEFLAGS &= 0xffffff7f;
+static inline void set_byte_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
+	
+	/* MJ - AF and OF not tested, also CF for 32 bit */
+	if ((i > 255) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
+	else CONTEXT_AEFLAGS &= ~0x1;
+	
+	if (i > 127) CONTEXT_AEFLAGS |= 0x80;			// SF
+	else CONTEXT_AEFLAGS &= ~0x80;
 
-	}
 	if ((i % 2) == 0) CONTEXT_AEFLAGS |= 0x4;				// PF
-		else CONTEXT_AEFLAGS &= 0xfffffffb;
+	else CONTEXT_AEFLAGS &= ~0x4;
+	
 	if (i == 0) CONTEXT_AEFLAGS |= 0x40;					// ZF
-		else CONTEXT_AEFLAGS &= 0xffffffbf;
-}
-
-static inline void *get_preg(int reg, CONTEXT_ATYPE CONTEXT_NAME, int size) {
-	switch (reg) {
-		case 0: return (void *)&(CONTEXT_AEAX);
-		case 1: return (void *)&(CONTEXT_AECX);
-		case 2: return (void *)&(CONTEXT_AEDX);
-		case 3: return (void *)&(CONTEXT_AEBX);
-		case 4: return (((uae_u8*)&(CONTEXT_AEAX)) + 1);
-		case 5: return (size > 1) ? (void*)(&(CONTEXT_AEBP)) : (void*)(((uae_u8*)&(CONTEXT_AECX)) + 1);
-		case 6: return (size > 1) ? (void*)(&(CONTEXT_AESI)) : (void*)(((uae_u8*)&(CONTEXT_AEDX)) + 1);
-		case 7: return (size > 1) ? (void*)(&(CONTEXT_AEDI)) : (void*)(((uae_u8*)&(CONTEXT_AEBX)) + 1);
-		default: abort();
-	}
+	else CONTEXT_AEFLAGS &= ~0x40;
 }
 
 static inline void unknown_instruction(uint32 instr) {
@@ -398,6 +469,65 @@ static inline void unknown_instruction(uint32 instr) {
 		abort();
 }
 
+/**
+	Opcode register id list:
+ 
+	8 Bit
+		0: AL
+		1: CL
+		2: DL
+		3: BL
+		4: AH (SPL, if REX)
+		5: CH (BPL, if REX)
+		6: DH (SIL, if REX)
+		7: BH (DIL, if REX)
+		8: R8L
+		9: R9L
+	   10: R10L
+	   11: R11L
+	   12: R12L
+	   13: R13L
+	   14: R14L
+	   15: R15L
+ 
+	16 Bit:
+		0: AX
+		1: CX
+		2: DX
+		3: BX
+		4: SP
+		5: BP
+		6: SI
+		7: DI
+		8: R8W
+		9: R9W
+	   10: R10W
+	   11: R11W
+	   12: R12W
+	   13: R13W
+	   14: R14W
+	   15: R15W
+ 
+	32 Bit:
+		0: EAX
+		1: ECX
+		2: EDX
+		3: EBX
+		4: ESP
+		5: EBP
+		6: ESI
+		7: EDI
+		8: R8D
+		9: R9D
+	   10: R10D
+	   11: R11D
+	   12: R12D
+	   13: R13D
+	   14: R14D
+	   15: R15D
+ 
+ **/
+
 #ifdef NO_NESTED_SIGSEGV
 static sigsegv_return_t sigsegv_handler2(sigsegv_address_t fault_address,
 										sigsegv_address_t fault_instruction,
@@ -408,35 +538,41 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 										 SIGSEGV_THREAD_STATE_TYPE *state)
 #endif
 {
-	D(panicbug("Catched signal %lx", fault_address));
-
+	D(panicbug("Catched signal %p", fault_address));
+	static const int x86_reg_map[] = {
+		X86_REG_EAX, X86_REG_ECX, X86_REG_EDX, X86_REG_EBX,
+		X86_REG_ESP, X86_REG_EBP, X86_REG_ESI, X86_REG_EDI,
+#if defined(__x86_64__) || defined(_M_X64)
+		X86_REG_R8,  X86_REG_R9,  X86_REG_R10, X86_REG_R11,
+		X86_REG_R12, X86_REG_R13, X86_REG_R14, X86_REG_R15,
+#endif
+	};
     
 	uintptr addr = (uintptr)fault_address;
-	uintptr ainstr = (uintptr)fault_instruction;
 	
-	uint32 instr = (uint32)*(uint32 *)ainstr;
+	const uintptr ainstr = (uintptr)fault_instruction;
+	const uint32 instr = (uint32)*(uint32 *)ainstr;
 	uint8 *addr_instr = (uint8 *)ainstr;
+	
 	int reg = -1;
 	int len = 0;
 	transfer_type_t transfer_type = TYPE_UNKNOWN;
 	int size = 4;
 	int imm = 0;
-	int pom1, pom2 = 0;
+	int pom1, pom2;
 	instruction_t instruction = INSTR_UNKNOWN;
 	void *preg;
 
-#if 1
 	if (in_handler > 0) {
 		panicbug("Segmentation fault in handler :-(");
 		abort();
 	}
-#endif
 	in_handler += 1;
 
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
 #endif
-	D(panicbug("\nBUS ERROR fault address is %08x at %08x", addr, ainstr));
+	D(panicbug("\nBUS ERROR fault address is %p at %p", addr, ainstr));
 	D2(panicbug("instruction is %08x", instr));
 
 	D2(panicbug("PC %08x", regs.pc)); 
@@ -446,14 +582,53 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 	D2(panicbug("op code: %x %x", (int)addr_instr[0], (int)addr_instr[1]));
 	
 #ifdef HW_SIGSEGV
+#if (CPU_x86_64)
+	if (addr_instr[0] == 0x67) { // address size override prefix
+		addr_instr++; // Skip prefix, seems to be enough
+		len++;
+	}
+#endif
 
-	if (addr_instr[0] == 0x66) {
+	if (addr_instr[0] == 0x66) { // Precision size override prefix
 		addr_instr++;
 		len++;
 		size = 2;
 		D(panicbug("Word instr:"));
 	}
- 	
+
+#if (CPU_x86_64)	
+	// REX prefix
+	struct rex_t {
+		unsigned char W;
+		unsigned char R;
+		unsigned char X;
+		unsigned char B;
+	};
+	rex_t rex = { 0, 0, 0, 0 };
+	bool has_rex = false;
+	if ((*addr_instr & 0xf0) == 0x40) {
+		has_rex = true;
+		const unsigned char b = *addr_instr;
+		rex.W = b & (1 << 3);
+		rex.R = b & (1 << 2);
+		rex.X = b & (1 << 1);
+		rex.B = b & (1 << 0);
+#if DEBUG
+		printf("REX: %c,%c,%c,%c\n",
+			   rex.W ? 'W' : '_',
+			   rex.R ? 'R' : '_',
+			   rex.X ? 'X' : '_',
+			   rex.B ? 'B' : '_');
+#endif
+		addr_instr++;
+		len++;
+		if (rex.W)
+			size = 8;
+	}
+#else
+	const bool has_rex = false;
+#endif
+	
 	switch (addr_instr[0]) {
 		case CASE_INSTR_ADD8MR:
 			D(panicbug("ADD m8, r8"));
@@ -518,6 +693,14 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 			size = 1;
 			transfer_type = TYPE_LOAD;
 			instruction = INSTR_AND8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
+		case CASE_INSTR_XOR8MR:
+			D(panicbug("XOR m8, r8"));
+			size = 1;
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_XOR8;
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
@@ -635,23 +818,6 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 					instruction = INSTR_NEG8;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
-#if 0
-				case 4:
-					D(panicbug("TEST m8, imm8"));
-					transfer_type = TYPE_STORE;
-					instruction = INSTR_TESTIMM8;
-					imm = addr_instr[3];
-					len += 3 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 5:
-					D(panicbug("TEST m8, imm8"));
-					transfer_type = TYPE_STORE;
-					instruction = INSTR_TESTIMM8;
-					reg = (addr_instr[1] >> 3) & 7;
-					imm = addr_instr[6];
-					len += 3 + get_instr_size_add(addr_instr + 1);
-					break;
-#else
 				case 4:
 					D(panicbug("MUL m8"));
 					transfer_type = TYPE_LOAD;
@@ -664,7 +830,6 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 					instruction = INSTR_IMUL8;
 					len += 2 + get_instr_size_add(addr_instr + 1);
 					break;
-#endif
 				case 6:
 					D(panicbug("DIV m8"));
 					transfer_type = TYPE_LOAD;
@@ -686,11 +851,12 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 			break;
 		default:
 			instruction = INSTR_UNKNOWN;
+			panicbug("unknown op code (%p): %x %x", ainstr, (int)addr_instr[0], (int)addr_instr[1]);
 			unknown_instruction(instr);
 			abort();
 	}
 
-	D2(panicbug("address %08x", addr));
+	D2(panicbug("address %p", addr));
 	
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
@@ -700,10 +866,27 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 		D2(panicbug("Throwing bus error"));
 		goto buserr;
 	}
+	
+#if (CPU_x86_64)
+	if (rex.R) {
+		reg += 8;
+		D2(panicbug("Extended register %d", reg));
+	}
+#endif
 
-	preg = get_preg(reg, CONTEXT_NAME, size);
+	// Get register pointer
+	if (size == 1) {
+		if (has_rex || reg < 4) {
+			preg = ((STATE_REGISTER_TYPE *)state) + x86_reg_map[reg];
+		} else {
+			preg = (uae_u8*)(((STATE_REGISTER_TYPE *)state) + x86_reg_map[reg - 4]) + 1; // AH, BH, CH, DH
+		}
+	} else {
+		preg = ((STATE_REGISTER_TYPE *)state) + x86_reg_map[reg];
+	}
+	// preg = get_preg(reg, CONTEXT_NAME, size);
 
-	D2(panicbug("Register %d, place %08x, address %08x", reg, preg, addr));
+	D2(panicbug("Register %d, place %p, address %p", reg, preg, addr));
 
 	if (transfer_type == TYPE_LOAD) {
 		D2(panicbug("LOAD instruction %X", instruction));
@@ -724,12 +907,11 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 				break;
 			case INSTR_OR8:
 				*((uae_u8 *)preg) |= HWget_b(addr);
-				set_eflags(*((uae_u8 *)preg), CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(*((uae_u8 *)preg), CONTEXT_NAME);
 				break;
 			case INSTR_AND8:
 				*((uae_u8 *)preg) &= HWget_b(addr);
-				imm = *((uae_u8 *)preg);
-				set_eflags(*((uae_u8 *)preg), CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(*((uae_u8 *)preg), CONTEXT_NAME);
 				break;
 			case INSTR_MOVZX8:
 				if (size == 4) {
@@ -751,33 +933,33 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 			case INSTR_CMP8:
 				imm = *((uae_u8 *)preg);
 				imm -= HWget_b(addr);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_DIV8:
 				pom1 = CONTEXT_AEAX & 0xffff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = CONTEXT_AEAX & 0xffff0000 + ((pom1 / pom2) << 8) + (pom1 / pom2);
+				CONTEXT_AEAX = CONTEXT_AEAX & ~0xffff + ((pom1 / pom2) << 8) + (pom1 / pom2);
 				break;
 			case INSTR_IDIV8:
 				pom1 = CONTEXT_AEAX & 0xffff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = CONTEXT_AEAX & 0xffff0000 + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
+				CONTEXT_AEAX = CONTEXT_AEAX & ~0xffff + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
 				break;
 			case INSTR_MUL8:
 				pom1 = CONTEXT_AEAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = CONTEXT_AEAX & 0xffff0000 + pom1 * pom2;
-				if ((CONTEXT_AEAX & 0xff00) == 0) CONTEXT_AEFLAGS &= 0xfffffbfe;	// CF + OF
+				CONTEXT_AEAX = CONTEXT_AEAX & ~0xffff + pom1 * pom2;
+				if ((CONTEXT_AEAX & 0xff00) == 0) CONTEXT_AEFLAGS &= ~0x401;	// CF + OF
 					else CONTEXT_AEFLAGS |= 0x401;
 				break;
 			case INSTR_IMUL8:
 				pom1 = CONTEXT_AEAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = CONTEXT_AEAX & 0xffff0000 + (uae_s8)pom1 * (uae_s8)pom2;
-				if ((CONTEXT_AEAX & 0xff00) == 0) CONTEXT_AEFLAGS &= 0xfffffbfe;	// CF + OF
+				CONTEXT_AEAX = CONTEXT_AEAX & ~0xffff + (uae_s8)pom1 * (uae_s8)pom2;
+				if ((CONTEXT_AEAX & 0xff00) == 0) CONTEXT_AEFLAGS &= ~0x401;	// CF + OF
 					else CONTEXT_AEFLAGS |= 0x401;
 				break;
-			default: 
+			default:
 				D2(panicbug("Unknown load instruction %X", instruction));
 				abort();
 		}
@@ -799,24 +981,24 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 				imm = HWget_b(addr);
 				imm &= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_ADD8:
 				imm = HWget_b(addr);
 				imm += *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_OR8:
 				imm = HWget_b(addr);
 				imm |= *((uae_u8 *)preg);
 				HWput_b(addr, imm);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_ORIMM8:
 				imm |= HWget_b(addr);
 				HWput_b(addr, imm);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_MOVIMM8:
 				HWput_b(addr, (uae_u8)imm);
@@ -830,7 +1012,7 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 				break;
 			case INSTR_TESTIMM8:
 				imm &= HWget_b(addr);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_NOT8:
 				HWput_b(addr, ~(uae_u8)HWget_b(addr));
@@ -838,18 +1020,24 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 			case INSTR_NEG8:
 				imm = ~(uae_u8)HWget_b(addr) + 1;
 				HWput_b(addr, imm);
-				set_eflags(imm, CONTEXT_NAME, TYPE_BYTE);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				if (imm == 0)
-					CONTEXT_AEFLAGS &= 0xfffffffe;
+					CONTEXT_AEFLAGS &= ~0x1;
 				else
 					CONTEXT_AEFLAGS |= 0x1;
+				break;
+			case INSTR_XOR8:
+				imm = HWget_b(addr);
+				imm ^= *((uae_u8 *)preg);
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			default: abort();
 		}
 	}
 
 	D2(panicbug("Access handled"));
-	D2(panicbug("Next instruction on %08x", CONTEXT_AEIP + len));
+	D2(panicbug("Next instruction on %p", CONTEXT_AEIP + len));
 	CONTEXT_AEIP += len;
 
 	in_handler -= 1;
@@ -879,7 +1067,7 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 										 SIGSEGV_THREAD_STATE_TYPE *state) {
 	if (SETJMP(sigsegv_env) != 0)
 	{
-		CONTEXT_AEIP = (unsigned int)atari_bus_fault;
+		CONTEXT_AEIP = (unsigned long)atari_bus_fault;
 		return SIGSEGV_RETURN_SUCCESS;
 	}
 
@@ -895,7 +1083,7 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 
 // This function handles the badaccess to memory.
 // It is called from the signal handler or the exception handler.
-static bool handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGLIST_1)
+static bool handle_badaccess(mach_port_t thread, MACH_EXCEPTION_DATA_T code, SIGSEGV_THREAD_STATE_TYPE *state)
 {
 	// We must match the initial count when writing back the CPU state registers
 	kern_return_t krc;
@@ -921,22 +1109,15 @@ static bool handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGLIST_1)
 	D2(panicbug("regs eip:%lx", CONTEXT_AEIP));
 	D2(panicbug("regs eflags:%lx", CONTEXT_AEFLAGS));
 
-	// Call user's handler and reinstall the global handler, if required
-	switch (SIGSEGV_FAULT_HANDLER_INVOKE(fault_address, fault_instruction, state)) {
-	case SIGSEGV_RETURN_SUCCESS:
-		D2(panicbug("esi:%lx", state->esi));
+	// Call user's handler 
+	if (sigsegv_fault_handler(fault_address, fault_instruction, state) == SIGSEGV_RETURN_SUCCESS) {
+		D2(panicbug("esi:%lx", CONTEXT_AESI));
 		krc = thread_set_state(thread,
 								SIGSEGV_THREAD_STATE_FLAVOR, (thread_state_t)state,
 								count);
 		MACH_CHECK_ERROR (thread_set_state, krc);
 		D(panicbug("return from handle bad access with true"));
 		return true;
-		
-	case SIGSEGV_RETURN_FAILURE:
-		// We can't do anything with the fault_address, dump state?
-		if (sigsegv_state_dumper != 0)
-			sigsegv_state_dumper(fault_address, fault_instruction);
-		break;
 	}
 
 	D(panicbug("return from handle bad access with false"));
@@ -957,7 +1138,7 @@ static inline kern_return_t
 forward_exception(mach_port_t thread_port,
 				  mach_port_t task_port,
 				  exception_type_t exception_type,
-				  exception_data_t exception_data,
+				  MACH_EXCEPTION_DATA_T exception_data,
 				  mach_msg_type_number_t data_count,
 				  ExceptionPorts *oldExceptionPorts)
 {
@@ -987,7 +1168,7 @@ forward_exception(mach_port_t thread_port,
 	behavior = oldExceptionPorts->behaviors[portIndex];
 	flavor = oldExceptionPorts->flavors[portIndex];
 	
-	if (!VALID_THREAD_STATE_FLAVOR(flavor)) {
+	if (flavor && !VALID_THREAD_STATE_FLAVOR(flavor)) {
 		fprintf(stderr, "Invalid thread_state flavor = %d. Not forwarding\n", flavor);
 		return KERN_FAILURE;
 	}
@@ -1006,26 +1187,26 @@ forward_exception(mach_port_t thread_port,
 	switch (behavior) {
 	case EXCEPTION_DEFAULT:
 	  // fprintf(stderr, "forwarding to exception_raise\n");
-	  kret = exception_raise(port, thread_port, task_port, exception_type,
+	  kret = MACH_EXCEPTION_RAISE(port, thread_port, task_port, exception_type,
 							 exception_data, data_count);
-	  MACH_CHECK_ERROR (exception_raise, kret);
+	  MACH_CHECK_ERROR (MACH_EXCEPTION_RAISE, kret);
 	  break;
 	case EXCEPTION_STATE:
 	  // fprintf(stderr, "forwarding to exception_raise_state\n");
-	  kret = exception_raise_state(port, exception_type, exception_data,
+	  kret = MACH_EXCEPTION_RAISE_STATE(port, exception_type, exception_data,
 								   data_count, &flavor,
 								   (natural_t *)&thread_state, thread_state_count,
 								   (natural_t *)&thread_state, &thread_state_count);
-	  MACH_CHECK_ERROR (exception_raise_state, kret);
+	  MACH_CHECK_ERROR (MACH_EXCEPTION_RAISE_STATE, kret);
 	  break;
 	case EXCEPTION_STATE_IDENTITY:
 	  // fprintf(stderr, "forwarding to exception_raise_state_identity\n");
-	  kret = exception_raise_state_identity(port, thread_port, task_port,
+	  kret = MACH_EXCEPTION_RAISE_STATE_IDENTITY(port, thread_port, task_port,
 											exception_type, exception_data,
 											data_count, &flavor,
 											(natural_t *)&thread_state, thread_state_count,
 											(natural_t *)&thread_state, &thread_state_count);
-	  MACH_CHECK_ERROR (exception_raise_state_identity, kret);
+	  MACH_CHECK_ERROR (MACH_EXCEPTION_RAISE_STATE_IDENTITY, kret);
 	  break;
 	default:
 	  panicbug("forward_exception got unknown behavior");
@@ -1063,11 +1244,11 @@ forward_exception(mach_port_t thread_port,
  */
 __attribute__ ((visibility("default")))
 kern_return_t
-catch_exception_raise(mach_port_t /*exception_port*/,
+CATCH_MACH_EXCEPTION_RAISE(mach_port_t exception_port,
 					  mach_port_t thread,
 					  mach_port_t task,
 					  exception_type_t exception,
-					  exception_data_t code,
+					  MACH_EXCEPTION_DATA_T code,
 					  mach_msg_type_number_t codeCount)
 {
 	SIGSEGV_THREAD_STATE_TYPE state;
@@ -1079,20 +1260,74 @@ catch_exception_raise(mach_port_t /*exception_port*/,
 		switch (code[0]) {
 			case KERN_PROTECTION_FAILURE:
 			case KERN_INVALID_ADDRESS:
-				if (handle_badaccess(SIGSEGV_FAULT_HANDLER_ARGS))
+				if (handle_badaccess(thread, code, &state))
 					return KERN_SUCCESS;
 				break;
 		}
 	}
+	
 
 	// In Mach we do not need to remove the exception handler.
 	// If we forward the exception, eventually some exception handler
 	// will take care of this exception.
 	krc = forward_exception(thread, task, exception, code, codeCount, &ports);
-
+	
 	return krc;
 }
 
+/* XXX: borrowed from launchd and gdb */
+kern_return_t
+catch_mach_exception_raise_state(mach_port_t exception_port,
+								 exception_type_t exception,
+								 MACH_EXCEPTION_DATA_T code,
+								 mach_msg_type_number_t code_count,
+								 int *flavor,
+								 thread_state_t old_state,
+								 mach_msg_type_number_t old_state_count,
+								 thread_state_t new_state,
+								 mach_msg_type_number_t *new_state_count)
+{
+	memcpy(new_state, old_state, old_state_count * sizeof(old_state[0]));
+	*new_state_count = old_state_count;
+	return KERN_SUCCESS;
+}
+
+/* XXX: borrowed from launchd and gdb */
+kern_return_t
+catch_mach_exception_raise_state_identity(mach_port_t exception_port,
+										  mach_port_t thread_port,
+										  mach_port_t task_port,
+										  exception_type_t exception,
+										  MACH_EXCEPTION_DATA_T code,
+										  mach_msg_type_number_t code_count,
+										  int *flavor,
+										  thread_state_t old_state,
+										  mach_msg_type_number_t old_state_count,
+										  thread_state_t new_state,
+										  mach_msg_type_number_t *new_state_count)
+{
+	kern_return_t kret;
+	
+	memcpy(new_state, old_state, old_state_count * sizeof(old_state[0]));
+	*new_state_count = old_state_count;
+	
+	kret = mach_port_deallocate(mach_task_self(), task_port);
+	MACH_CHECK_ERROR(mach_port_deallocate, kret);
+	kret = mach_port_deallocate(mach_task_self(), thread_port);
+	MACH_CHECK_ERROR(mach_port_deallocate, kret);
+	
+	return KERN_SUCCESS;
+}
+
+/*
+ * This is the entry point for the exception handler thread. The job
+ * of this thread is to wait for exception messages on the exception
+ * port that was setup beforehand and to pass them on to exc_server.
+ * exc_server is a MIG generated function that is a part of Mach.
+ * Its job is to decide what to do with the exception message. In our
+ * case exc_server calls catch_exception_raise on our behalf. After
+ * exc_server returns, it is our responsibility to send the reply.
+ */
 static void *
 handleExceptions(void * /*priv*/)
 {
@@ -1109,7 +1344,7 @@ handleExceptions(void * /*priv*/)
 				_exceptionPort, 0, MACH_PORT_NULL);
 		MACH_CHECK_ERROR(mach_msg, krc);
 
-		if (!exc_server(msg, reply)) {
+		if (!MACH_EXC_SERVER(msg, reply)) {
 			fprintf(stderr, "exc_server hated the message\n");
 			exit(1);
 		}

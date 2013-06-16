@@ -1,6 +1,15 @@
+2013/06/16 - Jens
+- configure.ac : Reverted to previous FIXED_ADDRESS implementation for 64 Bit
+  previous change wasn't necessary
+- sigsegv_darwin_x86.cpp : 64 Bit code
+- sigsegv_darwin_x86.cpp : xor added statement
+- New files: MachServer.c, MachUser.c and gen_machfiles.sh
+- MacAranym.xcodeproj: New build phase gen_machfiles
+- sigsegv_linux_x86_64.cpp : New 64 Bit Jit for Linux
+
 2013/06/02 - Jens
 - MacAranym.xcodeproj: Fixed Profile settings
-- configure.ac: Fixed typo
+- configure.ac : Fixed typo
 
 2013/06/01 - Jens
 - bpf_helper.c: Set executable flag in fix permissions and wait for child

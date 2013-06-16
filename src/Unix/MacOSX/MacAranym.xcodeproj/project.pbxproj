@@ -529,6 +529,8 @@
 		B4A9EC070C5B3C1400C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
 		B4A9EC080C5B3C3900C156C3 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
 		B4A9EC090C5B3C3900C156C3 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
+		B4C7EE951768552800B63B96 /* MachServer.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE931768552800B63B96 /* MachServer.c */; };
+		B4C7EE961768552800B63B96 /* MachUser.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE941768552800B63B96 /* MachUser.c */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
 		F83B575E0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
@@ -1091,6 +1093,10 @@
 		B471E7C00D2A88750021DFA7 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = ../../adler32.c; sourceTree = SOURCE_ROOT; };
 		B47270880C6BB5D600A1379D /* aratapif.sh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.script.sh; name = aratapif.sh; path = darwin/aratapif.sh; sourceTree = "<group>"; };
 		B47270900C6BB62700A1379D /* README_ethernet.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README_ethernet.txt; path = darwin/README_ethernet.txt; sourceTree = "<group>"; };
+		B472BB88176907CB00611354 /* gen_machfiles.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = gen_machfiles.sh; path = scripts/gen_machfiles.sh; sourceTree = "<group>"; };
+		B472BB8B17690B2D00611354 /* mach_exc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = mach_exc.h; path = ../mach_exc.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		B472BB8C17690B2D00611354 /* mach_excServer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mach_excServer.c; path = ../mach_excServer.c; sourceTree = BUILT_PRODUCTS_DIR; };
+		B472BB8D17690B2D00611354 /* mach_excUser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mach_excUser.c; path = ../mach_excUser.c; sourceTree = BUILT_PRODUCTS_DIR; };
 		B475E5A60D4FA41500C8607E /* dlgPartition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgPartition.cpp; sourceTree = "<group>"; };
 		B4844A650C7BA1A0003FE2D2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = darwin/English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4844A660C7BA1B4003FE2D2 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = darwin/German.lproj/aranym.nib; sourceTree = "<group>"; };
@@ -1107,6 +1113,9 @@
 		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
+		B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "aranym-0.9.15+CVS-macosx-x86_64_i386.dmg"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4C7EE931768552800B63B96 /* MachServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachServer.c; path = darwin/MachServer.c; sourceTree = "<group>"; };
+		B4C7EE941768552800B63B96 /* MachUser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachUser.c; path = darwin/MachUser.c; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLHotkeysRefresh.M; path = darwin/SDLHotkeysRefresh.M; sourceTree = "<group>"; };
@@ -1617,6 +1626,7 @@
 				17AC403013F1C81F003B4FAD /* configure.sh */,
 				17AC403113F1C81F003B4FAD /* gen_cpu.sh */,
 				173598FF13F1F7AE00F84DB3 /* gen_diskimage.sh */,
+				B472BB88176907CB00611354 /* gen_machfiles.sh */,
 				17AC403213F1C81F003B4FAD /* set_version.sh */,
 				17AC409013F1D216003B4FAD /* Unix */,
 			);
@@ -1656,6 +1666,9 @@
 				17E699AC13F3395A00C3B36D /* comptbl.h */,
 				173598F213F1F61300F84DB3 /* compemu.cpp */,
 				173598F313F1F61300F84DB3 /* compstbl.cpp */,
+				B472BB8B17690B2D00611354 /* mach_exc.h */,
+				B472BB8C17690B2D00611354 /* mach_excServer.c */,
+				B472BB8D17690B2D00611354 /* mach_excUser.c */,
 			);
 			name = "Generated Sources";
 			sourceTree = "<group>";
@@ -1712,6 +1725,7 @@
 				B449DA000D2A9212005F0CC6 /* logo.png */,
 				1743987C0B320B480011038E /* README_Xcode.rtf */,
 				17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */,
+				B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */,
 			);
 			name = MacAranym;
 			sourceTree = "<group>";
@@ -1742,6 +1756,8 @@
 				B4844A700C7BA262003FE2D2 /* parameters_darwin.cpp */,
 				B4844A710C7BA262003FE2D2 /* PkgInfo */,
 				B4844A720C7BA262003FE2D2 /* sdl.m4 */,
+				B4C7EE931768552800B63B96 /* MachServer.c */,
+				B4C7EE941768552800B63B96 /* MachUser.c */,
 				F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */,
 				B4844A730C7BA262003FE2D2 /* SDLMain.h */,
 				B4844A740C7BA262003FE2D2 /* SDLMain.M */,
@@ -1855,6 +1871,7 @@
 			buildPhases = (
 				B439AC300C5B2FD00046EFC9 /* Script: Run configure */,
 				B439AC310C5B2FD00046EFC9 /* Script: Build CPU source files */,
+				B472BB871768FBBA00611354 /* Build Mach Support files */,
 				B439AC320C5B2FD00046EFC9 /* Sources */,
 				B439AC8D0C5B2FD00046EFC9 /* Frameworks */,
 				B439AC920C5B2FD00046EFC9 /* Resources */,
@@ -2199,6 +2216,20 @@
 			shellPath = /bin/sh;
 			shellScript = ". \"$PROJECT_DIR/scripts/gen_cpu.sh\"\nexit $?";
 			showEnvVarsInLog = 0;
+		};
+		B472BB871768FBBA00611354 /* Build Mach Support files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build Mach Support files";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = ". \"$PROJECT_DIR/scripts/gen_machfiles.sh\"\nexit $?";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2679,6 +2710,8 @@
 				1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */,
 				177A4E0815AA29AD00780D11 /* ethernet_macosx.cpp in Sources */,
 				177A4E0B15AA29BF00780D11 /* fd_trans.c in Sources */,
+				B4C7EE951768552800B63B96 /* MachServer.c in Sources */,
+				B4C7EE961768552800B63B96 /* MachUser.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2800,6 +2833,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -2808,6 +2842,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -2947,25 +2982,38 @@
 		B439AC980C5B2FD00046EFC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-pagezero_size",
+					0x2000,
+				);
 				PRODUCT_NAME = "MacAranym JIT";
+				SDKROOT = macosx10.7;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
 		B439AC990C5B2FD00046EFC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-pagezero_size",
+					0x2000,
+				);
 				PRODUCT_NAME = "MacAranym JIT";
+				SDKROOT = macosx10.7;
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
