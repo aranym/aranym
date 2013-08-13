@@ -211,6 +211,7 @@ AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 dnl Target CPU type.
 ARCHFLAGS=
 HAVE_I386=no
+HAVE_ARM=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
 HAVE_X86_64=no
@@ -240,6 +241,7 @@ case "$host_cpu" in
 	fi
 	;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
+  arm* ) CPU_TYPE=arm HAVE_ARM=yes;;
   powerpc* )
 	CPU_TYPE=powerpc
 	HAVE_POWERPC=yes
@@ -1004,6 +1006,9 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 	  ;;
 	x86_64)
           SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86_64.cpp"
+          ;;
+	arm)
+          SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_arm.cpp"
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])

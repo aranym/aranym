@@ -1,3 +1,8 @@
+2013/08/12 - Jens
+- configure.ac : Added sigsegv_linux.arm.cpp for linux ARM Architecture
+- sigsegv_linux_arm.cpp  : sigsegv support for ARM Linux
+- Support for --enable-addr-check=sseg on ARM Linux
+
 2013/06/16 - Jens
 - configure.ac : Reverted to previous FIXED_ADDRESS implementation for 64 Bit
   previous change wasn't necessary
