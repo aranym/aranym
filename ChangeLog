@@ -1,3 +1,12 @@
+
+2013/08/17 - Jens
+- configure.ac : Added ARM Assembly compiler flags (build armv6 optimized assembly on armv6 and above) 
+- src/Unix/sysdeps.h : Improved __asm__ memory access (supports armv6, armv7 and common arm)
+  (ARMV6_ASSEMBLY for armv6 -> armv8; or ARM_ASSEMBLY for armv1 -> armv5)
+  because extended optimation is for armv6 and above i.E. --build=armv5l-unknown-linux-gnueabi will build an
+  generic arm version with common ARM instructions
+- sigsegv_linux_arm.cpp  : Bug fixed with word/int byte order
+
 2013/08/12 - Jens
 - configure.ac : Added sigsegv_linux.arm.cpp for linux ARM Architecture
 - sigsegv_linux_arm.cpp  : sigsegv support for ARM Linux

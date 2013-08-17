@@ -78,6 +78,7 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
 	unsigned int *pc = (unsigned int *)pregs[ARM_REG_PC];
 
 	D(panicbug("IP: %p [%08x] %p\n", pc, pc[0], addr));
+	if (pc == 0) return false;
 
 	if (in_handler > 0) {
                 panicbug("Segmentation fault in handler :-(");
@@ -85,8 +86,6 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
         }
 
         in_handler += 1;
-
-	if (pc == 0) return false;
 
 	transfer_type_t transfer_type = TYPE_UNKNOWN;
 	int transfer_size = SIZE_UNKNOWN;
@@ -100,6 +99,7 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
 			// Determine transfer size (S/H bits)
 			switch ((opcode >> 5) & 3) {
 				case 0: // SWP instruction
+					panicbug("FIXME: SWP Instruction");
 					break;
 				case 1: // Unsigned halfwords
 	  				transfer_size = SIZE_WORD;
@@ -146,15 +146,15 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
 	"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
 	"r8", "r9", "sl", "fp", "ip", "sp", "lr", "pc"
   };
-  D(panicbug("%s %s register %s\n",
+  panicbug("%s %s register %s\n",
 		 transfer_size == SIZE_BYTE ? "byte" :
 		 transfer_size == SIZE_WORD ? "word" :
 		 transfer_size == SIZE_INT ? "long" : "unknown",
 		 transfer_type == TYPE_LOAD ? "load to" : "store from",
-		 reg_names[rd]));
-  for (int i = 0; i < 16; i++) {
-	D(panicbug("%s : %p", reg_names[i], pregs[i]));
-  }
+		 reg_names[rd]);
+//  for (int i = 0; i < 16; i++) {
+//  	panicbug("%s : %p", reg_names[i], pregs[i]);
+//  }
 #endif
 
     	if (addr >= 0xff000000)
@@ -170,11 +170,11 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
 		    break;
 		  }
 		  case SIZE_WORD: {
-		    pregs[rd] = style == SIGNED ? (uae_s16)HWget_w(addr) : (uae_u16)HWget_w(addr);
+		    pregs[rd] = do_byteswap_16(style == SIGNED ? (uae_s16)HWget_w(addr) : (uae_u16)HWget_w(addr));
 		    break;
 		  }
 		  case SIZE_INT: {
-		    pregs[rd] = HWget_l(addr);
+		    pregs[rd] = do_byteswap_32(HWget_l(addr));
 		    break;
 		  }
 		}
@@ -185,11 +185,11 @@ static bool handle_arm_instruction(unsigned long *pregs, uintptr addr) {
 		    break;
 		  }
 		  case SIZE_WORD: {
-		    HWput_w(addr, pregs[rd]);
+		    HWput_w(addr, do_byteswap_16(pregs[rd]));
 		    break;
 		  }
 		  case SIZE_INT: {
-		    HWput_l(addr, pregs[rd]);
+		    HWput_l(addr, do_byteswap_32(pregs[rd]));
 		    break;
 		  }
 		}

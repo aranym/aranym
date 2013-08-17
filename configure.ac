@@ -1250,6 +1250,25 @@ elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xy
     esac
     ;;
   esac
+elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
+  dnl ARM CPU
+  if [[ "x$HAVE_GAS" = "xyes" ]]; then
+    case "$host_cpu" in
+	armv6*)
+	   DEFINES="$DEFINES -DARMV6_ASSEMBLY"
+           CFLAGS="$CFLAGS -march=armv6"
+           CXXFLAGS="$CXXFLAGS -march=armv6"
+	   ;;
+	armv7*)
+	   DEFINES="$DEFINES -DARMV7_ASSEMBLY"
+           CFLAGS="$CFLAGS -march=armv7"
+           CXXFLAGS="$CXXFLAGS -march=armv7"
+	   ;;
+	*)
+	   DEFINES="$DEFINES -DARM_ASSEMBLY"
+	   ;;
+    esac
+  fi
 fi
 
 dnl JIT sources if available
