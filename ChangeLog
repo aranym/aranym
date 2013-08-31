@@ -1,3 +1,7 @@
+2013/08/22 - Jens
+- m68k.h - Added ARM flags optimization
+- configure.ac - Added ARM flags optimization
+- sysdeps.h - Improved clobber list
 
 2013/08/17 - Jens
 - configure.ac : Added ARM Assembly compiler flags (build armv6 optimized assembly on armv6 and above) 

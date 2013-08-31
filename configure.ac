@@ -1254,18 +1254,15 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
   dnl ARM CPU
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     case "$host_cpu" in
-	armv6*)
-	   DEFINES="$DEFINES -DARMV6_ASSEMBLY"
+	armv6* | armv7* )
+           ASM_OPTIMIZATIONS="ARM/V6 architecture w optimized flags"
+	   DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
            CFLAGS="$CFLAGS -march=armv6"
            CXXFLAGS="$CXXFLAGS -march=armv6"
 	   ;;
-	armv7*)
-	   DEFINES="$DEFINES -DARMV7_ASSEMBLY"
-           CFLAGS="$CFLAGS -march=armv7"
-           CXXFLAGS="$CXXFLAGS -march=armv7"
-	   ;;
 	*)
-	   DEFINES="$DEFINES -DARM_ASSEMBLY"
+           ASM_OPTIMIZATIONS="ARM/generic w optimized flags"
+	   DEFINES="$DEFINES -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
 	   ;;
     esac
   fi

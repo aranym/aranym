@@ -366,35 +366,35 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("bswapl %0" : "=&r" (v
 static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("rolw $8,%0" : "=r" (v) : "0" (v) : "cc"); return v;}
 #endif
 
-#elif defined(ARMV6_ASSEMBLY) || defined(ARMV7_ASSEMBLY) || defined(ARMV8_ASSEMBLY)
+#elif defined(ARMV6_ASSEMBLY) 
 
-// #pragma message "Using ARM v6/v7/v8 optimized code"
+// #pragma message "ARM/v6 optimized sysdeps"
 static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint32 retval; __asm__ (
  						"rev %0, %0"
-                                                 : "=r" (retval) : "0" (*a) : "cc"); return retval;}
+                                                 : "=r" (retval) : "0" (*a) ); return retval;}
 
 static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint32 retval; __asm__ (
  						"revsh %0,%0\n\t"
                                                 "uxth %0,%0"
-                                                : "=&r" (retval) : "0" (*a) : "cc"); return retval;}
+                                                : "=r" (retval) : "0" (*a) ); return retval;}
 
 // ARM v6 and above doesn't support unaligned write, but even in 68k an unaligned access is resulting in a trap
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {__asm__ ("rev %0,%0" : "=r" (v) : "0" (v) : "cc"); *a = v;}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {__asm__ ("rev %0,%0" : "=r" (v) : "0" (v) ); *a = v;}
 
 static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {__asm__ (
 						 "revsh %0, %0"
-                                                : "=&r" (v) : "0" (v) : "cc"); *a = v;}
+                                                : "=r" (v) : "0" (v) ); *a = v;}
 
 #define HAVE_OPTIMIZED_BYTESWAP_32
 static inline uae_u32 do_byteswap_32(uae_u32 v) {__asm__ (
 						"rev %0, %0"
-                                                : "=r" (v) : "0" (v) : "cc"); return v;}
+                                                : "=r" (v) : "0" (v) ); return v;}
 
 #define HAVE_OPTIMIZED_BYTESWAP_16
 static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
   						"revsh %0, %0\n\t"
                                                 "uxth %0, %0"
-                                                : "=&r" (v) : "0" (v) : "cc"); return v;}
+                                                : "=r" (v) : "0" (v) ); return v;}
 
 #define HAVE_GET_WORD_UNSWAPPED
 #define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
@@ -402,7 +402,7 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
 /* ARM v1 to v5 support or cross ARM support */
 #elif defined(ARM_ASSEMBLY)
 
-// #pragma message "Using ARM v1/v5 optimized code"
+// #pragma message "ARM/generic optimized sysdeps"
 
 static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint32 retval; __asm__ (
 						"eor r3, %0, %0, ror #16\n\t"
@@ -417,7 +417,7 @@ static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint32 retval; __asm__ (
                                                 "and  r3, %0, #0xff\n\t"
                                                 "mov  %0, %0, lsr #8\n\t"
                                                 "orr  %0, %0, r3, lsl #8"
-                                                : "=&r" (retval) : "0" (*a) : "r3", "cc"); return retval;}
+                                                : "=r" (retval) : "0" (*a) : "r3", "cc"); return retval;}
 
 // ARM doesn't support unaligned write, but even in 68k an unaligned access is resulting in a trap
 static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {__asm__ (
@@ -425,13 +425,13 @@ static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {__asm__ (
                                                 "bic r3,r3, #0x00FF0000\n\t"
                                                 "mov %0, %0, ror #8\n\t"
                                                 "eor %0, %0, r3, lsr #8"
-                                                : "=&r" (v) : "0" (v) : "r3", "cc"); *a = v;}
+                                                : "=r" (v) : "0" (v) : "r3", "cc"); *a = v;}
 
 static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {__asm__ (
                                                 "and  r3, %0, #0xff00\n\t"
                                                 "mov  %0, %0, lsl #8\n\t"
                                                 "orr  %0, %0, r3, lsr #8"
-                                                : "=&r" (v) : "0" (v) : "r3", "cc"); *a = v;}
+                                                : "=r" (v) : "0" (v) : "r3", "cc"); *a = v;}
 
 #define HAVE_OPTIMIZED_BYTESWAP_32
 static inline uae_u32 do_byteswap_32(uae_u32 v) {__asm__ (
@@ -447,7 +447,7 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
                                                 "mov  %0, %0, lsl #8\n\t"
                                                 "orr  %0, %0, r3, lsr #8\n\t"
                                                 "bic %0,%0, #0x00FF0000"
-                                                : "=&r" (v) : "0" (v) : "r3", "cc"); return v;}
+                                                : "=r" (v) : "0" (v) : "r3", "cc"); return v;}
 
 #define HAVE_GET_WORD_UNSWAPPED
 #define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
