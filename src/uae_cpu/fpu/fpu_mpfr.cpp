@@ -1,7 +1,7 @@
 /*
  * fpu_mpfr.cpp - emulate 68881/68040 fpu with mpfr
  *
- * Copyright (c) 2012 Andreas Schwab
+ * Copyright (c) 2012, 2013 Andreas Schwab
  *
  * ARAnyM is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -528,40 +528,10 @@ update_exceptions ()
 }
 
 static void
-set_fp_register (int reg, mpfr_t value, mpfr_prec_t prec, mpfr_rnd_t rnd, bool do_flags)
+set_fp_register (int reg, mpfr_t value, int t, mpfr_rnd_t rnd, bool do_flags)
 {
-  int t;
-
-  switch (prec)
-    {
-    case SINGLE_PREC:
-      {
-	MPFR_DECL_INIT (single, SINGLE_PREC);
-	// Round to single
-	set_format (SINGLE_PREC);
-	t = mpfr_set (single, value, rnd);
-	t = mpfr_check_range (single, t, rnd);
-	mpfr_subnormalize (single, t, rnd);
-	set_format (EXTENDED_PREC);
-	mpfr_set (fpu.registers[reg].f, single, rnd);
-      }
-      break;
-    case DOUBLE_PREC:
-      {
-	MPFR_DECL_INIT (dbl, DOUBLE_PREC);
-	// Round to double
-	set_format (DOUBLE_PREC);
-	t = mpfr_set (dbl, value, rnd);
-	t = mpfr_check_range (dbl, t, rnd);
-	mpfr_subnormalize (dbl, t, rnd);
-	set_format (EXTENDED_PREC);
-	mpfr_set (fpu.registers[reg].f, dbl, rnd);
-      }
-      break;
-    case EXTENDED_PREC:
-      mpfr_set (fpu.registers[reg].f, value, rnd);
-      break;
-    }
+  mpfr_subnormalize (value, t, rnd);
+  mpfr_set (fpu.registers[reg].f, value, rnd);
   if (do_flags)
     {
       uae_u32 flags = 0;
@@ -1138,6 +1108,7 @@ fpuop_fmovem_register (uae_u32 opcode, uae_u32 extra)
   int list;
   int i;
 
+  set_format (EXTENDED_PREC);
   if (!get_fp_addr (opcode, &addr, extra & 0x2000))
     return false;
   if (extra & 0x800)
@@ -1208,19 +1179,22 @@ fpuop_fmovem_register (uae_u32 opcode, uae_u32 extra)
   return true;
 }
 
-static void
-do_getexp (mpfr_t value)
+static int
+do_getexp (mpfr_t value, mpfr_rnd_t rnd)
 {
+  int t = 0;
+
   if (mpfr_inf_p (value))
     {
       mpfr_set_nan (value);
       cur_exceptions |= FPSR_EXCEPTION_OPERR;
     }
   else if (!mpfr_nan_p (value) && !mpfr_zero_p (value))
-    mpfr_set_si (value, mpfr_get_exp (value) - 1, MPFR_RNDN);
+    t = mpfr_set_si (value, mpfr_get_exp (value) - 1, rnd);
+  return t;
 }
 
-static void
+static int
 do_getman (mpfr_t value)
 {
   if (mpfr_inf_p (value))
@@ -1230,12 +1204,14 @@ do_getman (mpfr_t value)
     }
   else if (!mpfr_nan_p (value) && !mpfr_zero_p (value))
     mpfr_set_exp (value, 1);
+  return 0;
 }
 
-static void
+static int
 do_scale (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
 {
   long scale;
+  int t = 0;
 
   if (mpfr_nan_p (value))
     ;
@@ -1248,27 +1224,30 @@ do_scale (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
     {
       scale = mpfr_get_si (value, MPFR_RNDZ);
       mpfr_clear_inexflag ();
-      mpfr_mul_2si (value, reg, scale, rnd);
+      t = mpfr_mul_2si (value, reg, scale, rnd);
     }
   else
     mpfr_set_inf (value, -mpfr_signbit (value));
+  return t;
 }
 
-static void
+static int
 do_remainder (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
 {
   long quo;
+  int t = 0;
 
   if (mpfr_nan_p (value) || mpfr_nan_p (reg))
     ;
   else if (mpfr_zero_p (value) || mpfr_inf_p (reg))
     cur_exceptions |= FPSR_EXCEPTION_OPERR;
-  mpfr_remquo (value, &quo, reg, value, rnd);
+  t = mpfr_remquo (value, &quo, reg, value, rnd);
   if (quo < 0)
     quo = (-quo & 0x7f) | 0x80;
   else
     quo &= 0x7f;
   fpu.fpsr.quotient = quo << 16;
+  return t;
 }
 
 // Unfortunately, mpfr_fmod does not return the quotient bits, so we
@@ -1358,9 +1337,11 @@ mpfr_rem1 (mpfr_t rem, int *quo, mpfr_t x, mpfr_t y, mpfr_rnd_t rnd)
   return inex;
 }
 
-static void
+static int
 do_fmod (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
 {
+  int t = 0;
+
   if (mpfr_nan_p (value) || mpfr_nan_p (reg))
     mpfr_set_nan (value);
   else if (mpfr_zero_p (value) || mpfr_inf_p (reg))
@@ -1371,15 +1352,16 @@ do_fmod (mpfr_t value, mpfr_t reg, mpfr_rnd_t rnd)
   else if (mpfr_zero_p (reg) || mpfr_inf_p (value))
     {
       fpu.fpsr.quotient = 0;
-      mpfr_set (value, reg, rnd);
+      t = mpfr_set (value, reg, rnd);
     }
   else
     {
       int quo;
 
-      mpfr_rem1 (value, &quo, reg, value, rnd);
+      t = mpfr_rem1 (value, &quo, reg, value, rnd);
       fpu.fpsr.quotient = quo << 16;
     }
+  return t;
 }
 
 static void
@@ -1423,12 +1405,14 @@ do_ftst (mpfr_t value)
 static bool
 fpuop_general (uae_u32 opcode, uae_u32 extra)
 {
-  MPFR_DECL_INIT (value, EXTENDED_PREC);
   mpfr_prec_t prec = get_cur_prec ();
   mpfr_rnd_t rnd = get_cur_rnd ();
   int reg = (extra >> 7) & 7;
+  int t = 0;
+  MPFR_DECL_INIT (value, prec);
 
   mpfr_clear_flags ();
+  set_format (prec);
   cur_exceptions = 0;
   cur_instruction_address = m68k_getpc () - 4;
   if ((extra & 0xfc00) == 0x5c00)
@@ -1436,12 +1420,12 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
       // FMOVECR
       int rom_index = extra & 0x7f;
       if (rom_index == 0 || (rom_index >= 11 && rom_index <= 15))
-	mpfr_set (value, fpu_constant_rom[rom_index], rnd);
+	t = mpfr_set (value, fpu_constant_rom[rom_index], rnd);
       else if (rom_index >= 48 && rom_index <= 63)
-	mpfr_set (value, fpu_constant_rom[rom_index - 32], rnd);
+	t = mpfr_set (value, fpu_constant_rom[rom_index - 32], rnd);
       else
 	mpfr_set_zero (value, 0);
-      set_fp_register (reg, value, prec, rnd, true);
+      set_fp_register (reg, value, t, rnd, true);
     }
   else if (extra & 0x40)
     {
@@ -1454,6 +1438,15 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	  1, 0, 1, 1, 1, 0, 1, 1,
 	  1, 0, 0, 0, 1, 0, 0, 0
 	};
+
+      if (extra & 4)
+	// FD...
+	prec = DOUBLE_PREC;
+      else
+	// FS...
+	prec = SINGLE_PREC;
+      set_format (prec);
+      MPFR_DECL_INIT (value2, prec);
 
       if (!fpu.is_integral)
 	return false;
@@ -1471,15 +1464,15 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	case 5: // FDSQRT
 	  if (mpfr_sgn (value) < 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sqrt (value, value, rnd);
+	  t = mpfr_sqrt (value2, value, rnd);
 	  break;
 	case 24: // FSABS
 	case 28: // FDABS
-	  mpfr_abs (value, value, rnd);
+	  t = mpfr_abs (value2, value, rnd);
 	  break;
 	case 26: // FSNEG
 	case 30: // FDNEG
-	  mpfr_neg (value, value, rnd);
+	  t = mpfr_neg (value2, value, rnd);
 	  break;
 	case 32: // FSDIV
 	case 36: // FDDIV
@@ -1492,39 +1485,33 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	    }
 	  else if (mpfr_inf_p (value) && mpfr_inf_p (fpu.registers[reg].f))
 		cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_div (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_div (value2, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 34: // FSADD
 	case 38: // FDADD
 	  if (mpfr_inf_p (fpu.registers[reg].f) && mpfr_inf_p (value)
 	      && mpfr_signbit (fpu.registers[reg].f) != mpfr_signbit (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_add (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_add (value2, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 35: // FSMUL
 	case 39: // FDMUL
 	  if ((mpfr_zero_p (value) && mpfr_inf_p (fpu.registers[reg].f))
 	      || (mpfr_inf_p (value) && mpfr_zero_p (fpu.registers[reg].f)))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_mul (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_mul (value2, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 40: // FSSUB
 	case 44: // FDSUB
 	  if (mpfr_inf_p (fpu.registers[reg].f) && mpfr_inf_p (value)
 	      && mpfr_signbit (fpu.registers[reg].f) == mpfr_signbit (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sub (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_sub (value2, fpu.registers[reg].f, value, rnd);
 	  break;
 	default:
 	  return false;
 	}
-      if (extra & 4)
-	// FD...
-	prec = DOUBLE_PREC;
-      else
-	// FS...
-	prec = SINGLE_PREC;
-      set_fp_register (reg, value, prec, rnd, true);
+      set_fp_register (reg, value2, t, rnd, true);
     }
   else if ((extra & 0x30) == 0x30)
     {
@@ -1537,14 +1524,14 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	{
 	  // FSINCOS
 	  int reg2 = extra & 7;
-	  MPFR_DECL_INIT (value2, EXTENDED_PREC);
+	  MPFR_DECL_INIT (value2, prec);
 
 	  if (mpfr_inf_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sin_cos (value, value2, value, rnd);
+	  t = mpfr_sin_cos (value, value2, value, rnd);
 	  if (reg2 != reg)
-	    set_fp_register (reg2, value2, prec, rnd, false);
-	  set_fp_register (reg, value, prec, rnd, true);
+	    set_fp_register (reg2, value2, t >> 2, rnd, false);
+	  set_fp_register (reg, value, t & 3, rnd, true);
 	}
       else if ((extra & 15) == 8)
 	// FCMP
@@ -1574,18 +1561,18 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	case 0: // FMOVE
 	  break;
 	case 1: // FINT
-	  mpfr_rint (value, value, rnd);
+	  t = mpfr_rint (value, value, rnd);
 	  break;
 	case 2: // FSINH
-	  mpfr_sinh (value, value, rnd);
+	  t = mpfr_sinh (value, value, rnd);
 	  break;
 	case 3: // FINTRZ
-	  mpfr_rint (value, value, MPFR_RNDZ);
+	  t = mpfr_rint (value, value, MPFR_RNDZ);
 	  break;
 	case 4: // FSQRT
 	  if (mpfr_sgn (value) < 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sqrt (value, value, rnd);
+	  t = mpfr_sqrt (value, value, rnd);
 	  break;
 	case 6: // FLOGNP1
 	  if (!mpfr_nan_p (value))
@@ -1596,91 +1583,91 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	      else if (cmp < 0)
 		cur_exceptions |= FPSR_EXCEPTION_OPERR;
 	    }
-	  mpfr_log1p (value, value, rnd);
+	  t = mpfr_log1p (value, value, rnd);
 	  break;
 	case 8: // FETOXM1
-	  mpfr_expm1 (value, value, rnd);
+	  t = mpfr_expm1 (value, value, rnd);
 	  break;
 	case 9: // FTANH
-	  mpfr_tanh (value, value, rnd);
+	  t = mpfr_tanh (value, value, rnd);
 	  break;
 	case 10: // FATAN
-	  mpfr_atan (value, value, rnd);
+	  t = mpfr_atan (value, value, rnd);
 	  break;
 	case 12: // FASIN
 	  if (mpfr_cmpabs (value, FPU_CONSTANT_ONE) > 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_asin (value, value, rnd);
+	  t = mpfr_asin (value, value, rnd);
 	  break;
 	case 13: // FATANH
 	  if (mpfr_cmpabs (value, FPU_CONSTANT_ONE) > 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_atanh (value, value, rnd);
+	  t = mpfr_atanh (value, value, rnd);
 	  break;
 	case 14: // FSIN
 	  if (mpfr_inf_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sin (value, value, rnd);
+	  t = mpfr_sin (value, value, rnd);
 	  break;
 	case 15: // FTAN
 	  if (mpfr_inf_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_tan (value, value, rnd);
+	  t = mpfr_tan (value, value, rnd);
 	  break;
 	case 16: // FETOX
-	  mpfr_exp (value, value, rnd);
+	  t = mpfr_exp (value, value, rnd);
 	  break;
 	case 17: // FTWOTOX
-	  mpfr_ui_pow (value, 2, value, rnd);
+	  t = mpfr_ui_pow (value, 2, value, rnd);
 	  break;
 	case 18: // FTENTOX
-	  mpfr_ui_pow (value, 10, value, rnd);
+	  t = mpfr_ui_pow (value, 10, value, rnd);
 	  break;
 	case 20: // FLOGN
 	  if (mpfr_zero_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_DZ;
 	  else if (mpfr_sgn (value) < 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_log (value, value, rnd);
+	  t = mpfr_log (value, value, rnd);
 	  break;
 	case 21: // FLOG10
 	  if (mpfr_zero_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_DZ;
 	  else if (mpfr_sgn (value) < 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_log10 (value, value, rnd);
+	  t = mpfr_log10 (value, value, rnd);
 	  break;
 	case 22: // FLOG2
 	  if (mpfr_zero_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_DZ;
 	  else if (mpfr_sgn (value) < 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_log2 (value, value, rnd);
+	  t = mpfr_log2 (value, value, rnd);
 	  break;
 	case 24: // FABS
-	  mpfr_abs (value, value, rnd);
+	  t = mpfr_abs (value, value, rnd);
 	  break;
 	case 25: // FCOSH
-	  mpfr_cosh (value, value, rnd);
+	  t = mpfr_cosh (value, value, rnd);
 	  break;
 	case 26: // FNEG
-	  mpfr_neg (value, value, rnd);
+	  t = mpfr_neg (value, value, rnd);
 	  break;
 	case 28: // FACOS
 	  if (mpfr_cmpabs (value, FPU_CONSTANT_ONE) > 0)
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_acos (value, value, rnd);
+	  t = mpfr_acos (value, value, rnd);
 	  break;
 	case 29: // FCOS
 	  if (mpfr_inf_p (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_cos (value, value, rnd);
+	  t = mpfr_cos (value, value, rnd);
 	  break;
 	case 30: // FGETEXP
-	  do_getexp (value);
+	  t = do_getexp (value, rnd);
 	  break;
 	case 31: // FGETMAN
-	  do_getman (value);
+	  t = do_getman (value);
 	  break;
 	case 32: // FDIV
 	  if (mpfr_zero_p (value))
@@ -1692,57 +1679,67 @@ fpuop_general (uae_u32 opcode, uae_u32 extra)
 	    }
 	  else if (mpfr_inf_p (value) && mpfr_inf_p (fpu.registers[reg].f))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_div (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_div (value, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 33: // FMOD
-	  do_fmod (value, fpu.registers[reg].f, rnd);
+	  t = do_fmod (value, fpu.registers[reg].f, rnd);
 	  break;
 	case 34: // FADD
 	  if (mpfr_inf_p (fpu.registers[reg].f) && mpfr_inf_p (value)
 	      && mpfr_signbit (fpu.registers[reg].f) != mpfr_signbit (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_add (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_add (value, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 35: // FMUL
 	  if ((mpfr_zero_p (value) && mpfr_inf_p (fpu.registers[reg].f))
 	      || (mpfr_inf_p (value) && mpfr_zero_p (fpu.registers[reg].f)))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_mul (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_mul (value, fpu.registers[reg].f, value, rnd);
 	  break;
 	case 36: // FSGLDIV
-	  if (mpfr_zero_p (value))
-	    {
-	      if (mpfr_regular_p (fpu.registers[reg].f))
-		cur_exceptions |= FPSR_EXCEPTION_DZ;
-	      else if (mpfr_zero_p (fpu.registers[reg].f))
-		cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	    }
-	  else if (mpfr_inf_p (value) && mpfr_inf_p (fpu.registers[reg].f))
-		cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_div (value, fpu.registers[reg].f, value, rnd);
-	  prec = SINGLE_PREC;
+	  {
+	    MPFR_DECL_INIT (value2, SINGLE_PREC);
+
+	    set_format (SINGLE_PREC);
+	    if (mpfr_zero_p (value))
+	      {
+		if (mpfr_regular_p (fpu.registers[reg].f))
+		  cur_exceptions |= FPSR_EXCEPTION_DZ;
+		else if (mpfr_zero_p (fpu.registers[reg].f))
+		  cur_exceptions |= FPSR_EXCEPTION_OPERR;
+	      }
+	    else if (mpfr_inf_p (value) && mpfr_inf_p (fpu.registers[reg].f))
+	      cur_exceptions |= FPSR_EXCEPTION_OPERR;
+	    t = mpfr_div (value2, fpu.registers[reg].f, value, rnd);
+	    mpfr_set (value, value2, rnd);
+	  }
 	  break;
 	case 37: // FREM
-	  do_remainder (value, fpu.registers[reg].f, rnd);
+	  t = do_remainder (value, fpu.registers[reg].f, rnd);
 	  break;
 	case 38: // FSCALE
-	  do_scale (value, fpu.registers[reg].f, rnd);
+	  t = do_scale (value, fpu.registers[reg].f, rnd);
 	  break;
 	case 39: // FSGLMUL
-	  if ((mpfr_zero_p (value) && mpfr_inf_p (fpu.registers[reg].f))
-	      || (mpfr_inf_p (value) && mpfr_zero_p (fpu.registers[reg].f)))
-	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_mul (value, fpu.registers[reg].f, value, rnd);
-	  prec = SINGLE_PREC;
+	  {
+	    MPFR_DECL_INIT (value2, SINGLE_PREC);
+
+	    set_format (SINGLE_PREC);
+	    if ((mpfr_zero_p (value) && mpfr_inf_p (fpu.registers[reg].f))
+		|| (mpfr_inf_p (value) && mpfr_zero_p (fpu.registers[reg].f)))
+	      cur_exceptions |= FPSR_EXCEPTION_OPERR;
+	    t = mpfr_mul (value2, fpu.registers[reg].f, value, rnd);
+	    mpfr_set (value, value2, rnd);
+	  }
 	  break;
 	case 40: // FSUB
 	  if (mpfr_inf_p (fpu.registers[reg].f) && mpfr_inf_p (value)
 	      && mpfr_signbit (fpu.registers[reg].f) == mpfr_signbit (value))
 	    cur_exceptions |= FPSR_EXCEPTION_OPERR;
-	  mpfr_sub (value, fpu.registers[reg].f, value, rnd);
+	  t = mpfr_sub (value, fpu.registers[reg].f, value, rnd);
 	  break;
 	}
-      set_fp_register (reg, value, prec, rnd, true);
+      set_fp_register (reg, value, t, rnd, true);
     }
   update_exceptions ();
   return true;

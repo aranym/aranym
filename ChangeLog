@@ -1,3 +1,6 @@
+2013/10/23 - Andreas
+- fpu_mpfr.c - Improve accuracy of denormal results
+
 2013/08/22 - Jens
 - m68k.h - Added ARM flags optimization
 - configure.ac - Added ARM flags optimization
