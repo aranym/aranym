@@ -62,7 +62,7 @@
 	#define MAP_ANONYMOUS 0
 #endif
 
-#define MAP_EXTRA_FLAGS (MAP_32BIT)
+#define MAP_EXTRA_FLAGS 0
 
 #ifdef HAVE_MACH_VM
 #elif defined(HAVE_MMAP_VM)
