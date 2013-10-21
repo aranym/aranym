@@ -1834,7 +1834,11 @@ void
 fpuop_bcc (uae_u32 opcode, uaecptr pc, uae_u32 disp)
 {
   if (check_fp_cond (opcode))
-    m68k_setpc (pc + (uae_s16) disp);
+    {
+      if (!(opcode & (1 << 6)))
+	disp = (uae_s16) disp;
+      m68k_setpc (pc + disp);
+    }
 }
 
 void
