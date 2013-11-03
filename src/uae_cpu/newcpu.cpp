@@ -457,11 +457,11 @@ uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
      case imm2:
 	offset = (uae_s32)get_ilong_1 (m68kpc_offset);
 	m68kpc_offset += 4;
-	sprintf (buffer,"#$%08lx", (unsigned long)offset);
+	sprintf (buffer,"#$%08lx", (unsigned long)offset & 0xffffffff);
 	break;
      case immi:
 	offset = (uae_s32)(uae_s8)(reg & 0xff);
-	sprintf (buffer,"#$%08lx", (unsigned long)offset);
+	sprintf (buffer,"#$%08lx", (unsigned long)offset & 0xffffffff);
 	break;
      default:
 	break;
