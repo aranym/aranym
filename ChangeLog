@@ -1,5 +1,6 @@
 2013/11/03 - Andreas
 - newcpu.cpp - Fix printing of sign-extended operands in disassembler
+- fpu_mpfr.cpp - Preserve the bits of NaN
 
 2013/10/23 - Andreas
 - fpu_mpfr.c - Improve accuracy of denormal results, fix decoding of FBcc.L
