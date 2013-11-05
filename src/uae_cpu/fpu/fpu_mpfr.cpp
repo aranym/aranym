@@ -314,7 +314,7 @@ set_from_double (fpu_register &value, uae_u32 words[2])
 }
 
 static void
-set_from_extended (fpu_register &value, uae_u32 words[3])
+set_from_extended (fpu_register &value, uae_u32 words[3], bool check_snan)
 {
   int s = words[0] >> 31;
   int e = (words[0] >> 16) & 0x7fff;
@@ -323,9 +323,13 @@ set_from_extended (fpu_register &value, uae_u32 words[3])
     {
       if (((words[1] & 0x7fffffff) | words[2]) != 0)
 	{
-	  if ((words[1] & 0x40000000) == 0)
-	    cur_exceptions |= FPSR_EXCEPTION_SNAN;
-	  set_nan (value, ((uae_u64) (words[1] | 0x40000000) << 32) | words[2]);
+	  if (check_snan)
+	    {
+	      if ((words[1] & 0x40000000) == 0)
+		cur_exceptions |= FPSR_EXCEPTION_SNAN;
+	      words[1] |= 0x40000000;
+	    }
+	  set_nan (value, ((uae_u64) words[1] << 32) | words[2]);
 	}
       else
 	mpfr_set_inf (value.f, 0);
@@ -399,6 +403,12 @@ get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register &value)
     {
       mpfr_set (value.f, fpu.registers[(extra >> 10) & 7].f, MPFR_RNDN);
       value.nan_bits = fpu.registers[(extra >> 10) & 7].nan_bits;
+      /* Check for SNaN.  */
+      if (mpfr_nan_p (value.f) && (value.nan_bits & (1ULL << 62)) == 0)
+	{
+	  value.nan_bits |= 1ULL << 62;
+	  cur_exceptions |= FPSR_EXCEPTION_SNAN;
+	}
       return true;
     }
   mode = (opcode >> 3) & 7;
@@ -480,7 +490,7 @@ get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register &value)
       words[0] = get_long (addr);
       words[1] = get_long (addr + 4);
       words[2] = get_long (addr + 8);
-      set_from_extended (value, words);
+      set_from_extended (value, words, true);
       break;
     case 3:
       words[0] = get_long (addr);
@@ -595,7 +605,14 @@ extract_to_single (fpu_register &value)
   if (mpfr_inf_p (single))
     word = 0x7f800000;
   else if (mpfr_nan_p (single))
-    word = 0x7f800000 | ((value.nan_bits >> (32 + 8)) & 0x7fffff);
+    {
+      if ((value.nan_bits & (1ULL << 62)) == 0)
+	{
+	  value.nan_bits |= 1ULL << 62;
+	  cur_exceptions |= FPSR_EXCEPTION_SNAN;
+	}
+      word = 0x7f800000 | ((value.nan_bits >> (32 + 8)) & 0x7fffff);
+    }
   else if (mpfr_zero_p (single))
     word = 0;
   else
@@ -648,6 +665,11 @@ extract_to_double (fpu_register &value, uint32_t *words)
     }
   else if (mpfr_nan_p (dbl))
     {
+      if ((value.nan_bits & (1ULL << 62)) == 0)
+	{
+	  value.nan_bits |= 1ULL << 62;
+	  cur_exceptions |= FPSR_EXCEPTION_SNAN;
+	}
       words[0] = 0x7ff00000 | ((value.nan_bits >> (32 + 11)) & 0xfffff);
       words[1] = value.nan_bits >> 11;
     }
@@ -1199,7 +1221,7 @@ fpuop_fmovem_register (uae_u32 opcode, uae_u32 extra)
 	    words[1] = get_long (addr + 4);
 	    words[2] = get_long (addr + 8);
 	    addr += 12;
-	    set_from_extended (fpu.registers[i], words);
+	    set_from_extended (fpu.registers[i], words, false);
 	  }
       if ((opcode & 070) == 030)
 	m68k_areg (regs, opcode & 7) = addr;

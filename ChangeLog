@@ -1,3 +1,6 @@
+2013/11/05 - Andreas
+- fpu_mpfr.cpp - Be more careful about SNaN
+
 2013/11/03 - Andreas
 - newcpu.cpp - Fix printing of sign-extended operands in disassembler
 - fpu_mpfr.cpp - Preserve the bits of NaN
