@@ -553,6 +553,7 @@ void IKBD::ThrowInterrupt(void)
 	sr |= (1<<ACIA_SR_INTERRUPT);
 
 	/* signal ACIA interrupt */
+	getMFP()->setGPIPbit(0x10, 0x10);	/* Force GPIP value transition so MFP layer generates interrupt */
 	getMFP()->setGPIPbit(0x10, 0);
 }
 

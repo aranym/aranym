@@ -1,3 +1,6 @@
+2013/01/01 - Patrice
+- ikbd.cpp - force transition for GPIP pin
+
 2013/11/05 - Andreas
 - fpu_mpfr.cpp - Be more careful about SNaN
 
