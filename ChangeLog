@@ -1,21 +1,35 @@
-2013/01/01 - Patrice
+2014/02/12 - David Gálvez improves NF USB support
+- Delete some FreeMiNT's specific code, like usb_device struct, leave
+  the updates to the members of this struct to FreeMiNT's driver.
+- Remove some endianess swapping where not necessary, and add them
+  where was needed. Use SDL function instead our owns.
+- Update API version, because some function have now less parameters.
+- Fix some return values.
+
+
+2014/01/01 - Patrice
 - ikbd.cpp - force transition for GPIP pin
+
 
 2013/11/05 - Andreas
 - fpu_mpfr.cpp - Be more careful about SNaN
+
 
 2013/11/03 - Andreas
 - newcpu.cpp - Fix printing of sign-extended operands in disassembler
 - fpu_mpfr.cpp - Preserve the bits of NaN
 
+
 2013/10/23 - Andreas
 - fpu_mpfr.c - Improve accuracy of denormal results, fix decoding of FBcc.L
 - Unix/vm_alloc.cpp - Use MAP_32BIT only when requested
+
 
 2013/08/22 - Jens
 - m68k.h - Added ARM flags optimization
 - configure.ac - Added ARM flags optimization
 - sysdeps.h - Improved clobber list
+
 
 2013/08/17 - Jens
 - configure.ac : Added ARM Assembly compiler flags (build armv6 optimized assembly on armv6 and above) 
@@ -25,10 +39,12 @@
   generic arm version with common ARM instructions
 - sigsegv_linux_arm.cpp  : Bug fixed with word/int byte order
 
+
 2013/08/12 - Jens
 - configure.ac : Added sigsegv_linux.arm.cpp for linux ARM Architecture
 - sigsegv_linux_arm.cpp  : sigsegv support for ARM Linux
 - Support for --enable-addr-check=sseg on ARM Linux
+
 
 2013/06/16 - Jens
 - configure.ac : Reverted to previous FIXED_ADDRESS implementation for 64 Bit
@@ -39,9 +55,11 @@
 - MacAranym.xcodeproj: New build phase gen_machfiles
 - sigsegv_linux_x86_64.cpp : New 64 Bit Jit for Linux
 
+
 2013/06/02 - Jens
 - MacAranym.xcodeproj: Fixed Profile settings
 - configure.ac : Fixed typo
+
 
 2013/06/01 - Jens
 - bpf_helper.c: Set executable flag in fix permissions and wait for child
@@ -54,13 +72,16 @@
 - sigsegv_darwin_x86.cpp: Limit to BAD_ACCESS and forward_exception to enable
   XCode Debugging
 
+
 2013/05/05 - Philipp
 - MacAranym.xcodeproj: Removed specific compilation flags of bpf_helper target.
   This should enable error-free compilation with Xcode 3.1.
 
+
 2013/05/01 - Philipp
 - newcpu.cpp/compemu_fpp.cpp/fpu_ieee.cpu: fixed bugs which were reported as
   warnings by LLVM.
+
 
 2013/04/28 - Philipp
 - ethernet_macosx.cpp: BPF packet filtering improvements: added a new filter for
@@ -71,9 +92,11 @@
   Implemented multi-packet reads from BPF device (one read operation can deliver
   multiple ethernet frames).
 
+
 2013/04/28 - Andreas
 - uae_cpu/compiler/compemu.h: Avoid conflict with definitions from
   <byteswap.h>, imported by SDL.
+
 
 2013/04/19 - Philipp
 - ethernet_macosx.cpp: fixed memory leak on Atari side by implementing a 
@@ -81,10 +104,12 @@
   forwarded to the Atari side. Removed the "nofilter" keyword.
   Thanks to Zorro for pointing me to this severe bug.
 
+
 2013/04/18 - Philipp
 - natfeat/ethernet.h: Increase MAX_PACKET_SIZE to 9000 to allow enabling
   Ethernet on systems with MTU bigger than 1514.
 - ethernet_macosx.cpp: Fix memory overflow in BPF driver.
+
 
 *** CVS tagged as ARANYM_0_9_15
 
@@ -92,6 +117,7 @@
 - input.cpp: fixed click to grab input, added proper host<->Atari mouse sync
 - ikbd.cpp: fixed SendMouseMotion() and MergeMousePacket()
 - include/aradata.h: added setAtariMousePosition()
+
 
 2013/01/23 - Petr
 - natfeat/nfvdi.cpp: fixes a bug (sort of a race condition) in NFVDI.

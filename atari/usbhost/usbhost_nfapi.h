@@ -1,7 +1,7 @@
 /*
 	NatFeat USB Host chip emulator
 
-	ARAnyM (C) 2011 David Gálvez
+	ARAnyM (C) 2011-2014 David Gálvez
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /* if you change anything in the enum {} below you have to increase 
    this ARAUSBHOST_NFAPI_VERSION!
 */
-#define USBHOST_NFAPI_VERSION	0x00000002
+#define USBHOST_NFAPI_VERSION	0x00000003
 
 enum {
 	GET_VERSION = 0,	/* no parameters, return NFAPI_VERSION in d0 */
@@ -37,6 +37,6 @@ enum {
 	USBHOST_SUBMIT_BULK_MSG
 };
 
-#define USBHOST(a)	(nfUsbHostId + a)
+#define USBHOST(a)	(nfUsbHostID + a)
 
 #endif /* _USBHOST_NFAPI_H */

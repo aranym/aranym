@@ -1,7 +1,7 @@
 /*
  * USB host chip emulation
  *
- * Copyright (c) 2012 David Galvez. ARAnyM development team (see AUTHORS).
+ * Copyright (c) 2012-2014 David Galvez. ARAnyM development team (see AUTHORS).
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -454,9 +454,8 @@ void usbhost_init_libusb(void)
 
 /*--- Support functions ---*/
 
-int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
-				 memptr buffer, int32 transfer_len,
-				  devrequest *cmd)
+int32 USBHost::aranym_submit_rh_msg(uint32 pipe, memptr buffer, int32 transfer_len,
+				    devrequest *cmd)
 {
 	D(bug("USBHost: aranym_submit_rh_msg()"));
 
@@ -473,13 +472,13 @@ int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 
 	if (usb_pipeint(pipe)) {
 		D(bug("USBHost: Root-Hub submit IRQ: NOT implemented"));
-		return 0;
+		return -1;
 	}
 
 	bmRType_bReq = cmd->requesttype | (cmd->request << 8);
-	wValue = swap_16(cmd->value);
-	wIndex = swap_16(cmd->index);
-	wLength = swap_16(cmd->length);
+	wValue = cmd->value;
+	wIndex = cmd->index;
+	wLength = cmd->length;
 
 	D(bug("USBHost: --- HUB ----------------------------------------"));
 	D(bug("USBHost: submit rh urb, req=%x val=%#x index=%#x len=%d",
@@ -490,21 +489,24 @@ int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 		case RH_GET_STATUS:
 			D(bug("USBHost: RH_GET_STATUS"));
 
-			*data_buf = (uint16)swap_16(1);
+			*data_buf = (SDL_BYTEORDER == SDL_BIG_ENDIAN) ? 
+					(uint16) SDL_Swap16(1) : (uint16)(1) ;
 			len = 2;
 			break;
 
 		case RH_GET_STATUS | RH_INTERFACE:
 			D(bug("USBHost: RH_GET_STATUS | RH_INTERFACE"));
 
-			*data_buf = (uint16)swap_16(0);
+			*data_buf = (SDL_BYTEORDER == SDL_BIG_ENDIAN) ? 
+					(uint16) SDL_Swap16(0) : (uint16)(0) ;
 			len = 2;
 			break;
 
 		case RH_GET_STATUS | RH_ENDPOINT:
 			D(bug("USBHost: RH_GET_STATUS | RH_ENDPOINT"));
 
-			*data_buf = (uint16)swap_16(0);
+			*data_buf = (SDL_BYTEORDER == SDL_BIG_ENDIAN) ? 
+					(uint16) SDL_Swap16(0) : (uint16)(0) ;
 			len = 2;
 			break;
 
@@ -518,7 +520,9 @@ int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 		case RH_GET_STATUS | RH_OTHER | RH_CLASS:
 			D(bug("USBHost: RH_GET_STATUS | RH_OTHER | RH_CLASS"));
 		
-			*(uint32 *)data_buf = port_status[wIndex - 1];
+			*(uint32 *)data_buf = (SDL_BYTEORDER == SDL_BIG_ENDIAN) ? 
+						SDL_Swap32(port_status[wIndex - 1]) :
+						port_status[wIndex - 1];
 			len = 4;
 			break;
 
@@ -710,13 +714,10 @@ int32 USBHost::aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
 
 	len = min1_t(int32, len, leni);
 
-	Host2Atari_memcpy(buffer, data_buf, len);
+	if(buffer != 0)
+		Host2Atari_memcpy(buffer, data_buf, len);
 
-	dev->act_len = len;
-	dev->status = stat;
-	D(bug("USBHost: dev act_len %d, status %ld", dev->act_len, dev->status));
-
-	return stat;
+	return (stat ? -1 : len);
 }
 
 
@@ -752,12 +753,11 @@ int32 USBHost::usb_lowlevel_stop(void)
 }
 
 
-int32 USBHost::submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
+int32 USBHost::submit_control_msg(uint32 pipe, memptr buffer,
 				int32 len, memptr devrequest)
 {
 	D(bug("\nUSBHost: submit_control_msg()"));
 
-	struct usb_device *tmp_usb_device;
 	struct devrequest *cmd;
 	uint8 *tempbuff;
 
@@ -770,7 +770,6 @@ int32 USBHost::submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	uint16 wIndex;
 	uint16 wLength;
 
-	tmp_usb_device = (struct usb_device *)Atari2HostAddr(usb_device);
 	cmd = (struct devrequest *)Atari2HostAddr(devrequest);
 	tempbuff = (uint8 *) Atari2HostAddr(buffer);
 
@@ -779,13 +778,13 @@ int32 USBHost::submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
 
 	/* Control message is for the HUB? */
 	if (devnum == rh_devnum)
-		return aranym_submit_rh_msg(tmp_usb_device, pipe, buffer, len, cmd);
+		return aranym_submit_rh_msg(pipe, buffer, len, cmd);
 
 	bmRType = cmd->requesttype;
 	bReq = cmd->request;
-	wValue = swap_16(cmd->value);
-	wIndex = swap_16(cmd->index);
-	wLength = swap_16(cmd->length);
+	wValue = cmd->value;
+	wIndex = cmd->index;
+	wLength = cmd->length;
 
 	D(bug("USBHost: bmRType %x, bReq %x, wValue %x, wIndex %x, wLength %x", bmRType, bReq, wValue, wIndex, wLength));
 
@@ -799,18 +798,13 @@ int32 USBHost::submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	else
 		r = libusb_control_transfer(devh[dev_idx], bmRType, bReq, wValue, wIndex, tempbuff, wLength, 0);
 
-	if (r >= 0)
-		tmp_usb_device->status = 0;
-
-	tmp_usb_device->act_len = r;
-
-	D(bug("USBHost: bytes transmited %d ", r));
+	D(bug("USBHost: bytes transmited %ld ", r));
 
 	return r;
 }
 
 
-int32 USBHost::submit_int_msg(memptr /* usb_device */, uint32 /* pipe */, memptr /* buffer */,
+int32 USBHost::submit_int_msg(uint32 /* pipe */, memptr /* buffer */,
 				int32 /* len*/, int32 /* interval*/)
 {
 	D(bug("\nUSBHost: submit_int_msg()"));
@@ -820,12 +814,10 @@ int32 USBHost::submit_int_msg(memptr /* usb_device */, uint32 /* pipe */, memptr
 }
 
 
-int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
-				int32 len)
+int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len)
 {
 	D(bug("\nUSBHost: submit_bulk_msg()"));
 
-	struct usb_device *tmp_usb_device;
 	uint8 *tempbuff;
 	
 	int32 dir_out;
@@ -835,7 +827,6 @@ int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	unsigned int dev_idx = 0;
 	int32 r;
 
-	tmp_usb_device = (struct usb_device *)Atari2HostAddr(usb_device);
 	tempbuff = (uint8 *)Atari2HostAddr(buffer);
 	
 	dir_out = usb_pipeout(pipe);
@@ -853,12 +844,7 @@ int32 USBHost::submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
 	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred, 1000);
 	D(bug("USBHost: return: %d len: %d transferred: %d", r, len, transferred));
 
-	if (r >= 0)
-		tmp_usb_device->status = 0;
-
-	tmp_usb_device->act_len = r;
-
-	return 0;
+	return r;
 }
 
 /*--- Public functions ---*/
@@ -908,17 +894,16 @@ int32 USBHost::dispatch(uint32 fncode)
 
 		case USBHOST_SUBMIT_CONTROL_MSG:
 			ret = submit_control_msg(getParameter(0), getParameter(1), getParameter(2),
-						getParameter(3), getParameter(4));
+						getParameter(3));
 			break;
 
 		case USBHOST_SUBMIT_INT_MSG:
 			ret = submit_int_msg(getParameter(0), getParameter(1), getParameter(2),
-						getParameter(3), getParameter(4));
+						getParameter(3));
 			break;
 
 		case USBHOST_SUBMIT_BULK_MSG:
-			ret = submit_bulk_msg(getParameter(0), getParameter(1), getParameter(2),
-						getParameter(3));
+			ret = submit_bulk_msg(getParameter(0), getParameter(1), getParameter(2));
 			break;
 		default:
 			D(bug("USBHost: unimplemented function #%d", fncode));

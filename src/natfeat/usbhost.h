@@ -160,20 +160,16 @@ private:
 	int total_num_handles;
 
 	
-	int32 aranym_submit_rh_msg(usb_device *dev, uint32 pipe,
-				   memptr buffer, int32 transfer_len,
+	int32 aranym_submit_rh_msg(uint32 pipe, memptr buffer, int32 transfer_len,
 				   devrequest *cmd);
 
 	int32 rh_port_status(memptr rh);
 		
 	int32 usb_lowlevel_init(void);
 	int32 usb_lowlevel_stop(void);
-	int32 submit_control_msg(memptr usb_device, uint32 pipe, memptr buffer,
-			         int32 len, memptr devrequest);
-	int32 submit_int_msg(memptr usb_device, uint32 pipe, memptr buffer,
-			     int32 len, int32 interval);
-	int32 submit_bulk_msg(memptr usb_device, uint32 pipe, memptr buffer,
-		    	      int32 len);
+	int32 submit_control_msg(uint32 pipe, memptr buffer, int32 len, memptr devrequest);
+	int32 submit_int_msg(uint32 pipe, memptr buffer, int32 len, int32 interval);
+	int32 submit_bulk_msg(uint32 pipe, memptr buffer, int32 len);
 
 public:
 	USBHost();

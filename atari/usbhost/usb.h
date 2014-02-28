@@ -1,5 +1,5 @@
 /*
- * Modified for Aranym Native Features by David Gálvez 2010
+ * Modified for Aranym Native Features by David Gálvez 2010-2014
  * Modified from u-boot sources for Atari by Didier Mequignon 2009
  *
  *
@@ -140,70 +140,6 @@ enum {
 	PACKET_SIZE_64  = 3,
 };
 
-struct usb_device {
-	int32	devnum;			/* Device number on USB bus */
-	int32	speed;			/* full/low/high */
-	int8	mf[32];			/* manufacturer */
-	int8	prod[32];		/* product */
-	int8	serial[32];		/* serial number */
-
-	/* Maximum packet size; one of: PACKET_SIZE_* */
-	int32 maxpacketsize;
-	/* one bit for each endpoint ([0] = IN, [1] = OUT) */
-	uint32 toggle[2];
-	/* endpoint halts; one bit per endpoint # & direction;
-	 * [0] = IN, [1] = OUT
-	 */
-	uint32 halted[2];
-	int32 epmaxpacketin[16];		/* INput endpoint specific maximums */
-	int32 epmaxpacketout[16];		/* OUTput endpoint specific maximums */
-
-	int32 configno;			/* selected config number */
-	struct usb_device_descriptor descriptor; /* Device Descriptor */
-	struct usb_config_descriptor config; /* config descriptor */
-
-	int32 have_langid;		/* whether string_langid is valid yet */
-	int32 string_langid;		/* language ID for strings */
-	memptr irq_handle;
-	uint32 irq_status;
-	int32 irq_act_len;		/* transfered bytes */
-	memptr privptr;
-	/*
-	 * Child devices -  if this is a hub device
-	 * Each instance needs its own set of data structures.
-	 */
-	uint32 status;
-	int32 act_len;			/* transfered bytes */
-	int32 maxchild;			/* Number of ports if hub */
-	int32 portnr;
-	memptr  parent;
-	memptr  children[USB_MAXCHILDREN];
-};
-
-
-/* big endian -> little endian conversion */
-/* some CPUs are already little endian e.g. the ARM920T */
-#define __swap_16(x) \
-	({ unsigned short x_ = (unsigned short)x; \
-	 (unsigned short)( \
-		((x_ & 0x00FFU) << 8) | ((x_ & 0xFF00U) >> 8)); \
-	})
-#define __swap_32(x) \
-	({ unsigned long x_ = (unsigned long)x; \
-	 (unsigned long)( \
-		((x_ & 0x000000FFUL) << 24) | \
-		((x_ & 0x0000FF00UL) <<	 8) | \
-		((x_ & 0x00FF0000UL) >>	 8) | \
-		((x_ & 0xFF000000UL) >> 24)); \
-	})
-
-#ifdef __LITTLE_ENDIAN
-# define swap_16(x) (x)
-# define swap_32(x) (x)
-#else
-# define swap_16(x) __swap_16(x)
-# define swap_32(x) __swap_32(x)
-#endif
 
 /*
  * Calling this entity a "pipe" is glorifying it. A USB pipe
