@@ -155,6 +155,7 @@ typedef struct {
 	char kernel[512];	/* /path/to/vmlinux[.gz] */
 	char args[512];		/* command line arguments for kernel */
 	char ramdisk[512];	/* /path/to/ramdisk[.gz] */
+	bool skip_stram;	/* load kernel to TT RAM */
 } bx_lilo_options_t;
 
 // Midi options

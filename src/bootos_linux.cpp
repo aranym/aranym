@@ -409,7 +409,7 @@ int LinuxBootOs::checkKernel(void)
     Elf32_Ehdr *kexec_elf;	/* header of kernel executable */
     Elf32_Phdr *kernel_phdrs;
 	unsigned long min_addr=0xffffffff, max_addr=0;
-	unsigned long kernel_size, mem_ptr;
+	unsigned long kernel_size, mem_ptr, kernel_offset;
 	int i;
 	const char *kname, *kernel_name="vmlinux";
 
@@ -475,6 +475,10 @@ int LinuxBootOs::checkKernel(void)
 	kernel_size = max_addr - min_addr;
 	D(bug("lilo: kernel_size=%lu",kernel_size));
 
+	if (bx_options.lilo.skip_stram)
+		kernel_offset = FastRAMBase;
+	else
+		kernel_offset = 0;
 	mem_ptr = KERNEL_START;
 	for (i=0; i<SDL_SwapBE16(kexec_elf->e_phnum); i++) {
 		unsigned long segment_length;
@@ -490,21 +494,29 @@ int LinuxBootOs::checkKernel(void)
 		}
 		segment_ptr =  SDL_SwapBE32(kernel_phdrs[i].p_vaddr)-PAGE_SIZE;
 
-		memcpy(((char *)RAMBaseHost) + mem_ptr + segment_ptr, ((char *) kexec_elf) + segment_offset, segment_length);
+		if (bx_options.lilo.skip_stram)
+			memcpy(FastRAMBaseHost + mem_ptr + segment_ptr, (char *) kexec_elf + segment_offset, segment_length);
+		else
+			memcpy(RAMBaseHost + mem_ptr + segment_ptr, (char *) kexec_elf + segment_offset, segment_length);
 
-	    D(bug("lilo: Copied segment %d: 0x%08x,0x%08x at 0x%08x",i,segment_offset,segment_length,mem_ptr+segment_ptr));
+	    D(bug("lilo: Copied segment %d: 0x%08x,0x%08x at 0x%08x",i,segment_offset,segment_length,kernel_offset+mem_ptr+segment_ptr));
 	}
 
 	/*--- Copy the ramdisk after kernel (and reserved bootinfo) ---*/
 	if (ramdisk && ramdisk_length) {
 		unsigned long rd_start;
 		unsigned long rd_len;
+		unsigned long rd_offset;
 
+		if (bx_options.lilo.skip_stram)
+			rd_offset = KERNEL_START + kernel_size + MAX_BI_SIZE;
+		else
+			rd_offset = 0;
 		rd_len = ramdisk_length - RAMDISK_FS_START;
-		if (FastRAMSize>rd_len) {
+		if (FastRAMSize > rd_offset + rd_len) {
 			/* Load in FastRAM */
-			rd_start = FastRAMBase;
-			memcpy(FastRAMBaseHost, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
+			rd_start = FastRAMBase + rd_offset;
+			memcpy(FastRAMBaseHost + rd_offset, (unsigned char *)ramdisk + RAMDISK_FS_START, rd_len);
 		} else {
 			/* Load in ST-RAM */
 			rd_start = RAMSize - rd_len;
@@ -519,7 +531,7 @@ int LinuxBootOs::checkKernel(void)
 		for (i=0; i<16; i++) {
 			uint32 *tmp;
 
-			tmp = (uint32 *)(((unsigned char *)FastRAMBaseHost) /*+ rd_start*/ + 512);
+			tmp = (uint32 *)((unsigned char *)FastRAMBaseHost + rd_offset + 512);
 			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 		}
 #endif
@@ -557,7 +569,8 @@ int LinuxBootOs::checkKernel(void)
 	bi.mch_type = SDL_SwapBE32(ATARI_MACH_AB40);
 
 	bi.num_memory=0;
-	ADD_CHUNK(0, RAMSize);
+	if (!bx_options.lilo.skip_stram)
+		ADD_CHUNK(0, RAMSize);
 	if (FastRAMSize>0) {
 		ADD_CHUNK(FastRAMBase, FastRAMSize);
 	}
@@ -569,24 +582,30 @@ int LinuxBootOs::checkKernel(void)
 	}
 
 	/*--- Copy boot info in RAM ---*/
-	memcpy(RAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
-    D(bug("lilo: bootinfo at 0x%08x",KERNEL_START + kernel_size));
+	if (bx_options.lilo.skip_stram)
+		memcpy(FastRAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
+	else
+		memcpy(RAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
+	D(bug("lilo: bootinfo at 0x%08x", kernel_offset + KERNEL_START + kernel_size));
 
 	for (i=0; i<16; i++) {
 		uint32 *tmp;
 
-		tmp = (uint32 *)(((unsigned char *)RAMBaseHost) + KERNEL_START + kernel_size);
+		if (bx_options.lilo.skip_stram)
+			tmp = (uint32 *)((unsigned char *)FastRAMBaseHost + KERNEL_START + kernel_size);
+		else
+			tmp = (uint32 *)((unsigned char *)RAMBaseHost + KERNEL_START + kernel_size);
 		D(bug("lilo: bi_union.record[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 	}
 
 	/*--- Init SP & PC ---*/
 	uint32 *tmp = (uint32 *)RAMBaseHost;
-	tmp[0] = SDL_SwapBE32(KERNEL_START);	/* SP */
+	tmp[0] = SDL_SwapBE32(kernel_offset + KERNEL_START);	/* SP */
 	tmp[1] = SDL_SwapBE32(0x00e00000);		/* PC = ROMBase */
-	ROMBaseHost[4] = KERNEL_START >> 24;
-	ROMBaseHost[5] = KERNEL_START >> 16;
-	ROMBaseHost[6] = KERNEL_START >>  8;
-	ROMBaseHost[7] = KERNEL_START & 0xff;
+	ROMBaseHost[4] = (kernel_offset + KERNEL_START) >> 24;
+	ROMBaseHost[5] = (kernel_offset + KERNEL_START) >> 16;
+	ROMBaseHost[6] = (kernel_offset + KERNEL_START) >>  8;
+	ROMBaseHost[7] = (kernel_offset + KERNEL_START) & 0xff;
 	
 	D(bug("lilo: ok"));
 

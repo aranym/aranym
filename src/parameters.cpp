@@ -595,6 +595,7 @@ struct Config_Tag lilo_conf[]={
 	{ "Kernel", Path_Tag, &LILO(kernel), sizeof(LILO(kernel)), 0},
 	{ "Args", String_Tag, &LILO(args), sizeof(LILO(args)), 0},
 	{ "Ramdisk", Path_Tag, &LILO(ramdisk), sizeof(LILO(ramdisk)), 0},
+	{ "SkipSTRAM", Bool_Tag, &LILO(skip_stram), 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -603,6 +604,7 @@ void preset_lilo()
   safe_strncpy(LILO(kernel), "linux.bin", sizeof(LILO(kernel)));
   safe_strncpy(LILO(args), "root=/dev/ram video=atafb:vga16", sizeof(LILO(args)));
   safe_strncpy(LILO(ramdisk), "root.bin", sizeof(LILO(ramdisk)));
+  LILO(skip_stram) = false;
 }
 
 void postload_lilo()
