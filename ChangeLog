@@ -1,5 +1,5 @@
 2014/03/16 - Andreas
-- New config setting [LILO] SkipSTRAM to load kernel in TT-RAM
+- New config setting [LILO] LoadToFastRAM to load kernel in FastRAM
 
 2014/02/12 - David Gálvez improves NF USB support
 - Delete some FreeMiNT's specific code, like usb_device struct, leave

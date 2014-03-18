@@ -412,6 +412,7 @@ int LinuxBootOs::checkKernel(void)
 	unsigned long kernel_size, mem_ptr, kernel_offset;
 	int i;
 	const char *kname, *kernel_name="vmlinux";
+	bool load_to_fastram = bx_options.lilo.load_to_fastram && FastRAMSize > 0;
 
 	kexec_elf = (Elf32_Ehdr *) kernel;
 	if (memcmp( &kexec_elf->e_ident[EI_MAG0], ELFMAG, SELFMAG ) == 0) {
@@ -475,7 +476,7 @@ int LinuxBootOs::checkKernel(void)
 	kernel_size = max_addr - min_addr;
 	D(bug("lilo: kernel_size=%lu",kernel_size));
 
-	if (bx_options.lilo.skip_stram)
+	if (load_to_fastram)
 		kernel_offset = FastRAMBase;
 	else
 		kernel_offset = 0;
@@ -494,7 +495,7 @@ int LinuxBootOs::checkKernel(void)
 		}
 		segment_ptr =  SDL_SwapBE32(kernel_phdrs[i].p_vaddr)-PAGE_SIZE;
 
-		if (bx_options.lilo.skip_stram)
+		if (load_to_fastram)
 			memcpy(FastRAMBaseHost + mem_ptr + segment_ptr, (char *) kexec_elf + segment_offset, segment_length);
 		else
 			memcpy(RAMBaseHost + mem_ptr + segment_ptr, (char *) kexec_elf + segment_offset, segment_length);
@@ -508,7 +509,7 @@ int LinuxBootOs::checkKernel(void)
 		unsigned long rd_len;
 		unsigned long rd_offset;
 
-		if (bx_options.lilo.skip_stram)
+		if (load_to_fastram)
 			rd_offset = KERNEL_START + kernel_size + MAX_BI_SIZE;
 		else
 			rd_offset = 0;
@@ -569,11 +570,14 @@ int LinuxBootOs::checkKernel(void)
 	bi.mch_type = SDL_SwapBE32(ATARI_MACH_AB40);
 
 	bi.num_memory=0;
-	if (!bx_options.lilo.skip_stram)
+	/* If loading to FastRAM switch the order of ST and Fast RAM */
+	if (!load_to_fastram)
 		ADD_CHUNK(0, RAMSize);
 	if (FastRAMSize>0) {
 		ADD_CHUNK(FastRAMBase, FastRAMSize);
 	}
+	if (load_to_fastram)
+		ADD_CHUNK(0, RAMSize);
 	bi.num_memory=SDL_SwapBE32(bi.num_memory);
 
 	if (!create_bootinfo()) {
@@ -582,7 +586,7 @@ int LinuxBootOs::checkKernel(void)
 	}
 
 	/*--- Copy boot info in RAM ---*/
-	if (bx_options.lilo.skip_stram)
+	if (load_to_fastram)
 		memcpy(FastRAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
 	else
 		memcpy(RAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
@@ -591,7 +595,7 @@ int LinuxBootOs::checkKernel(void)
 	for (i=0; i<16; i++) {
 		uint32 *tmp;
 
-		if (bx_options.lilo.skip_stram)
+		if (load_to_fastram)
 			tmp = (uint32 *)((unsigned char *)FastRAMBaseHost + KERNEL_START + kernel_size);
 		else
 			tmp = (uint32 *)((unsigned char *)RAMBaseHost + KERNEL_START + kernel_size);
