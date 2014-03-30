@@ -1,3 +1,6 @@
+2014/03/30 - Philipp
+- MacAranym.xcodeproj, configure.ac: Fixing build on Mac OS 10.9 / Xcode 5.1
+
 2014/03/16 - Andreas
 - New config setting [LILO] LoadToFastRAM to load kernel in FastRAM
 

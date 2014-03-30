@@ -2833,7 +2833,6 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -2842,7 +2841,6 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -2993,7 +2991,6 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
-				SDKROOT = macosx10.7;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
@@ -3012,7 +3009,6 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
-				SDKROOT = macosx10.7;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
