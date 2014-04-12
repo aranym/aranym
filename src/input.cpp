@@ -289,10 +289,12 @@ bool grabMouse(bool grab)
 
 	// show hint in the window caption
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
-		char buf[128];
-		char key[80];
-		displayKeysym(bx_options.hotkeys.ungrab, key);
-		snprintf(buf, sizeof(buf), "press [%s] or middle mouse button to release input grab", key);
+		char ungrab_key[60];
+		char setup_key[60];
+		char buf[160];
+		displayKeysym(bx_options.hotkeys.ungrab, ungrab_key);
+		displayKeysym(bx_options.hotkeys.setup, setup_key);
+		snprintf(buf, sizeof(buf), "ARAnyM: press [%s] for SETUP, [%s] or middle mouse button to release input grab", setup_key, ungrab_key);
 		SDL_WM_SetCaption(buf, "ARAnyM");
 	}
 	else {
