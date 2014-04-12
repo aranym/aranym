@@ -1,22 +1,53 @@
+2013/04/12 - version 0.9.16 released @ atariada.cz
+
+ Major highlights of this release:
+
+ o JIT CPU compiler supported on 64-bit Linux and Mac OS X now!
+   (Jens made a miracle)
+
+ o MFPR FPU emulation should be perfect
+   (Andreas ironed out few remainings bugs)
+
+ o Ethernet support under Mac OS X should be way better
+   (Philipp added support for big packets and multi-packets)
+
+ o ARAnyM (with JIT?) now runs also on ARM platform driven by Linux
+   (is Jens planning on making a blazing fast ARAnyM on Android?)
+
+ o new config setting "LoadToFastRAM" to load kernel in FastRAM
+   (is Andreas working on fixing Linux-m68k issues in FastRAM?)
+
+ o David Gálvez improved NatFeat USB support (now requires FreeMiNT 1.17+)
+
+ There's also a small set of bugs fixed in this release - mainly in Mac OS X
+ thanks to Philipp but also some generic things like GPIP (Patrice).
+
+
 2013/04/15 - version 0.9.15 released
 
  The main new feature of this release is the seamless mouse integration mode:
 
  o Mouse input handling is improved a lot. Now ARAnyM has a seamless mouse
    integration when new Clocky (2013/04/15) is loaded.
+
  o There is no need to manually ungrab or grab the mouse.
+
  o Also mouse grab on left button click now reacts on the first button
    click everytime (previously only if you had window focus) and the
    host and mouse cursor positions are synced.
+
  o And if you ungrab the mouse intentionally then it's not automatically
    grabbed when the host mouse pointer returns to ARAnyM window.
+
  o At last, the annoying "resetting weird mouse packet" error is gone, too.
 
  Bugs fixed:
 
  o Native Features were missing proper memory overflow checks and bugs
    in NatFeat drivers could kill the ARAnyM.
+
  o NFVDI had a bug (a race condition) in resolution switching.
+
  o build date of EmuTOS was decoded improperly
 
 

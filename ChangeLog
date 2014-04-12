@@ -1,15 +1,27 @@
+*** repository tagged as ARANYM_0_9_16
+
+2014/04/12 - Petr
+- input.cpp: improved the help message in window title
+- various files: version++ and other minor updates for the new release
+
+
 2014/03/30 - Philipp
 - MacAranym.xcodeproj, configure.ac: Fixing build on Mac OS 10.9 / Xcode 5.1
+
 
 2014/03/16 - Andreas
 - New config setting [LILO] LoadToFastRAM to load kernel in FastRAM
 
+
 2014/02/12 - David Gálvez improves NF USB support
 - Delete some FreeMiNT's specific code, like usb_device struct, leave
   the updates to the members of this struct to FreeMiNT's driver.
+
 - Remove some endianess swapping where not necessary, and add them
   where was needed. Use SDL function instead our owns.
+
 - Update API version, because some function have now less parameters.
+
 - Fix some return values.
 
 
@@ -38,11 +50,16 @@
 
 
 2013/08/17 - Jens
-- configure.ac : Added ARM Assembly compiler flags (build armv6 optimized assembly on armv6 and above) 
-- src/Unix/sysdeps.h : Improved __asm__ memory access (supports armv6, armv7 and common arm)
+- configure.ac : Added ARM Assembly compiler flags (build armv6 optimized
+  assembly on armv6 and above) 
+
+- src/Unix/sysdeps.h : Improved __asm__ memory access (supports armv6, armv7
+  and common arm)
   (ARMV6_ASSEMBLY for armv6 -> armv8; or ARM_ASSEMBLY for armv1 -> armv5)
-  because extended optimation is for armv6 and above i.E. --build=armv5l-unknown-linux-gnueabi will build an
+  because extended optimation is for armv6 and above
+  i.e. --build=armv5l-unknown-linux-gnueabi will build an
   generic arm version with common ARM instructions
+
 - sigsegv_linux_arm.cpp  : Bug fixed with word/int byte order
 
 
@@ -114,10 +131,11 @@
 2013/04/18 - Philipp
 - natfeat/ethernet.h: Increase MAX_PACKET_SIZE to 9000 to allow enabling
   Ethernet on systems with MTU bigger than 1514.
+
 - ethernet_macosx.cpp: Fix memory overflow in BPF driver.
 
 
-*** CVS tagged as ARANYM_0_9_15
+*** repository tagged as ARANYM_0_9_15
 
 2013/04/15 - Petr
 - input.cpp: fixed click to grab input, added proper host<->Atari mouse sync

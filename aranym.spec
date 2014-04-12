@@ -1,6 +1,6 @@
 # generic defines used by all distributions.
 #
-%define ver			0.9.15
+%define ver			0.9.16
 
 #
 #
@@ -234,15 +234,11 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 
 
 %build
-# JIT only works on i586
-#
-%ifarch %ix86
 %configure --enable-jit-compiler --enable-usbhost
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-jit
 %{__make} clean
-%endif
 
 %configure --enable-fullmmu --enable-lilo --enable-usbhost
 %{__make} depend
@@ -266,11 +262,7 @@ install -m 755 aranym-mmu %{buildroot}%{_bindir}
 #
 install -m 755 aratapif %{buildroot}%{_bindir}
 
-# JIT only works on i586
-#
-%ifarch %ix86
 install -m 755 aranym-jit %{buildroot}%{_bindir}
-%endif
 
 
 # add a desktop menu entry
@@ -308,17 +300,12 @@ desktop-file-install                                    \
  %{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}.desktop
 %endif
 
-%ifarch %ix86
-
 %if %{my_suse}%{my_mandriva}
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
 %endif
 
 %if %{my_fedora}
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
-%endif
-%else
-%{__rm} %{buildroot}/%{_mandir}/man1/%{name}-jit.1*
 %endif
 
 
@@ -361,13 +348,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 %{_bindir}/aranym
 
 
-# JIT only works on i586
-#
-%ifarch %ix86
 %{_bindir}/aranym-jit
 %{_mandir}/man1/%{name}-jit.1*
 %{_datadir}/applications/*%{name}-jit.desktop
-%endif
 
 
 %defattr(-,root,root)
@@ -377,6 +360,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
+* Mon Apr 12 2014 Petr Stehlik <pstehlik@sophics.cz> 0.9.16
+New upstream ARAnyM release. JIT supported on 64-bit now.
+
 * Mon Apr 15 2013 Petr Stehlik <pstehlik@sophics.cz> 0.9.15
 New ARAnyM release.
 

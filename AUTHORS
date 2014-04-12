@@ -91,6 +91,8 @@ Jens Heitmann
 - ethernet for Mac OS X
 - delayed screen updates
 - 64bit fixes
+- JIT for 64-bit Linux and Mac OS X
+- JIT for ARM
 
 François Revol
 - resource file for Haiku and BeOS
