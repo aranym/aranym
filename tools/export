@@ -18,10 +18,13 @@ TAG=`echo $TAG | tr '[:lower:]' '[:upper:]'`
 FOLDER="aranym-"$VERSION
 FNAME="aranym_"$VERSION".orig.tar.gz"
 #
-echo "download from CVS? (y/N)"
+echo "download from upstream git repository? (y/N)"
 read key
 if [ "x$key" = "xy" ]; then
-	cvs -z3 -d:ext:joy@cvs.sophics.cz:/var/repos export -r $TAG aranym
+	git clone git://git.code.sf.net/p/aranym/code aranym
+	cd aranym
+	git checkout $TAG
+	cd ..
 fi
 #
 grep "define VER_MAJOR" aranym/src/include/version.h | grep $VER_MAJOR >/dev/null
