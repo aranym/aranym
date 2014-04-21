@@ -1,3 +1,6 @@
+2014/04/21 - Andreas
+- bootos_linux.cpp: always load ramdisk to end of memory chunk
+
 *** repository tagged as ARANYM_0_9_16
 
 2014/04/12 - Petr
