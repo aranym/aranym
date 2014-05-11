@@ -278,7 +278,7 @@ AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h mach/mach.h sys/ioctl.h)
 AC_CHECK_HEADERS(getopt.h)
 AC_CHECK_HEADERS(termios.h termio.h alloca.h sys/statfs.h sys/statvfs.h)
 AC_CHECK_HEADERS(sys/types.h sys/stat.h sys/vfs.h utime.h sys/param.h)
-AC_CHECK_HEADERS(sys/mount.h types.h stat.h)
+AC_CHECK_HEADERS(sys/mount.h types.h stat.h ext2fs/ext2_fs.h)
 AC_CHECK_HEADERS(sys/socket.h)
 AC_CHECK_HEADERS(linux/if.h linux/if_tun.h net/if.h net/if_tun.h, [], [], [
 #ifdef HAVE_SYS_SOCKET_H
@@ -308,6 +308,8 @@ AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_STRUCT_TM
 AC_SYS_LARGEFILE
+gl_TM_GMTOFF
+gl_STAT_TIME
 
 AC_CXX_BOOL
 
@@ -321,7 +323,7 @@ AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
 AC_CHECK_FUNCS(usleep gettimeofday)
-AC_CHECK_FUNCS(fseeko fsync)
+AC_CHECK_FUNCS(fseeko fsync link readlink symlink lstat truncate pathconf)
 AC_CHECK_FUNCS(canonicalize_file_name realpath)
 
 dnl Defines caddr_t as void * if not already defined
@@ -1348,7 +1350,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     esac
     ;;
   x86)
-    if [[ ":$HAVE_GCC27:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" ]]; then
+    if test ":$HAVE_GCC27:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" -o ":$HAVE_GCC27:$HAVE_X86_64:$HAVE_GAS:" = ":yes:yes:yes:"; then
       FPE_CORE="i387 fpu core"
       DEFINES="$DEFINES -DFPU_X86"
       FPUSRCS="uae_cpu/fpu/fpu_x86.cpp"

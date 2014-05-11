@@ -1,3 +1,15 @@
+2014/05/11 - Thorsten
+Various fixes to hostfs support:
+    - implement FUTIME
+    - fix FUTIME_UTC
+    - changed the ifdef USE_FS_EXT3 to instead look at the flags that are passed from hostfs.xfs
+    - xfs_getxattr returned a wrong value for st_blocks when blksize != 512.
+    - use hosts FIONREAD instead of seeks, when that is available.
+    - implement Fcntl(FSTAT) and FSTAT64
+    - implement xfs_hardlink
+    - support nano-second timestamps if host provides it
+
+
 2014/04/21 - Andreas
 - bootos_linux.cpp: always load ramdisk to end of memory chunk
 

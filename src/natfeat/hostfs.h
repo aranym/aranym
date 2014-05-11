@@ -42,6 +42,7 @@ class HostFs : public NF_Base
 		int16     driveNumber;
 		memptr    fsDrv;
 		memptr    fsDevDrv;
+		int32     fsFlags;
 		char      *hostRoot;
 		char      *mountPoint;
 		bool      halfSensitive;
@@ -52,6 +53,7 @@ class HostFs : public NF_Base
 			driveNumber = -1;
 			fsDrv = 0;
 			fsDevDrv = 0;
+			fsFlags = 0;
 			hostRoot = NULL;
 			mountPoint = NULL;
 			halfSensitive = true;
@@ -143,6 +145,7 @@ class HostFs : public NF_Base
 	uint16 time2dos( time_t t );
 	uint16 date2dos( time_t t );
 	void   datetime2tm( uint32 dtm, struct tm* ttm );
+	time_t datetime2utc(uint32 dtm);
 
 	/**
 	 * Path conversions.
@@ -177,8 +180,8 @@ class HostFs : public NF_Base
 	int32 xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg );
 	int32 xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook );
 	int32 xfs_release( XfsCookie *fc );
-	int32 xfs_getxattr( XfsCookie *fc, memptr xattrp );
-	int32 xfs_stat64( XfsCookie *fc, memptr statp );
+	int32 xfs_getxattr( XfsCookie *fc, memptr name, memptr xattrp );
+	int32 xfs_stat64( XfsCookie *fc, memptr name, memptr statp );
 	int32 xfs_chattr( XfsCookie *fc, int16 attr );
 	int32 xfs_chmod( XfsCookie *fc, uint16 mode );
 	int32 xfs_getdev( XfsCookie *fc, memptr devspecial );
@@ -198,6 +201,7 @@ class HostFs : public NF_Base
 	int32 xfs_readlabel( XfsCookie *dir, memptr buff, int16 len );
 	int32 xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname );
 	int32 xfs_readlink( XfsCookie *dir, memptr buff, int16 len );
+	int32 xfs_hardlink( XfsCookie *fromDir, memptr fromname, XfsCookie *toDir, memptr toname );
 
 	int32 xfs_dev_open(ExtFile *fp);
 	int32 xfs_dev_close(ExtFile *fp, int16 pid);

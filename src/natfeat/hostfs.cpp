@@ -49,6 +49,9 @@
 #ifdef HAVE_SYS_VFS_H
 # include <sys/vfs.h>
 #endif
+#ifdef HAVE_EXT2FS_EXT2_FS_H
+# include <ext2fs/ext2_fs.h>
+#endif
 
 # include <cerrno>
 # include <cstdlib>
@@ -213,8 +216,125 @@ int statfs(const char *path, struct statfs *buf)
 #endif
 
 // for the FS_EXT3 using host.xfs (recently changed)
-#undef USE_FS_EXT3
+#define FS_EXT_3 0x800
 
+
+#define SHR(a, b)       \
+  (-1 >> 1 == -1        \
+   ? (a) >> (b)         \
+   : (a) / (1 << (b)) - ((a) % (1 << (b)) < 0))
+
+static long gmtoff(time_t t)
+{
+	struct tm *tp;
+
+	if ((tp = localtime(&t)) == NULL)
+		return 0;
+#ifdef HAVE_STRUCT_TM_TM_GMTOFF
+	return tp->tm_gmtoff;
+#else
+	{
+		struct tm gtm;
+		struct tm ltm;
+		time_t lt;
+		long a4, b4, a100, b100, a400, b400, intervening_leap_days, years, days;
+		ltm = *tp;
+		lt = mktime(&ltm);
+	
+		if (lt == (time_t) -1)
+		{
+			/* mktime returns -1 for errors, but -1 is also a
+			   valid time_t value.  Check whether an error really
+			   occurred.  */
+			struct tm tm;
+	
+			if ((tp = localtime(&lt)) == NULL)
+				return 0;
+			tm = *tp;
+			if ((ltm.tm_sec ^ tm.tm_sec) ||
+				(ltm.tm_min ^ tm.tm_min) ||
+				(ltm.tm_hour ^ tm.tm_hour) ||
+				(ltm.tm_mday ^ tm.tm_mday) ||
+				(ltm.tm_mon ^ tm.tm_mon) ||
+				(ltm.tm_year ^ tm.tm_year))
+				return 0;
+		}
+	
+		if ((tp = gmtime(&lt)) == NULL)
+			return 0;
+		gtm = *tp;
+		
+		a4 = SHR(ltm.tm_year, 2) + SHR(1900, 2) - !(ltm.tm_year & 3);
+		b4 = SHR(gtm.tm_year, 2) + SHR(1900, 2) - !(gtm.tm_year & 3);
+		a100 = a4 / 25 - (a4 % 25 < 0);
+		b100 = b4 / 25 - (b4 % 25 < 0);
+		a400 = SHR(a100, 2);
+		b400 = SHR(b100, 2);
+		intervening_leap_days = (a4 - b4) - (a100 - b100) + (a400 - b400);
+		years = ltm.tm_year - gtm.tm_year;
+		days = (365 * years + intervening_leap_days + (ltm.tm_yday - gtm.tm_yday));
+	
+		return (60 * (60 * (24 * days + (ltm.tm_hour - gtm.tm_hour)) + (ltm.tm_min - gtm.tm_min)) + (ltm.tm_sec - gtm.tm_sec));
+	}
+#endif
+}
+
+
+#if defined HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC
+# ifdef TYPEOF_STRUCT_STAT_ST_ATIM_IS_STRUCT_TIMESPEC
+#  define STAT_TIMESPEC(st, st_xtim) ((st)->st_xtim)
+# else
+#  define STAT_TIMESPEC_NS(st, st_xtim) ((st)->st_xtim.tv_nsec)
+# endif
+#elif defined HAVE_STRUCT_STAT_ST_ATIMESPEC_TV_NSEC
+# define STAT_TIMESPEC(st, st_xtim) ((st)->st_xtim##espec)
+#elif defined HAVE_STRUCT_STAT_ST_ATIMENSEC
+# define STAT_TIMESPEC_NS(st, st_xtim) ((st)->st_xtim##ensec)
+#elif defined HAVE_STRUCT_STAT_ST_ATIM_ST__TIM_TV_NSEC
+# define STAT_TIMESPEC_NS(st, st_xtim) ((st)->st_xtim.st__tim.tv_nsec)
+#endif
+
+/* Return the nanosecond component of *ST's access time.  */
+static long int
+get_stat_atime_ns (struct stat const *st)
+{
+# if defined STAT_TIMESPEC
+  return STAT_TIMESPEC (st, st_atim).tv_nsec;
+# elif defined STAT_TIMESPEC_NS
+  return STAT_TIMESPEC_NS (st, st_atim);
+# else
+  (void) st;
+  return 0;
+# endif
+}
+
+/* Return the nanosecond component of *ST's status change time.  */
+static long int
+get_stat_ctime_ns (struct stat const *st)
+{
+# if defined STAT_TIMESPEC
+  return STAT_TIMESPEC (st, st_ctim).tv_nsec;
+# elif defined STAT_TIMESPEC_NS
+  return STAT_TIMESPEC_NS (st, st_ctim);
+# else
+  (void) st;
+  return 0;
+# endif
+}
+
+/* Return the nanosecond component of *ST's data modification time.  */
+static long int
+get_stat_mtime_ns (struct stat const *st)
+{
+# if defined STAT_TIMESPEC
+  return STAT_TIMESPEC (st, st_mtim).tv_nsec;
+# elif defined STAT_TIMESPEC_NS
+  return STAT_TIMESPEC_NS (st, st_mtim);
+# else
+  (void) st;
+  return 0;
+# endif
+}
 
 int32 HostFs::dispatch(uint32 fncode)
 {
@@ -290,6 +410,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			D(bug("%s", "fs_getxattr"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_getxattr( &fc,
+								0,
 								getParameter(1) /* XATTR* */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
@@ -298,6 +419,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			D(bug("%s", "fs_stat64"));
 			fetchXFSC( &fc, getParameter(0) );
 			ret = xfs_stat64( &fc,
+							  0,
 							  getParameter(1) /* STAT* */ );
 			flushXFSC( &fc, getParameter(0) );
 			break;
@@ -448,8 +570,13 @@ int32 HostFs::dispatch(uint32 fncode)
 
 		case XFS_HARDLINK:
 			D(bug("%s", "fs_hardlink"));
-			D(bug("fs_hardlink - TODO: NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+    		XfsCookie  fromDir, toDir;
+			fetchXFSC( &fromDir, getParameter(0) );
+			fetchXFSC( &toDir, getParameter(2) );
+			ret = xfs_hardlink( &fromDir,
+							   (memptr)getParameter(1), /* fromName */
+							   &toDir,
+							   (memptr)getParameter(3)  /* toName */ );
 			break;
 
 		case XFS_FSCNTL:
@@ -533,8 +660,8 @@ int32 HostFs::dispatch(uint32 fncode)
 		case DEV_IOCTL:
 			fetchXFSF( &extFile, getParameter(0) );
 			D(bug("fs_dev_ioctl '%c'<<8|%d", (getParameter(1)>>8)&0xff ? (char)(getParameter(1)>>8)&0xff : 0x20, (char)(getParameter(1)&0xff)));
-			D(bug("fs_dev_ioctl - TODO: NOT IMPLEMENTED!"));
-			ret = TOS_EINVFN;
+			ret = xfs_dev_ioctl(&extFile, getParameter(1), (memptr)getParameter(2));
+			flushXFSF( &extFile, getParameter(0) );
 			break;
 
 		case DEV_DATIME:
@@ -600,6 +727,7 @@ void HostFs::fetchXFSF( ExtFile *extFile, memptr filep )
 #else
 	extFile->hostFd = (int)ReadInt32( filep + 4 ); // offset not needed (replaced by the host fd)
 #endif
+	/* devinfo unused */
 	fetchXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
 }
 void HostFs::flushXFSF( ExtFile *extFile, memptr filep )
@@ -611,6 +739,7 @@ void HostFs::flushXFSF( ExtFile *extFile, memptr filep )
 #else
 	WriteInt32( filep + 4, (uint32)extFile->hostFd ); // instead of the offset
 #endif
+	/* devinfo unused */
 	flushXFSC( &extFile->fc, filep + 12 ); // sizeof(12)
 }
 
@@ -689,6 +818,15 @@ void HostFs::datetime2tm(uint32 dtm, struct tm* ttm)
 	ttm->tm_sec	 = ((dtm>>16) & 0x1f) << 1;
 	ttm->tm_min	 = (dtm>>21) & 0x3f;
 	ttm->tm_hour = (dtm>>27) & 0x1f;
+	ttm->tm_isdst = -1;
+}
+
+
+time_t HostFs::datetime2utc(uint32 dtm)
+{
+	struct tm ttm;
+	datetime2tm(dtm, &ttm);
+	return mktime(&ttm);
 }
 
 
@@ -1317,7 +1455,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 		// then set the special index->created to true
 		fp->fc.index->created = true;
 
-		// crear the O_EXCL and O_CREAT flags
+		// clear the O_EXCL and O_CREAT flags
 		flags &= ~(O_CREAT|O_EXCL);
 	}
 
@@ -1330,7 +1468,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 		fdMapper.putNative( fp->hostFd );
     #endif
 
-	D(bug("HOSTFS: /dev_open (fd = %ld)", fp->hostFd));
+	D(bug("HOSTFS: /dev_open (fd = %d)", fp->hostFd));
 	return TOS_E_OK;
 
 }
@@ -1532,12 +1670,48 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 		strcpy( ftoName, ftoname );
 	}
 
+	for (char *p = ftoName; *p != '\0'; p++)
+		if (*p == '\\')
+			*p = '/';
 	D(bug( "HOSTFS: fs_symlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
 
 	if ( symlink( ftoName, ffromName ) )
 		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
+}
+
+
+int32 HostFs::xfs_hardlink( XfsCookie *fromDir, memptr fromname, XfsCookie *toDir, memptr toname )
+{
+#ifdef HAVE_LINK
+	char ffromname[MAXPATHNAMELEN];
+	char ftoname[MAXPATHNAMELEN];
+	Atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
+	Atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
+
+	char ffromName[MAXPATHNAMELEN];
+	cookie2Pathname( fromDir, ffromname, ffromName );
+
+	char ftoName[MAXPATHNAMELEN];
+	cookie2Pathname( toDir, ftoname, ftoName );
+
+	D(bug( "HOSTFS: fs_hardlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
+
+	if ( link( ffromName, ftoName ) )
+	{
+		D(bug("link %s %s: %s", ffromName, ftoName, strerror(errno)));
+		return errnoHost2Mint(errno,TOS_EFILNF);
+	}
+	
+	return TOS_E_OK;
+#else
+	(void) fromDir;
+	(void) fromname;
+	(void) toDir;
+	(void) toname;
+	return TOS_EINVFN;
+#endif
 }
 
 
@@ -1556,19 +1730,15 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 	if (wflag != 0) {
 		struct utimbuf tmb;
 
-#if defined(USE_FS_EXT3)
-		tmb.actime = datetime;
-#else
-		struct tm ttm;
+	    if (fp->fc.drv->fsFlags & FS_EXT_3)
+	    {
+		  tmb.actime = datetime;
+		} else
+		{
+		  struct tm ttm;
 
-		datetime2tm( datetime, &ttm );
-		tmb.actime = mktime( &ttm );  /* access time */
-#endif
-		tmb.modtime = tmb.actime; /* modification time */
-
-		utime( fpathName, &tmb );
-
-#if ! defined(USE_FS_EXT3)
+		  datetime2tm( datetime, &ttm );
+		  tmb.actime = mktime( &ttm );  /* access time */
 		D(bug("HOSTFS: /dev_datime: setting to: %d.%d.%d %d:%d.%d",
 				  ttm.tm_mday,
 				  ttm.tm_mon,
@@ -1577,14 +1747,23 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 				  ttm.tm_min,
 				  ttm.tm_hour
 				  ));
-#endif
+		  tmb.actime -= gmtoff(tmb.actime);
+		}
+		tmb.modtime = tmb.actime; /* modification time */
+
+		if (utime( fpathName, &tmb ) < 0)
+			return errnoHost2Mint(errno, TOS_EACCES);
 	}
 
-#if ! defined(USE_FS_EXT3)
-	datetime =
-		( time2dos(statBuf.st_mtime) << 16 ) | date2dos(statBuf.st_mtime);
-#endif
-	WriteInt32( datetimep, datetime );
+	if (!wflag)
+	{
+		if (!(fp->fc.drv->fsFlags & FS_EXT_3))
+		{
+			datetime = statBuf.st_mtime + gmtoff(statBuf.st_mtime);
+			datetime = (time2dos(datetime) << 16 ) | date2dos(datetime);
+		}
+		WriteInt32( datetimep, datetime );
+	}
 
 	return TOS_E_OK; //EBADRQ;
 }
@@ -1851,10 +2030,19 @@ int32 HostFs::host_stat64( XfsCookie *fc, const char *fpathName, struct stat *st
 	return TOS_E_OK;
 }
 
-int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr xattrp )
+int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr name, memptr xattrp )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc, NULL, fpathName);
+	if (name)
+	{
+		char fname[MAXPATHNAMELEN];
+		Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+
+		cookie2Pathname( fc, fname, fpathName );
+	} else
+	{
+		cookie2Pathname( fc, NULL, fpathName );
+	}
 
 	D(bug("HOSTFS: fs_getxattr (%s)", fpathName));
 
@@ -1875,28 +2063,38 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr xattrp )
 	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
 	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
 	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf.st_size );
+	unsigned long blksize, blocks;
 #ifdef __MINGW32__
-	/* LONG	 blksize   */  WriteInt32( xattrp + 20, 512 ); // FIXME: I just made up the number
+	blksize = 512 ; // FIXME: I just made up the number
 #else
-	/* LONG	 blksize   */  WriteInt32( xattrp + 20, statBuf.st_blksize );
+	blksize = statBuf.st_blksize;
 #endif
+	/* LONG	 blksize   */  WriteInt32( xattrp + 20, blksize );
+	/*
+	 * in struct xattr, "blocks" is the number blocks of size blksize
+	 */
+    if (blksize <= 512)
+      blksize = 512;
 #if defined(OS_beos) || defined (__MINGW32__)
-	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, 0 ); // FIXME: should be possible to find out for MINGW32
+	blocks = (statBuf.st_size + blksize - 1) / blksize;
 #else
-	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, statBuf.st_blocks );
+	blocks = (statBuf.st_blocks * 512 + blksize - 1) / blksize;
 #endif
-#if defined(USE_FS_EXT3)
+	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, blocks );
+    if (fc->drv->fsFlags & FS_EXT_3)
+    {
 	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf.st_mtime );
 	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf.st_atime );
 	/* UWORD atime	   */  WriteInt32( xattrp + 36, statBuf.st_ctime );
-#else
+	} else
+	{
 	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf.st_mtime) );
 	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf.st_mtime) );
 	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf.st_atime) );
 	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf.st_atime) );
 	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf.st_ctime) );
 	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf.st_ctime) );
-#endif
+	}
 	/* UWORD attr	   */  WriteInt16( xattrp + 40, modeHost2TOS(statBuf.st_mode) );
 	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
 	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
@@ -1907,10 +2105,19 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr xattrp )
 	return TOS_E_OK;
 }
 
-int32 HostFs::xfs_stat64( XfsCookie *fc, memptr statp )
+int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
 {
 	char fpathName[MAXPATHNAMELEN];
-	cookie2Pathname(fc, NULL, fpathName);
+	if (name)
+	{
+		char fname[MAXPATHNAMELEN];
+		Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+
+		cookie2Pathname( fc, fname, fpathName );
+	} else
+	{
+		cookie2Pathname( fc, NULL, fpathName );
+	}
 
 	D(bug("HOSTFS: fs_stat64 (%s)", fpathName));
 
@@ -1930,29 +2137,55 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr statp )
 	/* LLONG hi rdev   */  WriteInt32( statp + 28, WHEN_INT4B( 0, ( statBuf.st_rdev >> 32 ) & 0xffffffffUL ) ); // FIXME: this is Linux's one
 	/* LLONG lo rdev   */  WriteInt32( statp + 32,   statBuf.st_rdev & 0xffffffffUL ); // FIXME: this is Linux's one
 
+    if (sizeof(statBuf.st_atime) > 4)
+	/* hi atime   */ WriteInt32( statp + 36,   (statBuf.st_atime >> 32) & 0xffffffffUL );
+    else
 	/* hi atime   */ WriteInt32( statp + 36, 0 );
 	/* lo atime   */ WriteInt32( statp + 40,   statBuf.st_atime );
-	/*    atime ns*/ WriteInt32( statp + 44, 0 );
+	/*    atime ns*/ WriteInt32( statp + 44, get_stat_atime_ns(&statBuf) );
+    if (sizeof(statBuf.st_mtime) > 4)
+	/* hi mtime   */ WriteInt32( statp + 48,   (statBuf.st_mtime >> 32) & 0xffffffffUL );
+    else
 	/* hi mtime   */ WriteInt32( statp + 48, 0 );
 	/* lo mtime   */ WriteInt32( statp + 52,   statBuf.st_mtime );
-	/*    mtime ns*/ WriteInt32( statp + 56, 0 );
+	/*    mtime ns*/ WriteInt32( statp + 56, get_stat_mtime_ns(&statBuf) );
+    if (sizeof(statBuf.st_mtime) > 4)
+	/* hi ctime   */ WriteInt32( statp + 60,   (statBuf.st_ctime >> 32) & 0xffffffffUL );
+    else
 	/* hi ctime   */ WriteInt32( statp + 60, 0 );
 	/* lo ctime   */ WriteInt32( statp + 64,   statBuf.st_ctime );
-	/*    ctime ns*/ WriteInt32( statp + 68, 0 );
+	/*    ctime ns*/ WriteInt32( statp + 68, get_stat_ctime_ns(&statBuf) );
 
 	/* LLONG hi size   */  WriteInt32( statp + 72, ( statBuf.st_size >> 32 ) & 0xffffffffUL );
 	/* LLONG lo size   */  WriteInt32( statp + 76,   statBuf.st_size & 0xffffffffUL );
-#if defined(OS_beos) || defined(__MINGW32__)
-	/* LLONG hi blocks */  WriteInt32( statp + 80,   0 );
-	/* LLONG lo blocks */  WriteInt32( statp + 84,   0 );
-	/* ULONG    blksize*/  WriteInt32( statp + 88,   0 );
+	uint64 blksize, blocks;
+#ifdef __MINGW32__
+	blksize = 512 ; // FIXME: I just made up the number
 #else
-	/* LLONG hi blocks */  WriteInt32( statp + 80, ( statBuf.st_blocks >> 32 ) & 0xffffffffUL );
-	/* LLONG lo blocks */  WriteInt32( statp + 84,   statBuf.st_blocks & 0xffffffffUL );
-	/* ULONG    blksize*/  WriteInt32( statp + 88,   statBuf.st_blksize );
+	blksize = statBuf.st_blksize;
 #endif
+	/*
+	 * in struct stat, "blocks" is the number blocks of size 512
+	 */
+    if (blksize <= 512)
+      blksize = 512;
+#if defined(OS_beos) || defined (__MINGW32__)
+	blocks = (statBuf.st_size + blksize - 1) / 512;
+#else
+	blocks = statBuf.st_blocks;
+#endif
+	/* LLONG hi blocks */  WriteInt32( statp + 80, ( blocks >> 32 ) & 0xffffffffUL );
+	/* LLONG lo blocks */  WriteInt32( statp + 84,   blocks & 0xffffffffUL );
+	/* ULONG    blksize*/  WriteInt32( statp + 88,   blksize );
 	/* ULONG    flags  */  WriteInt32( statp + 92,   0 );
 	/* ULONG    gen    */  WriteInt32( statp + 96,   0 );
+	/* ULONG    reserverd[0]    */  WriteInt32( statp + 100,   0 );
+	/* ULONG    reserverd[1]    */  WriteInt32( statp + 104,   0 );
+	/* ULONG    reserverd[2]    */  WriteInt32( statp + 108,   0 );
+	/* ULONG    reserverd[3]    */  WriteInt32( statp + 112,   0 );
+	/* ULONG    reserverd[4]    */  WriteInt32( statp + 116,   0 );
+	/* ULONG    reserverd[5]    */  WriteInt32( statp + 120,   0 );
+	/* ULONG    reserverd[6]    */  WriteInt32( statp + 124,   0 );
 
 	D(bug("HOSTFS: fs_stat64 mode %#02x, mtime %#08lx", modeHost2Mint(statBuf.st_mode), ReadInt32(statp + 52)));
 
@@ -2319,6 +2552,14 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 # define MINT_FUTIME_UTC	(('F'<< 8) | 7)		/* 1.15.4 extension, optional */
 # define MINT_FIBMAP		(('F'<< 8) | 10)
 
+# define MINT_EXT2_IOC_GETFLAGS       (('f'<< 8) | 1)
+# define MINT_EXT2_IOC_SETFLAGS       (('f'<< 8) | 2)
+# define MINT_EXT2_IOC_GETVERSION_NEW (('f'<< 8) | 3)
+# define MINT_EXT2_IOC_SETVERSION_NEW (('f'<< 8) | 4)
+
+# define MINT_EXT2_IOC_GETVERSION     (('v'<< 8) | 1)
+# define MINT_EXT2_IOC_SETVERSION     (('v'<< 8) | 2)
+
 
 int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 {
@@ -2355,9 +2596,9 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			if (arg)
 			{
 				/* LONG  blocksize */  WriteInt32( arg     , buff.f_bsize );
-				/* LLONG hi blocks */  WriteInt32( arg +  4, WHEN_INT4B( 0, ( buff.f_blocks >> 32 ) & 0xffffffffUL ) );
+				/* LLONG hi blocks */  WriteInt32( arg +  4, (buff.f_blocks >> 32 ) & 0xffffffffUL );
 				/* LLONG lo blocks */  WriteInt32( arg +  8, buff.f_blocks & 0xffffffffUL );
-				/* LLONG hi freebs */  WriteInt32( arg + 12, WHEN_INT4B( 0, ( buff.f_bavail >> 32 ) & 0xffffffffUL ) );
+				/* LLONG hi freebs */  WriteInt32( arg + 12, (buff.f_bavail >> 32 ) & 0xffffffffUL );
 				/* LLONG lo freebs */  WriteInt32( arg + 16, buff.f_bavail & 0xffffffffUL );
 				/* LLONG hi inodes */  WriteInt32( arg + 20, 0xffffffffUL);
 				/* LLONG lo inodes */  WriteInt32( arg + 24, 0xffffffffUL);
@@ -2372,18 +2613,63 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			break;
 
 		case MINT_FUTIME:
-			// We do not do any GEMDOS time setting.
-			// Mintlib calls the dcntl(FUTIME_ETC, filename) first anyway.
-			return TOS_ENOSYS;
+			// Mintlib calls the dcntl(FUTIME_ETC, filename) first (below),
+			// but other libs might not know.
+		{
+			char fpathName[MAXPATHNAMELEN];
+			struct utimbuf t_set;
+
+			if (name)
+			{
+				char fname[MAXPATHNAMELEN];
+				Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+
+				cookie2Pathname( dir, fname, fpathName );
+			} else
+			{
+				cookie2Pathname( dir, NULL, fpathName );
+			}
+			
+			if (arg)
+			{
+				t_set.actime  = ReadInt32( arg );
+				t_set.modtime = ReadInt32( arg + 4 );
+				t_set.actime = datetime2utc(t_set.actime) - gmtoff(t_set.actime);
+				t_set.modtime = datetime2utc(t_set.modtime) - gmtoff(t_set.modtime);
+			} else
+			{
+				t_set.actime = t_set.modtime = time(NULL);
+			}
+			if (utime(fpathName, &t_set))
+				return errnoHost2Mint( errno, TOS_EFILNF );
+
+			return TOS_E_OK;
+		}
 
 		case MINT_FUTIME_UTC:
 		{
 			char fpathName[MAXPATHNAMELEN];
-			cookie2Pathname( dir, NULL, fpathName );
-
 			struct utimbuf t_set;
-			t_set.actime  = ReadInt32( arg );
-			t_set.modtime = ReadInt32( arg + 4 );
+
+			if (name)
+			{
+				char fname[MAXPATHNAMELEN];
+				Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+
+				cookie2Pathname( dir, fname, fpathName );
+			} else
+			{
+				cookie2Pathname( dir, NULL, fpathName );
+			}
+			
+			if (arg)
+			{
+				t_set.actime  = ReadInt32( arg );
+				t_set.modtime = ReadInt32( arg + 4 );
+			} else
+			{
+				t_set.actime = t_set.modtime = time(NULL);
+			}
 			if (utime(fpathName, &t_set))
 				return errnoHost2Mint( errno, TOS_EFILNF );
 
@@ -2403,6 +2689,12 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 
 			return TOS_E_OK;
 		}
+
+		case MINT_FSTAT:
+			return xfs_getxattr(dir, name, arg);
+
+		case MINT_FSTAT64:
+			return xfs_stat64(dir, name, arg);
 	}
 
 	return TOS_ENOSYS;
@@ -2418,9 +2710,17 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			return TOS_E_OK;
 		case MINT_FIONREAD:
 		{
-			int32 pos = lseek( fp->hostFd, 0, SEEK_CUR ); // get position
-			WriteInt32(buff, lseek( fp->hostFd, 0, SEEK_END ) - pos);
-			lseek( fp->hostFd, pos, SEEK_SET ); // set the position back
+			int navail;
+			
+#ifdef FIONREAD
+			if (ioctl(fp->hostFd, FIONREAD, &navail) < 0)
+#endif
+			{
+				int32 pos = lseek( fp->hostFd, 0, SEEK_CUR ); // get position
+				navail = lseek( fp->hostFd, 0, SEEK_END ) - pos;
+				lseek( fp->hostFd, pos, SEEK_SET ); // set the position back
+			}
+			WriteInt32(buff, navail);
 			return TOS_E_OK;
 		}
 		case MINT_FIOEXCEPT:
@@ -2428,30 +2728,123 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			return TOS_E_OK;
 
 		case MINT_FUTIME:
+			// Mintlib calls the dcntl(FUTIME_ETC, filename) first (below).
+			// but other libs might not know.
+			{
+				struct timeval tv[2];
+				if (buff)
+				{
+					tv[0].tv_sec = ReadInt32(buff);
+					tv[1].tv_sec = ReadInt32(buff + 4);
+					tv[0].tv_sec = datetime2utc(tv[0].tv_sec) - gmtoff(tv[0].tv_sec);
+					tv[1].tv_sec = datetime2utc(tv[1].tv_sec) - gmtoff(tv[1].tv_sec);
+				} else
+				{
+					tv[0].tv_sec = tv[1].tv_sec = time(NULL);
+				}
+				tv[0].tv_usec = tv[1].tv_usec = 0;
+				if (futimes(fp->hostFd, tv))
+				    return errnoHost2Mint( errno, TOS_EACCES );
+			}
+			return TOS_E_OK;
+
 		case MINT_FUTIME_UTC:
-			// Do not provide this on filedescriptor level.
-			// Mintlib calls the Dcntl(FUTIME_ETC, filename) first anyway.
-			return TOS_ENOSYS;
+			{
+				struct timeval tv[2];
+				if (buff)
+				{
+					tv[0].tv_sec = ReadInt32(buff);
+					tv[1].tv_sec = ReadInt32(buff + 4);
+				} else
+				{
+					tv[0].tv_sec = tv[1].tv_sec = time(NULL);
+				}
+				tv[0].tv_usec = tv[1].tv_usec = 0;
+				if (futimes(fp->hostFd, tv))
+				    return errnoHost2Mint( errno, TOS_EACCES );
+			}
+			return TOS_E_OK;
 
 #if FIXME
 		case MINT_F_SETLK:
 		case MINT_F_SETLKW:
 		case MINT_F_GETLK:
-			// FIXME: TODO! locking
+			// locking cant be handled here.
+			// It has to be done in hostfs.xfs on the Atari side.
 			break;			
 #endif
 
 		case MINT_FTRUNCATE:
-		{
-			D(bug( "HOSTFS: fs_ioctl: FTRUNCATE( fd=%ld, %08lx )", fp->hostFd, ReadInt32(buff) ));
+			D(bug( "HOSTFS: fs_ioctl: FTRUNCATE( fd=%d, %08lx )", fp->hostFd, (unsigned long)ReadInt32(buff) ));
 			if ((fp->flags & O_ACCMODE) == O_RDONLY)
 				return TOS_EACCES;
 
 			if (ftruncate( fp->hostFd, ReadInt32(buff)))
-				return errnoHost2Mint( errno, TOS_EFILNF );
+				return errnoHost2Mint( errno, TOS_EACCES );
 
 			return TOS_E_OK;
-		}
+
+		case MX_KER_XFSNAME:
+			D(bug( "HOSTFS: fs_ioctl: MX_KER_XFSNAME: arg = %08lx", (unsigned long)buff ));
+			if (buff)
+			    Host2AtariSafeStrncpy(buff, "hostfs-xfs", 32);
+			return TOS_E_OK;
+		
+#ifdef EXT2_IOC_GETFLAGS
+		case MINT_EXT2_IOC_GETFLAGS:
+		    {
+		    long flags;
+			D(bug( "HOSTFS: fs_ioctl: EXT2_IOC_GETFLAGS( fd=%d, %08lx )", fp->hostFd, (unsigned long)buff ));
+			if (ioctl( fp->hostFd, EXT2_IOC_GETFLAGS, &flags))
+				return errnoHost2Mint( errno, TOS_EACCES );
+		    WriteInt32(buff, flags);
+		    }
+			return TOS_E_OK;
+#endif
+
+#ifdef EXT2_IOC_SETFLAGS
+		case MINT_EXT2_IOC_SETFLAGS:
+		    {
+		    long flags;
+			D(bug( "HOSTFS: fs_ioctl: EXT2_IOC_SETFLAGS( fd=%d, %08lx )", fp->hostFd, (unsigned long)ReadInt32(buff) ));
+			flags = ReadInt32(buff);
+			if (ioctl( fp->hostFd, EXT2_IOC_SETFLAGS, &flags))
+				return errnoHost2Mint( errno, TOS_EACCES );
+		    }
+			return TOS_E_OK;
+#endif
+
+#if defined EXT2_IOC_GETVERSION || defined EXT2_IOC_GETVERSION_NEW
+		case MINT_EXT2_IOC_GETVERSION:
+		case MINT_EXT2_IOC_GETVERSION_NEW:
+		    {
+		    long version;
+			D(bug( "HOSTFS: fs_ioctl: EXT2_IOC_GETVERSION( fd=%d, %08lx )", fp->hostFd, (unsigned long)buff ));
+#ifdef EXT2_IOC_GETVERSION_NEW
+			if (ioctl( fp->hostFd, EXT2_IOC_GETVERSION_NEW, &version))
+#endif
+				if (ioctl( fp->hostFd, EXT2_IOC_GETVERSION, &version))
+					return errnoHost2Mint( errno, TOS_EACCES );
+		    WriteInt32(buff, version);
+		    }
+			return TOS_E_OK;
+#endif
+
+#if defined EXT2_IOC_SETVERSION || defined EXT2_IOC_SETVERSION_NEW
+		case MINT_EXT2_IOC_SETVERSION:
+		    {
+		    long version;
+			D(bug( "HOSTFS: fs_ioctl: EXT2_IOC_SETVERSION( fd=%d, %08lx )", fp->hostFd, (unsigned long)ReadInt32(buff) ));
+			version  = ReadInt32(buff);
+#ifdef EXT2_IOC_SETVERSION_NEW
+			if (ioctl( fp->hostFd, EXT2_IOC_SETVERSION_NEW, &version))
+#endif
+				if (ioctl( fp->hostFd, EXT2_IOC_SETVERSION, &version))
+					return errnoHost2Mint( errno, TOS_EACCES );
+		    }
+			return TOS_E_OK;
+#endif
+
 	}
 
 	return TOS_ENOSYS;
@@ -2521,6 +2914,7 @@ HostFs::ExtDrive::ExtDrive( HostFs::ExtDrive *old ) {
 	if ( old ) {
 		driveNumber = old->driveNumber;
 		fsDrv = old->fsDrv;
+		fsFlags = old->fsFlags;
 		fsDevDrv = old->fsDevDrv;
 		hostRoot = old->hostRoot ? strdup( old->hostRoot ) : NULL;
 		mountPoint = old->hostRoot ? strdup( old->mountPoint ) : NULL;
@@ -2537,6 +2931,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
+	drv->fsFlags = ReadInt32(filesys + 4);
 	drv->fsDevDrv = filesys_devdrv;
 	drv->mountPoint = strdup( fmountPoint );
 
@@ -2590,14 +2985,15 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 
 
 	bug("HOSTFS: fs_native_init:\n"
-	    "\t\t fs_drv	   = %#08x\n"
+	    "\t\t fs_drv	   = %#08x, flags %#08x\n"
 		"\t\t fs_devdrv  = %#08x\n"
-		  "\t\t fs_devnum  = %#04x\n"
+		  "\t\t fs_devnum  = %#04x (%c)\n"
 		  "\t\t fs_mountPoint = %s\n"
 		  "\t\t fs_hostRoot   = %s [%d]\n"
-		  ,drv->fsDrv
+		  ,drv->fsDrv, drv->fsFlags
 		  ,drv->fsDevDrv
 		  ,(int)devnum
+		  ,dnum < 0 ? '-' : DriveToLetter(dnum)
 		  ,drv->mountPoint
 		  ,drv->hostRoot
 		  ,strlen(drv->hostRoot)
