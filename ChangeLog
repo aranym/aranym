@@ -1,4 +1,10 @@
 2014/05/11 - Thorsten
+Some fixes for nfcdrom:
+    - fix calls to CloseDrive() in nfcdrom_linux
+    - fix return values at various places to return TOS error codes
+
+
+2014/05/11 - Thorsten
 Various fixes to hostfs support:
     - implement FUTIME
     - fix FUTIME_UTC

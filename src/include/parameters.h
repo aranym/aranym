@@ -254,6 +254,8 @@ typedef struct {
 
 #define DISKS	8
 
+#define CD_MAX_DRIVES 32
+
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
@@ -269,7 +271,7 @@ typedef struct {
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
   bx_ikbd_options_t		ikbd;
-  bx_nfcdrom_options_t	nfcdroms[ 'Z'-'A'+1 ];
+  bx_nfcdrom_options_t	nfcdroms[ CD_MAX_DRIVES ];
 #ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;
 #endif

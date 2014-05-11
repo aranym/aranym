@@ -118,7 +118,7 @@ class NativeTypeMapper
 			return;
 
 		// cast to the number (not a pointer) type
-		// of the same size as the void*. Than cut the lowest
+		// of the same size as the void*. Then cut the lowest
 		// 32bits as the default hash value
 		uint32 aValue = (uintptr)value & 0xffffffffUL;
 

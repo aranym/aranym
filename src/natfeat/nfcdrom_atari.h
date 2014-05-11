@@ -129,6 +129,14 @@ typedef struct {
 	} channel[4];
 } atari_cdrom_audioctrl_t;
 
+struct atari_cdrom_volctrl
+{
+    unsigned char    channel0;			/* volume level 0..255 */
+    unsigned char    channel1;
+    unsigned char    channel2;
+    unsigned char    channel3;
+};
+
 typedef struct {
 	unsigned char	audiostatus;
 	unsigned char	mcn[23];
@@ -173,7 +181,7 @@ enum {
 	ATARI_CDROMALLOWREMOVAL,
 	ATARI_CDROMAUDIOCTRL,
 	ATARI_CDROMREADDA,
-	ATARI_CDROM12,	/* unused */
+	ATARI_CDROMRESET,
 	ATARI_CDROMGETMCN,
 	ATARI_CDROMGETTISRC
 };

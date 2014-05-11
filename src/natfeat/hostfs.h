@@ -136,7 +136,6 @@ class HostFs : public NF_Base
 	/**
 	 * Host to ARAnyM structure conversion routines.
 	 **/
-	uint32 errnoHost2Mint( int unixerrno,int defaulttoserrno );
 	mode_t modeMint2Host( uint16 m );
 	uint16 modeHost2Mint( mode_t m );
 	uint16 modeHost2TOS( mode_t m );

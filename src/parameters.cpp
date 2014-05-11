@@ -668,11 +668,17 @@ struct Config_Tag nfcdroms_conf[]={
 	NFCDROM_ENTRY("X", 23),
 	NFCDROM_ENTRY("Y", 24),
 	NFCDROM_ENTRY("Z", 25),
+	NFCDROM_ENTRY("0", 26),
+	NFCDROM_ENTRY("1", 27),
+	NFCDROM_ENTRY("2", 28),
+	NFCDROM_ENTRY("3", 29),
+	NFCDROM_ENTRY("4", 30),
+	NFCDROM_ENTRY("5", 31),
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 void preset_nfcdroms() {
-	for(int i=0; i < 'Z'-'A'+1; i++) {
+	for(int i=0; i < CD_MAX_DRIVES; i++) {
 		bx_options.nfcdroms[i].physdevtohostdev = -1;
 	}
 }

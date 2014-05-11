@@ -34,6 +34,9 @@
 #else
 #define DUNUSED(x)	((void)x)
 #endif
+#ifndef UNUSED
+#define UNUSED(x)	((void)x)
+#endif
 
 #define	MAX_HIST	10000
 

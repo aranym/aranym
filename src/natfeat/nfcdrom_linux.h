@@ -26,7 +26,7 @@
 class CdromDriverLinux : public CdromDriver
 {
 	private:
-		int drive_handles[32];	/* Handle for each possible opened drive */
+		int drive_handles[CD_MAX_DRIVES];	/* Handle for each possible opened drive */
 
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 

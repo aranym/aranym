@@ -33,7 +33,7 @@
 class CdromDriver : public NF_Base
 {
 private:
-	SDL_CD *drive_handles[32];	/* Handle for each possible opened drive */
+	SDL_CD *drive_handles[CD_MAX_DRIVES];	/* Handle for each possible opened drive */
 
 protected:
 	uint32	drives_mask;

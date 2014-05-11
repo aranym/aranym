@@ -22,6 +22,8 @@
 #include <SDL_endian.h>
 
 #include <linux/cdrom.h>
+#include <errno.h>
+#include "toserror.h"
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
@@ -45,7 +47,7 @@ CdromDriverLinux::CdromDriverLinux()
 
 	D(bug(NFCD_NAME "CdromDriverLinux()"));
 	drives_mask = 0xffffffffUL;
-	for (i=0; i<32; i++) {
+	for (i=0; i<CD_MAX_DRIVES; i++) {
 		drive_handles[i]=-1;
 	}
 }
@@ -55,8 +57,8 @@ CdromDriverLinux::~CdromDriverLinux()
 	int i;
 
 	D(bug(NFCD_NAME "~CdromDriverLinux()"));
-	for (i='A'; i<='Z'; i++) {
-		CloseDrive(i-'A');
+	for (i=0; i<CD_MAX_DRIVES; i++) {
+		CloseDrive(i);
 	}
 }
 
@@ -66,12 +68,13 @@ int CdromDriverLinux::OpenDrive(memptr device)
 {
 	int drive;
 
-	drive = GetDrive(device)-'A';
-
+	drive = GetDrive(device);
+	drive = DriveFromLetter(drive);
+	
 	/* Drive exist ? */
-	if ((drives_mask & (1<<drive))==0) {
-		D(bug(NFCD_NAME " physical device %c do not exist", drive+'A'));
-		return EINVFN;
+	if (drive < 0 || drive >= CD_MAX_DRIVES || (drives_mask & (1<<drive))==0) {
+		D(bug(NFCD_NAME " physical device %c does not exist", GetDrive(device)));
+		return TOS_ENOSYS;
 	}
 
 	/* Drive opened ? */
@@ -82,9 +85,10 @@ int CdromDriverLinux::OpenDrive(memptr device)
 	/* Open drive */
 	drive_handles[drive]=open(SDL_CDName(bx_options.nfcdroms[drive].physdevtohostdev), O_RDONLY|O_EXCL|O_NONBLOCK, 0);
 	if (drive_handles[drive]<0) {
-		D(bug(NFCD_NAME " error opening drive %d", bx_options.nfcdroms[drive].physdevtohostdev));
 		drive_handles[drive]=-1;
-		return EINVFN;
+		drive = errnoHost2Mint(errno, TOS_ENOSYS);
+		D(bug(NFCD_NAME " error opening drive %s: %s", SDL_CDName(bx_options.nfcdroms[drive].physdevtohostdev), strerror(errno)));
+		return drive;
 	}
 
 	return drive;
@@ -105,14 +109,48 @@ uint16 CdromDriverLinux::AtariToLinuxIoctl(uint16 opcode)
 {
 	uint16 new_opcode;
 
-	if ((opcode<ATARI_CDROMREADOFFSET) || (opcode>ATARI_CDROMGETTISRC)) {
-		return 0xffff;
-	}
-
-	new_opcode = opcode;
 	switch(opcode) {
 		case ATARI_CDROMREADOFFSET:
 			new_opcode = CDROMMULTISESSION;
+			break;
+		case ATARI_CDROMPAUSE:
+			new_opcode = CDROMPAUSE;
+			break;
+		case ATARI_CDROMRESUME:
+			new_opcode = CDROMRESUME;
+			break;
+		case ATARI_CDROMPLAYMSF:
+			new_opcode = CDROMPLAYMSF;
+			break;
+		case ATARI_CDROMPLAYTRKIND:
+			new_opcode = CDROMPLAYTRKIND;
+			break;
+		case ATARI_CDROMREADTOCHDR:
+			new_opcode = CDROMREADTOCHDR;
+			break;
+		case ATARI_CDROMREADTOCENTRY:
+			new_opcode = CDROMREADTOCENTRY;
+			break;
+		case ATARI_CDROMSTOP:
+			new_opcode = CDROMSTOP;
+			break;
+		case ATARI_CDROMSTART:
+			new_opcode = CDROMSTART;
+			break;
+		case ATARI_CDROMEJECT:
+			new_opcode = CDROMEJECT;
+			break;
+		case ATARI_CDROMVOLCTRL:
+			new_opcode = CDROMVOLCTRL;
+			break;
+		case ATARI_CDROMSUBCHNL:
+			new_opcode = CDROMSUBCHNL;
+			break;
+		case ATARI_CDROMREADMODE2:
+			new_opcode = CDROMREADMODE2;
+			break;
+		case ATARI_CDROMREADMODE1:
+			new_opcode = CDROMREADMODE1;
 			break;
 		case ATARI_CDROMPREVENTREMOVAL:
 		case ATARI_CDROMALLOWREMOVAL:
@@ -121,18 +159,20 @@ uint16 CdromDriverLinux::AtariToLinuxIoctl(uint16 opcode)
 		case ATARI_CDROMAUDIOCTRL:
 			new_opcode = CDROMVOLCTRL;
 			break;
-		case ATARI_CDROMGETTISRC:
-			new_opcode = 0xffff;
-			break;
 		case ATARI_CDROMREADDA:
 			new_opcode = CDROMREADRAW;
+			break;
+		case ATARI_CDROMRESET:
+			new_opcode = CDROMRESET;
 			break;
 		case ATARI_CDROMGETMCN:
 			new_opcode = CDROM_GET_MCN;
 			break;
+		case ATARI_CDROMGETTISRC:
+			new_opcode = 0xffff;
+			break;
 		default:
-			new_opcode -= 'C'<<8;
-			new_opcode += 'S'<<8;
+			new_opcode = 0xffff;
 			break;
 	}
 
@@ -146,7 +186,7 @@ int32 CdromDriverLinux::cd_read(memptr device, memptr buffer, uint32 first, uint
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	D(bug(NFCD_NAME "Read(%d,%d)", first, length));
@@ -154,35 +194,36 @@ int32 CdromDriverLinux::cd_read(memptr device, memptr buffer, uint32 first, uint
 	if (lseek(drive_handles[drive], first * 2048, SEEK_SET)<0) {
 		D(bug(NFCD_NAME "Read(): can not seek to block %d", first));
 		CloseDrive(drive);
-		return EINVFN;
+		return TOS_ENOSYS;
 	}
 
 	if (read(drive_handles[drive], Atari2HostAddr(buffer), length * 2048)<0) {
 		D(bug(NFCD_NAME "Read(): can not read %d blocks", length));
 		CloseDrive(drive);
-		return EINVFN;
+		return TOS_ENOSYS;
 	}
 
 	CloseDrive(drive);
-	return 0;
+	return TOS_E_OK;
 }
 
 int32 CdromDriverLinux::cd_status(memptr device, memptr ext_status)
 {
-	DUNUSED(ext_status);
+	UNUSED(ext_status);
 	int drive, errorcode, mediachanged;
 	unsigned long status;
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	status = 0;
 	errorcode=ioctl(drive_handles[drive], CDROM_MEDIA_CHANGED, &status);
 	D(bug(NFCD_NAME "Status(CDROM_MEDIA_CHANGED): errorcode=0x%08x", errorcode));
 	if (errorcode<0) {
-		CloseDrive(device);
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
+		CloseDrive(drive);
 		return errorcode;
 	}
 	mediachanged = (errorcode==1);
@@ -191,12 +232,13 @@ int32 CdromDriverLinux::cd_status(memptr device, memptr ext_status)
 	errorcode=ioctl(drive_handles[drive], CDROM_DRIVE_STATUS, &status);
 	D(bug(NFCD_NAME "Status(CDROM_DRIVE_STATUS): errorcode=0x%08x", errorcode));
 	if (errorcode<0) {
-		CloseDrive(device);
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
+		CloseDrive(drive);
 		return errorcode;
 	}
 	if (errorcode == CDS_DRIVE_NOT_READY) {
 		CloseDrive(drive);
-		return ENOTREADY;
+		return TOS_EDRVNR;
 	}
 
 	CloseDrive(drive);
@@ -210,14 +252,14 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
-	errorcode = EINVFN;
+	errorcode = TOS_ENOSYS;
 	new_opcode=AtariToLinuxIoctl(opcode);
 	if (new_opcode == 0xffff) {
 		D(bug(NFCD_NAME "Ioctl(): ioctl 0x%04x unsupported", opcode));
-		CloseDrive(device);
+		CloseDrive(drive);
 		return errorcode;
 	}
 
@@ -280,36 +322,48 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				atari_cdrom_audioctrl_t *atari_audioctrl;
 
 				if (opcode == ATARI_CDROMVOLCTRL) {
-					break;
-				}
-
-				/* CDROMAUDIOCTRL function emulation */
-				atari_audioctrl = (atari_cdrom_audioctrl_t *) Atari2HostAddr(buffer);
-				errorcode=EINVFN;
-
-				D(bug(NFCD_NAME " Ioctl(CDROMAUDIOCTRL,0x%04x)", atari_audioctrl->set));
-
-				if (atari_audioctrl->set == 0) {
-					/* Read volume settings */
-					errorcode=ioctl(drive_handles[drive], CDROMVOLREAD, &volctrl);
-					if (errorcode>=0) {
-						atari_audioctrl->channel[0].selection =
-							atari_audioctrl->channel[1].selection =
-							atari_audioctrl->channel[2].selection =
-							atari_audioctrl->channel[3].selection = 0;
-						atari_audioctrl->channel[0].volume = volctrl.channel0;
-						atari_audioctrl->channel[1].volume = volctrl.channel1;
-						atari_audioctrl->channel[2].volume = volctrl.channel2;
-						atari_audioctrl->channel[3].volume = volctrl.channel3;
-					}
-				} else {
+					/* CDROMVOLCTRL function emulation */
+					/* CDROMAUDIOCTRL function emulation */
+					struct atari_cdrom_volctrl *v = (struct atari_cdrom_volctrl *) Atari2HostAddr(buffer);
+	
+					D(bug(NFCD_NAME " Ioctl(CDROMVOLCTRL)"));
+	
 					/* Write volume settings */
-					volctrl.channel0 = atari_audioctrl->channel[0].volume;
-					volctrl.channel1 = atari_audioctrl->channel[1].volume;
-					volctrl.channel2 = atari_audioctrl->channel[2].volume;
-					volctrl.channel3 = atari_audioctrl->channel[3].volume;
+					volctrl.channel0 = v->channel0;
+					volctrl.channel1 = v->channel1;
+					volctrl.channel2 = v->channel2;
+					volctrl.channel3 = v->channel3;
 
 					errorcode=ioctl(drive_handles[drive], CDROMVOLCTRL, &volctrl);
+				} else
+				{
+					/* CDROMAUDIOCTRL function emulation */
+					atari_audioctrl = (atari_cdrom_audioctrl_t *) Atari2HostAddr(buffer);
+	
+					D(bug(NFCD_NAME " Ioctl(CDROMAUDIOCTRL,0x%04x)", atari_audioctrl->set));
+	
+					if (atari_audioctrl->set == 0) {
+						/* Read volume settings */
+						errorcode=ioctl(drive_handles[drive], CDROMVOLREAD, &volctrl);
+						if (errorcode>=0) {
+							atari_audioctrl->channel[0].selection =
+								atari_audioctrl->channel[1].selection =
+								atari_audioctrl->channel[2].selection =
+								atari_audioctrl->channel[3].selection = 0;
+							atari_audioctrl->channel[0].volume = volctrl.channel0;
+							atari_audioctrl->channel[1].volume = volctrl.channel1;
+							atari_audioctrl->channel[2].volume = volctrl.channel2;
+							atari_audioctrl->channel[3].volume = volctrl.channel3;
+						}
+					} else {
+						/* Write volume settings */
+						volctrl.channel0 = atari_audioctrl->channel[0].volume;
+						volctrl.channel1 = atari_audioctrl->channel[1].volume;
+						volctrl.channel2 = atari_audioctrl->channel[2].volume;
+						volctrl.channel3 = atari_audioctrl->channel[3].volume;
+	
+						errorcode=ioctl(drive_handles[drive], CDROMVOLCTRL, &volctrl);
+					}
 				}
 			}
 			break;
@@ -388,6 +442,14 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				errorcode=ioctl(drive_handles[drive], new_opcode, atari_mcn->mcn);
 			}
 			break;
+		case CDROM_LOCKDOOR:
+			errorcode=ioctl(drive_handles[drive], new_opcode, opcode == ATARI_CDROMPREVENTREMOVAL ? (void *)1 : (void *)0);
+			break;
+		case CDROMEJECT:
+			if (buffer != 0)
+				new_opcode = CDROMCLOSETRAY;
+			errorcode=ioctl(drive_handles[drive], new_opcode, (void *)0);
+			break;
 		default:
 			{
 				D(bug(NFCD_NAME " Ioctl(0x%04x)", new_opcode));
@@ -396,21 +458,22 @@ int32 CdromDriverLinux::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 			}
 			break;
 	}
-
+	if (errorcode < 0)
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 	CloseDrive(drive);
 	return errorcode;
 }
 
 int32 CdromDriverLinux::cd_startaudio(memptr device, uint32 dummy, memptr buffer)
 {
-	DUNUSED(dummy);
+	UNUSED(dummy);
 	int drive, errorcode;
 	struct cdrom_ti	track_index;
 	metados_bos_tracks_t	*atari_track_index;
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	atari_track_index = (metados_bos_tracks_t *) Atari2HostAddr(buffer);
@@ -420,6 +483,8 @@ int32 CdromDriverLinux::cd_startaudio(memptr device, uint32 dummy, memptr buffer
 	track_index.cdti_ind0 = 99;
 
 	errorcode=ioctl(drive_handles[drive], CDROMPLAYTRKIND, &track_index);
+	if (errorcode < 0)
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 	CloseDrive(drive);
 	return errorcode;
 }
@@ -430,23 +495,25 @@ int32 CdromDriverLinux::cd_stopaudio(memptr device)
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	errorcode=ioctl(drive_handles[drive], CDROMSTOP, NULL);
+	if (errorcode < 0)
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 	CloseDrive(drive);
 	return errorcode;
 }
 
 int32 CdromDriverLinux::cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf)
 {
-	DUNUSED(dummy);
+	UNUSED(dummy);
 	int drive, errorcode;
 	struct cdrom_msf audio_bloc;
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	audio_bloc.cdmsf_min0 = (start_msf>>16) & 0xff;
@@ -460,13 +527,15 @@ int32 CdromDriverLinux::cd_setsongtime(memptr device, uint32 dummy, uint32 start
 	D(bug(NFCD_NAME " end:   %02d:%02d:%02d", (end_msf>>16) & 0xff, (end_msf>>8) & 0xff, end_msf & 0xff));
 
 	errorcode=ioctl(drive_handles[drive], CDROMPLAYMSF, &audio_bloc);
+	if (errorcode < 0)
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 	CloseDrive(drive);
 	return errorcode;
 }
 
 int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 {
-	DUNUSED(dummy);
+	UNUSED(dummy);
 	int drive, i, numtracks, errorcode;
 	struct cdrom_tochdr tochdr;
 	struct cdrom_tocentry tocentry;
@@ -474,12 +543,13 @@ int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	/* Read TOC header */
 	errorcode=ioctl(drive_handles[drive], CDROMREADTOCHDR, &tochdr);
 	if (errorcode<0) {
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 		CloseDrive(drive);
 		return errorcode;
 	}
@@ -501,6 +571,7 @@ int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 
 		errorcode = ioctl(drive_handles[drive], CDROMREADTOCENTRY, &tocentry);
 		if (errorcode<0) {
+			errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 			CloseDrive(drive);
 			return errorcode;
 		}
@@ -538,7 +609,7 @@ int32 CdromDriverLinux::cd_gettoc(memptr device, uint32 dummy, memptr buffer)
 		atari_tocentry[numtracks+1].frame = 0;
 
 	CloseDrive(drive);
-	return 0;
+	return TOS_E_OK;
 }
 
 int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
@@ -551,12 +622,13 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 
 	drive = OpenDrive(device);
 	if (drive<0) {
-		return EINVFN;
+		return drive;
 	}
 
 	/* Read TOC header */
 	errorcode=ioctl(drive_handles[drive], CDROMREADTOCHDR, &tochdr);
 	if (errorcode<0) {
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 		CloseDrive(drive);
 		return errorcode;
 	}
@@ -573,6 +645,7 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 	subchnl.cdsc_format = CDROM_MSF;
 	errorcode=ioctl(drive_handles[drive], CDROMSUBCHNL, &subchnl);
 	if (errorcode<0) {
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 		CloseDrive(drive);
 		return errorcode;
 	}
@@ -597,6 +670,7 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 
 	errorcode = ioctl(drive_handles[drive], CDROMREADTOCENTRY, &tocentry);
 	if (errorcode<0) {
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 		CloseDrive(drive);
 		return errorcode;
 	}
@@ -608,6 +682,7 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 
 	errorcode = ioctl(drive_handles[drive], CDROMREADTOCENTRY, &tocentry);
 	if (errorcode<0) {
+		errorcode = errnoHost2Mint(errno, TOS_EDRVNR);
 		CloseDrive(drive);
 		return errorcode;
 	}
@@ -620,7 +695,7 @@ int32 CdromDriverLinux::cd_discinfo(memptr device, memptr buffer)
 	discinfo->end.frame = BinaryToBcd(tocentry.cdte_addr.msf.frame);
 
 	CloseDrive(drive);
-	return 0;
+	return TOS_E_OK;
 }
 
 /*
