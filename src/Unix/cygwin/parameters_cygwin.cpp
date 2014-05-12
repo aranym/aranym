@@ -77,9 +77,10 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 	safe_strncpy(buffer, program_name, bufsize);
 	// strip out filename and separator from the path
 	char *ptr = strrchr(buffer, '/');	// first try Unix separator
+	char *ptr2 = strrchr(buffer, '\\');	// then DOS sep.
+	if (ptr2 > ptr)
+		ptr = ptr2;
 	if (ptr != NULL)
-		ptr[0] = '\0';
-	else if ((ptr = strrchr(buffer, '\\')) != NULL)	// then DOS sep.
 		ptr[0] = '\0';
 	else
 		buffer[0] = '\0';	// last resort - current folder

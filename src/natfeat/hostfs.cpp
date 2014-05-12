@@ -62,6 +62,10 @@
 #include <mint/mintbind.h>
 #endif /* OS_mint */
 
+#ifdef __CYGWIN__
+#include <sys/socket.h> /* for FIONREAD */
+#endif
+
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
 #ifndef HAVE_CANONICALIZE_FILE_NAME

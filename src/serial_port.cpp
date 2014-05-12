@@ -25,6 +25,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <termios.h>
+#ifdef __CYGWIN__
+#include <sys/socket.h> /* for FIONREAD */
+#endif
 
 #include "serial.h"
 #include "serial_port.h"
@@ -215,9 +218,9 @@ uint16 Serialport::getStatus()
 uint16 Serialport::getTBE() // not suited to serial USB
 {
 	uint16 value=0;
-	int status=0;
 	
 #if defined(TIOCSERGETLSR) && defined(TIOCSER_TEMT)
+	int status=0;
 	if (ioctl(handle,TIOCSERGETLSR,&status)<0){// OK with ttyS0, not OK with ttyUSB0
 		//D(bug("Serialport: Can't get LSR"));
 		value|=(1<<TBE);// only for serial USB

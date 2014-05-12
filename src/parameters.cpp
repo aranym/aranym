@@ -1227,7 +1227,7 @@ int process_cmdline(int argc, char **argv)
 				}
 				// set the drive
 				{
-					int8 i = toupper(optarg[0]) - 'A';
+					int8 i = DriveFromLetter(toupper(optarg[0]));
 					if (i <= 0 || i>('Z'-'A')) {
 						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
 						break;
@@ -1297,7 +1297,7 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize)
 		panicbug("addFilename(\"%s\") - buffer too small!", file);
 		safe_strncpy(buffer, file, bufsize);	// at least the filename
 	}
-
+	strd2upath(buffer, buffer);
 	return buffer;
 }
 
@@ -1319,8 +1319,14 @@ char *getConfFilename(const char *file, char *buffer, unsigned int bufsize)
 // build a complete path to system wide data file
 char *getDataFilename(const char *file, char *buffer, unsigned int bufsize)
 {
-	Host::getDataFolder(buffer, bufsize);
-	return addFilename(buffer, file, bufsize);
+	char *name = getConfFilename(file, buffer, bufsize);
+	struct stat buf;
+	if (stat(name, &buf) == -1)
+	{
+	  Host::getDataFolder(buffer, bufsize);
+	  name = addFilename(buffer, file, bufsize);
+	}
+	return name;
 }
 
 static bool decode_ini_file(const char *rcfile)

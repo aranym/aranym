@@ -1,3 +1,7 @@
+2014/05/13 - Thorsten
+Fix building for cygwin
+
+
 2014/05/11 - Thorsten
 Some fixes for nfcdrom:
     - fix calls to CloseDrive() in nfcdrom_linux
