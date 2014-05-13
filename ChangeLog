@@ -1,3 +1,7 @@
+2014/05/13 - Jens
+- src/Unix/MacOSX/scripts/gen_machfiles.sh - Prepared for XCode 5 on Mavericks
+- src/uae_cpu/compiler/codegen_x86.cpp - Fixed typo
+
 2014/05/13 - Xavier Joubert
 - tools/build-cygwin.sh: Updates to cygwin build script
 
