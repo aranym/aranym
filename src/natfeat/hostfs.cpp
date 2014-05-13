@@ -213,12 +213,6 @@ int statfs(const char *path, struct statfs *buf)
 #    define STATVFS struct statfs
 #endif
 
-#if SIZEOF_DEV_T > 4
-#    define WHEN_INT4B(x,y) y
-#else
-#    define WHEN_INT4B(x,y) x
-#endif
-
 // for the FS_EXT3 using host.xfs (recently changed)
 #define FS_EXT_3 0x800
 
@@ -2098,37 +2092,22 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
 	if ( res != TOS_E_OK )
 		return res;
 
-	/* LLONG hi dev	   */  WriteInt32( statp     , WHEN_INT4B( 0, ( statBuf.st_dev >> 32 ) & 0xffffffffUL ) ); // FIXME: this is Linux's one
-	/* LLONG lo dev	   */  WriteInt32( statp +  4, statBuf.st_dev & 0xffffffffUL ); // FIXME: this is Linux's one
+	/* LLONG    dev	   */  WriteInt64( statp +  0, statBuf.st_dev  ); // FIXME: this is Linux's one
 	/* ULONG    ino	   */  WriteInt32( statp +  8, statBuf.st_ino ); // FIXME: this is Linux's one
 	/* ULONG    mode   */  WriteInt32( statp + 12, modeHost2Mint(statBuf.st_mode) ); // FIXME: convert???
 	/* ULONG    nlink  */  WriteInt32( statp + 16, statBuf.st_nlink );
 	/* ULONG    uid	   */  WriteInt32( statp + 20, statBuf.st_uid ); // FIXME: this is Linux's one
 	/* ULONG    gid	   */  WriteInt32( statp + 24, statBuf.st_gid ); // FIXME: this is Linux's one
-	/* LLONG hi rdev   */  WriteInt32( statp + 28, WHEN_INT4B( 0, ( statBuf.st_rdev >> 32 ) & 0xffffffffUL ) ); // FIXME: this is Linux's one
-	/* LLONG lo rdev   */  WriteInt32( statp + 32,   statBuf.st_rdev & 0xffffffffUL ); // FIXME: this is Linux's one
+	/* LLONG    rdev   */  WriteInt64( statp + 28, statBuf.st_rdev ); // FIXME: this is Linux's one
 
-    if (sizeof(statBuf.st_atime) > 4)
-	/* hi atime   */ WriteInt32( statp + 36,   (statBuf.st_atime >> 32) & 0xffffffffUL );
-    else
-	/* hi atime   */ WriteInt32( statp + 36, 0 );
-	/* lo atime   */ WriteInt32( statp + 40,   statBuf.st_atime );
+	/*    atime   */ WriteInt64( statp + 36,   statBuf.st_atime );
 	/*    atime ns*/ WriteInt32( statp + 44, get_stat_atime_ns(&statBuf) );
-    if (sizeof(statBuf.st_mtime) > 4)
-	/* hi mtime   */ WriteInt32( statp + 48,   (statBuf.st_mtime >> 32) & 0xffffffffUL );
-    else
-	/* hi mtime   */ WriteInt32( statp + 48, 0 );
-	/* lo mtime   */ WriteInt32( statp + 52,   statBuf.st_mtime );
+	/*    mtime   */ WriteInt64( statp + 48,   statBuf.st_mtime );
 	/*    mtime ns*/ WriteInt32( statp + 56, get_stat_mtime_ns(&statBuf) );
-    if (sizeof(statBuf.st_mtime) > 4)
-	/* hi ctime   */ WriteInt32( statp + 60,   (statBuf.st_ctime >> 32) & 0xffffffffUL );
-    else
-	/* hi ctime   */ WriteInt32( statp + 60, 0 );
-	/* lo ctime   */ WriteInt32( statp + 64,   statBuf.st_ctime );
+	/*    ctime   */ WriteInt64( statp + 60,   statBuf.st_ctime );
 	/*    ctime ns*/ WriteInt32( statp + 68, get_stat_ctime_ns(&statBuf) );
 
-	/* LLONG hi size   */  WriteInt32( statp + 72, ( statBuf.st_size >> 32 ) & 0xffffffffUL );
-	/* LLONG lo size   */  WriteInt32( statp + 76,   statBuf.st_size & 0xffffffffUL );
+	/* LLONG    size   */  WriteInt64( statp + 72, statBuf.st_size );
 	uint64 blksize, blocks;
 #ifdef __MINGW32__
 	blksize = 512 ; // FIXME: I just made up the number
@@ -2145,8 +2124,7 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
 #else
 	blocks = statBuf.st_blocks;
 #endif
-	/* LLONG hi blocks */  WriteInt32( statp + 80, ( blocks >> 32 ) & 0xffffffffUL );
-	/* LLONG lo blocks */  WriteInt32( statp + 84,   blocks & 0xffffffffUL );
+	/* LLONG    blocks */  WriteInt64( statp + 80,   blocks );
 	/* ULONG    blksize*/  WriteInt32( statp + 88,   blksize );
 	/* ULONG    flags  */  WriteInt32( statp + 92,   0 );
 	/* ULONG    gen    */  WriteInt32( statp + 96,   0 );
@@ -2567,14 +2545,10 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			if (arg)
 			{
 				/* LONG  blocksize */  WriteInt32( arg     , buff.f_bsize );
-				/* LLONG hi blocks */  WriteInt32( arg +  4, (buff.f_blocks >> 32 ) & 0xffffffffUL );
-				/* LLONG lo blocks */  WriteInt32( arg +  8, buff.f_blocks & 0xffffffffUL );
-				/* LLONG hi freebs */  WriteInt32( arg + 12, (buff.f_bavail >> 32 ) & 0xffffffffUL );
-				/* LLONG lo freebs */  WriteInt32( arg + 16, buff.f_bavail & 0xffffffffUL );
-				/* LLONG hi inodes */  WriteInt32( arg + 20, 0xffffffffUL);
-				/* LLONG lo inodes */  WriteInt32( arg + 24, 0xffffffffUL);
-				/* LLONG hi finodes*/  WriteInt32( arg + 28, 0xffffffffUL);
-				/* LLONG lo finodes*/  WriteInt32( arg + 32, 0xffffffffUL);
+				/* LLONG    blocks */  WriteInt64( arg +  4, buff.f_blocks );
+				/* LLONG    freebs */  WriteInt64( arg + 12, buff.f_bavail );
+				/* LLONG    inodes */  WriteInt64( arg + 20, 0xffffffffffffffffULL);
+				/* LLONG    finodes*/  WriteInt64( arg + 28, 0xffffffffffffffffULL);
 			}
 			return TOS_E_OK;
 		}

@@ -95,7 +95,7 @@ static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
 {
   SDL_Surface *bitmap;
   Uint8 *dstbits;
-  int x, y, srcpitch;
+  int x, y;
 	int w = 128;
 	int h = 256;
 
@@ -107,7 +107,6 @@ static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
     return(NULL);
   }
 
-  srcpitch = ((w + 7) / 8);
   dstbits = (Uint8 *)bitmap->pixels;
   int mask = 0x80;
   int charheight = h/16;

@@ -149,6 +149,7 @@ int main()
 	    patbits[i] = nextch;
 	    getnextch();
 	}
+	(void) patbits;
 
 	while (isspace(nextch) || nextch == ':') /* Get CPU and privilege level */
 	    getnextch();

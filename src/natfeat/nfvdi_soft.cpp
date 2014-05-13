@@ -429,7 +429,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
 				}
 			}
-			SDL_Rect identRect = { 0, 0, w, h };
+			SDL_Rect identRect = { 0, 0, Uint16(w), Uint16(h) };
 			SDL_BlitSurface(asurf,NULL,blocksurf,&identRect);
 			SDL_FreeSurface(asurf);
 
@@ -462,7 +462,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 		D(bug("fVDI: %s %x, %d, %d", "8BIT expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 
-		SDL_Rect destRect = { dx, dy, w, h };
+		SDL_Rect destRect = { Sint16(dx), Sint16(dy), Uint16(w), Uint16(h) };
 		SDL_BlitSurface(asurf,NULL,surface->getSdlSurface(),&destRect);
 		SDL_FreeSurface(asurf);
 

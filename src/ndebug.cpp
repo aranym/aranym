@@ -378,6 +378,7 @@ void ndebug::set_Sx(char **inl) {
 #ifdef FULLMMU
 				mmu_set_tc(r & 0xc000);
 #endif
+				(void) r;
 				break;
 			case 1:
 				regs.srp = readhex(inl);

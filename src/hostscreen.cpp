@@ -468,8 +468,8 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 	int width = hsurf->getWidth();
 	int height = hsurf->getHeight();
 
-	SDL_Rect src_rect = {0,0, width, height};
-	SDL_Rect dst_rect = {0,0, screen->w, screen->h};
+	SDL_Rect src_rect = {0,0, Uint16(width), Uint16(height)};
+	SDL_Rect dst_rect = {0,0, Uint16(screen->w), Uint16(screen->h)};
 	if (screen->w > width) {
 		dst_rect.x = (screen->w - width) >> 1;
 		dst_rect.w = width;

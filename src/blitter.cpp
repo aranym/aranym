@@ -161,6 +161,8 @@ void _fn_name ( BLITTER& b ) \
 		b.source_addr += b.source_y_inc;				\
 		b.dest_addr += b.dest_y_inc;				\
 		_do_halftone_inc;					\
+		(void) opd_data; \
+		(void) dst_data; \
 	} while (--b.y_count > 0);					\
 };
 

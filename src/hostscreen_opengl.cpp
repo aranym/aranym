@@ -201,19 +201,14 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	int width = hsurf->getWidth();
 	int height = hsurf->getHeight();
 
-	SDL_Rect src_rect = {0,0, width, height};
-	SDL_Rect dst_rect = {0,0, screen->w, screen->h};
+	SDL_Rect dst_rect = {0,0, Uint16(screen->w), Uint16(screen->h)};
 	if (screen->w > width) {
 		dst_rect.x = (screen->w - width) >> 1;
 		dst_rect.w = width;
-	} else {
-		src_rect.w = screen->w;
 	}
 	if (screen->h > height) {
 		dst_rect.y = (screen->h - height) >> 1;
 		dst_rect.h = height;
-	} else {
-		src_rect.h = screen->h;
 	}
 
 	/* Init texturing */

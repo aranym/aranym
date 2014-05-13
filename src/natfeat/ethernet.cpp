@@ -100,7 +100,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
 
 				// default MAC Address is just made up
-				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+				uint8 mac_addr[6] = {'\0','A','E','T','H', uint8('0'+ethX) };
 
 				// convert user-defined MAC Address from string to 6 bytes array
 				char *ms = bx_options.ethernet[ethX].mac_addr;

@@ -32,6 +32,7 @@
 #include "host.h"
 #include "host_filesys.h"
 #include "cfgopts.h"
+#include "natfeat/nf_base.h"
 
 #define DEBUG 0
 #include "debug.h"

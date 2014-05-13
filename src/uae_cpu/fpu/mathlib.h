@@ -559,6 +559,7 @@ PRIVATE inline void FFPU make_nan(fpu_register & r)
 	sxp.ieee.mantissa2	= 0xffffffff;
 	sxp.ieee.mantissa3	= 0xffffffff;
 #endif
+	r = sxp.value;
 }
 
 PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
