@@ -1,3 +1,6 @@
+2014/05/14 - Jens
+- src/Unix/MacOSX/scripts/gen_machfiles.sh - Removed forgotten debug code
+
 2014/05/14 - Thorsten
 - hostfs: improved handling of symlinks
 
