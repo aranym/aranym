@@ -1136,7 +1136,7 @@ LOWFUNC(WRITE,READ,2,raw_cmp_b_mi,(MEMR d, IMM s))
 {
 	CMPBim(s, d, X86_NOREG, X86_NOREG, 1);
 }
-LENDFUNC(WRITE,READ,2,raw_cmp_l_mi,(MEMR d, IMM s))
+LENDFUNC(WRITE,READ,2,raw_cmp_b_mi,(MEMR d, IMM s))
 
 LOWFUNC(WRITE,NONE,2,raw_cmp_b_ri,(R1 d, IMM i))
 {
