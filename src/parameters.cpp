@@ -497,12 +497,18 @@ struct Config_Tag arafs_conf[]={
 	HOSTFS_ENTRY("X", 23),
 	HOSTFS_ENTRY("Y", 24),
 	HOSTFS_ENTRY("Z", 25),
+	HOSTFS_ENTRY("0", 26),
+	HOSTFS_ENTRY("1", 27),
+	HOSTFS_ENTRY("2", 28),
+	HOSTFS_ENTRY("3", 29),
+	HOSTFS_ENTRY("4", 30),
+	HOSTFS_ENTRY("5", 31),
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
 void preset_arafs()
 {
-	for(int i=0; i < 'Z'-'A'+1; i++) {
+	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
 		bx_options.aranymfs[i].rootPath[0] = '\0';
 		bx_options.aranymfs[i].configPath[0] = '\0';
 		bx_options.aranymfs[i].halfSensitive = true;
@@ -511,7 +517,7 @@ void preset_arafs()
 
 void postload_arafs()
 {
-	for(int i=0; i < 'Z'-'A'+1; i++) {
+	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
 		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
 		int len = strlen(bx_options.aranymfs[i].configPath);
 		bx_options.aranymfs[i].halfSensitive = true;
@@ -521,13 +527,26 @@ void postload_arafs()
 				*ptrLast = '\0';
 				bx_options.aranymfs[i].halfSensitive = false;
 			}
+#ifdef __CYGWIN__
+			// interpet "C:" here as the root directory of C:, not the current directory
+			if (DriveFromLetter(toupper(bx_options.aranymfs[i].rootPath[0])) >= 0 &&
+				bx_options.aranymfs[i].rootPath[1] == ':' &&
+				bx_options.aranymfs[i].rootPath[2] == '\0')
+				strcat(bx_options.aranymfs[i].rootPath, DIRSEPARATOR);
+			cygwin_path_to_win32(bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].rootPath));
+#endif
+			strd2upath(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].rootPath);
+			len = strlen(bx_options.aranymfs[i].rootPath);
+			ptrLast = bx_options.aranymfs[i].rootPath + len-1;
+			if (*ptrLast != *DIRSEPARATOR)
+				strcat(bx_options.aranymfs[i].rootPath, DIRSEPARATOR);
 		}
 	}
 }
 
 void presave_arafs()
 {
-	for(int i=0; i < 'Z'-'A'+1; i++) {
+	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
 		safe_strncpy(bx_options.aranymfs[i].configPath, bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].configPath));
 		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
 			 !bx_options.aranymfs[i].halfSensitive ) {
@@ -1229,7 +1248,7 @@ int process_cmdline(int argc, char **argv)
 				// set the drive
 				{
 					int8 i = DriveFromLetter(toupper(optarg[0]));
-					if (i <= 0 || i>('Z'-'A')) {
+					if (i <= 0 || i >= HOSTFS_MAX_DRIVES) {
 						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
 						break;
 					}

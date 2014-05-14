@@ -68,9 +68,11 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
-#ifndef HAVE_CANONICALIZE_FILE_NAME
-char *canonicalize_file_name(const char *filename)
+static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 {
+	if (filename == NULL)
+		return NULL;
+
 #ifdef PATH_MAX
 	int path_max = PATH_MAX;
 #else
@@ -79,17 +81,40 @@ char *canonicalize_file_name(const char *filename)
 		path_max = 4096;
 #endif
 
-#ifdef HAVE_REALPATH
+	char *resolved;
+#if defined HAVE_CANONICALIZE_FILE_NAME
+	resolved = canonicalize_file_name(filename);
+#elif defined HAVE_REALPATH
 	char *tmp = (char *)malloc(path_max);
 	char *realp = realpath(filename, tmp);
-	char *resolved = (realp != NULL) ? strdup(realp) : NULL;
+	resolved = (realp != NULL) ? strdup(realp) : NULL;
 	free(tmp);
+#endif
+	if (resolved == NULL)
+		resolved = strdup(filename);
+	if (resolved)
+	{
+#ifdef __CYGWIN__
+		char *tmp2 = (char *)malloc(path_max);
+		strcpy(tmp2, resolved);
+		cygwin_path_to_win32(tmp2, path_max);
+		free(resolved);
+		resolved = tmp2;
+#endif
+		strd2upath(resolved, resolved);
+		if (append_slash)
+		{
+			size_t len = strlen(resolved);
+			if (len > 1 && resolved[len - 1] != *DIRSEPARATOR)
+			{
+				resolved = (char *)realloc(resolved, len + sizeof(DIRSEPARATOR));
+				if (resolved)
+					strcat(resolved, DIRSEPARATOR);
+			}
+		}
+	}
 	return resolved;
-#else
-	return (filename ? strdup(filename) : NULL);
-#endif
 }
-#endif
 
 // TODO FIXME the following POSIX emulation for MINGW32/WinAPI should be moved elsewhere...
 #ifdef __MINGW32__
@@ -1584,60 +1609,50 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 	Atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
 
 	char ffromName[MAXPATHNAMELEN];
-	cookie2Pathname( dir, ffromname, ffromName );
-
-	// search among the mount points to find suitable link...
-	size_t toNmLen = strlen( ftoname );
-
-	// prefer the current device
-	ExtDrive *drv = dir->drv;
-
-	MountMap::iterator it = mounts.begin();
-
-	// no dir->drv? should never happen!
-	if ( !drv ) {
-		if ( it == mounts.end() ) {
-			panicbug( "HOSTFS: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL && mounts.size() == 0!", ffromname, ftoname );
-			return TOS_EINTRN; // FIXME?
-		}
-
-		// get the first mount
-		drv = it->second;
-		it++;
-		bug( "HOSTFS: ERROR: fs_symlink: \"%s\"-->\"%s\" dir->drv == NULL???", ffromname, ftoname );
-	}
-
-	// compare the beginning of the link path with the current
-	// mountPoint path (if matches then use the current drive)
-	size_t mpLen = 0;
-	while ( drv ) {
-		mpLen = strlen( drv->mountPoint );
-		if (mpLen < toNmLen && !strncmp( drv->mountPoint, ftoname, mpLen ) )
-			break;
-
-		// no more mountpoints available
-		if (it == mounts.end()) {
-			drv = NULL;
-			break;
-		}
-
-		// get the ExtDrive from the mountpoint
-		drv = it->second;
-		// move the iterator to the next one
-		it++;
-	}
-
 	char ftoName[MAXPATHNAMELEN];
-	if ( drv ) {
-		strcpy( ftoName, drv->hostRoot );
-		strcat( ftoName, &ftoname[ mpLen ] );
-	} else {
-		strcpy( ftoName, ftoname );
-	}
+	cookie2Pathname( dir, ffromname, ffromName );
+	
+	strcpy( ftoName, ftoname );
 
-	for (char *p = ftoName; *p != '\0'; p++)
-		if (*p == '\\')
-			*p = '/';
+	char *tmp;
+	if ( (ftoname[0] != '/' && ftoname[0] != '\\' && ftoname[1] != ':' ) ||
+		(tmp = my_canonicalize_file_name(ftoname, false)) == NULL)
+	{
+		// relative symlink. Use it as is
+	} else {
+		// search among the mount points to find suitable link...
+
+		size_t nameLen = strlen(tmp);
+		bool found = false;
+		for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
+		{
+			ExtDrive *drv = it->second;
+			size_t mpLen = strlen( drv->mountPoint );
+			if (mpLen == 0 || mpLen > nameLen)
+				continue;
+			if (strncasecmp(drv->mountPoint, tmp, mpLen) == 0)
+			{
+				// target drive found; replace MiNTs mount point
+				// with the hosts root directory
+				int len = MAXPATHNAMELEN;
+				safe_strncpy(ftoName, drv->hostRoot, len);
+				int hrLen = strlen( drv->hostRoot );
+				if (hrLen < len)
+					safe_strncpy(ftoName + hrLen, tmp + mpLen, len - hrLen);
+				found = true;
+				break;
+			}
+		}
+		free(tmp);
+		if (!found)
+		{
+			// undo a possible _unx2dos() conversion from MiNTlib
+			if (toupper(ftoName[0]) == 'U' && ftoName[1] == ':')
+				strcpy(ftoName, ftoname + 2);
+		}
+	}
+	
+	strd2upath(ftoName, ftoName);
 	D(bug( "HOSTFS: fs_symlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
 
 	if ( symlink( ftoName, ffromName ) )
@@ -1817,35 +1832,32 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 	// put the trailing \0
 	target[rv] = '\0';
 
-	// relative host fs symlinks are converted to absolute ones (why?? PS 090830)
-	if ( target[0] != '/' && target[0] != '\\' && target[1] != ':' ) {
-		// find the last dirseparator
-		const char *slash = &pathname[strlen(pathname)];
-		while ( --slash >= pathname &&
-				*slash != '/' &&
-				*slash != '\\' ) ;
-
-		// get the path part (in front of the slash)
-		// and prepend it to the link target (if fits)
-		int plen = slash - pathname + 1;
-		if ( plen && plen + (int)strlen(target) <= len ) {
-			memmove( target + plen, target, strlen(target)+1 );	
-			memmove( target, pathname, plen );
+	// relative host fs symlinks are left alone. The MiNT kernel will parse them
+	if ( target[0] != '/' && target[0] != '\\' && target[1] != ':' )
+		return target;
+	// convert to real path (example: "/tmp/../file" -> "/file")
+	char *tmp = my_canonicalize_file_name(target, false);
+	if (tmp == NULL)
+		return target;
+	size_t nameLen = strlen(tmp);
+	for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
+	{
+		ExtDrive *drv = it->second;
+		size_t hrLen = strlen( drv->hostRoot );
+		if (hrLen == 0 || hrLen > nameLen)
+			continue;
+		if (strncmp(drv->hostRoot, tmp, hrLen) == 0)
+		{
+			// target drive found; replace the hosts root directory
+			// with MiNTs mount point
+			safe_strncpy(target, drv->mountPoint, len);
+			int mLen = strlen( drv->mountPoint );
+			if (mLen < len)
+				safe_strncpy(target + mLen, tmp + hrLen, len - mLen);
+			break;
 		}
-		else {
-			panicbug( "HOSTFS: host_readlink: relative link doesn't fit the len '%s'\n", target );
-			errno = ENOMEM;
-			return NULL;
-		}
-
-		// convert to real path (example: "/tmp/../file" -> "/file")
-		char *tmp = canonicalize_file_name(target);
-		if (tmp == NULL)
-			return NULL;
-		strncpy(target, tmp, len);
-		target[len-1] = '\0';
-		free(tmp);
 	}
+	free(tmp);
 
 	D(bug("host_readlink(%s, %s)", pathname, target));
 
@@ -1971,26 +1983,9 @@ int32 HostFs::xfs_rewinddir( XfsDir *dirh )
 
 int32 HostFs::host_stat64( XfsCookie *fc, const char *fpathName, struct stat *statBuf ) {
 
+	(void) fc;
 	if ( lstat(fpathName, statBuf) )
 		return errnoHost2Mint(errno,TOS_EFILNF);
-
-	// symlink
-	if ( S_ISLNK(statBuf->st_mode) ) {
-		char target[MAXPATHNAMELEN];
-		if (!host_readlink(fpathName,target,sizeof(target)-1))
-			return errnoHost2Mint(errno,TOS_EFILNF);
-
-		// doesn't point to a mapped drive
-		if (!findDrive(fc, target)) {
-			D(bug( "HOSTFS: host_stat64: follow symlink -> %s", target ));
-
-			// get the information from the link target
-			if ( stat(target, statBuf) ) {
-				// on error just rollback to a symlink (broken one)
-				lstat(fpathName, statBuf);
-			}
-		}
-	}
 
 	return TOS_E_OK;
 }
@@ -2227,49 +2222,6 @@ int32 HostFs::xfs_getdev( XfsCookie *fc, memptr devspecial )
 }
 
 
-HostFs::ExtDrive *HostFs::findDrive( XfsCookie *dir, char *pathname )
-{
-	D(bug("HOSTFS:findDrive(%s)", pathname));
-
-	// absolute FreeMiNT's link stored in the HOSTFS
-	if ( pathname[0] && pathname[1] == ':' )
-		return NULL;
-
-	// search among the mount points to find suitable link...
-	size_t toNmLen = strlen( pathname );
-	size_t hrLen = 0;
-
-	// prefer the current device
-	MountMap::iterator it = mounts.find(dir->dev);
-	if ( ! ( ( hrLen = strlen( it->second->hostRoot ) ) <= toNmLen &&
-			 !strncmp( it->second->hostRoot, pathname, hrLen ) ) )
-	{
-		// preference failed -> search all
-		D2(bug("HOSTFS:findDrive(%s) - NOT FOUND on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
-		it = mounts.begin();
-		while (it != mounts.end()) {
-			D2(bug("HOSTFS:findDrive(%s) - searching on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
-			hrLen = strlen( it->second->hostRoot );
-			if ( hrLen <= toNmLen &&
-				 !strncmp( it->second->hostRoot, pathname, hrLen ) ) {
-				D(bug("HOSTFS:findDrive(%s) - found on device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
-				break;
-			}
-			it++;
-		}
-	}
-	else {
-		D2(bug("HOSTFS:findDrive(%s) found on current device (%c: = %s)", pathname, it->second->driveNumber+'A', it->second->hostRoot));
-	}
-
-	if ( it != mounts.end() )
-		return it->second;
-
-	D(bug("HOSTFS:findDrive(%s) NOT FOUND!)", pathname));
-	return NULL;
-}
-
-
 int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 {
 	char fpathName[MAXPATHNAMELEN];
@@ -2278,51 +2230,12 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 	D(bug( "HOSTFS: fs_readlink: %s", fpathName ));
 
 	char target[MAXPATHNAMELEN];
-	if (!host_readlink(fpathName,target,sizeof(target)-1))
+	if (!host_readlink(fpathName,target,sizeof(target)))
 		return errnoHost2Mint( errno, TOS_EFILNF );
 
 	D(bug( "HOSTFS: fs_readlink: -> %s", target ));
 
-	ExtDrive *drv = findDrive(dir, target);
-	if ( drv ) {
-		int len = strlen( drv->hostRoot );
-		// check to see if both link and its target are on the same GEMDOS drive
-		if ( drv == findDrive(dir, fpathName) ) {
-			// return a relative path of the symlink:
-			// first find out the common part of the path
-			int cl = len;
-			while(fpathName[cl] && fpathName[cl] == target[cl]) ++cl;
-			while(cl > 0 && fpathName[cl] !='/' && fpathName[cl] != '\\') --cl;
-			++cl;
-
-			// now count the remaining depth of the source
-			D2(bug("HOSTFS: fs_readlink relative: source '%s' and dest '%s'", fpathName+cl, target+cl));
-			int srcdepth = 0;
-			for(int i=strlen(fpathName); i>=cl; i--) {
-				if (fpathName[i] == '/' || fpathName[i] == '\\')
-					srcdepth++;
-			}
-			// prepend as many "../" as is the source depth
-			*fpathName = '\0';
-			for(int i=0; i<srcdepth; i++)
-				strcat(fpathName, "../");
-			D2(bug("HOSTFS: fs_readlink relative: prepend '%s'", fpathName));
-			// at last append the destination
-			strcat( fpathName, target + cl );
-		}
-		else {
-			strcpy( fpathName, drv->mountPoint );
-			if ( target[ len ] != '/' )
-				strcat( fpathName, "/" );
-			strcat( fpathName, &target[ len ] );
-		}
-	} else {
-		strcpy( fpathName, target );
-	}
-
-	D(bug( "HOSTFS: /fs_readlink: %s", fpathName ));
-
-	Host2AtariSafeStrncpy( buf, fpathName, len );
+	Host2AtariSafeStrncpy( buf, target, len );
 	return TOS_E_OK;
 }
 
@@ -2878,22 +2791,26 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	drv->fsDrv = filesys;
 	drv->fsFlags = ReadInt32(filesys + 4);
 	drv->fsDevDrv = filesys_devdrv;
-	drv->mountPoint = strdup( fmountPoint );
 
 	int16 dnum = -1;
-	if ( strlen( fmountPoint ) == 2 && fmountPoint[1] == ':' ) {
+	size_t len = strlen( fmountPoint );
+	if ( len == 2 && fmountPoint[1] == ':' ) {
 		// The mountPoint is of a "X:" format: (BetaDOS mapping)
-		dnum = tolower(fmountPoint[0])-'a';
+		dnum = DriveFromLetter(toupper(fmountPoint[0]));
 	}
-	else if (strlen(fmountPoint) >= 4 && !strncasecmp(fmountPoint, "u:\\", 3)) {
+	else if (len >= 4 && !strncasecmp(fmountPoint, "u:\\", 3)) {
 		// the hostfs.xfs tries to map drives to u:\\X
 		// in this case we use the [HOSTFS] of config file here
-		dnum = tolower(fmountPoint[3])-'a';
+		dnum = DriveFromLetter(toupper(fmountPoint[3]));
 	}
-
+	if (len > 0 && fmountPoint[len - 1] != '\\' && fmountPoint[len - 1] != '/')
+		strcat(fmountPoint, "/");
+	drv->mountPoint = strdup( fmountPoint );
+	strd2upath(drv->mountPoint, drv->mountPoint);
+	
 	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
 	if (dnum >= 0 && dnum < maxdnum) {
-		drv->hostRoot = canonicalize_file_name( bx_options.aranymfs[dnum].rootPath );
+		drv->hostRoot = my_canonicalize_file_name( bx_options.aranymfs[dnum].rootPath, true );
 		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
 	}
 	else {
@@ -2904,7 +2821,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		char fhostroot[MAXPATHNAMELEN];
 		Atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
 
-		drv->hostRoot = canonicalize_file_name( fhostroot );
+		drv->hostRoot = my_canonicalize_file_name( fhostroot, true );
 		drv->halfSensitive = halfSensitive;
 	}
 

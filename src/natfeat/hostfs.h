@@ -168,7 +168,6 @@ class HostFs : public NF_Base
 	int32 host_statvfs ( const char *fpathName, void *buff );
 	char *host_readlink( const char *pathname, char *target, int len );
 	DIR  *host_opendir(  const char *name );
-	ExtDrive *findDrive( XfsCookie *dir, char *pathname );
 
 	void xfs_freefs( XfsFsFile *fs );
 

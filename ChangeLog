@@ -1,3 +1,7 @@
+2014/05/14 - Thorsten
+- hostfs: improved handling of symlinks
+
+
 2014/05/13 - Xavier Joubert
 - tools/build-cygwin.sh: Updates to cygwin build script
 
