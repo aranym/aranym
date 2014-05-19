@@ -43,6 +43,11 @@ uaecptr write_page = 0xeeeeeeee;
 uintptr write_offset = 0;
 #endif
 
+extern "C" void breakpt(void)
+{
+	// fprintf(stderr, "bus err: pc=%08x, sp=%08x, addr=%08x\n", regs.pc, regs.regs[15], regs.mmu_fault_addr);
+}
+
 #if !KNOWN_ALLOC && !NORMAL_ADDRESSING
 // This part need rewrite for ARAnyM !!
 // It can be taken from hatari.

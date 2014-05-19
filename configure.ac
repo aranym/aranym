@@ -804,6 +804,47 @@ if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
   SYSSRCS="$SYSSRCS Unix/getopt_init.c Unix/getopt1.c Unix/getopt.c"
 fi
 
+dnl Check if we have __builtin_bswap16/32
+AC_CACHE_CHECK([for __builtin_bswap16],
+  ac_cv_have___builtin_bswap16, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #include <stdarg.h>
+    #include <stdio.h>
+    unsigned short v;
+  ], [
+    v = __builtin_bswap16(v);
+  ],
+  [ac_cv_have___builtin_bswap16=yes],
+  [ac_cv_have___builtin_bswap16=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE___BUILTIN_BSWAP16, $ac_cv_have___builtin_bswap16,
+  [Define if your compiler supports __builtin_bswap16])
+AC_CACHE_CHECK([for __builtin_bswap32],
+  ac_cv_have___builtin_bswap32, [
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  AC_TRY_COMPILE([
+    #include <stdarg.h>
+    #include <stdio.h>
+    unsigned int v;
+  ], [
+    v = __builtin_bswap32(v);
+  ],
+  [ac_cv_have___builtin_bswap32=yes],
+  [ac_cv_have___builtin_bswap32=no]
+  )
+  AC_LANG_RESTORE
+  ]
+)
+AC_TRANSLATE_DEFINE(HAVE___BUILTIN_BSWAP32, $ac_cv_have___builtin_bswap32,
+  [Define if your compiler supports __builtin_bswap32])
+
+
 case $CONTROL_KEY in
 	meta)
 		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
@@ -1229,6 +1270,18 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
     CAN_JIT=yes
     WANT_33BIT_ADDRESSING=yes
+	SAVED_CXXFLAGS="$CXXFLAGS"
+	CXXFLAGS="$CXXFLAGS -mno-red-zone"
+	  AC_CACHE_CHECK([whether GCC supports -mno-red-zone], ac_cv_gcc_no_red_zone, [
+	    AC_LANG_SAVE
+	    AC_LANG_CPLUSPLUS
+	    AC_TRY_COMPILE([],[],[ac_cv_gcc_no_red_zone=yes],[ac_cv_gcc_no_red_zone=no])
+	    AC_LANG_RESTORE
+	  ])
+	  CXXFLAGS="$SAVED_CXXFLAGS"
+	  if [[ "x$ac_cv_gcc_no_red_zone" = "xyes" ]]; then
+	     GENCPU_FLAGS="-mno-red-zone"
+	  fi
   fi
 elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
   dnl SPARC CPU
@@ -1841,6 +1894,7 @@ AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
 AC_SUBST(CPU_TYPE)
 AC_SUBST(ARCHFLAGS)
+AC_SUBST(GENCPU_FLAGS)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 AC_SUBST(BUNDLE_FRAMEWORKS)

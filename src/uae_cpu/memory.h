@@ -121,6 +121,8 @@ extern uintptr FastRAMBaseDiff;
 #define InitVMEMBaseDiff(va, ra)        (ra = (uintptr)(va) + MEMBaseDiff)
 #endif
 
+extern "C" void breakpt(void);
+
 #ifndef NOCHECKBOUNDARY
 static ALWAYS_INLINE bool test_ram_boundary(uaecptr addr, int size, bool super, bool write)
 {
@@ -153,6 +155,7 @@ static ALWAYS_INLINE void check_ram_boundary(uaecptr addr, int size, bool write)
 	// D(bug("BUS ERROR %s at $%x\n", (write ? "writing" : "reading"), addr));
 	regs.mmu_fault_addr = addr;
 	regs.mmu_ssw = ((size & 3) << 5) | (write ? 0 : (1 << 8));
+	breakpt();
 	THROW(2);
 }
 

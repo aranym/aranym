@@ -111,14 +111,17 @@ extern JMP_BUF sigsegv_env;
 		in_handler = 0; \
 		LONGJMP(sigsegv_env, 1); \
 	} \
-	else \
+	else { \
+		breakpt(); \
 		THROW(2); \
+	} \
 }
 #else /* NO_NESTED_SIGSEGV */
 # define BUS_ERROR(a) \
 { \
 	regs.mmu_fault_addr=(a); \
 	in_handler = 0; \
+	breakpt(); \
 	THROW(2); \
 }
 #endif /* NO_NESTED_SIGSEGV */
@@ -126,6 +129,7 @@ extern JMP_BUF sigsegv_env;
 # define BUS_ERROR(a) \
 { \
 	regs.mmu_fault_addr=(a); \
+	breakpt(); \
 	THROW(2); \
 }
 #endif /* EXTENDED_SIGSEGV */

@@ -674,6 +674,7 @@ JMP_BUF sigsegv_env;
 static void
 atari_bus_fault(void)
 {
+	breakpt();
 	THROW(2);
 }
 

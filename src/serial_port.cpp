@@ -41,6 +41,8 @@
 Serialport::Serialport(void)
 {
 	D(bug("Serialport: interface created"));
+	oldTBE = 0;
+	oldStatus = 0;
 	handle = open(bx_options.serial.serport,O_RDWR|O_NDELAY|O_NONBLOCK);/* Raw mode */
 	// /dev/ttyS0 by default or /dev/ttyUSB0 : see Serport in ./aranym/config [SERIAL]
 	if (handle<0) {

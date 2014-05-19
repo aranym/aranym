@@ -33,6 +33,7 @@ CXXFLAGS1 = @CXXFLAGS@
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS) $(ZLIB_CFLAGS)
 CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
 ARCHFLAGS = @ARCHFLAGS@
+GENCPU_FLAGS = @GENCPU_FLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@
 LDFLAGS = @LDFLAGS@
@@ -480,55 +481,55 @@ $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 $(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp $(GEN_DIR)/comptbl.h
 
 $(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu2.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu3.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu4.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu5.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu6.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu7.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu8.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuemu1_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_1 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu2_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_2 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu3_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_3 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu4_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_4 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu5_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_5 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu6_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_6 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu7_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_7 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu8_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_8 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/compemu1.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu2.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu3.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu4.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu5.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu6.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu7.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu8.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/cpufast.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp.s

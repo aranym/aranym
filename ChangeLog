@@ -1,3 +1,8 @@
+2014/05/18 - Thorsten
+- configure.ac, Makefile.in, newcpu.h: Fixed nasty bug that clobbered
+  local variables when compiling without optimizing
+
+
 2014/05/14 - Jens
 - src/Unix/MacOSX/scripts/gen_machfiles.sh - Removed forgotten debug code
 
