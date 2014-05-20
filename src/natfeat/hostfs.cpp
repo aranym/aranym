@@ -73,12 +73,14 @@ static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 	if (filename == NULL)
 		return NULL;
 
+#if (!defined HAVE_CANONICALIZE_FILE_NAME && defined HAVE_REALPATH) || defined __CYGWIN__
 #ifdef PATH_MAX
 	int path_max = PATH_MAX;
 #else
 	int path_max = pathconf(filename, _PC_PATH_MAX);
 	if (path_max <= 0)
 		path_max = 4096;
+#endif
 #endif
 
 	char *resolved;

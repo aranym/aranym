@@ -1,3 +1,9 @@
+2014/05/20 - Thorsten
+- nfcdrom_win32.{cpp,h}: New, implementing NatFeat CDROM for win32
+- nfcdrom_sdl.{cpp,h}: New, implementing NatFeat CDROM for SDL
+  that was previously in nfcdrom.{cpp,h}
+
+
 2014/05/18 - Thorsten
 - configure.ac, Makefile.in, newcpu.h: Fixed nasty bug that clobbered
   local variables when compiling without optimizing

@@ -21,7 +21,7 @@
 #ifndef NFCDROM_LINUX_H
 #define NFCDROM_LINUX_H
 
-#include "parameters.h"
+#include "nfcdrom.h"
 
 class CdromDriverLinux : public CdromDriver
 {
@@ -30,8 +30,10 @@ class CdromDriverLinux : public CdromDriver
 
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 
+	protected:
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
+		const char *DeviceName(int drive);
 
 		int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
 		int32 cd_status(memptr device, memptr ext_status);
@@ -42,6 +44,8 @@ class CdromDriverLinux : public CdromDriver
 		int32 cd_setsongtime(memptr device, uint32 dummy, uint32 start_msf, uint32 end_msf);
 		int32 cd_gettoc(memptr device, uint32 dummy, memptr buffer);
 		int32 cd_discinfo(memptr device, memptr buffer);
+
+		int cd_unixioctl(int drive, int request, void *buffer);
 
 	public:
 		CdromDriverLinux();

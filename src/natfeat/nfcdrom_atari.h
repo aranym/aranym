@@ -33,6 +33,13 @@
 #define	CDROM_LBA 0x01 /* "logical block": first frame is #0 */
 #define	CDROM_MSF 0x02 /* "minute-second-frame": binary, not bcd here! */
 
+/* SUB Q control bits */
+
+#define CDROM_AUDIO_EMPHASIS    0x01
+#define CDROM_COPY_PERMITTED    0x02
+#define CDROM_DATA_TRACK        0x04
+#define CDROM_FOUR_CHANNEL      0x08
+
 /* audio states (from SCSI-2, but seen with other drives, too) */
 #define	CDROM_AUDIO_INVALID	0x00	/* audio status not supported */
 #define	CDROM_AUDIO_PLAY	0x11	/* audio play operation in progress */
@@ -64,6 +71,24 @@ typedef struct {
 	unsigned char	cdth_trk0;      /* start track */
 	unsigned char	cdth_trk1;      /* end track */
 } atari_cdromtochdr_t;
+
+typedef struct
+{
+    unsigned char    cdmsf_min0;     /* start minute */
+    unsigned char    cdmsf_sec0;     /* start second */
+    unsigned char    cdmsf_frame0;   /* start frame */
+    unsigned char    cdmsf_min1;     /* end minute */
+    unsigned char    cdmsf_sec1;     /* end second */
+    unsigned char    cdmsf_frame1;   /* end frame */
+} atari_cdrom_msf_t;
+
+typedef struct 
+{
+	unsigned char	cdti_trk0;	/* start track */
+	unsigned char	cdti_ind0;	/* start index */
+	unsigned char	cdti_trk1;	/* end track */
+	unsigned char	cdti_ind1;	/* end index */
+} atari_cdrom_ti;
 
 typedef struct  {
 	/* input parameters */
