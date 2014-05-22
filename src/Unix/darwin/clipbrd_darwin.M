@@ -25,6 +25,9 @@
 #include "debug.h"
 #include <Cocoa/Cocoa.h>
 
+#include "SDL.h"
+#include "clipbrd.h"
+
 unichar atari_2_unicode_table[256] = {
 /* Standard ASCII characters from 0x00 to 0x7e */
 /* Unicode stuff from 0x7f to 0xff */
@@ -64,6 +67,8 @@ unichar atari_2_unicode_table[256] = {
 
 
 int init_aclip() { return 0; }
+
+int filter_aclip(const SDL_Event *event) { return 1; }
 
 char *read_aclip(size_t *len)
 {

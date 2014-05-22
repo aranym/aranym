@@ -42,6 +42,8 @@
 #include "debug.h"
 
 #include <SDL.h>
+#include <SDL_syswm.h>
+#include "clipbrd.h"
 
 /* Joysticks */
 
@@ -192,6 +194,12 @@ static void hideMouse(bool hide)
 	}
 }
 
+static int event_filter(const SDL_Event *event)
+{
+	if (filter_aclip(event) == 0) return 0;
+	return 1;
+}
+
 void InputInit()
 {
 	aranym_cursor = init_system_cursor(arrow);
@@ -217,6 +225,10 @@ void InputInit()
 	OPEN_JOYSTICK(bx_options.joysticks.ikbd1, ARANYM_JOY_IKBD1);
 	OPEN_JOYSTICK(bx_options.joysticks.joypada, ARANYM_JOY_JOYPADA);
 	OPEN_JOYSTICK(bx_options.joysticks.joypadb, ARANYM_JOY_JOYPADB);
+
+	/* Enable the special window hook events */
+	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+	SDL_SetEventFilter(event_filter);
 }
 
 void InputReset()

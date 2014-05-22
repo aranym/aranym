@@ -27,6 +27,7 @@
 
 #include "SDL.h"
 #include "SDL_syswm.h"
+#include "clipbrd.h"
 
 #if defined(__unix__) \
 	|| defined (_BSD_SOURCE) || defined (_SYSV_SOURCE) \
@@ -49,8 +50,6 @@ static Window SDL_Window;
 static void (*Lock_Display)(void);
 static void (*Unlock_Display)(void);
 
-/* The system message filter function -- handle clipboard messages */
-static int clipboard_filter(const SDL_Event *event);
 
 int init_aclip()
 {
@@ -70,7 +69,6 @@ int init_aclip()
 
 			/* Enable the special window hook events */
 			SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
-			SDL_SetEventFilter(clipboard_filter);
 
 			retval = 0;
 		}
@@ -150,10 +148,11 @@ char * read_aclip(size_t *dstlen)
 	return dst;
 }
 
-static int clipboard_filter(const SDL_Event *event)
+/* The system message filter function -- handle clipboard messages */
+int filter_aclip(const SDL_Event *event)
 {
 	/* Post all non-window manager specific events */
-	if ( event->type != SDL_SYSWMEVENT ) {
+	if ( !SDL_Window || event->type != SDL_SYSWMEVENT ) {
 		return 1;
 	}
 
@@ -206,6 +205,7 @@ static int clipboard_filter(const SDL_Event *event)
 int init_aclip() { return -1; }
 void write_aclip(char *src, size_t srclen) { }
 char * read_aclip(size_t *dstlen) { return NULL; }
+int filter_aclip(const SDL_Event *event) { return 1; }
 #endif /* X11_SCRAP */
 
 // don't remove this modeline with intended formatting for vim:ts=4:sw=4:
