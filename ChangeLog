@@ -1,3 +1,7 @@
+2014/05/22 - Thorsten
+Missed some changes in previous commit.
+
+
 2014/05/20 - Thorsten
 - nfcdrom_win32.{cpp,h}: New, implementing NatFeat CDROM for win32
 - nfcdrom_sdl.{cpp,h}: New, implementing NatFeat CDROM for SDL

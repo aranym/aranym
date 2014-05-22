@@ -338,14 +338,20 @@ AC_CHECK_FUNCS(mach_task_self task_self)
 
 AC_DEFINE([DIRSEPARATOR], "/", [Default directory separator])
 
+AH_TEMPLATE([ARANYMHOME], [Default ARAnyM directory])
+
 case "$host_os" in
   linux*)
     EXTRASYSSRCS="Unix/linux/parameters_linux.cpp Unix/linux/ethernet_linux.cpp Unix/host_filesys_unix.cpp"
     ;;
   cygwin*)
-    AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
+    AC_DEFINE([ARANYMHOME], "aranym")
     LIBS="$LIBS -liberty"
-    EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/tools_cygwin.cpp Unix/cygwin/ethernet_cygwin.cpp"
+    EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/tools_cygwin.cpp Unix/cygwin/ethernet_cygwin.cpp Unix/cygwin/win32_supp.cpp"
+    ;;
+  mingw*)
+    AC_DEFINE([ARANYMHOME], "aranym")
+    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp Unix/cygwin/win32_supp.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -363,10 +369,10 @@ case "$host_os" in
   darwin*)
 	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
 	if test "x$WITH_FINK" = "xyes"; then
-		AC_DEFINE([ARANYMHOME], "aranym", [Default ARAnyM directory])
+		AC_DEFINE([ARANYMHOME], "aranym")
 		EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp Unix/darwin/ethernet_darwin.cpp Unix/darwin/SDLHotkeysRefresh.M"
 	else
-		AC_DEFINE([ARANYMHOME], "ARAnyM", [Default ARAnyM directory])
+		AC_DEFINE([ARANYMHOME], "ARAnyM")
 		
 		if test "x$WITH_CLASSIC_CONFIG" = "xyes"; then
 			echo "Using classic config"
@@ -1650,9 +1656,17 @@ AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
 NFCDROM_DRIVER="sdl"
 case "$host_os" in
 	linux*)
-		NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
+		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp natfeat/nfcdrom_linux.cpp"
 		AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
 		NFCDROM_DRIVER="linux,$NFCDROM_DRIVER"
+		;;
+	mingw*|cygwin*)
+		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp natfeat/nfcdrom_win32.cpp"
+		AC_DEFINE([NFCDROM_WIN32_SUPPORT], 1, [Define if you want to use Win32 support as CD-ROM driver])
+		NFCDROM_DRIVER="win32,$NFCDROM_DRIVER"
+		;;
+	*)
+		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp"
 		;;
 esac
 PROVIDES_NF="$PROVIDES_NF cdrom($NFCDROM_DRIVER)"

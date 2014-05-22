@@ -140,7 +140,6 @@ SRCS = main.cpp \
 	natfeat/nfbootstrap.cpp \
 	natfeat/nf_basicset.cpp \
 	natfeat/debugprintf.cpp \
-	natfeat/nfcdrom.cpp \
 	$(MIDISEQSRCS) \
 	$(NFCDROMSRCS) \
 	$(NFPCISRCS) \
@@ -358,7 +357,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) cdromtest $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -rf $(GEN_DIR)
@@ -614,6 +613,9 @@ $(GEN_DIR)/memory.s: memory.cpp
 
 $(APP_IFC): aratapif.c
 	$(AM_V_CC)$(CC) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/Unix/aratapif.c
+
+cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfeat/nfcdrom_sdl.cpp $(srcdir)/natfeat/nfcdrom_linux.cpp $(srcdir)/natfeat/nfcdrom_win32.cpp
+	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)
 
 # Include dependencies
 ifneq ($(wildcard $(DEPEND)),)
