@@ -530,7 +530,7 @@ static int findScanCodeOffset(SDL_keysym keysym)
 		default:	break;
 	}
 	if (offset != UNDEFINED_OFFSET) {
-		panicbug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC);
+		D(bug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC));
 	}
 
 	return offset;
@@ -591,7 +591,7 @@ static int keysymToAtari(SDL_keysym keysym)
 			if (offset == UNDEFINED_OFFSET) {
 				offset = findScanCodeOffset(keysym);
 				if (offset == UNDEFINED_OFFSET) {
-					panicbug("Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym);
+					D(bug("Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym));
 					return 0;	// unknown scancode
 				}
 			}

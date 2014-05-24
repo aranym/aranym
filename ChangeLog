@@ -1,4 +1,8 @@
 2014/05/24 - Thorsten
+- input.cpp: don't panic about unknown keycodes unless debugging
+
+
+2014/05/24 - Thorsten
 - hostfs: fixed handling of absolute symlinks with a drive letter only
 
 
