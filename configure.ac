@@ -24,31 +24,32 @@ fi
 AC_SUBST(AM_DEFAULT_VERBOSITY)
 
 dnl Options.
-AC_ARG_ENABLE(nat-debug,     [  --enable-nat-debug      enable native debugger support (default=yes)], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
+AC_ARG_ENABLE(nat-debug,     [AC_HELP_STRING([--enable-nat-debug], [enable native debugger support (default=yes)])], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
-AC_ARG_ENABLE(full-debug,    [  --enable-full-debug     enable full debug outputs (default=no)], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
+AC_ARG_ENABLE(full-debug,    [AC_HELP_STRING([--enable-full-debug], [enable full debug outputs (default=no)])], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
 
+WHICH_DEBUG_DEFAULT="ndebug"
 AC_ARG_ENABLE(debug,
-[  --enable-debug=which    specify which debugger to use (default=ndebug)],
+[AC_HELP_STRING([--enable-debug=which], [specify which debugger to use (default=ndebug)])],
 [ case "$enableval" in
-    default)  WHICH_DEBUG="ndebug";;
+    default)  WHICH_DEBUG=$WHICH_DEBUG_DEFAULT;;
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
          no)  WHICH_DEBUG="no";;
 	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
   esac
 ],
-[WHICH_DEBUG="ndebug"
+[WHICH_DEBUG=$WHICH_DEBUG_DEFAULT
 ])
 
-AC_ARG_ENABLE(fullhistory,     [  --enable-fullhistory    enable full history for debugger (default=no)], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
+AC_ARG_ENABLE(fullhistory,     [AC_HELP_STRING([--enable-fullhistory], [enable full history for debugger (default=no)])], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(flightrecorder,  [  --enable-flightrecorder enable CPU flight recorder (default=no)], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
+AC_ARG_ENABLE(flightrecorder,  [AC_HELP_STRING([--enable-flightrecorder], [enable CPU flight recorder (default=no)])], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
 
-AC_ARG_ENABLE(fullmmu,         [  --enable-fullmmu        enable full 68040 MMU (default=no)], [WANT_MMU=$enableval], [WANT_MMU=no])
+AC_ARG_ENABLE(fullmmu,         [AC_HELP_STRING([--enable-fullmmu], [enable full 68040 MMU (default=no)])], [WANT_MMU=$enableval], [WANT_MMU=no])
 
 AC_ARG_ENABLE(atc,
-[  --enable-atc=ATC        select type of ATC for MMU (default=full)],
+[AC_HELP_STRING([--enable-atc=ATC], [select type of ATC for MMU (default=full)])],
 [ case "$enableval" in
         full)  ATC_TYPE="full";;
        small)  ATC_type="small";;
@@ -57,26 +58,26 @@ AC_ARG_ENABLE(atc,
   esac
 ], [ATC_TYPE=full])
 
-AC_ARG_ENABLE(realstop,        [  --enable-realstop       enable real STOP instruction (default=yes)], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
+AC_ARG_ENABLE(realstop,        [AC_HELP_STRING([--enable-realstop], [enable real STOP instruction (default=yes)])], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
 
-AC_ARG_ENABLE(dsp,             [  --enable-dsp            enable DSP 56001 (default=yes)], [WANT_DSP=$enableval], [WANT_DSP=yes])
+AC_ARG_ENABLE(dsp,             [AC_HELP_STRING([--enable-dsp], [enable DSP 56001 (default=yes)])], [WANT_DSP=$enableval], [WANT_DSP=yes])
 
-AC_ARG_ENABLE(dsp-disasm,      [  --enable-dsp-disasm     enable DSP 56001 disassembler (default=no)], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
+AC_ARG_ENABLE(dsp-disasm,      [AC_HELP_STRING([--enable-dsp-disasm], [enable DSP 56001 disassembler (default=no)])], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(protect2k,       [  --enable-protect2k      enable first 2kB of RAM Super protection (default=yes)], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=yes])
+AC_ARG_ENABLE(protect2k,       [AC_HELP_STRING([--enable-protect2k], [enable first 2kB of RAM Super protection (default=yes)])], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=yes])
 
-AC_ARG_ENABLE(fixedfastram,    [  --enable-fixedfastram=X use fixed size FastRAM of X MB (default=no)], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
+AC_ARG_ENABLE(fixedfastram,    [AC_HELP_STRING([--enable-fixedfastram=X], [use fixed size FastRAM of X MB (default=no)])], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
-AC_ARG_ENABLE(fixedvideoram,   [  --enable-fixedvideoram  use fixed start of VideoRAM (default=no)], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
+AC_ARG_ENABLE(fixedvideoram,   [AC_HELP_STRING([--enable-fixedvideoram], [use fixed start of VideoRAM (default=no)])], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
 
-AC_ARG_ENABLE(blitmemmove,     [  --enable-blitmemmove    enable Blitter memmove rout (default=no)], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
+AC_ARG_ENABLE(blitmemmove,     [AC_HELP_STRING([--enable-blitmemmove], [enable Blitter memmove rout (default=no)])], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
 
-AC_ARG_ENABLE(blitsdlblit,     [  --enable-blitsdlblit    enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
+AC_ARG_ENABLE(blitsdlblit,     [AC_HELP_STRING([--enable-blitsdlblit], [enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)])], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
-AC_ARG_ENABLE(hostfs,          [  --enable-hostfs         enable hostfs support (default=yes)], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
+AC_ARG_ENABLE(hostfs,          [AC_HELP_STRING([--enable-hostfs], [enable hostfs support (default=yes)])], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
 AC_ARG_ENABLE(ctrlkey,
-[  --enable-ctrlkey=WICH        specify which key to use for control key emulation (default=both)],
+[AC_HELP_STRING([--enable-ctrlkey=WHICH], [specify which key to use for control key emulation (default=both)])],
 [ case "$enableval" in
     dnl default is both
     ctrl)	    CONTROL_KEY="ctrl";;
@@ -88,41 +89,41 @@ AC_ARG_ENABLE(ctrlkey,
 [ CONTROL_KEY="both"
 ])
 
-AC_ARG_ENABLE(gui,             [  --enable-gui            enable GUI (default=yes)], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
+AC_ARG_ENABLE(gui,             [AC_HELP_STRING([--enable-gui], [enable GUI (default=yes)])], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
-AC_ARG_ENABLE(opengl,          [  --enable-opengl         enable OpenGL (default=yes)], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
+AC_ARG_ENABLE(opengl,          [AC_HELP_STRING([--enable-opengl], [enable OpenGL (default=yes)])], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
 
-AC_ARG_WITH(mesa-headers,      [  --with-mesa-headers     Path to Mesa header files], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
+AC_ARG_WITH(mesa-headers,      [AC_HELP_STRING([--with-mesa-headers], [Path to Mesa header files])], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
 
-AC_ARG_ENABLE(nfpci,           [  --enable-nfpci          enable NatFeat PCI (default=no)], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
+AC_ARG_ENABLE(nfpci,           [AC_HELP_STRING([--enable-nfpci], [enable NatFeat PCI (default=no)])], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
 
-AC_ARG_ENABLE(usbhost,         [  --enable-usbhost        enable NatFeat USB (default=no)], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
+AC_ARG_ENABLE(usbhost,         [AC_HELP_STRING([--enable-usbhost], [enable NatFeat USB (default=no)])], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
 
-AC_ARG_ENABLE(nfosmesa,        [  --enable-nfosmesa       enable NatFeat OSMesa (default=no)], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
+AC_ARG_ENABLE(nfosmesa,        [AC_HELP_STRING([--enable-nfosmesa], [enable NatFeat OSMesa (default=no)])], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
 
-AC_ARG_ENABLE(nfjpeg,          [  --enable-nfjpeg         enable NatFeat JPEG (default=yes)], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
+AC_ARG_ENABLE(nfjpeg,          [AC_HELP_STRING([--enable-nfjpeg], [enable NatFeat JPEG (default=yes)])], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
-AC_ARG_ENABLE(nfclipbrd,       [  --enable-nfclipbrd      enable NatFeat Clipboard (default=yes)], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
+AC_ARG_ENABLE(nfclipbrd,       [AC_HELP_STRING([--enable-nfclipbrd], [enable NatFeat Clipboard (default=yes)])], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
 
-AC_ARG_ENABLE(nfvdi,           [  --enable-nfvdi          enable NatFeat VDI (default=yes)], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
+AC_ARG_ENABLE(nfvdi,           [AC_HELP_STRING([--enable-nfvdi], [enable NatFeat VDI (default=yes)])], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
 
-AC_ARG_ENABLE(ata-cdrom,       [  --enable-ata-cdrom      enable ATA CD-ROM emulation (default=yes)], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
+AC_ARG_ENABLE(ata-cdrom,       [AC_HELP_STRING([--enable-ata-cdrom], [enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
-AC_ARG_ENABLE(epslimiter,      [  --enable-epslimiter     enable Exception per second limiter (default=no)], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
+AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
 
-AC_ARG_ENABLE(lilo,            [  --enable-lilo           enable Linux-m68k loader (default=no)], WANT_LILO="$enableval", WANT_LILO="no")
+AC_ARG_ENABLE(lilo,            [AC_HELP_STRING([--enable-lilo], [enable Linux-m68k loader (default=no)])], WANT_LILO="$enableval", WANT_LILO="no")
 
-AC_ARG_ENABLE(rtctimer,        [  --enable-rtctimer       enable Linux /dev/rtc as source timer (default=yes)], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
+AC_ARG_ENABLE(rtctimer,        [AC_HELP_STRING([--enable-rtctimer], [enable Linux /dev/rtc as source timer (default=yes)])], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
 
-AC_ARG_ENABLE(parallelx86,     [  --enable-parallelx86    enable Linux X86 hw access for parallel port (default=no)], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
+AC_ARG_ENABLE(parallelx86,     [AC_HELP_STRING([--enable-parallelx86], [enable Linux X86 hw access for parallel port (default=no)])], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
 
-AC_ARG_ENABLE(parport,         [  --enable-parport        enable Linux /dev/parport access for parallel port (default=yes)], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
+AC_ARG_ENABLE(parport,         [AC_HELP_STRING([--enable-parport], [enable Linux /dev/parport access for parallel port (default=yes)])], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
 
-AC_ARG_ENABLE(serialport,      [  --enable-serialport     enable Unix /dev/ttySn serial port support (default=yes)], [WANT_UNIXSERIALPORT=$enableval], [WANT_UNIXSERIALPORT=yes])
+AC_ARG_ENABLE(serialport,      [AC_HELP_STRING([--enable-serialport], [enable Unix /dev/ttySn serial port support (default=yes)])], [WANT_UNIXSERIALPORT=$enableval], [WANT_UNIXSERIALPORT=yes])
 
-AC_ARG_WITH(fink,              [  --with-fink             Use Fink suite to build Aranym on MacOSX (default=no)], [WITH_FINK=$withval], [WITH_FINK=no])
+AC_ARG_WITH(fink,              [AC_HELP_STRING([--with-fink], [Use Fink suite to build Aranym on MacOSX (default=no)])], [WITH_FINK=$withval], [WITH_FINK=no])
 
-AC_ARG_WITH(classicconfig,     [  --with-classicconfig	  Use Classic config names on MacOSX (default=no)], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
+AC_ARG_WITH(classicconfig,     [AC_HELP_STRING([--with-classicconfig], [Use Classic config names on MacOSX (default=no)])], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
 
 dnl FPU emulation core.
 if [[ "x$WANT_MMU" = "xyes" ]]; then
@@ -131,7 +132,7 @@ else
     SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="ieee uae"
 fi
 AC_ARG_ENABLE(fpe,
-[  --enable-fpe=FPE        specify which fpu emulator to use (default=auto)],
+[AC_HELP_STRING([--enable-fpe=FPE], [specify which fpu emulator to use (default=auto)])],
 [ case "$enableval" in
     dnl default is always ieee, if architecture has this fp format
     auto)	FPE_CORE_TEST_ORDER=$SUGGESTED_AUTO_FPE_CORE_TEST_ORDER;;
@@ -147,7 +148,7 @@ AC_ARG_ENABLE(fpe,
 
 dnl Addressing modes.
 AC_ARG_ENABLE(addressing,
-[  --enable-addressing=AM  specify the addressing mode to use (default=fastest)],
+[AC_HELP_STRING([--enable-addressing=AM], [specify the addressing mode to use (default=fastest)])],
 [ case "$enableval" in
     direct)	ADDRESSING_TEST_ORDER="direct";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
@@ -159,7 +160,7 @@ AC_ARG_ENABLE(addressing,
 ])
 
 AC_ARG_ENABLE(addr-check,
-[  --enable-addr-check=AM  specify the memory check to use (default=page)],
+[AC_HELP_STRING([--enable-addr-check=AM], [specify the memory check to use (default=page)])],
 [ case "$enableval" in
     no)		MEMORY_CHECK="no";;
     full)	MEMORY_CHECK="full";;
@@ -174,21 +175,21 @@ AC_ARG_ENABLE(addr-check,
 ])
 
 dnl Experimental hacks around spcflags handling.
-AC_ARG_ENABLE(spcflags-excl, [  --enable-spcflags-excl  enable exclusive spcflags handling (default=no)], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
+AC_ARG_ENABLE(spcflags-excl, [AC_HELP_STRING([--enable-spcflags-excl], [enable exclusive spcflags handling (default=no)])], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
 
 dnl JIT compiler options.
-AC_ARG_ENABLE(jit-compiler,    [  --enable-jit-compiler   enable JIT compiler (default=no)], [WANT_JIT=$enableval], [WANT_JIT=no])
+AC_ARG_ENABLE(jit-compiler, [AC_HELP_STRING([--enable-jit-compiler], [enable JIT compiler (default=no)])], [WANT_JIT=$enableval], [WANT_JIT=no])
 
 AC_ARG_ENABLE(jit-fpu,
-[  --enable-jit-fpu        enable JIT compiler for FPU instructions (default=no)], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
+[AC_HELP_STRING([--enable-jit-fpu], [enable JIT compiler for FPU instructions (default=no)])], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
 
-AC_ARG_ENABLE(jit-debug,       [  --enable-jit-debug      activate native code disassemblers (default=no)], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
+AC_ARG_ENABLE(jit-debug,       [AC_HELP_STRING([--enable-jit-debug], [activate native code disassemblers (default=no)])], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-AC_ARG_ENABLE(ethernet,        [  --enable-ethernet       enable ethernet card emulation (default=yes)], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
+AC_ARG_ENABLE(ethernet,        [AC_HELP_STRING([--enable-ethernet], [enable ethernet card emulation (default=yes)])], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
-AC_ARG_ENABLE(bpf-ethernet,    [  --enable-bpf-ethernet   enable ethernet card emulation using BPF (default=no)], [WANT_BFP_ETHERNET=$enableval], [WANT_BFP_ETHERNET=no])
+AC_ARG_ENABLE(bpf-ethernet,    [AC_HELP_STRING([--enable-bpf-ethernet], [enable ethernet card emulation using BPF (default=no)])], [WANT_BFP_ETHERNET=$enableval], [WANT_BFP_ETHERNET=no])
 
-AC_ARG_ENABLE(cxx-exceptions,  [  --enable-cxx-exceptions enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
+AC_ARG_ENABLE(cxx-exceptions,  [AC_HELP_STRING([--enable-cxx-exceptions], [enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)])], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
 case "$host_os" in
@@ -339,6 +340,10 @@ AC_CHECK_FUNCS(mach_task_self task_self)
 AC_DEFINE([DIRSEPARATOR], "/", [Default directory separator])
 
 AH_TEMPLATE([ARANYMHOME], [Default ARAnyM directory])
+AH_TEMPLATE([HAVE_O_FSYNC], [Define if you want to use FreeBSD's imitation of O_SYNC])
+AH_TEMPLATE([ARANYMCONFIG], [Default ARAnyM config file])
+AH_TEMPLATE([ARANYMNVRAM], [Default ARAnyM NVRAM file])
+AH_TEMPLATE([ARANYMKEYMAP], [Default ARAnyM keymap])
 
 case "$host_os" in
   linux*)
@@ -363,11 +368,11 @@ case "$host_os" in
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/irix/unaligned.c Unix/host_filesys_unix.cpp"
     ;;
   freebsd*|kfreebsd*-gnu)
-    AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
+    AC_DEFINE([HAVE_O_FSYNC], 1)
     EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp"
     ;;
   darwin*)
-	AC_DEFINE([HAVE_O_FSYNC], 1, [Define if you want to use FreeBSD's imitation of O_SYNC])
+	AC_DEFINE([HAVE_O_FSYNC], 1)
 	if test "x$WITH_FINK" = "xyes"; then
 		AC_DEFINE([ARANYMHOME], "aranym")
 		EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp Unix/darwin/ethernet_darwin.cpp Unix/darwin/SDLHotkeysRefresh.M"
@@ -376,14 +381,14 @@ case "$host_os" in
 		
 		if test "x$WITH_CLASSIC_CONFIG" = "xyes"; then
 			echo "Using classic config"
-			AC_DEFINE([ARANYMCONFIG], "config", [Default ARAnyM config file])
-			AC_DEFINE([ARANYMNVRAM], "nvram", [Default ARAnyM NVRAM file])
-			AC_DEFINE([ARANYMKEYMAP], "keymap", [Default ARAnyM keymap])
+			AC_DEFINE([ARANYMCONFIG], "config")
+			AC_DEFINE([ARANYMNVRAM], "nvram")
+			AC_DEFINE([ARANYMKEYMAP], "keymap")
 		else	
 			echo "Using preference files"
-			AC_DEFINE([ARANYMCONFIG], "org.aranym.amcfg", [Default ARAnyM config file])
-			AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram", [Default ARAnyM NVRAM file])
-			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap", [Default ARAnyM keymap])
+			AC_DEFINE([ARANYMCONFIG], "org.aranym.amcfg")
+			AC_DEFINE([ARANYMNVRAM], "org.aranym.nvram")
+			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap")
 		fi
 		
 		EXTRASYSSRCS="Unix/darwin/SDLMain.M Unix/darwin/host_filesys_darwin.M Unix/darwin/parameters_darwin.cpp Unix/darwin/ethernet_darwin.cpp Unix/darwin/SDLHotkeysRefresh.M"
@@ -851,16 +856,18 @@ AC_TRANSLATE_DEFINE(HAVE___BUILTIN_BSWAP32, $ac_cv_have___builtin_bswap32,
   [Define if your compiler supports __builtin_bswap32])
 
 
+AH_TEMPLATE([MAP_META_TO_CONTROL], [Define if you want to map the meta key to the emulated control key])
+AH_TEMPLATE([MAP_CONTROL_TO_CONTROL], [Define if you want to map the control key to the emulated control key])
 case $CONTROL_KEY in
 	meta)
-		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
+		AC_DEFINE([MAP_META_TO_CONTROL], 1)
 		;;
 	both)
-		AC_DEFINE([MAP_META_TO_CONTROL], 1, [Define if you want to map the meta key to the emulated control key])
-		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
+		AC_DEFINE([MAP_META_TO_CONTROL], 1)
+		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1)
 		;;
 	ctrl)
-		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1, [Define if you want to map the control key to the emulated control key])
+		AC_DEFINE([MAP_CONTROL_TO_CONTROL], 1)
 		;;
 esac
 
@@ -869,30 +876,35 @@ if [[ "x$WANT_JIT" = "xyes" ]]; then
   MEMORY_CHECK=sseg
 fi
 
+AH_TEMPLATE([ARAM_PAGE_CHECK], [Define if you want to try out a different memory check])
+AH_TEMPLATE([NOCHECKBOUNDARY], [Define if you don't want to use check memory boundary])
+AH_TEMPLATE([EXTENDED_SIGSEGV], [Define if you want to use extended segafault handler])
+AH_TEMPLATE([RAMENDNEEDED], [Define if you want protect end of memory])
+AH_TEMPLATE([HW_SIGSEGV], [Define if you want to use extended segfault handler also for HW space])
 case $MEMORY_CHECK in
-  no)   AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
+  no)   AC_DEFINE([NOCHECKBOUNDARY], 1)
         ;;
-  page) AC_DEFINE([ARAM_PAGE_CHECK], 1, [Define if you want to try out a different memory check])
+  page) AC_DEFINE([ARAM_PAGE_CHECK], 1)
         ;;
   hwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
-	AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
+        AC_DEFINE([NOCHECKBOUNDARY], 1)
+	AC_DEFINE([EXTENDED_SIGSEGV], 1)
         AC_DEFINE([RAMENDNEEDED])
         ;;
   pagehwsp) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE([ARAM_PAGE_CHECK], 1, [Define if you want to try out a different memory check])
-        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
-	AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
-        AC_DEFINE([RAMENDNEEDED], 1, [Define if you want protect end of memory])
+        AC_DEFINE([ARAM_PAGE_CHECK], 1)
+        AC_DEFINE([NOCHECKBOUNDARY], 1)
+	AC_DEFINE([EXTENDED_SIGSEGV], 1)
+        AC_DEFINE([RAMENDNEEDED], 1)
         ;;
    sseg) ADDRESSING_TEST_ORDER="fixed"
         WANT_EXSIGSEGV="yes"
-        AC_DEFINE([NOCHECKBOUNDARY], 1, [Define if you don't want to use check memory boundary])
-	AC_DEFINE([RAMENDNEEDED], 1,)
-        AC_DEFINE([EXTENDED_SIGSEGV], 1, [Define if you want to use extended segafault handler])
-	AC_DEFINE([HW_SIGSEGV], 1, [Define if you want to use extended segfault handler also for HW space])
+        AC_DEFINE([NOCHECKBOUNDARY], 1)
+	AC_DEFINE([RAMENDNEEDED], 1)
+        AC_DEFINE([EXTENDED_SIGSEGV], 1)
+	AC_DEFINE([HW_SIGSEGV], 1)
         ;;
   *) ;;
 esac
@@ -940,6 +952,9 @@ if [[ "x$WANT_DSP" = "xyes" ]]; then
     fi
 fi
 
+AH_TEMPLATE([FIXED_VIDEORAM], [Define if you want fixed position of VideoRAM])
+AH_TEMPLATE([PROTECT2K], [Define if you want to protect first 2kB of RAM against user mode access])
+
 dnl protect first 2kB of RAM
 if [[ "x$WANT_PROTECT2K" != "xno" ]]; then
   AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
@@ -952,15 +967,15 @@ fi
 
 dnl fixed start of VideoRAM
 if [[ "x$WANT_FIXEDVIDEORAM" = "xyes" ]]; then
-  AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+  AC_DEFINE([FIXED_VIDEORAM], 1)
 else
   if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_MSG_WARN([Protection of first 2kB RAM enabled as well - won't hurt])
-    AC_DEFINE([PROTECT2K], 1, [Define if you want to protect first 2kB of RAM against user mode access])
+    AC_DEFINE([PROTECT2K], 1)
   fi
   if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
-    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+    AC_DEFINE([FIXED_VIDEORAM], 1)
     WANT_FIXEDVIDEORAM="yes"
   fi
 fi
@@ -978,7 +993,7 @@ fi
 
   if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
     AC_MSG_WARN([Blitter SDL surface blitting support needs fixed position of VideoRAM])
-    AC_DEFINE([FIXED_VIDEORAM], 1, [Define if you want fixed position of VideoRAM])
+    AC_DEFINE([FIXED_VIDEORAM], 1)
     WANT_FIXEDVIDEORAM="yes"
   fi
 dnl Blitter SDL surface blitting
@@ -987,21 +1002,22 @@ if [[ "x$WANT_BLITSDLBLIT" = "xyes" ]]; then
   AC_DEFINE([BLITTER_MEMMOVE], 1, [Define if you want accelerated blitter output])	dnl required for the SDLBLIT
 fi
 
+AH_TEMPLATE([ETHERNET_SUPPORT], [Define if you want to use ethernet card emulation])
 dnl Ethernet card emulation
 HAVE_ETHERNET=no
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
   if [[ "x$ac_cv_tun_tap_support" = "xyes" ]]; then
-    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    AC_DEFINE([ETHERNET_SUPPORT], 1)
     SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
     TAPIF="aratapif"
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
-    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    AC_DEFINE([ETHERNET_SUPPORT], 1)
     SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
     TAPIF=""
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
-    AC_DEFINE([ETHERNET_SUPPORT], 1, [Define if you want to use ethernet card emulation])
+    AC_DEFINE([ETHERNET_SUPPORT], 1)
     if [[ "x$WANT_BFP_ETHERNET" = "xyes" ]]; then
       AC_TRANSLATE_DEFINE(ENABLE_BPF, $ac_cv_bpf_support,
         [Define if your system supports BPF devices.])
@@ -1046,6 +1062,8 @@ if [[ "x$WANT_CXX_EXCEPTIONS" = "xno" ]]; then
   AC_DEFINE(EXCEPTIONS_VIA_LONGJMP, 1, [Define if you want to use setjmp/longjmp instead of C++ exceptions])
 fi
 
+AH_TEMPLATE(NO_NESTED_SIGSEGV, [Define if OS needs to cleanly exit sigsegv handler])
+
 dnl Extended signal segmentation fault handler
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   case "$host_os" in
@@ -1077,7 +1095,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       else
         SYSSRCS="$SYSSRCS Unix/darwin/sigsegv_darwin_x86.cpp"
-        AC_DEFINE(NO_NESTED_SIGSEGV, 1 , [Define if OS needs to cleanly exit sigsegv handler])
+        AC_DEFINE(NO_NESTED_SIGSEGV, 1)
       fi
       ;;
     netbsd*)
@@ -1097,7 +1115,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
     cygwin*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS Unix/cygwin/sigsegv_cygwin.cpp"
-        AC_DEFINE(NO_NESTED_SIGSEGV, 1 , [Define if OS needs to cleanly exit sigsegv handler])
+        AC_DEFINE(NO_NESTED_SIGSEGV, 1)
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
@@ -1376,13 +1394,15 @@ dnl  AC_MSG_WARN([Sorry, JIT-FPU supports only the "ieee" FPE implementation])
   dnl Restore previous variables. FPE_CORE_STR and FPUSRCS are overwritten
 fi
 
+AH_TEMPLATE([USES_FPU_CORE], [FPU core])
+
 for fpe in $FPE_CORE_TEST_ORDER; do
   case $fpe in
   ieee)
     case $ac_cv_c_float_format in
     IEEE*)
       FPE_CORE="IEEE fpu core"
-      AC_DEFINE([USES_FPU_CORE], "IEEE", [FPU core])
+      AC_DEFINE([USES_FPU_CORE], "IEEE")
       DEFINES="$DEFINES -DFPU_IEEE"
       FPUSRCS="uae_cpu/fpu/fpu_ieee.cpp"
       dnl Math functions not mandated by C99 standard
@@ -1418,7 +1438,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     ;;
   uae)
     FPE_CORE="uae fpu core"
-    AC_DEFINE([USES_FPU_CORE], "UAE", [FPU core])
+    AC_DEFINE([USES_FPU_CORE], "UAE")
     DEFINES="$DEFINES -DFPU_UAE"
     FPUSRCS="uae_cpu/fpu/fpu_uae.cpp"
     break
@@ -1427,7 +1447,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     AC_CHECK_LIB(mpfr, mpfr_set_zero, [LIBS="$LIBS -lmpfr -lgmp"], [], [-lgmp])
     if test $ac_cv_lib_mpfr_mpfr_set_zero = yes; then
       FPE_CORE="mpfr fpu core"
-      AC_DEFINE([USES_FPU_CORE], "MPFR", [FPU core])
+      AC_DEFINE([USES_FPU_CORE], "MPFR")
       DEFINES="$DEFINES -DFPU_MPFR"
       FPUSRCS="uae_cpu/fpu/fpu_mpfr.cpp"
       break
@@ -1446,19 +1466,22 @@ dnl Check for certain math functions
 AC_CHECK_FUNCS(atanh)
 AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
+AH_TEMPLATE([DEBUGGER], [Define if using some internal debugger])
+AH_TEMPLATE([NEWDEBUG], [Define if using new debugger])
+AH_TEMPLATE([UAEDEBUG], [Define if using UAE debugger])
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
   dnl new debugger
   if [[ "x$WHICH_DEBUG" = "xndebug" -a "x$ac_cv_func_sigaction" = "xyes" ]]; then
-    AC_DEFINE([DEBUGGER], 1, [Define if using some internal debugger])
-    AC_DEFINE([NEWDEBUG], 1, [Define if using new debugger])
+    AC_DEFINE([DEBUGGER], 1)
+    AC_DEFINE([NEWDEBUG], 1)
     CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
   fi
 
   dnl UAE debugger
   if [[ "x$WHICH_DEBUG" = "xuae" ]]; then
-    AC_DEFINE([DEBUGGER], 1, [Define if using some internal debugger])
-    AC_DEFINE([UAEDEBUG], 1, [Define if using UAE debugger])
+    AC_DEFINE([DEBUGGER], 1)
+    AC_DEFINE([UAEDEBUG], 1)
     CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
   fi
 fi

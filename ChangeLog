@@ -1,4 +1,8 @@
 2014/05/24 - Thorsten
+- configure.ac: clean up help output from --enable-xxx
+
+
+2014/05/24 - Thorsten
 - input.cpp: don't hide host mouse when entering a window that is
   above Aranyms window
 
