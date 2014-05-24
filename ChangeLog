@@ -1,4 +1,8 @@
 2014/05/24 - Thorsten
+- clipbrd_cygwin.cpp: Fix cygwin build
+
+
+2014/05/24 - Thorsten
 - configure.ac: clean up help output from --enable-xxx
 
 

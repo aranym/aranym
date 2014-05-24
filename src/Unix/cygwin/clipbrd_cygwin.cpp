@@ -20,6 +20,7 @@
 
 #if defined(OS_cygwin)
 #define WIN32 1
+#include <SDL.h>
 #include <SDL_syswm.h>
 #include <windows.h>
 #undef WIN32
