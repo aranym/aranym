@@ -2659,7 +2659,7 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			}
 			return TOS_E_OK;
 
-#if FIXME
+#if 0
 		case MINT_F_SETLK:
 		case MINT_F_SETLKW:
 		case MINT_F_GETLK:

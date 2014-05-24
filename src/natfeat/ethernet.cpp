@@ -395,7 +395,7 @@ void ETHERNETDriver::stopThread(int ethX)
 	if (handler->handlingThread) {
 		D(bug("Ethernet: Stop thread"));
 
-#if FIXME
+#ifdef FIXME
 		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
 		SDL_WaitThread(handler->handlingThread, NULL);
 		SDL_DestroySemaphore(handler->intAck);

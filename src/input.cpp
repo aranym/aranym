@@ -692,7 +692,7 @@ static void process_keyboard_event(const SDL_Event &event)
 	}
 #endif /* SDL_GUI */
 
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 	static bool flight_is_active = false;
 	bool flight_turn_on = (state & (KMOD_SHIFT)) == KMOD_RSHIFT;
 	bool flight_turn_off = (state & (KMOD_SHIFT)) == KMOD_LSHIFT;

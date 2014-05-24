@@ -44,7 +44,7 @@
 #define PACKET_SIZE 12
 
 bx_hard_drive_c bx_hard_drive;
-#if BX_USE_HD_SMF
+#ifdef BX_USE_HD_SMF
 #define this (&bx_hard_drive)
 #endif
 
@@ -312,7 +312,7 @@ bx_hard_drive_c::reset(unsigned /*type*/)
   Bit32u
 bx_hard_drive_c::read_handler(void *this_ptr, Bit32u address, unsigned io_len)
 {
-#if !BX_USE_HD_SMF
+#ifndef BX_USE_HD_SMF
   bx_hard_drive_c *class_ptr = (bx_hard_drive_c *) this_ptr;
 
   return( class_ptr->read(address, io_len) );
@@ -364,7 +364,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
             panicbug("IO read(f00000): buffer_index >= 512");
 
-#if BX_SupportRepeatSpeedups
+#ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
             unsigned transferLen, quantumsMax;
 
@@ -773,7 +773,7 @@ if ( quantumsMax == 0)
   void
 bx_hard_drive_c::write_handler(void *this_ptr, Bit32u address, Bit32u value, unsigned io_len)
 {
-#if !BX_USE_HD_SMF
+#ifndef BX_USE_HD_SMF
   bx_hard_drive_c *class_ptr = (bx_hard_drive_c *) this_ptr;
 
   class_ptr->write(address, value, io_len);
@@ -817,7 +817,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
             panicbug("IO write(f00000): buffer_index >= 512");
 
-#if BX_SupportRepeatSpeedups
+#ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
             unsigned transferLen, quantumsMax;
 

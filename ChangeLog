@@ -1,4 +1,8 @@
 2014/05/24 - Thorsten
+- Use #if/#ifdef more consistently
+
+
+2014/05/24 - Thorsten
 - Implement file ioctls(FSTAT/FSTAT64).
   Needs also MiNT patch do be effective.
 

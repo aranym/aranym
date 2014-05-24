@@ -297,9 +297,7 @@ extern uaecptr last_fault_for_exception_3;
 /* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0_ff[];
 
-#ifndef FLIGHT_RECORDER
-# define FLIGHT_RECORDER 0
-#else
+#ifdef FLIGHT_RECORDER
 extern void m68k_record_step(uaecptr, int);
 #endif
 

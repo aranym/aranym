@@ -309,9 +309,9 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 
 void hop2op3p( BLITTER& b )
 {
-#if BLITTER_MEMMOVE
+#ifdef BLITTER_MEMMOVE
 	if (getVIDEL ()->getBpp() == 16) {
-#if BLITTER_SDLBLIT
+#ifdef BLITTER_SDLBLIT
 		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 			SDL_Rect src, dest;
 			int src_offset = b.source_addr - ARANYMVRAMSTART;
@@ -345,11 +345,11 @@ void hop2op3p( BLITTER& b )
 
 void hop2op3n( BLITTER& b )
 {
-#if BLITTER_MEMMOVE
+#ifdef BLITTER_MEMMOVE
 	if (getVIDEL ()->getBpp() == 16) {
 		b.source_addr += ((b.x_count-1)*b.source_x_inc);
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
-#if BLITTER_SDLBLIT
+#ifdef BLITTER_SDLBLIT
 		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 			b.source_addr += (((b.x_count)*b.source_x_inc)+b.source_y_inc)*b.y_count;
 			b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;

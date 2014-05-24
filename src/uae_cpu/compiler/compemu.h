@@ -36,7 +36,7 @@
 
 #ifdef USE_JIT
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 /* dump some information (m68k block, x86 block addresses) about the compiler state */
 extern void compiler_dumpstate(void);
 #endif
@@ -581,7 +581,7 @@ typedef struct blockinfo_t {
     dependency* deplist; /* List of things that depend on this */
     smallstate  env;
 	
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 	/* (gb) size of the compiled block (direct handler) */
 	uae_u32 direct_handler_size;
 #endif

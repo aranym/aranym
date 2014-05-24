@@ -29,7 +29,7 @@
 # define DEBUG 2
 #endif
 
-#if DEBUG
+#if defined(DEBUG) && DEBUG
 #define DUNUSED(x)
 #else
 #define DUNUSED(x)	((void)x)
@@ -91,13 +91,13 @@ extern void deactivate_debugger(void);
 #define panicbug pdbprintf
 #endif
 
-#if DEBUG
+#if defined(DEBUG) && DEBUG
 #define D(x) (x);
 #else
 #define D(x) ;
 #endif
 
-#if DEBUG > 1
+#if defined(DEBUG) && DEBUG > 1
 #define D2(x) (x);
 #else
 #define D2(x) ;

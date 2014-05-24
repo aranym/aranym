@@ -1505,7 +1505,7 @@ if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"
   WFLAGS=""
   if [[ "x$HAVE_GCC27" = "xyes" ]]; then
-    WFLAGS="$WFLAGS -W -Wall"
+    WFLAGS="$WFLAGS -W -Wall -Wundef"
     DBGSP="-ggdb3"
   fi
 else

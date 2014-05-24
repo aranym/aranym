@@ -982,15 +982,6 @@ static inline int clipEncode (int x, int y, int left, int top, int right, int bo
 
 bool SoftVdiDriver::clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 {
-#if OLD_CODE // check what is bad!
-	if (!cliprect) {
-		return true; // Clipping is off
-	// Get clipping boundary
- 	int left   = cliprect[0];
- 	int top    = cliprect[1];
- 	int right  = cliprect[2];
- 	int bottom = cliprect[3];
-#else
 	// Get clipping boundary
 	int left, top, right, bottom;
 
@@ -1005,7 +996,6 @@ bool SoftVdiDriver::clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 		right  = cliprect[2];
 		bottom = cliprect[3];
 	}
-#endif
 
 	bool draw = false;
 	while (1) {
@@ -1201,7 +1191,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 
 	int minmax[4] = {1000000, 1000000, -1000000, -1000000};
 
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 	int eq_coord = (x1 == x2) + 2 * (y1 == y2);
 #endif
 
@@ -1210,7 +1200,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			drawMoveLine(table, length, index, moves, pattern, fgColor, bgColor,
 			             logOp, cliprect, minmax);
 		else {
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (logOp < 3)) {
 				table += 8;
 				for(--length; length > 0; length--) {
@@ -1250,7 +1240,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
  				break;
 			}
  		}
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 	} else if (eq_coord && ((pattern & 0xffff) == 0xffff)) {
 		if (eq_coord & 1) {
 			if (y1 < y2)

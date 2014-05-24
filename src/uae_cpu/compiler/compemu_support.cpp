@@ -91,7 +91,7 @@
 static void dummy_write_log(const char *, ...) { }
 #endif
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 #undef abort
 #define abort() do { \
 	fprintf(stderr, "Abort in file %s at line %d\n", __FILE__, __LINE__); \
@@ -141,7 +141,7 @@ uae_u8* comp_pc_p;
 extern int quit_program;
 
 // gb-- Extra data for Basilisk II/JIT
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
 #else
 const bool		JITDebug			= false;	// Don't use JIT debug mode at all
@@ -4968,7 +4968,7 @@ void compiler_init(void)
 	if (initialized)
 		return;
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 	// JIT debug mode ?
 	JITDebug = bx_options.startup.debugger;
 #endif
@@ -6454,7 +6454,7 @@ static inline void disasm_m68k_block(uint8 *start, size_t length)
 # define DO_GET_OPCODE(a) (do_get_mem_word((uae_u16 *)(a)))
 #endif
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 static uae_u8 *last_regs_pc_p = 0;
 static uae_u8 *last_compiled_block_addr = 0;
 
@@ -6494,7 +6494,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	compile_count++;
 	clock_t start_time = clock();
 #endif
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 	bool disasm_block = false;
 #endif
 	
@@ -6637,7 +6637,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    *branchadd=(uintptr)get_target()-((uintptr)branchadd+1);
 #endif
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 		if (JITDebug) {
 			raw_mov_l_mi((uintptr)&last_regs_pc_p,(uintptr)pc_hist[0].location);
 			raw_mov_l_mi((uintptr)&last_compiled_block_addr,current_block_start_target);
@@ -6659,7 +6659,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    comptbl=compfunctbl;
 		}
 
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 		{
 		    mov_l_ri(S1, ((uintptr)(pc_hist[i].location)) | 1);
 		    /* store also opcode to second register */
@@ -6901,7 +6901,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 	current_cache_size += get_target() - (uae_u8 *)current_compile_p;
 	
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 	if (JITDebug)
 		bi->direct_handler_size = get_target() - (uae_u8 *)current_block_start_target;
 	
@@ -6962,7 +6962,7 @@ void exec_nostats(void)
 {
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 		m68k_record_step(m68k_getpc(), opcode);
 #endif
 		(*cpufunctbl[opcode])(opcode);
@@ -6988,7 +6988,7 @@ void execute_normal(void)
 		for (;;)  { /* Take note: This is the do-it-normal loop */
 			pc_hist[blocklen++].location = (uae_u16 *)regs.pc_p;
 			uae_u32 opcode = GET_OPCODE;
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 			m68k_record_step(m68k_getpc(), opcode);
 #endif
 			(*cpufunctbl[opcode])(opcode);
@@ -7024,7 +7024,7 @@ setjmpagain:
 	for (;;) {
 	    if (quit_program > 0) {
 		if (quit_program == 1) {
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 		    dump_log();
 #endif
 		    break;

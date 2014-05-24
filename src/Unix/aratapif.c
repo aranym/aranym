@@ -78,7 +78,7 @@ static int set_ip_using(const char *name, unsigned long c, const char *ip, const
     else if (c == SIOCSIFDSTADDR)
     	memcpy(&ifr.ifr_dstaddr, &sin, sizeof(struct sockaddr));
     else if (c == SIOCSIFNETMASK)
-#if OS_darwin		
+#ifdef OS_darwin		
     	memcpy(&ifr.ifr_addr, &sin, sizeof(struct sockaddr));
 #else	
 		memcpy(&ifr.ifr_netmask, &sin, sizeof(struct sockaddr));

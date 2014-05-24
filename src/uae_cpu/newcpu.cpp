@@ -83,7 +83,7 @@ int movem_next[256];
 
 cpuop_func *cpufunctbl[65536];
 
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 
 // feel free to edit the following defines to customize the dump
 #define FRLOG_HOTKEY	1	/* 1 = dump only when hotkey is held down */
@@ -1318,7 +1318,7 @@ void m68k_reset (void)
     // Cache
     regs.cacr = 0;
     regs.caar = 0;
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 	log_ptr = 0;
 	memset(log, 0, sizeof(log));
 #endif
@@ -1607,7 +1607,7 @@ void m68k_do_execute (void)
 #endif
 #endif
 	opcode = GET_OPCODE;
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 	m68k_record_step(m68k_getpc(), opcode);
 #endif
 	(*cpufunctbl[opcode])(opcode);
@@ -1635,7 +1635,7 @@ setjmpagain:
 	for (;;) {
 	    if (quit_program > 0) {
 		if (quit_program == 1) {
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 		    dump_log();
 #endif
 		    break;
