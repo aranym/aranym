@@ -1614,17 +1614,42 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 	char ftoName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, ffromname, ffromName );
 	
+	strd2upath(ftoname, ftoname);
 	strcpy( ftoName, ftoname );
 
-	char *tmp;
-	if ( (ftoname[0] != '/' && ftoname[0] != '\\' && ftoname[1] != ':' ) ||
-		(tmp = my_canonicalize_file_name(ftoname, false)) == NULL)
+	if (ftoName[0] == '\0' || ffromName[0] == '\0')
+		return TOS_EFILNF;
+	
+	if (ftoName[0] != '/' && ftoName[1] != ':' )
 	{
 		// relative symlink. Use it as is
 	} else {
 		// search among the mount points to find suitable link...
 
-		size_t nameLen = strlen(tmp);
+		size_t nameLen = strlen(ftoname);
+		/* convert U:/c/... to c:/... */
+		if (nameLen >= 4 && strncasecmp(ftoname, "u:\\", 3) == 0 &&
+			DriveFromLetter(toupper(ftoname[3])) >= 0 &&
+			(ftoname[4] == '\0' || ftoname[4] == '/'))
+		{
+			ftoname[0] = ftoname[3];
+			memmove(ftoname + 2, ftoname + 4, nameLen - 3);
+			nameLen -= 2;
+		} else
+		/* convert /c/... to c:/... */
+		if (nameLen >= 2 && ftoname[0] == '/' &&
+			DriveFromLetter(toupper(ftoname[1])) >= 0 &&
+			(ftoname[2] == '\0' || ftoname[2] == '/'))
+		{
+			ftoname[0] = ftoname[1];
+			ftoname[1] = ':';
+		}
+		if (nameLen == 2)
+		{
+			strcat(ftoname, "/");
+			nameLen++;
+		}
+		
 		bool found = false;
 		for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
 		{
@@ -1632,7 +1657,7 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 			size_t mpLen = strlen( drv->mountPoint );
 			if (mpLen == 0 || mpLen > nameLen)
 				continue;
-			if (strncasecmp(drv->mountPoint, tmp, mpLen) == 0)
+			if (strncasecmp(drv->mountPoint, ftoname, mpLen) == 0)
 			{
 				// target drive found; replace MiNTs mount point
 				// with the hosts root directory
@@ -1640,12 +1665,11 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 				safe_strncpy(ftoName, drv->hostRoot, len);
 				int hrLen = strlen( drv->hostRoot );
 				if (hrLen < len)
-					safe_strncpy(ftoName + hrLen, tmp + mpLen, len - hrLen);
+					safe_strncpy(ftoName + hrLen, ftoname + mpLen, len - hrLen);
 				found = true;
 				break;
 			}
 		}
-		free(tmp);
 		if (!found)
 		{
 			// undo a possible _unx2dos() conversion from MiNTlib
@@ -1654,7 +1678,6 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 		}
 	}
 	
-	strd2upath(ftoName, ftoName);
 	D(bug( "HOSTFS: fs_symlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
 
 	if ( symlink( ftoName, ffromName ) )
@@ -2800,15 +2823,20 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		// The mountPoint is of a "X:" format: (BetaDOS mapping)
 		dnum = DriveFromLetter(toupper(fmountPoint[0]));
 	}
-	else if (len >= 4 && !strncasecmp(fmountPoint, "u:\\", 3)) {
+	else if (len >= 4 && strncasecmp(fmountPoint, "u:\\", 3) == 0)
+	{
 		// the hostfs.xfs tries to map drives to u:\\X
 		// in this case we use the [HOSTFS] of config file here
 		dnum = DriveFromLetter(toupper(fmountPoint[3]));
+		/* convert U:/c/... to c:/... */
+		fmountPoint[0] = fmountPoint[3];
+		memmove(fmountPoint + 2, fmountPoint + 4, len - 3);
+		len -= 2;
 	}
-	if (len > 0 && fmountPoint[len - 1] != '\\' && fmountPoint[len - 1] != '/')
+	strd2upath(fmountPoint, fmountPoint);
+	if (len > 0 && fmountPoint[len - 1] != '/')
 		strcat(fmountPoint, "/");
 	drv->mountPoint = strdup( fmountPoint );
-	strd2upath(drv->mountPoint, drv->mountPoint);
 	
 	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
 	if (dnum >= 0 && dnum < maxdnum) {
