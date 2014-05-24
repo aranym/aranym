@@ -1055,7 +1055,7 @@ static void process_active_event(const SDL_Event &event)
 				else {
 					D(bug("Host mouse is returning!"));
 					// if grabbing the mouse is allowed
-					if (canGrabMouseAgain) {
+					if (canGrabMouseAgain && (SDL_GetAppState() & SDL_APPINPUTFOCUS)) {
 						D(bug("canGrabMouseAgain allows autograb"));
 						// then grab it
 						grabTheMouse();
