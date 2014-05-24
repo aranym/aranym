@@ -114,6 +114,10 @@ class HostFs : public NF_Base
   private:
 	void freeMounts();
 
+  protected:
+    void convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr xattrp );
+    void convert_to_stat64( ExtDrive *drv, const struct stat *statBuf, memptr statp );
+
   public:
 	HostFs();
 	~HostFs();

@@ -1,4 +1,9 @@
 2014/05/24 - Thorsten
+- Implement file ioctls(FSTAT/FSTAT64).
+  Needs also MiNT patch do be effective.
+
+
+2014/05/24 - Thorsten
 - clipbrd_cygwin.cpp: Fix cygwin build
 
 

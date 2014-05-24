@@ -1455,7 +1455,7 @@ int32 HostFs::xfs_dev_open(ExtFile *fp)
 	if (fd < 0)
 		return errnoHost2Mint(errno,TOS_EFILNF);
 	fp->hostFd = fd;
-
+	
     #if SIZEOF_INT != 4 || DEBUG_NON32BIT
 		fdMapper.putNative( fp->hostFd );
     #endif
@@ -2015,6 +2015,59 @@ int32 HostFs::host_stat64( XfsCookie *fc, const char *fpathName, struct stat *st
 	return TOS_E_OK;
 }
 
+void HostFs::convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr xattrp )
+{
+	// XATTR structure conversion (COMPEND.HYP)
+	/* UWORD mode	   */  WriteInt16( xattrp	  , modeHost2Mint(statBuf->st_mode) );
+	/* LONG	 index	   */  WriteInt32( xattrp +	 2, statBuf->st_ino ); // FIXME: this is Linux's one
+
+	/* UWORD dev	   */  WriteInt16( xattrp +	 6, statBuf->st_dev ); // FIXME: this is Linux's one
+
+	/* UWORD reserved1 */  WriteInt16( xattrp +	 8, 0 );
+	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf->st_nlink );
+	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf->st_uid );	 // FIXME: this is Linux's one
+	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf->st_gid );	 // FIXME: this is Linux's one
+	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf->st_size );
+	unsigned long blksize, blocks;
+#ifdef __MINGW32__
+	blksize = 512 ; // FIXME: I just made up the number
+#else
+	blksize = statBuf->st_blksize;
+#endif
+	/* LONG	 blksize   */  WriteInt32( xattrp + 20, blksize );
+	/*
+	 * in struct xattr, "blocks" is the number blocks of size blksize
+	 */
+    if (blksize <= 512)
+      blksize = 512;
+#if defined(OS_beos) || defined (__MINGW32__)
+	blocks = (statBuf->st_size + blksize - 1) / blksize;
+#else
+	blocks = (statBuf->st_blocks * 512 + blksize - 1) / blksize;
+#endif
+	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, blocks );
+    if (drv->fsFlags & FS_EXT_3)
+    {
+	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf->st_mtime );
+	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf->st_atime );
+	/* UWORD atime	   */  WriteInt32( xattrp + 36, statBuf->st_ctime );
+	} else
+	{
+	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf->st_mtime) );
+	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf->st_mtime) );
+	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf->st_atime) );
+	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf->st_atime) );
+	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf->st_ctime) );
+	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf->st_ctime) );
+	}
+	/* UWORD attr	   */  WriteInt16( xattrp + 40, modeHost2TOS(statBuf->st_mode) );
+	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
+	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
+	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
+
+	D(bug("HOSTFS: fs_getxattr mode %#02x, mtime %#04x, mdate %#04x", modeHost2Mint(statBuf->st_mode), ReadInt16(xattrp + 28), ReadInt16(xattrp + 30)));
+}
+
 int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr name, memptr xattrp )
 {
 	char fpathName[MAXPATHNAMELEN];
@@ -2037,57 +2090,59 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr name, memptr xattrp )
 	if ( res != TOS_E_OK )
 		return res;
 
-	// XATTR structure conversion (COMPEND.HYP)
-	/* UWORD mode	   */  WriteInt16( xattrp	  , modeHost2Mint(statBuf.st_mode) );
-	/* LONG	 index	   */  WriteInt32( xattrp +	 2, statBuf.st_ino ); // FIXME: this is Linux's one
+	convert_to_xattr(fc->drv, &statBuf, xattrp);
 
-	/* UWORD dev	   */  WriteInt16( xattrp +	 6, statBuf.st_dev ); // FIXME: this is Linux's one
+	return TOS_E_OK;
+}
 
-	/* UWORD reserved1 */  WriteInt16( xattrp +	 8, 0 );
-	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf.st_nlink );
-	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf.st_uid );	 // FIXME: this is Linux's one
-	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf.st_gid );	 // FIXME: this is Linux's one
-	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf.st_size );
-	unsigned long blksize, blocks;
+void HostFs::convert_to_stat64( ExtDrive *drv, const struct stat *statBuf, memptr statp )
+{
+	(void) drv;
+	/* LLONG    dev	   */  WriteInt64( statp +  0, statBuf->st_dev  ); // FIXME: this is Linux's one
+	/* ULONG    ino	   */  WriteInt32( statp +  8, statBuf->st_ino ); // FIXME: this is Linux's one
+	/* ULONG    mode   */  WriteInt32( statp + 12, modeHost2Mint(statBuf->st_mode) ); // FIXME: convert???
+	/* ULONG    nlink  */  WriteInt32( statp + 16, statBuf->st_nlink );
+	/* ULONG    uid	   */  WriteInt32( statp + 20, statBuf->st_uid ); // FIXME: this is Linux's one
+	/* ULONG    gid	   */  WriteInt32( statp + 24, statBuf->st_gid ); // FIXME: this is Linux's one
+	/* LLONG    rdev   */  WriteInt64( statp + 28, statBuf->st_rdev ); // FIXME: this is Linux's one
+
+	/*    atime   */ WriteInt64( statp + 36,   statBuf->st_atime );
+	/*    atime ns*/ WriteInt32( statp + 44, get_stat_atime_ns(statBuf) );
+	/*    mtime   */ WriteInt64( statp + 48,   statBuf->st_mtime );
+	/*    mtime ns*/ WriteInt32( statp + 56, get_stat_mtime_ns(statBuf) );
+	/*    ctime   */ WriteInt64( statp + 60,   statBuf->st_ctime );
+	/*    ctime ns*/ WriteInt32( statp + 68, get_stat_ctime_ns(statBuf) );
+
+	/* LLONG    size   */  WriteInt64( statp + 72, statBuf->st_size );
+	uint64 blksize, blocks;
 #ifdef __MINGW32__
 	blksize = 512 ; // FIXME: I just made up the number
 #else
-	blksize = statBuf.st_blksize;
+	blksize = statBuf->st_blksize;
 #endif
-	/* LONG	 blksize   */  WriteInt32( xattrp + 20, blksize );
 	/*
-	 * in struct xattr, "blocks" is the number blocks of size blksize
+	 * in struct stat, "blocks" is the number blocks of size 512
 	 */
     if (blksize <= 512)
       blksize = 512;
 #if defined(OS_beos) || defined (__MINGW32__)
-	blocks = (statBuf.st_size + blksize - 1) / blksize;
+	blocks = (statBuf->st_size + blksize - 1) / 512;
 #else
-	blocks = (statBuf.st_blocks * 512 + blksize - 1) / blksize;
+	blocks = statBuf->st_blocks;
 #endif
-	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, blocks );
-    if (fc->drv->fsFlags & FS_EXT_3)
-    {
-	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf.st_mtime );
-	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf.st_atime );
-	/* UWORD atime	   */  WriteInt32( xattrp + 36, statBuf.st_ctime );
-	} else
-	{
-	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf.st_mtime) );
-	/* UWORD mdate	   */  WriteInt16( xattrp + 30, date2dos(statBuf.st_mtime) );
-	/* UWORD atime	   */  WriteInt16( xattrp + 32, time2dos(statBuf.st_atime) );
-	/* UWORD adate	   */  WriteInt16( xattrp + 34, date2dos(statBuf.st_atime) );
-	/* UWORD ctime	   */  WriteInt16( xattrp + 36, time2dos(statBuf.st_ctime) );
-	/* UWORD cdate	   */  WriteInt16( xattrp + 38, date2dos(statBuf.st_ctime) );
-	}
-	/* UWORD attr	   */  WriteInt16( xattrp + 40, modeHost2TOS(statBuf.st_mode) );
-	/* UWORD reserved2 */  WriteInt16( xattrp + 42, 0 );
-	/* LONG	 reserved3 */  WriteInt32( xattrp + 44, 0 );
-	/* LONG	 reserved4 */  WriteInt32( xattrp + 48, 0 );
+	/* LLONG    blocks */  WriteInt64( statp + 80,   blocks );
+	/* ULONG    blksize*/  WriteInt32( statp + 88,   blksize );
+	/* ULONG    flags  */  WriteInt32( statp + 92,   0 );
+	/* ULONG    gen    */  WriteInt32( statp + 96,   0 );
+	/* ULONG    reserverd[0]    */  WriteInt32( statp + 100,   0 );
+	/* ULONG    reserverd[1]    */  WriteInt32( statp + 104,   0 );
+	/* ULONG    reserverd[2]    */  WriteInt32( statp + 108,   0 );
+	/* ULONG    reserverd[3]    */  WriteInt32( statp + 112,   0 );
+	/* ULONG    reserverd[4]    */  WriteInt32( statp + 116,   0 );
+	/* ULONG    reserverd[5]    */  WriteInt32( statp + 120,   0 );
+	/* ULONG    reserverd[6]    */  WriteInt32( statp + 124,   0 );
 
-	D(bug("HOSTFS: fs_getxattr mode %#02x, mtime %#04x, mdate %#04x", modeHost2Mint(statBuf.st_mode), ReadInt16(xattrp + 28), ReadInt16(xattrp + 30)));
-
-	return TOS_E_OK;
+	D(bug("HOSTFS: fs_stat64 mode %#02x, mtime %#08lx", modeHost2Mint(statBuf->st_mode), ReadInt32(statp + 52)));
 }
 
 int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
@@ -2112,52 +2167,8 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
 	if ( res != TOS_E_OK )
 		return res;
 
-	/* LLONG    dev	   */  WriteInt64( statp +  0, statBuf.st_dev  ); // FIXME: this is Linux's one
-	/* ULONG    ino	   */  WriteInt32( statp +  8, statBuf.st_ino ); // FIXME: this is Linux's one
-	/* ULONG    mode   */  WriteInt32( statp + 12, modeHost2Mint(statBuf.st_mode) ); // FIXME: convert???
-	/* ULONG    nlink  */  WriteInt32( statp + 16, statBuf.st_nlink );
-	/* ULONG    uid	   */  WriteInt32( statp + 20, statBuf.st_uid ); // FIXME: this is Linux's one
-	/* ULONG    gid	   */  WriteInt32( statp + 24, statBuf.st_gid ); // FIXME: this is Linux's one
-	/* LLONG    rdev   */  WriteInt64( statp + 28, statBuf.st_rdev ); // FIXME: this is Linux's one
-
-	/*    atime   */ WriteInt64( statp + 36,   statBuf.st_atime );
-	/*    atime ns*/ WriteInt32( statp + 44, get_stat_atime_ns(&statBuf) );
-	/*    mtime   */ WriteInt64( statp + 48,   statBuf.st_mtime );
-	/*    mtime ns*/ WriteInt32( statp + 56, get_stat_mtime_ns(&statBuf) );
-	/*    ctime   */ WriteInt64( statp + 60,   statBuf.st_ctime );
-	/*    ctime ns*/ WriteInt32( statp + 68, get_stat_ctime_ns(&statBuf) );
-
-	/* LLONG    size   */  WriteInt64( statp + 72, statBuf.st_size );
-	uint64 blksize, blocks;
-#ifdef __MINGW32__
-	blksize = 512 ; // FIXME: I just made up the number
-#else
-	blksize = statBuf.st_blksize;
-#endif
-	/*
-	 * in struct stat, "blocks" is the number blocks of size 512
-	 */
-    if (blksize <= 512)
-      blksize = 512;
-#if defined(OS_beos) || defined (__MINGW32__)
-	blocks = (statBuf.st_size + blksize - 1) / 512;
-#else
-	blocks = statBuf.st_blocks;
-#endif
-	/* LLONG    blocks */  WriteInt64( statp + 80,   blocks );
-	/* ULONG    blksize*/  WriteInt32( statp + 88,   blksize );
-	/* ULONG    flags  */  WriteInt32( statp + 92,   0 );
-	/* ULONG    gen    */  WriteInt32( statp + 96,   0 );
-	/* ULONG    reserverd[0]    */  WriteInt32( statp + 100,   0 );
-	/* ULONG    reserverd[1]    */  WriteInt32( statp + 104,   0 );
-	/* ULONG    reserverd[2]    */  WriteInt32( statp + 108,   0 );
-	/* ULONG    reserverd[3]    */  WriteInt32( statp + 112,   0 );
-	/* ULONG    reserverd[4]    */  WriteInt32( statp + 116,   0 );
-	/* ULONG    reserverd[5]    */  WriteInt32( statp + 120,   0 );
-	/* ULONG    reserverd[6]    */  WriteInt32( statp + 124,   0 );
-
-	D(bug("HOSTFS: fs_stat64 mode %#02x, mtime %#08lx", modeHost2Mint(statBuf.st_mode), ReadInt32(statp + 52)));
-
+	convert_to_stat64(fc->drv, &statBuf, statp);
+	
 	return TOS_E_OK;
 }
 
@@ -2667,6 +2678,28 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 
 			return TOS_E_OK;
 
+		case MINT_FSTAT:
+			{
+				struct stat statBuf;
+				D(bug( "HOSTFS: fs_ioctl: FSTAT: arg = %08lx", (unsigned long)buff ));
+				if (fstat( fp->hostFd, &statBuf))
+					return errnoHost2Mint( errno, TOS_EFILNF );
+				if (buff)
+				    convert_to_xattr(fp->fc.drv, &statBuf, buff);
+			}
+			return TOS_E_OK;
+		
+		case MINT_FSTAT64:
+			{
+				struct stat statBuf;
+				D(bug( "HOSTFS: fs_ioctl: FSTAT64: arg = %08lx", (unsigned long)buff ));
+				if (fstat( fp->hostFd, &statBuf))
+					return errnoHost2Mint( errno, TOS_EFILNF );
+				if (buff)
+				    convert_to_stat64(fp->fc.drv, &statBuf, buff);
+			}
+			return TOS_E_OK;
+		
 		case MX_KER_XFSNAME:
 			D(bug( "HOSTFS: fs_ioctl: MX_KER_XFSNAME: arg = %08lx", (unsigned long)buff ));
 			if (buff)
