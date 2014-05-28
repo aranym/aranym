@@ -468,9 +468,10 @@ void presave_disk()
 
 /*************************************************************************/
 #define HOSTFS_ENTRY(c,n) \
-	{ c, Path_Tag, &bx_options.aranymfs[n].configPath, sizeof(bx_options.aranymfs[n].configPath), 0}
+	{ c, Path_Tag, &bx_options.aranymfs.drive[n].configPath, sizeof(bx_options.aranymfs.drive[n].configPath), 0}
 
 struct Config_Tag arafs_conf[]={
+	{ "symlinks", String_Tag, &bx_options.aranymfs.symlinks, sizeof(bx_options.aranymfs.symlinks), 0},
 	HOSTFS_ENTRY("A", 0),
 	HOSTFS_ENTRY("B", 1),
 	HOSTFS_ENTRY("C", 2),
@@ -508,38 +509,39 @@ struct Config_Tag arafs_conf[]={
 
 void preset_arafs()
 {
+	strcpy(bx_options.aranymfs.symlinks, "posix");
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
-		bx_options.aranymfs[i].rootPath[0] = '\0';
-		bx_options.aranymfs[i].configPath[0] = '\0';
-		bx_options.aranymfs[i].halfSensitive = true;
+		bx_options.aranymfs.drive[i].rootPath[0] = '\0';
+		bx_options.aranymfs.drive[i].configPath[0] = '\0';
+		bx_options.aranymfs.drive[i].halfSensitive = true;
 	}
 }
 
 void postload_arafs()
 {
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
-		safe_strncpy(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].configPath, sizeof(bx_options.aranymfs[i].rootPath));
-		int len = strlen(bx_options.aranymfs[i].configPath);
-		bx_options.aranymfs[i].halfSensitive = true;
+		safe_strncpy(bx_options.aranymfs.drive[i].rootPath, bx_options.aranymfs.drive[i].configPath, sizeof(bx_options.aranymfs.drive[i].rootPath));
+		int len = strlen(bx_options.aranymfs.drive[i].configPath);
+		bx_options.aranymfs.drive[i].halfSensitive = true;
 		if (len > 0) {
-			char *ptrLast = bx_options.aranymfs[i].rootPath + len-1;
+			char *ptrLast = bx_options.aranymfs.drive[i].rootPath + len-1;
 			if (*ptrLast == ':') {
 				*ptrLast = '\0';
-				bx_options.aranymfs[i].halfSensitive = false;
+				bx_options.aranymfs.drive[i].halfSensitive = false;
 			}
 #ifdef __CYGWIN__
 			// interpet "C:" here as the root directory of C:, not the current directory
-			if (DriveFromLetter(toupper(bx_options.aranymfs[i].rootPath[0])) >= 0 &&
-				bx_options.aranymfs[i].rootPath[1] == ':' &&
-				bx_options.aranymfs[i].rootPath[2] == '\0')
-				strcat(bx_options.aranymfs[i].rootPath, DIRSEPARATOR);
-			cygwin_path_to_win32(bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].rootPath));
+			if (DriveFromLetter(bx_options.aranymfs.drive[i].rootPath[0]) >= 0 &&
+				bx_options.aranymfs.drive[i].rootPath[1] == ':' &&
+				bx_options.aranymfs.drive[i].rootPath[2] == '\0')
+				strcat(bx_options.aranymfs.drive[i].rootPath, DIRSEPARATOR);
+			cygwin_path_to_win32(bx_options.aranymfs.drive[i].rootPath, sizeof(bx_options.aranymfs.drive[i].rootPath));
 #endif
-			strd2upath(bx_options.aranymfs[i].rootPath, bx_options.aranymfs[i].rootPath);
-			len = strlen(bx_options.aranymfs[i].rootPath);
-			ptrLast = bx_options.aranymfs[i].rootPath + len-1;
+			strd2upath(bx_options.aranymfs.drive[i].rootPath, bx_options.aranymfs.drive[i].rootPath);
+			len = strlen(bx_options.aranymfs.drive[i].rootPath);
+			ptrLast = bx_options.aranymfs.drive[i].rootPath + len-1;
 			if (*ptrLast != *DIRSEPARATOR)
-				strcat(bx_options.aranymfs[i].rootPath, DIRSEPARATOR);
+				strcat(bx_options.aranymfs.drive[i].rootPath, DIRSEPARATOR);
 		}
 	}
 }
@@ -547,11 +549,11 @@ void postload_arafs()
 void presave_arafs()
 {
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
-		safe_strncpy(bx_options.aranymfs[i].configPath, bx_options.aranymfs[i].rootPath, sizeof(bx_options.aranymfs[i].configPath));
-		if ( strlen(bx_options.aranymfs[i].rootPath) > 0 &&
-			 !bx_options.aranymfs[i].halfSensitive ) {
+		safe_strncpy(bx_options.aranymfs.drive[i].configPath, bx_options.aranymfs.drive[i].rootPath, sizeof(bx_options.aranymfs.drive[i].configPath));
+		if ( strlen(bx_options.aranymfs.drive[i].rootPath) > 0 &&
+			 !bx_options.aranymfs.drive[i].halfSensitive ) {
 			// set the halfSensitive indicator
-			strcat( bx_options.aranymfs[i].configPath, ":" );
+			strcat( bx_options.aranymfs.drive[i].configPath, ":" );
 		}
 	}
 }
@@ -1247,14 +1249,14 @@ int process_cmdline(int argc, char **argv)
 				}
 				// set the drive
 				{
-					int8 i = DriveFromLetter(toupper(optarg[0]));
+					int8 i = DriveFromLetter(optarg[0]);
 					if (i <= 0 || i >= HOSTFS_MAX_DRIVES) {
 						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
 						break;
 					}
 
-					safe_strncpy( bx_options.aranymfs[i].rootPath, optarg+2,
-								sizeof(bx_options.aranymfs[i].rootPath) );
+					safe_strncpy( bx_options.aranymfs.drive[i].configPath, optarg+2,
+								sizeof(bx_options.aranymfs.drive[i].configPath) );
 					// Note: tail colon processing (case sensitivity flag) is 
 					// done later by calling postload_cfg.
 					// Just make sure postload_cfg is called after this.

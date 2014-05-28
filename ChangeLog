@@ -1,3 +1,8 @@
+2014/05/28 - Thorsten
+- hostfs: make translation of symlink targets from/to host filenames
+  configurable.
+
+
 2014/05/24 - Thorsten
 - Use #if/#ifdef more consistently
 

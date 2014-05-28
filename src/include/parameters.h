@@ -60,10 +60,16 @@ enum geo_type {
 extern int get_geometry(const char *, enum geo_type geo);
 
 // External filesystem type
+#define HOSTFS_MAX_DRIVES 32
+
 typedef struct {
 	bool halfSensitive;
 	char rootPath[512];
 	char configPath[520];
+} bx_aranymfs_drive_t;
+typedef struct {
+	char symlinks[20];
+	bx_aranymfs_drive_t drive[HOSTFS_MAX_DRIVES];
 } bx_aranymfs_options_t;
 
 // Floppy device
@@ -255,14 +261,13 @@ typedef struct {
 #define DISKS	8
 
 #define CD_MAX_DRIVES 32
-#define HOSTFS_MAX_DRIVES 32
 
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
   bx_scsidevice_options_t	disks[DISKS];
-  bx_aranymfs_options_t	aranymfs[ HOSTFS_MAX_DRIVES ];
+  bx_aranymfs_options_t	aranymfs;
   bx_video_options_t	video;
   bx_tos_options_t	tos;
   bx_startup_options_t	startup;

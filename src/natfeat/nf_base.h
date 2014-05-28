@@ -26,7 +26,11 @@
 
 #include "natfeats.h"	/* nf_getparameter is defined there */
 
-#define DriveFromLetter(d) (((d) >= 'A' && (d) <= 'Z') ? (d - 'A') : ((d) >= '0' && (d) <= '5') ? (d - '0' + 26) : -1)
+#define DriveFromLetter(d) \
+	(((d) >= 'A' && (d) <= 'Z') ? (d - 'A') : \
+	 ((d) >= 'a' && (d) <= 'z') ? (d - 'a') : \
+	 ((d) >= '0' && (d) <= '5') ? (d - '0' + 26) : \
+	 -1)
 #define DriveToLetter(d) ((d) < 26 ? 'A' + (d) : (d) - 26 + '0')
 
 class NF_Base
@@ -43,4 +47,3 @@ public:
 };
 
 #endif /* _NF_BASE_H */
-

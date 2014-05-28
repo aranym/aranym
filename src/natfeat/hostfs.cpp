@@ -379,8 +379,8 @@ int32 HostFs::dispatch(uint32 fncode)
 
     	case GET_DRIVE_BITS:
 			ret = 0;
-			for(int i=0; i<(int)(sizeof(bx_options.aranymfs)/sizeof(bx_options.aranymfs[0])); i++)
-				if (bx_options.aranymfs[i].rootPath != NULL && bx_options.aranymfs[i].rootPath[0])
+			for(int i=0; i<(int)(sizeof(bx_options.aranymfs.drive)/sizeof(bx_options.aranymfs.drive[0])); i++)
+				if (bx_options.aranymfs.drive[i].rootPath != NULL && bx_options.aranymfs.drive[i].rootPath[0])
 					ret |= (1 << i);
 			D(bug("HOSTFS: drvBits %08lx", (uint32)ret));
     		break;
@@ -1628,8 +1628,8 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 
 		size_t nameLen = strlen(ftoname);
 		/* convert U:/c/... to c:/... */
-		if (nameLen >= 4 && strncasecmp(ftoname, "u:\\", 3) == 0 &&
-			DriveFromLetter(toupper(ftoname[3])) >= 0 &&
+		if (nameLen >= 4 && strncasecmp(ftoname, "u:/", 3) == 0 &&
+			DriveFromLetter(ftoname[3]) >= 0 &&
 			(ftoname[4] == '\0' || ftoname[4] == '/'))
 		{
 			ftoname[0] = ftoname[3];
@@ -1638,7 +1638,7 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 		} else
 		/* convert /c/... to c:/... */
 		if (nameLen >= 2 && ftoname[0] == '/' &&
-			DriveFromLetter(toupper(ftoname[1])) >= 0 &&
+			DriveFromLetter(ftoname[1]) >= 0 &&
 			(ftoname[2] == '\0' || ftoname[2] == '/'))
 		{
 			ftoname[0] = ftoname[1];
@@ -1650,31 +1650,48 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 			nameLen++;
 		}
 		
-		bool found = false;
-		for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
+		if (strcmp(bx_options.aranymfs.symlinks, "conv") == 0)
 		{
-			ExtDrive *drv = it->second;
-			size_t mpLen = strlen( drv->mountPoint );
-			if (mpLen == 0 || mpLen > nameLen)
-				continue;
-			if (strncasecmp(drv->mountPoint, ftoname, mpLen) == 0)
+			bool found = false;
+			for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
 			{
-				// target drive found; replace MiNTs mount point
-				// with the hosts root directory
-				int len = MAXPATHNAMELEN;
-				safe_strncpy(ftoName, drv->hostRoot, len);
-				int hrLen = strlen( drv->hostRoot );
-				if (hrLen < len)
-					safe_strncpy(ftoName + hrLen, ftoname + mpLen, len - hrLen);
-				found = true;
-				break;
+				ExtDrive *drv = it->second;
+				size_t mpLen = strlen( drv->mountPoint );
+				if (mpLen == 0 || mpLen > nameLen)
+					continue;
+				if (strncasecmp(drv->mountPoint, ftoname, mpLen) == 0)
+				{
+					// target drive found; replace MiNTs mount point
+					// with the hosts root directory
+					int len = MAXPATHNAMELEN;
+					safe_strncpy(ftoName, drv->hostRoot, len);
+					int hrLen = strlen( drv->hostRoot );
+					if (hrLen < len)
+						safe_strncpy(ftoName + hrLen, ftoname + mpLen, len - hrLen);
+					found = true;
+					break;
+				}
 			}
-		}
-		if (!found)
+			if (!found)
+			{
+				// undo a possible _unx2dos() conversion from MiNTlib
+				if (toupper(ftoName[0]) == 'U' && ftoName[1] == ':')
+					strcpy(ftoName, ftoname + 2);
+			}
+		} else
 		{
-			// undo a possible _unx2dos() conversion from MiNTlib
 			if (toupper(ftoName[0]) == 'U' && ftoName[1] == ':')
+			{
 				strcpy(ftoName, ftoname + 2);
+			} else
+			{
+				if (DriveFromLetter(ftoname[0]) >= 0 && ftoname[1] == ':')
+				{
+					ftoname[1] = ftoname[0];
+					ftoname[0] = '/';
+				}
+				strcpy(ftoName, ftoname);
+			}
 		}
 	}
 	
@@ -1861,29 +1878,32 @@ char *HostFs::host_readlink(const char *pathname, char *target, int len )
 	if ( target[0] != '/' && target[0] != '\\' && target[1] != ':' )
 		return target;
 	// convert to real path (example: "/tmp/../file" -> "/file")
-	char *tmp = my_canonicalize_file_name(target, false);
-	if (tmp == NULL)
-		return target;
-	size_t nameLen = strlen(tmp);
-	for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
+	if (strcmp(bx_options.aranymfs.symlinks, "conv") == 0)
 	{
-		ExtDrive *drv = it->second;
-		size_t hrLen = strlen( drv->hostRoot );
-		if (hrLen == 0 || hrLen > nameLen)
-			continue;
-		if (strncmp(drv->hostRoot, tmp, hrLen) == 0)
+		char *tmp = my_canonicalize_file_name(target, false);
+		if (tmp == NULL)
+			return target;
+		size_t nameLen = strlen(tmp);
+		for (MountMap::iterator it = mounts.begin(); it != mounts.end(); it++)
 		{
-			// target drive found; replace the hosts root directory
-			// with MiNTs mount point
-			safe_strncpy(target, drv->mountPoint, len);
-			int mLen = strlen( drv->mountPoint );
-			if (mLen < len)
-				safe_strncpy(target + mLen, tmp + hrLen, len - mLen);
-			break;
+			ExtDrive *drv = it->second;
+			size_t hrLen = strlen( drv->hostRoot );
+			if (hrLen == 0 || hrLen > nameLen)
+				continue;
+			if (strncmp(drv->hostRoot, tmp, hrLen) == 0)
+			{
+				// target drive found; replace the hosts root directory
+				// with MiNTs mount point
+				safe_strncpy(target, drv->mountPoint, len);
+				int mLen = strlen( drv->mountPoint );
+				if (mLen < len)
+					safe_strncpy(target + mLen, tmp + hrLen, len - mLen);
+				break;
+			}
 		}
+		free(tmp);
 	}
-	free(tmp);
-
+	
 	D(bug("host_readlink(%s, %s)", pathname, target));
 
 	return target;
@@ -2854,13 +2874,13 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	size_t len = strlen( fmountPoint );
 	if ( len == 2 && fmountPoint[1] == ':' ) {
 		// The mountPoint is of a "X:" format: (BetaDOS mapping)
-		dnum = DriveFromLetter(toupper(fmountPoint[0]));
+		dnum = DriveFromLetter(fmountPoint[0]);
 	}
 	else if (len >= 4 && strncasecmp(fmountPoint, "u:\\", 3) == 0)
 	{
 		// the hostfs.xfs tries to map drives to u:\\X
 		// in this case we use the [HOSTFS] of config file here
-		dnum = DriveFromLetter(toupper(fmountPoint[3]));
+		dnum = DriveFromLetter(fmountPoint[3]);
 		/* convert U:/c/... to c:/... */
 		fmountPoint[0] = fmountPoint[3];
 		memmove(fmountPoint + 2, fmountPoint + 4, len - 3);
@@ -2871,10 +2891,10 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		strcat(fmountPoint, "/");
 	drv->mountPoint = strdup( fmountPoint );
 	
-	int maxdnum = sizeof(bx_options.aranymfs) / sizeof(bx_options.aranymfs[0]);
+	int maxdnum = sizeof(bx_options.aranymfs.drive) / sizeof(bx_options.aranymfs.drive[0]);
 	if (dnum >= 0 && dnum < maxdnum) {
-		drv->hostRoot = my_canonicalize_file_name( bx_options.aranymfs[dnum].rootPath, true );
-		drv->halfSensitive = bx_options.aranymfs[dnum].halfSensitive;
+		drv->hostRoot = my_canonicalize_file_name( bx_options.aranymfs.drive[dnum].rootPath, true );
+		drv->halfSensitive = bx_options.aranymfs.drive[dnum].halfSensitive;
 	}
 	else {
 		dnum = -1; // invalidate dnum

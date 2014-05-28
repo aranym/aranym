@@ -454,7 +454,7 @@ bool InitAll(void)
 	// the cygwin implementation will sometimes
 	// use Win32 style pathnames. Avoid the warning.
 	if (getenv("CYGWIN") == NULL)
-		putenv((char *)"CYGWIN=winsymlinks:native nodosfilewarning");
+		putenv((char *)"CYGWIN=nodosfilewarning");
 #endif
 
  	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK
