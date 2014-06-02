@@ -477,7 +477,7 @@ $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
 $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp $(GEN_DIR)/comptbl.h
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp compemu_midfunc_x86.cpp codegen_arm.cpp compemu_midfunc_arm.cpp $(GEN_DIR)/comptbl.h
 
 $(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@

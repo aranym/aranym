@@ -487,6 +487,10 @@
 		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
+		B442F1A1193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A2193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A3193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A4193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
 		B449D9E00D2A8D37005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
 		B449D9EA0D2A8DD5005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
 		B449D9F30D2A8E68005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
@@ -1083,6 +1087,8 @@
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfcdrom_sdl.cpp; sourceTree = "<group>"; };
+		B442F1A0193C9BC100D515B8 /* nfcdrom_sdl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfcdrom_sdl.h; sourceTree = "<group>"; };
 		B449DA000D2A9212005F0CC6 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../../../data/logo.png; sourceTree = SOURCE_ROOT; };
 		B44B01B00D07443D0017F23B /* dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dialog.cpp; sourceTree = "<group>"; };
 		B44B01B50D07447F0017F23B /* host_surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = host_surface.cpp; path = ../../host_surface.cpp; sourceTree = SOURCE_ROOT; };
@@ -1111,6 +1117,8 @@
 		B4844A730C7BA262003FE2D2 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = darwin/SDLMain.h; sourceTree = "<group>"; };
 		B4844A740C7BA262003FE2D2 /* SDLMain.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLMain.M; path = darwin/SDLMain.M; sourceTree = "<group>"; };
 		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
+		B49A2412193CBE9600B73091 /* compemu_midfunc_x86.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = compemu_midfunc_x86.cpp; sourceTree = "<group>"; };
+		B49A2413193CBE9600B73091 /* compemu_midfunc_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compemu_midfunc_x86.h; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
 		B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "aranym-0.9.15+CVS-macosx-x86_64_i386.dmg"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1442,6 +1450,8 @@
 				17798D7D0A652B51009733EB /* nfbootstrap.h */,
 				17798D800A652B51009733EB /* nfcdrom_linux.cpp */,
 				17798D810A652B51009733EB /* nfcdrom_linux.h */,
+				B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */,
+				B442F1A0193C9BC100D515B8 /* nfcdrom_sdl.h */,
 				17798D7E0A652B51009733EB /* nfcdrom.cpp */,
 				17798D7F0A652B51009733EB /* nfcdrom.h */,
 				17798D840A652B51009733EB /* nfclipbrd_nfapi.h */,
@@ -1544,6 +1554,8 @@
 				17798DBB0A652B51009733EB /* codegen_x86.h */,
 				17798DBC0A652B51009733EB /* compemu.h */,
 				17798DBD0A652B51009733EB /* compemu_fpp.cpp */,
+				B49A2412193CBE9600B73091 /* compemu_midfunc_x86.cpp */,
+				B49A2413193CBE9600B73091 /* compemu_midfunc_x86.h */,
 				17798DBE0A652B51009733EB /* compemu_support.cpp */,
 				17798DBF0A652B51009733EB /* flags_x86.h */,
 				17798DC00A652B51009733EB /* gencomp.c */,
@@ -2312,6 +2324,7 @@
 				1778A4A21555A8A70005B336 /* hostfs.cpp in Sources */,
 				1778A4A31555A8A70005B336 /* aranym_glue.cpp in Sources */,
 				1778A4A41555A8A70005B336 /* memory.cpp in Sources */,
+				B442F1A4193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				1778A4A51555A8A70005B336 /* newcpu.cpp in Sources */,
 				1778A4A61555A8A70005B336 /* readcpu.cpp in Sources */,
 				1778A4A71555A8A70005B336 /* debug.cpp in Sources */,
@@ -2428,6 +2441,7 @@
 				17BCD8290B20F6BF00432CE1 /* hostfs.cpp in Sources */,
 				17BCD82A0B20F6BF00432CE1 /* aranym_glue.cpp in Sources */,
 				17BCD82B0B20F6BF00432CE1 /* memory.cpp in Sources */,
+				B442F1A2193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				17BCD82C0B20F6BF00432CE1 /* newcpu.cpp in Sources */,
 				17BCD82D0B20F6BF00432CE1 /* readcpu.cpp in Sources */,
 				17BCD8310B20F6BF00432CE1 /* debug.cpp in Sources */,
@@ -2494,6 +2508,7 @@
 				17798F130A652F64009733EB /* aranym_exception.cpp in Sources */,
 				17798F150A652F74009733EB /* ata.cpp in Sources */,
 				17798F160A652F7F009733EB /* audio_dma.cpp in Sources */,
+				B442F1A1193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				17798F170A652F80009733EB /* audio_crossbar.cpp in Sources */,
 				17798F180A652F84009733EB /* blitter.cpp in Sources */,
 				17798F190A652F87009733EB /* bootos.cpp in Sources */,
@@ -2613,6 +2628,7 @@
 				B439AC3B0C5B2FD00046EFC9 /* acia.cpp in Sources */,
 				B439AC3C0C5B2FD00046EFC9 /* acsifdc.cpp in Sources */,
 				B439AC3D0C5B2FD00046EFC9 /* aradata.cpp in Sources */,
+				B442F1A3193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				B439AC3E0C5B2FD00046EFC9 /* aranym_exception.cpp in Sources */,
 				B439AC3F0C5B2FD00046EFC9 /* ata.cpp in Sources */,
 				B439AC400C5B2FD00046EFC9 /* audio_dma.cpp in Sources */,

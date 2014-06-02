@@ -1,3 +1,26 @@
+2014/06/92 - Jens
+- flags_x86.h :
+	Fixed codes VC/VS (never used yet)
+- configure.ac :
+	ARM JIT added
+- Makefile.in :
+	codegen_arm.cpp compemu_midfunc_x86/arm.cpp added to dependencies
+- gencomp.cpp :
+	ARM Flags support added (using constant s in condition_codes array instead using x86 codes directly)
+- compemu.h :
+	Renamed R1/2/4 to RR1/2/4 because it collides with the ARM register of the same name defined in the system includes
+- compemu_support.cpp :
+	ARM support, Blacklist separator changed to ',' instead of ';', because it was clipped by config loader as a comment
+	split compemu_support x86 midfunc into files compemu_midfunc_x86.cpp/.h
+- codegen_arm.cpp / codegen_arm.h / flags_arm.h / compemu_midfunc_arm.cpp/.h :
+	ARM JIT (remember it is still experimental and there's a lot of things that could be optimized in the next step)
+- codegen_x86.cpp :
+	Map new RR1/2/4 definitions to old R1/2/4-Style
+- test_codegen_arm.cpp :
+	some testing (standalone)
+- MacAranym.xcodeproj :
+	Fixed broken mac build (SDL CDRom)
+
 2014/05/28 - Thorsten
 - hostfs: make translation of symlink targets from/to host filenames
   configurable.

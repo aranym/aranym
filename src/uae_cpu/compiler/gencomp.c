@@ -4,8 +4,8 @@
  *  Based on work Copyright 1995, 1996 Bernd Schmidt
  *  Changes for UAE-JIT Copyright 2000 Bernd Meyer
  *
- *  Adaptation for ARAnyM, copyright 2001-2009
- *    Milan Jurik
+ *  Adaptation for ARAnyM/ARM, copyright 2001-2014
+ *    Milan Jurik, Jens Heitmann
  * 
  *  Adaptation for Basilisk II and improvements, copyright 2000-2005
  *    Gwenole Beauchesne
@@ -63,7 +63,21 @@ static char endstr[1000];
 static char lines[100000];
 static int comp_index=0;
 
-static int cond_codes_x86[]={-1,-1,7,6,3,2,5,4,-1,-1,9,8,13,12,15,14};
+#if defined(CPU_arm)
+# include "flags_arm.h"
+#else
+# include "flags_x86.h"
+#endif
+
+static int cond_codes[]={-1,-1,
+		NATIVE_CC_HI,NATIVE_CC_LS,
+		NATIVE_CC_CC,NATIVE_CC_CS,
+		NATIVE_CC_NE,NATIVE_CC_EQ,
+		-1,-1,
+		NATIVE_CC_PL,NATIVE_CC_MI,
+		NATIVE_CC_GE,NATIVE_CC_LT,
+		NATIVE_CC_GT,NATIVE_CC_LE
+		};
 
 static void comprintf(const char* format, ...)
 {
@@ -1069,8 +1083,8 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 		      "\tmov_l_ri(zero,0);\n"
 		      "\tmov_l_ri(one,-1);\n"
 		      "\tmake_flags_live();\n"
-		      "\tcmov_l_rr(zero,one,5);\n"
-		      "\t}\n");
+		      "\tcmov_l_rr(zero,one,%d);\n"
+		      "\t}\n",NATIVE_CC_NE);
 	    comprintf("\trestore_carry();\n"); /* Reload the X flag into C */
 	    switch (size)
 	    {
@@ -1089,10 +1103,10 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	    }
 	    comprintf("\tlive_flags();\n");
 	    comprintf("\tif (needed_flags&FLAG_Z) {\n"
-		      "\tcmov_l_rr(zero,one,5);\n"
+		      "\tcmov_l_rr(zero,one,%d);\n"
 		      "\tset_zero(zero, one);\n" /* No longer need one */
 		      "\tlive_flags();\n"
-		      "\t}\n");
+		      "\t}\n",NATIVE_CC_NE);
 	    comprintf("\tend_needflags();\n");
 	    duplicate_carry();
 	    comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -1578,7 +1592,7 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\tv1=get_const(PC_P);\n"
 		      "\tv2=get_const(src);\n"
 		      "\tregister_branch(v1,v2,%d);\n",
-		      cond_codes_x86[curi->cc]);
+		      cond_codes[curi->cc]);
 	    comprintf("\tmake_flags_live();\n"); /* Load the flags */
 	    isjump; 
 	}
@@ -1672,7 +1686,7 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\tuae_u32 v2,v;\n"
 		      "\tuae_u32 v1=get_const(PC_P);\n");
 	    comprintf("\tv2=get_const(offs);\n"
-		      "\tregister_branch(v1,v2,3);\n");
+		      "\tregister_branch(v1,v2,%d);\n", NATIVE_CC_CC);
 	    break;
 
 	 case 8: failure; break;  /* Work out details! FIXME */
@@ -1694,9 +1708,9 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\tlea_l_brr(scratchie,src,(uae_s32)-1);\n"
 		      "\tmov_w_rr(src,scratchie);\n");
 	    comprintf("\tcmov_l_rr(offs,PC_P,%d);\n",
-		      cond_codes_x86[curi->cc]);
+	    		cond_codes[curi->cc]);
 	    comprintf("\tcmov_l_rr(src,nsrc,%d);\n",
-		      cond_codes_x86[curi->cc]);
+	    		cond_codes[curi->cc]);
 	    /* OK, now for cc=true, we have src==nsrc and offs==PC_P, 
 	       so whether we move them around doesn't matter. However,
 	       if cc=false, we have offs==jump_pc, and src==nsrc-1 */
@@ -1704,7 +1718,7 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\t start_needflags();\n");
 	    comprintf("\ttest_w_rr(nsrc,nsrc);\n"); 
 	    comprintf("\t end_needflags();\n");
-	    comprintf("\tcmov_l_rr(PC_P,offs,5);\n"); 
+	    comprintf("\tcmov_l_rr(PC_P,offs,%d);\n", NATIVE_CC_NE);
 	    break;
 	 default: abort();
 	}
@@ -1744,7 +1758,7 @@ gen_opcode (unsigned long int opcode)
 	    comprintf("\tmake_flags_live();\n"); /* Load the flags */
 	    /* All condition codes can be inverted by changing the LSB */
 	    comprintf("\tsetcc(val,%d);\n",
-		      cond_codes_x86[curi->cc]^1); break;
+	    		cond_codes[curi->cc]^1); break;
 	 default: abort();
 	}
 	comprintf("\tsub_b_ri(val,1);\n");
@@ -1817,7 +1831,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("\tmov_l_rr(tmpcnt,cnt);\n"
 			  "\tand_l_ri(tmpcnt,63);\n"
 			  "\tmov_l_ri(cdata,0);\n"
-			  "\tcmov_l_rr(cdata,data,5);\n");
+			  "\tcmov_l_rr(cdata,data,%d);\n", NATIVE_CC_NE);
 		/* cdata is now either data (for shift count!=0) or
 		   0 (for shift count==0) */
 		switch(curi->size) {
@@ -1838,7 +1852,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(highshift,0);\n"
 			  "mov_l_ri(scratchie,width/2);\n"
-			  "cmov_l_rr(highshift,scratchie,5);\n");
+			  "cmov_l_rr(highshift,scratchie,%d);\n", NATIVE_CC_NE);
 		/* The x86 masks out bits, so we now make sure that things
 		   really get shifted as much as planned */
 		switch(curi->size) {
@@ -1867,7 +1881,7 @@ gen_opcode (unsigned long int opcode)
 		/* If the shift count was higher than the width, we need
 		   to pick up the sign from data */
 		comprintf("test_l_ri(tmpcnt,highmask);\n"
-			  "cmov_l_rr(cdata,data,5);\n");
+			  "cmov_l_rr(cdata,data,%d);\n", NATIVE_CC_NE);
 		/* And create the flags */
 		comprintf("\tstart_needflags();\n");
 		comprintf("\tif (needed_flags & FLAG_ZNV)\n");
@@ -1907,7 +1921,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(highshift,0);\n"
 			  "mov_l_ri(scratchie,width/2);\n"
-			  "cmov_l_rr(highshift,scratchie,5);\n");
+			  "cmov_l_rr(highshift,scratchie,%d);\n",NATIVE_CC_NE);
 		/* The x86 masks out bits, so we now make sure that things
 		   really get shifted as much as planned */
 		switch(curi->size) {
@@ -1990,7 +2004,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("\tmov_l_rr(tmpcnt,cnt);\n"
 			  "\tand_l_ri(tmpcnt,63);\n"
 			  "\tmov_l_ri(cdata,0);\n"
-			  "\tcmov_l_rr(cdata,data,5);\n");
+			  "\tcmov_l_rr(cdata,data,%d);\n",NATIVE_CC_NE);
 		/* cdata is now either data (for shift count!=0) or
 		   0 (for shift count==0) */
 		switch(curi->size) {
@@ -2007,7 +2021,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
@@ -2025,7 +2039,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(tmpcnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(cdata,scratchie,5);\n");
+			  "cmov_l_rr(cdata,scratchie,%d);\n",NATIVE_CC_NE);
 		/* And create the flags */
 		comprintf("\tstart_needflags();\n");
 
@@ -2062,7 +2076,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
@@ -2128,7 +2142,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("\tmov_l_rr(tmpcnt,cnt);\n"
 			  "\tand_l_ri(tmpcnt,63);\n"
 			  "\tmov_l_ri(cdata,0);\n"
-			  "\tcmov_l_rr(cdata,data,5);\n");
+			  "\tcmov_l_rr(cdata,data,%d);\n",NATIVE_CC_NE);
 		/* cdata is now either data (for shift count!=0) or
 		   0 (for shift count==0) */
 		switch(curi->size) {
@@ -2145,7 +2159,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
@@ -2163,7 +2177,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(tmpcnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(cdata,scratchie,5);\n");
+			  "cmov_l_rr(cdata,scratchie,%d);\n",NATIVE_CC_NE);
 		/* And create the flags */
 		comprintf("\tstart_needflags();\n");
 		comprintf("\tif (needed_flags & FLAG_ZNV)\n");
@@ -2197,7 +2211,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
@@ -2263,7 +2277,7 @@ gen_opcode (unsigned long int opcode)
 		comprintf("\tmov_l_rr(tmpcnt,cnt);\n"
 			  "\tand_l_ri(tmpcnt,63);\n"
 			  "\tmov_l_ri(cdata,0);\n"
-			  "\tcmov_l_rr(cdata,data,5);\n");
+			  "\tcmov_l_rr(cdata,data,%d);\n",NATIVE_CC_NE);
 		/* cdata is now either data (for shift count!=0) or
 		   0 (for shift count==0) */
 		switch(curi->size) {
@@ -2280,7 +2294,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
@@ -2298,7 +2312,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(tmpcnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(cdata,scratchie,5);\n");
+			  "cmov_l_rr(cdata,scratchie,%d);\n",NATIVE_CC_NE);
 		/* And create the flags */
 		comprintf("\tstart_needflags();\n");
 		comprintf("\tif (needed_flags & FLAG_ZNV)\n");
@@ -2334,7 +2348,7 @@ gen_opcode (unsigned long int opcode)
 		}
 		comprintf("test_l_ri(cnt,highmask);\n"
 			  "mov_l_ri(scratchie,0);\n"
-			  "cmov_l_rr(scratchie,data,4);\n");
+			  "cmov_l_rr(scratchie,data,%d);\n",NATIVE_CC_EQ);
 		switch(curi->size) {
 		 case sz_byte: comprintf("\tmov_b_rr(data,scratchie);\n");break;
 		 case sz_word: comprintf("\tmov_w_rr(data,scratchie);\n");break;
