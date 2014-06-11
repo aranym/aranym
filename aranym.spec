@@ -199,6 +199,18 @@ BuildRequires:			mpfr-devel >= 3.0.0
 BuildRequires:			libusb1-devel >= 1.0.0
 %endif
 
+%if %{my_centos}
+Requires:                       SDL >= 1.2.10
+Requires:			SDL_image >= 1.2.5
+Requires:                       zlib >= 1.2.3
+Requires:                       mpfr >= 2.4.1
+Requires:                       libusb1 >= 1.0.0
+BuildRequires:                  SDL-devel >= 1.2.10
+BuildRequires:			SDL_image-devel >= 1.2.5
+BuildRequires:                  zlib-devel >= 1.2.3
+BuildRequires:                  mpfr-devel >= 2.4.1
+BuildRequires:                  libusb1-devel >= 1.0.0
+%endif
 
 # Now for the meat of the spec file
 #
@@ -288,7 +300,7 @@ desktop-file-install                                    \
 %endif
 %endif
 
-%if %{my_fedora}
+%if %{my_fedora}%{my_centos}
 install -m 644 contrib/%{name}.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}.desktop
 desktop-file-install                                    \
  --delete-original                                      \
@@ -304,7 +316,7 @@ desktop-file-install                                    \
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
 %endif
 
-%if %{my_fedora}
+%if %{my_fedora}%{my_centos}
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
 %endif
 
@@ -313,7 +325,7 @@ install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/
 install -m 644 contrib/%{name}-mmu.desktop %{buildroot}/%{_datadir}/applications/%{name}-mmu.desktop
 %endif
 
-%if %{my_fedora}
+%if %{my_fedora}%{my_centos}
 install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-mmu.desktop
 %endif
 
@@ -360,6 +372,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
+* Tue Jun 03 2014 Jens Heitmann <jens.heitmann@stc-de.com>
+Desktop copy added for CentOS; dependencies for centos (JIT version crashes with SDL < 1.2.15)
+
 * Mon Apr 12 2014 Petr Stehlik <pstehlik@sophics.cz> 0.9.16
 New upstream ARAnyM release. JIT supported on 64-bit now.
 

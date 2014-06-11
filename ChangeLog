@@ -1,4 +1,8 @@
-2014/06/92 - Jens
+2014/06/03 - Jens
+- aranym.spec
+	CentOS fixed
+
+2014/06/02 - Jens
 - flags_x86.h :
 	Fixed codes VC/VS (never used yet)
 - configure.ac :
