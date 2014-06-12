@@ -621,5 +621,10 @@ extern CFBundleRef mainBundle;
 #define unlikely(x)	__builtin_expect(!!(x), 0)
 #define ALWAYS_INLINE	inline __attribute__((always_inline))
 
+#ifndef __attribute__
+#  if !__GNUC_PREREQ(2, 0)
+#    define __attribute__(xyz)	/* Ignore */
+#  endif
+#endif
 
 #endif /* SYSDEPS_H */

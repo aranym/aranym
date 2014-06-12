@@ -567,11 +567,11 @@ void BLITTER::Do_Blit(void)
 	}
 
 	if (source_addr <= 0x800 || (source_addr >= 0x0e80000 && source_addr < 0x1000000)) {
-		panicbug("Blitter Source address out of range: $%08lx", source_addr);
+		panicbug("Blitter Source address out of range: $%08x", source_addr);
 		return;
 	}
 	if (dest_addr <= 0x800 || (dest_addr >= 0x0e00000 && dest_addr < 0x1000000)) {
-		panicbug("Blitter Destination address out of range: $%08lx", dest_addr);
+		panicbug("Blitter Destination address out of range: $%08x", dest_addr);
 		return;
 	}
 

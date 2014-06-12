@@ -160,13 +160,13 @@ class ndebug {
 public:
   static
 #endif
-  int dbprintf(const char *, ...);
+  int dbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
 #ifdef NEWDEBUG
 public:
     static
 #endif
-    int pdbprintf(const char *, ...);
+    int pdbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
 #ifdef NEWDEBUG
   static bool do_skip;

@@ -34,7 +34,7 @@ int32 BootstrapNatFeat::dispatch(uint32 fncode)
 		case 0: {/* load_executable(char *addr, uint32 max_len) */
 					memptr addr = getParameter(0);
 					long size = getParameter(1);
-					bug("NF BOOTSTRAP(%s -> %p, %ld)", bx_options.bootstrap_path, addr, size);
+					bug("NF BOOTSTRAP(%s -> $%08x, %ld)", bx_options.bootstrap_path, addr, size);
 
 					long length = 0;
 					FILE *fh = fopen( bx_options.bootstrap_path, "rb" );
@@ -55,7 +55,7 @@ int32 BootstrapNatFeat::dispatch(uint32 fncode)
 						}
 						fclose(fh);
 					}
-					bug("NF BOOTSTRAP(%p, %ld) -> %ld", addr, size, length);
+					bug("NF BOOTSTRAP($%08x, %ld) -> %ld", addr, size, length);
 					return length;
 				}
 

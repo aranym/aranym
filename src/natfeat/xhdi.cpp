@@ -266,13 +266,13 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			if (! disk->byteswap)
 				byteSwapBuf(tempbuf, sizeof(tempbuf));
 			if (fwrite(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("nfXHDI: Error writing to device %u.%u (record=%ld)", major, minor, recno+i);
+				panicbug("nfXHDI: Error writing to device %u.%u (record=%d)", major, minor, recno+i);
 				break;
 			}
 		}
 		else {
 			if (fread(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("nfXHDI: error reading device %u.%u (record=%ld)", major, minor, recno+i);
+				panicbug("nfXHDI: error reading device %u.%u (record=%d)", major, minor, recno+i);
 				break;
 			}
 			if (! disk->byteswap)

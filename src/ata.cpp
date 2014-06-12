@@ -747,7 +747,7 @@ if ( quantumsMax == 0)
         (unsigned) address);
     }
 
-  panicbug("hard drive: shouldnt get here! PC=%08lx", showPC());
+  panicbug("hard drive: shouldnt get here! PC=%08x", showPC());
   return(0);
 
   return_value32:

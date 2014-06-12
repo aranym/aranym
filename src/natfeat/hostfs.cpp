@@ -2941,7 +2941,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ,dnum < 0 ? '-' : DriveToLetter(dnum)
 		  ,drv->mountPoint
 		  ,drv->hostRoot
-		  ,strlen(drv->hostRoot)
+		  ,(int)strlen(drv->hostRoot)
 		  );
 
 	return TOS_E_OK;
