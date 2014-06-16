@@ -395,7 +395,7 @@ int WinTapEthernetHandler::recv(uint8 *buf, int len)
 	}
 
 	device_total_in += lenin;
-	D(bug("WinTap: Read packet done (len %d)", lenin));
+	D(bug("WinTap: Read packet done (len %d)", (int)lenin));
 	return lenin;
 }
 

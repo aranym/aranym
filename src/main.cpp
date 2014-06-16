@@ -57,7 +57,7 @@
 # include <stdlib.h>
 #endif
 
-#if RTC_TIMER
+#ifdef RTC_TIMER
 #include <linux/rtc.h>
 #include <errno.h>
 #endif
@@ -97,7 +97,7 @@ int FPUType;
 // Timer stuff
 static uint32 lastTicks = 0;
 
-#if RTC_TIMER
+#ifdef RTC_TIMER
 static SDL_Thread *RTCthread = NULL;
 static volatile bool using_rtc_timer = false;
 static volatile bool quit_rtc_loop = false;
@@ -192,7 +192,7 @@ void invoke200HzInterrupt()
 	}
 #endif
 
-#if RTC_TIMER
+#ifdef RTC_TIMER
 	if (using_rtc_timer) {
 		// do not generate multiple interrupts, let it synchronize over time
 		count = 1;
@@ -220,7 +220,7 @@ void invoke200HzInterrupt()
 	}
 }
 
-#if RTC_TIMER
+#ifdef RTC_TIMER
 static int rtc_timer_thread(void * /*ptr*/) {
 	int fd = open ("/dev/rtc", O_RDONLY);
 
@@ -527,7 +527,7 @@ bool InitAll(void)
 #endif
 
 	// timer init
-#if RTC_TIMER
+#ifdef RTC_TIMER
 	RTCthread = SDL_CreateThread(rtc_timer_thread, NULL);
 	if (RTCthread != NULL) {
 		SDL_Delay(50); // give the timer thread time to initialize
@@ -544,7 +544,7 @@ bool InitAll(void)
 		panicbug("SDL Timer does not work!");
 		return false;
 	}
-#if RTC_TIMER
+#ifdef RTC_TIMER
 	}
 #endif
 
@@ -570,7 +570,7 @@ void ExitAll(void)
 	InputExit();
 
 	// Exit Time Manager
-#if RTC_TIMER
+#ifdef RTC_TIMER
 	KillRTCTimer();
 #endif
 	if (my_timer_id) {
