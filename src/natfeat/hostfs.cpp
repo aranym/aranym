@@ -1682,7 +1682,7 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 		{
 			if (toupper(ftoName[0]) == 'U' && ftoName[1] == ':')
 			{
-				strcpy(ftoName, ftoname + 2);
+				memmove(ftoName, ftoName + 2, strlen(ftoName + 2) + 1);
 			} else
 			{
 				if (DriveFromLetter(ftoname[0]) >= 0 && ftoname[1] == ':')

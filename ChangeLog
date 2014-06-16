@@ -1,3 +1,7 @@
+2014/06/16 - Thorsten
+- hostfs: small fix to handling of absolute symlinks
+
+
 2014/06/12 - Thorsten
 Some small fixes in format specifiers of debug output
 
