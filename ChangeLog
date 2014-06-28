@@ -1,4 +1,9 @@
 2014/06/28 - Thorsten
+- hostfs.cpp: convert drive letter in
+  absolute symlinks like /C/mint to lowercase
+
+
+2014/06/28 - Thorsten
 - some more fixes to #ifdefs
 
 

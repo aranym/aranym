@@ -1693,6 +1693,9 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 				strcpy(ftoName, ftoname);
 			}
 		}
+		if (ftoName[0] == '/' && DriveFromLetter(ftoname[1]) >= 0 &&
+			(ftoName[2] == '\0' || ftoName[2] == '/'))
+			ftoName[1] = tolower(ftoName[1]);
 	}
 	
 	D(bug( "HOSTFS: fs_symlink: \"%s\" --> \"%s\"", ffromName, ftoName ));
