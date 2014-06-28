@@ -577,7 +577,7 @@ void comp_fscc_opp (uae_u32 opcode, uae_u16 extra)
     int cc;
     int reg;
 
-#if DEBUG_FPP
+#ifdef DEBUG_FPP
     printf ("fscc_opp at %08lx\n", m68k_getpc ());
     fflush (stdout);
 #endif
@@ -793,7 +793,7 @@ void comp_fsave_opp (uae_u32 opcode)
     FAIL(1);
     return;
 
-#if DEBUG_FPP
+#ifdef DEBUG_FPP
     printf ("fsave_opp at %08lx\n", m68k_getpc ());
     fflush (stdout);
 #endif
@@ -848,7 +848,7 @@ void comp_frestore_opp (uae_u32 opcode)
     FAIL(1);
     return;
 
-#if DEBUG_FPP
+#ifdef DEBUG_FPP
     printf ("frestore_opp at %08lx\n", m68k_getpc ());
     fflush (stdout);
 #endif
@@ -1319,7 +1319,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			dont_care_fflags();
 			break;
 		case 0x03:		/* FINTRZ */
-#if USE_X86_FPUCW 
+#ifdef USE_X86_FPUCW 
 			/* If we have control over the CW, we can do this */
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);

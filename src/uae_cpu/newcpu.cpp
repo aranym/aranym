@@ -1596,7 +1596,7 @@ void m68k_do_execute (void)
 #endif
 
 #ifndef FULLMMU
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
 	if (((pc ^ pc_page) > ARAM_PAGE_MASK)) {
 	    check_ram_boundary(pc, 2, false);
 	    pc_page = pc;

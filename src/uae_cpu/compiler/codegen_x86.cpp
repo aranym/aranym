@@ -3175,6 +3175,28 @@ static inline void raw_nop(void)
 
 static inline void raw_emit_nop_filler(int nbytes)
 {
+
+#if defined(CPU_x86_64)
+  /* The recommended way to pad 64bit code is to use NOPs preceded by
+     maximally four 0x66 prefixes.  Balance the size of nops.  */
+  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
+  if (nbytes == 0)
+	  return;
+
+  int i;
+  int nnops = (nbytes + 3) / 4;
+  int len = nbytes / nnops;
+  int remains = nbytes - nnops * len;
+
+  for (i = 0; i < remains; i++) {
+	  emit_block(prefixes, len);
+	  raw_nop();
+  }
+  for (; i < nnops; i++) {
+	  emit_block(prefixes, len - 1);
+	  raw_nop();
+  }
+#else
   /* Source: GNU Binutils 2.12.90.0.15 */
   /* Various efficient no-op patterns for aligning code labels.
      Note: Don't try to assemble the instructions in the comments.
@@ -3226,27 +3248,6 @@ static inline void raw_emit_nop_filler(int nbytes)
     f32_9, f32_10, f32_11, f32_12, f32_13, f32_14, f32_15
   };
 
-#if defined(CPU_x86_64)
-  /* The recommended way to pad 64bit code is to use NOPs preceded by
-     maximally four 0x66 prefixes.  Balance the size of nops.  */
-  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
-  if (nbytes == 0)
-	  return;
-
-  int i;
-  int nnops = (nbytes + 3) / 4;
-  int len = nbytes / nnops;
-  int remains = nbytes - nnops * len;
-
-  for (i = 0; i < remains; i++) {
-	  emit_block(prefixes, len);
-	  raw_nop();
-  }
-  for (; i < nnops; i++) {
-	  emit_block(prefixes, len - 1);
-	  raw_nop();
-  }
-#else
   int nloops = nbytes / 16;
   while (nloops-- > 0)
 	emit_block(f32_16, sizeof(f32_16));
@@ -3459,7 +3460,7 @@ static inline void raw_inc_sp(int off)
  *************************************************************************/
 
 void compiler_status() {
-	  panicbug("compiled code starts at %08x, current at %08x", compiled_code, current_compile_p);
+	  panicbug("compiled code starts at %p, current at %08x", compiled_code, (unsigned int)(current_compile_p - compiled_code));
 }
 
 /*************************************************************************

@@ -94,7 +94,7 @@ extern uintptr VMEMBaseDiff;
 extern uae_u32 VideoRAMBase;
 #endif
 
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
 extern uaecptr pc_page, read_page, write_page;
 extern uintptr pc_offset, read_offset, write_offset;
 # ifdef PROTECT2K
@@ -195,7 +195,7 @@ static inline bool phys_valid_address(uaecptr, bool, int) { return true; }
 
 static inline uae_u32 phys_get_long(uaecptr addr)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_long((uae_u32*)(addr + read_offset));
 #endif
@@ -205,7 +205,7 @@ static inline uae_u32 phys_get_long(uaecptr addr)
 #endif
     check_ram_boundary(addr, 4, false);
     uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -214,7 +214,7 @@ static inline uae_u32 phys_get_long(uaecptr addr)
 
 static inline uae_u32 phys_get_word(uaecptr addr)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_word((uae_u16*)(addr + read_offset));
 #endif
@@ -224,7 +224,7 @@ static inline uae_u32 phys_get_word(uaecptr addr)
 #endif
     check_ram_boundary(addr, 2, false);
     uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -233,7 +233,7 @@ static inline uae_u32 phys_get_word(uaecptr addr)
 
 static inline uae_u32 phys_get_byte(uaecptr addr)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ read_page) <= ARAM_PAGE_MASK))
         return do_get_mem_byte((uae_u8*)(addr + read_offset));
 #endif
@@ -243,7 +243,7 @@ static inline uae_u32 phys_get_byte(uaecptr addr)
 #endif
     check_ram_boundary(addr, 1, false);
     uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     read_page = addr;
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -252,7 +252,7 @@ static inline uae_u32 phys_get_byte(uaecptr addr)
 
 static inline void phys_put_long(uaecptr addr, uae_u32 l)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_long((uae_u32*)(addr + write_offset), l);
         return;
@@ -267,7 +267,7 @@ static inline void phys_put_long(uaecptr addr, uae_u32 l)
 #endif
     check_ram_boundary(addr, 4, true);
     uae_u32 * const m = (uae_u32 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -276,7 +276,7 @@ static inline void phys_put_long(uaecptr addr, uae_u32 l)
 
 static inline void phys_put_word(uaecptr addr, uae_u32 w)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_word((uae_u16*)(addr + write_offset), w);
         return;
@@ -291,7 +291,7 @@ static inline void phys_put_word(uaecptr addr, uae_u32 w)
 #endif
     check_ram_boundary(addr, 2, true);
     uae_u16 * const m = (uae_u16 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -300,7 +300,7 @@ static inline void phys_put_word(uaecptr addr, uae_u32 w)
 
 static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
         do_put_mem_byte((uae_u8*)(addr + write_offset), b);
         return;
@@ -315,7 +315,7 @@ static inline void phys_put_byte(uaecptr addr, uae_u32 b)
 #endif
     check_ram_boundary(addr, 1, true);
     uae_u8 * const m = (uae_u8 *)phys_get_real_address(addr);
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     write_page = addr;
     write_offset = (uintptr)m - (uintptr)addr;
 #endif
@@ -522,7 +522,7 @@ static inline bool valid_address(uaecptr addr, bool write, int sz)
 #endif
 
 static inline void flush_internals() {
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
     pc_page = 0xeeeeeeee;
     read_page = 0xeeeeeeee;
     write_page = 0xeeeeeeee;

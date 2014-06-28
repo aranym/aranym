@@ -33,7 +33,7 @@
 #error "Only Fixed Addressing is supported with the JIT Compiler"
 #endif
 
-#if X86_ASSEMBLY && !SAHF_SETO_PROFITABLE
+#if defined(X86_ASSEMBLY) && !SAHF_SETO_PROFITABLE
 #error "Only [LS]AHF scheme to [gs]et flags is supported with the JIT Compiler"
 #endif
 
@@ -79,8 +79,6 @@
 # include <cerrno>
 # include <cassert>
 
-#define UNUSED(param)	((void)(param))
-
 #if defined(CPU_x86_64) && 0
 #define RECORD_REGISTER_USAGE		1
 #endif
@@ -100,7 +98,7 @@ static void dummy_write_log(const char *, ...) { }
 } while (0)
 #endif
 
-#if RECORD_REGISTER_USAGE
+#ifdef RECORD_REGISTER_USAGE
 static uint64 reg_count[16];
 static int reg_count_local[16];
 
@@ -1681,7 +1679,7 @@ static inline void remove_all_offsets(void)
 
 static inline void flush_reg_count(void)
 {
-#if RECORD_REGISTER_USAGE
+#ifdef RECORD_REGISTER_USAGE
     for (int r = 0; r < 16; r++)
 	if (reg_count_local[r])
 	    ADDQim(reg_count_local[r], ((uintptr)reg_count) + (8 * r), X86_NOREG, X86_NOREG, 1);
@@ -1690,7 +1688,7 @@ static inline void flush_reg_count(void)
 
 static inline void record_register(int r)
 {
-#if RECORD_REGISTER_USAGE
+#ifdef RECORD_REGISTER_USAGE
     if (r < 16)
 	reg_count_local[r]++;
 #else
@@ -2414,11 +2412,11 @@ void compiler_exit(void)
 		dp = table68k + opcode_nums[i];
 		for (lookup = lookuptab; lookup->mnemo != (instrmnem)dp->mnemo; lookup++)
 			;
-		panicbug("%03d: %04x %10lu %s", i, opcode_nums[i], count, lookup->name);
+		panicbug("%03d: %04x %10u %s", i, opcode_nums[i], count, lookup->name);
 	}
 #endif
 
-#if RECORD_REGISTER_USAGE
+#ifdef RECORD_REGISTER_USAGE
 	int reg_count_ids[16];
 	uint64 tot_reg_count = 0;
 	for (int i = 0; i < 16; i++) {
@@ -2460,7 +2458,7 @@ void init_comp(void)
     uae_s8* cw=can_word;
     uae_s8* au=always_used;
 
-#if RECORD_REGISTER_USAGE
+#ifdef RECORD_REGISTER_USAGE
     for (i=0;i<16;i++)
 	reg_count_local[i] = 0;
 #endif

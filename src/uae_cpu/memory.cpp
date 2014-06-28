@@ -34,7 +34,7 @@
 
 #include "memory.h"
 
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
 uaecptr pc_page = 0xeeeeeeee;
 uintptr pc_offset = 0;
 uaecptr read_page = 0xeeeeeeee;
