@@ -47,6 +47,24 @@
 # define USE_JIT 0
 #endif
 
+#ifndef USE_JIT_FPU
+# define USE_JIT_FPU 0
+#endif
+
+#if defined(HW_SIGSEGV)
+# define MEMORY_CHECK "sseg"
+#elif defined(EXTENDED_SIGSEGV) && defined(ARAM_PAGE_CHECK)
+# define MEMORY_CHECK "pagehwsp"
+#elif defined(EXTENDED_SIGSEGV)
+# define MEMORY_CHECK "hwsp"
+#elif defined(ARAM_PAGE_CHECK)
+# define MEMORY_CHECK "page"
+#elif defined(NOCHECKBOUNDARY)
+# define MEMORY_CHECK "none"
+#else
+# define MEMORY_CHECK "full"
+#endif
+
 #ifndef FULLMMU
 # define FULLMMU 0
 #endif
@@ -1130,7 +1148,15 @@ void early_cmdline_check(int argc, char **argv) {
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
 			// infoprint("%s\n", VERSION_STRING);
 			infoprint("HW Configuration:");
+			infoprint("SDL (compiled)   : %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			SDL_version linked;
+			SDL_GetVersion(&linked);
+			infoprint("SDL (linked)     : %d.%d.%dd", linked.major, linked.minor, linked.patch);
+#endif
 			infoprint("CPU JIT compiler : %s", (USE_JIT == 1) ? "enabled" : "disabled");
+			infoprint("FPU JIT compiler : %s", (USE_JIT_FPU == 1) ? "enabled" : "disabled");
+			infoprint("Memory check     : %s", MEMORY_CHECK);
 			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
 			infoprint("FPU              : %s", USES_FPU_CORE);
 			infoprint("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");

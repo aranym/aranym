@@ -1,3 +1,7 @@
+2014/06/29 - Thorsten
+- parameters.cpp: print a few more infos
+
+
 2014/06/28 - Thorsten
 - hostfs.cpp: convert drive letter in
   absolute symlinks like /C/mint to lowercase
