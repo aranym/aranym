@@ -1,3 +1,7 @@
+2014/06/29 - Andreas
+- fpu_mpfr.cpp: avoid crash if fpu_exit was called without fpu_init
+
+
 2014/06/29 - Thorsten
 - parameters.cpp: print a few more infos
 
