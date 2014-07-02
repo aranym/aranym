@@ -878,7 +878,7 @@ fi
 
 AH_TEMPLATE([ARAM_PAGE_CHECK], [Define if you want to try out a different memory check])
 AH_TEMPLATE([NOCHECKBOUNDARY], [Define if you don't want to use check memory boundary])
-AH_TEMPLATE([EXTENDED_SIGSEGV], [Define if you want to use extended segafault handler])
+AH_TEMPLATE([EXTENDED_SIGSEGV], [Define if you want to use extended segfault handler])
 AH_TEMPLATE([RAMENDNEEDED], [Define if you want protect end of memory])
 AH_TEMPLATE([HW_SIGSEGV], [Define if you want to use extended segfault handler also for HW space])
 case $MEMORY_CHECK in
@@ -1209,30 +1209,12 @@ EOF
 if $CC conftest.S -c -o conftest.o >/dev/null 2>&1 ; then HAVE_GAS=yes; fi
 AC_MSG_RESULT($HAVE_GAS)
 
-dnl Check for GCC 2.7 or higher.
-HAVE_GCC27=no
-AC_MSG_CHECKING(for GCC 2.7 or higher)
-AC_EGREP_CPP(xyes,
-[#if __GNUC__ - 1 > 1 || __GNUC_MINOR__ - 1 > 5
-  xyes
-#endif
-], [AC_MSG_RESULT(yes); HAVE_GCC27=yes], AC_MSG_RESULT(no))
-
-dnl Check for GCC 3.0 or higher.
-HAVE_GCC30=no
-AC_MSG_CHECKING(for GCC 3.0 or higher)
-AC_EGREP_CPP(xyes,
-[#if __GNUC__ >= 3
-  xyes
-#endif
-], [AC_MSG_RESULT(yes); HAVE_GCC30=yes], AC_MSG_RESULT(no))
-
 dnl (gb) Do not merge constants since it breaks fpu/fpu_x86.cpp.
 dnl As of 2001/08/02, this affects the following compilers:
 dnl Official: probably gcc-3.1 (mainline CVS)
 dnl Mandrake: gcc-2.96 >= 0.59mdk, gcc-3.0.1 >= 0.1mdk
 dnl Red Hat : gcc-2.96 >= 89, gcc-3.0 >= 1
-if [[ "x$HAVE_GCC27" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
+if [[ "x$GCC" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
   SAVED_CXXFLAGS="$CXXFLAGS"
   CXXFLAGS="$CXXFLAGS -fno-merge-constants"
   AC_CACHE_CHECK([whether GCC supports constants merging], ac_cv_gcc_constants_merging, [
@@ -1242,22 +1224,6 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
     AC_LANG_RESTORE
   ])
   if [[ "x$ac_cv_gcc_constants_merging" != "xyes" ]]; then
-    CXXFLAGS="$SAVED_CXXFLAGS"
-  fi
-fi
-
-dnl Store motion was introduced in 3.3-hammer branch and any gcc >= 3.4
-dnl However, there are some corner cases exposed on x86-64
-if [[ "x$HAVE_GCC27" = "xyes" ]]; then
-  SAVED_CXXFLAGS="$CXXFLAGS"
-  CXXFLAGS="$CXXFLAGS -fno-gcse-sm"
-  AC_CACHE_CHECK([whether GCC supports store motion], ac_cv_gcc_store_motion, [
-    AC_LANG_SAVE
-    AC_LANG_CPLUSPLUS
-    AC_TRY_COMPILE([],[],[ac_cv_gcc_store_motion=yes],[ac_cv_gcc_store_motion=no])
-    AC_LANG_RESTORE
-  ])
-  if [[ "x$ac_cv_gcc_store_motion" != "xyes" ]]; then
     CXXFLAGS="$SAVED_CXXFLAGS"
   fi
 fi
@@ -1274,7 +1240,7 @@ CAN_JIT=no
 JITSRCS=
 GENJITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
 
-if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
+if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   dnl i386 CPU
   DEFINES="$DEFINES -DUNALIGNED_PROFITABLE -DREGPARAM=\"__attribute__((regparm(3)))\""
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
@@ -1285,7 +1251,7 @@ if [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
 #    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
   fi
-elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
+elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   dnl x86-64 CPU
   DEFINES="$DEFINES -DUNALIGNED_PROFITABLE"
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
@@ -1307,7 +1273,7 @@ elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
 	     GENCPU_FLAGS="-mno-red-zone"
 	  fi
   fi
-elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
+elif [[ "x$GCC" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
   dnl SPARC CPU
   case "$host_os" in
   solaris*)
@@ -1330,7 +1296,7 @@ elif [[ "x$HAVE_GCC27" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xy
     esac
     ;;
   esac
-elif [[ "x$HAVE_GCC30" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
+elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
   dnl ARM CPU
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     case "$host_cpu" in
@@ -1431,7 +1397,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     esac
     ;;
   x86)
-    if test ":$HAVE_GCC27:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" -o ":$HAVE_GCC27:$HAVE_X86_64:$HAVE_GAS:" = ":yes:yes:yes:"; then
+    if test ":$GCC:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" -o ":$GCC:$HAVE_X86_64:$HAVE_GAS:" = ":yes:yes:yes:"; then
       FPE_CORE="i387 fpu core"
       DEFINES="$DEFINES -DFPU_X86"
       FPUSRCS="uae_cpu/fpu/fpu_x86.cpp"
@@ -1499,14 +1465,14 @@ CPUSRCS="$CPUSRCS uae_cpu/aranym_glue.cpp uae_cpu/memory.cpp uae_cpu/newcpu.cpp 
 GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
 
 dnl Remove the "-g" option if set for GCC.
-if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+if [[ "x$GCC" = "xyes" ]]; then
   CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
   CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"
   WFLAGS=""
-  if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+  if [[ "x$GCC" = "xyes" ]]; then
     WFLAGS="$WFLAGS -W -Wall -Wundef"
     DBGSP="-ggdb3"
   fi
@@ -1521,17 +1487,11 @@ if [[ "x$WANT_FULLDEBUG" = "xyes" ]]; then
 fi
 
 dnl Remove the "-O2" option if set for GCC and set the "-O3" option.
-if [[ "x$HAVE_GCC27" = "xyes" ]]; then
+if [[ "x$GCC" = "xyes" ]]; then
   CFLAGS=`echo $CFLAGS | sed -e 's/-O2//g'`
   CFLAGS="-O3 $CFLAGS"
   CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O2//g'`
   CXXFLAGS="-O3 $CXXFLAGS"
-fi
-
-dnl Remove -O[23] for cygwin gcc 3.x (gcc-3.3.3-3 found buggy).
-if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_GCC30" = "xyes" ]]; then
-  CFLAGS=`echo $CFLAGS | sed -e 's/-O[[23]]//g'`
-  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O[[23]]//g'`
 fi
 
 dnl Or if we have -Ofast
@@ -1571,17 +1531,28 @@ else
 	CFLAGS="$CFLAGS $SDL_CFLAGS"
 	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 
-	AC_CHECK_HEADER(SDL_image.h, have_sdlimage_h=yes, havesdlimage_h=no)
-	AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+	case "$host" in
+		# the mixed environment on cygwin usually
+		# causes link tests against SDL fail here,
+		# just assume it is present
+		*-*-cygwin* | *-*-mingw*)
+			have_sdlimage_lib=yes
+			have_sdlimage_h=yes
+			;;
+		*)
+			AC_CHECK_HEADER(SDL_image.h, have_sdlimage_h=yes, havesdlimage_h=no)
+			AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+			;;
+	esac
 
 	CFLAGS=$tmp_cflags
 	CPPFLAGS=$tmp_cppflags
 
-	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
+	if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 		LIBS="$LIBS -lSDL_image"
 	fi
 fi
-if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
+if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 	AC_DEFINE(HAVE_SDL_IMAGE, 1, [Define if you have SDL_image])
 fi
 
@@ -1604,14 +1575,24 @@ if test "x$WANT_OPENGL" = "xyes"; then
 				;;
 		esac
 	fi
+	case "$host" in
+		# the mixed environment on cygwin usually
+		# causes link tests against SDL fail here,
+		# just assume it is present
+		*-*-cygwin* | *-*-mingw*)
+			have_opengl=yes
+			;;
+	esac
 	AC_MSG_CHECKING(for OpenGL support)
-	tmp_cflags=$CFLAGS
-	tmp_libs=$LIBS
-	CFLAGS="$CFLAGS $SDL_CFLAGS"
-	LIBS="$LIBS $SDL_LIBS $GL_LIBS"
-	AC_TRY_COMPILE([
-		 #include "SDL_opengl.h"
-		],[],[have_opengl="yes"])
+	if test "$have_opengl" = no; then
+		tmp_cflags=$CFLAGS
+		tmp_libs=$LIBS
+		CFLAGS="$CFLAGS $SDL_CFLAGS"
+		LIBS="$LIBS $SDL_LIBS $GL_LIBS"
+		AC_TRY_COMPILE([
+			 #include "SDL_opengl.h"
+			],[],[have_opengl="yes"])
+	fi
 	AC_MSG_RESULT($have_opengl)
 	CFLAGS=$tmp_cflags
 	LIBS=$tmp_libs
@@ -1728,24 +1709,31 @@ fi
 dnl Natfeat OSMesa driver
 
 NFOSMESASRCS=""
+AH_TEMPLATE([NFOSMESA_SUPPORT], [Define if you want to use host OSMesa driver])
 if test "x$WANT_NFOSMESA" = "xyes"; then
-	AC_DEFINE([NFOSMESA_SUPPORT], 1, [Define if you want to use host OSMesa driver])
-	NFOSMESASRCS="natfeat/nfosmesa.cpp"
+	have_osmesa=no
 	if test "x$PKG_CONFIG" != "x"; then
-		PKG_CHECK_MODULES([OSMESA], [osmesa])
+		PKG_CHECK_MODULES([OSMESA], [osmesa], have_osmesa=yes, :)
 	fi
-	if test "x$OSMESA_CFLAGS" != "x"; then
-		CPPFLAGS="$CPPFLAGS $OSMESA_CFLAGS"
-	else
+	if test "$have_osmesa" = "no"; then
 		case "$host_os" in
 			dnl For darwin the OSMesa include path is by default not defined
 			darwin*)
-				CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include/"
+				OSMESA_CFLAGS="-I/usr/X11R6/include/"
 				;;
 			*)
-				WANT_NFOSMESA="no"
 				;;
 		esac
+		have_osmesa=yes
+		AC_CHECK_HEADER(GL/osmesa.h, :, have_osmesa=no)
+		AC_CHECK_LIB(OSMesa, OSMesaCreateContext, :, have_osmesa=no)
+	fi
+	if test "$have_osmesa" = "yes"; then
+		CPPFLAGS="$CPPFLAGS $OSMESA_CFLAGS"
+		AC_DEFINE([NFOSMESA_SUPPORT], 1)
+		NFOSMESASRCS="natfeat/nfosmesa.cpp"
+	else
+		WANT_NFOSMESA="no"
 	fi
 fi
 

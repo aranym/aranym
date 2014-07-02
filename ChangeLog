@@ -1,3 +1,7 @@
+2014/07/02 - Thorsten
+- configure.ac: remove some obsolete tests
+
+
 2014/06/29 - Thorsten
 - nfcdrom_win32.cpp: Get rid of some warnings.
 
