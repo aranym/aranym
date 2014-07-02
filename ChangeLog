@@ -1,3 +1,7 @@
+2014/06/29 - Thorsten
+- nfcdrom_win32.cpp: Get rid of some warnings.
+
+
 2014/06/29 - Andreas
 - fpu_mpfr.cpp: avoid crash if fpu_exit was called without fpu_init
 

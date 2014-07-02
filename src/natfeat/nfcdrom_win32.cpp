@@ -37,6 +37,21 @@
 
 #define NFCD_NAME	"nf:cdrom:win32: "
 
+#ifndef MSF_TO_FRAMES
+#define CD_FPS     75
+#define MSF_TO_FRAMES(M, S, F)     ((M)*60*CD_FPS+(S)*CD_FPS+(F))
+#endif
+#ifndef FRAMES_TO_MSF
+#define FRAMES_TO_MSF(f, M,S,F)	{					\
+	int value = f;							\
+	*(F) = value%CD_FPS;						\
+	value /= CD_FPS;						\
+	*(S) = value%60;						\
+	value /= 60;							\
+	*(M) = value;							\
+}
+#endif
+
 /*--- CDROM definitions ---*/
 
 #define _MS_STRUCT __attribute__ ((ms_struct))
@@ -483,7 +498,8 @@ int32 CdromDriverWin32::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 			errorcode = cd_winioctl(drive, IOCTL_CDROM_GET_LAST_SESSION, NULL, 0, &data, sizeof(data));
 			if (errorcode >= 0)
 			{
-				*atari_addr = *(Uint32 *)data.TrackData[0].Address;
+				Uint32 *p = (Uint32 *)data.TrackData[0].Address;
+				*atari_addr = *p;
 				D(bug(NFCD_NAME "CDROMREADOFFSET:    lba 0x%08x", SDL_SwapBE32(*atari_addr)));
 			}
 		}
@@ -581,10 +597,11 @@ int32 CdromDriverWin32::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 				{
 					if (toc.TrackData[i].TrackNumber == atari_tocentry->cdte_track)
 					{
+						Uint32 *p = (Uint32 *)toc.TrackData[i].Address;
 						atari_tocentry->cdte_info = (toc.TrackData[i].Adr << 4) | toc.TrackData[i].Control;
 						atari_tocentry->cdte_datamode = 0;
 						atari_tocentry->dummy = 0;
-						atari_tocentry->cdte_addr = *(Uint32 *)toc.TrackData[i].Address;
+						atari_tocentry->cdte_addr = *p;
 						break;
 					}
 				}
@@ -682,15 +699,19 @@ int32 CdromDriverWin32::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 
 			if (errorcode >= 0)
 			{
+				Uint32 *p;
+				
 				atari_subchnl->cdsc_audiostatus = data.CurrentPosition.Header.AudioStatus;
 				atari_subchnl->cdsc_resvd = 0;
 				atari_subchnl->cdsc_info = (data.CurrentPosition.ADR & 0x0f)<<4;
 				atari_subchnl->cdsc_info |= data.CurrentPosition.Control & 0x0f;
 				atari_subchnl->cdsc_trk = data.CurrentPosition.TrackNumber;
 				atari_subchnl->cdsc_ind = data.CurrentPosition.IndexNumber;
-
-				atari_subchnl->cdsc_absaddr = *(Uint32 *)data.CurrentPosition.AbsoluteAddress;
-				atari_subchnl->cdsc_reladdr = *(Uint32 *)data.CurrentPosition.TrackRelativeAddress;
+				
+				p = (Uint32 *)data.CurrentPosition.AbsoluteAddress;
+				atari_subchnl->cdsc_absaddr = *p;
+				p = (Uint32 *)data.CurrentPosition.TrackRelativeAddress;
+				atari_subchnl->cdsc_reladdr = *p;
 				if (atari_subchnl->cdsc_format != CDROM_LBA)
 				{
 					int minute, second, frame;
@@ -1041,13 +1062,15 @@ int32 CdromDriverWin32::cd_discinfo(memptr device, memptr buffer)
 	discinfo->current = data.CurrentPosition.TrackNumber;	/* current track */
 	discinfo->index = data.CurrentPosition.IndexNumber;	/* current index */
 
-	FRAMES_TO_MSF(SDL_SwapBE32(*(Uint32 *)data.CurrentPosition.TrackRelativeAddress), &minute, &second, &frame);
+	Uint32 *p = (Uint32 *)data.CurrentPosition.TrackRelativeAddress;
+	FRAMES_TO_MSF(SDL_SwapBE32(*p), &minute, &second, &frame);
 	discinfo->relative.track = 0;
 	discinfo->relative.minute = BinaryToBcd(minute);
 	discinfo->relative.second = BinaryToBcd(second);
 	discinfo->relative.frame = BinaryToBcd(frame);
 
-	FRAMES_TO_MSF(SDL_SwapBE32(*(Uint32 *)data.CurrentPosition.AbsoluteAddress), &minute, &second, &frame);
+	p = (Uint32 *)data.CurrentPosition.AbsoluteAddress;
+	FRAMES_TO_MSF(SDL_SwapBE32(*p), &minute, &second, &frame);
 	discinfo->absolute.track = 0;
 	discinfo->absolute.minute = BinaryToBcd(minute);
 	discinfo->absolute.second = BinaryToBcd(second);
