@@ -106,10 +106,8 @@ DECLARE_MIDFUNC(lea_l_rr_indexed(W4 d, RR4 s, RR4 index, IMM factor));
 DECLARE_MIDFUNC(mov_l_bRr(RR4 d, RR4 s, IMM offset));
 DECLARE_MIDFUNC(mov_w_bRr(RR4 d, RR2 s, IMM offset));
 DECLARE_MIDFUNC(mov_b_bRr(RR4 d, RR1 s, IMM offset));
-#undef bswap_32
-DECLARE_MIDFUNC(bswap_32(RW4 r));
-#undef bswap_16
-DECLARE_MIDFUNC(bswap_16(RW2 r));
+DECLARE_MIDFUNC(mid_bswap_32(RW4 r));
+DECLARE_MIDFUNC(mid_bswap_16(RW2 r));
 DECLARE_MIDFUNC(mov_l_rr(W4 d, RR4 s));
 DECLARE_MIDFUNC(mov_l_mr(IMM d, RR4 s));
 DECLARE_MIDFUNC(mov_w_mr(IMM d, RR2 s));

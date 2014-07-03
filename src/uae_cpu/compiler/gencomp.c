@@ -666,12 +666,12 @@ genmovemel (uae_u16 opcode)
     switch(table68k[opcode].size) {
      case sz_long: 
 	comprintf("\t\t\tmov_l_rR(i,native,offset);\n"
-		  "\t\t\tbswap_32(i);\n"
+		  "\t\t\tmid_bswap_32(i);\n"
 		  "\t\t\toffset+=4;\n");
 	break;
      case sz_word: 
 	comprintf("\t\t\tmov_w_rR(i,native,offset);\n"
-		  "\t\t\tbswap_16(i);\n"
+		  "\t\t\tmid_bswap_16(i);\n"
 		  "\t\t\tsign_extend_16_rr(i,i);\n"
 		  "\t\t\toffset+=2;\n");
 	break;
@@ -703,13 +703,13 @@ genmovemle (uae_u16 opcode)
 	switch(table68k[opcode].size) {
 	 case sz_long: 
 	    comprintf("\t\t\tmov_l_rr(tmp,i);\n"
-		      "\t\t\tbswap_32(tmp);\n"
+		      "\t\t\tmid_bswap_32(tmp);\n"
 		      "\t\t\tmov_l_Rr(native,tmp,offset);\n"
 		      "\t\t\toffset+=4;\n");
 	    break;
 	 case sz_word: 
 	    comprintf("\t\t\tmov_l_rr(tmp,i);\n"
-		      "\t\t\tbswap_16(tmp);\n"
+		      "\t\t\tmid_bswap_16(tmp);\n"
 		      "\t\t\tmov_w_Rr(native,tmp,offset);\n"
 		      "\t\t\toffset+=2;\n");
 	    break;
@@ -723,14 +723,14 @@ genmovemle (uae_u16 opcode)
 	 case sz_long: 
 	    comprintf("\t\t\toffset-=4;\n"
 		      "\t\t\tmov_l_rr(tmp,15-i);\n"
-		      "\t\t\tbswap_32(tmp);\n"
+		      "\t\t\tmid_bswap_32(tmp);\n"
 		      "\t\t\tmov_l_Rr(native,tmp,offset);\n"
 		      );
 	    break;
 	 case sz_word: 
 	    comprintf("\t\t\toffset-=2;\n"
 		      "\t\t\tmov_l_rr(tmp,15-i);\n"
-		      "\t\t\tbswap_16(tmp);\n"
+		      "\t\t\tmid_bswap_16(tmp);\n"
 		      "\t\t\tmov_w_Rr(native,tmp,offset);\n"
 		      );
 	    break;
@@ -1164,6 +1164,7 @@ gen_opcode (unsigned long int opcode)
      case sz_long: ssize="l"; break;
      default: abort();
     }
+    (void)ssize;
 
     switch (curi->mnemo)
     {

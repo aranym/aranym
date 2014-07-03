@@ -2777,8 +2777,8 @@ static void writemem_real(int address, int source, int size, int tmp, int clobbe
 
 	switch(size) {
 	 case 1: mov_b_bRr(address,source,MEMBaseDiff); break; 
-	 case 2: mov_w_rr(f,source); bswap_16(f); mov_w_bRr(address,f,MEMBaseDiff); break;
-	 case 4: mov_l_rr(f,source); bswap_32(f); mov_l_bRr(address,f,MEMBaseDiff); break;
+	 case 2: mov_w_rr(f,source); mid_bswap_16(f); mov_w_bRr(address,f,MEMBaseDiff); break;
+	 case 4: mov_l_rr(f,source); mid_bswap_32(f); mov_l_bRr(address,f,MEMBaseDiff); break;
 	}
 	forget_about(tmp);
 	forget_about(f);
@@ -2836,8 +2836,8 @@ static void readmem_real(int address, int dest, int size, int tmp)
 
 	switch(size) {
 	 case 1: mov_b_brR(dest,address,MEMBaseDiff); break; 
-	 case 2: mov_w_brR(dest,address,MEMBaseDiff); bswap_16(dest); break;
-	 case 4: mov_l_brR(dest,address,MEMBaseDiff); bswap_32(dest); break;
+	 case 2: mov_w_brR(dest,address,MEMBaseDiff); mid_bswap_16(dest); break;
+	 case 4: mov_l_brR(dest,address,MEMBaseDiff); mid_bswap_32(dest); break;
 	}
 	forget_about(tmp);
 }
