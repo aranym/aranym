@@ -1138,7 +1138,6 @@ cdrom_interface::capacity()
   // <splite@purdue.edu> 21 June 2001
 
   int i, dtrk_lba, num_sectors;
-  int dtrk = 0;
   struct cdrom_tochdr td;
   struct cdrom_tocentry te;
 
@@ -1162,7 +1161,6 @@ cdrom_interface::capacity()
       break;
     }
     if (te.cdte_ctrl & CDROM_DATA_TRACK) {
-      dtrk = i;
       dtrk_lba = te.cdte_addr.lba;
     }
   }
