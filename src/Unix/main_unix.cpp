@@ -53,8 +53,6 @@ typedef void (*sighandler_t)(int);
 	extern void refreshMenuKeys();
 #endif
 
-static sighandler_t oldsegfault = SIG_ERR;
-
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
@@ -159,22 +157,19 @@ static void allocate_all_memory()
 #endif /* DIRECT_ADDRESSING || FIXED_ADDRESSING */
 }
 
-#ifdef EXTENDED_SIGSEGV
-extern sighandler_t install_sigsegv();
-#else
-static sighandler_t install_sigsegv() {
-	return signal(SIGSEGV, segmentationfault);
+#ifndef EXTENDED_SIGSEGV
+void install_sigsegv() {
+	signal(SIGSEGV, segmentationfault);
 }
 #endif
 
-static void remove_sigsegv(sighandler_t orighandler) {
-	if (orighandler != SIG_ERR)
-		signal(SIGSEGV, orighandler);
+static void remove_sigsegv() {
+	signal(SIGSEGV, SIG_DFL);
 }
 
 static void install_signal_handler()
 {
-	oldsegfault = install_sigsegv();
+	install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
 #ifdef NEWDEBUG
@@ -222,7 +217,7 @@ static void install_signal_handler()
 
 static void remove_signal_handler()
 {
-	remove_sigsegv(oldsegfault);
+	remove_sigsegv();
 	D(bug("Sigsegv handler removed"));
 }
 

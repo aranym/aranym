@@ -1071,9 +1071,11 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       case "$CPU_TYPE" in
         i386)
 	  SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86.cpp"
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
 	  ;;
 	x86_64)
-          SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86_64.cpp"
+          SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86.cpp"
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
           ;;
 	arm)
           SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_arm.cpp"
@@ -1466,8 +1468,12 @@ GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$GCC" = "xyes" ]]; then
-  CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
-  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
+  if test "$ac_test_CFLAGS" != set; then
+    CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
+  fi
+  if test "$ac_test_CXXFLAGS" != set; then
+    CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
+  fi
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"
@@ -1487,11 +1493,16 @@ if [[ "x$WANT_FULLDEBUG" = "xyes" ]]; then
 fi
 
 dnl Remove the "-O2" option if set for GCC and set the "-O3" option.
+dnl Do this only if it was defaulted by configure
 if [[ "x$GCC" = "xyes" ]]; then
-  CFLAGS=`echo $CFLAGS | sed -e 's/-O2//g'`
-  CFLAGS="-O3 $CFLAGS"
-  CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O2//g'`
-  CXXFLAGS="-O3 $CXXFLAGS"
+  if test "$ac_test_CFLAGS" != set; then
+    CFLAGS=`echo $CFLAGS | sed -e 's/-O2//g'`
+    CFLAGS="-O3 $CFLAGS"
+  fi
+  if test "$ac_test_CXXFLAGS" != set; then
+    CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-O2//g'`
+    CXXFLAGS="-O3 $CXXFLAGS"
+  fi
 fi
 
 dnl Or if we have -Ofast

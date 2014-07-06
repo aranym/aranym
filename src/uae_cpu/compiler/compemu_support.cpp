@@ -2840,6 +2840,7 @@ static void readmem_real(int address, int dest, int size, int tmp)
 	 case 4: mov_l_brR(dest,address,MEMBaseDiff); mid_bswap_32(dest); break;
 	}
 	forget_about(tmp);
+	(void) f;
 }
 
 void readbyte(int address, int dest, int tmp)
@@ -2878,6 +2879,8 @@ void get_n_addr(int address, int dest, int tmp)
 # error "Only fixed adressing mode supported"
 #endif
 	forget_about(tmp);
+	(void) f;
+	(void) a;
 }
 
 void get_n_addr_jmp(int address, int dest, int tmp)

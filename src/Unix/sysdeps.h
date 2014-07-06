@@ -188,6 +188,8 @@
 
 #endif /* OS_INCLUDES_DEFINE */
 
+extern void install_sigsegv(void);
+
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
 #else
@@ -611,6 +613,14 @@ extern CFBundleRef mainBundle;
 #  define __always_inline __inline __attribute__ ((__always_inline__))
 # else
 #  define __always_inline __inline
+# endif
+#endif
+
+#ifndef __attribute_noinline__
+# if __GNUC_PREREQ(3,1)
+#  define __attribute_noinline__ __attribute__ ((__noinline__))
+# else
+#  define __attribute_noinline__ /* Ignore */
 # endif
 #endif
 

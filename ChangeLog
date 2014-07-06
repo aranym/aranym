@@ -1,3 +1,10 @@
+2014/07/06 - Thorsten
+- */sigsegv_x86.cpp: merged x86/x86_64 cpu emulation
+  into sigsegv_common_x86.h; update x86 ports to use it.
+- sigsegv_common_x86.h: new file with core x86 cpu
+  emulation, fixing some decoding errors.
+
+
 2014/07/04 - Thorsten
 - cdrom.cpp: removed unused variable
 

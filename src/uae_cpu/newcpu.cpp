@@ -1548,6 +1548,16 @@ int m68k_do_specialties(void)
 		Exception (9,last_trace_ad);
 	}
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
+		if ((regs.sr & 0x700) == 0x700)
+		{
+			panicbug("STOPed with interrupts disabled, exiting");
+			quit_program = 1;
+#ifdef FULL_HISTORY
+			showBackTrace(20, false);
+			m68k_dumpstate (NULL);
+#endif
+			return 1;
+		}
 		// give unused time slices back to OS
 		SleepAndWait();
 
