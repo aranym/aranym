@@ -821,7 +821,6 @@ buserr:
 #endif /* HW_SIGSEGV */
 
 	BUS_ERROR(addr);
-	__builtin_unreachable();
 }
 
 #ifdef NO_NESTED_SIGSEGV
@@ -834,7 +833,6 @@ atari_bus_fault(void)
 {
 	breakpt();
 	THROW(2);
-	__builtin_unreachable();
 }
 
 static __attribute_noinline__ void handle_access_fault(CONTEXT_ATYPE CONTEXT_NAME, volatile memptr faultaddr)

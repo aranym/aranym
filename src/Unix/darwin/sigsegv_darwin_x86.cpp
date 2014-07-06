@@ -144,7 +144,7 @@ typedef struct _ExceptionPorts {
 #			define SIGSEGV_THREAD_STATE_TYPE		x86_thread_state32_t
 #			define SIGSEGV_THREAD_STATE_FLAVOR		x86_THREAD_STATE32
 #			define SIGSEGV_THREAD_STATE_COUNT		x86_THREAD_STATE32_COUNT
-#			define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->eax) /* EAX is the first GPR we consider */
+#			define SIGSEGV_REGISTER_FILE			((unsigned long *)&state->__eax) /* EAX is the first GPR we consider */
 #			define SIGSEGV_FAULT_INSTRUCTION		state->__eip
 
 #		else

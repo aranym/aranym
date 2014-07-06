@@ -1,4 +1,9 @@
 2014/07/06 - Thorsten
+- sigsegv_darwin_x86.cpp, sigsegv_common_x86.h:
+  Fix build on MacOSX
+
+
+2014/07/06 - Thorsten
 missed sigsegv_common_x86.h in last commit
 
 
