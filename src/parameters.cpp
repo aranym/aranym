@@ -33,6 +33,7 @@
 #include "host_filesys.h"
 #include "cfgopts.h"
 #include "natfeat/nf_base.h"
+#include "rtc.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -371,29 +372,29 @@ static void set_ide(unsigned int number, const char *dev_path, int cylinders, in
   // Autodetect ???
   if (cylinders == -1) {
     if ((cylinders = get_geometry(dev_path, geoCylinders)) == -1) {
-      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
-      exit(-1);
+      panicbug("Disk %s has unknown geometry.", dev_path);
+      exit(EXIT_FAILURE);
     }
   }
 
   if (heads == -1) {
     if ((heads = get_geometry(dev_path, geoHeads)) == -1) {
-      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
-      exit(-1);
+      panicbug("Disk %s has unknown geometry.", dev_path);
+      exit(EXIT_FAILURE);
     }
   }
 
   if (spt == -1) {
     if ((spt = get_geometry(dev_path, geoSpt)) == -1) {
-      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
-      exit(-1);
+      panicbug("Disk %s has unknown geometry.", dev_path);
+      exit(EXIT_FAILURE);
     }
   }
 
   if (byteswap == -1) {
     if ((byteswap = get_geometry(dev_path, geoByteswap)) == -1) {
-      fprintf(stderr, "Disk %s has unknown geometry.\n", dev_path);
-      exit(-1);
+      panicbug("Disk %s has unknown geometry.", dev_path);
+      exit(EXIT_FAILURE);
     }
   }
 
@@ -1139,7 +1140,7 @@ void early_cmdline_check(int argc, char **argv) {
 			if ((c + 1) < argc) {
 				safe_strncpy(config_file, argv[c + 1], sizeof(config_file));
 			} else {
-				fprintf(stderr, "config switch requires one parameter\n");
+				panicbug("config switch requires one parameter");
 				exit(EXIT_FAILURE);
 			}
 		} else if ((strcmp(p, "-h") == 0) || (strcmp(p, "--help") == 0)) {
@@ -1152,10 +1153,15 @@ void early_cmdline_check(int argc, char **argv) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			SDL_version linked;
 			SDL_GetVersion(&linked);
-			infoprint("SDL (linked)     : %d.%d.%dd", linked.major, linked.minor, linked.patch);
+			infoprint("SDL (linked)     : %d.%d.%d", linked.major, linked.minor, linked.patch);
 #endif
 			infoprint("CPU JIT compiler : %s", (USE_JIT == 1) ? "enabled" : "disabled");
 			infoprint("FPU JIT compiler : %s", (USE_JIT_FPU == 1) ? "enabled" : "disabled");
+#if FIXED_ADDRESSING
+			infoprint("Addressing mode  : fixed (0x%08x)", FMEMORY);
+#else
+			infoprint("Addressing mode  : %s", DIRECT_ADDRESSING ? "direct" : "normal");
+#endif
 			infoprint("Memory check     : %s", MEMORY_CHECK);
 			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
 			infoprint("FPU              : %s", USES_FPU_CORE);
@@ -1255,7 +1261,7 @@ int process_cmdline(int argc, char **argv)
 	
 			case 'a':
 				if ((strlen(optarg)-1) > sizeof(bx_options.floppy.path))
-					fprintf(stderr, "Floppy image filename longer than %zu chars.\n", sizeof(bx_options.floppy.path));
+					panicbug("Floppy image filename longer than %u chars.", (unsigned)sizeof(bx_options.floppy.path));
 				safe_strncpy(bx_options.floppy.path, optarg, sizeof(bx_options.floppy.path));
 				break;
 
@@ -1270,14 +1276,14 @@ int process_cmdline(int argc, char **argv)
 #if HOSTFS_SUPPORT
 			case 'd':
 				if ( strlen(optarg) < 4 || optarg[1] != ':') {
-					fprintf(stderr, "Not enough parameters for -d\n");
+					panicbug("Not enough parameters for -d");
 					break;
 				}
 				// set the drive
 				{
 					int8 i = DriveFromLetter(optarg[0]);
 					if (i <= 0 || i >= HOSTFS_MAX_DRIVES) {
-						fprintf(stderr, "Drive out of [A-Z] range for -d\n");
+						panicbug("Drive out of [A-Z] range for -d");
 						break;
 					}
 
@@ -1302,22 +1308,77 @@ int process_cmdline(int argc, char **argv)
 
 			case 'k':
 				{
-					char countries[][3] = {{"us"},{"de"},{"fr"},{"uk"},{"es"},{"it"},{"se"},{"ch"},
-							{"cd"},{"tr"},{"fi"},{"no"},{"dk"},{"sa"},{"nl"},{"cz"},{"hu"},{"sk"},{"gr"}};
+					static struct {
+						char name[6];
+						nvram_t id;
+					} const countries[] = {
+						{ "us", COUNTRY_US }, { "en_US", COUNTRY_US },
+						{ "de", COUNTRY_DE }, { "de_DE", COUNTRY_DE }, 
+						{ "fr", COUNTRY_FR }, { "fr_FR", COUNTRY_FR },
+						{ "uk", COUNTRY_UK }, { "en_GB", COUNTRY_UK }, 
+						{ "es", COUNTRY_ES }, { "es_ES", COUNTRY_ES },
+						{ "it", COUNTRY_IT }, { "it_IT", COUNTRY_IT },
+						{ "se", COUNTRY_SE }, { "sv_SE", COUNTRY_SE },
+						{ "ch", COUNTRY_SF }, { "fr_CH", COUNTRY_SF },
+						{ "cd", COUNTRY_SG }, { "de_CH", COUNTRY_SG },
+						{ "tr", COUNTRY_TR }, { "tr_TR", COUNTRY_TR },
+						{ "fi", COUNTRY_FI }, { "fi_FI", COUNTRY_FI },
+						{ "no", COUNTRY_NO }, { "no_NO", COUNTRY_NO }, 
+						{ "dk", COUNTRY_DK }, { "da_DK", COUNTRY_DK },
+						{ "sa", COUNTRY_SA }, { "ar_SA", COUNTRY_SA },
+						{ "nl", COUNTRY_NL }, { "nl_NL", COUNTRY_NL },
+						{ "cz", COUNTRY_CZ }, { "cS_CZ", COUNTRY_CZ },
+						{ "hu", COUNTRY_HU }, { "hu_HU", COUNTRY_HU }, 
+						{ "pl", COUNTRY_PL }, { "pl_PL", COUNTRY_PL }, 
+						{ "lt", COUNTRY_PL }, { "lt_LT", COUNTRY_LT }, 
+						{ "ru", COUNTRY_RU }, { "ru_RU", COUNTRY_RU }, 
+						{ "ee", COUNTRY_EE }, { "et_EE", COUNTRY_EE }, 
+						{ "by", COUNTRY_BY }, { "be_BY", COUNTRY_BY }, 
+						{ "ua", COUNTRY_UA }, { "uk_UA", COUNTRY_UA }, 
+						{ "sk", COUNTRY_SK }, { "sk_SK", COUNTRY_SK },
+						{ "ro", COUNTRY_RO }, { "ro_RO", COUNTRY_RO },
+						{ "bg", COUNTRY_BG }, { "bg_BG", COUNTRY_BG },
+						{ "si", COUNTRY_SI }, { "sl_SI", COUNTRY_SI },
+						{ "hr", COUNTRY_HR }, { "hr_HR", COUNTRY_HR },
+						{ "rs", COUNTRY_RS }, { "sr_RS", COUNTRY_RS },
+						{ "me", COUNTRY_ME }, { "sr_ME", COUNTRY_ME },
+						{ "mk", COUNTRY_MK }, { "mk_MK", COUNTRY_MK },
+						{ "gr", COUNTRY_GR }, { "el_GR", COUNTRY_GR },
+						{ "lv", COUNTRY_LV }, { "lv_LV", COUNTRY_LV },
+						{ "il", COUNTRY_IL }, { "he_IL", COUNTRY_IL },
+						{ "za", COUNTRY_ZA }, { "af_ZA", COUNTRY_ZA }, /* ambigious language */
+						{ "pt", COUNTRY_PT }, { "pt_PT", COUNTRY_PT },
+						{ "be", COUNTRY_BE }, { "fr_BE", COUNTRY_BE },
+						{ "jp", COUNTRY_JP }, { "ja_JP", COUNTRY_JP },
+						{ "cn", COUNTRY_CN }, { "zh_CN", COUNTRY_CN },
+						{ "kr", COUNTRY_KR }, { "ko_KR", COUNTRY_KR },
+						{ "vn", COUNTRY_VN }, { "vi_VN", COUNTRY_VN },
+						{ "in", COUNTRY_IN }, { "ar_IN", COUNTRY_IN }, /* ambigious language */
+						{ "ir", COUNTRY_IR }, { "fa_IR", COUNTRY_IR },
+						{ "mn", COUNTRY_MN }, { "mn_MN", COUNTRY_MN },
+						{ "np", COUNTRY_NP }, { "ne_NP", COUNTRY_NP },
+						{ "la", COUNTRY_LA }, { "lo_LA", COUNTRY_LA },
+						{ "kh", COUNTRY_KH }, { "km_KH", COUNTRY_KH },
+						{ "id", COUNTRY_ID }, { "id_ID", COUNTRY_ID },
+						{ "bd", COUNTRY_BD }, { "bn_BD", COUNTRY_BD },
+					};
 					bx_options.tos.cookie_akp = -1;
 					for(unsigned i=0; i<sizeof(countries)/sizeof(countries[0]); i++) {
-						if (strcasecmp(optarg, countries[i]) == 0) {
+						if (strcasecmp(optarg, countries[i].name) == 0) {
+							i = countries[i].id;
 							bx_options.tos.cookie_akp = i << 8 | i;
 							break;
 						}
 					}
 					if (bx_options.tos.cookie_akp == -1) {
-						fprintf(stderr, "Error '%s', use one of:", optarg);
+						char countrystr[(sizeof(countries)/sizeof(countries[0])) * 6 + 1];
+						*countrystr = '\0';
 						for(unsigned i=0; i<sizeof(countries)/sizeof(countries[0]); i++) {
-							fprintf(stderr, " %s", countries[i]);
+							strcat(countrystr, " ");
+							strcat(countrystr, countries[i].name);
 						}
-						fprintf(stderr, "\n");
-						exit(0);
+						panicbug("Error unknown country '%s', use one of: %s", optarg, countrystr);
+						exit(EXIT_FAILURE);
 					}
 				}
 				break;
@@ -1458,7 +1519,7 @@ bool saveSettings(const char *fs)
 	ConfigOptions cfgopts(fs, home_folder, data_folder);
 
 	if (cfgopts.update_config(global_conf, "[GLOBAL]") < 0) {
-		fprintf(stderr, "Error while writing the '%s' config file.\n", fs);
+		panicbug("Error while writing the '%s' config file.", fs);
 		return false;
 	}
 	cfgopts.update_config(startup_conf, "[STARTUP]");

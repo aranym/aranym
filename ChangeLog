@@ -1,4 +1,10 @@
 2014/07/07 - Thorsten
+- rtc.h, parameters.cpp: add missing country codes
+  from current EmuTOS/FreeMiNT;
+  change greek and slovak code to match current version
+
+
+2014/07/07 - Thorsten
 - codegen_x86.h: Get rid of some warnings.
 
 
