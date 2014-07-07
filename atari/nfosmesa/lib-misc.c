@@ -25,58 +25,109 @@
 
 #include <mint/osbind.h>
 
-#include <GL/gl.h>
-
 #include "lib-osmesa.h"
 #include "lib-oldmesa.h"
 #include "nfosmesa_nfapi.h"
 
 /*--- Defines ---*/
 
+#define GL_VENDOR     0x1F00
+#define GL_RENDERER   0x1F01
+#define GL_VERSION    0x1F02
+#define GL_EXTENSIONS 0x1F03
+#define GL_SHADING_LANGUAGE_VERSION       0x8B8C
+
 /*--- Variables ---*/
 
-static GLubyte *gl_strings[5]={NULL,NULL,NULL,NULL,""};
+static GLubyte *gl_strings[7]={(GLubyte *)"",NULL,NULL,NULL,NULL};
 
 /*--- Functions ---*/
 
-const GLubyte* glGetString( GLenum name )
+const GLubyte* APIENTRY glGetString( GLenum name )
 {
 	int i, len;
 
 	switch(name) {
 		case GL_VERSION:
-			i=0;
-			break;
-		case GL_RENDERER:
 			i=1;
 			break;
-		case GL_VENDOR:
+		case GL_RENDERER:
 			i=2;
 			break;
-		case GL_EXTENSIONS:
+		case GL_VENDOR:
 			i=3;
 			break;
-		default:
+		case GL_EXTENSIONS:
 			i=4;
+			break;
+		default:
+			i=0;
 			break;
 	}
 
-	if (i!=4) {
+	if (i!=0) {
 		if (gl_strings[i]==NULL) {
 			unsigned long params[3];
 			
 			params[0] = (unsigned long) cur_context;
 			params[1] = (unsigned long) name;
 
-			len=(int)(*HostCall_p)(NFOSMESA_LENGLGETSTRING,0,params);
+			len=(int)(*HostCall_p)(NFOSMESA_LENGLGETSTRING,cur_context,params);
 			gl_strings[i]=(GLubyte *)Atari_MxAlloc(len+1);
 			if (gl_strings[i]) {
 				params[0] = (unsigned long) cur_context;
 				params[1] = (unsigned long) name;
 				params[2] = (unsigned long) gl_strings[i];
-				(*HostCall_p)(NFOSMESA_PUTGLGETSTRING,0,params);
+				(*HostCall_p)(NFOSMESA_PUTGLGETSTRING,cur_context,params);
 			} else {
-				return gl_strings[4];
+				return gl_strings[0];
+			}
+		}
+	}
+
+	return gl_strings[i];
+}
+
+const GLubyte* APIENTRY glGetStringi( GLenum name, GLuint index )
+{
+	int i, len;
+
+	switch(name) {
+		case GL_EXTENSIONS:
+			i=5;
+			break;
+		case GL_SHADING_LANGUAGE_VERSION:
+			i=6;
+			break;
+		default:
+			i=0;
+			break;
+	}
+
+	if (i!=0) {
+		if (gl_strings[i]!=NULL) {
+			Mfree(gl_strings[i]);
+			gl_strings[i]=NULL;
+		}
+		{
+			unsigned long params[4];
+			
+			params[0] = (unsigned long) cur_context;
+			params[1] = (unsigned long) name;
+			params[2] = (unsigned long) index;
+
+			len=(int)(*HostCall_p)(NFOSMESA_LENGLGETSTRINGI,cur_context,params);
+			if (len < 0)
+				return NULL;
+			gl_strings[i]=(GLubyte *)Atari_MxAlloc(len+1);
+			if (gl_strings[i]) {
+				params[0] = (unsigned long) cur_context;
+				params[1] = (unsigned long) name;
+				params[2] = (unsigned long) name;
+				params[3] = (unsigned long) gl_strings[i];
+				(*HostCall_p)(NFOSMESA_PUTGLGETSTRINGI,cur_context,params);
+			} else {
+				return gl_strings[0];
 			}
 		}
 	}
@@ -88,10 +139,40 @@ void freeglGetString(void)
 {
 	int i;
 	
-	for (i=0;i<4;i++) {
+	for (i=1;i<7;i++) {
 		if (gl_strings[i]) {
 			Mfree(gl_strings[i]);
 			gl_strings[i]=NULL;
 		}
 	}
 }
+
+void APIENTRY gluLookAtf( GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ )
+{
+	(*HostCall_p)(NFOSMESA_GLULOOKATF, cur_context, &eyeX);
+}
+
+void APIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
+{
+	(*HostCall_p)(NFOSMESA_GLFRUSTUMF, cur_context, &left);
+}
+
+void glOrthof( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val )
+{
+	(*HostCall_p)(NFOSMESA_GLORTHOF, cur_context, &left);
+}
+
+void APIENTRY tinyglswapbuffer(void *buf)
+{
+	(*HostCall_p)(NFOSMESA_TINYGLSWAPBUFFER, cur_context, &buf);
+}
+
+
+/* NYI */
+void APIENTRY tinyglexception_error(void CALLBACK (*exception)(GLenum param))
+{
+	(void) exception;
+}
+
+
+/* glClearDepthf() already exists in OpenGL/Mesa */

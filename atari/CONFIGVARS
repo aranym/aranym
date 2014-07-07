@@ -49,6 +49,7 @@ CP    = cp
 RM    = rm -f
 TOUCH = touch
 MKDIR = mkdir
+MKDIR_P = $(MKDIR) -p
 SED   = sed
 
 #

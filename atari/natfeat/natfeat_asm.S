@@ -49,9 +49,10 @@
 _detect_native_features:
 
 	clr.l	d0			// assume no NatFeats available
-	move.l	sp,a1			// save the ssp
 	move.l	(0x0010).w,a0		// illegal instruction vector
-	move.l	#fail_natfeat,(0x0010).w
+	lea.l	fail_natfeat(pc),a1
+	move.l  a1,(0x0010).w
+	move.l	sp,a1			// save the ssp
 
 	nop				// flush pipelines (for 68040+)
 

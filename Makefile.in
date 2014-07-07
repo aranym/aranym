@@ -8,6 +8,7 @@
 SHELL = /bin/sh
 
 prefix = @prefix@
+includedir = @includedir@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 datadir = @datadir@
@@ -67,6 +68,8 @@ AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ACLOCAL = aclocal
 AUTOCONF = autoconf
 AUTOHEADER = autoheader
+PERL = @PERL@
+MKDIR_P = @MKDIR_P@
 
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -204,12 +207,28 @@ am__v_CXX_0 = @echo "  CXX   " $@;
 AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend $(APP_BUNDLE)
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h .m .M
 
 all: $(builddir)/version_date.h $(TARGET) $(TAPIF)
+
+BUILD_SOURCES = \
+	$(top_srcdir)/atari/nfosmesa/glfuncs.h \
+	$(top_srcdir)/src/natfeat/nfosmesa/call-gl.c \
+	$(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c \
+	$(top_srcdir)/atari/nfosmesa/ldg/osmesa.h \
+	$(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h \
+	$(top_srcdir)/atari/nfosmesa/osmesa_load.c \
+	$(top_srcdir)/atari/nfosmesa/tinygl_load.c \
+	$(top_srcdir)/atari/nfosmesa/link-tinygl.h \
+	$(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h \
+	$(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c \
+	$(empty)
 
 OBJ_DIR = obj_$(ARCH)
 $(OBJ_DIR)::
@@ -233,7 +252,7 @@ empty:=
 space:= $(empty) $(empty)
 VPATH += $(subst $(space),:,$(strip $(addprefix $(filter-out ./,$(srcdir)/), $(SRC_PATHS))))
 
-$(APP): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+$(APP): $(OBJ_DIR) $(GEN_DIR) $(BUILD_SOURCES) $(OBJS)
 	$(AM_V_CXXLD)$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
 ifneq ($(BEOS_XRES),)
 	$(BEOS_RC) -o $(APP).rsrc $(BEOS_RESOURCES)
@@ -300,6 +319,7 @@ install: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(AP
 	$(INSTALL_DATA) $(srcdir)/../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../atari/nfosmesa/README $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/README
 	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(srcdir)/../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
@@ -336,6 +356,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
@@ -398,6 +419,7 @@ bindist: $(APP) $(TAPIF) $(top_srcdir)/doc/$(APP).1 $(top_srcdir)/doc/$(APP)-jit
 	$(INSTALL_DATA) $(top_srcdir)/atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/nfosmesa/README tmpdist$(datadir)/$(APP)/atari/nfosmesa/README
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(top_srcdir)/tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
@@ -604,6 +626,78 @@ $(GEN_DIR)/cpufast8_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
 	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp8.s >$@ || mv $(GEN_DIR)/cputmp8.s $@
 	rm -f $(GEN_DIR)/cputmp8.s
 
+DYNGL_PL = $(top_srcdir)/tools/dyngl.pl
+
+$(top_srcdir)/atari/nfosmesa/glfuncs.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -macros $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/src/natfeat/nfosmesa/call-gl.c: $(top_srcdir)/atari/nfosmesa/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -calls $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c: $(top_srcdir)/atari/nfosmesa/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/ldg/osmesa.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -ldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/osmesa_load.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -ldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/tinygl_load.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/link-tinygl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldglink $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyslbheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyslbsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
 # For tests
 $(GEN_DIR)/newcpu.s: newcpu.cpp
 	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $< -o $@
@@ -616,6 +710,19 @@ $(APP_IFC): aratapif.c
 
 cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfeat/nfcdrom_sdl.cpp $(srcdir)/natfeat/nfcdrom_linux.cpp $(srcdir)/natfeat/nfcdrom_win32.cpp
 	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)
+
+gldiff:
+	$(PERL) $(DYNGL_PL) -protos /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/osmesa.h | diff $(top_srcdir)/tools/glfuncs.h - || true
+	$(PERL) $(DYNGL_PL) -macros $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/glfuncs.h - || true
+	$(PERL) $(DYNGL_PL) -calls $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/call-gl.c - || true
+	$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c - || true
+	$(PERL) $(DYNGL_PL) -ldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h - || true
+	$(PERL) $(DYNGL_PL) -ldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/osmesa_load.c - || true
+	$(PERL) $(DYNGL_PL) -tinyldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_load.c - || true
+	$(PERL) $(DYNGL_PL) -tinyldglink $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/link-tinygl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyslbheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyslbsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c - || true
 
 # Include dependencies
 ifneq ($(wildcard $(DEPEND)),)

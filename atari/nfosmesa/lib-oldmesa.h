@@ -24,19 +24,30 @@
 /*--- Defines ---*/
 
 /* Mxalloc parameters */
+#ifndef MX_STRAM
 #define MX_STRAM 0
 #define MX_TTRAM 1
 #define MX_PREFSTRAM 2
 #define MX_PREFTTRAM 3
+#endif
 
 /*--- Functions prototypes ---*/
 
 void *Atari_MxAlloc(unsigned long size);
+void err_init(const char *str);
 
-void *OSMesaCreateLDG( long format, long type, long width, long height );
-void OSMesaDestroyLDG(void);
-long max_width(void);
-long max_height(void);
-void glOrtho6f( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val );
+void *APIENTRY OSMesaCreateLDG( long format, long type, long width, long height );
+void APIENTRY OSMesaDestroyLDG(void);
+GLsizei APIENTRY max_width(void);
+GLsizei APIENTRY max_height(void);
+void APIENTRY glOrthof( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val );
+
+void APIENTRY glClearDepthf(GLfloat depth);
+void APIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val );
+void APIENTRY gluLookAtf( GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ );
+
+void APIENTRY tinyglswapbuffer(void *buf);
+void APIENTRY tinyglexception_error(void CALLBACK (*exception)(GLenum param));
+void APIENTRY tinyglinformation(void);
 
 #endif /* OLDMESA_H */

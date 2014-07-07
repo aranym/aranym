@@ -1,5 +1,5 @@
 /*
-	OSMesa LDG linker
+	NFTinyGL LDG linker
 
 	Copyright (C) 2004	Patrice Mandin
 
@@ -32,6 +32,8 @@
 #include "lib-oldmesa.h"
 #include "lib-misc.h"
 #include "nfosmesa_nfapi.h"
+#include "../natfeat/nf_ops.h"
+
 
 #define WITH_PROTOTYPE_STRINGS 1
 
@@ -39,37 +41,34 @@
 
 static PROC const LibFunc[]={ 
 #if WITH_PROTOTYPE_STRINGS
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, #type " " #gl #name #params, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, #type " OSMesa" #name #params, OSMesa ## name },
+#define GL_PROC(name, f, desc) { name, desc, f },
 #else
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, 0, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, 0, OSMesa ## name },
+#define GL_PROC(name, f, desc) { name, 0, f },
 #endif
-	#include "glfuncs.h"		/* 12 OSMesa + 2664 GL functions */
-	#include "link-oldmesa.h"	/* 5 + 8 functions */
+	#include "link-tinygl.h"	/* 83 functions */
 	{NULL, NULL, NULL}
 };
 
 #include "versinfo.h"
 
+char const __Ident_tinygl[] = "$NFTinyGL: TinyGL NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER " $";
+
 int err_old_nfapi(void)
 {
-	/* an error for Mesa_GL */
-	return 1;
+	/* not an error for TinyGL; the 83 functions should always be present */
+	return 0;
 }
 
 
-char const __Ident_osmesa[] = "$OSMesa: NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER " $";
-
 static LDGLIB const LibLdg = { 
 	/* library version */
-	0x0A15,
+	0x0100,
 	/* count of functions in library */
 	sizeof(LibFunc) / sizeof(LibFunc[0]) - 1,
 	/* function addresses */
 	LibFunc,
 	/* Library information string */
-	"Mesa library NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER,
+	"TinyGL NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER,
 	/* Library flags */
 	LDG_NOT_SHARED,
 	NULL,
@@ -81,7 +80,6 @@ void APIENTRY tinyglinformation(void)
 	(void) Cconws(LibLdg.infos);
 	(void) Cconws("\r\n");
 }
-
 
 /*
  * Main part : communication with LDG-system

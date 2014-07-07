@@ -25,8 +25,7 @@
 
 #include <mint/osbind.h>
 
-#include <GL/osmesa.h>
-
+#include "lib-osmesa.h"
 #include "lib-oldmesa.h"
 
 /*--- Defines ---*/
@@ -35,11 +34,21 @@
 #define VDI_RGB			0xf
 #define DIRECT_VDI_ARGB	0x10
 
+#define GL_RGB                                     0x1907
+#define GL_COLOR_INDEX                             0x1900
+
+#define OSMESA_ARGB            0x2
+#define OSMESA_RGB             GL_RGB
+#define OSMESA_COLOR_INDEX     GL_COLOR_INDEX
+#define OSMESA_MAX_WIDTH       0x24
+#define OSMESA_MAX_HEIGHT      0x25
+#define OSMESA_Y_UP            0x11
+
 /*--- Functions ---*/
 
 static OSMesaContext	oldmesa_ctx=NULL;
 
-void *OSMesaCreateLDG( long format, long type, long width, long height )
+void *APIENTRY OSMesaCreateLDG( long format, long type, long width, long height )
 {
 	unsigned long buffer_size;
 	void *buffer = NULL;
@@ -88,7 +97,7 @@ void *OSMesaCreateLDG( long format, long type, long width, long height )
 	return (buffer);
 }
 
-void OSMesaDestroyLDG(void)
+void APIENTRY OSMesaDestroyLDG(void)
 {
 	if (oldmesa_ctx) {
 		OSMesaDestroyContext(oldmesa_ctx);
@@ -96,26 +105,22 @@ void OSMesaDestroyLDG(void)
 	}
 }
 
-long max_width(void)
+GLsizei APIENTRY max_width(void)
 {
-	GLint value;
+	GLint value = 0;
 	
 	OSMesaGetIntegerv(OSMESA_MAX_WIDTH, &value);
 	return value;
 }
 
-long max_height(void)
+GLsizei APIENTRY max_height(void)
 {
-	GLint value;
+	GLint value = 0;
 	
 	OSMesaGetIntegerv(OSMESA_MAX_HEIGHT, &value);
 	return value;
 }
 
-void glOrtho6f( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val )
-{
-	glOrtho(left,right, bottom,top, near_val, far_val);
-}
 
 void *Atari_MxAlloc(unsigned long size)
 {

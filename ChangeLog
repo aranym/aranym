@@ -1,3 +1,86 @@
+2014/07/08 - Thorsten
+Restructured NFOSMesa support, supporting OpenGL 4.4 / Mesa 10.1.4.
+osmesa.ldg usable now as a direct replacement for TinyGL.ldg
+
+- tools/dyngl.pl: complete rewrite
+- tools/glfuncs.h:
+  new file
+  (generated from /usr/include/GL/gl.h,
+   glext.h from Khronos group and
+   osmesa.h from Mesa 10.1.4)
+- atari/nfosmesa/link-osmesa.h,
+  atari/nfosmesa/link-gl.h,
+  atari/nfosmesa/lib-gen.pl,
+  atari/nfosmesa/enum-misc.h,
+  atari/nfosmesa/enum-glext.h,
+  atari/nfosmesa/lib-glext.c,
+  atari/nfosmesa/enum-gen.pl,
+  atari/nfosmesa/link-glext.h,
+  atari/nfosmesa/enum-osmesa.h,
+  atari/nfosmesa.xdd/nfosmesa.c,
+  atari/nfosmesa.xdd/Makefile,
+  src/dyngl_gl.c,
+  src/dyngl_glext.c,
+  src/include/dyngl_gl.h,
+  src/include/dyngl_glext.h,
+  src/natfeat/nfosmesa/call-glext.c,
+  src/natfeat/nfosmesa/dispatch-gen.pl,
+  src/natfeat/nfosmesa/call-gen.pl,
+  src/natfeat/nfosmesa/dispatch-osmesa.c,
+  src/natfeat/nfosmesa/unload-gen.pl,
+  src/natfeat/nfosmesa/load-gl.c,
+  src/natfeat/nfosmesa/pointers-osmesa.h,
+  src/natfeat/nfosmesa/proto-gl.h,
+  src/natfeat/nfosmesa/pointers-gl.h,
+  src/natfeat/nfosmesa/proto-gen.pl,
+  src/natfeat/nfosmesa/load-gen.pl,
+  src/natfeat/nfosmesa/unload-gl.c,
+  src/natfeat/nfosmesa/pointers-gen.pl,
+  src/natfeat/nfosmesa/dispatch-glext.c,
+  src/natfeat/nfosmesa/load-glext.c,
+  src/natfeat/nfosmesa/unload-glext.c,
+  src/natfeat/nfosmesa/proto-glext.h,
+  src/natfeat/nfosmesa/pointers-glext.h,
+  tools/dyngl_c.pl,
+  tools/dyngl_h.pl:
+  removed
+- src/natfeat/nfosmesa/dipatch-gl.c,
+  src/natfeat/nfosmesa/call-gl.c:
+  regenerated
+- atari/nfosmesa/enum-gl.h,
+  atari/nfosmesa/lib-gl.c,
+  atari/nfosmesa/lib-misc.c,
+  atari/nfosmesa/lib-osmesa.c,
+  atari/nfosmesa/lib-osmesa.h,
+  atari/nfosmesa/nfosmesa.c,
+  atari/nfosmesa/nfosmesa_nfapi.h,
+  updated
+- atari/nfosmesa/gltypes.h:
+  new file
+- atari/nfosmesa/glfuncs.h:
+  new file (generated)
+- src/natfeat/nfosmesa.cpp,
+  src/natfeat/nfosmesa.h:
+  updated
+- atari/nfosmesa/nfosmesa_load.c:
+  new file (generated, example use for LDG client code)
+- atari/nfosmesa/ldg/osmesa.h:
+  new file (generated, declarations of exported LDG functions)
+- atari/nfosmesa/tinygl_load.c:
+  new file (generated, example use for LDG client code)
+- atari/nfosmesa/ldg/tiny_gl.h:
+  new file (generated, declarations of exported LDG functions)
+- atari/nfosmesa/crt0.S,
+  atari/nfosmesa/crtinit.c,
+  atari/nfosmesa/libc.c:
+  new files, for creating LDG with minimal startup code,
+  reducing filesize to ~13kb for tiny_gl.ldg
+- configure.ac,
+  Makefile,
+  atari/nfosmesa/Makefile:
+  updated to reflect new/deleted files
+
+
 2014/07/07 - Thorsten
 - rtc.h, parameters.cpp: add missing country codes
   from current EmuTOS/FreeMiNT;

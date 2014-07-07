@@ -60,8 +60,9 @@ int dyngl_load(char *filename)
 		fprintf(stderr, "Loaded default OpenGL library\n");
 	}
 
-	#include "dyngl_gl.c"
-	#include "dyngl_glext.c"
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) gl.name = SDL_GL_GetProcAddress(#gl #name);
+#define GLU_PROC(type, gl, name, export, upper, params, first, ret)
+#include "../../atari/nfosmesa/glfuncs.h"
 
 	return 1;
 }

@@ -28,8 +28,6 @@
 #include <mint/osbind.h>
 #include <mint/mintbind.h>
 
-#include <GL/gl.h>
-
 #include "lib-osmesa.h"
 #include "lib-misc.h"
 #include "../natfeat/nf_ops.h"
@@ -41,13 +39,13 @@
 
 /*--- Global variables ---*/
 
-OSMesaContext cur_context=0;
+/* FIXME: should be per thread */
+OSMesaContext cur_context = 0;
 
 /*--- Local variables ---*/
 
 static struct nf_ops *nfOps;
 static unsigned long nfOSMesaId=0;
-static int dev_handle=-1;
 
 int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
 
@@ -57,17 +55,51 @@ static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first
 
 /*--- OSMesa functions redirectors ---*/
 
+
+void err_init(const char *str)
+{
+	/*
+	 * FIXME: figure out how to get at the apid of the
+	 * the app that loaded us (LDG->id), and perform
+	 * either Cconws() or form_alert()
+	 */
+	(void) Cconws(str);
+	(void) Cconws("\r\n");
+	/* if (__mint) */ Salert(str);
+}
+
+
 static void InitNatfeat(void)
 {
+	long ver;
+	
 	nfOps = nf_init();
 	if (!nfOps) {
-		Cconws("__NF cookie not present on this system\r\n");
+		err_init("__NF cookie not present on this system");
 		return;
 	}
 
 	nfOSMesaId=nfOps->get_id("OSMESA");
 	if (nfOSMesaId==0) {
-		Cconws("NF OSMesa functions not present on this system\r\n");
+		err_init("NF OSMesa functions not present on this system");
+		return;
+	}
+	ver = nfOps->call(nfOSMesaId+GET_VERSION, 0l, 0l);
+	if (ver < ARANFOSMESA_NFAPI_VERSION)
+	{
+		if (err_old_nfapi())
+		{
+			err_init("NF OSMesa functions in ARAnyM too old");
+			nfOSMesaId = 0;
+			return;
+		}
+	}
+	if (ver > ARANFOSMESA_NFAPI_VERSION)
+	{
+		/*
+		 * they should be backward compatible, but give a warning
+		 */
+	    (void) Cconws("Warning: NF OSMesa functions in ARAnyM newer than library\r\n");
 	}
 }
 
@@ -76,28 +108,8 @@ static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first
 	return nfOps->call(nfOSMesaId+function_number,ctx,first_param);
 }
 
-static int HostCall_device(int function_number, OSMesaContext ctx, void *first_param)
-{
-	unsigned long params[3];
-
-	params[0] = (unsigned long) function_number;
-	params[1] = (unsigned long) ctx;
-	params[2] = (unsigned long) first_param;
-
-	return Fcntl(dev_handle, params, NFOSMESA_IOCTL);
-}
-
 static int InstallHostCall(void)
 {
-	/* Try the MiNT device */
-	if (dev_handle<0) {
-		dev_handle = Fopen(NFOSMESA_DEVICE, 0);
-		if (dev_handle>0) {
-			HostCall_p = HostCall_device;
-			return 1;
-		}
-	}
-
 	/* TOS maybe, try the cookie */
 	if (nfOSMesaId==0) {
 		InitNatfeat();
@@ -110,7 +122,7 @@ static int InstallHostCall(void)
 	return 0;
 }
 
-OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
+OSMesaContext APIENTRY OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
 {
 	if (HostCall_p==NULL) {
 		if (!InstallHostCall()) {
@@ -118,11 +130,10 @@ OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
 		}
 	}
 
-	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXT, 0, &format);
-	return cur_context;
+	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXT, cur_context, &format);
 }
 
-OSMesaContext OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
+OSMesaContext APIENTRY OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
 {
 	if (HostCall_p==NULL) {
 		if (!InstallHostCall()) {
@@ -130,51 +141,69 @@ OSMesaContext OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint sten
 		}
 	}
 
-	cur_context=(OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, 0, &format);
-	return cur_context;
+	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, cur_context, &format);
 }
 
-void OSMesaDestroyContext( OSMesaContext ctx )
+void APIENTRY OSMesaDestroyContext( OSMesaContext ctx )
 {
-	(*HostCall_p)(NFOSMESA_OSMESADESTROYCONTEXT, 0, &ctx);
+	(*HostCall_p)(NFOSMESA_OSMESADESTROYCONTEXT, cur_context, &ctx);
 	freeglGetString();
-	if (dev_handle>0) {
-		Fclose(dev_handle);
-		dev_handle=-1;
-	}
+	if (ctx == cur_context)
+		cur_context = 0;
 }
 
-GLboolean OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type, GLsizei width, GLsizei height )
+GLboolean APIENTRY OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type, GLsizei width, GLsizei height )
 {
-	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT,0, &ctx);
+	GLboolean ret = (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT, cur_context, &ctx);
+	if (ret)
+		cur_context = ctx;
+	return ret;
 }
 
-OSMesaContext OSMesaGetCurrentContext( void )
+OSMesaContext APIENTRY OSMesaGetCurrentContext( void )
 {
-	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESAGETCURRENTCONTEXT, 0, NULL);
+#if 0
+	/*
+	 * wrong; the host manages his current context for all processes using NFOSMesa;
+	 * return local copy instead
+	 */
+	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESAGETCURRENTCONTEXT, cur_context, NULL);
+#else
+	return cur_context;
+#endif
 }
 
-void OSMesaPixelStore( GLint pname, GLint value )
+void APIENTRY OSMesaPixelStore( GLint pname, GLint value )
 {
-	(*HostCall_p)(NFOSMESA_OSMESAPIXELSTORE,0, &pname);
+	(*HostCall_p)(NFOSMESA_OSMESAPIXELSTORE, cur_context, &pname);
 }
 
-void OSMesaGetIntegerv( GLint pname, GLint *value )
+void APIENTRY OSMesaGetIntegerv( GLint pname, GLint *value )
 {
-	(*HostCall_p)(NFOSMESA_OSMESAGETINTEGERV,0, &pname);
+	(*HostCall_p)(NFOSMESA_OSMESAGETINTEGERV, cur_context, &pname);
 }
 
-GLboolean OSMesaGetDepthBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
+GLboolean APIENTRY OSMesaGetDepthBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
 {
-	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETDEPTHBUFFER,0, &c);
+	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETDEPTHBUFFER, cur_context, &c);
 }
 
-GLboolean OSMesaGetColorBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer )
+GLboolean APIENTRY OSMesaGetColorBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer )
 {
-	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETCOLORBUFFER,0, &c);
+	return (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAGETCOLORBUFFER, cur_context, &c);
 }
 
-void *OSMesaGetProcAddress( const char *funcName )
+OSMESAproc APIENTRY OSMesaGetProcAddress( const char *funcName )
 {
-	return (void *)(*HostCall_p)(NFOSMESA_OSMESAGETPROCADDRESS,0, &funcName);
+	return (OSMESAproc)(*HostCall_p)(NFOSMESA_OSMESAGETPROCADDRESS, cur_context, &funcName);
+}
+
+void APIENTRY OSMesaColorClamp(GLboolean32 enable)
+{
+	(*HostCall_p)(NFOSMESA_OSMESACOLORCLAMP, cur_context, &enable);
+}
+
+void APIENTRY OSMesaPostprocess(OSMesaContext osmesa, const char *filter, GLuint enable_value)
+{
+	(*HostCall_p)(NFOSMESA_OSMESAPOSTPROCESS, cur_context, &osmesa);
 }

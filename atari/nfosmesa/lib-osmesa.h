@@ -21,9 +21,14 @@
 #ifndef LIB_OSMESA_H
 #define LIB_OSMESA_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 /*--- Types ---*/
 
 typedef struct osmesa_context *OSMesaContext;
+
+#include "gltypes.h"
 
 /*--- Variables ---*/
 
@@ -33,15 +38,8 @@ extern int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_par
 
 /*--- Functions prototypes ---*/
 
-OSMesaContext OSMesaCreateContext( GLenum format, OSMesaContext sharelist );
-OSMesaContext OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist);
-void OSMesaDestroyContext( OSMesaContext ctx );
-GLboolean OSMesaMakeCurrent( OSMesaContext ctx, void *buffer, GLenum type, GLsizei width, GLsizei height );
-OSMesaContext OSMesaGetCurrentContext( void );
-void OSMesaPixelStore( GLint pname, GLint value );
-void OSMesaGetIntegerv( GLint pname, GLint *value );
-GLboolean OSMesaGetDepthBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
-GLboolean OSMesaGetColorBuffer( OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer );
-void *OSMesaGetProcAddress( const char *funcName );
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) extern type APIENTRY OSMesa ## name params ;
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) extern type APIENTRY gl ## name params ;
+#include "glfuncs.h"
 
 #endif

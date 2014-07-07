@@ -177,7 +177,7 @@ void install_driver(unsigned long resident_length)
 static void press_any_key(void)
 {
 	Cconws("- Press any key to continue -\r\n");
-	while (Bconstat(DEV_CONSOLE)==0);
+	Crawcin();
 }
 
 static void install_pci_bios(void)
