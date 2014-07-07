@@ -1,4 +1,8 @@
 2014/07/07 - Thorsten
+- codegen_x86.h: Get rid of some warnings.
+
+
+2014/07/07 - Thorsten
 - sigsegv_*_x86.cpp:
   changed include of "sigsegv_common_x86.h"
 - sigsegv_common_x86.h:

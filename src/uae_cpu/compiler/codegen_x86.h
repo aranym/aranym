@@ -251,6 +251,11 @@ typedef unsigned int	_ul;
 #define _PSL(X)		((_sl *)(X))
 #define _PUL(X)		((_ul *)(X))
 
+#undef _B
+#undef _W
+#undef _L
+#undef _Q
+
 #define _B(B)		x86_emit_byte((B))
 #define _W(W)		x86_emit_word((W))
 #define _L(L)		x86_emit_long((L))
@@ -437,7 +442,7 @@ typedef unsigned int	_ul;
 #define	 _d16()					   (		  _B(0x66	)				  )
 #define	  _O(	     OP				)  (		  _B(  OP	)				  )
 #define	  _Or(	     OP,R			)  (		  _B( (OP)|_r(R))				  )
-#define	 _OO(	     OP				)  ( _B((OP)>>8), _B( (OP)	)				  )
+#define	 _OO(	     OP				)  ( _B((OP)>>8), _B( (uae_u8)(OP)	)			  )
 #define	 _OOr(	     OP,R			)  ( _B((OP)>>8), _B( (OP)|_r(R))				  )
 #define	  _Os(	     OP,B			)  (	_s8P(B) ? _B(((OP)|_b10)) : _B(OP)			  )
 #define	    _sW(			     W	)  (				       _s8P(W) ? _B(W):_W(W)	  )
@@ -479,6 +484,8 @@ typedef unsigned int	_ul;
 
 
 /* --- REX prefixes -------------------------------------------------------- */
+
+#undef _VOID
 
 #define _VOID()			((void)0)
 #define _BIT(X)			(!!(X))
