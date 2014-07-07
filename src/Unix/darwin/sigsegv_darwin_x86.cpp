@@ -33,13 +33,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifdef USE_JIT
-extern void compiler_status();
-# ifdef JIT_DEBUG
-extern void compiler_dumpstate();
-# endif
-#endif
-
 //
 //
 //  Darwin segmentation violation handler
@@ -277,7 +270,7 @@ static char replybuf[MSG_SIZE];
 
 #if defined(CPU_i386) || defined(CPU_x86_64)
 
-#include "src/Unix/sigsegv_common_x86.h"
+#include "sigsegv_common_x86.h"
 
 static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 										sigsegv_address_t /* fault_instruction */,
@@ -656,4 +649,3 @@ static bool sigsegv_do_install_handler(sigsegv_fault_handler_t handler)
 void install_sigsegv() {
 	sigsegv_do_install_handler(sigsegv_handler);
 }
-

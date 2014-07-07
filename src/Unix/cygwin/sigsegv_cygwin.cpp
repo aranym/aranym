@@ -64,7 +64,7 @@
 #define CONTEXT_AEDI	CONTEXT_REGS[REG_RDI]
 #endif
 
-#include "src/Unix/sigsegv_common_x86.h"
+#include "sigsegv_common_x86.h"
 
 
 static LONG WINAPI

@@ -1,3 +1,10 @@
+2014/07/07 - Thorsten
+- sigsegv_*_x86.cpp:
+  changed include of "sigsegv_common_x86.h"
+- sigsegv_common_x86.h:
+  Add some more missing decodings
+
+
 2014/07/06 - Thorsten
 - sigsegv_darwin_x86.cpp, sigsegv_common_x86.h:
   Fix build on MacOSX

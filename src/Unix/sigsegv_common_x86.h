@@ -27,9 +27,27 @@ enum instruction_t {
 	INSTR_MOVIMM8,
 	INSTR_MOVIMM32,
 	INSTR_OR8,
+	INSTR_ADDIMM8,
 	INSTR_ORIMM8,
+	INSTR_ANDIMM8,
+	INSTR_SUBIMM8,
+	INSTR_XORIMM8,
+	INSTR_CMPIMM8,
+	INSTR_ADDIMM32,
+	INSTR_ORIMM32,
+	INSTR_ANDIMM32,
+	INSTR_SUBIMM32,
+	INSTR_XORIMM32,
+	INSTR_CMPIMM32,
+	INSTR_ADDLIMM8,
+	INSTR_ORLIMM8,
+	INSTR_ANDLIMM8,
+	INSTR_SUBLIMM8,
+	INSTR_XORLIMM8,
+	INSTR_CMPLIMM8,
 	INSTR_AND8,
 	INSTR_ADD8,
+	INSTR_SUB8,
 	INSTR_CMP8,
 	INSTR_DIV8,
 	INSTR_IDIV8,
@@ -90,7 +108,6 @@ static inline void set_byte_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
 }
 
 /* MJ - AF and OF not tested, also CF for 32 bit */
-/* currently unused */
 static inline void set_word_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
 	if ((i > 65535) || (i < 0)) CONTEXT_AEFLAGS |= 0x1;	// CF
 	else CONTEXT_AEFLAGS &= ~0x1;
@@ -106,7 +123,6 @@ static inline void set_word_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
 }
 
 /* MJ - AF and OF not tested, also CF for 32 bit */
-/* currently unused */
 static inline void set_long_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
 	if (i > 2147483647) CONTEXT_AEFLAGS |= 0x80;		// SF
 	else CONTEXT_AEFLAGS &= ~0x80;
@@ -323,6 +339,22 @@ static const int x86_reg_map[] = {
 			reg = (addr_instr[1] >> 3) & 7;
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
+		case 0x28:
+			D(bug("SUB m8, r8"));
+			size = 1;
+			transfer_type = TYPE_STORE;
+			instruction = INSTR_SUB8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
+		case 0x2A:
+			D(bug("SUB r8, m8"));
+			size = 1;
+			transfer_type = TYPE_LOAD;
+			instruction = INSTR_SUB8;
+			reg = (addr_instr[1] >> 3) & 7;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			break;
 		case 0x08:
 			D(bug("OR m8, r8"));
 			size = 1;
@@ -340,50 +372,51 @@ static const int x86_reg_map[] = {
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x0f:
-			switch (addr_instr[1]) {
-				case 0xb6:
-					D(bug("MOVZX r32, m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MOVZX8;
-					reg = (addr_instr[2] >> 3 ) & 7;
-					len += 3 + get_instr_size_add(addr_instr + 2);
-					break;
-				case 0xb7:
-					D(bug("MOVZX r32, m16"));
-					size = 2;
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MOVZX16;
-					reg = (addr_instr[2] >> 3 ) & 7;
-					len += 3 + get_instr_size_add(addr_instr + 2);
-					break;
-				case 0xbe:
-					D(bug("MOVSX r32, m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MOVSX8;
-					reg = (addr_instr[2] >> 3 ) & 7;
-					len += 3 + get_instr_size_add(addr_instr + 2);
-					break;
-				case 0xbf:
-					D(bug("MOVSX r32, m16"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MOVSX16;
-					reg = (addr_instr[2] >> 3 ) & 7;
-					len += 3 + get_instr_size_add(addr_instr + 2);
-					break;
+			switch (addr_instr[1])
+			{
+			case 0xb6:
+				D(bug("MOVZX r32, m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MOVZX8;
+				reg = (addr_instr[2] >> 3 ) & 7;
+				len += 3 + get_instr_size_add(addr_instr + 2);
+				break;
+			case 0xb7:
+				D(bug("MOVZX r32, m16"));
+				size = 2;
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MOVZX16;
+				reg = (addr_instr[2] >> 3 ) & 7;
+				len += 3 + get_instr_size_add(addr_instr + 2);
+				break;
+			case 0xbe:
+				D(bug("MOVSX r32, m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MOVSX8;
+				reg = (addr_instr[2] >> 3 ) & 7;
+				len += 3 + get_instr_size_add(addr_instr + 2);
+				break;
+			case 0xbf:
+				D(bug("MOVSX r32, m16"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MOVSX16;
+				reg = (addr_instr[2] >> 3 ) & 7;
+				len += 3 + get_instr_size_add(addr_instr + 2);
+				break;
 #ifdef CPU_x86_64
-				case 0x63:
-					D(bug("MOVSX r64, m32"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MOVSX32;
-					reg = (addr_instr[2] >> 3 ) & 7;
-					len += 3 + get_instr_size_add(addr_instr + 2);
-					break;
+			case 0x63:
+				D(bug("MOVSX r64, m32"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MOVSX32;
+				reg = (addr_instr[2] >> 3 ) & 7;
+				len += 3 + get_instr_size_add(addr_instr + 2);
+				break;
 #endif
-				default:
-					instruction = INSTR_UNKNOWN;
-					panicbug("MOVSX - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
-					break;
+			default:
+				instruction = INSTR_UNKNOWN;
+				panicbug("MOVSX - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+				unknown_instruction();
+				break;
 			}
 			break;
 		case 0x20:
@@ -419,13 +452,135 @@ static const int x86_reg_map[] = {
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			break;
 		case 0x80:
-			D(bug("OR m8, imm8"));
 			size = 1;
 			transfer_type = TYPE_STORE;
-			instruction = INSTR_ORIMM8;
-			reg = (addr_instr[1] >> 3) & 7;
+			switch ((addr_instr[1] >> 3) & 7)
+			{
+			case 0:
+				D(bug("ADD m8, imm8"));
+				instruction = INSTR_ADDIMM8;
+				break;
+			case 1:
+				D(bug("OR m8, imm8"));
+				instruction = INSTR_ORIMM8;
+				break;
+			case 4:
+				D(bug("AND m8, imm8"));
+				instruction = INSTR_ANDIMM8;
+				break;
+			case 5:
+				D(bug("SUB m8, imm8"));
+				instruction = INSTR_SUBIMM8;
+				break;
+			case 6:
+				D(bug("XOR m8, imm8"));
+				instruction = INSTR_XORIMM8;
+				break;
+			case 7:
+				D(bug("CMP m8, imm8"));
+				instruction = INSTR_CMPIMM8;
+				break;
+			
+			case 2: /* ADC */
+			case 3: /* SBB */
+			default:
+				instruction = INSTR_UNKNOWN;
+				panicbug("ADD m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+				unknown_instruction();
+				break;
+			}
 			len += 2 + get_instr_size_add(addr_instr + 1);
 			imm = *((uae_u8 *)(ainstr + len));
+			len++;
+			break;
+		case 0x81:
+			transfer_type = TYPE_STORE;
+			switch ((addr_instr[1] >> 3) & 7)
+			{
+			case 0:
+				D(bug("ADD m32, imm32"));
+				instruction = INSTR_ADDIMM32;
+				break;
+			case 1:
+				D(bug("OR m32, imm32"));
+				instruction = INSTR_ORIMM32;
+				break;
+			case 4:
+				D(bug("AND m32, imm32"));
+				instruction = INSTR_ANDIMM32;
+				break;
+			case 5:
+				D(bug("SUB m32, imm32"));
+				instruction = INSTR_SUBIMM32;
+				break;
+			case 6:
+				D(bug("XOR m32, imm32"));
+				instruction = INSTR_XORIMM32;
+				break;
+			case 7:
+				D(bug("CMP m32, imm32"));
+				instruction = INSTR_CMPIMM32;
+				break;
+			
+			case 2: /* ADC */
+			case 3: /* SBB */
+			default:
+				instruction = INSTR_UNKNOWN;
+				panicbug("ADD m32, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+				unknown_instruction();
+				break;
+			}
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			if (size == 2)
+			{
+				imm = *((uae_u16 *)(ainstr + len));
+				len += 2;
+			} else
+			{
+				imm = *((uae_u32 *)(ainstr + len));
+				len += 4;
+			}
+			break;
+		case 0x83:
+			size = 1;
+			transfer_type = TYPE_STORE;
+			switch ((addr_instr[1] >> 3) & 7)
+			{
+			case 0:
+				D(bug("ADDL m32, imm8"));
+				instruction = INSTR_ADDLIMM8;
+				break;
+			case 1:
+				D(bug("ORL m32, imm8"));
+				instruction = INSTR_ORLIMM8;
+				break;
+			case 4:
+				D(bug("ANDL m32, imm8"));
+				instruction = INSTR_ANDLIMM8;
+				break;
+			case 5:
+				D(bug("SUBL m32, imm8"));
+				instruction = INSTR_SUBLIMM8;
+				break;
+			case 6:
+				D(bug("XORL m32, imm8"));
+				instruction = INSTR_XORLIMM8;
+				break;
+			case 7:
+				D(bug("CMPL m32, imm8"));
+				instruction = INSTR_CMPLIMM8;
+				break;
+			
+			case 2: /* ADC */
+			case 3: /* SBB */
+			default:
+				instruction = INSTR_UNKNOWN;
+				panicbug("ADD m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+				unknown_instruction();
+				break;
+			}
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			imm = *((uae_s8 *)(ainstr + len));
 			len++;
 			break;
 		case 0x8a:
@@ -485,58 +640,56 @@ static const int x86_reg_map[] = {
 			}
 			break;
 		case 0xf6:
-			reg = (addr_instr[1] >> 3) & 7;
 			size = 1;
-			switch (addr_instr[1] & 0x07) {
-				case 0:
-					D(bug("TEST m8, imm8"));
-					transfer_type = TYPE_STORE;
-					instruction = INSTR_TESTIMM8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					imm = *((uae_u8 *)(ainstr + len));
-					len++;
-					break;
-				case 2:
-					D(bug("NOT m8"));
-					transfer_type = TYPE_STORE;
-					instruction = INSTR_NOT8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 3:
-					D(bug("NEG m8"));
-					transfer_type = TYPE_STORE;
-					instruction = INSTR_NEG8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 4:
-					D(bug("MUL m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_MUL8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 5:
-					D(bug("IMUL m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_IMUL8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 6:
-					D(bug("DIV m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_DIV8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				case 7:
-					D(bug("IDIV m8"));
-					transfer_type = TYPE_LOAD;
-					instruction = INSTR_IDIV8;
-					len += 2 + get_instr_size_add(addr_instr + 1);
-					break;
-				default:
-					instruction = INSTR_UNKNOWN;
-					panicbug("TEST m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
-					break;
+			len += 2 + get_instr_size_add(addr_instr + 1);
+			switch ((addr_instr[1] >> 3) & 7)
+			{
+			case 0:
+				D(bug("TEST m8, imm8"));
+				transfer_type = TYPE_STORE;
+				instruction = INSTR_TESTIMM8;
+				imm = *((uae_u8 *)(ainstr + len));
+				len++;
+				break;
+			case 2:
+				D(bug("NOT m8"));
+				transfer_type = TYPE_STORE;
+				instruction = INSTR_NOT8;
+				break;
+			case 3:
+				D(bug("NEG m8"));
+				transfer_type = TYPE_STORE;
+				instruction = INSTR_NEG8;
+				break;
+			case 4:
+				D(bug("MUL m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_MUL8;
+				reg = 0; /* always EAX */
+				break;
+			case 5:
+				D(bug("IMUL m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_IMUL8;
+				reg = 0; /* always EAX */
+				break;
+			case 6:
+				D(bug("DIV m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_DIV8;
+				reg = 0; /* always EAX */
+				break;
+			case 7:
+				D(bug("IDIV m8"));
+				transfer_type = TYPE_LOAD;
+				instruction = INSTR_IDIV8;
+				reg = 0; /* always EAX */
+				break;
+			default:
+				instruction = INSTR_UNKNOWN;
+				panicbug("TEST m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+				unknown_instruction();
+				break;
 			}
 			break;
 		default:
@@ -688,25 +841,29 @@ static const int x86_reg_map[] = {
 				*((uae_u8 *)preg) += HWget_b(addr);
 				set_byte_eflags(*((uae_u8 *)preg), CONTEXT_NAME);
 				break;
+			case INSTR_SUB8:
+				*((uae_u8 *)preg) -= HWget_b(addr);
+				set_byte_eflags(*((uae_u8 *)preg), CONTEXT_NAME);
+				break;
 			case INSTR_CMP8:
 				imm = *((uae_u8 *)preg);
 				imm -= HWget_b(addr);
 				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
 			case INSTR_DIV8:
-				pom1 = CONTEXT_AEAX & 0xffff;
+				pom1 = CONTEXT_AEAX & 0xffffUL;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffff) + ((pom1 / pom2) << 8) + (pom1 / pom2);
+				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffffUL) + ((pom1 % pom2) << 8) + (pom1 / pom2);
 				break;
 			case INSTR_IDIV8:
-				pom1 = CONTEXT_AEAX & 0xffff;
+				pom1 = CONTEXT_AEAX & 0xffffUL;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffff) + (((uae_s8)pom1 / (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
+				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffffUL) + (((uae_s8)pom1 % (uae_s8)pom2) << 8) + ((uae_s8)pom1 / (uae_s8)pom2);
 				break;
 			case INSTR_MUL8:
 				pom1 = CONTEXT_AEAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffff) + pom1 * pom2;
+				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffffUL) + pom1 * pom2;
 				if ((CONTEXT_AEAX & 0xff00) == 0)
 					CONTEXT_AEFLAGS &= ~0x401;	// CF + OF
 				else
@@ -715,7 +872,7 @@ static const int x86_reg_map[] = {
 			case INSTR_IMUL8:
 				pom1 = CONTEXT_AEAX & 0xff;
 				pom2 = HWget_b(addr);
-				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffff) + (uae_s8)pom1 * (uae_s8)pom2;
+				CONTEXT_AEAX = (CONTEXT_AEAX & ~0xffffUL) + (uae_s8)pom1 * (uae_s8)pom2;
 				if ((CONTEXT_AEAX & 0xff00) == 0)
 					CONTEXT_AEFLAGS &= ~0x401;	// CF + OF
 				else
@@ -758,9 +915,20 @@ static const int x86_reg_map[] = {
 				HWput_b(addr, imm);
 				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
+			case INSTR_SUB8:
+				imm = HWget_b(addr);
+				imm -= *((uae_u8 *)preg);
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
 			case INSTR_OR8:
 				imm = HWget_b(addr);
 				imm |= *((uae_u8 *)preg);
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_ADDIMM8:
+				imm += HWget_b(addr);
 				HWput_b(addr, imm);
 				set_byte_eflags(imm, CONTEXT_NAME);
 				break;
@@ -768,6 +936,273 @@ static const int x86_reg_map[] = {
 				imm |= HWget_b(addr);
 				HWput_b(addr, imm);
 				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_ANDIMM8:
+				imm &= HWget_b(addr);
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_SUBIMM8:
+ 				imm = HWget_b(addr) - imm;
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_XORIMM8:
+				imm ^= HWget_b(addr);
+				HWput_b(addr, imm);
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_CMPIMM8:
+				imm = HWget_b(addr) - imm;
+				set_byte_eflags(imm, CONTEXT_NAME);
+				break;
+			case INSTR_ADDIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("ADD m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm += HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm += HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_ORIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("OR m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm |= HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm |= HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_ANDIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("AND m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm &= HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm &= HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_SUBIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("SUB m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm = HWget_l(addr) - imm;
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm = HWget_w(addr) - imm;
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_XORIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("XOR m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm ^= HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm ^= HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_CMPIMM32:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("CMP m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm = HWget_l(addr) - imm;
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm = HWget_w(addr) - imm;
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_ADDLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("ADDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm += (uae_s32)HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm += (uae_s16)HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_ORLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("ORL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm |= (uae_s32)HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm |= (uae_s16)HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_ANDLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("ANDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm &= (uae_s32)HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm &= (uae_s16)HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_SUBLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("SUBL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm = (uae_s32)HWget_l(addr) - imm;
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm = (uae_s16)HWget_w(addr) - imm;
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_XORLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("ANDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm ^= (uae_s32)HWget_l(addr);
+					HWput_l(addr, imm);
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm ^= (uae_s16)HWget_w(addr);
+					HWput_w(addr, imm);
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
+				break;
+			case INSTR_CMPLIMM8:
+#ifdef CPU_x86_64
+				if (rex.W)
+				{
+					/* TODO: needs HWput_q */
+					panicbug("CMP m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
+					unknown_instruction();
+				} else
+#endif
+				if (size == 4)
+				{
+					imm = (uae_s32)HWget_l(addr) - imm;
+					set_long_eflags(imm, CONTEXT_NAME);
+				} else
+				{
+					imm = (uae_s16)HWget_w(addr) - imm;
+					set_word_eflags(imm, CONTEXT_NAME);
+				}
 				break;
 			case INSTR_MOVIMM8:
 				HWput_b(addr, (uae_u8)imm);

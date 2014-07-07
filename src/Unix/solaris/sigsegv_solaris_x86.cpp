@@ -71,7 +71,7 @@ typedef void (*sighandler_t)(int);
 #define CONTEXT_AEDI	CONTEXT_REGS[REG_RDI]
 #endif
 
-#include "src/Unix/sigsegv_common_x86.h"
+#include "sigsegv_common_x86.h"
 
 static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
 {
