@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <assert.h>
+#undef abort
 
 static FILE *tablef;
 static int nextch = 0;

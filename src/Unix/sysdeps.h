@@ -85,7 +85,7 @@
 
 #endif
 
-#ifdef OS_beos
+#if defined(OS_beos) || defined(OS_cygwin)
 #include <stdlib.h>
 #include <string.h>
 #endif
@@ -189,6 +189,11 @@
 #endif /* OS_INCLUDES_DEFINE */
 
 extern void install_sigsegv(void);
+
+#if defined(OS_cygwin) && defined(EXTENDED_SIGSEGV)
+void cygwin_abort(void);
+#define abort() cygwin_abort()
+#endif
 
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>

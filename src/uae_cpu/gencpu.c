@@ -48,6 +48,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#undef abort
 
 #if defined(SPARC_V8_ASSEMBLY) || defined(SPARC_V9_ASSEMBLY)
 #define SPARC_ASSEMBLY 0

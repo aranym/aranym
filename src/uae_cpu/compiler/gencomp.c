@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#undef abort
 
 
 #define BOOL_TYPE		"int"

@@ -66,6 +66,7 @@
 
 #include "sigsegv_common_x86.h"
 
+static int main_exception_filter_installed = 0;
 
 static LONG WINAPI
 main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
@@ -139,13 +140,28 @@ do_install_main_exception_filter ()
 static void
 install_main_exception_filter ()
 {
-  static int main_exception_filter_installed = 0;
 
   if (!main_exception_filter_installed)
     {
       do_install_main_exception_filter ();
       main_exception_filter_installed = 1;
     }
+}
+
+static void uninstall_main_exception_filter ()
+{
+	if (main_exception_filter_installed)
+	{
+		_except_list->handler = cygwin_exception_handler;
+		main_exception_filter_installed = 0;
+	}
+}
+
+void cygwin_abort()
+{
+	uninstall_main_exception_filter();
+#undef abort
+	abort();
 }
 
 void install_sigsegv ()

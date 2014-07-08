@@ -1,4 +1,9 @@
 2014/07/08 - Thorsten
+- sigsegv_cygwin.cpp: remove handler from global 
+  exception list before calling abort()
+
+
+2014/07/08 - Thorsten
 cygwin: Make sure SDL_opengl.h uses the WIN32 API of gl.h,
 since SDL.dll is using it.
 
