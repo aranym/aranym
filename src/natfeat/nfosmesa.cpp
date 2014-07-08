@@ -372,7 +372,9 @@ void OSMesaDriver::InitPointersOSMesa(void *handle)
 	D(bug("nfosmesa: InitPointersOSMesa()"));
 
 #define GL_PROC(type, gl, name, export, upper, params, first, ret) 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) fn.OSMesa ## name = (type (APIENTRY *) params) SDL_LoadFunction(handle, "OSMesa" #name);
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) \
+	fn.OSMesa ## name = (type (APIENTRY *) params) SDL_LoadFunction(handle, "OSMesa" #name); \
+	if (fn.OSMesa ## name == 0) fn.OSMesa ## name = (type (APIENTRY *) params)glNop;
 #include "../../atari/nfosmesa/glfuncs.h"
 }
 

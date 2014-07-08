@@ -1,4 +1,9 @@
 2014/07/08 - Thorsten
+cygwin: Make sure SDL_opengl.h uses the WIN32 API of gl.h,
+since SDL.dll is using it.
+
+
+2014/07/08 - Thorsten
 Restructured NFOSMesa support, supporting OpenGL 4.4 / Mesa 10.1.4.
 osmesa.ldg usable now as a direct replacement for TinyGL.ldg
 

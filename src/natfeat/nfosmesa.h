@@ -24,18 +24,7 @@
 /*--- Includes ---*/
 
 #include <SDL_types.h>
-#include <SDL_opengl.h>
-/*	On darwin/Mac OS X systems SDL_opengl.h includes OpenGL/gl.h instead of GL/gl.h, 
-   	which does not define GLAPI and GLAPIENTRY used by GL/osmesa.h
-*/
-#if defined(__gl_h_) 
-	#if !defined(GLAPI)
-		#define GLAPI
-	#endif
-	#if !defined(GLAPIENTRY)
-		#define GLAPIENTRY
-	#endif
-#endif
+#include "SDL_opengl_wrapper.h"
 #include <GL/osmesa.h>
 #include "../../atari/nfosmesa/gltypes.h"
 
@@ -129,7 +118,7 @@ protected:
 	void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
 
 	static void *APIENTRY glNop(void);
-#define GL_ISNOP(f) ((void *(*APIENTRY)(void))(f) == glNop)
+#define GL_ISNOP(f) ((void *(APIENTRY*)(void))(f) == glNop)
 
 	void glSetError(GLenum) { }
 

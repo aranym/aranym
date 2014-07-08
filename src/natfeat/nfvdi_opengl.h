@@ -25,8 +25,7 @@
 
 #include "parameters.h"
 
-#include <SDL_opengl.h>
-
+#include "SDL_opengl_wrapper.h"
 
 /*--- Defines ---*/
 
