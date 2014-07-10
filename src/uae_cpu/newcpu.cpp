@@ -110,7 +110,7 @@ const int LOG_SIZE = 10;
 #else
 const int LOG_SIZE = FRLOG_SIZE;
 #endif
-static rec_step log[LOG_SIZE];
+static rec_step frlog[LOG_SIZE];
 static int log_ptr = -1; // First time initialization
 
 static const char *log_filename(void)
@@ -119,7 +119,7 @@ static const char *log_filename(void)
 	return name ? name : "log.68k";
 }
 
-static void dump_log()
+void dump_flight_recorder(void)
 {
 #if FRLOG_ALL
 	FILE *f = fopen(log_filename(), "a");
@@ -130,13 +130,13 @@ static void dump_log()
 		return;
 	for (int i = 0; i < LOG_SIZE; i++) {
 		int j = (i + log_ptr) % LOG_SIZE;
-		fprintf(f, "pc %08x  instr %04x  sr %04x  usp %08x  msp %08x  isp %08x\n", log[j].pc, log[j].instr, log[j].sr, log[j].usp, log[j].msp, log[j].isp);
+		fprintf(f, "pc %08x  instr %04x  sr %04x  usp %08x  msp %08x  isp %08x\n", frlog[j].pc, frlog[j].instr, frlog[j].sr, frlog[j].usp, frlog[j].msp, frlog[j].isp);
 	// adding a simple opcode -> assembler conversion table would help
 #if FRLOG_REGS
-		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", log[j].d[0], log[j].d[1], log[j].d[2], log[j].d[3]);
-		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", log[j].d[4], log[j].d[5], log[j].d[6], log[j].d[7]);
-		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", log[j].a[0], log[j].a[1], log[j].a[2], log[j].a[3]);
-		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", log[j].a[4], log[j].a[5], log[j].a[6], log[j].a[7]);
+		fprintf(f, "d0 %08x d1 %08x d2 %08x d3 %08x\n", frlog[j].d[0], frlog[j].d[1], frlog[j].d[2], frlog[j].d[3]);
+		fprintf(f, "d4 %08x d5 %08x d6 %08x d7 %08x\n", frlog[j].d[4], frlog[j].d[5], frlog[j].d[6], frlog[j].d[7]);
+		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", frlog[j].a[0], frlog[j].a[1], frlog[j].a[2], frlog[j].a[3]);
+		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", frlog[j].a[4], frlog[j].a[5], frlog[j].a[6], frlog[j].a[7]);
 #endif
 	}
 	fclose(f);
@@ -150,7 +150,7 @@ void m68k_record_step(uaecptr pc, int opcode)
 	if (! cpu_flight_recorder_active) {
 		if (last_state) {
 			// dump log out
-		    	dump_log();
+		    	dump_flight_recorder();
 
 			// remember last state
 			last_state = false;
@@ -162,33 +162,33 @@ void m68k_record_step(uaecptr pc, int opcode)
 	if (! last_state) {
 		// reset old log
 		log_ptr = 0;
-		memset(log, 0, sizeof(log));
+		memset(frlog, 0, sizeof(frlog));
 		// remember last state
 		last_state = true;
 	}
 
 #if FRLOG_REGS
 	for (int i = 0; i < 8; i++) {
-		log[log_ptr].d[i] = m68k_dreg(regs, i);
-		log[log_ptr].a[i] = m68k_areg(regs, i);
+		frlog[log_ptr].d[i] = m68k_dreg(regs, i);
+		frlog[log_ptr].a[i] = m68k_areg(regs, i);
 	}
 #endif
-	log[log_ptr].pc = pc;
+	frlog[log_ptr].pc = pc;
 
 	MakeSR();
 #if ! FRLOG_IRQ
 	// is CPU in interrupt handler? Quit if should not be logged.
 	if (regs.s && !regs.m) return;
 #endif
-	log[log_ptr].sr = regs.sr;
-	log[log_ptr].usp = regs.usp;
-	log[log_ptr].msp = regs.msp;
-	log[log_ptr].isp = regs.isp;
-	log[log_ptr].instr = opcode;
+	frlog[log_ptr].sr = regs.sr;
+	frlog[log_ptr].usp = regs.usp;
+	frlog[log_ptr].msp = regs.msp;
+	frlog[log_ptr].isp = regs.isp;
+	frlog[log_ptr].instr = opcode;
 
 	log_ptr = (log_ptr + 1) % LOG_SIZE;
 #if FRLOG_ALL
-	if (log_ptr == 0) dump_log();
+	if (log_ptr == 0) dump_flight_recorder();
 #endif
 }
 #endif /* FLIGHT_RECORDER */
@@ -1320,7 +1320,7 @@ void m68k_reset (void)
     regs.caar = 0;
 #ifdef FLIGHT_RECORDER
 	log_ptr = 0;
-	memset(log, 0, sizeof(log));
+	memset(frlog, 0, sizeof(frlog));
 #endif
 }
 
@@ -1411,11 +1411,11 @@ void REGPARAM2 op_illg (uae_u32 opcode)
 	}
 
 	if ((opcode & 0xF000) == 0xF000) {
-	Exception(0xB,0);
-	return;
+		Exception(0xB,0);
+		return;
 	}
 
-	D(bug("Illegal instruction: %04x at %08lx", opcode, pc));
+	D(bug("Illegal instruction: %04x at %08x", opcode, pc));
 #if defined(USE_JIT) && defined(JIT_DEBUG)
 	compiler_dumpstate();
 #endif
@@ -1646,7 +1646,7 @@ setjmpagain:
 	    if (quit_program > 0) {
 		if (quit_program == 1) {
 #ifdef FLIGHT_RECORDER
-		    dump_log();
+		    dump_flight_recorder();
 #endif
 		    break;
 		}

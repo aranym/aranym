@@ -172,6 +172,7 @@ extern void TriggerNMI(void);		// Trigger interrupt level 7
 
 #ifdef FLIGHT_RECORDER
 extern void cpu_flight_recorder(int);
+extern void dump_flight_recorder(void);
 #endif
 
 // CPU looping handlers

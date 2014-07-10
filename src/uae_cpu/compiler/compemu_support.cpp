@@ -69,7 +69,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#ifndef WIN32
+#if DEBUG
 #define PROFILE_COMPILE_TIME		1
 #define PROFILE_UNTRANSLATED_INSNS	1
 #endif
@@ -81,12 +81,6 @@
 
 #if defined(CPU_x86_64) && 0
 #define RECORD_REGISTER_USAGE		1
-#endif
-
-#ifdef WIN32
-#undef write_log
-#define write_log dummy_write_log
-static void dummy_write_log(const char *, ...) { }
 #endif
 
 #ifdef JIT_DEBUG
@@ -110,7 +104,7 @@ static int reg_count_compare(const void *ap, const void *bp)
 }
 #endif
 
-#if PROFILE_COMPILE_TIME
+#ifdef PROFILE_COMPILE_TIME
 #include <time.h>
 static uae_u32 compile_count	= 0;
 static clock_t compile_time		= 0;
@@ -118,8 +112,8 @@ static clock_t emul_start_time	= 0;
 static clock_t emul_end_time	= 0;
 #endif
 
-#if PROFILE_UNTRANSLATED_INSNS
-const int untranslated_top_ten = 20;
+#ifdef PROFILE_UNTRANSLATED_INSNS
+static const int untranslated_top_ten = 20;
 static uae_u32 raw_cputbl_count[65536] = { 0, };
 static uae_u16 opcode_nums[65536];
 
@@ -164,7 +158,7 @@ const bool		tune_nop_fillers	= true;		// Tune no-op fillers for architecture
 static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
-static int		optcount[10]		= {
+static int		optcount[18]		= {
 	10,		// How often a block has to be executed before it is translated
 	0,		// How often to use naive translation
 	0, 0, 0, 0,
@@ -1071,7 +1065,7 @@ static void ru_fill(regusage *ru, uae_u32 opcode)
 	}
 
 	if (!handled) {
-		write_log("ru_fill: %04x = { %04x, %04x }\n",
+		panicbug("ru_fill: %04x = { %04x, %04x }n",
 				  real_opcode, ru->rmask, ru->wmask);
 		abort();
 	}
@@ -2316,7 +2310,7 @@ void compiler_init(void)
 	// JIT debug mode ?
 	JITDebug = bx_options.startup.debugger;
 #endif
-	D(panicbug("<JIT compiler> : enable runtime disassemblers : %s", JITDebug ? "yes" : "no"));
+	D(bug("<JIT compiler> : enable runtime disassemblers : %s", JITDebug ? "yes" : "no"));
 	
 #ifdef USE_JIT_FPU
 	// Use JIT compiler for FPU instructions ?
@@ -2325,52 +2319,52 @@ void compiler_init(void)
 	// JIT FPU is always disabled
 	avoid_fpu = true;
 #endif
-	panicbug("<JIT compiler> : compile FPU instructions : %s", !avoid_fpu ? "yes" : "no");
+	D(bug("<JIT compiler> : compile FPU instructions : %s", !avoid_fpu ? "yes" : "no"));
 	
 	// Get size of the translation cache (in KB)
 	cache_size = bx_options.jit.jitcachesize;
-	panicbug("<JIT compiler> : requested translation cache size : %d KB", cache_size);
+	D(bug("<JIT compiler> : requested translation cache size : %d KB", cache_size));
 	
 	// Initialize target CPU (check for features, e.g. CMOV, rat stalls)
 	raw_init_cpu();
 	setzflg_uses_bsf = target_check_bsf();
-	panicbug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no");
-	panicbug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no");
-	panicbug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps);
+	D(bug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no"));
+	D(bug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no"));
+	D(bug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps));
 
 	// Translation cache flush mechanism
 	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
-	panicbug("<JIT compiler> : lazy translation cache invalidation : %s", str_on_off(lazy_flush));
+	D(bug("<JIT compiler> : lazy translation cache invalidation : %s", str_on_off(lazy_flush)));
 	flush_icache = lazy_flush ? flush_icache_lazy : flush_icache_hard;
 	
 	// Compiler features
-	panicbug("<JIT compiler> : register aliasing : %s", str_on_off(1));
-	panicbug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS));
-	panicbug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET));
+	D(bug("<JIT compiler> : register aliasing : %s", str_on_off(1)));
+	D(bug("<JIT compiler> : FP register aliasing : %s", str_on_off(USE_F_ALIAS)));
+	D(bug("<JIT compiler> : lazy constant offsetting : %s", str_on_off(USE_OFFSET)));
 #if USE_INLINING
 	follow_const_jumps = bx_options.jit.jitinline;
 #endif
-	panicbug("<JIT compiler> : block inlining : %s", str_on_off(follow_const_jumps));
-	panicbug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA));
+	D(bug("<JIT compiler> : block inlining : %s", str_on_off(follow_const_jumps)));
+	D(bug("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA)));
 	
 	// Build compiler tables
 	build_comp();
 
 	initialized = true;
 
-#if PROFILE_UNTRANSLATED_INSNS
-	panicbug("<JIT compiler> : gather statistics on untranslated insns count");
+#ifdef PROFILE_UNTRANSLATED_INSNS
+	bug("<JIT compiler> : gather statistics on untranslated insns count");
 #endif
 
-#if PROFILE_COMPILE_TIME
-	panicbug("<JIT compiler> : gather statistics on translation time");
+#ifdef PROFILE_COMPILE_TIME
+	bug("<JIT compiler> : gather statistics on translation time");
 	emul_start_time = clock();
 #endif
 }
 
 void compiler_exit(void)
 {
-#if PROFILE_COMPILE_TIME
+#ifdef PROFILE_COMPILE_TIME
 	emul_end_time = clock();
 #endif
 	
@@ -2386,23 +2380,23 @@ void compiler_exit(void)
 		popallspace = 0;
 	}
 
-#if PROFILE_COMPILE_TIME
-	panicbug("### Compile Block statistics");
-	panicbug("Number of calls to compile_block : %d", compile_count);
+#ifdef PROFILE_COMPILE_TIME
+	bug("### Compile Block statistics");
+	bug("Number of calls to compile_block : %d", compile_count);
 	uae_u32 emul_time = emul_end_time - emul_start_time;
-	panicbug("Total emulation time   : %.1f sec", double(emul_time)/double(CLOCKS_PER_SEC));
-	panicbug("Total compilation time : %.1f sec (%.1f%%)", double(compile_time)/double(CLOCKS_PER_SEC), 100.0*double(compile_time)/double(emul_time));
+	bug("Total emulation time   : %.1f sec", double(emul_time)/double(CLOCKS_PER_SEC));
+	bug("Total compilation time : %.1f sec (%.1f%%)", double(compile_time)/double(CLOCKS_PER_SEC), 100.0*double(compile_time)/double(emul_time));
 #endif
 
-#if PROFILE_UNTRANSLATED_INSNS
+#ifdef PROFILE_UNTRANSLATED_INSNS
 	uae_u64 untranslated_count = 0;
 	for (int i = 0; i < 65536; i++) {
 		opcode_nums[i] = i;
 		untranslated_count += raw_cputbl_count[i];
 	}
-	panicbug("Sorting out untranslated instructions count...");
+	bug("Sorting out untranslated instructions count...");
 	qsort(opcode_nums, 65536, sizeof(uae_u16), untranslated_compfn);
-	panicbug("Rank  Opc      Count Name");
+	bug("Rank  Opc      Count Name");
 	for (int i = 0; i < untranslated_top_ten; i++) {
 		uae_u32 count = raw_cputbl_count[opcode_nums[i]];
 		struct instr *dp;
@@ -2412,7 +2406,7 @@ void compiler_exit(void)
 		dp = table68k + opcode_nums[i];
 		for (lookup = lookuptab; lookup->mnemo != (instrmnem)dp->mnemo; lookup++)
 			;
-		panicbug("%03d: %04x %10u %s", i, opcode_nums[i], count, lookup->name);
+		bug("%03d: %04x %10u %s", i, opcode_nums[i], count, lookup->name);
 	}
 #endif
 
@@ -2428,7 +2422,7 @@ void compiler_exit(void)
 	for (int i = 0; i < 16; i++) {
 	    int r = reg_count_ids[i];
 	    cum_reg_count += reg_count[r];
-	    panicbug("%c%d : %16ld %2.1f%% [%2.1f]", r < 8 ? 'D' : 'A', r % 8,
+	    bug("%c%d : %16ld %2.1f%% [%2.1f]", r < 8 ? 'D' : 'A', r % 8,
 		   reg_count[r],
 		   100.0*double(reg_count[r])/double(tot_reg_count),
 		   100.0*double(cum_reg_count)/double(tot_reg_count));
@@ -3062,7 +3056,7 @@ void alloc_cache(void)
 	vm_protect(compiled_code, cache_size * 1024, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
 	
 	if (compiled_code) {
-		D(panicbug("<JIT compiler> : actual translation cache size : %d KB at 0x%08X", cache_size, compiled_code));
+		D(bug("<JIT compiler> : actual translation cache size : %d KB at 0x%08X", cache_size, compiled_code));
 		max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST;
 		current_compile_p = compiled_code;
 		current_cache_size = 0;
@@ -3215,7 +3209,7 @@ static inline int block_check_checksum(blockinfo* bi)
 	isgood=called_check_checksum(bi);
     }
     if (isgood) {
-	D2(panicbug("reactivate %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
+	D2(bug("reactivate %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
 	remove_from_list(bi);
 	add_to_active(bi);
 	raise_in_cl_list(bi);
@@ -3224,7 +3218,7 @@ static inline int block_check_checksum(blockinfo* bi)
     else {
 	/* This block actually changed. We need to invalidate it,
 	   and set it up to be recompiled */
-	D2(panicbug("discard %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
+	D2(bug("discard %p/%p (%x %x/%x %x)",bi,bi->pc_p, c1,c2,bi->c1,bi->c2));
 	invalidate_block(bi);
 	raise_in_cl_list(bi);
     }
@@ -3312,7 +3306,7 @@ static inline void create_popalls(void)
   int i,r;
 
   if ((popallspace = alloc_code(POPALLSPACE_SIZE)) == NULL) {
-	  write_log("FATAL: Could not allocate popallspace!\n");
+	  panicbug("FATAL: Could not allocate popallspace!");
 	  abort();
   }
   vm_protect(popallspace, POPALLSPACE_SIZE, VM_PAGE_READ | VM_PAGE_WRITE);
@@ -3504,7 +3498,7 @@ static bool merge_blacklist()
 			}
 
 			if (*p == 0 || *p == ',') {
-				panicbug("<JIT compiler> : blacklist opcodes : %04x-%04x\n", opcode1, opcode2);
+				D(bug("<JIT compiler> : blacklist opcodes : %04x-%04x\n", opcode1, opcode2));
 				for (int opcode = opcode1; opcode <= opcode2; opcode++)
 					reset_compop(cft_map(opcode));
 
@@ -3532,10 +3526,10 @@ void build_comp(void)
 
 #ifdef NATMEM_OFFSET
     signal(SIGSEGV, (sighandler_t)segfault_vec);
-    D(panicbug("<JIT compiler> : NATMEM OFFSET handler installed"));
+    D(bug("<JIT compiler> : NATMEM OFFSET handler installed"));
 #endif
 
-    D(panicbug("<JIT compiler> : building compiler function tables"));
+    D(bug("<JIT compiler> : building compiler function tables"));
 	
 	for (opcode = 0; opcode < 65536; opcode++) {
 		reset_compop(opcode);
@@ -3618,7 +3612,7 @@ void build_comp(void)
 	if (compfunctbl[cft_map(opcode)])
 	    count++;
     }
-	D(panicbug("<JIT compiler> : supposedly %d compileable opcodes!",count));
+	D(bug("<JIT compiler> : supposedly %d compileable opcodes!",count));
 
     /* Initialise state */
     create_popalls();
@@ -3657,7 +3651,7 @@ static void flush_icache_hard(int)
     blockinfo* bi, *dbi;
 
     hard_flush_count++;
-    D(panicbug("Flush Icache_hard(%d/%x/%p), %u KB",
+    D(bug("Flush Icache_hard(%d/%x/%p), %u KB",
 	   n,regs.pc,regs.pc_p,current_cache_size/1024));
 #if 0
 	current_cache_size = 0;
@@ -3823,34 +3817,34 @@ void compiler_dumpstate(void)
 	if (!JITDebug)
 		return;
 	
-	panicbug("### Host addresses");
-	panicbug("MEM_BASE    : %x", MEMBaseDiff);
-	panicbug("PC_P        : %p", &regs.pc_p);
-	panicbug("SPCFLAGS    : %p", &regs.spcflags);
-	panicbug("D0-D7       : %p-%p", &regs.regs[0], &regs.regs[7]);
-	panicbug("A0-A7       : %p-%p", &regs.regs[8], &regs.regs[15]);
-	panicbug("");
+	bug("### Host addresses");
+	bug("MEM_BASE    : %x", MEMBaseDiff);
+	bug("PC_P        : %p", &regs.pc_p);
+	bug("SPCFLAGS    : %p", &regs.spcflags);
+	bug("D0-D7       : %p-%p", &regs.regs[0], &regs.regs[7]);
+	bug("A0-A7       : %p-%p", &regs.regs[8], &regs.regs[15]);
+	bug("");
 	
-	panicbug("### M68k processor state");
+	bug("### M68k processor state");
 	m68k_dumpstate(0);
-	panicbug("");
+	bug("");
 	
-	panicbug("### Block in Atari address space");
-	panicbug("M68K block   : %p",
+	bug("### Block in Atari address space");
+	bug("M68K block   : %p",
 			  (void *)(uintptr)last_regs_pc_p);
 	if (last_regs_pc_p != 0) {
-		panicbug("Native block : %p (%d bytes)",
+		bug("Native block : %p (%d bytes)",
 			  (void *)last_compiled_block_addr,
 			  get_blockinfo_addr(last_regs_pc_p)->direct_handler_size);
 	}
-	panicbug("");
+	bug("");
 }
 #endif
 
 static void compile_block(cpu_history* pc_hist, int blocklen)
 {
     if (letit && compiled_code) {
-#if PROFILE_COMPILE_TIME
+#ifdef PROFILE_COMPILE_TIME
 	compile_count++;
 	clock_t start_time = clock();
 #endif
@@ -4068,7 +4062,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    raw_mov_l_mi((uintptr)&regs.pc_p,
 				 (uintptr)pc_hist[i].location);
 		    raw_call((uintptr)cputbl[opcode]);
-#if PROFILE_UNTRANSLATED_INSNS
+#ifdef PROFILE_UNTRANSLATED_INSNS
 			// raw_cputbl_count[] is indexed with plain opcode (in m68k order)
 			raw_add_l_mi((uintptr)&raw_cputbl_count[cft_map(opcode)],1);
 #endif
@@ -4267,10 +4261,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	
 	if (JITDebug && disasm_block) {
 		uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
-		D(panicbug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
+		D(bug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
 		uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
 		disasm_m68k_block((uae_u8 *)pc_hist[0].location, block_size);
-		D(panicbug("Compiled block @ 0x%08x\n", pc_hist[0].location));
+		D(bug("Compiled block @ 0x%08x\n", pc_hist[0].location));
 		disasm_native_block((uae_u8 *)current_block_start_target, bi->direct_handler_size);
 		getchar();
 	}
@@ -4305,7 +4299,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	if (redo_current_block)
 	    block_need_recompile(bi);
 	
-#if PROFILE_COMPILE_TIME
+#ifdef PROFILE_COMPILE_TIME
 	compile_time += (clock() - start_time);
 #endif
     }
@@ -4386,7 +4380,7 @@ setjmpagain:
 	    if (quit_program > 0) {
 		if (quit_program == 1) {
 #ifdef FLIGHT_RECORDER
-		    dump_log();
+		    dump_flight_recorder();
 #endif
 		    break;
 		}
