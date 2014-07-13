@@ -249,7 +249,7 @@ static inline void m68k_setstopped (int stop)
 # endif
 #else
 # ifdef HAVE_GET_WORD_UNSWAPPED
-#  define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
+#  define GET_OPCODE (do_get_mem_word_unswapped ((uae_u16*)get_real_address(m68k_getpc(), 0, sz_word)))
 # else
 #  define GET_OPCODE (get_iword (0))
 # endif

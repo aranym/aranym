@@ -367,12 +367,64 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("bswapl %0" : "=&r" (v
 static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("rolw $8,%0" : "=r" (v) : "0" (v) : "cc"); return v;}
 #endif
 #endif
-static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswap_32(*a); }
-static inline uae_u32 do_get_mem_word(uae_u16 *a) { return do_byteswap_16(*a); }
+
+#ifdef HW_SIGSEGV
+// #define HW_SIGSEGV_SIMPLE_ACCESS 1
+#endif
+#ifdef HW_SIGSEGV_SIMPLE_ACCESS
+/*
+ * The purpose of this inlines is to simplify
+ * decoding in the segfault handler by forcing
+ * the operands to be in registers.
+ * Experimental and not activated by default.
+ */
+static inline uae_u32 __get_mem_long(uae_u32 *a)
+{
+	uae_u32 v;
+	__asm__ __volatile__ ("movl (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline uae_u16 __get_mem_word(uae_u16 *a)
+{
+	uae_u16 v;
+	__asm__ __volatile__ ("movw (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline uae_u8 __get_mem_byte(uae_u8 *a)
+{
+	uae_u8 v;
+	__asm__ __volatile__ ("movb (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline void __put_mem_long(uae_u32 *a, uae_u32 v)
+{
+	__asm__ __volatile__ ("movl %1,(%0)" : : "r"(a), "r"(v));
+}
+static inline void __put_mem_word(uae_u16 *a, uae_u16 v)
+{
+	__asm__ __volatile__ ("movw %1,(%0)" : : "r"(a), "r"(v));
+}
+static inline void __put_mem_byte(uae_u8 *a, uae_u8 v)
+{
+	__asm__ __volatile__ ("movb %1,(%0)" : : "r"(a), "r"(v));
+}
+#else
+static inline uae_u32 __get_mem_long(uae_u32 *a) { return *a; }
+static inline uae_u16 __get_mem_word(uae_u16 *a) { return *a; }
+static inline uae_u8 __get_mem_byte(uae_u8 *a) { return *a; }
+static inline void __put_mem_long(uae_u32 *a, uae_u32 v) { *a = v; }
+static inline void __put_mem_word(uae_u16 *a, uae_u16 v) { *a = v; }
+static inline void __put_mem_byte(uae_u8 *a, uae_u8 v) { *a = v; }
+#endif
+
+static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswap_32(__get_mem_long(a)); }
+static inline uae_u32 do_get_mem_word(uae_u16 *a) { return do_byteswap_16(__get_mem_word(a)); }
+#define do_get_mem_byte(a) ((uae_u32)__get_mem_byte(a))
 #define HAVE_GET_WORD_UNSWAPPED
-#define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) { *a = do_byteswap_32(v); }
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) { *a = do_byteswap_16(v); }
+static inline uae_u32 do_get_mem_word_unswapped(uae_u16 *a) { return (uae_u32)__get_mem_word(a); }
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) { __put_mem_long(a, do_byteswap_32(v)); }
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) { __put_mem_word(a, do_byteswap_16(v)); }
+#define do_put_mem_byte(a, v) __put_mem_byte(a, v)
 
 #elif defined(ARMV6_ASSEMBLY) 
 
@@ -504,8 +556,12 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 #endif
 #endif
 
+#ifndef do_get_mem_byte
 #define do_get_mem_byte(a) ((uae_u32)*((uae_u8 *)(a)))
+#endif
+#ifndef do_put_mem_byte
 #define do_put_mem_byte(a, v) (*(uae_u8 *)(a) = (v))
+#endif
 
 #define call_mem_get_func(func, addr) ((*func)(addr))
 #define call_mem_put_func(func, addr, v) ((*func)(addr, v))
