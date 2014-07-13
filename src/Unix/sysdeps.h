@@ -189,6 +189,7 @@
 #endif /* OS_INCLUDES_DEFINE */
 
 extern void install_sigsegv(void);
+extern void uninstall_sigsegv(void);
 
 #if defined(OS_cygwin) && defined(EXTENDED_SIGSEGV)
 void cygwin_abort(void);

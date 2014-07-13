@@ -30,7 +30,6 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -80,5 +79,15 @@ void install_sigsegv() {
 	sigaction(SIGSEGV, &act, NULL);
 #if defined(CPU_x86_64) /* XXX is this really neccessary? */
 	sigaction(SIGILL, &act, NULL);
+#endif
+}
+
+void uninstall_sigsegv()
+{
+	signal(SIGSEGV, SIG_DFL);
+#ifdef HW_SIGSEGV_STATISTICS
+	for (unsigned int i = 0; i < 256; i++)
+		if (x86_opcodes[i] != 0)
+			bug("opcodes: %02x = %lu", i, x86_opcodes[i]);
 #endif
 }

@@ -26,7 +26,6 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -230,3 +229,7 @@ void install_sigsegv() {
 //	signal(SIGSEGV, (sighandler_t)segfault_vec);
 }
 
+void uninstall_sigsegv()
+{
+	signal(SIGSEGV, SIG_DFL);
+}

@@ -1,6 +1,5 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -157,9 +156,14 @@ static void uninstall_main_exception_filter ()
 	}
 }
 
-void cygwin_abort()
+void uninstall_sigsegv ()
 {
 	uninstall_main_exception_filter();
+}
+
+void cygwin_abort()
+{
+	uninstall_sigsegv();
 #undef abort
 	abort();
 }

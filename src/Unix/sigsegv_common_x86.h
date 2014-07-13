@@ -12,6 +12,10 @@ extern void compiler_dumpstate();
 #endif
 
 int in_handler = 0;
+#define HW_SIGSEGV_STATISTICS 1
+#ifdef HW_SIGSEGV_STATISTICS
+static unsigned long x86_opcodes[256];
+#endif
 
 enum instruction_t {
 	INSTR_UNKNOWN,
@@ -237,7 +241,7 @@ static const int x86_reg_map[] = {
 	};
 
 	if (in_handler > 0) {
-		panicbug("Segmentation fault in handler :-(");
+		panicbug("Segmentation fault in handler :-(, faultaddr=0x%08x", faultaddr);
 		abort();
 	}
 	in_handler += 1;
@@ -321,7 +325,11 @@ static const int x86_reg_map[] = {
 			size = 8;
 	}
 #endif
-	
+
+#ifdef HW_SIGSEGV_STATISTICS
+	x86_opcodes[addr_instr[0]]++;
+#endif
+
 	switch (addr_instr[0]) {
 		case 0x00:
 			D(bug("ADD m8, r8"));

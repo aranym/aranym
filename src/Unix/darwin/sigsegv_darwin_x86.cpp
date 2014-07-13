@@ -29,7 +29,6 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -648,4 +647,9 @@ static bool sigsegv_do_install_handler(sigsegv_fault_handler_t handler)
 
 void install_sigsegv() {
 	sigsegv_do_install_handler(sigsegv_handler);
+}
+
+void uninstall_sigsegv()
+{
+	/* TODO */
 }

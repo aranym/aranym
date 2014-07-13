@@ -25,7 +25,6 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -90,4 +89,9 @@ void install_sigsegv() {
 	sigemptyset (&act.sa_mask);
 	act.sa_flags = SA_SIGINFO;
 	sigaction(SIGSEGV, &act, oact);
+}
+
+void uninstall_sigsegv()
+{
+	signal(SIGSEGV, SIG_DFL);
 }

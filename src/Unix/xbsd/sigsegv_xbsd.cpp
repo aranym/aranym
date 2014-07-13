@@ -31,7 +31,6 @@
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "memory.h"
-#include <SDL_endian.h>
 #define DEBUG 0
 #include "debug.h"
 
@@ -84,4 +83,9 @@ void install_sigsegv() {
 	sigsegv_sa.sa_handler = (sighandler_t) segfault_vec;
 	sigsegv_sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGSEGV, &sigsegv_sa, NULL);
+}
+
+void uninstall_sigsegv()
+{
+	signal(SIGSEGV, SIG_DFL);
 }

@@ -1,4 +1,9 @@
 2014/07/13 - Thorsten
+- main_unix.cpp: move uninstalling sigsegv handler to system
+  dependent code (where it was installed)
+
+
+2014/07/13 - Thorsten
 - sysdeps.h: add (experimental) code to force memory references
   to always use registers, to simplify decoding in the segfault
   handler (disabled by default)

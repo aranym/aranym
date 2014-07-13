@@ -109,7 +109,7 @@ static void allocate_all_memory()
 
 #if FIXED_ADDRESSING
 	if (vm_acquire_fixed((void *)FMEMORY, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
 		QuitEmulator();
 	}
 	RAMBaseHost = (uint8 *)FMEMORY;
@@ -118,14 +118,14 @@ static void allocate_all_memory()
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 # ifdef EXTENDED_SIGSEGV
 	if (vm_acquire_fixed((void *)(FMEMORY + ~0xffffffL), RAMSize + ROMSize + HWSize) == false) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (protected mirror RAM 0x%08x).", RAMSize);
 		QuitEmulator();
 	}
 
 #  ifdef HW_SIGSEGV
 
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (Shadow IO).");
 		QuitEmulator();
 	}
 
@@ -134,7 +134,7 @@ static void allocate_all_memory()
 #else
 	RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
 	if (RAMBaseHost == VM_MAP_FAILED) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
 		QuitEmulator();
 	}
 
@@ -148,7 +148,7 @@ static void allocate_all_memory()
 	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
 # ifdef EXTENDED_SIGSEGV
 #  ifdef HW_SIGSEGV
-	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
+	D(bug("FakeIOspace %p", FakeIOBaseHost));
 #  endif
 #  ifdef RAMENDNEEDED
 	D(bug("RAMEnd needed"));
@@ -161,11 +161,11 @@ static void allocate_all_memory()
 void install_sigsegv() {
 	signal(SIGSEGV, segmentationfault);
 }
-#endif
 
-static void remove_sigsegv() {
+void uninstall_sigsegv() {
 	signal(SIGSEGV, SIG_DFL);
 }
+#endif
 
 static void install_signal_handler()
 {
@@ -187,14 +187,14 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(panicbug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+	D(bug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
 
 # ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't protect RAMEnd");
 		exit(-1);
 	}
-	D(panicbug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+	D(bug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
 # endif
 
 # ifdef HW_SIGSEGV
@@ -203,21 +203,21 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(panicbug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
+	D(bug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
 
 	if (vm_protect(RAMBaseHost + ~0xffffffL, 0x1000000, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set mirror address space");
 		QuitEmulator();
 	}
 
-	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + ~0xffffffL, RAMBaseHost + ~0xffffffL + RAMSize + ROMSize + HWSize));
+	D(bug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + ~0xffffffL, RAMBaseHost + ~0xffffffL + RAMSize + ROMSize + HWSize));
 # endif /* HW_SIGSEGV */
 #endif /* EXTENDED_SIGSEGV */
 }
 
 static void remove_signal_handler()
 {
-	remove_sigsegv();
+	uninstall_sigsegv();
 	D(bug("Sigsegv handler removed"));
 }
 
