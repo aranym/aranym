@@ -12,7 +12,7 @@ extern void compiler_dumpstate();
 #endif
 
 int in_handler = 0;
-#define HW_SIGSEGV_STATISTICS 1
+// #define HW_SIGSEGV_STATISTICS 1
 #ifdef HW_SIGSEGV_STATISTICS
 static unsigned long x86_opcodes[256];
 #endif

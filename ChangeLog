@@ -1,4 +1,9 @@
 2014/07/13 - Thorsten
+- sigsegv_common_x86.h:
+  disabled forgotten debug output from previous commit
+
+
+2014/07/13 - Thorsten
 - main_unix.cpp: move uninstalling sigsegv handler to system
   dependent code (where it was installed)
 
