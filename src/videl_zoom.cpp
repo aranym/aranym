@@ -50,10 +50,10 @@ VidelZoom::~VidelZoom(void)
 		host->video->destroySurface(surface);
 	}
 	if (xtable) {
-		delete xtable;
+		delete [] xtable;
 	}
 	if (ytable) {
-		delete ytable;
+		delete [] ytable;
 	}
 }
 
@@ -151,7 +151,7 @@ HostSurface *VidelZoom::getSurface(void)
 		int i;
 
 		if (xtable) {
-			delete xtable;
+			delete [] xtable;
 		}
 		xtable = new int[zoomWidth];
 		for (i=0; i<zoomWidth; i++) {
@@ -159,7 +159,7 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 
 		if (ytable) {
-			delete ytable;
+			delete [] ytable;
 		}
 		ytable = new int[zoomHeight];
 		for (i=0; i<zoomHeight; i++) {

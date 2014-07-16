@@ -34,7 +34,7 @@ DirtyRects::DirtyRects(int width, int height)
 DirtyRects::~DirtyRects(void)
 {
 	if (dirtyMarker) {
-		delete dirtyMarker;
+		delete [] dirtyMarker;
 	}
 }
 
@@ -43,7 +43,7 @@ DirtyRects::~DirtyRects(void)
 void DirtyRects::resizeDirty(int width, int height)
 {
 	if (dirtyMarker) {
-		delete dirtyMarker;
+		delete [] dirtyMarker;
 	}
 
 	areaW = width;

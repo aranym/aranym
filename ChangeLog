@@ -1,3 +1,7 @@
+2014/07/16 - Thorsten
+Fix some problems reported by Valgrind.
+
+
 2014/07/13 - Thorsten
 - sigsegv_common_x86.h:
   disabled forgotten debug output from previous commit

@@ -102,7 +102,7 @@ char *read_aclip(size_t *len)
 			ptr++;
 		}
 
-		delete utf16_str;		
+		delete [] utf16_str;		
 	}
 	[pool release];  // should be [pool drain] for >=10.4
 
@@ -129,7 +129,7 @@ void write_aclip(char* clip_buf, size_t clip_len)
 	[paste_board setString:[[NSString alloc] initWithCharacters:utf16_str length:clip_len] forType:NSStringPboardType];
 	[pool release];  // should be [pool drain] for >=10.4
 
-	delete utf16_str;
+	delete [] utf16_str;
 }
 
 #endif

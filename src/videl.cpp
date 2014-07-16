@@ -59,7 +59,7 @@ VIDEL::VIDEL(memptr addr, uint32 size)
 VIDEL::~VIDEL(void)
 {
 	if (crcList) {
-		delete crcList;
+		delete [] crcList;
 	}
 	if (surface) {
 		host->video->destroySurface(surface);
@@ -274,13 +274,13 @@ HostSurface *VIDEL::getSurface(void)
 		if (prevVidelBpp == bpp) {
 			if ((prevVidelWidth!=width) || (prevVidelHeight!=height)) {
 				surface->resize(width, height);
-				delete crcList;
+				delete [] crcList;
 				crcList = NULL;
 			}
 		} else {
 			delete surface;
 			surface = NULL;
-			delete crcList;
+			delete [] crcList;
 			crcList = NULL;
 		}
 	}

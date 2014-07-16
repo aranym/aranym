@@ -55,9 +55,9 @@ IKBD::IKBD(memptr addr, uint32 size) : ACIA(addr, size)
 
 IKBD::~IKBD()
 {
-	delete outbuffer;
+	delete [] outbuffer;
 	outbuffer = NULL;
-	delete inbuffer;
+	delete [] inbuffer;
 	inbuffer = NULL;
 
 	D(bug("ikbd: interface destroyed at 0x%06x", getHWoffset()));

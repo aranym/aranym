@@ -513,7 +513,7 @@ int32 HostFs::dispatch(uint32 fncode)
 							  &resFc,
 							  (memptr)getParameter(3) /* newName */ );
 			// not needed: flushXFSC( &fc, getParameter(0) );
-			// not needed: flushXFSC( &resFc, getParameter(1) );
+			// not needed: flushXFSC( &resFc, getParameter(2) );
 			break;
 
 		case XFS_OPENDIR:
@@ -1411,6 +1411,9 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
+	*fc = *dir;
+	fc->index = 0;
+
 	int fd = open( fpathName, O_CREAT|O_EXCL|O_WRONLY|O_BINARY, mode );
 	if (fd < 0)
 		return errnoHost2Mint(errno,TOS_EFILNF);
@@ -1961,6 +1964,12 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	struct dirent *dirEntry;
 
 
+	fc->drv = dirh->fc.drv;
+	fc->xfs = fc->drv->fsDrv;
+	fc->dev = dirh->fc.dev;
+	fc->aux = 0;
+	fc->index = 0;
+
 	do {
 		if ((void*)(dirEntry = readdir( dirh->hostDir )) == NULL)
 			return TOS_ENMFIL;
@@ -2336,6 +2345,9 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
 
 	XfsFsFile *newFsFile;
+
+	*fc = *dir;
+	fc->index = 0;
 
 	if ( !*fname || (*fname == '.' && !fname[1]) ) {
 		newFsFile = dir->index;

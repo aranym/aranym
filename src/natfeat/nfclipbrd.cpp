@@ -66,7 +66,7 @@ int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 	is_read = (mode == 1);
 	clip_len = 0;
 	if (clip_buf) {
-		delete clip_buf;
+		delete [] clip_buf;
 		clip_buf = NULL;
 	}
 	if (is_read) {
@@ -86,7 +86,7 @@ int32 ClipbrdNatFeat::close(uint32 id)
 		if (!is_read && clip_len > 0) {
 			write_aclip(clip_buf, clip_len);
 		}
-		delete clip_buf;
+		delete [] clip_buf;
 		clip_buf = NULL;
 	}
 	return 0;
@@ -116,7 +116,7 @@ int32 ClipbrdNatFeat::write(uint32 id, memptr buff, uint32 len, uint32 pos)
 
 	if (clip_buf) {
 		memcpy(newbuf, clip_buf, (clip_len > newlen) ? pos : clip_len);
-		delete clip_buf;
+		delete [] clip_buf;
 	}
 	clip_buf = newbuf;
 	clip_len = newlen;
