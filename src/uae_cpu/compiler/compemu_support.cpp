@@ -566,7 +566,7 @@ template< class T >
 class LazyBlockAllocator
 {
 	enum {
-		kPoolSize = 1 + 4096 / sizeof(T)
+		kPoolSize = 1 + (16384 - sizeof(T) - sizeof(void *)) / sizeof(T)
 	};
 	struct Pool {
 		T chunk[kPoolSize];
@@ -588,7 +588,7 @@ LazyBlockAllocator<T>::~LazyBlockAllocator()
 	while (currentPool) {
 		Pool * deadPool = currentPool;
 		currentPool = currentPool->next;
-		free(deadPool);
+		vm_release(deadPool, sizeof(Pool));
 	}
 }
 
@@ -598,7 +598,11 @@ T * LazyBlockAllocator<T>::acquire()
 	if (!mChunks) {
 		// There is no chunk left, allocate a new pool and link the
 		// chunks into the free list
-		Pool * newPool = (Pool *)malloc(sizeof(Pool));
+		Pool * newPool = (Pool *)vm_acquire(sizeof(Pool), VM_MAP_DEFAULT | VM_MAP_32BIT);
+		if (newPool == VM_MAP_FAILED) {
+	      panicbug("FATAL: Could not allocate block pool!");
+	      abort();
+	    }
 		for (T * chunk = &newPool->chunk[0]; chunk < &newPool->chunk[kPoolSize]; chunk++) {
 			chunk->next = mChunks;
 			mChunks = chunk;
@@ -2152,7 +2156,6 @@ static inline void f_make_exclusive(int r, int clobber)
 		       live.fate[live.fat[rr].holds[i]].realreg,
 		       live.fate[live.fat[rr].holds[i]].realind));
 	    }
-	    D(panicbug(""));
 	    abort();
 	}
 	return;
@@ -2331,6 +2334,10 @@ void compiler_init(void)
 	D(bug("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no"));
 	D(bug("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no"));
 	D(bug("<JIT compiler> : alignment for loops, jumps are %d, %d", align_loops, align_jumps));
+#if defined(CPU_i386) || defined(CPU_x86_64)
+	D(bug("<JIT compiler> : target processor has SSE2 instructions : %s", cpuinfo.x86_has_xmm2 ? "yes" : "no"));
+	D(bug("<JIT compiler> : cache linesize is %lu", (unsigned long)cpuinfo.x86_clflush_size));
+#endif
 
 	// Translation cache flush mechanism
 	lazy_flush = (bx_options.jit.jitlazyflush == 0) ? false : true;
@@ -2732,31 +2739,15 @@ void register_branch(uae_u32 not_taken, uae_u32 taken, uae_u8 cond)
     branch_cc=cond;
 }
 
-/*
-static uae_u32 get_handler_address(uae_u32 addr)
-{
-    (void)cacheline(addr);
-    blockinfo* bi=get_blockinfo_addr_new((void*)(uintptr)addr,0);
-    return (uintptr)&(bi->direct_handler_to_use);
-}
-*/
-
 /* Note: get_handler may fail in 64 Bit environments, if direct_handler_to_use is
  * 		 outside 32 bit
  */
-static uae_u32 get_handler(uae_u32 addr)
+static uintptr get_handler(uintptr addr)
 {
     (void)cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)(uintptr)addr,0);
     return (uintptr)bi->direct_handler_to_use;
 }
-
-/*
-static void load_handler(int reg, uae_u32 addr)
-{
-    mov_l_rm(reg,get_handler_address(addr));
-}
-*/
 
 /* This version assumes that it is writing *real* memory, and *will* fail
  *  if that assumption is wrong! No branches, no second chances, just
@@ -3056,7 +3047,7 @@ void alloc_cache(void)
 	vm_protect(compiled_code, cache_size * 1024, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
 	
 	if (compiled_code) {
-		D(bug("<JIT compiler> : actual translation cache size : %d KB at 0x%08X", cache_size, compiled_code));
+		D(bug("<JIT compiler> : actual translation cache size : %d KB at %p-%p", cache_size, compiled_code, compiled_code + cache_size*1024));
 		max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST;
 		current_compile_p = compiled_code;
 		current_cache_size = 0;
@@ -3646,13 +3637,14 @@ static void flush_icache_none(int)
 	/* Nothing to do.  */
 }
 
-static void flush_icache_hard(int)
+static void flush_icache_hard(int n)
 {
     blockinfo* bi, *dbi;
 
     hard_flush_count++;
     D(bug("Flush Icache_hard(%d/%x/%p), %u KB",
 	   n,regs.pc,regs.pc_p,current_cache_size/1024));
+	UNUSED(n);
 #if 0
 	current_cache_size = 0;
 #endif
@@ -3890,7 +3882,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    }
 
 	    Dif (bi->count!=-1 && bi->status!=BI_NEED_RECOMP) {
-		panicbug("bi->count=%d, bi->status=%d",bi->count,bi->status);
+		panicbug("bi->count=%d, bi->status=%d,bi->optlevel=%d",bi->count,bi->status,bi->optlevel);
 		/* What the heck? We are not supposed to be here! */
 		abort();
 	    }
@@ -4183,11 +4175,11 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			raw_jmp_r(r2);
 		}
 		else if (was_comp && isconst(PC_P)) {
-		    uae_u32 v=live.state[PC_P].val;
+		    uintptr v=live.state[PC_P].val;
 		    uae_u32* tba;
 		    blockinfo* tbi;
 
-		    tbi=get_blockinfo_addr_new((void*)(uintptr)v,1);
+		    tbi=get_blockinfo_addr_new((void*)v,1);
 		    match_states(tbi);
 
 			raw_cmp_l_mi((uintptr)specflags,0);

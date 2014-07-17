@@ -1,3 +1,15 @@
+2014/07/18 - Thorsten
+Fix some bugs in the JIT compiler:
+- compemu_support.cpp: use vm_acquire() rather than malloc() to
+  allocate the blockinfos, since some variables in the structure
+  are accessed by JIT compiled code and must therefore be in 32bit
+  address range.
+- vm_alloc.cpp: use separate base addresses for 32bit and 64bit
+- compemu_midfunc_x86.cpp: implement flush_cpu_icache() for x86
+- codegen_x86.cpp: add some missing ADDR32 to instructions
+  that access memory.
+
+
 2014/07/16 - Thorsten
 Fix some problems reported by Valgrind.
 
