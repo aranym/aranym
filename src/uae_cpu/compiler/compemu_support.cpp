@@ -3818,7 +3818,7 @@ void compiler_dumpstate(void)
 	bug("");
 	
 	bug("### M68k processor state");
-	m68k_dumpstate(0);
+	m68k_dumpstate(stderr, 0);
 	bug("");
 	
 	bug("### Block in Atari address space");

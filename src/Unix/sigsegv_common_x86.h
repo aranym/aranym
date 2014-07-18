@@ -1,3 +1,5 @@
+#include "disasm-glue.h"
+
 enum transfer_type_t {
 	TYPE_UNKNOWN,
 	TYPE_LOAD,
@@ -62,6 +64,93 @@ enum instruction_t {
 	INSTR_TESTIMM8,
 	INSTR_XOR8
 };
+
+
+#if DEBUG && defined(DISASM_USE_OPCODES)
+#include <dis-asm.h>
+
+struct opcodes_info {
+	char linebuf[128];
+	size_t bufsize;
+	size_t linepos;
+	disassemble_info opcodes_info;
+};
+
+
+static int opcodes_printf(void *info, const char *format, ...)
+{
+	struct opcodes_info *opcodes_info = (struct opcodes_info *)info;
+	va_list args;
+	int len;
+	size_t remain;
+	
+	va_start(args, format);
+	remain = opcodes_info->bufsize - opcodes_info->linepos - 1;
+	len = vsnprintf(opcodes_info->linebuf + opcodes_info->linepos, remain, format, args);
+	if (len > 0)
+	{
+		if ((size_t)len > remain)
+			len = remain;
+		opcodes_info->linepos += len;
+	}
+	va_end(args);
+	return len;
+}
+
+static const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
+{
+	struct opcodes_info info;
+	int len;
+	int i;
+	char *opcode;
+	char *p;
+	
+	info.linepos = 0;
+	info.bufsize = sizeof(info.linebuf);
+	INIT_DISASSEMBLE_INFO(info.opcodes_info, &info, opcodes_printf);
+	info.opcodes_info.buffer = (bfd_byte *)ainstr;
+	info.opcodes_info.buffer_length = 15; // largest instruction size on x86
+	info.opcodes_info.buffer_vma = (uintptr)ainstr;
+#ifdef CPU_i386
+	info.opcodes_info.mach = bfd_mach_i386_i386;
+#else
+	info.opcodes_info.mach = bfd_mach_x86_64;
+#endif
+	len = print_insn_i386(info.opcodes_info.buffer_vma, &info.opcodes_info);
+	info.linebuf[info.linepos] = '\0';
+#ifdef CPU_i386
+	sprintf(buf, "[%08x]", (uintptr)ainstr);
+#else
+	sprintf(buf, "[%016lx]", (uintptr)ainstr);
+#endif
+	for (i = 0; i < 7 && i < len; i++)
+	{
+		sprintf(buf + strlen(buf), " %02x", ainstr[i]);
+	}
+	for (; i < 7; i++)
+		strcat(buf, "   ");
+	opcode = info.linebuf;
+	if (strncmp(opcode, "addr32", 6) == 0)
+	{
+		opcode += 6;
+		while (*opcode == ' ')
+			opcode++;
+	}		
+	p = strchr(opcode, ' ');
+	if (p)
+	{
+		*p++ = '\0';
+		while (*p == ' ')
+			p++;
+	}
+	sprintf(buf + strlen(buf), "  %-10s", opcode);
+	if (p)
+		strcat(buf, p);
+	if (len > 0)
+		ainstr += len;
+	return ainstr;
+}
+#endif
 
 
 static inline int get_instr_size_add(const uint8 *p)
@@ -735,6 +824,14 @@ static const int x86_reg_map[] = {
 			break;
 		}
 	}
+#ifdef DISASM_USE_OPCODES
+	{
+		char buf[128];
+		
+		x86_disasm(ainstr, buf);
+		bug("%s", buf);
+	}
+#endif
 #endif
 
 	if (addr >= 0xff000000)

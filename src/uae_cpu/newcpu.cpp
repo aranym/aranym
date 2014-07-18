@@ -46,6 +46,7 @@
 #endif
 #include "fpu/fpu.h"
 #include "natfeats.h"
+#include "disasm-glue.h"
 
 #include <cstdlib>
 
@@ -274,7 +275,6 @@ void exit_m68k (void)
 struct regstruct regs, lastint_regs;
 // MJ static struct regstruct regs_backup[16];
 // MJ static int backup_pointer = 0;
-static long int m68kpc_offset;
 int lastint_no;
 
 
@@ -295,308 +295,6 @@ static inline uae_u32 get_ilong_1(uae_u32 o)
 # define get_ibyte_1(o) get_byte(m68k_getpc() + (o) + 1)
 # define get_iword_1(o) get_word(m68k_getpc() + (o))
 # define get_ilong_1(o) get_long(m68k_getpc() + (o))
-#endif
-
-uae_s32 ShowEA (int reg, amodes mode, wordsizes size, char *buf)
-{
-    uae_u16 dp;
-    uae_s8 disp8;
-    uae_s16 disp16;
-    int r;
-    uae_u32 dispreg;
-    uaecptr addr;
-    uae_s32 offset = 0;
-    char buffer[80];
-
-    strcpy(buffer, "");
-
-    switch (mode){
-     case Dreg:
-	sprintf (buffer,"D%d", reg);
-	break;
-     case Areg:
-	sprintf (buffer,"A%d", reg);
-	break;
-     case Aind:
-	sprintf (buffer,"(A%d)", reg);
-	break;
-     case Aipi:
-	sprintf (buffer,"(A%d)+", reg);
-	break;
-     case Apdi:
-	sprintf (buffer,"-(A%d)", reg);
-	break;
-     case Ad16:
-	disp16 = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	addr = m68k_areg(regs,reg) + (uae_s16)disp16;
-	sprintf (buffer,"(A%d,$%04x) == $%08lx", reg, disp16 & 0xffff,
-					(unsigned long)addr);
-	break;
-     case Ad8r:
-	dp = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	disp8 = dp & 0xFF;
-	r = (dp & 0x7000) >> 12;
-	dispreg = dp & 0x8000 ? m68k_areg(regs,r) : m68k_dreg(regs,r);
-	if (!(dp & 0x800)) dispreg = (uae_s32)(uae_s16)(dispreg);
-	dispreg <<= (dp >> 9) & 3;
-
-	if (dp & 0x100) {
-	    uae_s32 outer = 0, disp = 0;
-	    uae_s32 base = m68k_areg(regs,reg);
-	    char name[10];
-	    sprintf (name,"A%d, ",reg);
-	    if (dp & 0x80) { base = 0; name[0] = 0; }
-	    if (dp & 0x40) dispreg = 0;
-	    if ((dp & 0x30) == 0x20) { disp = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x30) == 0x30) { disp = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-	    base += disp;
-
-	    if ((dp & 0x3) == 0x2) { outer = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-
-	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
-	    if (dp & 4) base += dispreg;
-
-	    addr = base + outer;
-	    sprintf (buffer,"(%s%c%d.%c*%d+%ld)+%ld == $%08x", name,
-		    dp & 0x8000 ? 'A' : 'D', (int)r, dp & 0x800 ? 'L' : 'W',
-		    1 << ((dp >> 9) & 3),
-		    (unsigned long)disp, (unsigned long)outer,
-		    (unsigned int)addr);
-	} else {
-	  addr = m68k_areg(regs,reg) + (uae_s32)((uae_s8)disp8) + dispreg;
-	  sprintf (buffer,"(A%d, %c%d.%c*%d, $%02x) == $%08x", reg,
-	       dp & 0x8000 ? 'A' : 'D', (int)r, dp & 0x800 ? 'L' : 'W',
-	       1 << ((dp >> 9) & 3), disp8,
-	       (unsigned int)addr);
-	}
-	break;
-     case PC16:
-	addr = m68k_getpc () + m68kpc_offset;
-	disp16 = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	addr += (uae_s16)disp16;
-	sprintf (buffer,"(PC,$%04x) == $%08x", disp16 & 0xffff,(unsigned int)addr);
-	break;
-     case PC8r:
-	addr = m68k_getpc () + m68kpc_offset;
-	dp = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	disp8 = dp & 0xFF;
-	r = (dp & 0x7000) >> 12;
-	dispreg = dp & 0x8000 ? m68k_areg(regs,r) : m68k_dreg(regs,r);
-	if (!(dp & 0x800)) dispreg = (uae_s32)(uae_s16)(dispreg);
-	dispreg <<= (dp >> 9) & 3;
-
-	if (dp & 0x100) {
-	    uae_s32 outer = 0,disp = 0;
-	    uae_s32 base = addr;
-	    char name[10];
-	    sprintf (name,"PC, ");
-	    if (dp & 0x80) { base = 0; name[0] = 0; }
-	    if (dp & 0x40) dispreg = 0;
-	    if ((dp & 0x30) == 0x20) { disp = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x30) == 0x30) { disp = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-	    base += disp;
-
-	    if ((dp & 0x3) == 0x2) { outer = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-
-	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
-	    if (dp & 4) base += dispreg;
-
-	    addr = base + outer;
-	    sprintf (buffer,"(%s%c%d.%c*%d+%ld)+%ld == $%08x", name,
-		    dp & 0x8000 ? 'A' : 'D', (int)r, dp & 0x800 ? 'L' : 'W',
-		    1 << ((dp >> 9) & 3),
-		    (unsigned long)disp, (unsigned long)outer,
-		    (unsigned int)addr);
-	} else {
-	  addr += (uae_s32)((uae_s8)disp8) + dispreg;
-	  sprintf (buffer,"(PC, %c%d.%c*%d, $%02x) == $%08x", dp & 0x8000 ? 'A' : 'D',
-		(int)r, dp & 0x800 ? 'L' : 'W',  1 << ((dp >> 9) & 3),
-		disp8, (unsigned int)addr);
-	}
-	break;
-     case absw:
-	sprintf (buffer,"$%08x", (unsigned int)(uae_s32)(uae_s16)get_iword_1 (m68kpc_offset));
-	m68kpc_offset += 2;
-	break;
-     case absl:
-	sprintf (buffer,"$%08x", (unsigned int)get_ilong_1 (m68kpc_offset));
-	m68kpc_offset += 4;
-	break;
-     case imm:
-	switch (size){
-	 case sz_byte:
-	    sprintf (buffer,"#$%02x", (unsigned int)(get_iword_1 (m68kpc_offset) & 0xff));
-	    m68kpc_offset += 2;
-	    break;
-	 case sz_word:
-	    sprintf (buffer,"#$%04x", (unsigned int)(get_iword_1 (m68kpc_offset) & 0xffff));
-	    m68kpc_offset += 2;
-	    break;
-	 case sz_long:
-	    sprintf (buffer,"#$%08x", (unsigned int)(get_ilong_1 (m68kpc_offset)));
-	    m68kpc_offset += 4;
-	    break;
-	 default:
-	    break;
-	}
-	break;
-     case imm0:
-	offset = (uae_s32)(uae_s8)get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	sprintf (buffer,"#$%02x", (unsigned int)(offset & 0xff));
-	break;
-     case imm1:
-	offset = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	sprintf (buffer,"#$%04x", (unsigned int)(offset & 0xffff));
-	break;
-     case imm2:
-	offset = (uae_s32)get_ilong_1 (m68kpc_offset);
-	m68kpc_offset += 4;
-	sprintf (buffer,"#$%08x", (unsigned int)offset & 0xffffffff);
-	break;
-     case immi:
-	offset = (uae_s32)(uae_s8)(reg & 0xff);
-	sprintf (buffer,"#$%08x", (unsigned int)offset & 0xffffffff);
-	break;
-     default:
-	break;
-    }
-    if (buf == 0)
-	printf ("%s", buffer);
-    else
-	strcat (buf, buffer);
-    return offset;
-}
-
-#if 0
-/* The plan is that this will take over the job of exception 3 handling -
- * the CPU emulation functions will just do a longjmp to m68k_go whenever
- * they hit an odd address. */
-static int verify_ea (int reg, amodes mode, wordsizes size, uae_u32 *val)
-{
-    uae_u16 dp;
-    uae_s8 disp8;
-    uae_s16 disp16;
-    int r;
-    uae_u32 dispreg;
-    uaecptr addr;
-// MJ    uae_s32 offset = 0;
-
-    switch (mode){
-     case Dreg:
-	*val = m68k_dreg (regs, reg);
-	return 1;
-     case Areg:
-	*val = m68k_areg (regs, reg);
-	return 1;
-
-     case Aind:
-     case Aipi:
-	addr = m68k_areg (regs, reg);
-	break;
-     case Apdi:
-	addr = m68k_areg (regs, reg);
-	break;
-     case Ad16:
-	disp16 = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	addr = m68k_areg(regs,reg) + (uae_s16)disp16;
-	break;
-     case Ad8r:
-	addr = m68k_areg (regs, reg);
-     d8r_common:
-	dp = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	disp8 = dp & 0xFF;
-	r = (dp & 0x7000) >> 12;
-	dispreg = dp & 0x8000 ? m68k_areg(regs,r) : m68k_dreg(regs,r);
-	if (!(dp & 0x800)) dispreg = (uae_s32)(uae_s16)(dispreg);
-	dispreg <<= (dp >> 9) & 3;
-
-	if (dp & 0x100) {
-	    uae_s32 outer = 0, disp = 0;
-	    uae_s32 base = addr;
-	    if (dp & 0x80) base = 0;
-	    if (dp & 0x40) dispreg = 0;
-	    if ((dp & 0x30) == 0x20) { disp = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x30) == 0x30) { disp = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-	    base += disp;
-
-	    if ((dp & 0x3) == 0x2) { outer = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset); m68kpc_offset += 2; }
-	    if ((dp & 0x3) == 0x3) { outer = get_ilong_1 (m68kpc_offset); m68kpc_offset += 4; }
-
-	    if (!(dp & 4)) base += dispreg;
-	    if (dp & 3) base = get_long (base);
-	    if (dp & 4) base += dispreg;
-
-	    addr = base + outer;
-	} else {
-	  addr += (uae_s32)((uae_s8)disp8) + dispreg;
-	}
-	break;
-     case PC16:
-	addr = m68k_getpc () + m68kpc_offset;
-	disp16 = get_iword_1 (m68kpc_offset); m68kpc_offset += 2;
-	addr += (uae_s16)disp16;
-	break;
-     case PC8r:
-	addr = m68k_getpc () + m68kpc_offset;
-	goto d8r_common;
-     case absw:
-	addr = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	break;
-     case absl:
-	addr = get_ilong_1 (m68kpc_offset);
-	m68kpc_offset += 4;
-	break;
-     case imm:
-	switch (size){
-	 case sz_byte:
-	    *val = get_iword_1 (m68kpc_offset) & 0xff;
-	    m68kpc_offset += 2;
-	    break;
-	 case sz_word:
-	    *val = get_iword_1 (m68kpc_offset) & 0xffff;
-	    m68kpc_offset += 2;
-	    break;
-	 case sz_long:
-	    *val = get_ilong_1 (m68kpc_offset);
-	    m68kpc_offset += 4;
-	    break;
-	 default:
-	    break;
-	}
-	return 1;
-     case imm0:
-	*val = (uae_s32)(uae_s8)get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	return 1;
-     case imm1:
-	*val = (uae_s32)(uae_s16)get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	return 1;
-     case imm2:
-	*val = get_ilong_1 (m68kpc_offset);
-	m68kpc_offset += 4;
-	return 1;
-     case immi:
-	*val = (uae_s32)(uae_s8)(reg & 0xff);
-	return 1;
-     default:
-	addr = 0;
-	break;
-    }
-    if ((addr & 1) == 0)
-	return 1;
-
-    last_addr_for_exception_3 = m68k_getpc () + m68kpc_offset;
-    last_fault_for_exception_3 = addr;
-    return 0;
-}
 #endif
 
 /*
@@ -828,8 +526,6 @@ static inline void exc_make_frame(
     exc_push_long(currpc);
     exc_push_word(sr);
 }
-
-extern void showBackTrace(int, bool=true);
 
 #ifdef EXCEPTIONS_VIA_LONGJMP
 static int building_bus_fault_stack_frame=0;
@@ -1274,10 +970,6 @@ void m68k_mull (uae_u32 /*opcode*/, uae_u32 src, uae_u16 extra)
 #endif
 }
 
-static const char* ccnames[] =
-{ "T ","F ","HI","LS","CC","CS","NE","EQ",
-  "VC","VS","PL","MI","GE","LT","GT","LE" };
-
 // If value is greater than zero, this means we are still processing an EmulOp
 // because the counter is incremented only in m68k_execute(), i.e. interpretive
 // execution only
@@ -1646,8 +1338,8 @@ int m68k_do_specialties(void)
 			panicbug("STOPed with interrupts disabled, exiting");
 			quit_program = 1;
 #ifdef FULL_HISTORY
-			showBackTrace(20, false);
-			m68k_dumpstate (NULL);
+			ndebug::showHistory(20, false);
+			m68k_dumpstate (stderr, NULL);
 #endif
 			return 1;
 		}
@@ -1766,330 +1458,112 @@ setjmpagain:
 #endif
 }
 
-#if 0
-static void m68k_verify (uaecptr addr, uaecptr *nextpc)
+void m68k_disasm (FILE *f, uaecptr addr, uaecptr *nextpc, int cnt)
 {
-    uae_u32 opcode, val;
-    struct instr *dp;
+#ifdef HAVE_DISASM
+	char buf[256];
+	int size;
 
-    opcode = get_iword_1(0);
-    last_op_for_exception_3 = opcode;
-    m68kpc_offset = 2;
-
-    if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-	opcode = 0x4AFC;
-    }
-    dp = table68k + opcode;
-
-    if (dp->suse) {
-	if (!verify_ea (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, &val)) {
-	    Exception (3, 0);
-	    return;
-	}
-    }
-    if (dp->duse) {
-	if (!verify_ea (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, &val)) {
-	    Exception (3, 0);
-	    return;
-	}
-    }
-}
-#endif
-
-void m68k_disasm (uaecptr addr, uaecptr *nextpc, int cnt)
-{
-    uaecptr newpc = 0;
-    m68kpc_offset = addr - m68k_getpc ();
+	disasm_info.memory_vma = addr;
     while (cnt-- > 0) {
-	char instrname[20],*ccpt;
-	int opwords;
-	uae_u32 opcode;
-	struct mnemolookup *lookup;
-	struct instr *dp;
-	printf ("%08lx: ", m68k_getpc () + m68kpc_offset);
-	for (opwords = 0; opwords < 5; opwords++){
-	    printf ("%04x ", get_iword_1 (m68kpc_offset + opwords*2));
+		size = m68k_disasm_to_buf(&disasm_info, buf);
+    	fprintf(f, "%s\n", buf);
+    	if (size < 0)
+    		break;
 	}
-	opcode = get_iword_1 (m68kpc_offset);
-	m68kpc_offset += 2;
-	if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-	    opcode = 0x4AFC;
-	}
-	dp = table68k + opcode;
-	for (lookup = lookuptab; (unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-	    ;
-
-	strcpy (instrname, lookup->name);
-	ccpt = strstr (instrname, "cc");
-	if (ccpt != 0) {
-	    strncpy (ccpt, ccnames[dp->cc], 2);
-	}
-	printf ("%s", instrname);
-	switch (dp->size){
-	 case sz_byte: printf (".B "); break;
-	 case sz_word: printf (".W "); break;
-	 case sz_long: printf (".L "); break;
-	 default: printf ("   "); break;
-	}
-
-	if (dp->suse) {
-	    newpc = m68k_getpc () + m68kpc_offset;
-	    newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, 0);
-	}
-	if (dp->suse && dp->duse)
-	    printf (",");
-	if (dp->duse) {
-	    newpc = m68k_getpc () + m68kpc_offset;
-	    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, 0);
-	}
-	if (ccpt != 0) {
-	    if (cctrue(dp->cc))
-		printf (" == %08lx (TRUE)", (unsigned long)newpc);
-	    else
-		printf (" == %08lx (FALSE)", (unsigned long)newpc);
-	} else if ((opcode & 0xff00) == 0x6100) /* BSR */
-	    printf (" == %08lx", (unsigned long)newpc);
-	printf ("\n");
-    }
     if (nextpc)
-	*nextpc = m68k_getpc () + m68kpc_offset;
+		*nextpc = disasm_info.memory_vma;
+#else
+    if (nextpc)
+		*nextpc = addr;
+	(void) f;
+	(void) cnt;
+#endif
 }
 
-#ifdef NEWDEBUG
-void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, VOLATILE unsigned int cnt)
+#ifdef DEBUGGER
+void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 {
-    char *buffer = (char *)malloc(80 * sizeof(char));
-    SAVE_EXCEPTION;
-    strcpy(buffer,"");
-    VOLATILE uaecptr newpc = 0;
-    m68kpc_offset = addr - m68k_getpc ();
-    if (cnt == 0) {
-        TRY(prb) {
-	    char instrname[20],*ccpt;
-	    int opwords;
-	    uae_u32 opcode;
-	    struct mnemolookup *lookup;
-	    struct instr *dp;
-	    for (opwords = 0; opwords < 5; opwords++) {
-		get_iword_1 (m68kpc_offset + opwords*2);
-	    }
-	    opcode = get_iword_1 (m68kpc_offset);
-	    m68kpc_offset += 2;
-	    if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-		opcode = 0x4AFC;
-	    }
-	    dp = table68k + opcode;
-	    for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-		;
-	    strcpy (instrname, lookup->name);
-	    ccpt = strstr (instrname, "cc");
-	    if (ccpt != 0) {
-		strncpy (ccpt, ccnames[dp->cc], 2);
-	    }
-	    if (dp->suse) {
-		newpc = m68k_getpc () + m68kpc_offset;
-		newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
-		strcpy(buffer,"");
-	    }
-	    if (dp->duse) {
-		newpc = m68k_getpc () + m68kpc_offset;
-		newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
-		strcpy(buffer,"");
-	    }
-	}
-	CATCH(prb) {}
-    } else {
-setjmpagain:
-	TRY(prb) {
-	    while (cnt-- > 0) {
-		char instrname[20],*ccpt;
-		int opwords;
-		uae_u32 opcode;
-		struct mnemolookup *lookup;
-		struct instr *dp;
-		fprintf (f, "%08lx: ", m68k_getpc () + m68kpc_offset);
-		for (opwords = 0; opwords < 5; opwords++) {
-		    fprintf (f, "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
-		}
-		opcode = get_iword_1 (m68kpc_offset);
-		m68kpc_offset += 2;
-		if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-			opcode = 0x4AFC;
-		}
-		dp = table68k + opcode;
-		for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-		    ;
-		strcpy (instrname, lookup->name);
-		ccpt = strstr (instrname, "cc");
-		if (ccpt != 0) {
-		    strncpy (ccpt, ccnames[dp->cc], 2);
-		}
-		fprintf (f, "%s", instrname);
-		switch (dp->size){
-		 case sz_byte: fprintf (f, ".B "); break;
-		 case sz_word: fprintf (f, ".W "); break;
-		 case sz_long: fprintf (f, ".L "); break;
-		 default: fprintf (f, "   "); break;
-		}
+#ifdef HAVE_DISASM
+	char buf[256];
 
-		if (dp->suse) {
-		    newpc = m68k_getpc () + m68kpc_offset;
-		    newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
-		    fprintf(f, "%s", buffer);
-		    strcpy(buffer,"");
-		}
-		if (dp->suse && dp->duse)
-		    fprintf (f, ",");
-		if (dp->duse) {
-		    newpc = m68k_getpc () + m68kpc_offset;
-		    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
-		    fprintf(f, "%s", buffer);
-		    strcpy(buffer,"");
-		}
-		if (ccpt != 0) {
-		    if (cctrue(dp->cc))
-			fprintf (f, " == %08lx (TRUE)", (unsigned long)newpc);
-		    else
-			fprintf (f, " == %08lx (FALSE)", (unsigned long)newpc);
-		} else if ((opcode & 0xff00) == 0x6100) /* BSR */
-		    fprintf (f, " == %08lx", (unsigned long)newpc);
-		fprintf (f, "\n");
-	    }
-	}
-	CATCH(prb) {
-		fprintf (f, " unknown address\n");
-                goto setjmpagain;
-	}
+	disasm_info.memory_vma = addr;
+    if (cnt == 0) {
+		m68k_disasm_to_buf(&disasm_info, buf);
+    } else {
+	    while (cnt-- > 0) {
+		m68k_disasm_to_buf(&disasm_info, buf);
+    	fprintf(f, "%s\n", buf);
+    	}
     }
     if (nextpc)
-	*nextpc = m68k_getpc () + m68kpc_offset;
-    free(buffer);
-    RESTORE_EXCEPTION;
+		*nextpc = disasm_info.memory_vma;
+#else
+    if (nextpc)
+		*nextpc = addr;
+	(void) cnt;
+#endif
 }
+
+#endif /* DEBUGGER */
 
 #ifdef FULL_HISTORY
 void showDisasm(uaecptr addr) {
-	char *buffer = (char *)malloc(80 * sizeof(char));
-	strcpy(buffer, "");
-	char *sbuffer[7];
-	for (int i = 0; i < 7; i++) {
-		sbuffer[i] = (char *)malloc(80 * sizeof(char));
-		strcpy(sbuffer[i], "");
-	}
-	char *buff[5];
-	for (int i = 0; i < 5; i++) {
-		buff[i] = (char *)malloc(80 * sizeof(char));
-		strcpy(buff[i],"");
-	}
-	SAVE_EXCEPTION;
-	VOLATILE uaecptr newpc = 0;
-	m68kpc_offset = addr - m68k_getpc ();
-	TRY(prb) {
-	    char instrname[20],*ccpt;
-	    int opwords;
-	    uae_u32 opcode;
-	    struct mnemolookup *lookup;
-	    struct instr *dp;
-	    sprintf(sbuffer[0], "%08x: ", m68k_getpc () + (uae_u32)m68kpc_offset);
-	    for (opwords = 0; opwords < 5; opwords++) {
-		    sprintf (buff[opwords], "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
-	    }
-	    opcode = get_iword_1 (m68kpc_offset);
-	    m68kpc_offset += 2;
-	    if (cpufunctbl[cft_map (opcode)] == op_illg_1) {
-		    opcode = 0x4AFC;
-	    }
-	    dp = table68k + opcode;
-	    for (lookup = lookuptab;(unsigned int)lookup->mnemo != dp->mnemo; lookup++)
-			;
-	    strcpy (instrname, lookup->name);
-	    ccpt = strstr (instrname, "cc");
-	    if (ccpt != 0) {
-		    strncpy (ccpt, ccnames[dp->cc], 2);
-	    }
-	    sprintf (sbuffer[1], "%s", instrname);
-	    switch (dp->size){
-		     case sz_byte: sprintf (sbuffer[2], ".B "); break;
-		     case sz_word: sprintf (sbuffer[2], ".W "); break;
-		     case sz_long: sprintf (sbuffer[2], ".L "); break;
-		     default: sprintf (sbuffer[2], "   "); break;
-	    }
+#ifdef HAVE_DISASM
+	char buf[256];
 
-	    if (dp->suse) {
-		    newpc = m68k_getpc () + m68kpc_offset;
-		    newpc += ShowEA (dp->sreg, (amodes)dp->smode, (wordsizes)dp->size, buffer);
-		    sprintf(sbuffer[3], "%s", buffer);
-		    strcpy(buffer,"");
-	    }
-	    if (dp->suse && dp->duse) sprintf (sbuffer[4], ",");
-	    if (dp->duse) {
-		    newpc = m68k_getpc () + m68kpc_offset;
-		    newpc += ShowEA (dp->dreg, (amodes)dp->dmode, (wordsizes)dp->size, buffer);
-		    sprintf(sbuffer[5], "%s", buffer);
-		    strcpy(buffer,"");
-	    }
-	    if (ccpt != 0) {
-		    if (cctrue(dp->cc)) sprintf (sbuffer[6], " == %08lx (TRUE)", (unsigned long)newpc);
-			    else sprintf (sbuffer[6], " == %08lx (FALSE)", (unsigned long)newpc);
-	    } else if ((opcode & 0xff00) == 0x6100) /* BSR */
-		    sprintf (sbuffer[6], " == %08lx", (unsigned long)newpc);
-
-	    bug("%s%s%s%s%s%s%s%s%s%s%s%s", sbuffer[0], buff[0], buff[1], buff[2], buff[3],  buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
-	}
-	CATCH(prb) {
-		bug("%s%s%s%s%s%s%s%s%s%s%s%s unknown address", sbuffer[0], buff[0],  buff[1],  buff[2], buff[3], buff[4], sbuffer[1], sbuffer[2], sbuffer[3], sbuffer[4], sbuffer[5], sbuffer[6]);
-	}
-	free(buffer);
-	for (int i = 0; i < 7; i++) free(sbuffer[i]);
-	for (int i = 0; i < 5; i++) free(buff[i]);
-	RESTORE_EXCEPTION;
+	disasm_info.memory_vma = addr;
+	m68k_disasm_to_buf(&disasm_info, buf);
+	bug("%s", buf);
+#else
+	(void) addr;
+#endif
 }
-#endif
-#endif
+#endif /* FULL_HISTORY */
 
-void m68k_dumpstate (uaecptr *nextpc)
+void m68k_dumpstate (FILE *out, uaecptr *nextpc)
 {
     int i;
     for (i = 0; i < 8; i++){
-	printf ("D%d: %08lx ", i, (unsigned long)m68k_dreg(regs, i));
-	if ((i & 3) == 3) printf ("\n");
+	fprintf (out, "D%d: %08lx ", i, (unsigned long)m68k_dreg(regs, i));
+	if ((i & 3) == 3) fprintf (out, "\n");
     }
     for (i = 0; i < 8; i++){
-	printf ("A%d: %08lx ", i, (unsigned long)m68k_areg(regs, i));
-	if ((i & 3) == 3) printf ("\n");
+	fprintf (out, "A%d: %08lx ", i, (unsigned long)m68k_areg(regs, i));
+	if ((i & 3) == 3) fprintf (out, "\n");
     }
     if (regs.s == 0) regs.usp = m68k_areg(regs, 7);
     if (regs.s && regs.m) regs.msp = m68k_areg(regs, 7);
     if (regs.s && regs.m == 0) regs.isp = m68k_areg(regs, 7);
-    printf ("USP=%08lx ISP=%08lx MSP=%08lx VBR=%08lx\n",
+    fprintf (out, "USP=%08lx ISP=%08lx MSP=%08lx VBR=%08lx\n",
 	    (unsigned long)regs.usp, (unsigned long)regs.isp,
 	    (unsigned long)regs.msp, (unsigned long)regs.vbr);
-    printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
+    fprintf (out, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, (int)GET_VFLG, (int)GET_CFLG, regs.intmask,
 	    regs.mmu_enabled, regs.mmu_pagesize_8k);
-    printf ("CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
+    fprintf (out, "CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
             (unsigned long)regs.cacr,
 	    (unsigned long)regs.caar,
 	    (unsigned long)regs.urp,
 	    (unsigned long)regs.srp);
-    printf ("DTT0=%08lx DTT1=%08lx ITT0=%08lx ITT1=%08lx\n",
+    fprintf (out, "DTT0=%08lx DTT1=%08lx ITT0=%08lx ITT1=%08lx\n",
             (unsigned long)regs.dtt0,
 	    (unsigned long)regs.dtt1,
 	    (unsigned long)regs.itt0,
 	    (unsigned long)regs.itt1);
     for (i = 0; i < 8; i++){
-	printf ("FP%d: %g ", i, (double)fpu.registers[i]);
-	if ((i & 3) == 3) printf ("\n");
+	fprintf (out, "FP%d: %g ", i, (double)fpu.registers[i]);
+	if ((i & 3) == 3) fprintf (out, "\n");
     }
 #if 0
-    printf ("N=%d Z=%d I=%d NAN=%d\n",
+    fprintf (out, "N=%d Z=%d I=%d NAN=%d\n",
 		(regs.fpsr & 0x8000000) != 0,
 		(regs.fpsr & 0x4000000) != 0,
 		(regs.fpsr & 0x2000000) != 0,
 		(regs.fpsr & 0x1000000) != 0);
 #endif
-    m68k_disasm(m68k_getpc (), nextpc, 1);
+    m68k_disasm(out, m68k_getpc (), nextpc, 1);
     if (nextpc)
-	printf ("next PC: %08lx\n", (unsigned long)*nextpc);
+	fprintf (out, "next PC: %08lx\n", (unsigned long)*nextpc);
 }

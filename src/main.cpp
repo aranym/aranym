@@ -36,6 +36,7 @@
 #include "bootos_emutos.h"
 #include "bootos_linux.h"
 #include "aranym_exception.h"
+#include "disasm-glue.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -380,6 +381,11 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
+#ifdef HAVE_DISASM
+	D(bug("Initializing disassembler..."));
+	m68k_disasm_init(&disasm_info, CPU_68040);
+#endif
+
 	// Init HW
 	HWInit();
 
@@ -469,6 +475,10 @@ void ExitAll(void)
 #ifdef SDL_GUI
 	close_GUI();
 	SDLGui_UnInit();
+#endif
+
+#ifdef HAVE_DISASM
+	m68k_disasm_exit(&disasm_info);
 #endif
 
 	// Natfeats

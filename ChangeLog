@@ -1,4 +1,9 @@
 2014/07/18 - Thorsten
+Get rid of old UAEDEBUG related code, and
+implement a real disassmbler.
+
+
+2014/07/18 - Thorsten
 Add preliminary SDL2 support.
 Does not use any new features yet, but should work as before with SDL2.
 

@@ -34,18 +34,15 @@ AC_ARG_ENABLE(nat-debug,     [AC_HELP_STRING([--enable-nat-debug], [enable nativ
 
 AC_ARG_ENABLE(full-debug,    [AC_HELP_STRING([--enable-full-debug], [enable full debug outputs (default=no)])], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
 
-WHICH_DEBUG_DEFAULT="ndebug"
 AC_ARG_ENABLE(debug,
-[AC_HELP_STRING([--enable-debug=which], [specify which debugger to use (default=ndebug)])],
+[AC_HELP_STRING([--enable-debug=which], [specify wether to use internal debugger (default=no)])],
 [ case "$enableval" in
-    default | yes)  WHICH_DEBUG=$WHICH_DEBUG_DEFAULT;;
-        uae)  WHICH_DEBUG="uae";;
-     ndebug)  WHICH_DEBUG="ndebug";;
-         no)  WHICH_DEBUG="no";;
+    default | yes | uae | ndebug)  USE_DEBUGGER=yes;;
+         no)  USE_DEBUGGER="no";;
 	  *)  AC_MSG_ERROR([--enable-debug takes only one of the following values: default, uae, ndebug, no]);;
   esac
 ],
-[WHICH_DEBUG=$WHICH_DEBUG_DEFAULT
+[USE_DEBUGGER=no
 ])
 
 AC_ARG_ENABLE(fullhistory,     [AC_HELP_STRING([--enable-fullhistory], [enable full history for debugger (default=no)])], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
@@ -1445,24 +1442,111 @@ AC_CHECK_FUNCS(atanh)
 AC_CHECK_FUNCS(isnan isinf finite isnormal signbit)
 
 AH_TEMPLATE([DEBUGGER], [Define if using some internal debugger])
-AH_TEMPLATE([NEWDEBUG], [Define if using new debugger])
-AH_TEMPLATE([UAEDEBUG], [Define if using UAE debugger])
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
   dnl new debugger
-  if [[ "x$WHICH_DEBUG" = "xndebug" -a "x$ac_cv_func_sigaction" = "xyes" ]]; then
+  if [[ "$USE_DEBUGGER" = "yes" -a "x$ac_cv_func_sigaction" = "xyes" ]]; then
     AC_DEFINE([DEBUGGER], 1)
-    AC_DEFINE([NEWDEBUG], 1)
-    CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
-  fi
-
-  dnl UAE debugger
-  if [[ "x$WHICH_DEBUG" = "xuae" ]]; then
-    AC_DEFINE([DEBUGGER], 1)
-    AC_DEFINE([UAEDEBUG], 1)
     CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
   fi
 fi
+
+AH_TEMPLATE([DISASM_USE_OPCODES],[Define if using the opcodes library for disassembly])
+AH_TEMPLATE([DISASM_USE_BUILTIN],[Define if using the builtin disassembler])
+
+AC_ARG_WITH(opcodes,
+[AC_HELP_STRING(--with-opcodes=DIR, [specify the directory where the opcodes library is located])],
+with_opcodes=$withval, with_opcodes=)
+
+AC_ARG_ENABLE(disasm,
+[AC_HELP_STRING(--enable-disasm=builtin|opcodes, [Specify which library to use for disassembly @<:@none@:>@])],
+enable_disasm=$enableval,
+enable_disasm=no; enable_disasm_defaulted=yes)
+case "$enable_disasm" in
+no|builtin|opcodes)
+	;;
+yes|auto)
+	enable_disasm=auto
+	;;
+*)
+	AC_MSG_ERROR([unknown disassembler $enable_disasm])
+	;;
+esac
+
+# check wether we need disassembly support, and which one
+DISASM_CFLAGS=
+DISASM_LIBS=
+if test "$USE_DEBUGGER" != no -o "$WANT_HISTORY" = yes; then
+   if test "$enable_disasm" = no; then
+     if test "$enable_disasm_defaulted" = "yes"; then
+        if test "$with_opcodes" != ""; then
+          enable_disasm=opcodes
+        else
+          enable_disasm=auto
+        fi
+     else
+        AC_MSG_WARN([you have requested debug support but disabled disassembly.
+The debugger needs some disassembling support.])
+     fi
+   fi
+fi
+if test "$enable_disasm" = auto -o "$enable_disasm" = opcodes; then
+   CPPFLAGS_save="$CPPFLAGS"
+   LIBS_save="$LIBS"
+   if test "$with_opcodes" != ""; then
+      if test -f "$with_opcodes/build-dir/bfd/bfd.h" ; then
+        OPCODES_CFLAGS="-I$with_opcodes/build-dir/bfd -I$with_opcodes/build-dir/libiberty -I$with_opcodes/build-dir/opcodes"
+        OPCODES_LIBS="-L$with_opcodes/build-dir/bfd -L$with_opcodes/build-dir/libiberty -L$with_opcodes/build-dir/opcodes"
+      else
+        OPCODES_CFLAGS="-I$with_opcodes/include"
+        OPCODES_LIBS="-L$with_opcodes/lib"
+      fi
+      CPPFLAGS="$CPPFLAGS $OPCODES_CFLAGS"
+   fi
+   OPCODES_LIBS="$OPCODES_LIBS -lopcodes -lbfd -liberty -lz -ldl"
+   found=yes
+   AC_CHECK_HEADERS(bfd.h,,found=no)
+   AC_CHECK_HEADERS(dis-asm.h,,found=no)
+   CPPFLAGS=$CPPFLAGS_save
+   if test "$found" = yes; then
+     AC_CHECK_LIB([opcodes], print_insn_m68k,, found=no, [$OPCODES_LIBS])
+   fi
+   LIBS="$LIBS_save"
+   AC_MSG_CHECKING([for opcodes usability])
+   if test "$found" = "yes"; then
+      AC_DEFINE(DISASM_USE_OPCODES)
+      DISASM_CFLAGS="$OPCODES_CFLAGS"
+      DISASM_LIBS="$OPCODES_LIBS"
+      AC_MSG_RESULT($found)
+      if test "$with_opcodes" != ""; then
+        DISASM_LIBS="$DISASM_LIBS -Wl,-rpath,$with_opcodes/lib"
+      fi
+      enable_disasm=opcodes
+   else
+      AC_MSG_RESULT($found)
+      if test "$enable_disasm" = "opcodes"; then
+        AC_MSG_NOTICE([
+
+Required libraries not found.
+You may have to specify the path to the correct directory.
+If your system isn't m68k-based, the libraries may be installed
+in some unusual place (maybe something like
+/usr/$host/m68k-unknown-linux-gnu).
+In the meantime, i will use the builtin support.
+])
+      fi
+      enable_disasm=auto
+   fi
+fi
+if test "$enable_disasm" = auto -o "$enable_disasm" = builtin; then
+   AC_DEFINE(DISASM_USE_BUILTIN)
+   enable_disasm=builtin
+fi
+AC_SUBST(DISASM_CFLAGS)
+AC_SUBST(DISASM_LIBS)
+dnl AM_CONDITIONAL(DISASM_USE_BUILTIN, test "$enable_disasm" = "builtin")
+dnl AM_CONDITIONAL(DISASM_USE_OPCODES, test "$enable_disasm" = "opcodes")
+ 
 
 dnl Exclusive spcflags handling
 if [[ "x$WANT_SPCFLAGS_EXCL" = "xyes" ]]; then
@@ -1488,7 +1572,6 @@ if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   WFLAGS=""
   if [[ "x$GCC" = "xyes" ]]; then
     WFLAGS="$WFLAGS -W -Wall -Wundef"
-    DBGSP="-ggdb3"
   fi
 else
   DBGSP=""
@@ -2041,7 +2124,7 @@ echo Linux /dev/rtc source timer ............ : $WANT_RTCTIMER
 echo Real STOP implementation ............... : $WANT_REALSTOP
 echo DSP 56001 support ...................... : $WANT_DSP
 echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
-echo Debugger ............................... : $WHICH_DEBUG
+echo Debugger ............................... : $USE_DEBUGGER
 echo Check memory ........................... : $MEMORY_CHECK
 echo First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K
 echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM

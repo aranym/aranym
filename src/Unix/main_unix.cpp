@@ -1,3 +1,4 @@
+
 /*
  * main_unix.cpp - Startup code for Unix
  *
@@ -87,12 +88,6 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/)
 # endif
 #endif
 
-#if defined(NEWDEBUG)
-static struct sigaction sigint_sa;
-#endif
-
-extern void showBackTrace(int, bool=true);
-
 #ifdef OS_irix
 void segmentationfault()
 #else
@@ -102,8 +97,8 @@ void segmentationfault(int)
 	grabMouse(SDL_FALSE);
 	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
 #ifdef FULL_HISTORY
-	showBackTrace(20, false);
-	m68k_dumpstate (NULL);
+	ndebug::showHistory(20, false);
+	m68k_dumpstate (stderr, NULL);
 #else
 	panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
@@ -185,14 +180,14 @@ static void install_signal_handler()
 	install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
-#ifdef NEWDEBUG
-	if (bx_options.startup.debugger) {
-		sigemptyset(&sigint_sa.sa_mask);
-		sigint_sa.sa_handler = (void (*)(int))setactvdebug;
-		sigint_sa.sa_flags = 0;
-		sigaction(SIGINT, &sigint_sa, NULL);
+	{
+		struct sigaction sa;
+		memset(&sa, 0, sizeof(sa));
+		sigemptyset(&sa.sa_mask);
+		sa.sa_handler = (void (*)(int))setactvdebug;
+		sa.sa_flags = 0;
+		sigaction(SIGINT, &sa, NULL);
 	}
-#endif
 
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
@@ -233,7 +228,6 @@ static void install_signal_handler()
 #if USE_VALGRIND
 	VALGRIND_MAKE_MEM_DEFINED(HWBaseHost, HWSize);
 	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + ~0xffffffUL, 0x1000000);
-	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + 0xff00000UL, 0x1000000);
 #endif
 # endif /* HW_SIGSEGV */
 
@@ -265,23 +259,19 @@ int main(int argc, char **argv)
 	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
-	// display version string on console (help when users provide debug info)
-	infoprint("%s", VERSION_STRING);
-
 	// remember program name
 	program_name = argv[0];
 
-#ifdef NEWDEBUG
+#ifdef DEBUGGER
 	ndebug::init();
 #endif
+
+	// display version string on console (help when users provide debug info)
+	infoprint("%s", VERSION_STRING);
 
 	// parse command line switches
 	if (!decode_switches(argc, argv))
 		exit(-1);
-
-#ifdef NEWDEBUG
-	signal(SIGINT, setactvdebug);
-#endif
 
 	allocate_all_memory();
 

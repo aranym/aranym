@@ -78,13 +78,8 @@ extern void deactivate_debugger(void);
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef NEWDEBUG
 #define bug ndebug::dbprintf
 #define panicbug ndebug::pdbprintf
-#else
-#define bug dbprintf
-#define panicbug pdbprintf
-#endif
 
 #if defined(DEBUG) && DEBUG
 #define D(x) (x);
@@ -98,6 +93,6 @@ extern void deactivate_debugger(void);
 #define D2(x) ;
 #endif
 
-#define infoprint panicbug
+#define infoprint bug
 
 #endif

@@ -52,8 +52,6 @@ extern "C" int vasprintf(char **, const char *, va_list);
 
 extern void QuitEmulator(void);
 
-#ifdef NEWDEBUG
-
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
 {
@@ -62,6 +60,20 @@ extern "C" char *strdup(const char *s)
 	return n;
 }
 #endif
+
+#ifdef FULL_HISTORY
+unsigned int firsthist = 0;
+unsigned int lasthist = 0;
+#ifdef NEED_TO_DEBUG_BADLY
+struct regstruct history[MAX_HIST];
+struct flag_struct historyf[MAX_HIST];
+#else
+uaecptr history[MAX_HIST];
+#endif
+#endif /* FULL_HISTORY */
+
+
+#ifdef DEBUGGER
 
 termios ndebug::savetty;
 bool ndebug::issavettyvalid = false;
@@ -79,7 +91,7 @@ uaecptr ndebug::skipaddr = 0;
 bool ndebug::do_skip_value = false;
 uaecptr ndebug::value_addr = 0;
 uint32 ndebug::value;
-value_test_t  ndebug::value_test;
+ndebug::value_test_t  ndebug::value_test;
 
 uint32 ndebug::do_breakpoints = 0;
 bool ndebug::breakpoint[max_breakpoints];
@@ -165,55 +177,42 @@ void ndebug::set_actualrow(signed int r)
 	}
 }
 
-#endif
+#endif /* DEBUGGER */
 
-#ifdef NEWDEBUG
-int ndebug::dbprintf(const char *s, ...)
-#else
-int dbprintf(const char *s, ...)
-#endif
+void ndebug::dbprintf(const char *s, ...)
 {
 	va_list a;
-#ifdef NEWDEBUG
-	if (bx_options.startup.debugger) {
-		int i;
+#ifdef DEBUGGER
+	{
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
 		va_start(a, s);
-		i = vasprintf(&dbbuffer[dbend++], s, a);
+		vasprintf(&dbbuffer[dbend++], s, a);
 		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
 		reset_actualrow();
-		return i;
-	} else
+	}
 #endif
 	{
-		int i;
 		va_start(a, s);
-		i = vfprintf(stderr, s, a);
-		i += fprintf(stderr, "\n");
+		vfprintf(stderr, s, a);
+		fprintf(stderr, "\n");
 		va_end(a);
 		fflush(stderr);
-		return i;
 	}
 }
 
-#ifdef NEWDEBUG
-int ndebug::pdbprintf(const char *s, ...)
-#else
-int pdbprintf(const char *s, ...)
-#endif
+void ndebug::pdbprintf(const char *s, ...)
 {
-	int i = 0;
 	va_list a;
-#ifdef NEWDEBUG
-	if (bx_options.startup.debugger) {
+#ifdef DEBUGGER
+	{
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
 		va_start(a, s);
-		i += vasprintf(&dbbuffer[dbend++], s, a);
+		vasprintf(&dbbuffer[dbend++], s, a);
 		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
@@ -222,15 +221,14 @@ int pdbprintf(const char *s, ...)
 	}
 #endif
 	va_start(a, s);
-	i = vfprintf(stderr, s, a);
-	i += fprintf(stderr, "\n");
+	vfprintf(stderr, s, a);
+	fprintf(stderr, "\n");
 	va_end(a);
 	fflush(stderr);
-	return i;
 }
 
 
-#ifdef NEWDEBUG
+#ifdef DEBUGGER
 void ndebug::warn_print(FILE * f)
 {
 	unsigned int ar;
@@ -599,12 +597,11 @@ void ndebug::log2phys(FILE *, uaecptr addr) {
 			}
 		}
 		RESTORE_EXCEPTION;
-	} else {
+	} else
 #endif /* FULLMMU */
+	{
 		bug("MMU disabled: %08lx", (unsigned long)addr);
-#ifdef FULLMMU
 	}
-#endif
 }
 
 unsigned int ndebug::get_len() {
@@ -631,7 +628,7 @@ void ndebug::showTypes() {
 	bug("3:        MMU TT browser");
 }
 
-int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::canon(FILE *f, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 	char input[80];
 	char cmd, *inptr;
 	int count;
@@ -645,7 +642,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 	fprintf(f, ">");
 	fflush(f);
 	if (fgets(input, 80, stdin) == NULL) {
-		if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 		return 0;
 	}
 	if (input[0] == '\n') strcpy(input, old_debug_cmd);
@@ -697,7 +693,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 		case 'g':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
-			if (wasGrabbed) grabMouse(SDL_TRUE);
 			/*
 			 * debugger activation/deactivation need to be rewriteen
 			 * deactivate_debugger();
@@ -775,7 +770,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 			do_skip = true;
 			irqindebug = true;
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(SDL_TRUE);
 			return 0;
 		case 'f':
 			if (!more_params(&inptr)) {
@@ -786,7 +780,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 			do_skip = true;
 			irqindebug = true;
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(SDL_TRUE);
 			return 0;
 		case 'B':
 			{
@@ -833,7 +826,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'w':
 					inptr += 2;
@@ -843,7 +835,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'l':
 					inptr += 2;
@@ -853,7 +844,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				default:
 					bug("v command needs for the 1st parameter b, w or l!");
@@ -874,7 +864,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'w':
 					inptr += 2;
@@ -884,7 +873,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'l':
 					inptr += 2;
@@ -894,7 +882,6 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				default:
 					bug("V command needs for the 1st parameter b, w or l!");
@@ -925,7 +912,7 @@ int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, 
 	return 1;
 }
 
-int ndebug::icanon(FILE *f, SDL_bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::icanon(FILE *f, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 	if (!issavettyvalid)
 		return(0);
 	
@@ -1009,7 +996,7 @@ int ndebug::icanon(FILE *f, SDL_bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 	return 1;
 }
 
-int ndebug::dm(FILE *f, SDL_bool, uaecptr, uaecptr &, uaecptr &nxmem) {
+int ndebug::dm(FILE *f, uaecptr, uaecptr &, uaecptr &nxmem) {
 	if (!issavettyvalid)
 		return(0);
 
@@ -1154,21 +1141,23 @@ void ndebug::run() {
 	newm68k_disasm(stderr, m68k_getpc(), &nextpc, 0);
 	nxdis = nextpc;
 	nxmem = 0;
-
-	for (;;) {
+	bool done = false;
+	
+	while (!done) {
 		switch(tp) {
 			default:
 			case 0:
-				if (canon(stderr, wasGrabbed, nextpc, nxdis, nxmem) == 0) return;
+				if (canon(stderr, nextpc, nxdis, nxmem) == 0) done = true;
 				break;
 			case 1:
-				if (icanon(stderr, wasGrabbed, nextpc, nxdis, nxmem) == 0) return;
+				if (icanon(stderr, nextpc, nxdis, nxmem) == 0) done = true;
 				break;
 			case 2:
-				if (dm(stderr, wasGrabbed, nextpc, nxdis, nxmem) == 0) return;
+				if (dm(stderr, nextpc, nxdis, nxmem) == 0) done = true;
 				break;
-		}	
+		}
 	}
+	if (wasGrabbed) grabMouse(SDL_TRUE);
 }
 
 void ndebug::init()
@@ -1348,8 +1337,10 @@ void ndebug::convertNo(char **s) {
 	bug("%d 0x%X 0%o %s", val, val, val, dectobin(val));
 }
 
+#endif /* DEBUGGER */
+
 #ifdef FULL_HISTORY
-void ndebug::showHistory(unsigned int count) {
+void ndebug::showHistory(unsigned int count, bool) {
 	unsigned int temp = lasthist;
 #ifdef NEED_TO_DEBUG_BADLY
 	struct regstruct save_regs = regs;
@@ -1364,7 +1355,7 @@ void ndebug::showHistory(unsigned int count) {
 #ifdef NEED_TO_DEBUG_BADLY
 		regs = history[temp];
 		regflags = historyf[temp];
-		m68k_dumpstate (NULL);
+		m68k_dumpstate (stderr, NULL);
 #else
 		showDisasm(history[temp]);
 #endif
@@ -1376,9 +1367,7 @@ void ndebug::showHistory(unsigned int count) {
 	regflags = save_flags;
 #endif
 }
-#endif
-
-#endif
+#endif /* FULL_HISTORY */
 
 /*
 vim:ts=4:sw=4:

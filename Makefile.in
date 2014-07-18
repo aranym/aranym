@@ -32,13 +32,15 @@ CFLAGS1 = @CFLAGS@
 CFLAGS = @CFLAGS@ $(SDL_CFLAGS) $(ZLIB_CFLAGS)
 CXXFLAGS1 = @CXXFLAGS@
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS) $(ZLIB_CFLAGS)
-CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
+CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@ $(DISASM_CFLAGS)
 ARCHFLAGS = @ARCHFLAGS@
 GENCPU_FLAGS = @GENCPU_FLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@
+DISASM_CFLAGS=@DISASM_CFLAGS@
+DISASM_LIBS=@DISASM_LIBS@
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@ $(SDL_LIBS) $(ZLIB_LIBS)
+LIBS = @LIBS@ $(SDL_LIBS) $(ZLIB_LIBS) $(DISASM_LIBS)
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -101,6 +103,8 @@ SRCS = main.cpp \
 	cfgopts.cpp \
 	dirty_rects.cpp \
 	dsp.cpp \
+	disasm-glue.cpp \
+	disasm-builtin.cpp \
 	emul_op.cpp \
 	natfeats.cpp \
 	fakeio.cpp \
@@ -378,7 +382,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) cdromtest $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) cdromtest m68kdisasm $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -rf $(GEN_DIR)
@@ -707,6 +711,9 @@ $(GEN_DIR)/memory.s: memory.cpp
 
 $(APP_IFC): aratapif.c
 	$(AM_V_CC)$(CC) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/Unix/aratapif.c
+
+m68kdisasm: disasm-main.cpp disasm-glue.cpp disasm-builtin.cpp
+	$(AM_V_CXXLD)$(CXX) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/disasm-main.cpp $(DISASM_LIBS)
 
 cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfeat/nfcdrom_sdl.cpp $(srcdir)/natfeat/nfcdrom_linux.cpp $(srcdir)/natfeat/nfcdrom_win32.cpp
 	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)
