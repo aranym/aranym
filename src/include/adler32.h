@@ -22,7 +22,7 @@
 #ifndef ADLER32_H
 #define ADLER32_H 1
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 #ifdef __cplusplus
 extern "C" {

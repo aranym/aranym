@@ -22,8 +22,8 @@
 #ifndef HOSTSURFACEOPENGL_H
 #define HOSTSURFACEOPENGL_H
 
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "SDL_compat.h"
+#include "SDL_opengl_wrapper.h"
 
 class HostSurface;
 

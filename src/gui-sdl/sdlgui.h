@@ -12,7 +12,7 @@
 
 #include "host.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 class HostSurface;
 class Dialog;
@@ -102,7 +102,6 @@ void SDLGui_setGuiPos(int guix, int guiy);
 HostSurface *SDLGui_getSurface(void);
 
 /* dlgHotkeys.cpp */
-char *displayKeysym(SDL_keysym keysym, char *buffer);
 
 /* stuff needed by dialog.cpp */
 int SDLGui_FindEditField(SGOBJ *dlg, int objnum, int mode);

@@ -284,6 +284,7 @@ extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 extern int m68k_do_specialties(void);
 extern void m68k_instr_set(void);
+uae_u32 linea68000(uae_u16 opcode);
 
 /* Opcode of faulting instruction */
 extern uae_u16 last_op_for_exception_3;
@@ -305,6 +306,7 @@ extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #ifdef USE_JIT
 extern void m68k_compile_execute(void);
+extern void m68k_do_compile_execute(void);
 #endif
 #ifdef USE_CPU_EMUL_SERVICES
 extern int32 emulated_ticks;

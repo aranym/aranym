@@ -27,6 +27,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#if defined _WIN32 || defined(OS_cygwin)
+# define SDL_MAIN_HANDLED
+#endif
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
@@ -36,6 +40,11 @@
 #include "parameters.h"
 #include "newcpu.h"
 #include "version.h"
+
+#define USE_VALGRIND 0
+#if USE_VALGRIND
+#include <valgrind/memcheck.h>
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -90,7 +99,7 @@ void segmentationfault()
 void segmentationfault(int)
 #endif
 {
-	grabMouse(false);
+	grabMouse(SDL_FALSE);
 	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
 #ifdef FULL_HISTORY
 	showBackTrace(20, false);
@@ -142,10 +151,14 @@ static void allocate_all_memory()
 	HWBaseHost = RAMBaseHost + HWBase;
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 #endif
-	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
-	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
-	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
-	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
+	InitMEM();
+	D(bug("ST-RAM     at %p - %p (0x%08x - 0x%08x)", RAMBaseHost, RAMBaseHost + RAMSize, RAMBase, RAMBase + RAMSize));
+	D(bug("TOS ROM    at %p - %p (0x%08x - 0x%08x)", ROMBaseHost, ROMBaseHost + ROMSize, ROMBase, ROMBase + ROMSize));
+	D(bug("HW space   at %p - %p (0x%08x - 0x%08x)", HWBaseHost, HWBaseHost + HWSize, HWBase, HWBase + HWSize));
+	D(bug("TT-RAM     at %p - %p (0x%08x - 0x%08x)", FastRAMBaseHost, FastRAMBaseHost + FastRAMSize, FastRAMBase, FastRAMBase + FastRAMSize));
+	if (VideoRAMBaseHost) {
+	D(bug("Video-RAM  at %p - %p (0x%08x - 0x%08x)", VideoRAMBaseHost, VideoRAMBaseHost + ARANYMVRAMSIZE, VideoRAMBase, VideoRAMBase + ARANYMVRAMSIZE));
+	}
 # ifdef EXTENDED_SIGSEGV
 #  ifdef HW_SIGSEGV
 	D(bug("FakeIOspace %p", FakeIOBaseHost));
@@ -187,14 +200,20 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(bug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+	D(bug("Protected ROM          (%p - %p)", ROMBaseHost, ROMBaseHost + ROMSize));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost, ROMSize);
+#endif
 
 # ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't protect RAMEnd");
 		exit(-1);
 	}
-	D(bug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+	D(bug("Protected RAMEnd       (%p - %p)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd);
+#endif
 # endif
 
 # ifdef HW_SIGSEGV
@@ -203,15 +222,25 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(bug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
+	D(bug("Protected HW space     (%p - %p)", HWBaseHost, HWBaseHost + HWSize));
 
-	if (vm_protect(RAMBaseHost + ~0xffffffL, 0x1000000, VM_PAGE_NOACCESS)) {
+	if (vm_protect(RAMBaseHost + ~0xffffffUL, 0x1000000, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set mirror address space");
 		QuitEmulator();
 	}
 
-	D(bug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + ~0xffffffL, RAMBaseHost + ~0xffffffL + RAMSize + ROMSize + HWSize));
+	D(bug("Protected mirror space (%p - %p)", RAMBaseHost + ~0xffffffUL, RAMBaseHost + ~0xffffffUL + RAMSize + ROMSize + HWSize));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(HWBaseHost, HWSize);
+	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + ~0xffffffUL, 0x1000000);
+	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + 0xff00000UL, 0x1000000);
+#endif
 # endif /* HW_SIGSEGV */
+
+#ifdef HAVE_SBRK
+	D(bug("Program break           %p", sbrk(0)));
+#endif
+
 #endif /* EXTENDED_SIGSEGV */
 }
 
@@ -226,6 +255,10 @@ static void remove_signal_handler()
  */
 int main(int argc, char **argv)
 {
+#if defined _WIN32 || defined(OS_cygwin)
+	SDL_SetMainReady();
+#endif
+
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;

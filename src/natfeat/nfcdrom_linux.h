@@ -26,10 +26,22 @@
 class CdromDriverLinux : public CdromDriver
 {
 	private:
-		int drive_handles[CD_MAX_DRIVES];	/* Handle for each possible opened drive */
+		/* for each possible opened drive */
+		struct {
+			char *device;
+			int handle;
+			dev_t cdmode;
+		} cddrives[CD_MAX_DRIVES];
 
+		bool drives_scanned;
+		int numcds;
+		
 		uint16 AtariToLinuxIoctl(uint16 opcode);	/* Translate ioctl numbers */
 
+		int CheckDrive(const char *drive, const char *mnttype, struct stat *stbuf);
+		void AddDrive(const char *drive, struct stat *stbuf);
+		void CheckMounts(const char *mtab);
+		
 	protected:
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);

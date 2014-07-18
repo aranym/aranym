@@ -30,7 +30,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
 
 #include "../../atari/network/ethernet/ethernet_nfapi.h"
@@ -372,7 +372,7 @@ bool ETHERNETDriver::startThread(int ethX)
 			return false;
 		}
 
-		handler->handlingThread = SDL_CreateThread( receiveFunc, handler );
+		handler->handlingThread = SDL_CreateNamedThread( receiveFunc, "Ethernet", handler );
 		if (handler->handlingThread == NULL) {
 			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
 			return false;

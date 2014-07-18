@@ -24,7 +24,7 @@
 
 #include "parameters.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 #include "dirty_rects.h"
 
@@ -66,11 +66,24 @@ class HostScreen: public DirtyRects
 	int	lastVidelWidth, lastVidelHeight, lastVidelBpp;
 	int	numScreen;
 
+	SDL_bool grabbedMouse;
+	SDL_bool hiddenMouse;
+	bool canGrabMouseAgain;
+	bool capslockState;
+	bool ignoreMouseMotionEvent;
+	
+	int atari_mouse_xpos;
+	int atari_mouse_ypos;
+
   protected:
 	static const int MIN_WIDTH = 640;
 	static const int MIN_HEIGHT = 480;
 
 	SDL_Surface *screen;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Renderer *renderer;
+	SDL_Texture *texture;
+#endif
 	int new_width, new_height;
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
@@ -86,6 +99,15 @@ class HostScreen: public DirtyRects
 		int *dst_x = NULL, int *dst_y = NULL);
 
   public:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *window;
+	Uint32 window_id;
+#ifdef SDL_GUI
+	SDL_Window *gui_window;
+	Uint32 gui_window_id;
+#endif
+#endif
+
 	HostScreen(void);
 	virtual ~HostScreen(void);
 
@@ -114,6 +136,8 @@ class HostScreen: public DirtyRects
 	void	refresh(void);
 	void	forceRefreshScreen(void);
 
+	virtual void refreshScreenFromSurface(SDL_Surface *surface);
+
 	void	setVidelRendering(bool videlRender);
 
 	void bootDone(void);
@@ -122,6 +146,34 @@ class HostScreen: public DirtyRects
 	virtual HostSurface *createSurface(int width, int height, int bpp);
 	virtual HostSurface *createSurface(int width, int height, SDL_PixelFormat *pixelFormat);
 	virtual void destroySurface(HostSurface *hsurf);
+
+	void SetWMIcon();
+	void SetCaption(const char *caption);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_Window *Window() { return window; }
+#ifdef SDL_GUI
+	SDL_Window *GuiWindow() { return gui_window; }
+#endif
+#endif
+
+	// Mouse handling
+	void WarpMouse(int x, int y);
+
+	bool IgnoreMouseMotionEvent() { return ignoreMouseMotionEvent; }
+	void IgnoreMouseMotionEvent(bool ignore) { ignoreMouseMotionEvent = ignore; }
+	bool CanGrabMouseAgain() { return canGrabMouseAgain; }
+	void CanGrabMouseAgain(bool enable) { canGrabMouseAgain = enable; }
+	bool CapslockState() { return capslockState; }
+	void CapslockState(bool state) { capslockState = state; }
+	SDL_bool GrabbedMouse() { return grabbedMouse; }
+	SDL_bool hideMouse(SDL_bool hide);
+	SDL_bool grabMouse(SDL_bool grab);
+	void grabTheMouse();
+	void releaseTheMouse();
+	void RememberAtariMouseCursorPosition();
+	void RestoreAtariMouseCursorPosition();
+	bool HasInputFocus();
 };
 
 #endif

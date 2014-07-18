@@ -23,17 +23,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
-#if defined(OS_cygwin)
-// HACK: cygwin/mingw32 mix crap (needs to be the first SDL header included)
-//       if not present the SDL_putenv uses cygwin implementation however
-//       the video driver reading it uses SDL_getenv which comes from the SDL
-//       build using mingw32...
-# define _WIN32 1
-# include <SDL_getenv.h>
-# undef _WIN32
-#endif
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
@@ -62,14 +51,7 @@
 #include <errno.h>
 #endif
 
-#include <SDL.h>
-
-// hack for SDL < 1.2.10 - remove when distros upgrade their SDL!
-#ifndef OS_cygwin
-	#ifndef SDL_putenv
-		#define SDL_putenv(x) putenv(x)
-	#endif
-#endif
+#include "SDL_compat.h"
 
 #ifdef SDL_GUI
 # include "sdlgui.h"
@@ -82,7 +64,7 @@ void setactvdebug()
 void setactvdebug(int)
 #endif
 {
-	grabMouse(false);
+	grabMouse(SDL_FALSE);
 
 #ifdef DEBUGGER
 	activate_debugger();
@@ -102,7 +84,7 @@ static SDL_Thread *RTCthread = NULL;
 static volatile bool using_rtc_timer = false;
 static volatile bool quit_rtc_loop = false;
 #endif
-SDL_TimerID my_timer_id = NULL;
+SDL_TimerID my_timer_id = SDL_static_cast(SDL_TimerID, 0);
 
 #if DEBUG
 static int early_interrupts = 0;
@@ -225,13 +207,13 @@ static int rtc_timer_thread(void * /*ptr*/) {
 	int fd = open ("/dev/rtc", O_RDONLY);
 
 	if (fd == -1) {
-		perror("ARAnyM RTC Timer: /dev/rtc");
+		bug("ARAnyM RTC Timer: /dev/rtc: %s", strerror(errno));
 		return 1;
 	}
 
 	int retval = ioctl(fd, RTC_IRQP_SET, 256); // 256 Hz
 	if (retval == -1) {
-		perror("ARAnyM RTC Timer: ioctl(256 Hz)");
+		bug("ARAnyM RTC Timer: ioctl(256 Hz): %s", strerror(errno));
 		close(fd);
 		return 2;
 	}
@@ -239,7 +221,7 @@ static int rtc_timer_thread(void * /*ptr*/) {
 	/* Enable periodic interrupts */
 	retval = ioctl(fd, RTC_PIE_ON, 0);
 	if (retval == -1) {
-		perror("ARAnyM RTC Timer; ioctl(PIE_ON)");
+		bug("ARAnyM RTC Timer; ioctl(PIE_ON): %s", strerror(errno));
 		close(fd);
 		return 3;
 	}
@@ -252,7 +234,7 @@ static int rtc_timer_thread(void * /*ptr*/) {
 		/* This blocks */
 		retval = read(fd, &data, sizeof(data));
 		if (retval == -1) {
-			perror("ARAnyM RTC Timer: read");
+			bug("ARAnyM RTC Timer: read: %s", strerror(errno));
 			close(fd);
 			return 4;
 		}
@@ -262,7 +244,7 @@ static int rtc_timer_thread(void * /*ptr*/) {
 	/* Disable periodic interrupts */
 	retval = ioctl(fd, RTC_PIE_OFF, 0);
 	if (retval == -1) {
-		perror("ARAnyM RTC Timer: ioctl(PIE_OFF)");
+		bug("ARAnyM RTC Timer: ioctl(PIE_OFF): %s", strerror(errno));
 	}
 
 	close(fd);
@@ -275,10 +257,16 @@ static void KillRTCTimer(void)
 	if (RTCthread != NULL) {
 		quit_rtc_loop = true;
 		SDL_Delay(50);	// give it a time to safely finish the timer thread
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_WaitThread(RTCthread, NULL);
+#else
 		SDL_KillThread(RTCthread);
+#endif
 		RTCthread = NULL;
 	}
 }
+#else
+# define KillRTCTimer()
 #endif
 
 /*
@@ -339,93 +327,6 @@ bool InitOS(void)
 	return false;
 }
 
-void SetWMIcon(void)
-{
-	char path[1024];
-	getDataFilename("wm_icon.bmp", path, sizeof(path));
-	SDL_Surface *icon = SDL_LoadBMP(path);
-	if (icon != NULL) {
-		uint8 mask[] = {0x00, 0x3f, 0xfc, 0x00,
-						0x00, 0xff, 0xfe, 0x00,
-						0x01, 0xff, 0xff, 0x80,
-						0x07, 0xff, 0xff, 0xe0,
-						0x0f, 0xff, 0xff, 0xf0,
-						0x1f, 0xff, 0xff, 0xf8,
-						0x1f, 0xff, 0xff, 0xf8,
-						0x3f, 0xff, 0xff, 0xfc,
-
-						0x7f, 0xff, 0xff, 0xfe,
-						0x7f, 0xff, 0xff, 0xfe,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0xff, 0xff, 0xff, 0xff,
-						0x7f, 0xff, 0xff, 0xfe,
-						0x7f, 0xff, 0xff, 0xfe,
-						0x3f, 0xff, 0xff, 0xfe,
-
-						0x3f, 0xff, 0xff, 0xfc,
-						0x1f, 0xff, 0xff, 0xf8,
-						0x0f, 0xff, 0xff, 0xf8,
-						0x0f, 0xff, 0xff, 0xf0,
-						0x07, 0xff, 0xff, 0xe0,
-						0x01, 0xff, 0xff, 0x80,
-						0x00, 0xff, 0xff, 0x00,
-						0x00, 0x1f, 0xfc, 0x00};
-/*
-		uint8 masK[] = {0x01, 0x80, 0x07, 0xfc,
-						0x01, 0x80, 0x07, 0xfc,
-						0x00, 0x00, 0x3e, 0x03,
-						0x00, 0x00, 0x3e, 0x03,
-						0x00, 0x00, 0x3e, 0x03,
-						0x00, 0x7c, 0xf0, 0x03,
-						0x00, 0x7c, 0xf0, 0x03,
-						0xc0, 0x7c, 0xc0, 0x1c,
-
-						0xc0, 0x7c, 0xc0, 0x1c,
-						0x07, 0x83, 0xc0, 0x63,
-						0x07, 0x83, 0xc0, 0x63,
-						0x07, 0x9e, 0x31, 0x9c,
-						0x07, 0x9e, 0x31, 0x9c,
-						0x07, 0x9e, 0x31, 0x9c,
-						0x00, 0x7c, 0xfe, 0x00,
-						0x00, 0x7c, 0xfe, 0x00,
-
-						0x07, 0xe3, 0x31, 0xe0,
-						0x07, 0xe3, 0x31, 0xe0,
-						0x3e, 0x1f, 0xff, 0xfc,
-						0x3e, 0x1f, 0xff, 0xfc,
-						0x38, 0x03, 0x3e, 0x00,
-						0xf8, 0x03, 0x3e, 0x00,
-						0xf8, 0x03, 0x3e, 0x00,
-						0xc0, 0x1c, 0xf1, 0xff,
-
-						0xc0, 0x1c, 0xf1, 0xff,
-						0xc0, 0x60, 0xf1, 0xe0,
-						0xc0, 0x60, 0xf1, 0xe0,
-						0xc1, 0x9c, 0x31, 0x9f,
-						0xc1, 0x9c, 0x31, 0x9f,
-						0xc1, 0x60, 0x31, 0x9f,
-						0x3e, 0x60, 0x01, 0x9c,
-						0x3e, 0x60, 0x01, 0x9c};
-*/
-		SDL_WM_SetIcon(icon, mask);
-		SDL_FreeSurface(icon);
-	}
-	else {
-		infoprint("WM Icon not found at %s", path);
-	}
-}
-
-
 /*
  *  Initialize everything, returns false on error
  */
@@ -447,8 +348,10 @@ bool InitAll(void)
 	if (!InitMEM())
 		return false;
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// work around a bug fix in Debian's libsdl1.2-dev - BTS #317010
-	putenv((char*)"SDL_DISABLE_LOCK_KEYS=1");
+	SDL_putenv((char*)"SDL_DISABLE_LOCK_KEYS=1");
+#endif
 
 #ifdef __CYGWIN__
 	// the cygwin implementation will sometimes
@@ -459,7 +362,7 @@ bool InitAll(void)
 
  	int sdlInitParams = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK
 		| SDL_INIT_NOPARACHUTE;
-#if NFCDROM_SUPPORT
+#if defined(NFCDROM_SUPPORT) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	sdlInitParams |= SDL_INIT_CDROM;
 #endif
 	sdlInitParams |= SDL_INIT_TIMER;
@@ -468,23 +371,6 @@ bool InitAll(void)
 		return false;
 	}
 	atexit(SDL_Quit);
-
-#ifndef OS_darwin
-	SetWMIcon();
-#endif
-
-	// set preferred window position
-	const char *wpos = bx_options.video.window_pos;
-	if (strlen(wpos) > 0) {
-		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
-			SDL_putenv((char*)"SDL_VIDEO_CENTERED=1");
-		}
-		else {
-			static char var[64];
-			snprintf(var, sizeof(var), "SDL_VIDEO_WINDOW_POS=%s", wpos);
-			SDL_putenv(var);
-		}
-	}
 
 	host = new Host();
 
@@ -512,6 +398,8 @@ bool InitAll(void)
 	if (isGuiAvailable && startupGUI) {
 		open_GUI();
 		do {
+			if (SDL_QuitRequested())
+				return false;
 			check_event();	// process mouse & keyboard events
 			host->video->refresh();
 			SDL_Delay(20);
@@ -528,7 +416,7 @@ bool InitAll(void)
 
 	// timer init
 #ifdef RTC_TIMER
-	RTCthread = SDL_CreateThread(rtc_timer_thread, NULL);
+	RTCthread = SDL_CreateNamedThread(rtc_timer_thread, "RTC", NULL);
 	if (RTCthread != NULL) {
 		SDL_Delay(50); // give the timer thread time to initialize
 	}
@@ -536,17 +424,16 @@ bool InitAll(void)
 	if (using_rtc_timer) {
 		infoprint("Using RTC Timer");
 	}
-	else {
+	else
+#endif
+	{
 		KillRTCTimer();
-#endif
-	my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
-	if (my_timer_id == NULL) {
-		panicbug("SDL Timer does not work!");
-		return false;
+		my_timer_id = SDL_AddTimer(10, my_callback_function, NULL);
+		if (my_timer_id == 0) {
+			panicbug("SDL Timer does not work!");
+			return false;
+		}
 	}
-#ifdef RTC_TIMER
-	}
-#endif
 
 	if (! InitOS())
 		return false;
@@ -570,12 +457,10 @@ void ExitAll(void)
 	InputExit();
 
 	// Exit Time Manager
-#ifdef RTC_TIMER
 	KillRTCTimer();
-#endif
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
-		my_timer_id = NULL;
+		my_timer_id = SDL_static_cast(SDL_TimerID, 0);
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
 

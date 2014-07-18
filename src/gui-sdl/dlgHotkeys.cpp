@@ -33,7 +33,7 @@
 #include "dlgHotkeys.h"
 #include "dlgAlert.h"
 
-#define UPDATE_BUTTON(Button) displayKeysym(hotkeys.Button, key_ ## Button)
+#define UPDATE_BUTTON(Button) keysymToString(key_ ## Button, &hotkeys.Button)
 
 enum HOTKEYSDLG {
 	box_main,
@@ -58,13 +58,13 @@ enum HOTKEYSDLG {
 	CANCEL
 };
 
-static char key_setup[30];
-static char key_quit[30];
-static char key_reboot[30];
-static char key_ungrab[30];
-static char key_debug[30];
-static char key_screenshot[30];
-static char key_fullscreen[30];
+static char key_setup[HOTKEYS_STRING_SIZE];
+static char key_quit[HOTKEYS_STRING_SIZE];
+static char key_reboot[HOTKEYS_STRING_SIZE];
+static char key_ungrab[HOTKEYS_STRING_SIZE];
+static char key_debug[HOTKEYS_STRING_SIZE];
+static char key_screenshot[HOTKEYS_STRING_SIZE];
+static char key_fullscreen[HOTKEYS_STRING_SIZE];
 
 /* The hotkeys dialog: */
 static SGOBJ hotkeysdlg[] =
@@ -106,30 +106,6 @@ static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "RA = Right Alt, RM = Right Meta.\n"
 "\n"
 "Shifter + [Enter] key => Shifter only";
-
-char *displayKeysym(SDL_keysym keysym, char *buffer)
-{
-	*buffer = 0;
-	SDLMod mods = keysym.mod;
-	if (mods & KMOD_LSHIFT) strcat(buffer, "LS+");
-	if (mods & KMOD_RSHIFT) strcat(buffer, "RS+");
-	if (mods & KMOD_LCTRL) strcat(buffer, "LC+");
-	if (mods & KMOD_RCTRL) strcat(buffer, "RC+");
-	if (mods & KMOD_LALT) strcat(buffer, "LA+");
-	if (mods & KMOD_RALT) strcat(buffer, "RA+");
-	if (mods & KMOD_LMETA) strcat(buffer, "LM+");
-	if (mods & KMOD_RMETA) strcat(buffer, "RM+");
-	if (mods & KMOD_MODE) strcat(buffer, "MO+");
-	if (keysym.sym) {
-		strcat(buffer, SDL_GetKeyName(keysym.sym));
-	} else {
-		// mod keys only, remove last plus sign
-		int len = strlen(buffer);
-		if (len > 0 && buffer[len-1] == '+')
-			buffer[len-1] = '\0';
-	}
-	return buffer;
-}
 
 DlgHotkeys::DlgHotkeys(SGOBJ *dlg)
 	: Dialog(dlg), state(STATE_MAIN), dlgKeypress(NULL)

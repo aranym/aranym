@@ -21,6 +21,9 @@
 #ifndef NFCDROM_WIN32_H
 #define NFCDROM_WIN32_H
 
+/*--- Includes ---*/
+
+#include "nfcdrom.h"
 #include "win32_supp.h"
 #undef NOERROR /* conflicts with jpgdh.h */
 #include "parameters.h"

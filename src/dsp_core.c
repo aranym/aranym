@@ -28,6 +28,7 @@
 #include "math.h"
 #include "dsp_core.h"
 #include "dsp_cpu.h"
+#include "SDL_compat.h"
 
 /*--- Defines ---*/
 
@@ -239,7 +240,7 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 			dsp_core->mutex = SDL_CreateMutex();
 		}
 		if (dsp_core->thread == NULL) {
-			dsp_core->thread = SDL_CreateThread(dsp56k_exec_thread, dsp_core);
+			dsp_core->thread = SDL_CreateNamedThread(dsp56k_exec_thread, "DSP", dsp_core);
 		}
 	} else {
 		dsp56k_init_cpu(dsp_core);

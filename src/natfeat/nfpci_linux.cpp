@@ -22,8 +22,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-#include <SDL_endian.h>
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"

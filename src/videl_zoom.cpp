@@ -18,9 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL.h>
-#include <SDL_endian.h>
-
 #include "sysdeps.h"
 #include "parameters.h"
 #include "hostscreen.h"
@@ -212,6 +209,9 @@ void VidelZoom::refreshScreen(void)
 			palette[i].r = videl_surf->format->palette->colors[i].r;
 			palette[i].g = videl_surf->format->palette->colors[i].g;
 			palette[i].b = videl_surf->format->palette->colors[i].b;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			palette[i].a = videl_surf->format->palette->colors[i].a;
+#endif
 		}
 		surface->setPalette(palette, 0, 256);
 	}

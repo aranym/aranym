@@ -31,6 +31,7 @@
 #include "input.h"
 #include "cpummu.h"
 #include "fpu/fpu.h"
+#include "host.h"
 
 #define DEBUG 1
 #include "debug.h"
@@ -168,11 +169,10 @@ void ndebug::set_actualrow(signed int r)
 
 #ifdef NEWDEBUG
 int ndebug::dbprintf(const char *s, ...)
-{
 #else
 int dbprintf(const char *s, ...)
-{
 #endif
+{
 	va_list a;
 #ifdef NEWDEBUG
 	if (bx_options.startup.debugger) {
@@ -187,26 +187,25 @@ int dbprintf(const char *s, ...)
 		if (dbstart == dbsize) dbstart = 0;
 		reset_actualrow();
 		return i;
-	} else {
+	} else
 #endif
+	{
 		int i;
 		va_start(a, s);
 		i = vfprintf(stderr, s, a);
 		i += fprintf(stderr, "\n");
 		va_end(a);
+		fflush(stderr);
 		return i;
-#ifdef NEWDEBUG
 	}
-#endif
 }
 
 #ifdef NEWDEBUG
 int ndebug::pdbprintf(const char *s, ...)
-{
 #else
 int pdbprintf(const char *s, ...)
-{
 #endif
+{
 	int i = 0;
 	va_list a;
 #ifdef NEWDEBUG
@@ -226,6 +225,7 @@ int pdbprintf(const char *s, ...)
 	i = vfprintf(stderr, s, a);
 	i += fprintf(stderr, "\n");
 	va_end(a);
+	fflush(stderr);
 	return i;
 }
 
@@ -631,7 +631,7 @@ void ndebug::showTypes() {
 	bug("3:        MMU TT browser");
 }
 
-int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::canon(FILE *f, SDL_bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 	char input[80];
 	char cmd, *inptr;
 	int count;
@@ -645,7 +645,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 	fprintf(f, ">");
 	fflush(f);
 	if (fgets(input, 80, stdin) == NULL) {
-		if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+		if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 		return 0;
 	}
 	if (input[0] == '\n') strcpy(input, old_debug_cmd);
@@ -697,7 +697,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 		case 'g':
 			if (more_params(&inptr)) m68k_setpc(readhex(&inptr));
 			fill_prefetch_0();
-			if (wasGrabbed) grabMouse(true);
+			if (wasGrabbed) grabMouse(SDL_TRUE);
 			/*
 			 * debugger activation/deactivation need to be rewriteen
 			 * deactivate_debugger();
@@ -775,7 +775,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			do_skip = true;
 			irqindebug = true;
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(true);
+			if (wasGrabbed) grabMouse(SDL_TRUE);
 			return 0;
 		case 'f':
 			if (!more_params(&inptr)) {
@@ -786,7 +786,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 			do_skip = true;
 			irqindebug = true;
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(true);
+			if (wasGrabbed) grabMouse(SDL_TRUE);
 			return 0;
 		case 'B':
 			{
@@ -833,7 +833,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'w':
 					inptr += 2;
@@ -843,7 +843,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'l':
 					inptr += 2;
@@ -853,7 +853,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				default:
 					bug("v command needs for the 1st parameter b, w or l!");
@@ -874,7 +874,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'w':
 					inptr += 2;
@@ -884,7 +884,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				case 'l':
 					inptr += 2;
@@ -894,7 +894,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 					do_skip_value = true;
 					irqindebug = true;
 					SPCFLAGS_SET( SPCFLAG_BRK );
-					if (wasGrabbed) grabMouse(true);
+					if (wasGrabbed) grabMouse(SDL_TRUE);
 					return 0;
 				default:
 					bug("V command needs for the 1st parameter b, w or l!");
@@ -925,7 +925,7 @@ int ndebug::canon(FILE *f, bool wasGrabbed, uaecptr nextpc, uaecptr &nxdis, uaec
 	return 1;
 }
 
-int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
+int ndebug::icanon(FILE *f, SDL_bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 	if (!issavettyvalid)
 		return(0);
 	
@@ -1009,7 +1009,7 @@ int ndebug::icanon(FILE *f, bool, uaecptr, uaecptr &nxdis, uaecptr &nxmem) {
 	return 1;
 }
 
-int ndebug::dm(FILE *f, bool, uaecptr, uaecptr &, uaecptr &nxmem) {
+int ndebug::dm(FILE *f, SDL_bool, uaecptr, uaecptr &, uaecptr &nxmem) {
 	if (!issavettyvalid)
 		return(0);
 
@@ -1148,7 +1148,7 @@ void ndebug::run() {
 
 	irqindebug = false;
 	// release keyboard and mouse control
-	bool wasGrabbed = grabMouse(false);
+	SDL_bool wasGrabbed = grabMouse(SDL_FALSE);
 
 	uaecptr nextpc, nxdis, nxmem;
 	newm68k_disasm(stderr, m68k_getpc(), &nextpc, 0);

@@ -20,11 +20,12 @@
 
 #if defined(OS_cygwin)
 #define WIN32 1
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_syswm.h>
 #include <windows.h>
 #undef WIN32
 #include "clipbrd.h"
+#include "host.h"
 
 int init_aclip() { return 0; }
 
@@ -45,10 +46,17 @@ void write_aclip(char *data, size_t len)
 	((unsigned char *) lock)[len] = 0;
 	GlobalUnlock(clipdata);
 
-	static SDL_SysWMinfo pInfo;
+	SDL_SysWMinfo pInfo;
+	HWND hwnd;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GetWindowWMInfo(host->video->Window(), &pInfo);
+	hwnd = pInfo.info.win.window;
+#else
 	SDL_GetWMInfo(&pInfo);
+	hwnd = pInfo.window;
+#endif
 
-	if (OpenClipboard(pInfo.window)) {
+	if (OpenClipboard(hwnd)) {
 		EmptyClipboard();
 		SetClipboardData(CF_TEXT, clipdata);
 		CloseClipboard();
@@ -58,10 +66,17 @@ void write_aclip(char *data, size_t len)
 
 char * read_aclip( size_t *len)
 {
-	static SDL_SysWMinfo pInfo;
+	SDL_SysWMinfo pInfo;
+	HWND hwnd;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GetWindowWMInfo(host->video->Window(), &pInfo);
+	hwnd = pInfo.info.win.window;
+#else
 	SDL_GetWMInfo(&pInfo);
+	hwnd = pInfo.window;
+#endif
 
-	if (OpenClipboard(pInfo.window)) {
+	if (OpenClipboard(hwnd)) {
 		HANDLE hData = GetClipboardData( CF_TEXT );
 		char* buffer = (char*)GlobalLock( hData );
 		char *data;

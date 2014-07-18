@@ -32,7 +32,7 @@
 
 /*--- Defines ---*/
 
-#define DEFAULT_INBUFFERLEN (1<<6)
+#define DEFAULT_INBUFFERLEN (1<<13)
 #define DEFAULT_OUTBUFFERLEN (1<<4)
 
 #define MOUSE_DELTA_MAX 	63
@@ -333,33 +333,42 @@ void IKBD::SendKey(uint8 scancode)
 	send(scancode);
 }
 
-void IKBD::SendMouseMotion(int relx, int rely, int buttons)
+void IKBD::SendMouseMotion(int relx, int rely, int buttons, bool slow)
 {
 	if (!mouse_enabled)
 		return;
 
-	if (abs(relx) > 2048 || abs(rely) > 2048) {
-		panicbug("IKBD: ignoring insane mouse motion: [%d, %d]", relx, rely);
+	if (!slow && (abs(relx) > 2048 || abs(rely) > 2048)) {
+		bug("IKBD: ignoring insane mouse motion: [%d, %d]", relx, rely);
 		return;
 	}
 
 	// Generate several mouse packets if motion is too long
 	do {
-		int movex = (abs(relx) > MOUSE_DELTA_MAX) ? ( (relx > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : relx;
+		int movex, movey;
+		
+		if (slow)
+		{
+			movex = relx > 0 ? 1 : relx < 0 ? -1 : 0;
+			movey = rely > 0 ? 1 : rely < 0 ? -1 : 0;
+		} else
+		{
+			movex = (abs(relx) > MOUSE_DELTA_MAX) ? ( (relx > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : relx;
+			movey = (abs(rely) > MOUSE_DELTA_MAX) ? ( (rely > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : rely;
+		}
 		relx -= movex;
-
-		int movey = (abs(rely) > MOUSE_DELTA_MAX) ? ( (rely > 0) ? MOUSE_DELTA_MAX : -MOUSE_DELTA_MAX ) : rely;
 		rely -= movey;
 
 		/* Merge with the previous mouse packet ? */
-		MergeMousePacket(&movex, &movey, buttons);
+		if (!slow)
+			MergeMousePacket(&movex, &movey, buttons);
 
 		/* Send the packet */
 		intype = IKBD_PACKET_MOUSE;
 		send(0xf8 | (buttons & 3));
 		send(movex);
 		send(yaxis_reversed ? -movey : movey);
-		// panicbug("IKBD: creating mouse packet [%d (%d), %d (%d), %d]", movex, relx, (yaxis_reversed ? -movey : movey), rely, buttons & 3);
+		// bug("IKBD: creating mouse packet [%d (%d), %d (%d), %d]", movex, relx, (yaxis_reversed ? -movey : movey), rely, buttons & 3);
 
 	} while (relx || rely);
 }

@@ -38,8 +38,6 @@
 extern "C" int fseeko(FILE *stream, off_t offset, int whence);
 #endif
 
-#include <SDL_endian.h>
-
 #define XHDI_BLOCK_SIZE	512
 
 /* XHDI error codes */

@@ -1330,84 +1330,177 @@ void m68k_emulop_return(void)
 	quit_program = 1;
 }
 
-void m68k_emulop(uae_u32 opcode)
+static void save_regs(struct M68kRegisters &r)
 {
-	struct M68kRegisters r;
 	int i;
-
+	
 	for (i=0; i<8; i++) {
 		r.d[i] = m68k_dreg(regs, i);
 		r.a[i] = m68k_areg(regs, i);
 	}
+	r.pc = m68k_getpc();
 	MakeSR();
 	r.sr = regs.sr;
-	EmulOp(opcode, &r);
+	r.isp = regs.isp;
+	r.usp = regs.usp;
+	r.msp = regs.msp;
+	if ((r.sr & 0x2000) == 0)
+		r.usp = r.a[7];
+	else if ((r.sr & 0x1000) != 0)
+		r.msp = r.a[7];
+	else
+		r.isp = r.a[7];
+}
+
+static void restore_regs(struct M68kRegisters &r)
+{
+	int i;
+	
 	for (i=0; i<8; i++) {
 		m68k_dreg(regs, i) = r.d[i];
 		m68k_areg(regs, i) = r.a[i];
 	}
+	regs.isp = r.isp;
+	regs.usp = r.usp;
+	regs.msp = r.msp;
 	regs.sr = r.sr;
 	MakeFromSR();
+}
+
+void m68k_emulop(uae_u32 opcode)
+{
+	struct M68kRegisters r;
+	save_regs(r);
+	EmulOp(opcode, &r);
+	restore_regs(r);
 }
 
 void m68k_natfeat_id(void)
 {
 	struct M68kRegisters r;
-	int i;
 
 	/* is it really necessary to save all registers? */
-	for (i=0; i<8; i++) {
-		r.d[i] = m68k_dreg(regs, i);
-		r.a[i] = m68k_areg(regs, i);
-	}
-	MakeSR();
-	r.sr = regs.sr;
+	save_regs(r);
 
 	memptr stack = r.a[7] + 4;	/* skip return address */
 	r.d[0] = nf_get_id(stack);
 
-	for (i=0; i<8; i++) {
-		m68k_dreg(regs, i) = r.d[i];
-		m68k_areg(regs, i) = r.a[i];
-	}
-	regs.sr = r.sr;
-	MakeFromSR();
+	restore_regs(r);
 }
 
 void m68k_natfeat_call(void)
 {
 	struct M68kRegisters r;
-	int i;
 
 	/* is it really necessary to save all registers? */
-	for (i=0; i<8; i++) {
-		r.d[i] = m68k_dreg(regs, i);
-		r.a[i] = m68k_areg(regs, i);
-	}
-	MakeSR();
-	r.sr = regs.sr;
+	save_regs(r);
 
 	memptr stack = r.a[7] + 4;	/* skip return address */
 	bool isSupervisorMode = ((r.sr & 0x2000) == 0x2000);
 	r.d[0] = nf_call(stack, isSupervisorMode);
 
-	for (i=0; i<8; i++) {
-		m68k_dreg(regs, i) = r.d[i];
-		m68k_areg(regs, i) = r.a[i];
+	restore_regs(r);
+}
+
+static int m68k_call(uae_u32 pc)
+{
+	VOLATILE int exc = 0;
+	m68k_setpc(pc);
+    TRY(prb) {
+#ifdef USE_JIT
+		if (bx_options.jit.jit)
+			m68k_do_compile_execute();
+		else
+#endif
+			m68k_do_execute();
+    }
+    CATCH(prb) {
+    	exc = int(prb);
+    }
+    return exc;
+}
+
+static uae_u32 m68k_alloca(int size)
+{
+	uae_u32 sp = m68k_areg(regs, 7) - (size + sizeof(void *));
+	m68k_areg(regs, 7) = sp;
+	if ((regs.sr & 0x2000) == 0)
+		regs.usp = sp;
+	else if ((regs.sr & 0x1000) != 0)
+		regs.msp = sp;
+	else
+		regs.isp = sp;
+	return sp;
+}
+
+uae_u32 linea68000(volatile uae_u16 opcode)
+{
+	sigjmp_buf jmp;
+	struct M68kRegisters r;
+	volatile uae_u32 abase = 0;
+	
+	SAVE_EXCEPTION;
+	save_regs(r);
+
+	if (sigsetjmp(jmp, 1) == 0)
+	{
+		void *p = jmp;
+		uae_u32 sp;
+		uae_u8 *sp_p;
+		int exc;
+		
+		sp = m68k_alloca(8);
+		WriteHWMemInt16(sp, opcode);
+		WriteHWMemInt16(sp + 2, 0xa0ff);
+		WriteHWMemInt32(sp + 4, 13);
+		sp_p = phys_get_real_address(sp + 8);
+		*((void **)sp_p) = p;
+		if ((exc = m68k_call(sp)) != 0)
+		{
+			panicbug("exception %d in LINEA", exc);
+			m68k_dreg(regs, 0) = 0;
+		}
+	} else
+	{
+		abase = m68k_dreg(regs, 0);
 	}
-	regs.sr = r.sr;
-	MakeFromSR();
+	restore_regs(r);
+	m68k_setpc(r.pc);
+    RESTORE_EXCEPTION;
+	return abase;
+}
+
+
+static void rts68000()
+{
+	uae_u32 SP = m68k_getpc() + 6;
+	sigjmp_buf *p;
+	uae_u8 *sp_p = phys_get_real_address(SP);
+	
+	p = (sigjmp_buf *)(*((void **)sp_p));
+	SP += sizeof(void *);
+	m68k_areg(regs, 7) = SP;
+	siglongjmp(*p, 1);
 }
 
 void REGPARAM2 op_illg (uae_u32 opcode)
 {
-#if DEBUG
 	uaecptr pc = m68k_getpc ();
-#endif
 
 	if ((opcode & 0xF000) == 0xA000) {
-	Exception(0xA,0);
-	return;
+		if (opcode == 0xa0ff)
+		{
+			uae_u32 call = ReadHWMemInt32(pc + 2);
+			switch (call)
+			{
+			case 13:
+				rts68000();
+				return;
+			}
+			m68k_setpc(pc + 6);
+		}
+		Exception(0xA,0);
+		return;
 	}
 
 	if ((opcode & 0xF000) == 0xF000) {
@@ -1897,7 +1990,7 @@ void showDisasm(uaecptr addr) {
 	    uae_u32 opcode;
 	    struct mnemolookup *lookup;
 	    struct instr *dp;
-	    sprintf(sbuffer[0], "%08lx: ", m68k_getpc () + m68kpc_offset);
+	    sprintf(sbuffer[0], "%08x: ", m68k_getpc () + (uae_u32)m68kpc_offset);
 	    for (opwords = 0; opwords < 5; opwords++) {
 		    sprintf (buff[opwords], "%04x ", get_iword_1 (m68kpc_offset + opwords*2));
 	    }

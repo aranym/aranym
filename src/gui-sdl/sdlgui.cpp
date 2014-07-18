@@ -56,10 +56,10 @@ static int gui_x = 0, gui_y = 0; /* gui position */
 static Dialog *gui_dlg = NULL;
 
 static SDL_Color gui_palette[4] = {
-	{0,0,0,0},
-	{128,128,128,0},
-	{192,192,192, 0},
-	{255, 255, 255, 0}
+	{0,0,0,255},
+	{128,128,128,255},
+	{192,192,192, 255},
+	{255, 255, 255, 255}
 };
 
 enum {
@@ -297,8 +297,13 @@ void SDLGui_UpdateRect(SDL_Rect *rect)
     rect->h = (sdlscrn->h - rect->y);
 
   if ((rect->w > 0) && (rect->h > 0))
+  {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+    host->video->refreshScreenFromSurface(sdlscrn);
+#else
     SDL_UpdateRects(sdlscrn, 1, rect);
-  else
+#endif
+  } else
   {
     rect->x = 0;
     rect->y = 0;
@@ -343,7 +348,11 @@ void SDLGui_Text(int x, int y, const char *txt, int col)
   char c;
   SDL_Rect sr, dr;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+  SDL_SetPaletteColors(fontgfx->format->palette, &gui_palette[col], 1, 1);
+#else
   SDL_SetColors(fontgfx, &gui_palette[col], 1, 1);
+#endif
 
   for (i = 0 ; txt[i] != 0 ; i++)
   {
@@ -1271,6 +1280,8 @@ int SDLGui_DoEvent(const SDL_Event &event)
 			case SDL_MOUSEBUTTONUP:
 				gui_dlg->mouseClick(event, gui_x, gui_y);
 				break;
+			case SDL_QUIT:
+				return Dialog::GUI_CLOSE;
 		}
 
 		while (num_dialogs-->0) {

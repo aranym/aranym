@@ -24,7 +24,7 @@
 #ifndef _IKBD_H
 #define _IKBD_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
 
 #include "acia.h"
@@ -90,7 +90,7 @@ class IKBD: public ACIA {
 		void WriteData(uae_u8 value);
 
 		void SendKey(uae_u8 scancode);
-		void SendMouseMotion(int relx, int rely, int buttons);
+		void SendMouseMotion(int relx, int rely, int buttons, bool slow);
 		void SendJoystickAxis(int numjoy, int numaxis, int value);
 		void SendJoystickHat(int numjoy, int value);
 		void SendJoystickButton(int numjoy, int pressed);

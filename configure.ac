@@ -23,6 +23,12 @@ if test x$enable_silent_rules = xyes; then
 fi
 AC_SUBST(AM_DEFAULT_VERBOSITY)
 
+AH_TOP([
+#ifndef __ARANYM_CONFIG_H__
+#define __ARANYM_CONFIG_H__
+
+])
+
 dnl Options.
 AC_ARG_ENABLE(nat-debug,     [AC_HELP_STRING([--enable-nat-debug], [enable native debugger support (default=yes)])], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
@@ -32,7 +38,7 @@ WHICH_DEBUG_DEFAULT="ndebug"
 AC_ARG_ENABLE(debug,
 [AC_HELP_STRING([--enable-debug=which], [specify which debugger to use (default=ndebug)])],
 [ case "$enableval" in
-    default)  WHICH_DEBUG=$WHICH_DEBUG_DEFAULT;;
+    default | yes)  WHICH_DEBUG=$WHICH_DEBUG_DEFAULT;;
         uae)  WHICH_DEBUG="uae";;
      ndebug)  WHICH_DEBUG="ndebug";;
          no)  WHICH_DEBUG="no";;
@@ -323,7 +329,7 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 AC_CHECK_FUNCS(sigaction signal)
 AC_CHECK_FUNCS(mmap mprotect munmap)
-AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect)
+AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect sbrk)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
 AC_CHECK_FUNCS(usleep gettimeofday)
 AC_CHECK_FUNCS(fseeko fsync link readlink symlink lstat truncate pathconf)
@@ -1515,24 +1521,74 @@ if [[ "x$HAVE_OFAST" = "xyes" ]]; then
   LDFLAGS="$LDFLAGS -ipa"
 fi
 
-dnl Check for SDL
+dnl Check for SDL and/or SDL2
+m4_define(use_sdl2_default, yes)
+m4_case(use_sdl2_default, yes,
+[AC_ARG_ENABLE(sdl2,    [AC_HELP_STRING([--disable-sdl2], [disable use of SDL2 even if available (default=no)])], , [enable_sdl2=auto])],
+[AC_ARG_ENABLE(sdl2,    [AC_HELP_STRING([--enable-sdl2], [use SDL2 if available (default=no)])], , [enable_sdl2=no])])
+
 SDL_CFLAGS=
 SDL_LIBS=
-if test "x$OS_TYPE" == "xdarwin" -a "x$WITH_FINK" = "xno"; then
+no_sdl=yes
+no_sdl2=yes
+if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
-fi
-if test "x$have_framework_SDL" = "xyes" ; then
-	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
-	CPPFLAGS="$CPPFLAGS -I$SDL_LOCATION/Headers"
-	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_LOCATION"
+	if test "$have_framework_SDL" = yes ; then
+		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
+	fi
+        if test "$enable_sdl2" != no; then
+		ARANYM_CHECK_FRAMEWORK(SDL2, [])
+		if test "$have_framework_SDL" = yes ; then
+			ARANYM_CHECK_FRAMEWORK_LOCATION(SDL2)
+		fi
+	fi
 else
-	dnl Try macro from sdl.m4
-	AM_PATH_SDL(1.2.10, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION or higher not found! ***]))
+	dnl Try macro from sdl.m4 and sdl2.m4
+	AM_PATH_SDL(1.2.15)
+        if test "$enable_sdl2" != no; then
+		AM_PATH_SDL2(2.0.3)
+	fi
+fi
+if test "$no_sdl" = yes -a "$no_sdl2" = yes; then
+	AC_MSG_ERROR([*** neither SDL nor SDL2 found! ***])
+fi
+if test "$no_sdl2" = yes -a "$enable_sdl2" = yes; then
+	AC_MSG_ERROR([*** SDL2 was requested, but was not found ***])
+fi
+if test "$no_sdl2" != yes -a "$enable_sdl2" != no; then
+	enable_sdl2=yes
+fi
+if test "$have_framework_SDL" = yes -o "$have_framework_SDL2" = yes; then
+        if test "$enable_sdl2" = yes; then
+		SDL_CFLAGS="-I$SDL2_LOCATION/Headers"
+		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL2_LOCATION"
+		SDL_LIBS="$SDL2_LIBS"
+		sdl_version="$sdl2_version"
+	else
+		SDL_CFLAGS="-I$SDL_LOCATION/Headers"
+		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_LOCATION"
+	fi
+else
+        if test "$enable_sdl2" = yes; then
+		SDL_CFLAGS="$SDL2_CFLAGS"
+		SDL_LIBS="$SDL2_LIBS"
+		sdl_version="$sdl2_version"
+	fi
 fi
 
 dnl Check for SDL_Image
-ARANYM_CHECK_FRAMEWORK(SDL_image, [])
-if test "x$have_framework_SDL_image" = "xyes" ; then
+if test "$enable_sdl2" = yes; then
+	ARANYM_CHECK_FRAMEWORK(SDL2_image, [])
+else
+	ARANYM_CHECK_FRAMEWORK(SDL_image, [])
+fi
+if test "$have_framework_SDL2_image" = yes ; then
+	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL2_image)
+	SDL_CFLAGS="$SDL_CFLAGS -I$SDL2_image_LOCATION/Headers"
+	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL2_image_LOCATION"
+	have_sdlimage_lib=yes
+	have_sdlimage_h=yes
+elif test "$have_framework_SDL_image" = yes ; then
 	ARANYM_CHECK_FRAMEWORK_LOCATION(SDL_image)
 	CPPFLAGS="$CPPFLAGS -I$SDL_image_LOCATION/Headers"
 	BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_image_LOCATION"
@@ -1562,7 +1618,11 @@ else
 	CPPFLAGS=$tmp_cppflags
 
 	if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
-		LIBS="$LIBS -lSDL_image"
+		if test "$enable_sdl2" = yes; then
+			SDL_LIBS="-lSDL2_image $SDL_LIBS"
+		else
+			SDL_LIBS="-lSDL_image $SDL_LIBS"
+		fi
 	fi
 fi
 if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
@@ -1671,23 +1731,31 @@ fi
 
 dnl Natfeat CD-ROM driver
 
-AC_DEFINE([NFCDROM_SUPPORT], 1, [Define if you want to use host CD-ROM driver])
-NFCDROM_DRIVER="sdl"
+AH_TEMPLATE([NFCDROM_SUPPORT], [Define if you want to use host CD-ROM driver])
+NFCDROM_DRIVER=""
 case "$host_os" in
 	linux*)
-		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp natfeat/nfcdrom_linux.cpp"
+		NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
 		AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
-		NFCDROM_DRIVER="linux,$NFCDROM_DRIVER"
+		NFCDROM_DRIVER="linux"
 		;;
 	mingw*|cygwin*)
-		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp natfeat/nfcdrom_win32.cpp"
+		NFCDROMSRCS="natfeat/nfcdrom_win32.cpp"
 		AC_DEFINE([NFCDROM_WIN32_SUPPORT], 1, [Define if you want to use Win32 support as CD-ROM driver])
-		NFCDROM_DRIVER="win32,$NFCDROM_DRIVER"
-		;;
-	*)
-		NFCDROMSRCS="natfeat/nfcdrom.cpp natfeat/nfcdrom_sdl.cpp"
+		NFCDROM_DRIVER="win32"
 		;;
 esac
+if test "$enable_sdl2" != yes; then
+	test "$NFCDROM_DRIVER" != "" && NFCDROM_DRIVER="${NFCDROM_DRIVER},"
+	NFCDROM_DRIVER="${NFCDROM_DRIVER}sdl"
+	NFCDROMSRCS="$NFCDROMSRCS natfeat/nfcdrom_sdl.cpp"
+fi
+if test "$NFCDROM_DRIVER" != ""; then
+	NFCDROMSRCS="$NFCDROMSRCS natfeat/nfcdrom.cpp"
+	AC_DEFINE([NFCDROM_SUPPORT], 1)
+else
+	NFCDROM_DRIVER=no
+fi
 PROVIDES_NF="$PROVIDES_NF cdrom($NFCDROM_DRIVER)"
 
 dnl Natfeat PCI driver
@@ -1906,6 +1974,10 @@ if [[ "x$ARCHFLAGS" != "x" ]]; then
 	LDFLAGS=`echo $LDFLAGS | sed -e "s:$ARCHFLAGS::g"`
 fi
 
+AH_BOTTOM([
+#endif /* __ARANYM_CONFIG_H__ */
+])
+
 dnl Generate Makefile.
 
 AC_SUBST(WFLAGS)
@@ -1946,6 +2018,7 @@ dnl Print summary.
 echo
 echo ARAnyM configuration summary:
 echo
+echo SDL version ................... ........ : $sdl_version
 echo Use exclusive spcflags handling ........ : $WANT_SPCFLAGS_EXCL
 echo Use JIT compiler ....................... : $WANT_JIT
 echo Use JIT compiler for FPU instructions .. : $WANT_JIT_FPU

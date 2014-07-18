@@ -65,9 +65,11 @@
 
 #include "sigsegv_common_x86.h"
 
-static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
+static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 {
-	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)sip->si_addr /* CONTEXT_REGS[REG_CR2] */ - FMEMORY));
+	CONTEXT_ATYPE CONTEXT_NAME = (CONTEXT_ATYPE) _ucp;
+	D(bug("\nsegfault: pc=%08x, eip=%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], sip->si_addr, (memptr)(uintptr)((char *)sip->si_addr - FMEMORY)));
+	handle_access_fault(CONTEXT_NAME, (memptr)(uintptr)((char *)sip->si_addr /* CONTEXT_REGS[REG_CR2] */ - FMEMORY));
 }
 
 void install_sigsegv() {

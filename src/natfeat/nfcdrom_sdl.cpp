@@ -31,8 +31,6 @@
 
 #include <cstdlib>
 #include <errno.h>
-#include <SDL_cdrom.h>
-#include <SDL_endian.h>
 
 /*--- Defines ---*/
 

@@ -24,6 +24,7 @@
 /*--- Includes ---*/
 
 #include "nfcdrom.h"
+#include "SDL_compat.h"
 #include <SDL_cdrom.h>
 
 /*--- Class ---*/

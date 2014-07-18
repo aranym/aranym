@@ -29,8 +29,8 @@
 #include "../../atari/nfjpeg/jpgdh.h"
 #undef ARANYM_NFJPEG
 
+#include "SDL_compat.h"
 #include <SDL_rwops.h>
-#include <SDL_endian.h>
 #include <SDL_image.h>
 
 #define DEBUG 0

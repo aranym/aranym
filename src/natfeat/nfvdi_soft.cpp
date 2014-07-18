@@ -47,11 +47,14 @@ static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 
 SoftVdiDriver::SoftVdiDriver()
 {
-	const SDL_version *version = SDL_Linked_Version();
+	SDL_version version;
 
+	SDL_GetVersion(&version);
 	/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
-	sdl_buggy_blitsurface = (SDL_VERSIONNUM(version->major, version->minor, version->patch) >= SDL_VERSIONNUM(1,2,10))
-		&& (SDL_VERSIONNUM(version->major, version->minor, version->patch) <= SDL_VERSIONNUM(1,2,13));
+	sdl_buggy_blitsurface = (SDL_VERSIONNUM(version.major, version.minor, version.patch) >= SDL_VERSIONNUM(1,2,10)
+						  && SDL_VERSIONNUM(version.major, version.minor, version.patch) <= SDL_VERSIONNUM(1,2,13))
+	/* SDL 2.x seems to not allow blitting inside the same surface at all */
+						|| SDL_VERSIONNUM(version.major, version.minor, version.patch) >= SDL_VERSIONNUM(2,0,0);
 }
 
 SoftVdiDriver::~SoftVdiDriver()
@@ -1510,6 +1513,9 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 	color.r = (red*255 + 500) / 1000;
 	color.g = (green*255 + 500) / 1000;
 	color.b = (blue*255 + 500) / 1000;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	color.a = WINDOW_ALPHA;
+#endif
 
 	surface->setPalette(&color, toTosColors(paletteIndex), 1);
 }
@@ -1871,8 +1877,11 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
    
 		if (a_surf) {
 			if (sdl_surf->format->BitsPerPixel<=8) {
-				SDL_SetPalette(a_surf, SDL_LOGPAL,
-					sdl_surf->format->palette->colors, 0, 256);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+				SDL_SetPaletteColors(a_surf->format->palette, sdl_surf->format->palette->colors, 0, 256);
+#else
+				SDL_SetPalette(a_surf, SDL_LOGPAL, sdl_surf->format->palette->colors, 0, 256);
+#endif
 			}
 
 			srcrect.x = sx;

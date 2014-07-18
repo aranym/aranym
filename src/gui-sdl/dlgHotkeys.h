@@ -22,6 +22,7 @@
 #define DLGHOTKEYS_H 1
 
 #include "dialog.h"
+#include "SDL_compat.h"
 
 class DlgKeypress;
 
@@ -47,8 +48,6 @@ class DlgHotkeys: public Dialog
  		void idle(void);
  		void processResult(void);
 
-		void setHotkey(SDL_keysym &cur_hotkey);
-  
 	public:
 		DlgHotkeys(SGOBJ *dlg);
 		~DlgHotkeys();

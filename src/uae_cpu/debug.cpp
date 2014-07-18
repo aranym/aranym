@@ -288,7 +288,7 @@ void debug (void)
 	nxmem = 0;
 
 	// release keyboard and mouse control
-	bool wasGrabbed = grabMouse(false);
+	SDL_bool wasGrabbed = grabMouse(SDL_FALSE);
 
 	for (;;) {
 		char cmd, *inptr;
@@ -299,7 +299,7 @@ void debug (void)
 		fflush (stdout);
 
 		if (fgets (input, 80, stdin) == 0) {
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 		}
 
@@ -403,14 +403,14 @@ S_argh:
 			if (more_params (&inptr))
 				m68k_setpc (readhex (&inptr));
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 		case 'z':
 			skipaddr = nextpc;
 			do_skip = 1;
 			irqindebug = true;
 			SPCFLAGS_SET( SPCFLAG_BRK );
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 
 		case 'f':
@@ -423,14 +423,14 @@ S_argh:
 				memcpy (trace_insn_copy, phys_get_real_address(m68k_getpc()), 10);
 				memcpy (&trace_prev_regs, &regs, sizeof regs);
 			}
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 
 		case 'q':
 			QuitEmulator();
 			debugger_active = 0;
 			debugging = 0;
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 
 		case 'g':
@@ -439,7 +439,7 @@ S_argh:
 			fill_prefetch_0 ();
 			debugger_active = 0;
 			debugging = 0;
-			if (wasGrabbed) grabMouse(true);	// lock keyboard and mouse
+			if (wasGrabbed) grabMouse(SDL_TRUE);	// lock keyboard and mouse
 			return;
 
 		case 'H': {

@@ -19,7 +19,7 @@
 */
 
 #include <stdio.h>
-#include <SDL.h>
+#include "SDL_compat.h"
 #include "SDL_opengl_wrapper.h"
 
 #include "dyngl.h"

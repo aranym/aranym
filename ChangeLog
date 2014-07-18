@@ -1,4 +1,9 @@
 2014/07/18 - Thorsten
+Add preliminary SDL2 support.
+Does not use any new features yet, but should work as before with SDL2.
+
+
+2014/07/18 - Thorsten
 Fix some bugs in the JIT compiler:
 - compemu_support.cpp: use vm_acquire() rather than malloc() to
   allocate the blockinfos, since some variables in the structure

@@ -33,6 +33,8 @@
 #include "sysdeps.h"
 
 #include "memory.h"
+#define DEBUG 0
+#include "debug.h"
 
 #ifdef ARAM_PAGE_CHECK
 uaecptr pc_page = 0xeeeeeeee;
@@ -45,7 +47,7 @@ uintptr write_offset = 0;
 
 extern "C" void breakpt(void)
 {
-	// fprintf(stderr, "bus err: pc=%08x, sp=%08x, addr=%08x\n", regs.pc, regs.regs[15], regs.mmu_fault_addr);
+	// bug("bus err: pc=%08x, sp=%08x, addr=%08x", m68k_getpc(), regs.regs[15], regs.mmu_fault_addr);
 }
 
 #if !KNOWN_ALLOC && !NORMAL_ADDRESSING

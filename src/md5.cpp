@@ -26,7 +26,7 @@
 
 #include "sysdeps.h"
 #include "aramd5.h"
-#include <SDL_endian.h>
+#include "SDL_compat.h"
 
 # include <cstring>
 

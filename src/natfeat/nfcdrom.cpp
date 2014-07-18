@@ -31,7 +31,7 @@
 
 #include <cstdlib>
 #include <errno.h>
-#include <SDL_endian.h>
+#include "SDL_compat.h"
 
 /*--- Defines ---*/
 
@@ -156,7 +156,7 @@ void CdromDriver::ScanDrives()
 
 		/* Add to MetaDOS CD-ROM drives */
 		drives_mask |= 1<<(i);
-		bug(NFCD_NAME "ScanDrives(): physical device %c (%s) added", DriveToLetter(i), DeviceName(bx_options.nfcdroms[i].physdevtohostdev));
+		D(bug(NFCD_NAME "ScanDrives(): physical device %c (%s) added", DriveToLetter(i), DeviceName(bx_options.nfcdroms[i].physdevtohostdev)));
 	}
 
 	D(bug(NFCD_NAME "ScanDrives()=0x%08x", drives_mask));

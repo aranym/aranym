@@ -27,9 +27,8 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
-#include <SDL_endian.h>
 
 /*--- Defines ---*/
 
@@ -443,7 +442,7 @@ void usbhost_init_libusb(void)
 		roothub.port[i].device_index = 0;
 	}
 
-	SDL_CreateThread(trigger_interrupt, NULL);
+	SDL_CreateNamedThread(trigger_interrupt, "USB", NULL);
 
 	usbhost_get_device_list();
 

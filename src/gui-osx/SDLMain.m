@@ -6,7 +6,7 @@
 	Adapted for aranym
 */
 
-#import "SDL.h"
+#import "SDL_compat.h"
 #import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>

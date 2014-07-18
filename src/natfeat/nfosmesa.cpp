@@ -24,6 +24,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#include "SDL_compat.h"
 #include <SDL_loadso.h>
 #include <SDL_endian.h>
 #include <math.h>

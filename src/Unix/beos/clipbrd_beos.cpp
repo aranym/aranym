@@ -24,7 +24,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "SDL.h"
+#include "SDL_compat.h"
 #include "clipbrd.h"
 
 int init_aclip() { return 0; }

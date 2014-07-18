@@ -270,7 +270,7 @@ swap_opcode (void)
 static void 
 sync_m68k_pc (void)
 {
-    comprintf("\t if (m68k_pc_offset>100) sync_m68k_pc();\n"); 
+    comprintf("\t if (m68k_pc_offset>SYNC_PC_OFFSET) sync_m68k_pc();\n"); 
 }
 
 

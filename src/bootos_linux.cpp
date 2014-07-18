@@ -27,7 +27,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL_endian.h>
+#include "SDL_compat.h"
 
 #ifdef ENABLE_LILO
 

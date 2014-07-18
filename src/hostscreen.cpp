@@ -23,9 +23,11 @@
 #include "config.h"
 #endif
 
-#include <SDL.h>
-#include <SDL_endian.h>
+#include "newcpu.h"
+
+#include "SDL_compat.h"
 #include <vector>
+#include <string>
 
 #include "dirty_rects.h"
 #include "host_surface.h"
@@ -47,12 +49,130 @@
 #define DEBUG 0
 #include "debug.h"
 
+
+void HostScreen::SetWMIcon(void)
+{
+#ifndef OS_darwin
+	char path[1024];
+	getDataFilename("wm_icon.bmp", path, sizeof(path));
+	SDL_Surface *icon = SDL_LoadBMP(path);
+	if (icon != NULL) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetWindowIcon(window, icon);
+#else
+		uint8 mask[] = {0x00, 0x3f, 0xfc, 0x00,
+						0x00, 0xff, 0xfe, 0x00,
+						0x01, 0xff, 0xff, 0x80,
+						0x07, 0xff, 0xff, 0xe0,
+						0x0f, 0xff, 0xff, 0xf0,
+						0x1f, 0xff, 0xff, 0xf8,
+						0x1f, 0xff, 0xff, 0xf8,
+						0x3f, 0xff, 0xff, 0xfc,
+
+						0x7f, 0xff, 0xff, 0xfe,
+						0x7f, 0xff, 0xff, 0xfe,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0xff, 0xff, 0xff, 0xff,
+						0x7f, 0xff, 0xff, 0xfe,
+						0x7f, 0xff, 0xff, 0xfe,
+						0x3f, 0xff, 0xff, 0xfe,
+
+						0x3f, 0xff, 0xff, 0xfc,
+						0x1f, 0xff, 0xff, 0xf8,
+						0x0f, 0xff, 0xff, 0xf8,
+						0x0f, 0xff, 0xff, 0xf0,
+						0x07, 0xff, 0xff, 0xe0,
+						0x01, 0xff, 0xff, 0x80,
+						0x00, 0xff, 0xff, 0x00,
+						0x00, 0x1f, 0xfc, 0x00};
+/*
+		uint8 masK[] = {0x01, 0x80, 0x07, 0xfc,
+						0x01, 0x80, 0x07, 0xfc,
+						0x00, 0x00, 0x3e, 0x03,
+						0x00, 0x00, 0x3e, 0x03,
+						0x00, 0x00, 0x3e, 0x03,
+						0x00, 0x7c, 0xf0, 0x03,
+						0x00, 0x7c, 0xf0, 0x03,
+						0xc0, 0x7c, 0xc0, 0x1c,
+
+						0xc0, 0x7c, 0xc0, 0x1c,
+						0x07, 0x83, 0xc0, 0x63,
+						0x07, 0x83, 0xc0, 0x63,
+						0x07, 0x9e, 0x31, 0x9c,
+						0x07, 0x9e, 0x31, 0x9c,
+						0x07, 0x9e, 0x31, 0x9c,
+						0x00, 0x7c, 0xfe, 0x00,
+						0x00, 0x7c, 0xfe, 0x00,
+
+						0x07, 0xe3, 0x31, 0xe0,
+						0x07, 0xe3, 0x31, 0xe0,
+						0x3e, 0x1f, 0xff, 0xfc,
+						0x3e, 0x1f, 0xff, 0xfc,
+						0x38, 0x03, 0x3e, 0x00,
+						0xf8, 0x03, 0x3e, 0x00,
+						0xf8, 0x03, 0x3e, 0x00,
+						0xc0, 0x1c, 0xf1, 0xff,
+
+						0xc0, 0x1c, 0xf1, 0xff,
+						0xc0, 0x60, 0xf1, 0xe0,
+						0xc0, 0x60, 0xf1, 0xe0,
+						0xc1, 0x9c, 0x31, 0x9f,
+						0xc1, 0x9c, 0x31, 0x9f,
+						0xc1, 0x60, 0x31, 0x9f,
+						0x3e, 0x60, 0x01, 0x9c,
+						0x3e, 0x60, 0x01, 0x9c};
+*/
+		SDL_WM_SetIcon(icon, mask);
+#endif
+		SDL_FreeSurface(icon);
+	}
+	else {
+		infoprint("WM Icon not found at %s", path);
+	}
+#endif
+}
+
+
 HostScreen::HostScreen(void)
-	: DirtyRects(), logo(NULL), logo_present(true), clear_screen(true),
-	force_refresh(true), do_screenshot(false),
-	refreshCounter(0), screen(NULL), new_width(0), new_height(0),
+  : DirtyRects(),
+  	logo(NULL),
+  	logo_present(true),
+  	clear_screen(true),
+	force_refresh(true),
+	do_screenshot(false),
+	refreshCounter(0),
+	grabbedMouse(SDL_FALSE),
+	hiddenMouse(SDL_FALSE),
+	canGrabMouseAgain(false),
+	capslockState(false),
+	ignoreMouseMotionEvent(false),
+	atari_mouse_xpos(-1),
+	atari_mouse_ypos(-1),
+	screen(NULL),
+	new_width(0),
+	new_height(0),
 	snapCounter(0)
 {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	window = NULL;
+	window_id = 0;
+	renderer = NULL;
+	texture = NULL;
+#ifdef SDL_GUI
+	gui_window = NULL;
+	gui_window_id = 0;
+#endif
+#endif
 }
 
 HostScreen::~HostScreen(void)
@@ -72,15 +192,25 @@ void HostScreen::reset(void)
 	setVideoMode(MIN_WIDTH,MIN_HEIGHT,8);
 
 	/* Set window caption */
-	char buf[sizeof(VERSION_STRING)+128];
+	std::string buf;
 #ifdef SDL_GUI
-	char key[80];
-	displayKeysym(bx_options.hotkeys.setup, key);
-	snprintf(buf, sizeof(buf), "%s  (Press the [%s] key for SETUP)", VERSION_STRING, key);
+	char key[HOTKEYS_STRING_SIZE];
+	keysymToString(key, &bx_options.hotkeys.setup);
+	buf = std::string(VERSION_STRING) + std::string("  (Press the [") + std::string(key) + std::string("] key for SETUP)");
 #else
-	safe_strncpy(buf, VERSION_STRING, sizeof(buf));
+	buf = std::string(VERSION_STRING);
 #endif /* SDL_GUI */
-	SDL_WM_SetCaption(buf, "ARAnyM");
+	SetCaption(buf.c_str());
+}
+
+void  HostScreen::SetCaption(const char *caption)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetWindowTitle(window, caption);
+	/* SDL2FIXME: have not found a way yet to set the window class */
+#else
+	SDL_WM_SetCaption(caption, "ARAnyM");
+#endif
 }
 
 int HostScreen::getWidth(void)
@@ -120,14 +250,6 @@ void HostScreen::toggleFullScreen(void)
 
 void HostScreen::setVideoMode(int width, int height, int bpp)
 {
-	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
-	if (!bx_options.autozoom.fixedsize) {
-		screenFlags |= SDL_RESIZABLE;
-	}
-	if (bx_options.video.fullscreen) {
-		screenFlags |= SDL_FULLSCREEN;
-	}
-
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
 		height = bx_options.autozoom.height;
@@ -146,6 +268,127 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		width = height = 0;
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+	int windowFlags = SDL_WINDOW_MOUSE_FOCUS;
+	if (!bx_options.autozoom.fixedsize) {
+		windowFlags |= SDL_WINDOW_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		windowFlags |= SDL_WINDOW_FULLSCREEN;
+	}
+
+	// set preferred window position
+	const char *wpos = bx_options.video.window_pos;
+	int x, y;
+	x = y = SDL_WINDOWPOS_UNDEFINED;
+	if (strlen(wpos) > 0) {
+		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
+			x = y = SDL_WINDOWPOS_CENTERED;
+		}
+		else {
+			sscanf(wpos, "%d,%d", &x, &y);
+		}
+	}
+
+	SDL_DisplayMode mode, oldmode;
+
+	if (window)
+		SDL_GetWindowDisplayMode(window, &oldmode);
+	else
+		memset(&oldmode, 0, sizeof(oldmode));
+	
+	mode.w = width;
+	mode.h = height;
+	mode.refresh_rate = 0;
+	mode.driverdata = 0;
+	if (bpp <= 8)
+		mode.format = SDL_PIXELFORMAT_INDEX8;
+	else if (bpp <= 16)
+		mode.format = SDL_PIXELFORMAT_RGB565;
+	else if (bpp <= 24)
+		mode.format = SDL_BITSPERPIXEL(oldmode.format) >= 24 ? oldmode.format : (Uint32)SDL_PIXELFORMAT_RGB24;
+	else
+		mode.format = SDL_BITSPERPIXEL(oldmode.format) >= 24 ? oldmode.format : (Uint32)SDL_PIXELFORMAT_RGBX8888;
+
+	if (window == NULL ||
+		width != oldmode.w ||
+		height != oldmode.h ||
+		mode.format != oldmode.format)
+	{
+		if (renderer)
+		{
+			SDL_DestroyRenderer(renderer);
+			renderer = NULL;
+		}
+		if (texture)
+		{
+			SDL_DestroyTexture(texture);
+			texture = NULL;
+		}
+		
+		if (window == NULL)
+		{
+			window = SDL_CreateWindow(VERSION_STRING, x, y, width, height, windowFlags);
+			if (window)
+			{
+				SDL_GetWindowDisplayMode(window, &oldmode);
+				if (bpp >= 24 && (int)SDL_BITSPERPIXEL(oldmode.format) >= bpp)
+					mode.format = oldmode.format;
+			}
+		}
+		
+		if (window==NULL) {
+			panicbug("Could not create window: %s", SDL_GetError());
+			QuitEmulator();
+			return;
+		}
+		window_id = SDL_GetWindowID(window);
+		
+		if (mode.format != oldmode.format ||
+			width != oldmode.w ||
+			height != oldmode.h)
+		{
+			if (SDL_SetWindowDisplayMode(window, &mode) < 0)
+			{
+				mode.format = oldmode.format;
+				SDL_SetWindowDisplayMode(window, &mode);
+			}
+		}
+		SDL_SetWindowSize(window, width, height);
+		/* SDL2FIXME: find appropriate renderer for bpp */
+		// renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	}
+	screen = SDL_GetWindowSurface(window);
+	// texture = SDL_CreateTextureFromSurface(renderer, screen);
+	
+	SetWMIcon();
+
+#else
+
+	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
+	// set preferred window position
+	const char *wpos = bx_options.video.window_pos;
+	if (strlen(wpos) > 0) {
+		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
+			SDL_putenv((char*)"SDL_VIDEO_CENTERED=1");
+		}
+		else {
+			static char var[64];
+			snprintf(var, sizeof(var), "SDL_VIDEO_WINDOW_POS=%s", wpos);
+			SDL_putenv(var);
+		}
+	}
+
+	SetWMIcon();
+
 	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);
 	if (screen==NULL) {
 		/* Try with default bpp */
@@ -155,21 +398,34 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		/* Try with default resolution */
 		screen = SDL_SetVideoMode(0, 0, 0, screenFlags);
 	}
+
+#endif
+
+	if (ReadHWMemInt32(40) != 0 && !boot_lilo)
+	{
+		uae_u32 abase = linea68000(0xa000);
+		getARADATA()->setAbase(abase);
+	}
+	
 	if (screen==NULL) {
-		panicbug(("Can not set video mode\n"));
+		panicbug("Can not set video mode");
 		QuitEmulator();
 		return;
 	}
 
 	SDL_SetClipRect(screen, NULL);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	bx_options.video.fullscreen = (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN;
+#else
 	bx_options.video.fullscreen = ((screen->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
+#endif
 
 	new_width = screen->w;
 	new_height = screen->h;
 	resizeDirty(screen->w, screen->h);
 
-	force_refresh = true;
+	forceRefreshScreen();
 }
 
 void HostScreen::resizeWindow(int new_width, int new_height)
@@ -238,7 +494,12 @@ void HostScreen::refresh(void)
 	}
 
 #ifdef SDL_GUI
-	if (!SDLGui_isClosed()) {
+	if (!SDLGui_isClosed()
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		&& window == gui_window
+#endif
+		)
+	{
 		refreshGui();
 	}
 #endif
@@ -416,6 +677,131 @@ void HostScreen::refreshGui(void)
 #endif /* SDL_GUI */
 }
 
+void HostScreen::WarpMouse(int x, int y)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_WarpMouseInWindow(window, x, y);
+#else
+	SDL_WarpMouse(x, y);
+#endif
+}
+
+SDL_bool HostScreen::hideMouse(SDL_bool hide)
+{
+	SDL_bool current = hiddenMouse;
+	if (hide) {
+		SDL_ShowCursor(SDL_DISABLE);
+		hiddenMouse = SDL_TRUE;
+	}
+	else if (!hide) {
+		SDL_ShowCursor(SDL_ENABLE);
+		hiddenMouse = SDL_FALSE;
+	}
+	return current;
+}
+
+SDL_bool HostScreen::grabMouse(SDL_bool grab)
+{
+	SDL_bool current = SDL_GetWindowGrab(window);
+	if (grab && !current) {
+		SDL_SetWindowGrab(window, SDL_TRUE);
+		grabbedMouse = SDL_TRUE;
+		canGrabMouseAgain = true;
+		hideMouse(SDL_TRUE);
+//		IgnoreMouseMotionEvent(true);
+	}
+	else if (!grab && current) {
+		SDL_SetWindowGrab(window, SDL_FALSE);
+		grabbedMouse = SDL_FALSE;
+		hideMouse(SDL_FALSE);
+	}
+
+	// show hint in the window caption
+	if (SDL_GetWindowGrab(window))
+	{
+		char ungrab_key[HOTKEYS_STRING_SIZE];
+		std::string buf;
+		keysymToString(ungrab_key, &bx_options.hotkeys.ungrab);
+#ifdef SDL_GUI
+		char setup_key[HOTKEYS_STRING_SIZE];
+		keysymToString(setup_key, &bx_options.hotkeys.setup);
+		buf = "ARAnyM: press [" + std::string(setup_key) + std::string("] for SETUP, [") + std::string(ungrab_key) + std::string("] or middle mouse button to release input grab");
+#else
+		buf = std::string("ARAnyM: press [") + std::string(ungrab_key) + std::string("] or middle mouse button to release input grab");
+#endif
+		SetCaption(buf.c_str());
+	}
+	else {
+		SetCaption("ARAnyM: no input grab");
+	}
+
+	return current;
+}
+
+
+void HostScreen::grabTheMouse()
+{
+#if DEBUG
+	int x,y;
+	SDL_GetMouseState(&x, &y);
+	D(bug("grabTheMouse: mouse grab at window position [%d,%d]", x, y));
+#endif
+	hideMouse(SDL_TRUE);
+	grabMouse(SDL_TRUE);
+	RestoreAtariMouseCursorPosition();
+}
+
+
+void HostScreen::releaseTheMouse()
+{
+	D(bug("Releasing the mouse grab"));
+	grabMouse(SDL_FALSE);	// release mouse
+	hideMouse(SDL_FALSE);	// show it
+	if (getARADATA()->isAtariMouseDriver()) {
+		RememberAtariMouseCursorPosition();
+		WarpMouse(atari_mouse_xpos, atari_mouse_ypos);
+	}
+}
+
+
+// remember the current Atari mouse cursor position
+void HostScreen::RememberAtariMouseCursorPosition()
+{
+	if (getARADATA()->isAtariMouseDriver()) {
+		atari_mouse_xpos = getARADATA()->getAtariMouseX();
+		atari_mouse_ypos = getARADATA()->getAtariMouseY();
+		D(bug("Atari mouse cursor pointer left at [%d, %d]", atari_mouse_xpos, atari_mouse_ypos));
+	}
+}
+
+// reposition the Atari mouse cursor to match the host mouse cursor position
+void HostScreen::RestoreAtariMouseCursorPosition()
+{
+	int xpos, ypos;
+	SDL_GetMouseState(&xpos, &ypos);
+	if (atari_mouse_xpos >=0 && atari_mouse_ypos >= 0) {
+		D(bug("Restoring mouse cursor pointer to [%d, %d]", xpos, ypos));
+//		getARADATA()->setAtariMousePosition(xpos, ypos);
+		int delta_x = xpos - atari_mouse_xpos;
+		int delta_y = ypos - atari_mouse_ypos;
+		if (delta_x || delta_y) {
+			D(bug("RestoreAtariMouse: %d,%d atari %d,%d delta %d,%d\n", xpos, ypos, atari_mouse_xpos, atari_mouse_ypos, delta_x, delta_y));
+			getIKBD()->SendMouseMotion(delta_x, delta_y, 0, true);
+		}
+	}
+}
+
+
+bool HostScreen::HasInputFocus()
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) != 0;
+#else
+	return (SDL_GetAppState() & SDL_APPINPUTFOCUS) != 0;
+#endif
+}
+
+
 void HostScreen::refreshSurface(HostSurface *hsurf)
 {
 	if (!hsurf) {
@@ -441,6 +827,16 @@ void HostScreen::refreshSurface(HostSurface *hsurf)
 
 	/* Set screen palette from surface if needed */
 	if (!bx_options.opengl.enabled && (bpp==8) && (getBpp() == 8)) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_Color colors[256];
+		for (int i=0; i<256; i++) {
+			colors[i].r = sdl_surf->format->palette->colors[i].r;
+			colors[i].g = sdl_surf->format->palette->colors[i].g;
+			colors[i].b = sdl_surf->format->palette->colors[i].b;
+			colors[i].a = WINDOW_ALPHA;
+		}
+		SDL_SetPaletteColors(screen->format->palette, colors, 0, 256);
+#else
 		SDL_Color palette[256];
 		for (int i=0; i<256; i++) {
 			palette[i].r = sdl_surf->format->palette->colors[i].r;
@@ -448,6 +844,7 @@ void HostScreen::refreshSurface(HostSurface *hsurf)
 			palette[i].b = sdl_surf->format->palette->colors[i].b;
 		}
 		SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, palette, 0,256);
+#endif
 	}
 
 	drawSurfaceToScreen(hsurf);
@@ -579,10 +976,12 @@ void HostScreen::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *dst_y)
 
 void HostScreen::refreshScreen(void)
 {
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	if ((screen->flags & SDL_DOUBLEBUF)==SDL_DOUBLEBUF) {
 		SDL_Flip(screen);
 		return;
 	}
+#endif
 
 	if (!dirtyMarker) {
 		return;
@@ -598,7 +997,13 @@ void HostScreen::refreshScreen(void)
 		update_rect.y=minDirtY;
 		update_rect.w=maxDirtX-minDirtX+1;
 		update_rect.h=maxDirtY-minDirtY+1;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_UpdateWindowSurfaceRects(window, &update_rect, 1);
+		if (renderer)
+			SDL_RenderPresent(renderer);
+#else
 		SDL_UpdateRects(screen, 1, &update_rect);
+#endif
 	}
 	else {
 		// Chunky redraw: blit multiple 16x16 rectangles
@@ -648,9 +1053,36 @@ void HostScreen::refreshScreen(void)
 			}
 		}
 				
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_UpdateWindowSurfaceRects(window, &update_rects[0], i);
+		if (renderer)
+			SDL_RenderPresent(renderer);
+#else
 		SDL_UpdateRects(screen, i, &update_rects[0]);
+#endif
 	}	
 	clearDirtyRects();
+}
+
+void HostScreen::refreshScreenFromSurface(SDL_Surface *surface)
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// SDL_UpdateTexture(texture, NULL, surface->pixels, surface->pitch);
+	// SDL_RenderClear(renderer);
+	// SDL_RenderCopy(renderer, texture, NULL, NULL);
+	// SDL_RenderPresent(renderer);
+	(void) surface;
+	SDL_UpdateWindowSurface(window);
+	if (renderer)
+		SDL_RenderPresent(renderer);
+#else
+	SDL_Rect update_rect;
+	update_rect.x=minDirtX;
+	update_rect.y=minDirtY;
+	update_rect.w=maxDirtX-minDirtX+1;
+	update_rect.h=maxDirtY-minDirtY+1;
+	SDL_UpdateRects(surface, 1, &update_rect);
+#endif
 }
 
 void HostScreen::forceRefreshScreen(void)

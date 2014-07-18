@@ -18,13 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL_cdrom.h>
-#include <SDL_endian.h>
-
-#include <linux/cdrom.h>
-#include <errno.h>
-#include "toserror.h"
-
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "parameters.h"
@@ -32,12 +25,194 @@
 #include "nfcdrom_atari.h"
 #include "nfcdrom_linux.h"
 
+#include <linux/cdrom.h>
+#include <errno.h>
+#include "toserror.h"
+
 #define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
 
 #define NFCD_NAME	"nf:cdrom:linux: "
+
+#ifndef MSF_TO_FRAMES
+#define CD_FPS     75
+#define MSF_TO_FRAMES(M, S, F)     ((M)*60*CD_FPS+(S)*CD_FPS+(F))
+#endif
+
+/* Define this to use the alternative getmntent() code */
+#ifndef __SVR4
+#define USE_MNTENT
+#endif
+
+#ifdef USE_MNTENT
+#if defined(__USLC__)
+#include <sys/mntent.h>
+#else
+#include <mntent.h>
+#endif
+
+#ifndef _PATH_MNTTAB
+#ifdef MNTTAB
+#define _PATH_MNTTAB	MNTTAB
+#else
+#define _PATH_MNTTAB	"/etc/fstab"
+#endif
+#endif /* !_PATH_MNTTAB */
+
+#ifndef _PATH_MOUNTED
+#define _PATH_MOUNTED	"/etc/mtab"
+#endif /* !_PATH_MOUNTED */
+
+#ifndef MNTTYPE_CDROM
+#define MNTTYPE_CDROM	"iso9660"
+#endif
+#ifndef MNTTYPE_SUPER
+#define MNTTYPE_SUPER	"supermount"
+#endif
+#endif /* USE_MNTENT */
+
+#ifndef ENOMEDIUM
+#define ENOMEDIUM ENOENT
+#endif
+#define ERRNO_TRAYEMPTY(errno)	\
+	((errno == EIO)    || (errno == ENOENT) || \
+	 (errno == EINVAL) || (errno == ENOMEDIUM))
+
+/*--- Private functions ---*/
+
+/* Check a drive to see if it is a CD-ROM */
+int CdromDriverLinux::CheckDrive(const char *drive, const char *mnttype, struct stat *stbuf)
+{
+	int is_cd, cdfd;
+	struct cdrom_subchnl info;
+
+	/* If it doesn't exist, return -1 */
+	if ( stat(drive, stbuf) < 0 ) {
+		return(-1);
+	}
+
+	/* If it does exist, verify that it's an available CD-ROM */
+	is_cd = 0;
+	if ( S_ISCHR(stbuf->st_mode) || S_ISBLK(stbuf->st_mode) ) {
+		cdfd = open(drive, (O_RDONLY|O_NONBLOCK), 0);
+		if ( cdfd >= 0 ) {
+			info.cdsc_format = CDROM_MSF;
+			/* Under Linux, EIO occurs when a disk is not present.
+			 */
+			if ( (ioctl(cdfd, CDROMSUBCHNL, &info) == 0) ||
+						ERRNO_TRAYEMPTY(errno) ) {
+				is_cd = 1;
+			}
+			close(cdfd);
+		}
+#ifdef USE_MNTENT
+		/* Even if we can't read it, it might be mounted */
+		else if ( mnttype && (strcmp(mnttype, MNTTYPE_CDROM) == 0) ) {
+			is_cd = 1;
+		}
+#endif
+	}
+	return(is_cd);
+}
+
+/* Add a CD-ROM drive to our list of valid drives */
+void CdromDriverLinux::AddDrive(const char *drive, struct stat *stbuf)
+{
+	int i;
+
+	if ( numcds < CD_MAX_DRIVES ) {
+		/* Check to make sure it's not already in our list.
+	 	   This can happen when we see a drive via symbolic link.
+		 */
+		for ( i=0; i<numcds; ++i ) {
+			if ( stbuf->st_rdev == cddrives[i].cdmode ) {
+			    D(bug("Duplicate drive detected: %s == %s", drive, cddrives[i].device));
+				return;
+			}
+		}
+
+		/* Add this drive to our list */
+		i = numcds;
+		cddrives[i].device = strdup(drive);
+		if ( cddrives[i].device == NULL ) {
+			return;
+		}
+		cddrives[i].cdmode = stbuf->st_rdev;
+		++numcds;
+		D(bug("Added CD-ROM drive: %s", drive));
+	}
+}
+
+#ifdef USE_MNTENT
+void CdromDriverLinux::CheckMounts(const char *mtab)
+{
+	FILE *mntfp;
+	struct mntent *mntent;
+	struct stat stbuf;
+
+	mntfp = setmntent(mtab, "r");
+	if ( mntfp != NULL ) {
+		char *tmp;
+		char *mnt_type;
+		size_t mnt_type_len;
+		char *mnt_dev;
+		size_t mnt_dev_len;
+
+		while ( (mntent=getmntent(mntfp)) != NULL ) {
+			mnt_type_len = strlen(mntent->mnt_type) + 1;
+			mnt_type = (char *)malloc(mnt_type_len);
+			if (mnt_type == NULL)
+				continue;  /* maybe you'll get lucky next time. */
+
+			mnt_dev_len = strlen(mntent->mnt_fsname) + 1;
+			mnt_dev = (char *)malloc(mnt_dev_len);
+			if (mnt_dev == NULL) {
+				free(mnt_type);
+				continue;
+			}
+
+			strcpy(mnt_type, mntent->mnt_type);
+			strcpy(mnt_dev, mntent->mnt_fsname);
+
+			/* Handle "supermount" filesystem mounts */
+			if ( strcmp(mnt_type, MNTTYPE_SUPER) == 0 ) {
+				tmp = strstr(mntent->mnt_opts, "fs=");
+				if ( tmp ) {
+					free(mnt_type);
+					mnt_type = strdup(tmp + strlen("fs="));
+					if ( mnt_type ) {
+						tmp = strchr(mnt_type, ',');
+						if ( tmp ) {
+							*tmp = '\0';
+						}
+					}
+				}
+				tmp = strstr(mntent->mnt_opts, "dev=");
+				if ( tmp ) {
+					free(mnt_dev);
+					mnt_dev = strdup(tmp + strlen("dev="));
+					if ( mnt_dev ) {
+						tmp = strchr(mnt_dev, ',');
+						if ( tmp ) {
+							*tmp = '\0';
+						}
+					}
+				}
+			}
+			if ( strcmp(mnt_type, MNTTYPE_CDROM) == 0 ) {
+				if (CheckDrive(mnt_dev, mnt_type, &stbuf) > 0) {
+					AddDrive(mnt_dev, &stbuf);
+				}
+			}
+			free(mnt_dev);
+			free(mnt_type);
+		}
+		endmntent(mntfp);
+	}
+}
+#endif /* USE_MNTENT */
 
 /*--- Public functions ---*/
 
@@ -47,18 +222,94 @@ CdromDriverLinux::CdromDriverLinux()
 
 	D(bug(NFCD_NAME "CdromDriverLinux()"));
 	for (i=0; i<CD_MAX_DRIVES; i++) {
-		drive_handles[i]=-1;
+		cddrives[i].handle=-1;
+		cddrives[i].device = NULL;
 	}
+	drives_scanned = false;
+	numcds = 0;
 }
 
 CdromDriverLinux::~CdromDriverLinux()
 {
+	int i;
+
 	D(bug(NFCD_NAME "~CdromDriverLinux()"));
+	for (i = 0; i < CD_MAX_DRIVES; i++)
+	{
+		CloseDrive(i);
+		free(cddrives[i].device);
+		cddrives[i].device = NULL;
+	}
+	drives_scanned = false;
 }
 
 const char *CdromDriverLinux::DeviceName(int drive)
 {
-	return SDL_CDName(drive);
+	if (!drives_scanned)
+	{
+		/* checklist: /dev/cdrom, /dev/hd?, /dev/scd? /dev/sr? */
+		static const char *const checklist[] = {
+			"cdrom", "?a hd?", "?0 scd?", "?0 sr?", NULL
+		};
+		struct stat stbuf;
+
+#ifdef USE_MNTENT
+		/* Check /dev/cdrom first :-) */
+		if (CheckDrive("/dev/cdrom", NULL, &stbuf) > 0) {
+			AddDrive("/dev/cdrom", &stbuf);
+		}
+
+		/* Now check the currently mounted CD drives */
+		CheckMounts(_PATH_MOUNTED);
+
+		/* Finally check possible mountable drives in /etc/fstab */
+		CheckMounts(_PATH_MNTTAB);
+
+		/* If we found our drives, there's nothing left to do */
+#endif /* USE_MNTENT */
+		if ( numcds == 0 )
+		{
+			char drive[32];
+			int i, j, exists;
+			
+			/* Scan the system for CD-ROM drives.
+			   Not always 100% reliable, so use the USE_MNTENT code above first.
+			 */
+			for ( i=0; checklist[i]; ++i ) {
+				if ( checklist[i][0] == '?' ) {
+					char *insert;
+					exists = 1;
+					for ( j=checklist[i][1]; exists; ++j ) {
+						sprintf(drive, "/dev/%s", &checklist[i][3]);
+						insert = strchr(drive, '?');
+						if ( insert != NULL ) {
+							*insert = j;
+						}
+						switch (CheckDrive(drive, NULL, &stbuf)) {
+							/* Drive exists and is a CD-ROM */
+							case 1:
+								AddDrive(drive, &stbuf);
+								break;
+							/* Drive exists, but isn't a CD-ROM */
+							case 0:
+								break;
+							/* Drive doesn't exist */
+							case -1:
+								exists = 0;
+								break;
+						}
+					}
+				} else {
+					sprintf(drive, "/dev/%s", checklist[i]);
+					if ( CheckDrive(drive, NULL, &stbuf) > 0 ) {
+						AddDrive(drive, &stbuf);
+					}
+				}
+			}
+		}
+		drives_scanned = true;
+	}
+	return cddrives[drive].device;
 }
 
 /*--- Private functions ---*/
@@ -71,22 +322,24 @@ int CdromDriverLinux::OpenDrive(memptr device)
 	drive = DriveFromLetter(drive);
 	
 	/* Drive exist ? */
-	if (drive < 0 || drive >= CD_MAX_DRIVES || (drives_mask & (1<<drive))==0) {
+	if (drive < 0 || drive >= CD_MAX_DRIVES || (drives_mask & (1<<drive)) == 0 ||
+		DeviceName(drive = bx_options.nfcdroms[drive].physdevtohostdev) == NULL)
+	{
 		D(bug(NFCD_NAME " physical device %c does not exist", GetDrive(device)));
 		return TOS_EUNDEV;
 	}
 
 	/* Drive opened ? */
-	if (drive_handles[drive]>=0) {
+	if (cddrives[drive].handle>=0) {
 		return drive;
 	}
 
 	/* Open drive */
-	drive_handles[drive]=open(DeviceName(bx_options.nfcdroms[drive].physdevtohostdev), O_RDONLY|O_EXCL|O_NONBLOCK, 0);
-	if (drive_handles[drive]<0) {
-		drive_handles[drive]=-1;
+	cddrives[drive].handle=open(DeviceName(drive), O_RDONLY|O_EXCL|O_NONBLOCK, 0);
+	if (cddrives[drive].handle<0) {
+		cddrives[drive].handle=-1;
 		int errorcode = errnoHost2Mint(errno, TOS_EFILNF);
-		D(bug(NFCD_NAME " error opening drive %s: %s", DeviceName(bx_options.nfcdroms[drive].physdevtohostdev), strerror(errno)));
+		D(bug(NFCD_NAME " error opening drive %s: %s", DeviceName(drive), strerror(errno)));
 		return errorcode;
 	}
 
@@ -96,17 +349,17 @@ int CdromDriverLinux::OpenDrive(memptr device)
 void CdromDriverLinux::CloseDrive(int drive)
 {
 	/* Drive already closed ? */
-	if (drive_handles[drive]<0) {
+	if (cddrives[drive].handle<0) {
 		return;
 	}
 
-	close(drive_handles[drive]);
-	drive_handles[drive]=-1;
+	close(cddrives[drive].handle);
+	cddrives[drive].handle=-1;
 }
 
 int CdromDriverLinux::cd_unixioctl(int drive, int request, void *buffer)
 {
-	int errorcode = ioctl(drive_handles[drive], request, buffer);
+	int errorcode = ioctl(cddrives[drive].handle, request, buffer);
 	if (errorcode >= 0)
 		return errorcode;
 	return errnoHost2Mint(errno, TOS_EDRVNR);
@@ -123,14 +376,14 @@ int32 CdromDriverLinux::cd_read(memptr device, memptr buffer, uint32 first, uint
 
 	D(bug(NFCD_NAME "Read(%d,%d)", first, length));
 
-	if (lseek(drive_handles[drive], (off_t)first * CD_FRAMESIZE, SEEK_SET)<0) {
+	if (lseek(cddrives[drive].handle, (off_t)first * CD_FRAMESIZE, SEEK_SET)<0) {
 		D(bug(NFCD_NAME "Read(): can not seek to block %d", first));
 		int errorcode = errnoHost2Mint(errno, TOS_ENOSYS);
 		CloseDrive(drive);
 		return errorcode;
 	}
 
-	if (read(drive_handles[drive], Atari2HostAddr(buffer), length * CD_FRAMESIZE)<0) {
+	if (read(cddrives[drive].handle, Atari2HostAddr(buffer), length * CD_FRAMESIZE)<0) {
 		int errorcode = errnoHost2Mint(errno, TOS_ENOSYS);
 		D(bug(NFCD_NAME "Read(): can not read %d blocks", length));
 		CloseDrive(drive);

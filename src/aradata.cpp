@@ -33,11 +33,26 @@ ARADATA::ARADATA(memptr addr, uint32 size) : BASE_IO(addr, size)
 	reset();
 }
 
+int ARADATA::getAtariMouseX()
+{
+	if (abase)
+		return ReadHWMemInt16(abase - 0x25a);
+	return mouse_x;
+}
+
+int ARADATA::getAtariMouseY()
+{
+	if (abase)
+		return ReadHWMemInt16(abase - 0x258);
+	return mouse_y;
+}
+
 void ARADATA::reset()
 {
 	mouseDriver = false;
 	mouse_x = -1;
 	mouse_y = -1;
+	abase = 0;
 }
 
 uint8 ARADATA::handleRead(memptr addr) {

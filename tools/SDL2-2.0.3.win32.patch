@@ -1,0 +1,52 @@
+--- i686-w64-mingw32/include/SDL2/SDL_platform.h.orig	2014-03-16 03:33:17.000000000 +0100
++++ i686-w64-mingw32/include/SDL2/SDL_platform.h	2014-05-28 08:30:45.000000000 +0200
+@@ -114,10 +114,10 @@
+ #define __SOLARIS__ 1
+ #endif
+ 
+-#if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__)
++#if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+ /* Try to find out if we're compiling for WinRT or non-WinRT */
+ /* If _USING_V110_SDK71_ is defined it means we are using the v110_xp or v120_xp toolset. */
+-#if defined(__MINGW32__) || (defined(_MSC_VER) && (_MSC_VER >= 1700) && !_USING_V110_SDK71_)	/* _MSC_VER==1700 for MSVC 2012 */
++#if (defined(_MSC_VER) && (_MSC_VER >= 1700) && !_USING_V110_SDK71_)	/* _MSC_VER==1700 for MSVC 2012 */
+ #include <winapifamily.h>
+ #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+ #undef __WINDOWS__
+--- i686-w64-mingw32/include/SDL2/SDL_config.h.orig	2014-07-12 10:50:40.004036200 +0200
++++ i686-w64-mingw32/include/SDL2/SDL_config.h	2014-07-12 10:51:10.158889200 +0200
+@@ -130,7 +130,7 @@
+ #define HAVE_SIN 1
+ #define HAVE_SINF 1
+ #define HAVE_SQRT 1
+-#if _MSC_VER >= 1800
++#if defined(_MSC_VER) && _MSC_VER >= 1800
+ #define HAVE_STRTOLL 1
+ #define HAVE_VSSCANF 1
+ #define HAVE_COPYSIGN 1
+--- x86_64-w64-mingw32/include/SDL2/SDL_platform.h.orig	2014-03-16 03:33:17.000000000 +0100
++++ x86_64-w64-mingw32/include/SDL2/SDL_platform.h	2014-05-28 08:30:45.000000000 +0200
+@@ -114,10 +114,10 @@
+ #define __SOLARIS__ 1
+ #endif
+ 
+-#if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__)
++#if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+ /* Try to find out if we're compiling for WinRT or non-WinRT */
+ /* If _USING_V110_SDK71_ is defined it means we are using the v110_xp or v120_xp toolset. */
+-#if defined(__MINGW32__) || (defined(_MSC_VER) && (_MSC_VER >= 1700) && !_USING_V110_SDK71_)	/* _MSC_VER==1700 for MSVC 2012 */
++#if (defined(_MSC_VER) && (_MSC_VER >= 1700) && !_USING_V110_SDK71_)	/* _MSC_VER==1700 for MSVC 2012 */
+ #include <winapifamily.h>
+ #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+ #undef __WINDOWS__
+--- x86_64-w64-mingw32/include/SDL2/SDL_config.h.orig	2014-07-12 10:50:40.004036200 +0200
++++ x86_64-w64-mingw32/include/SDL2/SDL_config.h	2014-07-12 10:51:10.158889200 +0200
+@@ -130,7 +130,7 @@
+ #define HAVE_SIN 1
+ #define HAVE_SINF 1
+ #define HAVE_SQRT 1
+-#if _MSC_VER >= 1800
++#if defined(_MSC_VER) && _MSC_VER >= 1800
+ #define HAVE_STRTOLL 1
+ #define HAVE_VSSCANF 1
+ #define HAVE_COPYSIGN 1

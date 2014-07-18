@@ -29,7 +29,7 @@
 #define PARAMETERS_H
 
 #include "sysdeps.h"
-#include <SDL_keyboard.h>
+#include "SDL_compat.h"
 
 #ifndef ARANYMHOME
 # define ARANYMHOME	".aranym"
@@ -230,14 +230,20 @@ typedef struct {
 } bx_ikbd_options_t;
 
 // Hotkeys
+#define HOTKEYS_STRING_SIZE		60
 typedef struct {
-	SDL_keysym	setup;
-	SDL_keysym	quit;
-	SDL_keysym	reboot;
-	SDL_keysym	debug;
-	SDL_keysym	ungrab;
-	SDL_keysym	fullscreen;
-	SDL_keysym	screenshot;
+	SDL_Keycode sym;
+	SDL_Keymod mod;
+} bx_hotkey;
+
+typedef struct {
+	bx_hotkey	setup;
+	bx_hotkey	quit;
+	bx_hotkey	reboot;
+	bx_hotkey	debug;
+	bx_hotkey	ungrab;
+	bx_hotkey	fullscreen;
+	bx_hotkey	screenshot;
 } bx_hotkeys_t;
 
 // Audio
@@ -324,6 +330,9 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 char *getHomeFolder(char *buffer, unsigned int bufsize);
 char *getConfFolder(char *buffer, unsigned int bufsize);
 char *getDataFolder(char *buffer, unsigned int bufsize);
+
+char *keysymToString(char *buffer, const bx_hotkey *keysym);
+bool stringToKeysym(bx_hotkey *keysym, const char *string);
 
 extern const char *getConfigFile();
 extern bool loadSettings(const char *);

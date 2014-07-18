@@ -31,10 +31,10 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <SDL.h>
+#include "SDL_compat.h"
 
 extern "C" {
-	static SDL_audiostatus playing;
+	static SDL_AudioStatus playing;
 	static SDL_AudioCVT	cvt;
 	static uint32 cvt_buf_len;
 

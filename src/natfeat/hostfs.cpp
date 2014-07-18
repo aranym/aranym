@@ -2944,7 +2944,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	}
 
 
-	bug("HOSTFS: fs_native_init:\n"
+	D(bug("HOSTFS: fs_native_init:\n"
 	    "\t\t fs_drv	   = %#08x, flags %#08x\n"
 		"\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x (%c)\n"
@@ -2957,7 +2957,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ,drv->mountPoint
 		  ,drv->hostRoot
 		  ,(int)strlen(drv->hostRoot)
-		  );
+		  ));
 
 	return TOS_E_OK;
 }

@@ -28,7 +28,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL_endian.h>
 #include "dyngl.h"
 
 #define ENABLE_GLU_TESSELATOR 0

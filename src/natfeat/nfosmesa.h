@@ -23,6 +23,7 @@
 
 /*--- Includes ---*/
 
+#include "SDL_compat.h"
 #include <SDL_types.h>
 #include "SDL_opengl_wrapper.h"
 #include <GL/osmesa.h>

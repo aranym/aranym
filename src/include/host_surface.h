@@ -21,7 +21,7 @@
 #ifndef HOSTSURFACE_H
 #define HOSTSURFACE_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 class DirtyRects;
 

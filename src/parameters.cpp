@@ -169,6 +169,381 @@ static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 
 // configuration file 
 /*************************************************************************/
+
+static struct {
+	SDL_Keycode current;
+	int sdl1;
+	const char *name;
+} const sdl_keysyms[] = {
+	{ SDLK_BACKSPACE, 8, "Backspace" },
+	{ SDLK_TAB, 9, "Tab" },
+	{ SDLK_CLEAR, 12, "Clear" },
+	{ SDLK_RETURN, 13, "Return" },
+	{ SDLK_PAUSE, 19, "Pause" },
+	{ SDLK_ESCAPE, 27, "Escape" },
+	{ SDLK_SPACE, 32, "Space" },
+
+	{ SDLK_EXCLAIM, 33, "!" },
+	{ SDLK_QUOTEDBL, 34, "\"" },
+	{ SDLK_HASH, 35, "#" },
+	{ SDLK_DOLLAR, 36, "$" },
+	{ SDLK_AMPERSAND, 38, "&" },
+	{ SDLK_QUOTE, 39, "'" },
+	{ SDLK_LEFTPAREN, 40, "(" },
+	{ SDLK_RIGHTPAREN, 41, ")" },
+	{ SDLK_ASTERISK, 42, "*" },
+	{ SDLK_PLUS, 43, "+" },
+	{ SDLK_COMMA, 44, "," },
+	{ SDLK_MINUS, 45, "-" },
+	{ SDLK_PERIOD, 46, "." },
+	{ SDLK_SLASH, 47, "/" },
+	{ SDLK_0, 48, "0" },
+	{ SDLK_1, 49, "1" },
+	{ SDLK_2, 50, "2" },
+	{ SDLK_3, 51, "3" },
+	{ SDLK_4, 52, "4" },
+	{ SDLK_5, 53, "5" },
+	{ SDLK_6, 54, "6" },
+	{ SDLK_7, 55, "7" },
+	{ SDLK_8, 56, "8" },
+	{ SDLK_9, 57, "9" },
+	{ SDLK_COLON, 58, ":" },
+	{ SDLK_SEMICOLON, 59, ";" },
+	{ SDLK_LESS, 60, "<" },
+	{ SDLK_EQUALS, 61, "=" },
+	{ SDLK_GREATER, 62, ">" },
+	{ SDLK_QUESTION, 63, "?" },
+	{ SDLK_AT, 64, "@" },
+	{ SDLK_LEFTBRACKET, 91, "[" },
+	{ SDLK_BACKSLASH, 92, "\\" },
+	{ SDLK_RIGHTBRACKET, 93, "]" },
+	{ SDLK_CARET, 94, "^" },
+	{ SDLK_UNDERSCORE, 95, "_" },
+	{ SDLK_BACKQUOTE, 96, "`" },
+	{ SDLK_a, 97, "a" },
+	{ SDLK_b, 98, "b" },
+	{ SDLK_c, 99, "c" },
+	{ SDLK_d, 100, "d" },
+	{ SDLK_e, 101, "e" },
+	{ SDLK_f, 102, "f" },
+	{ SDLK_g, 103, "g" },
+	{ SDLK_h, 104, "h" },
+	{ SDLK_i, 105, "i" },
+	{ SDLK_j, 106, "j" },
+	{ SDLK_k, 107, "k" },
+	{ SDLK_l, 108, "l" },
+	{ SDLK_m, 109, "m" },
+	{ SDLK_n, 110, "n" },
+	{ SDLK_o, 111, "o" },
+	{ SDLK_p, 112, "p" },
+	{ SDLK_q, 113, "q" },
+	{ SDLK_r, 114, "r" },
+	{ SDLK_s, 115, "s" },
+	{ SDLK_t, 116, "t" },
+	{ SDLK_u, 117, "u" },
+	{ SDLK_v, 118, "v" },
+	{ SDLK_w, 119, "w" },
+	{ SDLK_x, 120, "x" },
+	{ SDLK_y, 121, "y" },
+	{ SDLK_z, 122, "z" },
+	{ SDLK_DELETE, 127, "Delete" },
+/*
+	{ SDLK_WORLD_0, 160 },
+	{ SDLK_WORLD_1, 161 },
+	{ SDLK_WORLD_2, 162 },
+	{ SDLK_WORLD_3, 163 },
+	{ SDLK_WORLD_4, 164 },
+	{ SDLK_WORLD_5, 165 },
+	{ SDLK_WORLD_6, 166 },
+	{ SDLK_WORLD_7, 167 },
+	{ SDLK_WORLD_8, 168 },
+	{ SDLK_WORLD_9, 169 },
+	{ SDLK_WORLD_10, 170 },
+	{ SDLK_WORLD_11, 171 },
+	{ SDLK_WORLD_12, 172 },
+	{ SDLK_WORLD_13, 173 },
+	{ SDLK_WORLD_14, 174 },
+	{ SDLK_WORLD_15, 175 },
+	{ SDLK_WORLD_16, 176 },
+	{ SDLK_WORLD_17, 177 },
+	{ SDLK_WORLD_18, 178 },
+	{ SDLK_WORLD_19, 179 },
+	{ SDLK_WORLD_20, 180 },
+	{ SDLK_WORLD_21, 181 },
+	{ SDLK_WORLD_22, 182 },
+	{ SDLK_WORLD_23, 183 },
+	{ SDLK_WORLD_24, 184 },
+	{ SDLK_WORLD_25, 185 },
+	{ SDLK_WORLD_26, 186 },
+	{ SDLK_WORLD_27, 187 },
+	{ SDLK_WORLD_28, 188 },
+	{ SDLK_WORLD_29, 189 },
+	{ SDLK_WORLD_30, 190 },
+	{ SDLK_WORLD_31, 191 },
+	{ SDLK_WORLD_32, 192 },
+	{ SDLK_WORLD_33, 193 },
+	{ SDLK_WORLD_34, 194 },
+	{ SDLK_WORLD_35, 195 },
+	{ SDLK_WORLD_36, 196 },
+	{ SDLK_WORLD_37, 197 },
+	{ SDLK_WORLD_38, 198 },
+	{ SDLK_WORLD_39, 199 },
+	{ SDLK_WORLD_40, 200 },
+	{ SDLK_WORLD_41, 201 },
+	{ SDLK_WORLD_42, 202 },
+	{ SDLK_WORLD_43, 203 },
+	{ SDLK_WORLD_44, 204 },
+	{ SDLK_WORLD_45, 205 },
+	{ SDLK_WORLD_46, 206 },
+	{ SDLK_WORLD_47, 207 },
+	{ SDLK_WORLD_48, 208 },
+	{ SDLK_WORLD_49, 209 },
+	{ SDLK_WORLD_50, 210 },
+	{ SDLK_WORLD_51, 211 },
+	{ SDLK_WORLD_52, 212 },
+	{ SDLK_WORLD_53, 213 },
+	{ SDLK_WORLD_54, 214 },
+	{ SDLK_WORLD_55, 215 },
+	{ SDLK_WORLD_56, 216 },
+	{ SDLK_WORLD_57, 217 },
+	{ SDLK_WORLD_58, 218 },
+	{ SDLK_WORLD_59, 219 },
+	{ SDLK_WORLD_60, 220 },
+	{ SDLK_WORLD_61, 221 },
+	{ SDLK_WORLD_62, 222 },
+	{ SDLK_WORLD_63, 223 },
+	{ SDLK_WORLD_64, 224 },
+	{ SDLK_WORLD_65, 225 },
+	{ SDLK_WORLD_66, 226 },
+	{ SDLK_WORLD_67, 227 },
+	{ SDLK_WORLD_68, 228 },
+	{ SDLK_WORLD_69, 229 },
+	{ SDLK_WORLD_70, 230 },
+	{ SDLK_WORLD_71, 231 },
+	{ SDLK_WORLD_72, 232 },
+	{ SDLK_WORLD_73, 233 },
+	{ SDLK_WORLD_74, 234 },
+	{ SDLK_WORLD_75, 235 },
+	{ SDLK_WORLD_76, 236 },
+	{ SDLK_WORLD_77, 237 },
+	{ SDLK_WORLD_78, 238 },
+	{ SDLK_WORLD_79, 239 },
+	{ SDLK_WORLD_80, 240 },
+	{ SDLK_WORLD_81, 241 },
+	{ SDLK_WORLD_82, 242 },
+	{ SDLK_WORLD_83, 243 },
+	{ SDLK_WORLD_84, 244 },
+	{ SDLK_WORLD_85, 245 },
+	{ SDLK_WORLD_86, 246 },
+	{ SDLK_WORLD_87, 247 },
+	{ SDLK_WORLD_88, 248 },
+	{ SDLK_WORLD_89, 249 },
+	{ SDLK_WORLD_90, 250 },
+	{ SDLK_WORLD_91, 251 },
+	{ SDLK_WORLD_92, 252 },
+	{ SDLK_WORLD_93, 253 },
+	{ SDLK_WORLD_94, 254 },
+	{ SDLK_WORLD_95, 255 },
+*/
+	{ SDLK_KP_0, 256, "Keypad 0" },
+	{ SDLK_KP_1, 257, "Keypad 1" },
+	{ SDLK_KP_2, 258, "Keypad 2" },
+	{ SDLK_KP_3, 259, "Keypad 3" },
+	{ SDLK_KP_4, 260, "Keypad 4" },
+	{ SDLK_KP_5, 261, "Keypad 5" },
+	{ SDLK_KP_6, 262, "Keypad 6" },
+	{ SDLK_KP_7, 263, "Keypad 7" },
+	{ SDLK_KP_8, 264, "Keypad 8" },
+	{ SDLK_KP_9, 265, "Keypad 9" },
+	{ SDLK_KP_PERIOD, 266, "Keypad ." },
+	{ SDLK_KP_DIVIDE, 267, "Keypad /" },
+	{ SDLK_KP_MULTIPLY, 268, "Keypad *" },
+	{ SDLK_KP_MINUS, 269, "Keypad -" },
+	{ SDLK_KP_PLUS, 270, "Keypad +" },
+	{ SDLK_KP_ENTER, 271, "Keypad Enter" },
+	{ SDLK_KP_EQUALS, 272, "Keypad =" },
+	{ SDLK_UP, 273, "Up" },
+	{ SDLK_DOWN, 274, "Down" },
+	{ SDLK_RIGHT, 275, "Right" },
+	{ SDLK_LEFT, 276, "Left" },
+	{ SDLK_INSERT, 277, "Insert" },
+	{ SDLK_HOME, 278, "Home" },
+	{ SDLK_END, 279, "End" },
+	{ SDLK_PAGEUP, 280, "PageUp" },
+	{ SDLK_PAGEDOWN, 281, "PageDown" },
+	{ SDLK_F1, 282, "F1" },
+	{ SDLK_F2, 283, "F2" },
+	{ SDLK_F3, 284, "F3" },
+	{ SDLK_F4, 285, "F4" },
+	{ SDLK_F5, 286, "F5" },
+	{ SDLK_F6, 287, "F6" },
+	{ SDLK_F7, 288, "F7" },
+	{ SDLK_F8, 289, "F8" },
+	{ SDLK_F9, 290, "F9" },
+	{ SDLK_F10, 291, "F10" },
+	{ SDLK_F11, 292, "F11" },
+	{ SDLK_F12, 293, "F12" },
+	{ SDLK_F13, 294, "F13" },
+	{ SDLK_F14, 295, "F14" },
+	{ SDLK_F15, 296, "F15" },
+	{ SDLK_NUMLOCKCLEAR, 300, "Numlock" },
+	{ SDLK_CAPSLOCK, 301, "CapsLock" },
+	{ SDLK_SCROLLLOCK, 302, "ScrollLock" },
+	{ SDLK_RSHIFT, 303, "Right Shift" },
+	{ SDLK_LSHIFT, 304, "Left Shift" },
+	{ SDLK_RCTRL, 305, "Right Ctrl" },
+	{ SDLK_LCTRL, 306, "Left Ctrl" },
+	{ SDLK_RALT, 307, "Right Alt" },
+	{ SDLK_LALT, 308, "Left Alt" },
+	{ SDLK_RGUI, 309, "Right GUI" },
+	{ SDLK_LGUI, 310, "Left GUI" },
+//	{ SDLK_LSUPER, 311 },
+//	{ SDLK_RSUPER, 312 },
+	{ SDLK_MODE, 313, "ModeSwitch" },
+//	{ SDLK_COMPOSE, 314 },
+	{ SDLK_HELP, 315, "Help" },
+	{ SDLK_PRINTSCREEN, 316, "PrintScreen" },
+	{ SDLK_SYSREQ, 317, "SysReq" },
+	{ SDLK_CANCEL, 318, "Cancel" },
+	{ SDLK_MENU, 319, "Menu" },
+	{ SDLK_POWER, 320, "Power" },
+//	{ SDLK_EURO, 321 },
+	{ SDLK_UNDO, 322, "Undo" },
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	{ SDLK_APPLICATION, 0, "Application" },
+	{ SDLK_F16, 0, "F16" },
+	{ SDLK_F17, 0, "F17" },
+	{ SDLK_F18, 0, "F18" },
+	{ SDLK_F19, 0, "F19" },
+	{ SDLK_F20, 0, "F20" },
+	{ SDLK_F21, 0, "F21" },
+	{ SDLK_F22, 0, "F22" },
+	{ SDLK_F23, 0, "F23" },
+	{ SDLK_F24, 0, "F24" },
+	{ SDLK_EXECUTE, 0, "Execute" },
+	{ SDLK_SELECT, 0, "Select" },
+	{ SDLK_STOP, 0, "Stop" },
+	{ SDLK_AGAIN, 0, "Again" },
+	{ SDLK_CUT, 0, "Cut" },
+	{ SDLK_COPY, 0, "Copy" },
+	{ SDLK_PASTE, 0, "Paste" },
+	{ SDLK_FIND, 0, "Find" },
+	{ SDLK_MUTE, 0, "Mute" },
+	{ SDLK_VOLUMEUP, 0, "VolumeUp" },
+	{ SDLK_VOLUMEDOWN, 0, "VolumeDown" },
+	{ SDLK_KP_COMMA, 0, "Keypad ," },
+	{ SDLK_PRIOR, 0, "Prior" },
+	{ SDLK_RETURN2, 0, "Return" },
+	{ SDLK_SEPARATOR, 0, "Separator" },
+	{ SDLK_OUT, 0, "Out" },
+	{ SDLK_OPER, 0, "Oper" },
+	{ SDLK_CLEARAGAIN, 0, "Clear / Again" },
+	{ SDLK_CRSEL, 0, "CrSel" },
+	{ SDLK_EXSEL, 0, "ExSel" },
+	{ SDLK_KP_00, 0, "Keypad 00" },
+	{ SDLK_KP_000, 0, "Keypad 000" },
+	{ SDLK_THOUSANDSSEPARATOR, 0, "ThousandsSeparator" },
+	{ SDLK_DECIMALSEPARATOR, 0, "DecimalSeparator" },
+	{ SDLK_CURRENCYUNIT, 0, "CurrencyUnit" },
+	{ SDLK_CURRENCYSUBUNIT, 0, "CurrencySubUnit" },
+#endif
+};
+
+static const char *sdl_getkeyname(SDL_Keycode sym)
+{
+	for (unsigned int i = 0; i < sizeof(sdl_keysyms) / sizeof(sdl_keysyms[0]); i++)
+		if (sdl_keysyms[i].current == sym)
+			return sdl_keysyms[i].name;
+	return SDL_GetKeyName(sym);
+}
+
+char *keysymToString(char *buffer, const bx_hotkey *keysym)
+{
+	*buffer = 0;
+	SDL_Keymod mods = keysym->mod;
+	if (mods & KMOD_LSHIFT) strcat(buffer, "LS+");
+	if (mods & KMOD_RSHIFT) strcat(buffer, "RS+");
+	if (mods & KMOD_LCTRL) strcat(buffer, "LC+");
+	if (mods & KMOD_RCTRL) strcat(buffer, "RC+");
+	if (mods & KMOD_LALT) strcat(buffer, "LA+");
+	if (mods & KMOD_RALT) strcat(buffer, "RA+");
+	if (mods & KMOD_LGUI) strcat(buffer, "LM+");
+	if (mods & KMOD_RGUI) strcat(buffer, "RM+");
+	if (mods & KMOD_MODE) strcat(buffer, "MO+");
+	if (keysym->sym) {
+		strcat(buffer, sdl_getkeyname(keysym->sym));
+	} else {
+		// mod keys only, remove last plus sign
+		int len = strlen(buffer);
+		if (len > 0 && buffer[len-1] == '+')
+			buffer[len-1] = '\0';
+	}
+	return buffer;
+}
+
+bool stringToKeysym(bx_hotkey *keysym, const char *string)
+{
+	int sym, mod;
+	if ( sscanf(string, "%i:%i", &sym, &mod) == 2)
+	{
+		/*
+		 * old format with direct encoding; keysyms are from SDL < 2.0
+		 * We must translate the SDL 1.2.x values
+		 */
+		for (unsigned int i = 0; i < sizeof(sdl_keysyms) / sizeof(sdl_keysyms[0]); i++)
+		{
+			if (sym == sdl_keysyms[i].sdl1)
+			{
+				keysym->mod = SDL_Keymod(mod);
+				keysym->sym = sdl_keysyms[i].current;
+				return true;
+			}
+		}
+		if (mod != 0 && sym == 0)
+		{
+			/* modifiers only */
+			keysym->mod = SDL_Keymod(mod);
+			keysym->sym = SDLK_UNKNOWN;
+			return true;
+		}
+		return false;
+	}
+	mod = 0;
+#define MOD(s, k) \
+	if (strncmp(string, s, sizeof(s) - 1) == 0 && \
+		(string[sizeof(s) - 1] == '+' || string[sizeof(s) - 1] == '\0')) \
+		{ mod |= k; string += sizeof(s) - 1; if (*string == '+') string++; }
+	MOD("LS", KMOD_LSHIFT);
+	MOD("RS", KMOD_RSHIFT);
+	MOD("LC", KMOD_LCTRL);
+	MOD("RC", KMOD_RCTRL);
+	MOD("LA", KMOD_LALT);
+	MOD("RA", KMOD_RALT);
+	MOD("LM", KMOD_LGUI);
+	MOD("RM", KMOD_RGUI);
+	MOD("MO", KMOD_MODE);
+#undef MOD
+	for (unsigned int i = 0; i < sizeof(sdl_keysyms) / sizeof(sdl_keysyms[0]); i++)
+	{
+		if (strcmp(sdl_keysyms[i].name, string) == 0)
+		{
+			keysym->mod = SDL_Keymod(mod);
+			keysym->sym = sdl_keysyms[i].current;
+			return true;
+		}
+	}
+	if (mod != 0)
+	{
+		/* modifiers only */
+		keysym->mod = SDL_Keymod(mod);
+		keysym->sym = SDLK_UNKNOWN;
+		return true;
+	}
+	return false;
+}
+
+/*************************************************************************/
 struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
 	{ "Floppy", Path_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
@@ -300,6 +675,7 @@ struct Config_Tag video_conf[]={
 	{ "VidelMonitor", Byte_Tag, &bx_options.video.monitor, 0, 0},
 	{ "SingleBlitComposing", Bool_Tag, &bx_options.video.single_blit_composing, 0, 0},
 	{ "SingleBlitRefresh", Bool_Tag, &bx_options.video.single_blit_refresh, 0, 0},
+	{ "WindowPos", String_Tag, bx_options.video.window_pos, sizeof(bx_options.video.window_pos), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -859,7 +1235,6 @@ void presave_nfvdi() {
 
 /*************************************************************************/
 
-#define HOTKEYS_STRING_SIZE		20
 static char hotkeys[10][HOTKEYS_STRING_SIZE];
 struct Config_Tag hotkeys_conf[]={
 	{ "Setup", String_Tag, hotkeys[0], HOTKEYS_STRING_SIZE, 0},
@@ -872,7 +1247,7 @@ struct Config_Tag hotkeys_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-typedef struct { char *string; SDL_keysym *keysym; } HOTKEYS_REL;
+typedef struct { char *string; bx_hotkey *keysym; } HOTKEYS_REL;
 
 HOTKEYS_REL hotkeys_rel[]={
 	{ hotkeys[0], &bx_options.hotkeys.setup },
@@ -889,19 +1264,19 @@ void preset_hotkeys()
 	// default values
 #ifdef OS_darwin
 	bx_options.hotkeys.setup.sym = SDLK_COMMA;
-	bx_options.hotkeys.setup.mod = KMOD_LMETA;
+	bx_options.hotkeys.setup.mod = KMOD_LGUI;
 	bx_options.hotkeys.quit.sym = SDLK_q;
-	bx_options.hotkeys.quit.mod = KMOD_LMETA;
+	bx_options.hotkeys.quit.mod = KMOD_LGUI;
 	bx_options.hotkeys.reboot.sym = SDLK_r;
-	bx_options.hotkeys.reboot.mod = KMOD_LMETA;
+	bx_options.hotkeys.reboot.mod = KMOD_LGUI;
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
-	bx_options.hotkeys.ungrab.mod = KMOD_LMETA;
+	bx_options.hotkeys.ungrab.mod = KMOD_LGUI;
 	bx_options.hotkeys.debug.sym = SDLK_d;
-	bx_options.hotkeys.debug.mod = KMOD_LMETA;
+	bx_options.hotkeys.debug.mod = KMOD_LGUI;
 	bx_options.hotkeys.screenshot.sym = SDLK_s;
-	bx_options.hotkeys.screenshot.mod = KMOD_LMETA;
+	bx_options.hotkeys.screenshot.mod = KMOD_LGUI;
 	bx_options.hotkeys.fullscreen.sym = SDLK_f;
-	bx_options.hotkeys.fullscreen.mod = KMOD_LMETA;
+	bx_options.hotkeys.fullscreen.mod = KMOD_LGUI;
 #else
 	bx_options.hotkeys.setup.sym = SDLK_PAUSE;
 	bx_options.hotkeys.setup.mod = KMOD_NONE;
@@ -910,12 +1285,12 @@ void preset_hotkeys()
 	bx_options.hotkeys.reboot.sym = SDLK_PAUSE;
 	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
-	bx_options.hotkeys.ungrab.mod = (SDLMod)(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
+	bx_options.hotkeys.ungrab.mod = SDL_Keymod(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
 	bx_options.hotkeys.debug.sym = SDLK_PAUSE;
 	bx_options.hotkeys.debug.mod = KMOD_LALT;
-	bx_options.hotkeys.screenshot.sym = SDLK_PRINT;
+	bx_options.hotkeys.screenshot.sym = SDLK_PRINTSCREEN;
 	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
-	bx_options.hotkeys.fullscreen.sym = SDLK_SCROLLOCK;
+	bx_options.hotkeys.fullscreen.sym = SDLK_SCROLLLOCK;
 	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
 #endif
 }
@@ -923,18 +1298,14 @@ void preset_hotkeys()
 void postload_hotkeys() {
 	// convert from string to pair of ints
 	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		int sym, mod;
-		if ( sscanf(hotkeys_rel[i].string, "%i:%i", &sym, &mod) != 2 ) continue;
-
-		hotkeys_rel[i].keysym->sym = SDLKey(sym);
-		hotkeys_rel[i].keysym->mod = SDLMod(mod);
+		stringToKeysym(hotkeys_rel[i].keysym, hotkeys_rel[i].string);
 	}
 }
 
 void presave_hotkeys() {
 	// convert from pair of ints to string
 	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
-		snprintf(hotkeys_rel[i].string, HOTKEYS_STRING_SIZE, "%d:%#x", hotkeys_rel[i].keysym->sym, hotkeys_rel[i].keysym->mod);
+		keysymToString(hotkeys_rel[i].string, hotkeys_rel[i].keysym);
 	}
 }
 
@@ -1130,6 +1501,31 @@ void presave_cfg() {
   presave_joysticks();
 }
 
+static void print_version(void)
+{
+	loadSettings(config_file);
+	// infoprint("%s\n", VERSION_STRING);
+	infoprint("Configuration:");
+	infoprint("SDL (compiled)   : %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+	SDL_version linked;
+	SDL_GetVersion(&linked);
+	infoprint("SDL (linked)     : %d.%d.%d", linked.major, linked.minor, linked.patch);
+	infoprint("CPU JIT compiler : %s%s", USE_JIT ? "enabled" : "disabled", USE_JIT ? (bx_options.jit.jit ? " (active)" : " (inactive)") : "");
+	infoprint("FPU JIT compiler : %s%s", USE_JIT_FPU ? "enabled" : "disabled", USE_JIT_FPU ? (bx_options.jit.jitfpu ? " (active)" : " (inactive)") : "");
+#if FIXED_ADDRESSING
+	infoprint("Addressing mode  : fixed (0x%08x)", FMEMORY);
+#else
+	infoprint("Addressing mode  : %s", DIRECT_ADDRESSING ? "direct" : "normal");
+#endif
+	infoprint("Memory check     : %s", MEMORY_CHECK);
+	infoprint("Full MMU         : %s", FULLMMU ? "enabled" : "disabled");
+	infoprint("FPU              : %s", USES_FPU_CORE);
+	infoprint("DSP              : %s", DSP_EMULATION ? "enabled" : "disabled");
+	infoprint("DSP disassembler : %s", DSP_DISASM ? "enabled" : "disabled");
+	infoprint("OpenGL support   : %s", ENABLE_OPENGL ? "enabled" : "disabled");
+	infoprint("Native features  : %s", PROVIDES_NATFEATS);
+}
+
 void early_cmdline_check(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
 		char *p = argv[c];
@@ -1147,29 +1543,7 @@ void early_cmdline_check(int argc, char **argv) {
 			usage(0);
 			exit(0);
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
-			// infoprint("%s\n", VERSION_STRING);
-			infoprint("HW Configuration:");
-			infoprint("SDL (compiled)   : %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			SDL_version linked;
-			SDL_GetVersion(&linked);
-			infoprint("SDL (linked)     : %d.%d.%d", linked.major, linked.minor, linked.patch);
-#endif
-			infoprint("CPU JIT compiler : %s", (USE_JIT == 1) ? "enabled" : "disabled");
-			infoprint("FPU JIT compiler : %s", (USE_JIT_FPU == 1) ? "enabled" : "disabled");
-#if FIXED_ADDRESSING
-			infoprint("Addressing mode  : fixed (0x%08x)", FMEMORY);
-#else
-			infoprint("Addressing mode  : %s", DIRECT_ADDRESSING ? "direct" : "normal");
-#endif
-			infoprint("Memory check     : %s", MEMORY_CHECK);
-			infoprint("Full MMU         : %s", (FULLMMU == 1) ? "enabled" : "disabled");
-			infoprint("FPU              : %s", USES_FPU_CORE);
-			infoprint("DSP              : %s", (DSP_EMULATION == 1) ? "enabled" : "disabled");
-			infoprint("DSP disassembler : %s", (DSP_DISASM == 1) ? "enabled" : "disabled");
-			infoprint("OpenGL support   : %s", (ENABLE_OPENGL == 1) ? "enabled" : "disabled");
-			infoprint("Native features  : %s", PROVIDES_NATFEATS);
-
+			print_version();
 			exit (0);
 		}
 	}

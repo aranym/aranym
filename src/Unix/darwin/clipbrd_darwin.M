@@ -25,7 +25,7 @@
 #include "debug.h"
 #include <Cocoa/Cocoa.h>
 
-#include "SDL.h"
+#include "SDL_compat.h"
 #include "clipbrd.h"
 
 unichar atari_2_unicode_table[256] = {
