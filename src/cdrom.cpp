@@ -850,6 +850,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track, in
 
     return true;
   }
+  return false;
 #elif (defined(OS_linux) || defined(OS_solaris))
   {
   struct cdrom_tochdr tochdr;

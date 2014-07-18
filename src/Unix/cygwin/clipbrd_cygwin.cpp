@@ -18,12 +18,16 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#if defined(OS_cygwin)
+#if defined(OS_cygwin) || defined(OS_mingw)
+#ifndef WIN32
 #define WIN32 1
+#endif
 #include "SDL_compat.h"
 #include <SDL_syswm.h>
 #include <windows.h>
+#ifdef __CYGWIN__
 #undef WIN32
+#endif
 #include "clipbrd.h"
 #include "host.h"
 

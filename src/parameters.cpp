@@ -924,12 +924,14 @@ void postload_arafs()
 				*ptrLast = '\0';
 				bx_options.aranymfs.drive[i].halfSensitive = false;
 			}
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(_WIN32)
 			// interpet "C:" here as the root directory of C:, not the current directory
 			if (DriveFromLetter(bx_options.aranymfs.drive[i].rootPath[0]) >= 0 &&
 				bx_options.aranymfs.drive[i].rootPath[1] == ':' &&
 				bx_options.aranymfs.drive[i].rootPath[2] == '\0')
 				strcat(bx_options.aranymfs.drive[i].rootPath, DIRSEPARATOR);
+#endif
+#if defined(__CYGWIN__)
 			cygwin_path_to_win32(bx_options.aranymfs.drive[i].rootPath, sizeof(bx_options.aranymfs.drive[i].rootPath));
 #endif
 			strd2upath(bx_options.aranymfs.drive[i].rootPath, bx_options.aranymfs.drive[i].rootPath);

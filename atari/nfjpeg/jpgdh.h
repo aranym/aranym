@@ -69,6 +69,7 @@ typedef JPGD_STRUCT	*JPGD_PTR;
 #define	JPGD_MAGIC	'_JPD'
 #define	JPGD_VERSION	1
 
+#undef NOERROR
 enum JPGD_ENUM {
 	NOERROR=0,			/* File correctly uncompressed */
 	UNKNOWNFORMAT,		/* File is not JFIF (Error) */

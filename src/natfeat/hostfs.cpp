@@ -33,6 +33,7 @@
 #include "toserror.h"
 #include "hostfs.h"
 #include "tools.h"
+#include "win32_supp.h"
 
 #undef  DEBUG_FILENAMETRANSFORMATION
 #undef DEBUG
@@ -41,7 +42,7 @@
 
 #if 0
 # define DEBUG_FILENAMETRANSFORMATION
-# define DFNAME(x) D2(x)
+# define DFNAME(x) x
 #else
 # define DFNAME(x)
 #endif
@@ -91,6 +92,19 @@ static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 	char *realp = realpath(filename, tmp);
 	resolved = (realp != NULL) ? strdup(realp) : NULL;
 	free(tmp);
+#elif defined _WIN32
+	int path_max = PATH_MAX;
+	char *tmp = (char *)malloc(path_max);
+	if (GetFullPathNameA(filename, path_max, tmp, NULL) == 0)
+	{
+		free(tmp);
+		resolved = NULL;
+	} else
+	{
+		resolved = tmp;
+	}
+#else
+	resolved = NULL;
 #endif
 	if (resolved == NULL)
 		resolved = strdup(filename);
@@ -117,110 +131,6 @@ static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 	}
 	return resolved;
 }
-
-// TODO FIXME the following POSIX emulation for MINGW32/WinAPI should be moved elsewhere...
-#ifdef __MINGW32__
-#define S_IXOTH	0
-#define S_IWOTH	0
-#define S_IROTH	0
-#define S_IXGRP	0
-#define S_IWGRP 0
-#define S_IRGRP 0
-#define S_ISVTX 0
-#define S_ISGID 0
-#define S_ISUID 0
-#define S_ISLNK(a) 0
-#define S_IFLNK 0
-#define O_NONBLOCK 0
-#define O_NOCTTY 0
-#define S_IRWXG 0
-#define S_IRWXO 0
-#define _PC_LINK_MAX 2
-
-static inline int readlink(const char *path, char *buf, size_t bufsiz)
-	{ errno = ENOSYS; return -1; }
-static inline int symlink(const char *oldpath, const char *newpath)
-	{ errno = ENOSYS; return -1; }
-static inline long pathconf(const char *file_name, int name)
-	{ errno = ENOSYS; return -1; }
-static inline int truncate(const char *file_name, off_t name)
-	{ errno = ENOSYS; return -1; } // FIXME truncate has to be there somewhere
-static inline int lstat(const char *file_name, struct stat *buf)
-	{ return stat(file_name, buf); }
-
-struct statfs
-{
-  long f_type;                  /* type of filesystem (see below) */
-  long f_bsize;                 /* optimal transfer block size */
-  long f_blocks;                /* total data blocks in file system */
-  long f_bfree;                 /* free blocks in fs */
-  long f_bavail;                /* free blocks avail to non-superuser */
-  long f_files;                 /* total file nodes in file system */
-  long f_ffree;                 /* free file nodes in fs */
-  long f_fsid;                  /* file system id */
-  long f_namelen;               /* maximum length of filenames */
-  long f_spare[6];              /* spare for later */
-};
-
-/* linux-compatible values for fs type */
-#define MSDOS_SUPER_MAGIC     0x4d44
-#define NTFS_SUPER_MAGIC      0x5346544E
-
-/**
- * @author Prof. A Olowofoyeku (The African Chief)
- * @author Frank Heckenbach
- * @see http://gd.tuwien.ac.at/gnu/mingw/os-hacks.h
- */
-int statfs(const char *path, struct statfs *buf)
-{
-  char tmp[MAX_PATH], resolved_path[MAX_PATH];
-  int retval = 0;
-
-  errno = 0;
-
-#ifdef HAVE_REALPATH
-	realpath(path, resolved_path);
-#else
-	strncpy(resolved_path, path, MAX_PATH);
-#endif
-  
-  long sectors_per_cluster, bytes_per_sector;
-  if(!GetDiskFreeSpaceA(resolved_path, (DWORD *)&sectors_per_cluster,
-                        (DWORD *)&bytes_per_sector, (DWORD *)&buf->f_bavail,
-                        (DWORD *)&buf->f_blocks))
-  {
-    errno = ENOENT;
-    retval = -1;
-  }
-  else {
-    buf->f_bsize = sectors_per_cluster * bytes_per_sector;
-    buf->f_files = buf->f_blocks;
-    buf->f_ffree = buf->f_bavail;
-    buf->f_bfree = buf->f_bavail;
-  }
-
-  /* get the FS volume information */
-  if(strspn(":", resolved_path) > 0)
-    resolved_path[3] = '\0';    /* we want only the root */
-  if(GetVolumeInformation
-     (resolved_path, NULL, 0, (DWORD *)&buf->f_fsid, (DWORD *)&buf->f_namelen, NULL, tmp,
-      MAX_PATH))
-  {
-    if(strcasecmp("NTFS", tmp) == 0)
-    {
-      buf->f_type = NTFS_SUPER_MAGIC;
-    }
-    else {
-      buf->f_type = MSDOS_SUPER_MAGIC;
-    }
-  }
-  else {
-    errno = ENOENT;
-    retval = -1;
-  }
-  return retval;
-}
-#endif // __MINGW32__
 
 // please remember to leave this define _after_ the reqired system headers!!!
 // some systems does define this to some important value for them....
@@ -374,7 +284,7 @@ int32 HostFs::dispatch(uint32 fncode)
     switch (fncode) {
     	case GET_VERSION:
     		ret = HOSTFS_NFAPI_VERSION;
-			D(bug("HOSTFS: version %ld", ret));
+			D(bug("HOSTFS: version %d", ret));
     		break;
 
     	case GET_DRIVE_BITS:
@@ -382,7 +292,7 @@ int32 HostFs::dispatch(uint32 fncode)
 			for(int i=0; i<(int)(sizeof(bx_options.aranymfs.drive)/sizeof(bx_options.aranymfs.drive[0])); i++)
 				if (bx_options.aranymfs.drive[i].rootPath != NULL && bx_options.aranymfs.drive[i].rootPath[0])
 					ret |= (1 << i);
-			D(bug("HOSTFS: drvBits %08lx", (uint32)ret));
+			D(bug("HOSTFS: drvBits %08x", (uint32)ret));
     		break;
 
     	case XFS_INIT:
@@ -2174,7 +2084,7 @@ void HostFs::convert_to_stat64( ExtDrive *drv, const struct stat *statBuf, mempt
 	/* ULONG    reserverd[5]    */  WriteInt32( statp + 120,   0 );
 	/* ULONG    reserverd[6]    */  WriteInt32( statp + 124,   0 );
 
-	D(bug("HOSTFS: fs_stat64 mode %#02x, mtime %#08lx", modeHost2Mint(statBuf->st_mode), ReadInt32(statp + 52)));
+	D(bug("HOSTFS: fs_stat64 mode %#02x, mtime %#08x", modeHost2Mint(statBuf->st_mode), ReadInt32(statp + 52)));
 }
 
 int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
@@ -2257,7 +2167,7 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 
 	D(bug( "root:\n"
 		   "  dev	 = %#04x\n"
-		   "  devdrv = %#08lx\n",
+		   "  devdrv = %#08x\n",
 		   dev, it->second->fsDrv));
 
 	fc->drv = it->second;
@@ -2500,13 +2410,13 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 	{
 		case MX_KER_XFSNAME:
 		{
-			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08lx", arg ));
+			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08x", arg ));
 			Host2AtariSafeStrncpy(arg, "hostfs-xfs", 32);
 			return TOS_E_OK;
 		}
 		case MINT_FS_INFO:
 		{
-			D(bug( "HOSTFS: fs_fscntl: FS_INFO: arg = %08lx", arg ));
+			D(bug( "HOSTFS: fs_fscntl: FS_INFO: arg = %08x", arg ));
 			if (arg)
 			{
 				Host2AtariSafeStrncpy(arg, "hostfs-xfs", 32);
@@ -2612,7 +2522,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			char fpathName[MAXPATHNAMELEN];
 			cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
-			D(bug( "HOSTFS: fs_fscntl: FTRUNCATE: %s, %08lx", fpathName, arg ));
+			D(bug( "HOSTFS: fs_fscntl: FTRUNCATE: %s, %08x", fpathName, arg ));
 			if(truncate(fpathName, arg))
 				return errnoHost2Mint( errno, TOS_EFILNF );
 
@@ -2897,7 +2807,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		// in this case we use the [HOSTFS] of config file here
 		dnum = DriveFromLetter(fmountPoint[3]);
 		/* convert U:/c/... to c:/... */
-		fmountPoint[0] = fmountPoint[3];
+		fmountPoint[0] = toupper(fmountPoint[3]);
 		memmove(fmountPoint + 2, fmountPoint + 4, len - 3);
 		len -= 2;
 	}
@@ -2944,7 +2854,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	}
 
 
-	D(bug("HOSTFS: fs_native_init:\n"
+	bug("HOSTFS: fs_native_init:\n"
 	    "\t\t fs_drv	   = %#08x, flags %#08x\n"
 		"\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x (%c)\n"
@@ -2957,7 +2867,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ,drv->mountPoint
 		  ,drv->hostRoot
 		  ,(int)strlen(drv->hostRoot)
-		  ));
+		  );
 
 	return TOS_E_OK;
 }

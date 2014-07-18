@@ -180,6 +180,7 @@ static void install_signal_handler()
 	install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
+#ifdef HAVE_SIGACTION
 	{
 		struct sigaction sa;
 		memset(&sa, 0, sizeof(sa));
@@ -188,6 +189,9 @@ static void install_signal_handler()
 		sa.sa_flags = 0;
 		sigaction(SIGINT, &sa, NULL);
 	}
+#else
+	signal(SIGINT, (void (*)(int))setactvdebug);
+#endif
 
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {

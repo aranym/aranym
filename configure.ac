@@ -324,7 +324,7 @@ AC_CHECK_LIB(m, sin)
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
-AC_CHECK_FUNCS(sigaction signal)
+AC_CHECK_FUNCS(sigaction signal sigsetjmp)
 AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect sbrk)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
@@ -338,6 +338,23 @@ AH_BOTTOM(
 [#ifndef HAVE_CADDR_T
 typedef void * caddr_t;
 #endif])
+
+AC_CACHE_CHECK([whether sigsetjmp is supported],
+  ac_cv_have_sigsetjmp, [
+  AC_TRY_LINK([
+    #include <signal.h>
+    #include <setjmp.h>
+  ], [
+    sigjmp_buf b;
+    sigsetjmp(b, 1);
+    siglongjmp(b, 1);
+  ],
+  ac_cv_have_sigsetjmp=yes, ac_cv_have_sigsetjmp=no
+  )
+])
+if test "$ac_cv_have_sigsetjmp" = "yes"; then
+  AC_DEFINE([HAVE_SIGSETJMP], 1)
+fi
 
 dnl Darwin seems to define mach_task_self() instead of task_self().
 AC_CHECK_FUNCS(mach_task_self task_self)
@@ -361,7 +378,7 @@ case "$host_os" in
     ;;
   mingw*)
     AC_DEFINE([ARANYMHOME], "aranym")
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp Unix/cygwin/win32_supp.cpp"
+    EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/win32_supp.cpp"
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -637,6 +654,11 @@ AC_TRANSLATE_DEFINE(HAVE_MMAP_VM, $have_mmap_vm,
   [Define if your system has a working mmap()-based memory allocator.])
 
 fi dnl HAVE_MMAP_VM
+
+AH_TEMPLATE(HAVE_WIN32_VM, [Define if your system has a working VirtualAlloc()-based memory allocator.])
+if test "$OS_TYPE" = mingw; then
+	AC_DEFINE([HAVE_WIN32_VM])
+fi
 
 dnl Check if we have POSIX shared memory support
 AC_CACHE_CHECK([whether POSIX shared memory is working],
@@ -1935,24 +1957,29 @@ fi
 dnl Natfeat Clipboard driver
 
 NFCLIPBOARDSRCS=""
+AH_TEMPLATE([NFCLIPBRD_SUPPORT], [Define if you want to use Clipboard])
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
-	if [[ "x$OS_TYPE" = "xcygwin" ]]; then
-		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use MS-Windows Clipboard])
+	case $OS_TYPE in
+	cygwin | mingw)
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
 		SYSSRCS="$SYSSRCS Unix/cygwin/clipbrd_cygwin.cpp"
-	elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
-		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use Mac OS X clipboard])
+		;;
+	darwin)
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
  		SYSSRCS="$SYSSRCS Unix/darwin/clipbrd_darwin.M"
-	elif [[ "x$OS_TYPE" = "xbeos" -o "x$OS_TYPE" = "xhaiku" ]]; then
-		AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use BeOS clipboard])
+		;;
+	beos | haiku)
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
  		SYSSRCS="$SYSSRCS Unix/beos/clipbrd_beos.cpp"
 		LIBS="$LIBS -lbe"
-	else
+		;;
+	*)
 		AC_CHECK_LIB(X11, XOpenDisplay)
 		if [[ "x$ac_cv_lib_X11_XOpenDisplay" = "xyes" ]]; then
-			AC_DEFINE([NFCLIPBRD_SUPPORT], 1, [Define if you want to use X11 clipboard])
+			AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
 			NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
 			SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
 			LIBS="$LIBS -lX11"
@@ -1960,7 +1987,8 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
 			WANT_NFCLIPBRD="no"
 		fi
-	fi
+		;;
+	esac
 fi
 
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then

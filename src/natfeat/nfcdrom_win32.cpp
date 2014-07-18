@@ -56,7 +56,9 @@
 
 #define _MS_STRUCT __attribute__ ((ms_struct))
 
+#ifndef FILE_DEVICE_CD_ROM
 #define FILE_DEVICE_CD_ROM                0x00000002
+#endif
 
 #define IOCTL_CDROM_BASE                  FILE_DEVICE_CD_ROM
 

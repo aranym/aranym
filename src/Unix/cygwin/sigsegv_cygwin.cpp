@@ -72,8 +72,10 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
 {
   if (ExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION)
   {
-    handle_access_fault(ExceptionInfo->ContextRecord,
-    	(memptr)(uintptr)((char *)ExceptionInfo->ExceptionRecord->ExceptionInformation[1] - FMEMORY));
+  	CONTEXT_ATYPE CONTEXT_NAME = ExceptionInfo->ContextRecord;
+  	char *fault_addr = (char *)ExceptionInfo->ExceptionRecord->ExceptionInformation[1];
+	D(bug("\nsegfault: pc=%08x, eip=%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], fault_addr, (memptr)(uintptr)(fault_addr - FMEMORY)));
+    handle_access_fault(CONTEXT_NAME, (memptr)(uintptr)(fault_addr - FMEMORY));
     return EXCEPTION_CONTINUE_EXECUTION;
   }
   return EXCEPTION_CONTINUE_SEARCH;

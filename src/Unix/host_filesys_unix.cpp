@@ -76,6 +76,7 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 int HostFilesys::makeDir(char *filename, int perm)
 {
 #ifdef OS_mingw
+	(void) perm;
 	return mkdir(filename);
 #else
 	return mkdir(filename, perm);

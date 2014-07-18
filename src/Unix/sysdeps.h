@@ -624,23 +624,22 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/);
 
 #endif /* OS_mingw */
 
-#if !HAVE_STRCHR
+#ifndef HAVE_STRCHR
 # define strchr index
 # define strrchr rindex
 char *strchr (), *strrchr ();
 #endif
 
-#if !HAVE_MEMCPY
+#ifndef HAVE_MEMCPY
+# ifndef HAVE_BCOPY
+#  error "no working memcpy()"
+# endif
 # define memcpy(d, s, n) bcopy ((s), (d), (n))
 # define memmove(d, s, n) bcopy ((s), (d), (n))
-#else
-# if !HAVE_BCOPY
-#  define bcopy(src, dest, size)  memcpy(dest, src, size)
-# endif
 #endif
 
-#if !HAVE_USLEEP
-# define usleep(microseconds)    {}
+#ifndef HAVE_USLEEP
+# define usleep(microseconds)    SDL_Delay((microseconds) / 1000)
 #endif
 
 #ifdef MACOSX_support
@@ -650,6 +649,13 @@ extern CFBundleRef mainBundle;
 
 
 #endif /* MACOSX_support */
+
+#ifndef HAVE_SIGSETJMP
+# include <setjmp.h>
+# define sigsetjmp(a, b) setjmp(a)
+# define siglongjmp(a, b) longjmp(a, b)
+typedef jmp_buf sigjmp_buf;
+#endif
 
 #ifdef HW_SIGSEGV
 # define SETJMP(a)	sigsetjmp(a, 1)

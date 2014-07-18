@@ -330,6 +330,7 @@ int vm_release(void * addr, size_t size)
 #ifdef HAVE_WIN32_VM
 	if (VirtualFree(align_addr_segment(addr), 0, MEM_RELEASE) == 0)
 		return -1;
+	(void) size;
 #else
 	free(addr);
 #endif
@@ -364,7 +365,11 @@ int vm_protect(void * addr, size_t size, int prot)
 int vm_get_page_size(void)
 {
 #ifdef _WIN32
-    return 4096;
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	if (si.dwAllocationGranularity > si.dwPageSize)
+		return si.dwAllocationGranularity;
+	return si.dwPageSize;
 #else
     return getpagesize();
 #endif
