@@ -1467,9 +1467,14 @@ AH_TEMPLATE([DEBUGGER], [Define if using some internal debugger])
 dnl Select debugger
 if [[ "x$WANT_JIT" = "xno" ]]; then
   dnl new debugger
-  if [[ "$USE_DEBUGGER" = "yes" -a "x$ac_cv_func_sigaction" = "xyes" ]]; then
+  if [[ "$USE_DEBUGGER" = "yes" ]]; then
     AC_DEFINE([DEBUGGER], 1)
     CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
+  fi
+else
+  if [[ "$USE_DEBUGGER" = "yes" ]]; then
+    AC_MSG_WARN([interactive debugger not usable with JIT])
+    USE_DEBUGGER=no
   fi
 fi
 
@@ -1643,7 +1648,7 @@ if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	fi
         if test "$enable_sdl2" != no; then
 		ARANYM_CHECK_FRAMEWORK(SDL2, [])
-		if test "$have_framework_SDL" = yes ; then
+		if test "$have_framework_SDL2" = yes ; then
 			ARANYM_CHECK_FRAMEWORK_LOCATION(SDL2)
 		fi
 	fi

@@ -1,4 +1,8 @@
 2014/07/18 - Thorsten
+configure.ac: fix some typos.
+
+
+2014/07/18 - Thorsten
 Fix building on MinGW.
 
 
