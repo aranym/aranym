@@ -1645,11 +1645,13 @@ if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
 	if test "$have_framework_SDL" = yes ; then
 		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
+        no_sdl=no
 	fi
-        if test "$enable_sdl2" != no; then
+    if test "$enable_sdl2" != no; then
 		ARANYM_CHECK_FRAMEWORK(SDL2, [])
 		if test "$have_framework_SDL2" = yes ; then
 			ARANYM_CHECK_FRAMEWORK_LOCATION(SDL2)
+            no_sdl2=no
 		fi
 	fi
 else

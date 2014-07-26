@@ -786,6 +786,7 @@
 		17473D1815AA07FD00CAEA47 /* fd_trans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fd_trans.h; sourceTree = "<group>"; };
 		17473D2515AA0A1100CAEA47 /* bpf_helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bpf_helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		175909550CA453990089CF9F /* dirty_rects.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dirty_rects.cpp; path = ../../dirty_rects.cpp; sourceTree = SOURCE_ROOT; usesTabs = 1; };
+		1759CCF319845F2600C4500E /* m4 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = m4; path = ../../../m4; sourceTree = "<group>"; };
 		1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.6.dylib; path = MesaGL/lib/libOSMesa.6.dylib; sourceTree = "<group>"; };
 		1765B6EE0C91C0BB00DD682B /* tap.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tap.kext; path = tuntap/tap.kext; sourceTree = "<group>"; };
 		1765B6EF0C91C0BB00DD682B /* tun.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tun.kext; path = tuntap/tun.kext; sourceTree = "<group>"; };
@@ -1010,7 +1011,6 @@
 		17798DE40A652B51009733EB /* registers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = registers.h; sourceTree = "<group>"; };
 		17798DE50A652B51009733EB /* spcflags.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = spcflags.h; sourceTree = "<group>"; };
 		17798DE60A652B51009733EB /* table68k */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = table68k; sourceTree = "<group>"; };
-		17798DE80A652B51009733EB /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = acinclude.m4; path = ../../../acinclude.m4; sourceTree = SOURCE_ROOT; };
 		17798DEA0A652B51009733EB /* ansidecl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ansidecl.h; sourceTree = "<group>"; };
 		17798DEB0A652B51009733EB /* aratapif.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = aratapif.c; sourceTree = "<group>"; };
 		17798DEC0A652B51009733EB /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = autogen.sh; path = ../../../autogen.sh; sourceTree = SOURCE_ROOT; };
@@ -1121,7 +1121,6 @@
 		B49A2413193CBE9600B73091 /* compemu_midfunc_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compemu_midfunc_x86.h; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
-		B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "aranym-0.9.15+CVS-macosx-x86_64_i386.dmg"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C7EE931768552800B63B96 /* MachServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachServer.c; path = darwin/MachServer.c; sourceTree = "<group>"; };
 		B4C7EE941768552800B63B96 /* MachUser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachUser.c; path = darwin/MachUser.c; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
@@ -1648,7 +1647,7 @@
 		17AC409013F1D216003B4FAD /* Unix */ = {
 			isa = PBXGroup;
 			children = (
-				17798DE80A652B51009733EB /* acinclude.m4 */,
+				1759CCF319845F2600C4500E /* m4 */,
 				17798DEC0A652B51009733EB /* autogen.sh */,
 				17798DFD0A652B51009733EB /* configure.ac */,
 				17AC408513F1CFA1003B4FAD /* configure */,
@@ -1737,7 +1736,6 @@
 				B449DA000D2A9212005F0CC6 /* logo.png */,
 				1743987C0B320B480011038E /* README_Xcode.rtf */,
 				17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */,
-				B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */,
 			);
 			name = MacAranym;
 			sourceTree = "<group>";
