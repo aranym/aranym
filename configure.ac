@@ -1645,19 +1645,21 @@ if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
 	if test "$have_framework_SDL" = yes ; then
 		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
+        sdl_version="`defaults read $SDL_LOCATION/Resources/Info.plist CFBundleShortVersionString`"
         no_sdl=no
 	fi
     if test "$enable_sdl2" != no; then
 		ARANYM_CHECK_FRAMEWORK(SDL2, [])
 		if test "$have_framework_SDL2" = yes ; then
 			ARANYM_CHECK_FRAMEWORK_LOCATION(SDL2)
+            sdl2_version="`defaults read $SDL2_LOCATION/Resources/Info.plist CFBundleShortVersionString`"
             no_sdl2=no
 		fi
 	fi
 else
 	dnl Try macro from sdl.m4 and sdl2.m4
 	AM_PATH_SDL(1.2.15)
-        if test "$enable_sdl2" != no; then
+	if test "$enable_sdl2" != no; then
 		AM_PATH_SDL2(2.0.3)
 	fi
 fi
@@ -1671,7 +1673,7 @@ if test "$no_sdl2" != yes -a "$enable_sdl2" != no; then
 	enable_sdl2=yes
 fi
 if test "$have_framework_SDL" = yes -o "$have_framework_SDL2" = yes; then
-        if test "$enable_sdl2" = yes; then
+	if test "$enable_sdl2" = yes; then
 		SDL_CFLAGS="-I$SDL2_LOCATION/Headers"
 		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL2_LOCATION"
 		SDL_LIBS="$SDL2_LIBS"
@@ -1681,7 +1683,7 @@ if test "$have_framework_SDL" = yes -o "$have_framework_SDL2" = yes; then
 		BUNDLE_FRAMEWORKS="$BUNDLE_FRAMEWORKS $SDL_LOCATION"
 	fi
 else
-        if test "$enable_sdl2" = yes; then
+	if test "$enable_sdl2" = yes; then
 		SDL_CFLAGS="$SDL2_CFLAGS"
 		SDL_LIBS="$SDL2_LIBS"
 		sdl_version="$sdl2_version"
