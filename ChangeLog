@@ -1,3 +1,10 @@
+2014/08/01 - Thorsten
+- dialog.cpp: fix a possible NULL ptr reference
+- dlgAlert.cpp: properly terminate the alert template buffer
+  since SDLGui_FindEditField() is called before it
+  is filled.
+
+
 2014/07/26 - Philipp
 - configure.ac: recognize SDL framework for Mac OS X
 - MacAranym.xcodeproj: acinclude.m4 has been replaced by content in m4 directory

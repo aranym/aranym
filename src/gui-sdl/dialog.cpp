@@ -25,7 +25,7 @@ Dialog::Dialog(SGOBJ *new_dlg)
 {
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-	cursor.position = (cursor.object != -1) ? strlen(dlg[cursor.object].txt) : 0;
+	cursor.position = (cursor.object != -1 && dlg[cursor.object].txt) ? strlen(dlg[cursor.object].txt) : 0;
 	cursor.blink_counter = SDL_GetTicks();
 	cursor.blink_state = true;
 }
