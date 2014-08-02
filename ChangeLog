@@ -1,3 +1,7 @@
+2014/08/02 - Thorsten
+- usbhost.cpp: fix segfault in destructor
+
+
 2014/08/01 - Thorsten
 - dialog.cpp: fix a possible NULL ptr reference
 - dlgAlert.cpp: properly terminate the alert template buffer
