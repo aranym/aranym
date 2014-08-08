@@ -1,3 +1,7 @@
+2014/08/08 - Thorsten
+- hostfs.cpp: fix reading timestamp in xfs_dev_datime
+
+
 2014/08/02 - Thorsten
 - usbhost.cpp: fix segfault in destructor
 

@@ -1699,6 +1699,9 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 		{
 			datetime = statBuf.st_mtime + gmtoff(statBuf.st_mtime);
 			datetime = (time2dos(datetime) << 16 ) | date2dos(datetime);
+		} else
+		{
+			datetime = statBuf.st_mtime;
 		}
 		WriteInt32( datetimep, datetime );
 	}
@@ -1992,7 +1995,7 @@ void HostFs::convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr
     {
 	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf->st_mtime );
 	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf->st_atime );
-	/* UWORD atime	   */  WriteInt32( xattrp + 36, statBuf->st_ctime );
+	/* UWORD ctime	   */  WriteInt32( xattrp + 36, statBuf->st_ctime );
 	} else
 	{
 	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf->st_mtime) );
@@ -2854,7 +2857,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	}
 
 
-	bug("HOSTFS: fs_native_init:\n"
+	D(bug("HOSTFS: fs_native_init:\n"
 	    "\t\t fs_drv	   = %#08x, flags %#08x\n"
 		"\t\t fs_devdrv  = %#08x\n"
 		  "\t\t fs_devnum  = %#04x (%c)\n"
@@ -2867,7 +2870,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		  ,drv->mountPoint
 		  ,drv->hostRoot
 		  ,(int)strlen(drv->hostRoot)
-		  );
+		  ));
 
 	return TOS_E_OK;
 }
