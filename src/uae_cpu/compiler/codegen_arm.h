@@ -935,11 +935,17 @@ enum {
 #define CC_PUSH(cc,r)						_W(((cc) << 28) | (0x92d << 16) | (1 << (r)))
 #define PUSH(r)								CC_PUSH(NATIVE_CC_AL, r)
 
+#define CC_PUSH_REGS(cc,r)					_W(((cc) << 28) | (0x92d << 16) | (r))
+#define PUSH_REGS(r)						CC_PUSH_REGS(NATIVE_CC_AL, r)
+
 #define CC_POP(cc,r)						_W(((cc) << 28) | (0x8bd << 16) | (1 << (r)))
 #define POP(r)								CC_POP(NATIVE_CC_AL, r)
 
+#define CC_POP_REGS(cc,r)					_W(((cc) << 28) | (0x8bd << 16) | (r))
+#define POP_REGS(r)							CC_POP_REGS(NATIVE_CC_AL, r)
+
 #define CC_LDR_rR(cc,Rd,Rn)					_LS1(cc,1,0,Rd,Rn,ADD_IMM(0))
-#define CC_LDR_rRI(cc,Rd,Rn,i)				_LS1(cc,1,0,Rd,Rn,ADD_IMM(i))
+#define CC_LDR_rRI(cc,Rd,Rn,i)				_LS1(cc,1,0,Rd,Rn,(i) >= 0 ? ADD_IMM(i) : SUB_IMM(-(i)))
 #define CC_LDR_rRi(cc,Rd,Rn,i)				_LS1(cc,1,0,Rd,Rn,SUB_IMM(i))
 #define CC_LDR_rRR(cc,Rd,Rn,Rm)				_LS1(cc,1,0,Rd,Rn,ADD_REG(Rm))
 #define CC_LDR_rRr(cc,Rd,Rn,Rm)				_LS1(cc,1,0,Rd,Rn,SUB_REG(Rm))
@@ -1079,7 +1085,7 @@ enum {
 #define LDRSH_rRr(Rd,Rn,Rm)                     CC_LDRSH_rRr(NATIVE_CC_AL,Rd,Rn,Rm)
 
 #define CC_LDRH_rR(cc,Rd,Rn)                    _LS2(cc,1,1,0,1,Rd,Rn,ADD2_IMM(0))
-#define CC_LDRH_rRI(cc,Rd,Rn,i)                 _LS2(cc,1,1,0,1,Rd,Rn,ADD2_IMM(i))
+#define CC_LDRH_rRI(cc,Rd,Rn,i)                 _LS2(cc,1,1,0,1,Rd,Rn,(i) >= 0 ? ADD2_IMM(i) : SUB2_IMM(-(i)))
 #define CC_LDRH_rRi(cc,Rd,Rn,i)                 _LS2(cc,1,1,0,1,Rd,Rn,SUB2_IMM(i))
 #define CC_LDRH_rRR(cc,Rd,Rn,Rm)                _LS2(cc,1,1,0,1,Rd,Rn,ADD2_REG(Rm))
 #define CC_LDRH_rRr(cc,Rd,Rn,Rm)                _LS2(cc,1,1,0,1,Rd,Rn,SUB2_REG(Rm))
@@ -1231,5 +1237,8 @@ enum {
 
 #define CC_REVSH_rr(cc,Rd,Rm)				_W(((cc) << 28) | (0x6f << 20) | (0xf << 16) | (0xf << 8) | ((Rd) << 12) | (0xB << 4) | SHIFT_REG(Rm))
 #define REVSH_rr(Rd,Rm)						CC_REVSH_rr(NATIVE_CC_AL,Rd,Rm)
+
+#define CC_PKHBT_rrr(cc,Rd,Rn,Rm)			_W(((cc) << 28) | (0x68 << 20) | (Rn << 16) | (Rd << 12) | (0x1 << 4) | (Rm))
+#define PKHBT_rrr(Rd,Rn,Rm)					CC_PKHBT_rrr(NATIVE_CC_AL,Rd,Rn,Rm)
 
 #endif /* ARM_RTASM_H */

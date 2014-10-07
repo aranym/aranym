@@ -1268,6 +1268,7 @@ dnl gb-- Other platforms should define their own set of noflags file variants
 CAN_JIT=no
 JITSRCS=
 GENJITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
+GENCOMP_ARCH=
 
 if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   dnl i386 CPU
@@ -1279,6 +1280,7 @@ if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
      GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
 #    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
+    GENCOMP_ARCH=x86
   fi
 elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   dnl x86-64 CPU
@@ -1288,6 +1290,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
     DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
     CAN_JIT=yes
+    GENCOMP_ARCH=x86
     WANT_33BIT_ADDRESSING=yes
 	SAVED_CXXFLAGS="$CXXFLAGS"
 	CXXFLAGS="$CXXFLAGS -mno-red-zone"
@@ -1341,6 +1344,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
 	   ;;
     esac
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
+    GENCOMP_ARCH=arm
     CAN_JIT=yes
   fi
 fi
@@ -2132,6 +2136,7 @@ AC_SUBST(SDL_LIBS)
 AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
+AC_SUBST(GENCOMP_ARCH)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.

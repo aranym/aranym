@@ -373,8 +373,8 @@ static inline int cctrue(int cc)
 #elif defined(CPU_arm) && defined(ARM_ASSEMBLY)
 
 struct flag_struct {
-    unsigned int nzcv;
-    unsigned int  x;
+	uae_u32 nzcv;
+	uae_u32 x;
 };
 
 #define FLAGVAL_Q       0x08000000

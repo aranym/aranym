@@ -25,6 +25,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ *  Note:
+ *  	- current using nf_xxx calls for non-flag operations
+ *  	  should be i.E. add vs. adds in the future, but meanwhile for
+ *  	  compatibility with compemu_support nf_ is used as prefix until
+ *  	  compemu_support.cpp raw_xxx calls are all moved to macro definitions
+ *
  */
 
 #include "sysdeps.h"
@@ -64,7 +71,7 @@ static char endstr[1000];
 static char lines[100000];
 static int comp_index=0;
 
-#include "flags_x86.h"
+#include "flags_arm.h"
 
 static int cond_codes[]={-1,-1,
 		NATIVE_CC_HI,NATIVE_CC_LS,
@@ -622,13 +629,13 @@ static void genmov16(uae_u32 opcode, struct instr *curi)
 	
 	if ((opcode & 0xfff8) == 0xf620) {
 		comprintf("\tif (srcreg != dstreg)\n");
-		comprintf("\tadd_l_ri(srcreg+8,16);\n");
-		comprintf("\tadd_l_ri(dstreg+8,16);\n");
+		comprintf("\tarm_ADD_l_ri8(srcreg+8,16);\n");
+		comprintf("\tarm_ADD_l_ri8(dstreg+8,16);\n");
 	}
 	else if ((opcode & 0xfff8) == 0xf600)
-		comprintf("\tadd_l_ri(srcreg+8,16);\n");
+		comprintf("\tarm_ADD_l_ri8(srcreg+8,16);\n");
 	else if ((opcode & 0xfff8) == 0xf608)
-		comprintf("\tadd_l_ri(dstreg+8,16);\n");
+		comprintf("\tarm_ADD_l_ri8(dstreg+8,16);\n");
 
 	comprintf("\tint tmp=scratchie;\n");
 	comprintf("\tscratchie+=4;\n");
@@ -774,8 +781,8 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	    {
 		char* op;
 		switch(type) {
-		 case flag_add: op="add"; break;
-		 case flag_sub: op="sub"; break;
+		 case flag_add: op="add"; break; // nf
+		 case flag_sub: op="sub"; break; // nf
 		 default: abort();
 		}
 		switch (size)
@@ -801,23 +808,23 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	     case sz_byte:
 		comprintf("if (kill_rodent(dst)) {\n");
 		comprintf("\tzero_extend_8_rr(scratchie,%s);\n",src);
-		comprintf("\tor_l_ri(scratchie,0xffffff00);\n");
-		comprintf("\tand_l(%s,scratchie);\n",dst);
+		comprintf("\tor_l_ri(scratchie,0xffffff00);\n"); // nf
+		comprintf("\tarm_AND_l(%s,scratchie);\n",dst);
 		comprintf("\tforget_about(scratchie);\n");
 		comprintf("\t} else \n"
-			  "\tand_b(%s,%s);\n",dst,src);
+			  "\tarm_AND_b(%s,%s);\n",dst,src);
 		break;
 	     case sz_word:
 		comprintf("if (kill_rodent(dst)) {\n");
 		comprintf("\tzero_extend_16_rr(scratchie,%s);\n",src);
-		comprintf("\tor_l_ri(scratchie,0xffff0000);\n");
-		comprintf("\tand_l(%s,scratchie);\n",dst);
+		comprintf("\tor_l_ri(scratchie,0xffff0000);\n"); // nf
+		comprintf("\tarm_AND_l(%s,scratchie);\n",dst);
 		comprintf("\tforget_about(scratchie);\n");
 		comprintf("\t} else \n"
-			  "\tand_w(%s,%s);\n",dst,src);
+			  "\tarm_AND_w(%s,%s);\n",dst,src);
 		break;
 	     case sz_long:
-		comprintf("\tand_l(%s,%s);\n",dst,src);
+		comprintf("\tarm_AND_l(%s,%s);\n",dst,src);
 		break;
 	    }
 	    return;
@@ -829,8 +836,8 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	     case sz_byte:
 		comprintf("if (kill_rodent(dst)) {\n");
 		comprintf("\tzero_extend_8_rr(scratchie,%s);\n",src);
-		comprintf("\tand_l_ri(%s,0xffffff00);\n",dst);
-		comprintf("\tor_l(%s,scratchie);\n",dst);
+		comprintf("\tand_l_ri(%s,0xffffff00);\n",dst); // nf
+		comprintf("\tarm_ORR_l(%s,scratchie);\n",dst);
 		comprintf("\tforget_about(scratchie);\n");
 		comprintf("\t} else \n"
 			  "\tmov_b_rr(%s,%s);\n",dst,src);
@@ -838,8 +845,8 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	     case sz_word:
 		comprintf("if (kill_rodent(dst)) {\n");
 		comprintf("\tzero_extend_16_rr(scratchie,%s);\n",src);
-		comprintf("\tand_l_ri(%s,0xffff0000);\n",dst);
-		comprintf("\tor_l(%s,scratchie);\n",dst);
+		comprintf("\tand_l_ri(%s,0xffff0000);\n",dst); // nf
+		comprintf("\tarm_ORR_l(%s,scratchie);\n",dst);
 		comprintf("\tforget_about(scratchie);\n");
 		comprintf("\t} else \n"
 			  "\tmov_w_rr(%s,%s);\n",dst,src);
@@ -857,8 +864,8 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 	    {
 		char* op;
 		switch(type) {
-		 case flag_or:  op="or"; break;
-		 case flag_eor: op="xor"; break;
+		 case flag_or:  op="ORR"; break; // nf
+		 case flag_eor: op="EOR"; break; // nf
 		 default: abort();
 		}
 		switch (size)
@@ -866,21 +873,21 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 		 case sz_byte:
 		    comprintf("if (kill_rodent(dst)) {\n");
 		    comprintf("\tzero_extend_8_rr(scratchie,%s);\n",src);
-		    comprintf("\t%s_l(%s,scratchie);\n",op,dst);
+		    comprintf("\tarm_%s_l(%s,scratchie);\n",op,dst);
 		    comprintf("\tforget_about(scratchie);\n");
 		    comprintf("\t} else \n"
-			      "\t%s_b(%s,%s);\n",op,dst,src);
+			      "\tarm_%s_b(%s,%s);\n",op,dst,src);
 		    break;
 		 case sz_word:
 		    comprintf("if (kill_rodent(dst)) {\n");
 		    comprintf("\tzero_extend_16_rr(scratchie,%s);\n",src);
-		    comprintf("\t%s_l(%s,scratchie);\n",op,dst);
+		    comprintf("\tarm_%s_l(%s,scratchie);\n",op,dst);
 		    comprintf("\tforget_about(scratchie);\n");
 		    comprintf("\t} else \n"
-			      "\t%s_w(%s,%s);\n",op,dst,src);
+			      "\tarm_%s_w(%s,%s);\n",op,dst,src);
 		    break;
 		 case sz_long:
-		    comprintf("\t%s_l(%s,%s);\n",op,dst,src);
+		    comprintf("\tarm_%s_l(%s,%s);\n",op,dst,src);
 		    break;
 		}
 		close_brace();
@@ -1235,7 +1242,7 @@ gen_opcode (unsigned long int opcode)
 	 case sz_long: comprintf("\ttmp=src;\n"); break;
 	 default: abort();
 	}
-	comprintf("\tadd_l(dst,tmp);\n");
+	comprintf("\tarm_ADD_l(dst,tmp);\n");
 	genastore ("dst", curi->dmode, "dstreg", sz_long, "dst");
 	break;
      case i_ADDX:
@@ -1479,7 +1486,7 @@ gen_opcode (unsigned long int opcode)
      case i_RTD:
 	genamode (curi->smode, "srcreg", curi->size, "offs", 1, 0);
 	/* offs is constant */
-	comprintf("\tadd_l_ri(offs,4);\n");
+	comprintf("\tarm_ADD_l_ri8(offs,4);\n");
 	start_brace();
 	comprintf("\tint newad=scratchie++;\n"
 		  "\treadlong(15,newad,scratchie);\n"
@@ -1487,7 +1494,7 @@ gen_opcode (unsigned long int opcode)
 		  "\tget_n_addr_jmp(newad,PC_P,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc_oldp,PC_P);\n"
 		  "\tm68k_pc_offset=0;\n"
-		  "\tadd_l(15,offs);\n");
+		  "\tarm_ADD_l(15,offs);\n");
 	gen_update_next_handler();
 	isjump; 
 	break;
@@ -1499,14 +1506,14 @@ gen_opcode (unsigned long int opcode)
 		  "\tmov_l_rr(src,15);\n");
 	if (curi->size==sz_word)
 	    comprintf("\tsign_extend_16_rr(offs,offs);\n");
-	comprintf("\tadd_l(15,offs);\n");
+	comprintf("\tarm_ADD_l(15,offs);\n");
 	genastore ("src", curi->smode, "srcreg", sz_long, "src");
 	break;
      case i_UNLK:
 	genamode (curi->smode, "srcreg", curi->size, "src", 1, 0);
 	comprintf("\tmov_l_rr(15,src);\n"
 		  "\treadlong(15,src,scratchie);\n"
-		  "\tadd_l_ri(15,4);\n");
+		  "\tarm_ADD_l_ri8(15,4);\n");
 	genastore ("src", curi->smode, "srcreg", curi->size, "src");
 	break;
      case i_RTS:
@@ -1561,10 +1568,9 @@ gen_opcode (unsigned long int opcode)
 		  "\tmov_l_ri(ret,retadd);\n"
 		  "\tsub_l_ri(15,4);\n"
 		  "\twritelong_clobber(15,ret,scratchie);\n");
-	comprintf("\tadd_l_ri(src,m68k_pc_offset_thisinst+2);\n");
+	comprintf("\tarm_ADD_l_ri(src,m68k_pc_offset_thisinst+2);\n");
 	comprintf("\tm68k_pc_offset=0;\n");
-	comprintf("\tadd_l(PC_P,src);\n");
-
+	comprintf("\tarm_ADD_l(PC_P,src);\n");
 	comprintf("\tcomp_pc_p=(uae_u8*)get_const(PC_P);\n");
 	break;
      case i_Bcc:
@@ -1579,11 +1585,11 @@ gen_opcode (unsigned long int opcode)
 	comprintf("\tsub_l_ri(src,m68k_pc_offset-m68k_pc_offset_thisinst-2);\n");
 	/* Leave the following as "add" --- it will allow it to be optimized
 	   away due to src being a constant ;-) */
-	comprintf("\tadd_l_ri(src,(uintptr)comp_pc_p);\n");  
+	comprintf("\tarm_ADD_l_ri(src,(uintptr)comp_pc_p);\n");
 	comprintf("\tmov_l_ri(PC_P,(uintptr)comp_pc_p);\n");
 	/* Now they are both constant. Might as well fold in m68k_pc_offset */
-	comprintf("\tadd_l_ri(src,m68k_pc_offset);\n");
-	comprintf("\tadd_l_ri(PC_P,m68k_pc_offset);\n");
+	comprintf("\tarm_ADD_l_ri(src,m68k_pc_offset);\n");
+	comprintf("\tarm_ADD_l_ri(PC_P,m68k_pc_offset);\n");
 	comprintf("\tm68k_pc_offset=0;\n");
 
 	if (curi->cc>=2) {
@@ -1653,13 +1659,14 @@ gen_opcode (unsigned long int opcode)
 	 default: abort();  /* Seems this only comes in word flavour */
 	}
 	comprintf("\tsub_l_ri(offs,m68k_pc_offset-m68k_pc_offset_thisinst-2);\n"); 
-	comprintf("\tadd_l_ri(offs,(uintptr)comp_pc_p);\n"); /* New PC, 
+	comprintf("\tarm_ADD_l_ri(offs,(uintptr)comp_pc_p);\n");
+	/* New PC,
 								once the 
 								offset_68k is
 								* also added */
 	/* Let's fold in the m68k_pc_offset at this point */
-	comprintf("\tadd_l_ri(offs,m68k_pc_offset);\n");
-	comprintf("\tadd_l_ri(PC_P,m68k_pc_offset);\n");
+	comprintf("\tarm_ADD_l_ri(offs,m68k_pc_offset);\n");
+	comprintf("\tarm_ADD_l_ri(PC_P,m68k_pc_offset);\n");
 	comprintf("\tm68k_pc_offset=0;\n");
 
 	start_brace();

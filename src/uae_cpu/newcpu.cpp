@@ -1114,7 +1114,7 @@ static int m68k_call(uae_u32 pc)
 
 static uae_u32 m68k_alloca(int size)
 {
-	uae_u32 sp = m68k_areg(regs, 7) - (size + sizeof(void *));
+	uae_u32 sp = (m68k_areg(regs, 7) - size) & ~1;
 	m68k_areg(regs, 7) = sp;
 	if ((regs.sr & 0x2000) == 0)
 		regs.usp = sp;
@@ -1134,14 +1134,19 @@ uae_u32 linea68000(volatile uae_u16 opcode)
 	SAVE_EXCEPTION;
 	save_regs(r);
 
+	int sz = 8 + sizeof(void *);
+	uae_u32 sp = 0;
+	uae_u32 backup[4];
+
 	if (sigsetjmp(jmp, 1) == 0)
 	{
 		void *p = jmp;
-		uae_u32 sp;
 		uae_u8 *sp_p;
 		int exc;
 		
-		sp = m68k_alloca(8);
+		sp = m68k_alloca(sz);
+		memcpy(backup, phys_get_real_address(sp), sz);
+
 		WriteHWMemInt16(sp, opcode);
 		WriteHWMemInt16(sp + 2, 0xa0ff);
 		WriteHWMemInt32(sp + 4, 13);
@@ -1155,6 +1160,10 @@ uae_u32 linea68000(volatile uae_u16 opcode)
 	} else
 	{
 		abase = m68k_dreg(regs, 0);
+	}
+
+	if (sp)	{
+		memcpy(phys_get_real_address(sp), backup, sz);
 	}
 	restore_regs(r);
 	m68k_setpc(r.pc);

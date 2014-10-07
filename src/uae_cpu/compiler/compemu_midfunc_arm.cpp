@@ -935,25 +935,6 @@ MIDFUNC(3,mov_w_rR,(W2 d, RR4 s, IMM offset))
 }
 MENDFUNC(3,mov_w_rR,(W2 d, RR4 s, IMM offset))
 
-#if !defined(CPU_arm)
-/* read the word at the address contained in s+offset and store in d */
-MIDFUNC(3,mov_b_rR,(W1 d, RR4 s, IMM offset))
-{
-	if (isconst(s)) {
-		COMPCALL(mov_b_rm)(d,live.state[s].val+offset);
-		return;
-	}
-	CLOBBER_MOV;
-	s=readreg(s,4);
-	d=writereg(d,1);
-
-	raw_mov_b_rR(d,s,offset);
-	unlock2(d);
-	unlock2(s);
-}
-MENDFUNC(3,mov_b_rR,(W1 d, RR4 s, IMM offset))
-#endif
-
 /* read the long at the address contained in s+offset and store in d */
 MIDFUNC(3,mov_l_brR,(W4 d, RR4 s, IMM offset))
 {
@@ -1447,17 +1428,6 @@ MIDFUNC(2,and_b,(RW1 d, RR1 s))
 }
 MENDFUNC(2,and_b,(RW1 d, RR1 s))
 
-// gb-- used for making an fpcr value in compemu_fpp.cpp
-MIDFUNC(2,or_l_rm,(RW4 d, IMM s))
-{
-	CLOBBER_OR;
-	d=rmw(d,4,4);
-
-	raw_or_l_rm(d,s);
-	unlock2(d);
-}
-MENDFUNC(2,or_l_rm,(RW4 d, IMM s))
-
 MIDFUNC(2,or_l_ri,(RW4 d, IMM i))
 {
 	if (isconst(d) && !needflags) {
@@ -1798,16 +1768,6 @@ MIDFUNC(2,cmp_l,(RR4 d, RR4 s))
 }
 MENDFUNC(2,cmp_l,(RR4 d, RR4 s))
 
-MIDFUNC(2,cmp_l_ri,(RR4 r, IMM i))
-{
-	CLOBBER_CMP;
-	r=readreg(r,4);
-
-	raw_cmp_l_ri(r,i);
-	unlock2(r);
-}
-MENDFUNC(2,cmp_l_ri,(RR4 r, IMM i))
-
 MIDFUNC(2,cmp_w,(RR2 d, RR2 s))
 {
 	CLOBBER_CMP;
@@ -1886,7 +1846,180 @@ MIDFUNC(1,f_forget_about,(FW r))
 }
 MENDFUNC(1,f_forget_about,(FW r))
 
+// ARM optimized functions
 
+MIDFUNC(2,arm_ADD_l,(RW4 d, RR4 s))
+{
+	if (isconst(s)) {
+		COMPCALL(arm_ADD_l_ri)(d,live.state[s].val);
+		return;
+	}
+
+	s=readreg(s,4);
+	d=rmw(d,4,4);
+
+	raw_ADD_l_rr(d,s);
+
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_ADD_l,(RW4 d, RR4 s))
+
+MIDFUNC(2,arm_ADD_l_ri,(RW4 d, IMM i))
+{
+	if (!i) return;
+	if (isconst(d)) {
+		live.state[d].val+=i;
+		return;
+	}
+#if USE_OFFSET
+	add_offset(d,i);
+	return;
+#endif
+	d=rmw(d,4,4);
+
+	raw_LDR_l_ri(REG_WORK1, i);
+	raw_ADD_l_rr(d,REG_WORK1);
+	unlock2(d);
+}
+MENDFUNC(2,arm_ADD_l_ri,(RW4 d, IMM i))
+
+MIDFUNC(2,arm_ADD_l_ri8,(RW4 d, IMM i))
+{
+	if (!i) return;
+	if (isconst(d)) {
+		live.state[d].val+=i;
+		return;
+	}
+#if USE_OFFSET
+	add_offset(d,i);
+	return;
+#endif
+	d=rmw(d,4,4);
+
+	raw_ADD_l_rri(d,d,i);
+	unlock2(d);
+}
+MENDFUNC(2,arm_ADD_l_ri8,(RW4 d, IMM i))
+
+MIDFUNC(2,arm_AND_l,(RW4 d, RR4 s))
+{
+	s=readreg(s,4);
+	d=rmw(d,4,4);
+
+	raw_AND_l_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_AND_l,(RW4 d, RR4 s))
+
+MIDFUNC(2,arm_AND_w,(RW2 d, RR2 s))
+{
+	s=readreg(s,2);
+	d=rmw(d,2,2);
+
+	raw_AND_w_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_AND_w,(RW2 d, RR2 s))
+
+MIDFUNC(2,arm_AND_b,(RW1 d, RR1 s))
+{
+	s=readreg(s,1);
+	d=rmw(d,1,1);
+
+	raw_AND_b_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_AND_b,(RW1 d, RR1 s))
+
+MIDFUNC(2,arm_AND_l_ri8,(RW4 d, IMM i))
+{
+	if (isconst(d)) {
+		live.state[d].val &= i;
+		return;
+	}
+
+	d=rmw(d,4,4);
+
+	raw_AND_l_ri(d,i);
+	unlock2(d);
+}
+MENDFUNC(2,arm_AND_l_ri8,(RW4 d, IMM i))
+
+MIDFUNC(2,arm_EOR_b,(RW1 d, RR1 s))
+{
+	s=readreg(s,1);
+	d=rmw(d,1,1);
+
+	raw_EOR_b_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_EOR_b,(RW1 d, RR1 s))
+
+MIDFUNC(2,arm_EOR_l,(RW4 d, RR4 s))
+{
+	s=readreg(s,4);
+	d=rmw(d,4,4);
+
+	raw_EOR_l_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_EOR_l,(RW4 d, RR4 s))
+
+MIDFUNC(2,arm_EOR_w,(RW2 d, RR2 s))
+{
+	s=readreg(s,2);
+	d=rmw(d,2,2);
+
+	raw_EOR_w_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_EOR_w,(RW2 d, RR2 s))
+
+MIDFUNC(2,arm_ORR_b,(RW1 d, RR1 s))
+{
+	s=readreg(s,1);
+	d=rmw(d,1,1);
+
+	raw_ORR_b_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_ORR_b,(RW1 d, RR1 s))
+
+MIDFUNC(2,arm_ORR_l,(RW4 d, RR4 s))
+{
+	if (isconst(d) && isconst(s)) {
+		live.state[d].val|=live.state[s].val;
+		return;
+	}
+	s=readreg(s,4);
+	d=rmw(d,4,4);
+
+	raw_ORR_l_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,arm_ORR_l,(RW4 d, RR4 s))
+
+MIDFUNC(2,arm_ORR_w,(RW2 d, RR2 s))
+{
+	s=readreg(s,2);
+	d=rmw(d,2,2);
+
+	raw_ORR_w_rr(d,s);
+	unlock2(d);
+	unlock2(s);
+}
+MENDFUNC(2,or_w,(RW2 d, RR2 s))
+
+// Other
 static inline void flush_cpu_icache(void *start, void *stop)
 {
 

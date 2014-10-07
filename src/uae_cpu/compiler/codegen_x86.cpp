@@ -194,6 +194,14 @@ static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #define x86_get_target()		get_target()
 #define x86_emit_failure(MSG)	jit_fail(MSG, __FILE__, __LINE__, __FUNCTION__)
 
+#define compemu_raw_add_l_mi(a,b)	raw_add_l_mi(a,b)
+#define compemu_raw_and_l_ri(a,b)	raw_and_l_ri(a,b)
+#define compemu_raw_mov_l_rm(a,b)	raw_mov_l_rm(a,b)
+#define compemu_raw_sub_l_mi(a,b)	raw_sub_l_mi(a,b)
+#define compemu_raw_jl(a)			raw_jl(a)
+#define compemu_raw_jz_b_oponly()	raw_jz_b_oponly()
+#define compemu_raw_test_l_rr(a,b) 	raw_test_l_rr(a,b)
+
 static void jit_fail(const char *msg, const char *file, int line, const char *function)
 {
 	panicbug("JIT failure in function %s from file %s at line %d: %s",
@@ -3453,6 +3461,20 @@ static inline void raw_dec_sp(int off)
 static inline void raw_inc_sp(int off)
 {
     if (off) raw_add_l_ri(ESP_INDEX,off);
+}
+
+static inline void raw_push_regs_to_preserve(void) {
+	  for (int i=N_REGS;i--;) {
+	      if (need_to_preserve[i])
+		  raw_push_l_r(i);
+	  }
+}
+
+static inline void raw_pop_preserved_regs(void) {
+	  for (int i=0;i<N_REGS;i++) {
+	      if (need_to_preserve[i])
+		  raw_pop_l_r(i);
+	  }
 }
 
 /*************************************************************************

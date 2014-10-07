@@ -31,6 +31,23 @@
  *
  */
 
+// Arm optimized midfunc
+DECLARE_MIDFUNC(arm_ADD_l(RW4 d, RR4 s));
+DECLARE_MIDFUNC(arm_ADD_l_ri(RW4 d, IMM i));
+DECLARE_MIDFUNC(arm_ADD_l_ri8(RW4 d, IMM i));
+DECLARE_MIDFUNC(arm_AND_b(RW1 d, RR1 s));
+DECLARE_MIDFUNC(arm_AND_w(RW2 d, RR2 s));
+DECLARE_MIDFUNC(arm_AND_l(RW4 d, RR4 s));
+DECLARE_MIDFUNC(arm_AND_l_ri8(RW4 d, IMM i));
+DECLARE_MIDFUNC(arm_EOR_b(RW1 d, RR1 s));
+DECLARE_MIDFUNC(arm_EOR_l(RW4 d, RR4 s));
+DECLARE_MIDFUNC(arm_EOR_w(RW2 d, RR2 s));
+DECLARE_MIDFUNC(arm_ORR_b(RW1 d, RR1 s));
+DECLARE_MIDFUNC(arm_ORR_l(RW4 d, RR4 s));
+DECLARE_MIDFUNC(arm_ORR_w(RW2 d, RR2 s));
+
+
+// Emulated midfunc
 DECLARE_MIDFUNC(bt_l_ri(RR4 r, IMM i));
 DECLARE_MIDFUNC(bt_l_rr(RR4 r, RR4 b));
 DECLARE_MIDFUNC(btc_l_rr(RW4 r, RR4 b));
@@ -74,13 +91,6 @@ DECLARE_MIDFUNC(setcc(W1 d, IMM cc));
 DECLARE_MIDFUNC(setcc_m(IMM d, IMM cc));
 DECLARE_MIDFUNC(cmov_l_rr(RW4 d, RR4 s, IMM cc));
 DECLARE_MIDFUNC(bsf_l_rr(W4 d, RR4 s));
-DECLARE_MIDFUNC(pop_m(IMM d));
-DECLARE_MIDFUNC(push_m(IMM d));
-DECLARE_MIDFUNC(pop_l(W4 d));
-DECLARE_MIDFUNC(push_l_i(IMM i));
-DECLARE_MIDFUNC(push_l(RR4 s));
-DECLARE_MIDFUNC(clear_16(RW4 r));
-DECLARE_MIDFUNC(clear_8(RW4 r));
 DECLARE_MIDFUNC(sign_extend_16_rr(W4 d, RR2 s));
 DECLARE_MIDFUNC(sign_extend_8_rr(W4 d, RR1 s));
 DECLARE_MIDFUNC(zero_extend_16_rr(W4 d, RR2 s));
@@ -92,7 +102,6 @@ DECLARE_MIDFUNC(mov_b_rr(W1 d, RR1 s));
 DECLARE_MIDFUNC(mov_w_rr(W2 d, RR2 s));
 DECLARE_MIDFUNC(mov_l_rR(W4 d, RR4 s, IMM offset));
 DECLARE_MIDFUNC(mov_w_rR(W2 d, RR4 s, IMM offset));
-DECLARE_MIDFUNC(mov_b_rR(W1 d, RR4 s, IMM offset));
 DECLARE_MIDFUNC(mov_l_brR(W4 d, RR4 s, IMM offset));
 DECLARE_MIDFUNC(mov_w_brR(W2 d, RR4 s, IMM offset));
 DECLARE_MIDFUNC(mov_b_brR(W1 d, RR4 s, IMM offset));
@@ -125,7 +134,6 @@ DECLARE_MIDFUNC(and_l_ri(RW4 d, IMM i));
 DECLARE_MIDFUNC(and_l(RW4 d, RR4 s));
 DECLARE_MIDFUNC(and_w(RW2 d, RR2 s));
 DECLARE_MIDFUNC(and_b(RW1 d, RR1 s));
-DECLARE_MIDFUNC(or_l_rm(RW4 d, IMM s));
 DECLARE_MIDFUNC(or_l_ri(RW4 d, IMM i));
 DECLARE_MIDFUNC(or_l(RW4 d, RR4 s));
 DECLARE_MIDFUNC(or_w(RW2 d, RR2 s));
@@ -149,7 +157,6 @@ DECLARE_MIDFUNC(sub_l(RW4 d, RR4 s));
 DECLARE_MIDFUNC(sub_w(RW2 d, RR2 s));
 DECLARE_MIDFUNC(sub_b(RW1 d, RR1 s));
 DECLARE_MIDFUNC(cmp_l(RR4 d, RR4 s));
-DECLARE_MIDFUNC(cmp_l_ri(RR4 r, IMM i));
 DECLARE_MIDFUNC(cmp_w(RR2 d, RR2 s));
 DECLARE_MIDFUNC(cmp_b(RR1 d, RR1 s));
 DECLARE_MIDFUNC(xor_l(RW4 d, RR4 s));

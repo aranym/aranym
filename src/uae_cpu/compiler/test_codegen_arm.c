@@ -248,5 +248,7 @@ TEST(CC_MOV_ri(NATIVE_CC_CC, 4,1), 0x33a04001, "movcc	r4, #1");
 
 int imm = 0x9f;
 TEST(ADDS_rri(0, 0, imm << 24), 0xe290049f, "adds r0, r0, 0x9f000000");
+
+TEST(PKHBT_rrr(1, 2, 3), 0xe6821013, "pkhbt r1,r2,r3");
 }
 

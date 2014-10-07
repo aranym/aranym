@@ -66,6 +66,8 @@ DBGSP = @DBGSP@
 TAPIF = @TAPIF@
 USBHOSTSRCS = @USBHOSTSRCS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+GENCOMP_ARCH = @GENCOMP_ARCH@
+GENCOMP_SRC = gencomp$(filter _$(GENCOMP_ARCH),_arm)
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
@@ -170,7 +172,7 @@ GENSRCS = \
 	uae_cpu/cpuopti.c \
 	uae_cpu/gencpu.c \
 	uae_cpu/readcpu.cpp \
-	uae_cpu/compiler/gencomp.c
+	uae_cpu/compiler/$(GENCOMP_SRC).c
 
 BUNDLE_RESOURCES = \
 	$(srcdir)/Unix/darwin/busybee.icns \
@@ -473,8 +475,8 @@ $(GEN_DIR)/build68k: $(GEN_DIR)/build68k.o
 	$(AM_V_CC)$(CC) $(LDFLAGS) -o $(GEN_DIR)/build68k $(GEN_DIR)/build68k.o
 $(GEN_DIR)/gencpu: $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencpu $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-$(GEN_DIR)/gencomp: $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+$(GEN_DIR)/gencomp: $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 
 $(GEN_DIR)/cpudefs.cpp: $(GEN_DIR)/build68k uae_cpu/table68k
 	$(GEN_DIR)/build68k <$(srcdir)/uae_cpu/table68k > $(GEN_DIR)/cpudefs.cpp
@@ -503,7 +505,9 @@ $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
 $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp compemu_midfunc_x86.cpp codegen_arm.cpp compemu_midfunc_arm.cpp $(GEN_DIR)/comptbl.h
+ifdef GENCOMP_ARCH
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_$(GENCOMP_ARCH).cpp compemu_midfunc_$(GENCOMP_ARCH).cpp $(GEN_DIR)/comptbl.h
+endif
 
 $(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@

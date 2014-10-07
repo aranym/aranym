@@ -1,3 +1,15 @@
+	
+2014/10/08 - Jens
+- Makefile.in / configure.ac - seperated arm/x86 compemu files more concrete in generated Makefile
+- gencomp.c - removed arm include
+- gencomp_arm.c - special arm version of gencomp.c
+- codegen_x86.cpp - preserve/restore registers, compemu_raw function declaration
+- compemu.h - data buffer settings
+- compemu_support.cpp - data buffer support (experimental, see what is faster way storing immediate values)
+- codegen_arm.cpp - use of data buffers, code cleanup, optimized code, bug fixing
+- MacAranym.xcodeproj/README_Xcode.rtf - fixed mac build, added missing source files to project
+- hostscreen.cpp - Flag added to avoid nested Line A calls
+
 2014/08/08 - Thorsten
 - hostfs.cpp: fix reading timestamp in xfs_dev_datime
 

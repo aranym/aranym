@@ -733,6 +733,75 @@ static inline void emit_block(const uae_u8 *block, uae_u32 blocklen)
 	target+=blocklen;
 }
 
+#if defined(USE_DATA_BUFFER)
+
+static uae_u8* data_start;
+static uae_u8* data_target;
+static uae_u8* data_ptr;
+
+static inline void data_byte(uae_u8 x)
+{
+    *(--data_target)=x;
+}
+
+static inline void data_word(uae_u16 x)
+{
+    data_target-=2;
+    *((uae_u16*)data_target)=x;
+}
+
+static inline void data_long(uae_u32 x)
+{
+    data_target-=4;
+    *((uae_u32*)data_target)=x;
+}
+
+static __inline__ void data_quad(uae_u64 x)
+{
+    data_target-=8;
+    *((uae_u64*)data_target)=x;
+}
+
+static inline void data_skip(int size) {
+	data_target -= size;
+}
+
+static inline void data_block(const uae_u8 *block, uae_u32 blocklen)
+{
+	data_target-=blocklen;
+	memcpy((uae_u8 *)data_target,block,blocklen);
+}
+
+static inline void data_addr(void *addr) {
+	data_target-=sizeof(void *);
+	*((void **)data_target) = addr;
+}
+
+static inline long get_data_offset() {
+	return data_target - data_start;
+}
+
+static inline uae_u8* get_data_target(void)
+{
+    return data_target;
+}
+
+static inline void set_data_start() {
+	data_start = data_target;
+}
+
+static inline void reset_data_buffer() {
+	data_target = data_ptr;
+}
+
+#define MAX_COMPILE_PTR 	data_target
+
+#else
+
+#define MAX_COMPILE_PTR		max_compile_start
+
+#endif
+
 static inline uae_u32 reverse32(uae_u32 v)
 {
 #if 1
@@ -1154,12 +1223,12 @@ static inline void do_load_reg(int n, int r)
   else if (r == FLAGX)
 	raw_load_flagx(n, r);
   else
-	raw_mov_l_rm(n, (uintptr) live.state[r].mem);
+	compemu_raw_mov_l_rm(n, (uintptr) live.state[r].mem);
 }
 
 static inline void check_load_reg(int n, int r)
 {
-  raw_mov_l_rm(n, (uintptr) live.state[r].mem);
+  compemu_raw_mov_l_rm(n, (uintptr) live.state[r].mem);
 }
 
 static inline void log_vwrite(int r)
@@ -1432,7 +1501,7 @@ static  int alloc_reg_hinted(int r, int size, int willclobber, int hint)
 	if (size==4 && live.state[r].validsize==2) {
 		log_isused(bestreg);
 		log_visused(r);
-	    raw_mov_l_rm(bestreg,(uintptr)live.state[r].mem);
+		compemu_raw_mov_l_rm(bestreg,(uintptr)live.state[r].mem);
 	    raw_bswap_32(bestreg);
 	    raw_zero_extend_16_rr(rr,rr);
 	    raw_zero_extend_16_rr(bestreg,bestreg);
@@ -2374,7 +2443,7 @@ void compiler_exit(void)
 #ifdef PROFILE_COMPILE_TIME
 	emul_end_time = clock();
 #endif
-	
+
 	// Deallocate translation cache
 	if (compiled_code) {
 		vm_release(compiled_code, cache_size * 1024);
@@ -2572,7 +2641,7 @@ void flush(int save_regs)
 		switch(live.state[i].status) {
 		 case INMEM:   
 		    if (live.state[i].val) {
-			raw_add_l_mi((uintptr)live.state[i].mem,live.state[i].val);
+			compemu_raw_add_l_mi((uintptr)live.state[i].mem,live.state[i].val);
 			log_vwrite(i);
 			live.state[i].val=0;
 		    }
@@ -3051,6 +3120,9 @@ void alloc_cache(void)
 		max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST;
 		current_compile_p = compiled_code;
 		current_cache_size = 0;
+#if defined(USE_DATA_BUFFER)
+		data_target = data_ptr = compiled_code + cache_size * 1024;
+#endif
 	}
 }
 
@@ -3325,74 +3397,54 @@ static inline void create_popalls(void)
   align_target(align_jumps);
   current_compile_p=get_target();
   pushall_call_handler=get_target();
-  for (i=N_REGS;i--;) {
-      if (need_to_preserve[i])
-	  raw_push_l_r(i);
-  }
+  raw_push_regs_to_preserve();
   raw_dec_sp(stack_space);
   r=REG_PC_TMP;
-  raw_mov_l_rm(r,(uintptr)&regs.pc_p);
-  raw_and_l_ri(r,TAGMASK);
+  compemu_raw_mov_l_rm(r,(uintptr)&regs.pc_p);
+  compemu_raw_and_l_ri(r,TAGMASK);
   raw_jmp_m_indexed((uintptr)cache_tags,r,SIZEOF_VOID_P);
 
   /* now the exit points */
   align_target(align_jumps);
   popall_do_nothing=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)do_nothing);
   
   align_target(align_jumps);
   popall_execute_normal=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)execute_normal);
 
   align_target(align_jumps);
   popall_cache_miss=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)cache_miss);
 
   align_target(align_jumps);
   popall_recompile_block=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)recompile_block);
 
   align_target(align_jumps);
   popall_exec_nostats=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)exec_nostats);
 
   align_target(align_jumps);
   popall_check_checksum=get_target();
   raw_inc_sp(stack_space);
-  for (i=0;i<N_REGS;i++) {
-      if (need_to_preserve[i])
-	  raw_pop_l_r(i);
-  }
+  raw_pop_preserved_regs();
   raw_jmp((uintptr)check_checksum);
 
   // no need to further write into popallspace
   vm_protect(popallspace, POPALLSPACE_SIZE, VM_PAGE_READ | VM_PAGE_EXECUTE);
-  flush_cpu_icache((void *)popallspace, (void *)target);
+  // No need to flush. Initialized and not modified
+  // flush_cpu_icache((void *)popallspace, (void *)target);
 }
 
 static inline void reset_lists(void)
@@ -3412,16 +3464,16 @@ static void prepare_block(blockinfo* bi)
     set_target(current_compile_p);
     align_target(align_jumps);
     bi->direct_pen=(cpuop_func *)get_target();
-    raw_mov_l_rm(0,(uintptr)&(bi->pc_p));
+    compemu_raw_mov_l_rm(0,(uintptr)&(bi->pc_p));
     raw_mov_l_mr((uintptr)&regs.pc_p,0);
     raw_jmp((uintptr)popall_execute_normal);
 
     align_target(align_jumps);
     bi->direct_pcc=(cpuop_func *)get_target();
-    raw_mov_l_rm(0,(uintptr)&(bi->pc_p));
+    compemu_raw_mov_l_rm(0,(uintptr)&(bi->pc_p));
     raw_mov_l_mr((uintptr)&regs.pc_p,0);
     raw_jmp((uintptr)popall_check_checksum);
-	flush_cpu_icache((void *)current_compile_p, (void *)target);
+    flush_cpu_icache((void *)current_compile_p, (void *)target);
     current_compile_p=get_target();
 
     bi->deplist=NULL;
@@ -3666,8 +3718,14 @@ static void flush_icache_hard(int n)
     reset_lists();
     if (!compiled_code)
 	return;
+
+#if defined(USE_DATA_BUFFER)
+    reset_data_buffer();
+#endif
+
     current_compile_p=compiled_code;
-	SPCFLAGS_SET( SPCFLAG_JIT_EXEC_RETURN ); /* To get out of compiled code */
+
+    SPCFLAGS_SET( SPCFLAG_JIT_EXEC_RETURN ); /* To get out of compiled code */
 }
 
 
@@ -3864,7 +3922,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	int extra_len=0;
 
 	redo_current_block=0;
-	if (current_compile_p>=max_compile_start)
+	if (current_compile_p>=MAX_COMPILE_PTR)
 	    flush_icache_hard(7);
 
 	alloc_blockinfos();
@@ -3951,13 +4009,18 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	set_dhtu(bi,bi->direct_handler);
 	bi->status=BI_COMPILING;
 	current_block_start_target=(uintptr)get_target();
-	
+
 	log_startblock();
+
+#if defined(USE_DATA_BUFFER)
+	set_data_start();
+	raw_init_dp();
+#endif
 	
 	if (bi->count>=0) { /* Need to generate countdown code */
 	    raw_mov_l_mi((uintptr)&regs.pc_p,(uintptr)pc_hist[0].location);
-	    raw_sub_l_mi((uintptr)&(bi->count),1);
-	    raw_jl((uintptr)popall_recompile_block);
+	    compemu_raw_sub_l_mi((uintptr)&(bi->count),1);
+	    compemu_raw_jl((uintptr)popall_recompile_block);
 	}
 	if (optlev==0) { /* No need to actually translate */
 	    /* Execute normally without keeping stats */
@@ -3975,7 +4038,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    was_comp=1;
 
 #ifdef USE_CPU_EMUL_SERVICES
-	    raw_sub_l_mi((uintptr)&emulated_ticks,blocklen);
+	    compemu_raw_sub_l_mi((uintptr)&emulated_ticks,blocklen);
 	    raw_jcc_b_oponly(NATIVE_CC_GT);
 	    uae_s8 *branchadd=(uae_s8*)get_target();
 	    emit_byte(0);
@@ -3991,7 +4054,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #endif
 		
 	    for (i=0;i<blocklen &&
-		     get_target_noopt()<max_compile_start;i++) {
+		     get_target_noopt()<MAX_COMPILE_PTR;i++) {
 		cpuop_func **cputbl;
 		compop_func **comptbl;
 		uae_u32 opcode=DO_GET_OPCODE(pc_hist[i].location);
@@ -4056,7 +4119,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    raw_call((uintptr)cputbl[opcode]);
 #ifdef PROFILE_UNTRANSLATED_INSNS
 			// raw_cputbl_count[] is indexed with plain opcode (in m68k order)
-			raw_add_l_mi((uintptr)&raw_cputbl_count[cft_map(opcode)],1);
+		    compemu_raw_add_l_mi((uintptr)&raw_cputbl_count[cft_map(opcode)],1);
 #endif
 #if USE_NORMAL_CALLING_CONVENTION
 		    raw_inc_sp(4);
@@ -4065,9 +4128,9 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    if (i < blocklen - 1) {
 			uae_s8* branchadd;
 			
-			raw_mov_l_rm(0,(uintptr)specflags);
-			raw_test_l_rr(0,0);
-			raw_jz_b_oponly();
+			compemu_raw_mov_l_rm(0,(uintptr)specflags);
+			compemu_raw_test_l_rr(0,0);
+			compemu_raw_jz_b_oponly();
 			branchadd=(uae_s8 *)get_target();
 			emit_byte(0);
 			raw_jmp((uintptr)popall_do_nothing);
@@ -4167,7 +4230,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		/* Let's find out where next_handler is... */
 		if (was_comp && isinreg(PC_P)) { 
 		    r=live.state[PC_P].realreg;
-			raw_and_l_ri(r,TAGMASK);
+		    compemu_raw_and_l_ri(r,TAGMASK);
 			int r2 = (r==0) ? 1 : 0;
 			raw_mov_l_ri(r2,(uintptr)popall_do_nothing);
 			raw_cmp_l_mi((uintptr)specflags,0);
@@ -4192,8 +4255,8 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		}
 		else {
 		    r=REG_PC_TMP;
-		    raw_mov_l_rm(r,(uintptr)&regs.pc_p);
-			raw_and_l_ri(r,TAGMASK);
+		    compemu_raw_mov_l_rm(r,(uintptr)&regs.pc_p);
+		    compemu_raw_and_l_ri(r,TAGMASK);
 			int r2 = (r==0) ? 1 : 0;
 			raw_mov_l_ri(r2,(uintptr)popall_do_nothing);
 			raw_cmp_l_mi((uintptr)specflags,0);
@@ -4284,7 +4347,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	raise_in_cl_list(bi);
 	
 	/* We will flush soon, anyway, so let's do it now */
-	if (current_compile_p>=max_compile_start)
+	if (current_compile_p>=MAX_COMPILE_PTR)
 		flush_icache_hard(7);
 	
 	bi->status=BI_ACTIVE;
