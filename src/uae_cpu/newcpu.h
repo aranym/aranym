@@ -249,7 +249,7 @@ static inline void m68k_setstopped (int stop)
 # endif
 #else
 # ifdef HAVE_GET_WORD_UNSWAPPED
-#  define GET_OPCODE (do_get_mem_word_unswapped (get_real_address(m68k_getpc(), 0, sz_word)))
+#  define GET_OPCODE (do_get_mem_word_unswapped ((uae_u16*)get_real_address(m68k_getpc(), 0, sz_word)))
 # else
 #  define GET_OPCODE (get_iword (0))
 # endif
@@ -276,14 +276,15 @@ extern void m68k_natfeat_id(void);
 extern void m68k_natfeat_call(void);
 extern void init_m68k (void);
 extern void exit_m68k (void);
-extern void m68k_dumpstate (uaecptr *);
-extern void m68k_disasm (uaecptr, uaecptr *, int);
+extern void m68k_dumpstate (FILE *, uaecptr *);
+extern void m68k_disasm (FILE *, uaecptr, uaecptr *, int);
 extern void newm68k_disasm(FILE *, uaecptr, uaecptr *, unsigned int);
 extern void showDisasm(uaecptr);
 extern void m68k_reset (void);
 extern void m68k_enter_debugger(void);
 extern int m68k_do_specialties(void);
 extern void m68k_instr_set(void);
+uae_u32 linea68000(uae_u16 opcode);
 
 /* Opcode of faulting instruction */
 extern uae_u16 last_op_for_exception_3;
@@ -297,9 +298,7 @@ extern uaecptr last_fault_for_exception_3;
 /* 68040+ 68881 */
 extern struct cputbl op_smalltbl_0_ff[];
 
-#ifndef FLIGHT_RECORDER
-# define FLIGHT_RECORDER 0
-#else
+#ifdef FLIGHT_RECORDER
 extern void m68k_record_step(uaecptr, int);
 #endif
 
@@ -307,6 +306,7 @@ extern void m68k_do_execute(void);
 extern void m68k_execute(void);
 #ifdef USE_JIT
 extern void m68k_compile_execute(void);
+extern void m68k_do_compile_execute(void);
 #endif
 #ifdef USE_CPU_EMUL_SERVICES
 extern int32 emulated_ticks;

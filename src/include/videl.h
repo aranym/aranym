@@ -21,7 +21,7 @@
 #ifndef VIDEL_H
 #define VIDEL_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 class BASE_IO;
 class HostSurface;

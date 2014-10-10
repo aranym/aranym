@@ -44,7 +44,7 @@
 #define PACKET_SIZE 12
 
 bx_hard_drive_c bx_hard_drive;
-#if BX_USE_HD_SMF
+#ifdef BX_USE_HD_SMF
 #define this (&bx_hard_drive)
 #endif
 
@@ -312,7 +312,7 @@ bx_hard_drive_c::reset(unsigned /*type*/)
   Bit32u
 bx_hard_drive_c::read_handler(void *this_ptr, Bit32u address, unsigned io_len)
 {
-#if !BX_USE_HD_SMF
+#ifndef BX_USE_HD_SMF
   bx_hard_drive_c *class_ptr = (bx_hard_drive_c *) this_ptr;
 
   return( class_ptr->read(address, io_len) );
@@ -364,7 +364,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
             panicbug("IO read(f00000): buffer_index >= 512");
 
-#if BX_SupportRepeatSpeedups
+#ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
             unsigned transferLen, quantumsMax;
 
@@ -433,7 +433,7 @@ if ( quantumsMax == 0)
               BX_SELECTED_CONTROLLER(channel).status.seek_complete = 1;
 
 	      if (!calculate_logical_address(channel, &logical_sector)) {
-	        bug("multi-sector read reached invalid sector %lu, aborting", logical_sector);
+	        bug("multi-sector read reached invalid sector %lu, aborting", (unsigned long)logical_sector);
 		command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
  	        GOTO_RETURN_VALUE ;
 	      }
@@ -445,8 +445,8 @@ if ( quantumsMax == 0)
 	      }
 	      ret = BX_SELECTED_DRIVE(channel).hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER(channel).buffer, 512);
               if (ret < 512) {
-                bug("logical sector was %lu", logical_sector);
-                bug("could not read() hard drive image file at byte %lu", logical_sector*512);
+                bug("logical sector was %lu", (unsigned long)logical_sector);
+                bug("could not read() hard drive image file at byte %lu", (unsigned long)logical_sector*512);
 		command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
  	        GOTO_RETURN_VALUE ;
 	      }
@@ -747,7 +747,7 @@ if ( quantumsMax == 0)
         (unsigned) address);
     }
 
-  panicbug("hard drive: shouldnt get here! PC=%08lx", showPC());
+  panicbug("hard drive: shouldnt get here! PC=%08x", showPC());
   return(0);
 
   return_value32:
@@ -773,7 +773,7 @@ if ( quantumsMax == 0)
   void
 bx_hard_drive_c::write_handler(void *this_ptr, Bit32u address, Bit32u value, unsigned io_len)
 {
-#if !BX_USE_HD_SMF
+#ifndef BX_USE_HD_SMF
   bx_hard_drive_c *class_ptr = (bx_hard_drive_c *) this_ptr;
 
   class_ptr->write(address, value, io_len);
@@ -817,7 +817,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
             panicbug("IO write(f00000): buffer_index >= 512");
 
-#if BX_SupportRepeatSpeedups
+#ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
             unsigned transferLen, quantumsMax;
 
@@ -860,19 +860,19 @@ if ( quantumsMax == 0)
             off_t ret;
 
 	    if (!calculate_logical_address(channel, &logical_sector)) {
-	      bug("write reached invalid sector %lu, aborting", logical_sector);
+	      bug("write reached invalid sector %lu, aborting", (unsigned long)logical_sector);
 	      command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	      return;
             }
 	    ret = BX_SELECTED_DRIVE(channel).hard_drive->lseek(logical_sector * 512, SEEK_SET);
             if (ret < 0) {
-              bug("could not lseek() hard drive image file at byte %lu", logical_sector * 512);
+              bug("could not lseek() hard drive image file at byte %lu", (unsigned long)logical_sector * 512);
 	      command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	      return;
 	    }
 	    ret = BX_SELECTED_DRIVE(channel).hard_drive->write((bx_ptr_t) BX_SELECTED_CONTROLLER(channel).buffer, 512);
             if (ret < 512) {
-              bug("could not write() hard drive image file at byte %lu", logical_sector*512);
+              bug("could not write() hard drive image file at byte %lu", (unsigned long)logical_sector*512);
 	      command_aborted (channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	      return;
 	    }
@@ -1267,7 +1267,9 @@ if ( quantumsMax == 0)
 						case 3:
 						case 4:
 							if (msf != TRUE)
+							{
 								D(panicbug("READ_TOC_EX: msf not set for format %i", format));
+							}
 						case 0:
 						case 1:
 						case 5:
@@ -1611,7 +1613,7 @@ if ( quantumsMax == 0)
 	  }
 
 	  if (!calculate_logical_address(channel, &logical_sector)) {
-	    bug("initial read from sector %lu out of bounds, aborting", logical_sector);
+	    bug("initial read from sector %lu out of bounds, aborting", (unsigned long)logical_sector);
 	    command_aborted(channel, value);
 	    break;
 	  }
@@ -1623,8 +1625,8 @@ if ( quantumsMax == 0)
 	  }
 	  ret = BX_SELECTED_DRIVE(channel).hard_drive->read((bx_ptr_t) BX_SELECTED_CONTROLLER(channel).buffer, 512);
           if (ret < 512) {
-            bug("logical sector was %lu", logical_sector);
-            bug("could not read() hard drive image file at byte %lu", logical_sector*512);
+            bug("logical sector was %lu", (unsigned long)logical_sector);
+            bug("could not read() hard drive image file at byte %lu", (unsigned long)logical_sector*512);
 	    command_aborted(channel, value);
 	    break;
 	  }
@@ -1899,7 +1901,7 @@ if ( quantumsMax == 0)
 	  if (BX_SELECTED_IS_HD(channel)) {
 	    D(bug("write cmd 0x70 (SEEK) executing"));
             if (!calculate_logical_address(channel, &logical_sector)) {
-	      panicbug("initial seek to sector %lu out of bounds, aborting", logical_sector);
+	      panicbug("initial seek to sector %lu out of bounds, aborting", (unsigned long)logical_sector);
               command_aborted(channel, value);
 	      break;
 	    }
@@ -2131,7 +2133,7 @@ bx_hard_drive_c::calculate_logical_address(Bit8u channel, off_t *sector)
            (Bit32u)BX_SELECTED_DRIVE(channel).hard_drive->sectors;
 
       *sector = logical_sector;
-      if (logical_sector >= sector_count) {
+      if (logical_sector >= (off_t)sector_count) {
             bug("calc_log_addr: out of bounds");
             return false;
       }

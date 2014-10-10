@@ -26,6 +26,14 @@
 #define TOS_EOTHER  -17 /* Insert other disk (request) */
 #define TOS_EINSERT -18 /* Insert disk: Metados error */
 #define TOS_EDVNRSP -19 /* Device not responding: Metados error */
+#define TOS_ESRCH   -20 /* No such process */
+#define TOS_ECHILD  -21 /* No child processes. */
+#define TOS_EDEADLK	-22	/* Resource deadlock would occur. */
+#define TOS_ENOTBLK	-23 /* Block device required. */
+#define TOS_EISDIR	-24 /* Is a directory. */
+#define TOS_EINVAL  -25 /* Invalid argument. */
+#define TOS_EFTYPE	-26 /* Inappropriate file type or format. */
+#define TOS_EILSEQ	-27 /* Illegal byte sequence. */
 
 #define TOS_EINVFN  -32 /* Invalid function number: GEMDOS */
 #define TOS_ENOSYS  TOS_EINVFN

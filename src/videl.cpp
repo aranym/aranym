@@ -18,8 +18,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL.h>
-#include <SDL_endian.h>
+#include "SDL_compat.h"
 
 #include "sysdeps.h"
 #include "hardware.h"
@@ -59,7 +58,7 @@ VIDEL::VIDEL(memptr addr, uint32 size)
 VIDEL::~VIDEL(void)
 {
 	if (crcList) {
-		delete crcList;
+		delete [] crcList;
 	}
 	if (surface) {
 		host->video->destroySurface(surface);
@@ -274,13 +273,13 @@ HostSurface *VIDEL::getSurface(void)
 		if (prevVidelBpp == bpp) {
 			if ((prevVidelWidth!=width) || (prevVidelHeight!=height)) {
 				surface->resize(width, height);
-				delete crcList;
+				delete [] crcList;
 				crcList = NULL;
 			}
 		} else {
 			delete surface;
 			surface = NULL;
-			delete crcList;
+			delete [] crcList;
 			crcList = NULL;
 		}
 	}
@@ -330,6 +329,9 @@ void VIDEL::refreshPalette(void)
 			c = color & 0x0f;
 			c = ((c & 7)<<1)|((c & 1)>>3);
 			palette[i].b = (c<<4)|c;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			palette[i].a = WINDOW_ALPHA;
+#endif
 		}
 	} else {
 		/* Falcon palette registers, 6 bits/component */
@@ -345,6 +347,9 @@ void VIDEL::refreshPalette(void)
 			c = F_COLORS(offset+3) & 0xfc;
 			c |= (c>>6) & 3;
 			palette[i].b = c;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			palette[i].a = WINDOW_ALPHA;
+#endif
 		}
 	}
 

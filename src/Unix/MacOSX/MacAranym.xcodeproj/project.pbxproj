@@ -398,6 +398,14 @@
 		17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		B426E0F119D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
+		B426E0F219D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
+		B426E0F319D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
+		B426E0F419D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
+		B426E0F519D88567003EEB83 /* disasm-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0F019D88567003EEB83 /* disasm-glue.cpp */; };
+		B426E0F619D88567003EEB83 /* disasm-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0F019D88567003EEB83 /* disasm-glue.cpp */; };
+		B426E0F719D88567003EEB83 /* disasm-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0F019D88567003EEB83 /* disasm-glue.cpp */; };
+		B426E0F819D88567003EEB83 /* disasm-glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0F019D88567003EEB83 /* disasm-glue.cpp */; };
 		B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
 		B428FAF80C7BA7100039CA66 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
 		B428FAF90C7BA7100039CA66 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
@@ -487,6 +495,10 @@
 		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
+		B442F1A1193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A2193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A3193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
+		B442F1A4193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
 		B449D9E00D2A8D37005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
 		B449D9EA0D2A8DD5005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
 		B449D9F30D2A8E68005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
@@ -736,8 +748,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170539131555D457006A6DDE /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = /opt/local/lib/libgmp.dylib; sourceTree = "<absolute>"; };
 		170539141555D457006A6DDE /* libmpfr.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpfr.dylib; path = /opt/local/lib/libmpfr.dylib; sourceTree = "<absolute>"; };
-		170C2B830BB872920026484E /* dyngl_gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl_gl.c; path = ../../dyngl_gl.c; sourceTree = SOURCE_ROOT; };
-		170C2B840BB872920026484E /* dyngl_glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl_glext.c; path = ../../dyngl_glext.c; sourceTree = SOURCE_ROOT; };
 		170C2B850BB872920026484E /* dyngl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl.c; path = ../../dyngl.c; sourceTree = SOURCE_ROOT; };
 		1717E85A151680B900D416FA /* dlgUsb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgUsb.cpp; sourceTree = "<group>"; };
 		171A3F0E154F2765005F6C9D /* fpu_mpfr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpu_mpfr.cpp; sourceTree = "<group>"; };
@@ -782,6 +792,7 @@
 		17473D1815AA07FD00CAEA47 /* fd_trans.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fd_trans.h; sourceTree = "<group>"; };
 		17473D2515AA0A1100CAEA47 /* bpf_helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bpf_helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		175909550CA453990089CF9F /* dirty_rects.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = dirty_rects.cpp; path = ../../dirty_rects.cpp; sourceTree = SOURCE_ROOT; usesTabs = 1; };
+		1759CCF319845F2600C4500E /* m4 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = m4; path = ../../../m4; sourceTree = "<group>"; };
 		1765B6ED0C91C0B000DD682B /* libOSMesa.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.6.dylib; path = MesaGL/lib/libOSMesa.6.dylib; sourceTree = "<group>"; };
 		1765B6EE0C91C0BB00DD682B /* tap.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tap.kext; path = tuntap/tap.kext; sourceTree = "<group>"; };
 		1765B6EF0C91C0BB00DD682B /* tun.kext */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.kernel-extension"; name = tun.kext; path = tuntap/tun.kext; sourceTree = "<group>"; };
@@ -1006,7 +1017,6 @@
 		17798DE40A652B51009733EB /* registers.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = registers.h; sourceTree = "<group>"; };
 		17798DE50A652B51009733EB /* spcflags.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = spcflags.h; sourceTree = "<group>"; };
 		17798DE60A652B51009733EB /* table68k */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; path = table68k; sourceTree = "<group>"; };
-		17798DE80A652B51009733EB /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = acinclude.m4; path = ../../../acinclude.m4; sourceTree = SOURCE_ROOT; };
 		17798DEA0A652B51009733EB /* ansidecl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = ansidecl.h; sourceTree = "<group>"; };
 		17798DEB0A652B51009733EB /* aratapif.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = aratapif.c; sourceTree = "<group>"; };
 		17798DEC0A652B51009733EB /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = autogen.sh; path = ../../../autogen.sh; sourceTree = SOURCE_ROOT; };
@@ -1081,8 +1091,12 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-builtin.cpp"; path = "../../disasm-builtin.cpp"; sourceTree = "<group>"; };
+		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm-glue.cpp"; sourceTree = "<group>"; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfcdrom_sdl.cpp; sourceTree = "<group>"; };
+		B442F1A0193C9BC100D515B8 /* nfcdrom_sdl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfcdrom_sdl.h; sourceTree = "<group>"; };
 		B449DA000D2A9212005F0CC6 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../../../data/logo.png; sourceTree = SOURCE_ROOT; };
 		B44B01B00D07443D0017F23B /* dialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dialog.cpp; sourceTree = "<group>"; };
 		B44B01B50D07447F0017F23B /* host_surface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = host_surface.cpp; path = ../../host_surface.cpp; sourceTree = SOURCE_ROOT; };
@@ -1111,9 +1125,10 @@
 		B4844A730C7BA262003FE2D2 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = darwin/SDLMain.h; sourceTree = "<group>"; };
 		B4844A740C7BA262003FE2D2 /* SDLMain.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLMain.M; path = darwin/SDLMain.M; sourceTree = "<group>"; };
 		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
+		B49A2412193CBE9600B73091 /* compemu_midfunc_x86.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = compemu_midfunc_x86.cpp; sourceTree = "<group>"; };
+		B49A2413193CBE9600B73091 /* compemu_midfunc_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compemu_midfunc_x86.h; sourceTree = "<group>"; };
 		B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ethernet_darwin.cpp; path = darwin/ethernet_darwin.cpp; sourceTree = "<group>"; };
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
-		B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "aranym-0.9.15+CVS-macosx-x86_64_i386.dmg"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C7EE931768552800B63B96 /* MachServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachServer.c; path = darwin/MachServer.c; sourceTree = "<group>"; };
 		B4C7EE941768552800B63B96 /* MachUser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachUser.c; path = darwin/MachUser.c; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
@@ -1259,13 +1274,13 @@
 				17798CDF0A652B50009733EB /* cdrom.cpp */,
 				17798CE00A652B50009733EB /* cfgopts.cpp */,
 				175909550CA453990089CF9F /* dirty_rects.cpp */,
+				B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */,
+				B426E0F019D88567003EEB83 /* disasm-glue.cpp */,
 				17798CE90A652B50009733EB /* dsp.cpp */,
 				17EC07DF0ECB762900100ED7 /* dsp_core.c */,
 				17EC07E00ECB762900100ED7 /* dsp_cpu.c */,
 				17EC07E10ECB762900100ED7 /* dsp_disasm.c */,
 				17EC07E20ECB762900100ED7 /* dsp.cpp */,
-				170C2B830BB872920026484E /* dyngl_gl.c */,
-				170C2B840BB872920026484E /* dyngl_glext.c */,
 				170C2B850BB872920026484E /* dyngl.c */,
 				17798CEA0A652B50009733EB /* emul_op.cpp */,
 				17798CEB0A652B50009733EB /* fakeio.cpp */,
@@ -1442,6 +1457,8 @@
 				17798D7D0A652B51009733EB /* nfbootstrap.h */,
 				17798D800A652B51009733EB /* nfcdrom_linux.cpp */,
 				17798D810A652B51009733EB /* nfcdrom_linux.h */,
+				B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */,
+				B442F1A0193C9BC100D515B8 /* nfcdrom_sdl.h */,
 				17798D7E0A652B51009733EB /* nfcdrom.cpp */,
 				17798D7F0A652B51009733EB /* nfcdrom.h */,
 				17798D840A652B51009733EB /* nfclipbrd_nfapi.h */,
@@ -1544,6 +1561,8 @@
 				17798DBB0A652B51009733EB /* codegen_x86.h */,
 				17798DBC0A652B51009733EB /* compemu.h */,
 				17798DBD0A652B51009733EB /* compemu_fpp.cpp */,
+				B49A2412193CBE9600B73091 /* compemu_midfunc_x86.cpp */,
+				B49A2413193CBE9600B73091 /* compemu_midfunc_x86.h */,
 				17798DBE0A652B51009733EB /* compemu_support.cpp */,
 				17798DBF0A652B51009733EB /* flags_x86.h */,
 				17798DC00A652B51009733EB /* gencomp.c */,
@@ -1636,7 +1655,7 @@
 		17AC409013F1D216003B4FAD /* Unix */ = {
 			isa = PBXGroup;
 			children = (
-				17798DE80A652B51009733EB /* acinclude.m4 */,
+				1759CCF319845F2600C4500E /* m4 */,
 				17798DEC0A652B51009733EB /* autogen.sh */,
 				17798DFD0A652B51009733EB /* configure.ac */,
 				17AC408513F1CFA1003B4FAD /* configure */,
@@ -1725,7 +1744,6 @@
 				B449DA000D2A9212005F0CC6 /* logo.png */,
 				1743987C0B320B480011038E /* README_Xcode.rtf */,
 				17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */,
-				B4B7562C176DCB3200BD7A2B /* aranym-0.9.15+CVS-macosx-x86_64_i386.dmg */,
 			);
 			name = MacAranym;
 			sourceTree = "<group>";
@@ -2294,6 +2312,7 @@
 				1778A4901555A8A70005B336 /* parallel_file.cpp in Sources */,
 				1778A4911555A8A70005B336 /* parameters.cpp in Sources */,
 				1778A4921555A8A70005B336 /* romdiff.cpp in Sources */,
+				B426E0F419D88567003EEB83 /* disasm-builtin.cpp in Sources */,
 				1778A4931555A8A70005B336 /* rtc.cpp in Sources */,
 				1778A4941555A8A70005B336 /* tools.cpp in Sources */,
 				1778A4951555A8A70005B336 /* videl.cpp in Sources */,
@@ -2312,6 +2331,7 @@
 				1778A4A21555A8A70005B336 /* hostfs.cpp in Sources */,
 				1778A4A31555A8A70005B336 /* aranym_glue.cpp in Sources */,
 				1778A4A41555A8A70005B336 /* memory.cpp in Sources */,
+				B442F1A4193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				1778A4A51555A8A70005B336 /* newcpu.cpp in Sources */,
 				1778A4A61555A8A70005B336 /* readcpu.cpp in Sources */,
 				1778A4A71555A8A70005B336 /* debug.cpp in Sources */,
@@ -2320,6 +2340,7 @@
 				1778A4AA1555A8A70005B336 /* file.cpp in Sources */,
 				1778A4AB1555A8A70005B336 /* dlgMain.cpp in Sources */,
 				1778A4AC1555A8A70005B336 /* dlgKeyboard.cpp in Sources */,
+				B426E0F819D88567003EEB83 /* disasm-glue.cpp in Sources */,
 				1778A4AD1555A8A70005B336 /* dlgHotkeys.cpp in Sources */,
 				1778A4AE1555A8A70005B336 /* dlgAlert.cpp in Sources */,
 				1778A4AF1555A8A70005B336 /* main_unix.cpp in Sources */,
@@ -2410,6 +2431,7 @@
 				17BCD8170B20F6BF00432CE1 /* parallel_file.cpp in Sources */,
 				17BCD8180B20F6BF00432CE1 /* parameters.cpp in Sources */,
 				17BCD8190B20F6BF00432CE1 /* romdiff.cpp in Sources */,
+				B426E0F219D88567003EEB83 /* disasm-builtin.cpp in Sources */,
 				17BCD81A0B20F6BF00432CE1 /* rtc.cpp in Sources */,
 				17BCD81B0B20F6BF00432CE1 /* tools.cpp in Sources */,
 				17BCD81C0B20F6BF00432CE1 /* videl.cpp in Sources */,
@@ -2428,6 +2450,7 @@
 				17BCD8290B20F6BF00432CE1 /* hostfs.cpp in Sources */,
 				17BCD82A0B20F6BF00432CE1 /* aranym_glue.cpp in Sources */,
 				17BCD82B0B20F6BF00432CE1 /* memory.cpp in Sources */,
+				B442F1A2193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				17BCD82C0B20F6BF00432CE1 /* newcpu.cpp in Sources */,
 				17BCD82D0B20F6BF00432CE1 /* readcpu.cpp in Sources */,
 				17BCD8310B20F6BF00432CE1 /* debug.cpp in Sources */,
@@ -2436,6 +2459,7 @@
 				17BCD8350B20F6BF00432CE1 /* file.cpp in Sources */,
 				17BCD8360B20F6BF00432CE1 /* dlgMain.cpp in Sources */,
 				17BCD8370B20F6BF00432CE1 /* dlgKeyboard.cpp in Sources */,
+				B426E0F619D88567003EEB83 /* disasm-glue.cpp in Sources */,
 				17BCD8380B20F6BF00432CE1 /* dlgHotkeys.cpp in Sources */,
 				17BCD8390B20F6BF00432CE1 /* dlgAlert.cpp in Sources */,
 				17BCD83A0B20F6BF00432CE1 /* main_unix.cpp in Sources */,
@@ -2494,6 +2518,7 @@
 				17798F130A652F64009733EB /* aranym_exception.cpp in Sources */,
 				17798F150A652F74009733EB /* ata.cpp in Sources */,
 				17798F160A652F7F009733EB /* audio_dma.cpp in Sources */,
+				B442F1A1193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				17798F170A652F80009733EB /* audio_crossbar.cpp in Sources */,
 				17798F180A652F84009733EB /* blitter.cpp in Sources */,
 				17798F190A652F87009733EB /* bootos.cpp in Sources */,
@@ -2516,6 +2541,7 @@
 				17798F2A0A652FCD009733EB /* ikbd.cpp in Sources */,
 				17798F2B0A652FD1009733EB /* input.cpp in Sources */,
 				17798F2C0A652FD5009733EB /* md5.cpp in Sources */,
+				B426E0F119D88567003EEB83 /* disasm-builtin.cpp in Sources */,
 				17798F2D0A652FD8009733EB /* mfp.cpp in Sources */,
 				17798F2E0A652FDB009733EB /* midi.cpp in Sources */,
 				17798F2F0A652FDF009733EB /* mmu.cpp in Sources */,
@@ -2543,6 +2569,7 @@
 				17798F470A653093009733EB /* hostfs.cpp in Sources */,
 				17798F480A6530AC009733EB /* aranym_glue.cpp in Sources */,
 				17798F490A6530B5009733EB /* memory.cpp in Sources */,
+				B426E0F519D88567003EEB83 /* disasm-glue.cpp in Sources */,
 				17798F4A0A6530B9009733EB /* newcpu.cpp in Sources */,
 				17798F4B0A6530C0009733EB /* readcpu.cpp in Sources */,
 				17798F540A653123009733EB /* debug.cpp in Sources */,
@@ -2613,6 +2640,7 @@
 				B439AC3B0C5B2FD00046EFC9 /* acia.cpp in Sources */,
 				B439AC3C0C5B2FD00046EFC9 /* acsifdc.cpp in Sources */,
 				B439AC3D0C5B2FD00046EFC9 /* aradata.cpp in Sources */,
+				B442F1A3193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */,
 				B439AC3E0C5B2FD00046EFC9 /* aranym_exception.cpp in Sources */,
 				B439AC3F0C5B2FD00046EFC9 /* ata.cpp in Sources */,
 				B439AC400C5B2FD00046EFC9 /* audio_dma.cpp in Sources */,
@@ -2660,6 +2688,7 @@
 				B439AC6B0C5B2FD00046EFC9 /* nf_basicset.cpp in Sources */,
 				B439AC6C0C5B2FD00046EFC9 /* debugprintf.cpp in Sources */,
 				B439AC6D0C5B2FD00046EFC9 /* nfvdi.cpp in Sources */,
+				B426E0F319D88567003EEB83 /* disasm-builtin.cpp in Sources */,
 				B439AC6E0C5B2FD00046EFC9 /* nfvdi_soft.cpp in Sources */,
 				B439AC6F0C5B2FD00046EFC9 /* nfcdrom.cpp in Sources */,
 				B439AC700C5B2FD00046EFC9 /* hostfs.cpp in Sources */,
@@ -2706,6 +2735,7 @@
 				17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 				1732BC84124540FF00272489 /* scc.cpp in Sources */,
 				1732BC8C1245412B00272489 /* serial.cpp in Sources */,
+				B426E0F719D88567003EEB83 /* disasm-glue.cpp in Sources */,
 				1732BC8D1245412B00272489 /* serial_port.cpp in Sources */,
 				1717E85D151680B900D416FA /* dlgUsb.cpp in Sources */,
 				177A4E0815AA29AD00780D11 /* ethernet_macosx.cpp in Sources */,
@@ -2785,6 +2815,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -2833,6 +2864,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Debug;
 		};
@@ -2841,6 +2873,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
 			};
 			name = Release;
 		};
@@ -2863,6 +2896,7 @@
 					"-lgmp",
 				);
 				PRODUCT_NAME = "MacAranym MMU MPFR";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -2885,6 +2919,7 @@
 					"-lgmp",
 				);
 				PRODUCT_NAME = "MacAranym MMU MPFR";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -2911,6 +2946,7 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -2923,6 +2959,7 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -2934,6 +2971,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -2991,6 +3029,7 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
@@ -3009,6 +3048,7 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;

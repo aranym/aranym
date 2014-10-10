@@ -3,7 +3,7 @@
 
 
 
-#import "SDL.h"
+#import "SDL_compat.h"
 #import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
@@ -27,9 +27,6 @@ static char*	gConfigFile(NULL);
 
 
 
-extern bool	start_GUI_thread();
-extern void	grabTheMouse();
-extern void	releaseTheMouse();
 
 
 

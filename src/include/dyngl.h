@@ -29,30 +29,14 @@ extern "C" {
 
 /*--- Defines ---*/
 
-#ifndef GL_VERSION_2_0
-typedef char GLchar;
-#endif
-
-#ifndef GL_MESA_program_debug
-typedef void (*GLprogramcallbackMESA)(GLenum target, GLvoid *data);
-#endif
-
-#ifndef GL_EXT_timer_query
-typedef int64_t GLint64EXT;
-typedef uint64_t GLuint64EXT;
-#endif
-
-#ifdef WIN32
-#define STDCALL __stdcall
-#else
-#define STDCALL
-#endif
+#include "../../atari/nfosmesa/gltypes.h"
 
 /*--- Structures ---*/
 
 typedef struct {
-	#include "dyngl_gl.h"
-	#include "dyngl_glext.h"
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) type (APIENTRY *name) params ;
+#define GLU_PROC(type, gl, name, export, upper, params, first, ret)
+#include "../../atari/nfosmesa/glfuncs.h"
 } dyngl_funcs;
 
 /*--- Global variables ---*/

@@ -25,6 +25,9 @@
 #include "debug.h"
 #include <Cocoa/Cocoa.h>
 
+#include "SDL_compat.h"
+#include "clipbrd.h"
+
 unichar atari_2_unicode_table[256] = {
 /* Standard ASCII characters from 0x00 to 0x7e */
 /* Unicode stuff from 0x7f to 0xff */
@@ -65,6 +68,8 @@ unichar atari_2_unicode_table[256] = {
 
 int init_aclip() { return 0; }
 
+int filter_aclip(const SDL_Event *event) { return 1; }
+
 char *read_aclip(size_t *len)
 {
 	char* clip_buf = NULL;
@@ -97,7 +102,7 @@ char *read_aclip(size_t *len)
 			ptr++;
 		}
 
-		delete utf16_str;		
+		delete [] utf16_str;		
 	}
 	[pool release];  // should be [pool drain] for >=10.4
 
@@ -124,7 +129,7 @@ void write_aclip(char* clip_buf, size_t clip_len)
 	[paste_board setString:[[NSString alloc] initWithCharacters:utf16_str length:clip_len] forType:NSStringPboardType];
 	[pool release];  // should be [pool drain] for >=10.4
 
-	delete utf16_str;
+	delete [] utf16_str;
 }
 
 #endif

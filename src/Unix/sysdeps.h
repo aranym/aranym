@@ -85,7 +85,7 @@
 
 #endif
 
-#ifdef OS_beos
+#if defined(OS_beos) || defined(OS_cygwin)
 #include <stdlib.h>
 #include <string.h>
 #endif
@@ -187,6 +187,14 @@
 #endif
 
 #endif /* OS_INCLUDES_DEFINE */
+
+extern void install_sigsegv(void);
+extern void uninstall_sigsegv(void);
+
+#if defined(OS_cygwin) && defined(EXTENDED_SIGSEGV)
+void cygwin_abort(void);
+#define abort() cygwin_abort()
+#endif
 
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
@@ -341,30 +349,83 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 #if defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)
 
 /* Intel x86 */
-#define X86_PPRO_OPT
-static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint32 retval; __asm__ ("bswap %0" : "=r" (retval) : "0" (*a) : "cc"); return retval;}
-#ifdef X86_PPRO_OPT
-static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint32 retval; __asm__ ("movzwl %w1,%k0\n\tshll $16,%k0\n\tbswapl %k0\n" : "=&r" (retval) : "m" (*a) : "cc"); return retval;}
-#else
-static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint32 retval; __asm__ ("xorl %k0,%k0\n\tmovw %w1,%w0\n\trolw $8,%w0" : "=&r" (retval) : "m" (*a) : "cc"); return retval;}
-#endif
-#define HAVE_GET_WORD_UNSWAPPED
-#define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {__asm__ ("bswap %0" : "=r" (v) : "0" (v) : "cc"); *a = v;}
-#ifdef X86_PPRO_OPT
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {__asm__ ("bswapl %0" : "=&r" (v) : "0" (v << 16) : "cc"); *a = v;}
-#else
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {__asm__ ("rolw $8,%0" : "=r" (v) : "0" (v) : "cc"); *a = v;}
-#endif
 #define HAVE_OPTIMIZED_BYTESWAP_32
-/* bswap doesn't affect condition codes */
-static inline uae_u32 do_byteswap_32(uae_u32 v) {__asm__ ("bswap %0" : "=r" (v) : "0" (v)); return v;}
+#ifdef HAVE___BUILTIN_BSWAP32
+static inline uae_u32 do_byteswap_32(uae_u32 v) { return __builtin_bswap32(v);}
+#else
+static inline uae_u32 do_byteswap_32(uae_u32 v) {__asm__ ("bswap %0" : "=r" (v) : "0" (v) : "cc"); return v;}
+#endif
 #define HAVE_OPTIMIZED_BYTESWAP_16
+#if defined HAVE___BUILTIN_BSWAP16
+static inline uae_u32 do_byteswap_16(uae_u32 v) { return __builtin_bswap16(v);}
+#elif defined HAVE___BUILTIN_BSWAP32
+static inline uae_u32 do_byteswap_16(uae_u32 v) { return __builtin_bswap32(v << 16);}
+#else
+#define X86_PPRO_OPT
 #ifdef X86_PPRO_OPT
 static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("bswapl %0" : "=&r" (v) : "0" (v << 16) : "cc"); return v;}
 #else
 static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ ("rolw $8,%0" : "=r" (v) : "0" (v) : "cc"); return v;}
 #endif
+#endif
+
+#ifdef HW_SIGSEGV
+// #define HW_SIGSEGV_SIMPLE_ACCESS 1
+#endif
+#ifdef HW_SIGSEGV_SIMPLE_ACCESS
+/*
+ * The purpose of this inlines is to simplify
+ * decoding in the segfault handler by forcing
+ * the operands to be in registers.
+ * Experimental and not activated by default.
+ */
+static inline uae_u32 __get_mem_long(uae_u32 *a)
+{
+	uae_u32 v;
+	__asm__ __volatile__ ("movl (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline uae_u16 __get_mem_word(uae_u16 *a)
+{
+	uae_u16 v;
+	__asm__ __volatile__ ("movw (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline uae_u8 __get_mem_byte(uae_u8 *a)
+{
+	uae_u8 v;
+	__asm__ __volatile__ ("movb (%1),%0" : "=r"(v) : "r"(a));
+	return v;
+}
+static inline void __put_mem_long(uae_u32 *a, uae_u32 v)
+{
+	__asm__ __volatile__ ("movl %1,(%0)" : : "r"(a), "r"(v));
+}
+static inline void __put_mem_word(uae_u16 *a, uae_u16 v)
+{
+	__asm__ __volatile__ ("movw %1,(%0)" : : "r"(a), "r"(v));
+}
+static inline void __put_mem_byte(uae_u8 *a, uae_u8 v)
+{
+	__asm__ __volatile__ ("movb %1,(%0)" : : "r"(a), "r"(v));
+}
+#else
+static inline uae_u32 __get_mem_long(uae_u32 *a) { return *a; }
+static inline uae_u16 __get_mem_word(uae_u16 *a) { return *a; }
+static inline uae_u8 __get_mem_byte(uae_u8 *a) { return *a; }
+static inline void __put_mem_long(uae_u32 *a, uae_u32 v) { *a = v; }
+static inline void __put_mem_word(uae_u16 *a, uae_u16 v) { *a = v; }
+static inline void __put_mem_byte(uae_u8 *a, uae_u8 v) { *a = v; }
+#endif
+
+static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswap_32(__get_mem_long(a)); }
+static inline uae_u32 do_get_mem_word(uae_u16 *a) { return do_byteswap_16(__get_mem_word(a)); }
+#define do_get_mem_byte(a) ((uae_u32)__get_mem_byte(a))
+#define HAVE_GET_WORD_UNSWAPPED
+static inline uae_u32 do_get_mem_word_unswapped(uae_u16 *a) { return (uae_u32)__get_mem_word(a); }
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) { __put_mem_long(a, do_byteswap_32(v)); }
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) { __put_mem_word(a, do_byteswap_16(v)); }
+#define do_put_mem_byte(a, v) __put_mem_byte(a, v)
 
 #elif defined(ARMV6_ASSEMBLY) 
 
@@ -452,45 +513,62 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
 #define HAVE_GET_WORD_UNSWAPPED
 #define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
 
-#elif defined(CPU_CAN_ACCESS_UNALIGNED)
-
-/* Other little-endian CPUs which can do unaligned accesses */
-static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint32 x = *a; return (x >> 24) | ((x >> 8) & 0xff00) | ((x << 8) & 0xff0000) | (x << 24);}
-static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint16 x = *a; return (x >> 8) | (x << 8);}
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = (v >> 24) | ((v >> 8) & 0xff00) | ((v << 8) & 0xff0000) | (v << 24);}
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = ((v >> 8) & 0xff) | (v << 8);}
-
-#else /* CPU_CAN_ACCESS_UNALIGNED */
-
-/* Other little-endian CPUs which can not do unaligned accesses (this needs optimization) */
-static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint8 *b = (uint8 *)a; return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];}
-static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint8 *b = (uint8 *)a; return (b[0] << 8) | b[1];}
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 24; b[1] = v >> 16; b[2] = v >> 8; b[3] = v;}
-static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 8; b[1] = v;}
-
-#endif /* CPU_CAN_ACCESS_UNALIGNED */
+#endif
 
 #endif /* WORDS_BIGENDIAN */
 
 #ifndef HAVE_OPTIMIZED_BYTESWAP_32
+#ifdef HAVE___BUILTIN_BSWAP32
+static inline uae_u32 do_byteswap_32(uae_u32 v) { return __builtin_bswap32(v);}
+#else
 static inline uae_u32 do_byteswap_32(uae_u32 v)
 	{ return (((v >> 24) & 0xff) | ((v >> 8) & 0xff00) | ((v & 0xff) << 24) | ((v & 0xff00) << 8)); }
 #endif
+#ifndef WORDS_BIGENDIAN
+#if defined(CPU_CAN_ACCESS_UNALIGNED)
+/* Other little-endian CPUs which can do unaligned accesses */
+static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswapped_32(*a);}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = do_byteswapped_32(v);}
+#else
+/* Other little-endian CPUs which can not do unaligned accesses (this needs optimization) */
+static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint8 *b = (uint8 *)a; return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 24; b[1] = v >> 16; b[2] = v >> 8; b[3] = v;}
+#endif
+#endif
+#endif
 
 #ifndef HAVE_OPTIMIZED_BYTESWAP_16
+#if defined HAVE___BUILTIN_BSWAP16
+static inline uae_u32 do_byteswap_16(uae_u32 v) { return __builtin_bswap16(v);}
+#else
 static inline uae_u32 do_byteswap_16(uae_u32 v)
 	{ return (((v >> 8) & 0xff) | ((v & 0xff) << 8)); }
 #endif
+#ifndef WORDS_BIGENDIAN
+#if defined(CPU_CAN_ACCESS_UNALIGNED)
+/* Other little-endian CPUs which can do unaligned accesses */
+static inline uae_u32 do_get_mem_word(uae_u16 *a) {return do_byteswap_16(*a);}
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {*a = do_byteswap_16(v);}
+#else
+/* Other little-endian CPUs which can not do unaligned accesses (this needs optimization) */
+static inline uae_u32 do_get_mem_word(uae_u16 *a) {uint8 *b = (uint8 *)a; return (b[0] << 8) | b[1];}
+static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 8; b[1] = v;}
+#endif
+#endif
+#endif
 
+#ifndef do_get_mem_byte
 #define do_get_mem_byte(a) ((uae_u32)*((uae_u8 *)(a)))
+#endif
+#ifndef do_put_mem_byte
 #define do_put_mem_byte(a, v) (*(uae_u8 *)(a) = (v))
+#endif
 
 #define call_mem_get_func(func, addr) ((*func)(addr))
 #define call_mem_put_func(func, addr, v) ((*func)(addr, v))
 #define CPU_EMU_SIZE 0
 #undef NO_INLINE_MEMORY_ACCESS
 #undef MD_HAVE_MEM_1_FUNCS
-#define write_log printf
 
 #ifdef X86_ASSEMBLY
 #define ASM_SYM_FOR_FUNC(a) __asm__(a)
@@ -546,23 +624,22 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/);
 
 #endif /* OS_mingw */
 
-#if !HAVE_STRCHR
+#ifndef HAVE_STRCHR
 # define strchr index
 # define strrchr rindex
 char *strchr (), *strrchr ();
 #endif
 
-#if !HAVE_MEMCPY
+#ifndef HAVE_MEMCPY
+# ifndef HAVE_BCOPY
+#  error "no working memcpy()"
+# endif
 # define memcpy(d, s, n) bcopy ((s), (d), (n))
 # define memmove(d, s, n) bcopy ((s), (d), (n))
-#else
-# if !HAVE_BCOPY
-#  define bcopy(src, dest, size)  memcpy(dest, src, size)
-# endif
 #endif
 
-#if !HAVE_USLEEP
-# define usleep(microseconds)    {}
+#ifndef HAVE_USLEEP
+# define usleep(microseconds)    SDL_Delay((microseconds) / 1000)
 #endif
 
 #ifdef MACOSX_support
@@ -572,6 +649,13 @@ extern CFBundleRef mainBundle;
 
 
 #endif /* MACOSX_support */
+
+#ifndef HAVE_SIGSETJMP
+# include <setjmp.h>
+# define sigsetjmp(a, b) setjmp(a)
+# define siglongjmp(a, b) longjmp(a, b)
+typedef jmp_buf sigjmp_buf;
+#endif
 
 #ifdef HW_SIGSEGV
 # define SETJMP(a)	sigsetjmp(a, 1)
@@ -583,6 +667,30 @@ extern CFBundleRef mainBundle;
 # define JMP_BUF	jmp_buf
 #endif
 
+#ifndef __GNUC_PREREQ
+# ifdef __GNUC__
+#   define __GNUC_PREREQ(maj, min) ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+# else
+#   define __GNUC_PREREQ(maj, min) 0
+# endif
+#endif
+
+#ifndef __always_inline
+# if __GNUC_PREREQ(3, 2)
+#  define __always_inline __inline __attribute__ ((__always_inline__))
+# else
+#  define __always_inline __inline
+# endif
+#endif
+
+#ifndef __attribute_noinline__
+# if __GNUC_PREREQ(3,1)
+#  define __attribute_noinline__ __attribute__ ((__noinline__))
+# else
+#  define __attribute_noinline__ /* Ignore */
+# endif
+#endif
+
 #if __GNUC__ < 3
 # define __builtin_expect(foo,bar) (foo)
 #endif
@@ -590,5 +698,10 @@ extern CFBundleRef mainBundle;
 #define unlikely(x)	__builtin_expect(!!(x), 0)
 #define ALWAYS_INLINE	inline __attribute__((always_inline))
 
+#ifndef __attribute__
+#  if !__GNUC_PREREQ(2, 0)
+#    define __attribute__(xyz)	/* Ignore */
+#  endif
+#endif
 
 #endif /* SYSDEPS_H */

@@ -34,7 +34,6 @@
 #include "debug.h"
 
 #include <new>
-#include <SDL_endian.h>
 
 /*--- Defines ---*/
 
@@ -710,7 +709,7 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 			break;
 		case 4:
 		case 5:
-			SDL_WarpMouse(x, y);
+			host->video->WarpMouse(x, y);
 			break;
 		case 6:
 		case 7:

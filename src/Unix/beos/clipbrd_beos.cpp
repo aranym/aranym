@@ -24,7 +24,12 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "SDL_compat.h"
+#include "clipbrd.h"
+
 int init_aclip() { return 0; }
+
+int filter_aclip(const SDL_Event *event) { return 1; }
 
 void write_aclip(char *data, size_t len)
 {

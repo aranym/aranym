@@ -6,7 +6,7 @@
 //  Copyright 2007 __MyCompanyName__. All rights reserved.
 //
 
-#import "SDL.h"
+#import "SDL_compat.h"
 #import "SDLMain.h"
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
@@ -21,20 +21,20 @@
 #define DEBUG_MENUITEM_TAG			6
 
 /* Map SDL Modifier Mask into MAC Modifier Mask */
-static unsigned int getRefreshModifier(SDLMod mods) 
+static unsigned int getRefreshModifier(SDL_Keymod mods) 
 {
 	unsigned int mask = 0;
 
 	if (mods & (KMOD_LSHIFT|KMOD_RSHIFT)) mask |= NSShiftKeyMask;
 	if (mods & (KMOD_LCTRL|KMOD_RCTRL)) mask |= NSControlKeyMask;
 	if (mods & (KMOD_LALT|KMOD_RALT)) mask |= NSAlternateKeyMask;
-	if (mods & (KMOD_LMETA|KMOD_RMETA)) mask |= NSCommandKeyMask;
+	if (mods & (KMOD_LGUI|KMOD_RGUI)) mask |= NSCommandKeyMask;
 	
 	return mask;
 }
 
 /* Update key combination in a menu entry */
-static void refreshMenuItem(SDL_keysym keysym, int itemTag) 
+static void refreshMenuItem(bx_hotkey keysym, int itemTag) 
 {
 	NSMenu *menu = [[NSApplication sharedApplication] mainMenu];
 	int numberOfItems = [menu numberOfItems];

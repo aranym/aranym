@@ -25,8 +25,8 @@
 
 #ifdef ENABLE_OPENGL
 
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "SDL_compat.h"
+#include "SDL_opengl_wrapper.h"
 
 #include "dyngl.h"
 #include "dirty_rects.h"

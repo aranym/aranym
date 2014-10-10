@@ -34,7 +34,8 @@
 /* The "Alert"-dialog: */
 SGOBJ alertdlg[1/*BACKGROUND*/ + MAX_LINES/*text*/ + 1/*OK*/ + 1/*Cancel*/ + 1/*NULL*/] =
 {
-  { SGBOX, SG_BACKGROUND, 0, 0,0, DLG_WIDTH,25, NULL }
+  { SGBOX, SG_BACKGROUND, 0, 0,0, DLG_WIDTH,25, NULL },
+  { -1, 0, 0, 0,0, 0,0, NULL }
 };
 
 SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, DLG_WIDTH-2,1, NULL };

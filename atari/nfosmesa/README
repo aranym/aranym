@@ -1,0 +1,83 @@
+tiny_gl.ldg
+===========
+
+This is the replacement of tiny_gl, using the NFOSMesa native
+feature of ARAnyM for offscreen rendering.
+
+
+osmesa.ldg
+==========
+
+This is the replacement of mesa_gl, using the NFOSMesa native
+feature of ARAnyM for offscreen rendering. It implements all
+functions of tiny_gl, and most of the other functions up to
+OpenGL standard 4.4 (about 2700 functions).
+
+
+nfosmesa.xdd
+============
+
+This was the MiNT driver used in previous versions. It is no
+longer needed.
+
+
+Installation
+============
+
+LDG must be installed for the library to be loaded/usable by
+applications. OSMesa is an OpenGL offscreen renderer, i.e. it renders
+images using host CPU in RAM. The result is then passed to the Atari
+application for final display.
+
+You can then substitute tiny_gl.ldg (or mesa_gl.ldg, but see BUGS below)
+by the version contained in the archive. It is usually located in
+c:\gemsys\ldg or the applications directory.
+
+ARAnyM should have been compiled with OpenGL support (which it done by
+default if it can be autodetected), and of course also with NFOSMesa
+support (which is current not done by default and has to be enabled
+with --enable-nfosmesa).
+
+For OSMesa to operate properly, you must have OSMesa host's libraries
+compiled and installed, see the Mesa project page for more
+informations. Then, fill the [NFOSMESA] section of the ARAnyM
+configuration file: 
+
+[NFOSMESA]
+LibGL = /path/to/libGL.so
+LibOSMesa = /path/to/libOSMesa.so
+
+LibGL may not be needed on all systems. 
+
+In previous versions of ARAnyM, there was also a ChannelSize option
+to select a different OSMesa version. This is no longer recommended,
+and might not be supported in future versions.
+
+
+BUGS
+====
+
+- The cygwin version of ARAnyM currently does not support this feature.
+
+- the exception_error() function of tiny_gl.ldg is exported, but the
+  callback will never be called (due to limitations in the NF design).
+  You should check at least the return value from OSMesaCreateLDG() to
+  check for errors.
+
+- Due to the design, usually all parameters that are supported by the
+  hosts OSMesa library can be set with glEnable() etc. Remember however,
+  that a native tiny_gl.ldg will only support a limited set of those.
+
+- Only framebuffers of type OSMESA_RGB (GL_RGB, 24bit RGB) should be
+  used currently. This is the format that screen.ldg expects to display
+  on the screen.
+
+- some GLU functions that are exported in the native mesa_gl.ldg are
+  not yet implemented.
+
+- Functions that take doubles as arguments might be difficult to call
+  from other languages than GNU-C. The library (and also the hosts
+  OSMesa library) will expect them to be in 64bit IEEE-754 format.
+
+- some functions that take pointers to arrays may not work yet on
+  little-endian hosts.

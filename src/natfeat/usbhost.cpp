@@ -27,9 +27,8 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
-#include <SDL_endian.h>
 
 /*--- Defines ---*/
 
@@ -224,21 +223,21 @@ int32 usbhost_get_device_list(void)
 	struct libusb_config_descriptor *config_desc;
 
 	cnt = libusb_get_device_list(NULL, &devs);
-	D(bug("USBHost: Number of USB devices attached to host bus: %d", cnt));
+	D(bug("USBHost: Number of USB devices attached to host bus: %d", (int)cnt));
 	if (cnt < 0)
 		return (int32)cnt;
 
 	while ((dev = devs[idx_dev]) != NULL) {
 		int r = libusb_open(dev, &devh[idx_dev]);
 		if (r < 0) {
-			D(bug("USBHost: \nFailed to open the device %d\n\r", idx_dev));
+			D(bug("USBHost: Failed to open the device %d", idx_dev));
 			goto try_another;
 		}
 		D(bug("USBHost: Device %d opened", idx_dev));
 
 		r = libusb_get_device_descriptor(dev, &dev_desc);
 		if (r < 0) {
-			D(bug("USBHost: \nUnable to get device descriptor %d\n\r", r));
+			D(bug("USBHost: Unable to get device descriptor %d", r));
 			goto try_another;
 		}
 
@@ -293,6 +292,7 @@ void usbhost_free_usb_devices(void)
 			libusb_release_interface(devh[i], virtual_device[i].idx_interface);
 
 		libusb_close(devh[i]);
+		devh[i] = NULL;
 		i++;
 	}
 
@@ -443,7 +443,7 @@ void usbhost_init_libusb(void)
 		roothub.port[i].device_index = 0;
 	}
 
-	SDL_CreateThread(trigger_interrupt, NULL);
+	SDL_CreateNamedThread(trigger_interrupt, "USB", NULL);
 
 	usbhost_get_device_list();
 
@@ -798,7 +798,7 @@ int32 USBHost::submit_control_msg(uint32 pipe, memptr buffer,
 	else
 		r = libusb_control_transfer(devh[dev_idx], bmRType, bReq, wValue, wIndex, tempbuff, wLength, 0);
 
-	D(bug("USBHost: bytes transmited %ld ", r));
+	D(bug("USBHost: bytes transmitted %d ", r));
 
 	return r;
 }
@@ -835,7 +835,7 @@ int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len)
 	D(bug("USBHost: devnum %d ", devnum));
 	D(bug("USBHost: pipe %x ", pipe));
 	D(bug("USBHost: --- BULK -----------------------------------------------"));
-	D(bug("USBHost: dev=%ld endpoint=%ld endpoint address= %x buf=%p size=%d dir_out=%d",
+	D(bug("USBHost: dev=%d endpoint=%d endpoint address= %x buf=%p size=%d dir_out=%d",
 	    usb_pipedevice(pipe), usb_pipeendpoint(pipe), endpoint, tempbuff, len, dir_out));
 
 	dev_idx = roothub.port[devnum - 2].device_index;
@@ -929,12 +929,13 @@ USBHost::USBHost()
 
 USBHost::~USBHost()
 {
-	int i = total_num_handles - 1;
+	int i = USB_MAX_DEVICE - 1;
 	unsigned int port_number = 0;
 
 	if (init_flag) {
 		while (i >= 0) {
-			D(bug("USBHost: Trying to close device %d \r", i));
+			if (devh[i] != NULL) {
+			D(bug("USBHost: Trying to close device %d", i));
 
 			while (port_number < NUMBER_OF_PORTS) {
 				if (roothub.port[port_number].device_index == i) {
@@ -949,7 +950,9 @@ USBHost::~USBHost()
 				port_number++;
 			}
 			libusb_close(devh[i]);
-			D(bug("USBHost: %d device closed\r", i));
+			devh[i] = NULL;
+			D(bug("USBHost: %d device closed", i));
+			}
 			i--;
 		}
 

@@ -25,7 +25,7 @@ Dialog::Dialog(SGOBJ *new_dlg)
 {
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-	cursor.position = (cursor.object != -1) ? strlen(dlg[cursor.object].txt) : 0;
+	cursor.position = (cursor.object != -1 && dlg[cursor.object].txt) ? strlen(dlg[cursor.object].txt) : 0;
 	cursor.blink_counter = SDL_GetTicks();
 	cursor.blink_state = true;
 }
@@ -133,7 +133,7 @@ void Dialog::keyPress(const SDL_Event &event)
 
 	int obj;
 	int keysym = event.key.keysym.sym;
-	SDLMod mod = event.key.keysym.mod;
+	SDL_Keymod mod = SDL_Keymod(event.key.keysym.mod);
 
 	if (cursor.object != -1) {
 		switch(keysym) {
@@ -196,12 +196,22 @@ void Dialog::keyPress(const SDL_Event &event)
 				break;
 
 			default:
-				if ((keysym >= SDLK_KP0) && (keysym <= SDLK_KP9)) {
-					// map numpad numbers to normal numbers
-					keysym -= (SDLK_KP0 - SDLK_0);
+				// map numpad numbers to normal numbers
+				switch(keysym)
+				{
+					case SDLK_KP_0: keysym = SDLK_0; break;
+					case SDLK_KP_1: keysym = SDLK_1; break;
+					case SDLK_KP_2: keysym = SDLK_2; break;
+					case SDLK_KP_3: keysym = SDLK_3; break;
+					case SDLK_KP_4: keysym = SDLK_4; break;
+					case SDLK_KP_5: keysym = SDLK_5; break;
+					case SDLK_KP_6: keysym = SDLK_6; break;
+					case SDLK_KP_7: keysym = SDLK_7; break;
+					case SDLK_KP_8: keysym = SDLK_8; break;
+					case SDLK_KP_9: keysym = SDLK_9; break;
 				}
 				/* If it is a "good" key then insert it into the text field */
-				if ((keysym >= SDLK_SPACE) && (keysym < SDLK_KP0)) {
+				if (((unsigned int)keysym >= 0x20) && ((unsigned int)keysym < 0x100)) {
 					char *dlgtxt = (char *)dlg[cursor.object].txt;
 					if (strlen(dlg[cursor.object].txt) < dlg[cursor.object].w) {
 						memmove(&dlgtxt[cursor.position+1],

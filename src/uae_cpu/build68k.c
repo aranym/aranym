@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <assert.h>
+#undef abort
 
 static FILE *tablef;
 static int nextch = 0;
@@ -149,6 +150,7 @@ int main()
 	    patbits[i] = nextch;
 	    getnextch();
 	}
+	(void) patbits;
 
 	while (isspace(nextch) || nextch == ':') /* Get CPU and privilege level */
 	    getnextch();

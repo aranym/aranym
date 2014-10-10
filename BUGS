@@ -34,3 +34,6 @@ Only Linux-ia32 (x86), MS-Windows and Solaris (x86) currently support JIT
 compiler for the CPU emulator. This is not a design limitation or a bug
 in other operating systems, it's just lack of manpower willing to work
 on JIT support for the other systems.
+
+User ids, group ids and device types reported by HOSTFS are those used on
+the host and are not converted to the corresponding MiNT values. 

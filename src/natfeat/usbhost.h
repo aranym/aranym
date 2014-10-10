@@ -157,7 +157,6 @@ class USBHost : public NF_Base
 {
 private:
 	int32 rh_devnum;			/* address of Root Hub endpoint */
-	int total_num_handles;
 
 	
 	int32 aranym_submit_rh_msg(uint32 pipe, memptr buffer, int32 transfer_len,

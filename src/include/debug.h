@@ -29,10 +29,13 @@
 # define DEBUG 2
 #endif
 
-#if DEBUG
+#if defined(DEBUG) && DEBUG
 #define DUNUSED(x)
 #else
 #define DUNUSED(x)	((void)x)
+#endif
+#ifndef UNUSED
+#define UNUSED(x)	((void)x)
 #endif
 
 #define	MAX_HIST	10000
@@ -75,31 +78,21 @@ extern void deactivate_debugger(void);
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef CONFGUI
-#undef NEWDEBUG
-#undef DEBUG
-#endif
-
-#ifdef NEWDEBUG
 #define bug ndebug::dbprintf
 #define panicbug ndebug::pdbprintf
-#else
-#define bug dbprintf
-#define panicbug pdbprintf
-#endif
 
-#if DEBUG
+#if defined(DEBUG) && DEBUG
 #define D(x) (x);
 #else
 #define D(x) ;
 #endif
 
-#if DEBUG > 1
+#if defined(DEBUG) && DEBUG > 1
 #define D2(x) (x);
 #else
 #define D2(x) ;
 #endif
 
-#define infoprint panicbug
+#define infoprint bug
 
 #endif

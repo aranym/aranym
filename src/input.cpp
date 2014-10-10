@@ -41,7 +41,9 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
+#include <SDL_syswm.h>
+#include "clipbrd.h"
 
 /* Joysticks */
 
@@ -90,17 +92,14 @@ SDL_Joystick *sdl_joysticks[4]={
 
 
 // according to Gerhard Stoll Milan defined scancode 76 for AltGr key
-#define RALT_ATARI_SCANCODE		(bx_options.ikbd.altgr ? 76 : 0x38)
+#define RALT_ATARI_SCANCODE		(bx_options.ikbd.altgr ? 0x4c : 0x38)
 
 /*********************************************************************
  * Mouse handling
  *********************************************************************/
 
-static bool grabbedMouse = false;
-static bool hiddenMouse = false;
-static bool canGrabMouseAgain = false;
-static bool capslockState = false;
-static bool ignoreMouseMotionEvent = false;
+static SDL_bool grabbedMouse = SDL_FALSE;
+static SDL_bool hiddenMouse = SDL_FALSE;
 static SDL_Cursor *aranym_cursor = NULL;
 
 static const char *arrow[] = {
@@ -180,16 +179,14 @@ static SDL_Cursor *init_system_cursor(const char *image[])
   return SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y);
 }
 
-static void hideMouse(bool hide)
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+static int SDLCALL event_filter(void * /* userdata */, SDL_Event *event)
+#else
+static int SDLCALL event_filter(const SDL_Event *event)
+#endif
 {
-	if (hide) {
-		SDL_ShowCursor(SDL_DISABLE);
-		hiddenMouse = true;
-	}
-	else if (!hide) {
-		SDL_ShowCursor(SDL_ENABLE);
-		hiddenMouse = false;
-	}
+	if (filter_aclip(event) == 0) return 0;
+	return 1;
 }
 
 void InputInit()
@@ -199,15 +196,14 @@ void InputInit()
 	if (bx_options.startup.grabMouseAllowed) {
 		// warp mouse to center of Atari 320x200 screen and grab it
 		if (! bx_options.video.fullscreen)
-			SDL_WarpMouse(320/2, 200/2);
-		grabMouse(true);
+			host->video->WarpMouse(320/2, 200/2);
+		grabMouse(SDL_TRUE);
 		// hide mouse unconditionally
-		hideMouse(true);
+		hideMouse(SDL_TRUE);
 	}
-	// capslockState (yes, 'false' is correct)
-	capslockState = false;
 
-#ifdef OS_darwin
+/* SDL2CHECKME: SDL_HAS3BUTTONMOUSE seems to be no longer needed */
+#if defined (OS_darwin) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Make sure ALT+click is not interpreted as SDL_MIDDLE_BUTTON
 	SDL_putenv((char*)"SDL_HAS3BUTTONMOUSE=1");
 #endif
@@ -217,19 +213,27 @@ void InputInit()
 	OPEN_JOYSTICK(bx_options.joysticks.ikbd1, ARANYM_JOY_IKBD1);
 	OPEN_JOYSTICK(bx_options.joysticks.joypada, ARANYM_JOY_JOYPADA);
 	OPEN_JOYSTICK(bx_options.joysticks.joypadb, ARANYM_JOY_JOYPADB);
+
+	/* Enable the special window hook events */
+	SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetEventFilter(event_filter, NULL);
+#else
+	SDL_SetEventFilter(event_filter);
+#endif
 }
 
 void InputReset()
 {
 	// FIXME: add? InputInit();
 	// FIXME: how??? capslockState (detect)
-	capslockState = (SDL_GetModState() & KMOD_CAPS) != 0;
+	host->video->CapslockState((SDL_GetModState() & KMOD_CAPS) != 0);
 }
 
 void InputExit()
 {
-	grabMouse(false);	// release mouse
-	hideMouse(false);	// show it
+	grabMouse(SDL_FALSE);	// release mouse
+	hideMouse(SDL_FALSE);	// show it
 
 	/* Close joysticks */
 	int i;
@@ -240,92 +244,6 @@ void InputExit()
 	}
 
 	SDL_FreeCursor(aranym_cursor);
-}
-
-static int atari_mouse_xpos = -1;
-static int atari_mouse_ypos = -1;
-// remember the current Atari mouse cursor position
-void RememberAtariMouseCursorPosition()
-{
-	if (getARADATA()->isAtariMouseDriver()) {
-		atari_mouse_xpos = getARADATA()->getAtariMouseX();
-		atari_mouse_ypos = getARADATA()->getAtariMouseY();
-		D(bug("Atari mouse cursor pointer left at [%d, %d]", atari_mouse_xpos, atari_mouse_ypos));
-	}
-}
-
-// reposition the Atari mouse cursor to match the host mouse cursor position
-void RestoreAtariMouseCursorPosition()
-{
-	int xpos, ypos;
-	SDL_GetMouseState(&xpos, &ypos);
-	if (atari_mouse_xpos >=0 && atari_mouse_ypos >= 0) {
-		D(bug("Restoring mouse cursor pointer to [%d, %d]", xpos, ypos));
-		getARADATA()->setAtariMousePosition(xpos, ypos);
-		int delta_x = xpos - atari_mouse_xpos;
-		int delta_y = ypos - atari_mouse_ypos;
-		if (delta_x || delta_y) {
-			D(bug("Moving Atari mouse by [%d, %d]", delta_x, delta_y));
-			getIKBD()->SendMouseMotion(delta_x, delta_y, 0);
-		}
-	}
-}
-
-bool grabMouse(bool grab)
-{
-	int current = SDL_WM_GrabInput(SDL_GRAB_QUERY);
-	if (grab && current != SDL_GRAB_ON) {
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-		grabbedMouse = true;
-		canGrabMouseAgain = true;
-		hideMouse(true);
-		ignoreMouseMotionEvent = true;
-	}
-	else if (!grab && current != SDL_GRAB_OFF) {
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-		grabbedMouse = false;
-		hideMouse(false);
-	}
-
-	// show hint in the window caption
-	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
-		char ungrab_key[60];
-		char setup_key[60];
-		char buf[160];
-		displayKeysym(bx_options.hotkeys.ungrab, ungrab_key);
-		displayKeysym(bx_options.hotkeys.setup, setup_key);
-		snprintf(buf, sizeof(buf), "ARAnyM: press [%s] for SETUP, [%s] or middle mouse button to release input grab", setup_key, ungrab_key);
-		SDL_WM_SetCaption(buf, "ARAnyM");
-	}
-	else {
-		SDL_WM_SetCaption("ARAnyM: no input grab", "ARAnyM");
-	}
-
-	return (current == SDL_GRAB_ON);
-}
-
-
-void grabTheMouse()
-{
-#if DEBUG
-	int x,y;
-	SDL_GetMouseState(&x, &y);
-	D(bug("grabTheMouse: mouse grab at window position [%d,%d]", x, y));
-#endif
-	RestoreAtariMouseCursorPosition();
-	hideMouse(true);
-	grabMouse(true);
-}
-
-void releaseTheMouse()
-{
-	D(bug("Releasing the mouse grab"));
-	grabMouse(false);	// release mouse
-	hideMouse(false);	// show it
-	if (getARADATA()->isAtariMouseDriver()) {
-		RememberAtariMouseCursorPosition();
-		SDL_WarpMouse(atari_mouse_xpos, atari_mouse_ypos);
-	}
 }
 
 /*********************************************************************
@@ -351,7 +269,7 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-static int keysymToAtari(SDL_keysym keysym)
+static int keysymToAtari(SDL_Keysym keysym)
 {
     // panicbug("scancode: %x - sym: %x - char: %s", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
 
@@ -401,38 +319,26 @@ static int keysymToAtari(SDL_keysym keysym)
 #endif /* KEYSYM_MACSCANCODE */
 
 #if KEYBOARD_TRANSLATION == KEYSYM_SYMTABLE
-static int keyboardTable[0x80] = {
-/* 0-7 */ 0, SDLK_ESCAPE, SDLK_1, SDLK_2, SDLK_3, SDLK_4, SDLK_5,
-		SDLK_6,
-/* 8-f */ SDLK_7, SDLK_8, SDLK_9, SDLK_0, SDLK_EQUALS, SDLK_QUOTE,
-		SDLK_BACKSPACE, SDLK_TAB,
-/*10-17*/ SDLK_q, SDLK_w, SDLK_e, SDLK_r, SDLK_t, SDLK_y, SDLK_u,
-		SDLK_i,
-/*18-1f*/ SDLK_o, SDLK_p, SDLK_LEFTPAREN, SDLK_RIGHTPAREN, SDLK_RETURN,
-		SDLK_LCTRL, SDLK_a, SDLK_s,
-/*20-27*/ SDLK_d, SDLK_f, SDLK_g, SDLK_h, SDLK_j, SDLK_k, SDLK_l,
-		SDLK_SEMICOLON,
-/*28-2f*/ SDLK_QUOTE, SDLK_HASH, SDLK_LSHIFT, SDLK_BACKQUOTE, SDLK_z,
-		SDLK_x, SDLK_c, SDLK_v,
-/*30-37*/ SDLK_b, SDLK_n, SDLK_m, SDLK_COMMA, SDLK_PERIOD, SDLK_SLASH,
-		SDLK_RSHIFT, 0,
-/*38-3f*/ SDLK_LALT, SDLK_SPACE, SDLK_CAPSLOCK, SDLK_F1, SDLK_F2,
-		SDLK_F3, SDLK_F4, SDLK_F5,
-/*40-47*/ SDLK_F6, SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10, 0, 0,
-		SDLK_HOME,
-/*48-4f*/ SDLK_UP, 0, SDLK_KP_MINUS, SDLK_LEFT, 0, SDLK_RIGHT,
-		SDLK_KP_PLUS, 0,
-/*50-57*/ SDLK_DOWN, 0, SDLK_INSERT, SDLK_DELETE, 0, 0, 0, 0,
-/*58-5f*/ 0, 0, 0, 0, 0, 0, 0, 0,
-	/*60-67*/ SDLK_BACKQUOTE, SDLK_F12, SDLK_F11, 0 /* NumLock */ ,
-		SDLK_KP_MINUS, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP7,
-/*68-6f*/ SDLK_KP8, SDLK_KP9, SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP1,
-		SDLK_KP2, SDLK_KP3,
-/*70-77*/ SDLK_KP0, SDLK_KP_PERIOD, SDLK_KP_ENTER, 0, 0, 0, 0, 0,
-/*78-7f*/ 0, 0, 0, 0, 0, 0, 0, 0
+static SDL_Keycode keyboardTable[0x80] = {
+/* 0-7 */ 0,              SDLK_ESCAPE,     SDLK_1,         SDLK_2,            SDLK_3,             SDLK_4,         SDLK_5,           SDLK_6,
+/* 8-f */ SDLK_7,         SDLK_8,          SDLK_9,         SDLK_0,            SDLK_EQUALS,        SDLK_QUOTE,     SDLK_BACKSPACE,   SDLK_TAB,
+/*10-17*/ SDLK_q,         SDLK_w,          SDLK_e,         SDLK_r,            SDLK_t,             SDLK_y,         SDLK_u,           SDLK_i,
+/*18-1f*/ SDLK_o,         SDLK_p,          SDLK_LEFTPAREN, SDLK_RIGHTPAREN,   SDLK_RETURN,        SDLK_LCTRL,     SDLK_a,           SDLK_s,
+/*20-27*/ SDLK_d,         SDLK_f,          SDLK_g,         SDLK_h,            SDLK_j,             SDLK_k,         SDLK_l,           SDLK_SEMICOLON,
+/*28-2f*/ SDLK_QUOTE,     SDLK_HASH,       SDLK_LSHIFT,    SDLK_BACKQUOTE,    SDLK_z,             SDLK_x,         SDLK_c,           SDLK_v,
+/*30-37*/ SDLK_b,         SDLK_n,          SDLK_m,         SDLK_COMMA,        SDLK_PERIOD,        SDLK_SLASH,     SDLK_RSHIFT,      SDLK_PRINTSCREEN,
+/*38-3f*/ SDLK_LALT,      SDLK_SPACE,      SDLK_CAPSLOCK,  SDLK_F1,           SDLK_F2,            SDLK_F3,        SDLK_F4,          SDLK_F5,
+/*40-47*/ SDLK_F6,        SDLK_F7,         SDLK_F8,        SDLK_F9,           SDLK_F10,           0,              0,                SDLK_HOME,
+/*48-4f*/ SDLK_UP,        SDLK_PAGEUP,     SDLK_KP_MINUS,  SDLK_LEFT,         0,                  SDLK_RIGHT,     SDLK_KP_PLUS,     SDLK_END,
+/*50-57*/ SDLK_DOWN,      SDLK_PAGEDOWN,   SDLK_INSERT,    SDLK_DELETE,       0,                  0,              0,                0,
+/*58-5f*/ 0,              0,               0,              0,                 0,                  0,              0,                0,
+/*60-67*/ SDLK_LESS,      SDLK_F12,        SDLK_F11,       SDLK_KP_LEFTPAREN, SDLK_KP_RIGHTPAREN, SDLK_KP_DIVIDE, SDLK_KP_MULTIPLY, SDLK_KP_7,
+/*68-6f*/ SDLK_KP_8,      SDLK_KP_9,       SDLK_KP_4,      SDLK_KP_5,         SDLK_KP_6,          SDLK_KP_1,      SDLK_KP_2,        SDLK_KP_3,
+/*70-77*/ SDLK_KP_0,      SDLK_KP_PERIOD,  SDLK_KP_ENTER,  0,                 0,                  0,              0,                0,
+/*78-7f*/ 0,              0,               0,              0,                 0,                  0,              0,                0
 };
 
-static int keysymToAtari(SDL_keysym keysym)
+static int keysymToAtari(SDL_Keysym keysym)
 {
  
 	int sym = keysym.sym;
@@ -452,7 +358,8 @@ static int keysymToAtari(SDL_keysym keysym)
 #endif /* KEYSYM_SYMTABLE */
 
 #if KEYBOARD_TRANSLATION == KEYSYM_SCANCODE
-// Heuristic analysis to find out the obscure scancode offset
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 static int findScanCodeOffset(SDL_keysym keysym)
 {
 	int scanPC = keysym.scancode;
@@ -518,76 +425,163 @@ static int findScanCodeOffset(SDL_keysym keysym)
 		default:	break;
 	}
 	if (offset != UNDEFINED_OFFSET) {
-		panicbug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC);
+		D(bug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC));
 	}
 
 	return offset;
 }
+#endif
 
-static int keysymToAtari(SDL_keysym keysym)
+
+static int keysymToAtari(SDL_Keysym keysym)
 {
-	static int offset = UNDEFINED_OFFSET;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	switch( (unsigned int) keysym.scancode) {
+		case SDL_SCANCODE_ESCAPE: return 0x01;
+		case SDL_SCANCODE_1:	return 0x02;
+		case SDL_SCANCODE_2:	return 0x03;
+		case SDL_SCANCODE_3:	return 0x04;
+		case SDL_SCANCODE_4:	return 0x05;
+		case SDL_SCANCODE_5:	return 0x06;
+		case SDL_SCANCODE_6:	return 0x07;
+		case SDL_SCANCODE_7:	return 0x08;
+		case SDL_SCANCODE_8:	return 0x09;
+		case SDL_SCANCODE_9:	return 0x0a;
+		case SDL_SCANCODE_0:	return 0x0b;
+		case SDL_SCANCODE_MINUS: return 0x0c;
+		case SDL_SCANCODE_EQUALS: return 0x0d;
+		case SDL_SCANCODE_BACKSPACE:	return 0x0e;
+		case SDL_SCANCODE_TAB:	return 0x0f;
+		case SDL_SCANCODE_Q:	return 0x10;
+		case SDL_SCANCODE_W:	return 0x11;
+		case SDL_SCANCODE_E:	return 0x12;
+		case SDL_SCANCODE_R:	return 0x13;
+		case SDL_SCANCODE_T:	return 0x14;
+		case SDL_SCANCODE_Y:	return 0x15;
+		case SDL_SCANCODE_U:	return 0x16;
+		case SDL_SCANCODE_I:	return 0x17;
+		case SDL_SCANCODE_O:	return 0x18;
+		case SDL_SCANCODE_P:	return 0x19;
+		case SDL_SCANCODE_LEFTBRACKET: return 0x1a;
+		case SDL_SCANCODE_RIGHTBRACKET: return 0x1b;
+		case SDL_SCANCODE_RETURN:	return 0x1c;
+		case SDL_SCANCODE_LCTRL:	return 0x1d;
+		case SDL_SCANCODE_A:	return 0x1e;
+		case SDL_SCANCODE_S:	return 0x1f;
+		case SDL_SCANCODE_D:	return 0x20;
+		case SDL_SCANCODE_F:	return 0x21;
+		case SDL_SCANCODE_G:	return 0x22;
+		case SDL_SCANCODE_H:	return 0x23;
+		case SDL_SCANCODE_J:	return 0x24;
+		case SDL_SCANCODE_K:	return 0x25;
+		case SDL_SCANCODE_L:	return 0x26;
+		case SDL_SCANCODE_SEMICOLON: return 0x27;
+		case SDL_SCANCODE_APOSTROPHE: return 0x28;
+		case SDL_SCANCODE_GRAVE: return 0x29;
+		case SDL_SCANCODE_LSHIFT:	return 0x2a;
+		case SDL_SCANCODE_BACKSLASH: return 0x2b;
+		case SDL_SCANCODE_Z:	return 0x2c;
+		case SDL_SCANCODE_X:	return 0x2d;
+		case SDL_SCANCODE_C:	return 0x2e;
+		case SDL_SCANCODE_V:	return 0x2f;
+		case SDL_SCANCODE_B:	return 0x30;
+		case SDL_SCANCODE_N:	return 0x31;
+		case SDL_SCANCODE_M:	return 0x32;
+		case SDL_SCANCODE_COMMA: return 0x33;
+		case SDL_SCANCODE_PERIOD: return 0x34;
+		case SDL_SCANCODE_SLASH: return 0x35;
+		case SDL_SCANCODE_RSHIFT:	return 0x36;
+		case SDL_SCANCODE_PRINTSCREEN: return 0x37;
+		case SDL_SCANCODE_LALT:	return 0x38;
+		case SDL_SCANCODE_SPACE:	return 0x39;
+		case SDL_SCANCODE_CAPSLOCK:	return 0x3a;
+		case SDL_SCANCODE_F1:	return 0x3b;
+		case SDL_SCANCODE_F2:	return 0x3c;
+		case SDL_SCANCODE_F3:	return 0x3d;
+		case SDL_SCANCODE_F4:	return 0x3e;
+		case SDL_SCANCODE_F5:	return 0x3f;
+		case SDL_SCANCODE_F6:	return 0x40;
+		case SDL_SCANCODE_F7:	return 0x41;
+		case SDL_SCANCODE_F8:	return 0x42;
+		case SDL_SCANCODE_F9:	return 0x43;
+		case SDL_SCANCODE_F10:	return 0x44;
 
-	switch(keysym.sym) {
+		case SDL_SCANCODE_NONUSBACKSLASH: return 0x60;
+		case SDL_SCANCODE_KP_LEFTPAREN: return 0x63;
+		case SDL_SCANCODE_KP_RIGHTPAREN: return 0x64;
+		
+		case SDL_SCANCODE_SCROLLLOCK: return 0x00;
+		case SDL_SCANCODE_PAUSE: return 0x00;
+	}
+#endif
+	switch((unsigned int) keysym.sym) {
 		// Numeric Pad
 		case SDLK_KP_DIVIDE:	return 0x65;	/* Numpad / */
 		case SDLK_KP_MULTIPLY:	return 0x66;	/* NumPad * */
-		case SDLK_KP7:	return 0x67;	/* NumPad 7 */
-		case SDLK_KP8:	return 0x68;	/* NumPad 8 */
-		case SDLK_KP9:	return 0x69;	/* NumPad 9 */
-		case SDLK_KP_MINUS:	return 0x4a;	/* NumPad - */
-		case SDLK_KP4:	return 0x6a;	/* NumPad 4 */
-		case SDLK_KP5:	return 0x6b;	/* NumPad 5 */
-		case SDLK_KP6:	return 0x6c;	/* NumPad 6 */
-		case SDLK_KP_PLUS:	return 0x4e;	/* NumPad + */
-		case SDLK_KP1:	return 0x6d;	/* NumPad 1 */
-		case SDLK_KP2:	return 0x6e;	/* NumPad 2 */
-		case SDLK_KP3:	return 0x6f;	/* NumPad 3 */
-		case SDLK_KP0:	return 0x70;	/* NumPad 0 */
+		case SDLK_KP_7:	return 0x67;	/* NumPad 7 */
+		case SDLK_KP_8:	return 0x68;	/* NumPad 8 */
+		case SDLK_KP_9:	return 0x69;	/* NumPad 9 */
+		case SDLK_KP_4:	return 0x6a;	/* NumPad 4 */
+		case SDLK_KP_5:	return 0x6b;	/* NumPad 5 */
+		case SDLK_KP_6:	return 0x6c;	/* NumPad 6 */
+		case SDLK_KP_1:	return 0x6d;	/* NumPad 1 */
+		case SDLK_KP_2:	return 0x6e;	/* NumPad 2 */
+		case SDLK_KP_3:	return 0x6f;	/* NumPad 3 */
+		case SDLK_KP_0:	return 0x70;	/* NumPad 0 */
 		case SDLK_KP_PERIOD:	return 0x71;	/* NumPad . */
 		case SDLK_KP_ENTER:	return 0x72;	/* NumPad Enter */
+		case SDLK_KP_MINUS:	return 0x4a;	/* NumPad - */
+		case SDLK_KP_PLUS:	return 0x4e;	/* NumPad + */
 
 		// Special Keys
 		case SDLK_F11:	return 0x62;	/* F11 => Help */
 		case SDLK_F12:	return 0x61;	/* F12 => Undo */
 		case SDLK_HOME:	return 0x47;	/* Home */
-		case SDLK_END:	return 0x4f;	/* Milan's scancode for End */
 		case SDLK_UP:	return 0x48;	/* Arrow Up */
+		case SDLK_PAGEUP: return 0x49;	/* Page Up */
 		case SDLK_LEFT:	return 0x4b;	/* Arrow Left */
 		case SDLK_RIGHT:	return 0x4d;	/* Arrow Right */
+		case SDLK_END:	return 0x4f;	/* Milan's scancode for End */
 		case SDLK_DOWN:	return 0x50;	/* Arrow Down */
+		case SDLK_PAGEDOWN:	return 0x51;	/* Page Down */
 		case SDLK_INSERT:	return 0x52;	/* Insert */
 		case SDLK_DELETE:	return 0x53;	/* Delete */
 
-		// a key that is out of the fixed offset matrix
+		case SDLK_NUMLOCKCLEAR: return 0x63;
+		
+		case SDLK_BACKQUOTE:
 		case SDLK_LESS: return 0x60;	/* a '<>' key next to short left Shift */
 
 		// keys not found on original Atari keyboard
 		case SDLK_RCTRL:	return 0x1d;	/* map right Control to Atari control */
 		case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
 		case SDLK_RALT:		return RALT_ATARI_SCANCODE;
-
-		default:
-		{
-			// Process remaining keys: assume that it's PC101 keyboard
-			// and that it is compatible with Atari ST keyboard (basically
-			// same scancodes but on different platforms with different
-			// base offset (framebuffer = 0, X11 = 8).
-			// Try to detect the offset using a little bit of black magic.
-			// If offset is known then simply pass the scancode.
-			int scanPC = keysym.scancode;
-			if (offset == UNDEFINED_OFFSET) {
-				offset = findScanCodeOffset(keysym);
-				if (offset == UNDEFINED_OFFSET) {
-					panicbug("Unknown key: scancode = %d ($%02x), keycode = '%s' ($%02x)", scanPC, scanPC, SDL_GetKeyName(keysym.sym), keysym.sym);
-					return 0;	// unknown scancode
-				}
-			}
-
-			// offset is defined so pass the scancode directly
-			return (scanPC > offset) ? scanPC - offset : 0;
-		}
 	}
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+	static int offset = UNDEFINED_OFFSET;
+
+	// Process remaining keys: assume that it's PC101 keyboard
+	// and that it is compatible with Atari ST keyboard (basically
+	// same scancodes but on different platforms with different
+	// base offset (framebuffer = 0, X11 = 8).
+	// Try to detect the offset using a little bit of black magic.
+	// If offset is known then simply pass the scancode.
+	int scanPC = keysym.scancode;
+	if (offset == UNDEFINED_OFFSET /* || scanPC == 0 */) {
+		offset = findScanCodeOffset(keysym);
+	}
+
+	// offset is defined so pass the scancode directly
+	if (offset != UNDEFINED_OFFSET && scanPC > offset)
+		return scanPC - offset;
+#endif
+
+	bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
+		keysym.sym, keysym.sym,
+		keysym.scancode, keysym.scancode,
+		SDL_GetKeyName(keysym.sym));
+	return 0;
 }
 #endif /* KEYSYM_SCANCODE */
 
@@ -611,48 +605,78 @@ void open_GUI(void)
 	cur_fullscreen = bx_options.video.fullscreen;
 
 	/* Always ungrab+show mouse */
-	SDL_ShowCursor(SDL_ENABLE);
-	SDL_WM_GrabInput(SDL_GRAB_OFF);
+	hiddenMouse = hideMouse(SDL_FALSE);
+	grabbedMouse = grabMouse(SDL_FALSE);
 	
 	SDLGui_Open(NULL);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	host->video->gui_window = host->video->window;
+	host->video->gui_window_id = SDL_GetWindowID(host->video->gui_window);
+#endif
 }
 
 void close_GUI(void)
 {
+	HostScreen *video;
+
 	if (!isGuiAvailable /*|| SDLGui_isClosed()*/) {
 		return;
 	}
-
+	if (host == NULL || (video = host->video) == NULL)
+		return;
+	
 	SDLGui_Close();
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (video->gui_window && video->gui_window != video->window)
+		SDL_DestroyWindow(video->gui_window);
+	video->gui_window = NULL;
+	video->gui_window_id = 0;
+#endif
 
 	// small hack to toggle fullscreen from the SETUP GUI
 	if (bx_options.video.fullscreen != cur_fullscreen) {
 		bx_options.video.fullscreen = cur_fullscreen;
 
-		host->video->toggleFullScreen();
+		video->toggleFullScreen();
 		if (bx_options.video.fullscreen && !grabbedMouse)
-			grabTheMouse();
+			video->grabTheMouse();
 	}
 
 	/* Restore mouse cursor state */
 	if (hiddenMouse) {
-		SDL_ShowCursor(SDL_DISABLE);
+		hideMouse(SDL_TRUE);
 	}
 	if (grabbedMouse) {
-		SDL_WM_GrabInput(SDL_GRAB_ON);
+		grabMouse(SDL_TRUE);
 	}
 
-	host->video->forceRefreshScreen();
+	video->forceRefreshScreen();
 }
 
 #endif /* SDL_GUI */
 
+SDL_bool grabMouse(SDL_bool grab)
+{
+	if (host && host->video) return host->video->grabMouse(grab);
+	return SDL_FALSE;
+}
+
+SDL_bool hideMouse(SDL_bool hide)
+{
+	if (host && host->video) return host->video->hideMouse(hide);
+	return SDL_FALSE;
+}
+
 #define CHECK_HOTKEY(Hotkey) ((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && masked_mod == bx_options.hotkeys.Hotkey.mod)
 static void process_keyboard_event(const SDL_Event &event)
 {
-	SDL_keysym keysym = event.key.keysym;
-	SDLKey sym = keysym.sym;
+	SDL_Keysym keysym = event.key.keysym;
+	SDL_Keycode sym = keysym.sym;
 	int state;
+	HostScreen *video;
+	
+	if (host == NULL || (video = host->video) == NULL)
+		return;
 	
 	if ((keysym.mod & HOTKEYS_MOD_MASK) == 0)
 		state  = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
@@ -660,7 +684,12 @@ static void process_keyboard_event(const SDL_Event &event)
 		state = keysym.mod;	// May be send by SDL_PushEvent
 		
 #ifdef SDL_GUI
-	if (!SDLGui_isClosed()) {
+	if (!SDLGui_isClosed()
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		&& event.key.windowID == video->gui_window_id
+#endif
+		)
+	{
 		switch (SDLGui_DoEvent(event)) {
 			case Dialog::GUI_CLOSE:
 				close_GUI();
@@ -680,7 +709,7 @@ static void process_keyboard_event(const SDL_Event &event)
 	}
 #endif /* SDL_GUI */
 
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 	static bool flight_is_active = false;
 	bool flight_turn_on = (state & (KMOD_SHIFT)) == KMOD_RSHIFT;
 	bool flight_turn_off = (state & (KMOD_SHIFT)) == KMOD_LSHIFT;
@@ -701,14 +730,19 @@ static void process_keyboard_event(const SDL_Event &event)
 	bool send2Atari = true;
 
 	if (sym == SDLK_CAPSLOCK) send2Atari = false;
-	if (capslockState != capslocked) {
+	if (video->CapslockState() != capslocked) {
 		// SDL sends SDLK_CAPSLOCK keydown to turn it on and keyup to off.
 		// TOS handles it just like any other keypress (down&up)
 		//  ->	we handle this differently here
 		getIKBD()->SendKey(0x3a);	// press CapsLock
 		getIKBD()->SendKey(0xba);	// release CapsLock
-		capslockState = capslocked;
+		video->CapslockState(capslocked);
 	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (event.key.windowID != video->window_id)
+		return;
+#endif
 
 	// process special hotkeys
 	if (pressed) {
@@ -742,8 +776,8 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 #ifdef DEBUGGER
 		else if (CHECK_HOTKEY(debug)) {
-			releaseTheMouse();
-			canGrabMouseAgain = false;	// let it leave our window
+			video->releaseTheMouse();
+			video->CanGrabMouseAgain(false);	// let it leave our window
 			// activate debugger
 			activate_debugger();
 			send2Atari = false;
@@ -751,19 +785,19 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 		else if (CHECK_HOTKEY(ungrab)) {
 			if ( bx_options.video.fullscreen )
-				host->video->toggleFullScreen();
-			releaseTheMouse();
-			canGrabMouseAgain = false;	// let it leave our window
+				video->toggleFullScreen();
+			video->releaseTheMouse();
+			video->CanGrabMouseAgain(false);	// let it leave our window
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(screenshot)) {
-			host->video->doScreenshot();
+			video->doScreenshot();
 			send2Atari = false;
 		}
 		else if (CHECK_HOTKEY(fullscreen)) {
-			host->video->toggleFullScreen();
-			if (bx_options.video.fullscreen && !grabbedMouse)
-				grabTheMouse();
+			video->toggleFullScreen();
+			if (bx_options.video.fullscreen && !video->GrabbedMouse())
+				video->grabTheMouse();
 			send2Atari = false;
 		}
 	}
@@ -809,11 +843,70 @@ static void process_keyboard_event(const SDL_Event &event)
 	}
 }
 
-static void process_mouse_event(const SDL_Event &event)
+#ifdef NFVDI_SUPPORT
+static NF_Base* fvdi = NULL;
+#endif
+
+
+static void send_wheelup(bool clicked)
 {
 #ifdef NFVDI_SUPPORT
+	if (clicked && fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
+		return;
+#endif
+	if (bx_options.ikbd.wheel_eiffel) {
+		if (clicked) {
+			getIKBD()->SendKey(0xF6);
+			getIKBD()->SendKey(0x05);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x59);
+		}
+	}
+	else {
+		int releaseKeyMask = (clicked ? 0x00 : 0x80);
+		getIKBD()->SendKey(0x48 | releaseKeyMask);	// keyUp
+	}
+}
+
+
+static void send_wheeldown(bool clicked)
+{
+#ifdef NFVDI_SUPPORT
+	if (clicked && fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
+		return;
+#endif
+	if (bx_options.ikbd.wheel_eiffel) {
+		if (clicked) {
+			getIKBD()->SendKey(0xF6);
+			getIKBD()->SendKey(0x05);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x00);
+			getIKBD()->SendKey(0x5A);
+		}
+	}
+	else {
+		int releaseKeyMask = (clicked ? 0x00 : 0x80);
+		getIKBD()->SendKey(0x50 | releaseKeyMask);	// keyDown
+	}
+}
+
+
+static void process_mouse_event(const SDL_Event &event)
+{
+	HostScreen *video;
+
+	if (host == NULL || (video = host->video) == NULL)
+		return;
+	
+#ifdef NFVDI_SUPPORT
 	bool mouse_exit = false;
-	static NF_Base* fvdi = NULL;
 	bool fvdi_events = false;
 
 	if (!fvdi) {
@@ -822,7 +915,12 @@ static void process_mouse_event(const SDL_Event &event)
 #endif
 
 #ifdef SDL_GUI
-	if (!SDLGui_isClosed()) {
+	if (!SDLGui_isClosed()
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		&& event.key.windowID == video->gui_window_id
+#endif
+		)
+	{
 		switch (SDLGui_DoEvent(event)) {
 			case Dialog::GUI_CLOSE:
 				close_GUI();
@@ -842,10 +940,11 @@ static void process_mouse_event(const SDL_Event &event)
 	}
 #endif /* SDL_GUI */
 
-	if (!grabbedMouse) {
+	if (!video->GrabbedMouse()) {
 		if ((event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) && event.button.button == SDL_BUTTON_LEFT) {
 			D(bug("Left mouse click in our window => grab the mouse"));
-			grabTheMouse();
+			video->RememberAtariMouseCursorPosition();
+			video->grabTheMouse();
 		}
 		return;
 	}
@@ -879,55 +978,21 @@ static void process_mouse_event(const SDL_Event &event)
 				else if (clicked) {
 					// ungrab on middle mouse button click
 					if ( bx_options.video.fullscreen )
-						host->video->toggleFullScreen();
-					releaseTheMouse();
-					canGrabMouseAgain = false;	// let it leave our window
+						video->toggleFullScreen();
+					video->releaseTheMouse();
+					video->CanGrabMouseAgain(false);	// let it leave our window
 				}
 				return;
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 			case SDL_BUTTON_WHEELUP:
-#ifdef NFVDI_SUPPORT
-				if (clicked && fvdi != NULL && fvdi->dispatch(0xc00100ff) == 0)
-					return;
-#endif
-				if (bx_options.ikbd.wheel_eiffel) {
-					if (clicked) {
-						getIKBD()->SendKey(0xF6);
-						getIKBD()->SendKey(0x05);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x59);
-					}
-				}
-				else {
-					getIKBD()->SendKey(0x48 | releaseKeyMask);	// keyUp
-				}
+				send_wheelup(clicked);
 				return;
 
 			case SDL_BUTTON_WHEELDOWN:
-#ifdef NFVDI_SUPPORT
-				if (clicked && fvdi != NULL && fvdi->dispatch(0xc0010001) == 0)
-					return;
-#endif
-				if (bx_options.ikbd.wheel_eiffel) {
-					if (clicked) {
-						getIKBD()->SendKey(0xF6);
-						getIKBD()->SendKey(0x05);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x00);
-						getIKBD()->SendKey(0x5A);
-					}
-				}
-				else {
-					getIKBD()->SendKey(0x50 | releaseKeyMask);	// keyDown
-				}
+				send_wheeldown(clicked);
 				return;
+#endif
 
 			default:
 				D(bug("Unknown mouse button: %d", event.button.button));
@@ -935,11 +1000,11 @@ static void process_mouse_event(const SDL_Event &event)
 	}
 	else if (event.type == SDL_MOUSEMOTION) {
 		SDL_MouseMotionEvent eve = event.motion;
-		if (!ignoreMouseMotionEvent) {
+		if (!video->IgnoreMouseMotionEvent()) {
 			xrel = eve.xrel;
 			yrel = eve.yrel;
 		}
-		else ignoreMouseMotionEvent = false;
+		else video->IgnoreMouseMotionEvent(false);
 
 #ifdef NFVDI_SUPPORT
 		if (fvdi != NULL) {
@@ -953,7 +1018,26 @@ static void process_mouse_event(const SDL_Event &event)
 		// So, define top left corner as exit point.
 		mouse_exit = (eve.x == 0) && (eve.y == 0);
 #endif
+		if ((xrel <= 0 && eve.x <= 0) ||
+			(yrel <= 0 && eve.y <= 0) ||
+			(xrel >= 0 && eve.x >= video->getWidth() - 1) ||
+			(yrel >= 0 && eve.y >= video->getHeight() - 1))
+			mouseOut = true;
+
 	}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	else if (event.type == SDL_MOUSEWHEEL) {
+		if (event.wheel.y > 0)
+		{
+			send_wheelup(true);
+			send_wheelup(false);
+		} else if (event.wheel.y < 0)
+		{
+			send_wheeldown(true);
+			send_wheeldown(false);
+		}
+	}
+#endif
 
 #ifdef NFVDI_SUPPORT
 	if (lastbut != but) {
@@ -977,13 +1061,13 @@ static void process_mouse_event(const SDL_Event &event)
 
 	// send the mouse data packet
 	if (xrel || yrel || lastbut != but) {
-#if 1
+#if 0
 		if (xrel < -250 || xrel > 250 || yrel < -250 || yrel > 250) {
 			D(bug("Resetting suspicious mouse packet: position %dx%d, buttons %d", xrel, yrel, but));
 			xrel = yrel = 0;	// reset the values otherwise ikbd goes crazy
 		}
 #endif
-		getIKBD()->SendMouseMotion(xrel, yrel, but);
+		getIKBD()->SendMouseMotion(xrel, yrel, but, false);
 	}
 
 	if (! bx_options.video.fullscreen && getARADATA()->isAtariMouseDriver()) {
@@ -993,8 +1077,8 @@ static void process_mouse_event(const SDL_Event &event)
 			mouseOut = true;
 
 		// same check but for bottom and right side of our window
-		int hostw = host->video->getWidth();
-		int hosth = host->video->getHeight();
+		int hostw = video->getWidth();
+		int hosth = video->getHeight();
 
 		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32) hostw - 1) ||
 			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32) hosth - 1))
@@ -1002,24 +1086,77 @@ static void process_mouse_event(const SDL_Event &event)
 	}
 }
 
+/*--- Video resize event ---*/
+
+static void process_resize_event(int w, int h)
+{
+	if (!host || !host->video) {
+		return;
+	}
+
+	/* Use new size as fixed size */
+	if (bx_options.autozoom.fixedsize) {
+		bx_options.autozoom.width = w;
+		bx_options.autozoom.height = h;
+	}
+
+	host->video->resizeWindow(w, h);
+}
+
 static void process_active_event(const SDL_Event &event)
 {
-	int state = event.active.state;
+	HostScreen *video;
+
+	if (host == NULL || (video = host->video) == NULL)
+		return;
+	
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (event.window.event == SDL_WINDOWEVENT_NONE ||
+		event.window.event == SDL_WINDOWEVENT_SHOWN ||
+		event.window.event == SDL_WINDOWEVENT_HIDDEN ||
+		event.window.event == SDL_WINDOWEVENT_EXPOSED ||
+		event.window.event == SDL_WINDOWEVENT_MOVED)
+		return;
+	if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+	{
+#ifdef SDL_GUI
+		if (event.window.windowID == video->gui_window_id && !SDLGui_isClosed())
+			close_GUI();
+#endif
+		return;
+	}
+	
+	bool app_focus = event.window.event == SDL_WINDOWEVENT_MINIMIZED || event.window.event == SDL_WINDOWEVENT_RESTORED || event.window.event == SDL_WINDOWEVENT_SHOWN || event.window.event == SDL_WINDOWEVENT_HIDDEN;
+	bool mouse_focus = event.window.event == SDL_WINDOWEVENT_ENTER || event.window.event == SDL_WINDOWEVENT_LEAVE;
+	bool input_focus = event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED || event.window.event == SDL_WINDOWEVENT_FOCUS_LOST;
+	bool gained = event.window.event == SDL_WINDOWEVENT_RESTORED || event.window.event == SDL_WINDOWEVENT_SHOWN || event.window.event == SDL_WINDOWEVENT_ENTER || event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED;
+	if ((event.window.event == SDL_WINDOWEVENT_RESIZED ||
+		 event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) &&
+		event.window.windowID == video->window_id)
+	{
+		process_resize_event(event.window.data1, event.window.data2);
+	}
+#else
+	bool app_focus = (event.active.state & SDL_APPACTIVE) != 0;
+	bool mouse_focus = (event.active.state & SDL_APPMOUSEFOCUS) != 0;
+	bool input_focus = (event.active.state & SDL_APPINPUTFOCUS) != 0;
+	bool gained = event.active.gain != 0;
+#endif
 #if DEBUG
 	uint32 ticks = SDL_GetTicks();
 #endif
 
-	if (state & SDL_APPACTIVE) {
-		D(bug("%d: ARAnyM window is being %s", ticks, event.active.gain ? "restored" : "minimized"));
+	if (app_focus) {
+		D(bug("%d: ARAnyM window is being %s", ticks, gained ? "restored" : "minimized"));
 	}
 
-	if (state & SDL_APPINPUTFOCUS) {
-		D(bug("%d: ARAnyM window is %s input focus", ticks, event.active.gain ? "gaining" : "losing"));
+	if (input_focus) {
+		D(bug("%d: ARAnyM window is %s input focus", ticks, gained ? "gaining" : "losing"));
 	}
 
 	// if it's mouse focus event
-	if (state & SDL_APPMOUSEFOCUS) {
-		D(bug("%d: Mouse pointer is %s ARAnyM window", ticks, event.active.gain ? "entering" : "leaving"));
+	if (mouse_focus) {
+		D(bug("%d: Mouse pointer is %s ARAnyM window", ticks, gained ? "entering" : "leaving"));
 		bool allowMouseGrab = true;
 #ifdef SDL_GUI
 		// Disable grab, if Setup GUI is open
@@ -1032,21 +1169,21 @@ static void process_active_event(const SDL_Event &event)
 			D(bug("Proceed only if AtariMouseDriver is working"));
 			if (getARADATA()->isAtariMouseDriver()) {
 				// if the mouse pointer is leaving our window
-				if (!event.active.gain) {
+				if (!gained) {
 					// allow grabbing it when it will be returning
 					D(bug("Host mouse is indeed leaving us"));
-					if (canGrabMouseAgain) {
-						// RememberAtariMouseCursorPosition();
+					if (video->CanGrabMouseAgain()) {
+						// video->RememberAtariMouseCursorPosition();
 					}
 				}
 				// if the mouse pointer is entering our window
 				else {
 					D(bug("Host mouse is returning!"));
 					// if grabbing the mouse is allowed
-					if (canGrabMouseAgain) {
+					if (video->CanGrabMouseAgain() && video->HasInputFocus()) {
 						D(bug("canGrabMouseAgain allows autograb"));
 						// then grab it
-						grabTheMouse();
+						video->grabTheMouse();
 					}
 				}
 			}
@@ -1100,33 +1237,21 @@ static void process_joystick_event(const SDL_Event &event)
 	}
 }
 
-/*--- Video resize event ---*/
-
-static void process_resize_event(const SDL_Event &event)
-{
-	if (!host) {
-		return;
-	}
-
-	/* Use new size as fixed size */
-	if (bx_options.autozoom.fixedsize) {
-		bx_options.autozoom.width = event.resize.w;
-		bx_options.autozoom.height = event.resize.h;
-	}
-
-	host->video->resizeWindow(event.resize.w, event.resize.h);
-}
-
 ///////
 // main function for checking keyboard, mouse and joystick events
 // called from main.cpp every 20 ms
 void check_event()
 {
+	HostScreen *video;
+
+	if (host == NULL || (video = host->video) == NULL)
+		return;
+	
 	if (!bx_options.video.fullscreen && mouseOut) {
 		// host mouse moved but the Atari mouse did not => mouse is
 		// probably at the Atari screen border. Ungrab it and warp the host mouse at
 		// the same location so the mouse moves smoothly.
-		releaseTheMouse();
+		video->releaseTheMouse();
 		mouseOut = false;
 	}
 
@@ -1141,21 +1266,57 @@ void check_event()
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
 			case SDL_MOUSEMOTION:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			case SDL_MOUSEWHEEL:
+#endif
 				process_mouse_event(event);
 				break;
+
 			case SDL_JOYBUTTONDOWN:
 			case SDL_JOYBUTTONUP:
 			case SDL_JOYHATMOTION:
 			case SDL_JOYAXISMOTION:
 				process_joystick_event(event);
 				break;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			case SDL_WINDOWEVENT:
+#else
 			case SDL_ACTIVEEVENT:
+#endif
 				process_active_event(event);
 				break;
-			case SDL_VIDEORESIZE:
-				process_resize_event(event);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			case SDL_APP_TERMINATING:
+			case SDL_APP_LOWMEMORY:
+			case SDL_APP_WILLENTERBACKGROUND:
+			case SDL_APP_DIDENTERBACKGROUND:
+			case SDL_APP_WILLENTERFOREGROUND:
+			case SDL_APP_DIDENTERFOREGROUND:
+				/* SDL2FIXME: TODO */
 				break;
+			case SDL_FINGERDOWN:
+			case SDL_FINGERUP:
+			case SDL_FINGERMOTION:
+				/* SDL2FIXME: TODO */
+				break;
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			/* resize handled in process_active_event() */
+#else
+			case SDL_VIDEORESIZE:
+				process_resize_event(event.resize.w, event.resize.h);
+				break;
+#endif
+
 			case SDL_QUIT:
+#ifdef SDL_GUI
+				if (!SDLGui_isClosed()) {
+					close_GUI();
+				}
+#endif
 				pendingQuit = true;
 				break;
 		}

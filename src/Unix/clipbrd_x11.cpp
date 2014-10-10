@@ -25,8 +25,10 @@
 #include <stdio.h>
 #include <limits.h>
 
-#include "SDL.h"
+#include "SDL_compat.h"
 #include "SDL_syswm.h"
+#include "clipbrd.h"
+#include "host.h"
 
 #if defined(__unix__) \
 	|| defined (_BSD_SOURCE) || defined (_SYSV_SOURCE) \
@@ -45,12 +47,15 @@
 typedef Atom scrap_type;
 
 static Display *SDL_Display;
-static Window SDL_Window;
+static Window SDL_window;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#define Lock_Display()
+#define Unlock_Display()
+#else
 static void (*Lock_Display)(void);
 static void (*Unlock_Display)(void);
+#endif
 
-/* The system message filter function -- handle clipboard messages */
-static int clipboard_filter(const SDL_Event *event);
 
 int init_aclip()
 {
@@ -60,17 +65,23 @@ int init_aclip()
 	retval = -1;
 
 	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) ) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if ( SDL_GetWindowWMInfo(host->video->Window(), &info) )
+#else
+	if ( SDL_GetWMInfo(&info) )
+#endif
+	{
 		/* Save the information for later use */
 		if ( info.subsystem == SDL_SYSWM_X11 ) {
 			SDL_Display = info.info.x11.display;
-			SDL_Window = info.info.x11.window;
+			SDL_window = info.info.x11.window;
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
 			Lock_Display = info.info.x11.lock_func;
 			Unlock_Display = info.info.x11.unlock_func;
+#endif
 
 			/* Enable the special window hook events */
 			SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
-			SDL_SetEventFilter(clipboard_filter);
 
 			retval = 0;
 		}
@@ -86,8 +97,8 @@ void write_aclip(char *src, size_t srclen)
 {
 	Lock_Display();
 	XChangeProperty(SDL_Display, DefaultRootWindow(SDL_Display), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (const unsigned char *)src, srclen);
-	if (XGetSelectionOwner(SDL_Display, XA_PRIMARY) != SDL_Window)
-		XSetSelectionOwner(SDL_Display, XA_PRIMARY, SDL_Window, CurrentTime);
+	if (XGetSelectionOwner(SDL_Display, XA_PRIMARY) != SDL_window)
+		XSetSelectionOwner(SDL_Display, XA_PRIMARY, SDL_window, CurrentTime);
 	Unlock_Display();
 }
 
@@ -106,7 +117,7 @@ char * read_aclip(size_t *dstlen)
 	Lock_Display();
 	owner = XGetSelectionOwner(SDL_Display, XA_PRIMARY);
 	Unlock_Display();
-	if ( (owner == None) || (owner == SDL_Window) ) {
+	if ( (owner == None) || (owner == SDL_window) ) {
 		owner = DefaultRootWindow(SDL_Display);
 		selection = XA_CUT_BUFFER0;
 	}
@@ -114,7 +125,7 @@ char * read_aclip(size_t *dstlen)
 		int selection_response = 0;
 		SDL_Event event;
 
-		owner = SDL_Window;
+		owner = SDL_window;
 		Lock_Display();
 		selection = XInternAtom(SDL_Display, "SDL_SELECTION", False);
 		XConvertSelection(SDL_Display, XA_PRIMARY, XA_STRING,
@@ -123,7 +134,11 @@ char * read_aclip(size_t *dstlen)
 		while ( ! selection_response ) {
 			SDL_WaitEvent(&event);
 			if ( event.type == SDL_SYSWMEVENT ) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+				XEvent xevent = event.syswm.msg->msg.x11.event;
+#else
 				XEvent xevent = event.syswm.msg->event.xevent;
+#endif
 
 				if ( (xevent.type == SelectionNotify) &&
 				        (xevent.xselection.requestor == owner) )
@@ -150,15 +165,22 @@ char * read_aclip(size_t *dstlen)
 	return dst;
 }
 
-static int clipboard_filter(const SDL_Event *event)
+/* The system message filter function -- handle clipboard messages */
+int filter_aclip(const SDL_Event *event)
 {
 	/* Post all non-window manager specific events */
-	if ( event->type != SDL_SYSWMEVENT ) {
+	if ( !SDL_window || event->type != SDL_SYSWMEVENT ) {
 		return 1;
 	}
 
 	/* Handle window-manager specific clipboard events */
-	switch (event->syswm.msg->event.xevent.type) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	XEvent *xevent = &event->syswm.msg->msg.x11.event;
+#else
+	XEvent *xevent = &event->syswm.msg->event.xevent;
+#endif
+	switch (event->type)
+	{
 		/* Copy the selection from XA_CUT_BUFFER0 to the requested property */
 	case SelectionRequest: {
 			XSelectionRequestEvent *req;
@@ -168,7 +190,7 @@ static int clipboard_filter(const SDL_Event *event)
 			unsigned long overflow;
 			unsigned char *seln_data;
 
-			req = &event->syswm.msg->event.xevent.xselectionrequest;
+			req = &xevent->xselectionrequest;
 			sevent.xselection.type = SelectionNotify;
 			sevent.xselection.display = req->display;
 			sevent.xselection.selection = req->selection;
@@ -206,6 +228,7 @@ static int clipboard_filter(const SDL_Event *event)
 int init_aclip() { return -1; }
 void write_aclip(char *src, size_t srclen) { }
 char * read_aclip(size_t *dstlen) { return NULL; }
+int filter_aclip(const SDL_Event *event) { return 1; }
 #endif /* X11_SCRAP */
 
 // don't remove this modeline with intended formatting for vim:ts=4:sw=4:

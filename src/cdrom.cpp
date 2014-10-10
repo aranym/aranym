@@ -56,7 +56,7 @@ extern "C" {
 #define BX_CD_FRAMESIZE CD_FRAMESIZE
 }
 
-#elif defined(__GNU__) || (defined(OS_cygwin) && !defined(WIN32))
+#elif defined(__GNU__) || (defined(OS_cygwin) && !defined(_WIN32))
 extern "C" {
 #include <sys/ioctl.h>
 #define BX_CD_FRAMESIZE 2048
@@ -149,7 +149,7 @@ static char CDDevicePath[ MAXPATHLEN ];
 #define BX_CD_FRAMESIZE 2048
 #define CD_FRAMESIZE	2048
 
-#elif defined(WIN32)
+#elif defined(_WIN32)
 #include <windows.h>
 #include <winioctl.h>
 #include "aspi-win32.h"
@@ -393,7 +393,7 @@ static struct _CDTOC * ReadTOC( const char * devpath ) {
 }
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 
 bool ReadCDSector(unsigned int hid, unsigned int tid, unsigned int lun, unsigned long frame, unsigned char *buf, int bufsize)
 {
@@ -481,7 +481,7 @@ cdrom_interface::cdrom_interface(char *dev)
     path = strdup(dev);
   }
   using_file=0;
-#ifdef WIN32
+#ifdef _WIN32
   bUseASPI = FALSE;
   osinfo.dwOSVersionInfoSize = sizeof(osinfo);
   GetVersionEx(&osinfo);
@@ -495,7 +495,7 @@ cdrom_interface::init(void) {
 
 cdrom_interface::~cdrom_interface(void)
 {
-#ifdef WIN32
+#ifdef _WIN32
 #else
 	if (fd >= 0)
 		close(fd);
@@ -512,7 +512,7 @@ cdrom_interface::insert_cdrom(char *dev)
 
   // Load CD-ROM. Returns false if CD is not ready.
   if (dev != NULL) path = strdup(dev);
-#ifdef WIN32
+#ifdef _WIN32
   char drive[256];
   if ( (path[1] == ':') && (strlen(path) == 2) )
   {
@@ -644,7 +644,7 @@ cdrom_interface::insert_cdrom(char *dev)
 
   // I just see if I can read a sector to verify that a
   // CD is in the drive and readable.
-#ifdef WIN32
+#ifdef _WIN32
     if(bUseASPI) {
       return ReadCDSector(hid, tid, lun, 0, buffer, BX_CD_FRAMESIZE);
     } else {
@@ -709,7 +709,7 @@ cdrom_interface::eject_cdrom()
 	  D(bug( "eject_cdrom: eject returns error." ));
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 if (using_file == 0)
 {
 	if(bUseASPI) {
@@ -718,7 +718,7 @@ if (using_file == 0)
 		DeviceIoControl(hFile, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0, &lpBytesReturned, NULL);
 	}
 }
-#else // WIN32
+#else /* _WIN32 */
 
 #ifdef OS_linux
   if (!using_file)
@@ -726,7 +726,7 @@ if (using_file == 0)
 #endif
 
     close(fd);
-#endif // WIN32
+#endif /* _WIN32 */
     fd = -1;
     }
 }
@@ -743,7 +743,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track, in
     return false;
   }
 
-#if defined(WIN32)
+#if defined(_WIN32)
   if (!isWindowsXP || using_file) { // This is a hack and works okay if there's one rom track only
 #else
   if (using_file) {
@@ -828,7 +828,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track, in
   }
   // all these implementations below are the platform-dependent code required
   // to read the TOC from a physical cdrom.
-#ifdef WIN32
+#ifdef _WIN32
   if(isWindowsXP)
   {
 
@@ -850,6 +850,7 @@ cdrom_interface::read_toc(uint8* buf, int* length, bool msf, int start_track, in
 
     return true;
   }
+  return false;
 #elif (defined(OS_linux) || defined(OS_solaris))
   {
   struct cdrom_tochdr tochdr;
@@ -1086,7 +1087,7 @@ cdrom_interface::capacity()
   // Return CD-ROM capacity.  I believe you want to return
   // the number of blocks of capacity the actual media has.
 
-#if !defined(WIN32)
+#if !defined(_WIN32)
   // win32 has its own way of doing this
   if (using_file) {
     // return length of the image file
@@ -1138,7 +1139,6 @@ cdrom_interface::capacity()
   // <splite@purdue.edu> 21 June 2001
 
   int i, dtrk_lba, num_sectors;
-  int dtrk = 0;
   struct cdrom_tochdr td;
   struct cdrom_tocentry te;
 
@@ -1162,7 +1162,6 @@ cdrom_interface::capacity()
       break;
     }
     if (te.cdte_ctrl & CDROM_DATA_TRACK) {
-      dtrk = i;
       dtrk_lba = te.cdte_addr.lba;
     }
   }
@@ -1225,7 +1224,7 @@ cdrom_interface::capacity()
   return(num_sectors);
 
   }
-#elif defined(WIN32)
+#elif defined(_WIN32)
   {
 	  if(bUseASPI) {
 		  return (GetCDCapacity(hid, tid, lun) / 2352);
@@ -1314,14 +1313,14 @@ cdrom_interface::read_block(uint8* buf, int lba)
 {
   // Read a single block from the CD
 
-#ifdef WIN32
+#ifdef _WIN32
   LARGE_INTEGER pos;
 #else
   off_t pos;
 #endif
   ssize_t n;
 
-#ifdef WIN32
+#ifdef _WIN32
   if(bUseASPI) {
 	  ReadCDSector(hid, tid, lun, lba, buf, BX_CD_FRAMESIZE);
 	  n = BX_CD_FRAMESIZE;

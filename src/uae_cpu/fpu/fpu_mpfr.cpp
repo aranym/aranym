@@ -118,6 +118,8 @@ set_nan (fpu_register &reg, uae_u64 nan_bits)
   reg.nan_bits = nan_bits;
 }
 
+static bool fpu_inited;
+
 void
 fpu_init (bool integral_68040)
 {
@@ -161,12 +163,16 @@ fpu_init (bool integral_68040)
   for (int i = 20; i < 31; i++)
     mpfr_sqr (fpu_constant_rom[i], fpu_constant_rom[i - 1], MPFR_RNDN);
 
+  fpu_inited = true;
+
   fpu_reset ();
 }
 
 void
 fpu_exit ()
 {
+  if (!fpu_inited) return;
+
   for (int i = 0; i < 8; i++)
     mpfr_clear (fpu.registers[i].f);
   mpfr_clear (fpu.result.f);

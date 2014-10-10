@@ -22,11 +22,12 @@
 #define DLGKEYPRESS_H 1
 
 #include "dialog.h"
+#include "SDL_compat.h"
 
 class DlgKeypress: public Dialog
 {
 	private:
-		SDL_keysym keysym;
+		bx_hotkey keysym;
 
 		void keyPress(const SDL_Event &event);
  
@@ -36,7 +37,7 @@ class DlgKeypress: public Dialog
 
 		int processDialog(void);
 
- 		SDL_keysym &getPressedKey(void);
+ 		bx_hotkey &getPressedKey(void);
 };
 
 Dialog *DlgKeypressOpen(void);

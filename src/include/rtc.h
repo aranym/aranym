@@ -45,9 +45,39 @@ typedef enum {
 	COUNTRY_NL,	// Holland
 	COUNTRY_CZ,	// Czech Republic
 	COUNTRY_HU,	// Hungary
-// the following entries are from EmuTOS
+// the following entries are from EmuTOS and TOS.HYP (http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP)
+	COUNTRY_PL,	// Poland
+	COUNTRY_LT,	// Lithuania
+	COUNTRY_RU, // Russia	
+	COUNTRY_EE, // Estonia
+	COUNTRY_BY, // Belarus
+	COUNTRY_UA, // Ukraine
 	COUNTRY_SK,	// Slovak Republic
-	COUNTRY_GR	// Greek
+	COUNTRY_RO, // Romania
+	COUNTRY_BG, // Bulgaria
+	COUNTRY_SI, // Slovenia
+	COUNTRY_HR, // Croatia
+	COUNTRY_RS, // Serbia
+	COUNTRY_ME, // Montenegro
+	COUNTRY_MK, // Macedonia
+	COUNTRY_GR,	// Greece
+	COUNTRY_LV, // Latvia
+	COUNTRY_IL, // Israel
+	COUNTRY_ZA, // South Africa
+	COUNTRY_PT, // Portugal
+	COUNTRY_BE, // Belgium
+	COUNTRY_JP, // Japan
+	COUNTRY_CN, // China
+	COUNTRY_KR, // Korea
+	COUNTRY_VN, // Vietnam
+	COUNTRY_IN, // India
+	COUNTRY_IR, // Iran
+	COUNTRY_MN, // Mongolia
+	COUNTRY_NP, // Nepal
+	COUNTRY_LA, // Lao People's Democratic Republic
+	COUNTRY_KH, // Cambodia
+	COUNTRY_ID, // Indonesia
+	COUNTRY_BD, // Bangladesh
 } nvram_t;
 
 class RTC : public BASE_IO {

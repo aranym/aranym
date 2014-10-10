@@ -110,7 +110,7 @@ void *init_driver(void)
 static void press_any_key(void)
 {
 	Cconws("- Press any key to continue -\r\n");
-	while (Bconstat(DEV_CONSOLE)==0);
+	Crawcin();
 }
 
 metados_bosheader_t *init_devices(unsigned long phys_letter, unsigned long phys_channel)

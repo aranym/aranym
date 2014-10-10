@@ -57,7 +57,6 @@ char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 		if (homelen > 0) {
 			unsigned int len = strlen(ARANYMHOME);
 			if ((homelen + 1 + len + 1) < bufsize) {
-				strcpy(path, home);
 				if (homelen)
 					strcat(path, DIRSEPARATOR);
 				strcat(path, ARANYMHOME);
@@ -77,6 +76,7 @@ char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 int HostFilesys::makeDir(char *filename, int perm)
 {
 #ifdef OS_mingw
+	(void) perm;
 	return mkdir(filename);
 #else
 	return mkdir(filename, perm);

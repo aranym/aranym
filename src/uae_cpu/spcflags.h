@@ -9,7 +9,7 @@
 #ifndef SPCFLAGS_H
 #define SPCFLAGS_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 typedef uae_u32 spcflags_t;
 

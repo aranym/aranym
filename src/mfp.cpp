@@ -279,7 +279,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					break;
 
 		case 0x09:
-#if DEBUG_IER
+#ifdef DEBUG_IER
 					if ((irq_enable ^ value) & 0x20) {
 						D(bug("Write: TimerC IRQ %sabled", (value & 20) ? "en" : "dis"));
 					}
@@ -311,7 +311,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 				break;
 
 		case 0x0d:
-#if DEBUG_IPR
+#ifdef DEBUG_IPR
 					if ((irq_pending ^ value) & 0x20) {
 						D(bug("Write: TimerC IRQ %s pending", (value & 20) ? "" : "NOT"));
 					}
@@ -335,7 +335,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					break;
 
 		case 0x11:
-#if DEBUG_ISR
+#ifdef DEBUG_ISR
 					if ((irq_inservice ^ value) & 0x20) {
 						D(bug("Write: TimerC IRQ %s in-service at %08x", (value & 20) ? "" : "NOT", showPC()));
 					}
@@ -352,7 +352,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 					break;
 					
 		case 0x15:
-#if DEBUG_IMR
+#ifdef DEBUG_IMR
 					if ((irq_mask ^ value) & 0x20) {
 						D(bug("Write: TimerC IRQ %s masked", (value & 20) ? "" : "NOT"));
 					}

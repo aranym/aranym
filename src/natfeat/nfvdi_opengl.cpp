@@ -28,7 +28,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL_endian.h>
 #include "dyngl.h"
 
 #define ENABLE_GLU_TESSELATOR 0
@@ -1169,7 +1168,7 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		gluTessEndPolygon(tess);
 	gl.EndList();
 
-	delete poly_coords;
+	delete [] poly_coords;
 
 	if (logOp == 1) {
 		/* First, the back color */

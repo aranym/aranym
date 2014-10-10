@@ -10,7 +10,7 @@
 #define _ETHERNET_CYGWIN_H
 
 #include "ethernet.h"
-#include <w32api/windows.h>
+#include <windows.h>
 
 class WinTapEthernetHandler : public ETHERNETDriver::Handler {
 	OVERLAPPED read_overlapped;

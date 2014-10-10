@@ -33,9 +33,7 @@ static SGOBJ presskeydlg[] =
 DlgKeypress::DlgKeypress(SGOBJ *dlg)
 	: Dialog(dlg)
 {
-	keysym.sym = SDLK_UNKNOWN;
-	keysym.scancode = keysym.unicode = 0;
-	keysym.mod = (SDLMod) 0;
+	memset(&keysym, 0, sizeof(keysym));
 }
 
 DlgKeypress::~DlgKeypress()
@@ -46,8 +44,9 @@ void DlgKeypress::keyPress(const SDL_Event &event)
 {
 	if (event.type == SDL_KEYDOWN) {
 		keysym.sym = event.key.keysym.sym;
-		keysym.mod = (SDLMod)(event.key.keysym.mod & HOTKEYS_MOD_MASK);
-		if (keysym.sym >= SDLK_NUMLOCK && keysym.sym <= SDLK_COMPOSE) {
+		keysym.mod = (SDL_Keymod)(event.key.keysym.mod & HOTKEYS_MOD_MASK);
+		if (SDLK_IS_MODIFIER(keysym.sym))
+		{
 			keysym.sym = SDLK_UNKNOWN;
 		}
 	}
@@ -68,7 +67,7 @@ int DlgKeypress::processDialog(void)
 	return retval;
 }
 
-SDL_keysym &DlgKeypress::getPressedKey(void)
+bx_hotkey &DlgKeypress::getPressedKey(void)
 {
 	return keysym;
 }

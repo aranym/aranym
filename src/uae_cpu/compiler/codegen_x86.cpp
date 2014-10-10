@@ -38,6 +38,10 @@
  * Some basic information about the the target CPU                       *
  *************************************************************************/
 
+#define R1 RR1
+#define R2 RR2
+#define R4 RR4
+
 #define EAX_INDEX 0
 #define ECX_INDEX 1
 #define EDX_INDEX 2
@@ -190,6 +194,14 @@ static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #define x86_get_target()		get_target()
 #define x86_emit_failure(MSG)	jit_fail(MSG, __FILE__, __LINE__, __FUNCTION__)
 
+#define compemu_raw_add_l_mi(a,b)	raw_add_l_mi(a,b)
+#define compemu_raw_and_l_ri(a,b)	raw_and_l_ri(a,b)
+#define compemu_raw_mov_l_rm(a,b)	raw_mov_l_rm(a,b)
+#define compemu_raw_sub_l_mi(a,b)	raw_sub_l_mi(a,b)
+#define compemu_raw_jl(a)			raw_jl(a)
+#define compemu_raw_jz_b_oponly()	raw_jz_b_oponly()
+#define compemu_raw_test_l_rr(a,b) 	raw_test_l_rr(a,b)
+
 static void jit_fail(const char *msg, const char *file, int line, const char *function)
 {
 	panicbug("JIT failure in function %s from file %s at line %d: %s",
@@ -283,31 +295,31 @@ LENDFUNC(WRITE,NONE,2,raw_sub_w_ri,(RW2 d, IMM i))
 
 LOWFUNC(NONE,READ,2,raw_mov_l_rm,(W4 d, MEMR s))
 {
-	MOVLmr(s, X86_NOREG, X86_NOREG, 1, d);
+	ADDR32 MOVLmr(s, X86_NOREG, X86_NOREG, 1, d);
 }
 LENDFUNC(NONE,READ,2,raw_mov_l_rm,(W4 d, MEMR s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_l_mi,(MEMW d, IMM s))
 {
-	MOVLim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVLim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_l_mi,(MEMW d, IMM s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_w_mi,(MEMW d, IMM s))
 {
-	MOVWim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVWim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_w_mi,(MEMW d, IMM s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_b_mi,(MEMW d, IMM s))
 {
-	MOVBim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVBim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_b_mi,(MEMW d, IMM s))
 
 LOWFUNC(WRITE,RMW,2,raw_rol_b_mi,(MEMRW d, IMM i))
 {
-	ROLBim(i, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 ROLBim(i, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,RMW,2,raw_rol_b_mi,(MEMRW d, IMM i))
 
@@ -379,7 +391,7 @@ LENDFUNC(WRITE,NONE,2,raw_ror_w_ri,(RW2 r, IMM i))
 
 LOWFUNC(WRITE,READ,2,raw_or_l_rm,(RW4 d, MEMR s))
 {
-	ORLmr(s, X86_NOREG, X86_NOREG, 1, d);
+	ADDR32 ORLmr(s, X86_NOREG, X86_NOREG, 1, d);
 }
 LENDFUNC(WRITE,READ,2,raw_or_l_rm,(RW4 d, MEMR s))
 
@@ -523,7 +535,7 @@ LENDFUNC(READ,NONE,2,raw_setcc,(W1 d, IMM cc))
 
 LOWFUNC(READ,WRITE,2,raw_setcc_m,(MEMW d, IMM cc))
 {
-	SETCCim(cc, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 SETCCim(cc, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(READ,WRITE,2,raw_setcc_m,(MEMW d, IMM cc))
 
@@ -585,7 +597,7 @@ LENDFUNC(NONE,NONE,2,raw_imul_32_32,(RW4 d, R4 s))
 LOWFUNC(NONE,NONE,2,raw_imul_64_32,(RW4 d, RW4 s))
 {
 	if (d!=MUL_NREG1 || s!=MUL_NREG2) {
-	write_log("Bad register in IMUL: d=%d, s=%d\n",d,s);
+	panicbug("Bad register in IMUL: d=%d, s=%d",d,s);
 	abort();
 	}
 	IMULLr(s);
@@ -595,7 +607,7 @@ LENDFUNC(NONE,NONE,2,raw_imul_64_32,(RW4 d, RW4 s))
 LOWFUNC(NONE,NONE,2,raw_mul_64_32,(RW4 d, RW4 s))
 {
 	if (d!=MUL_NREG1 || s!=MUL_NREG2) {
-	write_log("Bad register in MUL: d=%d, s=%d\n",d,s);
+	panicbug("Bad register in MUL: d=%d, s=%d",d,s);
 	abort();
 	}
 	MULLr(s);
@@ -718,7 +730,7 @@ LOWFUNC(NONE,READ,3,raw_cmov_l_rm,(W4 d, IMM mem, IMM cond))
 	else { /* replacement using branch and mov */
 		int8 *target_p = (int8 *)x86_get_target() + 1;
 		JCCSii(cond^1, 0);
-		MOVLmr(mem, X86_NOREG, X86_NOREG, 1, d);
+		ADDR32 MOVLmr(mem, X86_NOREG, X86_NOREG, 1, d);
 		*target_p = (uintptr)x86_get_target() - ((uintptr)target_p + 1);
 	}
 }
@@ -798,25 +810,25 @@ LENDFUNC(NONE,WRITE,3,raw_mov_b_Rr,(R4 d, R1 s, IMM offset))
 
 LOWFUNC(NONE,NONE,3,raw_lea_l_brr,(W4 d, R4 s, IMM offset))
 {
-	LEALmr(offset, s, X86_NOREG, 1, d);
+	ADDR32 LEALmr(offset, s, X86_NOREG, 1, d);
 }
 LENDFUNC(NONE,NONE,3,raw_lea_l_brr,(W4 d, R4 s, IMM offset))
 
 LOWFUNC(NONE,NONE,5,raw_lea_l_brr_indexed,(W4 d, R4 s, R4 index, IMM factor, IMM offset))
 {
-	LEALmr(offset, s, index, factor, d);
+	ADDR32 LEALmr(offset, s, index, factor, d);
 }
 LENDFUNC(NONE,NONE,5,raw_lea_l_brr_indexed,(W4 d, R4 s, R4 index, IMM factor, IMM offset))
 
 LOWFUNC(NONE,NONE,4,raw_lea_l_rr_indexed,(W4 d, R4 s, R4 index, IMM factor))
 {
-	LEALmr(0, s, index, factor, d);
+	ADDR32 LEALmr(0, s, index, factor, d);
 }
 LENDFUNC(NONE,NONE,4,raw_lea_l_rr_indexed,(W4 d, R4 s, R4 index, IMM factor))
 
 LOWFUNC(NONE,NONE,4,raw_lea_l_r_scaled,(W4 d, R4 index, IMM factor))
 {
-	LEALmr(0, X86_NOREG, index, factor, d);
+	ADDR32 LEALmr(0, X86_NOREG, index, factor, d);
 }
 LENDFUNC(NONE,NONE,4,raw_lea_l_r_scaled,(W4 d, R4 index, IMM factor))
 
@@ -858,31 +870,31 @@ LENDFUNC(NONE,NONE,2,raw_mov_l_rr,(W4 d, R4 s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_l_mr,(IMM d, R4 s))
 {
-	MOVLrm(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVLrm(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_l_mr,(IMM d, R4 s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_w_mr,(IMM d, R2 s))
 {
-	MOVWrm(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVWrm(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_w_mr,(IMM d, R2 s))
 
 LOWFUNC(NONE,READ,2,raw_mov_w_rm,(W2 d, IMM s))
 {
-	MOVWmr(s, X86_NOREG, X86_NOREG, 1, d);
+	ADDR32 MOVWmr(s, X86_NOREG, X86_NOREG, 1, d);
 }
 LENDFUNC(NONE,READ,2,raw_mov_w_rm,(W2 d, IMM s))
 
 LOWFUNC(NONE,WRITE,2,raw_mov_b_mr,(IMM d, R1 s))
 {
-	MOVBrm(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 MOVBrm(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(NONE,WRITE,2,raw_mov_b_mr,(IMM d, R1 s))
 
 LOWFUNC(NONE,READ,2,raw_mov_b_rm,(W1 d, IMM s))
 {
-	MOVBmr(s, X86_NOREG, X86_NOREG, 1, d);
+	ADDR32 MOVBmr(s, X86_NOREG, X86_NOREG, 1, d);
 }
 LENDFUNC(NONE,READ,2,raw_mov_b_rm,(W1 d, IMM s))
 
@@ -906,25 +918,25 @@ LENDFUNC(NONE,NONE,2,raw_mov_b_ri,(W1 d, IMM s))
 
 LOWFUNC(RMW,RMW,2,raw_adc_l_mi,(MEMRW d, IMM s))
 {
-	ADCLim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 ADCLim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(RMW,RMW,2,raw_adc_l_mi,(MEMRW d, IMM s))
 
 LOWFUNC(WRITE,RMW,2,raw_add_l_mi,(IMM d, IMM s)) 
 {
-	ADDLim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 ADDLim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,RMW,2,raw_add_l_mi,(IMM d, IMM s)) 
 
 LOWFUNC(WRITE,RMW,2,raw_add_w_mi,(IMM d, IMM s)) 
 {
-	ADDWim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 ADDWim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,RMW,2,raw_add_w_mi,(IMM d, IMM s)) 
 
 LOWFUNC(WRITE,RMW,2,raw_add_b_mi,(IMM d, IMM s)) 
 {
-	ADDBim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 ADDBim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,RMW,2,raw_add_b_mi,(IMM d, IMM s)) 
 
@@ -1134,9 +1146,9 @@ LENDFUNC(WRITE,NONE,2,raw_cmp_w,(R2 d, R2 s))
 
 LOWFUNC(WRITE,READ,2,raw_cmp_b_mi,(MEMR d, IMM s))
 {
-	CMPBim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 CMPBim(s, d, X86_NOREG, X86_NOREG, 1);
 }
-LENDFUNC(WRITE,READ,2,raw_cmp_l_mi,(MEMR d, IMM s))
+LENDFUNC(WRITE,READ,2,raw_cmp_b_mi,(MEMR d, IMM s))
 
 LOWFUNC(WRITE,NONE,2,raw_cmp_b_ri,(R1 d, IMM i))
 {
@@ -1176,13 +1188,13 @@ LENDFUNC(WRITE,NONE,2,raw_xor_b,(RW1 d, R1 s))
 
 LOWFUNC(WRITE,RMW,2,raw_sub_l_mi,(MEMRW d, IMM s))
 {
-	SUBLim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 SUBLim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,RMW,2,raw_sub_l_mi,(MEMRW d, IMM s))
 
 LOWFUNC(WRITE,READ,2,raw_cmp_l_mi,(MEMR d, IMM s))
 {
-	CMPLim(s, d, X86_NOREG, X86_NOREG, 1);
+	ADDR32 CMPLim(s, d, X86_NOREG, X86_NOREG, 1);
 }
 LENDFUNC(WRITE,READ,2,raw_cmp_l_mi,(MEMR d, IMM s))
 
@@ -1213,7 +1225,7 @@ LENDFUNC(WRITE,READ,0,raw_popfl,(void))
 /* Generate floating-point instructions */
 static inline void x86_fadd_m(MEMR s)
 {
-	FADDLm(s,X86_NOREG,X86_NOREG,1);
+	ADDR32 FADDLm(s,X86_NOREG,X86_NOREG,1);
 }
 
 #else
@@ -3026,7 +3038,7 @@ static inline void raw_call_r(R4 r)
 static inline void raw_call_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
 #if USE_NEW_RTASM
-    CALLsm(base, X86_NOREG, r, m);
+    ADDR32 CALLsm(base, X86_NOREG, r, m);
 #else
     int mu;
     switch(m) {
@@ -3056,7 +3068,7 @@ static inline void raw_jmp_r(R4 r)
 static inline void raw_jmp_m_indexed(uae_u32 base, uae_u32 r, uae_u32 m)
 {
 #if USE_NEW_RTASM
-    JMPsm(base, X86_NOREG, r, m);
+    ADDR32 JMPsm(base, X86_NOREG, r, m);
 #else
     int mu;
     switch(m) {
@@ -3084,7 +3096,7 @@ static inline void raw_jmp_m(uae_u32 base)
 static inline void raw_call(uae_u32 t)
 {
 #if USE_NEW_RTASM
-    CALLm(t);
+    ADDR32 CALLm(t);
 #else
     emit_byte(0xe8);
     emit_long(t-(uae_u32)target-4);
@@ -3094,7 +3106,7 @@ static inline void raw_call(uae_u32 t)
 static inline void raw_jmp(uae_u32 t)
 {
 #if USE_NEW_RTASM
-    JMPm(t);
+    ADDR32 JMPm(t);
 #else
     emit_byte(0xe9);
     emit_long(t-(uae_u32)target-4);
@@ -3171,6 +3183,28 @@ static inline void raw_nop(void)
 
 static inline void raw_emit_nop_filler(int nbytes)
 {
+
+#if defined(CPU_x86_64)
+  /* The recommended way to pad 64bit code is to use NOPs preceded by
+     maximally four 0x66 prefixes.  Balance the size of nops.  */
+  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
+  if (nbytes == 0)
+	  return;
+
+  int i;
+  int nnops = (nbytes + 3) / 4;
+  int len = nbytes / nnops;
+  int remains = nbytes - nnops * len;
+
+  for (i = 0; i < remains; i++) {
+	  emit_block(prefixes, len);
+	  raw_nop();
+  }
+  for (; i < nnops; i++) {
+	  emit_block(prefixes, len - 1);
+	  raw_nop();
+  }
+#else
   /* Source: GNU Binutils 2.12.90.0.15 */
   /* Various efficient no-op patterns for aligning code labels.
      Note: Don't try to assemble the instructions in the comments.
@@ -3222,27 +3256,6 @@ static inline void raw_emit_nop_filler(int nbytes)
     f32_9, f32_10, f32_11, f32_12, f32_13, f32_14, f32_15
   };
 
-#if defined(CPU_x86_64)
-  /* The recommended way to pad 64bit code is to use NOPs preceded by
-     maximally four 0x66 prefixes.  Balance the size of nops.  */
-  static const uae_u8 prefixes[4] = { 0x66, 0x66, 0x66, 0x66 };
-  if (nbytes == 0)
-	  return;
-
-  int i;
-  int nnops = (nbytes + 3) / 4;
-  int len = nbytes / nnops;
-  int remains = nbytes - nnops * len;
-
-  for (i = 0; i < remains; i++) {
-	  emit_block(prefixes, len);
-	  raw_nop();
-  }
-  for (; i < nnops; i++) {
-	  emit_block(prefixes, len - 1);
-	  raw_nop();
-  }
-#else
   int nloops = nbytes / 16;
   while (nloops-- > 0)
 	emit_block(f32_16, sizeof(f32_16));
@@ -3338,7 +3351,7 @@ static inline void raw_flags_set_zero_FLAGSTK(int s, int tmp)
 
 static inline void raw_flags_init_FLAGSTK(void) { }
 
-#if defined(__x86_64__)
+#if defined(CPU_x86_64)
 /* Try to use the LAHF/SETO method on x86_64 since it is faster.
    This can't be the default because some older CPUs don't support
    LAHF/SAHF in long mode.  */
@@ -3399,7 +3412,7 @@ static inline void raw_flags_init_FLAGGEN(void)
 
 #ifdef SAHF_SETO_PROFITABLE
 #define FLAG_SUFFIX FLAGREG
-#elif defined __x86_64__
+#elif defined CPU_x86_64
 #define FLAG_SUFFIX FLAGGEN
 #else
 #define FLAG_SUFFIX FLAGSTK
@@ -3450,12 +3463,26 @@ static inline void raw_inc_sp(int off)
     if (off) raw_add_l_ri(ESP_INDEX,off);
 }
 
+static inline void raw_push_regs_to_preserve(void) {
+	  for (int i=N_REGS;i--;) {
+	      if (need_to_preserve[i])
+		  raw_push_l_r(i);
+	  }
+}
+
+static inline void raw_pop_preserved_regs(void) {
+	  for (int i=0;i<N_REGS;i++) {
+	      if (need_to_preserve[i])
+		  raw_pop_l_r(i);
+	  }
+}
+
 /*************************************************************************
  * Handling mistaken direct memory access (removed from ARAnyM sources)  *
  *************************************************************************/
 
 void compiler_status() {
-	  panicbug("compiled code starts at %08x, current at %08x", compiled_code, current_compile_p);
+	  D(bug("compiled code starts at %p, current at %p (size 0x%x)", compiled_code, current_compile_p, (unsigned int)(current_compile_p - compiled_code)));
 }
 
 /*************************************************************************
@@ -3470,8 +3497,10 @@ struct cpuinfo_x86 {
   uae_u32	x86_hwcap;
   uae_u8	x86_model;
   uae_u8	x86_mask;
+  bool		x86_has_xmm2;
   int		cpuid_level;    // Maximum supported CPUID level, -1=no CPUID
   char		x86_vendor_id[16];
+  uintptr	x86_clflush_size;
 };
 struct cpuinfo_x86 cpuinfo;
 
@@ -3500,6 +3529,7 @@ enum {
   X86_PROCESSOR_max
 };
 
+#if DEBUG
 static const char * x86_processor_string_table[X86_PROCESSOR_max] = {
   "80386",
   "80486",
@@ -3510,6 +3540,7 @@ static const char * x86_processor_string_table[X86_PROCESSOR_max] = {
   "Pentium4",
   "x86-64"
 };
+#endif
 
 static struct ptt {
   const int align_loop;
@@ -3557,50 +3588,66 @@ x86_get_cpu_vendor(struct cpuinfo_x86 *c)
 		c->x86_vendor = X86_VENDOR_UNKNOWN;
 }
 
+/*
+ * Generic CPUID function
+ * clear %ecx since some cpus (Cyrix MII) do not set or clear %ecx
+ * resulting in stale register contents being returned.
+ */
+/* Some CPUID calls want 'count' to be placed in ecx */
+#ifdef __GNUC__
+static void cpuid_count(uae_u32 op, uae_u32 count, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
+{
+	uae_u32 _eax, _ebx, _ecx, _edx;
+	_eax = op;
+	_ecx = count;
+	__asm__ __volatile__(
+	"   movl %0,%%eax \n"
+	"   movl %2,%%ecx \n"
+	"	cpuid \n"
+	"   movl %%eax,%0 \n"
+	"   movl %%ebx,%1 \n"
+	"   movl %%ecx,%2 \n"
+	"   movl %%edx,%3 \n"
+		: "+m" (_eax),
+ 		  "=m" (_ebx),
+		  "+m" (_ecx),
+		  "=m" (_edx)
+		:
+		: "eax", "ebx", "ecx", "edx");
+	*eax = _eax;
+	*ebx = _ebx;
+	*ecx = _ecx;
+	*edx = _edx;
+}
+#endif
+
+#ifdef _MSC_VER
+static void cpuid_count(uae_u32 op, uae_u32 count, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
+{
+	int cpuinfo[4];
+	cpuinfo[0] = op;
+	cpuinfo[1] = 0;
+	cpuinfo[2] = count;
+	cpuinfo[3] = 0;
+	__cpuidex(cpuinfo, op, count);
+	*eax = cpuinfo[0];
+	*ebx = cpuinfo[1];
+	*ecx = cpuinfo[2];
+	*edx = cpuinfo[3];
+}
+#endif
+
 static void
 cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
 {
-  const int CPUID_SPACE = 4096;
-  uae_u8* cpuid_space = (uae_u8 *)vm_acquire(CPUID_SPACE);
-  if (cpuid_space == VM_MAP_FAILED)
-    abort();
-  vm_protect(cpuid_space, CPUID_SPACE, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE);
-
-  static uae_u32 s_op, s_eax, s_ebx, s_ecx, s_edx;
-  uae_u8* tmp=get_target();
-
-  s_op = op;
-  set_target(cpuid_space);
-  raw_push_l_r(0); /* eax */
-  raw_push_l_r(1); /* ecx */
-  raw_push_l_r(2); /* edx */
-  raw_push_l_r(3); /* ebx */
-  raw_mov_l_rm(0,(uintptr)&s_op);
-  raw_cpuid(0);
-  raw_mov_l_mr((uintptr)&s_eax,0);
-  raw_mov_l_mr((uintptr)&s_ebx,3);
-  raw_mov_l_mr((uintptr)&s_ecx,1);
-  raw_mov_l_mr((uintptr)&s_edx,2);
-  raw_pop_l_r(3);
-  raw_pop_l_r(2);
-  raw_pop_l_r(1);
-  raw_pop_l_r(0);
-  raw_ret();
-  set_target(tmp);
-
-  ((cpuop_func*)cpuid_space)(0);
-  if (eax != NULL) *eax = s_eax;
-  if (ebx != NULL) *ebx = s_ebx;
-  if (ecx != NULL) *ecx = s_ecx;
-  if (edx != NULL) *edx = s_edx;
-
-  vm_release(cpuid_space, CPUID_SPACE);
+  cpuid_count(op, 0, eax, ebx, ecx, edx);
 }
 
 static void
 raw_init_cpu(void)
 {
   struct cpuinfo_x86 *c = &cpuinfo;
+  uae_u32 dummy;
 
   /* Defaults */
   c->x86_processor = X86_PROCESSOR_max;
@@ -3609,7 +3656,12 @@ raw_init_cpu(void)
   c->x86_model = c->x86_mask = 0;	/* So far unknown... */
   c->x86_vendor_id[0] = '\0';		/* Unset */
   c->x86_hwcap = 0;
-  
+#ifdef CPU_x86_64
+  c->x86_clflush_size = 64;
+#else
+  c->x86_clflush_size = 32;
+#endif
+
   /* Get vendor name */
   c->x86_vendor_id[12] = '\0';
   cpuid(0x00000000,
@@ -3623,7 +3675,7 @@ raw_init_cpu(void)
   c->x86_brand_id = 0;
   if ( c->cpuid_level >= 0x00000001 ) {
 	uae_u32 tfms, brand_id;
-	cpuid(0x00000001, &tfms, &brand_id, NULL, &c->x86_hwcap);
+	cpuid(0x00000001, &tfms, &brand_id, &dummy, &c->x86_hwcap);
 	c->x86 = (tfms >> 8) & 15;
 	if (c->x86 == 0xf)
 		c->x86 += (tfms >> 20) & 0xff; /* extended family */
@@ -3632,6 +3684,10 @@ raw_init_cpu(void)
 		c->x86_model |= (tfms >> 12) & 0xf0; /* extended model */
 	c->x86_brand_id = brand_id & 0xff;
 	c->x86_mask = tfms & 15;
+    if (c->x86_hwcap & (1 << 19))
+    {
+  	  c->x86_clflush_size = ((brand_id >> 8) & 0xff) * 8;
+    }
   } else {
 	/* Have CPUID level 0 only - unheard of */
 	c->x86 = 4;
@@ -3639,11 +3695,11 @@ raw_init_cpu(void)
 
   /* AMD-defined flags: level 0x80000001 */
   uae_u32 xlvl;
-  cpuid(0x80000000, &xlvl, NULL, NULL, NULL);
+  cpuid(0x80000000, &xlvl, &dummy, &dummy, &dummy);
   if ( (xlvl & 0xffff0000) == 0x80000000 ) {
 	if ( xlvl >= 0x80000001 ) {
 	  uae_u32 features, extra_features;
-	  cpuid(0x80000001, NULL, NULL, &extra_features, &features);
+	  cpuid(0x80000001, &dummy, &dummy, &extra_features, &features);
 	  if (features & (1 << 29)) {
 		/* Assume x86-64 if long mode is supported */
 		c->x86_processor = X86_PROCESSOR_X86_64;
@@ -3689,24 +3745,26 @@ raw_init_cpu(void)
   }
   if (c->x86_processor == X86_PROCESSOR_max) {
 	c->x86_processor = X86_PROCESSOR_I386;
-	panicbug("Error: unknown processor type\n");
-	panicbug("  Family  : %d\n", c->x86);
-	panicbug("  Model   : %d\n", c->x86_model);
-	panicbug("  Mask    : %d\n", c->x86_mask);
-	panicbug("  Vendor  : %s [%d]\n", c->x86_vendor_id, c->x86_vendor);
+	panicbug("Error: unknown processor type");
+	panicbug("  Family  : %d", c->x86);
+	panicbug("  Model   : %d", c->x86_model);
+	panicbug("  Mask    : %d", c->x86_mask);
+	panicbug("  Vendor  : %s [%d]", c->x86_vendor_id, c->x86_vendor);
 	if (c->x86_brand_id)
-	  fprintf(stderr, "  BrandID : %02x\n", c->x86_brand_id);
+	  panicbug("  BrandID : %02x", c->x86_brand_id);
   }
 
   /* Have CMOV support? */
-  have_cmov = c->x86_hwcap & (1 << 15);
+  have_cmov = (c->x86_hwcap & (1 << 15)) != 0;
 #if defined(CPU_x86_64)
   if (!have_cmov) {
-	  write_log("x86-64 implementations are bound to have CMOV!\n");
+	  panicbug("x86-64 implementations are bound to have CMOV!");
 	  abort();
   }
 #endif
 
+  c->x86_has_xmm2 = (c->x86_hwcap & (1 << 26)) != 0;
+  
   /* Can the host CPU suffer from partial register stalls? */
   have_rat_stall = (c->x86_vendor == X86_VENDOR_INTEL);
 #if 1
@@ -3723,12 +3781,14 @@ raw_init_cpu(void)
 	align_jumps = x86_alignments[c->x86_processor].align_jump;
   }
 
-  panicbug("<JIT compiler> : Max CPUID level=%d Processor is %s [%s]",
+  D(bug("<JIT compiler> : Max CPUID level=%d Processor is %s [%s]",
 			c->cpuid_level, c->x86_vendor_id,
-			x86_processor_string_table[c->x86_processor]);
+			x86_processor_string_table[c->x86_processor]));
 
   raw_flags_init();
 }
+
+static void __attribute_noinline__ prevent_redzone_use(void) {}
 
 static bool target_check_bsf(void)
 {
@@ -3738,8 +3798,9 @@ static bool target_check_bsf(void)
 	for (int g_OF = 0; g_OF <= 1; g_OF++) {
 	for (int g_SF = 0; g_SF <= 1; g_SF++) {
 		for (int value = -1; value <= 1; value++) {
-			unsigned long flags = (g_SF << 7) | (g_OF << 11) | (g_ZF << 6) | g_CF;
-			long tmp = value;
+			uintptr flags = (g_SF << 7) | (g_OF << 11) | (g_ZF << 6) | g_CF;
+			intptr tmp = value;
+	        prevent_redzone_use();
 			__asm__ __volatile__ ("push %0; popf; bsf %1,%1; pushf; pop %0"
 								  : "+r" (flags), "+r" (tmp) : : "cc");
 			int OF = (flags >> 11) & 1;
@@ -3752,7 +3813,9 @@ static bool target_check_bsf(void)
 		}
 	}}}}
 	if (mismatch)
-		panicbug("<JIT compiler> : Target CPU defines all flags on BSF instruction");
+	{
+		D(bug("<JIT compiler> : Target CPU defines all flags on BSF instruction"));
+	}
 	return !mismatch;
 }
 

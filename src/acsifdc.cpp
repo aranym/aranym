@@ -339,6 +339,7 @@ bool ACSIFDC::insert_floppy()
 	}
 
 	D(bug("Floppy inserted %s", rw ? "read-write" : "read-only"));
+	DUNUSED(rw);
 	drive_fd = status;
 
 	set_floppy_geometry();

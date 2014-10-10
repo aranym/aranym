@@ -18,7 +18,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 #include "dirty_rects.h"
 #include "host_surface.h"
@@ -151,6 +151,9 @@ void HostSurface::resize(int new_width, int new_height,
 					palette[i].r = surface->format->palette->colors[i].r;
 					palette[i].g = surface->format->palette->colors[i].g;
 					palette[i].b = surface->format->palette->colors[i].b;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+					palette[i].a = surface->format->palette->colors[i].a;
+#endif
 				}
 				restore_palette = SDL_TRUE;
 			}
@@ -176,7 +179,11 @@ void HostSurface::setPalette(SDL_Color *palette, int first, int count)
 		return;
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetPaletteColors(surface->format->palette, palette, first, count);
+#else
 	SDL_SetPalette(surface, SDL_LOGPAL, palette, first, count);
+#endif
 }
 
 int HostSurface::getParam(int num_param)

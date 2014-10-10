@@ -290,7 +290,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 		return (wrd1 & 0x80000000) ? -0.0 : 0.0;
 
 	fpu_register result;
-#if USE_QUAD_DOUBLE
+#if defined(USE_QUAD_DOUBLE)
 	// is it NaN?
 	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && ((wrd2 & 0x7fffffff) != 0 || wrd3 != 0)) {
 		make_nan(result);
@@ -311,7 +311,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 	srp.ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
 	srp.ieee.mantissa2 = (wrd3 & 0xffff) << 16;
 	srp.ieee.mantissa3 = 0;
-#elif USE_LONG_DOUBLE
+#elif defined(USE_LONG_DOUBLE)
 	fp_declare_init_shape(srp, extended);
 	srp.ieee.negative	= (wrd1 >> 31) & 1;
 	srp.ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
@@ -380,7 +380,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 		make_nan(result);
 		return;
 	}
-#if USE_QUAD_DOUBLE
+#if defined(USE_QUAD_DOUBLE)
 	// is it inf?
 	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && (wrd2 & 0x7fffffff) == 0 && wrd3 == 0) {
 		if ((wrd1 & 0x80000000) == 0)
@@ -396,7 +396,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 	srp.ieee.mantissa1 = ((wrd2 & 0xffff) << 16) | ((wrd3 >> 16) & 0xffff);
 	srp.ieee.mantissa2 = (wrd3 & 0xffff) << 16;
 	srp.ieee.mantissa3 = 0;
-#elif USE_LONG_DOUBLE
+#elif defined(USE_LONG_DOUBLE)
 	fp_declare_init_shape(srp, extended);
 	srp.ieee.negative	= (wrd1 >> 31) & 1;
 	srp.ieee.exponent	= (wrd1 >> 16) & FP_EXTENDED_EXP_MAX;
@@ -431,7 +431,7 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 		*wrd1 = *wrd2 = *wrd3 = 0;
 		return;
 	}
-#if USE_QUAD_DOUBLE
+#if defined(USE_QUAD_DOUBLE)
 	// FIXME: deal with denormals?
 	fp_declare_init_shape(srp, extended);
 	srp.value = src;
@@ -439,7 +439,7 @@ PRIVATE inline void FFPU extract_extended(fpu_register const & src,
 	// always set the explicit integer bit.
 	*wrd2 = 0x80000000 | (srp.ieee.mantissa0 << 15) | ((srp.ieee.mantissa1 & 0xfffe0000) >> 17);
 	*wrd3 = (srp.ieee.mantissa1 << 15) | ((srp.ieee.mantissa2 & 0xfffe0000) >> 17);
-#elif USE_LONG_DOUBLE
+#elif defined(USE_LONG_DOUBLE)
 	fpu_register_parts p = { src };
 #ifdef WORDS_BIGENDIAN
 	*wrd1 = p.parts[0];
@@ -561,7 +561,11 @@ PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1
 	char *cp;
 	char str[100];
 
+#ifdef _WIN32
+	sprintf(str, "%.16e", (double)src);
+#else
 	sprintf(str, "%.16Le", (long double)src);
+#endif
 
 	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
 
@@ -1680,7 +1684,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				FPU registers[reg] = 1.0e256;
 				fpu_debug(("FP const: 1.0e256\n"));
 				break;
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 			case 0x3c:
 				FPU registers[reg] = 1.0e512L;
 				fpu_debug(("FP const: 1.0e512\n"));
@@ -2056,7 +2060,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				// an overflow or underflow always results.
 				// Here (int) cast is okay.
 				int scale_factor = (int)fp_round_to_zero(src);
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 				fp_declare_init_shape(sxp, extended);
 				sxp.value = FPU registers[reg];
 				sxp.ieee.exponent += scale_factor;

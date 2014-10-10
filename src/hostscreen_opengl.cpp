@@ -24,8 +24,8 @@
 
 #ifdef ENABLE_OPENGL
 
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "SDL_compat.h"
+#include "SDL_opengl_wrapper.h"
 
 #include "dyngl.h"
 #include "hostscreen.h"
@@ -33,6 +33,8 @@
 #include "host_surface.h"
 #include "host_surface_opengl.h"
 #include "parameters.h"
+#include "version.h"
+#include "main.h"	/* QuitEmulator */
 
 #define DEBUG 0
 #include "debug.h"
@@ -59,15 +61,7 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		return;
 	}
 
-	int i, gl_bpp[4]={0,16,24,32}, screenFlags;
-
-	screenFlags = SDL_OPENGL;
-	if (!bx_options.autozoom.fixedsize) {
-		screenFlags |= SDL_RESIZABLE;
-	}
-	if (bx_options.video.fullscreen) {
-		screenFlags |= SDL_FULLSCREEN;
-	}
+	int i, gl_bpp[4]={0,16,24,32};
 
 	if (bx_options.autozoom.fixedsize) {
 		width = bx_options.autozoom.width;
@@ -102,6 +96,86 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		(*it)->destroyTextureObject();
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+	int windowFlags = 0;
+	if (!bx_options.autozoom.fixedsize) {
+		windowFlags |= SDL_WINDOW_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		windowFlags |= SDL_WINDOW_FULLSCREEN;
+	}
+
+	// set preferred window position
+	const char *wpos = bx_options.video.window_pos;
+	int x, y;
+	x = y = SDL_WINDOWPOS_UNDEFINED;
+	if (strlen(wpos) > 0) {
+		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
+			x = y = SDL_WINDOWPOS_CENTERED;
+		}
+		else {
+			sscanf(wpos, "%d,%d", &x, &y);
+		}
+	}
+
+	window = SDL_CreateWindow(VERSION_STRING, x, y, width, height, windowFlags);
+	if (window==NULL) {
+		panicbug("Could not create window: %s", SDL_GetError());
+		QuitEmulator();
+		return;
+	}
+	
+	/* SDL2FIXME: find appropriate renderer for bpp */
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	/* Now setup video mode */
+	for (i=0;i<4;i++) {
+		screen = SDL_CreateRGBSurface(0, width, height, gl_bpp[i], 0, 0, 0, 0);
+		if (screen) {
+			break;
+		}
+	}
+
+	if (screen==NULL) {
+		panicbug("Can not set OpenGL video mode: using software rendering mode");
+		bx_options.opengl.enabled = false;
+		HostScreen::setVideoMode(width, height, bpp);
+		return;
+	}
+
+	/* SDL2FIXME: find appropriate renderer for bpp */
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	texture = SDL_CreateTextureFromSurface(renderer, screen);
+
+	SetWMIcon();
+
+#else
+
+	int screenFlags = SDL_OPENGL;
+	if (!bx_options.autozoom.fixedsize) {
+		screenFlags |= SDL_RESIZABLE;
+	}
+	if (bx_options.video.fullscreen) {
+		screenFlags |= SDL_FULLSCREEN;
+	}
+
+	// set preferred window position
+	const char *wpos = bx_options.video.window_pos;
+	if (strlen(wpos) > 0) {
+		if (strncasecmp(wpos, "center", strlen("center")) == 0) {
+			SDL_putenv((char*)"SDL_VIDEO_CENTERED=1");
+		}
+		else {
+			static char var[64];
+			snprintf(var, sizeof(var), "SDL_VIDEO_WINDOW_POS=%s", wpos);
+			SDL_putenv(var);
+		}
+	}
+
+	SetWMIcon();
+
 	/* Now setup video mode */
 	for (i=0;i<4;i++) {
 		screen = SDL_SetVideoMode(width, height, gl_bpp[i], screenFlags);
@@ -118,19 +192,26 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 			}
 		}
 	}
+
 	if (screen==NULL) {
-		fprintf(stderr, "Can not set OpenGL video mode: using software rendering mode\n");
+		panicbug("Can not set OpenGL video mode: using software rendering mode");
 		bx_options.opengl.enabled = false;
 		HostScreen::setVideoMode(width, height, bpp);
 		return;
 	}
+
+#endif
 
 	/* Now tell surfaces to recreate their texture */
 	for (it=surfList.begin(); it!=surfList.end(); ++it) {
 		(*it)->createTextureObject();
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	bx_options.video.fullscreen = (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) == SDL_WINDOW_FULLSCREEN;
+#else
 	bx_options.video.fullscreen = ((screen->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN);
+#endif
 
 	new_width = screen->w;
 	new_height = screen->h;
@@ -201,19 +282,14 @@ void HostScreenOpenGL::drawSurfaceToScreen(HostSurface *hsurf, int *dst_x, int *
 	int width = hsurf->getWidth();
 	int height = hsurf->getHeight();
 
-	SDL_Rect src_rect = {0,0, width, height};
-	SDL_Rect dst_rect = {0,0, screen->w, screen->h};
+	SDL_Rect dst_rect = {0,0, Uint16(screen->w), Uint16(screen->h)};
 	if (screen->w > width) {
 		dst_rect.x = (screen->w - width) >> 1;
 		dst_rect.w = width;
-	} else {
-		src_rect.w = screen->w;
 	}
 	if (screen->h > height) {
 		dst_rect.y = (screen->h - height) >> 1;
 		dst_rect.h = height;
-	} else {
-		src_rect.h = screen->h;
 	}
 
 	/* Init texturing */
@@ -347,7 +423,11 @@ void HostScreenOpenGL::refreshScreen(void)
 		return;
 	}
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GL_SwapWindow(window);
+#else
 	SDL_GL_SwapBuffers();
+#endif
 }
 
 HostSurface *HostScreenOpenGL::createSurface(int width, int height, int bpp)

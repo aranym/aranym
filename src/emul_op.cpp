@@ -27,7 +27,7 @@
 #include "parameters.h"
 #include "bootos.h"
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 # include "compiler/compemu.h"
 #endif
 
@@ -162,7 +162,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_MONd:
 		case M68K_EMUL_OP_MONe:
 			fprintf(stderr, "Monitor %08x\n", opcode);
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 			compiler_dumpstate();
 #else
 			fprintf(stderr, "d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"

@@ -24,54 +24,74 @@
 
 #include <gem.h>
 #include <ldg.h>
-
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <osbind.h>
 
 /*--- Functions prototypes ---*/
 
 #include "lib-osmesa.h"
 #include "lib-oldmesa.h"
 #include "lib-misc.h"
+#include "nfosmesa_nfapi.h"
+
+#define WITH_PROTOTYPE_STRINGS 1
 
 /*--- LDG functions ---*/
 
-PROC LibFunc[]={ 
-	#include "link-osmesa.h"	/* 10 functions */
-	#include "link-gl.h"		/* 465-118 functions */
-	#include "link-glext.h"		/* 974 functions */
-	#include "link-oldmesa.h"	/* 5 functions */
+static PROC const LibFunc[]={ 
+#if WITH_PROTOTYPE_STRINGS
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, #type " " #gl #name #params, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, #type " OSMesa" #name #params, OSMesa ## name },
+#else
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, 0, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, 0, OSMesa ## name },
+#endif
+	#include "glfuncs.h"		/* 12 OSMesa + 2664 GL functions */
+	#include "link-oldmesa.h"	/* 5 + 8 functions */
 	{NULL, NULL, NULL}
 };
 
-LDGLIB LibLdg[]={ 
-	{
-		/* library version */
-		0x0620,
-		/* count of functions in library */
-		10+465-118+974+5,
-		/* function addresses */
-		LibFunc,
-		/* Library information string */
-		"Mesa library",
-		/* Library flags */
-		LDG_NOT_SHARED,
-		NULL,
-		0
-	}
+#include "versinfo.h"
+
+int err_old_nfapi(void)
+{
+	/* an error for Mesa_GL */
+	return 1;
+}
+
+
+char const __Ident_osmesa[] = "$OSMesa: NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER " $";
+
+static LDGLIB const LibLdg = { 
+	/* library version */
+	0x0A15,
+	/* count of functions in library */
+	sizeof(LibFunc) / sizeof(LibFunc[0]) - 1,
+	/* function addresses */
+	LibFunc,
+	/* Library information string */
+	"Mesa library NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER,
+	/* Library flags */
+	LDG_NOT_SHARED,
+	NULL,
+	0
 };
+
+void APIENTRY tinyglinformation(void)
+{
+	(void) Cconws(LibLdg.infos);
+	(void) Cconws("\r\n");
+}
+
 
 /*
  * Main part : communication with LDG-system
  */
 
-int main(int argc, char *argv[])
+int main(void)
 {
-	if (ldg_init(LibLdg)==-1) {
-		appl_init();
-		form_alert(1, "[1][This program is a LDG library][End]");
-		appl_exit();
+	if (ldg_init(&LibLdg) != 0)
+	{
+		err_init("This program is a LDG library");
 	}
 	return 0;
 }

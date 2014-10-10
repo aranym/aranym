@@ -23,11 +23,9 @@
 
 /*--- Includes ---*/
 
-#include <GL/gl.h>
-
 /*--- Functions ---*/
 
-const GLubyte* glGetString( GLenum name );
 void freeglGetString(void);
+int err_old_nfapi(void);
 
 #endif

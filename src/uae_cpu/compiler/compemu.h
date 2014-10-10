@@ -36,7 +36,7 @@
 
 #ifdef USE_JIT
 
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 /* dump some information (m68k block, x86 block addresses) about the compiler state */
 extern void compiler_dumpstate(void);
 #endif
@@ -102,8 +102,13 @@ union cacheline {
 #define SCALE 2
 
 #define BYTES_PER_INST 10240  /* paranoid ;-) */
+#if defined(CPU_arm)
+#define LONGEST_68K_INST 256 /* The number of bytes the longest possible
+			       68k instruction takes */
+#else
 #define LONGEST_68K_INST 16 /* The number of bytes the longest possible
 			       68k instruction takes */
+#endif
 #define MAX_CHECKSUM_LEN 2048 /* The maximum size we calculate checksums
 				 for. Anything larger will be flushed
 				 unconditionally even with SOFT_FLUSH */
@@ -130,10 +135,15 @@ union cacheline {
 
 #define KILLTHERAT 1  /* Set to 1 to avoid some partial_rat_stalls */
 
+#if defined(CPU_arm)
+# // define USE_DATA_BUFFER 
+# define N_REGS 13  /* really 16, but 13 to 15 are SP, LR, PC */
+#else
 #if defined(CPU_x86_64)
 #define N_REGS 16 /* really only 15, but they are numbered 0-3,5-15 */
 #else
 #define N_REGS 8  /* really only 7, but they are numbered 0,1,2,3,5,6,7 */
+#endif
 #endif
 #define N_FREGS 6 /* That leaves us two positions on the stack to play with */
 
@@ -264,8 +274,8 @@ typedef struct {
 
 typedef struct {
   /* Integer part */
-  char virt[VREGS];
-  char nat[N_REGS];
+  uae_s8 virt[VREGS];
+  uae_s8 nat[N_REGS];
 } smallstate;
 
 extern bigstate live;
@@ -273,9 +283,15 @@ extern int touchcnt;
 
 
 #define IMM uae_s32
+#define RR1  uae_u32
+#define RR2  uae_u32
+#define RR4  uae_u32
+/*
+  R1, R2, R4 collides with ARM registers defined in ucontext
 #define R1  uae_u32
 #define R2  uae_u32
 #define R4  uae_u32
+*/
 #define W1  uae_u32
 #define W2  uae_u32
 #define W4  uae_u32
@@ -299,205 +315,15 @@ extern int touchcnt;
 
 /* What we expose to the outside */
 #define DECLARE_MIDFUNC(func) extern void func
-DECLARE_MIDFUNC(bt_l_ri(R4 r, IMM i));
-DECLARE_MIDFUNC(bt_l_rr(R4 r, R4 b));
-DECLARE_MIDFUNC(btc_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(btc_l_rr(RW4 r, R4 b));
-DECLARE_MIDFUNC(bts_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(bts_l_rr(RW4 r, R4 b));
-DECLARE_MIDFUNC(btr_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(btr_l_rr(RW4 r, R4 b));
-DECLARE_MIDFUNC(mov_l_rm(W4 d, IMM s));
-DECLARE_MIDFUNC(call_r(R4 r));
-DECLARE_MIDFUNC(sub_l_mi(IMM d, IMM s));
-DECLARE_MIDFUNC(mov_l_mi(IMM d, IMM s));
-DECLARE_MIDFUNC(mov_w_mi(IMM d, IMM s));
-DECLARE_MIDFUNC(mov_b_mi(IMM d, IMM s));
-DECLARE_MIDFUNC(rol_b_ri(RW1 r, IMM i));
-DECLARE_MIDFUNC(rol_w_ri(RW2 r, IMM i));
-DECLARE_MIDFUNC(rol_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(rol_l_rr(RW4 d, R1 r));
-DECLARE_MIDFUNC(rol_w_rr(RW2 d, R1 r));
-DECLARE_MIDFUNC(rol_b_rr(RW1 d, R1 r));
-DECLARE_MIDFUNC(shll_l_rr(RW4 d, R1 r));
-DECLARE_MIDFUNC(shll_w_rr(RW2 d, R1 r));
-DECLARE_MIDFUNC(shll_b_rr(RW1 d, R1 r));
-DECLARE_MIDFUNC(ror_b_ri(R1 r, IMM i));
-DECLARE_MIDFUNC(ror_w_ri(R2 r, IMM i));
-DECLARE_MIDFUNC(ror_l_ri(R4 r, IMM i));
-DECLARE_MIDFUNC(ror_l_rr(R4 d, R1 r));
-DECLARE_MIDFUNC(ror_w_rr(R2 d, R1 r));
-DECLARE_MIDFUNC(ror_b_rr(R1 d, R1 r));
-DECLARE_MIDFUNC(shrl_l_rr(RW4 d, R1 r));
-DECLARE_MIDFUNC(shrl_w_rr(RW2 d, R1 r));
-DECLARE_MIDFUNC(shrl_b_rr(RW1 d, R1 r));
-DECLARE_MIDFUNC(shra_l_rr(RW4 d, R1 r));
-DECLARE_MIDFUNC(shra_w_rr(RW2 d, R1 r));
-DECLARE_MIDFUNC(shra_b_rr(RW1 d, R1 r));
-DECLARE_MIDFUNC(shll_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(shll_w_ri(RW2 r, IMM i));
-DECLARE_MIDFUNC(shll_b_ri(RW1 r, IMM i));
-DECLARE_MIDFUNC(shrl_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(shrl_w_ri(RW2 r, IMM i));
-DECLARE_MIDFUNC(shrl_b_ri(RW1 r, IMM i));
-DECLARE_MIDFUNC(shra_l_ri(RW4 r, IMM i));
-DECLARE_MIDFUNC(shra_w_ri(RW2 r, IMM i));
-DECLARE_MIDFUNC(shra_b_ri(RW1 r, IMM i));
-DECLARE_MIDFUNC(setcc(W1 d, IMM cc));
-DECLARE_MIDFUNC(setcc_m(IMM d, IMM cc));
-DECLARE_MIDFUNC(cmov_l_rr(RW4 d, R4 s, IMM cc));
-DECLARE_MIDFUNC(cmov_l_rm(RW4 d, IMM s, IMM cc));
-DECLARE_MIDFUNC(bsf_l_rr(W4 d, R4 s));
-DECLARE_MIDFUNC(pop_m(IMM d));
-DECLARE_MIDFUNC(push_m(IMM d));
-DECLARE_MIDFUNC(pop_l(W4 d));
-DECLARE_MIDFUNC(push_l_i(IMM i));
-DECLARE_MIDFUNC(push_l(R4 s));
-DECLARE_MIDFUNC(clear_16(RW4 r));
-DECLARE_MIDFUNC(clear_8(RW4 r));
-DECLARE_MIDFUNC(sign_extend_16_rr(W4 d, R2 s));
-DECLARE_MIDFUNC(sign_extend_8_rr(W4 d, R1 s));
-DECLARE_MIDFUNC(zero_extend_16_rr(W4 d, R2 s));
-DECLARE_MIDFUNC(zero_extend_8_rr(W4 d, R1 s));
-DECLARE_MIDFUNC(imul_64_32(RW4 d, RW4 s));
-DECLARE_MIDFUNC(mul_64_32(RW4 d, RW4 s));
-DECLARE_MIDFUNC(imul_32_32(RW4 d, R4 s));
-DECLARE_MIDFUNC(mul_32_32(RW4 d, R4 s));
-DECLARE_MIDFUNC(mov_b_rr(W1 d, R1 s));
-DECLARE_MIDFUNC(mov_w_rr(W2 d, R2 s));
-DECLARE_MIDFUNC(mov_l_rrm_indexed(W4 d,R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_w_rrm_indexed(W2 d, R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_b_rrm_indexed(W1 d, R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_l_mrr_indexed(R4 baser, R4 index, IMM factor, R4 s));
-DECLARE_MIDFUNC(mov_w_mrr_indexed(R4 baser, R4 index, IMM factor, R2 s));
-DECLARE_MIDFUNC(mov_b_mrr_indexed(R4 baser, R4 index, IMM factor, R1 s));
-DECLARE_MIDFUNC(mov_l_bmrr_indexed(IMM base, R4 baser, R4 index, IMM factor, R4 s));
-DECLARE_MIDFUNC(mov_w_bmrr_indexed(IMM base, R4 baser, R4 index, IMM factor, R2 s));
-DECLARE_MIDFUNC(mov_b_bmrr_indexed(IMM base, R4 baser, R4 index, IMM factor, R1 s));
-DECLARE_MIDFUNC(mov_l_brrm_indexed(W4 d, IMM base, R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_w_brrm_indexed(W2 d, IMM base, R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_b_brrm_indexed(W1 d, IMM base, R4 baser, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_l_rm_indexed(W4 d, IMM base, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_l_rR(W4 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_w_rR(W2 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_b_rR(W1 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_l_brR(W4 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_w_brR(W2 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_b_brR(W1 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_l_Ri(R4 d, IMM i, IMM offset));
-DECLARE_MIDFUNC(mov_w_Ri(R4 d, IMM i, IMM offset));
-DECLARE_MIDFUNC(mov_b_Ri(R4 d, IMM i, IMM offset));
-DECLARE_MIDFUNC(mov_l_Rr(R4 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_w_Rr(R4 d, R2 s, IMM offset));
-DECLARE_MIDFUNC(mov_b_Rr(R4 d, R1 s, IMM offset));
-DECLARE_MIDFUNC(lea_l_brr(W4 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(lea_l_brr_indexed(W4 d, R4 s, R4 index, IMM factor, IMM offset));
-DECLARE_MIDFUNC(lea_l_rr_indexed(W4 d, R4 s, R4 index, IMM factor));
-DECLARE_MIDFUNC(mov_l_bRr(R4 d, R4 s, IMM offset));
-DECLARE_MIDFUNC(mov_w_bRr(R4 d, R2 s, IMM offset));
-DECLARE_MIDFUNC(mov_b_bRr(R4 d, R1 s, IMM offset));
-#undef bswap_32
-DECLARE_MIDFUNC(bswap_32(RW4 r));
-#undef bswap_16
-DECLARE_MIDFUNC(bswap_16(RW2 r));
-DECLARE_MIDFUNC(mov_l_rr(W4 d, R4 s));
-DECLARE_MIDFUNC(mov_l_mr(IMM d, R4 s));
-DECLARE_MIDFUNC(mov_w_mr(IMM d, R2 s));
-DECLARE_MIDFUNC(mov_w_rm(W2 d, IMM s));
-DECLARE_MIDFUNC(mov_b_mr(IMM d, R1 s));
-DECLARE_MIDFUNC(mov_b_rm(W1 d, IMM s));
-DECLARE_MIDFUNC(mov_l_ri(W4 d, IMM s));
-DECLARE_MIDFUNC(mov_w_ri(W2 d, IMM s));
-DECLARE_MIDFUNC(mov_b_ri(W1 d, IMM s));
-DECLARE_MIDFUNC(add_l_mi(IMM d, IMM s) );
-DECLARE_MIDFUNC(add_w_mi(IMM d, IMM s) );
-DECLARE_MIDFUNC(add_b_mi(IMM d, IMM s) );
-DECLARE_MIDFUNC(test_l_ri(R4 d, IMM i));
-DECLARE_MIDFUNC(test_l_rr(R4 d, R4 s));
-DECLARE_MIDFUNC(test_w_rr(R2 d, R2 s));
-DECLARE_MIDFUNC(test_b_rr(R1 d, R1 s));
-DECLARE_MIDFUNC(and_l_ri(RW4 d, IMM i));
-DECLARE_MIDFUNC(and_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(and_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(and_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(or_l_rm(RW4 d, IMM s));
-DECLARE_MIDFUNC(or_l_ri(RW4 d, IMM i));
-DECLARE_MIDFUNC(or_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(or_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(or_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(adc_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(adc_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(adc_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(add_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(add_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(add_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(sub_l_ri(RW4 d, IMM i));
-DECLARE_MIDFUNC(sub_w_ri(RW2 d, IMM i));
-DECLARE_MIDFUNC(sub_b_ri(RW1 d, IMM i));
-DECLARE_MIDFUNC(add_l_ri(RW4 d, IMM i));
-DECLARE_MIDFUNC(add_w_ri(RW2 d, IMM i));
-DECLARE_MIDFUNC(add_b_ri(RW1 d, IMM i));
-DECLARE_MIDFUNC(sbb_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(sbb_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(sbb_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(sub_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(sub_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(sub_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(cmp_l(R4 d, R4 s));
-DECLARE_MIDFUNC(cmp_l_ri(R4 r, IMM i));
-DECLARE_MIDFUNC(cmp_w(R2 d, R2 s));
-DECLARE_MIDFUNC(cmp_b(R1 d, R1 s));
-DECLARE_MIDFUNC(xor_l(RW4 d, R4 s));
-DECLARE_MIDFUNC(xor_w(RW2 d, R2 s));
-DECLARE_MIDFUNC(xor_b(RW1 d, R1 s));
-DECLARE_MIDFUNC(live_flags(void));
-DECLARE_MIDFUNC(dont_care_flags(void));
-DECLARE_MIDFUNC(duplicate_carry(void));
-DECLARE_MIDFUNC(restore_carry(void));
-DECLARE_MIDFUNC(start_needflags(void));
-DECLARE_MIDFUNC(end_needflags(void));
-DECLARE_MIDFUNC(make_flags_live(void));
-DECLARE_MIDFUNC(call_r_11(R4 r, W4 out1, R4 in1, IMM osize, IMM isize));
-DECLARE_MIDFUNC(call_r_02(R4 r, R4 in1, R4 in2, IMM isize1, IMM isize2));
-DECLARE_MIDFUNC(forget_about(W4 r));
-DECLARE_MIDFUNC(nop(void));
 
-DECLARE_MIDFUNC(f_forget_about(FW r));
-DECLARE_MIDFUNC(fmov_pi(FW r));
-DECLARE_MIDFUNC(fmov_log10_2(FW r));
-DECLARE_MIDFUNC(fmov_log2_e(FW r));
-DECLARE_MIDFUNC(fmov_loge_2(FW r));
-DECLARE_MIDFUNC(fmov_1(FW r));
-DECLARE_MIDFUNC(fmov_0(FW r));
-DECLARE_MIDFUNC(fmov_rm(FW r, MEMR m));
-DECLARE_MIDFUNC(fmovi_rm(FW r, MEMR m));
-DECLARE_MIDFUNC(fmovi_mr(MEMW m, FR r));
-DECLARE_MIDFUNC(fmovs_rm(FW r, MEMR m));
-DECLARE_MIDFUNC(fmovs_mr(MEMW m, FR r));
-DECLARE_MIDFUNC(fmov_mr(MEMW m, FR r));
-DECLARE_MIDFUNC(fmov_ext_mr(MEMW m, FR r));
-DECLARE_MIDFUNC(fmov_ext_rm(FW r, MEMR m));
-DECLARE_MIDFUNC(fmov_rr(FW d, FR s));
-DECLARE_MIDFUNC(fldcw_m_indexed(R4 index, IMM base));
-DECLARE_MIDFUNC(ftst_r(FR r));
-DECLARE_MIDFUNC(dont_care_fflags(void));
-DECLARE_MIDFUNC(fsqrt_rr(FW d, FR s));
-DECLARE_MIDFUNC(fabs_rr(FW d, FR s));
-DECLARE_MIDFUNC(frndint_rr(FW d, FR s));
-DECLARE_MIDFUNC(fsin_rr(FW d, FR s));
-DECLARE_MIDFUNC(fcos_rr(FW d, FR s));
-DECLARE_MIDFUNC(ftwotox_rr(FW d, FR s));
-DECLARE_MIDFUNC(fetox_rr(FW d, FR s));
-DECLARE_MIDFUNC(flog2_rr(FW d, FR s));
-DECLARE_MIDFUNC(fneg_rr(FW d, FR s));
-DECLARE_MIDFUNC(fadd_rr(FRW d, FR s));
-DECLARE_MIDFUNC(fsub_rr(FRW d, FR s));
-DECLARE_MIDFUNC(fmul_rr(FRW d, FR s));
-DECLARE_MIDFUNC(frem_rr(FRW d, FR s));
-DECLARE_MIDFUNC(frem1_rr(FRW d, FR s));
-DECLARE_MIDFUNC(fdiv_rr(FRW d, FR s));
-DECLARE_MIDFUNC(fcmp_rr(FR d, FR s));
-DECLARE_MIDFUNC(fflags_into_flags(W2 tmp));
+#if defined(CPU_arm)
+#include "compemu_midfunc_arm.h"
+#endif
+
+#if defined(CPU_i386) || defined(CPU_x86_64)
+#include "compemu_midfunc_x86.h"
+#endif
+
 #undef DECLARE_MIDFUNC
 
 extern int failure;
@@ -519,6 +345,7 @@ extern void calc_disp_ea_020(int base, uae_u32 dp, int target, int tmp);
 /* Set native Z flag only if register is zero */
 extern void set_zero(int r, int tmp);
 extern int kill_rodent(int r);
+#define SYNC_PC_OFFSET 100
 extern void sync_m68k_pc(void);
 extern uae_u32 get_const(int r);
 extern int  is_const(int r);
@@ -581,7 +408,7 @@ typedef struct blockinfo_t {
     dependency* deplist; /* List of things that depend on this */
     smallstate  env;
 	
-#if JIT_DEBUG
+#ifdef JIT_DEBUG
 	/* (gb) size of the compiled block (direct handler) */
 	uae_u32 direct_handler_size;
 #endif

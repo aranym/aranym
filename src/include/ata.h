@@ -100,7 +100,7 @@ class default_image_t : public device_image_t
 
 };
 
-#if BX_SPLIT_HD_SUPPORT
+#ifdef BX_SPLIT_HD_SUPPORT
 class concat_image_t : public device_image_t
 {
   public:
@@ -147,11 +147,11 @@ class concat_image_t : public device_image_t
 };
 #endif /* BX_SPLIT_HD_SUPPORT */
 
-#if EXTERNAL_DISK_SIMULATOR
+#ifdef EXTERNAL_DISK_SIMULATOR
 #include "external-disk-simulator.h"
 #endif
 
-#if DLL_HD_SUPPORT
+#ifdef DLL_HD_SUPPORT
 class dll_image_t : public device_image_t
 {
   public:
@@ -282,7 +282,7 @@ struct atapi_t
   int total_bytes_remaining;
 };
 
-#if BX_USE_HD_SMF
+#ifdef BX_USE_HD_SMF
 #  define BX_HD_SMF  static
 #  define BX_HD_THIS bx_hard_drive.
 #else
@@ -308,7 +308,7 @@ public:
   BX_HD_SMF void  bmdma_complete(Bit8u channel);
 
 
-#if !BX_USE_HD_SMF
+#ifndef BX_USE_HD_SMF
   Bit32u read(Bit32u address, unsigned io_len);
   void   write(Bit32u address, Bit32u value, unsigned io_len);
 #endif

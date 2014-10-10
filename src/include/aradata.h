@@ -28,6 +28,7 @@
 class ARADATA : public BASE_IO {
 private:
 	bool mouseDriver;
+	uae_u32 abase;
 	int mouse_x, mouse_y;
 
 public:
@@ -35,9 +36,10 @@ public:
 	void reset();
 	virtual uint8 handleRead(memptr addr);
 	virtual void handleWrite(memptr addr, uint8 value);
-	bool isAtariMouseDriver()	{ return mouseDriver; }
-	int getAtariMouseX()	{ return mouse_x; }
-	int getAtariMouseY()	{ return mouse_y; }
+	bool isAtariMouseDriver()	{ return abase != 0 || mouseDriver; }
+	int getAtariMouseX();
+	int getAtariMouseY();
 	void setAtariMousePosition(int x, int y) { mouse_x = x; mouse_y = y; }
+	void setAbase(memptr addr) { abase = addr; }
 };
 #endif /* _ARADATA */

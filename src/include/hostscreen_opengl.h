@@ -23,7 +23,7 @@
 
 #include <list>
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 class HostScreen;
 class HostSurface;

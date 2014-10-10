@@ -21,7 +21,7 @@
 #ifndef AUDIOCONV_H
 #define AUDIOCONV_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 class AudioConv {
 	private:

@@ -33,13 +33,13 @@
 
 # include <cctype>
 
-#ifdef NEWDEBUG
-
-typedef enum {EQUAL_value_test_8, EQUAL_value_test_16, EQUAL_value_test_32, CHANGE_value_test_8, CHANGE_value_test_16, CHANGE_value_test_32 } value_test_t;
-
-const unsigned int max_breakpoints = 256;
-
 class ndebug {
+
+#ifdef DEBUGGER
+  typedef enum {EQUAL_value_test_8, EQUAL_value_test_16, EQUAL_value_test_32, CHANGE_value_test_8, CHANGE_value_test_16, CHANGE_value_test_32 } value_test_t;
+
+  static const unsigned int max_breakpoints = 256;
+
   static termios savetty;
   static bool issavettyvalid;
   static unsigned int rowlen;
@@ -150,33 +150,26 @@ class ndebug {
   static void log2phys(FILE *, uaecptr);
 
   static void showTypes();
-  static int canon(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
-  static int icanon(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
-  static int dm(FILE *, bool, uaecptr, uaecptr &, uaecptr &);
+  static int canon(FILE *, uaecptr, uaecptr &, uaecptr &);
+  static int icanon(FILE *, uaecptr, uaecptr &, uaecptr &);
+  static int dm(FILE *, uaecptr, uaecptr &, uaecptr &);
  
-#endif
+#endif /* DEBUGGER */
 
-#ifdef NEWDEBUG
 public:
-  static
-#endif
-  int dbprintf(const char *, ...);
+  static void dbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
-#ifdef NEWDEBUG
-public:
-    static
-#endif
-    int pdbprintf(const char *, ...);
+  static void pdbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
-#ifdef NEWDEBUG
+#ifdef DEBUGGER
   static bool do_skip;
   static void run();
   static void init();
   static void nexit();
+#endif
 #ifdef FULL_HISTORY
-  static void showHistory(unsigned int);
+  static void showHistory(unsigned int, bool showLast = true);
 #endif
 };
-#endif
 
 #endif

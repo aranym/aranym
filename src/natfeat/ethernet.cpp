@@ -30,7 +30,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
 
 #include "../../atari/network/ethernet/ethernet_nfapi.h"
@@ -100,7 +100,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
 
 				// default MAC Address is just made up
-				uint8 mac_addr[6] = {'\0','A','E','T','H', '0'+ethX };
+				uint8 mac_addr[6] = {'\0','A','E','T','H', uint8('0'+ethX) };
 
 				// convert user-defined MAC Address from string to 6 bytes array
 				char *ms = bx_options.ethernet[ethX].mac_addr;
@@ -372,7 +372,7 @@ bool ETHERNETDriver::startThread(int ethX)
 			return false;
 		}
 
-		handler->handlingThread = SDL_CreateThread( receiveFunc, handler );
+		handler->handlingThread = SDL_CreateNamedThread( receiveFunc, "Ethernet", handler );
 		if (handler->handlingThread == NULL) {
 			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
 			return false;
@@ -395,7 +395,7 @@ void ETHERNETDriver::stopThread(int ethX)
 	if (handler->handlingThread) {
 		D(bug("Ethernet: Stop thread"));
 
-#if FIXME
+#ifdef FIXME
 		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
 		SDL_WaitThread(handler->handlingThread, NULL);
 		SDL_DestroySemaphore(handler->intAck);

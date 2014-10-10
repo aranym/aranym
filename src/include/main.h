@@ -39,6 +39,8 @@ struct M68kRegisters {
 	uint32 d[8];
 	memptr a[8];
 	uint16 sr;
+	memptr usp, isp, msp;
+	memptr pc;
 };
 
 // General functions

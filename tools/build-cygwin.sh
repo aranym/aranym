@@ -19,21 +19,22 @@
 # flag set - if not, "chmod +x build-cygwin.sh").
 #
 # Untar SDL sources in this directory (They are avaible at :
-# http://www.libsdl.org/download-1.2.php ). I used SDL 1.2.12, but it should
+# http://www.libsdl.org/download-1.2.php ). I used SDL 1.2.15, but it should
 # work with newer releases as they will be available (CVS won't work !).
 # Please edit the SDL_SOURCES variable below to reflect the path where
 # SDL sources lie.
 #
 # If you want to compile ARAnyM with --enable-nfjpeg (NatFeat jpeg
 # decoder), untar SDL_image sources next to SDL sources (They are available
-# at : http://www.libsdl.org/projects/SDL_image/ ). I used SDL_image 1.2.6,
+# at : http://www.libsdl.org/projects/SDL_image/release-1.2.html ).
+# I used SDL_image 1.2.12,
 # but it should work with newer releases as they will be available (CVS
 # won't work !). Please edit SDL_IMAGE_SOURCES variable to reflect the path
 # where SDL_image sources lie. Set this variable to blank if you don't want
 # SDL_image.
 #
 # Untar ARAnyM sources at the same place. You can also pull sources from
-# CVS (see http://aranym.sourceforge.net/development.html for details on
+# GIT (see http://aranym.sourceforge.net/development.html for details on
 # how to do this). Please edit ARANYM_SOURCES variable below to reflect
 # the path where ARAnyM sources lie.
 #
@@ -42,7 +43,7 @@
 # about "\r", please run "dos2unix build-cygwin.sh" to convert line endings
 # from DOS style to unix style.
 #
-# Any parameter given to build-cygwin.sh will be transmitted to ARAnyM's
+# Any parameter given to build-cygwin.sh will be forwarded to ARAnyM's
 # configure script, so you can run "./build-cygwin.sh --enable-fullmmu"
 # if you want to build with MMU support. Run
 # "aranym-build/configure --help" after first build for a list
@@ -62,11 +63,12 @@
 # aranym-build/" and run build-cygwin.sh again.
 #
 # Cygwin packages that should be installed :
-# - gcc
+# - gcc-core
 # - gcc-g++
+# - mingw-gcc-core
 # - make
-# - xorg-x11-bin (for the makedepend binary)
-# - cvs, autoconf and automake (if you want to use CVS version, or if
+# - makedepend
+# - git, autoconf and automake (if you want to use GIT version, or if
 #   you modify configure.ac)
 # - cygutils (for the dos2unix tool)
 #
@@ -77,9 +79,9 @@
 
 #----------------------------------------------
 # Edit this to suit your configuration !
-SDL_SOURCES=${PWD}/SDL-1.2.13
-SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.6
-ARANYM_SOURCES=${PWD}/aranym
+SDL_SOURCES=${PWD}/SDL-1.2.15
+SDL_IMAGE_SOURCES=${PWD}/SDL_image-1.2.12
+ARANYM_SOURCES=${PWD}/aranym-0.9.15
 #----------------------------------------------
 
 # A small function used to report errors
@@ -135,7 +137,7 @@ if [ ! -x ${SDL_PREFIX}/bin/sdl-config -o \
   check_return "Unable to create ${SDL_PREFIX}."
 
   cd ${SDL_BUILD}
-  ${SDL_SOURCES}/configure --prefix=${SDL_PREFIX} && \
+  ${SDL_SOURCES}/configure --prefix=${SDL_PREFIX} CC=i686-pc-mingw32-gcc && \
   make && \
   make install
   check_return "Unable to compile SDL from ${SDL_SOURCES}."
@@ -207,7 +209,7 @@ echo ${LINE2}
 cd ${ARANYM_SOURCES}
 
 if [ configure.ac -nt configure ] ; then
-  # This is needed for CVS sources only
+  # This is needed for GIT sources only
   # or if you modified configure.ac
 
   echo -n "Running aclocal... "

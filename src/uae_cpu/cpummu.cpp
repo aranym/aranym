@@ -309,6 +309,7 @@ static void mmu_bus_error(uaecptr addr, int fc, int write, int size)
 
 	D(bug("BUS ERROR: fc=%d w=%d log=%08x ssw=%04x", fc, write, addr, ssw));
 
+	breakpt();
 	THROW(2);
 }
 
@@ -441,7 +442,10 @@ uaecptr mmu_translate(uaecptr addr, int super, int data, int write)
 	l = &atc_l2[super][ATC_L2_INDEX(addr)];
 	mmu_fill_atc_l2(addr, super, data, write, l);
 	if (!(data ? l->valid_data : l->valid_inst))
+	{
+		breakpt();
 		THROW(2);
+	}
 
 	return addr + l->phys;
 }
@@ -539,6 +543,7 @@ uae_u16 mmu_get_word_unaligned(uaecptr addr, int data)
 		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw |= MMU_SSW_MA;
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 	return res;
@@ -559,6 +564,7 @@ uae_u32 mmu_get_long_unaligned(uaecptr addr, int data)
 			RESTORE_EXCEPTION;
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
+			breakpt();
 			THROW_AGAIN(prb);
 		}
 	} else {
@@ -574,6 +580,7 @@ uae_u32 mmu_get_long_unaligned(uaecptr addr, int data)
 			RESTORE_EXCEPTION;
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
+			breakpt();
 			THROW_AGAIN(prb);
 		}
 	}
@@ -659,6 +666,7 @@ REGPARAM2 void mmu_put_long_unaligned(uaecptr addr, uae_u32 val, int data)
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
 		}
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 }
@@ -678,6 +686,7 @@ REGPARAM2 void mmu_put_word_unaligned(uaecptr addr, uae_u16 val, int data)
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
 		}
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 }
@@ -768,6 +777,7 @@ uae_u32 sfc_get_long(uaecptr addr)
 			RESTORE_EXCEPTION;
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
+			breakpt();
 			THROW_AGAIN(prb);
 		}
 	} else {
@@ -783,6 +793,7 @@ uae_u32 sfc_get_long(uaecptr addr)
 			RESTORE_EXCEPTION;
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
+			breakpt();
 			THROW_AGAIN(prb);
 		}
 	}
@@ -808,6 +819,7 @@ uae_u16 sfc_get_word(uaecptr addr)
 		RESTORE_EXCEPTION;
 		regs.mmu_fault_addr = addr;
 		regs.mmu_ssw |= MMU_SSW_MA;
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 	return res;
@@ -848,6 +860,7 @@ void dfc_put_long(uaecptr addr, uae_u32 val)
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
 		}
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 }
@@ -874,6 +887,7 @@ void dfc_put_word(uaecptr addr, uae_u16 val)
 			regs.mmu_fault_addr = addr;
 			regs.mmu_ssw |= MMU_SSW_MA;
 		}
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 }
@@ -891,6 +905,7 @@ void dfc_put_byte(uaecptr addr, uae_u8 val)
 	CATCH(prb) {
 		RESTORE_EXCEPTION;
 		regs.wb3_data = val;
+		breakpt();
 		THROW_AGAIN(prb);
 	}
 }

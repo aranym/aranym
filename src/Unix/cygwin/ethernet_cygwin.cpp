@@ -22,11 +22,11 @@
 #include "main.h"
 #include "ethernet_cygwin.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
-#include <w32api/windows.h>
-#include <w32api/winioctl.h>
+#include <windows.h>
+#include <winioctl.h>
 
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
@@ -395,7 +395,7 @@ int WinTapEthernetHandler::recv(uint8 *buf, int len)
 	}
 
 	device_total_in += lenin;
-	D(bug("WinTap: Read packet done (len %d)", lenin));
+	D(bug("WinTap: Read packet done (len %d)", (int)lenin));
 	return lenin;
 }
 

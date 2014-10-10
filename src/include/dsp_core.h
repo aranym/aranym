@@ -22,7 +22,7 @@
 #ifndef DSP_CORE_H
 #define DSP_CORE_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <SDL_thread.h>
 
 #ifdef __cplusplus

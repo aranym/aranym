@@ -46,8 +46,13 @@
    unsigned long hereunder is either 64-bit or 32-bit wide depending
    on the target.  */
 struct flag_struct {
-    unsigned long cznv;
-    unsigned long x;
+#if defined(CPU_x86_64)
+    uint64 cznv;
+    uint64 x;
+#else
+    uint32 cznv;
+    uint32 x;
+#endif
 };
 
 #define FLAGVAL_Z	0x40
@@ -106,25 +111,25 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("andl %1,%1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "r" (v) : "cc")
+			: "=rm" (regflags.cznv) : "r" (v) : "memory", "cc")
 
 #define optflag_testw(v) \
   __asm__ __volatile__ ("andw %w1,%w1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "r" (v) : "cc")
+			: "=rm" (regflags.cznv) : "r" (v) : "memory", "cc")
 
 #define optflag_testb(v) \
   __asm__ __volatile__ ("andb %b1,%b1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "q" (v) : "cc")
+			: "=rm" (regflags.cznv) : "q" (v) : "memory", "cc")
 
 #define optflag_addl(v, s, d) do { \
   __asm__ __volatile__ ("addl %k2,%k1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
+			: "=rm" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "memory", "cc"); \
     COPY_CARRY; \
     } while (0)
 
@@ -132,7 +137,7 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("addw %w2,%w1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
+			: "=rm" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "memory", "cc"); \
     COPY_CARRY; \
     } while (0)
 
@@ -148,7 +153,7 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("subl %k2,%k1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
+			: "=rm" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "memory", "cc"); \
     COPY_CARRY; \
     } while (0)
 
@@ -156,7 +161,7 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("subw %w2,%w1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "cc"); \
+			: "=rm" (regflags.cznv), "=r" (v) : "rmi" (s), "1" (d) : "memory", "cc"); \
     COPY_CARRY; \
     } while (0)
 
@@ -164,7 +169,7 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("subb %b2,%b1\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv), "=q" (v) : "qmi" (s), "1" (d) : "cc"); \
+			: "=rm" (regflags.cznv), "=q" (v) : "qmi" (s), "1" (d) : "memory", "cc"); \
     COPY_CARRY; \
     } while (0)
 
@@ -172,19 +177,19 @@ static inline int cctrue(int cc)
   __asm__ __volatile__ ("cmpl %k1,%k2\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "rmi" (s), "r" (d) : "cc")
+			: "=rm" (regflags.cznv) : "rmi" (s), "r" (d) : "memory", "cc")
 
 #define optflag_cmpw(s, d) \
   __asm__ __volatile__ ("cmpw %w1,%w2\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "rmi" (s), "r" (d) : "cc")
+			: "=rm" (regflags.cznv) : "rmi" (s), "r" (d) : "memory", "cc")
 
 #define optflag_cmpb(s, d) \
   __asm__ __volatile__ ("cmpb %b1,%b2\n\t" \
 			"pushf\n\t" \
 			"pop %0\n\t" \
-			: "=r" (regflags.cznv) : "qmi" (s), "q" (d) : "cc")
+			: "=rm" (regflags.cznv) : "qmi" (s), "q" (d) : "memory", "cc")
 
 #else
 
@@ -353,7 +358,7 @@ static inline int cctrue(int cc)
 			"seto %%al\n\t" \
 			"movb %%al,regflags\n\t" \
 			"movb %%ah,regflags+1\n\t" \
-			: : "rmi" (s), "r" (d) : "%eax","cc","memory");
+			: : "rmi" (s), "r" (d) : "%eax","cc","memory")
 
 #define optflag_cmpb(s, d) \
   __asm__ __volatile__ ("cmpb %b0,%b1\n\t" \
@@ -368,8 +373,8 @@ static inline int cctrue(int cc)
 #elif defined(CPU_arm) && defined(ARM_ASSEMBLY)
 
 struct flag_struct {
-    unsigned int nzcv;
-    unsigned int  x;
+	uae_u32 nzcv;
+	uae_u32 x;
 };
 
 #define FLAGVAL_Q       0x08000000

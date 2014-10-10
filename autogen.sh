@@ -43,6 +43,7 @@ if [ -z "$*" -a -z "$NO_CONFIGURE" ]; then
         echo "to pass any to it, please specify them on the $0 command line."
 fi
 
+ACLOCAL_FLAGS="-I m4"
 aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
     aclocal $aclocalinclude; \

@@ -106,14 +106,14 @@ static JPGDDRV_STRUCT nfjpeg_cookie = {
 
 void install_driver(unsigned long resident_length)
 {
-	Cconws(
+	(void) Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"
 	);
 
 	/* Check if _JPD already installed */
 	if (cookie_present(C__JPD, NULL)) {
-		Cconws("A JPEG driver is already installed on this system\r\n");
+		(void) Cconws("A JPEG driver is already installed on this system\r\n");
 		press_any_key();
 		return;
 	}	
@@ -121,14 +121,14 @@ void install_driver(unsigned long resident_length)
 	/* Check if NF is present for NFJPEG */
 	nfOps = nf_init();
 	if (!nfOps) {
-		Cconws("Native Features not present on this system\r\n");
+		(void) Cconws("Native Features not present on this system\r\n");
 		press_any_key();
 		return;
 	}
 
 	nfJpegId = nfOps->get_id("JPEG");
 	if (nfJpegId==0) {
-		Cconws("NF JPEG functions not present on this system\r\n");
+		(void) Cconws("NF JPEG functions not present on this system\r\n");
 		press_any_key();
 		return;
 	}	
@@ -141,8 +141,8 @@ void install_driver(unsigned long resident_length)
 
 static void press_any_key(void)
 {
-	Cconws("- Press any key to continue -\r\n");
-	while (Bconstat(DEV_CONSOLE)==0);
+	(void) Cconws("- Press any key to continue -\r\n");
+	Crawcin();
 }
 
 static void install_jpeg(void)

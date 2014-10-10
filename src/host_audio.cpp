@@ -26,7 +26,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 /*--- SDL callback function ---*/
 

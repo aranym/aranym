@@ -101,7 +101,7 @@ bool Init680x0(void)
 {
 	init_m68k();
 
-#if (ENABLE_EXCLUSIVE_SPCFLAGS && !(HAVE_HARDWARE_LOCKS))
+#if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
     if ((spcflags_lock = SDL_CreateMutex()) ==  NULL) {
 		panicbug("Error by SDL_CreateMutex()");
 		exit(EXIT_FAILURE);
@@ -321,7 +321,7 @@ void report_double_bus_error()
 	CPU_ACTION;
 }
 
-#if FLIGHT_RECORDER
+#ifdef FLIGHT_RECORDER
 extern bool cpu_flight_recorder_active;
 void cpu_flight_recorder(int activate) { cpu_flight_recorder_active = activate; }
 #endif

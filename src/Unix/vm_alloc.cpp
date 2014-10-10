@@ -75,6 +75,7 @@
 		#define MAP_BASE	0x00000000
 	#endif
 	static char * next_address = (char *)MAP_BASE;
+	static char * next_address_32bit = (char *)MAP_BASE;
 #endif
 
 #ifdef HAVE_MMAP_VM
@@ -137,7 +138,7 @@ static int translate_prot_flags(int prot_flags)
 		prot = PAGE_READWRITE;
 	else if (prot_flags == VM_PAGE_READ)
 		prot = PAGE_READONLY;
-	else if (prot_flags == 0)
+	else if (prot_flags == VM_PAGE_NOACCESS)
 		prot = PAGE_NOACCESS;
 	return prot;
 }
@@ -187,18 +188,29 @@ void * vm_acquire(size_t size, int options)
 	// vm_allocate() returns a zero-filled memory region
 	if (vm_allocate(mach_task_self(), (vm_address_t *)&addr, size, TRUE) != KERN_SUCCESS)
 		return VM_MAP_FAILED;
+
+	// Sanity checks for 64-bit platforms
+	if (sizeof(void *) > 4 && (options & VM_MAP_32BIT) && !(((char *)addr + size) <= (char *)0xffffffff))
+	{
+		vm_release(addr, size);
+		return VM_MAP_FAILED;
+	}
 #elif defined(HAVE_MMAP_VM)
 	int fd = zero_fd;
 	int the_map_flags = translate_map_flags(options) | map_flags;
+	char **base = (options & VM_MAP_32BIT) ? &next_address_32bit : &next_address;
 
-	if ((addr = mmap((caddr_t)next_address, size, VM_PAGE_DEFAULT, the_map_flags, fd, 0)) == (void *)MAP_FAILED)
+	if ((addr = mmap((caddr_t)(*base), size, VM_PAGE_DEFAULT, the_map_flags, fd, 0)) == (void *)MAP_FAILED)
 		return VM_MAP_FAILED;
 	
 	// Sanity checks for 64-bit platforms
-	if (sizeof(void *) == 8 && (options & VM_MAP_32BIT) && !((char *)addr <= (char *)0xffffffff))
+	if (sizeof(void *) > 4 && (options & VM_MAP_32BIT) && !(((char *)addr + size) <= (char *)0xffffffff))
+	{
+		vm_release(addr, size);
 		return VM_MAP_FAILED;
+	}
 
-	next_address = (char *)addr + size;
+	*base = (char *)addr + size;
 	
 	// Since I don't know the standard behavior of mmap(), zero-fill here
 	if (std::memset(addr, 0, size) != addr)
@@ -209,6 +221,13 @@ void * vm_acquire(size_t size, int options)
 	if ((addr = VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE)) == NULL)
 		return VM_MAP_FAILED;
 
+	// Sanity checks for 64-bit platforms
+	if (sizeof(void *) > 4 && (options & VM_MAP_32BIT) && !(((char *)addr + size) <= (char *)0xffffffff))
+	{
+		vm_release(addr, size);
+		return VM_MAP_FAILED;
+	}
+
 	// Zero newly allocated memory
 	if (std::memset(addr, 0, size) != addr)
 		return VM_MAP_FAILED;
@@ -216,6 +235,13 @@ void * vm_acquire(size_t size, int options)
 	if ((addr = calloc(size, 1)) == 0)
 		return VM_MAP_FAILED;
 	
+	// Sanity checks for 64-bit platforms
+	if (sizeof(void *) > 4 && (options & VM_MAP_32BIT) && !(((char *)addr + size) <= (char *)0xffffffff))
+	{
+		free(addr);
+		return VM_MAP_FAILED;
+	}
+
 	// Omit changes for protections because they are not supported in this mode
 	return addr;
 #endif
@@ -224,7 +250,10 @@ void * vm_acquire(size_t size, int options)
 	// Explicitely protect the newly mapped region here because on some systems,
 	// say MacOS X, mmap() doesn't honour the requested protection flags.
 	if (vm_protect(addr, size, VM_PAGE_DEFAULT) != 0)
+	{
+		vm_release(addr, size);
 		return VM_MAP_FAILED;
+	}
 	
 	return addr;
 }
@@ -262,11 +291,11 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 	DWORD  req_size = align_size_segment(addr, size);
 	LPVOID ret_addr = VirtualAlloc(req_addr, req_size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 	if (ret_addr != req_addr)
-		return -1;
+		return false;
 
 	// Zero newly allocated memory
 	if (memset(addr, 0, size) != addr)
-		return -1;
+		return false;
 #else
 	// Unsupported
 	return false;
@@ -301,6 +330,7 @@ int vm_release(void * addr, size_t size)
 #ifdef HAVE_WIN32_VM
 	if (VirtualFree(align_addr_segment(addr), 0, MEM_RELEASE) == 0)
 		return -1;
+	(void) size;
 #else
 	free(addr);
 #endif
@@ -335,7 +365,11 @@ int vm_protect(void * addr, size_t size, int prot)
 int vm_get_page_size(void)
 {
 #ifdef _WIN32
-    return 4096;
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	if (si.dwAllocationGranularity > si.dwPageSize)
+		return si.dwAllocationGranularity;
+	return si.dwPageSize;
 #else
     return getpagesize();
 #endif
@@ -354,9 +388,9 @@ void handler(int sig)
 int main(void)
 {
 	vm_init();
-	signal(SIGSEGV, &handler);
+	signal(SIGSEGV, handler);
 	
-#define page_align(address) ((char *)((unsigned long)(address) & -page_size))
+#define page_align(address) ((char *)((uintptr)(address) & -page_size))
 	const unsigned long page_size = vm_get_page_size();
 	
 	const int area_size = 6 * page_size;

@@ -18,7 +18,7 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #include <string.h>
 
 #include "dirty_rects.h"
@@ -34,7 +34,7 @@ DirtyRects::DirtyRects(int width, int height)
 DirtyRects::~DirtyRects(void)
 {
 	if (dirtyMarker) {
-		delete dirtyMarker;
+		delete [] dirtyMarker;
 	}
 }
 
@@ -43,7 +43,7 @@ DirtyRects::~DirtyRects(void)
 void DirtyRects::resizeDirty(int width, int height)
 {
 	if (dirtyMarker) {
-		delete dirtyMarker;
+		delete [] dirtyMarker;
 	}
 
 	areaW = width;

@@ -1,3 +1,4 @@
+
 /*
  * main_unix.cpp - Startup code for Unix
  *
@@ -27,6 +28,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#if defined _WIN32 || defined(OS_cygwin)
+# define SDL_MAIN_HANDLED
+#endif
+
 #include "sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
@@ -36,6 +41,11 @@
 #include "parameters.h"
 #include "newcpu.h"
 #include "version.h"
+
+#define USE_VALGRIND 0
+#if USE_VALGRIND
+#include <valgrind/memcheck.h>
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -52,8 +62,6 @@ typedef void (*sighandler_t)(int);
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
 #endif
-
-static sighandler_t oldsegfault = SIG_ERR;
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -80,23 +88,17 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/)
 # endif
 #endif
 
-#if defined(NEWDEBUG)
-static struct sigaction sigint_sa;
-#endif
-
-extern void showBackTrace(int, bool=true);
-
 #ifdef OS_irix
 void segmentationfault()
 #else
 void segmentationfault(int)
 #endif
 {
-	grabMouse(false);
+	grabMouse(SDL_FALSE);
 	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
 #ifdef FULL_HISTORY
-	showBackTrace(20, false);
-	m68k_dumpstate (NULL);
+	ndebug::showHistory(20, false);
+	m68k_dumpstate (stderr, NULL);
 #else
 	panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
@@ -111,7 +113,7 @@ static void allocate_all_memory()
 
 #if FIXED_ADDRESSING
 	if (vm_acquire_fixed((void *)FMEMORY, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
 		QuitEmulator();
 	}
 	RAMBaseHost = (uint8 *)FMEMORY;
@@ -120,14 +122,14 @@ static void allocate_all_memory()
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 # ifdef EXTENDED_SIGSEGV
 	if (vm_acquire_fixed((void *)(FMEMORY + ~0xffffffL), RAMSize + ROMSize + HWSize) == false) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (protected mirror RAM 0x%08x).", RAMSize);
 		QuitEmulator();
 	}
 
 #  ifdef HW_SIGSEGV
 
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (Shadow IO).");
 		QuitEmulator();
 	}
 
@@ -136,7 +138,7 @@ static void allocate_all_memory()
 #else
 	RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
 	if (RAMBaseHost == VM_MAP_FAILED) {
-		panicbug("Not enough free memory.");
+		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
 		QuitEmulator();
 	}
 
@@ -144,13 +146,17 @@ static void allocate_all_memory()
 	HWBaseHost = RAMBaseHost + HWBase;
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 #endif
-	D(bug("ST-RAM starts at %p (%08x)", RAMBaseHost, RAMBase));
-	D(bug("TOS ROM starts at %p (%08x)", ROMBaseHost, ROMBase));
-	D(bug("HW space starts at %p (%08x)", HWBaseHost, HWBase));
-	D(bug("TT-RAM starts at %p (%08x)", FastRAMBaseHost, FastRAMBase));
+	InitMEM();
+	D(bug("ST-RAM     at %p - %p (0x%08x - 0x%08x)", RAMBaseHost, RAMBaseHost + RAMSize, RAMBase, RAMBase + RAMSize));
+	D(bug("TOS ROM    at %p - %p (0x%08x - 0x%08x)", ROMBaseHost, ROMBaseHost + ROMSize, ROMBase, ROMBase + ROMSize));
+	D(bug("HW space   at %p - %p (0x%08x - 0x%08x)", HWBaseHost, HWBaseHost + HWSize, HWBase, HWBase + HWSize));
+	D(bug("TT-RAM     at %p - %p (0x%08x - 0x%08x)", FastRAMBaseHost, FastRAMBaseHost + FastRAMSize, FastRAMBase, FastRAMBase + FastRAMSize));
+	if (VideoRAMBaseHost) {
+	D(bug("Video-RAM  at %p - %p (0x%08x - 0x%08x)", VideoRAMBaseHost, VideoRAMBaseHost + ARANYMVRAMSIZE, VideoRAMBase, VideoRAMBase + ARANYMVRAMSIZE));
+	}
 # ifdef EXTENDED_SIGSEGV
 #  ifdef HW_SIGSEGV
-	D(panicbug("FakeIOspace %p", FakeIOBaseHost));
+	D(bug("FakeIOspace %p", FakeIOBaseHost));
 #  endif
 #  ifdef RAMENDNEEDED
 	D(bug("RAMEnd needed"));
@@ -159,31 +165,32 @@ static void allocate_all_memory()
 #endif /* DIRECT_ADDRESSING || FIXED_ADDRESSING */
 }
 
-#ifdef EXTENDED_SIGSEGV
-extern sighandler_t install_sigsegv();
-#else
-static sighandler_t install_sigsegv() {
-	return signal(SIGSEGV, segmentationfault);
+#ifndef EXTENDED_SIGSEGV
+void install_sigsegv() {
+	signal(SIGSEGV, segmentationfault);
+}
+
+void uninstall_sigsegv() {
+	signal(SIGSEGV, SIG_DFL);
 }
 #endif
 
-static void remove_sigsegv(sighandler_t orighandler) {
-	if (orighandler != SIG_ERR)
-		signal(SIGSEGV, orighandler);
-}
-
 static void install_signal_handler()
 {
-	oldsegfault = install_sigsegv();
+	install_sigsegv();
 	D(bug("Sigsegv handler installed"));
 
-#ifdef NEWDEBUG
-	if (bx_options.startup.debugger) {
-		sigemptyset(&sigint_sa.sa_mask);
-		sigint_sa.sa_handler = (void (*)(int))setactvdebug;
-		sigint_sa.sa_flags = 0;
-		sigaction(SIGINT, &sigint_sa, NULL);
+#ifdef HAVE_SIGACTION
+	{
+		struct sigaction sa;
+		memset(&sa, 0, sizeof(sa));
+		sigemptyset(&sa.sa_mask);
+		sa.sa_handler = (void (*)(int))setactvdebug;
+		sa.sa_flags = 0;
+		sigaction(SIGINT, &sa, NULL);
 	}
+#else
+	signal(SIGINT, (void (*)(int))setactvdebug);
 #endif
 
 #ifdef EXTENDED_SIGSEGV
@@ -192,14 +199,20 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(panicbug("Protected ROM (%08lx - %08lx)", ROMBaseHost, ROMBaseHost + ROMSize));
+	D(bug("Protected ROM          (%p - %p)", ROMBaseHost, ROMBaseHost + ROMSize));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost, ROMSize);
+#endif
 
 # ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't protect RAMEnd");
 		exit(-1);
 	}
-	D(panicbug("Protected RAMEnd (%08lx - %08lx)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+	D(bug("Protected RAMEnd       (%p - %p)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd);
+#endif
 # endif
 
 # ifdef HW_SIGSEGV
@@ -208,21 +221,30 @@ static void install_signal_handler()
 		exit(-1);
 	}
 
-	D(panicbug("Protected HW space (%08lx - %08lx)", HWBaseHost, HWBaseHost + HWSize));
+	D(bug("Protected HW space     (%p - %p)", HWBaseHost, HWBaseHost + HWSize));
 
-	if (vm_protect(RAMBaseHost + ~0xffffffL, 0x1000000, VM_PAGE_NOACCESS)) {
+	if (vm_protect(RAMBaseHost + ~0xffffffUL, 0x1000000, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set mirror address space");
 		QuitEmulator();
 	}
 
-	D(panicbug("Protected mirror space (%08lx - %08lx)", RAMBaseHost + ~0xffffffL, RAMBaseHost + ~0xffffffL + RAMSize + ROMSize + HWSize));
+	D(bug("Protected mirror space (%p - %p)", RAMBaseHost + ~0xffffffUL, RAMBaseHost + ~0xffffffUL + RAMSize + ROMSize + HWSize));
+#if USE_VALGRIND
+	VALGRIND_MAKE_MEM_DEFINED(HWBaseHost, HWSize);
+	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + ~0xffffffUL, 0x1000000);
+#endif
 # endif /* HW_SIGSEGV */
+
+#ifdef HAVE_SBRK
+	D(bug("Program break           %p", sbrk(0)));
+#endif
+
 #endif /* EXTENDED_SIGSEGV */
 }
 
 static void remove_signal_handler()
 {
-	remove_sigsegv(oldsegfault);
+	uninstall_sigsegv();
 	D(bug("Sigsegv handler removed"));
 }
 
@@ -231,29 +253,29 @@ static void remove_signal_handler()
  */
 int main(int argc, char **argv)
 {
+#if defined _WIN32 || defined(OS_cygwin)
+	SDL_SetMainReady();
+#endif
+
 	// Initialize variables
 	RAMBaseHost = NULL;
 	ROMBaseHost = NULL;
 	HWBaseHost = NULL;
 	FastRAMBaseHost = NULL;
 
-	// display version string on console (help when users provide debug info)
-	infoprint("%s", VERSION_STRING);
-
 	// remember program name
 	program_name = argv[0];
 
-#ifdef NEWDEBUG
+#ifdef DEBUGGER
 	ndebug::init();
 #endif
+
+	// display version string on console (help when users provide debug info)
+	infoprint("%s", VERSION_STRING);
 
 	// parse command line switches
 	if (!decode_switches(argc, argv))
 		exit(-1);
-
-#ifdef NEWDEBUG
-	signal(SIGINT, setactvdebug);
-#endif
 
 	allocate_all_memory();
 

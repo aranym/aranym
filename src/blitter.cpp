@@ -48,7 +48,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 #if DEBUG
 #define SHOWPARAMS												\
@@ -161,6 +161,8 @@ void _fn_name ( BLITTER& b ) \
 		b.source_addr += b.source_y_inc;				\
 		b.dest_addr += b.dest_y_inc;				\
 		_do_halftone_inc;					\
+		(void) opd_data; \
+		(void) dst_data; \
 	} while (--b.y_count > 0);					\
 };
 
@@ -307,9 +309,9 @@ HOP_OPS(_HOP_3_OP_15_P,(0xffff) ,source_buffer <<=16,source_buffer |= ((unsigned
 
 void hop2op3p( BLITTER& b )
 {
-#if BLITTER_MEMMOVE
+#ifdef BLITTER_MEMMOVE
 	if (getVIDEL ()->getBpp() == 16) {
-#if BLITTER_SDLBLIT
+#ifdef BLITTER_SDLBLIT
 		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 			SDL_Rect src, dest;
 			int src_offset = b.source_addr - ARANYMVRAMSTART;
@@ -343,11 +345,11 @@ void hop2op3p( BLITTER& b )
 
 void hop2op3n( BLITTER& b )
 {
-#if BLITTER_MEMMOVE
+#ifdef BLITTER_MEMMOVE
 	if (getVIDEL ()->getBpp() == 16) {
 		b.source_addr += ((b.x_count-1)*b.source_x_inc);
 		b.dest_addr += ((b.x_count-1)*b.dest_x_inc);
-#if BLITTER_SDLBLIT
+#ifdef BLITTER_SDLBLIT
 		if (b.source_addr >= ARANYMVRAMSTART && b.dest_addr >= ARANYMVRAMSTART) {
 			b.source_addr += (((b.x_count)*b.source_x_inc)+b.source_y_inc)*b.y_count;
 			b.dest_addr += (((b.x_count-1)*b.dest_x_inc)+b.dest_y_inc)*b.y_count;
@@ -565,11 +567,11 @@ void BLITTER::Do_Blit(void)
 	}
 
 	if (source_addr <= 0x800 || (source_addr >= 0x0e80000 && source_addr < 0x1000000)) {
-		panicbug("Blitter Source address out of range: $%08lx", source_addr);
+		panicbug("Blitter Source address out of range: $%08x", source_addr);
 		return;
 	}
 	if (dest_addr <= 0x800 || (dest_addr >= 0x0e00000 && dest_addr < 0x1000000)) {
-		panicbug("Blitter Destination address out of range: $%08lx", dest_addr);
+		panicbug("Blitter Destination address out of range: $%08x", dest_addr);
 		return;
 	}
 

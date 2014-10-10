@@ -29,7 +29,7 @@
 #define PARAMETERS_H
 
 #include "sysdeps.h"
-#include <SDL_keyboard.h>
+#include "SDL_compat.h"
 
 #ifndef ARANYMHOME
 # define ARANYMHOME	".aranym"
@@ -60,10 +60,16 @@ enum geo_type {
 extern int get_geometry(const char *, enum geo_type geo);
 
 // External filesystem type
+#define HOSTFS_MAX_DRIVES 32
+
 typedef struct {
 	bool halfSensitive;
 	char rootPath[512];
 	char configPath[520];
+} bx_aranymfs_drive_t;
+typedef struct {
+	char symlinks[20];
+	bx_aranymfs_drive_t drive[HOSTFS_MAX_DRIVES];
 } bx_aranymfs_options_t;
 
 // Floppy device
@@ -224,14 +230,20 @@ typedef struct {
 } bx_ikbd_options_t;
 
 // Hotkeys
+#define HOTKEYS_STRING_SIZE		60
 typedef struct {
-	SDL_keysym	setup;
-	SDL_keysym	quit;
-	SDL_keysym	reboot;
-	SDL_keysym	debug;
-	SDL_keysym	ungrab;
-	SDL_keysym	fullscreen;
-	SDL_keysym	screenshot;
+	SDL_Keycode sym;
+	SDL_Keymod mod;
+} bx_hotkey;
+
+typedef struct {
+	bx_hotkey	setup;
+	bx_hotkey	quit;
+	bx_hotkey	reboot;
+	bx_hotkey	debug;
+	bx_hotkey	ungrab;
+	bx_hotkey	fullscreen;
+	bx_hotkey	screenshot;
 } bx_hotkeys_t;
 
 // Audio
@@ -254,12 +266,14 @@ typedef struct {
 
 #define DISKS	8
 
+#define CD_MAX_DRIVES 32
+
 // Options 
 typedef struct {
   bx_floppy_options_t	floppy;
   bx_atadevice_options_t atadevice[BX_MAX_ATA_CHANNEL][2];
   bx_scsidevice_options_t	disks[DISKS];
-  bx_aranymfs_options_t	aranymfs[ 'Z'-'A'+1 ];
+  bx_aranymfs_options_t	aranymfs;
   bx_video_options_t	video;
   bx_tos_options_t	tos;
   bx_startup_options_t	startup;
@@ -269,7 +283,7 @@ typedef struct {
   bx_lilo_options_t		lilo;
   bx_midi_options_t		midi;
   bx_ikbd_options_t		ikbd;
-  bx_nfcdrom_options_t	nfcdroms[ 'Z'-'A'+1 ];
+  bx_nfcdrom_options_t	nfcdroms[ CD_MAX_DRIVES ];
 #ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;
 #endif
@@ -316,6 +330,9 @@ char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 char *getHomeFolder(char *buffer, unsigned int bufsize);
 char *getConfFolder(char *buffer, unsigned int bufsize);
 char *getDataFolder(char *buffer, unsigned int bufsize);
+
+char *keysymToString(char *buffer, const bx_hotkey *keysym);
+bool stringToKeysym(bx_hotkey *keysym, const char *string);
 
 extern const char *getConfigFile();
 extern bool loadSettings(const char *);

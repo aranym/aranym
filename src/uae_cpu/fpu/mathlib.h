@@ -65,7 +65,7 @@
 // TODO: actually implement the slower but safer versions
 #define FPU_FAST_MATH 1
 
-#if FPU_USE_ISO_C99
+#if defined(FPU_USE_ISO_C99)
 // NOTE: no prior <math.h> shall be included at this point
 #define __USE_ISOC99 1 // for glibc 2.2.X and newer
 #define __USE_ISOC9X 1 // for glibc 2.1.X
@@ -148,7 +148,7 @@ union fpu_double_shape {
 		unsigned int mantissa0:20;
 		unsigned int mantissa1:32;
 #else
-#	if HOST_FLOAT_WORDS_BIG_ENDIAN
+#	if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int mantissa0:20;
 		unsigned int exponent:11;
 		unsigned int negative:1;
@@ -173,7 +173,7 @@ union fpu_double_shape {
 		unsigned int mantissa0:19;
 		unsigned int mantissa1:32;
 #else
-#	if HOST_FLOAT_WORDS_BIG_ENDIAN
+#	if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int mantissa0:19;
 		unsigned int quiet_nan:1;
 		unsigned int exponent:11;
@@ -192,7 +192,7 @@ union fpu_double_shape {
 
 	/* This format is used to extract the sign_exponent and mantissa parts only */
 	struct {
-#if HOST_FLOAT_WORDS_BIG_ENDIAN
+#if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int msw:32;
 		unsigned int lsw:32;
 #else
@@ -216,7 +216,7 @@ union fpu_extended_shape {
 		unsigned int mantissa0:32;
 		unsigned int mantissa1:32;
 #else
-#	if HOST_FLOAT_WORDS_BIG_ENDIAN
+#	if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int exponent:15;
 		unsigned int negative:1;
 		unsigned int empty:16;
@@ -243,7 +243,7 @@ union fpu_extended_shape {
 		unsigned int mantissa0:30;
 		unsigned int mantissa1:32;
 #else
-#	if HOST_FLOAT_WORDS_BIG_ENDIAN
+#	if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int exponent:15;
 		unsigned int negative:1;
 		unsigned int empty:16;
@@ -265,7 +265,7 @@ union fpu_extended_shape {
 	
 	/* This format is used to extract the sign_exponent and mantissa parts only */
 	struct {
-#if HOST_FLOAT_WORDS_BIG_ENDIAN
+#if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 		unsigned int sign_exponent:16;
 		unsigned int empty:16;
 		unsigned int msw:32;
@@ -326,7 +326,7 @@ union fpu_extended_shape {
 	} ieee_nan;
 
 	/* This format is used to extract the sign_exponent and mantissa parts only */
-#if HOST_FLOAT_WORDS_BIG_ENDIAN
+#if defined(HOST_FLOAT_WORDS_BIG_ENDIAN) && HOST_FLOAT_WORDS_BIG_ENDIAN
 	struct {
 		uae_u64 msw;
 		uae_u64 lsw;
@@ -371,7 +371,7 @@ union fpu_extended_shape {
 PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 {
 #ifdef BRANCHES_ARE_EXPENSIVE
-#ifndef USE_LONG_DOUBLE
+#if !defined(USE_LONG_DOUBLE)
 	fp_declare_init_shape(sxp, double);
 	sxp.value = r;
 	uae_s32 hx = sxp.parts.msw;
@@ -380,7 +380,7 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 	hx |= (uae_u32)(lx | (-lx)) >> 31;
 	hx = 0x7ff00000 - hx;
 	return (int)(((uae_u32)hx) >> 31);
-#elif USE_QUAD_DOUBLE
+#elif defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	uae_s64 hx = sxp.parts64.msw;
@@ -403,7 +403,7 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 	return (int)(((uae_u32)(se)) >> 16);
 #endif
 #else
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	return	(sxp.ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
@@ -432,7 +432,7 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 {
 #ifdef BRANCHES_ARE_EXPENSIVE
-#ifndef USE_LONG_DOUBLE
+#if !defined(USE_LONG_DOUBLE)
 	fp_declare_init_shape(sxp, double);
 	sxp.value = r;
 	uae_s32 hx = sxp.parts.msw;
@@ -440,7 +440,7 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 	lx |= (hx & 0x7fffffff) ^ 0x7ff00000;
 	lx |= -lx;
 	return ~(lx >> 31) & (hx >> 30);
-#elif USE_QUAD_DOUBLE
+#elif defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	uae_s64 hx = sxp.parts64.msw;
@@ -467,7 +467,7 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 	return ~(lx >> 31) & (1 - (se >> 14));
 #endif
 #else
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	return	(sxp.ieee_nan.exponent == FP_EXTENDED_EXP_MAX)
@@ -491,7 +491,7 @@ PRIVATE inline bool FFPU fp_do_isinf(fpu_register const & r)
 
 PRIVATE inline bool FFPU fp_do_isneg(fpu_register const & r)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 #else
 	fp_declare_init_shape(sxp, double);
@@ -506,7 +506,7 @@ PRIVATE inline bool FFPU fp_do_isneg(fpu_register const & r)
 PRIVATE inline bool FFPU fp_do_iszero(fpu_register const & r)
 {
 	// TODO: BRANCHES_ARE_EXPENSIVE
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 #else
 	fp_declare_init_shape(sxp, double);
@@ -543,7 +543,7 @@ PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 PRIVATE inline void FFPU make_nan(fpu_register & r)
 {
 	// FIXME: is that correct ?
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	sxp.ieee.exponent	= FP_EXTENDED_EXP_MAX;
@@ -559,6 +559,7 @@ PRIVATE inline void FFPU make_nan(fpu_register & r)
 	sxp.ieee.mantissa2	= 0xffffffff;
 	sxp.ieee.mantissa3	= 0xffffffff;
 #endif
+	r = sxp.value;
 }
 
 PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
@@ -566,7 +567,7 @@ PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
 #if 1
 	r = +0.0;
 #else
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 #else
 	fp_declare_init_shape(sxp, double);
@@ -588,7 +589,7 @@ PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
 #if 1
 	r = -0.0;
 #else
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 #else
 	fp_declare_init_shape(sxp, double);
@@ -607,7 +608,7 @@ PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
 
 PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
 #else
@@ -626,7 +627,7 @@ PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
 
 PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX;
 #else
@@ -645,7 +646,7 @@ PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
 
 PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	return ((int) sxp.ieee.exponent - FP_EXTENDED_EXP_BIAS);
@@ -659,7 +660,7 @@ PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r)
 // Normalize to range 1..2
 PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = r;
 	sxp.ieee.exponent = FP_EXTENDED_EXP_BIAS;
@@ -675,7 +676,7 @@ PRIVATE inline void FFPU fast_remove_exponent(fpu_register & r)
 // of the source and destination operands.
 PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_register const & rb)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sap, extended);
 	fp_declare_init_shape(sbp, extended);
 #else
@@ -691,7 +692,7 @@ PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_regis
 /* --- Math functions                                                     --- */
 /* -------------------------------------------------------------------------- */
 
-#if FPU_USE_ISO_C99 && (USE_LONG_DOUBLE || USE_QUAD_DOUBLE)
+#if defined(FPU_USE_ISO_C99) && (defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE))
 # ifdef HAVE_LOGL
 #  define fp_log	logl
 # endif
@@ -971,7 +972,7 @@ PRIVATE inline fpu_extended fp_do_expm1(fpu_extended x)
 
 PRIVATE inline fpu_extended fp_do_sgn1(fpu_extended x)
 {
-#if USE_LONG_DOUBLE || USE_QUAD_DOUBLE
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.value = x;
 	sxp.ieee_nan.exponent	= FP_EXTENDED_EXP_MAX>>1;

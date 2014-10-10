@@ -8,6 +8,7 @@
 SHELL = /bin/sh
 
 prefix = @prefix@
+includedir = @includedir@
 exec_prefix = @exec_prefix@
 bindir = @bindir@
 datadir = @datadir@
@@ -31,12 +32,15 @@ CFLAGS1 = @CFLAGS@
 CFLAGS = @CFLAGS@ $(SDL_CFLAGS) $(ZLIB_CFLAGS)
 CXXFLAGS1 = @CXXFLAGS@
 CXXFLAGS = @CXXFLAGS@ $(SDL_CFLAGS) $(ZLIB_CFLAGS)
-CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@
+CPPFLAGS = -I$(GEN_DIR) -I$(srcdir)/include -I$(srcdir)/Unix -I$(builddir) -I$(srcdir)/natfeat @CPUINCLUDES@ @CPPFLAGS@ $(DISASM_CFLAGS)
 ARCHFLAGS = @ARCHFLAGS@
+GENCPU_FLAGS = @GENCPU_FLAGS@
 WFLAGS = @WFLAGS@
 DEFS = @DEFS@ @DEFINES@
+DISASM_CFLAGS=@DISASM_CFLAGS@
+DISASM_LIBS=@DISASM_LIBS@
 LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@ $(SDL_LIBS) $(ZLIB_LIBS)
+LIBS = @LIBS@ $(SDL_LIBS) $(ZLIB_LIBS) $(DISASM_LIBS)
 SDL_LIBS = @SDL_LIBS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_CFLAGS = @SDL_CFLAGS@
@@ -62,10 +66,14 @@ DBGSP = @DBGSP@
 TAPIF = @TAPIF@
 USBHOSTSRCS = @USBHOSTSRCS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+GENCOMP_ARCH = @GENCOMP_ARCH@
+GENCOMP_SRC = gencomp$(filter _$(GENCOMP_ARCH),_arm)
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
 AUTOHEADER = autoheader
+PERL = @PERL@
+MKDIR_P = @MKDIR_P@
 
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -97,6 +105,8 @@ SRCS = main.cpp \
 	cfgopts.cpp \
 	dirty_rects.cpp \
 	dsp.cpp \
+	disasm-glue.cpp \
+	disasm-builtin.cpp \
 	emul_op.cpp \
 	natfeats.cpp \
 	fakeio.cpp \
@@ -139,7 +149,6 @@ SRCS = main.cpp \
 	natfeat/nfbootstrap.cpp \
 	natfeat/nf_basicset.cpp \
 	natfeat/debugprintf.cpp \
-	natfeat/nfcdrom.cpp \
 	$(MIDISEQSRCS) \
 	$(NFCDROMSRCS) \
 	$(NFPCISRCS) \
@@ -163,7 +172,7 @@ GENSRCS = \
 	uae_cpu/cpuopti.c \
 	uae_cpu/gencpu.c \
 	uae_cpu/readcpu.cpp \
-	uae_cpu/compiler/gencomp.c
+	uae_cpu/compiler/$(GENCOMP_SRC).c
 
 BUNDLE_RESOURCES = \
 	$(srcdir)/Unix/darwin/busybee.icns \
@@ -204,12 +213,28 @@ am__v_CXX_0 = @echo "  CXX   " $@;
 AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 
 .PHONY: install installdirs uninstall mostlyclean clean distclean depend $(APP_BUNDLE)
 .SUFFIXES:
 .SUFFIXES: .c .cpp .s .o .h .m .M
 
 all: $(builddir)/version_date.h $(TARGET) $(TAPIF)
+
+BUILD_SOURCES = \
+	$(top_srcdir)/atari/nfosmesa/glfuncs.h \
+	$(top_srcdir)/src/natfeat/nfosmesa/call-gl.c \
+	$(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c \
+	$(top_srcdir)/atari/nfosmesa/ldg/osmesa.h \
+	$(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h \
+	$(top_srcdir)/atari/nfosmesa/osmesa_load.c \
+	$(top_srcdir)/atari/nfosmesa/tinygl_load.c \
+	$(top_srcdir)/atari/nfosmesa/link-tinygl.h \
+	$(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h \
+	$(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c \
+	$(empty)
 
 OBJ_DIR = obj_$(ARCH)
 $(OBJ_DIR)::
@@ -233,7 +258,7 @@ empty:=
 space:= $(empty) $(empty)
 VPATH += $(subst $(space),:,$(strip $(addprefix $(filter-out ./,$(srcdir)/), $(SRC_PATHS))))
 
-$(APP): $(OBJ_DIR) $(GEN_DIR) $(OBJS)
+$(APP): $(OBJ_DIR) $(GEN_DIR) $(BUILD_SOURCES) $(OBJS)
 	$(AM_V_CXXLD)$(CXX) -o $@ $(LDFLAGS) $(ARCHFLAGS) $(OBJS) $(LIBS)
 ifneq ($(BEOS_XRES),)
 	$(BEOS_RC) -o $(APP).rsrc $(BEOS_RESOURCES)
@@ -300,6 +325,7 @@ install: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(AP
 	$(INSTALL_DATA) $(srcdir)/../atari/mmusetup.cnf $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(srcdir)/../atari/hostfs/README $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(srcdir)/../atari/nfosmesa/README $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/README
 	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(srcdir)/../atari/network/ethernet/README $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(srcdir)/../tools/arabridge $(DESTDIR)$(datadir)/$(APP)/arabridge
@@ -336,6 +362,7 @@ uninstall:
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/mmusetup.cnf
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/hostfs/README
+	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/nfosmesa/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(datadir)/$(APP)/atari/network/README
 	rm -f $(DESTDIR)$(datadir)/$(APP)/arabridge
@@ -357,7 +384,7 @@ uninstall:
 	rmdir $(DESTDIR)$(docdir)/$(APP)
 
 mostlyclean:
-	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) $(OBJ_DIR)/* core* *.core *~ *.bak
+	rm -r -f $(APP) $(APP_BUNDLE) $(APP_ARCH) $(APP_LIB) $(APP_STATIC) $(TAPIF) cdromtest m68kdisasm $(OBJ_DIR)/* core* *.core *~ *.bak
 
 clean: mostlyclean
 	rm -rf $(GEN_DIR)
@@ -398,6 +425,7 @@ bindist: $(APP) $(TAPIF) $(top_srcdir)/doc/$(APP).1 $(top_srcdir)/doc/$(APP)-jit
 	$(INSTALL_DATA) $(top_srcdir)/atari/mmusetup.cnf tmpdist$(datadir)/$(APP)/atari/mmusetup.cnf
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys tmpdist$(datadir)/$(APP)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README tmpdist$(datadir)/$(APP)/atari/hostfs/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/nfosmesa/README tmpdist$(datadir)/$(APP)/atari/nfosmesa/README
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh tmpdist$(datadir)/$(APP)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README tmpdist$(datadir)/$(APP)/atari/network/README
 	$(INSTALL) $(top_srcdir)/tools/arabridge tmpdist$(datadir)/$(APP)/arabridge
@@ -447,8 +475,8 @@ $(GEN_DIR)/build68k: $(GEN_DIR)/build68k.o
 	$(AM_V_CC)$(CC) $(LDFLAGS) -o $(GEN_DIR)/build68k $(GEN_DIR)/build68k.o
 $(GEN_DIR)/gencpu: $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencpu $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-$(GEN_DIR)/gencomp: $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/gencomp.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+$(GEN_DIR)/gencomp: $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 
 $(GEN_DIR)/cpudefs.cpp: $(GEN_DIR)/build68k uae_cpu/table68k
 	$(GEN_DIR)/build68k <$(srcdir)/uae_cpu/table68k > $(GEN_DIR)/cpudefs.cpp
@@ -477,58 +505,60 @@ $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
 $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_x86.cpp $(GEN_DIR)/comptbl.h
+ifdef GENCOMP_ARCH
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_$(GENCOMP_ARCH).cpp compemu_midfunc_$(GENCOMP_ARCH).cpp $(GEN_DIR)/comptbl.h
+endif
 
 $(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu2.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu3.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu4.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu5.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu6.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu7.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu8.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/cpuemu1_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_1 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu2_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_2 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu3_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_3 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu4_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_4 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu5_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_5 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu6_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_6 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu7_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_7 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/cpuemu8_nf.o: $(GEN_DIR)/cpuemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_8 -DNOFLAGS $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/compemu1.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu2.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_2 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu3.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_3 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu4.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_4 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu5.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_5 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu6.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_6 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu7.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_7 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compemu8.o: $(GEN_DIR)/compemu.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) -DPART_8 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/cpufast.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $(ARCHFLAGS) $< -o $(GEN_DIR)/cputmp.s
@@ -604,6 +634,78 @@ $(GEN_DIR)/cpufast8_nf.s: $(GEN_DIR)/cpuemu.cpp $(GEN_DIR)/cpuopti
 	$(GEN_DIR)/cpuopti <$(GEN_DIR)/cputmp8.s >$@ || mv $(GEN_DIR)/cputmp8.s $@
 	rm -f $(GEN_DIR)/cputmp8.s
 
+DYNGL_PL = $(top_srcdir)/tools/dyngl.pl
+
+$(top_srcdir)/atari/nfosmesa/glfuncs.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -macros $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/src/natfeat/nfosmesa/call-gl.c: $(top_srcdir)/atari/nfosmesa/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -calls $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c: $(top_srcdir)/atari/nfosmesa/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/ldg/osmesa.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -ldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/osmesa_load.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -ldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/tinygl_load.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/link-tinygl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyldglink $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyslbheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) -tinyslbsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { $(RM) $$$$.tmp; false; } \
+	fi
+
 # For tests
 $(GEN_DIR)/newcpu.s: newcpu.cpp
 	$(CXX) -fverbose-asm $(CPPFLAGS) $(DEFS) -S $(CXXFLAGS) $< -o $@
@@ -613,6 +715,25 @@ $(GEN_DIR)/memory.s: memory.cpp
 
 $(APP_IFC): aratapif.c
 	$(AM_V_CC)$(CC) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $(APP_IFC) -DHAVE_AFINET $(srcdir)/Unix/aratapif.c
+
+m68kdisasm: disasm-main.cpp disasm-glue.cpp disasm-builtin.cpp
+	$(AM_V_CXXLD)$(CXX) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/disasm-main.cpp $(DISASM_LIBS)
+
+cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfeat/nfcdrom_sdl.cpp $(srcdir)/natfeat/nfcdrom_linux.cpp $(srcdir)/natfeat/nfcdrom_win32.cpp
+	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)
+
+gldiff:
+	$(PERL) $(DYNGL_PL) -protos /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/osmesa.h | diff $(top_srcdir)/tools/glfuncs.h - || true
+	$(PERL) $(DYNGL_PL) -macros $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/glfuncs.h - || true
+	$(PERL) $(DYNGL_PL) -calls $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/call-gl.c - || true
+	$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c - || true
+	$(PERL) $(DYNGL_PL) -ldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h - || true
+	$(PERL) $(DYNGL_PL) -ldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/osmesa_load.c - || true
+	$(PERL) $(DYNGL_PL) -tinyldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_load.c - || true
+	$(PERL) $(DYNGL_PL) -tinyldglink $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/link-tinygl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyslbheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h - || true
+	$(PERL) $(DYNGL_PL) -tinyslbsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c - || true
 
 # Include dependencies
 ifneq ($(wildcard $(DEPEND)),)

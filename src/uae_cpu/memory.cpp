@@ -33,8 +33,10 @@
 #include "sysdeps.h"
 
 #include "memory.h"
+#define DEBUG 0
+#include "debug.h"
 
-#if ARAM_PAGE_CHECK
+#ifdef ARAM_PAGE_CHECK
 uaecptr pc_page = 0xeeeeeeee;
 uintptr pc_offset = 0;
 uaecptr read_page = 0xeeeeeeee;
@@ -42,6 +44,11 @@ uintptr read_offset = 0;
 uaecptr write_page = 0xeeeeeeee;
 uintptr write_offset = 0;
 #endif
+
+extern "C" void breakpt(void)
+{
+	// bug("bus err: pc=%08x, sp=%08x, addr=%08x", m68k_getpc(), regs.regs[15], regs.mmu_fault_addr);
+}
 
 #if !KNOWN_ALLOC && !NORMAL_ADDRESSING
 // This part need rewrite for ARAnyM !!

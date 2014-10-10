@@ -21,7 +21,7 @@
 #ifndef DIALOG_H
 #define DIALOG_H 1
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 #include "sdlgui.h"
 

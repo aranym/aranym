@@ -47,11 +47,14 @@ static const uint8 tos_colours[] = { 0,255,1,2,4,6,3,5,7,8,9,10,12,14,11,13 };
 
 SoftVdiDriver::SoftVdiDriver()
 {
-	const SDL_version *version = SDL_Linked_Version();
+	SDL_version version;
 
+	SDL_GetVersion(&version);
 	/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
-	sdl_buggy_blitsurface = (SDL_VERSIONNUM(version->major, version->minor, version->patch) >= SDL_VERSIONNUM(1,2,10))
-		&& (SDL_VERSIONNUM(version->major, version->minor, version->patch) <= SDL_VERSIONNUM(1,2,13));
+	sdl_buggy_blitsurface = (SDL_VERSIONNUM(version.major, version.minor, version.patch) >= SDL_VERSIONNUM(1,2,10)
+						  && SDL_VERSIONNUM(version.major, version.minor, version.patch) <= SDL_VERSIONNUM(1,2,13))
+	/* SDL 2.x seems to not allow blitting inside the same surface at all */
+						|| SDL_VERSIONNUM(version.major, version.minor, version.patch) >= SDL_VERSIONNUM(2,0,0);
 }
 
 SoftVdiDriver::~SoftVdiDriver()
@@ -429,7 +432,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 					*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
 				}
 			}
-			SDL_Rect identRect = { 0, 0, w, h };
+			SDL_Rect identRect = { 0, 0, Uint16(w), Uint16(h) };
 			SDL_BlitSurface(asurf,NULL,blocksurf,&identRect);
 			SDL_FreeSurface(asurf);
 
@@ -462,7 +465,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 		D(bug("fVDI: %s %x, %d, %d", "8BIT expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 
-		SDL_Rect destRect = { dx, dy, w, h };
+		SDL_Rect destRect = { Sint16(dx), Sint16(dy), Uint16(w), Uint16(h) };
 		SDL_BlitSurface(asurf,NULL,surface->getSdlSurface(),&destRect);
 		SDL_FreeSurface(asurf);
 
@@ -982,15 +985,6 @@ static inline int clipEncode (int x, int y, int left, int top, int right, int bo
 
 bool SoftVdiDriver::clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 {
-#if OLD_CODE // check what is bad!
-	if (!cliprect) {
-		return true; // Clipping is off
-	// Get clipping boundary
- 	int left   = cliprect[0];
- 	int top    = cliprect[1];
- 	int right  = cliprect[2];
- 	int bottom = cliprect[3];
-#else
 	// Get clipping boundary
 	int left, top, right, bottom;
 
@@ -1005,7 +999,6 @@ bool SoftVdiDriver::clipLine(int& x1, int& y1, int& x2, int& y2, int cliprect[])
 		right  = cliprect[2];
 		bottom = cliprect[3];
 	}
-#endif
 
 	bool draw = false;
 	while (1) {
@@ -1201,7 +1194,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 
 	int minmax[4] = {1000000, 1000000, -1000000, -1000000};
 
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 	int eq_coord = (x1 == x2) + 2 * (y1 == y2);
 #endif
 
@@ -1210,7 +1203,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			drawMoveLine(table, length, index, moves, pattern, fgColor, bgColor,
 			             logOp, cliprect, minmax);
 		else {
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (logOp < 3)) {
 				table += 8;
 				for(--length; length > 0; length--) {
@@ -1250,7 +1243,7 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
  				break;
 			}
  		}
-#if TEST_STRAIGHT	// Not yet working
+#ifdef TEST_STRAIGHT	// Not yet working
 	} else if (eq_coord && ((pattern & 0xffff) == 0xffff)) {
 		if (eq_coord & 1) {
 			if (y1 < y2)
@@ -1520,6 +1513,9 @@ void SoftVdiDriver::setColor(memptr /*vwk*/, uint32 paletteIndex, uint32 red,
 	color.r = (red*255 + 500) / 1000;
 	color.g = (green*255 + 500) / 1000;
 	color.b = (blue*255 + 500) / 1000;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	color.a = WINDOW_ALPHA;
+#endif
 
 	surface->setPalette(&color, toTosColors(paletteIndex), 1);
 }
@@ -1881,8 +1877,11 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
    
 		if (a_surf) {
 			if (sdl_surf->format->BitsPerPixel<=8) {
-				SDL_SetPalette(a_surf, SDL_LOGPAL,
-					sdl_surf->format->palette->colors, 0, 256);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+				SDL_SetPaletteColors(a_surf->format->palette, sdl_surf->format->palette->colors, 0, 256);
+#else
+				SDL_SetPalette(a_surf, SDL_LOGPAL, sdl_surf->format->palette->colors, 0, 256);
+#endif
 			}
 
 			srcrect.x = sx;

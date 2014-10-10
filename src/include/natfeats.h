@@ -44,16 +44,20 @@ extern uint32 nf_getparameter(int);
 #  define ReadNFInt8	ReadAtariInt8
 #  define ReadNFInt16	ReadAtariInt16
 #  define ReadNFInt32	ReadAtariInt32
+#  define ReadNFInt64	ReadAtariInt64
 #  define WriteNFInt8	WriteAtariInt8
 #  define WriteNFInt16	WriteAtariInt16
 #  define WriteNFInt32	WriteAtariInt32
+#  define WriteNFInt64	WriteAtariInt64
 #else
 #  define ReadNFInt8	ReadInt8
 #  define ReadNFInt16	ReadInt16
 #  define ReadNFInt32	ReadInt32
+#  define ReadNFInt64	ReadInt64
 #  define WriteNFInt8	WriteInt8
 #  define WriteNFInt16	WriteInt16
 #  define WriteNFInt32	WriteInt32
+#  define WriteNFInt64	WriteInt64
 #endif
 
 static inline void Atari2Host_memcpy(void *_dst, memptr src, size_t count)

@@ -18,9 +18,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <SDL.h>
-#include <SDL_endian.h>
-
 #include "sysdeps.h"
 #include "parameters.h"
 #include "hostscreen.h"
@@ -50,10 +47,10 @@ VidelZoom::~VidelZoom(void)
 		host->video->destroySurface(surface);
 	}
 	if (xtable) {
-		delete xtable;
+		delete [] xtable;
 	}
 	if (ytable) {
-		delete ytable;
+		delete [] ytable;
 	}
 }
 
@@ -151,7 +148,7 @@ HostSurface *VidelZoom::getSurface(void)
 		int i;
 
 		if (xtable) {
-			delete xtable;
+			delete [] xtable;
 		}
 		xtable = new int[zoomWidth];
 		for (i=0; i<zoomWidth; i++) {
@@ -159,7 +156,7 @@ HostSurface *VidelZoom::getSurface(void)
 		}
 
 		if (ytable) {
-			delete ytable;
+			delete [] ytable;
 		}
 		ytable = new int[zoomHeight];
 		for (i=0; i<zoomHeight; i++) {
@@ -212,6 +209,9 @@ void VidelZoom::refreshScreen(void)
 			palette[i].r = videl_surf->format->palette->colors[i].r;
 			palette[i].g = videl_surf->format->palette->colors[i].g;
 			palette[i].b = videl_surf->format->palette->colors[i].b;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+			palette[i].a = videl_surf->format->palette->colors[i].a;
+#endif
 		}
 		surface->setPalette(palette, 0, 256);
 	}

@@ -29,7 +29,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 
 /*--- Defines ---*/
@@ -75,7 +75,7 @@
 /*--- DMA callback ---*/
 
 extern "C" {
-	static SDL_audiostatus playing;
+	static SDL_AudioStatus playing;
 	static AudioConv *audioConv;
 
 	static uint32	start_replay, current_replay, end_replay;

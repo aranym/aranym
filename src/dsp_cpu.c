@@ -596,7 +596,10 @@ void dsp56k_init_cpu(void *th_dsp_core)
 
 int dsp56k_exec_thread(void *th_dsp_core)
 {
-	Uint32 start_time, num_inst;
+#if DSP_COUNT_IPS
+	Uint32 start_time;
+	Uint32 num_inst;
+#endif
 
 	dsp56k_init_cpu(th_dsp_core);
 #ifdef DSP_DISASM
@@ -608,8 +611,10 @@ int dsp56k_exec_thread(void *th_dsp_core)
 #endif
 	dsp_core->pauseThread(dsp_core);
 
+#if DSP_COUNT_IPS
 	start_time = SDL_GetTicks();
 	num_inst = 0;
+#endif
 	while(dsp_core->running) {
 		dsp56k_execute_instruction();
 #if DSP_COUNT_IPS
@@ -3279,7 +3284,7 @@ static void dsp_pm_4(void)
 static void dsp_pm_4x(int immediat, Uint32 l_addr)
 {
 	Uint32 value, numreg, numreg2;
-	immediat = 0; /* UNUSED */
+	(void) immediat; /* UNUSED */
 /*
 	0100 l0ll w0aa aaaa l:aa,D
 						S,l:aa

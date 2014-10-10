@@ -27,7 +27,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <SDL_endian.h>
+#include "SDL_compat.h"
 
 #ifdef ENABLE_LILO
 
@@ -516,8 +516,8 @@ int LinuxBootOs::checkKernel(void)
 		rd_len = ramdisk_length - RAMDISK_FS_START;
 		if (FastRAMSize > rd_offset + rd_len) {
 			/* Load in FastRAM */
-			rd_start = FastRAMBase + rd_offset;
-			memcpy(FastRAMBaseHost + rd_offset, (unsigned char *)ramdisk + RAMDISK_FS_START, rd_len);
+			rd_start = FastRAMBase + FastRAMSize - rd_len;
+			memcpy(FastRAMBaseHost + rd_start - FastRAMBase, (unsigned char *)ramdisk + RAMDISK_FS_START, rd_len);
 		} else {
 			/* Load in ST-RAM */
 			rd_start = RAMSize - rd_len;
@@ -527,15 +527,6 @@ int LinuxBootOs::checkKernel(void)
 		bi.ramdisk.addr = SDL_SwapBE32(rd_start);
 		bi.ramdisk.size = SDL_SwapBE32(rd_len);
 	    D(bug("lilo: Ramdisk at 0x%08x in RAM, length=0x%08x", rd_start, rd_len));
-
-#if 0
-		for (i=0; i<16; i++) {
-			uint32 *tmp;
-
-			tmp = (uint32 *)((unsigned char *)FastRAMBaseHost + rd_offset + 512);
-			D(bug("lilo: ramdisk[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
-		}
-#endif
 	} else {
 		bi.ramdisk.addr = 0;
 		bi.ramdisk.size = 0;

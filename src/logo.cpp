@@ -20,7 +20,7 @@
 
 #include "sysdeps.h"
 
-#include <SDL.h>
+#include "SDL_compat.h"
 #ifdef HAVE_SDL_IMAGE
 #include <SDL_image.h>
 #endif

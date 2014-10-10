@@ -21,7 +21,7 @@
 #ifndef HOSTAUDIO_H
 #define HOSTAUDIO_H
 
-#include <SDL.h>
+#include "SDL_compat.h"
 
 /*--- Defines ---*/
 
