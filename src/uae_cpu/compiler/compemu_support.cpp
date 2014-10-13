@@ -158,7 +158,7 @@ const bool		tune_nop_fillers	= true;		// Tune no-op fillers for architecture
 static bool		setzflg_uses_bsf	= false;	// setzflg virtual instruction can use native BSF instruction correctly?
 static int		align_loops			= 32;		// Align the start of loops
 static int		align_jumps			= 32;		// Align the start of jumps
-static int		optcount[18]		= {
+static int		optcount[10]		= {
 	10,		// How often a block has to be executed before it is translated
 	0,		// How often to use naive translation
 	0, 0, 0, 0,
