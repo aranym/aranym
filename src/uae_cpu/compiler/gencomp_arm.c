@@ -1412,7 +1412,7 @@ gen_opcode (unsigned long int opcode)
      case i_SWAP:
 	genamode (curi->smode, "srcreg", sz_long, "src", 1, 0);
 	comprintf("\tdont_care_flags();\n");
-	comprintf("\trol_l_ri(src,16);\n");
+	comprintf("\tarm_ROR_l_ri8(src,16);\n");
 	genflags (flag_logical, sz_long, "src", "", "");
 	genastore ("src", curi->smode, "srcreg", sz_long, "src");
 	break;

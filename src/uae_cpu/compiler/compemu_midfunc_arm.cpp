@@ -55,6 +55,8 @@
  *     - 8th unlock2 all registers that were locked
  */
 
+static bool inverted_carry = false;
+
 MIDFUNC(0,live_flags,(void))
 {
 	live.flags_on_stack=TRASH;
@@ -236,12 +238,8 @@ MIDFUNC(2,rol_l_rr,(RW4 d, RR1 r))
 		return;
 	}
 	CLOBBER_ROL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_rol_l_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -256,12 +254,8 @@ MIDFUNC(2,rol_w_rr,(RW2 d, RR1 r))
 		return;
 	}
 	CLOBBER_ROL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_rol_w_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -275,14 +269,9 @@ MIDFUNC(2,rol_b_rr,(RW1 d, RR1 r))
 		COMPCALL(rol_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
-
 	CLOBBER_ROL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_rol_b_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -296,12 +285,8 @@ MIDFUNC(2,shll_l_rr,(RW4 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHLL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_shll_l_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -316,12 +301,8 @@ MIDFUNC(2,shll_w_rr,(RW2 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHLL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shll_b",r));
-		abort();
-	}
 	raw_shll_w_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -335,14 +316,9 @@ MIDFUNC(2,shll_b_rr,(RW1 d, RR1 r))
 		COMPCALL(shll_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
-
 	CLOBBER_SHLL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shll_b",r));
-		abort();
-	}
 	raw_shll_b_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -389,7 +365,7 @@ MIDFUNC(2,ror_l_rr,(RR4 d, RR1 r))
 		return;
 	}
 	CLOBBER_ROR;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,4,4);
 	raw_ror_l_rr(d,r);
 	unlock2(r);
@@ -404,7 +380,7 @@ MIDFUNC(2,ror_w_rr,(RR2 d, RR1 r))
 		return;
 	}
 	CLOBBER_ROR;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,2,2);
 	raw_ror_w_rr(d,r);
 	unlock2(r);
@@ -420,7 +396,7 @@ MIDFUNC(2,ror_b_rr,(RR1 d, RR1 r))
 	}
 
 	CLOBBER_ROR;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,1,1);
 	raw_ror_b_rr(d,r);
 	unlock2(r);
@@ -435,12 +411,8 @@ MIDFUNC(2,shrl_l_rr,(RW4 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHRL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_shrl_l_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -455,12 +427,8 @@ MIDFUNC(2,shrl_w_rr,(RW2 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHRL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shrl_b",r));
-		abort();
-	}
 	raw_shrl_w_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -476,12 +444,8 @@ MIDFUNC(2,shrl_b_rr,(RW1 d, RR1 r))
 	}
 
 	CLOBBER_SHRL;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shrl_b",r));
-		abort();
-	}
 	raw_shrl_b_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -602,12 +566,8 @@ MIDFUNC(2,shra_l_rr,(RW4 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHRA;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_rol_b",r));
-		abort();
-	}
 	raw_shra_l_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -622,12 +582,8 @@ MIDFUNC(2,shra_w_rr,(RW2 d, RR1 r))
 		return;
 	}
 	CLOBBER_SHRA;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shra_b",r));
-		abort();
-	}
 	raw_shra_w_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -643,12 +599,8 @@ MIDFUNC(2,shra_b_rr,(RW1 d, RR1 r))
 	}
 
 	CLOBBER_SHRA;
-	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
+	r=readreg(r,1);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		D(panicbug("Illegal register %d in raw_shra_b",r));
-		abort();
-	}
 	raw_shra_b_rr(d,r);
 	unlock2(r);
 	unlock2(d);
@@ -2017,7 +1969,18 @@ MIDFUNC(2,arm_ORR_w,(RW2 d, RR2 s))
 	unlock2(d);
 	unlock2(s);
 }
-MENDFUNC(2,or_w,(RW2 d, RR2 s))
+MENDFUNC(2,arm_ORR_w,(RW2 d, RR2 s))
+
+MIDFUNC(2,arm_ROR_l_ri8,(RW4 r, IMM i))
+{
+	if (!i)
+	return;
+
+	r=rmw(r,4,4);
+	raw_ROR_l_ri(r,i);
+	unlock2(r);
+}
+MENDFUNC(2,arm_ROR_l_ri8,(RW4 r, IMM i))
 
 // Other
 static inline void flush_cpu_icache(void *start, void *stop)

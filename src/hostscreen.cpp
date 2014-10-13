@@ -191,6 +191,14 @@ void HostScreen::reset(void)
 
 	setVideoMode(MIN_WIDTH,MIN_HEIGHT,8);
 
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (!videoInfo->wm_available) {
+		hideMouse(SDL_TRUE);
+		SDL_SetWindowGrab(window, SDL_TRUE);
+		grabbedMouse = SDL_TRUE;
+		canGrabMouseAgain = true;
+	}
+
 	/* Set window caption */
 	std::string buf;
 #ifdef SDL_GUI
@@ -388,6 +396,15 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	}
 
 	SetWMIcon();
+
+#ifdef USE_FIXED_CONSOLE_FBVIDEOMODE
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (!videoInfo->wm_available) {
+	   width = videoInfo->current_w;
+	   height = videoInfo->current_h;
+	   bpp = videoInfo->vfmt->BitsPerPixel;
+	}
+#endif
 
 	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);
 	if (screen==NULL) {
@@ -759,6 +776,9 @@ void HostScreen::grabTheMouse()
 
 void HostScreen::releaseTheMouse()
 {
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	if (!videoInfo->wm_available && hiddenMouse) return;
+
 	D(bug("Releasing the mouse grab"));
 	grabMouse(SDL_FALSE);	// release mouse
 	hideMouse(SDL_FALSE);	// show it
