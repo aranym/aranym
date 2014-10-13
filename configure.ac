@@ -1662,7 +1662,7 @@ if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	fi
 else
 	dnl Try macro from sdl.m4 and sdl2.m4
-	AM_PATH_SDL(1.2.15)
+	AM_PATH_SDL(1.2.12)
 	if test "$enable_sdl2" != no; then
 		AM_PATH_SDL2(2.0.3)
 	fi
