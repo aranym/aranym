@@ -17,7 +17,7 @@
  o new config setting "LoadToFastRAM" to load kernel in FastRAM
    (is Andreas working on fixing Linux-m68k issues in FastRAM?)
 
- o David Gálvez improved NatFeat USB support (now requires FreeMiNT 1.17+)
+ o David Gálvez improved NatFeat USB support (now requires FreeMiNT 1.19+)
 
  There's also a small set of bugs fixed in this release - mainly in Mac OS X
  thanks to Philipp but also some generic things like GPIP (Patrice).
