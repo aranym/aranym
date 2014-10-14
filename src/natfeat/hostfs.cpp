@@ -2570,9 +2570,25 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			return TOS_E_OK;
 
 		case MINT_FUTIME:
-			// Mintlib calls the dcntl(FUTIME_ETC, filename) first (below).
+			// Mintlib calls the dcntl(FUTIME_UTC, filename) first (below).
 			// but other libs might not know.
 			{
+#ifdef HAVE_FUTIMENS
+				struct timespec ts[2];
+				if (buff)
+				{
+					ts[0].tv_sec = ReadInt32(buff);
+					ts[1].tv_sec = ReadInt32(buff + 4);
+					ts[0].tv_sec = datetime2utc(ts[0].tv_sec) - gmtoff(ts[0].tv_sec);
+					ts[1].tv_sec = datetime2utc(ts[1].tv_sec) - gmtoff(ts[1].tv_sec);
+				} else
+				{
+					ts[0].tv_sec = ts[1].tv_sec = time(NULL);
+				}
+				ts[0].tv_nsec = ts[1].tv_nsec = 0;
+				if (futimens(fp->hostFd, ts))
+				    return errnoHost2Mint( errno, TOS_EACCES );
+#else
 				struct timeval tv[2];
 				if (buff)
 				{
@@ -2587,11 +2603,26 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				tv[0].tv_usec = tv[1].tv_usec = 0;
 				if (futimes(fp->hostFd, tv))
 				    return errnoHost2Mint( errno, TOS_EACCES );
+#endif
 			}
 			return TOS_E_OK;
 
 		case MINT_FUTIME_UTC:
 			{
+#ifdef HAVE_FUTIMENS
+				struct timespec ts[2];
+				if (buff)
+				{
+					ts[0].tv_sec = ReadInt32(buff);
+					ts[1].tv_sec = ReadInt32(buff + 4);
+				} else
+				{
+					ts[0].tv_sec = ts[1].tv_sec = time(NULL);
+				}
+				ts[0].tv_nsec = ts[1].tv_nsec = 0;
+				if (futimens(fp->hostFd, ts))
+				    return errnoHost2Mint( errno, TOS_EACCES );
+#else
 				struct timeval tv[2];
 				if (buff)
 				{
@@ -2604,6 +2635,7 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				tv[0].tv_usec = tv[1].tv_usec = 0;
 				if (futimes(fp->hostFd, tv))
 				    return errnoHost2Mint( errno, TOS_EACCES );
+#endif
 			}
 			return TOS_E_OK;
 
