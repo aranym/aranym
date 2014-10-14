@@ -1,4 +1,9 @@
-	
+2014/10/14 - Petr
+- François Revol adds ARAnyM icon for Haiku
+- François Revol adds a missing futimes() replacement (using POSIX futimens)
+- configure.ac: changed the required libSDL version back to 1.2.12
+
+
 2014/10/08 - Jens
 - Makefile.in / configure.ac - seperated arm/x86 compemu files more concrete in generated Makefile
 - gencomp.c - removed arm include
@@ -9,6 +14,7 @@
 - codegen_arm.cpp - use of data buffers, code cleanup, optimized code, bug fixing
 - MacAranym.xcodeproj/README_Xcode.rtf - fixed mac build, added missing source files to project
 - hostscreen.cpp - Flag added to avoid nested Line A calls
+
 
 2014/08/08 - Thorsten
 - hostfs.cpp: fix reading timestamp in xfs_dev_datime

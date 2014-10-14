@@ -286,6 +286,14 @@ int futimes(int fd, const struct timeval tv[2])
 	return -1;
 }
 
+int futimens(int fd, const struct timespec ts[2])
+{
+	UNUSED(fd);
+	UNUSED(ts);
+	errno = ENOSYS;
+	return -1;
+}
+
 /**
  * @author Prof. A Olowofoyeku (The African Chief)
  * @author Frank Heckenbach

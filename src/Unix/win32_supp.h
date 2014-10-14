@@ -53,6 +53,7 @@ int truncate(const char *file_name, off_t name);
 int win32_lstat(const char *file_name, struct stat *buf);
 int win32_stat(const char *file_name, struct stat *buf);
 int futimes(int fd, const struct timeval tv[2]);
+int futimens(int fd, const struct timespec ts[2]);
 
 struct statfs
 {
@@ -66,6 +67,11 @@ struct statfs
   long f_fsid;                  /* file system id */
   long f_namelen;               /* maximum length of filenames */
   long f_spare[6];              /* spare for later */
+};
+
+struct timespec {
+  time_t tv_sec;				/* seconds */
+  long   tv_nsec;				/* and nanoseconds */
 };
 
 /* linux-compatible values for fs type */
