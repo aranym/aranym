@@ -4,6 +4,12 @@
 - configure.ac: changed the required libSDL version back to 1.2.12
 
 
+2014/10/13 - Jens
+- codegen_x86/compemu_support - serveral functions marked as "compemu_" only
+- codegen_arm, compemu_midfunc_arm, gencomp_arm - additional JIT optimizations
+- hostscreen.cpp / configure.ac - Raspberry Framebuffer (16bpp only) console workaround
+
+
 2014/10/08 - Jens
 - Makefile.in / configure.ac - seperated arm/x86 compemu files more concrete in generated Makefile
 - gencomp.c - removed arm include

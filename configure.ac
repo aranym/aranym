@@ -1669,6 +1669,14 @@ else
 fi
 if test "$no_sdl" = yes -a "$no_sdl2" = yes; then
 	AC_MSG_ERROR([*** neither SDL nor SDL2 found! ***])
+else
+	AS_CASE("$host",
+		[arm*-*-linux*],[on_rpi=`awk -v r=0 '/^Hardware@<:@ \t@:>@+:@<:@ \t@:>@+BCM2708/ { ++r;} /^Serial@<:@ \t@:>@+:/ { ++r; } END { print ((r > 1) ? "yes" : "no");}' /proc/cpuinfo`],
+		[on_rpi="no"])
+	
+	if test "$on_rpi" = yes; then
+		AC_DEFINE(USE_FIXED_CONSOLE_FBVIDEOMODE, 1, [Define if console framebuffer does not support changing host video mode])
+	fi
 fi
 if test "$no_sdl2" = yes -a "$enable_sdl2" = yes; then
 	AC_MSG_ERROR([*** SDL2 was requested, but was not found ***])

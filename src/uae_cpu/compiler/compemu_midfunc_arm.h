@@ -45,7 +45,7 @@ DECLARE_MIDFUNC(arm_EOR_w(RW2 d, RR2 s));
 DECLARE_MIDFUNC(arm_ORR_b(RW1 d, RR1 s));
 DECLARE_MIDFUNC(arm_ORR_l(RW4 d, RR4 s));
 DECLARE_MIDFUNC(arm_ORR_w(RW2 d, RR2 s));
-
+DECLARE_MIDFUNC(arm_ROR_l_ri8(RW4 r, IMM i));
 
 // Emulated midfunc
 DECLARE_MIDFUNC(bt_l_ri(RR4 r, IMM i));
@@ -59,7 +59,6 @@ DECLARE_MIDFUNC(mov_w_mi(IMM d, IMM s));
 DECLARE_MIDFUNC(mov_b_mi(IMM d, IMM s));
 DECLARE_MIDFUNC(rol_b_ri(RW1 r, IMM i));
 DECLARE_MIDFUNC(rol_w_ri(RW2 r, IMM i));
-DECLARE_MIDFUNC(rol_l_ri(RW4 r, IMM i));
 DECLARE_MIDFUNC(rol_l_rr(RW4 d, RR1 r));
 DECLARE_MIDFUNC(rol_w_rr(RW2 d, RR1 r));
 DECLARE_MIDFUNC(rol_b_rr(RW1 d, RR1 r));
