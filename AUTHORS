@@ -95,9 +95,18 @@ Jens Heitmann
 - JIT for ARM
 
 François Revol
-- resource file for Haiku and BeOS
+- resource file and icon for Haiku and BeOS
 - VIDEL refresh palette fix when switching to bitplane mode
 - BeOS NF clipboard support
+
+Thorsten Otto
+- HostFS fixes and improvements (symlinks, ioctl, timestamp and more)
+- NF CDROM implementations for SDL and Win32
+- sigsegv cleanup
+- NFOSMesa upgrade
+- JIT memory management fixes
+- SDL2 support
+- disassembler
 
 ---
 

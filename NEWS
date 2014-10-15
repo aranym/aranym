@@ -1,4 +1,34 @@
-2013/04/12 - version 0.9.16 released @ atariada.cz
+2014/10/15 - version 1.0.0 released
+==========
+
+ Major highlights of this release:
+
+ o JIT CPU compiler now supports also ARM platforms driven by Linux
+
+ o JIT CPU compiler fixes memory management and adds some instructions
+
+ o massive NatFeat HostFS fixes and improvements (symlinks and more)
+
+ o NatFeat CD-ROM for Win32 and SDL
+
+ o NatFeat OSMesa support improved (OpenGL 4.4 / Mesa 10.1.4)
+   osmesa.ldg can replace tinygl.ldg now
+
+ o seamless mouse integration and keyboard input improved
+
+ o NVRAM: many country codes added (from current FreeMiNT)
+
+ o libSDL2 is supported now (along with libSDL 1.2.x)
+
+ o Cygwin, MinGW, Mac OS X, CentOS and Debian build fixes
+
+Countless bug fixes and many other under-the-hood improvements are included
+as well. This release crowns more than 13 years of continuous development
+by many dedicated programmers (listed in the AUTHORS file). Thank you all!
+
+
+2014/04/12 - version 0.9.16 released @ atariada.cz
+==========
 
  Major highlights of this release:
 
@@ -11,9 +41,6 @@
  o Ethernet support under Mac OS X should be way better
    (Philipp added support for big packets and multi-packets)
 
- o ARAnyM (with JIT?) now runs also on ARM platform driven by Linux
-   (is Jens planning on making a blazing fast ARAnyM on Android?)
-
  o new config setting "LoadToFastRAM" to load kernel in FastRAM
    (is Andreas working on fixing Linux-m68k issues in FastRAM?)
 
@@ -24,6 +51,7 @@
 
 
 2013/04/15 - version 0.9.15 released
+==========
 
  The main new feature of this release is the seamless mouse integration mode:
 
@@ -52,6 +80,7 @@
 
 
 2012/09/20 - version 0.9.14 released
+==========
 
  Mac users: check out the new bridged ethernet (see README_ethernet.rtf).
 
@@ -69,6 +98,7 @@
 
  
 2012/03/23 - version 0.9.13 released
+==========
 
  A couple of important bugfixes accumulated in last few days:
 
@@ -83,6 +113,7 @@
 
 
 2012/03/19 - version 0.9.12 released
+==========
 
  New features:
 
@@ -117,6 +148,7 @@
 
 
 2011/02/06 - version 0.9.11 released
+==========
 
  New features: SCC serial port emulation and USB NatFeat support.
  BeOS/Haiku port: fixes and improvements.
@@ -126,6 +158,7 @@
 
 
 2010/05/27 - version 0.9.10 released
+==========
 
  New feature: GEM clipboard support that allows you to pass data between
  GEM clipboard and the host one (MS Windows, Mac OS X and X Window System).
@@ -141,6 +174,7 @@
 
 
 2009/09/05 - version 0.9.9 released
+==========
 
  This time mostly bugfixes:
 
@@ -164,6 +198,7 @@
 
 
 2009/04/25 - version 0.9.8beta released
+==========
 
  o CPU: fixed TRAPcc and FTRAPcc instructions (for Guillaume's mplayer :-)
  o VIDEL: pixel precise horizontal scrolling implemented
@@ -190,6 +225,7 @@
 
 
 2008/11/08 - version 0.9.7beta released
+==========
 
  Mostly small fixes at various places plus a lot of work went into
  improving the DSP56001 emulation. Also the sound DMA emulation is improved
@@ -209,6 +245,7 @@
 
 
 2008/01/29 - version 0.9.6beta2 released
+==========
  
  Main change: major graphics output overhaul, two video backends - software
  and OpenGL renderer. Faster graphics output on all platforms. Try enabling
@@ -233,6 +270,7 @@
 
 
 2007/07/09 - version 0.9.5beta released
+==========
 
  This version brings major speed up of the MMU version thanks to contribution
  of Roman Zippel and also many improvements for Mac OS X as well as bunch of
@@ -255,6 +293,7 @@
 
 
 2006/11/28 - version 0.9.4beta2 released
+==========
 
  I was so wrong when I wrote "last MMU bugs were fixed" in previous release
  notes. This second beta release fixes several newly found CPU/FPU bugs that
@@ -298,6 +337,7 @@
 
 
 2006/09/22 - version 0.9.4beta released
+==========
 
  This release has one major highlight: two last MMU emulation bugs have
  been fixed and ARAnyM now runs Linux-m68k stable for days without any
@@ -362,6 +402,7 @@
 
 
 2006/02/20 - version 0.9.3beta released
+==========
 
  Exciting news: ARAnyM now has its own domain (http://aranym.org) and also
  brand new Wikiwiki for easier cooperation on improving ARAnyM documentation
@@ -401,6 +442,7 @@
 
  
 2005/04/14 - version 0.9.0 released
+==========
 
  We've been providing 68040 PMMU (a memory management unit emulation,
  required for running FreeMiNT with MMU protection, and Linux/m68k)
@@ -436,6 +478,7 @@
 
 
 2004/11/07 - version 0.8.11beta released
+==========
 
  We've been slow and quiet lately but nevertheless a progress has been
  made. Some important changes for users include:
@@ -479,6 +522,7 @@
 
 
 2004/08/07 - version 0.8.10beta released
+==========
 
  Great news for MS Windows users: ARAnyM runs with JIT CPU compiler now
  thanks to Xavier's work on sigsegv handler.
@@ -491,6 +535,7 @@
 
 
 2004/07/06 - version 0.8.9beta released
+==========
 
  Great bug fixes:
 
@@ -504,6 +549,7 @@
 
 
 2004/07/05 - version 0.8.8beta released
+==========
 
  Main bug fixes:
 
