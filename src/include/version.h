@@ -21,14 +21,14 @@
 
 #include "version_date.h"
 #ifdef VERSION_DATE
-#define CVS_DATE	"CVS " VERSION_DATE
+#define CVS_DATE	"git " VERSION_DATE
 #else
-#define CVS_DATE	"CVS"
+#define CVS_DATE	"git"
 #endif
 
-#define VER_MAJOR	0
-#define VER_MINOR	9
-#define VER_MICRO	16
+#define VER_MAJOR	1
+#define VER_MINOR	0
+#define VER_MICRO	0
 
 #ifndef VER_STATUS
 #define VER_STATUS
