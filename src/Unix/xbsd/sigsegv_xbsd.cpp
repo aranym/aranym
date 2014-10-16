@@ -40,6 +40,49 @@
 typedef void (*sighandler_t)(int);
 #endif
 
+#if defined(OS_freebsd)
+enum {
+#ifdef CPU_i386
+	REG_EDI = 0,
+	REG_ESI = 1,
+	REG_EBP = 2,
+	REG_EBX = 4,
+	REG_EDX = 5,
+	REG_ECX = 6,
+	REG_EAX = 7,
+	REG_EIP = 10,
+	REG_EFL = 12,
+	REG_ESP = 13,
+#endif
+#if defined(CPU_x86_64)
+	REG_RDI = 0,
+	REG_RSI = 1,
+	REG_RDX = 2,
+	REG_RCX = 3,
+
+	REG_R8  = 4,
+	REG_R9  = 5,
+
+	REG_RAX = 6,
+	REG_RBX = 7,
+	REG_RBP = 8,
+
+	REG_R10 = 9,
+	REG_R11 = 10,
+	REG_R12 = 11,
+	REG_R13 = 12,
+	REG_R14 = 13,
+	REG_R15 = 14,
+
+	REG_EFL = 19,
+
+	REG_RIP = 23,
+
+	REG_RSP = 26,
+
+#endif
+};
+#endif
 
 #ifdef CPU_i386
 #define REG_RIP REG_EIP
@@ -52,11 +95,16 @@ typedef void (*sighandler_t)(int);
 #define REG_RDI REG_EDI
 #define REG_RSP REG_ESP
 #endif
+
 #if defined(CPU_i386) || defined(CPU_x86_64)
 #define CONTEXT_NAME	uap
 #define CONTEXT_TYPE	volatile ucontext_t
 #define CONTEXT_ATYPE	CONTEXT_TYPE *
-#define CONTEXT_REGS    CONTEXT_NAME->uc_mcontext.gregs
+#ifdef CPU_i386
+#	define CONTEXT_REGS    ((uae_u32 *)&CONTEXT_NAME->uc_mcontext.mc_edi)
+#else
+#	define CONTEXT_REGS    ((uae_u64 *)&CONTEXT_NAME->uc_mcontext.mc_rdi)
+#endif
 #define CONTEXT_AEFLAGS	CONTEXT_REGS[REG_EFL]
 #define CONTEXT_AEIP	CONTEXT_REGS[REG_RIP]
 #define CONTEXT_AEAX	CONTEXT_REGS[REG_RAX]
@@ -67,7 +115,6 @@ typedef void (*sighandler_t)(int);
 #define CONTEXT_AESI	CONTEXT_REGS[REG_RSI]
 #define CONTEXT_AEDI	CONTEXT_REGS[REG_RDI]
 #endif
-
 
 #include "sigsegv_common_x86.h"
 
