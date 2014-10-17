@@ -1,3 +1,13 @@
+2014/10/17 - version 1.0.1 released
+==========
+
+ Just a quick bugfix release:
+
+ o SDL NF CDROM is included in the build correctly
+ o JIT is supported on kfreebsd (alternate kernel for Debian OS)
+ o some warnings that prevented build on Debian fixed
+
+
 2014/10/15 - version 1.0.0 released
 ==========
 

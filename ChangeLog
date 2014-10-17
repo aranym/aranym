@@ -1,5 +1,14 @@
+*** repository tagged as ARANYM_1_0_1
+
+2014/10/17 - Petr
+- main.cpp: fixed warnings that break the build with Debian's -Werror=format-security
+- bootos_linux.cpp, cpummu.cpp: fixed warnings about unused variables
+- various files: version++ for the new release
+
+
 2014/10/17 - Jens
 Fixed build on kfreebsd-i386
+
 
 2014/10/16 - Petr
 - nf_objs.cpp: SDL NFCDROM included correctly
