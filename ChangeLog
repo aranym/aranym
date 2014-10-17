@@ -1,3 +1,10 @@
+*** repository tagged as ARANYM_1_0_2
+
+2014/10/17 - Petr
+- sysdeps.h: fixed typo error (I hope) that prevented the build on PPC64
+- various files: version++ for the new release
+
+
 *** repository tagged as ARANYM_1_0_1
 
 2014/10/17 - Petr

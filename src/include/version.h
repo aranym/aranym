@@ -28,7 +28,7 @@
 
 #define VER_MAJOR	1
 #define VER_MINOR	0
-#define VER_MICRO	1
+#define VER_MICRO	2
 
 #ifndef VER_STATUS
 #define VER_STATUS
