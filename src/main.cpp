@@ -299,7 +299,7 @@ bool InitOS(void)
 			return true;
 		} catch (AranymException &e) {
 			/* Could not init Linux/m68k */
-			panicbug(e.getErrorMessage());
+			panicbug("%s", e.getErrorMessage());
 		}
 	}
 
@@ -310,7 +310,7 @@ bool InitOS(void)
 			return true;
 		} catch (AranymException &e) {
 			/* Could not init TOS */
-			panicbug(e.getErrorMessage());
+			panicbug("%s", e.getErrorMessage());
 		}
 	}
 
@@ -320,7 +320,7 @@ bool InitOS(void)
 		return true;
 	} catch (AranymException &e) {
 		/* Could not init EmuTOS */
-		panicbug(e.getErrorMessage());
+		panicbug("%s", e.getErrorMessage());
 	}
 
 	panicbug("No operating system found. ARAnyM can not boot!");
@@ -514,7 +514,7 @@ void RestartAll()
 	try {
 		bootOs->reset();
 	} catch (AranymException &e) {
-		panicbug(e.getErrorMessage());
+		panicbug("%s", e.getErrorMessage());
 	}
 
 	// CPU init
