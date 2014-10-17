@@ -1,3 +1,8 @@
+2014/10/17 - Jens
+- sigsegv support for kfreebsd-amd64 / freebsd i386 (maybe also freebsd amd64, too)
+- 32 Bit mapping on x64
+- Fixed link error if nfclipbrd is disabled
+
 *** repository tagged as ARANYM_1_0_2
 
 2014/10/17 - Petr

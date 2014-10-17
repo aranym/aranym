@@ -26,6 +26,10 @@
 
 #include "vm_alloc.h"
 
+#if defined(OS_freebsd) && defined(CPU_x86_64)
+#	include <sys/resource.h>
+#endif
+
 # include <cstdlib>
 # include <cstring>
 #ifdef HAVE_WIN32_VM
@@ -200,9 +204,29 @@ void * vm_acquire(size_t size, int options)
 	int the_map_flags = translate_map_flags(options) | map_flags;
 	char **base = (options & VM_MAP_32BIT) ? &next_address_32bit : &next_address;
 
-	if ((addr = mmap((caddr_t)(*base), size, VM_PAGE_DEFAULT, the_map_flags, fd, 0)) == (void *)MAP_FAILED)
-		return VM_MAP_FAILED;
+//
+// FREEBSD has no MAP_32BIT on x64
+// Hack to limit allocation to lower 32 Bit
+#if defined(OS_freebsd) && defined(CPU_x86_64)
+	static int mode32 = 0;
+	static rlimit oldlim;
+        if (!mode32 && (options & VM_MAP_32BIT)) {
+	  getrlimit(RLIMIT_DATA, &oldlim);
+          struct rlimit rlim;
+          rlim.rlim_cur = rlim.rlim_max = 0x10000000;
+          setrlimit(RLIMIT_DATA, &rlim);
+          mode32 = 1;
+        }
+#	define RESTORE_MODE	if (mode32) { setrlimit(RLIMIT_DATA, &oldlim); mode32 = 0;}
+#else
+#	define RESTORE_MODE
+#endif
 	
+	addr = mmap((caddr_t)(*base), size, VM_PAGE_DEFAULT, the_map_flags, fd, 0);
+	RESTORE_MODE;
+	if (addr == (void *)MAP_FAILED)
+		return VM_MAP_FAILED;
+
 	// Sanity checks for 64-bit platforms
 	if (sizeof(void *) > 4 && (options & VM_MAP_32BIT) && !(((char *)addr + size) <= (char *)0xffffffff))
 	{

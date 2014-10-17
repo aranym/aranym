@@ -84,6 +84,18 @@ it and select "Show Package Contents".
 There are also other methods of building ARAnyM for OS X. Refere also to the 
 documents inside src/Unix/MacOSX.
 
+  2-4) FreeBSD (i386)
+  -------------------
+If you got the source code from CVS then type
+MAKE=gmake
+./autogen.sh && gmake
+
+If you have a source snapshot or proper ARAnyM source code release then type
+./configure && make
+
+./configure --help shows you all the compile time options.
+
+If everything went OK you got an executable file named "aranym".
 
 3) Installation
 ---------------

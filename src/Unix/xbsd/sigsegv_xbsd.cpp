@@ -35,6 +35,7 @@
 #include "debug.h"
 
 #include <csignal>
+#include <ucontext.h>
 
 #ifndef HAVE_SIGHANDLER_T
 typedef void (*sighandler_t)(int);
@@ -74,11 +75,11 @@ enum {
 	REG_R14 = 13,
 	REG_R15 = 14,
 
-	REG_EFL = 19,
+	REG_EFL = 21,
 
-	REG_RIP = 23,
+	REG_RIP = 19,
 
-	REG_RSP = 26,
+	REG_RSP = 22,
 
 #endif
 };

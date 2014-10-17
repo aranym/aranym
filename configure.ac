@@ -1135,11 +1135,19 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       fi
       ;;
     freebsd*|kfreebsd*-gnu)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
-      else
-        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
-      fi
+      case "$CPU_TYPE" in
+        i386)
+          SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+	  ;;
+	x86_64)
+          SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+          ;;
+        *)
+          AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+          ;;
+      esac
       ;;
     cygwin*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
@@ -1996,6 +2004,12 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
  		SYSSRCS="$SYSSRCS Unix/beos/clipbrd_beos.cpp"
 		LIBS="$LIBS -lbe"
+		;;
+	freebsd)
+		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
+		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
+		SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
+		LIBS="$LIBS -lX11"
 		;;
 	*)
 		AC_CHECK_LIB(X11, XOpenDisplay)
