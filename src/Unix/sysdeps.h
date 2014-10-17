@@ -518,23 +518,23 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
 #endif /* WORDS_BIGENDIAN */
 
 #ifndef HAVE_OPTIMIZED_BYTESWAP_32
-#ifdef HAVE___BUILTIN_BSWAP32
+# ifdef HAVE___BUILTIN_BSWAP32
 static inline uae_u32 do_byteswap_32(uae_u32 v) { return __builtin_bswap32(v);}
-#else
+# else
 static inline uae_u32 do_byteswap_32(uae_u32 v)
 	{ return (((v >> 24) & 0xff) | ((v >> 8) & 0xff00) | ((v & 0xff) << 24) | ((v & 0xff00) << 8)); }
-#endif
-#ifndef WORDS_BIGENDIAN
-#if defined(CPU_CAN_ACCESS_UNALIGNED)
+# endif
+# ifndef WORDS_BIGENDIAN
+#  if defined(CPU_CAN_ACCESS_UNALIGNED)
 /* Other little-endian CPUs which can do unaligned accesses */
-static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswapped_32(*a);}
-static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = do_byteswapped_32(v);}
-#else
+static inline uae_u32 do_get_mem_long(uae_u32 *a) { return do_byteswap_32(*a);}
+static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {*a = do_byteswap_32(v);}
+#  else
 /* Other little-endian CPUs which can not do unaligned accesses (this needs optimization) */
 static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint8 *b = (uint8 *)a; return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | b[3];}
 static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) {uint8 *b = (uint8 *)a; b[0] = v >> 24; b[1] = v >> 16; b[2] = v >> 8; b[3] = v;}
-#endif
-#endif
+#  endif
+# endif
 #endif
 
 #ifndef HAVE_OPTIMIZED_BYTESWAP_16
