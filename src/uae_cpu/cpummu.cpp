@@ -51,12 +51,13 @@ static unsigned int mmu_atc_hits[ATC_L2_SIZE];
 static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 {
 	DUNUSED(label);
+#if DEBUG
 	uae_u32 from_addr, to_addr;
 
 	from_addr = ttr & MMU_TTR_LOGICAL_BASE;
 	to_addr = (ttr & MMU_TTR_LOGICAL_MASK) << 8;
 
-	D(bug("%s: [%08lx] %08lx - %08lx enabled=%d supervisor=%d wp=%d cm=%02d",
+	D(bug("%s: [%08x] %08x - %08x enabled=%d supervisor=%d wp=%d cm=%02d",
 			label, ttr,
 			from_addr, to_addr,
 			ttr & MMU_TTR_BIT_ENABLED ? 1 : 0,
@@ -64,6 +65,9 @@ static void mmu_dump_ttr(const char * label, uae_u32 ttr)
 			ttr & MMU_TTR_BIT_WRITE_PROTECT ? 1 : 0,
 			(ttr & MMU_TTR_CACHE_MASK) >> MMU_TTR_CACHE_SHIFT
 		  ));
+#else
+	DUNUSED(ttr);
+#endif
 }
 
 void mmu_make_transparent_region(uaecptr baseaddr, uae_u32 size, int datamode)
@@ -141,7 +145,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 	uaecptr ptr_des_addr, page_addr,
 		root_log, ptr_log, page_log;
 
-	D(bug("%s: root=%lx", label, root_ptr));
+	D(bug("%s: root=%x", label, root_ptr));
 
 	for (root_idx = 0; root_idx < ROOT_TABLE_SIZE; root_idx++) {
 		root_des = phys_get_long(root_ptr + root_idx);

@@ -583,6 +583,7 @@ int LinuxBootOs::checkKernel(void)
 		memcpy(RAMBaseHost + KERNEL_START + kernel_size, &bi_union.record, bi_size);
 	D(bug("lilo: bootinfo at 0x%08x", kernel_offset + KERNEL_START + kernel_size));
 
+#if DEBUG
 	for (i=0; i<16; i++) {
 		uint32 *tmp;
 
@@ -592,6 +593,7 @@ int LinuxBootOs::checkKernel(void)
 			tmp = (uint32 *)((unsigned char *)RAMBaseHost + KERNEL_START + kernel_size);
 		D(bug("lilo: bi_union.record[%d]=0x%08x",i, SDL_SwapBE32(tmp[i])));
 	}
+#endif
 
 	/*--- Init SP & PC ---*/
 	uint32 *tmp = (uint32 *)RAMBaseHost;
