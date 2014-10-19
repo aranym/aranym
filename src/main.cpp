@@ -85,7 +85,7 @@ static SDL_Thread *RTCthread = NULL;
 static volatile bool using_rtc_timer = false;
 static volatile bool quit_rtc_loop = false;
 #endif
-SDL_TimerID my_timer_id = SDL_static_cast(SDL_TimerID, 0);
+SDL_TimerID my_timer_id = (SDL_TimerID)0;
 
 #if DEBUG
 static int early_interrupts = 0;
@@ -466,7 +466,7 @@ void ExitAll(void)
 	KillRTCTimer();
 	if (my_timer_id) {
 		SDL_RemoveTimer(my_timer_id);
-		my_timer_id = SDL_static_cast(SDL_TimerID, 0);
+		my_timer_id = (SDL_TimerID)0;
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
 

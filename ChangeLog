@@ -1,3 +1,7 @@
+2014/10/19 - Andreas
+- main.cpp: Replace SDL_static_cast with plain cast to remain compatible
+  with SDL 1.2.12
+
 2014/10/17 - Jens
 - sigsegv support for kfreebsd-amd64 / freebsd i386 (maybe also freebsd amd64, too)
 - 32 Bit mapping on x64
