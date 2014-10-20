@@ -1,11 +1,17 @@
+2014/10/20 - Petr
+- config.{sub,guess}: updated from 2010-01-22 to 2012-02-10, for ARM64 arch
+
+
 2014/10/19 - Andreas
 - main.cpp: Replace SDL_static_cast with plain cast to remain compatible
   with SDL 1.2.12
+
 
 2014/10/17 - Jens
 - sigsegv support for kfreebsd-amd64 / freebsd i386 (maybe also freebsd amd64, too)
 - 32 Bit mapping on x64
 - Fixed link error if nfclipbrd is disabled
+
 
 *** repository tagged as ARANYM_1_0_2
 
