@@ -1143,6 +1143,10 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 	x86_64)
           SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
           AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+
+	  dnl FreeBSD is using clang which requires additional options, may be to be set in
+	  dnl general for clang in the future
+  	  AS_CASE("$host_os", [freebsd*],[CFLAGS="$CFLAGS -mstack-alignment=16 -mstackrealign"]);
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])

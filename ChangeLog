@@ -1,3 +1,6 @@
+2014/10/21 - Jens
+- configure.ac : clang options for FreeBSD x86_64
+
 2014/10/20 - Petr
 - config.{sub,guess}: updated from 2010-01-22 to 2012-02-10, for ARM64 arch
 
