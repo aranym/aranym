@@ -1146,7 +1146,8 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 
 	  dnl FreeBSD is using clang which requires additional options, may be to be set in
 	  dnl general for clang in the future
-  	  AS_CASE("$host_os", [freebsd*],[CFLAGS="$CFLAGS -mstack-alignment=16 -mstackrealign"]);
+  	  AS_CASE("$host_os", [freebsd*],[CFLAGS="$CFLAGS -mstackrealign"
+					  CXXFLAGS="$CXXFLAGS -mstackrealign"]);
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
@@ -1735,8 +1736,10 @@ elif test "$have_framework_SDL_image" = yes ; then
 else
 	tmp_cflags=$CFLAGS
 	tmp_cppflags=$CPPFLAGS
+	tmp_ldflags=$LDFLAGS
 	CFLAGS="$CFLAGS $SDL_CFLAGS"
 	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
+	LDFLAGS="$LDFLAGS $SDL_LIBS"
 
 	case "$host" in
 		# the mixed environment on cygwin usually
@@ -1754,6 +1757,7 @@ else
 
 	CFLAGS=$tmp_cflags
 	CPPFLAGS=$tmp_cppflags
+	LDFLAGS=$tmp_ldflags
 
 	if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 		if test "$enable_sdl2" = yes; then

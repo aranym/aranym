@@ -1,3 +1,6 @@
+2014/10/22 - Jens
+- configure.ac : another clang options fix for FreeBSD x86_64, locate SDL_image in non standard directory (FreeBSD nfjpeg support)
+
 2014/10/21 - Jens
 - configure.ac : clang options for FreeBSD x86_64
 
