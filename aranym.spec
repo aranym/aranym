@@ -87,6 +87,10 @@
 %define	rel			%{myrelease}.sles%{sles_version}.%{mybuild}
 %endif
 
+%if %suse_version >= 930
+%define debugrpm 1
+%endif
+
 %define	group			%{suse_group}
 
 %endif
@@ -239,7 +243,7 @@ Authors:
 Ctirad Fertr, Milan Jurik, Standa Opichal, Petr Stehlik, Johan Klockars,
 Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 
-
+%{?debugrpm:%debug_package}
 %prep
 %setup -q
 #%%patch0
