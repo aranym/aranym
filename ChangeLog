@@ -1,3 +1,6 @@
+2014/11/01 - Jens
+configure.ac - Build on MacOSX 10.10 (Yosemite)
+MacAranym.xcodeproj - sigsegv_handler_x86.h added
 
 2014/11/01 - Jens
 configure.ac - Fixed faulty case

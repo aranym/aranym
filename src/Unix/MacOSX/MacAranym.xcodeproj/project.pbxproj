@@ -1112,6 +1112,7 @@
 		B472BB8C17690B2D00611354 /* mach_excServer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mach_excServer.c; path = ../mach_excServer.c; sourceTree = BUILT_PRODUCTS_DIR; };
 		B472BB8D17690B2D00611354 /* mach_excUser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = mach_excUser.c; path = ../mach_excUser.c; sourceTree = BUILT_PRODUCTS_DIR; };
 		B475E5A60D4FA41500C8607E /* dlgPartition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgPartition.cpp; sourceTree = "<group>"; };
+		B476BEC619F3BDB60088926C /* sigsegv_common_x86.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sigsegv_common_x86.h; sourceTree = "<group>"; };
 		B4844A650C7BA1A0003FE2D2 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = darwin/English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4844A660C7BA1B4003FE2D2 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = darwin/German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4844A6B0C7BA262003FE2D2 /* aranym.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = aranym.icns; path = darwin/aranym.icns; sourceTree = "<group>"; };
@@ -1617,6 +1618,7 @@
 				17798E7F0A652B52009733EB /* Makefile.in */,
 				17798E810A652B52009733EB /* mkinstalldirs */,
 				17798E820A652B52009733EB /* parameters_unix.cpp */,
+				B476BEC619F3BDB60088926C /* sigsegv_common_x86.h */,
 				17798E850A652B52009733EB /* sysdeps.h */,
 				17798E860A652B52009733EB /* vasprintf.c */,
 				17798E870A652B52009733EB /* vm_alloc.cpp */,

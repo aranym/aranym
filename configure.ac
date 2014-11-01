@@ -236,6 +236,7 @@ case "$host_cpu" in
 			darwin10* )	ISYSROOT="-mmacosx-version-min=10.4 -isysroot $DEVELOPER_SDK_DIR/MacOSX10.5.sdk";;
 			darwin11* | darwin12* )	ISYSROOT="-mmacosx-version-min=10.5";;
 			darwin13* )	ISYSROOT="-mmacosx-version-min=10.7";;
+			darwin14* )	ISYSROOT="-mmacosx-version-min=10.10";;
 			*)
 				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
