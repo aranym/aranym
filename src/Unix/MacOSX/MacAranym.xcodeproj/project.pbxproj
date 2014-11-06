@@ -1008,7 +1008,6 @@
 		17798DDB0A652B51009733EB /* gencpu.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = gencpu.c; sourceTree = "<group>"; };
 		17798DDC0A652B51009733EB /* m68k.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = m68k.h; sourceTree = "<group>"; };
 		17798DDD0A652B51009733EB /* memory.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = memory.cpp; sourceTree = "<group>"; };
-		17798DDE0A652B51009733EB /* memory.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
 		17798DDF0A652B51009733EB /* newcpu.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = newcpu.cpp; sourceTree = "<group>"; };
 		17798DE00A652B51009733EB /* newcpu.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = newcpu.h; sourceTree = "<group>"; };
 		17798DE10A652B51009733EB /* noflags.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = noflags.h; sourceTree = "<group>"; };
@@ -1095,6 +1094,7 @@
 		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm-glue.cpp"; sourceTree = "<group>"; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4420ED71A0AAC240063F8A9 /* memory-uae.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "memory-uae.h"; sourceTree = "<group>"; };
 		B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfcdrom_sdl.cpp; sourceTree = "<group>"; };
 		B442F1A0193C9BC100D515B8 /* nfcdrom_sdl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfcdrom_sdl.h; sourceTree = "<group>"; };
 		B449DA000D2A9212005F0CC6 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../../../data/logo.png; sourceTree = SOURCE_ROOT; };
@@ -1541,7 +1541,7 @@
 				17798DDB0A652B51009733EB /* gencpu.c */,
 				17798DDC0A652B51009733EB /* m68k.h */,
 				17798DDD0A652B51009733EB /* memory.cpp */,
-				17798DDE0A652B51009733EB /* memory.h */,
+				B4420ED71A0AAC240063F8A9 /* memory-uae.h */,
 				17798DDF0A652B51009733EB /* newcpu.cpp */,
 				17798DE00A652B51009733EB /* newcpu.h */,
 				17798DE10A652B51009733EB /* noflags.h */,

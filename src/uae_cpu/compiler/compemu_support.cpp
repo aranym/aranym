@@ -57,7 +57,7 @@
 #include "vm_alloc.h"
 
 #include "m68k.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "readcpu.h"
 #include "newcpu.h"
 #include "comptbl.h"

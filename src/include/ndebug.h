@@ -28,7 +28,7 @@
 
 #include "sysdeps.h"
 #include "identify.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "cpu_emulation.h"
 
 # include <cctype>

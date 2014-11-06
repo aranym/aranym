@@ -22,7 +22,7 @@
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "dsp.h"
 #if DSP_EMULATION
 # include "dsp_cpu.h"

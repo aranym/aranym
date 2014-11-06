@@ -257,6 +257,16 @@ get_stat_ctime_ns (struct stat const *st)
 # endif
 }
 
+#ifdef __ANDROID__
+int futimes(int fd, const struct timeval tv[2])
+{
+	UNUSED(fd);
+	UNUSED(tv);
+	errno = ENOSYS;
+	return -1;
+}
+#endif
+
 /* Return the nanosecond component of *ST's data modification time.  */
 static long int
 get_stat_mtime_ns (struct stat const *st)

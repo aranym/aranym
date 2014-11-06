@@ -2357,7 +2357,7 @@ static void generate_includes (FILE * f)
 {
     fprintf (f, "#include \"sysdeps.h\"\n");
     fprintf (f, "#include \"m68k.h\"\n");
-    fprintf (f, "#include \"memory.h\"\n");
+    fprintf (f, "#include \"memory-uae.h\"\n");
     fprintf (f, "#include \"readcpu.h\"\n");
     fprintf (f, "#include \"newcpu.h\"\n");
 #ifdef USE_JIT

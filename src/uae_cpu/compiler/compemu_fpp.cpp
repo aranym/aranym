@@ -43,7 +43,7 @@
 # include <cstdio>
 # include <cassert>
 
-#include "memory.h"
+#include "memory-uae.h"
 #include "readcpu.h"
 #include "newcpu.h"
 #include "main.h"

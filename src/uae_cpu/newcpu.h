@@ -37,7 +37,7 @@
 #include "registers.h"
 #include "spcflags.h"
 #include "m68k.h"
-#include "memory.h"
+#include "memory-uae.h"
 
 # include <csetjmp>
 

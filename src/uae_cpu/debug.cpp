@@ -33,7 +33,7 @@
 
 #include "sysdeps.h"
 
-#include "memory.h"
+#include "memory-uae.h"
 #include "newcpu.h"
 #include "debug.h"
 

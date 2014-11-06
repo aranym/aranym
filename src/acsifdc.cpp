@@ -35,7 +35,7 @@
 
 #include "hardware.h"
 #include "cpu_emulation.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "acsifdc.h"
 #include "ncr5380.h"
 #include "parameters.h"

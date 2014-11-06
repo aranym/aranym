@@ -27,7 +27,7 @@
 #include "sysdeps.h"
 
 #include "cpummu.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "newcpu.h"
 #include "debug.h"
 #ifdef USE_JIT

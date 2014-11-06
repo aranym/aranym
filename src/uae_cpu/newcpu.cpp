@@ -38,7 +38,7 @@
 #include "main.h"
 #include "emul_op.h"
 #include "m68k.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "readcpu.h"
 #include "newcpu.h"
 #ifdef USE_JIT

@@ -21,7 +21,7 @@
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "host.h"
 #include "audio_dma.h"
 #include "audio_conv.h"

@@ -26,7 +26,7 @@
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
-#include "memory.h"
+#include "memory-uae.h"
 #include "midi.h"
 #include "midi_sequencer.h"
 #include "parameters.h"

@@ -32,7 +32,7 @@
 
 #include "sysdeps.h"
 
-#include "memory.h"
+#include "memory-uae.h"
 #define DEBUG 0
 #include "debug.h"
 

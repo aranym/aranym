@@ -1,3 +1,16 @@
+2014/11/06 - Jens
+- Integrated Lubomyr Lisen Android changes:
+   * renamed: src/uae_cpu/memory.h -> src/uae_cpu/memory-uae.h
+   * modified: project.pbxproj gen_machfiles.sh sigsegv_darwin_x86.cpp
+	sigsegv_xbsd.cpp acia.cpp acsifdc.cpp aradata.cpp audio_crossbar.cpp
+	audio_dma.cpp blitter.cpp disasm-builtin.cpp disasm-glue.cpp dsp.cpp
+	fakeio.cpp hardware.cpp hostscreen.cpp ikbd.cpp ndebug.h joypads.cpp
+	mfp.cpp midi.cpp midi_file.cpp midi_sequencer.cpp mmu.cpp hostfs.cpp
+	ncr5380.cpp ndebug.cpp rtc.cpp scc.cpp codegen_arm.h compemu_fpp.cpp
+	compemu_support.cpp gencomp.c gencomp_arm.c cpu_emulation.h cpummu.cpp
+	debug.cpp fpu_ieee.cpp fpu_mpfr.cpp fpu_uae.cpp fpu_x86.cpp gencpu.c
+	memory.cpp newcpu.cpp newcpu.h videl.cpp yamaha.cpp
+
 2014/11/01 - Jens
 configure.ac - Build on MacOSX 10.10 (Yosemite)
 MacAranym.xcodeproj - sigsegv_handler_x86.h added

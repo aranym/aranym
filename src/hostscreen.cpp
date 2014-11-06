@@ -374,7 +374,11 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 
 #else
 
+#ifdef __ANDROID__
+	int screenFlags = SDL_SWSURFACE|SDL_HWPALETTE;
+#else
 	int screenFlags = SDL_HWSURFACE|SDL_HWPALETTE;
+#endif
 	if (!bx_options.autozoom.fixedsize) {
 		screenFlags |= SDL_RESIZABLE;
 	}

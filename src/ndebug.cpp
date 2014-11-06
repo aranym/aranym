@@ -24,7 +24,7 @@
 
 #include "sysdeps.h"
 
-#include "memory.h"
+#include "memory-uae.h"
 #include "newcpu.h"
 #include "m68k.h"
 #include "cpu_emulation.h"

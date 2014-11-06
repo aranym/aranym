@@ -152,9 +152,11 @@
 /* ========================================================================= */
 
 /* Branch instructions */
+#ifndef __ANDROID__
 enum {
 	_B, _BL, _BLX, _BX, _BXJ
 };
+#endif
 
 /* Data processing instructions */
 enum {
