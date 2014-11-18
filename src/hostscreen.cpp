@@ -191,6 +191,9 @@ void HostScreen::reset(void)
 
 	setVideoMode(MIN_WIDTH,MIN_HEIGHT,8);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// If double mouse cursor appear in FB Mode do sthg. similar to below code
+#else
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (!videoInfo->wm_available) {
 		hideMouse(SDL_TRUE);
@@ -198,6 +201,7 @@ void HostScreen::reset(void)
 		grabbedMouse = SDL_TRUE;
 		canGrabMouseAgain = true;
 	}
+#endif
 
 	/* Set window caption */
 	std::string buf;
@@ -402,12 +406,17 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	SetWMIcon();
 
 #ifdef USE_FIXED_CONSOLE_FBVIDEOMODE
+// Raspberry doesn't allow switching video mode. Keep current mode
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// ToDo: Check how sdl2 is working
+#else
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (!videoInfo->wm_available) {
 	   width = videoInfo->current_w;
 	   height = videoInfo->current_h;
 	   bpp = videoInfo->vfmt->BitsPerPixel;
 	}
+#endif
 #endif
 
 	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);
@@ -780,8 +789,12 @@ void HostScreen::grabTheMouse()
 
 void HostScreen::releaseTheMouse()
 {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// ToDo: If double mouse cursor appear in FB Mode do sthg. similar to below
+#else
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (!videoInfo->wm_available && hiddenMouse) return;
+#endif
 
 	D(bug("Releasing the mouse grab"));
 	grabMouse(SDL_FALSE);	// release mouse

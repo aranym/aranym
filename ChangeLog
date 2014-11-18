@@ -1,3 +1,6 @@
+2014/11/18 - Jens
+- hostscreen.cpp : Building with SDL2. May be still some work to do, for FB mode
+
 2014/11/06 - Jens
 - Integrated Lubomyr Lisen Android changes:
    * renamed: src/uae_cpu/memory.h -> src/uae_cpu/memory-uae.h
