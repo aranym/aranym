@@ -1,3 +1,8 @@
+2014/11/23 - Jens
+- android - Android build scripts
+- ndebug.cpp - Android logcat logging
+- configure.ac, Makefile.in, m4/ax_prog_cc*.m4 - Cross compilation configuration. Required for Android
+
 2014/11/18 - Jens
 - hostscreen.cpp : Building with SDL2. May be still some work to do, for FB mode
 

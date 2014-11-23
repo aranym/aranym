@@ -1,0 +1,70 @@
+Building on Debian
+==================
+
+After a fresh install. If you already have setup a development
+environment, some of the steps may be unneccessary.
+
+$ sudo apt-get install openjdk-7-jdk
+$ sudo apt-get install ant
+$ sudo apt-get install git-core
+$ sudo apt-get install g++
+$ sudo apt-get install automake
+$ sudo apt-get install libsdl1.2-dev libsdl-image1.2-dev libusb-1.0-0-dev libmpfr-dev zlib1g-dev lib32z1
+
+Download Android SDK & NDK to your "aranym"-User Home
+
+SDK: https://developer.android.com/sdk/index.html
+NDK: https://developer.android.com/tools/sdk/ndk/index.html
+
+$ cd 
+$ tar xvzf android-sdk_r23.0.2-linux.tgz
+$ chmod +x android-ndk-r10c-linux-x86_64.bin
+$ ./android-ndk-r10c-linux-x86_64.bin 
+
+Now run "android" from GUI to install 
+
+	* SDK Platform Tools
+	* SDK Tools
+	* SDK Build Tools
+	* Target android 21
+
+NOTE: If you have trouble starting the NDK*.bin on a 64 Bit environment
+you may fix this by
+
+	$ sudo dpkg --add-architecture i386
+	$ sudo apt-get update
+	$ sudo apt-get install libstdc++6:i386
+
+or unpack the package with 7z (apt-get install p7zip-full)
+
+Add to .profile
+
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/jre/
+export ANDROID_HOME=~/android-sdk-linux
+export PATH=$ANDROID_HOME/tools:~/android-ndk-r10c:$HOME/android-sdk-linux:$PATH
+
+Logout and login again
+
+$ git clone https://github.com/pelya/commandergenius sdl-android
+
+$ cd sdl-android/project/jni/application
+$ rm src
+$ cp -r ~/aranym-code/android aranym
+$ ln -s aranym src
+$ cd src
+$ ln -s ~/aranym-code aranym
+$ cd ~/sdl-android
+$ ./changeAppSettings.sh
+$ ./build.sh
+
+You will find the build .apk in directory: 
+
+	~/sdl-android/project/bin/MainActivity-release-unsigned.apk
+
+To sign the application afterwards, execute the following comannds:
+
+$ keytool -genkey -v -keystore my-release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
+$ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore my_application.apk alias_name
+$ jarsigner -verify -verbose -certs my_application.apk
+$ zipalign -v 4 your_project_name-unaligned.apk your_project_name.apk
+

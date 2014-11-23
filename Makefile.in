@@ -25,6 +25,11 @@ ARCH := @CPU_TYPE@
 DEPEND := $(builddir)/depend_$(ARCH)
 makefile := $(builddir)/Makefile
 
+CXX_FOR_BUILD=@CXX_FOR_BUILD@
+CC_FOR_BUILD=@CC_FOR_BUILD@
+CXXFLAGS_FOR_BUILD+=@CXXFLAGS_FOR_BUILD@
+CFLAGS_FOR_BUILD+=@CFLAGS_FOR_BUILD@
+LDFLAGS_FOR_BUILD+=@LDFLAGS_FOR_BUILD@
 
 CC = @CC@
 CXX = @CXX@
@@ -448,8 +453,8 @@ dist: distclean
 depend: $(builddir)/version_date.h
 	$(AM_V_CC)$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.c,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' > $(DEPEND)
 	$(AM_V_CXX)$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) $(addprefix $(srcdir)/,$(filter %.cpp,$(SRCS))) | sed 's,^[^ ],$$(OBJ_DIR)/&,' >> $(DEPEND)
-	$(AM_V_CC)$(CC) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
-	$(AM_V_CXX)$(CXX) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(CC_FOR_BUILD) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS_FOR_BUILD) $(addprefix $(srcdir)/,$(filter %.c,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
+	$(CXX_FOR_BUILD) -MM $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS_FOR_BUILD) $(addprefix $(srcdir)/,$(filter %.cpp,$(GENSRCS))) | sed 's,^[^ ],$$(GEN_DIR)/&,' >> $(DEPEND)
 
 $(OBJ_DIR)/%.o : %.c
 	$(AM_V_CC)$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
@@ -463,20 +468,20 @@ $(OBJ_DIR)/%.o : %.s
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/%.o : %.c
-	$(AM_V_CC)$(CC) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS1) -c $< -o $@
+	$(CC_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CFLAGS_FOR_BUILD) -c $< -o $@
 $(GEN_DIR)/%.o : %.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS1) -c $< -o $@
+	$(CXX_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS_FOR_BUILD) -c $< -o $@
 $(GEN_DIR)/%.o : %.s
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS) -c $< -o $@
+	$(CXX_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(CFLAGS_FOR_BUILD) -c $< -o $@
 
 $(GEN_DIR)/cpuopti: $(GEN_DIR)/cpuopti.o
-	$(AM_V_CC)$(CC) $(LDFLAGS) -o $(GEN_DIR)/cpuopti $(GEN_DIR)/cpuopti.o
+	$(CC_FOR_BUILD) $(LDFLAGS_FOR_BUILD) -o $(GEN_DIR)/cpuopti $(GEN_DIR)/cpuopti.o
 $(GEN_DIR)/build68k: $(GEN_DIR)/build68k.o
-	$(AM_V_CC)$(CC) $(LDFLAGS) -o $(GEN_DIR)/build68k $(GEN_DIR)/build68k.o
+	$(CC_FOR_BUILD) $(LDFLAGS_FOR_BUILD) -o $(GEN_DIR)/build68k $(GEN_DIR)/build68k.o
 $(GEN_DIR)/gencpu: $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencpu $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(CXX_FOR_BUILD) $(LDFLAGS_FOR_BUILD) -o $(GEN_DIR)/gencpu $(GEN_DIR)/gencpu.o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 $(GEN_DIR)/gencomp: $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
-	$(AM_V_CXX)$(CXX) $(LDFLAGS) -o $(GEN_DIR)/gencomp $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
+	$(CXX_FOR_BUILD) $(LDFLAGS_FOR_BUILD) -o $(GEN_DIR)/gencomp $(GEN_DIR)/$(GENCOMP_SRC).o $(GEN_DIR)/readcpu.o $(GEN_DIR)/cpudefs.o
 
 $(GEN_DIR)/cpudefs.cpp: $(GEN_DIR)/build68k uae_cpu/table68k
 	$(GEN_DIR)/build68k <$(srcdir)/uae_cpu/table68k > $(GEN_DIR)/cpudefs.cpp
@@ -501,9 +506,9 @@ $(OBJ_DIR)/compstbl.o: $(GEN_DIR)/compstbl.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS_FOR_BUILD) -c $< -o $@
 $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
-	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS_FOR_BUILD) -c $< -o $@
 
 ifdef GENCOMP_ARCH
 $(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_$(GENCOMP_ARCH).cpp compemu_midfunc_$(GENCOMP_ARCH).cpp $(GEN_DIR)/comptbl.h

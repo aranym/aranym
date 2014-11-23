@@ -195,7 +195,12 @@ AC_ARG_ENABLE(bpf-ethernet,    [AC_HELP_STRING([--enable-bpf-ethernet], [enable 
 AC_ARG_ENABLE(cxx-exceptions,  [AC_HELP_STRING([--enable-cxx-exceptions], [enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)])], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
+ANDROID_OS=no
 case "$host_os" in
+  *android*)	OS_TYPE=linux
+		ANDROID_OS=yes
+		LIBS="$LIBS -lgnustl_static -llog"
+	;;
   linux*)	OS_TYPE=linux;;
   openbsd*)	OS_TYPE=openbsd;;
   netbsd*)	OS_TYPE=netbsd;;
@@ -271,6 +276,8 @@ AC_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
+AX_PROG_CC_FOR_BUILD
+AX_PROG_CXX_FOR_BUILD
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
@@ -1878,9 +1885,11 @@ AH_TEMPLATE([NFCDROM_SUPPORT], [Define if you want to use host CD-ROM driver])
 NFCDROM_DRIVER=""
 case "$host_os" in
 	linux*)
-		NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
-		AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
-		NFCDROM_DRIVER="linux"
+		if [[ "$ANDROID_OS" != "yes" ]]; then
+			NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
+			AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
+			NFCDROM_DRIVER="linux"
+		fi
 		;;
 	mingw*|cygwin*)
 		NFCDROMSRCS="natfeat/nfcdrom_win32.cpp"
@@ -2168,6 +2177,11 @@ AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GENCOMP_ARCH)
+AC_SUBST(CXX_FOR_BUILD)
+AC_SUBST(CC_FOR_BUILD)
+AC_SUBST(CFLAGS_FOR_BUILD)
+AC_SUBST(CXXFLAGS_FOR_BUILD)
+AC_SUBST(LDFLAGS_FOR_BUILD)
 AC_OUTPUT(Makefile)
 
 dnl Print summary.

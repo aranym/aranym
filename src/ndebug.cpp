@@ -41,6 +41,10 @@
 #include <cerrno>
 #include <assert.h>
 
+#if defined(__ANDROID__)
+# include <android/log.h>
+#endif
+
 #ifndef HAVE_GNU_SOURCE
 
 /* NDEBUG needs vasprintf, implementation in GNU binutils (libiberty) */
@@ -199,6 +203,9 @@ void ndebug::dbprintf(const char *s, ...)
 		va_start(a, s);
 		vfprintf(stderr, s, a);
 		fprintf(stderr, "\n");
+#ifdef __ANDROID__
+		__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
+#endif
 		va_end(a);
 		fflush(stderr);
 	}
@@ -223,6 +230,9 @@ void ndebug::pdbprintf(const char *s, ...)
 	va_start(a, s);
 	vfprintf(stderr, s, a);
 	fprintf(stderr, "\n");
+#ifdef __ANDROID__
+		__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
+#endif
 	va_end(a);
 	fflush(stderr);
 }
