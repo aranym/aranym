@@ -252,7 +252,10 @@ case "$host_cpu" in
 	fi
 	;;
   sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
-  arm* ) CPU_TYPE=arm HAVE_ARM=yes;;
+  arm* ) CPU_TYPE=arm HAVE_ARM=yes
+         CFLAGS="$CFLAGS -ffast-math"
+         CXXFLAGS="$CXXFLAGS -ffast-math"          
+  	;;
   powerpc* )
 	CPU_TYPE=powerpc
 	HAVE_POWERPC=yes
@@ -1114,6 +1117,8 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
           ;;
 	arm)
           SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_arm.cpp"
+          CFLAGS="$CFLAGS -marm"
+          CXXFLAGS="$CXXFLAGS -marm"          
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
@@ -1356,12 +1361,23 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
 	armv6*|armv7*|armv8*|armv9*)
            ASM_OPTIMIZATIONS="ARM/V6 architecture w optimized flags"
 	   DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
-           CFLAGS="$CFLAGS -march=armv6 -marm"
-           CXXFLAGS="$CXXFLAGS -march=armv6 -marm"
+           CFLAGS="$CFLAGS -march=armv6"
+           CXXFLAGS="$CXXFLAGS -march=armv6"
 	   ;;
 	*)
-           ASM_OPTIMIZATIONS="ARM/generic w optimized flags"
-	   DEFINES="$DEFINES -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
+	   dnl Hack until we find a better way
+           case "$host_os" in
+                *-androideabi)
+                        ASM_OPTIMIZATIONS="ARM/V6 architecture w optimized flags"
+                        DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
+                        CFLAGS="$CFLAGS -march=armv6"
+                        CXXFLAGS="$CXXFLAGS -march=armv6"
+                        ;;
+                *)
+                        ASM_OPTIMIZATIONS="ARM/generic w optimized flags"
+                        DEFINES="$DEFINES -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
+                        ;;
+           esac
 	   ;;
     esac
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"

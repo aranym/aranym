@@ -1,3 +1,6 @@
+2014/11/25 - Jens
+configure.ac : Use armv6 code and fast-math for Android/ARM
+
 2014/11/23 - Jens
 - android - Android build scripts
 - ndebug.cpp - Android logcat logging
