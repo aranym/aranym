@@ -403,10 +403,36 @@ void AUDIODMA::handleWrite(uaecptr addr, uae_u8 value)
 
 void AUDIODMA::updateCurrent(void)
 {
-	current = start;
+	int time_elapsed, total_bytes, duration, sample_size_shift;
+
+	current = start_replay;
 
 	if (playing == SDL_AUDIO_PLAYING) {
-		current += (end_replay-start_replay)>>1;
+		time_elapsed = SDL_GetTicks() - start_tic;
+
+		switch (mode & (MODE_FORMAT_MASK<<MODE_FORMAT)) {
+			case MODE_FORMAT_8STEREO:
+				sample_size_shift = 1;
+				break;
+			case MODE_FORMAT_8MONO:
+				sample_size_shift = 0;
+				break;
+			case MODE_FORMAT_16STEREO:
+			default:
+				sample_size_shift = 2;
+				break;
+		}
+
+		total_bytes = end_replay-start_replay;
+		duration = ((total_bytes>>sample_size_shift) * 1000) / freq;
+		if (duration<0) {
+			duration = 1;
+		}
+		
+		current += (time_elapsed / duration)<<sample_size_shift;
+
+		if (current<start_replay) current=start_replay;
+		if (current>end_replay) current=end_replay;
 	}
 }
 
@@ -434,7 +460,7 @@ void AUDIODMA::updateControl(void)
 
 void AUDIODMA::updateMode(void)
 {
-	int channels, freq, offset, skip, prediv;
+	int channels, offset, skip, prediv;
 	Uint16	format;
 
 	SDL_LockAudio();

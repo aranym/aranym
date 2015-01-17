@@ -31,6 +31,8 @@ class AUDIODMA : public BASE_IO {
 		uint32	current;
 		uint16	mode;
 
+		int freq;
+
 		void updateCurrent();
 		void updateControl();
 
