@@ -403,7 +403,7 @@ void AUDIODMA::handleWrite(uaecptr addr, uae_u8 value)
 
 void AUDIODMA::updateCurrent(void)
 {
-	int time_elapsed, total_bytes, duration, sample_size_shift;
+	int time_elapsed, total_samples, total_duration, sample_size_shift;
 
 	current = start_replay;
 
@@ -423,13 +423,13 @@ void AUDIODMA::updateCurrent(void)
 				break;
 		}
 
-		total_bytes = end_replay-start_replay;
-		duration = ((total_bytes>>sample_size_shift) * 1000) / freq;
-		if (duration<0) {
-			duration = 1;
+		total_samples = (end_replay-start_replay)>>sample_size_shift;
+		total_duration = (total_samples * 1000) / freq;
+		if (total_duration<0) {
+			total_duration = 1;
 		}
 		
-		current += (time_elapsed / duration)<<sample_size_shift;
+		current += ((time_elapsed * total_samples)/ total_duration)<<sample_size_shift;
 
 		if (current<start_replay) current=start_replay;
 		if (current>end_replay) current=end_replay;
