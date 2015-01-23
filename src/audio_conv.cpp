@@ -75,7 +75,7 @@ int AudioConv::rescaleFreq8(Uint8 *source, int *src_len, Uint8 *dest, int dst_le
 				break;
 		}
 
-		srcSamplesRead = (dstSamplesWritten++ * srcRate) / dstRate;
+		srcSamplesRead = (++dstSamplesWritten * srcRate) / dstRate;
 		srcBytesRead = srcSamplesRead*srcSkip+srcOffset;
 	}
 
@@ -102,7 +102,7 @@ int AudioConv::rescaleFreq16(Uint16 *source, int *src_len, Uint16 *dest, int dst
 				break;
 		}
 
-		srcSamplesRead = (dstSamplesWritten++ * srcRate) / dstRate;
+		srcSamplesRead = (++dstSamplesWritten * srcRate) / dstRate;
 		srcWordsRead = srcSamplesRead*curSkip+curOffset;
 	}
 
