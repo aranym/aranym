@@ -33,6 +33,8 @@
 #include <cstring>
 #include "SDL_compat.h"
 
+#define ZMAGXSND_BUFSIZE 4096
+
 extern "C" {
 	static SDL_AudioStatus playing;
 	static SDL_AudioCVT	cvt;
@@ -53,6 +55,9 @@ extern "C" {
 		if (cvt.needed) {
 			/* Convert Atari audio to host audio */
 			par->len = (uint32 ) (len / cvt.len_ratio);
+			if (par->len > ZMAGXSND_BUFSIZE) {
+				par->len = ZMAGXSND_BUFSIZE;
+			}
 
 			/* Current buffer too small ? */
 			if (cvt_buf_len<par->len) {
@@ -74,7 +79,11 @@ extern "C" {
 			SDL_MixAudio(stream, cvt.buf, len, par->volume);
 		} else {
 			par->len = len;
-			SDL_MixAudio(stream, buffer, len, par->volume);
+			if (par->len > ZMAGXSND_BUFSIZE) {
+				par->len = ZMAGXSND_BUFSIZE;
+			}
+
+			SDL_MixAudio(stream, buffer, par->len, par->volume);
 		}
 
 		TriggerInt5();		// Audio is at interrupt level 5

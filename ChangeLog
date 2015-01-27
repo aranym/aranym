@@ -1,7 +1,10 @@
+2015/01/27 - Patrice
+- nfaudio: prevent buffer overflow on Atari side if config file sets more samples
+  than the buffer size in zmagxsnd.prg can handle.
+
 2015/01/17 - Patrice
 - dma audio: Calculate current position, instead of always returning middle of
   buffer played.
-
 
 2014/11/25 - Jens
 configure.ac : Use armv6 code and fast-math for Android/ARM
