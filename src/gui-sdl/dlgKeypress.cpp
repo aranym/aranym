@@ -23,12 +23,8 @@
 #include "input.h"
 #include "dlgKeypress.h"
 
-static SGOBJ presskeydlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 15,3, NULL },
-	{ SGTEXT, 0, 0, 2,1, 11,1, "Press a key" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
+#define SDLGUI_INCLUDE_PRESSKEYDLG
+#include "sdlgui.sdl"
 
 DlgKeypress::DlgKeypress(SGOBJ *dlg)
 	: Dialog(dlg)

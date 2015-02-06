@@ -32,19 +32,9 @@
 #define DEBUG 0
 #include "debug.h"
 
-#define SGFSDLG_FILENAME   5
-#define SGFSDLG_UPDIR      6
-#define SGFSDLG_ROOTDIR    7
-#define SGFSDLG_FIRSTENTRY 10
-#define SGFSDLG_LASTENTRY  24
-#define SGFSDLG_UP         25
-#define SGFSDLG_DOWN       26
-#define SGFSDLG_OKAY       27
-#define SGFSDLG_CANCEL     28
-
 #define DLG_WIDTH			76
 
-#define ENTRY_COUNT (SGFSDLG_LASTENTRY - SGFSDLG_FIRSTENTRY + 1)
+#define ENTRY_COUNT 		15 /* (SGFSDLG_LASTENTRY - SGFSDLG_FIRSTENTRY + 1) */
 #define ENTRY_LENGTH		(DLG_WIDTH-5)
 
 
@@ -52,41 +42,8 @@ static char dlgpath[DLG_WIDTH-1], dlgfname[ENTRY_LENGTH-2];	/* File and path nam
 static char dlgfilenames[ENTRY_COUNT][ENTRY_LENGTH + 1];
 
 /* The dialog data: */
-static SGOBJ fsdlg[] = {
-	{SGBOX, SG_BACKGROUND, 0, 0, 0, DLG_WIDTH, 25, NULL},
-	{SGTEXT, 0, 0, (DLG_WIDTH-13)/2, 1, 13, 1, "Choose a file"},
-	{SGTEXT, 0, 0, 1, 2, 7, 1, "Folder:"},
-	{SGTEXT, 0, 0, 1, 3, sizeof(dlgpath)-1, 1, dlgpath},
-	{SGTEXT, 0, 0, 1, 4, 6, 1, "File:"},
-	{SGTEXT, 0, 0, 7, 4, sizeof(dlgfname)-1, 1, dlgfname},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, DLG_WIDTH-9, 1, 4, 1, ".."},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, DLG_WIDTH-4, 1, 3, 1, "/"},
-	{SGBOX, 0, 0, 1, 6, ENTRY_LENGTH+3, 15, NULL},
-	{SGBOX, 0, 0, ENTRY_LENGTH+3, 6, 1, 15, NULL},
-	{SGTEXT, 0, 0, 2, 6, ENTRY_LENGTH, 1, dlgfilenames[0]},
-	{SGTEXT, 0, 0, 2, 7, ENTRY_LENGTH, 1, dlgfilenames[1]},
-	{SGTEXT, 0, 0, 2, 8, ENTRY_LENGTH, 1, dlgfilenames[2]},
-	{SGTEXT, 0, 0, 2, 9, ENTRY_LENGTH, 1, dlgfilenames[3]},
-	{SGTEXT, 0, 0, 2, 10, ENTRY_LENGTH, 1, dlgfilenames[4]},
-	{SGTEXT, 0, 0, 2, 11, ENTRY_LENGTH, 1, dlgfilenames[5]},
-	{SGTEXT, 0, 0, 2, 12, ENTRY_LENGTH, 1, dlgfilenames[6]},
-	{SGTEXT, 0, 0, 2, 13, ENTRY_LENGTH, 1, dlgfilenames[7]},
-	{SGTEXT, 0, 0, 2, 14, ENTRY_LENGTH, 1, dlgfilenames[8]},
-	{SGTEXT, 0, 0, 2, 15, ENTRY_LENGTH, 1, dlgfilenames[9]},
-	{SGTEXT, 0, 0, 2, 16, ENTRY_LENGTH, 1, dlgfilenames[10]},
-	{SGTEXT, 0, 0, 2, 17, ENTRY_LENGTH, 1, dlgfilenames[11]},
-	{SGTEXT, 0, 0, 2, 18, ENTRY_LENGTH, 1, dlgfilenames[12]},
-	{SGTEXT, 0, 0, 2, 19, ENTRY_LENGTH, 1, dlgfilenames[13]},
-	{SGTEXT, 0, 0, 2, 20, ENTRY_LENGTH, 1, dlgfilenames[14]},
-	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, ENTRY_LENGTH+3, 6, 1, 1, "\x01"},
-	/* Arrow up */
-	{SGBUTTON, SG_SELECTABLE | SG_TOUCHEXIT, 0, ENTRY_LENGTH+3, 20, 1, 1, "\x02"},
-	/* Arrow down */
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, (DLG_WIDTH-8-8)/3, 23, 8, 1,
-	 "OK"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, (DLG_WIDTH-8-8)*2/3+8, 23, 8, 1, "Cancel"},
-	{-1, 0, 0, 0, 0, 0, 0, NULL}
-};
+#define SDLGUI_INCLUDE_FSDLG
+#include "sdlgui.sdl"
 
 struct listentry {
 	char *filename;

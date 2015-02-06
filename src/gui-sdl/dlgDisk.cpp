@@ -65,128 +65,8 @@ static char ide1_path[80];
 #define BAR32G		(MAXHEADS * MaxSPT * MAXCYLS / 2048)
 
 /* The disks dialog: */
-enum DISCDLG {
-	box_main,
-	
-	box_floppy,
-	text_floppy,
-	spacer_mount,
-	FLOPPY_MOUNT,
-	FLP_BROWSE,
-	FLP_PATH,
-
-	box_ide0,
-	text_ide0,
-	IDE0_NAME,
-	spacer_name0,
-	IDE0_MOUNT,
-	IDE0_BROWSE,
-	IDE0_PATH,
-	IDE0_PRESENT,
-	IDE0_CDROM,
-	IDE0_READONLY,
-	IDE0_BYTESWAP,
-	text_geom0,
-	text_cyls0,
-	IDE0_CYL,
-	text_heads0,
-	IDE0_HEAD,
-	text_spts0,
-	IDE0_SEC,
-	text_size0,
-	IDE0_SIZE,
-	text_size0mb,
-	IDE0_GENERATE,
-
-	box_ide1,
-	text_ide1,
-	IDE1_NAME,
-	spacer_name1,
-	IDE1_MOUNT,
-	IDE1_BROWSE,
-	IDE1_PATH,
-	IDE1_PRESENT,
-	IDE1_CDROM,
-	IDE1_READONLY,
-	IDE1_BYTESWAP,
-	text_geom1,
-	text_cyls1,
-	IDE1_CYL,
-	text_heads1,
-	IDE1_HEAD,
-	text_spts1,
-	IDE1_SEC,
-	text_size1,
-	IDE1_SIZE,
-	text_size1mb,
-	IDE1_GENERATE,
-
-	HELP,
-	APPLY,
-	CANCEL
-};
-
-static SGOBJ discdlg[] = {
-	{SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL},
-
-	{SGBOX, 0, 0, 1, 2, 74, 2, NULL},
-	{SGTEXT, 0, 0, 2, 1, 16, 1, " Floppy disk A: "},
-	{SGTEXT, 0, 0, 27, 1, 1, 1, " "},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 18, 1, 9, 1, NULL},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 3, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 3, 67, 1, NULL},
-
-	{SGBOX, 0, 0, 1, 7, 74, 6, NULL},
-	{SGTEXT, 0, 0, 2, 6, 17, 1, " Hard disk IDE0:"},
-	{SGEDITFIELD, 0, 0, 19, 6, sizeof(ide0_name) - 1, 1, ide0_name},
-	{SGTEXT, 0, 0, 59, 6, 1, 1, " "},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 6, 8, 1, NULL},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 8, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 8, 66, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 9, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 63, 10, 8, 1, "is CDROM"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 11, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 12, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 2, 10, 8, 1, "Geometry"},
-	{SGTEXT, 0, 0, 12, 10, 10, 1, "Cylinders:"},
-	{SGEDITFIELD, 0, 0, 22, 10, 5, 1, ide0_cyl},
-	{SGTEXT, 0, 0, 29, 10, 6, 1, "Heads:"},
-	{SGEDITFIELD, 0, 0, 35, 10, 2, 1, ide0_head},
-	{SGTEXT, 0, 0, 39, 10, 18, 1, "Sectors per track:"},
-	{SGEDITFIELD, 0, 0, 57, 10, 3, 1, ide0_spt},
-	{SGTEXT, 0, 0, 2, 12, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 12, 12, 6, 1, ide0_size},
-	{SGTEXT, 0, 0, 19, 12, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 12, 21, 1, "Generate Disk Image"},
-
-	{SGBOX, 0, 0, 1, 15, 74, 6, NULL},
-	{SGTEXT, 0, 0, 2, 14, 17, 1, " Hard disk IDE1:"},
-	{SGEDITFIELD, 0, 0, 19, 14, sizeof(ide1_name) - 1, 1, ide1_name},
-	{SGTEXT, 0, 0, 59, 14, 1, 1, " "},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 14, 8, 1, NULL},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 16, 5, 1, "Path:"},
-	{SGTEXT, 0, 0, 8, 16, 66, 1, NULL},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 17, 8, 1, "Present"},
-	{SGCHECKBOX, SG_SELECTABLE | SG_EXIT, 0, 63, 18, 8, 1, "is CDROM"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 19, 8, 1, "ReadOnly"},
-	{SGCHECKBOX, SG_SELECTABLE, 0, 63, 20, 8, 1, "ByteSwap"},
-	{SGTEXT, 0, 0, 2, 18, 8, 1, "Geometry"},
-	{SGTEXT, 0, 0, 12, 18, 10, 1, "Cylinders:"},
-	{SGEDITFIELD, 0, 0, 22, 18, 5, 1, ide1_cyl},
-	{SGTEXT, 0, 0, 29, 18, 6, 1, "Heads:"},
-	{SGEDITFIELD, 0, 0, 35, 18, 2, 1, ide1_head},
-	{SGTEXT, 0, 0, 39, 18, 18, 1, "Sectors per track:"},
-	{SGEDITFIELD, 0, 0, 57, 18, 3, 1, ide1_spt},
-	{SGTEXT, 0, 0, 2, 20, 10, 1, "Disk Size:"},
-	{SGEDITFIELD, 0, 0, 12, 20, 6, 1, ide1_size},
-	{SGTEXT, 0, 0, 19, 20, 2, 1, "MB"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 31, 20, 21, 1, "Generate Disk Image"},
-
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 2, 23, 6, 1, "Help"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT | SG_DEFAULT, 0, 54, 23, 8, 1, "Apply"},
-	{SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 66, 23, 8, 1, "Cancel"},
-	{-1, 0, 0, 0, 0, 0, 0, NULL}
-};
+#define SDLGUI_INCLUDE_DISCDLG
+#include "sdlgui.sdl"
 
 static const char *HELP_TEXT =
 	"For creating new disk image click on the [Path] and select a file (or type in a new filename).\n"
@@ -227,6 +107,8 @@ static void HideDiskSettings(int handle, bool state)
 	for (int i = start; i <= end; i++) {
 		setState(i, SG_HIDDEN, state);
 	}
+	// MOUNT button visibility
+	setState((handle == 0) ? IDE0_MOUNT : IDE1_MOUNT, SG_HIDDEN, !state);
 }
 
 static void UpdateCDROMstatus(int handle)

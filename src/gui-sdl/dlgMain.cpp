@@ -38,6 +38,7 @@
 #include "dlgHotkeys.h"
 #include "dlgDisk.h"
 #include "dlgUsb.h"
+#include "dlgHostfs.h"
 #include "bootos.h" // bootOs ptr
 
 #ifdef OS_darwin
@@ -45,60 +46,8 @@
 #endif
 
 /* The main dialog: */
-enum MAINDLG {
-	box_main,
-	box_setup,
-	text_main,
-	ABOUT,
-	DISCS,
-	HOTKEYS,
-	KEYBOARD,
-	OS,
-	VIDEO,
-	NETWORK,
-	PARTITIONS,
-	USB,
-	text_conffile,
-	LOAD,
-	SAVE,
-	box_hotkeys,
-	text_hotkeys,
-	REBOOT,
-	SHUTDOWN,
-	FULLSCREEN,
-	SCREENSHOT,
-	HELP,
-	CLOSE
-};
-
-SGOBJ maindlg[] = {
-	{SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL},
-	{SGBOX, 0, 0, 17, 2, 44, 15, NULL},
-	{SGTEXT, 0, 0, 32, 1, 14, 1, " ARAnyM SETUP "},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 3, 18, 1, "About"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 5, 18, 1, "Disks"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 7, 18, 1, "Hotkeys"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 9, 18, 1, "Keyboard + mouse"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 11, 18, 1, "Operating System"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 3, 18, 1, "Video"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 5, 18, 1, "Networking"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 7, 18, 1, "Partitions"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 9, 18, 1, "USB"},
-
-	{SGTEXT, 0, 0, 22, 15, 12, 1, "Config file:"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 35, 15, 6, 1, "Load"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 43, 15, 6, 1, "Save"},
-	
-	{SGBOX, 0, 0, 17, 19, 44, 5, NULL},
-	{SGTEXT, 0, 0, 27, 18, 22, 1, " Quick Access Buttons "},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 20, 10, 1, "Reboot"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 22, 10, 1, "Shutdown"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 20, 12, 1, "Fullscreen"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 22, 12, 1, "Screenshot"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 47, 20, 12, 1, "Help"},
-	{SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 47, 22, 12, 1, "Close"},
-	{-1, 0, 0, 0, 0, 0, 0, NULL}
-};
+#define SDLGUI_INCLUDE_MAINDLG
+#include "sdlgui.sdl"
 
 static const char *ABOUT_TEXT =
 "            " VERSION_STRING "\n"
@@ -182,6 +131,9 @@ int DlgMain::processDialog(void)
 			break;
 		case USB:
 			SDLGui_Open(DlgUsbOpen());
+			break;
+		case HOSTFS:
+			SDLGui_Open(DlgHostfsOpen());
 			break;
 		case LOAD:
 			LoadSettings();

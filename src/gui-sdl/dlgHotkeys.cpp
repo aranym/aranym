@@ -35,28 +35,6 @@
 
 #define UPDATE_BUTTON(Button) keysymToString(key_ ## Button, &hotkeys.Button)
 
-enum HOTKEYSDLG {
-	box_main,
-	box_hotkeys,
-	label_hotkeys,
-	SETUP,
-	setup_key,
-	QUIT,
-	quit_key,
-	REBOOT,
-	reboot_key,
-	UNGRAB,
-	ungrab_key,
-	DEBUG,
-	debug_key,
-	SCREENSHOT,
-	screenshot_key,
-	FULLSCREEN,
-	fullscreen_key,
-	HELP,
-	APPLY,
-	CANCEL
-};
 
 static char key_setup[HOTKEYS_STRING_SIZE];
 static char key_quit[HOTKEYS_STRING_SIZE];
@@ -67,30 +45,8 @@ static char key_screenshot[HOTKEYS_STRING_SIZE];
 static char key_fullscreen[HOTKEYS_STRING_SIZE];
 
 /* The hotkeys dialog: */
-static SGOBJ hotkeysdlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 42,21, NULL },
-	{ SGBOX, 0, 0, 1,2, 38,15, NULL },
-	{ SGTEXT, 0, 0, 12,1, 16,1, " Hotkeys Editor " },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 11,1, "Setup" },
-	{ SGTEXT, 0, 0, 14,3, 25,1, key_setup },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 5, 11,1, "Quit" },
-	{ SGTEXT, 0, 0, 14,5, 25,1, key_quit },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 7, 11,1, "Reboot" },
-	{ SGTEXT, 0, 0, 14,7, 25,1, key_reboot },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 9, 11,1, "Ungrab" },
-	{ SGTEXT, 0, 0, 14,9, 25,1, key_ungrab },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 11, 11,1, "Debug" },
-	{ SGTEXT, 0, 0, 14,11, 25,1, key_debug },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 13, 11,1, "Screenshot" },
-	{ SGTEXT, 0, 0, 14,13, 25,1, key_screenshot },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 15, 11,1, "Fullscreen" },
-	{ SGTEXT, 0, 0, 14,15, 25,1, key_fullscreen },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2,19, 6,1, "Help" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20,19, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30,19, 8,1, "Cancel" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
+#define SDLGUI_INCLUDE_HOTKEYSDLG
+#include "sdlgui.sdl"
 
 static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "\n"

@@ -1,3 +1,7 @@
+2015/01/27 - Thorsten
+- sdlgui: move dialogs to resource files
+          add dialog for hostfs configuration
+
 2015/01/27 - Patrice
 - nfaudio: prevent buffer overflow on Atari side if config file sets more samples
   than the buffer size in zmagxsnd.prg can handle.

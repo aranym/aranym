@@ -336,8 +336,10 @@ claim:	r = libusb_claim_interface(devh[dev_index], int_index);
 
 	virtual_device[virtdev_index].connected = true;
 	if (++number_ports_used == NUMBER_OF_PORTS)
-		disable_buttons();
-
+	{
+		/* disable_buttons(); */
+	}
+	
 	for (int i = 0; i < NUMBER_OF_PORTS; i++) {
 		if (roothub.port[i].busy == true)
 			continue;
@@ -378,8 +380,10 @@ int usbhost_release_device(int virtdev_index)
 	fill_port_status(port_number, virtual_device[virtdev_index].connected);
 
 	if ((--number_ports_used < NUMBER_OF_PORTS))
-		enable_buttons();
-
+	{
+		/* enable_buttons(); */
+	}
+	
 	return r;
 }
 

@@ -32,7 +32,6 @@
 #ifdef USBHOST_SUPPORT
 #include "../natfeat/usbhost.h"
 
-void enable_buttons(void);
 void disable_buttons(void);	
 
 class DlgAlert;
@@ -50,7 +49,11 @@ class DlgUsb: public Dialog
 		DlgAlert *dlgAlert;
 
 		void confirm(void);
- 
+        void reset_buttons_and_state(void);
+        void clean_product_strings(void);
+        int check_if_devices_connected(void);
+		void enable_buttons(void);
+        
 	public:
 		DlgUsb(SGOBJ *dlg);
 		~DlgUsb();

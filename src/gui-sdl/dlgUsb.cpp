@@ -31,42 +31,6 @@
 #include "debug.h"
 
 #ifdef USBHOST_SUPPORT
-enum DLG {
-	box_main,
-	box_usb,
-	text_usb,
-	usb_desc0,
-	usb_desc1,
-	usb_desc2,
-	usb_desc3,
-	usb_desc4,
-	usb_desc5,
-	usb_desc6,
-	usb_desc7,
-	usb_desc8,
-	PLUG_0,
-	PLUG_1,
-	PLUG_2,
-	PLUG_3,
-	PLUG_4,
-	PLUG_5,
-	PLUG_6,
-	PLUG_7,
-	PLUG_8,	
-	GET_DEVICE_LIST,
-	OK,
-	CONNECTED_0,
-	CONNECTED_1,
-	CONNECTED_2,
-	CONNECTED_3,
-	CONNECTED_4,
-	CONNECTED_5,
-	CONNECTED_6,
-	CONNECTED_7,
-	CONNECTED_8,
-};
-
-
 /* External functions (usbhost.cpp) */
 
 extern void usbhost_init_libusb(void);
@@ -95,48 +59,15 @@ static const char *ALERT_TEXT =
 "connected to Aranym\n"
 "";
 
-static SGOBJ dlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 64,24, NULL },
-	{ SGBOX, 0, 0, 2, 2, 60, 18, NULL},
-	{ SGTEXT, 0, 0, 26, 1, 13, 1, " USB Devices " },
-	{ SGTEXT, 0, 0, 4, 3, 8, 1, product[0] },
-	{ SGTEXT, 0, 0, 4, 5, 8, 1, product[1] },
-	{ SGTEXT, 0, 0, 4, 7, 8, 1, product[2] },
-	{ SGTEXT, 0, 0, 4, 9, 8, 1, product[3] },
-	{ SGTEXT, 0, 0, 4, 11, 8, 1, product[4] },
-	{ SGTEXT, 0, 0, 4, 13, 8, 1, product[5] },
-	{ SGTEXT, 0, 0, 4, 15, 8, 1, product[6] },
-	{ SGTEXT, 0, 0, 4, 17, 8, 1, product[7] },
-	{ SGTEXT, 0, 0, 4, 19, 8, 1, product[8] },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 3, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 5, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 7, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 9, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 11, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 13, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 15, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 17, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 19, 13,1, "Plug/Unplug" },
-	{ SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 4,22, 16,1, "Get new list" },
-	{ SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 43,22, 16,1, "OK" },
-	{ SGTEXT, 0, 0, 36, 3, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 5, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 7, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 9, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 11, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 13, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 15, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 17, 8, 1, "CONNECTED" },
-	{ SGTEXT, 0, 0, 36, 19, 8, 1, "CONNECTED" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
-#define PLUG_BUTTON_OFFSET	12
+#define SDLGUI_INCLUDE_USBDLG
+#include "sdlgui.sdl"
+
+#define PLUG_BUTTON_OFFSET	PLUG_0
 
 
 /* Local functions */
 
-int check_if_devices_connected(void)
+int DlgUsb::check_if_devices_connected(void)
 {
 	int i = 0;
 
@@ -150,7 +81,7 @@ int check_if_devices_connected(void)
 }
 
 
-void enable_buttons(void)
+void DlgUsb::enable_buttons(void)
 {
 	int i = 0;
 
@@ -168,13 +99,13 @@ void disable_buttons(void)
 
 	while (i < MAX_NUMBER_VIRT_DEV) {
 		if (virtual_device[i].connected == false)
-			dlg[PLUG_0 + i].state |= SG_DISABLED;
+			usbdlg[PLUG_0 + i].state |= SG_DISABLED;
 		i++;
 	}
 }
 
 
-void reset_buttons_and_state(void)
+void DlgUsb::reset_buttons_and_state(void)
 {
 	dlg[PLUG_0].state |= SG_DISABLED;
 	dlg[PLUG_1].state |= SG_DISABLED;
@@ -200,7 +131,7 @@ void reset_buttons_and_state(void)
 }
 
 
-void clean_product_strings(void)
+void DlgUsb::clean_product_strings(void)
 {
 	int i = 0;
 
@@ -245,12 +176,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_0].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_0].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -260,12 +193,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_1].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_1].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -275,12 +210,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_2].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_2].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -290,12 +227,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_3].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_3].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -305,12 +244,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_4].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_4].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -320,12 +261,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_5].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_5].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -335,12 +278,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_6].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_6].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -350,12 +295,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_7].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_7].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 
@@ -365,12 +312,14 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_8].state &= ~SG_DISABLED;
+					disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_8].state |= SG_DISABLED;
+					enable_buttons();
 				}
 				break;
 		}
@@ -409,29 +358,10 @@ DlgUsb::DlgUsb(SGOBJ *dlg)
 
 #else /* Function and variables for when USB not present */
 
-enum DLG {
-	box_main,
-	usb_text0,
-	usb_text1,
-	usb_text2,
-	usb_text3,
-	usb_text4,
-	usb_text5,
-	OK
-};
+#define usbdlg nousbdlg
 
-static SGOBJ dlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 48, 11, NULL },
-	{ SGTEXT, 0, 0, 16, 1, 13, 1, "NO USB SUPPORT" },
-	{ SGTEXT, 0, 0, 2, 3, 13, 1, "Aranym has been compiled without USB support," },
-	{ SGTEXT, 0, 0, 2, 4, 13, 1, "if  you want to  have USB support  in Aranym" },
-	{ SGTEXT, 0, 0, 2, 5, 13, 1, "you   need   libusb  for  your platform  and" },
-	{ SGTEXT, 0, 0, 2, 6, 13, 1, "compile  Aranym again  with --enable-usbhost" },
-	{ SGTEXT, 0, 0, 2, 7, 13, 1, "when running the configure script" },
-	{ SGBUTTON, SG_SELECTABLE | SG_EXIT, 0, 19,9, 6,1, "OK" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
+#define SDLGUI_INCLUDE_NOUSBDLG
+#include "sdlgui.sdl"
 
 
 int DlgUsb::processDialog(void)
@@ -469,5 +399,5 @@ void DlgUsb::confirm(void)
 
 Dialog *DlgUsbOpen(void)
 {
-	return new DlgUsb(dlg);
+	return new DlgUsb(usbdlg);
 }

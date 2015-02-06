@@ -85,6 +85,9 @@ void Dialog::mouseClick(const SDL_Event &event, int gui_x, int gui_y)
 
 	/* Memorize object on mouse button pressed event */
 	if (event.type == SDL_MOUSEBUTTONDOWN) {
+		/* ignore mouse wheel events reported as button presses here */
+		if (!(event.button.button >= 1 && event.button.button <= 3))
+			return;
 		SDLGui_UpdateObjState(dlg, clicked_obj, original_state, x, y);
 		last_clicked_obj = clicked_obj;
 		last_state = original_state;

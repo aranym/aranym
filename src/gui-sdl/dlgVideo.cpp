@@ -33,96 +33,12 @@
 #define S05F	10
 #define S01F	50
 
-enum VIDEODLG {
-	box_main,
-	text_fullscreen,
-	FULLSCREEN,
-	WINDOW,
-	text_frameskip,
-	FRAMESKIP_0,
-	FRAMESKIP_1,
-	FRAMESKIP_2,
-	FRAMESKIP_5,
-	FRAMESKIP_10,
-	FRAMESKIP_50,
-	text_monitor,
-	MONITOR_NV,
-	MONITOR_VGA,
-	MONITOR_TV,
-	text_colordepth,
-	COLORDEPTH_NV,
-	COLORDEPTH_1,
-	COLORDEPTH_2,
-	COLORDEPTH_4,
-	COLORDEPTH_8,
-	COLORDEPTH_16,
-	text_autozoom,
-	AUTOZOOM_ON,
-	AZ_INTEGER,
-	AZ_FIXEDSIZE,
-	SINGLE_BLIT_COMPOSING,
-	SINGLE_BLIT_REFRESH,
-	RES_640,
-	RES_800,
-	RES_1024,
-	RES_1280,
-	RES_CUSTOM,
-	text_rw,
-	RES_WIDTH,
-	text_rh,
-	RES_HEIGHT,
-	APPLY,
-	CANCEL
-};
-
 // static char window_pos[10];
 static char video_width[5];
 static char video_height[5];
 
-static SGOBJ videodlg[] =
-{
-	{ SGBOX, SG_BACKGROUND, 0, 0,0, 40,24, NULL },
-	{ SGTEXT, 0, 0, 2,2, 7,1, "ARAnyM:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 10,2, 10,1, "Fullscreen" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 24,2, 11,1, "in a Window" },
-	{ SGTEXT, 0, 0, 2,4, 6,1, "VIDEL:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,5, 6,1, "50 FPS" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,6, 6,1, "25 FPS" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,7, 6,1, "17 FPS" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,8, 6,1, "10 FPS" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,9, 6,1, " 5 FPS" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2,10,6,1, " 1 FPS" },
-	{ SGTEXT, 0, 0, 13, 4, 8, 1, "Monitor:"},
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 13,5, 7,1, "<NVRAM>" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 13,6, 3,1, "VGA" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 13,7, 2,1, "TV" },
-	{ SGTEXT, 0, 0, 25,4, 12,1, "Boot Depth:" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,5, 7,1, "<NVRAM>" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,6, 8,1, "2 colors" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,7, 8,1, "4 colors" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,8, 9,1, "16 colors" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,9, 10,1, "256 colors" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25,10, 9,1, "TrueColor" },
-	{ SGTEXT, 0, 0, 2,13, 17,1, "Video output:" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,14, 16,1, "Autozoom enabled" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,15, 16,1, "Integer coefs" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,16, 16,1, "Fixed size" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,17, 19,1, "SingleBlitComposing" },
-	{ SGCHECKBOX, SG_SELECTABLE, 0, 2,18, 16,1, "SingleBlitRefresh" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,14, 9,1, "640x480" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,15, 9,1, "800x600" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,16, 10,1, "1024x768" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,17, 11,1, "1280x1024" },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 23,18, 10,1, "Custom" },
-	{ SGTEXT, 0, 0, 26,19, 7,1, "Width: " },
-	{ SGEDITFIELD, 0, 0, 33,19, sizeof(video_width)-1,1, video_width },
-	{ SGTEXT, 0, 0, 26,20, 7,1, "Height:" },
-	{ SGEDITFIELD, 0, 0, 33,20, sizeof(video_height)-1,1, video_height },
-//	{ SGEDITFIELD, 0, 0, 12, 10, 9, 1, window_pos},
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 6,22, 8,1, "Apply" },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 27,22, 8,1, "Cancel" },
-	{ -1, 0, 0, 0,0, 0,0, NULL }
-};
+#define SDLGUI_INCLUDE_VIDEODLG
+#include "sdlgui.sdl"
 
 DlgVideo::DlgVideo(SGOBJ *dlg)
 	: Dialog(dlg)

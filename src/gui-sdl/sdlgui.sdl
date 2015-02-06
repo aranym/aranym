@@ -1,0 +1,824 @@
+/*
+ * GEM resource SDL output of sdlgui
+ *
+ * created by ORCS 2.12
+ */
+
+#if defined(SDLGUI_INCLUDE_MAINDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum MAINDLG {
+	box_main = 0,
+	box_setup = 1,
+	ABOUT = 2,
+	DISCS = 3,
+	HOTKEYS = 4,
+	KEYBOARD = 5,
+	OS = 6,
+	VIDEO = 7,
+	NETWORK = 8,
+	PARTITIONS = 9,
+	USB = 10,
+	text_conffile = 11,
+	LOAD = 12,
+	SAVE = 13,
+	HOSTFS = 14,
+	text_main = 15,
+	box_hotkeys = 16,
+	REBOOT = 17,
+	SHUTDOWN = 18,
+	FULLSCREEN = 19,
+	SCREENSHOT = 20,
+	HELP = 21,
+	CLOSE = 22,
+	text_hotkeys = 23
+};
+
+static SGOBJ maindlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL },
+	{ SGBOX, 0, 0, 17, 2, 44, 15, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 3, 18, 1, "About" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 5, 18, 1, "Disks" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 7, 18, 1, "Hotkeys" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 9, 18, 1, "Keyboard + mouse" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 11, 18, 1, "Operating System" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 3, 18, 1, "Video" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 5, 18, 1, "Networking" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 7, 18, 1, "Partitions" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 9, 18, 1, "USB" },
+	{ SGTEXT, 0, 0, 22, 15, 12, 1, "Config file:" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 35, 15, 6, 1, "Load" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 43, 15, 6, 1, "Save" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 41, 11, 18, 1, "Host Filesystem" },
+	{ SGTEXT, 0, 0, 32, 1, 14, 1, " ARAnyM Setup " },
+	{ SGBOX, 0, 0, 17, 19, 44, 5, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 20, 10, 1, "Reboot" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 19, 22, 10, 1, "Shutdown" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 20, 12, 1, "Fullscreen" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 22, 12, 1, "Screenshot" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 47, 20, 12, 1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 47, 22, 12, 1, "Close" },
+	{ SGTEXT, 0, 0, 27, 18, 22, 1, " Quick Access Buttons " },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_DISCDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum DISCDLG {
+	box_main = 0,
+	box_floppy = 1,
+	FLP_BROWSE = 2,
+	FLP_PATH = 3,
+	text_floppy = 4,
+	spacer_mount = 5,
+	FLOPPY_MOUNT = 6,
+	box_ide0 = 7,
+	IDE0_BROWSE = 8,
+	IDE0_PATH = 9,
+	IDE0_PRESENT = 10,
+	IDE0_CDROM = 11,
+	IDE0_READONLY = 12,
+	IDE0_BYTESWAP = 13,
+	text_geom0 = 14,
+	text_cyls0 = 15,
+	IDE0_CYL = 16, /* max len 5 */
+	text_heads0 = 17,
+	IDE0_HEAD = 18, /* max len 2 */
+	text_spts0 = 19,
+	IDE0_SEC = 20, /* max len 3 */
+	text_size0 = 21,
+	IDE0_SIZE = 22, /* max len 6 */
+	text_size0mb = 23,
+	IDE0_GENERATE = 24,
+	text_ide0 = 25,
+	spacer_name0 = 26,
+	IDE0_NAME = 27, /* max len 40 */
+	IDE0_MOUNT = 28,
+	box_ide1 = 29,
+	IDE1_BROWSE = 30,
+	IDE1_PATH = 31,
+	IDE1_PRESENT = 32,
+	IDE1_CDROM = 33,
+	IDE1_READONLY = 34,
+	IDE1_BYTESWAP = 35,
+	text_geom1 = 36,
+	text_cyls1 = 37,
+	IDE1_CYL = 38, /* max len 5 */
+	text_heads1 = 39,
+	IDE1_HEAD = 40, /* max len 2 */
+	text_spts1 = 41,
+	IDE1_SEC = 42, /* max len 3 */
+	text_size1 = 43,
+	IDE1_SIZE = 44, /* max len 6 */
+	IDE1_GENERATE = 46,
+	text_ide1 = 47,
+	spacer_name1 = 48,
+	IDE1_NAME = 49, /* max len 40 */
+	IDE1_MOUNT = 50,
+	HELP = 51,
+	APPLY = 52,
+	CANCEL = 53
+};
+
+static SGOBJ discdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL },
+	{ SGBOX, 0, 0, 1, 2, 74, 2, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 5, 1, "Path:" },
+	{ SGTEXT, 0, 0, 8, 3, 67, 1, floppy_path },
+	{ SGTEXT, 0, 0, 2, 1, 16, 1, " Floppy disk A: " },
+	{ SGTEXT, 0, 0, 27, 1, 1, 1, " " },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 18, 1, 9, 1, "Eject" },
+	{ SGBOX, 0, 0, 1, 7, 74, 6, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 8, 5, 1, "Path:" },
+	{ SGTEXT, 0, 0, 8, 8, 67, 1, "" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 9, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 63, 10, 11, 1, "is CDROM" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 11, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 12, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 2, 10, 8, 1, "Geometry" },
+	{ SGTEXT, 0, 0, 12, 10, 10, 1, "Cylinders:" },
+	{ SGEDITFIELD, 0, 0, 22, 10, 5, 1, ide0_cyl },
+	{ SGTEXT, 0, 0, 29, 10, 6, 1, "Heads:" },
+	{ SGEDITFIELD, 0, 0, 35, 10, 2, 1, ide0_head },
+	{ SGTEXT, 0, 0, 39, 10, 18, 1, "Sectors per track:" },
+	{ SGEDITFIELD, 0, 0, 57, 10, 3, 1, ide0_spt },
+	{ SGTEXT, 0, 0, 2, 12, 10, 1, "Disk Size:" },
+	{ SGEDITFIELD, 0, 0, 12, 12, 6, 1, ide0_size },
+	{ SGTEXT, 0, 0, 19, 12, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 31, 12, 21, 1, "Generate Disk Image" },
+	{ SGTEXT, 0, 0, 2, 6, 17, 1, " Hard disk IDE0:" },
+	{ SGTEXT, 0, 0, 59, 6, 1, 1, " " },
+	{ SGEDITFIELD, 0, 0, 19, 6, 40, 1, ide0_name },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 66, 6, 8, 1, "Insert" },
+	{ SGBOX, 0, 0, 1, 15, 74, 6, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 16, 5, 1, "Path:" },
+	{ SGTEXT, 0, 0, 8, 16, 67, 1, "" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 17, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 63, 18, 11, 1, "is CDROM" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 19, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 63, 20, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 2, 18, 8, 1, "Geometry" },
+	{ SGTEXT, 0, 0, 12, 18, 10, 1, "Cylinders:" },
+	{ SGEDITFIELD, 0, 0, 22, 18, 5, 1, ide1_cyl },
+	{ SGTEXT, 0, 0, 29, 18, 6, 1, "Heads:" },
+	{ SGEDITFIELD, 0, 0, 35, 18, 2, 1, ide1_head },
+	{ SGTEXT, 0, 0, 39, 18, 18, 1, "Sectors per track:" },
+	{ SGEDITFIELD, 0, 0, 57, 18, 3, 1, ide1_spt },
+	{ SGTEXT, 0, 0, 2, 20, 10, 1, "Disk Size:" },
+	{ SGEDITFIELD, 0, 0, 12, 20, 6, 1, ide1_size },
+	{ SGTEXT, 0, 0, 19, 20, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 31, 20, 21, 1, "Generate Disk Image" },
+	{ SGTEXT, 0, 0, 2, 14, 17, 1, " Hard disk IDE1:" },
+	{ SGTEXT, 0, 0, 59, 14, 1, 1, " " },
+	{ SGEDITFIELD, 0, 0, 19, 14, 40, 1, ide1_name },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 66, 14, 8, 1, "Insert" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 23, 6, 1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 54, 23, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 66, 23, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_FSDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum FSDLG {
+	SGFSDLG_PATH = 3,
+	SGFSDLG_FILENAME = 5,
+	SGFSDLG_UPDIR = 6,
+	SGFSDLG_ROOTDIR = 7,
+	SGFSDLG_UP = 10,
+	SGFSDLG_DOWN = 11,
+	SGFSDLG_FIRSTENTRY = 12, /* max len 71 */
+	SGFSDLG_LASTENTRY = 26, /* max len 71 */
+	SGFSDLG_OKAY = 27,
+	SGFSDLG_CANCEL = 28
+};
+
+static SGOBJ fsdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL },
+	{ SGTEXT, 0, 0, 31, 1, 13, 1, "Choose a file" },
+	{ SGTEXT, 0, 0, 1, 2, 7, 1, "Folder:" },
+	{ SGTEXT, 0, 0, 1, 3, 74, 1, dlgpath },
+	{ SGTEXT, 0, 0, 1, 4, 5, 1, "File:" },
+	{ SGTEXT, 0, 0, 7, 4, 68, 1, dlgfname },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 1, 4, 1, ".." },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 72, 1, 3, 1, "/" },
+	{ SGBOX, 0, 0, 1, 6, 74, 15, NULL },
+	{ SGBOX, 0, 0, 74, 6, 1, 15, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 74, 6, 1, 1, "\001" },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 74, 20, 1, 1, "\002" },
+	{ SGTEXT, 0, 0, 2, 6, 71, 1, dlgfilenames[0] },
+	{ SGTEXT, 0, 0, 2, 7, 71, 1, dlgfilenames[1] },
+	{ SGTEXT, 0, 0, 2, 8, 71, 1, dlgfilenames[2] },
+	{ SGTEXT, 0, 0, 2, 9, 71, 1, dlgfilenames[3] },
+	{ SGTEXT, 0, 0, 2, 10, 71, 1, dlgfilenames[4] },
+	{ SGTEXT, 0, 0, 2, 11, 71, 1, dlgfilenames[5] },
+	{ SGTEXT, 0, 0, 2, 12, 71, 1, dlgfilenames[6] },
+	{ SGTEXT, 0, 0, 2, 13, 71, 1, dlgfilenames[7] },
+	{ SGTEXT, 0, 0, 2, 14, 71, 1, dlgfilenames[8] },
+	{ SGTEXT, 0, 0, 2, 15, 71, 1, dlgfilenames[9] },
+	{ SGTEXT, 0, 0, 2, 16, 71, 1, dlgfilenames[10] },
+	{ SGTEXT, 0, 0, 2, 17, 71, 1, dlgfilenames[11] },
+	{ SGTEXT, 0, 0, 2, 18, 71, 1, dlgfilenames[12] },
+	{ SGTEXT, 0, 0, 2, 19, 71, 1, dlgfilenames[13] },
+	{ SGTEXT, 0, 0, 2, 20, 71, 1, dlgfilenames[14] },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20, 23, 8, 1, "OK" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 48, 23, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_HOTKEYSDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum HOTKEYSDLG {
+	box_main = 0,
+	box_hotkeys = 1,
+	SETUP = 2,
+	setup_key = 3, /* max len 25 */
+	QUIT = 4,
+	quit_key = 5, /* max len 25 */
+	REBOOT = 6,
+	reboot_key = 7, /* max len 25 */
+	UNGRAB = 8,
+	ungrab_key = 9, /* max len 25 */
+	DEBUG = 10,
+	debug_key = 11, /* max len 25 */
+	SCREENSHOT = 12,
+	screenshot_key = 13, /* max len 25 */
+	FULLSCREEN = 14,
+	fullscreen_key = 15, /* max len 25 */
+	label_hotkeys = 16,
+	HELP = 17,
+	APPLY = 18,
+	CANCEL = 19
+};
+
+static SGOBJ hotkeysdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 42, 21, NULL },
+	{ SGBOX, 0, 0, 2, 2, 38, 15, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 3, 11, 1, "Setup" },
+	{ SGTEXT, 0, 0, 15, 3, 25, 1, key_setup },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 5, 11, 1, "Quit" },
+	{ SGTEXT, 0, 0, 15, 5, 25, 1, key_quit },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 7, 11, 1, "Reboot" },
+	{ SGTEXT, 0, 0, 15, 7, 25, 1, key_reboot },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 9, 11, 1, "Ungrab" },
+	{ SGTEXT, 0, 0, 15, 9, 25, 1, key_ungrab },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 11, 11, 1, "Debug" },
+	{ SGTEXT, 0, 0, 15, 11, 25, 1, key_debug },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 13, 11, 1, "Screenshot" },
+	{ SGTEXT, 0, 0, 15, 13, 25, 1, key_screenshot },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 3, 15, 11, 1, "Fullscreen" },
+	{ SGTEXT, 0, 0, 15, 15, 25, 1, key_fullscreen },
+	{ SGTEXT, 0, 0, 12, 1, 16, 1, " Hotkeys Editor " },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 19, 6, 1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 21, 19, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 32, 19, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_KEYBOARDDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum KEYBOARDDLG {
+	box_main = 0,
+	box_wheel = 1,
+	ARROWKEYS = 2,
+	EIFFEL = 3,
+	text_wheel = 4,
+	box_altgr = 5,
+	ATARI_ALT = 6,
+	MILAN_ALTGR = 7,
+	text_altgr = 8,
+	APPLY = 9,
+	CANCEL = 10
+};
+
+static SGOBJ keyboarddlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 42, 13, NULL },
+	{ SGBOX, 0, 0, 2, 2, 38, 2, NULL },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 3, 13, 1, "Arrow keys" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 19, 3, 19, 1, "Eiffel scancodes" },
+	{ SGTEXT, 0, 0, 3, 1, 18, 1, " Host mouse wheel " },
+	{ SGBOX, 0, 0, 2, 7, 38, 2, NULL },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 8, 12, 1, "Atari Alt" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 19, 8, 14, 1, "Milan AltGr" },
+	{ SGTEXT, 0, 0, 3, 6, 16, 1, " Host AltGr key " },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 7, 11, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28, 11, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_PRESSKEYDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum PRESSKEYDLG {
+	box_main = 0,
+	label_key = 1
+};
+
+static SGOBJ presskeydlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 15, 3, NULL },
+	{ SGTEXT, 0, 0, 2, 1, 11, 1, "Press a key" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_NETWORKDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum NETWORKDLG {
+	box_main = 0,
+	eth0_type = 1,
+	ETH0_TUNNEL = 2, /* max len 5 */
+	ETH0_TYP_NONE = 3,
+	ETH0_TYP_PTP = 4,
+	ETH0_TYP_BRIDGE = 5,
+	eth0_hip = 6,
+	ETH0_HIP = 7, /* max len 15 */
+	eth0_aip = 8,
+	ETH0_AIP = 9, /* max len 15 */
+	eth0_mask = 10,
+	ETH0_MASK = 11, /* max len 15 */
+	eth0_mac = 12,
+	ETH0_MAC = 13, /* max len 17 */
+	eth1_type = 14,
+	ETH1_TUNNEL = 15, /* max len 5 */
+	ETH1_TYP_NONE = 16,
+	ETH1_TYP_PTP = 17,
+	ETH1_TYP_BRIDGE = 18,
+	eth1_hip = 19,
+	ETH1_HIP = 20, /* max len 15 */
+	eth1_aip = 21,
+	ETH1_AIP = 22, /* max len 15 */
+	eth1_mask = 23,
+	ETH1_MASK = 24, /* max len 15 */
+	eth1_mac = 25,
+	ETH1_MAC = 26, /* max len 17 */
+	APPLY = 27,
+	CANCEL = 28
+};
+
+static SGOBJ networkdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 44, 25, NULL },
+	{ SGTEXT, 0, 0, 1, 2, 5, 1, "ETH0:" },
+	{ SGEDITFIELD, 0, 0, 7, 2, 5, 1, eth0_tunnel },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 14, 2, 7, 1, "None" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 23, 2, 8, 1, "P-t-p" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 33, 2, 9, 1, "Bridge" },
+	{ SGTEXT, 0, 0, 4, 4, 8, 1, "Host IP:" },
+	{ SGEDITFIELD, 0, 0, 14, 4, 15, 1, eth0_host_ip },
+	{ SGTEXT, 0, 0, 4, 6, 9, 1, "Atari IP:" },
+	{ SGEDITFIELD, 0, 0, 14, 6, 15, 1, eth0_atari_ip },
+	{ SGTEXT, 0, 0, 4, 8, 8, 1, "Netmask:" },
+	{ SGEDITFIELD, 0, 0, 14, 8, 15, 1, eth0_netmask },
+	{ SGTEXT, 0, 0, 4, 10, 9, 1, "MAC addr:" },
+	{ SGEDITFIELD, 0, 0, 14, 10, 17, 1, eth0_mac_addr },
+	{ SGTEXT, 0, 0, 1, 12, 5, 1, "ETH1:" },
+	{ SGEDITFIELD, 0, 0, 7, 12, 5, 1, eth1_tunnel },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 14, 12, 7, 1, "None" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 23, 12, 8, 1, "P-t-p" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 33, 12, 9, 1, "Bridge" },
+	{ SGTEXT, 0, 0, 4, 14, 8, 1, "Host IP:" },
+	{ SGEDITFIELD, 0, 0, 14, 14, 15, 1, eth1_host_ip },
+	{ SGTEXT, 0, 0, 4, 16, 9, 1, "Atari IP:" },
+	{ SGEDITFIELD, 0, 0, 14, 16, 15, 1, eth1_atari_ip },
+	{ SGTEXT, 0, 0, 4, 18, 8, 1, "Netmask:" },
+	{ SGEDITFIELD, 0, 0, 14, 18, 15, 1, eth1_netmask },
+	{ SGTEXT, 0, 0, 4, 20, 9, 1, "MAC addr:" },
+	{ SGEDITFIELD, 0, 0, 14, 20, 17, 1, eth1_mac_addr },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8, 23, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28, 23, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_OSDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum OSDLG {
+	box_main = 0,
+	box_wheel = 1,
+	TOSCONSOLE = 2,
+	text_mch = 3,
+	MCH_ARANYM = 4,
+	MCH_FALCON = 5,
+	text_wheel = 6,
+	APPLY = 7,
+	CANCEL = 8
+};
+
+static SGOBJ osdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 52, 10, NULL },
+	{ SGBOX, 0, 0, 2, 2, 48, 5, NULL },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_BUTTON_RIGHT, SG_SELECTED, 3, 3, 45, 1, "BIOS CON: output redirected to Host stdout" },
+	{ SGTEXT, 0, 0, 3, 5, 18, 1, "_MCH Cookie value:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 22, 5, 9, 1, "ARAnyM" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 33, 5, 9, 1, "Falcon" },
+	{ SGTEXT, 0, 0, 3, 1, 13, 1, " TOS patches " },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8, 8, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30, 8, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_PARTITIONDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum PARTITIONDLG {
+	box_main = 0,
+	header = 1,
+	box_part0 = 2,
+	PART0_BROWSE = 3,
+	PART0_PATH = 4, /* max len 0 */
+	text_id0 = 5,
+	PART0_ID = 6, /* max len 3 */
+	PART0_PRESENT = 7,
+	PART0_READONLY = 8,
+	PART0_BYTESWAP = 9,
+	text_size0 = 10,
+	PART0_SIZE = 11, /* max len 6 */
+	text_size0mb = 12,
+	PART0_GENERATE = 13,
+	box_part1 = 14,
+	PART1_BROWSE = 15,
+	PART1_PATH = 16, /* max len 0 */
+	text_id1 = 17,
+	PART1_ID = 18, /* max len 3 */
+	PART1_PRESENT = 19,
+	PART1_READONLY = 20,
+	PART1_BYTESWAP = 21,
+	text_size1 = 22,
+	PART1_SIZE = 23, /* max len 6 */
+	text_size1mb = 24,
+	PART1_GENERATE = 25,
+	box_part2 = 26,
+	PART2_BROWSE = 27,
+	PART2_PATH = 28, /* max len 0 */
+	text_id2 = 29,
+	PART2_ID = 30, /* max len 3 */
+	PART2_PRESENT = 31,
+	PART2_READONLY = 32,
+	PART2_BYTESWAP = 33,
+	text_size2 = 34,
+	PART2_SIZE = 35, /* max len 6 */
+	text_size2mb = 36,
+	PART2_GENERATE = 37,
+	box_part3 = 38,
+	PART3_BROWSE = 39,
+	PART3_PATH = 40, /* max len 0 */
+	text_id3 = 41,
+	PART3_ID = 42, /* max len 3 */
+	PART3_PRESENT = 43,
+	PART3_READONLY = 44,
+	PART3_BYTESWAP = 45,
+	text_size3 = 46,
+	PART3_SIZE = 47, /* max len 6 */
+	text_size3mb = 48,
+	PART3_GENERATE = 49,
+	text_ide = 50,
+	MAP_IDE0 = 51,
+	MAP_IDE1 = 52,
+	HELP = 53,
+	APPLY = 54,
+	CANCEL = 55
+};
+
+static SGOBJ partitiondlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 25, NULL },
+	{ SGTEXT, 0, 0, 16, 1, 42, 1, "XHDI Direct Access to Host Disk Partitions" },
+	{ SGBOX, 0, 0, 1, 3, 74, 3, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 6, 1, "SCSI0:" },
+	{ SGTEXT, 0, 0, 9, 3, 65, 1, "" },
+	{ SGTEXT, 0, 0, 2, 5, 7, 1, "PartID:" },
+	{ SGEDITFIELD, 0, 0, 9, 5, 3, 1, part_id[0] },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 14, 5, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 26, 5, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 39, 5, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 52, 5, 5, 1, "Size:" },
+	{ SGEDITFIELD, 0, 0, 57, 5, 6, 1, part_size[0] },
+	{ SGTEXT, 0, 0, 64, 5, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 5, 7, 1, "Create" },
+	{ SGBOX, 0, 0, 1, 7, 74, 3, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 7, 6, 1, "SCSI1:" },
+	{ SGTEXT, 0, 0, 9, 7, 65, 1, "" },
+	{ SGTEXT, 0, 0, 2, 9, 7, 1, "PartID:" },
+	{ SGEDITFIELD, 0, 0, 9, 9, 3, 1, part_id[1] },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 14, 9, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 26, 9, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 39, 9, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 52, 9, 5, 1, "Size:" },
+	{ SGEDITFIELD, 0, 0, 57, 9, 6, 1, part_size[1] },
+	{ SGTEXT, 0, 0, 64, 9, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 9, 7, 1, "Create" },
+	{ SGBOX, 0, 0, 1, 11, 74, 3, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 11, 6, 1, "SCSI2:" },
+	{ SGTEXT, 0, 0, 9, 11, 65, 1, "" },
+	{ SGTEXT, 0, 0, 2, 13, 7, 1, "PartID:" },
+	{ SGEDITFIELD, 0, 0, 9, 13, 3, 1, part_id[2] },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 14, 13, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 26, 13, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 39, 13, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 52, 13, 5, 1, "Size:" },
+	{ SGEDITFIELD, 0, 0, 57, 13, 6, 1, part_size[2] },
+	{ SGTEXT, 0, 0, 64, 13, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 13, 7, 1, "Create" },
+	{ SGBOX, 0, 0, 1, 15, 74, 3, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 15, 6, 1, "SCSI3:" },
+	{ SGTEXT, 0, 0, 9, 15, 65, 1, "" },
+	{ SGTEXT, 0, 0, 2, 17, 7, 1, "PartID:" },
+	{ SGEDITFIELD, 0, 0, 9, 17, 3, 1, part_id[3] },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 14, 17, 10, 1, "Present" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 26, 17, 11, 1, "ReadOnly" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 39, 17, 11, 1, "ByteSwap" },
+	{ SGTEXT, 0, 0, 52, 17, 5, 1, "Size:" },
+	{ SGEDITFIELD, 0, 0, 57, 17, 6, 1, part_size[3] },
+	{ SGTEXT, 0, 0, 64, 17, 2, 1, "MB" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 17, 7, 1, "Create" },
+	{ SGTEXT, 0, SG_DISABLED, 2, 20, 32, 1, "Map IDE disk drives as XHDI IDE:" },
+	{ SGCHECKBOX, SG_SELECTABLE, SG_SELECTED|SG_DISABLED, 36, 20, 16, 1, "IDE0 (Master)" },
+	{ SGCHECKBOX, SG_SELECTABLE, SG_SELECTED|SG_DISABLED, 54, 20, 16, 1, "IDE1 (Slave)" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 23, 6, 1, "Help" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 54, 23, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 66, 23, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_NOUSBDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum NOUSBDLG {
+	box_main = 0,
+	usb_text0 = 1,
+	usb_text1 = 2,
+	usb_text2 = 3,
+	usb_text3 = 4,
+	usb_text4 = 5,
+	usb_text5 = 6,
+	OK = 7
+};
+
+static SGOBJ nousbdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 48, 11, NULL },
+	{ SGTEXT, 0, 0, 17, 1, 14, 1, "NO USB SUPPORT" },
+	{ SGTEXT, 0, 0, 2, 3, 45, 1, "Aranym has been compiled without USB support," },
+	{ SGTEXT, 0, 0, 2, 4, 44, 1, "if  you want to  have USB support  in Aranym" },
+	{ SGTEXT, 0, 0, 2, 5, 44, 1, "you   need   libusb  for  your platform  and" },
+	{ SGTEXT, 0, 0, 2, 6, 44, 1, "compile  Aranym again  with --enable-usbhost" },
+	{ SGTEXT, 0, 0, 2, 7, 34, 1, "when running the configure script." },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 21, 9, 6, 1, "OK" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_USBDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum USBDLG {
+	box_main = 0,
+	box_usb = 1,
+	usb_desc0 = 2,
+	usb_desc1 = 3,
+	usb_desc2 = 4,
+	usb_desc3 = 5,
+	usb_desc4 = 6,
+	usb_desc5 = 7,
+	usb_desc6 = 8,
+	usb_desc7 = 9,
+	usb_desc8 = 10,
+	CONNECTED_0 = 11,
+	CONNECTED_1 = 12,
+	CONNECTED_2 = 13,
+	CONNECTED_3 = 14,
+	CONNECTED_4 = 15,
+	CONNECTED_5 = 16,
+	CONNECTED_6 = 17,
+	CONNECTED_7 = 18,
+	CONNECTED_8 = 19,
+	PLUG_0 = 20,
+	PLUG_1 = 21,
+	PLUG_2 = 22,
+	PLUG_3 = 23,
+	PLUG_4 = 24,
+	PLUG_5 = 25,
+	PLUG_6 = 26,
+	PLUG_7 = 27,
+	PLUG_8 = 28,
+	text_usb = 29,
+	GET_DEVICE_LIST = 30,
+	OK = 31
+};
+
+static SGOBJ usbdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 64, 24, NULL },
+	{ SGBOX, 0, 0, 2, 2, 60, 18, NULL },
+	{ SGTEXT, 0, 0, 4, 3, 31, 1, product[0] },
+	{ SGTEXT, 0, 0, 4, 5, 31, 1, product[1] },
+	{ SGTEXT, 0, 0, 4, 7, 31, 1, product[2] },
+	{ SGTEXT, 0, 0, 4, 9, 31, 1, product[3] },
+	{ SGTEXT, 0, 0, 4, 11, 31, 1, product[4] },
+	{ SGTEXT, 0, 0, 4, 13, 31, 1, product[5] },
+	{ SGTEXT, 0, 0, 4, 15, 31, 1, product[6] },
+	{ SGTEXT, 0, 0, 4, 17, 31, 1, product[7] },
+	{ SGTEXT, 0, 0, 4, 19, 31, 1, product[8] },
+	{ SGTEXT, 0, 0, 36, 3, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 5, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 7, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 9, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 11, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 13, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 15, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 17, 9, 1, "CONNECTED" },
+	{ SGTEXT, 0, 0, 36, 19, 9, 1, "CONNECTED" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 3, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 5, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 7, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 9, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 11, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 13, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 15, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 17, 13, 1, "Plug/Unplug" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 19, 13, 1, "Plug/Unplug" },
+	{ SGTEXT, 0, 0, 26, 1, 13, 1, " USB Devices " },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 22, 16, 1, "Get new list" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 43, 22, 16, 1, "OK" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_VIDEODLG) || defined(SDLGUI_INCLUDE_ALL)
+enum VIDEODLG {
+	box_main = 0,
+	text_fullscreen = 1,
+	FULLSCREEN = 2,
+	WINDOW = 3,
+	text_frameskip = 4,
+	FRAMESKIP_0 = 5,
+	FRAMESKIP_1 = 6,
+	FRAMESKIP_2 = 7,
+	FRAMESKIP_5 = 8,
+	FRAMESKIP_10 = 9,
+	FRAMESKIP_50 = 10,
+	text_monitor = 11,
+	MONITOR_NV = 12,
+	MONITOR_VGA = 13,
+	MONITOR_TV = 14,
+	text_colordepth = 15,
+	COLORDEPTH_NV = 16,
+	COLORDEPTH_1 = 17,
+	COLORDEPTH_2 = 18,
+	COLORDEPTH_4 = 19,
+	COLORDEPTH_8 = 20,
+	COLORDEPTH_16 = 21,
+	text_autozoom = 22,
+	AUTOZOOM_ON = 23,
+	AZ_INTEGER = 24,
+	AZ_FIXEDSIZE = 25,
+	SINGLE_BLIT_COMPOSING = 26,
+	SINGLE_BLIT_REFRESH = 27,
+	RES_640 = 28,
+	RES_800 = 29,
+	RES_1024 = 30,
+	RES_1280 = 31,
+	RES_CUSTOM = 32,
+	text_rw = 33,
+	RES_WIDTH = 34, /* max len 4 */
+	text_rh = 35,
+	RES_HEIGHT = 36, /* max len 4 */
+	APPLY = 37,
+	CANCEL = 38
+};
+
+static SGOBJ videodlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 42, 24, NULL },
+	{ SGTEXT, 0, 0, 2, 2, 7, 1, "ARAnyM:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 10, 2, 13, 1, "Fullscreen" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 24, 2, 14, 1, "in a Window" },
+	{ SGTEXT, 0, 0, 2, 4, 6, 1, "VIDEL:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2, 5, 9, 1, "50 FPS" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 2, 6, 9, 1, "25 FPS" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2, 7, 9, 1, "17 FPS" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2, 8, 9, 1, "10 FPS" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2, 9, 9, 1, " 5 FPS" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 2, 10, 9, 1, " 1 FPS" },
+	{ SGTEXT, 0, 0, 13, 4, 8, 1, "Monitor:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 13, 5, 10, 1, "<NVRAM>" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 13, 6, 6, 1, "VGA" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 13, 7, 5, 1, "TV" },
+	{ SGTEXT, 0, 0, 25, 4, 11, 1, "Boot Depth:" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 25, 5, 10, 1, "<NVRAM>" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 6, 11, 1, "2 colors" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 7, 11, 1, "4 colors" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 8, 12, 1, "16 colors" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 9, 13, 1, "256 colors" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 10, 12, 1, "TrueColor" },
+	{ SGTEXT, 0, 0, 2, 13, 13, 1, "Video output:" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2, 14, 19, 1, "Autozoom enabled" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2, 15, 16, 1, "Integer coefs" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2, 16, 13, 1, "Fixed size" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2, 17, 22, 1, "SingleBlitComposing" },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 2, 18, 20, 1, "SingleBlitRefresh" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 14, 10, 1, "640x480" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 15, 10, 1, "800x600" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 16, 11, 1, "1024x768" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 25, 17, 12, 1, "1280x1024" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_RADIO, 0, 25, 18, 11, 1, "Custom" },
+	{ SGTEXT, 0, 0, 28, 19, 6, 1, "Width:" },
+	{ SGEDITFIELD, 0, 0, 35, 19, 4, 1, video_width },
+	{ SGTEXT, 0, 0, 28, 20, 7, 1, "Height:" },
+	{ SGEDITFIELD, 0, 0, 35, 20, 4, 1, video_height },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 6, 22, 8, 1, "Apply" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 29, 22, 8, 1, "Cancel" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_HOSTFSDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum HOSTFSDLG {
+	HOSTFSDLG_FIRSTDRIVE = 3,
+	HOSTFSDLG_FIRSTENTRY = 18, /* max len 55 */
+	HOSTFSDLG_LASTENTRY = 32, /* max len 55 */
+	HOSTFSDLG_FIRSTCASE = 33,
+	HOSTFSDLG_UP = 49,
+	HOSTFSDLG_DOWN = 50,
+	HOSTFSDLG_OKAY = 51,
+	HOSTFSDLG_CANCEL = 52,
+	HELP = 53
+};
+
+static SGOBJ hostfsdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 76, 23, NULL },
+	{ SGTEXT, 0, 0, 31, 1, 15, 1, "Host Filesystem" },
+	{ SGBOX, 0, 0, 1, 4, 74, 15, NULL },
+	{ SGTEXT, 0, 0, 2, 4, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 5, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 6, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 7, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 8, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 9, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 10, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 11, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 12, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 13, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 14, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 15, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 16, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 17, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 2, 18, 2, 1, "A:" },
+	{ SGTEXT, 0, 0, 5, 4, 55, 1, dlgfilenames[0] },
+	{ SGTEXT, 0, 0, 5, 5, 55, 1, dlgfilenames[1] },
+	{ SGTEXT, 0, 0, 5, 6, 55, 1, dlgfilenames[2] },
+	{ SGTEXT, 0, 0, 5, 7, 55, 1, dlgfilenames[3] },
+	{ SGTEXT, 0, 0, 5, 8, 55, 1, dlgfilenames[4] },
+	{ SGTEXT, 0, 0, 5, 9, 55, 1, dlgfilenames[5] },
+	{ SGTEXT, 0, 0, 5, 10, 55, 1, dlgfilenames[6] },
+	{ SGTEXT, 0, 0, 5, 11, 55, 1, dlgfilenames[7] },
+	{ SGTEXT, 0, 0, 5, 12, 55, 1, dlgfilenames[8] },
+	{ SGTEXT, 0, 0, 5, 13, 55, 1, dlgfilenames[9] },
+	{ SGTEXT, 0, 0, 5, 14, 55, 1, dlgfilenames[10] },
+	{ SGTEXT, 0, 0, 5, 15, 55, 1, dlgfilenames[11] },
+	{ SGTEXT, 0, 0, 5, 16, 55, 1, dlgfilenames[12] },
+	{ SGTEXT, 0, 0, 5, 17, 55, 1, dlgfilenames[13] },
+	{ SGTEXT, 0, 0, 5, 18, 55, 1, dlgfilenames[14] },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 4, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 5, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 6, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 7, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 8, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 9, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 10, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 11, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 12, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 13, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 14, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 15, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 16, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 17, 12, 1, "Case Sens" },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 18, 12, 1, "Case Sens" },
+	{ SGBOX, 0, 0, 74, 4, 1, 15, NULL },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 74, 4, 1, 1, "\001" },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 74, 18, 1, 1, "\002" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 54, 21, 8, 1, "OK" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 21, 8, 1, "Cancel" },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 21, 8, 1, "Help" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
+#if defined(SDLGUI_INCLUDE_NOHOSTFSDLG) || defined(SDLGUI_INCLUDE_ALL)
+enum NOHOSTFSDLG {
+	box_main = 0,
+	OK = 6
+};
+
+static SGOBJ nohostfsdlg[] = {
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 53, 11, NULL },
+	{ SGTEXT, 0, 0, 18, 1, 17, 1, "NO HOSTFS SUPPORT" },
+	{ SGTEXT, 0, 0, 2, 3, 50, 1, "Aranym  has been compiled without HOSTFS  support," },
+	{ SGTEXT, 0, 0, 2, 4, 49, 1, "if you want to have HOSTFS support in Aranym  you" },
+	{ SGTEXT, 0, 0, 2, 5, 49, 1, "need to compile Aranym again with --enable-hostfs" },
+	{ SGTEXT, 0, 0, 2, 6, 34, 1, "when running the configure script." },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 24, 9, 6, 1, "OK" },
+	{ -1, 0, 0, 0, 0, 0, 0, NULL }
+};
+#endif
+
+
