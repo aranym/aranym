@@ -314,7 +314,11 @@ static int keysymToAtari(SDL_Keysym keysym)
 			return i;
 		}
 	}
-	panicbug ("scancode mac:%x is not mapped", keysym.scancode);
+	if (keysym.scancode != 0)
+	bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
+		keysym.sym, keysym.sym,
+		keysym.scancode, keysym.scancode,
+		SDL_GetKeyName(keysym.sym));
 	
 	return 0;	/* invalid scancode */
 }
@@ -579,6 +583,7 @@ static int keysymToAtari(SDL_Keysym keysym)
 		return scanPC - offset;
 #endif
 
+	if (keysym.scancode != 0)
 	bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
 		keysym.sym, keysym.sym,
 		keysym.scancode, keysym.scancode,

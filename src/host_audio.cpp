@@ -32,7 +32,7 @@
 
 extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
-		DUNUSED(unused);
+		UNUSED(unused);
 
 		if (!host) {
 			return;

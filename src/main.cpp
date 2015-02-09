@@ -458,7 +458,8 @@ void ExitAll(void)
 	delete bootOs;
 
 	/* Pause audio before killing hw then host */
-	SDL_PauseAudio(SDL_TRUE);
+	if (SDL_WasInit(SDL_INIT_AUDIO))
+		SDL_PauseAudio(SDL_TRUE);
 
 	InputExit();
 

@@ -120,7 +120,7 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 		return;
 	}
 
-	D(bug("audioconv: from 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
+	D(bug("audioconv: from %p, %d -> %p, %d", source, *src_len, dest, *dst_len));
 
 	/* Calc needed buffer size */
 	int neededBufSize = *dst_len;
@@ -161,7 +161,7 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 	/* Set converted length */
 	*dst_len = cvt.len_cvt;
 
-	D(bug("audioconv: to 0x%08x, %d -> 0x%08x, %d", source, *src_len, dest, *dst_len));
+	D(bug("audioconv: to %p, %d -> %p, %d", source, *src_len, dest, *dst_len));
 }
 
 void AudioConv::setVolume(int newVolume)

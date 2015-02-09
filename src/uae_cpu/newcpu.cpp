@@ -1344,8 +1344,11 @@ int m68k_do_specialties(void)
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		if ((regs.sr & 0x700) == 0x700)
 		{
-			panicbug("STOPed with interrupts disabled, exiting");
+			panicbug("STOPed with interrupts disabled, exiting; pc=$%08x", m68k_getpc());
+			m68k_dumpstate (stderr, NULL);
+#if 0
 			quit_program = 1;
+#endif
 #ifdef FULL_HISTORY
 			ndebug::showHistory(20, false);
 			m68k_dumpstate (stderr, NULL);
