@@ -23,24 +23,37 @@ enum
   SGTEXT,
   SGEDITFIELD,
   SGBUTTON,
+  SGRADIOBUT,
   SGCHECKBOX,
-  SGPOPUP
+  SGPOPUP,
+  SGSCROLLBAR
 };
 
 
 /* Object flags: */
-#define SG_TOUCHEXIT     1
-#define SG_EXIT          2
-#define SG_BUTTON_RIGHT  4
-#define SG_DEFAULT       8
-#define SG_SELECTABLE   16
-#define SG_BACKGROUND   32
-#define SG_RADIO        64
+#define SG_TOUCHEXIT    0x0001   /* Exit immediately when mouse button is pressed down */
+#define SG_EXIT         0x0002   /* Exit when mouse button has been pressed (and released) */
+#define SG_BUTTON_RIGHT 0x0004   /* Text is aligned right */
+#define SG_DEFAULT      0x0008   /* Marks a default button, selectable with Enter & Return keys */
+#define SG_CANCEL       0x0010   /* Marks a cancel button, selectable with ESC key */
+#define SG_SHORTCUT     0x0020   /* Marks a shortcut button, selectable with masked letter */
+#define SG_SELECTABLE   0x0100
+#define SG_BACKGROUND   0x0200
+#define SG_RADIO        0x0400
 
 /* Object states: */
-#define SG_SELECTED   1
-#define SG_HIDDEN     2
-#define SG_DISABLED   4
+#define SG_SELECTED    0x0001
+#define SG_MOUSEDOWN   0x0002
+#define SG_FOCUSED     0x0004   /* Marks an object that has selection focus */
+#define SG_WASFOCUSED  0x0008   /* Marks an object that had selection focus & its bg needs redraw */
+#define SG_HIDDEN      0x0100
+#define SG_DISABLED    0x0200
+
+/* special shortcut keys, something that won't conflict with text shortcuts */
+#define SG_SHORTCUT_LEFT	'<'
+#define SG_SHORTCUT_RIGHT	'>'
+#define SG_SHORTCUT_UP  	'^'
+#define SG_SHORTCUT_DOWN	'|'
 
 /* Special characters: */
 #define SGCHECKBOX_RADIO_NORMAL   12
@@ -51,19 +64,20 @@ enum
 #define SGCHECKBOX_NORMAl         29
 #define SGCHECKBOX_SELECTED       30
 #define SGCHECKBOX_SELECTEd       31
-#define SGARROWUP    1
-#define SGARROWDOWN  2
-#define SGFOLDER     5
+#define SGARROWUP                1
+#define SGARROWDOWN              2
+#define SGFOLDER                 5
 
 
 typedef struct
 {
   int type;             /* What type of object */
   int flags;            /* Object flags */
-  int state;		/* Object state */
+  int state;            /* Object state */
   int x, y;             /* The offset to the upper left corner */
-  unsigned int w, h;             /* Width and height */
-  const char *txt;            /* Text string */
+  unsigned int w, h;    /* Width and height (for scrollbar : height and position) */
+  const char *txt;      /* Text string */
+  int shortcut;         /* shortcut key */
 }  SGOBJ;
 
 typedef struct

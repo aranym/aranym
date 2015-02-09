@@ -815,6 +815,7 @@ void SDLGui_DrawObject(SGOBJ *dlg, int objnum)
       SDLGui_DrawButton(dlg, objnum);
       break;
     case SGCHECKBOX:
+    case SGRADIOBUT:
       SDLGui_DrawCheckBox(dlg, objnum);
       break;
     case SGPOPUP:

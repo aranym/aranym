@@ -34,14 +34,14 @@
 /* The "Alert"-dialog: */
 SGOBJ alertdlg[1/*BACKGROUND*/ + MAX_LINES/*text*/ + 1/*OK*/ + 1/*Cancel*/ + 1/*NULL*/] =
 {
-  { SGBOX, SG_BACKGROUND, 0, 0,0, DLG_WIDTH,25, NULL },
-  { -1, 0, 0, 0,0, 0,0, NULL }
+  { SGBOX, SG_BACKGROUND, 0, 0,0, DLG_WIDTH,25, NULL, 0 },
+  { -1, 0, 0, 0,0, 0,0, NULL, 0 }
 };
 
-SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, DLG_WIDTH-2,1, NULL };
-SGOBJ obj_but_ok = { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, (DLG_WIDTH-8-8)/3,5, 8,1, "OK" };
-SGOBJ obj_but_cancel = { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, (DLG_WIDTH-8-8)*2/3+8,5, 8,1, "Cancel" };
-SGOBJ obj_null = { -1, 0, 0, 0,0, 0,0, NULL };
+SGOBJ obj_text = { SGTEXT, 0, 0, 1,1, DLG_WIDTH-2,1, NULL, 0 };
+SGOBJ obj_but_ok = { SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, (DLG_WIDTH-8-8)/3,5, 8,1, "OK", 0 };
+SGOBJ obj_but_cancel = { SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, (DLG_WIDTH-8-8)*2/3+8,5, 8,1, "Cancel", 0 };
+SGOBJ obj_null = { -1, 0, 0, 0,0, 0,0, NULL, 0 };
 
 /*
    Breaks long string to several strings of max_width, divided by '\0'
