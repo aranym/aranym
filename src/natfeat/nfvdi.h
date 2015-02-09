@@ -40,6 +40,33 @@
 #define MFDB_STAND                 10
 #define MFDB_NPLANES               12
 
+/* gsx modes */
+
+#define MD_REPLACE      1
+#define MD_TRANS        2
+#define MD_XOR          3
+#define MD_ERASE        4
+
+/* bit blt rules */
+
+#define ALL_WHITE        0
+#define S_AND_D          1
+#define S_AND_NOTD       2
+#define S_ONLY           3
+#define NOTS_AND_D       4
+#define D_ONLY           5
+#define S_XOR_D          6
+#define S_OR_D           7
+#define NOT_SORD         8
+#define NOT_SXORD        9
+#define D_INVERT        10
+#define NOT_D			D_INVERT
+#define S_OR_NOTD		11
+#define NOT_S			12
+#define NOTS_OR_D       13
+#define NOT_SANDD       14
+#define ALL_BLACK       15
+
 // This is supposed to be a fast 16x16/16 with 32 bit intermediate result
 #define SMUL_DIV(x,y,z)	((short)(((x)*(long)(y))/(z)))
 // Some other possible variants are

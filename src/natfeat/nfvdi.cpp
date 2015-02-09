@@ -313,54 +313,54 @@ uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 	uint32 destinationData, uint32 sourceData)
 {
 	switch(logicalOperation) {
-		case 0:
+		case ALL_WHITE:
 			destinationData = 0;
 			break;
-		case 1:
+		case S_AND_D:
 			destinationData = sourceData & destinationData;  
 			break;
-		case 2:
+		case S_AND_NOTD:
 			destinationData = sourceData & ~destinationData;
 			break;
-		case 3:
+		case S_ONLY:
 			destinationData = sourceData;
 			break;
-		case 4:
+		case NOTS_AND_D:
 			destinationData = ~sourceData & destinationData;
 			break;
 /*
-		case 5:
+		case D_ONLY:
 			destinationData = destinationData;
 			break;
 */
-		case 6:
+		case S_XOR_D:
 			destinationData = sourceData ^ destinationData;
 			break;
-		case 7:
+		case S_OR_D:
 			destinationData = sourceData | destinationData;
 			break;
-		case 8:
+		case NOT_SORD:
 			destinationData = ~(sourceData | destinationData);
 			break;
-		case 9:
+		case NOT_SXORD:
 			destinationData = ~(sourceData ^ destinationData);
 			break;
-		case 10:
+		case D_INVERT:
 			destinationData = ~destinationData;
 			break;
-		case 11:
+		case S_OR_NOTD:
 			destinationData = sourceData | ~destinationData;
 			break;
-		case 12:
+		case NOT_S:
 			destinationData = ~sourceData;
 			break;
-		case 13:
+		case NOTS_OR_D:
 			destinationData = ~sourceData | destinationData;
 			break;
-		case 14:
+		case NOT_SANDD:
 			destinationData = ~(sourceData & destinationData);
 			break;
-		case 15:
+		case ALL_BLACK:
 			destinationData = 0xffffffffUL;
 			break;
 	}
