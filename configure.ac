@@ -1159,8 +1159,14 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 
 	  dnl FreeBSD is using clang which requires additional options, may be to be set in
 	  dnl general for clang in the future
-  	  AS_CASE("$host_os", [freebsd*],[CFLAGS="$CFLAGS -mstackrealign"
-					  CXXFLAGS="$CXXFLAGS -mstackrealign"]);
+  	  case "$host_os" in
+          freebsd*)
+            CFLAGS="$CFLAGS -mstackrealign"
+	    CXXFLAGS="$CXXFLAGS -mstackrealign"
+            ;;
+          *) :
+            ;;
+          esac
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])

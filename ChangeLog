@@ -1,4 +1,8 @@
 2015/02/09 - Thorsten
+- configure.ac: fix building on OSX
+
+
+2015/02/09 - Thorsten
 - nfvdi: fix drawing diagonal lines
 
 
