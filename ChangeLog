@@ -1,4 +1,9 @@
 2015/02/10 - Thorsten
+add tool to strip binutils aexec header from executables;
+needed to make SLBs work on MagiC
+
+
+2015/02/10 - Thorsten
 - atari/CONFIGVARS: auto-detect CROSS-compilation environment
 
 

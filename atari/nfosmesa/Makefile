@@ -137,19 +137,31 @@ libc_v4e.o: libc.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
 
+STRIPEX = ../tools/stripex
+
+# -ffreestanding is needed to prevent GNU-C from optimizing fprintf to fputs
+# -fno-unit-at-a-time is needed to prevent static functions
+# to be moved before the SLB header
+SLB_CFLAGS = -fno-unit-at-a-time -ffreestanding
+
+SLB_OBJS=tiny_gl_slb.o lib-tinygl_68k.o lib-osmesa_68k.o lib-oldmesa_68k.o lib-misc_68k.o libc_68k.o natfeat_68k.o natfeat_asm_68k.o
 # -mprg-flags,15 is fastload, load to ttram, mallocs from ttram, and bit3 required for SLBs
-m68k/tiny_gl.slb: tiny_gl_slb.o lib-tinygl_68k.o lib-osmesa_68k.o lib-oldmesa_68k.o lib-misc_68k.o libc_68k.o natfeat_68k.o natfeat_asm_68k.o
-	$(AM_V_LD)$(CC) $(M68K_FLAGS) -nostartfiles -nostdlib -Wl,--mprg-flags,15 -Wl,-b,a.out-mintprg -s -o $@ $^ -lgcc
+m68k/tiny_gl.slb: $(SLB_OBJS) $(STRIPEX)
+	$(AM_V_LD)$(CC) $(M68K_FLAGS) -nostartfiles -nostdlib -Wl,--mprg-flags,15 -Wl,-b,a.out-mintprg -s -o $@ $(SLB_OBJS) -lgcc
+	$(AM_V_at)$(STRIPEX) $@
 
 tiny_gl_slb.o: tiny_gl_slb.c
-	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
+	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) $(SLB_CFLAGS) -c -o $@ $<
+
+$(STRIPEX): ../tools/stripex.c
+	$(AM_V_CC)$(NATIVECC) $(NATIVECFLAGS) -o $@ $<
 
 
 dirs:
 	$(AM_V_at)$(MKDIR_P) m68k v4e
 
 clean:
-	rm -f *.o m68k/*.ldg m68k/*.slb v4e/*.ldg v4e/*.slb
+	rm -f *.o m68k/*.ldg m68k/*.slb v4e/*.ldg v4e/*.slb $(STRIPEX)
 	-rmdir m68k v4e
 
 TESTDIR=/windows/c/atari/src/ldg-code/test

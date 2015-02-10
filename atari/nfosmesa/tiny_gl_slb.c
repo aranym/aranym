@@ -83,7 +83,7 @@ static char const slh_name[] = "tiny_gl.slb";
 
 /* generate the function names */
 static char const *const slh_names[] = {
-#define GL_PROC(type, ret, name, f, desc, proto, args) #name,
+#define GL_PROC(type, ret, name, f, desc, proto, args) name,
 #include "link-tinygl.h"
 	0
 };
