@@ -1,11 +1,8 @@
 # 
 # cross compiling
 #
-ifneq (yes,$(M68K_ATARI_MINT_CROSS))
-CROSS = no
-else
-CROSS = yes
-endif
+EVAL_CROSS := case `uname -s` in *MiNT*) echo no;; *) echo yes; esac
+CROSS := $(shell $(EVAL_CROSS))
 
 #
 # target and host compiler

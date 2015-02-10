@@ -1,4 +1,8 @@
 2015/02/10 - Thorsten
+- atari/CONFIGVARS: auto-detect CROSS-compilation environment
+
+
+2015/02/10 - Thorsten
 - tinygl_loadslb.c: remove "libname" argument from
   slb_load_tiny_gl(); MiNT will refuse to load the
   library anyways if it does not match the header
