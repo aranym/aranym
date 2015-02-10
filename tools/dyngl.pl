@@ -2153,7 +2153,7 @@ sub gen_tinyslbheader() {
 /*
  * load & initialize TinyGL
  */
-long slb_load_tiny_gl(const char *libname, const char *path, long min_version);
+long slb_load_tiny_gl(const char *path, long min_version);
 
 /*
  * unload TinyGL
@@ -2408,13 +2408,11 @@ EOF
 }
 
 
-long slb_load_tiny_gl(const char *libname, const char *path, long min_version)
+long slb_load_tiny_gl(const char *path, long min_version)
 {
 	long ret;
 	
-	if (libname == NULL)
-		libname = "tiny_gl.slb";
-	ret = Slbopen(libname, path, min_version, &gl_slb, &gl_exec);
+	ret = Slbopen("tiny_gl.slb", path, min_version, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
 		slb_init_tiny_gl();

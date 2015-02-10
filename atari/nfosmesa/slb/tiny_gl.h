@@ -26,7 +26,7 @@
 /*
  * load & initialize TinyGL
  */
-long slb_load_tiny_gl(const char *libname, const char *path, long min_version);
+long slb_load_tiny_gl(const char *path, long min_version);
 
 /*
  * unload TinyGL
