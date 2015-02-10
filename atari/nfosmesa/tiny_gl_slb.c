@@ -3,14 +3,27 @@
 #endif
 #include <osbind.h>
 #include "nfosmesa_nfapi.h"
+#define NFOSMESA_NO_MANGLE
 #include <slb/tiny_gl.h>
+#include <mint/basepage.h>
+#include "lib-oldmesa.h"
 
 
 #define __CDECL
 
-typedef long __CDECL (*SLB_FUNC)(BASEPAGE *pd, long fn, short nargs, ...);
+typedef long __CDECL (*SLB_LFUNC)(BASEPAGE *pd, long fn, long nargs, ...);
 
-#define UNDERSCORE "_"
+#ifndef __STRINGIFY
+#define __STRINGIFY(x) __STRINGIFY1(x)
+#define __STRINGIFY1(x) #x
+#endif
+
+/* generate the prototypes */
+#define varargs(proto...) proto
+#define NOTHING
+#define AND ,
+#define GL_PROC(type, ret, name, f, desc, proto, args) static type __CDECL slb_ ## f(BASEPAGE *base, long fn, long nwords varargs proto);
+#include "link-tinygl.h"
 
 /* The file header of a shared library */
 struct slb_head
@@ -24,63 +37,65 @@ struct slb_head
 	long		__CDECL (*slh_slb_open)(BASEPAGE *b);	/* Pointer to open()-function */
 	long		__CDECL (*slh_slb_close)(BASEPAGE *b);	/* Pointer to close()-function */
 	const char	*const *slh_names;						/* Pointer to functions names, or 0L */
-	long		slh_reserved[8];						/* Currently 0L and unused */
+	void        *sl_next;                               /* used by MetaDOS loader */
+	long		slh_reserved[7];						/* Currently 0L and unused */
 	long		slh_no_funcs;							/* Number of functions */
-	SLB_FUNC	slh_functions[];						/* The function pointers */
+	SLB_LFUNC	slh_functions[NUM_TINYGL_PROCS];		/* The function pointers */
 };
 
 
-#ifndef __STRINGIFY
-#define __STRINGIFY(x) __STRINGIFY1(x)
-#define __STRINGIFY1(x) #x
-#endif
+static char const slh_name[];
+static char const *const slh_names[];
 
-/* first include is onyl to get definition of NUM_TINYGL_PROCS */
-#define GL_PROC(name, f, desc)
-#include "link-tinygl.h"
+static long __CDECL slb_init(void);
+static void __CDECL slb_exit(void);
+static long __CDECL slb_open(BASEPAGE *bp);
+static long __CDECL slb_close(BASEPAGE *bp);
 
 /*
+ * The file header of a shared library
+ *
  * This replaces the startup code, and must be the first thing in this file,
- * and also in the resulting executable
+ * and also in the resulting executable.
+ * Make sure your binutils put this into the text section.
  */
-#define SLB_HEAD(version, flags, no_funcs) \
-	__asm__ ("\
-	.text\n\
-	.dc.l 0x70004afc\n\
-	.dc.l slh_name\n\
-	.dc.l " __STRINGIFY(version) "\n\
-	.dc.l " __STRINGIFY(flags) "\n\
-	.dc.l " UNDERSCORE "slb_init\n\
-	.dc.l " UNDERSCORE "slb_exit\n\
-	.dc.l " UNDERSCORE "slb_open\n\
-	.dc.l " UNDERSCORE "slb_close\n\
-	.dc.l slh_names\n\
-	.dc.l 0,0,0,0,0,0,0,0\n\
-	.dc.l " __STRINGIFY(no_funcs) "\n");
-
-/* spit out the header */
-SLB_HEAD(1, 0, NUM_TINYGL_PROCS)
-
+struct slb_head const _start = {
+	0x70004afc,
+	slh_name,
+	2,
+	0,
+	slb_init,
+	slb_exit,
+	slb_open,
+	slb_close,
+	slh_names,
+	0,
+	{ 0, 0, 0, 0, 0, 0, 0 },
+	NUM_TINYGL_PROCS,
+	{
 /* generate the function table */
-#define GL_PROC(name, f, desc) __asm__(".dc.l " UNDERSCORE #f "_execwrap\n");
+#define GL_PROC(type, ret, name, f, desc, proto, args) (SLB_LFUNC)slb_ ## f,
 #include "link-tinygl.h"
+	}
+};
 
-__asm__ ("\
-slh_name:	.asciz \"tiny_gl.slb\"\n\
-slh_names:\n");
+static char const slh_name[] = "tiny_gl.slb";
 
 /* generate the function names */
-#define GL_PROC(name, f, desc) __asm__(".asciz \"" name "\"\n");
+static char const *const slh_names[] = {
+#define GL_PROC(type, ret, name, f, desc, proto, args) #name,
 #include "link-tinygl.h"
-__asm__ (".even\n");
+	0
+};
 
 /* generate the wrapper functions */
-/* move return pc, and pop BASEPAGE *, function #, and number of args */
-#define GL_PROC(name, f, desc) \
-	__asm__(UNDERSCORE #f "_execwrap:\n\
-	move.l (sp),10(sp)\n\
-	lea 10(sp),sp\n\
-	braw " UNDERSCORE #f "\n");
+#define voidf /**/
+#define unused __attribute__((__unused__))
+#define GL_PROC(type, ret, name, f, desc, proto, args) \
+static type __CDECL slb_ ## f(BASEPAGE *bp unused, long fn unused, long nwords unused varargs proto) \
+{ \
+	ret f args; \
+}
 #include "link-tinygl.h"
 	
 
@@ -96,31 +111,28 @@ int err_old_nfapi(void)
  * to zero in the header, even if they
  * currently don't do anything
  */
-static __attribute__((used))
-long __CDECL slb_init(void)
+static long __CDECL slb_init(void)
 {
 	return 0;
 }
 
 
-static __attribute__((used))
-void __CDECL slb_exit(void)
+static void __CDECL slb_exit(void)
 {
 }
 
 
-static __attribute__((used))
-long __CDECL slb_open(BASEPAGE *pd)
+static long __CDECL slb_open(BASEPAGE *pd)
 {
 	(void) pd;
 	return 0;
 }
 
 
-static __attribute__((used))
-void __CDECL slb_close(BASEPAGE *pd)
+static long __CDECL slb_close(BASEPAGE *pd)
 {
 	(void) pd;
+	return 0;
 }
 
 

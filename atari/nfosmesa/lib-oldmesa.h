@@ -36,7 +36,7 @@
 void *Atari_MxAlloc(unsigned long size);
 void err_init(const char *str);
 
-void *APIENTRY OSMesaCreateLDG( long format, long type, long width, long height );
+void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint height );
 void APIENTRY OSMesaDestroyLDG(void);
 GLsizei APIENTRY max_width(void);
 GLsizei APIENTRY max_height(void);

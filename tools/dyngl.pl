@@ -1807,6 +1807,7 @@ sub gen_tinyldglink() {
 	my $gl;
 	my $glx;
 	my $args;
+	my $ret;
 	my $key;
 	
 	add_missing(\%oldmesa);
@@ -1826,6 +1827,18 @@ sub gen_tinyldglink() {
 		$args = $ent->{args};
 		$prototype = $ent->{proto};
 		$gl = $ent->{gl};
+		if ($return_type eq "void")
+		{
+			$ret = "voidf";
+		} else {
+			$ret = "return ";
+		}
+		if ($prototype eq "void")
+		{
+			$prototype = "NOTHING";
+		} else {
+			$prototype = "AND " . $prototype;
+		}
 		$complete_name = $gl . $function_name;
 		# remove trailing 'f' from export name
 		if (substr($complete_name, -1) eq "f" && defined($floatfuncs{substr($complete_name, 0, length($complete_name) - 1)})) {
@@ -1833,7 +1846,7 @@ sub gen_tinyldglink() {
 		}
 		$glx = "";
 		$glx = "tinygl" if ($complete_name eq "information" || $complete_name eq "swapbuffer" || $complete_name eq "exception_error");
-		print "GL_PROC(\"${gl}${function_name}\", ${glx}${complete_name}, \"${return_type} ${complete_name}(${prototype})\")\n";
+		print "GL_PROC($return_type, $ret, \"${gl}${function_name}\", ${glx}${complete_name}, \"${return_type} ${complete_name}(${prototype})\", ($prototype), ($args))\n";
 		$tinygl_count++;
 	}
 
@@ -2262,6 +2275,7 @@ sub gen_tinyslbsource() {
 	my $return_type;
 	my $gl;
 	my $glx;
+	my $args;
 	my $params;
 	my $nargs;
 	my $argcount;
@@ -2294,6 +2308,27 @@ sub gen_tinyslbsource() {
 
 struct _gl_tiny gl;
 
+/*
+ * The "nwords" argument should actually only be a "short".
+ * MagiC will expect it that way, with the actual arguments
+ * following.
+ * However, a "short" in the actual function definition
+ * will be treated as promoted to int.
+ * So we pass a long instead, with the upper half
+ * set to 1 + nwords to account for the extra space.
+ * This also has the benefit of keeping the stack longword aligned.
+ */
+#undef SLB_NWORDS
+#define SLB_NWORDS(_nwords) ((((long)(_nwords) + 1l) << 16) | (long)(_nwords))
+#undef SLB_NARGS
+#define SLB_NARGS(_nargs) SLB_NWORDS(_nargs * 2)
+
+#ifndef __slb_lexec_defined
+typedef long  __CDECL (*SLB_LEXEC)(SLB_HANDLE slb, long fn, long nwords, ...);
+#define __slb_lexec_defined 1
+#endif
+
+
 EOF
 
 	foreach $key (keys %floatfuncs) {
@@ -2315,15 +2350,12 @@ EOF
 		$funcno = $tinygl{$key} - 1;
 		$prototype = $ent->{proto};
 		$params = $ent->{params};
+		$args = $ent->{args};
 		$gl = $ent->{gl};
 		$glx = $gl;
 		$glx = "" if ($glx eq "gl");
 		print "static $return_type APIENTRY exec_${gl}${function_name}($prototype)\n";
 		print "{\n";
-		print "\tstruct ${function_name}_args {\n";
-		print "\t\tSLB_HANDLE slb;\n";
-		print "\t\tlong fn;\n";
-		print "\t\tshort nwords;\n";
 		$argcount = $#$params + 1;
 		$nargs = 0;
 		for (my $argc = 0; $argc < $argcount; $argc++)
@@ -2338,35 +2370,15 @@ EOF
 			} else {
 				$nargs += 1;
 			}
-			if ($pointer == 1) {
-				$pointer = "*";
-			} else {
-				$pointer = "";
-			}
-			print "\t\t${type} ${pointer}${name};\n";
 		}
-		print "\t} args;\n";
-		print "\t$return_type __CDECL (*exec)(struct ${function_name}_args) = ($return_type __CDECL (*)(struct ${function_name}_args))gl_exec;\n";
-		print "\targs.slb = gl_slb;\n";
-		print "\targs.fn = $funcno;\n";
-		$nargs *= 2;
-		print "\targs.nwords = $nargs;\n";
-		for (my $argc = 0; $argc < $argcount; $argc++)
-		{
-			my $param = $params->[$argc];
-			my $name = $param->{name};
-			# hack for exception_error, which has a function pointer as argument
-			if ($function_name eq "exception_error") {
-				$name = "exception";
-			}
-			print "\targs.${name} = ${name};\n";
-		}
+		print "\tSLB_LEXEC exec = (SLB_LEXEC)gl_exec;\n";
 		if ($return_type eq 'void') {
 			$ret = '';
 		} else {
-			$ret = "return ";
+			$ret = "return ($return_type)";
 		}
-		print "\t${ret}(*exec)(args);\n";
+		$args = ", " . $args unless ($args eq "");
+		print "\t${ret}(*exec)(gl_slb, $funcno, SLB_NARGS($nargs)$args);\n";
 		print "}\n\n";
 	}
 

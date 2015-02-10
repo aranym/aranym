@@ -41,9 +41,9 @@
 
 static PROC const LibFunc[]={ 
 #if WITH_PROTOTYPE_STRINGS
-#define GL_PROC(name, f, desc) { name, desc, f },
+#define GL_PROC(type, ret, name, f, desc, proto, args) { name, desc, f },
 #else
-#define GL_PROC(name, f, desc) { name, 0, f },
+#define GL_PROC(type, ret, name, f, desc, proto, args) { name, 0, f },
 #endif
 	#include "link-tinygl.h"	/* 83 functions */
 	{NULL, NULL, NULL}

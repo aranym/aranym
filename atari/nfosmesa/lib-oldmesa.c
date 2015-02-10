@@ -48,7 +48,7 @@
 
 static OSMesaContext	oldmesa_ctx=NULL;
 
-void *APIENTRY OSMesaCreateLDG( long format, long type, long width, long height )
+void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint height )
 {
 	unsigned long buffer_size;
 	void *buffer = NULL;
