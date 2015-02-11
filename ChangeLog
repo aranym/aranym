@@ -1,4 +1,8 @@
 2015/02/11 - Thorsten
+use more consistent exit codes for failures.
+
+
+2015/02/11 - Thorsten
 support EXTENDED_SIGSEGV on MinGW
 
 

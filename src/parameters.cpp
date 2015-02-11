@@ -1542,11 +1542,10 @@ void early_cmdline_check(int argc, char **argv) {
 				exit(EXIT_FAILURE);
 			}
 		} else if ((strcmp(p, "-h") == 0) || (strcmp(p, "--help") == 0)) {
-			usage(0);
-			exit(0);
+			usage(EXIT_SUCCESS);
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
 			print_version();
-			exit (0);
+			exit(EXIT_SUCCESS);
 		}
 	}
 }

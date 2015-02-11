@@ -83,7 +83,7 @@ void install_sigsegv() {
 	memset(&act, 0, sizeof(act));
 	if (oact == NULL) {
 		panicbug("Not enough memory");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	act.sa_sigaction = segfault_vec;
 	sigemptyset (&act.sa_mask);

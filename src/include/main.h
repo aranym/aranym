@@ -57,6 +57,6 @@ extern void setactvdebug(int);
 #endif
 
 // Platform-specific functions
-extern void QuitEmulator(void);				// Quit emulator
+extern void QuitEmulator(int exitcode = EXIT_FAILURE);				// Quit emulator
 
 #endif

@@ -1,4 +1,3 @@
-
 /*
  * main_unix.cpp - Startup code for Unix
  *
@@ -102,7 +101,7 @@ void segmentationfault(int)
 #else
 	panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
-	exit(0);
+	exit(EXIT_FAILURE);
 }
 
 static void allocate_all_memory()
@@ -196,7 +195,7 @@ static void install_signal_handler()
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
 		panicbug("Couldn't protect ROM");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
 	D(bug("Protected ROM          (%p - %p)", ROMBaseHost, ROMBaseHost + ROMSize));
@@ -207,7 +206,7 @@ static void install_signal_handler()
 # ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't protect RAMEnd");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 	D(bug("Protected RAMEnd       (%p - %p)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
 #if USE_VALGRIND
@@ -218,7 +217,7 @@ static void install_signal_handler()
 # ifdef HW_SIGSEGV
 	if (vm_protect(HWBaseHost, HWSize, VM_PAGE_NOACCESS)) {
 		panicbug("Couldn't set HW address space");
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
 	D(bug("Protected HW space     (%p - %p)", HWBaseHost, HWBaseHost + HWSize));
@@ -280,7 +279,7 @@ int main(int argc, char **argv)
 
 	// parse command line switches
 	if (!decode_switches(argc, argv))
-		exit(-1);
+		exit(EXIT_FAILURE);
 
 	allocate_all_memory();
 
@@ -303,7 +302,7 @@ int main(int argc, char **argv)
 	// returning from emulation after the NMI
 	remove_signal_handler();
 
-	QuitEmulator();
+	QuitEmulator(0);
 
 	return 0;
 }
@@ -312,7 +311,7 @@ int main(int argc, char **argv)
 /*
  *  Quit emulator
  */
-void QuitEmulator(void)
+void QuitEmulator(int exitcode)
 {
 	D(bug("QuitEmulator"));
 
@@ -351,5 +350,5 @@ void QuitEmulator(void)
 	// Exit VM wrappers
 	vm_exit();
 
-	exit(0); // the Quit is real
+	exit(exitcode); // the Quit is real
 }

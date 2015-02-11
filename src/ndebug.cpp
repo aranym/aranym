@@ -53,8 +53,8 @@ extern "C" int vasprintf(char **, const char *, va_list);
 #endif
 
 #include "parameters.h"
+#include "main.h"	/* QuitEmulator */
 
-extern void QuitEmulator(void);
 
 #ifndef HAVE_STRDUP
 extern "C" char *strdup(const char *s)
@@ -667,9 +667,9 @@ int ndebug::canon(FILE *f, uaecptr nextpc, uaecptr &nxdis, uaecptr &nxmem) {
 		case 'Q':
 			fprintf(f, "Really quit?\n");
 			if (fgets(input, 80, stdin) == NULL)
-				QuitEmulator();
+				QuitEmulator(0);
 			if (input[0] == 'y' || input[0] == 'Y')
-				QuitEmulator();
+				QuitEmulator(0);
 			break;
 		case 'R':
 			m68k_reset();
