@@ -74,8 +74,8 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
   {
   	CONTEXT_ATYPE CONTEXT_NAME = ExceptionInfo->ContextRecord;
   	char *fault_addr = (char *)ExceptionInfo->ExceptionRecord->ExceptionInformation[1];
-	D(bug("\nsegfault: pc=%08x, eip=%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], fault_addr, (memptr)(uintptr)(fault_addr - FMEMORY)));
-    handle_access_fault(CONTEXT_NAME, (memptr)(uintptr)(fault_addr - FMEMORY));
+	D(bug("\nsegfault: pc=%08x, eip=%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], fault_addr, (memptr)(uintptr)(fault_addr - fixed_memory_offset)));
+    handle_access_fault(CONTEXT_NAME, (memptr)(uintptr)(fault_addr - fixed_memory_offset));
     return EXCEPTION_CONTINUE_EXECUTION;
   }
   return EXCEPTION_CONTINUE_SEARCH;

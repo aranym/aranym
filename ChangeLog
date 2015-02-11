@@ -1,4 +1,8 @@
 2015/02/11 - Thorsten
+make setting of FMEMORY configurable.
+
+
+2015/02/11 - Thorsten
 use more consistent exit codes for failures.
 
 

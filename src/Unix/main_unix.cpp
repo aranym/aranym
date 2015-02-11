@@ -40,6 +40,9 @@
 #include "parameters.h"
 #include "newcpu.h"
 #include "version.h"
+#if defined _WIN32 || defined(OS_cygwin)
+#include "win32_supp.h"
+#endif
 
 #define USE_VALGRIND 0
 #if USE_VALGRIND
@@ -104,32 +107,32 @@ void segmentationfault(int)
 	exit(EXIT_FAILURE);
 }
 
-static void allocate_all_memory()
+static bool allocate_all_memory(uintptr fmemory, bool quiet)
 {
 #if DIRECT_ADDRESSING || FIXED_ADDRESSING
-	// Initialize VM system
-	vm_init();
-
 #if FIXED_ADDRESSING
-	if (vm_acquire_fixed((void *)FMEMORY, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
-		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
-		QuitEmulator();
+	if (vm_acquire_fixed((void *)fmemory, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {
+		if (!quiet)
+			panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
+		return false;
 	}
-	RAMBaseHost = (uint8 *)FMEMORY;
+	RAMBaseHost = (uint8 *)fmemory;
 	ROMBaseHost = RAMBaseHost + ROMBase;
 	HWBaseHost = RAMBaseHost + HWBase;
 	FastRAMBaseHost = RAMBaseHost + FastRAMBase;
 # ifdef EXTENDED_SIGSEGV
-	if (vm_acquire_fixed((void *)(FMEMORY + ~0xffffffL), RAMSize + ROMSize + HWSize) == false) {
-		panicbug("Not enough free memory (protected mirror RAM 0x%08x).", RAMSize);
-		QuitEmulator();
+	if (vm_acquire_fixed((void *)(fmemory + ~0xffffffL), RAMSize + ROMSize + HWSize) == false) {
+		if (!quiet)
+			panicbug("Not enough free memory (protected mirror RAM 0x%08x-0x%08x).", (unsigned int)(fmemory + ~0xffffffL), (unsigned int)(fmemory + ~0xffffffL + RAMSize + ROMSize + HWSize));
+		return false;
 	}
 
 #  ifdef HW_SIGSEGV
 
 	if ((FakeIOBaseHost = (uint8 *)vm_acquire(0x00100000)) == VM_MAP_FAILED) {
-		panicbug("Not enough free memory (Shadow IO).");
-		QuitEmulator();
+		if (!quiet)
+			panicbug("Not enough free memory (Shadow IO).");
+		return false;
 	}
 
 #  endif /* HW_SISEGV */
@@ -137,8 +140,9 @@ static void allocate_all_memory()
 #else
 	RAMBaseHost = (uint8*)vm_acquire(RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd);
 	if (RAMBaseHost == VM_MAP_FAILED) {
-		panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
-		QuitEmulator();
+		if (!quiet)
+			panicbug("Not enough free memory (ST-RAM 0x%08x + TT-RAM 0x%08x).", RAMSize, FastRAMSize);
+		return false;
 	}
 
 	ROMBaseHost = RAMBaseHost + ROMBase;
@@ -162,6 +166,8 @@ static void allocate_all_memory()
 #  endif
 # endif /* EXTENDED_SIGSEGV */
 #endif /* DIRECT_ADDRESSING || FIXED_ADDRESSING */
+	
+	return true;
 }
 
 #ifndef EXTENDED_SIGSEGV
@@ -174,11 +180,8 @@ void uninstall_sigsegv() {
 }
 #endif
 
-static void install_signal_handler()
+static bool install_signal_handler(bool quiet)
 {
-	install_sigsegv();
-	D(bug("Sigsegv handler installed"));
-
 #ifdef HAVE_SIGACTION
 	{
 		struct sigaction sa;
@@ -194,8 +197,9 @@ static void install_signal_handler()
 
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
-		panicbug("Couldn't protect ROM");
-		exit(EXIT_FAILURE);
+		if (!quiet)
+			panicbug("Couldn't protect ROM");
+		return false;
 	}
 
 	D(bug("Protected ROM          (%p - %p)", ROMBaseHost, ROMBaseHost + ROMSize));
@@ -205,8 +209,9 @@ static void install_signal_handler()
 
 # ifdef RAMENDNEEDED
 	if (vm_protect(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd, VM_PAGE_NOACCESS)) {
-		panicbug("Couldn't protect RAMEnd");
-		exit(EXIT_FAILURE);
+		if (!quiet)
+			panicbug("Couldn't protect RAMEnd");
+		return false;
 	}
 	D(bug("Protected RAMEnd       (%p - %p)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
 #if USE_VALGRIND
@@ -216,15 +221,17 @@ static void install_signal_handler()
 
 # ifdef HW_SIGSEGV
 	if (vm_protect(HWBaseHost, HWSize, VM_PAGE_NOACCESS)) {
-		panicbug("Couldn't set HW address space");
-		exit(EXIT_FAILURE);
+		if (!quiet)
+			panicbug("Couldn't set HW address space");
+		return false;
 	}
 
 	D(bug("Protected HW space     (%p - %p)", HWBaseHost, HWBaseHost + HWSize));
 
 	if (vm_protect(RAMBaseHost + ~0xffffffUL, 0x1000000, VM_PAGE_NOACCESS)) {
-		panicbug("Couldn't set mirror address space");
-		QuitEmulator();
+		if (!quiet)
+			panicbug("Couldn't set mirror address space");
+		return false;
 	}
 
 	D(bug("Protected mirror space (%p - %p)", RAMBaseHost + ~0xffffffUL, RAMBaseHost + ~0xffffffUL + RAMSize + ROMSize + HWSize));
@@ -239,6 +246,8 @@ static void install_signal_handler()
 #endif
 
 #endif /* EXTENDED_SIGSEGV */
+
+	return true;
 }
 
 static void remove_signal_handler()
@@ -246,6 +255,169 @@ static void remove_signal_handler()
 	uninstall_sigsegv();
 	D(bug("Sigsegv handler removed"));
 }
+
+
+#if FIXED_ADDRESSING
+
+#include <setjmp.h>
+
+static volatile int try_gotsig;
+static sigjmp_buf seg_jmpbuf;
+
+#ifdef OS_irix
+static void try_segfault()
+#else
+static void try_segfault(int)
+#endif
+{
+	try_gotsig = 1;
+	printf("got segfault\n");
+	fflush(stdout);
+	siglongjmp(seg_jmpbuf, 1);
+}
+
+
+static void try_release(uintptr addr, size_t size)
+{
+	if (RAMBaseHost != VM_MAP_FAILED)
+	{
+# ifdef EXTENDED_SIGSEGV
+		/* release mirror RAM */
+		void *mirror = (void *)(addr + ~0xffffffL);
+		if (mirror != 0 && mirror != VM_MAP_FAILED)
+			vm_release(mirror, RAMSize + ROMSize + HWSize);
+#  ifdef HW_SIGSEGV
+		vm_release((void *)FakeIOBaseHost, 0x00100000);
+#  endif
+#endif
+		vm_release((void *)addr, size);
+	}
+}
+
+
+static bool try_acquire(uintptr addr, size_t ttram_size)
+{
+	size_t const stram_size = RAMSize + ROMSize + HWSize;
+	size_t try_size = stram_size + ttram_size + RAMEnd;
+	bool const quiet = true;
+	
+	FastRAMSize = ttram_size;
+	FakeIOBaseHost = (uint8 *)VM_MAP_FAILED;
+	RAMBaseHost = (uint8 *)VM_MAP_FAILED;
+	try_gotsig = 0;
+	if (sigsetjmp(seg_jmpbuf, 1) != 0)
+	{
+		try_release(addr, try_size);
+		return false;
+	}
+	signal(SIGSEGV, (void (*)(int))try_segfault);
+#ifdef SIGBUS
+	signal(SIGBUS, (void (*)(int))try_segfault);
+#endif
+	if (allocate_all_memory(addr, quiet) == false)
+	{
+		try_release(addr, try_size);
+		return false;
+	}
+	
+	if (install_signal_handler(quiet) == false)
+	{
+		try_release(addr, try_size);
+		return false;
+	}
+	
+	try_release(addr, try_size);
+	if (try_gotsig)
+		return false;
+	
+	return true;
+}
+
+
+void vm_probe_fixed(void)
+{	
+	// This might need tweaking
+	// 0x01000000 gives SIGSEGV without being catched by handler on linux
+	uintptr const probestart = 0x02000000;
+	uintptr const probeend   = 0xfff00000;
+	size_t  const step       = 0x00100000;
+	size_t  const mapsize    = (probeend - probestart) / step;
+	
+	size_t ttram_size = 0;
+	size_t best_size = 0;
+	uintptr best_addr = 0;
+	uintptr addr;
+	char *maptab;
+	size_t i, j;
+	
+	maptab = new char[mapsize];
+	memset(maptab, 0, mapsize);
+	
+	vm_init();
+	/* no install_sigsegv() here; catch segfaults seperately */
+	
+	printf("probing available memory ranges (this may take a while)\n");
+	fflush(stdout);
+	for (addr = probestart; addr < probeend; addr += step)
+	{
+		if (try_acquire(addr, ttram_size))
+			maptab[(addr - probestart) / step] = 1;
+	}
+	for (i = 0; i < mapsize; i++)
+	{
+		if (maptab[i])
+		{
+			for (j = i + 1; j < mapsize; j++)
+				if (!maptab[j])
+					break;
+			size_t size = (j - i) * step;
+			addr = probestart + i * step;
+			size_t ttram_size;
+			size_t const reserved = RAMSize + ROMSize + HWSize + RAMEnd;
+			if (size > reserved)
+				ttram_size = size - reserved;
+			else
+				ttram_size = 0;
+			if (ttram_size > best_size)
+			{
+				best_addr = addr;
+				best_size = ttram_size;
+			}
+			printf("available: 0x%08x - 0x%08x (%uMB TT-RAM)\n", (unsigned int)addr, (unsigned int)(addr + size), (unsigned int)(ttram_size / 0x00100000));
+			i = j - 1;
+		}
+	}
+	
+	if (best_addr)
+		printf("suggested --fixedmem setting: 0x%08x (%uMB TT-RAM)\n", (unsigned int)best_addr, (unsigned int)(best_size / 0x00100000));
+	else
+		printf("no suitable address to allow TT-RAM found!\n");
+	
+	delete [] maptab;
+}
+#endif
+
+
+void vm_probe_fixed_hint(void)
+{
+#if FIXED_ADDRESSING
+	/*
+	 * give a hint for the command line option if memory allocation fails
+	 * (with FIXED_ADDRESSING, this is usually not caused by missing memory,
+	 * but overlapping of virtual addresses due to the --fixedmem setting)
+	 */
+	char msg[256];
+	snprintf(msg, sizeof(msg),
+		"failed to acquire virtual memory at 0x%08x\n"
+		"try running 'aranym --probe-fixed'",
+		(unsigned int) fixed_memory_offset);
+	panicbug(msg);
+#if defined _WIN32 || defined(OS_cygwin)
+	MessageBoxA(NULL, msg, "ARAnyM: memory setup error", MB_ICONSTOP);
+#endif
+#endif
+}
+
 
 #if defined(OS_cygwin) || defined(OS_mingw)
 /* we don't link to SDL_main */
@@ -281,15 +453,30 @@ int main(int argc, char **argv)
 	if (!decode_switches(argc, argv))
 		exit(EXIT_FAILURE);
 
-	allocate_all_memory();
+#if DIRECT_ADDRESSING || FIXED_ADDRESSING
+	// Initialize VM system
+	vm_init();
+#endif
 
+	if (!allocate_all_memory(fixed_memory_offset, false))
+	{
+		vm_probe_fixed_hint();
+		QuitEmulator();
+	}
+	
 	// Initialize everything
 	D(bug("Initializing All Modules..."));
 	if (!InitAll())
 		QuitEmulator();
 	D(bug("Initialization complete"));
 
-	install_signal_handler();
+	install_sigsegv();
+	D(bug("Sigsegv handler installed"));
+	if (!install_signal_handler(false))
+	{
+		vm_probe_fixed_hint();
+		QuitEmulator();
+	}
 
 #ifdef OS_darwin
 	refreshMenuKeys();

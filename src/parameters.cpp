@@ -34,6 +34,7 @@
 #include "cfgopts.h"
 #include "natfeat/nf_base.h"
 #include "rtc.h"
+#include "vm_alloc.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -94,6 +95,9 @@
 # define PROVIDES_NATFEATS "<undefined>"
 #endif
 
+#define OPT_PROBE_FIXED (256 + 0)
+#define OPT_FIXEDMEM_OFFSET (256 + 1)
+
 static struct option const long_options[] =
 {
 #ifndef FixedSizeFastRAM
@@ -125,6 +129,10 @@ static struct option const long_options[] =
   {"lilo", no_argument, 0, 'l'},
 #endif
   {"display", required_argument, 0, 'P'},
+#if FIXED_ADDRESSING
+  {"probe-fixed", no_argument, 0, OPT_PROBE_FIXED },
+  {"fixedmem", required_argument, 0, OPT_FIXEDMEM_OFFSET },
+#endif
   {NULL, 0, NULL, 0}
 };
 
@@ -147,6 +155,9 @@ bool boot_lilo = false;
 bool halt_on_reboot = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
+#if FIXED_ADDRESSING
+uintptr fixed_memory_offset = FMEMORY;
+#endif
 
 static char config_file[512];
 
@@ -546,6 +557,7 @@ bool stringToKeysym(bx_hotkey *keysym, const char *string)
 /*************************************************************************/
 struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
+	{ "FixedMemoryOffset", HexLong_Tag, &bx_options.fixed_memory_offset, 0, 0}, // FIXME: implement Ptr_Tag
 	{ "Floppy", Path_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
 	{ "TOS", Path_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
 	{ "EmuTOS", Path_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
@@ -572,6 +584,9 @@ void preset_global()
 #else
   FastRAMSize = 0;
 #endif
+#if FIXED_ADDRESSING
+	bx_options.fixed_memory_offset = fixed_memory_offset;
+#endif
 #ifdef ENABLE_EPSLIMITER
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
@@ -583,6 +598,9 @@ void postload_global()
 #ifndef FixedSizeFastRAM
 	FastRAMSize = bx_options.fastram * 1024 * 1024;
 #endif
+#if FIXED_ADDRESSING
+	fixed_memory_offset = bx_options.fixed_memory_offset;
+#endif
 	if (!isalpha(bx_options.bootdrive))
 		bx_options.bootdrive = 0;
 }
@@ -590,6 +608,9 @@ void postload_global()
 void presave_global()
 {
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
+#if FIXED_ADDRESSING
+	bx_options.fixed_memory_offset = fixed_memory_offset;
+#endif
 	if (bx_options.bootdrive == 0)
 		bx_options.bootdrive = ' ';
 }
@@ -1419,6 +1440,10 @@ Options:\n\
 #ifndef FixedSizeFastRAM
   printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
 #endif
+#if FIXED_ADDRESSING
+  printf("      --fixedmem OFFSET      use OFFSET for Atari memory (default: 0x%08x)\n", (unsigned int) fixed_memory_offset);
+  printf("      --probe-fixed          try to figure out best value for above offset\n");
+#endif
 #ifdef DEBUGGER
   printf("  -D, --debug                start debugger\n");
 #endif
@@ -1515,7 +1540,10 @@ static void print_version(void)
 	infoprint("CPU JIT compiler : %s%s", USE_JIT ? "enabled" : "disabled", USE_JIT ? (bx_options.jit.jit ? " (active)" : " (inactive)") : "");
 	infoprint("FPU JIT compiler : %s%s", USE_JIT_FPU ? "enabled" : "disabled", USE_JIT_FPU ? (bx_options.jit.jitfpu ? " (active)" : " (inactive)") : "");
 #if FIXED_ADDRESSING
-	infoprint("Addressing mode  : fixed (0x%08x)", FMEMORY);
+	if (fixed_memory_offset != FMEMORY)
+	infoprint("Addressing mode  : fixed (0x%08x; default: 0x%08x)", (unsigned int) fixed_memory_offset, FMEMORY);
+	else
+	infoprint("Addressing mode  : fixed (0x%08x)", (unsigned int) fixed_memory_offset);
 #else
 	infoprint("Addressing mode  : %s", DIRECT_ADDRESSING ? "direct" : "normal");
 #endif
@@ -1546,6 +1574,11 @@ void early_cmdline_check(int argc, char **argv) {
 		} else if ((strcmp(p, "-V") == 0) || (strcmp(p, "--version") == 0)) {
 			print_version();
 			exit(EXIT_SUCCESS);
+#if FIXED_ADDRESSING
+		} else if ((strcmp(p, "--probe-fixed") == 0)) {
+			vm_probe_fixed();
+			exit(EXIT_SUCCESS);
+#endif
 		}
 	}
 }
@@ -1758,6 +1791,16 @@ int process_cmdline(int argc, char **argv)
 				}
 				break;
 				
+			case OPT_PROBE_FIXED:
+				/* processed in early_cmdline_check already */
+				break;
+
+#if FIXED_ADDRESSING
+			case OPT_FIXEDMEM_OFFSET:
+				bx_options.fixed_memory_offset = strtoul(optarg, NULL, 0);
+				break;
+#endif
+
 			default:
 				usage (EXIT_FAILURE);
 		}

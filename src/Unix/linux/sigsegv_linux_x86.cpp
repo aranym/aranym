@@ -72,15 +72,15 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 {
 	CONTEXT_ATYPE CONTEXT_NAME = (CONTEXT_ATYPE) _ucp;
 	uintptr faultaddr = (uintptr)sip->si_addr;	/* CONTEXT_REGS[REG_CR2] */
-	memptr addr = (memptr)(faultaddr - FMEMORY);
+	memptr addr = (memptr)(faultaddr - fixed_memory_offset);
 #if DEBUG
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
 	if (addr < 0x00f00000 || addr > 0x00ffffff) // YYY
 		bug("\nsegfault: pc=%08x, " REG_RIP_NAME " =%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], sip->si_addr, addr);
-	if (faultaddr < (uintptr)(FMEMORY - 0x1000000UL)
+	if (faultaddr < (uintptr)(fixed_memory_offset - 0x1000000UL)
 #ifdef CPU_x86_64
-		|| faultaddr >= ((uintptr)FMEMORY + 0x100000000UL)
+		|| faultaddr >= ((uintptr)fixed_memory_offset + 0x100000000UL)
 #endif
 		)
 	{

@@ -212,7 +212,7 @@ static void segfault_vec(int /*sig*/, siginfo_t *sip, void *uc) {
 	mcontext_t *context = &(((struct ucontext *)uc)->uc_mcontext);
 	unsigned long *regs = &context->arm_r0;
 	uintptr addr = (uintptr)sip->si_addr;
-        addr -= FMEMORY;
+        addr -= fixed_memory_offset;
 
 	if (handle_arm_instruction(regs, addr)) {
 	}

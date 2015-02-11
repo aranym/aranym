@@ -121,7 +121,7 @@ enum {
 
 static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
 {
-	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)sip->si_addr /* CONTEXT_REGS[REG_CR2] */ - FMEMORY));
+	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)sip->si_addr /* CONTEXT_REGS[REG_CR2] */ - fixed_memory_offset));
 }
 
 void install_sigsegv() {

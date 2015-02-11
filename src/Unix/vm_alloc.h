@@ -110,4 +110,10 @@ extern int vm_release(void * addr, size_t size);
 
 extern int vm_protect(void * addr, size_t size, int prot);
 
+/*
+ * probe for a suitable value of fixed_memory_offset
+ */
+void vm_probe_fixed(void);
+void vm_probe_fixed_hint(void);
+
 #endif /* VM_ALLOC_H */

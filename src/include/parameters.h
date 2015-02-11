@@ -301,6 +301,7 @@ typedef struct {
   char			bootstrap_args[512];
   char			bootdrive;
   uint32		fastram;
+  unsigned long fixed_memory_offset; // FIXME: should be uintptr
   bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
@@ -310,6 +311,9 @@ extern bx_options_t bx_options;
 
 
 extern uint32 FastRAMSize;	// Size of Fast-RAM
+#if FIXED_ADDRESSING
+extern uintptr fixed_memory_offset;	// Virtual address of atari memory
+#endif
 
 extern char *program_name;
 extern char rom_path[512];

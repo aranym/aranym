@@ -274,7 +274,7 @@ static char replybuf[MSG_SIZE];
 static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 										sigsegv_address_t /* fault_instruction */,
 										 SIGSEGV_THREAD_STATE_TYPE *state) {
-	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)fault_address - FMEMORY));
+	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)fault_address - fixed_memory_offset));
 	return SIGSEGV_RETURN_SUCCESS;
 }
 										 
