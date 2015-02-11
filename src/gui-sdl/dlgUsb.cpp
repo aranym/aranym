@@ -93,7 +93,7 @@ void DlgUsb::enable_buttons(void)
 }
 
 
-void disable_buttons(void)
+void DlgUsb::disable_buttons(void)
 {
 	int i = 0;
 
@@ -176,14 +176,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_0].state &= ~SG_DISABLED;
-					disable_buttons();
+					if ((++number_ports_used == NUMBER_OF_PORTS))
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_0].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -193,14 +195,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_1].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_1].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -210,14 +214,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_2].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_2].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -227,14 +233,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_3].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_3].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -244,14 +252,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_4].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_4].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -261,14 +271,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_5].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_5].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -278,14 +290,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_6].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_6].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -295,14 +309,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_7].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_7].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 
@@ -312,14 +328,16 @@ int DlgUsb::processDialog(void)
 						break;
 					D(bug("dlgUsb: Device plugged"));
 					dlg[CONNECTED_8].state &= ~SG_DISABLED;
-					disable_buttons();
+					if (++number_ports_used == NUMBER_OF_PORTS)
+						disable_buttons();
 				}
 				else {
 					if (usbhost_release_device(virtdev_idx) == -1)
 						break;
 					D(bug("dlgUsb: Device unplugged"));
 					dlg[CONNECTED_8].state |= SG_DISABLED;
-					enable_buttons();
+					if (--number_ports_used < NUMBER_OF_PORTS)
+						enable_buttons();
 				}
 				break;
 		}
