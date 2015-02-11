@@ -248,6 +248,11 @@ static void remove_signal_handler()
 	D(bug("Sigsegv handler removed"));
 }
 
+#if defined(OS_cygwin) || defined(OS_mingw)
+/* we don't link to SDL_main */
+#undef main
+#endif
+
 /*
  *  Main program
  */

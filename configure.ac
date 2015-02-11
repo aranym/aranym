@@ -669,6 +669,9 @@ fi dnl HAVE_MMAP_VM
 AH_TEMPLATE(HAVE_WIN32_VM, [Define if your system has a working VirtualAlloc()-based memory allocator.])
 if test "$OS_TYPE" = mingw; then
 	AC_DEFINE([HAVE_WIN32_VM])
+        if [[ "x$HAVE_I386" = "xyes" ]]; then
+		LDFLAGS="$LDFLAGS -Wl,--large-address-aware"
+	fi
 fi
 
 dnl Check if we have POSIX shared memory support
@@ -1173,7 +1176,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
           ;;
       esac
       ;;
-    cygwin*)
+    cygwin*|mingw*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
         SYSSRCS="$SYSSRCS Unix/cygwin/sigsegv_cygwin.cpp"
         AC_DEFINE(NO_NESTED_SIGSEGV, 1)
@@ -1236,6 +1239,11 @@ for am in $ADDRESSING_TEST_ORDER; do
       break
     fi
     if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+      break
+    fi
+    if [[ "x$OS_TYPE" = "xmingw" -a "x$HAVE_I386" ]]; then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break

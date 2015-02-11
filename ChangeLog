@@ -1,3 +1,7 @@
+2015/02/11 - Thorsten
+support EXTENDED_SIGSEGV on MinGW
+
+
 2015/02/10 - Thorsten
 add tool to strip binutils aexec header from executables;
 needed to make SLBs work on MagiC

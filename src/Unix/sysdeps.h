@@ -85,7 +85,7 @@
 
 #endif
 
-#if defined(OS_beos) || defined(OS_cygwin)
+#if defined(OS_beos) || defined(OS_cygwin) || defined(OS_mingw)
 #include <stdlib.h>
 #include <string.h>
 #endif
@@ -191,9 +191,9 @@
 extern void install_sigsegv(void);
 extern void uninstall_sigsegv(void);
 
-#if defined(OS_cygwin) && defined(EXTENDED_SIGSEGV)
-void cygwin_abort(void);
-#define abort() cygwin_abort()
+#if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
+void cygwin_mingw_abort(void);
+#define abort() cygwin_mingw_abort()
 #endif
 
 #ifdef HAVE_GETOPT_H

@@ -5,7 +5,7 @@
 
 /******************************************************************************/
 
-#ifdef OS_cygwin
+#if defined(OS_cygwin) || defined(OS_mingw)
 
 #define WIN32_LEAN_AND_MEAN /* avoid including junk */
 #include <windows.h>
@@ -81,6 +81,7 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
   return EXCEPTION_CONTINUE_SEARCH;
 }
 
+#ifdef OS_cygwin
 /* In Cygwin programs, SetUnhandledExceptionFilter has no effect because Cygwin
    installs a global exception handler.  We have to dig deep in order to install
    our main_exception_filter.  */
@@ -137,6 +138,15 @@ do_install_main_exception_filter ()
   cygwin_exception_handler = _except_list->handler;
   _except_list->handler = aranym_exception_handler;
 }
+#endif /* OS_cygwin */
+
+#ifdef OS_mingw
+static void
+do_install_main_exception_filter ()
+{
+	SetUnhandledExceptionFilter(main_exception_filter);
+}
+#endif
 
 static void
 install_main_exception_filter ()
@@ -153,7 +163,12 @@ static void uninstall_main_exception_filter ()
 {
 	if (main_exception_filter_installed)
 	{
+#ifdef OS_cygwin
 		_except_list->handler = cygwin_exception_handler;
+#endif
+#ifdef OS_mingw
+		SetUnhandledExceptionFilter(NULL);
+#endif
 		main_exception_filter_installed = 0;
 	}
 }
@@ -163,7 +178,7 @@ void uninstall_sigsegv ()
 	uninstall_main_exception_filter();
 }
 
-void cygwin_abort()
+void cygwin_mingw_abort()
 {
 	uninstall_sigsegv();
 #undef abort

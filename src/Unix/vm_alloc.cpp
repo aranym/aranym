@@ -24,6 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "sysdeps.h"
 #include "vm_alloc.h"
 
 #if defined(OS_freebsd) && defined(CPU_x86_64)
@@ -119,12 +120,12 @@ static int translate_map_flags(int vm_flags)
 #ifdef HAVE_WIN32_VM
 static inline LPVOID align_addr_segment(LPVOID addr)
 {
-	return (LPVOID)(((DWORD)addr) & -65536);
+	return (LPVOID)(((DWORD_PTR)addr) & -65536);
 }
 
 static inline DWORD align_size_segment(LPVOID addr, DWORD size)
 {
-	return size + ((DWORD)addr - (DWORD)align_addr_segment(addr));
+	return size + ((DWORD_PTR)addr - (DWORD_PTR)align_addr_segment(addr));
 }
 #endif
 
@@ -458,12 +459,14 @@ int main(void)
 #if defined(TEST_VM_PROT_NONE_READ)
 	// this should cause a core dump
 	char foo = *fault_address;
+	// if we get here vm_protect(VM_PAGE_NOACCESS) did not work
 	return 0;
 #endif
 
 #if defined(TEST_VM_PROT_NONE_WRITE) || defined(TEST_VM_PROT_READ_WRITE)
 	// this should cause a core dump
 	*fault_address = 'z';
+	// if we get here vm_protect(VM_PAGE_READ) did not work
 	return 0;
 #endif
 
