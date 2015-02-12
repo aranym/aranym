@@ -283,13 +283,40 @@ try_another:
 }
 
 
+int usbhost_release_device(int virtdev_index)
+{
+	D(bug("USBHost: release_device() %d", virtdev_index));
+
+	int r;
+	int dev_index, int_index;
+	int port_number;
+
+	dev_index = virtual_device[virtdev_index].idx_dev;
+	int_index = virtual_device[virtdev_index].idx_interface;
+
+	r = libusb_release_interface(devh[dev_index], int_index);
+	if (r < 0) {
+		D(bug("USBHost: Releasing interface failed"));
+		return -1;
+ 	}
+
+	virtual_device[virtdev_index].connected = false;
+	port_number = virtual_device[virtdev_index].port_number;
+
+	roothub.port[port_number].busy = false;
+	fill_port_status(port_number, virtual_device[virtdev_index].connected);
+
+	return r;
+}
+
+
 void usbhost_free_usb_devices(void)
 {
 	int i = 0;
 
 	while (devs[i] != NULL) {
 		if (virtual_device[i].connected)
-			libusb_release_interface(devh[i], virtual_device[i].idx_interface);
+			usbhost_release_device(i);
 
 		libusb_close(devh[i]);
 		devh[i] = NULL;
@@ -347,33 +374,6 @@ claim:	r = libusb_claim_interface(devh[dev_index], int_index);
 	}
 
 	fill_port_status(virtual_device[virtdev_index].port_number, virtual_device[virtdev_index].connected);
-
-	return r;
-}
-
-
-int usbhost_release_device(int virtdev_index)
-{
-	D(bug("USBHost: release_device() %d", virtdev_index));
-
-	int r;
-	int dev_index, int_index;
-	int port_number;
-
-	dev_index = virtual_device[virtdev_index].idx_dev;
-	int_index = virtual_device[virtdev_index].idx_interface;
-
-	r = libusb_release_interface(devh[dev_index], int_index);
-	if (r < 0) {
-		D(bug("USBHost: Releasing interface failed"));
-		return -1;
- 	}
-
-	virtual_device[virtdev_index].connected = false;
-	port_number = virtual_device[virtdev_index].port_number;
-
-	roothub.port[port_number].busy = false;
-	fill_port_status(port_number, virtual_device[virtdev_index].connected);
 
 	return r;
 }
