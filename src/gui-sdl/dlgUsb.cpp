@@ -367,8 +367,8 @@ DlgUsb::DlgUsb(SGOBJ *dlg)
 	}
 
 	for (int i = 0; i < MAX_NUMBER_VIRT_DEV; i++) {
-		if ((virtual_device[i].virtdev_available == true && number_ports_used <= NUMBER_OF_PORTS) ||
-		    (virtual_device[i].connected         == true && number_ports_used >  NUMBER_OF_PORTS)) {
+		if ((virtual_device[i].virtdev_available == true && number_ports_used < NUMBER_OF_PORTS) ||
+		    (virtual_device[i].connected         == true)) {
 			dlg[PLUG_0 + i].state &= ~SG_DISABLED;
 		}
 	}
