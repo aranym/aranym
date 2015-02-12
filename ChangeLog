@@ -1,4 +1,8 @@
 2015/02/11 - Thorsten
+- src/Unix/main_unix.cpp: fix compilation if FIXED_ADDRESSING is not used
+
+
+2015/02/11 - Thorsten
 make setting of FMEMORY configurable.
 
 

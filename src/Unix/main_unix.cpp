@@ -107,7 +107,11 @@ void segmentationfault(int)
 	exit(EXIT_FAILURE);
 }
 
+#if FIXED_ADDRESSING
 static bool allocate_all_memory(uintptr fmemory, bool quiet)
+#else
+static bool allocate_all_memory(bool quiet)
+#endif
 {
 #if DIRECT_ADDRESSING || FIXED_ADDRESSING
 #if FIXED_ADDRESSING
@@ -195,6 +199,7 @@ static bool install_signal_handler(bool quiet)
 	signal(SIGINT, (void (*)(int))setactvdebug);
 #endif
 
+	UNUSED(quiet);
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
 		if (!quiet)
@@ -458,7 +463,11 @@ int main(int argc, char **argv)
 	vm_init();
 #endif
 
+#if FIXED_ADDRESSING
 	if (!allocate_all_memory(fixed_memory_offset, false))
+#else
+	if (!allocate_all_memory(false))
+#endif
 	{
 		vm_probe_fixed_hint();
 		QuitEmulator();
