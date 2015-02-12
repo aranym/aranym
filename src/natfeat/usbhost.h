@@ -1,7 +1,7 @@
 /*
  * USB host chip emulation
  *
- * Copyright (c) 2012 David Galvez. ARAnyM development team (see AUTHORS).
+ * Copyright (c) 2012-2015 David Galvez. ARAnyM development team (see AUTHORS).
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -127,7 +127,7 @@ typedef struct {
 typedef struct virtual_usbdev {
 	int idx_dev;
 	int idx_conf;
-	int idx_interface;	
+	int idx_interface;
 	bool virtdev_available;
 	bool connected;
 	int port_number;
@@ -145,10 +145,10 @@ typedef struct virtual_usbdev {
 				int len, int interval)
 
 	int submit_control_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
-			        int len, struct devrequest *setup)
-      
+							int len, struct devrequest *setup)
+ 
 	int submit_bulk_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
-		    		int len)
+							int len)
 */
 
 /*--- Class ---*/
@@ -163,7 +163,7 @@ private:
 				   devrequest *cmd);
 
 	int32 rh_port_status(memptr rh);
-		
+
 	int32 usb_lowlevel_init(void);
 	int32 usb_lowlevel_stop(void);
 	int32 submit_control_msg(uint32 pipe, memptr buffer, int32 len, memptr devrequest);
@@ -172,7 +172,7 @@ private:
 
 public:
 	USBHost();
-	~USBHost();	
+	~USBHost();
 	void reset();
 
 	const char *name() { return "USBHOST"; }

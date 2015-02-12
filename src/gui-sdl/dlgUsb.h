@@ -1,7 +1,7 @@
 /*
  * dlgUsb.h - USB selection dialog
  *
- * Copyright (c) 2012 David Galvez. ARAnyM development team (see AUTHORS).
+ * Copyright (c) 2012-2015 David Galvez. ARAnyM development team (see AUTHORS).
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -47,12 +47,12 @@ class DlgUsb: public Dialog
 		DlgAlert *dlgAlert;
 
 		void confirm(void);
-        void reset_buttons_and_state(void);
-        void clean_product_strings(void);
-        int check_if_devices_connected(void);
+		void reset_buttons_and_state(void);
+		void clean_product_strings(void);
+		int check_if_devices_connected(void);
 		void enable_buttons(void);
 		void disable_buttons(void);
-        
+
 	public:
 		DlgUsb(SGOBJ *dlg);
 		~DlgUsb();
