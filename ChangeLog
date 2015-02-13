@@ -1,3 +1,20 @@
+2015/02/12 - David
+- Cosmetic (USB sources).
+
+
+2015/02/12 - David
+- Fix handling of CONNECT/DISCONNECT buttons in USB dialog.
+
+
+2015/02/12 - David
+- Inform guest OS about USB devices disconnected
+  when requesting new USB devices list.
+
+
+2015/02/11 - David
+- Fix regression in USB dialog.
+
+
 2015/02/11 - Thorsten
 - src/Unix/main_unix.cpp: fix compilation if FIXED_ADDRESSING is not used
 
