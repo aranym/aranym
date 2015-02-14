@@ -136,10 +136,13 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 	DUNUSED(label);
 	const int ROOT_TABLE_SIZE = 128,
 		PTR_TABLE_SIZE = 128,
-		PAGE_TABLE_SIZE = 64,
+		PAGE_TABLE_SIZE = regs.mmu_pagesize_8k ? 32 : 64,
 		ROOT_INDEX_SHIFT = 25,
 		PTR_INDEX_SHIFT = 18;
-	// const int PAGE_INDEX_SHIFT = 12;
+	const uae_u32 ptr_addr_mask = (regs.mmu_pagesize_8k ? MMU_PTR_PAGE_ADDR_MASK_8 : MMU_PTR_PAGE_ADDR_MASK_4);
+	const uae_u32 page_addr_mask = (regs.mmu_pagesize_8k ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+	const uae_u32 page_ur_mask = (regs.mmu_pagesize_8k ? MMU_PAGE_UR_MASK_8 : MMU_PAGE_UR_MASK_4);
+	const uae_u32 page_size = (regs.mmu_pagesize_8k ? (1 << 13) : (1 << 12));
 	int root_idx, ptr_idx, page_idx;
 	uae_u32 root_des, ptr_des, page_des;
 	uaecptr ptr_des_addr, page_addr,
@@ -148,7 +151,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 	D(bug("%s: root=%x", label, root_ptr));
 
 	for (root_idx = 0; root_idx < ROOT_TABLE_SIZE; root_idx++) {
-		root_des = phys_get_long(root_ptr + root_idx);
+		root_des = phys_get_long(root_ptr + (root_idx << 2));
 
 		if ((root_des & 2) == 0)
 			continue;	/* invalid */
@@ -171,26 +174,29 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 			} page_info[PAGE_TABLE_SIZE];
 			int n_pages_used;
 
-			ptr_des = phys_get_long(ptr_des_addr + ptr_idx);
+			ptr_des = phys_get_long(ptr_des_addr + (ptr_idx << 2));
 			ptr_log = root_log | (ptr_idx << PTR_INDEX_SHIFT);
 
 			if ((ptr_des & 2) == 0)
 				continue; /* invalid */
 
-			page_addr = ptr_des & (regs.mmu_pagesize_8k ? MMU_PTR_PAGE_ADDR_MASK_8 : MMU_PTR_PAGE_ADDR_MASK_4);
+			page_addr = ptr_des & ptr_addr_mask;
 
 			n_pages_used = -1;
 			for (page_idx = 0; page_idx < PAGE_TABLE_SIZE; page_idx++) {
 
-				page_des = phys_get_long(page_addr + page_idx);
-				page_log = ptr_log | (page_idx << 2);		// ??? PAGE_INDEX_SHIFT
+				page_des = phys_get_long(page_addr + (page_idx << 2));
+				page_log = ptr_log | (page_idx * page_size);
 
 				switch (page_des & 3) {
 					case 0: /* invalid */
 						continue;
 					case 1: case 3: /* resident */
 					case 2: /* indirect */
-						if (n_pages_used == -1 || page_info[n_pages_used].match != page_des) {
+						if (n_pages_used == -1 ||
+							(page_info[n_pages_used].match & ~page_addr_mask) != (page_des & ~page_addr_mask) ||
+							page_info[n_pages_used].phys + (page_info[n_pages_used].n_pages * page_size) != (page_des & page_addr_mask))
+						{
 							/* use the next entry */
 							n_pages_used++;
 
@@ -198,6 +204,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 							page_info[n_pages_used].n_pages = 1;
 							page_info[n_pages_used].start_idx = page_idx;
 							page_info[n_pages_used].log = page_log;
+							page_info[n_pages_used].phys = page_des & page_addr_mask;
 						} else {
 							page_info[n_pages_used].n_pages++;
 						}
@@ -219,7 +226,7 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 				page_des = page_info[page_idx].match;
 
 				if ((page_des & MMU_PDT_MASK) == 2) {
-					D(bug("  PAGE: %03d-%03d log=%08lx INDIRECT --> addr=%08lx",
+					D(bug("  PAGE: %03d-%03d log=%08x INDIRECT --> addr=%08x",
 							page_info[page_idx].start_idx,
 							page_info[page_idx].start_idx + page_info[page_idx].n_pages - 1,
 							page_info[page_idx].log,
@@ -227,12 +234,12 @@ static void mmu_dump_table(const char * label, uaecptr root_ptr)
 						  ));
 
 				} else {
-					D(bug("  PAGE: %03d-%03d log=%08lx addr=%08lx UR=%02d G=%d U1/0=%d S=%d CM=%d M=%d U=%d W=%d",
+					D(bug("  PAGE: %03d-%03d log=%08x addr=%08x UR=%02d G=%d U1/0=%d S=%d CM=%d M=%d U=%d W=%d",
 							page_info[page_idx].start_idx,
 							page_info[page_idx].start_idx + page_info[page_idx].n_pages - 1,
 							page_info[page_idx].log,
-							page_des & (regs.mmu_pagesize_8k ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4),
-							(page_des & (regs.mmu_pagesize_8k ? MMU_PAGE_UR_MASK_8 : MMU_PAGE_UR_MASK_4)) >> MMU_PAGE_UR_SHIFT,
+							page_info[page_idx].phys,
+							(page_des & page_ur_mask) >> MMU_PAGE_UR_SHIFT,
 							page_des & MMU_DES_GLOBAL ? 1 : 0,
 							(page_des & MMU_TTR_UX_MASK) >> MMU_TTR_UX_SHIFT,
 							page_des & MMU_DES_SUPER ? 1 : 0,
@@ -408,7 +415,7 @@ mmu_fill_atc_l1(uaecptr addr, int super, int data, int write,
 	}
 	if (write) {
 		if (l->write_protect) {
-			D(bug("MMU: write protected (via %s) %lx", l->tt ? "ttr" : "atc", addr));
+			D(bug("MMU: write protected (via %s) %x", l->tt ? "ttr" : "atc", addr));
 			goto fail;
 		}
 		if (!l->modified)
@@ -472,7 +479,7 @@ static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write
 	desc_addr = (desc & MMU_ROOT_PTR_ADDR_MASK) | i;
 	desc = phys_get_long(desc_addr);
 	if ((desc & 2) == 0) {
-		D(bug("MMU: invalid root descriptor for %lx", addr));
+		D(bug("MMU: invalid root descriptor for %x", addr));
 		return 0;
 	}
 
@@ -485,7 +492,7 @@ static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write
 	desc_addr = (desc & MMU_ROOT_PTR_ADDR_MASK) | i;
 	desc = phys_get_long(desc_addr);
 	if ((desc & 2) == 0) {
-		D(bug("MMU: invalid ptr descriptor for %lx", addr));
+		D(bug("MMU: invalid ptr descriptor for %x", addr));
 		return 0;
 	}
 	wp |= desc;
@@ -508,7 +515,7 @@ static uaecptr REGPARAM2 mmu_lookup_pagetable(uaecptr addr, int super, int write
 		desc = phys_get_long(desc_addr);
 	}
 	if ((desc & 1) == 0) {
-		D(bug("MMU: invalid page descriptor log=%08lx desc=%08lx @%08lx", addr, desc, desc_addr));
+		D(bug("MMU: invalid page descriptor log=%08x desc=%08x @%08x", addr, desc, desc_addr));
 		return desc;
 	}
 

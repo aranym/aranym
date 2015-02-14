@@ -1,3 +1,7 @@
+2015/02/14 - Thorsten
+- Fix mmu_dump_table()
+
+
 2015/02/12 - David
 - Cosmetic (USB sources).
 
