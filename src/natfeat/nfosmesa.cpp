@@ -1814,7 +1814,7 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 	void *draw_buffer;
 	Uint32 ctx = cur_context;
 	
-	D(bug("nfosmesa: swapbuffer($%08x)", buf));
+	D(bug("nfosmesa: swapbuffer($%08x)", buffer));
 
 	if (ctx>MAX_OSMESA_CONTEXTS) {
 		return;
