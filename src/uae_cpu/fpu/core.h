@@ -45,7 +45,7 @@
 #endif
 
 /* Only use x87 FPU on x86-64 if long double precision is requested.  */
-#if defined(X86_64_ASSEMBLY) && USE_LONG_DOUBLE
+#if defined(X86_64_ASSEMBLY) && defined(USE_LONG_DOUBLE)
 #define USE_X87_ASSEMBLY 1
 #define ACCURATE_SIN_COS_TAN 1
 #endif
