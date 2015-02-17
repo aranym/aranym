@@ -218,21 +218,6 @@ static inline void mmu_set_mmusr(uae_u32 val)
 	regs.mmusr = val;
 }
 
-static inline void mmu_set_root_pointer(int regno, uae_u32 val)
-{
-	val &= MMU_ROOT_PTR_ADDR_MASK;
-	switch (regno) {
-	case 0x806:
-		regs.urp = val;
-		break;
-	case 0x807:
-		regs.srp = val;
-		break;
-	default:
-		abort();
-	}
-}
-
 #define FC_DATA		(regs.s ? 5 : 1)
 #define FC_INST		(regs.s ? 6 : 2)
 

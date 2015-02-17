@@ -683,8 +683,8 @@ int m68k_move2c (int regno, uae_u32 *regp)
 	 case 0x803: regs.msp = *regp; if (regs.m == 1) m68k_areg(regs, 7) = regs.msp; break;
 	 case 0x804: regs.isp = *regp; if (regs.m == 0) m68k_areg(regs, 7) = regs.isp; break;
 	 case 0x805: mmu_set_mmusr(*regp); break;
-	 case 0x806: regs.urp = *regp & 0xffffff00; break;
-	 case 0x807: regs.srp = *regp & 0xffffff00; break;
+	 case 0x806: regs.urp = *regp & MMU_ROOT_PTR_ADDR_MASK; break;
+	 case 0x807: regs.srp = *regp & MMU_ROOT_PTR_ADDR_MASK; break;
 	 default:
 	    op_illg (0x4E7B);
 	    return 0;
