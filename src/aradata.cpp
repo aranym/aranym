@@ -24,12 +24,15 @@
 #include "sysdeps.h"
 #include "hardware.h"
 #include "cpu_emulation.h"
+#include "newcpu.h"
 #include "memory-uae.h"
 #include "aradata.h"
 #include "parameters.h"
 
 ARADATA::ARADATA(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
+	abase = 0;
+	linea_trap = 0;
 	reset();
 }
 
@@ -52,7 +55,28 @@ void ARADATA::reset()
 	mouseDriver = false;
 	mouse_x = -1;
 	mouse_y = -1;
-	abase = 0;
+}
+
+void ARADATA::setAbase(void)
+{
+	if (boot_lilo) return;
+	uae_u32 new_abase;
+	uae_u32 new_linea_trap;
+	new_linea_trap = ReadHWMemInt32(40);
+	/*
+	 * Prevent linea68000() from being called too early;
+	 * after a reboot the exception vector might still point
+	 * to the memory of some program that hooked it up before
+	 * but is now gone
+	 */
+	if (new_linea_trap != 0 && (linea_trap == 0 || linea_trap == new_linea_trap))
+	{
+		/* prevent it also from being called recursively on slow machines */
+		linea_trap = 1;
+		new_abase = linea68000(0xa000);
+		abase = new_abase;
+		linea_trap = new_linea_trap;
+	}
 }
 
 uint8 ARADATA::handleRead(memptr addr) {

@@ -1,4 +1,8 @@
 2015/02/17 - Thorsten
+Fix possible freeze during reboot.
+
+
+2015/02/17 - Thorsten
 - cpummu.h: remove unused function
 - newcpu.c: use correct mask when setting MMU root pointer
 

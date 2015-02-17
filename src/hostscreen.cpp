@@ -431,16 +431,7 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 
 #endif
 
-	/* Flag is necessary for slower CPU. Without it will result in
-	   a nested Line A call, when returning from the called op */
-	static bool lineaActive = false;
-	if (ReadHWMemInt32(40) != 0 && !boot_lilo && !lineaActive)
-	{
-		lineaActive = true;
-		uae_u32 abase = linea68000(0xa000);
-		getARADATA()->setAbase(abase);
-		lineaActive = false;
-	}
+	getARADATA()->setAbase();
 	
 	if (screen==NULL) {
 		panicbug("Can not set video mode");
