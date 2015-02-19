@@ -187,7 +187,6 @@ static uint8 root_hub_class_st[] = {
 /*--- Global variables ---*/
 
 virtual_usbdev_t virtual_device[USB_MAX_DEVICE];
-char product[USB_MAX_DEVICE][MAX_PRODUCT_LENGTH];
 int number_ports_used;
 roothub_t roothub;
 uint32 port_status[NUMBER_OF_PORTS];
@@ -261,7 +260,7 @@ int32 usbhost_get_device_list(void)
 					r = libusb_get_string_descriptor_ascii(
 								devh[idx_dev],
 								dev_desc.iProduct,
-								(unsigned char *)product[idx_virtdev],
+								(unsigned char *)virtual_device[idx_virtdev].product_name,
 								MAX_PRODUCT_LENGTH);
 
 
@@ -429,7 +428,7 @@ void usbhost_init_libusb(void)
 
 	libusb_set_debug(NULL, 3);
 	
-	for (int i = 0; i <= MAX_NUMBER_VIRT_DEV; i++) {
+	for (int i = 0; i <= USB_MAX_DEVICE; i++) {
 		virtual_device[i].connected = false;
 		virtual_device[i].virtdev_available = false;
 	}

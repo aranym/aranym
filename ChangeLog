@@ -1,4 +1,9 @@
 2015/02/19 - David
+- Increase the maximum number of USB devices (interfaces)
+  that we can handle from 9 to 32.
+
+
+2015/02/19 - David
 - Fix wrong record of the USB ports being used.
 
 

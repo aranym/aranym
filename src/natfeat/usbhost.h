@@ -131,6 +131,7 @@ typedef struct virtual_usbdev {
 	bool virtdev_available;
 	bool connected;
 	int port_number;
+	char product_name[MAX_PRODUCT_LENGTH];
 } virtual_usbdev_t;
 
 

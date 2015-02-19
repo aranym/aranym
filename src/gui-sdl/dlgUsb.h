@@ -24,7 +24,7 @@
 #ifndef DLGUSB_H
 #define DLGUSB_H
 
-#define MAX_NUMBER_VIRT_DEV	9
+#define ENTRY_COUNT					9 /* (usb_description_8 - usb_description_0 + 1) */
 #define MAX_PRODUCT_LENGTH	32
 
 
@@ -43,6 +43,8 @@ class DlgUsb: public Dialog
 			STATE_ALERT,
 		};
 		int state;
+		int ypos;
+		bool refreshentries;
 
 		DlgAlert *dlgAlert;
 
@@ -52,6 +54,7 @@ class DlgUsb: public Dialog
 		int check_if_devices_connected(void);
 		void enable_buttons(void);
 		void disable_buttons(void);
+		void refreshEntries(void);
 
 	public:
 		DlgUsb(SGOBJ *dlg);

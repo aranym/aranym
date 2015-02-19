@@ -1,7 +1,7 @@
 /*
  * GEM resource SDL output of sdlgui
  *
- * created by ORCS 2.13
+ * created by ORCS 2.14
  */
 
 #ifndef SDL_GUI_SHORTCUT_STRING
@@ -603,14 +603,17 @@ enum USBDLG {
 	PLUG_6 = 26,
 	PLUG_7 = 27,
 	PLUG_8 = 28,
-	text_usb = 29,
-	GET_DEVICE_LIST = 30,
-	OK = 31
+	SLIDEBAR = 29,
+	USBHOSTDLG_UP = 30,
+	USBHOSTDLG_DOWN = 31,
+	text_usb = 32,
+	GET_DEVICE_LIST = 33,
+	OK = 34
 };
 
 static SGOBJ usbdlg[] = {
 	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 64, 24, NULL, 0 },
-	{ SGBOX, 0, 0, 2, 2, 60, 18, NULL, 0 },
+	{ SGBOX, 0, 0, 2, 3, 60, 17, NULL, 0 },
 	{ SGTEXT, 0, 0, 4, 3, 31, 1, product[0], 0 },
 	{ SGTEXT, 0, 0, 4, 5, 31, 1, product[1], 0 },
 	{ SGTEXT, 0, 0, 4, 7, 31, 1, product[2], 0 },
@@ -638,6 +641,9 @@ static SGOBJ usbdlg[] = {
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 15, 13, 1, "Plug/Unplug", 0 },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 17, 13, 1, "Plug/Unplug", 0 },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 46, 19, 13, 1, "Plug/Unplug", 0 },
+	{ SGBOX, 0, 0, 61, 3, 1, 17, NULL, 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 61, 3, 1, 1, "\001", SG_SHORTCUT_UP },
+	{ SGBUTTON, SG_SELECTABLE|SG_TOUCHEXIT, 0, 61, 19, 1, 1, "\002", SG_SHORTCUT_UP },
 	{ SGTEXT, 0, 0, 26, 1, 13, 1, " USB Devices ", 0 },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 4, 22, 16, 1, "Get new list", 0 },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 43, 22, 16, 1, "OK", 0 },
