@@ -1,4 +1,10 @@
 2015/02/19 - David
+- Force redraw of USB dialog always at entering,
+  otherwise we see the old device list (scrolled)
+  until we move the mouse.
+
+
+2015/02/19 - David
 - Increase the maximum number of USB devices (interfaces)
   that we can handle from 9 to 32.
 
