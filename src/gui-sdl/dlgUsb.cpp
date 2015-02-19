@@ -264,9 +264,8 @@ DlgUsb::DlgUsb(SGOBJ *dlg)
 	if (init_flag == false) {
 		reset_buttons_and_state();
 		usbhost_init_libusb();
-		refreshEntries();
 	}
-
+	refreshEntries();
 	for (int i = 0; i < ENTRY_COUNT; i++) {
 		if ((virtual_device[i].virtdev_available == true && number_ports_used < NUMBER_OF_PORTS) ||
 		    (virtual_device[i].connected         == true)) {
