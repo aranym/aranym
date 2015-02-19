@@ -222,6 +222,8 @@ int32 usbhost_get_device_list(void)
 	struct libusb_device_descriptor dev_desc;
 	struct libusb_config_descriptor *config_desc;
 
+	number_ports_used = 0;
+
 	cnt = libusb_get_device_list(NULL, &devs);
 	D(bug("USBHost: Number of USB devices attached to host bus: %d", (int)cnt));
 	if (cnt < 0)
@@ -420,8 +422,6 @@ int trigger_interrupt(void *)
 
 void usbhost_init_libusb(void)
 {
-	number_ports_used = 0;
-
 	if (libusb_init(NULL)) {
 		D(bug("USBHost: Imposible to start libusb"));
 		return;

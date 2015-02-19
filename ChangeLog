@@ -1,3 +1,7 @@
+2015/02/19 - David
+- Fix wrong record of the USB ports being used.
+
+
 2015/02/17 - Thorsten
 Fix possible freeze during reboot.
 
