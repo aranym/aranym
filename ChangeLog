@@ -1,3 +1,7 @@
+2015/02/19 - Thorsten
+Fix a few warnings with --enable-lilo
+
+
 2015/02/19 - David
 - Force redraw of USB dialog always at entering,
   otherwise we see the old device list (scrolled)

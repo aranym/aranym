@@ -652,7 +652,7 @@ int LinuxBootOs::create_bootinfo(void)
 		return(0);
 
     /* Trailer */
-    record = (struct bi_record *)((u_long)&bi_union.record+bi_size);
+    record = (struct bi_record *)((char *)&bi_union.record+bi_size);
     record->tag = SDL_SwapBE16(BI_LAST);
     bi_size += sizeof(bi_union.record.tag);
 
@@ -677,10 +677,10 @@ int LinuxBootOs::add_bi_record( unsigned short tag, unsigned short size, const v
 	fprintf (stderr, "Can't add bootinfo record. Ask a wizard to enlarge me.\n");
 	return(0);
     }
-    record = (struct bi_record *)((u_long)&bi_union.record+bi_size);
+    record = (struct bi_record *)((char *)&bi_union.record+bi_size);
     record->tag = SDL_SwapBE16(tag);
     record->size = SDL_SwapBE16(size2);
-    memcpy(record->data, data, size);
+    memcpy((char *)record + sizeof(struct bi_record), data, size);
     bi_size += size2;
 
 #else
