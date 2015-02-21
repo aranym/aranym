@@ -751,6 +751,12 @@ static void process_keyboard_event(const SDL_Event &event)
 		return;
 #endif
 
+#if defined(_WIN32) || defined(__CYGWIN__)
+	/* SDL on windows does not report KMOD_CTRL on right ctrl key */
+	if (keysym.sym == SDLK_RCTRL)
+		state |= KMOD_CTRL;
+#endif
+
 	// process special hotkeys
 	if (pressed) {
 		int masked_mod = state & HOTKEYS_MOD_MASK;

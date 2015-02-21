@@ -1,3 +1,7 @@
+2015/02/21 - Thorsten
+Right-Ctrl could not be used as Hotkey-Modifier on Win32
+
+
 2015/02/19 - Thorsten
 Fix a few warnings with --enable-lilo
 
