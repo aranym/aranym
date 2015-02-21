@@ -1,4 +1,10 @@
 2015/02/21 - Thorsten
+- tools/dist-cygwin.sh: fetch list of needed dlls from executable
+  instead of hardcoding it
+- tools/ldd.c: new tool to list linked dlls
+
+
+2015/02/21 - Thorsten
 Right-Ctrl could not be used as Hotkey-Modifier on Win32
 
 

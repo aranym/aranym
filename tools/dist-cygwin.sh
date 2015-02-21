@@ -76,7 +76,7 @@ function build() {
 		echo "configuring aranym-mmu failed; see $log for details" >&2
 		exit 1
 	}
-	echo "building aranym-jit..."
+	echo "building aranym..."
 	make clean
 	make >> $log 2>&1 || {
 		echo "building aranym failed; see $log for details" >&2
@@ -93,15 +93,12 @@ function build() {
 
 function mkdist() {
 	local sdlname
-	local sdllibs
 	local sdldef
 	
 	case $SDL in 
 	1) sdlname=-sdl1
-	   sdllibs="SDL.dll SDL_image.dll"
 	   ;;
 	2) sdlname=-sdl2
-	   sdllibs="SDL2.dll SDL2_image.dll"
 	   ;;
 	*) exit 1 ;;
 	esac
@@ -132,27 +129,25 @@ function mkdist() {
 	  done
 	)
 	
+	dlls=
 	for f in aranym.exe aranym-jit.exe aranym-mmu.exe; do
 		cp -a $f "$distdir" || exit 1
+		dlls="$dlls `./ldd.exe --path $f`"
 	done
-	
-	for f in cyggcc_s-1.dll cygstdc++-6.dll cygwin1.dll; do
-		cp -a /bin/$f "$distdir" || exit 1
+	copydlls=
+	for dll in $dlls; do
+		lower="`echo $dll | tr '[A-Z]' '[a-z]'`"
+		case $lower in
+		*/system32/* | */syswow64/* )
+			continue ;;
+		*)
+			;;
+		esac
+		copydlls="$copydlls $dll"
 	done
-	
-	for f in $sdllibs libjpeg-8.dll libpng14-14.dll libtiff-3.dll zlib1.dll; do
-		found=false
-		for dir in /usr/mingw/bin /usr/bin/mingw /mingw/bin; do
-			if test -f "$dir/$f"; then
-				cp -a "$dir/$f" "$distdir" || exit 1
-				found=true
-				break
-			fi
-		done
-		if ! $found; then
-			echo "cannot find $f" >&2
-			exit 1
-		fi
+
+	for f in $copydlls; do
+		cp -a "$f" "$distdir" || exit 1
 	done
 	
 	( cd "$tmpdir"
@@ -176,6 +171,9 @@ function mkdist() {
 	
 }
 
+
+gcc -O2 -mwin32 tools/ldd.c -o ldd.exe || exit 1
+
 SDL=1
 build
 mkdist
@@ -185,4 +183,4 @@ build
 mkdist
 
 
-rm -f $log
+rm -f $log ldd.exe
