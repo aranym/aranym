@@ -126,8 +126,8 @@ typedef struct {
 /* Devices attached to the Host */
 typedef struct virtual_usbdev {
 	int idx_dev;
-	int idx_conf;
-	int idx_interface;
+	struct libusb_device_descriptor dev_desc;
+	struct libusb_config_descriptor *config_desc; /* Only support for one configuration */
 	bool virtdev_available;
 	bool connected;
 	int port_number;

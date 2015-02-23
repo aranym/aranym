@@ -1,3 +1,7 @@
+2015/02/23 - David
+- USB dialog now shows devices instead of interfaces.
+
+
 2015/02/21 - Thorsten
 - tools/dist-cygwin.sh: fetch list of needed dlls from executable
   instead of hardcoding it

@@ -215,11 +215,8 @@ void fill_port_status(unsigned int port_number, bool connected)
 
 int32 usbhost_get_device_list(void)
 {
-	int idx_conf = 0, idx_interface = 0, idx_dev = 0, idx_virtdev = 0;
-
+	int idx_dev = 0, idx_virtdev = 0;
 	ssize_t cnt;
-	struct libusb_device_descriptor dev_desc;
-	struct libusb_config_descriptor *config_desc;
 
 	number_ports_used = 0;
 
@@ -236,46 +233,37 @@ int32 usbhost_get_device_list(void)
 		}
 		D(bug("USBHost: Device %d opened", idx_dev));
 
-		r = libusb_get_device_descriptor(dev, &dev_desc);
+		r = libusb_get_device_descriptor(dev, &virtual_device[idx_virtdev].dev_desc);
 		if (r < 0) {
 			D(bug("USBHost: Unable to get device descriptor %d", r));
 			goto try_another;
 		}
 
-		if (dev_desc.bDeviceClass == LIBUSB_CLASS_HUB) {
+		if (virtual_device[idx_virtdev].dev_desc.bDeviceClass == LIBUSB_CLASS_HUB) {
 			D(bug("USBHost: Device is a HUB"));
 			goto try_another;
 		}
 
-		D(bug("USBHost: Number config: %d ", dev_desc.bNumConfigurations));
-
-		for (idx_conf = 0; idx_conf < dev_desc.bNumConfigurations; idx_conf++) {
-			r = libusb_get_config_descriptor(dev, 0, &config_desc);
-			D(bug("USBHost: Number of interfaces %d", config_desc->bNumInterfaces));
-
-			for (idx_interface = 0; idx_interface < config_desc->bNumInterfaces; idx_interface++) {
-
-				if (dev_desc.bDeviceClass != LIBUSB_CLASS_HUB)
-				{
-					r = libusb_get_string_descriptor_ascii(
-								devh[idx_dev],
-								dev_desc.iProduct,
-								(unsigned char *)virtual_device[idx_virtdev].product_name,
-								MAX_PRODUCT_LENGTH);
-
-
-					virtual_device[idx_virtdev].idx_dev = idx_dev;
-					virtual_device[idx_virtdev].idx_conf = idx_conf;
-					virtual_device[idx_virtdev].idx_interface = idx_interface;
-					virtual_device[idx_virtdev].virtdev_available = true;
-
-					idx_virtdev++;
-				}
-			}
-			idx_interface = 0;
+		r = libusb_get_string_descriptor_ascii(
+						devh[idx_dev],
+						virtual_device[idx_virtdev].dev_desc.iProduct,
+						(unsigned char *)virtual_device[idx_virtdev].product_name,
+						MAX_PRODUCT_LENGTH);
+		if (r < 0) {
+			D(bug("USBHost: Unable to get string descriptor %d", r));
+			goto try_another;
 		}
-		idx_conf = 0;
 
+		r = libusb_get_config_descriptor(dev, 0, &virtual_device[idx_virtdev].config_desc);
+		if (r < 0) {
+			D(bug("USBHost: Unable to get configuration descriptor %d", r));
+			goto try_another;
+		}
+		D(bug("USBHost: Number of interfaces %d", virtual_device[idx_virtdev].config_desc->bNumInterfaces));
+
+		virtual_device[idx_virtdev].idx_dev = idx_dev;
+		virtual_device[idx_virtdev].virtdev_available = true;
+		idx_virtdev++;
 try_another:
 		idx_dev++;
 	}
@@ -286,21 +274,22 @@ try_another:
 
 int usbhost_release_device(int virtdev_index)
 {
-	D(bug("USBHost: release_device() %d", virtdev_index));
+	D(bug("USBHost: Release device %d", virtdev_index));
 
-	int r;
-	int dev_index, int_index;
+	int r = -1;
+	int dev_index, if_index;
 	int port_number;
+	int no_of_ifaces;
 
 	dev_index = virtual_device[virtdev_index].idx_dev;
-	int_index = virtual_device[virtdev_index].idx_interface;
+	no_of_ifaces = virtual_device[virtdev_index].config_desc->bNumInterfaces;
 
-	r = libusb_release_interface(devh[dev_index], int_index);
-	if (r < 0) {
-		D(bug("USBHost: Releasing interface failed"));
-		return -1;
+	for (if_index = 0; if_index < no_of_ifaces; if_index++) {
+		r = libusb_release_interface(devh[dev_index], if_index);
+		if (r < 0) {
+			D(bug("USBHost: Releasing interface %d failed", if_index));
+		}
 	}
-
 	virtual_device[virtdev_index].connected = false;
 	port_number = virtual_device[virtdev_index].port_number;
 
@@ -331,35 +320,36 @@ void usbhost_free_usb_devices(void)
 
 int usbhost_claim_device(int virtdev_index)
 {
-	D(bug("USBHost: claim_device() %d", virtdev_index));
+	D(bug("USBHost: Claim device %d", virtdev_index));
 
-	int r;
-	int dev_index, int_index;
+	int r = -1;
+	int dev_index, if_index;
+	int no_of_ifaces;
 
 	dev_index = virtual_device[virtdev_index].idx_dev;
-	int_index = virtual_device[virtdev_index].idx_interface;
+	no_of_ifaces = virtual_device[virtdev_index].config_desc->bNumInterfaces;
 
-	r = libusb_kernel_driver_active(devh[dev_index], int_index);
-	if (r < 0) {
-		D(bug("USBHost: Checking if kernel driver is active failed. Error %d", r));
-		return -1;
-	}
+	for (if_index = 0; if_index < no_of_ifaces; if_index++ ) {
+		r = libusb_kernel_driver_active(devh[dev_index], if_index);
+		if (r < 0) {
+			D(bug("USBHost: Checking if kernel driver is active failed. Error %d", r));
+			return -1;
+		}
 
-	if (r == 1) {
-		D(bug("USBHost: Kernel driver active for interface"));
-		D(bug("USBHost: Trying to detach it"));
-		r = libusb_detach_kernel_driver(devh[dev_index], int_index);
-	} else goto claim;
+		if (r == 1) {
+		D(bug("USBHost: Kernel driver active for interface %d", if_index));
+			D(bug("USBHost: Trying to detach it"));
+			r = libusb_detach_kernel_driver(devh[dev_index], if_index);
+		} else goto claim;
+		if (r < 0) {
+			D(bug("USBHost: Driver detaching failed"));
+			return -1;
+		}
 
-	if (r < 0) {
-		D(bug("USBHost: Driver detaching failed"));
-		return -1;
-	}
-
-claim:	r = libusb_claim_interface(devh[dev_index], int_index);
-	if (r < 0) {
-		D(bug("USBHost: Claiming interface failed"));
-		return -1;
+claim:	r = libusb_claim_interface(devh[dev_index], if_index);
+		if (r < 0) {
+		D(bug("USBHost: Claiming interface number %d failed", if_index));
+		}
 	}
 
 	virtual_device[virtdev_index].connected = true;
