@@ -24,7 +24,7 @@
 #include "usbhost.h"
 #include "../../atari/usbhost/usbhost_nfapi.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #include "debug.h"
 
 #include "SDL_compat.h"
