@@ -1,4 +1,9 @@
 2015/02/23 - David
+- We have support only for one device configuration, so we
+  filter attempts to change to configurations greater than 1.
+
+
+2015/02/23 - David
 - Refresh also the USB dialog after the Alert box is shown.
 
 

@@ -24,7 +24,7 @@
 #include "usbhost.h"
 #include "../../atari/usbhost/usbhost_nfapi.h"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 
 #include "SDL_compat.h"
@@ -747,9 +747,13 @@ int32 USBHost::submit_control_msg(uint32 pipe, memptr buffer,
 	dev_idx = roothub.port[devnum - 2].device_index;
 	D(bug("USBHost: dev_idx %d ", dev_idx));
 
-	if (bReq == USB_REQ_SET_ADDRESS) {	/* The only msg we don't want to pass to the device */
-		D(bug("USBHost: SET_ADDRESS msg %x ", bReq));
+	if (bReq == USB_REQ_SET_ADDRESS) {	/* Don't allow to change device's address set by the host OS */
+		D(bug("USBHost: Attempt to set device address"));
 		r = 0;
+	}
+	else if ((bReq == USB_REQ_SET_CONFIGURATION) && (wValue > 1)) {	/* We only support one configuration per device */
+		D(bug("USBHost: Attempt to change to configuration number %d ", wValue));
+		r = -1;
 	}
 	else
 		r = libusb_control_transfer(devh[dev_idx], bmRType, bReq, wValue, wIndex, tempbuff, wLength, 0);
