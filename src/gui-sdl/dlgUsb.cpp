@@ -204,9 +204,6 @@ int DlgUsb::processDialog(void)
 				}
 			}
 		}
-		if (refreshentries) {
-			refreshEntries();
-		}
 	}
 	else { /* Process Alert dialog */
 		state = STATE_MAIN;
@@ -216,8 +213,11 @@ int DlgUsb::processDialog(void)
 			clean_product_strings();
 			usbhost_free_usb_devices();
 			usbhost_get_device_list();
-			enable_buttons();
+			refreshentries = true;
 		}
+	}
+	if (refreshentries) {
+		refreshEntries();
 	}
 
 	return_obj = -1;

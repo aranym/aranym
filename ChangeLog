@@ -1,4 +1,8 @@
 2015/02/23 - David
+- Refresh also the USB dialog after the Alert box is shown.
+
+
+2015/02/23 - David
 - USB dialog now shows devices instead of interfaces.
 
 
