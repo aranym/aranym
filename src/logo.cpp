@@ -133,7 +133,7 @@ void Logo::alphaBlend(bool init)
 		opacity = 100;
 	}
 	else {
-		if (/* bx_options.opengl.enabled && */ opacity > 0) {
+		if (bx_options.opengl.enabled && opacity > 0) {
 			if (surface != NULL) {
 				surface->setParam(HostSurface::SURF_ALPHA, opacity);
 				surface->setDirtyRect(0, 0, surface->getWidth(), surface->getHeight());

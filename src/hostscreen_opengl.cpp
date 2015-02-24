@@ -119,13 +119,36 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		}
 	}
 
-	window = SDL_CreateWindow(VERSION_STRING, x, y, width, height, windowFlags);
-	if (window==NULL) {
-		panicbug("Could not create window: %s", SDL_GetError());
-		QuitEmulator();
-		return;
-	}
+	SDL_DisplayMode mode, oldmode;
+
+	if (window)
+		SDL_GetWindowDisplayMode(window, &oldmode);
+	else
+		memset(&oldmode, 0, sizeof(oldmode));
 	
+	mode.w = width;
+	mode.h = height;
+
+	if (window == NULL ||
+		width != oldmode.w ||
+		height != oldmode.h)
+	{
+		if (window == NULL)
+		{
+			window = SDL_CreateWindow(VERSION_STRING, x, y, width, height, windowFlags);
+			if (window)
+			{
+				SDL_GetWindowDisplayMode(window, &mode);
+			}
+		}
+		if (window==NULL) {
+			panicbug("Could not create window: %s", SDL_GetError());
+			QuitEmulator();
+			return;
+		}
+		SDL_SetWindowSize(window, width, height);
+	}
+		
 	/* SDL2FIXME: find appropriate renderer for bpp */
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
