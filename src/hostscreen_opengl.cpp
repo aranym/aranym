@@ -46,6 +46,16 @@ HostScreenOpenGL::HostScreenOpenGL(void)
 		fprintf(stderr, "Can not load OpenGL library: using software rendering mode\n");
 		bx_options.opengl.enabled = false;
 	}
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	window = NULL;
+	window_id = 0;
+	renderer = NULL;
+	texture = NULL;
+#ifdef SDL_GUI
+	gui_window = NULL;
+	gui_window_id = 0;
+#endif
+#endif
 }
 
 HostScreenOpenGL::~HostScreenOpenGL()
@@ -146,6 +156,7 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 			QuitEmulator();
 			return;
 		}
+		window_id = SDL_GetWindowID(window);
 		SDL_SetWindowSize(window, width, height);
 	}
 		

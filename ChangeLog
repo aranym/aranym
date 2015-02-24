@@ -1,4 +1,8 @@
 2015/02/24 - Thorsten
+SDL2: Hotkeys did not work when opengl rendering was enabled
+
+
+2015/02/24 - Thorsten
 SDL2: switching resolutions during boot did not work
 when opengl rendering was enabled
 
