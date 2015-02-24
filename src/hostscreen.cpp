@@ -146,7 +146,6 @@ void HostScreen::SetWMIcon(void)
 HostScreen::HostScreen(void)
   : DirtyRects(),
   	logo(NULL),
-  	logo_present(true),
   	clear_screen(true),
 	force_refresh(true),
 	do_screenshot(false),
@@ -578,13 +577,10 @@ void HostScreen::checkSwitchVidelNfvdi(void)
 
 void HostScreen::refreshLogo(void)
 {
-	char path[1024];
-	getDataFilename(LOGO_FILENAME, path, sizeof(path));
-
-	if (!logo_present) {
-		return;
-	}
 	if (!logo) {
+		char path[1024];
+		getDataFilename(LOGO_FILENAME, path, sizeof(path));
+
 		logo = new Logo(path);
 		if (!logo) {
 			return;
@@ -593,13 +589,7 @@ void HostScreen::refreshLogo(void)
 
 	HostSurface *logo_hsurf = logo->getSurface();
 	if (!logo_hsurf) {
-		logo->load(path);
-		logo_hsurf = logo->getSurface();
-		if (!logo_hsurf) {
-			panicbug("Can not load logo from %s file\n", path); 
-			logo_present = false;
-			return;
-		}
+		return;
 	}
 
 	refreshSurface(logo_hsurf);
@@ -621,31 +611,14 @@ void HostScreen::forceRefreshLogo(void)
 
 void HostScreen::alphaBlendLogo(bool init)
 {
-	static int logo_opacity = 100;
-
-	if (init) {
-		logo_opacity = 100;
-	}
-	else {
-		if (bx_options.opengl.enabled && logo != NULL && logo_opacity > 0) {
-			HostSurface *logo_hsurf = logo->getSurface();
-			if (logo_hsurf != NULL) {
-				logo_hsurf->setParam(HostSurface::SURF_ALPHA, logo_opacity);
-				logo_hsurf->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
-				drawSurfaceToScreen(logo_hsurf);
-			}
-
-			logo_opacity -= 5 * bx_options.video.refresh;
-			if (logo_opacity <= 0 && getVIDEL() != NULL && getVIDEL()->getSurface() != NULL && logo_hsurf != NULL) {
-				getVIDEL()->getSurface()->setDirtyRect(0, 0, logo_hsurf->getWidth(), logo_hsurf->getHeight());
-			}
-		}
-	}
+	if (logo)
+		logo->alphaBlend(init);
 }
+
 void HostScreen::checkSwitchToVidel(void)
 {
 	/* No logo ? */
-	if (!logo_present) {
+	if (!logo || !logo->getSurface()) {
 		numScreen = SCREEN_VIDEL;
 		return;
 	}

@@ -58,7 +58,6 @@ class HostScreen: public DirtyRects
 	SDL_bool OpenGLVdi;	/* Using NF OpenGL VDI renderer ? */
 
 	Logo *logo;
-	bool logo_present;
 	bool clear_screen, force_refresh, do_screenshot;
 
 	int	refreshCounter;
@@ -95,10 +94,10 @@ class HostScreen: public DirtyRects
 	virtual void refreshScreen(void);
 	virtual void initScreen(void);
 	virtual void clearScreen(void);
+  public:
 	virtual void drawSurfaceToScreen(HostSurface *hsurf,
 		int *dst_x = NULL, int *dst_y = NULL);
 
-  public:
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *window;
 	Uint32 window_id;

@@ -30,11 +30,15 @@
 #include "logo.h"
 #include "hostscreen.h"
 #include "host.h"
+
+#define DEBUG 0
+#include "debug.h"
+
  
 /*--- Constructor/destructor ---*/
 
 Logo::Logo(const char *filename)
-	: logo_surf(NULL), surface(NULL)
+	: logo_surf(NULL), surface(NULL), opacity(100)
 {
 	load(filename);
 }
@@ -60,6 +64,7 @@ void Logo::load(const char *filename)
 
 	SDL_RWops *rwops = SDL_RWFromFile(filename, "rb");
 	if (!rwops) {
+		panicbug("Can not load logo from file %s", filename); 
 		return;
 	}
 
@@ -120,6 +125,27 @@ HostSurface *Logo::getSurface(void)
 	}
 
 	return surface;
+}
+
+void Logo::alphaBlend(bool init)
+{
+	if (init) {
+		opacity = 100;
+	}
+	else {
+		if (/* bx_options.opengl.enabled && */ opacity > 0) {
+			if (surface != NULL) {
+				surface->setParam(HostSurface::SURF_ALPHA, opacity);
+				surface->setDirtyRect(0, 0, surface->getWidth(), surface->getHeight());
+				host->video->drawSurfaceToScreen(surface);
+			}
+
+			opacity -= 5 * bx_options.video.refresh;
+			if (opacity <= 0 && getVIDEL() != NULL && getVIDEL()->getSurface() != NULL && surface != NULL) {
+				getVIDEL()->getSurface()->setDirtyRect(0, 0, surface->getWidth(), surface->getHeight());
+			}
+		}
+	}
 }
 
 /*

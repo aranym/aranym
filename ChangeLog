@@ -1,3 +1,7 @@
+2015/02/24 - Thorsten
+Fixed trying to load the boot logo twice on startup
+
+
 2015/02/23 - David
 - We have support only for one device configuration, so we
   filter attempts to change to configurations greater than 1.

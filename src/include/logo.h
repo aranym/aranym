@@ -33,13 +33,16 @@ class Logo {
 	private:
 		SDL_Surface *logo_surf;
 		HostSurface *surface;
+		int opacity;
+		
+		void load(const char *filename);
 
 	public:
 		Logo(const char *filename);
 		virtual ~Logo();
 
-		void load(const char *filename);
 		HostSurface *getSurface(void);
+		void alphaBlend(bool init);
 };
 
 #endif /* LOGO_H */
