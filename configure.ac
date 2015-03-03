@@ -1589,7 +1589,7 @@ if test "$enable_disasm" = auto -o "$enable_disasm" = opcodes; then
    found=yes
    AC_CHECK_HEADERS(bfd.h,,found=no)
    AC_CHECK_HEADERS(dis-asm.h,,found=no)
-   CPPFLAGS=$CPPFLAGS_save
+   CPPFLAGS="$CPPFLAGS_save"
    if test "$found" = yes; then
      AC_CHECK_LIB([opcodes], print_insn_m68k,, found=no, [$OPCODES_LIBS])
    fi
@@ -1772,9 +1772,9 @@ elif test "$have_framework_SDL_image" = yes ; then
 	have_sdlimage_lib=yes
 	have_sdlimage_h=yes
 else
-	tmp_cflags=$CFLAGS
-	tmp_cppflags=$CPPFLAGS
-	tmp_ldflags=$LDFLAGS
+	tmp_cflags="$CFLAGS"
+	tmp_cppflags="$CPPFLAGS"
+	tmp_ldflags="$LDFLAGS"
 	CFLAGS="$CFLAGS $SDL_CFLAGS"
 	CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 	LDFLAGS="$LDFLAGS $SDL_LIBS"
@@ -1793,9 +1793,9 @@ else
 			;;
 	esac
 
-	CFLAGS=$tmp_cflags
-	CPPFLAGS=$tmp_cppflags
-	LDFLAGS=$tmp_ldflags
+	CFLAGS="$tmp_cflags"
+	CPPFLAGS="$tmp_cppflags"
+	LDFLAGS="$tmp_ldflags"
 
 	if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 		if test "$enable_sdl2" = yes; then
@@ -1837,9 +1837,9 @@ if test "x$WANT_OPENGL" = "xyes"; then
 			;;
 	esac
 	AC_MSG_CHECKING(for OpenGL support)
+	tmp_cflags="$CFLAGS"
+	tmp_libs="$LIBS"
 	if test "$have_opengl" = no; then
-		tmp_cflags=$CFLAGS
-		tmp_libs=$LIBS
 		CFLAGS="$CFLAGS $SDL_CFLAGS"
 		LIBS="$LIBS $SDL_LIBS $GL_LIBS"
 		AC_TRY_COMPILE([
@@ -1847,8 +1847,8 @@ if test "x$WANT_OPENGL" = "xyes"; then
 			],[],[have_opengl="yes"])
 	fi
 	AC_MSG_RESULT($have_opengl)
-	CFLAGS=$tmp_cflags
-	LIBS=$tmp_libs
+	CFLAGS="$tmp_cflags"
+	LIBS="$tmp_libs"
 	DYNGLSRCS=""
 	if test "x$have_opengl" = "xyes"; then
 		AC_DEFINE([ENABLE_OPENGL], 1, [Define if OpenGL enabled])

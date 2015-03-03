@@ -1,3 +1,8 @@
+2015/03/03 - Thorsten
+- configure.ac: fixed saving/restoring CFLAGS and LIBS variables
+  during checks in some places
+
+
 2015/02/24 - Thorsten
 SDL2: Hotkeys did not work when opengl rendering was enabled
 
