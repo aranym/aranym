@@ -365,6 +365,7 @@ int DlgDisk::processDialogMain(void)
 				}
 			}
 			UpdateFloppyStatus();
+			return_obj = -1;
 			break;
 
 		case IDE0_MOUNT:

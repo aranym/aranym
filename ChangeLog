@@ -1,4 +1,9 @@
 2015/03/14 - Thorsten
+- dlgDisk.cpp: prevent Floppy eject button from reacting on both click and release
+- sdlgui.cpp: prevent EXIT objects from continously reacting on mouse movements
+
+
+2015/03/14 - Thorsten
 - dlgDisk.cpp: do not update input fields if selected file
   for generating image did not exist
 

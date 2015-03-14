@@ -1283,6 +1283,8 @@ int SDLGui_DoEvent(const SDL_Event &event)
 				break;
 			case SDL_QUIT:
 				return Dialog::GUI_CLOSE;
+			case SDL_MOUSEMOTION:
+				return Dialog::GUI_CONTINUE;
 		}
 
 		while (num_dialogs-->0) {
