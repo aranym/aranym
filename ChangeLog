@@ -1,3 +1,8 @@
+2015/03/14 - Andreas
+- gencpu.c: Fix CAS2 emulation to update the compare operand when
+  comparison failed
+
+
 2015/03/14 - Thorsten
 - dlgDisk.cpp: prevent Floppy eject button from reacting on both click and release
 - sdlgui.cpp: prevent EXIT objects from continously reacting on mouse movements

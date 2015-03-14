@@ -1977,33 +1977,37 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuae_u32 rn2 = regs.regs[(extra >> 12) & 15];\n");
 	if (curi->size == sz_word) {
 	    int old_brace_level = n_braces;
+	    printf ("\tuae_u32 rc1 = (extra >> 16) & 7;\n");
+	    printf ("\tuae_u32 rc2 = extra & 7;\n");
 	    printf ("\tuae_u16 dst1 = get_word(rn1), dst2 = get_word(rn2);\n");
-	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, (extra >> 16) & 7)", "dst1");
+	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc1)", "dst1");
 	    printf ("\tif (GET_ZFLG) {\n");
-	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, extra & 7)", "dst2");
+	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc2)", "dst2");
 	    printf ("\tif (GET_ZFLG) {\n");
 	    printf ("\tput_word(rn1, m68k_dreg(regs, (extra >> 22) & 7));\n");
 	    printf ("\tput_word(rn2, m68k_dreg(regs, (extra >> 6) & 7));\n");
 	    printf ("\t}}\n");
 	    pop_braces (old_brace_level);
 	    printf ("\tif (! GET_ZFLG) {\n");
-	    printf ("\tm68k_dreg(regs, (extra >> 6) & 7) = (m68k_dreg(regs, (extra >> 6) & 7) & ~0xffff) | (dst2 & 0xffff);\n");
-	    printf ("\tm68k_dreg(regs, (extra >> 22) & 7) = (m68k_dreg(regs, (extra >> 22) & 7) & ~0xffff) | (dst1 & 0xffff);\n");
+	    printf ("\tm68k_dreg(regs, rc2) = (m68k_dreg(regs, rc2) & ~0xffff) | (dst2 & 0xffff);\n");
+	    printf ("\tm68k_dreg(regs, rc1) = (m68k_dreg(regs, rc1) & ~0xffff) | (dst1 & 0xffff);\n");
 	    printf ("\t}\n");
 	} else {
 	    int old_brace_level = n_braces;
+	    printf ("\tuae_u32 rc1 = (extra >> 16) & 7;\n");
+	    printf ("\tuae_u32 rc2 = extra & 7;\n");
 	    printf ("\tuae_u32 dst1 = get_long(rn1), dst2 = get_long(rn2);\n");
-	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, (extra >> 16) & 7)", "dst1");
+	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc1)", "dst1");
 	    printf ("\tif (GET_ZFLG) {\n");
-	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, extra & 7)", "dst2");
+	    genflags (flag_cmp, curi->size, "newv", "m68k_dreg(regs, rc2)", "dst2");
 	    printf ("\tif (GET_ZFLG) {\n");
 	    printf ("\tput_long(rn1, m68k_dreg(regs, (extra >> 22) & 7));\n");
 	    printf ("\tput_long(rn2, m68k_dreg(regs, (extra >> 6) & 7));\n");
 	    printf ("\t}}\n");
 	    pop_braces (old_brace_level);
 	    printf ("\tif (! GET_ZFLG) {\n");
-	    printf ("\tm68k_dreg(regs, (extra >> 6) & 7) = dst2;\n");
-	    printf ("\tm68k_dreg(regs, (extra >> 22) & 7) = dst1;\n");
+	    printf ("\tm68k_dreg(regs, rc2) = dst2;\n");
+	    printf ("\tm68k_dreg(regs, rc1) = dst1;\n");
 	    printf ("\t}\n");
 	}
 	break;
