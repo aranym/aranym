@@ -185,7 +185,7 @@ bool make_image(long sec, const char *filename)
 {
 	FILE *fp;
 
-	fp = fopen(filename, "w");
+	fp = fopen(filename, "wb");
 	if (fp == NULL) {
 		// attempt to print an error
 		panicbug("make_image: error while opening '%s' for writing", filename);
@@ -461,9 +461,14 @@ void DlgDisk::processResultIde0(void)
 		{
 			strcpy(gui_options.atadevice[0][0].path, tmpname);
 			File_ShrinkName(ide0_path, tmpname, discdlg[IDE0_PATH].w);
-			setState(IDE0_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][0].path));
-			UpdateDiskParameters(0, true);
-			setSelected(IDE0_PRESENT, true);
+			bool exists = DiskImageSize(gui_options.atadevice[0][0].path) > 0;
+			setState(IDE0_PATH, SG_DISABLED, !exists);
+			if (exists) {
+				UpdateDiskParameters(0, true);
+				setSelected(IDE0_PRESENT, true);
+			} else {
+				setSelected(IDE0_PRESENT, false);
+			}
 		} else {
 			ide0_path[0] = 0;
 		}
@@ -480,9 +485,14 @@ void DlgDisk::processResultIde1(void)
 		{
 			strcpy(gui_options.atadevice[0][1].path, tmpname);
 			File_ShrinkName(ide1_path, tmpname, discdlg[IDE1_PATH].w);
-			setState(IDE1_PATH, SG_DISABLED, ! File_Exists(gui_options.atadevice[0][1].path));
-			UpdateDiskParameters(1, true);
-			setSelected(IDE1_PRESENT, true);
+			bool exists = DiskImageSize(gui_options.atadevice[0][1].path) > 0;
+			setState(IDE1_PATH, SG_DISABLED, !exists);
+			if (exists) {
+				UpdateDiskParameters(1, true);
+				setSelected(IDE1_PRESENT, true);
+			} else {
+				setSelected(IDE1_PRESENT, false);
+			}
 		} else {
 			ide1_path[0] = 0;
 		}
