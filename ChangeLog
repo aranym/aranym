@@ -1,3 +1,7 @@
+2015/03/16 - Thorsten
+- dlgKeyboard.cpp: fix initialization of radio buttons
+
+
 2015/03/14 - Andreas
 - gencpu.c: Fix CAS2 emulation to update the compare operand when
   comparison failed

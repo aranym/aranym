@@ -33,8 +33,10 @@
 DlgKeyboard::DlgKeyboard(SGOBJ *dlg)
 	: Dialog(dlg)
 {
-	keyboarddlg[bx_options.ikbd.wheel_eiffel ? EIFFEL : ARROWKEYS].state |= SG_SELECTED;
-	keyboarddlg[bx_options.ikbd.altgr ? MILAN_ALTGR : ATARI_ALT].state |= SG_SELECTED;
+	keyboarddlg[EIFFEL].state = bx_options.ikbd.wheel_eiffel ? SG_SELECTED : 0;
+	keyboarddlg[ARROWKEYS].state = bx_options.ikbd.wheel_eiffel ? 0 : SG_SELECTED;
+	keyboarddlg[MILAN_ALTGR].state = bx_options.ikbd.altgr ? SG_SELECTED : 0;
+	keyboarddlg[ATARI_ALT].state = bx_options.ikbd.altgr ? 0 : SG_SELECTED;
 }
 
 DlgKeyboard::~DlgKeyboard()
