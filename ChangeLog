@@ -1,3 +1,7 @@
+2015/03/19 - Thorsten
+- bootos: clear first 64k of memory upon reboot
+
+
 2015/03/16 - Thorsten
 - dlgKeyboard.cpp: fix initialization of radio buttons
 

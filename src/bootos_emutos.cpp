@@ -35,13 +35,13 @@ EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 
 	load(bx_options.emutos_path);
 
+	init();
+
 	infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
 		ROMBaseHost[0x1a], ROMBaseHost[0x1b],
 		ROMBaseHost[0x18], ROMBaseHost[0x19],
 		bx_options.emutos_path
 	);
-
-	init();
 }
 /* vim:ts=4:sw=4
  */

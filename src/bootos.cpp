@@ -30,6 +30,7 @@ BootOs *bootOs = NULL;
 
 void BootOs::init(void)
 {
+	memset(RAMBaseHost, 0, 0x10000);
 	/* Setting "SP & PC" for CPU with ROM based OS (TOS, EmuTOS) */
 	for (int i=0; i<8; i++) {
 		RAMBaseHost[i] = ROMBaseHost[i];
@@ -38,6 +39,7 @@ void BootOs::init(void)
 
 void BootOs::reset(void)
 {
+	init();
 }
 
 void BootOs::load(const char *filename) throw (AranymException)

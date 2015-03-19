@@ -51,6 +51,8 @@ void TosBootOs::tos_patch(void) throw (AranymException)
 
 	load(bx_options.tos_path);
 
+	init();
+
 	// check if this is the correct 68040 aware TOS ROM version
 	D(bug("Checking TOS version.."));
 	unsigned char TOS404[16] = {0xe5,0xea,0x0f,0x21,0x6f,0xb4,0x46,0xf1,0xc4,0xa4,0xf4,0x76,0xbc,0x5f,0x03,0xd4};
@@ -232,8 +234,6 @@ void TosBootOs::tos_patch(void) throw (AranymException)
 	}
 
 	infoprint("TOS 4.04 loading... [OK]");
-
-	init();
 }
 /* vim:ts=4:sw=4
  */
