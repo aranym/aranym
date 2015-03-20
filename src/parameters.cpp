@@ -1263,10 +1263,11 @@ struct Config_Tag hotkeys_conf[]={
 	{ "Setup", String_Tag, hotkeys[0], HOTKEYS_STRING_SIZE, 0},
 	{ "Quit", String_Tag, hotkeys[1], HOTKEYS_STRING_SIZE, 0},
 	{ "Reboot", String_Tag, hotkeys[2], HOTKEYS_STRING_SIZE, 0},
-	{ "Ungrab", String_Tag, hotkeys[3], HOTKEYS_STRING_SIZE, 0},
-	{ "Debug", String_Tag, hotkeys[4], HOTKEYS_STRING_SIZE, 0},
-	{ "Screenshot", String_Tag, hotkeys[5], HOTKEYS_STRING_SIZE, 0},
-	{ "Fullscreen", String_Tag, hotkeys[6], HOTKEYS_STRING_SIZE, 0},
+	{ "ColdReboot", String_Tag, hotkeys[3], HOTKEYS_STRING_SIZE, 0},
+	{ "Ungrab", String_Tag, hotkeys[4], HOTKEYS_STRING_SIZE, 0},
+	{ "Debug", String_Tag, hotkeys[5], HOTKEYS_STRING_SIZE, 0},
+	{ "Screenshot", String_Tag, hotkeys[6], HOTKEYS_STRING_SIZE, 0},
+	{ "Fullscreen", String_Tag, hotkeys[7], HOTKEYS_STRING_SIZE, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -1275,11 +1276,12 @@ typedef struct { char *string; bx_hotkey *keysym; } HOTKEYS_REL;
 HOTKEYS_REL hotkeys_rel[]={
 	{ hotkeys[0], &bx_options.hotkeys.setup },
 	{ hotkeys[1], &bx_options.hotkeys.quit },
-	{ hotkeys[2], &bx_options.hotkeys.reboot },
-	{ hotkeys[3], &bx_options.hotkeys.ungrab },
-	{ hotkeys[4], &bx_options.hotkeys.debug },
-	{ hotkeys[5], &bx_options.hotkeys.screenshot },
-	{ hotkeys[6], &bx_options.hotkeys.fullscreen }
+	{ hotkeys[2], &bx_options.hotkeys.warmreboot },
+	{ hotkeys[3], &bx_options.hotkeys.coldreboot },
+	{ hotkeys[4], &bx_options.hotkeys.ungrab },
+	{ hotkeys[5], &bx_options.hotkeys.debug },
+	{ hotkeys[6], &bx_options.hotkeys.screenshot },
+	{ hotkeys[7], &bx_options.hotkeys.fullscreen }
 };
 
 void preset_hotkeys()
@@ -1290,8 +1292,10 @@ void preset_hotkeys()
 	bx_options.hotkeys.setup.mod = KMOD_LGUI;
 	bx_options.hotkeys.quit.sym = SDLK_q;
 	bx_options.hotkeys.quit.mod = KMOD_LGUI;
-	bx_options.hotkeys.reboot.sym = SDLK_r;
-	bx_options.hotkeys.reboot.mod = KMOD_LGUI;
+	bx_options.hotkeys.warmreboot.sym = SDLK_r;
+	bx_options.hotkeys.warmreboot.mod = KMOD_LGUI;
+	bx_options.hotkeys.coldreboot.sym = SDLK_r;
+	bx_options.hotkeys.coldreboot.mod = SDL_Keymod(KMOD_LGUI | KMOD_LSHIFT);
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
 	bx_options.hotkeys.ungrab.mod = KMOD_LGUI;
 	bx_options.hotkeys.debug.sym = SDLK_d;
@@ -1305,8 +1309,10 @@ void preset_hotkeys()
 	bx_options.hotkeys.setup.mod = KMOD_NONE;
 	bx_options.hotkeys.quit.sym = SDLK_PAUSE;
 	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
-	bx_options.hotkeys.reboot.sym = SDLK_PAUSE;
-	bx_options.hotkeys.reboot.mod = KMOD_LCTRL;
+	bx_options.hotkeys.warmreboot.sym = SDLK_PAUSE;
+	bx_options.hotkeys.warmreboot.mod = KMOD_LCTRL;
+	bx_options.hotkeys.coldreboot.sym = SDLK_PAUSE;
+	bx_options.hotkeys.coldreboot.mod = SDL_Keymod(KMOD_LCTRL | KMOD_LSHIFT);
 	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
 	bx_options.hotkeys.ungrab.mod = SDL_Keymod(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
 	bx_options.hotkeys.debug.sym = SDLK_PAUSE;

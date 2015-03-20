@@ -1,3 +1,8 @@
+2015/03/20 - Thorsten
+- reworked previous patch, and added options to do Warm-/Coldreboot
+  as discussed in ML
+
+
 2015/03/19 - Thorsten
 - bootos: clear first 64k of memory upon reboot
 

@@ -254,7 +254,7 @@ LinuxBootOs::LinuxBootOs(void) throw (AranymException)
 		ROMBaseHost[0x0048] = 'N';
 		ROMBaseHost[0x0049] = 0;
 	}
-	init();
+	init(true);
 }
 
 LinuxBootOs::~LinuxBootOs(void)
@@ -262,9 +262,9 @@ LinuxBootOs::~LinuxBootOs(void)
 	cleanup();
 }
 
-void LinuxBootOs::reset(void) throw (AranymException)
+void LinuxBootOs::reset(bool cold) throw (AranymException)
 {
-	init();
+	init(cold);
 }
 
 /*--- Private functions ---*/
@@ -282,7 +282,7 @@ void LinuxBootOs::cleanup(void)
 	}
 }
 
-void LinuxBootOs::init(void)
+void LinuxBootOs::init(bool cold)
 {
 	kernel=ramdisk=NULL;
 	kernel_length=ramdisk_length=0;

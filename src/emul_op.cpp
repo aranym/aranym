@@ -72,7 +72,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		}
 
 		case M68K_EMUL_RESET:	// used in Linux/m68k reboot routine
-			bootOs->reset();	// reload linux kernel
+			bootOs->reset(false);	// reload linux kernel
 			Reset680x0();		// reset CPU so it fetches correct SP && PC
 			break;
 

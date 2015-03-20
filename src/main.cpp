@@ -494,7 +494,7 @@ void ExitAll(void)
 	SDL_Quit();
 }
 
-void RestartAll()
+void RestartAll(bool cold)
 {
 	lastTicks = 0;
 
@@ -513,7 +513,7 @@ void RestartAll()
 
 	// OS init
 	try {
-		bootOs->reset();
+		bootOs->reset(cold);
 	} catch (AranymException &e) {
 		panicbug("%s", e.getErrorMessage());
 	}

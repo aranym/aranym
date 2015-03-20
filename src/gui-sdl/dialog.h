@@ -39,7 +39,8 @@ class Dialog {
 		enum {
 			GUI_CONTINUE,	/* continue displaying dialog */
 			GUI_CLOSE,	/* close current dialog */
-			GUI_REBOOT,	/* reboot aranym */
+			GUI_WARMREBOOT,	/* reboot aranym */
+			GUI_COLDREBOOT,	/* reboot aranym */
 			GUI_SHUTDOWN	/* shutdown aranym */	
 		};
 

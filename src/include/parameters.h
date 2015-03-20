@@ -239,7 +239,8 @@ typedef struct {
 typedef struct {
 	bx_hotkey	setup;
 	bx_hotkey	quit;
-	bx_hotkey	reboot;
+	bx_hotkey	warmreboot;
+	bx_hotkey	coldreboot;
 	bx_hotkey	debug;
 	bx_hotkey	ungrab;
 	bx_hotkey	fullscreen;

@@ -60,7 +60,7 @@ class LinuxBootOs : public BootOs
 		unsigned long bi_size;
 
 		void cleanup(void);
-		void init(void);
+		void init(bool cold);
 		void *loadFile(char *filename, unsigned long *length);
 		int checkKernel(void);
 		int create_bootinfo(void);
@@ -72,7 +72,7 @@ class LinuxBootOs : public BootOs
 		LinuxBootOs(void) throw (AranymException);
 		virtual ~LinuxBootOs(void);
 
-		virtual void reset(void) throw (AranymException);
+		virtual void reset(bool cold) throw (AranymException);
 };
 
 #endif /* BOOTOSLINUX_H */

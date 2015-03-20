@@ -701,9 +701,13 @@ static void process_keyboard_event(const SDL_Event &event)
 			case Dialog::GUI_CLOSE:
 				close_GUI();
 				break;
-			case Dialog::GUI_REBOOT:
+			case Dialog::GUI_WARMREBOOT:
 				close_GUI();
 				RestartAll();
+				break;
+			case Dialog::GUI_COLDREBOOT:
+				close_GUI();
+				RestartAll(true);
 				break;
 			case Dialog::GUI_SHUTDOWN:
 				close_GUI();
@@ -765,8 +769,12 @@ static void process_keyboard_event(const SDL_Event &event)
 			pendingQuit = true;
 			send2Atari = false;
 		}
-		else if (CHECK_HOTKEY(reboot)) {
-			RestartAll();	// force Cold Reboot
+		else if (CHECK_HOTKEY(warmreboot)) {
+			RestartAll();	// force Warm Reboot
+			send2Atari = false;
+		}
+		else if (CHECK_HOTKEY(coldreboot)) {
+			RestartAll(true);	// force Cold Reboot
 			send2Atari = false;
 		}
 #ifdef SDL_GUI
@@ -938,9 +946,13 @@ static void process_mouse_event(const SDL_Event &event)
 			case Dialog::GUI_CLOSE:
 				close_GUI();
 				break;
-			case Dialog::GUI_REBOOT:
+			case Dialog::GUI_WARMREBOOT:
 				close_GUI();
 				RestartAll();
+				break;
+			case Dialog::GUI_COLDREBOOT:
+				close_GUI();
+				RestartAll(true);
 				break;
 			case Dialog::GUI_SHUTDOWN:
 				close_GUI();

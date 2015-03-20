@@ -33,17 +33,17 @@
 
 TosBootOs::TosBootOs(void) throw (AranymException)
 {
-	tos_patch();
+	tos_patch(true);
 }
 
-void TosBootOs::reset(void) throw (AranymException)
+void TosBootOs::reset(bool cold) throw (AranymException)
 {
-	tos_patch();
+	tos_patch(cold);
 }
 
 /*--- Private functions ---*/
 
-void TosBootOs::tos_patch(void) throw (AranymException)
+void TosBootOs::tos_patch(bool cold) throw (AranymException)
 {
 	if (strlen(bx_options.tos_path) == 0) {
 		throw AranymException("Path to TOS ROM image file undefined");
@@ -51,7 +51,7 @@ void TosBootOs::tos_patch(void) throw (AranymException)
 
 	load(bx_options.tos_path);
 
-	init();
+	init(cold);
 
 	// check if this is the correct 68040 aware TOS ROM version
 	D(bug("Checking TOS version.."));

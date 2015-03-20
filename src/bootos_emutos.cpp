@@ -35,7 +35,7 @@ EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 
 	load(bx_options.emutos_path);
 
-	init();
+	init(true);
 
 	infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
 		ROMBaseHost[0x1a], ROMBaseHost[0x1b],

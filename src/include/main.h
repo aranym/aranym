@@ -46,7 +46,7 @@ struct M68kRegisters {
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);
-extern void RestartAll(void);
+extern void RestartAll(bool cold = false);
 
 extern void invoke200HzInterrupt(void);
 

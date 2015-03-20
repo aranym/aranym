@@ -38,7 +38,8 @@
 
 static char key_setup[HOTKEYS_STRING_SIZE];
 static char key_quit[HOTKEYS_STRING_SIZE];
-static char key_reboot[HOTKEYS_STRING_SIZE];
+static char key_warmreboot[HOTKEYS_STRING_SIZE];
+static char key_coldreboot[HOTKEYS_STRING_SIZE];
 static char key_ungrab[HOTKEYS_STRING_SIZE];
 static char key_debug[HOTKEYS_STRING_SIZE];
 static char key_screenshot[HOTKEYS_STRING_SIZE];
@@ -50,13 +51,14 @@ static char key_fullscreen[HOTKEYS_STRING_SIZE];
 
 static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "\n"
-"Setup ...... you are using it right now\n"
-"Quit ....... quit ARAnyM\n"
-"Reboot ..... restart virtual machine\n"
-"Ungrab ..... release mouse and keyboard\n"
-"Debug ...... invoke internal debugger\n"
-"Screenshot.. save screen image to file\n"
-"Fullscreen.. switch from/to window mode\n"
+"Setup ....... you are using it right now\n"
+"Quit ........ quit ARAnyM\n"
+"Warm-Reboot . restart virtual machine\n"
+"Cold-Reboot . power-on virtual machine\n"
+"Ungrab ...... release mouse and keyboard\n"
+"Debug ....... invoke internal debugger\n"
+"Screenshot... save screen image to file\n"
+"Fullscreen... switch from/to window mode\n"
 "\n"
 "LS = Left Shift, LC = Left Ctrl,\n"
 "RA = Right Alt, RM = Right Meta.\n"
@@ -71,7 +73,8 @@ DlgHotkeys::DlgHotkeys(SGOBJ *dlg)
 	// show current GUI hotkey
 	UPDATE_BUTTON(setup);
 	UPDATE_BUTTON(quit);
-	UPDATE_BUTTON(reboot);
+	UPDATE_BUTTON(warmreboot);
+	UPDATE_BUTTON(coldreboot);
 	UPDATE_BUTTON(ungrab);
 	UPDATE_BUTTON(debug);
 	UPDATE_BUTTON(screenshot);
@@ -97,10 +100,15 @@ int DlgHotkeys::processDialog(void)
 			SDLGui_Open(dlgKeypress);
 			state = STATE_QUIT;
 			break;
-		case REBOOT:
+		case WARMREBOOT:
 			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
 			SDLGui_Open(dlgKeypress);
-			state = STATE_REBOOT;
+			state = STATE_WARMREBOOT;
+			break;
+		case COLDREBOOT:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_COLDREBOOT;
 			break;
 		case UNGRAB:
 			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
@@ -147,7 +155,8 @@ void DlgHotkeys::idle(void)
 	// show current GUI hotkey
 	UPDATE_BUTTON(setup);
 	UPDATE_BUTTON(quit);
-	UPDATE_BUTTON(reboot);
+	UPDATE_BUTTON(warmreboot);
+	UPDATE_BUTTON(coldreboot);
 	UPDATE_BUTTON(ungrab);
 	UPDATE_BUTTON(debug);
 	UPDATE_BUTTON(screenshot);
@@ -172,9 +181,15 @@ void DlgHotkeys::processResult(void)
 				dlgKeypress = NULL;
 			}
 			break;
-		case STATE_REBOOT:
+		case STATE_WARMREBOOT:
 			if (dlgKeypress) {
-				hotkeys.reboot = dlgKeypress->getPressedKey();
+				hotkeys.warmreboot = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_COLDREBOOT:
+			if (dlgKeypress) {
+				hotkeys.coldreboot = dlgKeypress->getPressedKey();
 				dlgKeypress = NULL;
 			}
 			break;

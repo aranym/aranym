@@ -90,7 +90,8 @@ DlgMain::DlgMain(SGOBJ *dlg)
 {
 	memset(path, 0, sizeof(path));
 	// if no bootOs available then disable the Reboot button
-	setState(REBOOT, SG_DISABLED, bootOs == NULL);
+	setState(WARMREBOOT, SG_DISABLED, bootOs == NULL);
+	setState(COLDREBOOT, SG_DISABLED, bootOs == NULL);
 }
 
 DlgMain::~DlgMain()
@@ -143,9 +144,13 @@ int DlgMain::processDialog(void)
 			// best by allowing this Save button only after the "Apply" was used.
 			SaveSettings();
 			break;
-		case REBOOT:
+		case WARMREBOOT:
 			if (bootOs != NULL)
-				retval = Dialog::GUI_REBOOT;
+				retval = Dialog::GUI_WARMREBOOT;
+			break;
+		case COLDREBOOT:
+			if (bootOs != NULL)
+				retval = Dialog::GUI_COLDREBOOT;
 			break;
 		case SHUTDOWN:
 			retval = Dialog::GUI_SHUTDOWN;
