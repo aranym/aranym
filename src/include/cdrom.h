@@ -25,8 +25,8 @@
 
 // Header file for low-level OS specific CDROM emulation
 
-#if defined(WIN32) && defined(OS_mingw)
-#include <windows.h>
+#if defined(_WIN32)
+#include <win32_supp.h>
 #endif
 
 class cdrom_interface {

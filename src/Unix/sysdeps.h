@@ -596,7 +596,7 @@ extern "C" char *strdup(const char *s);
 #endif
 
 #ifdef OS_mingw
-#include <windows.h>
+#include "windows_ver.h"
 
 /* FIXME: O_SYNC not defined in mingw, is there a replacement value ?
  * Does it make floppy working even without it ?

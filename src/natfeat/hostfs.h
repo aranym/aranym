@@ -28,6 +28,7 @@
 
 #include "nf_base.h"
 #include "tools.h"
+#include "win32_supp.h"
 
 #include <map>
 

@@ -1,3 +1,8 @@
+2015/04/05 - Thorsten
+Fix compilation problems for MinGW when using compilers from
+MinGW64 project
+
+
 2015/03/20 - Thorsten
 - reworked previous patch, and added options to do Warm-/Coldreboot
   as discussed in ML

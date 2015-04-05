@@ -19,12 +19,15 @@
    */
 
 
-#include "win32_supp.h"
-
+#define __WIN32_SUPP_IMPLEMENTATION
 #include "sysdeps.h"
+
+#include "win32_supp.h"
 
 #define DEBUG 0
 #include "debug.h"
+
+#if defined(_WIN32) || defined(__CYGWIN__)
 
 #define ISSLASH(C) ((C) == '/' || (C) == '\\')
 
@@ -148,7 +151,32 @@ const char *win32_errstring(DWORD err)
 }
 
 
-#ifdef OS_mingw
+#ifdef _WIN32
+
+
+#undef stat
+#undef fstat
+#undef lstat
+
+
+#if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64)
+#ifdef _USE_32BIT_TIME_T
+#define stat _stati64
+#define fstat _fstati64
+#undef _stati64
+#else
+#define stat _stat64
+#define fstat _fstat64
+#endif
+#else
+#ifdef __MINGW64_VERSION_MAJOR
+#define stat _stat32
+#define fstat _fstat32
+#else
+#define stat _stat
+#define fstat _fstat
+#endif
+#endif
 
 int readlink(const char *path, char *buf, size_t bufsiz)
 {
@@ -178,26 +206,46 @@ long pathconf(const char *file_name, int name)
 }
 
 
-int truncate(const char *file_name, off_t name)
+int win32_truncate(const char *pathname, off_t len)
 {
-	UNUSED(file_name);
-	UNUSED(name);
-	errno = ENOSYS;
-	return -1;
+	int ret, err;
+	
+	int fd = _open(pathname, _O_BINARY | _O_RDWR);
+	if (fd == -1)
+		return fd;
+	ret = win32_ftruncate(fd, len);
+	err = errno;
+	_close(fd);
+	errno = err;
+	return ret;
 }
 
 
-#undef stat
+int win32_ftruncate(int fd, off_t length)
+{
+/*
+ * _chsize_s is not declared in MinGW32 headers, and missing in import libraries
+ * it is also not available in Windows XP msvcrt.dll
+ */
+	return _chsize(fd, length);
+}
+
+
 static int orig_stat(const char *filename, struct stat *buf)
 {
 	return stat(filename, buf);
 }
 
 
-#undef lstat
 static int orig_lstat(const char *filename, struct stat *buf)
 {
-	return stat(filename, buf);
+	return orig_stat(filename, buf);
+}
+
+
+int win32_fstat(int fd, struct stat *st)
+{
+	return fstat(fd, st);
 }
 
 
@@ -280,19 +328,39 @@ int win32_lstat(const char *file, struct stat *sbuf)
 
 int futimes(int fd, const struct timeval tv[2])
 {
-	UNUSED(fd);
-	UNUSED(tv);
-	errno = ENOSYS;
-	return -1;
+	struct timespec ts[2];
+	ts[0].tv_sec = tv[0].tv_sec;
+	ts[0].tv_nsec = tv[0].tv_usec * 1000;
+	ts[1].tv_sec = tv[1].tv_sec;
+	ts[1].tv_nsec = tv[1].tv_usec * 1000;
+	return futimens(fd, ts);
 }
+
 
 int futimens(int fd, const struct timespec ts[2])
 {
-	UNUSED(fd);
-	UNUSED(ts);
-	errno = ENOSYS;
-	return -1;
+	FILETIME ac, mod;
+	ULARGE_INTEGER i;
+	HANDLE h;
+	
+/* 100ns difference between Windows and UNIX timebase. */
+#define FACTOR (0x19db1ded53e8000ULL)
+#define set_filetime(ft, t) \
+	i.QuadPart = (t.tv_sec * 1000000000ULL + t.tv_nsec) / 100UL + FACTOR; \
+	ft.dwLowDateTime = i.u.LowPart; \
+	ft.dwHighDateTime = i.u.HighPart
+	set_filetime(ac, ts[0]);
+	set_filetime(mod, ts[1]);
+#undef set_filetime
+	h = (HANDLE)_get_osfhandle(fd);
+	if (!SetFileTime(h, NULL, &ac, &mod))
+	{
+		errno = win32_errno_from_oserr(GetLastError());
+		return -1;
+	}
+	return 0;
 }
+
 
 /**
  * @author Prof. A Olowofoyeku (The African Chief)
@@ -352,4 +420,6 @@ int statfs(const char *path, struct statfs *buf)
 	return retval;
 }
 
-#endif /* OS_mingw */
+#endif /* _WIN32 */
+
+#endif /* _WIN32 || __CYGWIN__ */

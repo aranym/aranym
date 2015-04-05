@@ -19,11 +19,11 @@
 */
 
 
-#include "win32_supp.h"
-#include <winioctl.h>
 
 #include "sysdeps.h"
+#include "win32_supp.h"
 #include "toserror.h"
+#include <winioctl.h>
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "nfcdrom.h"
