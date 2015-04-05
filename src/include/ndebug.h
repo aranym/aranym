@@ -40,7 +40,9 @@ class ndebug {
 
   static const unsigned int max_breakpoints = 256;
 
+#ifdef HAVE_TERMIOS_H
   static termios savetty;
+#endif
   static bool issavettyvalid;
   static unsigned int rowlen;
   static const unsigned int dbsize = 1000;

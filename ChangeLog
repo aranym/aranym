@@ -1,4 +1,8 @@
 2015/04/05 - Thorsten
+Fix compilation errors on MinGW with --enable-debug
+
+
+2015/04/05 - Thorsten
 Fix compilation problems for MinGW when using compilers from
 MinGW64 project
 

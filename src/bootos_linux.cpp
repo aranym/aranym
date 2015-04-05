@@ -287,6 +287,7 @@ void LinuxBootOs::init(bool cold)
 	kernel=ramdisk=NULL;
 	kernel_length=ramdisk_length=0;
 
+	UNUSED(cold);
 #ifdef ENABLE_LILO
 	/* Load the kernel */
 	kernel=loadFile(bx_options.lilo.kernel, &kernel_length);
