@@ -1172,7 +1172,15 @@ void ndebug::run() {
 
 	irqindebug = false;
 	// release keyboard and mouse control
-	SDL_bool wasGrabbed = grabMouse(SDL_FALSE);
+	SDL_bool wasGrabbed;
+	HostScreen *video;
+	if (host && (video = host->video) != NULL)
+	{
+		wasGrabbed = grabMouse(SDL_FALSE);
+		video->releaseTheMouse();
+	} else {
+		wasGrabbed = SDL_FALSE;
+	}
 
 	uaecptr nextpc, nxdis, nxmem;
 	newm68k_disasm(stderr, m68k_getpc(), &nextpc, 0);
@@ -1194,7 +1202,9 @@ void ndebug::run() {
 				break;
 		}
 	}
-	if (wasGrabbed) grabMouse(SDL_TRUE);
+	if (wasGrabbed) video->grabTheMouse();
+	if (!SPCFLAGS_TEST(SPCFLAG_BRK))
+		debugging = false;
 }
 
 void ndebug::init()

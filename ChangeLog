@@ -1,4 +1,8 @@
 2015/04/05 - Thorsten
+Some fixes for internal debugger
+
+
+2015/04/05 - Thorsten
 Fix compilation errors on MinGW with --enable-debug
 
 

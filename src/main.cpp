@@ -65,8 +65,6 @@ void setactvdebug()
 void setactvdebug(int)
 #endif
 {
-	grabMouse(SDL_FALSE);
-
 #ifdef DEBUGGER
 	activate_debugger();
 #endif

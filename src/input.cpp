@@ -797,8 +797,6 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 #ifdef DEBUGGER
 		else if (CHECK_HOTKEY(debug)) {
-			video->releaseTheMouse();
-			video->CanGrabMouseAgain(false);	// let it leave our window
 			// activate debugger
 			activate_debugger();
 			send2Atari = false;
