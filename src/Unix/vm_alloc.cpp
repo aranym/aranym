@@ -237,10 +237,6 @@ void * vm_acquire(size_t size, int options)
 
 	*base = (char *)addr + size;
 	
-	// Since I don't know the standard behavior of mmap(), zero-fill here
-	if (std::memset(addr, 0, size) != addr)
-		return VM_MAP_FAILED;
-
 #else
 #ifdef HAVE_WIN32_VM
 	if ((addr = VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE)) == NULL)
@@ -252,10 +248,6 @@ void * vm_acquire(size_t size, int options)
 		vm_release(addr, size);
 		return VM_MAP_FAILED;
 	}
-
-	// Zero newly allocated memory
-	if (std::memset(addr, 0, size) != addr)
-		return VM_MAP_FAILED;
 #else
 	if ((addr = calloc(size, 1)) == 0)
 		return VM_MAP_FAILED;
@@ -301,10 +293,6 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 
 	if (mmap((caddr_t)addr, size, VM_PAGE_DEFAULT, extra_map_flags | map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
 		return false;
-
-	// Since I don't know the standard behavior of mmap(), zero-fill here
-	if (std::memset(addr, 0, size) != addr)
-		return false;
 #else
 #ifdef HAVE_WIN32_VM
 	// Windows cannot allocate Low Memory
@@ -316,10 +304,6 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 	DWORD  req_size = align_size_segment(addr, size);
 	LPVOID ret_addr = VirtualAlloc(req_addr, req_size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 	if (ret_addr != req_addr)
-		return false;
-
-	// Zero newly allocated memory
-	if (memset(addr, 0, size) != addr)
 		return false;
 #else
 	// Unsupported
