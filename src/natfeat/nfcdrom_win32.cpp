@@ -313,15 +313,25 @@ CdromDriverWin32::~CdromDriverWin32()
 		cddrives[i].device = NULL;
 	}
 	drives_scanned = false;
+	numcds = 0;
 }
 
+
+int CdromDriverWin32::Count()
+{
+	if (!drives_scanned)
+	{
+		(void) DeviceName(0);
+	}
+	return numcds;
+}
 
 const char *CdromDriverWin32::DeviceName(int drive)
 {
 	if (!drives_scanned)
 	{
 		char device[10];
-		int count = 0;
+		numcds = 0;
 
 		for ( int i = 0 ; i < CD_MAX_DRIVES; i++ )
 		{
@@ -329,8 +339,8 @@ const char *CdromDriverWin32::DeviceName(int drive)
 			if ( GetDriveType(device) == DRIVE_CDROM )
 			{
 				sprintf(device, "\\\\.\\%c:", DriveToLetter(i));
-				cddrives[count].device = strdup(device);
-				count++;
+				cddrives[numcds].device = strdup(device);
+				numcds++;
 			}
 		}
 		drives_scanned = true;

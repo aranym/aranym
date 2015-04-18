@@ -45,7 +45,6 @@ class CdromDriverLinux : public CdromDriver
 	protected:
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
-		const char *DeviceName(int drive);
 
 		int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
 		int32 cd_status(memptr device, memptr ext_status);
@@ -62,6 +61,9 @@ class CdromDriverLinux : public CdromDriver
 	public:
 		CdromDriverLinux();
 		virtual ~CdromDriverLinux();
+
+		virtual int Count();
+		virtual const char *DeviceName(int drive);
 };
 
 #endif /* NFCDROM_LINUX_H */

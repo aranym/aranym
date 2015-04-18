@@ -39,11 +39,11 @@ class CdromDriverWin32 : public CdromDriver
 		} cddrives[CD_MAX_DRIVES];
 
 		bool drives_scanned;
+		int numcds;
 		
 	protected:
 		int OpenDrive(memptr device);
 		void CloseDrive(int drive);
-		const char *DeviceName(int drive);
 
 		int32 cd_read(memptr device, memptr buffer, uint32 first, uint32 length);
 		int32 cd_status(memptr device, memptr ext_status);
@@ -61,6 +61,9 @@ class CdromDriverWin32 : public CdromDriver
 	public:
 		CdromDriverWin32();
 		virtual ~CdromDriverWin32();
+
+		virtual int Count();
+		virtual const char *DeviceName(int drive);
 };
 
 #endif /* NFCDROM_WIN32_H */

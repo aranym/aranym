@@ -53,6 +53,11 @@ CdromDriverSdl::~CdromDriverSdl(void)
 
 /*--- Public functions ---*/
 
+int CdromDriverSdl::Count()
+{
+	return SDL_CDNumDrives();
+}
+
 const char *CdromDriverSdl::DeviceName(int drive)
 {
 	return SDL_CDName(drive);

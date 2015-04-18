@@ -42,7 +42,6 @@ protected:
 	unsigned char BinaryToBcd(unsigned char value);	/* Convert a value to BCD */
 
 	virtual void ScanDrives();
-	virtual const char *DeviceName(int drive) = 0;
 	virtual int OpenDrive(memptr device) = 0;
 	virtual void CloseDrive(int drive);
 
@@ -64,6 +63,9 @@ public:
 	CdromDriver(void);
 	virtual ~CdromDriver(void);
 
+	virtual int Count() = 0;
+	virtual const char *DeviceName(int drive) = 0;
+	
 	const char *name() { return "CDROM"; }
 	bool isSuperOnly() { return true; }
 	int32 dispatch(uint32 fncode);

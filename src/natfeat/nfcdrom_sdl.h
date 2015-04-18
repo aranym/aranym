@@ -37,7 +37,6 @@ private:
 protected:
 	virtual int OpenDrive(memptr device);
 	virtual void CloseDrive(int drive);
-	virtual const char *DeviceName(int drive);
 
 	virtual int32 cd_status(memptr device, memptr ext_status);
 	virtual int32 cd_ioctl(memptr device, uint16 opcode, memptr buffer);
@@ -51,6 +50,9 @@ protected:
 public:
 	CdromDriverSdl(void);
 	virtual ~CdromDriverSdl(void);
+
+	virtual int Count();
+	virtual const char *DeviceName(int drive);
 };
 
 #endif /* NFCDROM_SDL_H */

@@ -243,6 +243,15 @@ CdromDriverLinux::~CdromDriverLinux()
 	drives_scanned = false;
 }
 
+int CdromDriverLinux::Count()
+{
+	if (!drives_scanned)
+	{
+		(void) DeviceName(0);
+	}
+	return numcds;
+}
+
 const char *CdromDriverLinux::DeviceName(int drive)
 {
 	if (!drives_scanned)
