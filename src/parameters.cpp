@@ -97,7 +97,8 @@
 
 enum {
 	OPT_PROBE_FIXED = 256,
-	OPT_FIXEDMEM_OFFSET
+	OPT_FIXEDMEM_OFFSET,
+	OPT_SET_OPTION
 };
 
 static struct option const long_options[] =
@@ -135,6 +136,7 @@ static struct option const long_options[] =
   {"probe-fixed", no_argument, 0, OPT_PROBE_FIXED },
   {"fixedmem", required_argument, 0, OPT_FIXEDMEM_OFFSET },
 #endif
+  {"option", required_argument, 0, OPT_SET_OPTION },
   {NULL, 0, NULL, 0}
 };
 
@@ -1480,6 +1482,7 @@ Options:\n\
   -S, --swap-ide                  swap IDE drives\n\
   -P <X,Y> or <center>            set window position\n\
   -k, --locale <XY>               set NVRAM keyboard layout and language\n\
+      --option section:key:value  set configuration value\n\
 ");
 #ifdef SDL_GUI
   printf("  -G, --gui                       open GUI at startup\n");
@@ -1814,6 +1817,28 @@ static int process_cmdline(int argc, char **argv)
 				break;
 #endif
 
+			case OPT_SET_OPTION:
+				{
+					char *section = optarg;
+					char *key = strchr(section, ':');
+					char *value;
+					if (key == NULL || (value = strchr(key + 1, ':')) == NULL)
+					{
+						panicbug("wrong '--option' argument: must be section:key:value");
+						exit(EXIT_FAILURE);
+					} else
+					{
+						*key++ = '\0';
+						*value++ = '\0';
+						if (setConfigValue(section, key, value) == false)
+						{
+							/* exit(EXIT_FAILURE); */
+							bug("cannot set [%s]%s to %s (ignored)", section, key, value);
+						}
+					}
+				}
+				break;
+				
 			default:
 				usage (EXIT_FAILURE);
 		}
@@ -1948,6 +1973,49 @@ bool saveSettings(const char *fs)
 	}
 	
 	return true;
+}
+
+
+/*
+ * set config variable by name
+ * 'section_name' must be passed without brackets here
+ */
+bool setConfigValue(const char *section_name, const char *key, const char *value)
+{
+	char home_folder[1024];
+	char data_folder[1024];
+	Host::getHomeFolder(home_folder, sizeof(home_folder));
+	Host::getDataFolder(data_folder, sizeof(data_folder));
+	ConfigOptions cfgopts(NULL, home_folder, data_folder);
+
+	int len = strlen(section_name);
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+	{
+		struct Config_Tag *conf = section->tags;
+		
+		if (*section->name != '[')
+			continue;
+		if (strncmp(section->name + 1, section_name, len) != 0 || section->name[len + 1] != ']')
+			continue;
+		if (ide_swap)
+		{
+			if (conf == diskc_configs) conf = diskd_configs;
+			else if (conf == diskd_configs) conf = diskc_configs;
+		}
+		for (; conf->code; conf++)
+		{
+			if (strcmp(conf->code, key) == 0)
+			{
+				bool ret = cfgopts.set_config_value(conf, value);
+				if (ret && section->postload)
+					section->postload();
+				return ret;
+			}
+		}
+		return false;
+	}
+	
+	return false;
 }
 
 

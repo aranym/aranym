@@ -1,4 +1,8 @@
 2015/04/18 - Thorsten
+Add commandline option to set configuration value by name
+
+
+2015/04/18 - Thorsten
 Clean-up and simplify config parameter handling
 
 
