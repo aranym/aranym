@@ -54,6 +54,7 @@ char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 		szPath))) 
 	{
 		safe_strncpy(buffer, szPath, bufsize);
+		strd2upath(buffer, buffer);
 	}
 	else {
 		buffer[0] = '\0';	// last resort - current folder

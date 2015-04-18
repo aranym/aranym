@@ -178,12 +178,10 @@ typedef struct {
 } bx_nfcdrom_options_t;
 
 // Misc CPU emulation options
-#ifdef ENABLE_EPSLIMITER
 typedef struct {
 	bool	eps_enabled;	/* Exception per second limiter enabled ? */
 	int32	eps_max;		/* Maximum tolerated eps before shutdown */
 } bx_cpu_options_t;
-#endif
 
 // Autozoom options
 typedef struct {
@@ -289,9 +287,7 @@ typedef struct {
   bx_midi_options_t		midi;
   bx_ikbd_options_t		ikbd;
   bx_nfcdrom_options_t	nfcdroms[ CD_MAX_DRIVES ];
-#ifdef ENABLE_EPSLIMITER
   bx_cpu_options_t  cpu;
-#endif
   bx_autozoom_options_t	autozoom;
   bx_nfosmesa_options_t	osmesa;
   bx_parallel_options_t parallel;
@@ -321,31 +317,25 @@ extern uintptr fixed_memory_offset;	// Virtual address of atari memory
 #endif
 
 extern char *program_name;
-extern char rom_path[512];
-extern char emutos_path[512];
 extern bool startupGUI;
 extern bool boot_emutos;
 extern bool boot_lilo;
 extern bool halt_on_reboot;
 
-void usage(int);
-extern bool check_cfg();
 extern bool decode_switches(int, char **);
 extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsize);
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 
-// following functions implemented in parameters_[unix|linux|cygwin].cpp
-char *getHomeFolder(char *buffer, unsigned int bufsize);
-char *getConfFolder(char *buffer, unsigned int bufsize);
-char *getDataFolder(char *buffer, unsigned int bufsize);
-
 char *keysymToString(char *buffer, const bx_hotkey *keysym);
 bool stringToKeysym(bx_hotkey *keysym, const char *string);
 
 extern const char *getConfigFile();
+void setConfigFile(const char *filename);
 extern bool loadSettings(const char *);
 extern bool saveSettings(const char *);
+
+extern const struct Config_Section *getConfigSections(void);
 
 #endif
 

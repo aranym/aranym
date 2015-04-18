@@ -42,6 +42,15 @@ struct Config_Tag {
 	char		stat;				/* internal flag for update_config */
 };
 
+struct Config_Section {
+	const char *name;
+	Config_Tag *tags;
+	bool skip_if_empty;
+	void (*preset)(void);
+	void (*postload)(void);
+	void (*presave)(void);
+};
+
 #ifndef MAX_PATH
 #define MAX_PATH	1024
 #endif
@@ -53,7 +62,6 @@ class ConfigOptions
 		char * strip_comment(char *);
 		long fcopy(const char *, const char *);
 		void expand_path(char *, const char *, unsigned short);
-		void compress_path(char *, char *, unsigned short);
 		bool write_token(FILE *, struct Config_Tag *);
 
 		const char *config_file;
@@ -63,10 +71,13 @@ class ConfigOptions
 		char line[32768];
 
 	public:
-		ConfigOptions(const char *, const char *, const char *);
-		int input_config(struct Config_Tag *, const char *);
-		int update_config(struct Config_Tag *, const char *);
-		int process_config(struct Config_Tag *, const char *, bool verbose);
+		ConfigOptions(const char *cfgfile, const char *home, const char *data);
+		int input_config(struct Config_Tag *configs, const char *section);
+		int update_config(struct Config_Tag *configs, const char *section);
+		bool set_config_value(struct Config_Tag *tag, const char *value);
+		int process_config(struct Config_Tag *configs, const char *section, bool verbose);
+
+		void compress_path(char *, char *, unsigned short);
 };
 
 #endif

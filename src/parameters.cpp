@@ -95,8 +95,10 @@
 # define PROVIDES_NATFEATS "<undefined>"
 #endif
 
-#define OPT_PROBE_FIXED (256 + 0)
-#define OPT_FIXEDMEM_OFFSET (256 + 1)
+enum {
+	OPT_PROBE_FIXED = 256,
+	OPT_FIXEDMEM_OFFSET
+};
 
 static struct option const long_options[] =
 {
@@ -565,14 +567,12 @@ struct Config_Tag global_conf[]={
 	{ "BootstrapArgs", String_Tag, bx_options.bootstrap_args, sizeof(bx_options.bootstrap_args), 0},
 	{ "BootDrive", Char_Tag, &bx_options.bootdrive, 0, 0},
 	{ "GMTime", Bool_Tag, &bx_options.gmtime, 0, 0},
-#ifdef ENABLE_EPSLIMITER
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
 	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
-#endif
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_global()
+static void preset_global()
 {
   strcpy(bx_options.tos_path, TOS_FILENAME);
   strcpy(bx_options.emutos_path, EMUTOS_FILENAME);
@@ -587,13 +587,11 @@ void preset_global()
 #if FIXED_ADDRESSING
 	bx_options.fixed_memory_offset = fixed_memory_offset;
 #endif
-#ifdef ENABLE_EPSLIMITER
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
-#endif
 }
 
-void postload_global()
+static void postload_global()
 {
 #ifndef FixedSizeFastRAM
 	FastRAMSize = bx_options.fastram * 1024 * 1024;
@@ -605,7 +603,7 @@ void postload_global()
 		bx_options.bootdrive = 0;
 }
 
-void presave_global()
+static void presave_global()
 {
 	bx_options.fastram = FastRAMSize / 1024 / 1024;
 #if FIXED_ADDRESSING
@@ -618,23 +616,21 @@ void presave_global()
 /*************************************************************************/
 struct Config_Tag startup_conf[]={
 	{ "GrabMouse", Bool_Tag, &bx_options.startup.grabMouseAllowed, 0, 0},
-#ifdef DEBUGGER
 	{ "Debugger", Bool_Tag, &bx_options.startup.debugger, 0, 0},
-#endif
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_startup()
+static void preset_startup()
 {
   bx_options.startup.debugger = false;
   bx_options.startup.grabMouseAllowed = true;
 }
 
-void postload_startup()
+static void postload_startup()
 {
 }
 
-void presave_startup()
+static void presave_startup()
 {
 }
 
@@ -649,7 +645,7 @@ struct Config_Tag jit_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_jit()
+static void preset_jit()
 {
 	bx_options.jit.jit = true;
 	bx_options.jit.jitfpu = true;
@@ -658,11 +654,11 @@ void preset_jit()
 	strcpy(bx_options.jit.jitblacklist, "");
 }
 
-void postload_jit()
+static void postload_jit()
 {
 }
 
-void presave_jit()
+static void presave_jit()
 {
 }
 
@@ -673,18 +669,18 @@ struct Config_Tag tos_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_tos()
+static void preset_tos()
 {
   bx_options.tos.redirect_CON = false;
   bx_options.tos.cookie_mch = 0x00050000; // ARAnyM
   bx_options.tos.cookie_akp = -1;
 }
 
-void postload_tos()
+static void postload_tos()
 {
 }
 
-void presave_tos()
+static void presave_tos()
 {
 }
 
@@ -700,7 +696,7 @@ struct Config_Tag video_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_video()
+static void preset_video()
 {
   bx_options.video.fullscreen = false;		// Boot in Fullscreen
   bx_options.video.boot_color_depth = -1;	// Boot in color depth
@@ -711,13 +707,13 @@ void preset_video()
   bx_options.video.single_blit_refresh = false;	// Use chunky screen refreshing
 }
 
-void postload_video()
+static void postload_video()
 {
 	if (bx_options.video.refresh < 1 || bx_options.video.refresh > 200)
 		bx_options.video.refresh = 2;	// default if input parameter is insane
 }
 
-void presave_video()
+static void presave_video()
 {
 }
 
@@ -729,21 +725,21 @@ struct Config_Tag opengl_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_opengl()
+static void preset_opengl()
 {
   bx_options.opengl.enabled = false;
   bx_options.opengl.filtered = false;
   strcpy(bx_options.opengl.library, "");
 }
 
-void postload_opengl()
+static void postload_opengl()
 {
 #ifndef ENABLE_OPENGL
   bx_options.opengl.enabled = false;
 #endif
 }
 
-void presave_opengl()
+static void presave_opengl()
 {
 }
 
@@ -819,7 +815,7 @@ static void set_ide(unsigned int number, const char *dev_path, int cylinders, in
 
 }
 
-void preset_ide()
+static void preset_ide()
 {
   set_ide(0, "", 0, 0, 0, false, false, "Master");
   set_ide(1, "", 0, 0, 0, false, false, "Slave");
@@ -827,11 +823,11 @@ void preset_ide()
   bx_options.newHardDriveSupport = true;
 }
 
-void postload_ide()
+static void postload_ide()
 {
 }
 
-void presave_ide()
+static void presave_ide()
 {
 }
 
@@ -863,7 +859,7 @@ DISK_CONFIG(disk5);
 DISK_CONFIG(disk6);
 DISK_CONFIG(disk7);
 
-void preset_disk()
+static void preset_disk()
 {
 	for(int i=0; i<DISKS; i++) {
 		*bx_options.disks[i].path = '\0';
@@ -874,11 +870,11 @@ void preset_disk()
 	}
 }
 
-void postload_disk()
+static void postload_disk()
 {
 }
 
-void presave_disk()
+static void presave_disk()
 {
 }
 
@@ -923,7 +919,7 @@ struct Config_Tag arafs_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0}
 };
 
-void preset_arafs()
+static void preset_arafs()
 {
 	strcpy(bx_options.aranymfs.symlinks, "posix");
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
@@ -933,7 +929,7 @@ void preset_arafs()
 	}
 }
 
-void postload_arafs()
+static void postload_arafs()
 {
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
 		safe_strncpy(bx_options.aranymfs.drive[i].rootPath, bx_options.aranymfs.drive[i].configPath, sizeof(bx_options.aranymfs.drive[i].rootPath));
@@ -964,7 +960,7 @@ void postload_arafs()
 	}
 }
 
-void presave_arafs()
+static void presave_arafs()
 {
 	for(int i=0; i < HOSTFS_MAX_DRIVES; i++) {
 		safe_strncpy(bx_options.aranymfs.drive[i].configPath, bx_options.aranymfs.drive[i].rootPath, sizeof(bx_options.aranymfs.drive[i].configPath));
@@ -999,7 +995,7 @@ ETH_CONFIG(eth2);
 ETH_CONFIG(eth3);
 
 #define ETH(i, x) bx_options.ethernet[i].x
-void preset_ethernet()
+static void preset_ethernet()
 {
 	// ETH[0] with some default values
 	safe_strncpy(ETH(0, type), XIF_TYPE, sizeof(ETH(0, type)));
@@ -1020,11 +1016,11 @@ void preset_ethernet()
 	}
 }
 
-void postload_ethernet()
+static void postload_ethernet()
 {
 }
 
-void presave_ethernet()
+static void presave_ethernet()
 {
 }
 
@@ -1039,7 +1035,7 @@ struct Config_Tag lilo_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_lilo()
+static void preset_lilo()
 {
   safe_strncpy(LILO(kernel), "linux.bin", sizeof(LILO(kernel)));
   safe_strncpy(LILO(args), "root=/dev/ram video=atafb:vga16", sizeof(LILO(args)));
@@ -1047,11 +1043,11 @@ void preset_lilo()
   LILO(load_to_fastram) = false;
 }
 
-void postload_lilo()
+static void postload_lilo()
 {
 }
 
-void presave_lilo()
+static void presave_lilo()
 {
 }
 
@@ -1122,16 +1118,16 @@ struct Config_Tag nfcdroms_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_nfcdroms() {
+static void preset_nfcdroms() {
 	for(int i=0; i < CD_MAX_DRIVES; i++) {
 		bx_options.nfcdroms[i].physdevtohostdev = -1;
 	}
 }
 
-void postload_nfcdroms() {
+static void postload_nfcdroms() {
 }
 
-void presave_nfcdroms() {
+static void presave_nfcdroms() {
 }
 
 /*************************************************************************/
@@ -1144,7 +1140,7 @@ struct Config_Tag autozoom_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_autozoom() {
+static void preset_autozoom() {
   bx_options.autozoom.enabled = false;
   bx_options.autozoom.integercoefs = false;
   bx_options.autozoom.fixedsize = false;
@@ -1152,10 +1148,10 @@ void preset_autozoom() {
   bx_options.autozoom.height = 480;
 }
 
-void postload_autozoom() {
+static void postload_autozoom() {
 }
 
-void presave_autozoom() {
+static void presave_autozoom() {
 }
 
 /*************************************************************************/
@@ -1168,16 +1164,16 @@ struct Config_Tag osmesa_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_osmesa() {
+static void preset_osmesa() {
 	OSMESA_CONF(channel_size) = 0;
 	safe_strncpy(OSMESA_CONF(libgl), "libGL.so", sizeof(OSMESA_CONF(libgl)));
 	safe_strncpy(OSMESA_CONF(libosmesa), "libOSMesa.so", sizeof(OSMESA_CONF(libosmesa)));
 }
 
-void postload_osmesa() {
+static void postload_osmesa() {
 }
 
-void presave_osmesa() {
+static void presave_osmesa() {
 }
 
 /*************************************************************************/
@@ -1230,19 +1226,19 @@ struct Config_Tag natfeat_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_natfeat() {
+static void preset_natfeat() {
   safe_strncpy(NATFEAT_CONF(cdrom_driver), "sdl", sizeof(NATFEAT_CONF(cdrom_driver)));
   safe_strncpy(NATFEAT_CONF(vdi_driver), "soft", sizeof(NATFEAT_CONF(vdi_driver)));
 }
 
-void postload_natfeat()
+static void postload_natfeat()
 {
 #ifndef ENABLE_OPENGL
   safe_strncpy(NATFEAT_CONF(vdi_driver), "soft", sizeof(NATFEAT_CONF(vdi_driver)));
 #endif
 }
 
-void presave_natfeat() {
+static void presave_natfeat() {
 }
 
 /*************************************************************************/
@@ -1253,14 +1249,14 @@ struct Config_Tag nfvdi_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_nfvdi() {
+static void preset_nfvdi() {
 	NFVDI_CONF(use_host_mouse_cursor) = false;
 }
 
-void postload_nfvdi() {
+static void postload_nfvdi() {
 }
 
-void presave_nfvdi() {
+static void presave_nfvdi() {
 }
 
 /*************************************************************************/
@@ -1291,54 +1287,38 @@ HOTKEYS_REL hotkeys_rel[]={
 	{ hotkeys[7], &bx_options.hotkeys.fullscreen }
 };
 
-void preset_hotkeys()
+static void preset_hotkeys()
 {
 	// default values
 #ifdef OS_darwin
-	bx_options.hotkeys.setup.sym = SDLK_COMMA;
-	bx_options.hotkeys.setup.mod = KMOD_LGUI;
-	bx_options.hotkeys.quit.sym = SDLK_q;
-	bx_options.hotkeys.quit.mod = KMOD_LGUI;
-	bx_options.hotkeys.warmreboot.sym = SDLK_r;
-	bx_options.hotkeys.warmreboot.mod = KMOD_LGUI;
-	bx_options.hotkeys.coldreboot.sym = SDLK_r;
-	bx_options.hotkeys.coldreboot.mod = SDL_Keymod(KMOD_LGUI | KMOD_LSHIFT);
-	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
-	bx_options.hotkeys.ungrab.mod = KMOD_LGUI;
-	bx_options.hotkeys.debug.sym = SDLK_d;
-	bx_options.hotkeys.debug.mod = KMOD_LGUI;
-	bx_options.hotkeys.screenshot.sym = SDLK_s;
-	bx_options.hotkeys.screenshot.mod = KMOD_LGUI;
-	bx_options.hotkeys.fullscreen.sym = SDLK_f;
-	bx_options.hotkeys.fullscreen.mod = KMOD_LGUI;
+	strcpy(hotkeys[0], "LM+,");
+	strcpy(hotkeys[1], "LM+q");
+	strcpy(hotkeys[2], "LM+r");
+	strcpy(hotkeys[3], "LM+LS+r");
+	strcpy(hotkeys[4], "LM+Escape");
+	strcpy(hotkeys[5], "LM+d");
+	strcpy(hotkeys[6], "LM+s");
+	strcpy(hotkeys[7], "LM+f");
 #else
-	bx_options.hotkeys.setup.sym = SDLK_PAUSE;
-	bx_options.hotkeys.setup.mod = KMOD_NONE;
-	bx_options.hotkeys.quit.sym = SDLK_PAUSE;
-	bx_options.hotkeys.quit.mod = KMOD_LSHIFT;
-	bx_options.hotkeys.warmreboot.sym = SDLK_PAUSE;
-	bx_options.hotkeys.warmreboot.mod = KMOD_LCTRL;
-	bx_options.hotkeys.coldreboot.sym = SDLK_PAUSE;
-	bx_options.hotkeys.coldreboot.mod = SDL_Keymod(KMOD_LCTRL | KMOD_LSHIFT);
-	bx_options.hotkeys.ungrab.sym = SDLK_ESCAPE;
-	bx_options.hotkeys.ungrab.mod = SDL_Keymod(KMOD_LSHIFT | KMOD_LCTRL | KMOD_LALT);
-	bx_options.hotkeys.debug.sym = SDLK_PAUSE;
-	bx_options.hotkeys.debug.mod = KMOD_LALT;
-	bx_options.hotkeys.screenshot.sym = SDLK_PRINTSCREEN;
-	bx_options.hotkeys.screenshot.mod = KMOD_NONE;
-	bx_options.hotkeys.fullscreen.sym = SDLK_SCROLLLOCK;
-	bx_options.hotkeys.fullscreen.mod = KMOD_NONE;
+	strcpy(hotkeys[0], "Pause");
+	strcpy(hotkeys[1], "LS+Pause");
+	strcpy(hotkeys[2], "LC+Pause");
+	strcpy(hotkeys[3], "LS+LC+Pause");
+	strcpy(hotkeys[4], "LS+LC+LA+Escape");
+	strcpy(hotkeys[5], "LA+Pause");
+	strcpy(hotkeys[6], "PrintScreen");
+	strcpy(hotkeys[7], "ScrollLock");
 #endif
 }
 
-void postload_hotkeys() {
+static void postload_hotkeys() {
 	// convert from string to pair of ints
 	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
 		stringToKeysym(hotkeys_rel[i].keysym, hotkeys_rel[i].string);
 	}
 }
 
-void presave_hotkeys() {
+static void presave_hotkeys() {
 	// convert from pair of ints to string
 	for(uint16 i=0; i<sizeof(hotkeys_rel)/sizeof(hotkeys_rel[0]); i++) {
 		keysymToString(hotkeys_rel[i].string, hotkeys_rel[i].keysym);
@@ -1352,17 +1332,17 @@ struct Config_Tag ikbd_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_ikbd()
+static void preset_ikbd()
 {
 	bx_options.ikbd.wheel_eiffel = false;
 	bx_options.ikbd.altgr = true;
 }
 
-void postload_ikbd()
+static void postload_ikbd()
 {
 }
 
-void presave_ikbd()
+static void presave_ikbd()
 {
 }
 
@@ -1403,7 +1383,7 @@ struct Config_Tag joysticks_conf[]={
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_joysticks() {
+static void preset_joysticks() {
 	bx_options.joysticks.ikbd0 = -1;	/* This one is wired to mouse */
 	bx_options.joysticks.ikbd1 = 0;
 	bx_options.joysticks.joypada = -1;
@@ -1416,131 +1396,149 @@ void preset_joysticks() {
 		sizeof(bx_options.joysticks.joypadb_mapping));
 }
 
-void postload_joysticks() {
+static void postload_joysticks() {
 }
 
-void presave_joysticks() {
+static void presave_joysticks() {
 }
 
 /*************************************************************************/
-void usage (int status) {
+
+struct Config_Tag cmdline_conf[]={
+	{ "IdeSwap", Bool_Tag, &ide_swap, 0, 0 },
+	{ "BootEmutos", Bool_Tag, &boot_emutos, 0, 0 },
+	{ "BootLilo", Bool_Tag, &boot_lilo, 0, 0 },
+	{ "HaltOnReboot", Bool_Tag, &halt_on_reboot, 0, 0 },
+	{ "ConfigFile", Path_Tag, config_file, sizeof(config_file), 0 },
+#ifdef SDL_GUI
+	{ "StartupGUI", Bool_Tag, &startupGUI, 0, 0 },
+#endif
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+/*************************************************************************/
+static struct Config_Section const all_sections[] = {
+	{ "[GLOBAL]",     global_conf,   false, preset_global, postload_global, presave_global },
+	{ "[STARTUP]",    startup_conf,  false, preset_startup, postload_startup, presave_startup },
+	{ "[IKBD]",       ikbd_conf,     false, preset_ikbd, postload_ikbd, presave_ikbd },
+	{ "[HOTKEYS]",    hotkeys_conf,  false, preset_hotkeys, postload_hotkeys, presave_hotkeys },
+	{ "[JIT]",        jit_conf,      false, preset_jit, postload_jit, presave_jit },
+	{ "[VIDEO]",      video_conf,    false, preset_video, postload_video, presave_video },
+	{ "[TOS]",        tos_conf,      false, preset_tos, postload_tos, presave_tos },
+	{ "[IDE0]",       diskc_configs, false, preset_ide, postload_ide, presave_ide }, // beware of ide_swap
+	{ "[IDE1]",       diskd_configs, false, 0, 0, 0 },
+	  /* DISKS sections */
+	{ "[PARTITION0]", disk0_configs, false, preset_disk, postload_disk, presave_disk },
+	{ "[PARTITION1]", disk1_configs, true,  0, 0, 0 },
+	{ "[PARTITION2]", disk2_configs, true,  0, 0, 0 },
+	{ "[PARTITION3]", disk3_configs, true,  0, 0, 0 },
+	{ "[PARTITION4]", disk4_configs, true,  0, 0, 0 },
+	{ "[PARTITION5]", disk5_configs, true,  0, 0, 0 },
+	{ "[PARTITION6]", disk6_configs, true,  0, 0, 0 },
+	{ "[PARTITION7]", disk7_configs, true,  0, 0, 0 },
+	{ "[HOSTFS]",     arafs_conf,    false, preset_arafs, postload_arafs, presave_arafs },
+	{ "[OPENGL]",     opengl_conf,   false, preset_opengl, postload_opengl, presave_opengl },
+	  /* MAX_ETH sections */
+	{ "[ETH0]",       eth0_conf,     false, preset_ethernet, postload_ethernet, presave_ethernet },
+	{ "[ETH1]",       eth1_conf,     true,  0, 0, 0 },
+	{ "[ETH2]",       eth2_conf,     true,  0, 0, 0 },
+	{ "[ETH3]",       eth3_conf,     true,  0, 0, 0 },
+	{ "[LILO]",       lilo_conf,     false, preset_lilo, postload_lilo, presave_lilo },
+	{ "[MIDI]",       midi_conf,     false, preset_midi, postload_midi, presave_midi },
+	{ "[CDROMS]",     nfcdroms_conf, false, preset_nfcdroms, postload_nfcdroms, presave_nfcdroms },
+	{ "[AUTOZOOM]",   autozoom_conf, false, preset_autozoom, postload_autozoom, presave_autozoom },
+	{ "[NFOSMESA]",   osmesa_conf,   false, preset_osmesa, postload_osmesa, presave_osmesa },
+	{ "[PARALLEL]",   parallel_conf, false, preset_parallel, postload_parallel, presave_parallel },
+	{ "[SERIAL]",     serial_conf,   false, preset_serial, postload_serial, presave_serial },
+	{ "[NATFEATS]",   natfeat_conf,  false, preset_natfeat, postload_natfeat, presave_natfeat },
+	{ "[NFVDI]",      nfvdi_conf,    false, preset_nfvdi, postload_nfvdi, presave_nfvdi },
+	{ "[AUDIO]",      audio_conf,    false, preset_audio, postload_audio, presave_audio },
+	{ "[JOYSTICKS]",  joysticks_conf,false, preset_joysticks, postload_joysticks, presave_joysticks },
+	{ "cmdline",      cmdline_conf,  false, 0, 0, 0 },
+	{ 0, 0, false, 0, 0, 0 }
+};
+
+const struct Config_Section *getConfigSections(void)
+{
+	return all_sections;
+}
+
+/*************************************************************************/
+static void usage (int status) {
   printf ("Usage: %s [OPTIONS]\n", program_name);
   printf ("\
 Options:\n\
-  -a, --floppy NAME          floppy image file NAME\n\
-  -e, --emutos               boot EmuTOS\n\
-  -N, --nomouse              don't grab mouse at startup\n\
-  -f, --fullscreen           start in fullscreen\n\
-  -v, --refresh <X>          VIDEL refresh rate in VBL (default 2)\n\
-  -r, --resolution <X>       boot in X color depth [1,2,4,8,16]\n\
-  -m, --monitor <X>          attached monitor: 0 = VGA, 1 = TV\n\
-  -c, --config FILE          read different configuration file\n\
-  -s, --save                 save configuration file\n\
-  -S, --swap-ide             swap IDE drives\n\
-  -P <X,Y> or <center>       set window position\n\
-  -k, --locale <XY>          set NVRAM keyboard layout and language\n\
-  -h, --help                 display this help and exit\n\
-  -V, --version              output version information and exit\n\
+  -a, --floppy NAME               floppy image file NAME\n\
+  -e, --emutos                    boot EmuTOS\n\
+  -N, --nomouse                   don't grab mouse at startup\n\
+  -f, --fullscreen                start in fullscreen\n\
+  -v, --refresh <X>               VIDEL refresh rate in VBL (default 2)\n\
+  -r, --resolution <X>            boot in X color depth [1,2,4,8,16]\n\
+  -m, --monitor <X>               attached monitor: 0 = VGA, 1 = TV\n\
+  -c, --config FILE               read different configuration file\n\
+  -s, --save                      save configuration file\n\
+  -S, --swap-ide                  swap IDE drives\n\
+  -P <X,Y> or <center>            set window position\n\
+  -k, --locale <XY>               set NVRAM keyboard layout and language\n\
 ");
 #ifdef SDL_GUI
-  printf("  -G, --gui                  open GUI at startup\n");
+  printf("  -G, --gui                       open GUI at startup\n");
 #endif
 #if HOSTFS_SUPPORT
-  printf("  -d, --disk CHAR:PATH[:]    HostFS mapping, e.g. d:/atari/d_drive\n");
+  printf("  -d, --disk CHAR:PATH[:]         HostFS mapping, e.g. d:/atari/d_drive\n");
 #endif
 #ifdef ENABLE_LILO
-  printf("  -l, --lilo                 boot a linux kernel\n");
-  printf("  -H, --halt                 linux kernel halts on reboot\n");
+  printf("  -l, --lilo                      boot a linux kernel\n");
+  printf("  -H, --halt                      linux kernel halts on reboot\n");
 #endif
 #ifndef FixedSizeFastRAM
-  printf("  -F, --fastram SIZE         FastRAM size (in MB)\n");
+  printf("  -F, --fastram SIZE              FastRAM size (in MB)\n");
 #endif
 #if FIXED_ADDRESSING
-  printf("      --fixedmem OFFSET      use OFFSET for Atari memory (default: 0x%08x)\n", (unsigned int) fixed_memory_offset);
-  printf("      --probe-fixed          try to figure out best value for above offset\n");
+  printf("      --fixedmem OFFSET           use OFFSET for Atari memory (default: 0x%08x)\n", (unsigned int) fixed_memory_offset);
+  printf("      --probe-fixed               try to figure out best value for above offset\n");
 #endif
 #ifdef DEBUGGER
-  printf("  -D, --debug                start debugger\n");
+  printf("  -D, --debug                     start debugger\n");
 #endif
+  printf ("\
+\n\
+  -h, --help                      display this help and exit\n\
+  -V, --version                   output version information and exit\n\
+");
   exit (status);
 }
 
-void preset_cfg() {
-  preset_global();
-  preset_ikbd();
-  preset_hotkeys();
-  preset_ide();
-  preset_disk();
-  preset_arafs();
-  preset_video();
-  preset_tos();
-  preset_startup();
-  preset_jit();
-  preset_opengl();
-  preset_ethernet();
-  preset_lilo();
-  preset_midi();
-  preset_nfcdroms();
-  preset_autozoom();
-  preset_osmesa();
-  preset_parallel();
-  preset_serial();
-  preset_natfeat();
-  preset_nfvdi();
-  preset_audio();
-  preset_joysticks();
+static void preset_cfg() {
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+	{
+		if (section->skip_if_empty)
+		{
+			/*
+			 * This is assumed in saveSettings().
+			 * Check this here because it is not called on startup.
+			 */
+			if (section->tags->type != String_Tag && section->tags->type != Path_Tag)
+			{
+				panicbug("type of first entry in config section %s not String or Path", section->name);
+				abort();
+			}
+		}
+		if (section->preset)
+			section->preset();
+	}
 }
 
-void postload_cfg() {
-  postload_global();
-  postload_ikbd();
-  postload_hotkeys();
-  postload_ide();
-  postload_disk();
-  postload_arafs();
-  postload_video();
-  postload_tos();
-  postload_startup();
-  postload_jit();
-  postload_opengl();
-  postload_ethernet();
-  postload_lilo();
-  postload_midi();
-  postload_nfcdroms();
-  postload_autozoom();
-  postload_osmesa();
-  postload_parallel();
-  postload_serial();
-  postload_natfeat();
-  postload_nfvdi();
-  postload_audio();
-  postload_joysticks();
+static void postload_cfg() {
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+		if (section->postload)
+			section->postload();
 }
 
-void presave_cfg() {
-  presave_global();
-  presave_ikbd();
-  presave_hotkeys();
-  presave_ide();
-  presave_disk();
-  presave_arafs();
-  presave_video();
-  presave_tos();
-  presave_startup();
-  presave_jit();
-  presave_opengl();
-  presave_ethernet();
-  presave_lilo();
-  presave_midi();
-  presave_nfcdroms();
-  presave_autozoom();
-  presave_osmesa();
-  presave_parallel();
-  presave_serial();
-  presave_natfeat();
-  presave_nfvdi();
-  presave_audio();
-  presave_joysticks();
+static void presave_cfg() {
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+		if (section->presave)
+			section->presave();
 }
 
 static void print_version(void)
@@ -1571,7 +1569,7 @@ static void print_version(void)
 	infoprint("Native features  : %s", PROVIDES_NATFEATS);
 }
 
-void early_cmdline_check(int argc, char **argv) {
+static void early_cmdline_check(int argc, char **argv) {
 	for (int c = 0; c < argc; c++) {
 		char *p = argv[c];
 		if (strcmp(p, "-S") == 0  || strcmp(p, "--swap-ide") == 0)
@@ -1579,7 +1577,7 @@ void early_cmdline_check(int argc, char **argv) {
 
 		else if ((strcmp(p, "-c") == 0) || (strcmp(p, "--config") == 0)) {
 			if ((c + 1) < argc) {
-				safe_strncpy(config_file, argv[c + 1], sizeof(config_file));
+				setConfigFile(argv[c + 1]);
 			} else {
 				panicbug("config switch requires one parameter");
 				exit(EXIT_FAILURE);
@@ -1598,7 +1596,7 @@ void early_cmdline_check(int argc, char **argv) {
 	}
 }
 
-int process_cmdline(int argc, char **argv)
+static int process_cmdline(int argc, char **argv)
 {
 	int c;
 	while ((c = getopt_long (argc, argv,
@@ -1894,43 +1892,19 @@ static bool decode_ini_file(const char *rcfile)
 	Host::getDataFolder(data_folder, sizeof(data_folder));
 	ConfigOptions cfgopts(rcfile, home_folder, data_folder);
 
-	cfgopts.process_config(global_conf, "[GLOBAL]", verbose);
-	cfgopts.process_config(startup_conf, "[STARTUP]", verbose);
-	cfgopts.process_config(ikbd_conf, "[IKBD]", verbose);
-	cfgopts.process_config(hotkeys_conf, "[HOTKEYS]", verbose);
-	cfgopts.process_config(jit_conf, "[JIT]", verbose);
-	cfgopts.process_config(video_conf, "[VIDEO]", verbose);
-	cfgopts.process_config(tos_conf, "[TOS]", verbose);
-	cfgopts.process_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]", verbose);
-	cfgopts.process_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]", verbose);
-
-	cfgopts.process_config(disk0_configs, "[PARTITION0]", verbose);
-	cfgopts.process_config(disk1_configs, "[PARTITION1]", verbose);
-	cfgopts.process_config(disk2_configs, "[PARTITION2]", verbose);
-	cfgopts.process_config(disk3_configs, "[PARTITION3]", verbose);
-	cfgopts.process_config(disk4_configs, "[PARTITION4]", verbose);
-	cfgopts.process_config(disk5_configs, "[PARTITION5]", verbose);
-	cfgopts.process_config(disk6_configs, "[PARTITION6]", verbose);
-	cfgopts.process_config(disk7_configs, "[PARTITION7]", verbose);
-
-	cfgopts.process_config(arafs_conf, "[HOSTFS]", verbose);
-	cfgopts.process_config(opengl_conf, "[OPENGL]", verbose);
-	cfgopts.process_config(eth0_conf, "[ETH0]", verbose);
-	cfgopts.process_config(eth1_conf, "[ETH1]", verbose);
-	cfgopts.process_config(eth2_conf, "[ETH2]", verbose);
-	cfgopts.process_config(eth3_conf, "[ETH3]", verbose);
-	cfgopts.process_config(lilo_conf, "[LILO]", verbose);
-	cfgopts.process_config(midi_conf, "[MIDI]", verbose);
-	cfgopts.process_config(nfcdroms_conf, "[CDROMS]", verbose);
-	cfgopts.process_config(autozoom_conf, "[AUTOZOOM]", verbose);
-	cfgopts.process_config(osmesa_conf, "[NFOSMESA]", verbose);
-	cfgopts.process_config(parallel_conf, "[PARALLEL]", verbose);
-	cfgopts.process_config(serial_conf, "[SERIAL]", verbose);
-	cfgopts.process_config(natfeat_conf, "[NATFEATS]", verbose);
-	cfgopts.process_config(nfvdi_conf, "[NFVDI]", verbose);
-	cfgopts.process_config(audio_conf, "[AUDIO]", verbose);
-	cfgopts.process_config(joysticks_conf, "[JOYSTICKS]", verbose);
-
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+	{
+		struct Config_Tag *conf = section->tags;
+		
+		if (*section->name != '[') continue;
+		if (ide_swap)
+		{
+			if (conf == diskc_configs) conf = diskd_configs;
+			else if (conf == diskd_configs) conf = diskc_configs;
+		}
+		cfgopts.process_config(conf, section->name, verbose);
+	}
+	
 	return true;
 }
 
@@ -1951,65 +1925,31 @@ bool saveSettings(const char *fs)
 	Host::getDataFolder(data_folder, sizeof(data_folder));
 	ConfigOptions cfgopts(fs, home_folder, data_folder);
 
-	if (cfgopts.update_config(global_conf, "[GLOBAL]") < 0) {
-		panicbug("Error while writing the '%s' config file.", fs);
-		return false;
+	bool first = true;
+	for (const struct Config_Section *section = all_sections; section->name; section++, first = false)
+	{
+		struct Config_Tag *conf = section->tags;
+		
+		if (*section->name != '[') continue;
+		if (ide_swap)
+		{
+			if (conf == diskc_configs) conf = diskd_configs;
+			else if (conf == diskd_configs) conf = diskc_configs;
+		}
+		if (!section->skip_if_empty || strlen((const char *)conf->buf) != 0)
+			if (cfgopts.update_config(conf, section->name) < 0)
+			{
+				if (first)
+				{
+					panicbug("Error while writing the '%s' config file.", fs);
+					return false;
+				}
+			}
 	}
-	cfgopts.update_config(startup_conf, "[STARTUP]");
-	cfgopts.update_config(ikbd_conf, "[IKBD]");
-	cfgopts.update_config(hotkeys_conf, "[HOTKEYS]");
-	cfgopts.update_config(jit_conf, "[JIT]");
-	cfgopts.update_config(video_conf, "[VIDEO]");
-	cfgopts.update_config(tos_conf, "[TOS]");
-	cfgopts.update_config(ide_swap ? diskd_configs : diskc_configs, "[IDE0]");
-	cfgopts.update_config(ide_swap ? diskc_configs : diskd_configs, "[IDE1]");
-
-	cfgopts.update_config(disk0_configs, "[PARTITION0]");
-	if (strlen((char *)disk1_configs->buf))
-		cfgopts.update_config(disk1_configs, "[PARTITION1]");
-	if (strlen((char *)disk2_configs->buf))
-		cfgopts.update_config(disk2_configs, "[PARTITION2]");
-	if (strlen((char *)disk3_configs->buf))
-		cfgopts.update_config(disk3_configs, "[PARTITION3]");
-	if (strlen((char *)disk4_configs->buf))
-		cfgopts.update_config(disk4_configs, "[PARTITION4]");
-	if (strlen((char *)disk5_configs->buf))
-		cfgopts.update_config(disk5_configs, "[PARTITION5]");
-	if (strlen((char *)disk6_configs->buf))
-		cfgopts.update_config(disk6_configs, "[PARTITION6]");
-	if (strlen((char *)disk7_configs->buf))
-		cfgopts.update_config(disk7_configs, "[PARTITION7]");
-
-	cfgopts.update_config(arafs_conf, "[HOSTFS]");
-	cfgopts.update_config(opengl_conf, "[OPENGL]");
-
-	cfgopts.update_config(eth0_conf, "[ETH0]");
-	if (strlen((char *)eth1_conf->buf))
-		cfgopts.update_config(eth1_conf, "[ETH1]");
-	if (strlen((char *)eth2_conf->buf))
-		cfgopts.update_config(eth2_conf, "[ETH2]");
-	if (strlen((char *)eth3_conf->buf))
-		cfgopts.update_config(eth3_conf, "[ETH3]");
-
-	cfgopts.update_config(lilo_conf, "[LILO]");
-	cfgopts.update_config(midi_conf, "[MIDI]");
-	cfgopts.update_config(nfcdroms_conf, "[CDROMS]");
-	cfgopts.update_config(autozoom_conf, "[AUTOZOOM]");
-	cfgopts.update_config(osmesa_conf, "[NFOSMESA]");
-	cfgopts.update_config(parallel_conf, "[PARALLEL]");
-	cfgopts.update_config(serial_conf, "[SERIAL]");
-	cfgopts.update_config(natfeat_conf, "[NATFEATS]");
-	cfgopts.update_config(nfvdi_conf, "[NFVDI]");
-	cfgopts.update_config(audio_conf, "[AUDIO]");
-	cfgopts.update_config(joysticks_conf, "[JOYSTICKS]");
-
+	
 	return true;
 }
 
-bool check_cfg()
-{
-	return true;
-}
 
 bool decode_switches(int argc, char **argv)
 {
@@ -2026,11 +1966,16 @@ bool decode_switches(int argc, char **argv)
 		saveSettings(config_file);
 	}
 
-	return check_cfg();
+	return true;
 }
 
 const char *getConfigFile() {
 	return config_file;
+}
+
+void setConfigFile(const char *filename)
+{
+	safe_strncpy(config_file, filename, sizeof(config_file));
 }
 
 /*
