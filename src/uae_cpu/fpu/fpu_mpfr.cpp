@@ -196,6 +196,12 @@ fpu_register::operator long double ()
   return mpfr_get_ld (f, MPFR_RNDN);
 }
 
+fpu_register &fpu_register::operator=(long double x)
+{
+	mpfr_set_ld(f, x, MPFR_RNDN);
+	return *this;
+}
+
 static bool
 get_fp_addr (uae_u32 opcode, uae_u32 *addr, bool write)
 {
@@ -2042,4 +2048,24 @@ fpuop_restore (uae_u32 opcode)
     addr += (format & 0xff0000) >> 16;
   if ((opcode & 070) == 030)
     m68k_areg (regs, opcode & 7) = addr;
+}
+
+void fpu_set_fpsr(uae_u32 new_fpsr)
+{
+	set_fpsr(new_fpsr);
+}
+
+uae_u32 fpu_get_fpsr(void)
+{
+	return get_fpsr();
+}
+
+void fpu_set_fpcr(uae_u32 new_fpcr)
+{
+	set_fpcr(new_fpcr);
+}
+
+uae_u32 fpu_get_fpcr(void)
+{
+	return get_fpcr();
 }

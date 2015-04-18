@@ -167,6 +167,7 @@ struct fpu_register {
   mpfr_t f;
   uae_u64 nan_bits;
   operator long double ();
+  fpu_register &operator=(long double);
 };
 
 #endif

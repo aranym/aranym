@@ -6670,6 +6670,26 @@ PRIVATE void FFPU do_fld1 ( fpu_register & dest )
 }
 
 
+void fpu_set_fpsr(uae_u32 new_fpsr)
+{
+	set_fpsr(new_fpsr);
+}
+
+uae_u32 fpu_get_fpsr(void)
+{
+	return get_fpsr();
+}
+
+void fpu_set_fpcr(uae_u32 new_fpcr)
+{
+	set_fpcr(new_fpcr);
+}
+
+uae_u32 fpu_get_fpcr(void)
+{
+	return get_fpcr();
+}
+
 /* ---------------------------- MAIN INIT ---------------------------- */
 
 #ifdef HAVE_SIGACTION

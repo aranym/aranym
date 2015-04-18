@@ -1,4 +1,8 @@
 2015/04/18 - Thorsten
+Make fpu_{get|set}_{fpsr|fpcr} accessible
+
+
+2015/04/18 - Thorsten
 Report the type of os that was actually booted
 
 

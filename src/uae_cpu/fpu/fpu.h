@@ -51,4 +51,9 @@
 #include "fpu/types.h"
 #include "fpu/core.h"
 
+void fpu_set_fpsr(uae_u32 new_fpsr);
+uae_u32 fpu_get_fpsr(void);
+void fpu_set_fpcr(uae_u32 new_fpcr);
+uae_u32 fpu_get_fpcr(void);
+
 #endif /* FPU_PUBLIC_HEADER_H */
