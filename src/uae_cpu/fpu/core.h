@@ -116,7 +116,7 @@ struct fpu_t {
 	
 	/* Floating-Point Condition Code Byte */
 	uae_u32		condition_codes;
-	#define		FPSR_CCB				0xff000000
+	#define		FPSR_CCB				0x0f000000
 	#define		FPSR_CCB_NEGATIVE		0x08000000
 	#define		FPSR_CCB_ZERO			0x04000000
 	#define		FPSR_CCB_INFINITY		0x02000000

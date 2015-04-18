@@ -1,4 +1,8 @@
 2015/04/18 - Thorsten
+Fix FPSR Condition Code Bytemask
+
+
+2015/04/18 - Thorsten
 Compilation fixes for SDL configured with --enable-directfb
 
 
