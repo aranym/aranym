@@ -411,6 +411,9 @@ int trigger_interrupt(void *)
 
 void usbhost_init_libusb(void)
 {
+	if (init_flag)
+		return;
+	
 	if (libusb_init(NULL)) {
 		D(bug("USBHost: Imposible to start libusb"));
 		return;

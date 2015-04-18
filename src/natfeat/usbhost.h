@@ -181,4 +181,19 @@ public:
 	int32 dispatch(uint32 fncode);
 };
 
+/* External functions (usbhost.cpp) */
+
+extern void usbhost_init_libusb(void);
+extern int32 usbhost_get_device_list(void);
+extern void usbhost_free_usb_devices(void);
+extern int usbhost_claim_device(int virtdev_index);
+extern int usbhost_release_device(int virtdev_index);
+
+
+/* External variables (usbhost.cpp) */
+
+extern int number_ports_used;
+extern virtual_usbdev_t virtual_device[USB_MAX_DEVICE];
+
+
 #endif /* _USBHOST_H */

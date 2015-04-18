@@ -1,3 +1,7 @@
+2015/04/18 - Thorsten
+USB support: move extern declarations to header file
+
+
 2015/04/05 - Thorsten
 Some fixes for internal debugger
 
