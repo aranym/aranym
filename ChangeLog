@@ -1,4 +1,8 @@
 2015/04/18 - Thorsten
+Compilation fixes for SDL configured with --enable-directfb
+
+
+2015/04/18 - Thorsten
 USB support: move extern declarations to header file
 
 

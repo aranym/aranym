@@ -27,6 +27,17 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
     PKG_CHECK_MODULES([SDL2], [sdl2 >= $min_sdl2_version],
            [sdl2_pc=yes],
            [sdl2_pc=no])
+    if test "x$sdl2_pc" = xyes ; then
+      #
+      # sdl2.pc fails to add -I{includedir}/directfb to cflags if SDL2 was
+      # configured with --enable-directfb; we may have to add it ourselves
+      #
+      case `$PKG_CONFIG --libs --static sdl2` in
+      *-ldirectfb*)
+	 SDL2_CFLAGS="$SDL2_CFLAGS -I`$PKG_CONFIG --variable=includedir sdl2`/directfb"
+	 ;;
+      esac
+    fi
   else
     sdl2_pc=no
     if test x$sdl2_exec_prefix != x ; then
@@ -62,7 +73,15 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
       SDL2_CFLAGS=`$SDL2_CONFIG $sdl_config_args --cflags`
       SDL2_LIBS=`$SDL2_CONFIG $sdl2_config_args --libs`
       sdl2_version=`$SDL2_CONFIG $sdl2_config_args --version`
-
+      #
+      # sdl2-config fails to add -I{includedir}/directfb to cflags if SDL2 was
+      # configured with --enable-directfb; we may have to add it ourselves
+      #
+      case `$SDL2_CONFIG $sdl2_config_args --static-libs` in
+      *-ldirectfb*)
+	 SDL2_CFLAGS="$SDL2_CFLAGS -I`$SDL2_CONFIG $sdl2_config_args --prefix`/include/directfb"
+	 ;;
+      esac
     fi
   fi
 

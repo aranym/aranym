@@ -15,6 +15,12 @@
 #  define HAVE_LIBC 1 /* SDL2 does not include system headers without it */
 #endif
 
+/*
+ * workaround for SDL2/SDL_syswm.h:
+ * make sure directfb++.h isn't included, because it is wrapped in extern "C"
+ */
+#define DIRECTFBPP_H
+
 #include <SDL.h>
 
 #include <SDL_version.h>
@@ -80,6 +86,7 @@ extern DECLSPEC int SDLCALL SDL_putenv(const char *variable);
 
 typedef SDLMod SDL_Keymod;
 typedef SDLKey SDL_Keycode;
+typedef Uint8 SDL_Scancode;
 typedef SDL_keysym SDL_Keysym;
 typedef SDL_audiostatus SDL_AudioStatus;
 
@@ -110,6 +117,10 @@ typedef SDL_audiostatus SDL_AudioStatus;
 
 #define SDLK_IS_MODIFIER(sym) ((sym) >= SDLK_NUMLOCK && (sym) <= SDLK_COMPOSE)
 
+#endif
+
+#if !defined(SDL_VIDEO_DRIVER_WINDOWS) && (defined(SDL_VIDEO_DRIVER_WINRT) || defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI))
+#  define SDL_VIDEO_DRIVER_WINDOWS 1
 #endif
 
 #endif /* _SDL_COMPAT_H */

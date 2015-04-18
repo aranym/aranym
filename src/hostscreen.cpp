@@ -327,6 +327,9 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		height != oldmode.h ||
 		mode.format != oldmode.format)
 	{
+#ifdef USE_FIXED_CONSOLE_FBVIDEOMODE
+// Raspberry doesn't allow switching video mode. Keep current mode
+#endif
 		if (renderer)
 		{
 			SDL_DestroyRenderer(renderer);
@@ -406,9 +409,6 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 
 #ifdef USE_FIXED_CONSOLE_FBVIDEOMODE
 // Raspberry doesn't allow switching video mode. Keep current mode
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	// ToDo: Check how sdl2 is working
-#else
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (!videoInfo->wm_available) {
 	   width = videoInfo->current_w;
@@ -416,8 +416,25 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	   bpp = videoInfo->vfmt->BitsPerPixel;
 	}
 #endif
-#endif
 
+	{
+		SDL_Rect **modes;
+		modes = SDL_ListModes(NULL, screenFlags);
+		if (modes != (SDL_Rect **)-1 && modes != (SDL_Rect **)0)
+		{
+			int i;
+			for (i = 0; modes[i] != NULL; i++)
+			{
+			}
+			if (i == 1)
+			{
+				width = modes[0]->w;
+				height = modes[0]->h;
+				bug("only one video mode, using %dx%d", width, height);
+			}
+		}
+	}
+	
 	screen = SDL_SetVideoMode(width, height, bpp, screenFlags);
 	if (screen==NULL) {
 		/* Try with default bpp */
