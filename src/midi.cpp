@@ -50,3 +50,23 @@ void MIDI::reset(void)
 
 	ACIA::reset();
 }
+
+
+void MIDI::close(void)
+{
+	if (fd >= 0)
+	{
+		int i, j;
+
+		for (j=0;j<128;j++) {
+			for (i=0;i<16;i++) {
+				WriteData(0x80 + i);
+				WriteData(j);
+				WriteData(0);
+			}
+		}
+	
+		::close(fd);
+		fd = -1;
+	}
+}

@@ -36,7 +36,9 @@ typedef void (*audio_callback_f)(void *unused, Uint8 *stream, int len);
 class HostAudio {
 	private:
 		SDL_AudioSpec	desired;
-
+		bool recording;
+		bool enabled;
+		
 	public:
 		HostAudio();
 		~HostAudio();
@@ -51,7 +53,15 @@ class HostAudio {
 		void RemoveCallback(audio_callback_f callback);
 
 		/* Usable by external audio callbacks, consider read-only */
-		SDL_AudioSpec	obtained;	
+		SDL_AudioSpec	obtained;
+		
+		bool Recording(void) { return recording; }
+		void StartRecording() { recording = true; }
+		void StopRecording() { recording = false; }
+		
+		bool Enabled(void) { return enabled; }
+		void Enable() { enabled = true; }
+		void Disable() { enabled = false; }
 };
 
 #endif /* HOSTAUDIO_H */

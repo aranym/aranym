@@ -25,10 +25,16 @@
 
 class MIDI: public ACIA
 {
+	protected:
+		int fd;
+		virtual void close(void);
+
 	public:
 		MIDI(memptr, uint32);
 		virtual ~MIDI();
 		virtual void reset(void);
+		virtual void enable(bool bEnable) = 0;
+		virtual const char *type() = 0;
 };
 
 #endif /* _MIDI_H */

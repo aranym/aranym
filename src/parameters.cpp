@@ -1062,19 +1062,24 @@ struct Config_Tag midi_conf[]={
 	{ "Type", String_Tag, &MIDI(type), sizeof(MIDI(type)), 0},
 	{ "File", Path_Tag, &MIDI(file), sizeof(MIDI(file)), 0},
 	{ "Sequencer", Path_Tag, &MIDI(sequencer), sizeof(MIDI(sequencer)), 0},
+	{ "Enabled", Bool_Tag, &MIDI(enabled), 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_midi() {
+static void preset_midi() {
   safe_strncpy(MIDI(type), "none", sizeof(MIDI(type)));
   safe_strncpy(MIDI(file), "", sizeof(MIDI(file)));
   safe_strncpy(MIDI(sequencer), "/dev/sequencer", sizeof(MIDI(sequencer)));
+  MIDI(enabled) = false;
 }
 
-void postload_midi() {
+static void postload_midi() {
+	MIDI *midi = getMIDI();
+	if (midi)
+		midi->enable(MIDI(enabled));
 }
 
-void presave_midi() {
+static void presave_midi() {
 }
 
 /*************************************************************************/
@@ -1182,36 +1187,38 @@ struct Config_Tag parallel_conf[]={
 	{ "Type", String_Tag, &PARALLEL_CONF(type), sizeof(PARALLEL_CONF(type)), 0},
 	{ "File", String_Tag, &PARALLEL_CONF(file), sizeof(PARALLEL_CONF(file)), 0},
 	{ "Parport", String_Tag, &PARALLEL_CONF(parport), sizeof(PARALLEL_CONF(parport)), 0},
+	{ "Enabled", Bool_Tag, &PARALLEL_CONF(enabled), 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_parallel() {
+static void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(file), "stderr", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
 }
 
-void postload_parallel() {
+static void postload_parallel() {
 }
 
-void presave_parallel() {
+static void presave_parallel() {
 }
 /*************************************************************************/
 #define SERIAL_CONF(x) bx_options.serial.x
 
 struct Config_Tag serial_conf[]={
 	{ "Serport", String_Tag, &SERIAL_CONF(serport), sizeof(SERIAL_CONF(serport)), 0},
+	{ "Enabled", Bool_Tag, &SERIAL_CONF(enabled), 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_serial() {
+static void preset_serial() {
   safe_strncpy(SERIAL_CONF(serport), DEFAULT_SERIAL, sizeof(SERIAL_CONF(serport)));
 }
 
-void postload_serial() {
+static void postload_serial() {
 }
 
-void presave_serial() {
+static void presave_serial() {
 }
 
 /*************************************************************************/
@@ -1365,20 +1372,22 @@ struct Config_Tag audio_conf[]={
 	{ "Channels", Int_Tag, &bx_options.audio.chans, 0, 0},
 	{ "Bits", Int_Tag, &bx_options.audio.bits, 0, 0},
 	{ "Samples", Int_Tag, &bx_options.audio.samples, 0, 0},
+	{ "Enabled", Bool_Tag, &bx_options.audio.enabled, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
-void preset_audio() {
+static void preset_audio() {
   bx_options.audio.freq = 22050;
   bx_options.audio.chans = 2;
   bx_options.audio.bits = 16;
   bx_options.audio.samples = 1024;
+  bx_options.audio.enabled = true;
 }
 
-void postload_audio() {
+static void postload_audio() {
 }
 
-void presave_audio() {
+static void presave_audio() {
 }
 
 /*************************************************************************/

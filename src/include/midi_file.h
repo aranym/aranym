@@ -25,14 +25,13 @@
 
 class MidiFile: public MIDI
 {
-	private:
-		int fd;
-
 	public:
 		MidiFile(memptr, uint32);
 		~MidiFile();
 
 		void WriteData(uint8);
+		virtual void enable(bool bEnable);
+		virtual const char *type() { return "file"; }
 };
 
 #endif /* _MIDI_FILE_H */

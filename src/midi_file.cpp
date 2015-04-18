@@ -33,32 +33,33 @@ MidiFile::MidiFile(memptr addr, uint32 size) : MIDI(addr, size)
 {
 	D(bug("midi_file: interface created at 0x%06x", getHWoffset()));
 	fd = -1;
+	if (bx_options.midi.enabled)
+		enable(true);
+}
+
+
+void MidiFile::enable(bool bEnable)
+{
 	bx_midi_options_t *m = &bx_options.midi;
-	if (strcmp("file", m->type)==0 && strlen(m->file) > 0) {
-		fd = open(m->file, O_WRONLY|O_CREAT, 0664);
-		if (fd < 0) {
-			panicbug("midi_file: Can not open %s", m->file); 
+	if (!bEnable)
+		close();
+	if (strcmp(type(), m->type)==0 && strlen(m->file) > 0) {
+		if (bEnable && fd < 0)
+		{
+			fd = ::open(m->file, O_WRONLY|O_CREAT, 0664);
+			if (fd < 0) {
+				panicbug("midi_file: Can not open %s", m->file);
+			}
 		}
 	}
+	m->enabled = bEnable;
 }
 
 MidiFile::~MidiFile(void)
 {
 	D(bug("midi_file: interface destroyed at 0x%06x", getHWoffset()));
 
-	if (fd>=0) {
-		int i, j;
-
-		for (j=0;j<128;j++) {
-			for (i=0;i<16;i++) {
-				WriteData(0x80 + i);
-				WriteData(j);
-				WriteData(0);
-			}
-		}
-	
-		close(fd);
-	}
+	close();
 }
 
 void MidiFile::WriteData(uae_u8 value)

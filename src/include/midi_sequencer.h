@@ -26,7 +26,6 @@
 class MidiSequencer: public MIDI
 {
 	private:
-		int fd;
 		unsigned char packet[4];
 
 	public:
@@ -34,6 +33,8 @@ class MidiSequencer: public MIDI
 		~MidiSequencer();
 
 		void WriteData(uint8);
+		virtual void enable(bool bEnable);
+		virtual const char *type() { return "sequencer"; }
 };
 
 #endif /* _MIDI_SEQUENCER_H */

@@ -169,6 +169,7 @@ typedef struct {
 	char type[32];		/* MIDI output type */
 	char file[512];	/* /path/to/output */
 	char sequencer[256];	/* /dev/sequencer */
+	bool enabled;
 } bx_midi_options_t;
 
 // NfCdrom options
@@ -216,11 +217,13 @@ typedef struct {
 	char type[256];
 	char file[256];
 	char parport[256];
+	bool enabled;
 } bx_parallel_options_t;
 
 // Serial port options
 typedef struct {
 	char serport[256];
+	bool enabled;
 } bx_serial_options_t;
 
 // Keyboard and mouse
@@ -253,6 +256,7 @@ typedef struct {
 	uint32 chans;
 	uint32 bits;
 	uint32 samples;
+	bool enabled;
 } bx_audio_options_t;
 
 // Joysticks

@@ -84,6 +84,8 @@ HostAudio::HostAudio()
 	}
 #endif
 
+	enabled = bx_options.audio.enabled;
+	recording = false;
 	SDL_PauseAudio(0);
 }
 
@@ -98,6 +100,7 @@ HostAudio::~HostAudio()
 
 void HostAudio::reset(void)
 {
+	StopRecording();
 /*
 	SDL_LockAudio();
 

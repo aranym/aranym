@@ -157,6 +157,7 @@ HostScreen::HostScreen(void)
 	ignoreMouseMotionEvent(false),
 	atari_mouse_xpos(-1),
 	atari_mouse_ypos(-1),
+	recording(false),
 	screen(NULL),
 	new_width(0),
 	new_height(0),
@@ -183,6 +184,7 @@ HostScreen::~HostScreen(void)
 
 void HostScreen::reset(void)
 {
+	StopRecording();
 	lastVidelWidth = lastVidelHeight = lastVidelBpp = -1;
 	numScreen = SCREEN_BOOT;
 	setVidelRendering(true);
@@ -821,6 +823,18 @@ bool HostScreen::HasInputFocus()
 	return (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) != 0;
 #else
 	return (SDL_GetAppState() & SDL_APPINPUTFOCUS) != 0;
+#endif
+}
+
+
+bool HostScreen::HasMouseFocus()
+{
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	Uint32 flags = SDL_GetWindowFlags(window);
+	return (flags & (SDL_WINDOW_MOUSE_FOCUS|SDL_WINDOW_SHOWN)) == (SDL_WINDOW_MOUSE_FOCUS|SDL_WINDOW_SHOWN);
+#else
+	Uint8 state = SDL_GetAppState();
+	return (state & (SDL_APPMOUSEFOCUS|SDL_APPACTIVE)) == (SDL_APPMOUSEFOCUS|SDL_APPACTIVE);
 #endif
 }
 

@@ -43,30 +43,37 @@ MidiSequencer::MidiSequencer(memptr addr, uint32 size) : MIDI(addr, size)
 	packet[2] = 0;	/* device number */
 	packet[3] = 0;	/* NULL */
 
-	fd = open(bx_options.midi.sequencer, O_WRONLY, 0664);
-	if (fd<0) {
-		panicbug("midi_sequencer: Can not open %s", bx_options.midi.sequencer); 
-	}
+	fd = -1;
+	if (bx_options.midi.enabled)
+		enable(true);
 }
+
+
+void MidiSequencer::enable(bool bEnable)
+{
+	bx_midi_options_t *m = &bx_options.midi;
+	if (!bEnable)
+		close();
+	if (strcmp(type(), m->type)==0 && strlen(m->sequencer) > 0) {
+		if (bEnable && fd < 0)
+		{
+			fd = ::open(m->sequencer, O_WRONLY, 0664);
+			if (fd < 0) {
+				panicbug("midi_sequencer: Can not open %s", m->sequencer); 
+			}
+		}
+	}
+	m->enabled = bEnable;
+}
+
 
 MidiSequencer::~MidiSequencer(void)
 {
 	D(bug("midi_sequencer: interface destroyed at 0x%06x", getHWoffset()));
 
-	if (fd>=0) {
-		int i,j;
-
-		for (j=0;j<128;j++) {
-			for (i=0;i<16;i++) {
-				WriteData(0x80 + i);
-				WriteData(j);
-				WriteData(0);
-			}
-		}
-
-		close(fd);
-	}
+	close();
 }
+
 
 void MidiSequencer::WriteData(uae_u8 value)
 {

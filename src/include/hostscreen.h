@@ -74,6 +74,8 @@ class HostScreen: public DirtyRects
 	int atari_mouse_xpos;
 	int atari_mouse_ypos;
 
+	bool recording;
+	
   protected:
 	static const int MIN_WIDTH = 640;
 	static const int MIN_HEIGHT = 480;
@@ -173,6 +175,11 @@ class HostScreen: public DirtyRects
 	void RememberAtariMouseCursorPosition();
 	void RestoreAtariMouseCursorPosition();
 	bool HasInputFocus();
+	bool HasMouseFocus();
+
+	virtual bool Recording(void) { return recording; }
+	virtual void StartRecording() { recording = true; }
+	virtual void StopRecording() { recording = false; }
 };
 
 #endif
