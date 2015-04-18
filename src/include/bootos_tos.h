@@ -31,6 +31,7 @@ class TosBootOs : public BootOs
 	public:
 		TosBootOs(void) throw (AranymException);
 		void reset(bool cold) throw (AranymException);
+		virtual const char *type() { return "TOS"; };
 	
 	private:
 		void tos_patch(bool cold) throw (AranymException);

@@ -32,6 +32,7 @@ class BootOs
 	public:
 		virtual ~BootOs() {};
 		virtual void reset(bool cold);
+		virtual const char *type() = 0;
 };
 
 extern BootOs *bootOs;

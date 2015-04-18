@@ -73,6 +73,7 @@ class LinuxBootOs : public BootOs
 		virtual ~LinuxBootOs(void);
 
 		virtual void reset(bool cold) throw (AranymException);
+		virtual const char *type() { return "LILO"; };
 };
 
 #endif /* BOOTOSLINUX_H */
