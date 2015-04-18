@@ -1,4 +1,8 @@
 2015/04/18 - Thorsten
+Generate cpufunctbl by gencpu instead of at runtime
+
+
+2015/04/18 - Thorsten
 Make fpu_{get|set}_{fpsr|fpcr} accessible
 
 

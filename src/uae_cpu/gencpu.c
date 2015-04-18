@@ -59,6 +59,7 @@
 
 static FILE *headerfile;
 static FILE *stblfile;
+static FILE *functblfile;
 
 static int using_prefetch;
 static int using_exception_3;
@@ -98,7 +99,8 @@ static void read_counts (void)
 
     file = fopen ("frequent.68k", "r");
     if (file) {
-	assert(fscanf (file, "Total: %lu\n", &total) == 1);
+	int c = fscanf (file, "Total: %lu\n", &total);
+	assert(c == 1);
 	while (fscanf (file, "%lx: %lu %s\n", &opcode, &count, name) == 3) {
 	    opcode_next_clev[nr] = 4;
 	    opcode_last_postfix[nr] = -1;
@@ -2385,11 +2387,20 @@ static void generate_includes (FILE * f)
 
 static int postfix;
 
+struct gencputbl {
+    char handler[80];
+    uae_u16 specific;
+    uae_u16 opcode;
+    int namei;
+};
+struct gencputbl cpustbl[65536];
+static int n_cpustbl;
+
 static void generate_one_opcode (int rp)
 {
     int i;
     uae_u16 smsk, dmsk;
-    long int opcode = opcode_map[rp];
+    int opcode = opcode_map[rp];
 
     if (table68k[opcode].mnemo == i_ILLG
 	|| table68k[opcode].clev > cpu_level)
@@ -2404,21 +2415,30 @@ static void generate_one_opcode (int rp)
 	return;
 
     if (opcode_next_clev[rp] != cpu_level) {
-	fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, opcode_last_postfix[rp],
-		 opcode, lookuptab[i].name);
+    	sprintf(cpustbl[n_cpustbl].handler, "CPUFUNC(op_%x_%d)", opcode, opcode_last_postfix[rp]);
+    	cpustbl[n_cpustbl].specific = 0;
+    	cpustbl[n_cpustbl].opcode = opcode;
+    	cpustbl[n_cpustbl].namei = i;
+	fprintf (stblfile, "{ %s, %d, %d }, /* %s */\n", cpustbl[n_cpustbl].handler, cpustbl[n_cpustbl].specific, opcode, lookuptab[i].name);
+	n_cpustbl++;
 	return;
     }
 
 	if (table68k[opcode].flagdead == 0)
 	/* force to the "ff" variant since the instruction doesn't set at all the condition codes */
-    fprintf (stblfile, "{ CPUFUNC_FF(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
+    sprintf (cpustbl[n_cpustbl].handler, "CPUFUNC_FF(op_%x_%d)", opcode, postfix);
 	else
-    fprintf (stblfile, "{ CPUFUNC(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, lookuptab[i].name);
+    sprintf (cpustbl[n_cpustbl].handler, "CPUFUNC(op_%x_%d)", opcode, postfix);
+   	cpustbl[n_cpustbl].specific = 0;
+   	cpustbl[n_cpustbl].opcode = opcode;
+   	cpustbl[n_cpustbl].namei = i;
+	fprintf (stblfile, "{ %s, %d, %d }, /* %s */\n", cpustbl[n_cpustbl].handler, cpustbl[n_cpustbl].specific, opcode, lookuptab[i].name);
+	n_cpustbl++;
 
-    fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
-    fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
+    fprintf (headerfile, "extern cpuop_func op_%x_%d_nf;\n", opcode, postfix);
+    fprintf (headerfile, "extern cpuop_func op_%x_%d_ff;\n", opcode, postfix);
     
-    printf ("void REGPARAM2 CPUFUNC(op_%lx_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
+    printf ("void REGPARAM2 CPUFUNC(op_%x_%d)(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
     printf ("\tcpuop_begin();\n");
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
 	   codes at all is the same as the "ff" variant, so we don't need the "nf"
@@ -2589,6 +2609,7 @@ static void generate_func (void)
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
 	rp = 0;
+	n_cpustbl = 0;
 	for(j=1;j<=8;++j) {
 		int k = (j*nr_cpuop_funcs)/8;
 		printf ("#ifdef PART_%d\n",j);
@@ -2598,6 +2619,75 @@ static void generate_func (void)
 	}
 	fprintf (stblfile, "{ 0, 0, 0 }};\n");
     }
+}
+
+static struct {
+	const char *handler;
+	const char *name;
+} cpufunctbl[65536];
+static char const op_illg_1[] = "op_illg_1";
+static char const illegal[] = "ILLEGAL";
+
+static void generate_functbl (void)
+{
+	int i;
+	unsigned int opcode;
+	int cpu_level = 4;
+	struct gencputbl *tbl = cpustbl;
+
+	for (opcode = 0; opcode < 65536; opcode++)
+	{
+		cpufunctbl[opcode].handler = op_illg_1;
+		cpufunctbl[opcode].name = illegal;
+	}
+	for (i = 0; i < n_cpustbl; i++)
+	{
+		if (! tbl[i].specific)
+		{
+			cpufunctbl[tbl[i].opcode].handler = tbl[i].handler;
+			cpufunctbl[tbl[i].opcode].name = lookuptab[tbl[i].namei].name;
+		}
+	}
+	for (opcode = 0; opcode < 65536; opcode++)
+	{
+		const char *f;
+
+		if (table68k[opcode].mnemo == i_ILLG || (unsigned)table68k[opcode].clev > (unsigned)cpu_level)
+			continue;
+
+		if (table68k[opcode].handler != -1)
+		{
+			f = cpufunctbl[table68k[opcode].handler].handler;
+			if (f == op_illg_1)
+				abort();
+			cpufunctbl[opcode].handler = f;
+			cpufunctbl[opcode].name = cpufunctbl[table68k[opcode].handler].name;
+		}
+	}
+	for (i = 0; i < n_cpustbl; i++)
+	{
+		if (tbl[i].specific)
+		{
+			cpufunctbl[tbl[i].opcode].handler = tbl[i].handler;
+			cpufunctbl[tbl[i].opcode].name = lookuptab[tbl[i].namei].name;
+		}
+	}
+	
+	fprintf(functblfile, "\n");
+	fprintf(functblfile, "cpuop_func *cpufunctbl[65536] = {\n");
+	fprintf(functblfile, "#if !defined(HAVE_GET_WORD_UNSWAPPED) || defined(FULLMMU)\n");
+	for (opcode = 0; opcode < 65536; opcode++)
+	{
+		fprintf(functblfile, "\t%s%s /* %s */\n", cpufunctbl[opcode].handler, opcode < 65535 ? "," : "", cpufunctbl[opcode].name);
+	}
+	fprintf(functblfile, "#else\n");
+	for (opcode = 0; opcode < 65536; opcode++)
+	{
+		unsigned int map = do_byteswap_16(opcode);
+		fprintf(functblfile, "\t%s%s /* %s */\n", cpufunctbl[map].handler, opcode < 65535 ? "," : "", cpufunctbl[map].name);
+	}
+	fprintf(functblfile, "#endif\n");
+	fprintf(functblfile, "};\n");
 }
 
 int main ()
@@ -2615,15 +2705,23 @@ int main ()
      * cputbl.h that way), but cpuopti can't cope.  That could be fixed, but
      * I don't dare to touch the 68k version.  */
 
-    headerfile = fopen ("cputbl.h", "wb");
-    stblfile = fopen ("cpustbl.cpp", "wb");
-    assert(freopen ("cpuemu.cpp", "wb", stdout) != NULL);
+    if ((headerfile = fopen ("cputbl.h", "wb")) == NULL)
+    	abort();
+    if ((stblfile = fopen ("cpustbl.cpp", "wb")) == NULL)
+    	abort(); 
+    if ((functblfile = fopen ("cpufunctbl.cpp", "wb")) == NULL)
+    	abort(); 
+    if (freopen ("cpuemu.cpp", "wb", stdout) == NULL)
+    	abort();
 
     generate_includes (stdout);
     generate_includes (stblfile);
+    generate_includes (functblfile);
     generate_func ();
+    generate_functbl ();
     free (table68k);
     fclose(headerfile);
     fclose(stblfile);
+    fclose(functblfile);
     return 0;
 }

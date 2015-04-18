@@ -322,4 +322,6 @@ static inline void cpu_check_ticks(void)
 #define cpu_do_check_ticks()
 #endif
 
+cpuop_func op_illg_1;
+
 #endif /* NEWCPU_H */

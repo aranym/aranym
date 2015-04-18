@@ -1638,7 +1638,7 @@ fi
 dnl UAE CPU sources for all architectures.
 CPUINCLUDES="-I\$(srcdir)/uae_cpu"
 CPUSRCS="$CPUSRCS uae_cpu/aranym_glue.cpp uae_cpu/memory.cpp uae_cpu/newcpu.cpp uae_cpu/readcpu.cpp $JITSRCS $FPUSRCS $MMUSRCS"
-GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp $GENJITSRCS"
+GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp cpufunctbl.cpp $GENJITSRCS"
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$GCC" = "xyes" ]]; then

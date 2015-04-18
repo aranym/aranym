@@ -492,6 +492,7 @@ $(GEN_DIR)/compemu.cpp: $(GEN_DIR)/gencomp
 
 $(GEN_DIR)/cpustbl_nf.cpp: $(GEN_DIR)/cpuemu.cpp 
 $(GEN_DIR)/cpustbl.cpp: $(GEN_DIR)/cpuemu.cpp 
+$(GEN_DIR)/cpufunctbl.cpp: $(GEN_DIR)/cpuemu.cpp 
 $(GEN_DIR)/cputbl.h: $(GEN_DIR)/cpuemu.cpp
 $(GEN_DIR)/compstbl.cpp: $(GEN_DIR)/compemu.cpp
 $(GEN_DIR)/comptbl.h: $(GEN_DIR)/compemu.cpp
@@ -503,6 +504,8 @@ $(OBJ_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
 $(OBJ_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 $(OBJ_DIR)/compstbl.o: $(GEN_DIR)/compstbl.cpp
+	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
+$(OBJ_DIR)/cpufunctbl.o: $(GEN_DIR)/cpufunctbl.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@
 
 $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp

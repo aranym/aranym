@@ -82,8 +82,6 @@ int movem_index1[256];
 int movem_index2[256];
 int movem_next[256];
 
-cpuop_func *cpufunctbl[65536];
-
 #ifdef FLIGHT_RECORDER
 
 // feel free to edit the following defines to customize the dump
@@ -198,51 +196,18 @@ int broken_in;
 
 static inline unsigned int cft_map (unsigned int f)
 {
-#if ((!defined(HAVE_GET_WORD_UNSWAPPED)) || (defined(FULLMMU)))
+#if !defined(HAVE_GET_WORD_UNSWAPPED) || defined(FULLMMU)
     return f;
 #else
     return do_byteswap_16(f);
 #endif
 }
 
-void REGPARAM2 op_illg_1 (uae_u32 opcode) REGPARAM;
-
 void REGPARAM2 op_illg_1 (uae_u32 opcode)
 {
     op_illg (cft_map (opcode));
 }
 
-static void build_cpufunctbl (void)
-{
-    int i;
-    unsigned long opcode;
-    int cpu_level = 4;
-    struct cputbl *tbl = op_smalltbl_0_ff;
-
-    for (opcode = 0; opcode < 65536; opcode++)
-	cpufunctbl[cft_map (opcode)] = op_illg_1;
-    for (i = 0; tbl[i].handler != NULL; i++) {
-	if (! tbl[i].specific)
-	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
-    }
-    for (opcode = 0; opcode < 65536; opcode++) {
-	cpuop_func *f;
-
-	if (table68k[opcode].mnemo == i_ILLG || (unsigned)table68k[opcode].clev > (unsigned)cpu_level)
-	    continue;
-
-	if (table68k[opcode].handler != -1) {
-	    f = cpufunctbl[cft_map (table68k[opcode].handler)];
-	    if (f == op_illg_1)
-		abort();
-	    cpufunctbl[cft_map (opcode)] = f;
-	}
-    }
-    for (i = 0; tbl[i].handler != NULL; i++) {
-	if (tbl[i].specific)
-	    cpufunctbl[cft_map (tbl[i].opcode)] = tbl[i].handler;
-    }
-}
 
 void init_m68k (void)
 {
@@ -257,10 +222,11 @@ void init_m68k (void)
 	movem_index2[i] = 7-j;
 	movem_next[i] = i & (~(1 << j));
     }
+#ifdef USE_JIT
+	/* still needed by build_comp(); FIXME */
     read_table68k ();
     do_merges ();
-
-    build_cpufunctbl ();
+#endif
     fpu_init (CPUType == 4);
 }
 
