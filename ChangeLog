@@ -1,4 +1,8 @@
 2015/04/19 - Thorsten
+Fix some FPU constants for IEEE
+
+
+2015/04/19 - Thorsten
 Fix some FPU constants for MPFR
 
 

@@ -141,6 +141,12 @@ fpu_t fpu;
 #include "fpu/exceptions.cpp"
 #include "fpu/rounding.cpp"
 
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
+#define LD(x) x ## L
+#else
+#define LD(x) x
+#endif
+
 /* -------------------------------------------------------------------------- */
 /* --- Debugging                                                          --- */
 /* -------------------------------------------------------------------------- */
@@ -1606,27 +1612,27 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			switch (extra & 0x7f) {
 			case 0x00:
 				// FPU registers[reg] = 4.0 * atan(1.0);
-				FPU registers[reg] = 3.1415926535897932384626433832795;
+				FPU registers[reg] = LD(3.1415926535897932384626433832795029);
 				fpu_debug(("FP const: Pi\n"));
 				break;
 			case 0x0b:
 				// FPU registers[reg] = log10 (2.0);
-				FPU registers[reg] = 0.30102999566398119521373889472449;
+				FPU registers[reg] = LD(0.30102999566398119521); // 0.3010299956639811952137388947244930L
 				fpu_debug(("FP const: Log 10 (2)\n"));
 				break;
 			case 0x0c:
 				// FPU registers[reg] = exp (1.0);
-				FPU registers[reg] = 2.7182818284590452353602874713527;
+				FPU registers[reg] = LD(2.7182818284590452353); // 2.7182818284590452353602874713526625L
 				fpu_debug(("FP const: e\n"));
 				break;
 			case 0x0d:
 				// FPU registers[reg] = log (exp (1.0)) / log (2.0);
-				FPU registers[reg] = 1.4426950408889634073599246810019;
+				FPU registers[reg] = LD(1.4426950408889634073599246810019);
 				fpu_debug(("FP const: Log 2 (e)\n"));
 				break;
 			case 0x0e:
 				// FPU registers[reg] = log (exp (1.0)) / log (10.0);
-				FPU registers[reg] = 0.43429448190325182765112891891661;
+				FPU registers[reg] = LD(0.4342944819032518276511289189166051);
 				fpu_debug(("FP const: Log 10 (e)\n"));
 				break;
 			case 0x0f:
@@ -1635,70 +1641,70 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				break;
 			case 0x30:
 				// FPU registers[reg] = log (2.0);
-				FPU registers[reg] = 0.69314718055994530941723212145818;
+				FPU registers[reg] = LD(0.6931471805599453094172321214581766);
 				fpu_debug(("FP const: ln(2)\n"));
 				break;
 			case 0x31:
 				// FPU registers[reg] = log (10.0);
-				FPU registers[reg] = 2.3025850929940456840179914546844;
+				FPU registers[reg] = LD(2.3025850929940456840179914546843642);
 				fpu_debug(("FP const: ln(10)\n"));
 				break;
 			case 0x32:
 				// ??
-				FPU registers[reg] = 1.0e0;
+				FPU registers[reg] = LD(1.0e0);
 				fpu_debug(("FP const: 1.0e0\n"));
 				break;
 			case 0x33:
-				FPU registers[reg] = 1.0e1;
+				FPU registers[reg] = LD(1.0e1);
 				fpu_debug(("FP const: 1.0e1\n"));
 				break;
 			case 0x34:
-				FPU registers[reg] = 1.0e2;
+				FPU registers[reg] = LD(1.0e2);
 				fpu_debug(("FP const: 1.0e2\n"));
 				break;
 			case 0x35:
-				FPU registers[reg] = 1.0e4;
+				FPU registers[reg] = LD(1.0e4);
 				fpu_debug(("FP const: 1.0e4\n"));
 				break;
 			case 0x36:
-				FPU registers[reg] = 1.0e8;
+				FPU registers[reg] = LD(1.0e8);
 				fpu_debug(("FP const: 1.0e8\n"));
 				break;
 			case 0x37:
-				FPU registers[reg] = 1.0e16;
+				FPU registers[reg] = LD(1.0e16);
 				fpu_debug(("FP const: 1.0e16\n"));
 				break;
 			case 0x38:
-				FPU registers[reg] = 1.0e32;
+				FPU registers[reg] = LD(1.0e32);
 				fpu_debug(("FP const: 1.0e32\n"));
 				break;
 			case 0x39:
-				FPU registers[reg] = 1.0e64;
+				FPU registers[reg] = LD(1.0e64);
 				fpu_debug(("FP const: 1.0e64\n"));
 				break;
 			case 0x3a:
-				FPU registers[reg] = 1.0e128;
+				FPU registers[reg] = LD(1.0e128);
 				fpu_debug(("FP const: 1.0e128\n"));
 				break;
 			case 0x3b:
-				FPU registers[reg] = 1.0e256;
+				FPU registers[reg] = LD(1.0e256);
 				fpu_debug(("FP const: 1.0e256\n"));
 				break;
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 			case 0x3c:
-				FPU registers[reg] = 1.0e512L;
+				FPU registers[reg] = LD(1.0e512);
 				fpu_debug(("FP const: 1.0e512\n"));
 				break;
 			case 0x3d:
-				FPU registers[reg] = 1.0e1024L;
+				FPU registers[reg] = LD(1.0e1024);
 				fpu_debug(("FP const: 1.0e1024\n"));
 				break;
 			case 0x3e:
-				FPU registers[reg] = 1.0e2048L;
+				FPU registers[reg] = LD(1.0e2048);
 				fpu_debug(("FP const: 1.0e2048\n"));
 				break;
 			case 0x3f:
-				FPU registers[reg] = 1.0e4096L;
+				FPU registers[reg] = LD(1.0e4096);
 				fpu_debug(("FP const: 1.0e4096\n"));
 #endif
 				break;
@@ -2007,6 +2013,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			get_source_flags(src);
 			if (fl_dest.in_range && fl_source.in_range) {
 				FPU registers[reg] *= src;
+				if (unlikely(isinf(FPU registers[reg])))
+				{
+					isneg(FPU registers[reg]) ? make_inf_negative(FPU registers[reg]) : make_inf_positive(FPU registers[reg]);
+				}
 			}
 			else if (fl_dest.nan || fl_source.nan || 
 					 (fl_dest.zero && fl_source.infinity) || 
@@ -2098,6 +2108,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		case 0x22:		/* FADD */
 			fpu_debug(("FADD %.04f\n",(double)src));
 			FPU registers[reg] += src;
+			if (unlikely(isinf(FPU registers[reg])))
+			{
+				isneg(FPU registers[reg]) ? make_inf_negative(FPU registers[reg]) : make_inf_positive(FPU registers[reg]);
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x30:		/* FSINCOS */
