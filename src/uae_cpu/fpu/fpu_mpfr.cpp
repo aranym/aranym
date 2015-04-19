@@ -141,28 +141,29 @@ fpu_init (bool integral_68040)
   mpfr_const_pi (fpu_constant_rom[0], MPFR_RNDN);
   // 11: log10 (2)
   mpfr_set_ui (fpu_constant_rom[11], 2, MPFR_RNDN);
-  mpfr_log10 (fpu_constant_rom[11], fpu_constant_rom[11], MPFR_RNDN);
+  mpfr_log10 (fpu_constant_rom[11], fpu_constant_rom[11], MPFR_RNDZ);
   // 12: e
   mpfr_set_ui (fpu_constant_rom[12], 1, MPFR_RNDN);
-  mpfr_exp (fpu_constant_rom[12], fpu_constant_rom[12], MPFR_RNDN);
+  mpfr_exp (fpu_constant_rom[12], fpu_constant_rom[12], MPFR_RNDZ);
   // 13: log2 (e)
-  mpfr_log2 (fpu_constant_rom[13], fpu_constant_rom[12], MPFR_RNDN);
+  mpfr_log2 (fpu_constant_rom[13], fpu_constant_rom[12], MPFR_RNDU);
   // 14: log10 (e)
-  mpfr_log10 (fpu_constant_rom[14], fpu_constant_rom[12], MPFR_RNDN);
+  mpfr_log10 (fpu_constant_rom[14], fpu_constant_rom[12], MPFR_RNDU);
   // 15: 0
   mpfr_set_zero (fpu_constant_rom[15], 0);
   // 48: ln (2)
-  mpfr_set_ui (fpu_constant_rom[16], 2, MPFR_RNDN);
-  mpfr_log (fpu_constant_rom[16], fpu_constant_rom[16], MPFR_RNDN);
+  mpfr_const_log2 (fpu_constant_rom[16], MPFR_RNDN);
   // 49: ln (10)
-  mpfr_set_ui (fpu_constant_rom[17], 2, MPFR_RNDN);
-  mpfr_log10 (fpu_constant_rom[17], fpu_constant_rom[17], MPFR_RNDN);
+  mpfr_set_ui (fpu_constant_rom[17], 10, MPFR_RNDN);
+  mpfr_log (fpu_constant_rom[17], fpu_constant_rom[17], MPFR_RNDN);
   // 50 to 63: powers of 10
   mpfr_set_ui (fpu_constant_rom[18], 1, MPFR_RNDN);
-  mpfr_set_ui (fpu_constant_rom[19], 10, MPFR_RNDN);
-  for (int i = 20; i < 31; i++)
-    mpfr_sqr (fpu_constant_rom[i], fpu_constant_rom[i - 1], MPFR_RNDN);
-
+  for (int i = 19; i < 32; i++)
+  {
+    mpfr_set_ui (fpu_constant_rom[i], 1L << (i - 19) , MPFR_RNDN);
+    mpfr_exp10 (fpu_constant_rom[i], fpu_constant_rom[i], MPFR_RNDN);
+  }
+  
   fpu_inited = true;
 
   fpu_reset ();
