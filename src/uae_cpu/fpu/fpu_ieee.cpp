@@ -143,8 +143,12 @@ fpu_t fpu;
 
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 #define LD(x) x ## L
+#define POWL(x, y) powl(x, y)
+#define LOG10L(x) log10l(x)
 #else
 #define LD(x) x
+#define POWL(x, y) pow(x, y)
+#define LOG10L(x) log10(x)
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -519,41 +523,88 @@ PRIVATE inline void FFPU extract_double(fpu_register const & src,
 // to_pack
 PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3)
 {
-	fpu_double d;
-	char *cp;
-	char str[100];
+	fpu_register d;
+	bool sm = (wrd1 & 0x80000000) != 0;
+	bool se = (wrd1 & 0x40000000) != 0;
+	int exp = (wrd1 & 0x7fff0000) >> 16;
+	unsigned int dig;
+	fpu_register pwr;
+	
+	if (exp == 0x7fff)
+	{
+		if (wrd2 == 0 && wrd3 == 0)
+		{
+			sm ? make_inf_negative(d) : make_inf_positive(d);
+		} else
+		{
+			make_nan(d);
+		}
+		return d;
+	}
+	dig = wrd1 & 0x0000000f;
+	if (dig == 0 && wrd2 == 0 && wrd3 == 0)
+	{
+		sm ? make_zero_negative(d) : make_zero_positive(d);
+		return d;
+	}
 
-	cp = str;
-	if (wrd1 & 0x80000000)
-		*cp++ = '-';
-	*cp++ = (char)((wrd1 & 0xf) + '0');
-	*cp++ = '.';
-	*cp++ = (char)(((wrd2 >> 28) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 24) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 20) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 16) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 12) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 8) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 4) & 0xf) + '0');
-	*cp++ = (char)(((wrd2 >> 0) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 28) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 24) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 20) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 16) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 12) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 8) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 4) & 0xf) + '0');
-	*cp++ = (char)(((wrd3 >> 0) & 0xf) + '0');
-	*cp++ = 'E';
-	if (wrd1 & 0x40000000)
-		*cp++ = '-';
-	*cp++ = (char)(((wrd1 >> 24) & 0xf) + '0');
-	*cp++ = (char)(((wrd1 >> 20) & 0xf) + '0');
-	*cp++ = (char)(((wrd1 >> 16) & 0xf) + '0');
-	*cp = 0;
-	sscanf(str, "%le", &d);
+	/*
+	 * Convert the bcd exponent to binary by successive adds and
+	 * muls. Set the sign according to SE. Subtract 16 to compensate
+	 * for the mantissa which is to be interpreted as 17 integer
+	 * digits, rather than 1 integer and 16 fraction digits.
+	 * Note: this operation can never overflow.
+	 */
+	exp = ((wrd1 >> 24) & 0xf);
+	exp = exp * 10 + ((wrd1 >> 20) & 0xf);
+	exp = exp * 10 + ((wrd1 >> 16) & 0xf);
+	if (se)
+		exp = -exp;
+	/* sub to compensate for shift of mant */
+	exp = exp - 16;
+	
+	/*
+	 * Convert the bcd mantissa to binary by successive
+	 * adds and muls. Set the sign according to SM.
+	 * The mantissa digits will be converted with the decimal point
+	 * assumed following the least-significant digit.
+	 * Note: this operation can never overflow.
+	 */
+	d = wrd1 & 0xf;
+	d = (d * LD(10.0)) + ((wrd2 >> 28) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >> 24) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >> 20) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >> 16) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >> 12) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >>  8) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2 >>  4) & 0xf);
+	d = (d * LD(10.0)) + ((wrd2      ) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >> 28) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >> 24) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >> 20) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >> 16) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >> 12) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >>  8) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3 >>  4) & 0xf);
+	d = (d * LD(10.0)) + ((wrd3      ) & 0xf);
 
-	fpu_debug(("make_packed str = %s\n",str));
+	/* Check the sign of the mant and make the value in fp0 the same sign. */
+	if (sm)
+		d = -d;
+	
+	/*
+	 * Calculate power-of-ten factor from exponent.
+	 */
+	if (exp < 0)
+	{
+		exp = -exp;
+		pwr = POWL(LD(10.0), exp);
+		d = d / pwr;
+	} else
+	{
+		pwr = POWL(LD(10.0), exp);
+		d = d * pwr;
+	}
 
 	fpu_debug(("make_packed(%X,%X,%X) = %.04f\n",wrd1,wrd2,wrd3,(double)d));
 	return d;
@@ -562,56 +613,88 @@ PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32
 // from_pack
 PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1, uae_u32 * wrd2, uae_u32 * wrd3)
 {
-	int i;
-	int t;
-	char *cp;
-	char str[100];
-
-#ifdef _WIN32
-	sprintf(str, "%.16e", (double)src);
-#else
-	sprintf(str, "%.16Le", (long double)src);
-#endif
-
-	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
-
-	cp = str;
+	fpu_register pwr;
+	int exp;
+	fpu_register d;
+	bool sm, se;
+	int dig;
+	
 	*wrd1 = *wrd2 = *wrd3 = 0;
-	if (*cp == '-') {
-		cp++;
-		*wrd1 = 0x80000000;
-	}
-	if (*cp == '+')
-		cp++;
-	*wrd1 |= (*cp++ - '0');
-	if (*cp == '.')
-		cp++;
-	for (i = 0; i < 8; i++) {
-		*wrd2 <<= 4;
-		if (*cp >= '0' && *cp <= '9')
-		*wrd2 |= *cp++ - '0';
-	}
-	for (i = 0; i < 8; i++) {
-		*wrd3 <<= 4;
-		if (*cp >= '0' && *cp <= '9')
-		*wrd3 |= *cp++ - '0';
-	}
-	if (*cp == 'e' || *cp == 'E') {
-		cp++;
-		if (*cp == '-') {
-			cp++;
-			*wrd1 |= 0x40000000;
-		}
-		if (*cp == '+')
-			cp++;
-		t = 0;
-		for (i = 0; i < 3; i++) {
-			if (*cp >= '0' && *cp <= '9')
-				t = (t << 4) | (*cp++ - '0');
-		}
-		*wrd1 |= t << 16;
+	
+	d = src;
+	sm = false;
+	if (isneg(src))
+	{
+		d = -d;
+		sm = true;
 	}
 
+	if (isnan(src))
+	{
+		*wrd1 = sm ? 0xffff0000 : 0x7fff0000;
+		*wrd2 = 0xffffffff;
+		*wrd3 = 0xffffffff;
+		return;
+	}
+	if (isinf(src))
+	{
+		*wrd1 = sm ? 0xffff0000 : 0x7fff0000;
+		*wrd2 = *wrd3 = 0;
+		return;
+	}
+	if (iszero(src))
+	{
+		*wrd1 = sm ? 0x80000000 : 0x00000000;
+		*wrd2 = *wrd3 = 0;
+		return;
+	}
+	sm = false;
+	if (isneg(src))
+	{
+		d = -d;
+		sm = true;
+	}
+	exp = (int)floor(log10l(d));
+	se = false;
+	if (exp < 0)
+	{
+		exp = -exp;
+		se = true;
+		pwr = POWL(LD(10.0), exp);
+		d = d * pwr;
+	} else
+	{
+		pwr = POWL(LD(10.0), exp);
+		d = d / pwr;
+	}
+	dig = (int)d; d = LD(10) * (d - dig); *wrd1 |= dig;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig << 28;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig << 24;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig << 20;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig << 16;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig << 12;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig <<  8;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig <<  4;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd2 |= dig;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig << 28;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig << 24;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig << 20;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig << 16;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig << 12;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig <<  8;
+	dig = (int)d; d = LD(10) * (d - dig); *wrd3 |= dig <<  4;
+	dig = (int)d;                         *wrd3 |= dig;
+	
+	dig = (exp / 100) % 10;
+	*wrd1 |= dig << 24;
+	dig = (exp / 10) % 10;
+	*wrd1 |= dig << 20;
+	dig = (exp) % 10;
+	*wrd1 |= dig << 16;
+	if (sm)
+		*wrd1 |= 0x80000000;
+	if (se)
+		*wrd1 |= 0x40000000;
 	fpu_debug(("extract_packed(%.04f) = %X,%X,%X\n",(double)src,*wrd1,*wrd2,*wrd3));
 }
 
