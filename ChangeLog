@@ -1,3 +1,7 @@
+2015/04/21 - Thorsten
+Use non-throwing test_ram_boundary for phys_valid_address
+
+
 2015/04/19 - Thorsten
 Fix fmove.p for IEEE
 

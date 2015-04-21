@@ -178,16 +178,7 @@ static inline uae_u8 *phys_get_real_address(uaecptr addr)
 #ifndef NOCHECKBOUNDARY
 static inline bool phys_valid_address(uaecptr addr, bool write, int sz)
 {
-    SAVE_EXCEPTION;
-    TRY(prb) {
-	check_ram_boundary(addr, sz, write);
-    }
-    CATCH(prb) {
-	RESTORE_EXCEPTION;
-	return false;
-    }
-    RESTORE_EXCEPTION;
-    return true;
+	return test_ram_boundary(addr, sz, regs.s, write);
 }
 #else
 static inline bool phys_valid_address(uaecptr, bool, int) { return true; }
