@@ -27,6 +27,10 @@
 #include "xhdi.h"
 #include "atari_rootsec.h"
 #include "tools.h"
+#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)) && defined(__SSE2__)
+#include <immintrin.h>
+/* #define USE_SSE_BYTESWAP 1 */
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -41,11 +45,8 @@ extern "C" int fseeko(FILE *stream, off_t offset, int whence);
 #define XHDI_BLOCK_SIZE	512
 
 /* XHDI error codes */
-#define EDRVNR	-2	/* device not responding */
-#define EUNDEV	-15 /* unknown device */
-#define EINVFN	-32	/* invalid function number = unimplemented function */
-#define EACCDN	-36	/* access denied, device is reserved */
-#define E_OK	0
+#include "toserror.h"
+
 
 XHDIDriver::XHDIDriver()
 {
@@ -142,12 +143,28 @@ disk_t *XHDIDriver::dev2disk(uint16 major, uint16 minor)
 	return NULL;
 }
 
-void XHDIDriver::byteSwapBuf(uint8 *buf, int size)
+void XHDIDriver::byteSwapBuf(uint8 *dst, int size)
 {
-	for(int i=0; i<size; i++) {
-		int tmp = buf[i];
-		buf[i] = buf[i+1];
-		buf[++i] = tmp;
+#ifdef USE_SSE_BYTESWAP
+	__m128i A;
+
+	if ((((uintptr)dst) & 0xf) == 0)
+	{
+		while (size >= 16)
+		{
+			A = *((__m128i *)dst);
+			*((__m128i *)dst) = _mm_or_si128(_mm_srli_epi16(A, 8), _mm_or_si128(_mm_slli_epi16(A, 8), _mm_setzero_si128()));
+			dst += 16;
+			size -= 16;
+		}
+	}
+#endif
+	while (size >= 2)
+	{
+		char tmp = *dst++;
+		dst[-1] = *dst;
+		*dst++ = tmp;
+		size -= 2;
 	}
 }
 
@@ -169,7 +186,7 @@ int32 XHDIDriver::XHInqDriver(uint16 bios_device, memptr name, memptr version,
 	DUNUSED(maxIPL);
 	D(bug("ARAnyM XHInqDriver(bios_device=%u)", bios_device));
 
-	return EINVFN;
+	return TOS_EINVFN;
 }
 
 
@@ -182,12 +199,12 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL) {
-		return EUNDEV;
+		return TOS_EUNDEV;
 	}
 
 	bool writing = (rwflag & 1);
 	if (writing && disk->readonly) {
-		return EACCDN;
+		return TOS_EACCDN;
 	}
 
 	FILE *f = disk->file;
@@ -200,7 +217,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			disk->file = f;
 		}
 		else {
-			return EDRVNR;
+			return TOS_EDRVNR;
 		}
 	}
 
@@ -246,7 +263,7 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 			count--;
 			buf+=XHDI_BLOCK_SIZE;
 			if (count == 0) {
-				return writing ? EACCDN : E_OK;
+				return writing ? TOS_EACCDN : TOS_E_OK;
 			}
 		}
 
@@ -257,30 +274,47 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 
 	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
 	fseeko(f, offset, SEEK_SET);
-	for(int i=0; i<count; i++) {
-		uint8 tempbuf[XHDI_BLOCK_SIZE];
-		if (writing) {
-			Atari2Host_memcpy(tempbuf, buf, sizeof(tempbuf));
-			if (! disk->byteswap)
-				byteSwapBuf(tempbuf, sizeof(tempbuf));
-			if (fwrite(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("nfXHDI: Error writing to device %u.%u (record=%d)", major, minor, recno+i);
-				break;
-			}
-		}
-		else {
-			if (fread(tempbuf, sizeof(tempbuf), 1, f) != 1) {
-				panicbug("nfXHDI: error reading device %u.%u (record=%d)", major, minor, recno+i);
-				break;
-			}
-			if (! disk->byteswap)
-				byteSwapBuf(tempbuf, sizeof(tempbuf));
-			Host2Atari_memcpy(buf, tempbuf, sizeof(tempbuf));
-		}
-		buf += sizeof(tempbuf);
-	}
+	memptr bytes = count * XHDI_BLOCK_SIZE;
+	if (writing)
+	{
+#ifdef USE_SSE_BYTESWAP
+		__attribute__((__aligned__(16))
+#endif
+		uint8 tempbuf[bytes];
 
-	return E_OK;
+		memptr src_end = buf + bytes - 1;
+		if (! ValidAtariAddr(buf, false, 1))
+			BUS_ERROR(buf);
+		if (! ValidAtariAddr(src_end, false, 1))
+			BUS_ERROR(src_end);
+		uint8 *src = Atari2HostAddr(buf);
+		if (! disk->byteswap)
+		{
+			memcpy(tempbuf, src, bytes);
+			byteSwapBuf(tempbuf, bytes);
+			src = tempbuf;
+		}
+		if (fwrite(src, bytes, 1, f) != 1) {
+			panicbug("nfXHDI: Error writing to device %u.%u (record=%d)", major, minor, recno);
+			return TOS_EWRITF;
+		}
+	} else {
+		memptr dst_end = buf + bytes - 1;
+		if (! ValidAtariAddr(buf, true, 1))
+			BUS_ERROR(buf);
+		if (! ValidAtariAddr(dst_end, true, 1))
+			BUS_ERROR(dst_end);
+		uint8 *dst = Atari2HostAddr(buf);
+		if (fread(dst, bytes, 1, f) != 1) {
+			panicbug("nfXHDI: error reading device %u.%u (record=%d)", major, minor, recno);
+			return TOS_EREADF;
+		} else
+		{
+			if (! disk->byteswap)
+				byteSwapBuf(dst, bytes);
+		}
+	}
+	return TOS_E_OK;
 }
 
 int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
@@ -290,7 +324,7 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 
 	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return EUNDEV;
+		return TOS_EUNDEV;
 
 	if (blocksize) {
 		WriteInt32(blocksize, XHDI_BLOCK_SIZE);
@@ -304,7 +338,7 @@ int32 XHDIDriver::XHInqTarget2(uint16 major, uint16 minor, lmemptr blocksize,
 		Host2AtariSafeStrncpy(product_name, disk->name, stringlen);
 	}
 
-	return E_OK;
+	return TOS_E_OK;
 }
 
 int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
@@ -320,7 +354,7 @@ int32 XHDIDriver::XHInqDev2(uint16 bios_device, wmemptr major, wmemptr minor,
 	DUNUSED(partid);
 	D(bug("ARAnyM XHInqDev2(bios_device=%u)", bios_device));
 
-	return EINVFN;
+	return TOS_EINVFN;
 }
 
 int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
@@ -330,17 +364,17 @@ int32 XHDIDriver::XHGetCapacity(uint16 major, uint16 minor,
 
 	disk_t *disk = dev2disk(major, minor);
 	if (disk == NULL)
-		return EUNDEV;
+		return TOS_EUNDEV;
 
 	if (! setDiskSizeInBlocks(disk))
-		return EDRVNR;
+		return TOS_EDRVNR;
 
 	D(bug("XHGetCapacity in blocks = %ld\n", disk->size_blocks));
 	if (blocks != 0)
 		WriteAtariInt32(blocks, disk->size_blocks);
 	if (blocksize != 0)
 		WriteAtariInt32(blocksize, XHDI_BLOCK_SIZE);
-	return E_OK;
+	return TOS_E_OK;
 }
 
 int32 XHDIDriver::dispatch(uint32 fncode)
@@ -424,7 +458,7 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 						);
 				break;
 				
-		default: ret = EINVFN;
+		default: ret = TOS_EINVFN;
 				D(bug("Unimplemented ARAnyM XHDI function #%d", fncode));
 				break;
 	}

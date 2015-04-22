@@ -1,3 +1,7 @@
+2015/04/22 - Thorsten
+Some optimizations for reading/writing sectors through XHDI interface
+
+
 2015/04/21 - Thorsten
 Use non-throwing test_ram_boundary for phys_valid_address
 
