@@ -73,8 +73,8 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 {
 	SDL_Event event;
 	event.type = SDL_KEYDOWN;
-	event.key.keysym.sym = bx_options.hotkeys.reboot.sym;
-	event.key.keysym.mod = bx_options.hotkeys.reboot.mod;
+	event.key.keysym.sym = bx_options.hotkeys.warmreboot.sym;
+	event.key.keysym.mod = bx_options.hotkeys.warmreboot.mod;
 	SDL_PushEvent(&event);
 }
 

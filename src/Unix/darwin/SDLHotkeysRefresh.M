@@ -55,7 +55,7 @@ void refreshMenuKeys()
 {		
 	refreshMenuItem(bx_options.hotkeys.setup, PREFERENCES_MENUITEM_TAG);
 	refreshMenuItem(bx_options.hotkeys.quit, QUIT_MENUITEM_TAG);
-	refreshMenuItem(bx_options.hotkeys.reboot, REBOOT_MENUITEM_TAG);
+	refreshMenuItem(bx_options.hotkeys.warmreboot, REBOOT_MENUITEM_TAG);
 	refreshMenuItem(bx_options.hotkeys.screenshot, SCREENSHOT_MENUITEM_TAG);
 	refreshMenuItem(bx_options.hotkeys.fullscreen, FULLSCREEN_MENUITEM_TAG);
 	refreshMenuItem(bx_options.hotkeys.debug, DEBUG_MENUITEM_TAG);

@@ -1,4 +1,8 @@
 2015/04/22 - Thorsten
+Fix compilation on MacOSX
+
+
+2015/04/22 - Thorsten
 Some optimizations for reading/writing sectors through XHDI interface
 
 
