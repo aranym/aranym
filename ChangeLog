@@ -1,4 +1,8 @@
 2015/04/22 - Thorsten
+use emmintrin.h directly for SSE2 definitions
+
+
+2015/04/22 - Thorsten
 Fix compilation on MacOSX
 
 

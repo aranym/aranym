@@ -28,7 +28,7 @@
 #include "atari_rootsec.h"
 #include "tools.h"
 #if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)) && defined(__SSE2__)
-#include <immintrin.h>
+#include <emmintrin.h>
 /* #define USE_SSE_BYTESWAP 1 */
 #endif
 
