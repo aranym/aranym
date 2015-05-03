@@ -1,4 +1,8 @@
 2015/05/03 - Thorsten
+Fix a wrong parameter in debug output
+
+
+2015/05/03 - Thorsten
 Add missing files + dependencies of recently added files
 to Xcode project
 

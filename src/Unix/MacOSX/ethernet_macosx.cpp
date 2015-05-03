@@ -161,7 +161,7 @@ void dump_frame(const char *prefix, struct ethernet_frame *frame)
 		bug("  %s: IP packet %d.%d.%d.%d > %d.%d.%d.%d  (Type %04x Total %02x%02x = %d, Payload=%d)", prefix,
 			ip->src_ip[0], ip->src_ip[1], ip->src_ip[2], ip->src_ip[3],
 			ip->dst_ip[0], ip->dst_ip[1], ip->dst_ip[2], ip->dst_ip[3],
-			ip->proto_type, ip->tot_len[0], ip->tot_len[1], tot_len, tot_len - sizeof(ip_packet)+1);
+			ip->proto_type, ip->tot_len[0], ip->tot_len[1], tot_len, tot_len - (int)sizeof(ip_packet)+1);
 		
 //		for (unsigned char *ptr=&ip->data; ptr<(unsigned char*)&ip->data+tot_len; ptr++)
 //			bug(">%*s\n",  tot_len-(sizeof(ip_packet)-1), &ip->data);
