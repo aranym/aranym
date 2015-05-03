@@ -545,6 +545,14 @@
 		B4C7EE961768552800B63B96 /* MachUser.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE941768552800B63B96 /* MachUser.c */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
+		CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
+		CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
+		CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
+		CBEA27B61AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
+		CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */; };
+		CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */; };
+		CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */; };
+		CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */; };
 		F83B575E0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
 		F83B575F0C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
 		F83B57600C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */ = {isa = PBXBuildFile; fileRef = F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */; };
@@ -1134,6 +1142,11 @@
 		B4C7EE941768552800B63B96 /* MachUser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachUser.c; path = darwin/MachUser.c; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
+		CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgHostfs.cpp; sourceTree = "<group>"; };
+		CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl.cpp; path = ../cpufunctbl.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBEA27C41AF65B2200B12FC5 /* cpufunctbl_i386.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_i386.cpp; path = ../cpufunctbl_i386.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBEA27C51AF65B2200B12FC5 /* cpufunctbl_x86_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_x86_64.cpp; path = ../cpufunctbl_x86_64.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBEA27C81AF65EB200B12FC5 /* cpufunctbl_pcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_pcc.cpp; path = ../cpufunctbl_pcc.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLHotkeysRefresh.M; path = darwin/SDLHotkeysRefresh.M; sourceTree = "<group>"; };
 		F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = videl_zoom.cpp; path = ../../videl_zoom.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -1330,6 +1343,7 @@
 		17798CED0A652B50009733EB /* gui-sdl */ = {
 			isa = PBXGroup;
 			children = (
+				CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */,
 				B44B01B00D07443D0017F23B /* dialog.cpp */,
 				17798CEE0A652B50009733EB /* dlgAlert.cpp */,
 				17798CEF0A652B50009733EB /* dlgDisk.cpp */,
@@ -1670,6 +1684,10 @@
 		17AC409213F1D3B2003B4FAD /* Generated Sources */ = {
 			isa = PBXGroup;
 			children = (
+				CBEA27C81AF65EB200B12FC5 /* cpufunctbl_pcc.cpp */,
+				CBEA27C41AF65B2200B12FC5 /* cpufunctbl_i386.cpp */,
+				CBEA27C51AF65B2200B12FC5 /* cpufunctbl_x86_64.cpp */,
+				CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */,
 				17AC409913F1D403003B4FAD /* config.h */,
 				17AC409813F1D403003B4FAD /* config_ppc.h */,
 				173598B713F1E97B00F84DB3 /* config_i386.h */,
@@ -2009,6 +2027,9 @@
 			outputPaths = (
 				"$(DERIVED_FILES_DIR)/config.h",
 				"$(DERIVED_FILES_DIR)/configure_options",
+				"$(DERIVED_FILES_DIR)/config_i386.h",
+				"$(DERIVED_FILES_DIR)/config_ppc.h",
+				"$(DERIVED_FILES_DIR)/config_x86_64.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2081,6 +2102,7 @@
 				"$(DERIVED_FILES_DIR)/configure_options",
 				"$(DERIVED_FILES_DIR)/config_i386.h",
 				"$(DERIVED_FILES_DIR)/config_ppc.h",
+				"$(DERIVED_FILES_DIR)/config_x86_64.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2103,6 +2125,7 @@
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/cpustbl.cpp",
 				"$(DERIVED_FILE_DIR)/cpuemu.cpp",
+				"$(DERIVED_FILE_DIR)/cpufunctbl.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2171,6 +2194,9 @@
 			outputPaths = (
 				"$(DERIVED_FILES_DIR)/config.h",
 				"$(DERIVED_FILES_DIR)/configure_options",
+				"$(DERIVED_FILES_DIR)/config_i386.h",
+				"$(DERIVED_FILES_DIR)/config_ppc.h",
+				"$(DERIVED_FILES_DIR)/config_x86_64.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2211,6 +2237,7 @@
 				"$(DERIVED_FILES_DIR)/config_i386.h",
 				"$(DERIVED_FILES_DIR)/config_ppc.h",
 				"$(TARGET_TEMP_DIR)/configure_options",
+				"$(DERIVED_FILES_DIR)/config_x86_64.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2379,6 +2406,8 @@
 				1778A4CE1555A8A70005B336 /* dlgUsb.cpp in Sources */,
 				177A4E0915AA29AE00780D11 /* ethernet_macosx.cpp in Sources */,
 				177A4E0C15AA29C000780D11 /* fd_trans.c in Sources */,
+				CBEA27B61AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
+				CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2498,6 +2527,8 @@
 				1717E85C151680B900D416FA /* dlgUsb.cpp in Sources */,
 				177A4E0615AA29AC00780D11 /* ethernet_macosx.cpp in Sources */,
 				177A4E0A15AA29BE00780D11 /* fd_trans.c in Sources */,
+				CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
+				CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2616,6 +2647,8 @@
 				1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */,
 				17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */,
 				17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */,
+				CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
+				CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2744,6 +2777,8 @@
 				177A4E0B15AA29BF00780D11 /* fd_trans.c in Sources */,
 				B4C7EE951768552800B63B96 /* MachServer.c in Sources */,
 				B4C7EE961768552800B63B96 /* MachUser.c in Sources */,
+				CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
+				CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

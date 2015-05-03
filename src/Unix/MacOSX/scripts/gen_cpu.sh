@@ -43,6 +43,13 @@ for ARCH in $ARCHS ; do
 #endif
 
 EOF
+  mv cpufunctbl.cpp "$DERIVED_FILES_DIR/cpufunctbl_$ARCH.cpp"
+  cat  >> "$DERIVED_FILES_DIR/cpufunctbl.cpp" << EOF
+#ifdef $CPU_TYPE
+#include "cpufunctbl_$ARCH.cpp"
+#endif
+
+EOF
 done
 
 if [ x$IS_JIT_COMPILE = 'x+' ]; then
@@ -62,6 +69,6 @@ fi
 
 rsync -pogt version_date.h cpudefs.cpp cputbl.h cpustbl*.cpp $JIT_ADDITIONAL_FILES "$DERIVED_FILES_DIR"
 cd "$DERIVED_FILES_DIR"
-rsync -pogt cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp $JIT_ADDITIONAL_FILES version_date.h "$BUILD_DIR" || exit 1
+rsync -pogt cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp cpufunctbl*.cpp $JIT_ADDITIONAL_FILES version_date.h "$BUILD_DIR" || exit 1
 
 exit 0

@@ -8,6 +8,7 @@ aranym
 aratapif
 config.h
 config.h.in
+config.h.in~
 config.log
 config.status
 configure
@@ -16,3 +17,6 @@ version_date.h
 *.framework
 *.xcworkspace
 xcuserdata
+src/Unix/MacOSX/build
+*.mode1v3
+*.pbxuser

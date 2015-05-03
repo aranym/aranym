@@ -1,4 +1,9 @@
 2015/05/03 - Thorsten
+Add missing files + dependencies of recently added files
+to Xcode project
+
+
+2015/05/03 - Thorsten
 Fix initialization of hotkey defaults for MacOSX
 
 
