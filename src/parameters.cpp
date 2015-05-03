@@ -1296,7 +1296,7 @@ static void preset_hotkeys()
 	strcpy(hotkeys[0], "LM+,");
 	strcpy(hotkeys[1], "LM+q");
 	strcpy(hotkeys[2], "LM+r");
-	strcpy(hotkeys[3], "LM+LS+r");
+	strcpy(hotkeys[3], "LS+LM+r");
 	strcpy(hotkeys[4], "LM+Escape");
 	strcpy(hotkeys[5], "LM+d");
 	strcpy(hotkeys[6], "LM+s");

@@ -1,3 +1,7 @@
+2015/05/03 - Thorsten
+Fix initialization of hotkey defaults for MacOSX
+
+
 2015/04/22 - Thorsten
 use emmintrin.h directly for SSE2 definitions
 
