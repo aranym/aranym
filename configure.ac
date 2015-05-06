@@ -2216,57 +2216,55 @@ AC_OUTPUT(Makefile)
 
 dnl Print summary.
 echo
-echo ARAnyM configuration summary:
+echo "ARAnyM configuration summary:"
 echo
-echo SDL version ................... ........ : $sdl_version
-echo Use exclusive spcflags handling ........ : $WANT_SPCFLAGS_EXCL
-echo Use JIT compiler ....................... : $WANT_JIT
-echo Use JIT compiler for FPU instructions .. : $WANT_JIT_FPU
-echo JIT debug mode ......................... : $WANT_JIT_DEBUG
-echo Floating-Point emulation core .......... : $FPE_CORE
-echo Assembly optimizations ................. : $ASM_OPTIMIZATIONS
-echo Addressing mode ........................ : $ADDRESSING_MODE
-echo -n Full MMU support ....................... : $WANT_MMU
+echo "SDL version ................... ........ : $sdl_version"
+echo "Use exclusive spcflags handling ........ : $WANT_SPCFLAGS_EXCL"
+echo "Use JIT compiler ....................... : $WANT_JIT"
+echo "Use JIT compiler for FPU instructions .. : $WANT_JIT_FPU"
+echo "JIT debug mode ......................... : $WANT_JIT_DEBUG"
+echo "Floating-Point emulation core .......... : $FPE_CORE"
+echo "Assembly optimizations ................. : $ASM_OPTIMIZATIONS"
+echo "Addressing mode ........................ : $ADDRESSING_MODE"
+ATC_TYPE_MSG=
 if [[ "x$WANT_MMU" = "xyes" ]]; then
-    echo -n " ("
     case "$ATC_TYPE" in
-		full)	echo -n "with ATC";;
-		small)	echo -n "with small ATC";;
-		no)		echo -n "without ATC";;
+		full)	ATC_TYPE_MSG=" (with ATC)";;
+		small)	ATC_TYPE_MSG=" (with small ATC)";;
+		no)	ATC_TYPE_MSG=" (without ATC)";;
     esac
-    echo -n \)
 fi
-echo
-echo Linux /dev/rtc source timer ............ : $WANT_RTCTIMER
-echo Real STOP implementation ............... : $WANT_REALSTOP
-echo DSP 56001 support ...................... : $WANT_DSP
-echo DSP 56001 disassembly support .......... : $WANT_DSP_DISASM
-echo Debugger ............................... : $USE_DEBUGGER
-echo Check memory ........................... : $MEMORY_CHECK
-echo First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K
-echo FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM
-echo Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM
-echo Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE
-echo Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT
-echo Support for hostfs ..................... : $WANT_HOSTFS
-echo Support for ethernet ................... : $HAVE_ETHERNET
-echo GUI .................................... : $WANT_SDLGUI
-echo OpenGL ................................. : $WANT_OPENGL
-echo Linux-m68k loader ...................... : $WANT_LILO
-echo Zlib ................................... : $have_zlib
-echo libusb-1.0.............................. : $WITH_USBHOST
-echo NatFeat CD-ROM driver .................. : $NFCDROM_DRIVER
-echo NatFeat PCI driver ..................... : $WANT_NFPCI
-echo NatFeat USB driver ..................... : $WANT_USBHOST
-echo NatFeat OSMesa driver .................. : $WANT_NFOSMESA
-echo NatFeat JPEG decoder ................... : $WANT_NFJPEG
-echo NatFeat Clipboard ...................... : $WANT_NFCLIPBRD
-echo NatFeat VDI driver ..................... : $WANT_NFVDI
-echo Exception per second limiter ........... : $WANT_EPSLIMITER
-echo Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86
-echo Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT
-echo Unix /dev/ttySn for serial port......... : $WANT_UNIXSERIALPORT
-echo Use C++ exceptions for m68k exceptions.. : $WANT_CXX_EXCEPTIONS
+echo "Full MMU support ....................... : $WANT_MMU$ATC_TYPE_MSG"
+echo "Linux /dev/rtc source timer ............ : $WANT_RTCTIMER"
+echo "Real STOP implementation ............... : $WANT_REALSTOP"
+echo "DSP 56001 support ...................... : $WANT_DSP"
+echo "DSP 56001 disassembly support .......... : $WANT_DSP_DISASM"
+echo "Debugger ............................... : $USE_DEBUGGER"
+echo "Check memory ........................... : $MEMORY_CHECK"
+echo "First 2kB of RAM Supervisor protected... : $WANT_PROTECT2K"
+echo "FastRAM fixed size ..................... : $WANT_FIXEDFASTRAM"
+echo "Fixed position of VideoRAM ............. : $WANT_FIXEDVIDEORAM"
+echo "Blitter memmove acceleration ........... : $WANT_BLITMEMMOVE"
+echo "Blitter SDL blit acceleration .......... : $WANT_BLITSDLBLIT"
+echo "Support for hostfs ..................... : $WANT_HOSTFS"
+echo "Support for ethernet ................... : $HAVE_ETHERNET"
+echo "GUI .................................... : $WANT_SDLGUI"
+echo "OpenGL ................................. : $WANT_OPENGL"
+echo "Linux-m68k loader ...................... : $WANT_LILO"
+echo "Zlib ................................... : $have_zlib"
+echo "libusb-1.0.............................. : $WITH_USBHOST"
+echo "NatFeat CD-ROM driver .................. : $NFCDROM_DRIVER"
+echo "NatFeat PCI driver ..................... : $WANT_NFPCI"
+echo "NatFeat USB driver ..................... : $WANT_USBHOST"
+echo "NatFeat OSMesa driver .................. : $WANT_NFOSMESA"
+echo "NatFeat JPEG decoder ................... : $WANT_NFJPEG"
+echo "NatFeat Clipboard ...................... : $WANT_NFCLIPBRD"
+echo "NatFeat VDI driver ..................... : $WANT_NFVDI"
+echo "Exception per second limiter ........... : $WANT_EPSLIMITER"
+echo "Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86"
+echo "Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT"
+echo "Unix /dev/ttySn for serial port......... : $WANT_UNIXSERIALPORT"
+echo "Use C++ exceptions for m68k exceptions.. : $WANT_CXX_EXCEPTIONS"
 echo
 echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
 \"make\" (or \"gmake\")."

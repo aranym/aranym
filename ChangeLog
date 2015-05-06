@@ -1,3 +1,7 @@
+2015/05/06 - Thorsten
+configure.ac: Cleanup summary report
+
+
 2015/05/03 - Thorsten
 Fix a wrong parameter in debug output
 
