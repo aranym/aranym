@@ -1,4 +1,8 @@
 2015/05/06 - Thorsten
+gen_cpu.sh: another fix for copying generated sources
+
+
+2015/05/06 - Thorsten
 configure.ac: Cleanup summary report
 
 

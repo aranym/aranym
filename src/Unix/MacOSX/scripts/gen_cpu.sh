@@ -3,8 +3,8 @@
 ########################## BUILD CPU EMULATION CORE ##########################
 
 mkdir -p "$DERIVED_FILES_DIR" && cd "$DERIVED_FILES_DIR" || exit 1
-MISSING_FILE_CNT=`ls cpuemu.cpp cpudefs.cpp cputbl.h cpustbl.cpp 2>&1 1>/dev/null | wc -l`
-rsync -pogt --stats cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp config*.h "$BUILD_DIR" > rsync_output.txt 2>/dev/null
+MISSING_FILE_CNT=`ls cpuemu.cpp cpudefs.cpp cputbl.h cpustbl.cpp cpufunctbl.cpp 2>&1 1>/dev/null | wc -l`
+rsync -pogt --stats cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp cpufunctbl*.cpp config*.h "$BUILD_DIR" > rsync_output.txt 2>/dev/null
 RET=$?
 #cat rsync_output.txt
 TRANSFERRED=`cat rsync_output.txt | grep "transferred:" | awk '{print $5}'`
