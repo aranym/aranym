@@ -1,4 +1,8 @@
 2015/05/07 - Thorsten
+Oops. Some of the recently removed files where needed by JIT target. Reverted.
+
+
+2015/05/07 - Thorsten
 Clean generated cpu sources from XCode project
 
 
