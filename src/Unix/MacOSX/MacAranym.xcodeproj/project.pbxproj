@@ -609,6 +609,34 @@
 			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
 			remoteInfo = "MacAranym MMU";
 		};
+		CB4679581AFA79440090A72D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB4679531AFA78430090A72D;
+			remoteInfo = ExternalScript;
+		};
+		CB46795A1AFA79700090A72D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB4679531AFA78430090A72D;
+			remoteInfo = ExternalScript;
+		};
+		CB46795C1AFA79AC0090A72D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB4679531AFA78430090A72D;
+			remoteInfo = ExternalScript;
+		};
+		CB46795E1AFA79C10090A72D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CB4679531AFA78430090A72D;
+			remoteInfo = ExternalScript;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1135,6 +1163,7 @@
 		B4A9E9C20C5B33AC00C156C3 /* ethernet_darwin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ethernet_darwin.h; path = darwin/ethernet_darwin.h; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
+		CB4679571AFA788C0090A72D /* externalScript.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = externalScript.sh; path = scripts/externalScript.sh; sourceTree = "<group>"; };
 		CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgHostfs.cpp; sourceTree = "<group>"; };
 		CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl.cpp; path = ../cpufunctbl.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBEA27C41AF65B2200B12FC5 /* cpufunctbl_i386.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_i386.cpp; path = ../cpufunctbl_i386.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1651,6 +1680,7 @@
 		17AC405D13F1C973003B4FAD /* Build Scripts */ = {
 			isa = PBXGroup;
 			children = (
+				CB4679571AFA788C0090A72D /* externalScript.sh */,
 				17AC403013F1C81F003B4FAD /* configure.sh */,
 				17AC403113F1C81F003B4FAD /* gen_cpu.sh */,
 				173598FF13F1F7AE00F84DB3 /* gen_diskimage.sh */,
@@ -1800,6 +1830,22 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		CB4679531AFA78430090A72D /* ExternalScript */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "\"$(PROJECT_DIR)/scripts/externalScript.sh\"";
+			buildConfigurationList = CB4679561AFA78630090A72D /* Build configuration list for PBXLegacyTarget "ExternalScript" */;
+			buildPhases = (
+			);
+			buildToolPath = /bin/sh;
+			dependencies = (
+			);
+			name = ExternalScript;
+			passBuildSettingsInEnvironment = 1;
+			productName = ExternalScript;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		17473D2415AA0A1100CAEA47 /* bpf_helper */ = {
 			isa = PBXNativeTarget;
@@ -1835,6 +1881,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CB46795F1AFA79C10090A72D /* PBXTargetDependency */,
 				17473D3915AA0FF400CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym MMU+MPFR";
@@ -1859,6 +1906,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CB46795B1AFA79700090A72D /* PBXTargetDependency */,
 				17473D3D15AA0FFA00CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym MMU";
@@ -1883,6 +1931,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CB4679591AFA79440090A72D /* PBXTargetDependency */,
 				17473D3415AA0A5D00CAEA47 /* PBXTargetDependency */,
 			);
 			name = MacAranym;
@@ -1907,6 +1956,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				CB46795D1AFA79AC0090A72D /* PBXTargetDependency */,
 				17473D3B15AA0FF800CAEA47 /* PBXTargetDependency */,
 			);
 			name = "MacAranym JIT";
@@ -1940,6 +1990,7 @@
 				B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */,
 				1778A4601555A8A70005B336 /* MacAranym MMU+MPFR */,
 				17AAB2A90B20A8150016FB8D /* Packaging */,
+				CB4679531AFA78430090A72D /* ExternalScript */,
 			);
 		};
 /* End PBXProject section */
@@ -2791,6 +2842,26 @@
 			target = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
 			targetProxy = 17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */;
 		};
+		CB4679591AFA79440090A72D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB4679531AFA78430090A72D /* ExternalScript */;
+			targetProxy = CB4679581AFA79440090A72D /* PBXContainerItemProxy */;
+		};
+		CB46795B1AFA79700090A72D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB4679531AFA78430090A72D /* ExternalScript */;
+			targetProxy = CB46795A1AFA79700090A72D /* PBXContainerItemProxy */;
+		};
+		CB46795D1AFA79AC0090A72D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB4679531AFA78430090A72D /* ExternalScript */;
+			targetProxy = CB46795C1AFA79AC0090A72D /* PBXContainerItemProxy */;
+		};
+		CB46795F1AFA79C10090A72D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CB4679531AFA78430090A72D /* ExternalScript */;
+			targetProxy = CB46795E1AFA79C10090A72D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3061,6 +3132,27 @@
 			};
 			name = Release;
 		};
+		CB4679541AFA78440090A72D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = ExternalScript;
+			};
+			name = Debug;
+		};
+		CB4679551AFA78440090A72D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = ExternalScript;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3123,6 +3215,15 @@
 			buildConfigurations = (
 				17E8B5B60ABC88C600BBFD59 /* Debug */,
 				1706B5050ABCB72B006CB74B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CB4679561AFA78630090A72D /* Build configuration list for PBXLegacyTarget "ExternalScript" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CB4679541AFA78440090A72D /* Debug */,
+				CB4679551AFA78440090A72D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
