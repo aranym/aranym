@@ -1,3 +1,7 @@
+2015/05/10 - Thorsten
+Fix location of created config folder on MacOS when no config file present
+
+
 2015/05/07 - Thorsten
 Oops. Some of the recently removed files where needed by JIT target. Reverted.
 
