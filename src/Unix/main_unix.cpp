@@ -411,17 +411,25 @@ void vm_probe_fixed_hint(void)
 	 * (with FIXED_ADDRESSING, this is usually not caused by missing memory,
 	 * but overlapping of virtual addresses due to the --fixedmem setting)
 	 */
-	char msg[256];
-	snprintf(msg, sizeof(msg),
-		"failed to acquire virtual memory at 0x%08x\n"
-		"try running 'aranym --probe-fixed'",
-		(unsigned int) fixed_memory_offset);
-	panicbug("%s", msg);
-#if defined _WIN32 || defined(OS_cygwin)
-	MessageBoxA(NULL, msg, "ARAnyM: memory setup error", MB_ICONSTOP);
-#endif
+	guialert("failed to acquire virtual memory at 0x%08x\n"
+			 "try running 'aranym --probe-fixed'",
+			 (unsigned int) fixed_memory_offset);
 #endif
 }
+
+
+#if !defined(OS_darwin) && !defined(_WIN32) && !defined(__CYGWIN__)
+void guialert(const char *fmt, ...)
+{
+	va_list args;
+	
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	fputs("\n", stderr);
+	va_end(args);
+	// FIXME: assuming some unix; use external tool to display alert
+}
+#endif
 
 
 #if defined(OS_cygwin) || defined(OS_mingw)

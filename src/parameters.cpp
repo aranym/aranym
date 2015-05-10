@@ -2031,7 +2031,8 @@ bool decode_switches(int argc, char **argv)
 
 	if (saveConfigFile) {
 		D(bug("Storing configuration to file '%s'", config_file));
-		saveSettings(config_file);
+		if (saveSettings(config_file))
+			loadSettings(config_file);
 	}
 
 	return true;

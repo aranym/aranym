@@ -321,10 +321,13 @@ bool InitOS(void)
 		panicbug("%s", e.getErrorMessage());
 	}
 
-	panicbug("No operating system found. ARAnyM can not boot!");
-	panicbug("Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
+	guialert("No operating system found. ARAnyM can not boot!\n"
+			 "Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
 	return false;
 }
+
+// From newcpu.cpp
+extern int quit_program;
 
 /*
  *  Initialize everything, returns false on error
@@ -332,6 +335,8 @@ bool InitOS(void)
 
 bool InitAll(void)
 {
+	bool needToReboot = false;
+
 #ifndef NOT_MALLOC
 	if (ROMBaseHost == NULL) {
 		if ((RAMBaseHost = (uint8 *)malloc(RAMSize + ROMSize + HWSize + FastRAMSize)) == NULL) {
@@ -396,23 +401,8 @@ bool InitAll(void)
 	if (!Init680x0())
 		return false;
 
-#ifdef SDL_GUI
-	isGuiAvailable = SDLGui_Init();
-
-	if (isGuiAvailable && startupGUI) {
-		open_GUI();
-		do {
-			if (SDL_QuitRequested())
-				return false;
-			check_event();	// process mouse & keyboard events
-			host->video->refresh();
-			SDL_Delay(20);
-		} while(!SDLGui_isClosed());
-	}
-#endif /* SDL_GUI */
-
 #ifdef DEBUGGER
-	if (bx_options.startup.debugger) {
+	if (bx_options.startup.debugger && !startupGUI) {
 		D(bug("Activate debugger..."));
 		activate_debugger();
 	}
@@ -440,6 +430,38 @@ bool InitAll(void)
 	}
 
 	if (! InitOS())
+	{
+		startupGUI = true;
+		needToReboot = true;
+	}
+	
+#ifdef SDL_GUI
+	isGuiAvailable = SDLGui_Init();
+	
+	if (isGuiAvailable && startupGUI) {
+		do
+		{
+			open_GUI();
+			do {
+				if (SDL_QuitRequested())
+					return false;
+				check_event();	// process mouse & keyboard events
+				host->video->refresh();
+				SDL_Delay(20);
+			} while(!SDLGui_isClosed());
+			if (needToReboot)
+			{
+				needToReboot = false;
+				if (!quit_program && !InitOS())
+				{
+					needToReboot = true;
+				}
+			}
+		} while(needToReboot);
+	}
+#endif /* SDL_GUI */
+	
+	if (bootOs == NULL)
 		return false;
 
 	host->video->bootDone();

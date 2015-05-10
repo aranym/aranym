@@ -162,7 +162,7 @@ public:
   static void dbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
   static void pdbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
-
+	
 #ifdef DEBUGGER
   static bool do_skip;
   static void run();
@@ -173,5 +173,7 @@ public:
   static void showHistory(unsigned int, bool showLast = true);
 #endif
 };
+
+extern "C" void guialert(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
 #endif

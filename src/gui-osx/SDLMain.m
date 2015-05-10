@@ -12,7 +12,6 @@
 #import <unistd.h>
 #import "parameters.h"
 
-
 static int gArgc;
 static char **gArgv;
 static BOOL gFinderLaunch;
@@ -171,6 +170,24 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 }
 @end
 
+
+void guialert(const char *fmt, ...)
+{
+	va_list args;
+	char *buf = NULL;
+	
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	fputs("\n", stderr);
+	va_end(args);
+	va_start(args, fmt);
+	vasprintf(&buf, fmt, args);
+	va_end(args);
+	NSString *str = [[NSString alloc] initWithUTF8String: buf];
+	NSRunAlertPanel (@"Error:", str, @"Ok", nil, nil);
+	[str release];
+	free(buf);
+}
 
 
 

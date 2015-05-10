@@ -1,4 +1,9 @@
 2015/05/10 - Thorsten
+Display error dialog for some fatal startup errors
+(loading BootOS and memory allocation currently)
+
+
+2015/05/10 - Thorsten
 Fix a few warnings
 
 

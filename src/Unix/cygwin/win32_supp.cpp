@@ -151,6 +151,24 @@ const char *win32_errstring(DWORD err)
 }
 
 
+void guialert(const char *fmt, ...)
+{
+	va_list args;
+	char *buf = NULL;
+	
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	fputs("\n", stderr);
+	va_end(args);
+	va_start(args, fmt);
+	vasprintf(&buf, fmt, args);
+	va_end(args);
+	MessageBoxA(NULL, buf, "ARAnyM: error", MB_ICONSTOP);
+	free(buf);
+}
+
+
+
 #ifdef _WIN32
 
 
