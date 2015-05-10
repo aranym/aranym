@@ -416,7 +416,7 @@ void vm_probe_fixed_hint(void)
 		"failed to acquire virtual memory at 0x%08x\n"
 		"try running 'aranym --probe-fixed'",
 		(unsigned int) fixed_memory_offset);
-	panicbug(msg);
+	panicbug("%s", msg);
 #if defined _WIN32 || defined(OS_cygwin)
 	MessageBoxA(NULL, msg, "ARAnyM: memory setup error", MB_ICONSTOP);
 #endif

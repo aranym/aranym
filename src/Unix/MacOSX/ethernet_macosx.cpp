@@ -198,7 +198,7 @@ bool BPFEthernetHandler::open()
 	D(bug("BPF(%d): open() type=%s", ethX, type));
 	if (strstr(type, "bridge") == NULL )
 	{
-		panicbug("BPF(%d): unsupported type '%s", ethX, type);
+		panicbug("BPF(%d): unsupported type '%s'", ethX, type);
 		return false;
 	}
 	
@@ -233,7 +233,7 @@ bool BPFEthernetHandler::open()
 	fd = receive_fd();
 	if (fd < 0)
 	{
-		panicbug("BPF(%d): failed receiving file descriptor from "ETH_HELPER".", ethX, dev_name);
+		panicbug("BPF(%d): failed receiving file descriptor from "ETH_HELPER".", ethX);
 		return false;
 	}
 	
