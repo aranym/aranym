@@ -856,7 +856,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fpu_registe
 PRIVATE inline uae_s32 FFPU toint(fpu_register const & src)
 {
 	fpu_register result;
-	switch (get_fpcr() & 0x30) {
+	switch (get_fpcr() & FPCR_ROUNDING_MODE) {
 	case FPCR_ROUND_ZERO:
 		result = fp_round_to_zero(src);
 		break;

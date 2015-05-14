@@ -1100,36 +1100,33 @@ PRIVATE inline fpu_extended fp_do_atanh(fpu_extended x)
 	return -0.5 * fp_log1p(-(y + y) / (1.0 + y)) * fp_sgn1(x);
 }
 
-#undef fp_floor
-#define fp_floor fp_do_floor
 
-PRIVATE inline fpu_extended fp_do_floor(fpu_extended x)
-{
-	volatile unsigned int cw;
-	__asm__ __volatile__("fnstcw %0" : "=m" (cw));
-	volatile unsigned int cw_temp = (cw & 0xf3ff) | 0x0400; // rounding down
-	__asm__ __volatile__("fldcw %0" : : "m" (cw_temp));
-	fpu_extended value;
-	__asm__ __volatile__("frndint" : "=t" (value) : "0" (x));
-	__asm__ __volatile__("fldcw %0" : : "m" (cw));
-	return value;
+/*
+ * LLVM 2.9 crashes on first definition,
+ * clang with LLVM 3.x crashes on 2nd definition... sigh
+ */
+#if defined(__clang__) || !defined(__llvm__)
+#define DEFINE_ROUND_FUNC(rounding_mode_str, rounding_mode)						\
+PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended __x)	\
+{ \
+	register long double __value; \
+	register int __ignore; \
+	volatile unsigned short __cw; \
+	volatile unsigned short __cwtmp; \
+	__asm __volatile ("fnstcw %3\n\t" \
+					  "movzwl %3, %1\n\t" \
+					  "andl $0xf3ff, %1\n\t" \
+					  "orl %5, %1\n\t" \
+					  "movw %w1, %2\n\t" \
+					  "fldcw %2\n\t" \
+					  "frndint\n\t" \
+					  "fldcw %3" \
+					  : "=t" (__value), "=&q" (__ignore), "=m" (__cwtmp), \
+					  "=m" (__cw) \
+					  : "0" (__x), "i"(rounding_mode)); \
+	return __value; \
 }
-
-#undef fp_ceil
-#define fp_ceil fp_do_ceil
-
-PRIVATE inline fpu_extended fp_do_ceil(fpu_extended x)
-{
-	volatile unsigned int cw;
-	__asm__ __volatile__("fnstcw %0" : "=m" (cw));
-	volatile unsigned int cw_temp = (cw & 0xf3ff) | 0x0800; // rounding up
-	__asm__ __volatile__("fldcw %0" : : "m" (cw_temp));
-	fpu_extended value;
-	__asm__ __volatile__("frndint" : "=t" (value) : "0" (x));
-	__asm__ __volatile__("fldcw %0" : : "m" (cw));
-	return value;
-}
-
+#else
 #define DEFINE_ROUND_FUNC(rounding_mode_str, rounding_mode)						\
 PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended x)	\
 {																				\
@@ -1142,6 +1139,7 @@ PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended x)
 	__asm__ __volatile__("fldcw %0" : : "m" (cw));										\
 	return value;																\
 }
+#endif
 
 #undef fp_round_to_minus_infinity
 #define fp_round_to_minus_infinity fp_do_round_to_minus_infinity
@@ -1162,6 +1160,13 @@ DEFINE_ROUND_FUNC(zero, 0xc00)
 #define fp_round_to_nearest fp_do_round_to_nearest
 
 DEFINE_ROUND_FUNC(nearest, 0x000)
+
+#undef fp_ceil
+#define fp_ceil fp_do_round_to_plus_infinity
+
+#undef fp_floor
+#define fp_floor fp_do_round_to_minus_infinity
+
 
 #endif /* USE_X87_ASSEMBLY */
 
