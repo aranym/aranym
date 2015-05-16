@@ -143,8 +143,16 @@ fpu_t fpu;
 
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 #define LD(x) x ## L
+#ifdef HAVE_POWL
 #define POWL(x, y) powl(x, y)
+#else
+#define POWL(x, y) pow(x, y)
+#endif
+#ifdef HAVE_LOG10L
 #define LOG10L(x) log10l(x)
+#else
+#define LOG10L(x) log10(x)
+#endif
 #else
 #define LD(x) x
 #define POWL(x, y) pow(x, y)
@@ -654,7 +662,7 @@ PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1
 		d = -d;
 		sm = true;
 	}
-	exp = (int)floor(log10l(d));
+	exp = (int)floor(LOG10L(d));
 	se = false;
 	if (exp < 0)
 	{

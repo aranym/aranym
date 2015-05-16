@@ -151,6 +151,8 @@ const char *win32_errstring(DWORD err)
 }
 
 
+extern "C" int vasprintf(char **, const char *, va_list);
+
 void guialert(const char *fmt, ...)
 {
 	va_list args;
