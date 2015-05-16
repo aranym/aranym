@@ -14,19 +14,6 @@ extern "C" {
 #endif
 }
 
-// Hacks for win32: always return regular file.
-#ifdef WIN32
-#ifndef __MINGW32__
-#  define S_ISREG(st_mode) 1
-#  define S_ISCHR(st_mode) 0
-
-// VCPP includes also are missing these
-#  define off_t long
-#  define ssize_t int
-#endif
-
-#endif
-
 #define BX_DEBUG(a)	D2(panicbug(a))
 #define BX_PANIC(a)	panicbug(a)
 #define BX_INFO(a)	infoprint(a)
