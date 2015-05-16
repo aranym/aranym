@@ -18,82 +18,95 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "sysdeps.h"
 #if defined(OS_cygwin) || defined(OS_mingw)
-#ifndef WIN32
-#define WIN32 1
-#endif
 #include "SDL_compat.h"
-#include <SDL_syswm.h>
-#include <windows.h>
-#ifdef __CYGWIN__
-#undef WIN32
-#endif
+#include "win32_supp.h"
 #include "clipbrd.h"
 #include "host.h"
+#include "maptab.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 int init_aclip() { return 0; }
 
 int filter_aclip(const SDL_Event *event) { (void) event; return 1; }
 
-void write_aclip(char *data, size_t len)
+void write_aclip(char *src, size_t len)
 {
 	HGLOBAL clipdata;
-	void *lock;
+	unsigned short *dst;
+	unsigned short ch;
 
-	clipdata = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, len + 1);
+	clipdata = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, sizeof(unsigned short) * (len + 1));
 	if (!clipdata)
 		return;
-	lock = GlobalLock(clipdata);
-	if (!lock)
+	dst = (unsigned short *)GlobalLock(clipdata);
+	if (!dst)
 		return;
-	memcpy(lock, data, len);
-	((unsigned char *) lock)[len] = 0;
+	size_t count = len;
+	while ( count > 0)
+	{
+		ch = (unsigned char)*src++;
+		if (ch == 0)
+			break;
+		ch = atari_to_utf16[ch];
+		*dst++ = ch;
+		count--;
+	}
+	*dst = 0;
 	GlobalUnlock(clipdata);
 
-	SDL_SysWMinfo pInfo;
-	HWND hwnd;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GetWindowWMInfo(host->video->Window(), &pInfo);
-	hwnd = pInfo.info.win.window;
-#else
-	SDL_GetWMInfo(&pInfo);
-	hwnd = pInfo.window;
-#endif
-
-	if (OpenClipboard(hwnd)) {
+	if (OpenClipboard(NULL)) {
 		EmptyClipboard();
-		SetClipboardData(CF_TEXT, clipdata);
+		SetClipboardData(CF_UNICODETEXT, clipdata);
 		CloseClipboard();
 	} else
+	{
 		GlobalFree(clipdata);
+		D(bug("OpenClipboard failed: %s", win32_errstring(GetLastError())));
+	}
 }
 
-char * read_aclip( size_t *len)
+char * read_aclip( size_t *dstlen)
 {
-	SDL_SysWMinfo pInfo;
-	HWND hwnd;
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_GetWindowWMInfo(host->video->Window(), &pInfo);
-	hwnd = pInfo.info.win.window;
-#else
-	SDL_GetWMInfo(&pInfo);
-	hwnd = pInfo.window;
-#endif
-
-	if (OpenClipboard(hwnd)) {
-		HANDLE hData = GetClipboardData( CF_TEXT );
-		char* buffer = (char*)GlobalLock( hData );
-		char *data;
-		*len = strlen(buffer);
-	   	data = new char[*len];
-		memcpy( data, buffer, *len);
-		GlobalUnlock( hData );
-		CloseClipboard();
-
-		return data;
+	if (OpenClipboard(NULL)) {
+		HANDLE hData = GetClipboardData( CF_UNICODETEXT );
+		if (hData)
+		{
+			unsigned short *src = (unsigned short *)GlobalLock( hData );
+			size_t len = GlobalSize(hData) / sizeof(unsigned short);
+		   	char *data = new char[len + 1];
+		   	char *dst = data;
+		   	while (len)
+		   	{
+		   		unsigned short ch = *src++;
+		   		if (ch == 0)
+		   			break;
+				unsigned char c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
+				if (c == 0xff && ch != atari_to_utf16[0xff])
+				{
+					charset_conv_error(ch);
+					*dst++ = '?';
+				} else
+				{
+					*dst++ = c;
+				}
+				len--;
+		   	}
+		   	*dst = '\0';
+			*dstlen = dst - data;
+			GlobalUnlock( hData );
+			CloseClipboard();
+	
+			return data;
+		}
+	} else
+	{
+		D(bug("OpenClipboard failed: %s", win32_errstring(GetLastError())));
 	}
 	return NULL;
 }
 
 #endif
-

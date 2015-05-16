@@ -34,7 +34,7 @@ int32 ClipbrdNatFeat::dispatch(uint32 fncode)
 {
 	switch(fncode) {
     	case GET_VERSION:
-			D(bug("CLIPBRD: version %ld", CLIPBRD_NFAPI_VERSION));
+			D(bug("CLIPBRD: version %d", CLIPBRD_NFAPI_VERSION));
     		return CLIPBRD_NFAPI_VERSION;
 
 		case CLIP_OPEN:
@@ -62,7 +62,7 @@ void ClipbrdNatFeat::reset()
 int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 {
 	DUNUSED(id);
-	D(bug("clipbrd: open id=%ld mode=%ld", id, mode));
+	D(bug("clipbrd: open id=%d mode=%d", id, mode));
 	is_read = (mode == 1);
 	clip_len = 0;
 	if (clip_buf) {
@@ -81,7 +81,7 @@ int32 ClipbrdNatFeat::open(uint32 id, uint32 mode)
 int32 ClipbrdNatFeat::close(uint32 id)
 {
 	DUNUSED(id);
-	D(bug("clipbrd: close id=%ld", id));
+	D(bug("clipbrd: close id=%d", id));
 	if (clip_buf) {
 		if (!is_read && clip_len > 0) {
 			write_aclip(clip_buf, clip_len);
@@ -94,9 +94,9 @@ int32 ClipbrdNatFeat::close(uint32 id)
 
 int32 ClipbrdNatFeat::read(uint32 id, memptr buff, uint32 size, uint32 pos)
 {
-	DUNUSED(id);
+	UNUSED(id);
 	int len = (clip_len - pos > size) ? size : clip_len - pos;
-	D(bug("clipbrd: read pos=%ld, len=%ld", pos, len));
+	D(bug("clipbrd: read pos=%d, len=%d", pos, len));
 
 
 	if (clip_buf) {
@@ -108,8 +108,8 @@ int32 ClipbrdNatFeat::read(uint32 id, memptr buff, uint32 size, uint32 pos)
 
 int32 ClipbrdNatFeat::write(uint32 id, memptr buff, uint32 len, uint32 pos)
 {
-	DUNUSED(id);
-	D(bug("clipbrd: write pos=%ld, len=%d", pos, len));
+	UNUSED(id);
+	D(bug("clipbrd: write pos=%d, len=%d", pos, len));
 
 	size_t newlen = pos + len;
 	char *newbuf = new char[newlen];

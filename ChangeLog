@@ -1,4 +1,9 @@
 2015/05/15 - Thorsten
+Convert non-ascii characters to/from atari characterset in hostfs
+and clipbboard
+
+
+2015/05/15 - Thorsten
 Avoid unneccessary statfs/statvfs calls
 
 

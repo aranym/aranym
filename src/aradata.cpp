@@ -55,6 +55,7 @@ void ARADATA::reset()
 	mouseDriver = false;
 	mouse_x = -1;
 	mouse_y = -1;
+	WriteHWMemInt32(40, 0);
 }
 
 void ARADATA::setAbase(void)

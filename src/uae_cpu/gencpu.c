@@ -40,6 +40,8 @@
  * Copyright 1995, 1996 Bernd Schmidt
  */
 
+#define CC_FOR_BUILD 1
+
 #include "sysdeps.h"
 #include "readcpu.h"
 

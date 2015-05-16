@@ -56,6 +56,8 @@ public:
 	const char *name() { return "NF_STDERR"; }
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
+	static uint32 host_puts(FILE *f, memptr s, int width);
+	static uint32 host_putc(FILE *f, unsigned char c);
 };
 
 #endif // _NF_BASICSET_H

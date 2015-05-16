@@ -17,8 +17,8 @@ public:
 	int32 dispatch(uint32 fncode);
 
 private:
-	uint32 debugprintf(FILE *, const char *, uint32);
+	uint32 debugprintf(FILE *, memptr, uint32);
 	uint32 PUTC(FILE *f, int c, int width);
-	uint32 PUTS(FILE *f, const char *s, int width);
+	uint32 PUTS(FILE *f, memptr s, int width);
 	uint32 PUTL(FILE *f, uint32 u, int base, int width, int fill_char);
 };

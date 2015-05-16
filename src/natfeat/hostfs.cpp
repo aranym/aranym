@@ -35,13 +35,10 @@
 #include "tools.h"
 #include "win32_supp.h"
 
-#undef  DEBUG_FILENAMETRANSFORMATION
-#undef DEBUG
 #define DEBUG 0
 #include "debug.h"
 
 #if 0
-# define DEBUG_FILENAMETRANSFORMATION
 # define DFNAME(x) x
 #else
 # define DFNAME(x)
@@ -92,17 +89,6 @@ static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 	char *realp = realpath(filename, tmp);
 	resolved = (realp != NULL) ? strdup(realp) : NULL;
 	free(tmp);
-#elif defined _WIN32
-	int path_max = PATH_MAX;
-	char *tmp = (char *)malloc(path_max);
-	if (GetFullPathNameA(filename, path_max, tmp, NULL) == 0)
-	{
-		free(tmp);
-		resolved = NULL;
-	} else
-	{
-		resolved = tmp;
-	}
 #else
 	resolved = NULL;
 #endif
@@ -795,7 +781,7 @@ uint16 HostFs::modeHost2Mint(mode_t m)
 	if ( m & S_IRUSR ) result |= 00400;
 	if ( m & S_ISVTX ) result |= 01000;
 	if ( m & S_ISGID ) result |= 02000;
-	if ( m & S_ISUID ) result |= 03000;
+	if ( m & S_ISUID ) result |= 04000;
 
 	if ( S_ISSOCK(m) ) result |= 0010000;
 	if ( S_ISCHR(m)  ) result |= 0020000;
@@ -828,16 +814,16 @@ mode_t HostFs::modeMint2Host(uint16 m)
 	if ( m & 00400 ) result |= S_IRUSR;
 	if ( m & 01000 ) result |= S_ISVTX;
 	if ( m & 02000 ) result |= S_ISGID;
-	if ( m & 03000 ) result |= S_ISUID;
+	if ( m & 04000 ) result |= S_ISUID;
 
-	if ( m & 0010000 ) result |= S_IFSOCK;
-	if ( m & 0020000 ) result |= S_IFCHR;
-	if ( m & 0040000 ) result |= S_IFDIR;
-	if ( m & 0060000 ) result |= S_IFBLK;
-	if ( m & 0100000 ) result |= S_IFREG;
-	if ( m & 0120000 ) result |= S_IFIFO;
+	if ( (m & 0170000) == 0010000 ) result |= S_IFSOCK;
+	if ( (m & 0170000) == 0020000 ) result |= S_IFCHR;
+	if ( (m & 0170000) == 0040000 ) result |= S_IFDIR;
+	if ( (m & 0170000) == 0060000 ) result |= S_IFBLK;
+	if ( (m & 0170000) == 0100000 ) result |= S_IFREG;
+	if ( (m & 0170000) == 0120000 ) result |= S_IFIFO;
 	// Linux doesn't have this!	if ( m & 0140000 ) result |= S_IFMEM;
-	if ( m & 0160000 ) result |= S_IFLNK;
+	if ( (m & 0170000) == 0160000 ) result |= S_IFLNK;
 
 	D2(bug("					(statmode: %#04o)", result));
 
@@ -1031,7 +1017,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 }
 
 
-bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const char* name )
+bool HostFs::getHostFileName( char* result, ExtDrive* drv, const char* pathName, const char* name )
 {
 	struct stat statBuf;
 
@@ -1111,11 +1097,9 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, char* pathName, const
 		if ( dh != NULL )
 			closedir( dh );
 	}
-#ifdef DEBUG_FILENAMETRANSFORMATION
 	else {
 		DFNAME(bug(" (stat OK)"));
 	}
-#endif
 
 	return true;
 }
@@ -1271,7 +1255,7 @@ int32 HostFs::xfs_readlabel(XfsCookie * dir, memptr buff, int16 len) {
 			if (len < 0 || hostrootlen > size_t(len)) {
 				return(TOS_ENAMETOOLONG);
 			} else {
-				Host2AtariSafeStrncpy(buff, poschar, hostrootlen);
+				Host2AtariUtf8Copy(buff, poschar, hostrootlen);
 				return(TOS_E_OK);
 			}
 		}
@@ -1279,7 +1263,7 @@ int32 HostFs::xfs_readlabel(XfsCookie * dir, memptr buff, int16 len) {
 	if (len > 0) {
 		//	there is no label name to extract
 		//	fall back to a default label
-		Host2AtariSafeStrncpy(buff, "HOSTFS", len);
+		Host2AtariUtf8Copy(buff, "HOSTFS", len);
 		return TOS_E_OK;
 	} else {
 		return(TOS_ENAMETOOLONG);
@@ -1290,7 +1274,7 @@ int32 HostFs::xfs_readlabel(XfsCookie * dir, memptr buff, int16 len) {
 int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 {
 	char fname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1305,7 +1289,7 @@ int32 HostFs::xfs_mkdir( XfsCookie *dir, memptr name, uint16 mode )
 int32 HostFs::xfs_rmdir( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname( dir, fname, fpathName );
@@ -1321,7 +1305,7 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 {
 	DUNUSED(flags);
 	char fname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 	// convert and mask out the file type bits for unix open()
 	mode = modeMint2Host( mode ) & (S_ISUID|S_ISGID|S_ISVTX|S_IRWXU|S_IRWXG|S_IRWXO);
@@ -1496,7 +1480,7 @@ int32 HostFs::xfs_dev_lseek(ExtFile *fp, int32 offset, int16 seekmode)
 int32 HostFs::xfs_remove( XfsCookie *dir, memptr name )
 {
 	char fname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	cookie2Pathname(dir,fname,fpathName); // get the cookie filename
@@ -1512,8 +1496,8 @@ int32 HostFs::xfs_rename( XfsCookie *olddir, memptr oldname, XfsCookie *newdir, 
 {
 	char foldname[MAXPATHNAMELEN];
 	char fnewname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( foldname, oldname, sizeof(foldname) );
-	Atari2HostSafeStrncpy( fnewname, newname, sizeof(fnewname) );
+	Atari2HostUtf8Copy( foldname, oldname, sizeof(foldname) );
+	Atari2HostUtf8Copy( fnewname, newname, sizeof(fnewname) );
 
 	char fpathName[MAXPATHNAMELEN];
 	char fnewPathName[MAXPATHNAMELEN];
@@ -1530,8 +1514,8 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 {
 	char ffromname[MAXPATHNAMELEN];
 	char ftoname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
-	Atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
+	Atari2HostUtf8Copy( ffromname, fromname, sizeof(ffromname) );
+	Atari2HostUtf8Copy( ftoname, toname, sizeof(ftoname) );
 
 	char ffromName[MAXPATHNAMELEN];
 	char ftoName[MAXPATHNAMELEN];
@@ -1635,8 +1619,8 @@ int32 HostFs::xfs_hardlink( XfsCookie *fromDir, memptr fromname, XfsCookie *toDi
 #ifdef HAVE_LINK
 	char ffromname[MAXPATHNAMELEN];
 	char ftoname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( ffromname, fromname, sizeof(ffromname) );
-	Atari2HostSafeStrncpy( ftoname, toname, sizeof(ftoname) );
+	Atari2HostUtf8Copy( ffromname, fromname, sizeof(ffromname) );
+	Atari2HostUtf8Copy( ftoname, toname, sizeof(ftoname) );
 
 	char ffromName[MAXPATHNAMELEN];
 	cookie2Pathname( fromDir, ffromname, ffromName );
@@ -1930,7 +1914,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 			return errnoHost2Mint(errno,TOS_EFILNF);
 */
 		WriteInt32( (uint32)buff, dirEntry->d_ino /* statBuf.st_ino */ );
-		Host2AtariSafeStrncpy( buff + 4, dirEntry->d_name, len-4 );
+		Host2AtariUtf8Copy( buff + 4, dirEntry->d_name, len-4 );
 	} else {
 		char truncFileName[MAXPATHNAMELEN];
 		transformFileName( truncFileName, (char*)dirEntry->d_name );
@@ -1942,7 +1926,7 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 			return TOS_ERANGE;
 		}
 
-		Host2AtariSafeStrncpy( buff, truncFileName, len );
+		Host2AtariUtf8Copy( buff, truncFileName, len );
 	}
 
 	dirh->index++;
@@ -2038,7 +2022,7 @@ int32 HostFs::xfs_getxattr( XfsCookie *fc, memptr name, memptr xattrp )
 	if (name)
 	{
 		char fname[MAXPATHNAMELEN];
-		Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+		Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 		cookie2Pathname( fc, fname, fpathName );
 	} else
@@ -2115,7 +2099,7 @@ int32 HostFs::xfs_stat64( XfsCookie *fc, memptr name, memptr statp )
 	if (name)
 	{
 		char fname[MAXPATHNAMELEN];
-		Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+		Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 		cookie2Pathname( fc, fname, fpathName );
 	} else
@@ -2235,7 +2219,7 @@ int32 HostFs::xfs_readlink( XfsCookie *dir, memptr buf, int16 len )
 
 	D(bug( "HOSTFS: fs_readlink: -> %s", target ));
 
-	Host2AtariSafeStrncpy( buf, target, len );
+	Host2AtariUtf8Copy( buf, target, len );
 	return TOS_E_OK;
 }
 
@@ -2272,7 +2256,7 @@ void HostFs::xfs_freefs( XfsFsFile *fs )
 int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 {
 	char fname[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+	Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 	D(bug( "HOSTFS: fs_lookup: %s", fname ));
 
@@ -2371,7 +2355,7 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
         *pfpathName = '\0';
         D(bug( "HOSTFS: fs_getname result = \"%s\"", fpathName ));
 
-        Host2AtariSafeStrncpy( pathName, fpathName, pfpathName - fpathName + 1 );
+        Host2AtariUtf8Copy( pathName, fpathName, pfpathName - fpathName + 1 );
         return TOS_E_OK;
     }
 }
@@ -2433,7 +2417,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 		case MX_KER_XFSNAME:
 		{
 			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08x", arg ));
-			Host2AtariSafeStrncpy(arg, "hostfs-xfs", 32);
+			Host2AtariUtf8Copy(arg, "hostfs-xfs", 32);
 			return TOS_E_OK;
 		}
 		case MINT_FS_INFO:
@@ -2441,10 +2425,10 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			D(bug( "HOSTFS: fs_fscntl: FS_INFO: arg = %08x", arg ));
 			if (arg)
 			{
-				Host2AtariSafeStrncpy(arg, "hostfs-xfs", 32);
+				Host2AtariUtf8Copy(arg, "hostfs-xfs", 32);
 				WriteInt32(arg+32, ((int32)HOSTFS_XFS_VERSION << 16) | HOSTFS_NFAPI_VERSION );
 				WriteInt32(arg+36, MINT_FS_HOSTFS );
-				Host2AtariSafeStrncpy(arg+40, "host filesystem", 32);
+				Host2AtariUtf8Copy(arg+40, "host filesystem", 32);
 			}
 			return TOS_E_OK;
 		}
@@ -2483,7 +2467,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			if (name)
 			{
 				char fname[MAXPATHNAMELEN];
-				Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+				Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 				cookie2Pathname( dir, fname, fpathName );
 			} else
@@ -2515,7 +2499,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			if (name)
 			{
 				char fname[MAXPATHNAMELEN];
-				Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+				Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 
 				cookie2Pathname( dir, fname, fpathName );
 			} else
@@ -2540,7 +2524,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 		case MINT_FTRUNCATE:
 		{
 			char fname[MAXPATHNAMELEN];
-			Atari2HostSafeStrncpy( fname, name, sizeof(fname) );
+			Atari2HostUtf8Copy( fname, name, sizeof(fname) );
 			char fpathName[MAXPATHNAMELEN];
 			cookie2Pathname(dir,fname,fpathName); // get the cookie filename
 
@@ -2702,7 +2686,7 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 		case MX_KER_XFSNAME:
 			D(bug( "HOSTFS: fs_ioctl: MX_KER_XFSNAME: arg = %08lx", (unsigned long)buff ));
 			if (buff)
-			    Host2AtariSafeStrncpy(buff, "hostfs-xfs", 32);
+			    Host2AtariUtf8Copy(buff, "hostfs-xfs", 32);
 			return TOS_E_OK;
 		
 #ifdef EXT2_IOC_GETFLAGS
@@ -2842,7 +2826,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 				bool halfSensitive, memptr filesys, memptr filesys_devdrv )
 {
 	char fmountPoint[MAXPATHNAMELEN];
-	Atari2HostSafeStrncpy( fmountPoint, mountpoint, sizeof(fmountPoint) );
+	Atari2HostUtf8Copy( fmountPoint, mountpoint, sizeof(fmountPoint) );
 
 	ExtDrive *drv = new ExtDrive();
 	drv->fsDrv = filesys;
@@ -2881,7 +2865,7 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 		// no [HOSTFS] match -> map to the passed mountpoint
 		//  - future extension to map from m68k side
 		char fhostroot[MAXPATHNAMELEN];
-		Atari2HostSafeStrncpy( fhostroot, hostroot, sizeof(fhostroot) );
+		Atari2HostUtf8Copy( fhostroot, hostroot, sizeof(fhostroot) );
 
 		drv->hostRoot = my_canonicalize_file_name( fhostroot, true );
 		drv->halfSensitive = halfSensitive;

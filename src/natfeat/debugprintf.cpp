@@ -21,23 +21,21 @@
 
 #include "cpu_emulation.h"
 #include "debugprintf.h"
+#include "nf_basicset.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 int32 DebugPrintf::dispatch(uint32 fncode)
 {
-	char buffer[2048];
 	FILE *output = stderr;
 
 	DUNUSED(fncode);
 
 	memptr str_ptr = getParameter(0);
-	D(bug("DebugPrintf(%d, %p)", fncode, str_ptr));
+	D(bug("DebugPrintf(%d, $%08x)", fncode, str_ptr));
 
-	Atari2HostSafeStrncpy(buffer, str_ptr, sizeof(buffer));
-
-	int ret = debugprintf(output, buffer, 1);
+	int ret = debugprintf(output, str_ptr, 1);
 	fflush(output);
 
 	return ret;
@@ -45,10 +43,8 @@ int32 DebugPrintf::dispatch(uint32 fncode)
 
 # define TIMESTEN(x)	((((x) << 2) + (x)) << 1)
 
-uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
+uint32 DebugPrintf::debugprintf(FILE *f, memptr fmt, uint32 param)
 {
-	D(bug("DebugPrintfPrintf(%p)", fmt));
-
 	char c;
 	char fill_char;
 
@@ -60,7 +56,7 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 	int   i_arg;
 	long  l_arg;
 
-	while ((c = *fmt++) != 0)
+	while ((c = ReadNFInt8(fmt++)) != 0)
 	{
 		if (c != '%')
 		{
@@ -68,26 +64,26 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 			continue;
 		}
 		
-		c = *fmt++;
+		c = ReadNFInt8(fmt++);
 		width = 0;
 		long_flag = 0;
 		fill_char = ' ';
 		
 		if (c == '0') {
 			fill_char = '0';
-			c = *fmt++;
+			c = ReadNFInt8(fmt++);
 		}
 		
 		while (c >= '0' && c <= '9')
 		{
 			width = TIMESTEN (width) + (c - '0');
-			c = *fmt++;
+			c = ReadNFInt8(fmt++);
 		}
 		
 		if (c == 'l' || c == 'L')
 		{
 			long_flag = 1;
-			c = *fmt++;
+			c = ReadNFInt8(fmt++);
 		}
 		
 		if (!c) break;
@@ -107,8 +103,7 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 			}
 			case 's':
 			{
-				char buf[256];
-				Atari2HostSafeStrncpy(buf, getParameter(param++), sizeof(buf));
+				memptr buf = getParameter(param++);
 				len += PUTS (f, buf, width);
 				break;
 			}
@@ -178,45 +173,27 @@ uint32 DebugPrintf::debugprintf(FILE *f, const char *fmt, uint32 param)
 
 uint32 DebugPrintf::PUTC(FILE *f, int c, int width)
 {
-	long put = 1;
+	uint32 put;
 	
-	fputc(c, f);
+	put = NF_StdErr::host_putc(f, c);
 	while (--width > 0)
 	{
-		fputc(' ', f);
-		put++;
+		put += NF_StdErr::host_putc(f, ' ');
 	}
 	
 	return put;
 }
 
-uint32 DebugPrintf::PUTS(FILE *f, const char *s, int width)
+uint32 DebugPrintf::PUTS(FILE *f, memptr s, int width)
 {
-	long put = 0;
-	
-	if (!s) s = "(null)";
-	
-	while (*s)
-	{
-		fputc(*s++, f);
-		put++;
-		width--;
-	}
-	
-	while (width-- > 0)
-	{
-		fputc(' ', f);
-		put++;
-	}
-	
-	return put;
+	return NF_StdErr::host_puts(f, s, width);
 }
 
 uint32 DebugPrintf::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
 {
 	char obuf[32];
 	char *t = obuf;
-	long put = 0;
+	uint32 put = 0;
 	
 	do {
 		*t++ = "0123456789ABCDEF"[u % base];
@@ -227,14 +204,12 @@ uint32 DebugPrintf::PUTL(FILE *f, uint32 u, int base, int width, int fill_char)
 	
 	while (width-- > 0)
 	{
-		fputc(fill_char, f);
-		put++;
+		put += NF_StdErr::host_putc(f, fill_char);
 	}
 	
 	while (t != obuf)
 	{
-		fputc(*--t, f);
-		put++;
+		put += NF_StdErr::host_putc(f, *--t);
 	}
 	
 	return put;

@@ -25,6 +25,7 @@
 #include "tools.h"
 #include "parameters.h"
 #include "host_filesys.h"
+#include "win32_supp.h"
 
 #define DEBUG 0
 #include "debug.h"

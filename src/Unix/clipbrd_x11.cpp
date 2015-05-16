@@ -29,6 +29,10 @@
 #include "SDL_syswm.h"
 #include "clipbrd.h"
 #include "host.h"
+#include "maptab.h"
+
+#define DEBUG 0
+#include "debug.h"
 
 #if defined(__unix__) \
 	|| defined (_BSD_SOURCE) || defined (_SYSV_SOURCE) \
@@ -96,9 +100,41 @@ int init_aclip()
 void write_aclip(char *src, size_t srclen)
 {
 	Lock_Display();
-	XChangeProperty(SDL_Display, DefaultRootWindow(SDL_Display), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, (const unsigned char *)src, srclen);
+	unsigned short ch;
+	
+	size_t count = srclen;
+	unsigned char *buf = new unsigned char[srclen * 3 + 1];
+	unsigned char *dst = buf;
+	while ( count > 0)
+	{
+		ch = (unsigned char)*src++;
+		if (ch == 0)
+			break;
+		ch = atari_to_utf16[ch];
+		if (ch < 0x80)
+		{
+			*dst++ = ch;
+		} else if (ch < 0x800)
+		{
+			*dst++ = ((ch >> 6) & 0x3f) | 0xc0;
+			*dst++ = (ch & 0x3f) | 0x80;
+		} else 
+		{
+			*dst++ = ((ch >> 12) & 0x0f) | 0xe0;
+			*dst++ = ((ch >> 6) & 0x3f) | 0x80;
+			*dst++ = (ch & 0x3f) | 0x80;
+		}
+		count--;
+	}
+
+	XChangeProperty(SDL_Display, DefaultRootWindow(SDL_Display), XA_CUT_BUFFER0, XA_STRING, 8, PropModeReplace, buf, dst - buf);
 	if (XGetSelectionOwner(SDL_Display, XA_PRIMARY) != SDL_window)
+	{
 		XSetSelectionOwner(SDL_Display, XA_PRIMARY, SDL_window, CurrentTime);
+		if (XGetSelectionOwner(SDL_Display, XA_PRIMARY) == SDL_window)
+			XStoreBytes(SDL_Display, (char *)buf, dst - buf);
+	}
+	delete [] buf;
 	Unlock_Display();
 }
 
@@ -122,43 +158,59 @@ char * read_aclip(size_t *dstlen)
 		selection = XA_CUT_BUFFER0;
 	}
 	else {
-		int selection_response = 0;
-		SDL_Event event;
-
 		owner = SDL_window;
 		Lock_Display();
 		selection = XInternAtom(SDL_Display, "SDL_SELECTION", False);
 		XConvertSelection(SDL_Display, XA_PRIMARY, XA_STRING,
 		                  selection, owner, CurrentTime);
 		Unlock_Display();
-		while ( ! selection_response ) {
-			SDL_WaitEvent(&event);
-			if ( event.type == SDL_SYSWMEVENT ) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-				XEvent xevent = event.syswm.msg->msg.x11.event;
-#else
-				XEvent xevent = event.syswm.msg->event.xevent;
-#endif
-
-				if ( (xevent.type == SelectionNotify) &&
-				        (xevent.xselection.requestor == owner) )
-					selection_response = 1;
-			}
-		}
 	}
 
-	char *src;
+	unsigned char *psrc;
 	Lock_Display();
 	if ( XGetWindowProperty(SDL_Display, owner, selection, 0, INT_MAX/4,
 	                        False, XA_STRING, &seln_type, &seln_format,
-	                        &nbytes, &overflow, (unsigned char **)&src) == Success ) {
+	                        &nbytes, &overflow, &psrc) == Success ) {
 		if ( seln_type == XA_STRING ) {
-			dst = new char[nbytes+1];
-			memcpy(dst, src, nbytes);
-			dst[nbytes] = '\0';
-			*dstlen = nbytes;
+			char *buf = new char[nbytes + 1];
+			dst = buf;
+			unsigned short ch;
+			unsigned char c;
+			size_t bytes;
+			const unsigned char *src = psrc;
+			
+			while ( nbytes > 0 )
+			{
+				c = *src;
+				ch = c;
+				if (ch < 0x80)
+				{
+					bytes = 1;
+				} else if ((ch & 0xe0) == 0xc0 || nbytes < 3)
+				{
+					ch = ((ch & 0x1f) << 6) | (src[1] & 0x3f);
+					bytes = 2;
+				} else
+				{
+					ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
+					bytes = 3;
+				}
+				c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
+				if (c == 0xff && ch != atari_to_utf16[0xff])
+				{
+					charset_conv_error(ch);
+					*buf++ = '?';
+				} else
+				{
+					*buf++ = c;
+				}
+				src += bytes;
+				nbytes -= bytes;
+			}
+			*buf = '\0';
+			*dstlen = buf - dst;
 		}
-		XFree(src);
+		XFree(psrc);
 	}
 	Unlock_Display();
 
@@ -214,8 +266,7 @@ int filter_aclip(const SDL_Event *event)
 				}
 				XFree(seln_data);
 			}
-			XSendEvent(SDL_Display,req->requestor,False,0,&sevent);
-			XSync(SDL_Display, False);
+			XSendEvent(SDL_Display, req->requestor, False, 0, &sevent);
 		}
 		break;
 	}

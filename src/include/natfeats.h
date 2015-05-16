@@ -133,4 +133,9 @@ static inline void Host2AtariSafeStrncpy(memptr dst, const char *src, size_t cou
 		WriteNFInt8( dst, 0 );
 #endif
 }
+
+void Atari2HostUtf8Copy(char *dst, memptr src, size_t count);
+void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count);
+void charset_conv_error(unsigned short ch);
+
 #endif /* _NATFEATS_H */

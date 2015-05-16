@@ -11,6 +11,9 @@ inline void win32_set_errno(int deferrno = EINVAL) { errno = win32_errno_from_os
 const char *win32_errstring(DWORD err);
 #endif
 
+wchar_t *win32_utf8_to_widechar(const char *name);
+char *win32_widechar_to_utf8(const wchar_t *wname);
+
 #endif
 
 #if defined _WIN32
@@ -70,7 +73,22 @@ extern "C" {
 /* MiNGW headers define FIONREAD, but lack ioctl() */
 #undef FIONREAD
 
+#ifndef O_BINARY
+# ifdef _O_BINARY
+#   define O_BINARY _O_BINARY
+# else
+#   define O_BINARY 0
+# endif
+#endif
+
+#ifndef __MINGW_NOTHROW
+#define __MINGW_NOTHROW
+#endif
+
+#ifndef CC_FOR_BUILD
+
 #undef stat
+#undef wstat
 #undef fstat
 #undef truncate
 #undef ftruncate
@@ -78,15 +96,19 @@ extern "C" {
 #if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64)
 #ifdef _USE_32BIT_TIME_T
 #define stat _stati64
+#define wstat _wstati64
 #undef _stati64
 #else
 #define stat _stat64
+#define wstat _wstat64
 #endif
 #else
 #ifdef __MINGW64_VERSION_MAJOR
 #define stat _stat32
+#define wstat _wstat32
 #else
 #define stat _stat
+#define wstat _wstat
 #endif
 #endif
 
@@ -110,8 +132,48 @@ int win32_truncate(const char *pathname, off_t len);
 int win32_ftruncate(int fd, off_t length);
 int win32_lstat(const char *file_name, struct stat *buf);
 int win32_fstat(int fd, struct stat *buf);
-int futimes(int fd, const struct timeval tv[2]);
-int futimens(int fd, const struct timespec ts[2]);
+
+char *win32_realpath(const char *path, char *resolved);
+#define realpath(path, resolved) win32_realpath(path, resolved)
+#define HAVE_REALPATH 1
+
+#define opendir win32_opendir
+#define readdir win32_readdir
+#define closedir win32_closedir
+#define rewinddir win32_rewinddir
+#define telldir win32_telldir
+#define seekdir win32_seekdir
+
+DIR *opendir(const char *szPath);
+struct dirent *readdir(DIR *_dirp);
+int closedir(DIR *_dirp);
+void rewinddir(DIR *_dirp);
+long telldir(DIR *_dirp);
+void seekdir(DIR *_dirp, long lPos);
+
+#define open win32_open
+int __MINGW_NOTHROW open (const char*, int, ...);
+
+#define unlink win32_unlink
+#define remove win32_unlink
+int __MINGW_NOTHROW unlink (const char*);
+
+#define rmdir win32_rmdir
+int __MINGW_NOTHROW rmdir (const char*);
+
+#define mkdir win32_mkdir
+int __MINGW_NOTHROW mkdir (const char*, ...);
+
+#define chmod win32_chmod
+int __MINGW_NOTHROW chmod (const char*, int);
+
+#define rename win32_rename
+int __MINGW_NOTHROW rename(const char*, const char*);
+
+#define getcwd win32_getcwd
+char * __MINGW_NOTHROW getcwd(char*, int);
+
+#define statfs win32_statfs
 
 struct statfs
 {
@@ -127,6 +189,12 @@ struct statfs
   long f_spare[6];              /* spare for later */
 };
 
+int statfs(const char *path, struct statfs *buf);
+
+/* linux-compatible values for fs type */
+#define MSDOS_SUPER_MAGIC     0x4d44
+#define NTFS_SUPER_MAGIC      0x5346544E
+
 #ifndef _TIMESPEC_DEFINED
 #define _TIMESPEC_DEFINED
 struct timespec {
@@ -140,16 +208,20 @@ struct itimerspec {
 };
 #endif	/* _TIMESPEC_DEFINED */
 
-/* linux-compatible values for fs type */
-#define MSDOS_SUPER_MAGIC     0x4d44
-#define NTFS_SUPER_MAGIC      0x5346544E
+int win32_futimens(int fd, const struct timespec ts[2]);
+#define futimens(fd, ts) win32_futimens(fd, ts)
+#define HAVE_FUTIMENS 1
 
-int statfs(const char *path, struct statfs *buf);
+int win32_futimes(int fd, const struct timeval tv[2]);
+#define futimes(fd, tv) win32_futimes(fd, tv)
+#define HAVE_FUTIMES 1
+
+#endif /* CC_FOR_BUILD */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif /* _WIN32 */
 
 #endif

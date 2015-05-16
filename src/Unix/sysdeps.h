@@ -98,6 +98,10 @@
 
 #ifndef OS_INCLUDES_DEFINED
 
+#ifdef OS_mingw
+#include "windows_ver.h"
+#endif
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -596,7 +600,8 @@ extern "C" char *strdup(const char *s);
 #endif
 
 #ifdef OS_mingw
-#include "windows_ver.h"
+#include <io.h>
+#include <sys/time.h>
 
 /* FIXME: O_SYNC not defined in mingw, is there a replacement value ?
  * Does it make floppy working even without it ?
@@ -710,5 +715,7 @@ typedef jmp_buf sigjmp_buf;
 #ifndef EXIT_FAILURE
 #  define EXIT_FAILURE 1
 #endif
+
+#include "win32_supp.h"
 
 #endif /* SYSDEPS_H */

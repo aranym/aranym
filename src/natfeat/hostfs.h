@@ -157,7 +157,7 @@ class HostFs : public NF_Base
 	 * Note: This is the most sophisticated thing in this object.
 	 **/
 	void transformFileName( char* dest, const char* source );
-	bool getHostFileName( char* result, ExtDrive* drv, char* pathName, const char* name );
+	bool getHostFileName( char* result, ExtDrive* drv, const char* pathName, const char* name );
 	void convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, const char* basePath = NULL );
 
 	void fetchXFSC( XfsCookie *fc, memptr filep );

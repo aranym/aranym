@@ -545,6 +545,10 @@
 		B4C7EE961768552800B63B96 /* MachUser.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE941768552800B63B96 /* MachUser.c */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
+		CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
+		CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
+		CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
+		CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
@@ -1169,6 +1173,8 @@
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		CB4679571AFA788C0090A72D /* externalScript.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = externalScript.sh; path = scripts/externalScript.sh; sourceTree = "<group>"; };
+		CBCE37AD1B05B70200A19E4D /* maptab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maptab.h; sourceTree = "<group>"; };
+		CBCE37AE1B05B76100A19E4D /* maptab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maptab.cpp; sourceTree = "<group>"; };
 		CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgHostfs.cpp; sourceTree = "<group>"; };
 		CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl.cpp; path = ../cpufunctbl.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBEA27C41AF65B2200B12FC5 /* cpufunctbl_i386.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_i386.cpp; path = ../cpufunctbl_i386.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1487,6 +1493,8 @@
 				17798D710A652B51009733EB /* fvdidrv_nfapi.h */,
 				17798D720A652B51009733EB /* hostfs.cpp */,
 				17798D730A652B51009733EB /* hostfs.h */,
+				CBCE37AE1B05B76100A19E4D /* maptab.cpp */,
+				CBCE37AD1B05B70200A19E4D /* maptab.h */,
 				17798D740A652B51009733EB /* nf_base.cpp */,
 				17798D750A652B51009733EB /* nf_base.h */,
 				17798D760A652B51009733EB /* nf_basicset.cpp */,
@@ -1980,7 +1988,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -2455,6 +2463,7 @@
 				177A4E0C15AA29C000780D11 /* fd_trans.c in Sources */,
 				CBEA27B61AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
+				CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2576,6 +2585,7 @@
 				177A4E0A15AA29BE00780D11 /* fd_trans.c in Sources */,
 				CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
+				CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2696,6 +2706,7 @@
 				17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */,
 				CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
+				CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2826,6 +2837,7 @@
 				B4C7EE961768552800B63B96 /* MachUser.c in Sources */,
 				CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
+				CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2919,7 +2931,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -2958,7 +2969,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Release;
@@ -2968,7 +2979,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -2977,7 +2988,7 @@
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -3000,7 +3011,6 @@
 					"-lgmp",
 				);
 				PRODUCT_NAME = "MacAranym MMU MPFR";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -3023,7 +3033,6 @@
 					"-lgmp",
 				);
 				PRODUCT_NAME = "MacAranym MMU MPFR";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -3050,7 +3059,6 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -3063,7 +3071,6 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
 				PRODUCT_NAME = "MacAranym MMU";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Release;
 		};
@@ -3075,7 +3082,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_NAME = MacAranym;
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
 			name = Debug;
 		};
@@ -3114,7 +3120,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Debug;
@@ -3132,7 +3138,6 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
@@ -3150,7 +3155,6 @@
 					0x2000,
 				);
 				PRODUCT_NAME = "MacAranym JIT";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;

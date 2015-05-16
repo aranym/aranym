@@ -21,6 +21,8 @@
 
 #define __WIN32_SUPP_IMPLEMENTATION
 #include "sysdeps.h"
+#include "maptab.h"
+#include <wchar.h>
 
 #include "win32_supp.h"
 
@@ -171,10 +173,85 @@ void guialert(const char *fmt, ...)
 
 
 
+wchar_t *win32_utf8_to_widechar(const char *name)
+{
+	size_t len;
+	unsigned short ch;
+	unsigned char c;
+	wchar_t *wname, *dst;
+	const char *src;
+	
+	if (name == NULL)
+		return NULL;
+	len = strlen(name);
+	wname = (wchar_t *)malloc((len + 1) * sizeof(*wname));
+	if (wname == NULL)
+		return NULL;
+	dst = wname;
+	src = name;
+	while (*src)
+	{
+		c = *src++;
+		ch = c;
+		if (ch < 0x80)
+		{
+		} else if ((ch & 0xe0) == 0xc0)
+		{
+			ch = ((ch & 0x1f) << 6) | (src[1] & 0x3f);
+		} else
+		{
+			ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
+		}
+		*dst++ = ch;
+	}
+	*dst = 0;
+	return wname;
+}
+
+
+char *win32_widechar_to_utf8(const wchar_t *wname)
+{
+	unsigned short ch;
+	char *name, *dst;
+	const wchar_t *src;
+	size_t len;
+	
+	if (wname == NULL)
+		return NULL;
+	len = wcslen(wname);
+	name = (char *)malloc((len * 3 + 1) * sizeof(*name));
+	if (name == NULL)
+		return NULL;
+	dst = name;
+	src = wname;
+	while (*src)
+	{
+		ch = *src++;
+		if (ch < 0x80)
+		{
+			*dst++ = ch;
+		} else if (ch < 0x800)
+		{
+			*dst++ = ((ch >> 6) & 0x3f) | 0xc0;
+			*dst++ = (ch & 0x3f) | 0x80;
+		} else 
+		{
+			*dst++ = ((ch >> 12) & 0x0f) | 0xe0;
+			*dst++ = ((ch >> 6) & 0x3f) | 0x80;
+			*dst++ = (ch & 0x3f) | 0x80;
+		}
+	}
+	*dst++ = 0;
+	name = (char *)realloc(name, (dst - name) * sizeof(*name));
+	return name;
+}
+
+
 #ifdef _WIN32
 
 
 #undef stat
+#undef wstat
 #undef fstat
 #undef lstat
 
@@ -182,23 +259,28 @@ void guialert(const char *fmt, ...)
 #if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64)
 #ifdef _USE_32BIT_TIME_T
 #define stat _stati64
+#define wstat _wstati64
 #define fstat _fstati64
 #undef _stati64
 #else
 #define stat _stat64
+#define wstat _wstat64
 #define fstat _fstat64
 #endif
 #else
 #ifdef __MINGW64_VERSION_MAJOR
 #define stat _stat32
+#define wstat _wstat32
 #define fstat _fstat32
 #else
 #define stat _stat
+#define wstat _wstat
 #define fstat _fstat
 #endif
 #endif
 
-int readlink(const char *path, char *buf, size_t bufsiz)
+
+extern "C" int readlink(const char *path, char *buf, size_t bufsiz)
 {
 	UNUSED(path);
 	UNUSED(buf);
@@ -207,7 +289,7 @@ int readlink(const char *path, char *buf, size_t bufsiz)
 	return -1;
 }
 
-int symlink(const char *oldpath, const char *newpath)
+extern "C" int symlink(const char *oldpath, const char *newpath)
 {
 	UNUSED(oldpath);
 	UNUSED(newpath);
@@ -216,7 +298,7 @@ int symlink(const char *oldpath, const char *newpath)
 }
 
 
-long pathconf(const char *file_name, int name)
+extern "C" long pathconf(const char *file_name, int name)
 {
 	UNUSED(file_name);
 	if (name == _PC_LINK_MAX)
@@ -226,11 +308,13 @@ long pathconf(const char *file_name, int name)
 }
 
 
-int win32_truncate(const char *pathname, off_t len)
+extern "C" int win32_truncate(const char *pathname, off_t len)
 {
 	int ret, err;
+	wchar_t *wname = win32_utf8_to_widechar(pathname);
 	
-	int fd = _open(pathname, _O_BINARY | _O_RDWR);
+	int fd = _wopen(wname, _O_BINARY | _O_RDWR);
+	free(wname);
 	if (fd == -1)
 		return fd;
 	ret = win32_ftruncate(fd, len);
@@ -241,7 +325,7 @@ int win32_truncate(const char *pathname, off_t len)
 }
 
 
-int win32_ftruncate(int fd, off_t length)
+extern "C" int win32_ftruncate(int fd, off_t length)
 {
 /*
  * _chsize_s is not declared in MinGW32 headers, and missing in import libraries
@@ -253,7 +337,10 @@ int win32_ftruncate(int fd, off_t length)
 
 static int orig_stat(const char *filename, struct stat *buf)
 {
-	return stat(filename, buf);
+	wchar_t *wname = win32_utf8_to_widechar(filename);
+	int res = wstat(wname, buf);
+	free(wname);
+	return res;
 }
 
 
@@ -263,13 +350,13 @@ static int orig_lstat(const char *filename, struct stat *buf)
 }
 
 
-int win32_fstat(int fd, struct stat *st)
+extern "C" int win32_fstat(int fd, struct stat *st)
 {
 	return fstat(fd, st);
 }
 
 
-int win32_stat(const char *name, struct stat *st)
+extern "C" int win32_stat(const char *name, struct stat *st)
 {
 	int result = orig_lstat(name, st);
 
@@ -284,8 +371,7 @@ int win32_stat(const char *name, struct stat *st)
 		   ENAMETOOLONG, and for stat("file/"), when we want ENOTDIR.
 		   Fortunately, mingw PATH_MAX is small enough for stack
 		   allocation.  */
-		char fixed_name[PATH_MAX + 1] =
-		{0};
+		char fixed_name[PATH_MAX + 1] = {0};
 		size_t len = strlen(name);
 		bool check_dir = false;
 
@@ -316,7 +402,7 @@ int win32_stat(const char *name, struct stat *st)
 }
 
 
-int win32_lstat(const char *file, struct stat *sbuf)
+extern "C" int win32_lstat(const char *file, struct stat *sbuf)
 {
 	size_t len;
 	int lstat_result = win32_stat(file, sbuf);
@@ -337,7 +423,7 @@ int win32_lstat(const char *file, struct stat *sbuf)
 				lstat_result = -1;
 			} else
 			{
-				lstat_result = win32_stat(file, sbuf);;
+				lstat_result = win32_stat(file, sbuf);
 			}
 		}
 	}
@@ -346,7 +432,7 @@ int win32_lstat(const char *file, struct stat *sbuf)
 }
 
 
-int futimes(int fd, const struct timeval tv[2])
+extern "C" int win32_futimes(int fd, const struct timeval tv[2])
 {
 	struct timespec ts[2];
 	ts[0].tv_sec = tv[0].tv_sec;
@@ -357,7 +443,7 @@ int futimes(int fd, const struct timeval tv[2])
 }
 
 
-int futimens(int fd, const struct timespec ts[2])
+extern "C" int win32_futimens(int fd, const struct timespec ts[2])
 {
 	FILETIME ac, mod;
 	ULARGE_INTEGER i;
@@ -387,45 +473,64 @@ int futimens(int fd, const struct timespec ts[2])
  * @author Frank Heckenbach
  * @see http://gd.tuwien.ac.at/gnu/mingw/os-hacks.h
  */
-int statfs(const char *path, struct statfs *buf)
+extern "C" int statfs(const char *path, struct statfs *buf)
 {
-	char tmp[MAX_PATH],
-	 resolved_path[MAX_PATH];
+	wchar_t tmp[MAX_PATH];
+	wchar_t resolved_path[MAX_PATH];
 	int retval = 0;
-
+	struct stat s;
+	
+	DWORD sectors_per_cluster;
+	DWORD bytes_per_sector;
+	DWORD f_bavail;
+	DWORD f_blocks;
+	DWORD fsid;
+	DWORD namelen;
+	
 	errno = 0;
 
-#  ifdef HAVE_REALPATH
-	realpath(path, resolved_path);
-#  else	/* ERROR_MEDIA_CHECK */
-	strncpy(resolved_path, path, MAX_PATH);
-#  endif	/* HAVE_REALPATH */
-
-	long sectors_per_cluster,
-	 bytes_per_sector;
-
-	if (!GetDiskFreeSpaceA(resolved_path, (DWORD *) & sectors_per_cluster,
-					  (DWORD *) & bytes_per_sector, (DWORD *) & buf->f_bavail,
-						   (DWORD *) & buf->f_blocks))
+	wchar_t *wpath = win32_utf8_to_widechar(path);
+	GetFullPathNameW(wpath, MAX_PATH, resolved_path, NULL);
+	free(wpath);
+	
+	/*
+	 * Some broken programs (like TeraDesk) seem to call
+	 * Dfree() on the filename instead of the directory name
+	 */
+	if (wstat(resolved_path, &s) == 0 &&
+		!S_ISDIR(s.st_mode))
 	{
-		errno = ENOENT;
+		wchar_t *p = wcsrchr(resolved_path, '\\');
+		if (*p)
+			*p = '\0';
+	}
+	
+	if (!GetDiskFreeSpaceW(resolved_path, &sectors_per_cluster,
+					  &bytes_per_sector, &f_bavail, &f_blocks))
+	{
+		win32_set_errno(ENOENT);
 		retval = -1;
 	} else
 	{
+		buf->f_bavail = f_bavail;
+		buf->f_blocks = f_blocks;
 		buf->f_bsize = sectors_per_cluster * bytes_per_sector;
 		buf->f_files = buf->f_blocks;
 		buf->f_ffree = buf->f_bavail;
 		buf->f_bfree = buf->f_bavail;
 	}
 
-	/* get the FS volume information */
-	if (strspn(":", resolved_path) > 0)
+	if (wcschr(resolved_path, ':') != NULL)
 		resolved_path[3] = '\0';		/* we want only the root */
-	if (GetVolumeInformation
-		(resolved_path, NULL, 0, (DWORD *) & buf->f_fsid, (DWORD *) & buf->f_namelen, NULL, tmp,
+
+	/* get the FS volume information */
+	if (GetVolumeInformationW
+		(resolved_path, NULL, 0, &fsid, &namelen, NULL, tmp,
 		 MAX_PATH))
 	{
-		if (strcasecmp("NTFS", tmp) == 0)
+		buf->f_fsid = fsid;
+		buf->f_namelen = namelen;
+		if (wcsicmp(L"NTFS", tmp) == 0)
 		{
 			buf->f_type = NTFS_SUPER_MAGIC;
 		} else
@@ -434,11 +539,432 @@ int statfs(const char *path, struct statfs *buf)
 		}
 	} else
 	{
-		errno = ENOENT;
+		win32_set_errno(ENOENT);
 		retval = -1;
 	}
 	return retval;
 }
+
+
+extern "C" char *win32_realpath(const char *path, char *resolved)
+{
+	int path_max = PATH_MAX;
+	wchar_t *tmp = (wchar_t *)malloc(path_max * sizeof(*tmp));
+	wchar_t *wpath = win32_utf8_to_widechar(path);
+	if (GetFullPathNameW(wpath, path_max, tmp, NULL) == 0)
+	{
+		resolved = NULL;
+	} else
+	{
+		char *utf8 = win32_widechar_to_utf8(tmp);
+		if (resolved == NULL)
+		{
+			resolved = utf8;
+		} else
+		{
+			strcpy(resolved, utf8);
+			free(utf8);
+		}
+	}
+	free(tmp);
+	return resolved;
+}
+
+
+extern "C" int win32_open(const char *pathname, int flags, ...)
+{
+	wchar_t *wname;
+	int res;
+	
+	mode_t m = 0;
+	if (flags & O_CREAT)
+	{
+		va_list args;
+		va_start(args, flags);
+		m = va_arg(args, int);
+		va_end(args);
+	}
+	wname = win32_utf8_to_widechar(pathname);
+	res = _wopen(wname, flags, m);
+	free(wname);
+	return res;
+}
+
+
+extern "C" int win32_unlink(const char *pathname)
+{
+	wchar_t *wname;
+	int res;
+	
+	wname = win32_utf8_to_widechar(pathname);
+	res = _wunlink(wname);
+	free(wname);
+	return res;
+}
+
+
+extern "C" int win32_rmdir(const char *pathname)
+{
+	wchar_t *wname;
+	int res;
+	
+	wname = win32_utf8_to_widechar(pathname);
+	res = _wrmdir(wname);
+	free(wname);
+	return res;
+}
+
+
+extern "C" int win32_mkdir(const char *pathname, ...)
+{
+	wchar_t *wname;
+	int res;
+	
+	wname = win32_utf8_to_widechar(pathname);
+	res = _wmkdir(wname);
+	free(wname);
+	return res;
+}
+
+
+extern "C" int win32_chmod(const char *pathname, int mode)
+{
+	wchar_t *wname;
+	int res;
+	
+	wname = win32_utf8_to_widechar(pathname);
+	res = _wchmod(wname, mode);
+	free(wname);
+	return res;
+}
+
+
+extern "C" int win32_rename(const char *oldpath, const char *newpath)
+{
+	wchar_t *woldpath, *wnewpath;
+	int res;
+	
+	woldpath = win32_utf8_to_widechar(oldpath);
+	wnewpath = win32_utf8_to_widechar(newpath);
+	res = _wrename(woldpath, wnewpath);
+	free(wnewpath);
+	free(woldpath);
+	return res;
+}
+
+
+extern "C" char *win32_getcwd(char *buf, int size)
+{
+	wchar_t wbuf[MAX_PATH];
+	char *name;
+	
+	if (!buf)
+	{
+		errno = EFAULT;
+		return NULL;
+	}
+	if (_wgetcwd(wbuf, MAX_PATH) == NULL)
+		return NULL;
+	name = win32_widechar_to_utf8(wbuf);
+	strncpy(buf, name, size);
+	free(name);
+	return buf;
+}
+
+
+/*
+ * dirent.c
+ * Borrowed from MinGW, modified to work with utf8 filenames.
+ * Note that the routines work with a _WDIR structure, but return a DIR *.
+ * If you expect you can peek in the DIR structure, you loose.
+ */
+
+#define SUFFIX	L"*"
+#define	SLASH	L"\\"
+
+/*
+ * opendir
+ *
+ * Returns a pointer to a DIR structure appropriately filled in to begin
+ * searching a directory.
+ */
+DIR *win32_opendir(const char *szPath)
+{
+	_WDIR *nd;
+	unsigned int rc;
+	wchar_t szFullPath[MAX_PATH];
+
+	errno = 0;
+
+	if (!szPath)
+	{
+		errno = EFAULT;
+		return (DIR *) 0;
+	}
+	if (szPath[0] == '\0')
+	{
+		errno = ENOTDIR;
+		return (DIR *) 0;
+	}
+	/* Attempt to determine if the given path really is a directory. */
+	rc = GetFileAttributes(szPath);
+	if (rc == INVALID_FILE_ATTRIBUTES)
+	{
+		/* call GetLastError for more error info */
+		win32_set_errno(ENOENT);
+		return (DIR *) 0;
+	}
+	if (!(rc & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		/* Error, entry exists but not a directory. */
+		errno = ENOTDIR;
+		return (DIR *) 0;
+	}
+	/* Make an absolute pathname.  */
+	wchar_t *wpath = win32_utf8_to_widechar(szPath);
+	GetFullPathNameW(wpath, MAX_PATH, szFullPath, NULL);
+	free(wpath);
+
+	/* Allocate enough space to store DIR structure and the complete
+	   * directory path given. */
+	nd = (_WDIR *) malloc(sizeof(*nd) + (wcslen(szFullPath) + wcslen(SLASH) + wcslen(SUFFIX) + 1) * sizeof(nd->dd_name[0]));
+
+	if (!nd)
+	{
+		/* Error, out of memory. */
+		errno = ENOMEM;
+		return (DIR *) 0;
+	}
+	/* Create the search expression. */
+	wcscpy(nd->dd_name, szFullPath);
+
+	/* Add on a slash if the path does not end with one. */
+	if (nd->dd_name[0] != '\0' &&
+		nd->dd_name[wcslen(nd->dd_name) - 1] != '/' &&
+		nd->dd_name[wcslen(nd->dd_name) - 1] != '\\')
+	{
+		wcscat(nd->dd_name, SLASH);
+	}
+	/* Add on the search pattern */
+	wcscat(nd->dd_name, SUFFIX);
+
+	/* Initialize handle to -1 so that a premature closedir doesn't try
+	   * to call _findclose on it. */
+	nd->dd_handle = -1;
+
+	/* Initialize the status. */
+	nd->dd_stat = 0;
+
+	/* Initialize the dirent structure. ino and reclen are invalid under
+	   * Win32, and name simply points at the appropriate part of the
+	   * findfirst_t structure. */
+	nd->dd_dir.d_ino = 0;
+	nd->dd_dir.d_reclen = 0;
+	nd->dd_dir.d_namlen = 0;
+	nd->dd_dir.d_name[0] = 0;
+
+	return (DIR *)nd;
+}
+
+
+/*
+ * readdir
+ *
+ * Return a pointer to a dirent structure filled with the information on the
+ * next entry in the directory.
+ */
+struct dirent *win32_readdir(DIR *_dirp)
+{
+	_WDIR *dirp = (_WDIR *)_dirp;
+	errno = 0;
+	
+	/* Check for valid DIR struct. */
+	if (!dirp)
+	{
+		errno = EFAULT;
+		return (struct dirent *) 0;
+	}
+	if (dirp->dd_stat < 0)
+	{
+		/* We have already returned all files in the directory
+		   * (or the structure has an invalid dd_stat). */
+		return (struct dirent *) 0;
+	} else if (dirp->dd_stat == 0)
+	{
+		/* We haven't started the search yet. */
+		/* Start the search */
+		dirp->dd_handle = _wfindfirst(dirp->dd_name, &(dirp->dd_dta));
+
+		if (dirp->dd_handle == -1)
+		{
+			/* Whoops! Seems there are no files in that
+			   * directory. */
+			dirp->dd_stat = -1;
+		} else
+		{
+			dirp->dd_stat = 1;
+		}
+	} else
+	{
+		/* Get the next search entry. */
+		if (_wfindnext(dirp->dd_handle, &(dirp->dd_dta)))
+		{
+			/* We are off the end or otherwise error.
+			   _findnext sets errno to ENOENT if no more file
+			   Undo this. */
+			DWORD winerr = GetLastError();
+
+			if (winerr == ERROR_NO_MORE_FILES)
+				errno = 0;
+			_findclose(dirp->dd_handle);
+			dirp->dd_handle = -1;
+			dirp->dd_stat = -1;
+		} else
+		{
+			/* Update the status to indicate the correct
+			   * number. */
+			dirp->dd_stat++;
+		}
+	}
+
+	if (dirp->dd_stat > 0)
+	{
+		/* Successfully got an entry. Everything about the file is
+		 * already appropriately filled in except the length of the
+		 * file name.
+		 */
+		/*
+		 * convert the name from widechar to utf8 and copy it,
+		 * This is safe because dirent and _wdirent are identical
+		 * except for dd_name, which is the last field
+		 */
+		char *name = win32_widechar_to_utf8(dirp->dd_dta.name);
+		dirp->dd_dir.d_namlen = strlen(name);
+		strcpy((char *)dirp->dd_dir.d_name, name);
+		free(name);
+		return (struct dirent *) &dirp->dd_dir;
+	}
+	return (struct dirent *) 0;
+}
+
+
+/*
+ * closedir
+ *
+ * Frees up resources allocated by opendir.
+ */
+int win32_closedir(DIR *_dirp)
+{
+	_WDIR *dirp = (_WDIR *)_dirp;
+	int rc;
+
+	errno = 0;
+	rc = 0;
+
+	if (!dirp)
+	{
+		errno = EFAULT;
+		return -1;
+	}
+	if (dirp->dd_handle != -1)
+	{
+		rc = _findclose(dirp->dd_handle);
+	}
+	/* Delete the dir structure. */
+	free(dirp);
+
+	return rc;
+}
+
+
+/*
+ * rewinddir
+ *
+ * Return to the beginning of the directory "stream". We simply call findclose
+ * and then reset things like an opendir.
+ */
+void win32_rewinddir(DIR *_dirp)
+{
+	_WDIR *dirp = (_WDIR *)_dirp;
+	errno = 0;
+
+	if (!dirp)
+	{
+		errno = EFAULT;
+		return;
+	}
+	if (dirp->dd_handle != -1)
+	{
+		_findclose(dirp->dd_handle);
+	}
+	dirp->dd_handle = -1;
+	dirp->dd_stat = 0;
+}
+
+
+/*
+ * telldir
+ *
+ * Returns the "position" in the "directory stream" which can be used with
+ * seekdir to go back to an old entry. We simply return the value in stat.
+ */
+long win32_telldir(DIR *_dirp)
+{
+	_WDIR *dirp = (_WDIR *)_dirp;
+	errno = 0;
+
+	if (!dirp)
+	{
+		errno = EFAULT;
+		return -1;
+	}
+	return dirp->dd_stat;
+}
+
+
+/*
+ * seekdir
+ *
+ * Seek to an entry previously returned by telldir. We rewind the directory
+ * and call readdir repeatedly until either dd_stat is the position number
+ * or -1 (off the end). This is not perfect, in that the directory may
+ * have changed while we weren't looking. But that is probably the case with
+ * any such system.
+ */
+void win32_seekdir(DIR *_dirp, long lPos)
+{
+	_WDIR *dirp = (_WDIR *)_dirp;
+	errno = 0;
+
+	if (!dirp)
+	{
+		errno = EFAULT;
+		return;
+	}
+	if (lPos < -1)
+	{
+		/* Seeking to an invalid position. */
+		errno = EINVAL;
+		return;
+	} else if (lPos == -1)
+	{
+		/* Seek past end. */
+		if (dirp->dd_handle != -1)
+		{
+			_findclose(dirp->dd_handle);
+		}
+		dirp->dd_handle = -1;
+		dirp->dd_stat = -1;
+	} else
+	{
+		/* Rewind and read forward to the appropriate index. */
+		win32_rewinddir((DIR *)dirp);
+
+		while ((dirp->dd_stat < lPos) && win32_readdir((DIR *)dirp))
+			;
+	}
+}
+
 
 #endif /* _WIN32 */
 
