@@ -1730,11 +1730,6 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 	// FIXME: Has to be different for .XFS and for HOSTFS.
 	D(bug("HOSTFS: fs_pathconf (%s,%d)", fpathName, which));
 
-	STATVFS buff;
-	int32 res = host_statvfs( fpathName, &buff);
-	if ( res != TOS_E_OK )
-		return res;
-
 	switch (which) {
 		case -1:
 			return 9;  // maximal which value
@@ -1753,23 +1748,37 @@ int32 HostFs::xfs_pathconf( XfsCookie *fc, int16 which )
 			return MAXPATHNAMELEN; // FIXME: This is the limitation of this implementation (ARAnyM specific)
 
 		case 3:	  // DP_NAMEMAX
+			{
+				STATVFS buff;
+				int32 res = host_statvfs( fpathName, &buff);
+				if ( res != TOS_E_OK )
+					return res;
+				
 #ifdef HAVE_SYS_STATVFS_H
-			return buff.f_namemax;
+				return buff.f_namemax;
 #else
 # if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd) || defined(OS_darwin))
-			return MFSNAMELEN;
+				return MFSNAMELEN;
 # else
 #if defined(OS_mint)
-			return Dpathconf(fpathName,3 /* DP_NAMEMAX */);
+				return Dpathconf(fpathName,3 /* DP_NAMEMAX */);
 #else
-			return buff.f_namelen;
+				return buff.f_namelen;
 #endif /* OS_mint */
 #endif /* OS_*bsd */
 #endif /* HAVE_SYS_STATVFS_H */
-
+			}
+			
 		case 4:	  // DP_ATOMIC
-			return buff.f_bsize;	 // ST max vs Linux optimal
-
+			{
+				STATVFS buff;
+				int32 res = host_statvfs( fpathName, &buff);
+				if ( res != TOS_E_OK )
+					return res;
+				
+				return buff.f_bsize;	 // ST max vs Linux optimal
+			}
+			
 		case 5:	  // DP_TRUNC
 			return 0;  // files are NOT truncated... (hope correct)
 
