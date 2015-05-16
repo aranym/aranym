@@ -343,13 +343,6 @@ AC_CHECK_FUNCS(usleep gettimeofday)
 AC_CHECK_FUNCS(fseeko fsync futimens link readlink symlink lstat truncate pathconf)
 AC_CHECK_FUNCS(canonicalize_file_name realpath)
 
-dnl Defines caddr_t as void * if not already defined
-AC_CHECK_TYPES(caddr_t)
-AH_BOTTOM(
-[#ifndef HAVE_CADDR_T
-typedef void * caddr_t;
-#endif])
-
 AC_CACHE_CHECK([whether sigsetjmp is supported],
   ac_cv_have_sigsetjmp, [
   AC_TRY_LINK([

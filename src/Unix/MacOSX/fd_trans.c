@@ -47,7 +47,7 @@ int receive_fd_using_sockfd(int *fd, int sockfd)
     iovec[0].iov_base = (void*)&c;
     iovec[0].iov_len = 1;
 	
-    msg.msg_name = (caddr_t)0;
+    msg.msg_name = NULL;
     msg.msg_namelen = 0;
     msg.msg_iov = iovec;
     msg.msg_iovlen = 1;
@@ -129,7 +129,7 @@ int send_fd_using_sockfd(int fd, int sockfd)
     iovec[0].iov_base = "";
     iovec[0].iov_len = 1;
 	
-    msg.msg_name = (caddr_t)0; // address (optional)
+    msg.msg_name = NULL;       // address (optional)
     msg.msg_namelen = 0;       // size of address
     msg.msg_iov = iovec;       // scatter/gather array
     msg.msg_iovlen = 1;        // members in msg.msg_iov

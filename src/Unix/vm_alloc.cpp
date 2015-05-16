@@ -223,7 +223,7 @@ void * vm_acquire(size_t size, int options)
 #	define RESTORE_MODE
 #endif
 	
-	addr = mmap((caddr_t)(*base), size, VM_PAGE_DEFAULT, the_map_flags, fd, 0);
+	addr = mmap((void *)(*base), size, VM_PAGE_DEFAULT, the_map_flags, fd, 0);
 	RESTORE_MODE;
 	if (addr == (void *)MAP_FAILED)
 		return VM_MAP_FAILED;
@@ -291,7 +291,7 @@ bool vm_acquire_fixed(void * addr, size_t size, int options)
 #elif defined(HAVE_MMAP_VM)
 	const int extra_map_flags = translate_map_flags(options);
 
-	if (mmap((caddr_t)addr, size, VM_PAGE_DEFAULT, extra_map_flags | map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
+	if (mmap((void *)addr, size, VM_PAGE_DEFAULT, extra_map_flags | map_flags | MAP_FIXED, zero_fd, 0) == MAP_FAILED)
 		return false;
 #else
 #ifdef HAVE_WIN32_VM
@@ -332,7 +332,7 @@ int vm_release(void * addr, size_t size)
 	if (vm_deallocate(mach_task_self(), (vm_address_t)addr, size) != KERN_SUCCESS)
 		return -1;
 #elif defined(HAVE_MMAP_VM)
-	if (munmap((caddr_t)addr, size) != 0)
+	if (munmap((void *)addr, size) != 0)
 		return -1;
 
 #else
@@ -357,7 +357,7 @@ int vm_protect(void * addr, size_t size, int prot)
 	int ret_code = vm_protect(mach_task_self(), (vm_address_t)addr, size, 0, prot);
 	return ret_code == KERN_SUCCESS ? 0 : -1;
 #elif defined(HAVE_MMAP_VM)
-	int ret_code = mprotect((caddr_t)addr, size, prot);
+	int ret_code = mprotect((void *)addr, size, prot);
 	return ret_code == 0 ? 0 : -1;
 #elif defined(HAVE_WIN32_VM)
 	DWORD old_prot;
