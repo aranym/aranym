@@ -236,9 +236,22 @@ static void fill_prefetch_2 (void)
 
 static void swap_opcode (void)
 {
-#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
+  printf("#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)\n");
   printf ("\topcode = do_byteswap_16(opcode);\n");
-#endif
+  printf("#endif\n");
+}
+
+static void real_opcode (int *have)
+{
+	if (!*have)
+	{
+		printf("#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)\n");
+		printf ("\tuae_u32 real_opcode = do_byteswap_16(opcode);\n");
+		printf("#else\n");
+		printf ("\tuae_u32 real_opcode = opcode;\n");
+		printf("#endif\n");
+		*have = 1;
+	}
 }
 
 static void sync_m68k_pc (void)
@@ -2403,7 +2416,8 @@ static void generate_one_opcode (int rp)
     int i;
     uae_u16 smsk, dmsk;
     int opcode = opcode_map[rp];
-
+	int have_realopcode = 0;
+	
     if (table68k[opcode].mnemo == i_ILLG
 	|| table68k[opcode].clev > cpu_level)
 	return;
@@ -2488,38 +2502,17 @@ static void generate_one_opcode (int rp)
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		abort ();
 #endif
-#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
-
-	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
-		sprintf (source, "(((opcode >> %d) | (opcode << %d)) & %d)",
-			pos ^ 8, 8 - pos, dmsk);
-	    else if (pos != 8)
-		sprintf (source, "((opcode >> %d) & %d)", pos ^ 8, smsk);
-	    else
-		sprintf (source, "(opcode & %d)", smsk);
-
-	    if (table68k[opcode].stype == 3)
-		printf ("\tuae_u32 srcreg = imm8_table[%s];\n", source);
-	    else if (table68k[opcode].stype == 1)
-		printf ("\tuae_u32 srcreg = (uae_s32)(uae_s8)%s;\n", source);
-	    else
-		printf ("\tuae_u32 srcreg = %s;\n", source);
-
-#else
-
+		real_opcode(&have_realopcode);
 	    if (pos)
-		sprintf (source, "((opcode >> %d) & %d)", pos, smsk);
+		sprintf (source, "((real_opcode >> %d) & %d)", pos, smsk);
 	    else
-		sprintf (source, "(opcode & %d)", smsk);
-
+		sprintf (source, "(real_opcode & %d)", smsk);
 	    if (table68k[opcode].stype == 3)
 		printf ("\tuae_u32 srcreg = imm8_table[%s];\n", source);
 	    else if (table68k[opcode].stype == 1)
 		printf ("\tuae_u32 srcreg = (uae_s32)(uae_s8)%s;\n", source);
 	    else
 		printf ("\tuae_u32 srcreg = %s;\n", source);
-
-#endif
 	}
     }
     if (table68k[opcode].duse
@@ -2540,26 +2533,12 @@ static void generate_one_opcode (int rp)
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		abort ();
 #endif
-#if ((defined(HAVE_GET_WORD_UNSWAPPED)) && (!defined(FULLMMU)))
-
-	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
-		printf ("\tuae_u32 dstreg = ((opcode >> %d) | (opcode << %d)) & %d;\n",
-			pos ^ 8, 8 - pos, dmsk);
-	    else if (pos != 8)
-		printf ("\tuae_u32 dstreg = (opcode >> %d) & %d;\n",
-			pos ^ 8, dmsk);
-	    else
-		printf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
-
-#else
-
+		real_opcode(&have_realopcode);
 	    if (pos)
-		printf ("\tuae_u32 dstreg = (opcode >> %d) & %d;\n",
+		printf ("\tuae_u32 dstreg = (real_opcode >> %d) & %d;\n",
 			pos, dmsk);
 	    else
-		printf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
-
-#endif
+		printf ("\tuae_u32 dstreg = real_opcode & %d;\n", dmsk);
 	}
     }
     need_endlabel = 0;
