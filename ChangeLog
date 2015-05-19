@@ -1,4 +1,8 @@
 2015/05/19 - Thorsten
+get_home_dir: Remove unused function
+
+
+2015/05/19 - Thorsten
 usbhost.cpp: fix off-by-1 bug in initializing arrays
 
 
