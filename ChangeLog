@@ -1,4 +1,8 @@
 2015/05/19 - Thorsten
+cygwin/mingw: Use real path of executable instead of relying on argv[0]
+
+
+2015/05/19 - Thorsten
 fixed_memory_offset could be 0 when config file was initialized
 by non-JIT version; use default in this case
 

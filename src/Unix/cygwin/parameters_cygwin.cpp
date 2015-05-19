@@ -47,14 +47,16 @@ int get_geometry(const char *dev_path, geo_type geo)
  */
 char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 {
-	char szPath[MAX_PATH];
-	if (SUCCEEDED(::SHGetFolderPath(NULL, 
+	wchar_t szPath[MAX_PATH];
+	if (SUCCEEDED(::SHGetFolderPathW(NULL, 
 		CSIDL_PROFILE, 
 		NULL, 
 		0, 
 		szPath))) 
 	{
-		safe_strncpy(buffer, szPath, bufsize);
+		char *path = win32_widechar_to_utf8(szPath);
+		safe_strncpy(buffer, path, bufsize);
+		free(path);
 		strd2upath(buffer, buffer);
 	}
 	else {
@@ -76,7 +78,14 @@ char *HostFilesys::getConfFolder(char *buffer, unsigned int bufsize)
 char *HostFilesys::getDataFolder(char *buffer, unsigned int bufsize)
 {
 	// data folder is where the program resides
-	safe_strncpy(buffer, program_name, bufsize);
+	static char *real_program_name;
+	if (real_program_name == NULL)
+	{
+		wchar_t name[4096];
+		GetModuleFileNameW(GetModuleHandle(NULL), name, sizeof(name) / sizeof(name[0]));
+		real_program_name = win32_widechar_to_utf8(name);
+	}
+	safe_strncpy(buffer, real_program_name, bufsize);
 	// strip out filename and separator from the path
 	char *ptr = strrchr(buffer, '/');	// first try Unix separator
 	char *ptr2 = strrchr(buffer, '\\');	// then DOS sep.
