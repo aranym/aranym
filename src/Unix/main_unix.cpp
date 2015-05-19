@@ -394,9 +394,9 @@ void vm_probe_fixed(void)
 	}
 	
 	if (best_addr)
-		printf("suggested --fixedmem setting: 0x%08x (%uMB TT-RAM)\n", (unsigned int)best_addr, (unsigned int)(best_size / 0x00100000));
+		guialert("suggested --fixedmem setting: 0x%08x (%uMB TT-RAM)", (unsigned int)best_addr, (unsigned int)(best_size / 0x00100000));
 	else
-		printf("no suitable address to allow TT-RAM found!\n");
+		guialert("no suitable address to allow TT-RAM found!");
 	
 	delete [] maptab;
 }

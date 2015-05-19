@@ -1,4 +1,8 @@
 2015/05/19 - Thorsten
+Use Alert Dialog for results of --probe-fixed
+
+
+2015/05/19 - Thorsten
 MinGW: use same values as cygwin for setuid/setgid bits
 
 
