@@ -1,3 +1,7 @@
+2015/05/19 - Thorsten
+usbhost.cpp: fix off-by-1 bug in initializing arrays
+
+
 2015/05/17 - Thorsten
 Use HAVE_GET_WORD_UNSWAPPED and FULLMU only in generated source,
 not in program that generates it

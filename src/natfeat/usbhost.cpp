@@ -421,7 +421,7 @@ void usbhost_init_libusb(void)
 
 	libusb_set_debug(NULL, 3);
 	
-	for (int i = 0; i <= USB_MAX_DEVICE; i++) {
+	for (int i = 0; i < USB_MAX_DEVICE; i++) {
 		virtual_device[i].connected = false;
 		virtual_device[i].virtdev_available = false;
 	}
