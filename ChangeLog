@@ -1,4 +1,8 @@
 2015/05/19 - Thorsten
+cygwin/mingw: add version resource and icon to executable
+
+
+2015/05/19 - Thorsten
 Use Alert Dialog for results of --probe-fixed
 
 

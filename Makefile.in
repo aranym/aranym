@@ -30,6 +30,8 @@ CC_FOR_BUILD=@CC_FOR_BUILD@
 CXXFLAGS_FOR_BUILD+=@CXXFLAGS_FOR_BUILD@
 CFLAGS_FOR_BUILD+=@CFLAGS_FOR_BUILD@
 LDFLAGS_FOR_BUILD+=@LDFLAGS_FOR_BUILD@
+WINDRES = @WINDRES@
+WIN32_RC_OBJS = @WIN32_RC_OBJS@
 
 CC = @CC@
 CXX = @CXX@
@@ -257,7 +259,7 @@ $(builddir)/version_date.h: $(top_srcdir)/ChangeLog
 	echo '/* generated from ChangeLog */' > $@
 	sed -n '/^20[0-9][0-9]\/[0-9]*\/[0-9]/p' < $(top_srcdir)/ChangeLog | sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' >> $@
 
-OBJS = $(SRCS_LIST_TO_OBJS)
+OBJS = $(SRCS_LIST_TO_OBJS) $(WIN32_RC_OBJS)
 
 SRC_PATHS += $(sort $(GEN_DIR)/ $(dir $(SRCS)))
 empty:=
@@ -307,6 +309,12 @@ $(APP_BUNDLE): $(APP)
 		cp -R $$locFolder $(APP_BUNDLE)/Contents/Resources/; \
 	done
 	find $(APP_BUNDLE)/Contents/Resources -type d -and \( -name CVS -or -name \*~.nib \) -or -name \*~ -or -name \*.bak | xargs rm -rf
+
+$(OBJ_DIR)/aranym_rc_i386.o: $(srcdir)/Unix/cygwin/aranym.rc
+	$(WINDRES) -o $@ --output-format coff --target pe-i386 $(CPPFLAGS) $(DEFS) $< 
+
+$(OBJ_DIR)/aranym_rc_x86_64.o: $(srcdir)/Unix/cygwin/aranym.rc
+	$(WINDRES) -o $@ --output-format coff --target pe-x86-64 $(CPPFLAGS) $(DEFS) $< 
 
 install: $(APP) $(TAPIF) doc/$(APP).1 doc/$(APP)-jit.1 doc/$(APP)-mmu.1 doc/$(APP_IFC).1 installdirs
 	$(INSTALL_PROGRAM) $(APP) $(DESTDIR)$(bindir)/$(APP)

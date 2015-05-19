@@ -1,0 +1,40 @@
+#ifndef ORC_INVOKED
+#include <windows.h>
+#endif
+
+#include "version.h"
+
+#undef VERSION_STRING
+#define VERSION_STRING	str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS 
+
+1 ICON "aranym.ico"
+
+1 VERSIONINFO 
+FILEVERSION VER_MAJOR, VER_MINOR, VER_MICRO, 0
+PRODUCTVERSION VER_MAJOR, VER_MINOR, VER_MICRO, 0
+FILEOS VOS_DOS_WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "ARAnyM developer team\000\000"
+   VALUE "FileDescription", "Atari Running on Any Machine\000"
+   VALUE "FileVersion", VERSION_STRING "\000"
+   VALUE "InternalName", NAME_STRING "\000"
+   VALUE "LegalCopyright", "Copyright \251 1996-2015 ARAnyM developer team\000"
+   VALUE "OriginalFilename", "ARANYM.EXE\000"
+   VALUE "ProductName", NAME_STRING "\000"
+   VALUE "ProductVersion", VERSION_STRING "\000"
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+
+}
+

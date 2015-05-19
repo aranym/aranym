@@ -285,6 +285,7 @@ AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
 AC_PATH_PROG(PERL, perl)
+AC_CHECK_TOOLS(WINDRES, [windres], :)
 PKG_PROG_PKG_CONFIG
 m4_ifndef([PKG_CHECK_MODULES], [AC_DEFUN([PKG_CHECK_MODULES], [true])])
 
@@ -375,14 +376,14 @@ case "$host_os" in
   linux*)
     EXTRASYSSRCS="Unix/linux/parameters_linux.cpp Unix/linux/ethernet_linux.cpp Unix/host_filesys_unix.cpp"
     ;;
-  cygwin*)
+  cygwin*|mingw*)
     AC_DEFINE([ARANYMHOME], "aranym")
-    LIBS="$LIBS -liberty"
     EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/tools_cygwin.cpp Unix/cygwin/ethernet_cygwin.cpp Unix/cygwin/win32_supp.cpp"
-    ;;
-  mingw*)
-    AC_DEFINE([ARANYMHOME], "aranym")
-    EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/win32_supp.cpp"
+    if [[ "x$HAVE_I386" = "xyes" ]]; then
+       WIN32_RC_OBJS='$(OBJ_DIR)/aranym_rc_i386.o'
+    else
+       WIN32_RC_OBJS='$(OBJ_DIR)/aranym_rc_x86_64.o'
+    fi
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
@@ -2205,6 +2206,8 @@ AC_SUBST(CC_FOR_BUILD)
 AC_SUBST(CFLAGS_FOR_BUILD)
 AC_SUBST(CXXFLAGS_FOR_BUILD)
 AC_SUBST(LDFLAGS_FOR_BUILD)
+AC_SUBST([WIN32_RC_OBJS])
+
 AC_OUTPUT(Makefile)
 
 dnl Print summary.
