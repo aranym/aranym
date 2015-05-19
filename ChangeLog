@@ -1,4 +1,9 @@
 2015/05/19 - Thorsten
+fixed_memory_offset could be 0 when config file was initialized
+by non-JIT version; use default in this case
+
+
+2015/05/19 - Thorsten
 Fix some warnings with recent gcc
 
 

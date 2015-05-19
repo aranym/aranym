@@ -600,6 +600,8 @@ static void postload_global()
 #endif
 #if FIXED_ADDRESSING
 	fixed_memory_offset = bx_options.fixed_memory_offset;
+	if (fixed_memory_offset == 0)
+		fixed_memory_offset = FMEMORY;
 #endif
 	if (!isalpha(bx_options.bootdrive))
 		bx_options.bootdrive = 0;
