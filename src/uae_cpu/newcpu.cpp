@@ -1101,7 +1101,7 @@ uae_u32 linea68000(volatile uae_u16 opcode)
 	save_regs(r);
 
 	int sz = 8 + sizeof(void *);
-	uae_u32 sp = 0;
+	volatile uae_u32 sp = 0;
 	uae_u32 backup[4];
 
 	if (sigsetjmp(jmp, 1) == 0)

@@ -368,7 +368,7 @@ static int keysymToAtari(SDL_Keysym keysym)
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 static int findScanCodeOffset(SDL_keysym keysym)
 {
-	int scanPC = keysym.scancode;
+	unsigned int scanPC = keysym.scancode;
 	int offset = UNDEFINED_OFFSET;
 
 	switch(keysym.sym) {
