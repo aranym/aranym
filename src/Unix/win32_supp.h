@@ -45,17 +45,19 @@ extern "C" {
 #define	S_IRGRP	(S_IXUSR >> 3)	/* Execute by group.  */
 #endif
 #ifndef S_ISVTX
-#define S_ISVTX 0
+#define S_ISVTX 0001000 /* save swapped text even after use */
 #endif
 #ifndef S_ISGID
-#define S_ISGID 0
+#define S_ISGID 0002000 /* set group id on execution */
 #endif
 #ifndef S_ISUID
-#define S_ISUID 0
+#define S_ISUID 0004000 /* set user id on execution */
 #endif
-#define S_ISLNK(a) 0
 #ifndef S_IFLNK
-#define S_IFLNK 0
+#define S_IFLNK S_IFLNK	0xa000	/* symbolic link */
+#endif
+#ifndef S_ISLNK
+#define S_ISLNK(m)    (((m)&_S_IFMT) == S_IFLNK)
 #endif
 #ifndef O_NONBLOCK
 #define O_NONBLOCK 0
