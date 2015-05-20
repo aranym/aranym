@@ -1,3 +1,13 @@
+2015/05/20 - Jens
+newcpu.cpp - Fixed call to JIT within m68kcall (Fixed NULL pointer)
+- Integrated DATA_BUFFER modification for JIT ARM (T. Borris):
+	codegen_arm.cpp
+	codegen_x86.cpp
+	compemu.h
+	compemu_midfunc_arm.cpp
+	compemu_midfunc_arm.h
+	compemu_support.cpp
+
 2015/05/19 - Thorsten
 cygwin/mingw: add version resource and icon to executable
 

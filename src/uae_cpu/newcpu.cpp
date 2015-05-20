@@ -1066,8 +1066,15 @@ static int m68k_call(uae_u32 pc)
 	m68k_setpc(pc);
     TRY(prb) {
 #ifdef USE_JIT
-		if (bx_options.jit.jit)
-			m68k_do_compile_execute();
+		if (bx_options.jit.jit) {
+			exec_nostats();
+			//			m68k_do_compile_execute();
+			// The above call to m68k_do_compile_execute fails with BadAccess in sigsegv_handler (MAC, if it is executed after the first compile_block)
+			// (NULL pointer to addr_instr).
+			// Call exec_nostats avoids calling compile_block, because stack modification is only temporary
+			// which will fill up compile cache with BOGUS data.
+			// we can call exec_nostats directly, do our code, and return back here.
+		}
 		else
 #endif
 			m68k_do_execute();

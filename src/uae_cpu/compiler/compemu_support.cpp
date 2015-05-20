@@ -215,7 +215,7 @@ static uae_u8* current_compile_p=NULL;
 static uae_u8* max_compile_start;
 static uae_u8* compiled_code=NULL;
 static uae_s32 reg_alloc_run;
-const int POPALLSPACE_SIZE = 1024; /* That should be enough space */
+const int POPALLSPACE_SIZE = 2048; /* That should be enough space */
 static uae_u8* popallspace=NULL;
 
 void* pushall_call_handler=NULL;
@@ -267,7 +267,7 @@ static void inline emit_jmp_target(uae_u32 a);
 
 uae_u32 m68k_pc_offset;
 
-/* Some arithmetic ooperations can be optimized away if the operands
+/* Some arithmetic operations can be optimized away if the operands
  * are known to be constant. But that's only a good idea when the
  * side effects they would have on the flags are not important. This
  * variable indicates whether we need the side effects or not
@@ -733,74 +733,7 @@ static inline void emit_block(const uae_u8 *block, uae_u32 blocklen)
 	target+=blocklen;
 }
 
-#if defined(USE_DATA_BUFFER)
-
-static uae_u8* data_start;
-static uae_u8* data_target;
-static uae_u8* data_ptr;
-
-static inline void data_byte(uae_u8 x)
-{
-    *(--data_target)=x;
-}
-
-static inline void data_word(uae_u16 x)
-{
-    data_target-=2;
-    *((uae_u16*)data_target)=x;
-}
-
-static inline void data_long(uae_u32 x)
-{
-    data_target-=4;
-    *((uae_u32*)data_target)=x;
-}
-
-static __inline__ void data_quad(uae_u64 x)
-{
-    data_target-=8;
-    *((uae_u64*)data_target)=x;
-}
-
-static inline void data_skip(int size) {
-	data_target -= size;
-}
-
-static inline void data_block(const uae_u8 *block, uae_u32 blocklen)
-{
-	data_target-=blocklen;
-	memcpy((uae_u8 *)data_target,block,blocklen);
-}
-
-static inline void data_addr(void *addr) {
-	data_target-=sizeof(void *);
-	*((void **)data_target) = addr;
-}
-
-static inline long get_data_offset() {
-	return data_target - data_start;
-}
-
-static inline uae_u8* get_data_target(void)
-{
-    return data_target;
-}
-
-static inline void set_data_start() {
-	data_start = data_target;
-}
-
-static inline void reset_data_buffer() {
-	data_target = data_ptr;
-}
-
-#define MAX_COMPILE_PTR 	data_target
-
-#else
-
 #define MAX_COMPILE_PTR		max_compile_start
-
-#endif
 
 static inline uae_u32 reverse32(uae_u32 v)
 {
@@ -811,17 +744,6 @@ static inline uae_u32 reverse32(uae_u32 v)
 	return ((v>>24)&0xff) | ((v>>8)&0xff00) | ((v<<8)&0xff0000) | ((v<<24)&0xff000000);
 #endif
 }
-
-/********************************************************************
- * Getting the information about the target CPU                     *
- ********************************************************************/
-
-#if defined(CPU_arm) 
-#include "codegen_arm.cpp"
-#endif
-#if defined(CPU_i386) || defined(CPU_x86_64)
-#include "codegen_x86.cpp"
-#endif
 
 void set_target(uae_u8* t)
 {
@@ -837,6 +759,91 @@ inline uae_u8* get_target(void)
 {
     return get_target_noopt();
 }
+
+/********************************************************************
+ * New version of data buffer: interleave data and code             *
+ ********************************************************************/
+#if defined(USE_DATA_BUFFER)
+
+#define DATA_BUFFER_SIZE 1024    // Enlarge POPALLSPACE_SIZE if this value is greater than 768
+#define DATA_BUFFER_MAXOFFSET 4096 - 32 // max range between emit of data and use of data
+static uae_u8* data_writepos = 0;
+static uae_u8* data_endpos = 0;
+#if DEBUG
+static long data_wasted = 0;
+#endif
+
+static inline void compemu_raw_branch(IMM d);
+
+static inline void data_check_end(long n, long codesize)
+{
+  if(data_writepos + n > data_endpos || get_target_noopt() + codesize - data_writepos > DATA_BUFFER_MAXOFFSET)
+  {
+    // Start new buffer
+#if DEBUG
+    if(data_writepos < data_endpos)
+      data_wasted += data_endpos - data_writepos;
+#endif
+    compemu_raw_branch(DATA_BUFFER_SIZE);
+    data_writepos = get_target_noopt();
+    data_endpos = data_writepos + DATA_BUFFER_SIZE;
+    set_target(get_target_noopt() + DATA_BUFFER_SIZE);
+  }
+}
+
+static inline long data_word_offs(uae_u16 x)
+{
+  data_check_end(4, 4);
+#ifdef WORDS_BIGENDIAN
+  *((uae_u16*)data_writepos)=x;
+  data_writepos += 2;
+  *((uae_u16*)data_writepos)=0;
+  data_writepos += 2;
+#else
+  *((uae_u32*)data_writepos)=x;
+  data_writepos += 4;
+#endif
+  return (long)data_writepos - (long)get_target_noopt() - 12;
+}
+
+static inline long data_long(uae_u32 x, long codesize)
+{
+  data_check_end(4, codesize);
+  *((uae_u32*)data_writepos)=x;
+  data_writepos += 4;
+  return (long)data_writepos - 4;
+}
+
+static inline long data_long_offs(uae_u32 x)
+{
+  data_check_end(4, 4);
+  *((uae_u32*)data_writepos)=x;
+  data_writepos += 4;
+  return (long)data_writepos - (long)get_target_noopt() - 12;
+}
+
+static inline long get_data_offset(long t) 
+{
+	return t - (long)get_target_noopt() - 8;
+}
+
+static inline void reset_data_buffer(void)
+{
+  data_writepos = 0;
+  data_endpos = 0;
+}
+
+#endif
+/********************************************************************
+ * Getting the information about the target CPU                     *
+ ********************************************************************/
+
+#if defined(CPU_arm) 
+#include "codegen_arm.cpp"
+#endif
+#if defined(CPU_i386) || defined(CPU_x86_64)
+#include "codegen_x86.cpp"
+#endif
 
 
 /********************************************************************
@@ -1506,7 +1513,7 @@ static  int alloc_reg_hinted(int r, int size, int willclobber, int hint)
 	    compemu_raw_zero_extend_16_rr(rr,rr);
 	    compemu_raw_zero_extend_16_rr(bestreg,bestreg);
 	    compemu_raw_bswap_32(bestreg);
-	    compemu_raw_lea_l_brr_indexed(rr,rr,bestreg,1,0);
+	    compemu_raw_lea_l_rr_indexed(rr,rr,bestreg,1);
 	    live.state[r].validsize=4;
 	    live.nat[rr].touched=touchcnt++;
 	    return rr;
@@ -1597,7 +1604,6 @@ static  void setlock(int r)
 
 static void mov_nregs(int d, int s)
 {
-    (void)live.nat[s].nholds;
     int nd=live.nat[d].nholds;
     int i;
 
@@ -2444,6 +2450,12 @@ void compiler_exit(void)
 	emul_end_time = clock();
 #endif
 
+#if DEBUG
+#if defined(USE_DATA_BUFFER)
+  printf("data_wasted = %d bytes\n", data_wasted);
+#endif
+#endif
+
 	// Deallocate translation cache
 	if (compiled_code) {
 		vm_release(compiled_code, cache_size * 1024);
@@ -2715,7 +2727,11 @@ void freescratch(void)
 {
     int i;
     for (i=0;i<N_REGS;i++)
+#if defined(CPU_arm)
+	if (live.nat[i].locked && i != 2 && i != 3) {
+#else
 	if (live.nat[i].locked && i!=4) {
+#endif
 	    D(panicbug("Warning! %d is locked",i));
 	}
 
@@ -2813,7 +2829,6 @@ void register_branch(uae_u32 not_taken, uae_u32 taken, uae_u8 cond)
  */
 static uintptr get_handler(uintptr addr)
 {
-    (void)cacheline(addr);
     blockinfo* bi=get_blockinfo_addr_new((void*)(uintptr)addr,0);
     return (uintptr)bi->direct_handler_to_use;
 }
@@ -3117,11 +3132,15 @@ void alloc_cache(void)
 	
 	if (compiled_code) {
 		D(bug("<JIT compiler> : actual translation cache size : %d KB at %p-%p", cache_size, compiled_code, compiled_code + cache_size*1024));
-		max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST;
+#ifdef USE_DATA_BUFFER
+	max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST - DATA_BUFFER_SIZE;
+#else
+	max_compile_start = compiled_code + cache_size*1024 - BYTES_PER_INST;
+#endif
 		current_compile_p = compiled_code;
 		current_cache_size = 0;
 #if defined(USE_DATA_BUFFER)
-		data_target = data_ptr = compiled_code + cache_size * 1024;
+  reset_data_buffer();
 #endif
 	}
 }
@@ -3228,8 +3247,10 @@ static void recompile_block(void)
 static void cache_miss(void)
 {
     blockinfo*  bi=get_blockinfo_addr(regs.pc_p);
+#if COMP_DEBUG
     uae_u32     cl=cacheline(regs.pc_p);
     blockinfo*  bi2=get_blockinfo(cl);
+#endif
 
     if (!bi) {
 	execute_normal(); /* Compile this block now */
@@ -3386,6 +3407,10 @@ static inline void create_popalls(void)
   current_compile_p=popallspace;
   set_target(current_compile_p);
 
+#if defined(USE_DATA_BUFFER)
+  reset_data_buffer();
+#endif
+
   /* We need to guarantee 16-byte stack alignment on x86 at any point
      within the JIT generated code. We have multiple exit points
      possible but a single entry. A "jmp" is used so that we don't
@@ -3440,6 +3465,10 @@ static inline void create_popalls(void)
   raw_inc_sp(stack_space);
   raw_pop_preserved_regs();
   compemu_raw_jmp((uintptr)check_checksum);
+
+#if defined(USE_DATA_BUFFER)
+  reset_data_buffer();
+#endif
 
   // no need to further write into popallspace
   vm_protect(popallspace, POPALLSPACE_SIZE, VM_PAGE_READ | VM_PAGE_EXECUTE);
@@ -4012,11 +4041,6 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 	log_startblock();
 
-#if defined(USE_DATA_BUFFER)
-	set_data_start();
-	raw_init_dp();
-#endif
-	
 	if (bi->count>=0) { /* Need to generate countdown code */
 	    compemu_raw_mov_l_mi((uintptr)&regs.pc_p,(uintptr)pc_hist[0].location);
 	    compemu_raw_sub_l_mi((uintptr)&(bi->count),1);
@@ -4130,6 +4154,9 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			
 			compemu_raw_mov_l_rm(0,(uintptr)specflags);
 			compemu_raw_test_l_rr(0,0);
+#if defined(USE_DATA_BUFFER)
+      data_check_end(8, 64);  // just a pessimistic guess...
+#endif
 			compemu_raw_jz_b_oponly();
 			branchadd=(uae_s8 *)get_target();
 			emit_byte(0);
@@ -4187,6 +4214,9 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		}
 		
 		tmp=live; /* ouch! This is big... */
+#if defined(USE_DATA_BUFFER)
+    data_check_end(32, 128); // just a pessimistic guess...
+#endif
 		compemu_raw_jcc_l_oponly(cc);
 		branchadd=(uae_u32*)get_target();
 		emit_long(0);

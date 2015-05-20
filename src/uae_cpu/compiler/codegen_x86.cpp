@@ -224,6 +224,7 @@ static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #define compemu_raw_sub_l_mi(a,b)		raw_sub_l_mi(a,b)
 #define compemu_raw_test_l_rr(a,b) 		raw_test_l_rr(a,b)
 #define compemu_raw_zero_extend_16_rr(a,b)	raw_zero_extend_16_rr(a,b)
+#define compemu_raw_lea_l_rr_indexed(a,b,c,d)	raw_lea_l_rr_indexed(a,b,c,d)
 
 static void jit_fail(const char *msg, const char *file, int line, const char *function)
 {

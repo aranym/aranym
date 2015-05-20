@@ -177,6 +177,17 @@ MIDFUNC(2,mov_l_rm,(W4 d, IMM s))
 }
 MENDFUNC(2,mov_l_rm,(W4 d, IMM s))
 
+MIDFUNC(4,mov_l_rm_indexed,(W4 d, IMM base, RR4 index, IMM factor))
+{
+	CLOBBER_MOV;
+  index=readreg(index,4);
+	d=writereg(d,4);
+	raw_mov_l_rm_indexed(d,base,index,factor);
+	unlock2(index);
+	unlock2(d);
+}
+MENDFUNC(4,mov_l_rm_indexed,(W4 d, IMM base, RR4 index, IMM factor))
+
 MIDFUNC(2,mov_l_mi,(IMM d, IMM s))
 {
 	CLOBBER_MOV;
@@ -1780,6 +1791,58 @@ MIDFUNC(2,xor_b,(RW1 d, RR1 s))
 }
 MENDFUNC(2,xor_b,(RW1 d, RR1 s))
 
+MIDFUNC(5,call_r_02,(RR4 r, RR4 in1, RR4 in2, IMM isize1, IMM isize2))
+{
+  clobber_flags();
+  in1=readreg_specific(in1,isize1,REG_PAR1);
+  in2=readreg_specific(in2,isize2,REG_PAR2);
+  r=readreg(r,4);
+  prepare_for_call_1();
+  unlock2(r);
+  unlock2(in1);
+  unlock2(in2);
+  prepare_for_call_2();
+  compemu_raw_call_r(r);
+}
+MENDFUNC(5,call_r_02,(RR4 r, RR4 in1, RR4 in2, IMM isize1, IMM isize2))
+
+MIDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
+{
+    clobber_flags();
+
+    if (osize==4) {
+	    if (out1!=in1 && out1!=r) {
+	      COMPCALL(forget_about)(out1);
+	    }
+    }
+    else {
+	    tomem_c(out1);
+    }
+
+    in1=readreg_specific(in1,isize,REG_PAR1);
+    r=readreg(r,4);
+
+    prepare_for_call_1();
+    unlock2(in1);
+    unlock2(r);
+
+    prepare_for_call_2();
+
+    compemu_raw_call_r(r);
+
+    live.nat[REG_RESULT].holds[0]=out1;
+    live.nat[REG_RESULT].nholds=1;
+    live.nat[REG_RESULT].touched=touchcnt++;
+
+    live.state[out1].realreg=REG_RESULT;
+    live.state[out1].realind=0;
+    live.state[out1].val=0;
+    live.state[out1].validsize=osize;
+    live.state[out1].dirtysize=osize;
+    set_status(out1,DIRTY);
+}
+MENDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
+
 /* forget_about() takes a mid-layer register */
 MIDFUNC(1,forget_about,(W4 r))
 {
@@ -1850,6 +1913,24 @@ MIDFUNC(2,arm_ADD_l_ri8,(RW4 d, IMM i))
 	d=rmw(d,4,4);
 
 	raw_ADD_l_rri(d,d,i);
+	unlock2(d);
+}
+MENDFUNC(2,arm_ADD_l_ri8,(RW4 d, IMM i))
+
+MIDFUNC(2,arm_SUB_l_ri8,(RW4 d, IMM i))
+{
+	if (!i) return;
+	if (isconst(d)) {
+		live.state[d].val-=i;
+		return;
+	}
+#if USE_OFFSET
+	add_offset(d,-i);
+	return;
+#endif
+	d=rmw(d,4,4);
+
+	raw_SUB_l_rri(d,d,i);
 	unlock2(d);
 }
 MENDFUNC(2,arm_ADD_l_ri8,(RW4 d, IMM i))

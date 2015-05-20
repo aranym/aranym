@@ -136,7 +136,7 @@ union cacheline {
 #define KILLTHERAT 1  /* Set to 1 to avoid some partial_rat_stalls */
 
 #if defined(CPU_arm)
-# // define USE_DATA_BUFFER 
+#define USE_DATA_BUFFER
 # define N_REGS 13  /* really 16, but 13 to 15 are SP, LR, PC */
 #else
 #if defined(CPU_x86_64)
