@@ -1,3 +1,6 @@
+2015/05/21 - Jens
+compemu_support.cpp / compemu_arm.cpp - Slight optimizations
+
 2015/05/20 - Jens
 newcpu.cpp - Fixed call to JIT within m68kcall (Fixed NULL pointer)
 - Integrated DATA_BUFFER modification for JIT ARM (T. Borris):

@@ -264,7 +264,7 @@ LENDFUNC(WRITE,NONE,2,raw_add_l,(RW4 d, RR4 s))
 LOWFUNC(WRITE,NONE,2,raw_add_w_ri,(RW2 d, IMM i))
 {
 #if defined(USE_DATA_BUFFER)
-  long offs = data_word_offs(i);
+    long offs = data_word_offs(i);
 	LDR_rRI(REG_WORK1, RPC_INDEX, offs); 	  // ldrh    r2, [pc, #offs]
 #else
 	LDRH_rRI(REG_WORK1, RPC_INDEX, 24); 				// ldrh    r2, [pc, #24]   ; <value>
@@ -283,7 +283,7 @@ LOWFUNC(WRITE,NONE,2,raw_add_w_ri,(RW2 d, IMM i))
 
 	//<value>:
 	emit_word(i);
-	emit_word(0);
+	skip_word(0);
 	//<jp>:
 #endif
 }
@@ -889,7 +889,7 @@ LENDFUNC(NONE,WRITE,2,raw_mov_w_mr,(IMM d, RR2 s))
 LOWFUNC(NONE,NONE,2,raw_mov_w_ri,(W2 d, IMM s))
 {
 #if defined(USE_DATA_BUFFER)
-  long offs = data_word_offs(s);
+    long offs = data_word_offs(s);
 	LDR_rRI(REG_WORK2, RPC_INDEX, offs);   	// ldrh    r3, [pc, #offs]
 #else
 	LDRH_rRI(REG_WORK2, RPC_INDEX, 12);   	// ldrh    r3, [pc, #12]   ; <value>
@@ -903,7 +903,7 @@ LOWFUNC(NONE,NONE,2,raw_mov_w_ri,(W2 d, IMM s))
 
 	//<value>:
 	emit_word(s);
-	emit_word(0);
+	skip_word(0);
 	//<jp>:
 #endif
 }
@@ -933,7 +933,7 @@ LOWFUNC(NONE,WRITE,2,raw_mov_w_mi,(MEMW d, IMM s))
 	emit_long(d);
 	//imm:
 	emit_word(s);
-	emit_word(0); 						// Alignment
+	skip_word(0); 						// Alignment
 
 	//<jp>:
 #endif
@@ -963,7 +963,7 @@ LOWFUNC(NONE,WRITE,3,raw_mov_w_Ri,(RR4 d, IMM i, IMM offset))
 	Dif(!isbyte(offset)) abort();
 
 #if defined(USE_DATA_BUFFER)
-  long offs = data_word_offs(i);
+    long offs = data_word_offs(i);
 	LDR_rRI(REG_WORK1, RPC_INDEX, offs); 	// ldr	r2, [pc, #offs]
 #else
 	LDRH_rRI(REG_WORK1, RPC_INDEX, 4); 	// ldrh	r2, [pc, #4]	; <value>
@@ -977,7 +977,7 @@ LOWFUNC(NONE,WRITE,3,raw_mov_w_Ri,(RR4 d, IMM i, IMM offset))
 
 	//<value>:
 	emit_word(i);
-	emit_word(0);
+	skip_word(0);
 	//<jp>:
 #endif
 }
@@ -1825,7 +1825,7 @@ LOWFUNC(WRITE,NONE,2,raw_sub_w_ri,(RW2 d, IMM i))
 	// TODO: optimize_imm
 
 #if defined(USE_DATA_BUFFER)
-  long offs = data_word_offs(i);
+    long offs = data_word_offs(i);
 	LDR_rRI(REG_WORK1, RPC_INDEX, offs);   	  // ldr	r2, [pc, #offs]	; <value>
 #else
 	LDRH_rRI(REG_WORK1, RPC_INDEX, 36);   		// ldrh	r2, [pc, #36]	; <value>
@@ -1846,7 +1846,7 @@ LOWFUNC(WRITE,NONE,2,raw_sub_w_ri,(RW2 d, IMM i))
 	B_i(0);                                    	// b	<jp>
 
 	emit_word(i);
-	emit_word(0);					//<value>:
+	skip_word(0);					//<value>:
 
 	//<jp>:
 #endif
@@ -2815,9 +2815,7 @@ static inline void compemu_raw_jz_b_oponly(void)
 	LDRSB_rRI(REG_WORK1, RPC_INDEX, 3);			// ldrsb	r2,[pc,#3]
 	ADD_rrr(RPC_INDEX, RPC_INDEX, REG_WORK1); 	// add		pc,pc,r2
 
-	emit_byte(0);
-	emit_byte(0);
-	emit_byte(0);
+	skip_n_bytes(3);
 
 	// <jp:>
 }

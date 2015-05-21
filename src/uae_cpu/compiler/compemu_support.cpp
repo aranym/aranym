@@ -721,6 +721,30 @@ static inline void emit_long(uae_u32 x)
     target+=4;
 }
 
+static inline void skip_n_bytes(int n) {
+	target+=n;
+}
+
+static inline void skip_byte()
+{
+    target++;
+}
+
+static inline void skip_word()
+{
+    target+=2;
+}
+
+static inline void skip_long()
+{
+    target+=4;
+}
+
+static inline void skip_quad()
+{
+    target+=8;
+}
+
 static __inline__ void emit_quad(uae_u64 x)
 {
     *((uae_u64*)target)=x;
@@ -2024,7 +2048,7 @@ static void bt_l_ri_noclobber(RR4 r, IMM i)
 static  void f_tomem(int r)
 {
     if (live.fate[r].status==DIRTY) {
-#if USE_LONG_DOUBLE
+#if defined(USE_LONG_DOUBLE)
 	raw_fmov_ext_mr((uintptr)live.fate[r].mem,live.fate[r].realreg); 
 #else
 	raw_fmov_mr((uintptr)live.fate[r].mem,live.fate[r].realreg); 
@@ -2036,7 +2060,7 @@ static  void f_tomem(int r)
 static  void f_tomem_drop(int r)
 {
     if (live.fate[r].status==DIRTY) {
-#if USE_LONG_DOUBLE
+#if defined(USE_LONG_DOUBLE)
 	raw_fmov_ext_mr_drop((uintptr)live.fate[r].mem,live.fate[r].realreg); 
 #else
 	raw_fmov_mr_drop((uintptr)live.fate[r].mem,live.fate[r].realreg); 
@@ -2146,7 +2170,7 @@ static  int f_alloc_reg(int r, int willclobber)
 
     if (!willclobber) {
 	if (live.fate[r].status!=UNDEF) {
-#if USE_LONG_DOUBLE
+#if defined(USE_LONG_DOUBLE)
 	    raw_fmov_ext_rm(bestreg,(uintptr)live.fate[r].mem);
 #else
 	    raw_fmov_rm(bestreg,(uintptr)live.fate[r].mem);
@@ -4065,7 +4089,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	    compemu_raw_sub_l_mi((uintptr)&emulated_ticks,blocklen);
 	    compemu_raw_jcc_b_oponly(NATIVE_CC_GT);
 	    uae_s8 *branchadd=(uae_s8*)get_target();
-	    emit_byte(0);
+	    skip_byte();
 	    compemu_raw_call((uintptr)cpu_do_check_ticks);
 	    *branchadd=(uintptr)get_target()-((uintptr)branchadd+1);
 #endif
@@ -4159,7 +4183,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #endif
 			compemu_raw_jz_b_oponly();
 			branchadd=(uae_s8 *)get_target();
-			emit_byte(0);
+			skip_byte();
 			compemu_raw_jmp((uintptr)popall_do_nothing);
 			*branchadd=(uintptr)get_target()-(uintptr)branchadd-1;
 		    }
@@ -4219,7 +4243,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #endif
 		compemu_raw_jcc_l_oponly(cc);
 		branchadd=(uae_u32*)get_target();
-		emit_long(0);
+		skip_long();
 		
 		/* predicted outcome */
 		tbi=get_blockinfo_addr_new((void*)t1,1);
