@@ -190,7 +190,7 @@ static inline bool may_trap(uae_u32 opcode)
 
 static inline unsigned int cft_map (unsigned int f)
 {
-#ifndef HAVE_GET_WORD_UNSWAPPED
+#if !defined(HAVE_GET_WORD_UNSWAPPED) || defined(FULLMMU)
     return f;
 #else
     return ((f >> 8) & 255) | ((f & 255) << 8);
@@ -3905,7 +3905,7 @@ static inline void disasm_m68k_block(uint8 *start, size_t length)
 	disasm_block(TARGET_M68K, start, length);
 }
 
-#ifdef HAVE_GET_WORD_UNSWAPPED
+#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)
 # define DO_GET_OPCODE(a) (do_get_mem_word_unswapped((uae_u16 *)(a)))
 #else
 # define DO_GET_OPCODE(a) (do_get_mem_word((uae_u16 *)(a)))

@@ -255,15 +255,16 @@ gen_nextibyte (void)
     return buffer;
 }
 
-#ifdef USE_JIT_FPU
+
 static void
 swap_opcode (void)
 {
-	comprintf("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+	comprintf("#ifdef USE_JIT_FPU\n");
+	comprintf("#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)\n");
 	comprintf("\topcode = do_byteswap_16(opcode);\n");
 	comprintf("#endif\n");
+	comprintf("#endif\n");
 }
-#endif
 
 static void 
 sync_m68k_pc (void)
@@ -2592,14 +2593,13 @@ gen_opcode (unsigned long int opcode)
 	break;
      case i_FBcc:
 	uses_fpu;
-#ifdef USE_JIT_FPU
 	isjump;
+#ifdef USE_JIT_FPU
 	uses_cmov;
 	mayfail;
 	swap_opcode();
 	comprintf("\tcomp_fbcc_opp(opcode);\n");
 #else
-	isjump; 
 	failure;
 #endif
 	break;
@@ -2771,7 +2771,7 @@ generate_one_opcode (int rp, int noflags)
 	    char source[100];
 	    int pos = table68k[opcode].spos;
 	  
-	    comprintf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+	    comprintf ("#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)\n");
 		
 	    if (pos < 8 && (smsk >> (8 - pos)) != 0)
 		sprintf (source, "(((opcode >> %d) | (opcode << %d)) & %d)",
@@ -2823,7 +2823,7 @@ generate_one_opcode (int rp, int noflags)
 	{
 	    int pos = table68k[opcode].dpos;
 	  
-	    comprintf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
+	    comprintf ("#if defined(HAVE_GET_WORD_UNSWAPPED) && !defined(FULLMMU)\n");
 		
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		comprintf ("\tuae_u32 dstreg = ((opcode >> %d) | (opcode << %d)) & %d;\n",
