@@ -1,3 +1,11 @@
+2015/05/27 - Thorsten
+missed Changelog in last commit
+
+
+2015/05/27 - Thorsten
+gencpu.c: move remaining #ifdefs to generated source
+
+
 2015/05/21 - Jens
 compemu_support.cpp / compemu_arm.cpp - Slight optimizations
 
