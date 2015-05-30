@@ -55,8 +55,6 @@
  *     - 8th unlock2 all registers that were locked
  */
 
-static bool inverted_carry = false;
-
 MIDFUNC(0,live_flags,(void))
 {
 	live.flags_on_stack=TRASH;
@@ -82,6 +80,15 @@ MENDFUNC(0,duplicate_carry,(void))
 
 MIDFUNC(0,restore_carry,(void))
 {
+#if defined(USE_JIT2)
+	RR4 r=readreg(FLAGX,4);
+	MRS_CPSR(REG_WORK1);
+	TEQ_ri(r,1);
+	CC_BIC_rri(NATIVE_CC_NE, REG_WORK1, REG_WORK1, ARM_C_FLAG);
+	CC_ORR_rri(NATIVE_CC_EQ, REG_WORK1, REG_WORK1, ARM_C_FLAG);
+	MSR_CPSRf_r(REG_WORK1);
+	unlock2(r);
+#else
 	if (!have_rat_stall) { /* Not a P6 core, i.e. no partial stalls */
 		bt_l_ri_noclobber(FLAGX,0);
 	}
@@ -91,6 +98,7 @@ MIDFUNC(0,restore_carry,(void))
 		COMPCALL(rol_b_ri(FLAGX,8));
 		isclean(FLAGX);
 	}
+#endif
 }
 MENDFUNC(0,restore_carry,(void))
 
@@ -180,7 +188,7 @@ MENDFUNC(2,mov_l_rm,(W4 d, IMM s))
 MIDFUNC(4,mov_l_rm_indexed,(W4 d, IMM base, RR4 index, IMM factor))
 {
 	CLOBBER_MOV;
-  index=readreg(index,4);
+	index=readreg(index,4);
 	d=writereg(d,4);
 	raw_mov_l_rm_indexed(d,base,index,factor);
 	unlock2(index);
@@ -1793,53 +1801,53 @@ MENDFUNC(2,xor_b,(RW1 d, RR1 s))
 
 MIDFUNC(5,call_r_02,(RR4 r, RR4 in1, RR4 in2, IMM isize1, IMM isize2))
 {
-  clobber_flags();
-  in1=readreg_specific(in1,isize1,REG_PAR1);
-  in2=readreg_specific(in2,isize2,REG_PAR2);
-  r=readreg(r,4);
-  prepare_for_call_1();
-  unlock2(r);
-  unlock2(in1);
-  unlock2(in2);
-  prepare_for_call_2();
-  compemu_raw_call_r(r);
+	clobber_flags();
+	in1=readreg_specific(in1,isize1,REG_PAR1);
+	in2=readreg_specific(in2,isize2,REG_PAR2);
+	r=readreg(r,4);
+	prepare_for_call_1();
+	unlock2(r);
+	unlock2(in1);
+	unlock2(in2);
+	prepare_for_call_2();
+	compemu_raw_call_r(r);
 }
 MENDFUNC(5,call_r_02,(RR4 r, RR4 in1, RR4 in2, IMM isize1, IMM isize2))
 
 MIDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
 {
-    clobber_flags();
+	clobber_flags();
 
-    if (osize==4) {
-	    if (out1!=in1 && out1!=r) {
-	      COMPCALL(forget_about)(out1);
-	    }
-    }
-    else {
-	    tomem_c(out1);
-    }
+	if (osize==4) {
+		if (out1!=in1 && out1!=r) {
+			COMPCALL(forget_about)(out1);
+		}
+	}
+	else {
+		tomem_c(out1);
+	}
 
-    in1=readreg_specific(in1,isize,REG_PAR1);
-    r=readreg(r,4);
+	in1=readreg_specific(in1,isize,REG_PAR1);
+	r=readreg(r,4);
 
-    prepare_for_call_1();
-    unlock2(in1);
-    unlock2(r);
+	prepare_for_call_1();
+	unlock2(in1);
+	unlock2(r);
 
-    prepare_for_call_2();
+	prepare_for_call_2();
 
-    compemu_raw_call_r(r);
+	compemu_raw_call_r(r);
 
-    live.nat[REG_RESULT].holds[0]=out1;
-    live.nat[REG_RESULT].nholds=1;
-    live.nat[REG_RESULT].touched=touchcnt++;
+	live.nat[REG_RESULT].holds[0]=out1;
+	live.nat[REG_RESULT].nholds=1;
+	live.nat[REG_RESULT].touched=touchcnt++;
 
-    live.state[out1].realreg=REG_RESULT;
-    live.state[out1].realind=0;
-    live.state[out1].val=0;
-    live.state[out1].validsize=osize;
-    live.state[out1].dirtysize=osize;
-    set_status(out1,DIRTY);
+	live.state[out1].realreg=REG_RESULT;
+	live.state[out1].realind=0;
+	live.state[out1].val=0;
+	live.state[out1].validsize=osize;
+	live.state[out1].dirtysize=osize;
+	set_status(out1,DIRTY);
 }
 MENDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
 
@@ -2070,23 +2078,23 @@ static inline void flush_cpu_icache(void *start, void *stop)
 	register void *_beg __asm ("a1") = start;
 	register void *_end __asm ("a2") = stop;
 	register void *_flg __asm ("a3") = 0;
-	#ifdef __ARM_EABI__
-	   register unsigned long _scno __asm ("r7") = 0xf0002;
-	   __asm __volatile ("swi 0x0		@ sys_cacheflush"
-                            : "=r" (_beg)
-                            : "0" (_beg), "r" (_end), "r" (_flg), "r" (_scno));
-	#else
-	   __asm __volatile ("swi 0x9f0002		@ sys_cacheflush"
-		   		    : "=r" (_beg)
-		   		    : "0" (_beg), "r" (_end), "r" (_flg));
-	#endif
+#ifdef __ARM_EABI__
+	register unsigned long _scno __asm ("r7") = 0xf0002;
+	__asm __volatile ("swi 0x0		@ sys_cacheflush"
+			: "=r" (_beg)
+			: "0" (_beg), "r" (_end), "r" (_flg), "r" (_scno));
+#else
+	__asm __volatile ("swi 0x9f0002		@ sys_cacheflush"
+			: "=r" (_beg)
+			: "0" (_beg), "r" (_end), "r" (_flg));
+#endif
 }
 
 static inline void write_jmp_target(uae_u32* jmpaddr, cpuop_func* a) {
-	*(jmpaddr) = (uae_u32)a;
-    flush_cpu_icache((void *)jmpaddr, (void *)&jmpaddr[1]);
+	*(jmpaddr) = (uae_u32) a;
+	flush_cpu_icache((void *) jmpaddr, (void *) &jmpaddr[1]);
 }
 
 static inline void emit_jmp_target(uae_u32 a) {
-	emit_long((uae_u32)a);
+	emit_long((uae_u32) a);
 }

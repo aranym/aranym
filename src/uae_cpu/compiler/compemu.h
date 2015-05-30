@@ -281,7 +281,6 @@ typedef struct {
 extern bigstate live;
 extern int touchcnt;
 
-
 #define IMM uae_s32
 #define RR1  uae_u32
 #define RR2  uae_u32
@@ -317,7 +316,12 @@ extern int touchcnt;
 #define DECLARE_MIDFUNC(func) extern void func
 
 #if defined(CPU_arm)
-#include "compemu_midfunc_arm.h"
+
+#  include "compemu_midfunc_arm.h"
+
+#  if defined(USE_JIT2)
+#    include "compemu_midfunc_arm2.h"
+#  endif
 #endif
 
 #if defined(CPU_i386) || defined(CPU_x86_64)

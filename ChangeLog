@@ -1,3 +1,9 @@
+2015/05/30 - Jens
+Added a first version of JIT2 for ARM (still incomplete and marked as experimental)
+- configure.ac / Makefile.in - Added support for --enable-jit2 for ARM
+- codegen_arm.*, compemu.h, compemu_midfunc_arm* - JIT2 support and improvements
+- compemu_support.cpp, gencomp_arm.c - JIT2 support
+
 2015/05/27 - Thorsten
 missed Changelog in last commit
 

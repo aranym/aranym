@@ -217,10 +217,13 @@ LOWFUNC(RMW,NONE,2,raw_adc_w,(RW2 d, RR2 s))
 	LSL_rri(REG_WORK1, s, 16); 							// lsl      r2, %[s], #16
 
 	ADCS_rrr(REG_WORK2, REG_WORK2, REG_WORK1); 			// adds    	r3, r3, r2
-
+#ifdef ARMV6_ASSEMBLY
+	PKHTB_rrrASRi(d,d,REG_WORK2,16);
+#else
 	BIC_rri(d, d, 0xff);								// bic		%[d],%[d],#0xff
 	BIC_rri(d, d, 0xff00);								// bic		%[d],%[d],#0xff00
 	ORR_rrrLSRi(d, d, REG_WORK2, 16); 					// orr     %[d], %[d], r3, lsr #16
+#endif
 }
 LENDFUNC(RMW,NONE,2,raw_adc_w,(RW2 d, RR2 s))
 
@@ -249,9 +252,13 @@ LOWFUNC(WRITE,NONE,2,raw_add_w,(RW2 d, RR2 s))
 
 	ADDS_rrr(REG_WORK2, REG_WORK2, REG_WORK1); 			// adds    r3, r3, r2
 
+#ifdef ARMV6_ASSEMBLY
+	PKHTB_rrrASRi(d,d,REG_WORK2,16);
+#else
 	BIC_rri(d, d, 0xff);								// bic		%[d],%[d],#0xff
 	BIC_rri(d, d, 0xff00);								// bic		%[d],%[d],#0xff00
 	ORR_rrrLSRi(d, d, REG_WORK2, 16); 					// orr     r7, r7, r3, LSR #16
+#endif
 }
 LENDFUNC(WRITE,NONE,2,raw_add_w,(RW2 d, RR2 s))
 
@@ -267,16 +274,24 @@ LOWFUNC(WRITE,NONE,2,raw_add_w_ri,(RW2 d, IMM i))
     long offs = data_word_offs(i);
 	LDR_rRI(REG_WORK1, RPC_INDEX, offs); 	  // ldrh    r2, [pc, #offs]
 #else
+#  ifdef ARMV6_ASSEMBLY
 	LDRH_rRI(REG_WORK1, RPC_INDEX, 24); 				// ldrh    r2, [pc, #24]   ; <value>
+#  else
+	LDRH_rRI(REG_WORK1, RPC_INDEX, 16); 				// ldrh    r2, [pc, #16]   ; <value>
+#  endif
 #endif
 	LSL_rri(REG_WORK2, d, 16);  						// lsl     r3, %[d], #16
 	LSL_rri(REG_WORK1, REG_WORK1, 16);  				// lsl     r2, r2, #16
 
 	ADDS_rrr(REG_WORK2, REG_WORK2, REG_WORK1); 			// adds    r3, r3, r2
 
+#ifdef ARMV6_ASSEMBLY
+	PKHTB_rrrASRi(d,d,REG_WORK2,16);
+#else
 	BIC_rri(d, d, 0xff);								// bic		%[d],%[d],#0xff
 	BIC_rri(d, d, 0xff00);								// bic		%[d],%[d],#0xff00
 	ORR_rrrLSRi(d, d, REG_WORK2, 16);					// orr     	%[d],%[d], r3, LSR #16
+#endif
 
 #if !defined(USE_DATA_BUFFER)
 	B_i(0); 											// b       <jp>
@@ -833,13 +848,21 @@ LOWFUNC(NONE,READ,3,raw_mov_w_brR,(W2 d, RR4 s, IMM offset))
   long offs = data_long_offs(offset);
 	LDR_rRI(REG_WORK1, RPC_INDEX, offs); 	// ldr     r2, [pc, #offs]
 #else
-	LDR_rRI(REG_WORK1, RPC_INDEX, 16); 	// ldr     r2, [pc, #16]   ; <value>
+#	ifdef ARMV6_ASSEMBLY
+		LDR_rRI(REG_WORK1, RPC_INDEX, 8); 	// ldr     r2, [pc, #16]   ; <value>
+#	else
+		LDR_rRI(REG_WORK1, RPC_INDEX, 16); 	// ldr     r2, [pc, #16]   ; <value>
+#	endif
 #endif
 	LDRH_rRR(REG_WORK1, REG_WORK1, s); 	// ldrh    r2, [r2, r6]
 
+#ifdef ARMV6_ASSEMBLY
+	PKHBT_rrr(d,REG_WORK1,d);
+#else
 	BIC_rri(d, d, 0xff);              	// bic     r7, r7, #0xff
 	BIC_rri(d, d, 0xff00);             	// bic     r7, r7, #0xff00
 	ORR_rrr(d, d, REG_WORK1);          	// orr     r7, r7, r2
+#endif
 
 #if !defined(USE_DATA_BUFFER)
 	B_i(0);                            	// b       <jp>
@@ -892,12 +915,21 @@ LOWFUNC(NONE,NONE,2,raw_mov_w_ri,(W2 d, IMM s))
     long offs = data_word_offs(s);
 	LDR_rRI(REG_WORK2, RPC_INDEX, offs);   	// ldrh    r3, [pc, #offs]
 #else
-	LDRH_rRI(REG_WORK2, RPC_INDEX, 12);   	// ldrh    r3, [pc, #12]   ; <value>
+#	ifdef ARMV6_ASSEMBLY
+		LDRH_rRI(REG_WORK2, RPC_INDEX, 12);   	// ldrh    r3, [pc, #12]   ; <value>
+#	else
+		LDRH_rRI(REG_WORK2, RPC_INDEX, 4);   	// ldrh    r3, [pc, #12]   ; <value>
+#	endif
 #endif
 
+#ifdef ARMV6_ASSEMBLY
+	PKHBT_rrr(d,REG_WORK2,d);
+#else
 	BIC_rri(REG_WORK1, d, 0xff);          	// bic     r2, r7, #0xff
 	BIC_rri(REG_WORK1, REG_WORK1, 0xff00); 	// bic     r2, r2, #0xff00
 	ORR_rrr(d, REG_WORK2, REG_WORK1);     	// orr     r7, r3, r2
+#endif
+
 #if !defined(USE_DATA_BUFFER)
 	B_i(0);                                 // b       <jp>
 
@@ -1021,9 +1053,13 @@ LOWFUNC(NONE,READ,3,raw_mov_w_rR,(W2 d, RR4 s, IMM offset))
 	else
 		LDRH_rRi(REG_WORK1, s, -offset);	// ldrh	r2, [r6, #-12]
 
+#ifdef ARMV6_ASSEMBLY
+	PKHBT_rrr(d,REG_WORK1,d);
+#else
 	BIC_rri(d, d, 0xff);         			// bic	r7, r7, #0xff
 	BIC_rri(d, d, 0xff00);         			// bic	r7, r7, #0xff00
 	ORR_rrr(d, d, REG_WORK1);     			// orr	r7, r7, r2
+#endif
 }
 LENDFUNC(NONE,READ,3,raw_mov_w_rR,(W2 d, RR4 s, IMM offset))
 

@@ -74,7 +74,9 @@ TAPIF = @TAPIF@
 USBHOSTSRCS = @USBHOSTSRCS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 GENCOMP_ARCH = @GENCOMP_ARCH@
-GENCOMP_SRC = gencomp$(filter _$(GENCOMP_ARCH),_arm)
+GENCOMP_SRC = @GENCOMP_SRC@
+GENCOMP_DEPS = @GENCOMP_DEPS@
+COMPEMU_DEPS = @COMPEMU_DEPS@
 
 ACLOCAL = aclocal
 AUTOCONF = autoconf
@@ -522,9 +524,7 @@ $(GEN_DIR)/cpustbl.o: $(GEN_DIR)/cpustbl.cpp
 $(GEN_DIR)/cpudefs.o: $(GEN_DIR)/cpudefs.cpp
 	$(CXX_FOR_BUILD) $(CPPFLAGS) $(DEFS) $(DBGSP) $(WFLAGS) $(CXXFLAGS_FOR_BUILD) -c $< -o $@
 
-ifdef GENCOMP_ARCH
-$(OBJ_DIR)/compemu_support.o: compemu_support.cpp codegen_$(GENCOMP_ARCH).cpp compemu_midfunc_$(GENCOMP_ARCH).cpp $(GEN_DIR)/comptbl.h
-endif
+$(OBJ_DIR)/compemu_support.o: compemu_support.cpp $(COMPEMU_DEPS) $(GEN_DIR)/comptbl.h
 
 $(OBJ_DIR)/cpuemu1.o: $(GEN_DIR)/cpuemu.cpp
 	$(AM_V_CXX)$(CXX) $(CPPFLAGS) $(DEFS) $(DBGSP) $(GENCPU_FLAGS) -DPART_1 $(CXXFLAGS) $(ARCHFLAGS) -c $< -o $@

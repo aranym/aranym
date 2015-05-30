@@ -182,6 +182,7 @@ AC_ARG_ENABLE(spcflags-excl, [AC_HELP_STRING([--enable-spcflags-excl], [enable e
 
 dnl JIT compiler options.
 AC_ARG_ENABLE(jit-compiler, [AC_HELP_STRING([--enable-jit-compiler], [enable JIT compiler (default=no)])], [WANT_JIT=$enableval], [WANT_JIT=no])
+AC_ARG_ENABLE(jit2, [AC_HELP_STRING([--enable-jit2], [enable JIT (v2) compiler (experimental/ARM only) (default=no)])], [WANT_JIT2=$enableval], [WANT_JIT2=no])
 
 AC_ARG_ENABLE(jit-fpu,
 [AC_HELP_STRING([--enable-jit-fpu], [enable JIT compiler for FPU instructions (default=no)])], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
@@ -1303,6 +1304,9 @@ CAN_JIT=no
 JITSRCS=
 GENJITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
 GENCOMP_ARCH=
+GENCOMP_SRC=
+GENCOMP_DEPS=
+COMPEMU_DEPS=
 
 if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   dnl i386 CPU
@@ -1315,6 +1319,8 @@ if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
 #    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
     GENCOMP_ARCH=x86
+    GENCOMP_SRC=gencomp
+    COMPEMU_DEPS="compemu_midfunc_x86.h compemu_midfunc_x86.cpp" 
   fi
 elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   dnl x86-64 CPU
@@ -1325,6 +1331,8 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
     CAN_JIT=yes
     GENCOMP_ARCH=x86
+    GENCOMP_SRC=gencomp
+    COMPEMU_DEPS="compemu_midfunc_x86.h compemu_midfunc_x86.cpp"
     WANT_33BIT_ADDRESSING=yes
 	SAVED_CXXFLAGS="$CXXFLAGS"
 	CXXFLAGS="$CXXFLAGS -mno-red-zone"
@@ -1389,8 +1397,20 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
 	   ;;
     esac
     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
+    COMPEMU_DEPS="compemu_midfunc_arm.h compemu_midfunc_arm.cpp"
     GENCOMP_ARCH=arm
+    GENCOMP_SRC=gencomp_arm
     CAN_JIT=yes
+  fi
+fi
+
+dnl Check for JIT Version 2
+if [[ "x$WANT_JIT2" = "xyes" ]]; then
+  if [[ "x$HAVE_ARM" = "xyes" ]]; then
+    DEFINES="$DEFINES -DUSE_JIT2=1"
+    COMPEMU_DEPS="$COMPEMU_DEPS compemu_midfunc_arm2.h compemu_midfunc_arm2.cpp"
+  else
+    AC_MSG_ERROR([JIT Version 2 is only available for ARM])
   fi
 fi
 
@@ -2201,6 +2221,9 @@ AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GENCOMP_ARCH)
+AC_SUBST(GENCOMP_SRC)
+AC_SUBST(GENCOMP_DEPS)
+AC_SUBST(COMPEMU_DEPS)
 AC_SUBST(CXX_FOR_BUILD)
 AC_SUBST(CC_FOR_BUILD)
 AC_SUBST(CFLAGS_FOR_BUILD)

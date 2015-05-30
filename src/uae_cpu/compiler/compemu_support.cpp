@@ -2335,6 +2335,10 @@ static void fflags_into_flags_internal(uae_u32 tmp)
 
 #if defined(CPU_arm)
 #include "compemu_midfunc_arm.cpp"
+
+#  if defined(USE_JIT2)
+#    include "compemu_midfunc_arm2.cpp"
+#  endif
 #endif
 
 #if defined(CPU_i386) || defined(CPU_x86_64)

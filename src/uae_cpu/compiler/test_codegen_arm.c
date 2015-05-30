@@ -250,5 +250,15 @@ int imm = 0x9f;
 TEST(ADDS_rri(0, 0, imm << 24), 0xe290049f, "adds r0, r0, 0x9f000000");
 
 TEST(PKHBT_rrr(1, 2, 3), 0xe6821013, "pkhbt r1,r2,r3");
+TEST(MVN_ri8(1,2), 0xe3e01002, "mvn r1,#2");
+
+TEST(ORR_rri8RORi(1,2,0x12,24), 0xe3821c12, "orr	r1, r2, #0x1200");
+TEST(PKHTB_rrrASRi(1, 2, 3, 4), 0xe6821253, "pkhtb r1,r2,r3,ASR #4");
+TEST(PKHBT_rrrLSLi(1, 2, 3, 4), 0xe6821213, "pkhbt r1,r2,r3,LSL #4");
+
+TEST(MUL_rrr(1,2,3), 0xe0010392, "mul	r1, r2, r3");
+TEST(MULS_rrr(1,2,3), 0xe0110392, "muls	r1, r2, r3");
+
+
 }
 
