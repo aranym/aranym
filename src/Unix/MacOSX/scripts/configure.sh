@@ -52,23 +52,12 @@ if [ -z "$PROJECT_DIR" ]; then
   echo
 fi
 
-# Make sure makedepend can be found
-if [ -d /usr/X11R6/bin ]; then
-  export PATH="$PATH:/usr/X11R6/bin"
-fi
-if [ -d /usr/X11/bin ]; then
-  export PATH="$PATH:/usr/X11/bin"
-fi
-
 # Make sure autoconf can be found
 ( autoconf --version ) > /dev/null 2>&1 || {
   echo "autoconf not found: appending /opt search locations to PATH (e.g. if MacPorts is used)"
   export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
 }
 
-
-# Make sure SDL.m4 can be found
-export ACLOCAL_FLAGS="-I $PROJECT_DIR/../darwin"
 
 # Make sure other AC macros can be found
 if [ -d /usr/X11/share/aclocal ]; then
@@ -94,7 +83,7 @@ fi
 cd "$SOURCE_DIR/.."
 
 # Remove old files
-rm -rf Makefile autom4te.cache aclocal.m4 config.h config.log 2>/dev/null
+rm -rf Makefile autom4te.cache aclocal.m4 config.h config.log config.status src/uae_cpu/*.o src/uae_cpu/build68k src/uae_cpu/gencpu src/uae_cpu/gencomp version_date.h 2>/dev/null
 
 # Generate configure script
 if [ -f autogen.sh ]; then
@@ -104,14 +93,15 @@ if [ -f autogen.sh ]; then
 fi
 
 # Configure system for all build architectures
-echo "" > "$DERIVED_FILES_DIR/config.h"
+cd "$DERIVED_FILES_DIR"
+echo "" > "config_tmp.h"
 for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
   COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
   echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE"
   echo "Current COMPILE_DEFS=$COMPILE_DEFS"
 
-  ./configure $CONFIGURE_OPTIONS --host=$ARCH-apple-$OSTYPE || exit 1
+  "$SOURCE_DIR/../configure" $CONFIGURE_OPTIONS --disable-dependency-tracking --disable-maintainer-mode --host=$ARCH-apple-$OSTYPE || exit 1
 
   if [ "$ARCH" = "ppc" -a "$SDK_NAME" = "macosx10.3.9" ]; then
     # 10.3.9 compatibility:
@@ -121,7 +111,7 @@ for ARCH in $ARCHS ; do
   else
     mv config.h config_$ARCH.h
   fi
-  cat  >> "$DERIVED_FILES_DIR/config.h" << EOF
+  cat  >> "config_tmp.h" << EOF
 #ifdef $CPU_TYPE
 #include "config_$ARCH.h"
 #endif
@@ -129,32 +119,34 @@ for ARCH in $ARCHS ; do
 EOF
 
   # Check whether the COMPILE_DEFS flag is still up-to-date
-  DEFS="`sed -n -e 's/DEFS = \(.*\)/ \1/p' Makefile | sed 's/ -D/ /g'`"
+  DEFS="`sed -n -e 's/DEFS = \(.*\)/ \1/p' -e 's/DEFINES = \(.*\)/ \1/p' Makefile | sed 's/ -D/ /g'`"
   echo $COMPILE_DEFS | sed 's/ /\
-/g' | sort > "$DERIVED_FILES_DIR/defs_xcode.txt"
+/g' | sort > "defs_xcode.txt"
 
   echo $DEFS | sed 's/ /\
-/g' | sort > "$DERIVED_FILES_DIR/defs_make.txt"
+/g' | sort > "defs_make.txt"
 
-  diff -u "$DERIVED_FILES_DIR/defs_xcode.txt" "$DERIVED_FILES_DIR/defs_make.txt" > "$DERIVED_FILES_DIR/defs_delta.txt"
-  if [ `wc -l < "$DERIVED_FILES_DIR/defs_delta.txt"` -gt 0 ]; then
+  diff -u "defs_xcode.txt" "defs_make.txt" > "defs_delta.txt"
+  if [ `wc -l < "defs_delta.txt"` -gt 0 ]; then
     echo "error: Invalid COMPILE_DEFS_$ARCH set in the target build setting."
     echo "Please add the following flags:"
-    grep -e "^+[^+]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/+//'
+    grep -e "^+[^+]" "defs_delta.txt" | sed 's/+//'
     echo 
     echo "Please remove the following flags:"
-    grep -e "^-[^-]" "$DERIVED_FILES_DIR/defs_delta.txt" | sed 's/-//'
+    grep -e "^-[^-]" "defs_delta.txt" | sed 's/-//'
     echo
     echo "Reminder: the following definitions are active for this target & architecture ($ARCH)"
     set | grep "COMPILE_DEF"
     exit 2
   fi
 
-  mv config_$ARCH.h "$DERIVED_FILES_DIR"
-  mv Makefile "$DERIVED_FILES_DIR/Makefile_$ARCH"
+  mv Makefile "Makefile_$ARCH"
 
   echo "$COMPILE_DEFS" >> "$OPTIONS_FILE"
 done
+mv config_tmp.h config.h
+echo am--refresh:: > Makefile
+
 
 # Remember configure options for next script execution
 echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE"
@@ -163,6 +155,6 @@ echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE"
 echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE"
 
 echo "Configuration generated:"
-cp "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || exit 1
+cp config*.h "$BUILD_DIR/" || exit 1
 
 exit 0

@@ -545,6 +545,10 @@
 		B4C7EE961768552800B63B96 /* MachUser.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE941768552800B63B96 /* MachUser.c */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
+		CB2C9D421B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
+		CB2C9D431B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
+		CB2C9D441B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
+		CB2C9D451B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
 		CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
@@ -1024,7 +1028,6 @@
 		17798DC20A652B51009733EB /* cpu_emulation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = cpu_emulation.h; sourceTree = "<group>"; };
 		17798DC30A652B51009733EB /* cpummu.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = cpummu.cpp; sourceTree = "<group>"; };
 		17798DC40A652B51009733EB /* cpummu.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = cpummu.h; sourceTree = "<group>"; };
-		17798DC50A652B51009733EB /* cpuopti.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = cpuopti.c; sourceTree = "<group>"; };
 		17798DC60A652B51009733EB /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		17798DC80A652B51009733EB /* core.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		17798DC90A652B51009733EB /* exceptions.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = exceptions.cpp; sourceTree = "<group>"; };
@@ -1060,7 +1063,6 @@
 		17798DEB0A652B51009733EB /* aratapif.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = aratapif.c; sourceTree = "<group>"; };
 		17798DEC0A652B51009733EB /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = autogen.sh; path = ../../../autogen.sh; sourceTree = SOURCE_ROOT; };
 		17798DF60A652B51009733EB /* config.guess */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = config.guess; path = ../../../config.guess; sourceTree = SOURCE_ROOT; };
-		17798DF90A652B51009733EB /* config.log */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = config.log; path = ../../../config.log; sourceTree = SOURCE_ROOT; };
 		17798DFD0A652B51009733EB /* configure.ac */ = {isa = PBXFileReference; fileEncoding = 5; indentWidth = 4; lastKnownFileType = text; name = configure.ac; path = ../../../configure.ac; sourceTree = SOURCE_ROOT; tabWidth = 4; usesTabs = 0; };
 		17798E130A652B51009733EB /* getopt.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = getopt.c; sourceTree = "<group>"; };
 		17798E140A652B51009733EB /* getopt.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = getopt.h; sourceTree = "<group>"; };
@@ -1072,7 +1074,6 @@
 		17798E420A652B51009733EB /* parameters_MacOSX.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = parameters_MacOSX.cpp; sourceTree = "<group>"; };
 		17798E7C0A652B52009733EB /* main_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = main_unix.cpp; sourceTree = "<group>"; };
 		17798E7F0A652B52009733EB /* Makefile.in */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = Makefile.in; path = ../../Makefile.in; sourceTree = "<group>"; };
-		17798E810A652B52009733EB /* mkinstalldirs */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.sh; name = mkinstalldirs; path = ../../mkinstalldirs; sourceTree = "<group>"; };
 		17798E820A652B52009733EB /* parameters_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = parameters_unix.cpp; sourceTree = "<group>"; };
 		17798E850A652B52009733EB /* sysdeps.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = sysdeps.h; sourceTree = "<group>"; };
 		17798E860A652B52009733EB /* vasprintf.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = vasprintf.c; sourceTree = "<group>"; };
@@ -1172,6 +1173,7 @@
 		B4C7EE941768552800B63B96 /* MachUser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MachUser.c; path = darwin/MachUser.c; sourceTree = "<group>"; };
 		B4C86DDB0C823CCA0077FB6E /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/aranym.nib; sourceTree = "<group>"; };
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
+		CB2C9D411B14E27200EC7BFA /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../../Makefile.am; sourceTree = SOURCE_ROOT; };
 		CB4679571AFA788C0090A72D /* externalScript.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = externalScript.sh; path = scripts/externalScript.sh; sourceTree = "<group>"; };
 		CBCE37AD1B05B70200A19E4D /* maptab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maptab.h; sourceTree = "<group>"; };
 		CBCE37AE1B05B76100A19E4D /* maptab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maptab.cpp; sourceTree = "<group>"; };
@@ -1585,7 +1587,6 @@
 				17798DC20A652B51009733EB /* cpu_emulation.h */,
 				17798DC30A652B51009733EB /* cpummu.cpp */,
 				17798DC40A652B51009733EB /* cpummu.h */,
-				17798DC50A652B51009733EB /* cpuopti.c */,
 				17798DC60A652B51009733EB /* debug.cpp */,
 				17798DDB0A652B51009733EB /* gencpu.c */,
 				17798DDC0A652B51009733EB /* m68k.h */,
@@ -1665,7 +1666,6 @@
 				17798E190A652B51009733EB /* install-sh */,
 				17798E7C0A652B52009733EB /* main_unix.cpp */,
 				17798E7F0A652B52009733EB /* Makefile.in */,
-				17798E810A652B52009733EB /* mkinstalldirs */,
 				17798E820A652B52009733EB /* parameters_unix.cpp */,
 				B476BEC619F3BDB60088926C /* sigsegv_common_x86.h */,
 				17798E850A652B52009733EB /* sysdeps.h */,
@@ -1707,12 +1707,12 @@
 		17AC409013F1D216003B4FAD /* Unix */ = {
 			isa = PBXGroup;
 			children = (
+				CB2C9D411B14E27200EC7BFA /* Makefile.am */,
 				1759CCF319845F2600C4500E /* m4 */,
 				17798DEC0A652B51009733EB /* autogen.sh */,
 				17798DFD0A652B51009733EB /* configure.ac */,
 				17AC408513F1CFA1003B4FAD /* configure */,
 				17798DF60A652B51009733EB /* config.guess */,
-				17798DF90A652B51009733EB /* config.log */,
 			);
 			name = Unix;
 			sourceTree = "<group>";
@@ -2020,6 +2020,7 @@
 				1778A4D71555A8A70005B336 /* logo.png in Resources */,
 				1778A4D81555A8A70005B336 /* aranym.icns in Resources */,
 				1778A4D91555A8A70005B336 /* aranym.nib in Resources */,
+				CB2C9D451B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2030,6 +2031,7 @@
 				B449DA030D2A9234005F0CC6 /* logo.png in Resources */,
 				1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF80C7BA7100039CA66 /* aranym.nib in Resources */,
+				CB2C9D441B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2040,6 +2042,7 @@
 				B449DA010D2A9222005F0CC6 /* logo.png in Resources */,
 				1736B1070C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF90C7BA7100039CA66 /* aranym.nib in Resources */,
+				CB2C9D431B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2050,6 +2053,7 @@
 				B449DA020D2A922C005F0CC6 /* logo.png in Resources */,
 				1736B1110C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */,
+				CB2C9D421B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

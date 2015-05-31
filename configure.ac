@@ -1,10 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Written in 1999 by Christian Bauer et al.
 dnl Adapted for ARAnyM by Milan Jurik
+dnl Adapted to automake by Thorsten Otto
 
-AC_INIT(aranym,0.9,aranym@lists.bobek.cz,aranym)
+m4_define(ARANYM_VERSION, m4_esyscmd([sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
+s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
+s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n']))
+
+AC_INIT(aranym, ARANYM_VERSION, [aranym@lists.bobek.cz,aranym],,[https://sourceforge.net/projects/aranym/files/aranym/])
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([.])
+AC_CONFIG_SRCDIR([src/hostscreen.cpp])
 
 dnl Define list of provided Native Features
 PROVIDES_NF="audio bootstrap xhdi"
@@ -12,16 +20,17 @@ PROVIDES_NF="audio bootstrap xhdi"
 dnl Canonical system information.
 AC_CANONICAL_HOST
 
-dnl Silent rules
+AM_INIT_AUTOMAKE(check-news m4_esyscmd([case `automake --version | head -n 1` in 
+                             *1.10*);; 
+                             *) echo subdir-objects color-tests;; 
+                             esac]))
+AM_MAINTAINER_MODE([disable])
 
-AC_ARG_ENABLE(silent-rules,
-AC_HELP_STRING([--enable-silent-rules], [Enable silent build [[default=yes]]]),
-              , enable_silent_rules=yes)
-AM_DEFAULT_VERBOSITY=1
-if test x$enable_silent_rules = xyes; then
-	AM_DEFAULT_VERBOSITY=0
-fi
-AC_SUBST(AM_DEFAULT_VERBOSITY)
+dnl Silent rules
+# Support silent build rules, requires at least automake-1.11. Disable
+# by either passing --disable-silent-rules to configure or passing V=1
+# to make
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AH_TOP([
 #ifndef __ARANYM_CONFIG_H__
@@ -213,8 +222,25 @@ case "$host_os" in
   mint*)	OS_TYPE=mint;;
   beos*|haiku*)	OS_TYPE=beos;;
   mingw*)	OS_TYPE=mingw;;
-  *)		OS_TYPE=`echo $host_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`;;
+  *)		OS_TYPE=unknown;;
 esac
+AM_CONDITIONAL([OS_TYPE_linux], test "$OS_TYPE" = "linux")
+AM_CONDITIONAL([OS_TYPE_openbsd], test "$OS_TYPE" = "openbsd")
+AM_CONDITIONAL([OS_TYPE_netbsd], test "$OS_TYPE" = "netbsd")
+AM_CONDITIONAL([OS_TYPE_freebsd], test "$OS_TYPE" = "freebsd")
+AM_CONDITIONAL([OS_TYPE_solaris], test "$OS_TYPE" = "solaris")
+AM_CONDITIONAL([OS_TYPE_darwin], test "$OS_TYPE" = "darwin")
+AM_CONDITIONAL([OS_TYPE_cygwin], test "$OS_TYPE" = "cygwin")
+AM_CONDITIONAL([OS_TYPE_irix], test "$OS_TYPE" = "irix")
+AM_CONDITIONAL([OS_TYPE_mint], test "$OS_TYPE" = "mint")
+AM_CONDITIONAL([OS_TYPE_beos], test "$OS_TYPE" = "beos")
+AM_CONDITIONAL([OS_TYPE_mingw], test "$OS_TYPE" = "mingw")
+AM_CONDITIONAL([OS_TYPE_unknown], test "$OS_TYPE" = "unknown")
+AM_CONDITIONAL([ANDROID_OS], test "$ANDROID_OS" = "yes")
+AM_CONDITIONAL([WITH_FINK], test "$WITH_FINK" = "yes")
+if test "$OS_TYPE" = "unknown"; then
+  OS_TYPE=`echo $host_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`
+fi
 DEFINES="$DEFINES -DOS_$OS_TYPE"
 AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 
@@ -269,14 +295,24 @@ case "$host_cpu" in
 	fi
 	;;
   x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=yes;;
-  *) CPU_TYPE=`echo $host_cpu | sed -e 's/-/_/g'`;;
+  *) CPU_TYPE=unknown;;
 esac
+AM_CONDITIONAL([CPU_TYPE_x86], test "$CPU_TYPE" = "i386")
+AM_CONDITIONAL([CPU_TYPE_x86_64], test "$CPU_TYPE" = "x86_64")
+AM_CONDITIONAL([CPU_TYPE_sparc], test "$CPU_TYPE" = "sparc")
+AM_CONDITIONAL([CPU_TYPE_arm], test "$CPU_TYPE" = "arm")
+AM_CONDITIONAL([CPU_TYPE_powerpc], test "$CPU_TYPE" = "powerpc")
+AM_CONDITIONAL([CPU_TYPE_unknown], test "$CPU_TYPE" = "unknown")
+if test "$CPU_TYPE" = "unknown"; then
+  CPU_TYPE=`echo $host_cpu | sed -e 's/-/_/g'`
+fi
 DEFINES="$DEFINES -DCPU_$CPU_TYPE"
 AC_DEFINE_UNQUOTED([CPU_TYPE], "$CPU_TYPE", [Define CPU type])
 
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CC_C_O
+AC_PROG_OBJC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
@@ -285,6 +321,7 @@ AX_PROG_CXX_FOR_BUILD
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PROG_MKDIR_P
+AC_PROG_RANLIB
 AC_PATH_PROG(PERL, perl)
 AC_CHECK_TOOLS(WINDRES, [windres], :)
 PKG_PROG_PKG_CONFIG
@@ -375,35 +412,22 @@ AH_TEMPLATE([ARANYMKEYMAP], [Default ARAnyM keymap])
 
 case "$host_os" in
   linux*)
-    EXTRASYSSRCS="Unix/linux/parameters_linux.cpp Unix/linux/ethernet_linux.cpp Unix/host_filesys_unix.cpp"
     ;;
   cygwin*|mingw*)
     AC_DEFINE([ARANYMHOME], "aranym")
-    EXTRASYSSRCS="Unix/cygwin/parameters_cygwin.cpp Unix/cygwin/tools_cygwin.cpp Unix/cygwin/ethernet_cygwin.cpp Unix/cygwin/win32_supp.cpp"
-    if [[ "x$HAVE_I386" = "xyes" ]]; then
-       WIN32_RC_OBJS='$(OBJ_DIR)/aranym_rc_i386.o'
-    else
-       WIN32_RC_OBJS='$(OBJ_DIR)/aranym_rc_x86_64.o'
-    fi
     ;;
   solaris*)
     AC_DEFINE([_XOPEN_SOURCE], 500, [Define if needed])
     AC_DEFINE([_POSIX_C_SOURCE], 199506L, [Define if needed])
     DEFINES="$DEFINES -DBSD_COMP -D__EXTENSIONS__"
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp"
-    ;;
-  irix*)
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/irix/unaligned.c Unix/host_filesys_unix.cpp"
     ;;
   freebsd*|kfreebsd*-gnu)
     AC_DEFINE([HAVE_O_FSYNC], 1)
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp"
     ;;
   darwin*)
 	AC_DEFINE([HAVE_O_FSYNC], 1)
 	if test "x$WITH_FINK" = "xyes"; then
 		AC_DEFINE([ARANYMHOME], "aranym")
-		EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp Unix/darwin/ethernet_darwin.cpp Unix/darwin/SDLHotkeysRefresh.M"
 	else
 		AC_DEFINE([ARANYMHOME], "ARAnyM")
 		
@@ -419,8 +443,6 @@ case "$host_os" in
 			AC_DEFINE([ARANYMKEYMAP], "org.aranym.keymap")
 		fi
 		
-		EXTRASYSSRCS="Unix/darwin/SDLMain.M Unix/darwin/host_filesys_darwin.M Unix/darwin/parameters_darwin.cpp Unix/darwin/ethernet_darwin.cpp Unix/darwin/SDLHotkeysRefresh.M"
-
 		BUNDLE_FRAMEWORKS= dnl Empty list of frameworks to bundle
 
 		dnl Check for some important frameworks
@@ -439,18 +461,12 @@ case "$host_os" in
     AC_PATH_PROG(BEOS_XRES, xres, [AC_MSG_ERROR([xres not found.])])
     AC_PATH_PROG(BEOS_RC, rc, [AC_MSG_ERROR([rc not found.])])
     AC_PATH_PROG(BEOS_SETVERSION, setversion, [AC_MSG_ERROR([setversion not found.])])
-
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/beos/cdrom_beos.cpp Unix/host_filesys_unix.cpp"
-    CPPFLAGS="$CPPFLAGS -I\$(srcdir)/Unix/beos"
     WANT_UNIXSERIALPORT=no
     ac_cv_tun_tap_support=no
     ;;
   *)
-    EXTRASYSSRCS="Unix/parameters_unix.cpp Unix/host_filesys_unix.cpp"
     ;;
 esac
-
-SYSSRCS="$SYSSRCS $EXTRASYSSRCS"
 
 dnl Stupid hack around problem with extfs straply vs. Mac OS X
 AC_CACHE_CHECK([for __wchar_t],
@@ -804,7 +820,6 @@ AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, $ac_cv_have_vasprintf,
   [Define if your system support GNU SOURCEs (vasprintf function)])
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
-else SYSSRCS="$SYSSRCS Unix/vasprintf.c"
 fi
 
 AC_CACHE_CHECK([for sighandler_t],
@@ -847,9 +862,8 @@ AC_CACHE_CHECK([for getopt_long],
 )
 AC_TRANSLATE_DEFINE(HAVE_GETOPT_H, $ac_cv_have_getopt_long)
 
-if [[ "x$ac_cv_have_getopt_long" = "xno" ]]; then
-  SYSSRCS="$SYSSRCS Unix/getopt_init.c Unix/getopt1.c Unix/getopt.c"
-fi
+AM_CONDITIONAL([NEED_GETOPT], test "$ac_cv_have_getopt_long" = "no")
+
 
 dnl Check if we have __builtin_bswap16/32
 AC_CACHE_CHECK([for __builtin_bswap16],
@@ -960,11 +974,11 @@ if [[ "x$WANT_CDROM" = "xyes" ]]; then
      AC_DEFINE([SUPPORT_CDROM], 1, [Define if you want to use ATA CD-ROM emulation])
 fi
 
-MMUSRCS="uae_cpu/cpummu.cpp"
 dnl Full MMU
 if [[ "x$WANT_MMU" = "xyes" ]]; then
     AC_DEFINE([FULLMMU], 1, [Define if using full MMU])
 fi
+AM_CONDITIONAL([FULLMMU], test "$WANT_MMU" = "yes")
 
 dnl Small ATC
 if [[ "x$ATC_TYPE" = "xsmall" ]]; then
@@ -977,16 +991,15 @@ if [[ "x$ATC_TYPE" = "xno" ]]; then
 fi
 
 dnl DSP
-DSPSRCS=""
 if [[ "x$WANT_DSP" = "xyes" ]]; then
     AC_DEFINE([DSP_EMULATION], 1, [Define if using DSP])
-    DSPSRCS="dsp_core.c dsp_cpu.c"
     dnl DSP disassembler
     if [[ "x$WANT_DSP_DISASM" = "xyes" ]]; then
         AC_DEFINE([DSP_DISASM], 1, [Define if DSP disassembly])
-        DSPSRCS="$DSPSRCS dsp_disasm.c"
     fi
 fi
+AM_CONDITIONAL([WANT_DSP], test "$WANT_DSP" = "yes")
+AM_CONDITIONAL([WANT_DSP_DISASM], test "$WANT_DSP_DISASM" = "yes")
 
 AH_TEMPLATE([FIXED_VIDEORAM], [Define if you want fixed position of VideoRAM])
 AH_TEMPLATE([PROTECT2K], [Define if you want to protect first 2kB of RAM against user mode access])
@@ -1041,16 +1054,14 @@ fi
 AH_TEMPLATE([ETHERNET_SUPPORT], [Define if you want to use ethernet card emulation])
 dnl Ethernet card emulation
 HAVE_ETHERNET=no
+NEED_ARATAPIF=no
 if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
   if [[ "x$ac_cv_tun_tap_support" = "xyes" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1)
-    SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
-    TAPIF="aratapif"
+    NEED_ARATAPIF="yes"
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1)
-    SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
-    TAPIF=""
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1)
@@ -1060,16 +1071,14 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
     else
       AC_MSG_WARN([Ethernet won't work without TunTap driver for Mac OS X. See http://tuntaposx.sourceforge.net/])
     fi
-    SYSSRCS="$SYSSRCS natfeat/ethernet.cpp"
-    TAPIF=""
     HAVE_ETHERNET="yes"
   else
     AC_MSG_WARN([Ethernet interface not supported on your system])
-    TAPIF=""
   fi
-else
-  TAPIF=""
 fi
+AM_CONDITIONAL([NEED_ARATAPIF], test "$NEED_ARATAPIF" = "yes")
+AM_CONDITIONAL([ETHERNET_SUPPORT], test "$HAVE_ETHERNET" = "yes")
+
 
 if [[ "x$HAVE_ETHERNET" = "xyes" ]]; then
   PROVIDES_NF="$PROVIDES_NF ethernet"
@@ -1077,18 +1086,18 @@ fi
 
 dnl Support for direct access to host's fs
 if [[ "x$WANT_HOSTFS" = "xyes" ]]; then
-  SYSSRCS="$SYSSRCS natfeat/hostfs.cpp"
   AC_DEFINE([HOSTFS_SUPPORT], 1, [Define if you want to use direct access to host's fs])
   PROVIDES_NF="$PROVIDES_NF hostfs"
 fi
+AM_CONDITIONAL([HOSTFS_SUPPORT], test "$WANT_HOSTFS" = "yes")
+
 
 dnl SDL GUI
-GUISDLSRCS=""
 if test "x$WANT_SDLGUI" = "xyes" ; then
-  GUISDLSRCS="gui-sdl/sdlgui.cpp gui-sdl/dlgFileSelect.cpp gui-sdl/file.cpp gui-sdl/dlgMain.cpp gui-sdl/dlgDisk.cpp gui-sdl/dlgPartition.cpp gui-sdl/dlgKeyboard.cpp gui-sdl/dlgHotkeys.cpp gui-sdl/dlgAlert.cpp gui-sdl/dlgOs.cpp gui-sdl/dlgVideo.cpp gui-sdl/dlgNetwork.cpp gui-sdl/dlgKeypress.cpp gui-sdl/dialog.cpp gui-sdl/dlgUsb.cpp gui-sdl/dlgHostfs.cpp"
-  CPPFLAGS="$CPPFLAGS -I\$(srcdir)/gui-sdl"
   AC_DEFINE([SDL_GUI], 1, [Define if you want to build SDL GUI])
 fi
+AM_CONDITIONAL([SDL_GUI], test "$WANT_SDLGUI" = yes)
+
 
 dnl C++ exceptions
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
@@ -1100,21 +1109,22 @@ fi
 
 AH_TEMPLATE(NO_NESTED_SIGSEGV, [Define if OS needs to cleanly exit sigsegv handler])
 
+
 dnl Extended signal segmentation fault handler
+dnl if you add support for os/cpu combinations here,
+dnl don't forget to update the list of source files
+dnl in src/Makefile.am, inside "if EXTENDED_SIGSEGV"
 if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
   case "$host_os" in
     linux*)
       case "$CPU_TYPE" in
         i386)
-	  SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86.cpp"
           AC_DEFINE(NO_NESTED_SIGSEGV, 1)
 	  ;;
 	x86_64)
-          SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_x86.cpp"
           AC_DEFINE(NO_NESTED_SIGSEGV, 1)
           ;;
 	arm)
-          SYSSRCS="$SYSSRCS Unix/linux/sigsegv_linux_arm.cpp"
           CFLAGS="$CFLAGS -marm"
           CXXFLAGS="$CXXFLAGS -marm"          
           ;;
@@ -1125,7 +1135,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
     openbsd*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
+        :
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
@@ -1134,13 +1144,12 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       if [[ "x$CPU_TYPE" = "powerpc" ]]; then
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       else
-        SYSSRCS="$SYSSRCS Unix/darwin/sigsegv_darwin_x86.cpp"
         AC_DEFINE(NO_NESTED_SIGSEGV, 1)
       fi
       ;;
     netbsd*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
+        :
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
@@ -1148,11 +1157,9 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
     freebsd*|kfreebsd*-gnu)
       case "$CPU_TYPE" in
         i386)
-          SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
           AC_DEFINE(NO_NESTED_SIGSEGV, 1)
 	  ;;
 	x86_64)
-          SYSSRCS="$SYSSRCS Unix/xbsd/sigsegv_xbsd.cpp"
           AC_DEFINE(NO_NESTED_SIGSEGV, 1)
 
 	  dnl FreeBSD is using clang which requires additional options, may be to be set in
@@ -1173,7 +1180,6 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
     cygwin*|mingw*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS Unix/cygwin/sigsegv_cygwin.cpp"
         AC_DEFINE(NO_NESTED_SIGSEGV, 1)
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
@@ -1181,7 +1187,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
     solaris*)
       if [[ "x$HAVE_I386" = "xyes" ]]; then
-        SYSSRCS="$SYSSRCS Unix/solaris/sigsegv_solaris_x86.cpp"
+	:
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       fi
@@ -1191,6 +1197,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       ;;
   esac
 fi
+AM_CONDITIONAL([EXTENDED_SIGSEGV], test "$WANT_EXSIGSEGV" = yes)
 
 dnl Determine the addressing mode to use
 ADDRESSING_MODE=""
@@ -1293,10 +1300,7 @@ if [[ "x$GCC" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
 fi
 
 dnl Select appropriate CPU source and REGPARAM define.
-CPUSRCS=
-GENCPUSRCS=
 ASM_OPTIMIZATIONS=none
-GENCPUSRCS="cpuemu1.cpp cpuemu2.cpp cpuemu3.cpp cpuemu4.cpp cpuemu5.cpp cpuemu6.cpp cpuemu7.cpp cpuemu8.cpp"
 
 dnl gb-- JITSRCS and GENJITSRCS will be emptied later if the JIT is not available
 dnl gb-- Other platforms should define their own set of noflags file variants
@@ -1304,9 +1308,8 @@ CAN_JIT=no
 JITSRCS=
 GENJITSRCS="compemu1.cpp compemu2.cpp compemu3.cpp compemu4.cpp compemu5.cpp compemu6.cpp compemu7.cpp compemu8.cpp"
 GENCOMP_ARCH=
-GENCOMP_SRC=
-GENCOMP_DEPS=
-COMPEMU_DEPS=
+
+AH_TEMPLATE([HAVE_CFLAG_NO_REDZONE], [define if your compiler understand -mno-red-zone])
 
 if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   dnl i386 CPU
@@ -1314,13 +1317,8 @@ if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS=i386
     DEFINES="$DEFINES -DX86_ASSEMBLY -DOPTIMIZED_FLAGS -DSAHF_SETO_PROFITABLE"
-#    GENCPUSRCS="cpufast1.s cpufast2.s cpufast3.s cpufast4.s cpufast5.s cpufast6.s cpufast7.s cpufast8.s"
-     GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
-#    GENJITSRCS="cpufast1_nf.s cpufast2_nf.s cpufast3_nf.s cpufast4_nf.s cpufast5_nf.s cpufast6_nf.s cpufast7_nf.s cpufast8_nf.s $GENJITSRCS"
     CAN_JIT=yes
     GENCOMP_ARCH=x86
-    GENCOMP_SRC=gencomp
-    COMPEMU_DEPS="compemu_midfunc_x86.h compemu_midfunc_x86.cpp" 
   fi
 elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   dnl x86-64 CPU
@@ -1328,11 +1326,8 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     ASM_OPTIMIZATIONS="x86-64"
     DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
-    GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
     CAN_JIT=yes
     GENCOMP_ARCH=x86
-    GENCOMP_SRC=gencomp
-    COMPEMU_DEPS="compemu_midfunc_x86.h compemu_midfunc_x86.cpp"
     WANT_33BIT_ADDRESSING=yes
 	SAVED_CXXFLAGS="$CXXFLAGS"
 	CXXFLAGS="$CXXFLAGS -mno-red-zone"
@@ -1344,7 +1339,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
 	  ])
 	  CXXFLAGS="$SAVED_CXXFLAGS"
 	  if [[ "x$ac_cv_gcc_no_red_zone" = "xyes" ]]; then
-	     GENCPU_FLAGS="-mno-red-zone"
+	     AC_DEFINE([HAVE_CFLAG_NO_REDZONE], 1)
 	  fi
   fi
 elif [[ "x$GCC" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
@@ -1396,10 +1391,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
            esac
 	   ;;
     esac
-    GENJITSRCS="cpuemu1_nf.cpp cpuemu2_nf.cpp cpuemu3_nf.cpp cpuemu4_nf.cpp cpuemu5_nf.cpp cpuemu6_nf.cpp cpuemu7_nf.cpp cpuemu8_nf.cpp $GENJITSRCS"
-    COMPEMU_DEPS="compemu_midfunc_arm.h compemu_midfunc_arm.cpp"
     GENCOMP_ARCH=arm
-    GENCOMP_SRC=gencomp_arm
     CAN_JIT=yes
   fi
 fi
@@ -1408,11 +1400,14 @@ dnl Check for JIT Version 2
 if [[ "x$WANT_JIT2" = "xyes" ]]; then
   if [[ "x$HAVE_ARM" = "xyes" ]]; then
     DEFINES="$DEFINES -DUSE_JIT2=1"
-    COMPEMU_DEPS="$COMPEMU_DEPS compemu_midfunc_arm2.h compemu_midfunc_arm2.cpp"
   else
     AC_MSG_ERROR([JIT Version 2 is only available for ARM])
   fi
 fi
+
+AM_CONDITIONAL([GENCOMP_ARCH_X86], test "$GENCOMP_ARCH" = "x86")
+AM_CONDITIONAL([GENCOMP_ARCH_ARM], test "$GENCOMP_ARCH" = "arm")
+
 
 dnl JIT sources if available
 if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
@@ -1431,10 +1426,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
 
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then
     DEFINES="$DEFINES -DUSE_JIT_FPU=1"
-    JITSRCS="$JITSRCS uae_cpu/compiler/compemu_fpp.cpp"
   fi
-
-  GENJITSRCS="$GENJITSRCS compstbl.cpp cpustbl_nf.cpp"
 else
   WANT_JIT=no
   WANT_JIT_FPU=no
@@ -1442,6 +1434,10 @@ else
   JITSRCS=""
   GENJITSRCS=""
 fi
+AM_CONDITIONAL([USE_JIT], test "$WANT_JIT" = "yes")
+AM_CONDITIONAL([USE_JIT_FPU], test "$WANT_JIT_FPU" = "yes")
+AM_CONDITIONAL([USE_JIT2], test "$WANT_JIT2" = "yes")
+
 
 dnl Use 33-bit memory addressing?
 if [[ "$ac_cv_have_33bit_addressing:$WANT_33BIT_ADDRESSING" = "yes:yes" ]]; then
@@ -1470,7 +1466,6 @@ for fpe in $FPE_CORE_TEST_ORDER; do
       FPE_CORE="IEEE fpu core"
       AC_DEFINE([USES_FPU_CORE], "IEEE")
       DEFINES="$DEFINES -DFPU_IEEE"
-      FPUSRCS="uae_cpu/fpu/fpu_ieee.cpp"
       dnl Math functions not mandated by C99 standard
       AC_CHECK_FUNCS(isnanl isinfl)
       dnl Math functions required by C99 standard, but probably not
@@ -1498,7 +1493,6 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     if test ":$GCC:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" -o ":$GCC:$HAVE_X86_64:$HAVE_GAS:" = ":yes:yes:yes:"; then
       FPE_CORE="i387 fpu core"
       DEFINES="$DEFINES -DFPU_X86"
-      FPUSRCS="uae_cpu/fpu/fpu_x86.cpp"
       break
     fi
     ;;
@@ -1506,7 +1500,6 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     FPE_CORE="uae fpu core"
     AC_DEFINE([USES_FPU_CORE], "UAE")
     DEFINES="$DEFINES -DFPU_UAE"
-    FPUSRCS="uae_cpu/fpu/fpu_uae.cpp"
     break
     ;;
   mpfr)
@@ -1515,7 +1508,6 @@ for fpe in $FPE_CORE_TEST_ORDER; do
       FPE_CORE="mpfr fpu core"
       AC_DEFINE([USES_FPU_CORE], "MPFR")
       DEFINES="$DEFINES -DFPU_MPFR"
-      FPUSRCS="uae_cpu/fpu/fpu_mpfr.cpp"
       break
     fi
     ;;
@@ -1527,6 +1519,11 @@ done
 if [[ "x$FPE_CORE" = "x" ]]; then
   AC_MSG_ERROR([Sorry, no suitable FPU core found in $FPE_CORE_TEST_ORDER])
 fi
+AM_CONDITIONAL([FPU_IEEE], test "$fpe" = "ieee")
+AM_CONDITIONAL([FPU_X86], test "$fpe" = "x86")
+AM_CONDITIONAL([FPU_UAE], test "$fpe" = "uae")
+AM_CONDITIONAL([FPU_MPFR], test "$fpe" = "mpfr")
+
 
 dnl Check for certain math functions
 AC_CHECK_FUNCS(atanh)
@@ -1538,7 +1535,6 @@ if [[ "x$WANT_JIT" = "xno" ]]; then
   dnl new debugger
   if [[ "$USE_DEBUGGER" = "yes" ]]; then
     AC_DEFINE([DEBUGGER], 1)
-    CPUSRCS="$CPUSRCS uae_cpu/debug.cpp"
   fi
 else
   if [[ "$USE_DEBUGGER" = "yes" ]]; then
@@ -1546,6 +1542,7 @@ else
     USE_DEBUGGER=no
   fi
 fi
+AM_CONDITIONAL([USE_DEBUGGER], test "$USE_DEBUGGER" = yes)
 
 AH_TEMPLATE([DISASM_USE_OPCODES],[Define if using the opcodes library for disassembly])
 AH_TEMPLATE([DISASM_USE_BUILTIN],[Define if using the builtin disassembler])
@@ -1640,8 +1637,8 @@ if test "$enable_disasm" = auto -o "$enable_disasm" = builtin; then
 fi
 AC_SUBST(DISASM_CFLAGS)
 AC_SUBST(DISASM_LIBS)
-dnl AM_CONDITIONAL(DISASM_USE_BUILTIN, test "$enable_disasm" = "builtin")
-dnl AM_CONDITIONAL(DISASM_USE_OPCODES, test "$enable_disasm" = "opcodes")
+AM_CONDITIONAL(DISASM_USE_BUILTIN, test "$enable_disasm" = "builtin")
+AM_CONDITIONAL(DISASM_USE_OPCODES, test "$enable_disasm" = "opcodes")
  
 
 dnl Exclusive spcflags handling
@@ -1650,8 +1647,7 @@ if [[ "x$WANT_SPCFLAGS_EXCL" = "xyes" ]]; then
 fi
 
 dnl UAE CPU sources for all architectures.
-CPUINCLUDES="-I\$(srcdir)/uae_cpu"
-CPUSRCS="$CPUSRCS uae_cpu/aranym_glue.cpp uae_cpu/memory.cpp uae_cpu/newcpu.cpp uae_cpu/readcpu.cpp $JITSRCS $FPUSRCS $MMUSRCS"
+CPUSRCS="$CPUSRCS $JITSRCS"
 GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp cpufunctbl.cpp $GENJITSRCS"
 
 dnl Remove the "-g" option if set for GCC.
@@ -1714,8 +1710,14 @@ if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
 	if test "$have_framework_SDL" = yes ; then
 		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
-        sdl_version="`defaults read $SDL_LOCATION/Resources/Info.plist CFBundleShortVersionString`"
-        no_sdl=no
+        	sdl_version="`defaults read $SDL_LOCATION/Resources/Info.plist CFBundleShortVersionString`"
+		# SDL 1.2.15 has still 1.2.14 in the Info.plist file
+		if test "$sdl_version" = "1.2.14"; then
+			if test `defaults read $SDL_LOCATION/Resources/Info.plist BuildMachineOSBuild` = "12F2518"; then
+				sdl_version=1.2.15
+			fi
+		fi
+        	no_sdl=no
 	fi
     if test "$enable_sdl2" != no; then
 		ARANYM_CHECK_FRAMEWORK(SDL2, [])
@@ -1766,6 +1768,7 @@ else
 		sdl_version="$sdl2_version"
 	fi
 fi
+AM_CONDITIONAL([ENABLE_SDL2], test "$enable_sdl2" = yes)
 
 dnl Check for SDL_Image
 if test "$enable_sdl2" = yes; then
@@ -1863,14 +1866,14 @@ if test "x$WANT_OPENGL" = "xyes"; then
 	AC_MSG_RESULT($have_opengl)
 	CFLAGS="$tmp_cflags"
 	LIBS="$tmp_libs"
-	DYNGLSRCS=""
 	if test "x$have_opengl" = "xyes"; then
 		AC_DEFINE([ENABLE_OPENGL], 1, [Define if OpenGL enabled])
-		DYNGLSRCS="dyngl.c"
 	else
 		WANT_OPENGL="no"
 	fi
 fi
+AM_CONDITIONAL([ENABLE_OPENGL], test "$WANT_OPENGL" = yes)
+
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
@@ -1930,13 +1933,11 @@ NFCDROM_DRIVER=""
 case "$host_os" in
 	linux*)
 		if [[ "$ANDROID_OS" != "yes" ]]; then
-			NFCDROMSRCS="natfeat/nfcdrom_linux.cpp"
 			AC_DEFINE([NFCDROM_LINUX_SUPPORT], 1, [Define if you want to use Linux support as CD-ROM driver])
 			NFCDROM_DRIVER="linux"
 		fi
 		;;
 	mingw*|cygwin*)
-		NFCDROMSRCS="natfeat/nfcdrom_win32.cpp"
 		AC_DEFINE([NFCDROM_WIN32_SUPPORT], 1, [Define if you want to use Win32 support as CD-ROM driver])
 		NFCDROM_DRIVER="win32"
 		;;
@@ -1944,26 +1945,23 @@ esac
 if test "$enable_sdl2" != yes; then
 	test "$NFCDROM_DRIVER" != "" && NFCDROM_DRIVER="${NFCDROM_DRIVER},"
 	NFCDROM_DRIVER="${NFCDROM_DRIVER}sdl"
-	NFCDROMSRCS="$NFCDROMSRCS natfeat/nfcdrom_sdl.cpp"
 fi
 if test "$NFCDROM_DRIVER" != ""; then
-	NFCDROMSRCS="$NFCDROMSRCS natfeat/nfcdrom.cpp"
 	AC_DEFINE([NFCDROM_SUPPORT], 1)
 else
 	NFCDROM_DRIVER=no
 fi
 PROVIDES_NF="$PROVIDES_NF cdrom($NFCDROM_DRIVER)"
+AM_CONDITIONAL([NFCDROM_SUPPORT], test "$NFCDROM_DRIVER" != "no")
+
 
 dnl Natfeat PCI driver
 
-NFPCISRCS=""
 if [[ "x$WANT_NFPCI" = "xyes" ]]; then
 	case "$host_os" in
 		linux*)
 			AC_DEFINE([NFPCI_SUPPORT], 1, [Define if you want to use host PCI driver])
-			NFPCISRCS="natfeat/nfpci.cpp"
 			AC_DEFINE([NFPCI_LINUX_SUPPORT], 1, [Define if you want to use Linux PCI driver])
-			NFPCISRCS="$NFPCISRCS natfeat/nfpci_linux.cpp"
 			PROVIDES_NF="$PROVIDES_NF pci"
 			;;
 		*)
@@ -1972,20 +1970,22 @@ if [[ "x$WANT_NFPCI" = "xyes" ]]; then
 			;;
 	esac
 fi
+AM_CONDITIONAL([NFPCI_SUPPORT], test "$WANT_NFPCI" = "yes")
+AM_CONDITIONAL([NFPCI_LINUX_SUPPORT], test "$WANT_NFPCI" = "yes" -a "$OS_TYPE" = "linux")
 
 dnl Natfeat USB driver
 
-USBHOSTSRCS=""
 if [[ "x$WANT_USBHOST" = "xyes" -a "x$WITH_USBHOST" = "xyes" ]]; then
 	AC_DEFINE([USBHOST_SUPPORT], 1, [Define if you want to use host USB driver])
-	USBHOSTSRCS="natfeat/usbhost.cpp"
 	LIBS="$LIBS $LIBUSB_LIBS"
 	PROVIDES_NF="$PROVIDES_NF usb"
+else
+	WANT_USBHOST=no
 fi
+AM_CONDITIONAL([USBHOST_SUPPORT], test "$WANT_USBHOST" = yes)
 
 dnl Natfeat OSMesa driver
 
-NFOSMESASRCS=""
 AH_TEMPLATE([NFOSMESA_SUPPORT], [Define if you want to use host OSMesa driver])
 if test "x$WANT_NFOSMESA" = "xyes"; then
 	have_osmesa=no
@@ -2008,11 +2008,11 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 	if test "$have_osmesa" = "yes"; then
 		CPPFLAGS="$CPPFLAGS $OSMESA_CFLAGS"
 		AC_DEFINE([NFOSMESA_SUPPORT], 1)
-		NFOSMESASRCS="natfeat/nfosmesa.cpp"
 	else
 		WANT_NFOSMESA="no"
 	fi
 fi
+AM_CONDITIONAL([NFOSMESA_SUPPORT], test "$WANT_NFOSMESA" = yes)
 
 if [[ "x$WANT_NFOSMESA" = "xyes" ]]; then
 	PROVIDES_NF="$PROVIDES_NF osmesa"
@@ -2020,65 +2020,48 @@ fi
 
 dnl Natfeat JPEG decoder
 
-NFJPEGSRCS=""
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
 	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
 		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
-		NFJPEGSRCS="natfeat/nfjpeg.cpp"
 		PROVIDES_NF="$PROVIDES_NF jpeg"
 	else
 		WANT_NFJPEG="no"
 	fi
 fi
+AM_CONDITIONAL([NFJPEG_SUPPORT], test "$WANT_NFJPEG" = yes)
+
 
 dnl Natfeat VDI driver
 
-NFVDISRCS=""
 if [[ "x$WANT_NFVDI" = "xyes" ]]; then
 	AC_DEFINE([NFVDI_SUPPORT], 1, [Define if you want to use NF VDI driver])
-	NFVDISRCS="natfeat/nfvdi.cpp natfeat/nfvdi_soft.cpp"
 	NFVDI_DRIVER="sw"
 	if [[ "x$WANT_OPENGL" = "xyes" ]]; then
-		NFVDISRCS="$NFVDISRCS natfeat/nfvdi_opengl.cpp"
 		NFVDI_DRIVER="opengl,$NFVDI_DRIVER"
 	fi
 	PROVIDES_NF="$PROVIDES_NF vdi($NFVDI_DRIVER)"
 fi
+AM_CONDITIONAL([NFVDI_SUPPORT], test "$WANT_NFVDI" = "yes")
 
 dnl Natfeat Clipboard driver
 
-NFCLIPBOARDSRCS=""
 AH_TEMPLATE([NFCLIPBRD_SUPPORT], [Define if you want to use Clipboard])
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 	case $OS_TYPE in
 	cygwin | mingw)
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-		SYSSRCS="$SYSSRCS Unix/cygwin/clipbrd_cygwin.cpp"
 		;;
 	darwin)
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
- 		SYSSRCS="$SYSSRCS Unix/darwin/clipbrd_darwin.M"
 		;;
 	beos | haiku)
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
- 		SYSSRCS="$SYSSRCS Unix/beos/clipbrd_beos.cpp"
 		LIBS="$LIBS -lbe"
-		;;
-	freebsd)
-		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-		NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-		SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
-		LIBS="$LIBS -lX11"
 		;;
 	*)
 		AC_CHECK_LIB(X11, XOpenDisplay)
 		if [[ "x$ac_cv_lib_X11_XOpenDisplay" = "xyes" ]]; then
 			AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-			NFCLIPBOARDSRCS="natfeat/nfclipbrd.cpp"
-			SYSSRCS="$SYSSRCS Unix/clipbrd_x11.cpp"
 			LIBS="$LIBS -lX11"
 		else
 		     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
@@ -2087,6 +2070,8 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		;;
 	esac
 fi
+AM_CONDITIONAL([NFCLIPBRD_SUPPORT], test "$WANT_NFCLIPBRD" = yes)
+
 
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 	PROVIDES_NF="$PROVIDES_NF clipboard"
@@ -2110,46 +2095,42 @@ fi
 
 dnl Linux/X86 hardware access for parallel port
 
-PARALLELX86SRCS=""
 if test "x$WANT_PARALLELX86" = "xyes" ; then
 	if test "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" = "xyes"; then
 		AC_DEFINE([ENABLE_PARALLELX86], 1, [Define if you want to use Linux/X86 hardware access for parallel port])
-		PARALLELX86SRCS="parallel_x86.cpp"
 	else
 		WANT_PARALLELX86="no"
 	fi
 fi
+AM_CONDITIONAL([ENABLE_PARALLELX86], test "$WANT_PARALLELX86" = yes)
 
 dnl Linux /dev/parport access for parallel port
 
-PARALLELPARPORTSRCS=""
 if test "x$WANT_PARALLELPARPORT" = "xyes" ; then
 	if test "x$OS_TYPE" = "xlinux"; then
 		AC_DEFINE([ENABLE_PARALLELPARPORT], 1, [Define if you want to use Linux /dev/parport access for parallel port])
-		PARALLELPARPORTSRCS="parallel_parport.cpp"
 	else
 		WANT_PARALLELPARPORT="no"
 	fi
 fi
+AM_CONDITIONAL([ENABLE_PARALLELPARPORT], test "$WANT_PARALLELPARPORT" = yes)
 
 dnl Linux /dev/sequencer MIDI support
 
 if test "x$OS_TYPE" = "xlinux"; then
 	AC_DEFINE([ENABLE_MIDI_SEQUENCER], 1, [Define if you want to use Linux /dev/sequencer support])
-	MIDISEQSRCS="midi_sequencer.cpp"
 fi
 
 dnl Serial port support
 
-SERIALSRCS=""
 if test "x$WANT_UNIXSERIALPORT" = "xyes" ; then
 	if test "x$ac_cv_header_termios_h" = "xyes" -a "x$ac_cv_header_sys_ioctl_h" = "xyes"; then
 		AC_DEFINE([ENABLE_SERIALUNIX], 1, [Define if you want to use /dev/ttyXXX access for serial port])
-		SERIALSRCS="serial_port.cpp"
 	else
 		WANT_UNIXSERIALPORT="no"
 	fi
 fi
+AM_CONDITIONAL([ENABLE_SERIALUNIX], test "$WANT_UNIXSERIALPORT" = yes)
 
 AC_DEFINE_UNQUOTED([PROVIDES_NATFEATS], "$PROVIDES_NF", [List of Native Features])
 
@@ -2188,50 +2169,35 @@ AH_BOTTOM([
 
 dnl Generate Makefile.
 
+ARCH="$CPU_TYPE"
+
+AC_SUBST(ARCH)
 AC_SUBST(WFLAGS)
-AC_SUBST(SET_MAKE)
 AC_SUBST(DEFINES)
-AC_SUBST(SYSSRCS)
-AC_SUBST(CPUINCLUDES)
-AC_SUBST(CPUSRCS)
-AC_SUBST(GENCPUSRCS)
-AC_SUBST(DSPSRCS)
-AC_SUBST(MIDISEQSRCS)
-AC_SUBST(NFCDROMSRCS)
-AC_SUBST(NFPCISRCS)
-AC_SUBST(USBHOSTSRCS)
-AC_SUBST(NFOSMESASRCS)
-AC_SUBST(NFJPEGSRCS)
-AC_SUBST(NFVDISRCS)
-AC_SUBST(NFCLIPBOARDSRCS)
-AC_SUBST(PARALLELX86SRCS)
-AC_SUBST(PARALLELPARPORTSRCS)
-AC_SUBST(SERIALSRCS)
-AC_SUBST(GUISDLSRCS)
-AC_SUBST(DYNGLSRCS)
 AC_SUBST(DBGSP)
-AC_SUBST(TAPIF)
 AC_SUBST(TARGET)
 AC_SUBST(CPU_TYPE)
 AC_SUBST(ARCHFLAGS)
-AC_SUBST(GENCPU_FLAGS)
 AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 AC_SUBST(BUNDLE_FRAMEWORKS)
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GENCOMP_ARCH)
-AC_SUBST(GENCOMP_SRC)
-AC_SUBST(GENCOMP_DEPS)
-AC_SUBST(COMPEMU_DEPS)
 AC_SUBST(CXX_FOR_BUILD)
 AC_SUBST(CC_FOR_BUILD)
 AC_SUBST(CFLAGS_FOR_BUILD)
 AC_SUBST(CXXFLAGS_FOR_BUILD)
 AC_SUBST(LDFLAGS_FOR_BUILD)
-AC_SUBST([WIN32_RC_OBJS])
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+src/uae_cpu/Makefile
+doc/Makefile
+])
+
+AC_OUTPUT
 
 dnl Print summary.
 echo
@@ -2285,5 +2251,4 @@ echo "Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT"
 echo "Unix /dev/ttySn for serial port......... : $WANT_UNIXSERIALPORT"
 echo "Use C++ exceptions for m68k exceptions.. : $WANT_CXX_EXCEPTIONS"
 echo
-echo "Configuration done. Now type \"make depend\" (or \"gmake depend\") then
-\"make\" (or \"gmake\")."
+echo "Configuration done. Now type \"make\" (or \"gmake\")."

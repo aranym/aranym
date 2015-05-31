@@ -18,6 +18,7 @@ License along with libiberty; see the file COPYING.LIB.  If
 not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
 
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -31,6 +32,8 @@ Boston, MA 02111-1307, USA.  */
 #ifdef TEST
 int global_total_width;
 #endif
+
+#ifndef HAVE_VASPRINTF
 
 static int
 int_vasprintf (result, format, args)
@@ -127,6 +130,10 @@ vasprintf (result, format, args)
 {
   return int_vasprintf (result, format, &args);
 }
+
+#else
+extern int _I_dont_care_that_ISO_C_forbids_an_empty_source_file_;
+#endif
 
 #ifdef TEST
 void

@@ -5,6 +5,8 @@
 
 DIE=0
 
+top_srcdir=`dirname $0`
+
 PROG="ARAnyM"
 
 # Check for GNU make
@@ -43,10 +45,18 @@ if [ -z "$*" -a -z "$NO_CONFIGURE" ]; then
         echo "to pass any to it, please specify them on the $0 command line."
 fi
 
+(
+cd "$top_srcdir" || exit 1
+
+rm -rf autom4te.cache
+
 ACLOCAL_FLAGS="-I m4"
 aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
     aclocal $aclocalinclude; \
+ echo "done.") && \
+(echo $_echo_n " + Running automake: $_echo_c"; \
+    automake --add-missing --copy; \
  echo "done.") && \
 (echo $_echo_n " + Running autoheader: $_echo_c"; \
     autoheader; \
@@ -55,15 +65,14 @@ aclocalinclude="$ACLOCAL_FLAGS"; \
     autoconf; \
  echo "done.") 
 
+rm -rf autom4te.cache
+
+) || exit 1
+
+
 if [ x"$NO_CONFIGURE" = "x" ]; then
     echo " + Running 'configure $@':"
-    ./configure "$@" || exit 1
-       echo
-       echo $_echo_n "Creating dependencies... $_echo_c" ;
-       $MAKE depend >/dev/null
-else
-       echo "Don't forget to 'make depend' after configure..."
-       echo "...or gnomes will steal your hat!"
+    "$top_srcdir/configure" "$@" || exit 1
 fi
 
 echo all done
