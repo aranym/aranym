@@ -36,6 +36,7 @@
 #include "version.h"
 #include "parameters.h"	/* bx_options */
 #include "main.h"	/* QuitEmulator */
+#include "input.h"
 
 #ifdef NFVDI_SUPPORT
 # include "nf_objs.h"
@@ -449,8 +450,6 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 
 #endif
 
-	getARADATA()->setAbase();
-	
 	if (screen==NULL) {
 		panicbug("Can not set video mode");
 		QuitEmulator();
@@ -708,11 +707,11 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 {
 	SDL_bool current = hiddenMouse;
 	if (hide) {
-		SDL_ShowCursor(SDL_DISABLE);
+		SDL_SetCursor(empty_cursor);
 		hiddenMouse = SDL_TRUE;
 	}
 	else if (!hide) {
-		SDL_ShowCursor(SDL_ENABLE);
+		SDL_SetCursor(aranym_cursor);
 		hiddenMouse = SDL_FALSE;
 	}
 	return current;
@@ -782,7 +781,8 @@ void HostScreen::releaseTheMouse()
 	D(bug("Releasing the mouse grab"));
 	grabMouse(SDL_FALSE);	// release mouse
 	hideMouse(SDL_FALSE);	// show it
-	if (getARADATA()->isAtariMouseDriver()) {
+	ARADATA *ara = getARADATA();
+	if (ara && ara->isAtariMouseDriver()) {
 		RememberAtariMouseCursorPosition();
 		WarpMouse(atari_mouse_xpos, atari_mouse_ypos);
 	}
@@ -792,7 +792,8 @@ void HostScreen::releaseTheMouse()
 // remember the current Atari mouse cursor position
 void HostScreen::RememberAtariMouseCursorPosition()
 {
-	if (getARADATA()->isAtariMouseDriver()) {
+	ARADATA *ara = getARADATA();
+	if (ara && ara->isAtariMouseDriver()) {
 		atari_mouse_xpos = getARADATA()->getAtariMouseX();
 		atari_mouse_ypos = getARADATA()->getAtariMouseY();
 		D(bug("Atari mouse cursor pointer left at [%d, %d]", atari_mouse_xpos, atari_mouse_ypos));
@@ -804,7 +805,7 @@ void HostScreen::RestoreAtariMouseCursorPosition()
 {
 	int xpos, ypos;
 	SDL_GetMouseState(&xpos, &ypos);
-	if (atari_mouse_xpos >=0 && atari_mouse_ypos >= 0) {
+	if (atari_mouse_xpos >= 0 && atari_mouse_ypos >= 0) {
 		D(bug("Restoring mouse cursor pointer to [%d, %d]", xpos, ypos));
 //		getARADATA()->setAtariMousePosition(xpos, ypos);
 		int delta_x = xpos - atari_mouse_xpos;

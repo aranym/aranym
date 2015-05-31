@@ -30,6 +30,9 @@ class EmutosBootOs : public BootOs {
 	public:
 		EmutosBootOs(void) throw (AranymException);
 		virtual const char *type() { return "EMUTOS"; };
+	
+	private:
+		void emutos_patch(bool cold) throw (AranymException);
 };
 
 #endif /* BOOTOSEMUTOS_H */

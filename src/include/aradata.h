@@ -29,7 +29,6 @@ class ARADATA : public BASE_IO {
 private:
 	bool mouseDriver;
 	uae_u32 abase;
-	uae_u32 linea_trap;
 	int mouse_x, mouse_y;
 
 	void reset();
@@ -42,6 +41,6 @@ public:
 	int getAtariMouseX();
 	int getAtariMouseY();
 	void setAtariMousePosition(int x, int y) { mouse_x = x; mouse_y = y; }
-	void setAbase(void);
+	void setAbase(memptr new_abase);
 };
 #endif /* _ARADATA */

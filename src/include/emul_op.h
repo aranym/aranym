@@ -41,6 +41,8 @@ enum {
 */
 	M68K_EMUL_BREAK = 0x7101,		// 0x7101 - breakpoint
 	M68K_EMUL_RESET,
+ 	M68K_EMUL_EXIT,
+	M68K_EMUL_INIT,
 	M68K_EMUL_OP_PUT_SCRAP = 0x712a,	// 0x712a - used in TOS ROM patch
 	M68K_EMUL_OP_CPUDEBUG_ON = 0x7139,		// 0x7139 - cpu_debugging on
 	M68K_EMUL_OP_CPUDEBUG_OFF,		// 0x713a - cpu_debugging off

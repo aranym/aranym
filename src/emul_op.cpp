@@ -76,6 +76,21 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			Reset680x0();		// reset CPU so it fetches correct SP && PC
 			break;
 
+		case M68K_EMUL_INIT:
+			{
+				ARADATA *ara = getARADATA();
+				if (ara)
+					ara->setAbase(r->a[0]);
+				if (ReadInt16(m68k_getpc() + 2) == 0x4cdf) // patch in EmuTOS
+				{
+					r->d[0] = 0;
+				} else
+				{
+					r->a[0] = ReadInt32(0x47a); // perform the move.l (0x47a),a0 that we patched out in TOS 4.04
+				}
+			}
+			break;
+
 		// VT52 Xconout
 		case M68K_EMUL_OP_PUT_SCRAP:
 			{

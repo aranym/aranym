@@ -22,6 +22,7 @@
 #include "cpu_emulation.h"
 #include "bootos_emutos.h"
 #include "aranym_exception.h"
+#include "emul_op.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -30,18 +31,75 @@
 
 EmutosBootOs::EmutosBootOs(void) throw (AranymException)
 {
+	emutos_patch(true);
+}
+
+/*--- Private functions ---*/
+
+void EmutosBootOs::emutos_patch(bool cold) throw (AranymException)
+{
 	if (strlen(bx_options.emutos_path) == 0)
 		throw AranymException("Path to EmuTOS ROM image file undefined");
 
 	load(bx_options.emutos_path);
 
-	init(true);
+	init(cold);
 
 	infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
 		ROMBaseHost[0x1a], ROMBaseHost[0x1b],
 		ROMBaseHost[0x18], ROMBaseHost[0x19],
 		bx_options.emutos_path
 	);
+	
+	int found = 0;
+	for (int ptr = 0; ptr < 0x10000; ptr += 2)
+	{
+		if (ROMBaseHost[ptr +  0] == 0x3f &&
+			ROMBaseHost[ptr +  1] == 0x3c &&
+			ROMBaseHost[ptr +  2] == 0xff &&
+			ROMBaseHost[ptr +  3] == 0xff &&
+			ROMBaseHost[ptr +  4] == 0x4e &&
+			ROMBaseHost[ptr +  5] == 0xb9 &&
+			ROMBaseHost[ptr +  6] == 0x00 &&
+			ROMBaseHost[ptr +  7] == 0xe0 &&
+			ROMBaseHost[ptr + 10] == 0x54 &&
+			ROMBaseHost[ptr + 11] == 0x8f &&
+			((ROMBaseHost[ptr + 12] == 0x08 &&
+			  ROMBaseHost[ptr + 13] == 0x00 &&
+			  ROMBaseHost[ptr + 14] == 0x00 &&
+			  ROMBaseHost[ptr + 15] == 0x03) ||
+			 (ROMBaseHost[ptr + 12] == 0x44 &&
+			  ROMBaseHost[ptr + 13] == 0xc0 &&
+			  ROMBaseHost[ptr + 14] == 0x6b &&
+			  ROMBaseHost[ptr + 15] == 0x14)))
+		{
+			D(bug("blkdev_hdv_boot found at %08x", ptr));
+			ROMBaseHost[ptr +  0] = 0x48; // movem.l d1-d2/a0-a2,-(a7)
+			ROMBaseHost[ptr +  1] = 0xe7;
+			ROMBaseHost[ptr +  2] = 0x60;
+			ROMBaseHost[ptr +  3] = 0xe0;
+			ROMBaseHost[ptr +  4] = 0xa0; // Linea_init
+			ROMBaseHost[ptr +  5] = 0x00;
+			ROMBaseHost[ptr +  6] = M68K_EMUL_INIT >> 8;
+			ROMBaseHost[ptr +  7] = M68K_EMUL_INIT & 0xff;
+			ROMBaseHost[ptr +  8] = 0x4c; // movem.l (a7)+,d1-d2/a0-a2
+			ROMBaseHost[ptr +  9] = 0xdf;
+			ROMBaseHost[ptr + 10] = 0x07;
+			ROMBaseHost[ptr + 11] = 0x06;
+			ROMBaseHost[ptr + 12] = 0x70; // moveq #0,d0
+			ROMBaseHost[ptr + 13] = 0x00;
+			ROMBaseHost[ptr + 14] = 0x4e; // nop
+			ROMBaseHost[ptr + 15] = 0x71;
+			found++;
+		}
+	}
+	if (found == 0)
+	{
+		bug("EmutosBootOs: blkdev_hdv_boot not found!");
+	} else if (found > 1)
+	{
+		bug("EmutosBootOs: blkdev_hdv_boot found %d times!", found);
+	}
 }
 /* vim:ts=4:sw=4
  */

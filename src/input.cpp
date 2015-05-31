@@ -100,7 +100,8 @@ SDL_Joystick *sdl_joysticks[4]={
 
 static SDL_bool grabbedMouse = SDL_FALSE;
 static SDL_bool hiddenMouse = SDL_FALSE;
-static SDL_Cursor *aranym_cursor = NULL;
+SDL_Cursor *aranym_cursor = NULL;
+SDL_Cursor *empty_cursor = NULL;
 
 static const char *arrow[] = {
   /* width height num_colors chars_per_pixel */
@@ -179,6 +180,18 @@ static SDL_Cursor *init_system_cursor(const char *image[])
   return SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y);
 }
 
+
+static SDL_Cursor *init_empty_cursor()
+{
+	Uint8 data[4*16];
+	Uint8 mask[4*16];
+	
+	memset(data, 0, sizeof(data));
+	memset(mask, 0, sizeof(mask));
+	return SDL_CreateCursor(data, mask, 16, 16, 0, 0);
+}
+
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 static int SDLCALL event_filter(void * /* userdata */, SDL_Event *event)
 #else
@@ -194,6 +207,7 @@ static int SDLCALL event_filter(const SDL_Event *event)
 void InputInit()
 {
 	aranym_cursor = init_system_cursor(arrow);
+	empty_cursor = init_empty_cursor();
 	SDL_SetCursor(aranym_cursor);
 	if (bx_options.startup.grabMouseAllowed) {
 		// warp mouse to center of Atari 320x200 screen and grab it
@@ -246,6 +260,9 @@ void InputExit()
 	}
 
 	SDL_FreeCursor(aranym_cursor);
+	aranym_cursor = NULL;
+	SDL_FreeCursor(empty_cursor);
+	empty_cursor = NULL;
 }
 
 /*********************************************************************
@@ -1046,7 +1063,6 @@ static void process_mouse_event(const SDL_Event &event)
 			(xrel >= 0 && eve.x >= video->getWidth() - 1) ||
 			(yrel >= 0 && eve.y >= video->getHeight() - 1))
 			mouseOut = true;
-
 	}
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	else if (event.type == SDL_MOUSEWHEEL) {
@@ -1103,8 +1119,8 @@ static void process_mouse_event(const SDL_Event &event)
 		int hostw = video->getWidth();
 		int hosth = video->getHeight();
 
-		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= (int32) hostw - 1) ||
-			(yrel > 0 && getARADATA()->getAtariMouseY() >= (int32) hosth - 1))
+		if ((xrel > 0 && getARADATA()->getAtariMouseX() >= hostw - 1) ||
+			(yrel > 0 && getARADATA()->getAtariMouseY() >= hosth - 1))
 			mouseOut = true;
 	}
 }
@@ -1266,7 +1282,7 @@ static void process_joystick_event(const SDL_Event &event)
 void check_event()
 {
 	HostScreen *video;
-
+	
 	if (host == NULL || (video = host->video) == NULL)
 		return;
 	

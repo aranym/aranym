@@ -23,4 +23,7 @@ void close_GUI(void);
 
 extern SDL_Joystick *sdl_joystick;
 
+extern SDL_Cursor *aranym_cursor;
+extern SDL_Cursor *empty_cursor;
+
 #endif /* _INPUT_H */
