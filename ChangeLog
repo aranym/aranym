@@ -1,3 +1,7 @@
+2015/06/01 - Thorsten
+configure.ac: Fix setting srcdir to "." on darwin
+
+
 2015/05/31 - Thorsten
 Switch to autmake
 
