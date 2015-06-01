@@ -131,19 +131,21 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 		currentPath = [[currentPath stringByExpandingTildeInPath] stringByStandardizingPath];
 		[fileManager fileExistsAtPath: currentPath isDirectory: &isDirectory];
 		[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN encoding: NSUTF8StringEncoding];
-		printf("--> %s %d\n", gAranymFilesDirectory, isDirectory);
 		
 		if (isDirectory)
 			//  it's a valid and existing directory
 			break;
 	}
 	
-	//	 if Preferences folder couldn't be found, take first choise
+	//	 if Preferences folder couldn't be found, take last choice
 	if (currentPath == nil)
-		currentPath = [[[searchPaths objectAtIndex: 0] stringByExpandingTildeInPath] stringByStandardizingPath];
+		currentPath = [[[searchPaths lastObject] stringByExpandingTildeInPath] stringByStandardizingPath];
 
 	//	 store this path, convert it to a C string and copy into buffer
-	[currentPath getCString: gAranymFilesDirectory maxLength: MAXPATHLEN encoding: NSUTF8StringEncoding];
+	[currentPath getFileSystemRepresentation: gAranymFilesDirectory maxLength: MAXPATHLEN];
+	char *real = realpath(gAranymFilesDirectory, NULL);
+	strncpy(gAranymFilesDirectory, real, MAXPATHLEN);
+	free(real);
 }
 
 
@@ -183,9 +185,7 @@ void guialert(const char *fmt, ...)
 	va_start(args, fmt);
 	vasprintf(&buf, fmt, args);
 	va_end(args);
-	NSString *str = [[NSString alloc] initWithUTF8String: buf];
-	NSRunAlertPanel (@"Error:", str, @"Ok", nil, nil);
-	[str release];
+	NSRunAlertPanel (@"Error:", @"%s", @"Ok", nil, nil, buf);
 	free(buf);
 }
 

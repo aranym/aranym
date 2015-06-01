@@ -2712,6 +2712,11 @@ int main ()
     	abort();
 
     generate_includes (stdout);
+    fprintf(stdout, "#ifdef HAVE_CFLAG_NO_REDZONE\n");
+    fprintf(stdout, "#ifndef NOFLAGS\n");
+    fprintf(stdout, "#pragma GCC option \"-mno-red-zone\"\n");
+    fprintf(stdout, "#endif\n");
+    fprintf(stdout, "#endif\n");
     generate_includes (stblfile);
     generate_includes (functblfile);
     generate_func ();

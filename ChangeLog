@@ -1,9 +1,14 @@
 2015/06/01 - Thorsten
+MacAranym: Reorder default config file location back, but
+use last entry if none is found
+
+
+2015/06/01 - Thorsten
 configure.ac: Fix setting srcdir to "." on darwin
 
 
 2015/05/31 - Thorsten
-Switch to autmake
+Switch to automake
 
 
 2015/05/30 - Thorsten
