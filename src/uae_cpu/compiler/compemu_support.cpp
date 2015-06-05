@@ -3641,13 +3641,13 @@ void build_comp(void)
 	
 	for (i = 0; tbl[i].opcode < 65536; i++) {
 		int cflow = table68k[tbl[i].opcode].cflow;
-		if (follow_const_jumps && (tbl[i].specific & 16))
+		if (follow_const_jumps && (tbl[i].specific & COMP_OPCODE_ISCJUMP))
 			cflow = fl_const_jump;
 		else
 			cflow &= ~fl_const_jump;
 		prop[cft_map(tbl[i].opcode)].cflow = cflow;
 
-		int uses_fpu = tbl[i].specific & 32;
+		bool uses_fpu = (tbl[i].specific & COMP_OPCODE_USES_FPU) != 0;
 		if (uses_fpu && avoid_fpu)
 			compfunctbl[cft_map(tbl[i].opcode)] = NULL;
 		else
@@ -3655,7 +3655,7 @@ void build_comp(void)
 	}
 
     for (i = 0; nftbl[i].opcode < 65536; i++) {
-		int uses_fpu = tbl[i].specific & 32;
+		bool uses_fpu = (tbl[i].specific & COMP_OPCODE_USES_FPU) != 0;
 		if (uses_fpu && avoid_fpu)
 			nfcompfunctbl[cft_map(nftbl[i].opcode)] = NULL;
 		else
@@ -4180,6 +4180,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		    if (i < blocklen - 1) {
 			uae_s8* branchadd;
 			
+			/* if (SPCFLAGS_TEST(SPCFLAG_STOP)) popall_do_nothing() */
 			compemu_raw_mov_l_rm(0,(uintptr)specflags);
 			compemu_raw_test_l_rr(0,0);
 #if defined(USE_DATA_BUFFER)

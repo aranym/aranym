@@ -1,3 +1,7 @@
+2015/06/05 - Thorsten
+gencomp.c: move remaining #ifdefs to generated source
+
+
 2015/06/01 - Thorsten
 MacAranym: Reorder default config file location back, but
 use last entry if none is found

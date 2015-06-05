@@ -1119,7 +1119,7 @@ genflags (flagtypes type, wordsizes size, char *value, char *src, char *dst)
 }
 
 static int  /* returns zero for success, non-zero for failure */
-gen_opcode (unsigned long int opcode)
+gen_opcode (unsigned int opcode)
 {
     struct instr *curi = table68k + opcode;
     char* ssize=NULL;
@@ -2582,26 +2582,26 @@ gen_opcode (unsigned long int opcode)
 	break;
      case i_FPP:
 	uses_fpu;
-#ifdef USE_JIT_FPU
 	mayfail;
+	comprintf("#ifdef USE_JIT_FPU\n");
 	comprintf("\tuae_u16 extra=%s;\n",gen_nextiword());
 	swap_opcode();
 	comprintf("\tcomp_fpp_opp(opcode,extra);\n");
-#else
-	failure;
-#endif
+	comprintf("#else\n");
+	comprintf("\tfailure = 1;\n");
+	comprintf("#endif\n");
 	break;
      case i_FBcc:
 	uses_fpu;
 	isjump;
-#ifdef USE_JIT_FPU
 	uses_cmov;
 	mayfail;
+	comprintf("#ifdef USE_JIT_FPU\n");
 	swap_opcode();
 	comprintf("\tcomp_fbcc_opp(opcode);\n");
-#else
-	failure;
-#endif
+	comprintf("#else\n");
+	comprintf("\tfailure = 1;\n");
+	comprintf("#endif\n");
 	break;
      case i_FDBcc:
 	uses_fpu;
@@ -2610,15 +2610,15 @@ gen_opcode (unsigned long int opcode)
 	break;
      case i_FScc:
 	uses_fpu;
-#ifdef USE_JIT_FPU
 	mayfail;
 	uses_cmov;
+	comprintf("#ifdef USE_JIT_FPU\n");
 	comprintf("\tuae_u16 extra=%s;\n",gen_nextiword());
 	swap_opcode();
 	comprintf("\tcomp_fscc_opp(opcode,extra);\n");
-#else
-	failure;
-#endif
+	comprintf("#else\n");
+	comprintf("\tfailure = 1;\n");
+	comprintf("#endif\n");
 	break;
      case i_FTRAPcc:
 	uses_fpu;
@@ -2702,7 +2702,7 @@ generate_one_opcode (int rp, int noflags)
 {
     int i;
     uae_u16 smsk, dmsk;
-    long int opcode = opcode_map[rp];
+    unsigned int opcode = opcode_map[rp];
     int aborted=0;
     int have_srcreg=0;
     int have_dstreg=0;
@@ -2870,31 +2870,30 @@ generate_one_opcode (int rp, int noflags)
 
     aborted=gen_opcode (opcode);
     {
-	int flags=0;
-	if (global_isjump)	flags|=1;
-	if (long_opcode)	flags|=2;
-	if (global_cmov)	flags|=4;
-	if (global_isaddx)	flags|=8;
-	if (global_iscjump)	flags|=16;
-	if (global_fpu)		flags|=32;
+	char flags[64 * 6];
+	*flags = '\0';
+	if (global_isjump)	strcat(flags, "COMP_OPCODE_ISJUMP|");
+	if (long_opcode)	strcat(flags, "COMP_OPCODE_LONG_OPCODE|");
+	if (global_cmov)	strcat(flags, "COMP_OPCODE_CMOV|");
+	if (global_isaddx)	strcat(flags, "COMP_OPCODE_ISADDX|");
+	if (global_iscjump)	strcat(flags, "COMP_OPCODE_ISCJUMP|");
+	if (global_fpu)		strcat(flags, "COMP_OPCODE_USES_FPU|");
+	if (*flags)
+		flags[strlen(flags) - 1] = '\0';
+	else
+		strcpy(flags, "0");
 	
 	comprintf ("}\n");
     
 	if (aborted) {
-	    fprintf (stblfile, "{ NULL, 0x%08x, %ld }, /* %s */\n", flags, opcode, lookuptab[i].name);
+	    fprintf (stblfile, "{ NULL, %s, %u }, /* %s */\n", flags, opcode, lookuptab[i].name);
 	    com_discard();
 	}
 	else {
-	    if (noflags) {
-		fprintf (stblfile, "{ op_%lx_%d_comp_nf, 0x%08x, %ld }, /* %s */\n", opcode, postfix, flags, opcode, lookuptab[i].name);
-		fprintf (headerfile, "extern compop_func op_%lx_%d_comp_nf;\n", opcode, postfix);
-		printf ("void REGPARAM2 op_%lx_%d_comp_nf(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
-	    }
-	    else {
-		fprintf (stblfile, "{ op_%lx_%d_comp_ff, 0x%08x, %ld }, /* %s */\n", opcode, postfix, flags, opcode, lookuptab[i].name);
-		fprintf (headerfile, "extern compop_func op_%lx_%d_comp_ff;\n", opcode, postfix);
-		printf ("void REGPARAM2 op_%lx_%d_comp_ff(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, lookuptab[i].name);
-	    }
+		const char *tbl = noflags ? "nf" : "ff";
+		fprintf (stblfile, "{ op_%x_%d_comp_%s, %s, %u }, /* %s */\n", opcode, postfix, tbl, flags, opcode, lookuptab[i].name);
+		fprintf (headerfile, "extern compop_func op_%x_%d_comp_%s;\n", opcode, postfix, tbl);
+		printf ("void REGPARAM2 op_%x_%d_comp_%s(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, tbl, lookuptab[i].name);
 	    com_flush();
 	}
     }
