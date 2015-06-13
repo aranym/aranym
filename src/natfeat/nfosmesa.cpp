@@ -140,6 +140,7 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 #define getStackedParameter64(n) SDL_SwapBE64(*((Uint64 *)&ctx_ptr[n]))
 #define getStackedFloat(n) Atari2HostFloat(getStackedParameter(n))
 #define getStackedDouble(n) Atari2HostDouble(getStackedParameter(n), getStackedParameter(n + 1))
+#define getStackedPointer(n) (ctx_ptr[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
 
 	if (fncode != NFOSMESA_OSMESAPOSTPROCESS)
 	{

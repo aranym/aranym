@@ -1138,7 +1138,7 @@ sub gen_dispatch() {
 				my $name = $params->[$argc]->{name};
 				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
 				if ($pointer ne "" || defined($pointer_types{$type})) {
-					print "(${type} ${pointer})Atari2HostAddr(getStackedParameter($paramnum))";
+					print "(${type} ${pointer})getStackedPointer($paramnum)";
 					++$paramnum;
 				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
 				{

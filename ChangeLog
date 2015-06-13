@@ -1,4 +1,8 @@
 2015/06/13 - Thorsten
+nfosmesa: convert Atari NULL to Host NULL when fetching pointer arguments
+
+
+2015/06/13 - Thorsten
 nfosmesa: support glGet() for enums that return more than 1 value
 
 

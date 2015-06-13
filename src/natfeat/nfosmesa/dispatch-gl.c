@@ -37,7 +37,7 @@
 		case NFOSMESA_GLACTIVEVARYINGNV:
 			nfglActiveVaryingNV(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLADDSWAPHINTRECTWIN:
 			nfglAddSwapHintRectWIN(
@@ -99,20 +99,20 @@
 		case NFOSMESA_GLAREPROGRAMSRESIDENTNV:
 			ret = nfglAreProgramsResidentNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *programs */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *residences */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *programs */,
+				(GLboolean *)getStackedPointer(2) /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENT:
 			ret = nfglAreTexturesResident(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *residences */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */,
+				(GLboolean *)getStackedPointer(2) /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENTEXT:
 			ret = nfglAreTexturesResidentEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *residences */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */,
+				(GLboolean *)getStackedPointer(2) /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARRAYELEMENT:
 			nfglArrayElement(
@@ -217,13 +217,13 @@
 			nfglBindAttribLocation(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATIONARB:
 			nfglBindAttribLocationARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLcharARB *)Atari2HostAddr(getStackedParameter(2)) /* const GLcharARB *name */);
+				(const GLcharARB *)getStackedPointer(2) /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLBINDBUFFER:
 			nfglBindBuffer(
@@ -296,35 +296,35 @@
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint first */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *buffers */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLBINDBUFFERSRANGE:
 			nfglBindBuffersRange(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint first */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *buffers */,
-				(const GLintptr *)Atari2HostAddr(getStackedParameter(4)) /* const GLintptr *offsets */,
-				(const GLsizeiptr *)Atari2HostAddr(getStackedParameter(5)) /* const GLsizeiptr *sizes */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *buffers */,
+				(const GLintptr *)getStackedPointer(4) /* const GLintptr *offsets */,
+				(const GLsizeiptr *)getStackedPointer(5) /* const GLsizeiptr *sizes */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATION:
 			nfglBindFragDataLocation(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint color */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONEXT:
 			nfglBindFragDataLocationEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint color */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONINDEXED:
 			nfglBindFragDataLocationIndexed(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint colorNumber */,
 				getStackedParameter(2) /* GLuint index */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(3)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(3) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGMENTSHADERATI:
 			nfglBindFragmentShaderATI(
@@ -364,7 +364,7 @@
 			nfglBindImageTextures(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *textures */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLBINDLIGHTPARAMETEREXT:
 			ret = nfglBindLightParameterEXT(
@@ -419,7 +419,7 @@
 			nfglBindSamplers(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *samplers */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *samplers */);
 			break;
 		case NFOSMESA_GLBINDTEXGENPARAMETEREXT:
 			ret = nfglBindTexGenParameterEXT(
@@ -446,7 +446,7 @@
 			nfglBindTextures(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *textures */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLBINDTRANSFORMFEEDBACK:
 			nfglBindTransformFeedback(
@@ -477,9 +477,9 @@
 			nfglBindVertexBuffers(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *buffers */,
-				(const GLintptr *)Atari2HostAddr(getStackedParameter(3)) /* const GLintptr *offsets */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* const GLsizei *strides */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *buffers */,
+				(const GLintptr *)getStackedPointer(3) /* const GLintptr *offsets */,
+				(const GLsizei *)getStackedPointer(4) /* const GLsizei *strides */);
 			break;
 		case NFOSMESA_GLBINDVERTEXSHADEREXT:
 			nfglBindVertexShaderEXT(
@@ -508,7 +508,7 @@
 			break;
 		case NFOSMESA_GLBINORMAL3BVEXT:
 			nfglBinormal3bvEXT(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3DEXT:
 			nfglBinormal3dEXT(
@@ -518,7 +518,7 @@
 			break;
 		case NFOSMESA_GLBINORMAL3DVEXT:
 			nfglBinormal3dvEXT(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3FEXT:
 			nfglBinormal3fEXT(
@@ -528,7 +528,7 @@
 			break;
 		case NFOSMESA_GLBINORMAL3FVEXT:
 			nfglBinormal3fvEXT(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3IEXT:
 			nfglBinormal3iEXT(
@@ -538,7 +538,7 @@
 			break;
 		case NFOSMESA_GLBINORMAL3IVEXT:
 			nfglBinormal3ivEXT(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3SEXT:
 			nfglBinormal3sEXT(
@@ -548,13 +548,13 @@
 			break;
 		case NFOSMESA_GLBINORMAL3SVEXT:
 			nfglBinormal3svEXT(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLBINORMALPOINTEREXT:
 			nfglBinormalPointerEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLBITMAP:
 			nfglBitmap(
@@ -564,7 +564,7 @@
 				getStackedFloat(3) /* GLfloat yorig */,
 				getStackedFloat(4) /* GLfloat xmove */,
 				getStackedFloat(5) /* GLfloat ymove */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(6)) /* const GLubyte *bitmap */);
+				(const GLubyte *)getStackedPointer(6) /* const GLubyte *bitmap */);
 			break;
 		case NFOSMESA_GLBITMAPXOES:
 			nfglBitmapxOES(
@@ -574,7 +574,7 @@
 				getStackedParameter(3) /* GLfixed yorig */,
 				getStackedParameter(4) /* GLfixed xmove */,
 				getStackedParameter(5) /* GLfixed ymove */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(6)) /* const GLubyte *bitmap */);
+				(const GLubyte *)getStackedPointer(6) /* const GLubyte *bitmap */);
 			break;
 		case NFOSMESA_GLBLENDBARRIERNV:
 			nfglBlendBarrierNV();
@@ -766,14 +766,14 @@
 			nfglBufferData(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *data */,
+				(const void *)getStackedPointer(2) /* const void *data */,
 				getStackedParameter(3) /* GLenum usage */);
 			break;
 		case NFOSMESA_GLBUFFERDATAARB:
 			nfglBufferDataARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizeiptrARB size */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *data */,
+				(const void *)getStackedPointer(2) /* const void *data */,
 				getStackedParameter(3) /* GLenum usage */);
 			break;
 		case NFOSMESA_GLBUFFERPARAMETERIAPPLE:
@@ -786,7 +786,7 @@
 			nfglBufferStorage(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *data */,
+				(const void *)getStackedPointer(2) /* const void *data */,
 				getStackedParameter(3) /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATA:
@@ -794,14 +794,14 @@
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *data */);
+				(const void *)getStackedPointer(3) /* const void *data */);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATAARB:
 			nfglBufferSubDataARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLintptrARB offset */,
 				getStackedParameter(2) /* GLsizeiptrARB size */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *data */);
+				(const void *)getStackedPointer(3) /* const void *data */);
 			break;
 		case NFOSMESA_GLCALLLIST:
 			nfglCallList(
@@ -811,7 +811,7 @@
 			nfglCallLists(
 				getStackedParameter(0) /* GLsizei n */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* const GLvoid *lists */);
+				(const GLvoid *)getStackedPointer(2) /* const GLvoid *lists */);
 			break;
 		case NFOSMESA_GLCHECKFRAMEBUFFERSTATUS:
 			ret = nfglCheckFramebufferStatus(
@@ -860,7 +860,7 @@
 				getStackedParameter(1) /* GLenum internalformat */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *data */);
+				(const void *)getStackedPointer(4) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERSUBDATA:
 			nfglClearBufferSubData(
@@ -870,7 +870,7 @@
 				getStackedParameter(3) /* GLsizeiptr size */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERFI:
 			nfglClearBufferfi(
@@ -883,19 +883,19 @@
 			nfglClearBufferfv(
 				getStackedParameter(0) /* GLenum buffer */,
 				getStackedParameter(1) /* GLint drawbuffer */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERIV:
 			nfglClearBufferiv(
 				getStackedParameter(0) /* GLenum buffer */,
 				getStackedParameter(1) /* GLint drawbuffer */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERUIV:
 			nfglClearBufferuiv(
 				getStackedParameter(0) /* GLenum buffer */,
 				getStackedParameter(1) /* GLint drawbuffer */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLCLEARCOLOR:
 			nfglClearColor(
@@ -961,7 +961,7 @@
 				getStackedParameter(1) /* GLenum internalformat */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *data */);
+				(const void *)getStackedPointer(4) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERSUBDATAEXT:
 			nfglClearNamedBufferSubDataEXT(
@@ -971,7 +971,7 @@
 				getStackedParameter(3) /* GLsizeiptr size */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARSTENCIL:
 			nfglClearStencil(
@@ -983,7 +983,7 @@
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *data */);
+				(const void *)getStackedPointer(4) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARTEXSUBIMAGE:
 			nfglClearTexSubImage(
@@ -997,7 +997,7 @@
 				getStackedParameter(7) /* GLsizei depth */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *data */);
+				(const void *)getStackedPointer(10) /* const void *data */);
 			break;
 		case NFOSMESA_GLCLIENTACTIVETEXTURE:
 			nfglClientActiveTexture(
@@ -1017,24 +1017,24 @@
 			break;
 		case NFOSMESA_GLCLIENTWAITSYNC:
 			ret = nfglClientWaitSync(
-				(GLsync )Atari2HostAddr(getStackedParameter(0)) /* GLsync sync */,
+				(GLsync )getStackedPointer(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLbitfield flags */,
 				getStackedParameter64(2) /* GLuint64 timeout */);
 			break;
 		case NFOSMESA_GLCLIPPLANE:
 			nfglClipPlane(
 				getStackedParameter(0) /* GLenum plane */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *equation */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *equation */);
 			break;
 		case NFOSMESA_GLCLIPPLANEFOES:
 			nfglClipPlanefOES(
 				getStackedParameter(0) /* GLenum plane */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *equation */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *equation */);
 			break;
 		case NFOSMESA_GLCLIPPLANEXOES:
 			nfglClipPlanexOES(
 				getStackedParameter(0) /* GLenum plane */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *equation */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *equation */);
 			break;
 		case NFOSMESA_GLCOLOR3B:
 			nfglColor3b(
@@ -1044,7 +1044,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3BV:
 			nfglColor3bv(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR3D:
 			nfglColor3d(
@@ -1054,7 +1054,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3DV:
 			nfglColor3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLCOLOR3F:
 			nfglColor3f(
@@ -1073,12 +1073,12 @@
 			break;
 		case NFOSMESA_GLCOLOR3FVERTEX3FVSUN:
 			nfglColor3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR3FV:
 			nfglColor3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR3HNV:
 			nfglColor3hNV(
@@ -1088,7 +1088,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3HVNV:
 			nfglColor3hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLCOLOR3I:
 			nfglColor3i(
@@ -1098,7 +1098,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3IV:
 			nfglColor3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLCOLOR3S:
 			nfglColor3s(
@@ -1108,7 +1108,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3SV:
 			nfglColor3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLCOLOR3UB:
 			nfglColor3ub(
@@ -1118,7 +1118,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3UBV:
 			nfglColor3ubv(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR3UI:
 			nfglColor3ui(
@@ -1128,7 +1128,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3UIV:
 			nfglColor3uiv(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLCOLOR3US:
 			nfglColor3us(
@@ -1138,7 +1138,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3USV:
 			nfglColor3usv(
-				(const GLushort *)Atari2HostAddr(getStackedParameter(0)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(0) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLCOLOR3XOES:
 			nfglColor3xOES(
@@ -1148,7 +1148,7 @@
 			break;
 		case NFOSMESA_GLCOLOR3XVOES:
 			nfglColor3xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *components */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *components */);
 			break;
 		case NFOSMESA_GLCOLOR4B:
 			nfglColor4b(
@@ -1159,7 +1159,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4BV:
 			nfglColor4bv(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR4D:
 			nfglColor4d(
@@ -1170,7 +1170,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4DV:
 			nfglColor4dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLCOLOR4F:
 			nfglColor4f(
@@ -1194,13 +1194,13 @@
 			break;
 		case NFOSMESA_GLCOLOR4FNORMAL3FVERTEX3FVSUN:
 			nfglColor4fNormal3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4FV:
 			nfglColor4fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4HNV:
 			nfglColor4hNV(
@@ -1211,7 +1211,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4HVNV:
 			nfglColor4hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLCOLOR4I:
 			nfglColor4i(
@@ -1222,7 +1222,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4IV:
 			nfglColor4iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLCOLOR4S:
 			nfglColor4s(
@@ -1233,7 +1233,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4SV:
 			nfglColor4sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UB:
 			nfglColor4ub(
@@ -1253,8 +1253,8 @@
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX2FVSUN:
 			nfglColor4ubVertex2fvSUN(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *c */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FSUN:
 			nfglColor4ubVertex3fSUN(
@@ -1268,12 +1268,12 @@
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FVSUN:
 			nfglColor4ubVertex3fvSUN(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *c */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UBV:
 			nfglColor4ubv(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UI:
 			nfglColor4ui(
@@ -1284,7 +1284,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4UIV:
 			nfglColor4uiv(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLCOLOR4US:
 			nfglColor4us(
@@ -1295,7 +1295,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4USV:
 			nfglColor4usv(
-				(const GLushort *)Atari2HostAddr(getStackedParameter(0)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(0) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLCOLOR4XOES:
 			nfglColor4xOES(
@@ -1306,7 +1306,7 @@
 			break;
 		case NFOSMESA_GLCOLOR4XVOES:
 			nfglColor4xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *components */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *components */);
 			break;
 		case NFOSMESA_GLCOLORFORMATNV:
 			nfglColorFormatNV(
@@ -1389,7 +1389,7 @@
 		case NFOSMESA_GLCOLORP3UIV:
 			nfglColorP3uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *color */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLCOLORP4UI:
 			nfglColorP4ui(
@@ -1399,14 +1399,14 @@
 		case NFOSMESA_GLCOLORP4UIV:
 			nfglColorP4uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *color */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLCOLORPOINTER:
 			nfglColorPointer(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(3)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(3) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLCOLORPOINTEREXT:
 			nfglColorPointerEXT(
@@ -1414,21 +1414,21 @@
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLCOLORPOINTERLISTIBM:
 			nfglColorPointerListIBM(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(3)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(3) /* const void * *pointer */,
 				getStackedParameter(4) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLCOLORPOINTERVINTEL:
 			nfglColorPointervINTEL(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */);
+				(const void * *)getStackedPointer(2) /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLE:
 			nfglColorSubTable(
@@ -1437,7 +1437,7 @@
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *data */);
+				(const void *)getStackedPointer(5) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLEEXT:
 			nfglColorSubTableEXT(
@@ -1446,7 +1446,7 @@
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *data */);
+				(const void *)getStackedPointer(5) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOLORTABLE:
 			nfglColorTable(
@@ -1455,7 +1455,7 @@
 				getStackedParameter(2) /* GLsizei width */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *table */);
+				(const void *)getStackedPointer(5) /* const void *table */);
 			break;
 		case NFOSMESA_GLCOLORTABLEEXT:
 			nfglColorTableEXT(
@@ -1464,31 +1464,31 @@
 				getStackedParameter(2) /* GLsizei width */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *table */);
+				(const void *)getStackedPointer(5) /* const void *table */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFV:
 			nfglColorTableParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFVSGI:
 			nfglColorTableParameterfvSGI(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIV:
 			nfglColorTableParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIVSGI:
 			nfglColorTableParameterivSGI(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLESGI:
 			nfglColorTableSGI(
@@ -1497,7 +1497,7 @@
 				getStackedParameter(2) /* GLsizei width */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *table */);
+				(const void *)getStackedPointer(5) /* const void *table */);
 			break;
 		case NFOSMESA_GLCOMBINERINPUTNV:
 			nfglCombinerInputNV(
@@ -1529,7 +1529,7 @@
 		case NFOSMESA_GLCOMBINERPARAMETERFVNV:
 			nfglCombinerParameterfvNV(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERINV:
 			nfglCombinerParameteriNV(
@@ -1539,13 +1539,13 @@
 		case NFOSMESA_GLCOMBINERPARAMETERIVNV:
 			nfglCombinerParameterivNV(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOMBINERSTAGEPARAMETERFVNV:
 			nfglCombinerStageParameterfvNV(
 				getStackedParameter(0) /* GLenum stage */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOMPILESHADER:
 			nfglCompileShader(
@@ -1559,8 +1559,8 @@
 			nfglCompileShaderIncludeARB(
 				getStackedParameter(0) /* GLuint shader */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *path */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *length */);
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *path */,
+				(const GLint *)getStackedPointer(3) /* const GLint *length */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE1DEXT:
 			nfglCompressedMultiTexImage1DEXT(
@@ -1571,7 +1571,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *bits */);
+				(const void *)getStackedPointer(7) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE2DEXT:
 			nfglCompressedMultiTexImage2DEXT(
@@ -1583,7 +1583,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *bits */);
+				(const void *)getStackedPointer(8) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE3DEXT:
 			nfglCompressedMultiTexImage3DEXT(
@@ -1596,7 +1596,7 @@
 				getStackedParameter(6) /* GLsizei depth */,
 				getStackedParameter(7) /* GLint border */,
 				getStackedParameter(8) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *bits */);
+				(const void *)getStackedPointer(9) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT:
 			nfglCompressedMultiTexSubImage1DEXT(
@@ -1607,7 +1607,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLenum format */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *bits */);
+				(const void *)getStackedPointer(7) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT:
 			nfglCompressedMultiTexSubImage2DEXT(
@@ -1620,7 +1620,7 @@
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *bits */);
+				(const void *)getStackedPointer(9) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT:
 			nfglCompressedMultiTexSubImage3DEXT(
@@ -1635,7 +1635,7 @@
 				getStackedParameter(8) /* GLsizei depth */,
 				getStackedParameter(9) /* GLenum format */,
 				getStackedParameter(10) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(11)) /* const void *bits */);
+				(const void *)getStackedPointer(11) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1D:
 			nfglCompressedTexImage1D(
@@ -1645,7 +1645,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLint border */,
 				getStackedParameter(5) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1DARB:
 			nfglCompressedTexImage1DARB(
@@ -1655,7 +1655,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLint border */,
 				getStackedParameter(5) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2D:
 			nfglCompressedTexImage2D(
@@ -1666,7 +1666,7 @@
 				getStackedParameter(4) /* GLsizei height */,
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *data */);
+				(const void *)getStackedPointer(7) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2DARB:
 			nfglCompressedTexImage2DARB(
@@ -1677,7 +1677,7 @@
 				getStackedParameter(4) /* GLsizei height */,
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *data */);
+				(const void *)getStackedPointer(7) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3D:
 			nfglCompressedTexImage3D(
@@ -1689,7 +1689,7 @@
 				getStackedParameter(5) /* GLsizei depth */,
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *data */);
+				(const void *)getStackedPointer(8) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3DARB:
 			nfglCompressedTexImage3DARB(
@@ -1701,7 +1701,7 @@
 				getStackedParameter(5) /* GLsizei depth */,
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *data */);
+				(const void *)getStackedPointer(8) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1D:
 			nfglCompressedTexSubImage1D(
@@ -1711,7 +1711,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1DARB:
 			nfglCompressedTexSubImage1DARB(
@@ -1721,7 +1721,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *data */);
+				(const void *)getStackedPointer(6) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2D:
 			nfglCompressedTexSubImage2D(
@@ -1733,7 +1733,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *data */);
+				(const void *)getStackedPointer(8) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2DARB:
 			nfglCompressedTexSubImage2DARB(
@@ -1745,7 +1745,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *data */);
+				(const void *)getStackedPointer(8) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3D:
 			nfglCompressedTexSubImage3D(
@@ -1759,7 +1759,7 @@
 				getStackedParameter(7) /* GLsizei depth */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *data */);
+				(const void *)getStackedPointer(10) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3DARB:
 			nfglCompressedTexSubImage3DARB(
@@ -1773,7 +1773,7 @@
 				getStackedParameter(7) /* GLsizei depth */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *data */);
+				(const void *)getStackedPointer(10) /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE1DEXT:
 			nfglCompressedTextureImage1DEXT(
@@ -1784,7 +1784,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *bits */);
+				(const void *)getStackedPointer(7) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE2DEXT:
 			nfglCompressedTextureImage2DEXT(
@@ -1796,7 +1796,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *bits */);
+				(const void *)getStackedPointer(8) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE3DEXT:
 			nfglCompressedTextureImage3DEXT(
@@ -1809,7 +1809,7 @@
 				getStackedParameter(6) /* GLsizei depth */,
 				getStackedParameter(7) /* GLint border */,
 				getStackedParameter(8) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *bits */);
+				(const void *)getStackedPointer(9) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT:
 			nfglCompressedTextureSubImage1DEXT(
@@ -1820,7 +1820,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLenum format */,
 				getStackedParameter(6) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *bits */);
+				(const void *)getStackedPointer(7) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT:
 			nfglCompressedTextureSubImage2DEXT(
@@ -1833,7 +1833,7 @@
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *bits */);
+				(const void *)getStackedPointer(9) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT:
 			nfglCompressedTextureSubImage3DEXT(
@@ -1848,7 +1848,7 @@
 				getStackedParameter(8) /* GLsizei depth */,
 				getStackedParameter(9) /* GLenum format */,
 				getStackedParameter(10) /* GLsizei imageSize */,
-				(const void *)Atari2HostAddr(getStackedParameter(11)) /* const void *bits */);
+				(const void *)getStackedPointer(11) /* const void *bits */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1D:
 			nfglConvolutionFilter1D(
@@ -1857,7 +1857,7 @@
 				getStackedParameter(2) /* GLsizei width */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *image */);
+				(const void *)getStackedPointer(5) /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1DEXT:
 			nfglConvolutionFilter1DEXT(
@@ -1866,7 +1866,7 @@
 				getStackedParameter(2) /* GLsizei width */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *image */);
+				(const void *)getStackedPointer(5) /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2D:
 			nfglConvolutionFilter2D(
@@ -1876,7 +1876,7 @@
 				getStackedParameter(3) /* GLsizei height */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *image */);
+				(const void *)getStackedPointer(6) /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2DEXT:
 			nfglConvolutionFilter2DEXT(
@@ -1886,7 +1886,7 @@
 				getStackedParameter(3) /* GLsizei height */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *image */);
+				(const void *)getStackedPointer(6) /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERF:
 			nfglConvolutionParameterf(
@@ -1904,13 +1904,13 @@
 			nfglConvolutionParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFVEXT:
 			nfglConvolutionParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERI:
 			nfglConvolutionParameteri(
@@ -1928,13 +1928,13 @@
 			nfglConvolutionParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIVEXT:
 			nfglConvolutionParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERXOES:
 			nfglConvolutionParameterxOES(
@@ -1946,7 +1946,7 @@
 			nfglConvolutionParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLCOPYBUFFERSUBDATA:
 			nfglCopyBufferSubData(
@@ -2297,11 +2297,11 @@
 			nfglCoverFillPathInstancedNV(
 				getStackedParameter(0) /* GLsizei numPaths */,
 				getStackedParameter(1) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *paths */,
+				(const void *)getStackedPointer(2) /* const void *paths */,
 				getStackedParameter(3) /* GLuint pathBase */,
 				getStackedParameter(4) /* GLenum coverMode */,
 				getStackedParameter(5) /* GLenum transformType */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(6)) /* const GLfloat *transformValues */);
+				(const GLfloat *)getStackedPointer(6) /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLCOVERFILLPATHNV:
 			nfglCoverFillPathNV(
@@ -2312,11 +2312,11 @@
 			nfglCoverStrokePathInstancedNV(
 				getStackedParameter(0) /* GLsizei numPaths */,
 				getStackedParameter(1) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *paths */,
+				(const void *)getStackedPointer(2) /* const void *paths */,
 				getStackedParameter(3) /* GLuint pathBase */,
 				getStackedParameter(4) /* GLenum coverMode */,
 				getStackedParameter(5) /* GLenum transformType */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(6)) /* const GLfloat *transformValues */);
+				(const GLfloat *)getStackedPointer(6) /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLCOVERSTROKEPATHNV:
 			nfglCoverStrokePathNV(
@@ -2329,7 +2329,7 @@
 		case NFOSMESA_GLCREATEPERFQUERYINTEL:
 			nfglCreatePerfQueryINTEL(
 				getStackedParameter(0) /* GLuint queryId */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *queryHandle */);
+				(GLuint *)getStackedPointer(1) /* GLuint *queryHandle */);
 			break;
 		case NFOSMESA_GLCREATEPROGRAM:
 			ret = nfglCreateProgram();
@@ -2348,19 +2348,19 @@
 		case NFOSMESA_GLCREATESHADERPROGRAMEXT:
 			ret = nfglCreateShaderProgramEXT(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *string */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *string */);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMV:
 			ret = nfglCreateShaderProgramv(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *strings */);
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *strings */);
 			break;
 #if 0
 		case NFOSMESA_GLCREATESYNCFROMCLEVENTARB:
 			ret = (int32)(intptr_t)nfglCreateSyncFromCLeventARB(
-				(struct _cl_context *)Atari2HostAddr(getStackedParameter(0)) /* struct _cl_context *context */,
-				(struct _cl_event *)Atari2HostAddr(getStackedParameter(1)) /* struct _cl_event *event */,
+				(struct _cl_context *)getStackedPointer(0) /* struct _cl_context *context */,
+				(struct _cl_event *)getStackedPointer(1) /* struct _cl_event *event */,
 				getStackedParameter(2) /* GLbitfield flags */);
 			break;
 #endif
@@ -2371,12 +2371,12 @@
 		case NFOSMESA_GLCULLPARAMETERDVEXT:
 			nfglCullParameterdvEXT(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(1) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLCULLPARAMETERFVEXT:
 			nfglCullParameterfvEXT(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLCURRENTPALETTEMATRIXARB:
 			nfglCurrentPaletteMatrixARB(
@@ -2385,22 +2385,22 @@
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACK:
 			nfglDebugMessageCallback(
-				(GLDEBUGPROC )Atari2HostAddr(getStackedParameter(0)) /* GLDEBUGPROC callback */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *userParam */);
+				(GLDEBUGPROC )getStackedPointer(0) /* GLDEBUGPROC callback */,
+				(const void *)getStackedPointer(1) /* const void *userParam */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKAMD:
 			nfglDebugMessageCallbackAMD(
-				(GLDEBUGPROCAMD )Atari2HostAddr(getStackedParameter(0)) /* GLDEBUGPROCAMD callback */,
-				(void *)Atari2HostAddr(getStackedParameter(1)) /* void *userParam */);
+				(GLDEBUGPROCAMD )getStackedPointer(0) /* GLDEBUGPROCAMD callback */,
+				(void *)getStackedPointer(1) /* void *userParam */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKARB:
 			nfglDebugMessageCallbackARB(
-				(GLDEBUGPROCARB )Atari2HostAddr(getStackedParameter(0)) /* GLDEBUGPROCARB callback */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *userParam */);
+				(GLDEBUGPROCARB )getStackedPointer(0) /* GLDEBUGPROCARB callback */,
+				(const void *)getStackedPointer(1) /* const void *userParam */);
 			break;
 #endif
 		case NFOSMESA_GLDEBUGMESSAGECONTROL:
@@ -2409,7 +2409,7 @@
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLenum severity */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(4)) /* const GLuint *ids */,
+				(const GLuint *)getStackedPointer(4) /* const GLuint *ids */,
 				getStackedParameter(5) /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGECONTROLARB:
@@ -2418,7 +2418,7 @@
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLenum severity */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(4)) /* const GLuint *ids */,
+				(const GLuint *)getStackedPointer(4) /* const GLuint *ids */,
 				getStackedParameter(5) /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEENABLEAMD:
@@ -2426,7 +2426,7 @@
 				getStackedParameter(0) /* GLenum category */,
 				getStackedParameter(1) /* GLenum severity */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *ids */,
+				(const GLuint *)getStackedPointer(3) /* const GLuint *ids */,
 				getStackedParameter(4) /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERT:
@@ -2436,7 +2436,7 @@
 				getStackedParameter(2) /* GLuint id */,
 				getStackedParameter(3) /* GLenum severity */,
 				getStackedParameter(4) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(5)) /* const GLchar *buf */);
+				(const GLchar *)getStackedPointer(5) /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTAMD:
 			nfglDebugMessageInsertAMD(
@@ -2444,7 +2444,7 @@
 				getStackedParameter(1) /* GLenum severity */,
 				getStackedParameter(2) /* GLuint id */,
 				getStackedParameter(3) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(4)) /* const GLchar *buf */);
+				(const GLchar *)getStackedPointer(4) /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTARB:
 			nfglDebugMessageInsertARB(
@@ -2453,7 +2453,7 @@
 				getStackedParameter(2) /* GLuint id */,
 				getStackedParameter(3) /* GLenum severity */,
 				getStackedParameter(4) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(5)) /* const GLchar *buf */);
+				(const GLchar *)getStackedPointer(5) /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEFORMSGIX:
 			nfglDeformSGIX(
@@ -2474,7 +2474,7 @@
 				getStackedDouble(15) /* GLdouble w2 */,
 				getStackedParameter(17) /* GLint wstride */,
 				getStackedParameter(18) /* GLint worder */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(19)) /* const GLdouble *points */);
+				(const GLdouble *)getStackedPointer(19) /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLDEFORMATIONMAP3FSGIX:
 			nfglDeformationMap3fSGIX(
@@ -2491,7 +2491,7 @@
 				getStackedFloat(10) /* GLfloat w2 */,
 				getStackedParameter(11) /* GLint wstride */,
 				getStackedParameter(12) /* GLint worder */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(13)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(13) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLDELETEASYNCMARKERSSGIX:
 			nfglDeleteAsyncMarkersSGIX(
@@ -2501,22 +2501,22 @@
 		case NFOSMESA_GLDELETEBUFFERS:
 			nfglDeleteBuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *buffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLDELETEBUFFERSARB:
 			nfglDeleteBuffersARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *buffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLDELETEFENCESAPPLE:
 			nfglDeleteFencesAPPLE(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *fences */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *fences */);
 			break;
 		case NFOSMESA_GLDELETEFENCESNV:
 			nfglDeleteFencesNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *fences */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *fences */);
 			break;
 		case NFOSMESA_GLDELETEFRAGMENTSHADERATI:
 			nfglDeleteFragmentShaderATI(
@@ -2525,12 +2525,12 @@
 		case NFOSMESA_GLDELETEFRAMEBUFFERS:
 			nfglDeleteFramebuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *framebuffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLDELETEFRAMEBUFFERSEXT:
 			nfglDeleteFramebuffersEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *framebuffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLDELETELISTS:
 			nfglDeleteLists(
@@ -2540,13 +2540,13 @@
 		case NFOSMESA_GLDELETENAMEDSTRINGARB:
 			nfglDeleteNamedStringARB(
 				getStackedParameter(0) /* GLint namelen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLDELETENAMESAMD:
 			nfglDeleteNamesAMD(
 				getStackedParameter(0) /* GLenum identifier */,
 				getStackedParameter(1) /* GLuint num */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *names */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *names */);
 			break;
 		case NFOSMESA_GLDELETEOBJECTARB:
 			nfglDeleteObjectARB(
@@ -2559,7 +2559,7 @@
 		case NFOSMESA_GLDELETEOCCLUSIONQUERIESNV:
 			nfglDeleteOcclusionQueriesNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *ids */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEPATHSNV:
 			nfglDeletePathsNV(
@@ -2569,7 +2569,7 @@
 		case NFOSMESA_GLDELETEPERFMONITORSAMD:
 			nfglDeletePerfMonitorsAMD(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *monitors */);
+				(GLuint *)getStackedPointer(1) /* GLuint *monitors */);
 			break;
 		case NFOSMESA_GLDELETEPERFQUERYINTEL:
 			nfglDeletePerfQueryINTEL(
@@ -2582,42 +2582,42 @@
 		case NFOSMESA_GLDELETEPROGRAMPIPELINES:
 			nfglDeleteProgramPipelines(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *pipelines */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *pipelines */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSARB:
 			nfglDeleteProgramsARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *programs */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSNV:
 			nfglDeleteProgramsNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *programs */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLDELETEQUERIES:
 			nfglDeleteQueries(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *ids */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEQUERIESARB:
 			nfglDeleteQueriesARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *ids */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERS:
 			nfglDeleteRenderbuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *renderbuffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERSEXT:
 			nfglDeleteRenderbuffersEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *renderbuffers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLDELETESAMPLERS:
 			nfglDeleteSamplers(
 				getStackedParameter(0) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *samplers */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *samplers */);
 			break;
 		case NFOSMESA_GLDELETESHADER:
 			nfglDeleteShader(
@@ -2625,37 +2625,37 @@
 			break;
 		case NFOSMESA_GLDELETESYNC:
 			nfglDeleteSync(
-				(GLsync )Atari2HostAddr(getStackedParameter(0)) /* GLsync sync */);
+				(GLsync )getStackedPointer(0) /* GLsync sync */);
 			break;
 		case NFOSMESA_GLDELETETEXTURES:
 			nfglDeleteTextures(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLDELETETEXTURESEXT:
 			nfglDeleteTexturesEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKS:
 			nfglDeleteTransformFeedbacks(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *ids */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKSNV:
 			nfglDeleteTransformFeedbacksNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *ids */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYS:
 			nfglDeleteVertexArrays(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *arrays */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *arrays */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYSAPPLE:
 			nfglDeleteVertexArraysAPPLE(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *arrays */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *arrays */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXSHADEREXT:
 			nfglDeleteVertexShaderEXT(
@@ -2688,7 +2688,7 @@
 			nfglDepthRangeArrayv(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEINDEXED:
 			nfglDepthRangeIndexed(
@@ -2730,7 +2730,7 @@
 			nfglDetailTexFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLDISABLE:
 			nfglDisable(
@@ -2825,7 +2825,7 @@
 		case NFOSMESA_GLDRAWARRAYSINDIRECT:
 			nfglDrawArraysIndirect(
 				getStackedParameter(0) /* GLenum mode */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *indirect */);
+				(const void *)getStackedPointer(1) /* const void *indirect */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCED:
 			nfglDrawArraysInstanced(
@@ -2863,17 +2863,17 @@
 		case NFOSMESA_GLDRAWBUFFERS:
 			nfglDrawBuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(1)) /* const GLenum *bufs */);
+				(const GLenum *)getStackedPointer(1) /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSARB:
 			nfglDrawBuffersARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(1)) /* const GLenum *bufs */);
+				(const GLenum *)getStackedPointer(1) /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSATI:
 			nfglDrawBuffersATI(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(1)) /* const GLenum *bufs */);
+				(const GLenum *)getStackedPointer(1) /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTARRAYAPPLE:
 			nfglDrawElementArrayAPPLE(
@@ -2891,28 +2891,28 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(3)) /* const GLvoid *indices */);
+				(const GLvoid *)getStackedPointer(3) /* const GLvoid *indices */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSBASEVERTEX:
 			nfglDrawElementsBaseVertex(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLint basevertex */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINDIRECT:
 			nfglDrawElementsIndirect(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *indirect */);
+				(const void *)getStackedPointer(2) /* const void *indirect */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCED:
 			nfglDrawElementsInstanced(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei instancecount */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDARB:
@@ -2920,7 +2920,7 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEINSTANCE:
@@ -2928,7 +2928,7 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei instancecount */,
 				getStackedParameter(5) /* GLuint baseinstance */);
 			break;
@@ -2937,7 +2937,7 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei instancecount */,
 				getStackedParameter(5) /* GLint basevertex */);
 			break;
@@ -2946,7 +2946,7 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei instancecount */,
 				getStackedParameter(5) /* GLint basevertex */,
 				getStackedParameter(6) /* GLuint baseinstance */);
@@ -2956,7 +2956,7 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *indices */,
+				(const void *)getStackedPointer(3) /* const void *indices */,
 				getStackedParameter(4) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWMESHARRAYSSUN:
@@ -2972,7 +2972,7 @@
 				getStackedParameter(1) /* GLsizei height */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(4)) /* const GLvoid *pixels */);
+				(const GLvoid *)getStackedPointer(4) /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTARRAYAPPLE:
 			nfglDrawRangeElementArrayAPPLE(
@@ -2996,7 +2996,7 @@
 				getStackedParameter(2) /* GLuint end */,
 				getStackedParameter(3) /* GLsizei count */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *indices */);
+				(const void *)getStackedPointer(5) /* const void *indices */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSBASEVERTEX:
 			nfglDrawRangeElementsBaseVertex(
@@ -3005,7 +3005,7 @@
 				getStackedParameter(2) /* GLuint end */,
 				getStackedParameter(3) /* GLsizei count */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *indices */,
+				(const void *)getStackedPointer(5) /* const void *indices */,
 				getStackedParameter(6) /* GLint basevertex */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSEXT:
@@ -3015,7 +3015,7 @@
 				getStackedParameter(2) /* GLuint end */,
 				getStackedParameter(3) /* GLsizei count */,
 				getStackedParameter(4) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *indices */);
+				(const void *)getStackedPointer(5) /* const void *indices */);
 			break;
 		case NFOSMESA_GLDRAWTEXTURENV:
 			nfglDrawTextureNV(
@@ -3071,33 +3071,33 @@
 		case NFOSMESA_GLEDGEFLAGPOINTER:
 			nfglEdgeFlagPointer(
 				getStackedParameter(0) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(1)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(1) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTEREXT:
 			nfglEdgeFlagPointerEXT(
 				getStackedParameter(0) /* GLsizei stride */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* const GLboolean *pointer */);
+				(const GLboolean *)getStackedPointer(2) /* const GLboolean *pointer */);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTERLISTIBM:
 			nfglEdgeFlagPointerListIBM(
 				getStackedParameter(0) /* GLint stride */,
-				(const GLboolean * *)Atari2HostAddr(getStackedParameter(1)) /* const GLboolean * *pointer */,
+				(const GLboolean * *)getStackedPointer(1) /* const GLboolean * *pointer */,
 				getStackedParameter(2) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLEDGEFLAGV:
 			nfglEdgeFlagv(
-				(const GLboolean *)Atari2HostAddr(getStackedParameter(0)) /* const GLboolean *flag */);
+				(const GLboolean *)getStackedPointer(0) /* const GLboolean *flag */);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERAPPLE:
 			nfglElementPointerAPPLE(
 				getStackedParameter(0) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *pointer */);
+				(const void *)getStackedPointer(1) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERATI:
 			nfglElementPointerATI(
 				getStackedParameter(0) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *pointer */);
+				(const void *)getStackedPointer(1) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLENABLE:
 			nfglEnable(
@@ -3225,7 +3225,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD1DV:
 			nfglEvalCoord1dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *u */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1F:
 			nfglEvalCoord1f(
@@ -3233,7 +3233,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD1FV:
 			nfglEvalCoord1fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *u */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1XOES:
 			nfglEvalCoord1xOES(
@@ -3241,7 +3241,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD1XVOES:
 			nfglEvalCoord1xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLEVALCOORD2D:
 			nfglEvalCoord2d(
@@ -3250,7 +3250,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD2DV:
 			nfglEvalCoord2dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *u */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD2F:
 			nfglEvalCoord2f(
@@ -3259,7 +3259,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD2FV:
 			nfglEvalCoord2fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *u */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD2XOES:
 			nfglEvalCoord2xOES(
@@ -3268,7 +3268,7 @@
 			break;
 		case NFOSMESA_GLEVALCOORD2XVOES:
 			nfglEvalCoord2xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLEVALMAPSNV:
 			nfglEvalMapsNV(
@@ -3302,7 +3302,7 @@
 			nfglExecuteProgramNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint id */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLEXTRACTCOMPONENTEXT:
 			nfglExtractComponentEXT(
@@ -3314,13 +3314,13 @@
 			nfglFeedbackBuffer(
 				getStackedParameter(0) /* GLsizei size */,
 				getStackedParameter(1) /* GLenum type */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *buffer */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *buffer */);
 			break;
 		case NFOSMESA_GLFEEDBACKBUFFERXOES:
 			nfglFeedbackBufferxOES(
 				getStackedParameter(0) /* GLsizei n */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *buffer */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *buffer */);
 			break;
 #if 0
 		case NFOSMESA_GLFENCESYNC:
@@ -3341,7 +3341,7 @@
 			break;
 		case NFOSMESA_GLFINISHASYNCSGIX:
 			ret = nfglFinishAsyncSGIX(
-				(GLuint *)Atari2HostAddr(getStackedParameter(0)) /* GLuint *markerp */);
+				(GLuint *)getStackedPointer(0) /* GLuint *markerp */);
 			break;
 		case NFOSMESA_GLFINISHFENCEAPPLE:
 			nfglFinishFenceAPPLE(
@@ -3400,7 +3400,7 @@
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGEAPPLE:
 			nfglFlushVertexArrayRangeAPPLE(
 				getStackedParameter(0) /* GLsizei length */,
-				(void *)Atari2HostAddr(getStackedParameter(1)) /* void *pointer */);
+				(void *)getStackedPointer(1) /* void *pointer */);
 			break;
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGENV:
 			nfglFlushVertexArrayRangeNV();
@@ -3414,19 +3414,19 @@
 			nfglFogCoordPointer(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTEREXT:
 			nfglFogCoordPointerEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTERLISTIBM:
 			nfglFogCoordPointerListIBM(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(2) /* const void * *pointer */,
 				getStackedParameter(3) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLFOGCOORDD:
@@ -3439,11 +3439,11 @@
 			break;
 		case NFOSMESA_GLFOGCOORDDV:
 			nfglFogCoorddv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *coord */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDDVEXT:
 			nfglFogCoorddvEXT(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *coord */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDF:
 			nfglFogCoordf(
@@ -3455,11 +3455,11 @@
 			break;
 		case NFOSMESA_GLFOGCOORDFV:
 			nfglFogCoordfv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *coord */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDFVEXT:
 			nfglFogCoordfvEXT(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *coord */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDHNV:
 			nfglFogCoordhNV(
@@ -3467,12 +3467,12 @@
 			break;
 		case NFOSMESA_GLFOGCOORDHVNV:
 			nfglFogCoordhvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *fog */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *fog */);
 			break;
 		case NFOSMESA_GLFOGFUNCSGIS:
 			nfglFogFuncSGIS(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLFOGF:
 			nfglFogf(
@@ -3482,7 +3482,7 @@
 		case NFOSMESA_GLFOGFV:
 			nfglFogfv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFOGI:
 			nfglFogi(
@@ -3492,7 +3492,7 @@
 		case NFOSMESA_GLFOGIV:
 			nfglFogiv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFOGXOES:
 			nfglFogxOES(
@@ -3502,7 +3502,7 @@
 		case NFOSMESA_GLFOGXVOES:
 			nfglFogxvOES(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *param */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLFRAGMENTCOLORMATERIALSGIX:
 			nfglFragmentColorMaterialSGIX(
@@ -3517,7 +3517,7 @@
 		case NFOSMESA_GLFRAGMENTLIGHTMODELFVSGIX:
 			nfglFragmentLightModelfvSGIX(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELISGIX:
 			nfglFragmentLightModeliSGIX(
@@ -3527,7 +3527,7 @@
 		case NFOSMESA_GLFRAGMENTLIGHTMODELIVSGIX:
 			nfglFragmentLightModelivSGIX(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTFSGIX:
 			nfglFragmentLightfSGIX(
@@ -3539,7 +3539,7 @@
 			nfglFragmentLightfvSGIX(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTISGIX:
 			nfglFragmentLightiSGIX(
@@ -3551,7 +3551,7 @@
 			nfglFragmentLightivSGIX(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALFSGIX:
 			nfglFragmentMaterialfSGIX(
@@ -3563,7 +3563,7 @@
 			nfglFragmentMaterialfvSGIX(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALISGIX:
 			nfglFragmentMaterialiSGIX(
@@ -3575,7 +3575,7 @@
 			nfglFragmentMaterialivSGIX(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAMETERMINATORGREMEDY:
 			nfglFrameTerminatorGREMEDY();
@@ -3593,7 +3593,7 @@
 			nfglFramebufferDrawBuffersEXT(
 				getStackedParameter(0) /* GLuint framebuffer */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(2)) /* const GLenum *bufs */);
+				(const GLenum *)getStackedPointer(2) /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERPARAMETERI:
 			nfglFramebufferParameteri(
@@ -3773,22 +3773,22 @@
 		case NFOSMESA_GLGENBUFFERS:
 			nfglGenBuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *buffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *buffers */);
 			break;
 		case NFOSMESA_GLGENBUFFERSARB:
 			nfglGenBuffersARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *buffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *buffers */);
 			break;
 		case NFOSMESA_GLGENFENCESAPPLE:
 			nfglGenFencesAPPLE(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *fences */);
+				(GLuint *)getStackedPointer(1) /* GLuint *fences */);
 			break;
 		case NFOSMESA_GLGENFENCESNV:
 			nfglGenFencesNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *fences */);
+				(GLuint *)getStackedPointer(1) /* GLuint *fences */);
 			break;
 		case NFOSMESA_GLGENFRAGMENTSHADERSATI:
 			ret = nfglGenFragmentShadersATI(
@@ -3797,12 +3797,12 @@
 		case NFOSMESA_GLGENFRAMEBUFFERS:
 			nfglGenFramebuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *framebuffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLGENFRAMEBUFFERSEXT:
 			nfglGenFramebuffersEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *framebuffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLGENLISTS:
 			ret = nfglGenLists(
@@ -3812,12 +3812,12 @@
 			nfglGenNamesAMD(
 				getStackedParameter(0) /* GLenum identifier */,
 				getStackedParameter(1) /* GLuint num */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *names */);
+				(GLuint *)getStackedPointer(2) /* GLuint *names */);
 			break;
 		case NFOSMESA_GLGENOCCLUSIONQUERIESNV:
 			nfglGenOcclusionQueriesNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *ids */);
+				(GLuint *)getStackedPointer(1) /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENPATHSNV:
 			ret = nfglGenPathsNV(
@@ -3826,47 +3826,47 @@
 		case NFOSMESA_GLGENPERFMONITORSAMD:
 			nfglGenPerfMonitorsAMD(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *monitors */);
+				(GLuint *)getStackedPointer(1) /* GLuint *monitors */);
 			break;
 		case NFOSMESA_GLGENPROGRAMPIPELINES:
 			nfglGenProgramPipelines(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *pipelines */);
+				(GLuint *)getStackedPointer(1) /* GLuint *pipelines */);
 			break;
 		case NFOSMESA_GLGENPROGRAMSARB:
 			nfglGenProgramsARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *programs */);
+				(GLuint *)getStackedPointer(1) /* GLuint *programs */);
 			break;
 		case NFOSMESA_GLGENPROGRAMSNV:
 			nfglGenProgramsNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *programs */);
+				(GLuint *)getStackedPointer(1) /* GLuint *programs */);
 			break;
 		case NFOSMESA_GLGENQUERIES:
 			nfglGenQueries(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *ids */);
+				(GLuint *)getStackedPointer(1) /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENQUERIESARB:
 			nfglGenQueriesARB(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *ids */);
+				(GLuint *)getStackedPointer(1) /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERS:
 			nfglGenRenderbuffers(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *renderbuffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERSEXT:
 			nfglGenRenderbuffersEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *renderbuffers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLGENSAMPLERS:
 			nfglGenSamplers(
 				getStackedParameter(0) /* GLsizei count */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *samplers */);
+				(GLuint *)getStackedPointer(1) /* GLuint *samplers */);
 			break;
 		case NFOSMESA_GLGENSYMBOLSEXT:
 			ret = nfglGenSymbolsEXT(
@@ -3878,32 +3878,32 @@
 		case NFOSMESA_GLGENTEXTURES:
 			nfglGenTextures(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *textures */);
+				(GLuint *)getStackedPointer(1) /* GLuint *textures */);
 			break;
 		case NFOSMESA_GLGENTEXTURESEXT:
 			nfglGenTexturesEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *textures */);
+				(GLuint *)getStackedPointer(1) /* GLuint *textures */);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKS:
 			nfglGenTransformFeedbacks(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *ids */);
+				(GLuint *)getStackedPointer(1) /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKSNV:
 			nfglGenTransformFeedbacksNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *ids */);
+				(GLuint *)getStackedPointer(1) /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYS:
 			nfglGenVertexArrays(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *arrays */);
+				(GLuint *)getStackedPointer(1) /* GLuint *arrays */);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYSAPPLE:
 			nfglGenVertexArraysAPPLE(
 				getStackedParameter(0) /* GLsizei n */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *arrays */);
+				(GLuint *)getStackedPointer(1) /* GLuint *arrays */);
 			break;
 		case NFOSMESA_GLGENVERTEXSHADERSEXT:
 			ret = nfglGenVertexShadersEXT(
@@ -3932,27 +3932,27 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint bufferIndex */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIB:
 			nfglGetActiveAttrib(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLchar *)getStackedPointer(6) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIBARB:
 			nfglGetActiveAttribARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei maxLength */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLcharARB *)Atari2HostAddr(getStackedParameter(6)) /* GLcharARB *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLcharARB *)getStackedPointer(6) /* GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINENAME:
 			nfglGetActiveSubroutineName(
@@ -3960,8 +3960,8 @@
 				getStackedParameter(1) /* GLenum shadertype */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei bufsize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(5)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(4) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(5) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMNAME:
 			nfglGetActiveSubroutineUniformName(
@@ -3969,8 +3969,8 @@
 				getStackedParameter(1) /* GLenum shadertype */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei bufsize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(5)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(4) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(5) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMIV:
 			nfglGetActiveSubroutineUniformiv(
@@ -3978,248 +3978,248 @@
 				getStackedParameter(1) /* GLenum shadertype */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *values */);
+				(GLint *)getStackedPointer(4) /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORM:
 			nfglGetActiveUniform(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLchar *)getStackedPointer(6) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMARB:
 			nfglGetActiveUniformARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei maxLength */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLcharARB *)Atari2HostAddr(getStackedParameter(6)) /* GLcharARB *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLcharARB *)getStackedPointer(6) /* GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKINDEX:
 			ret = nfglGetActiveUniformBlockIndex(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *uniformBlockName */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKNAME:
 			nfglGetActiveUniformBlockName(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint uniformBlockIndex */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *uniformBlockName */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(4) /* GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKIV:
 			nfglGetActiveUniformBlockiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint uniformBlockIndex */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMNAME:
 			nfglGetActiveUniformName(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint uniformIndex */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *uniformName */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(4) /* GLchar *uniformName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMSIV:
 			nfglGetActiveUniformsiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei uniformCount */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *uniformIndices */,
+				(const GLuint *)getStackedPointer(2) /* const GLuint *uniformIndices */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *params */);
+				(GLint *)getStackedPointer(4) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEVARYINGNV:
 			nfglGetActiveVaryingNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLsizei *)getStackedPointer(4) /* GLsizei *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLchar *)getStackedPointer(6) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTFVATI:
 			nfglGetArrayObjectfvATI(
 				getStackedParameter(0) /* GLenum array */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTIVATI:
 			nfglGetArrayObjectivATI(
 				getStackedParameter(0) /* GLenum array */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETATTACHEDOBJECTSARB:
 			nfglGetAttachedObjectsARB(
 				getStackedParameter(0) /* GLhandleARB containerObj */,
 				getStackedParameter(1) /* GLsizei maxCount */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *count */,
-				(GLhandleARB *)Atari2HostAddr(getStackedParameter(3)) /* GLhandleARB *obj */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *count */,
+				(GLhandleARB *)getStackedPointer(3) /* GLhandleARB *obj */);
 			break;
 		case NFOSMESA_GLGETATTACHEDSHADERS:
 			nfglGetAttachedShaders(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei maxCount */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *count */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *shaders */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *count */,
+				(GLuint *)getStackedPointer(3) /* GLuint *shaders */);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATION:
 			ret = nfglGetAttribLocation(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATIONARB:
 			ret = nfglGetAttribLocationARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
-				(const GLcharARB *)Atari2HostAddr(getStackedParameter(1)) /* const GLcharARB *name */);
+				(const GLcharARB *)getStackedPointer(1) /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETBOOLEANINDEXEDVEXT:
 			nfglGetBooleanIndexedvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *data */);
+				(GLboolean *)getStackedPointer(2) /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETBOOLEANI_V:
 			nfglGetBooleani_v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *data */);
+				(GLboolean *)getStackedPointer(2) /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETBOOLEANV:
 			nfglGetBooleanv(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(1)) /* GLboolean *params */);
+				(GLboolean *)getStackedPointer(1) /* GLboolean *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERI64V:
 			nfglGetBufferParameteri64v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLint64 *params */);
+				(GLint64 *)getStackedPointer(2) /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIV:
 			nfglGetBufferParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIVARB:
 			nfglGetBufferParameterivARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERUI64VNV:
 			nfglGetBufferParameterui64vNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERV:
 			nfglGetBufferPointerv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *params */);
+				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERVARB:
 			nfglGetBufferPointervARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *params */);
+				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERSUBDATA:
 			nfglGetBufferSubData(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr size */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *data */);
+				(void *)getStackedPointer(3) /* void *data */);
 			break;
 		case NFOSMESA_GLGETBUFFERSUBDATAARB:
 			nfglGetBufferSubDataARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLintptrARB offset */,
 				getStackedParameter(2) /* GLsizeiptrARB size */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *data */);
+				(void *)getStackedPointer(3) /* void *data */);
 			break;
 		case NFOSMESA_GLGETCLIPPLANE:
 			nfglGetClipPlane(
 				getStackedParameter(0) /* GLenum plane */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* GLdouble *equation */);
+				(GLdouble *)getStackedPointer(1) /* GLdouble *equation */);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEFOES:
 			nfglGetClipPlanefOES(
 				getStackedParameter(0) /* GLenum plane */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *equation */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *equation */);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEXOES:
 			nfglGetClipPlanexOES(
 				getStackedParameter(0) /* GLenum plane */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* GLfixed *equation */);
+				(GLfixed *)getStackedPointer(1) /* GLfixed *equation */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLE:
 			nfglGetColorTable(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *table */);
+				(void *)getStackedPointer(3) /* void *table */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEEXT:
 			nfglGetColorTableEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *data */);
+				(void *)getStackedPointer(3) /* void *data */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFV:
 			nfglGetColorTableParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVEXT:
 			nfglGetColorTableParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVSGI:
 			nfglGetColorTableParameterfvSGI(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIV:
 			nfglGetColorTableParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVEXT:
 			nfglGetColorTableParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVSGI:
 			nfglGetColorTableParameterivSGI(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLESGI:
 			nfglGetColorTableSGI(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *table */);
+				(void *)getStackedPointer(3) /* void *table */);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERFVNV:
 			nfglGetCombinerInputParameterfvNV(
@@ -4227,7 +4227,7 @@
 				getStackedParameter(1) /* GLenum portion */,
 				getStackedParameter(2) /* GLenum variable */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(4) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERIVNV:
 			nfglGetCombinerInputParameterivNV(
@@ -4235,97 +4235,97 @@
 				getStackedParameter(1) /* GLenum portion */,
 				getStackedParameter(2) /* GLenum variable */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *params */);
+				(GLint *)getStackedPointer(4) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERFVNV:
 			nfglGetCombinerOutputParameterfvNV(
 				getStackedParameter(0) /* GLenum stage */,
 				getStackedParameter(1) /* GLenum portion */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERIVNV:
 			nfglGetCombinerOutputParameterivNV(
 				getStackedParameter(0) /* GLenum stage */,
 				getStackedParameter(1) /* GLenum portion */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINERSTAGEPARAMETERFVNV:
 			nfglGetCombinerStageParameterfvNV(
 				getStackedParameter(0) /* GLenum stage */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDMULTITEXIMAGEEXT:
 			nfglGetCompressedMultiTexImageEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint lod */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *img */);
+				(void *)getStackedPointer(3) /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGE:
 			nfglGetCompressedTexImage(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint level */,
-				(void *)Atari2HostAddr(getStackedParameter(2)) /* void *img */);
+				(void *)getStackedPointer(2) /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGEARB:
 			nfglGetCompressedTexImageARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint level */,
-				(void *)Atari2HostAddr(getStackedParameter(2)) /* void *img */);
+				(void *)getStackedPointer(2) /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTUREIMAGEEXT:
 			nfglGetCompressedTextureImageEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint lod */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *img */);
+				(void *)getStackedPointer(3) /* void *img */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTER:
 			nfglGetConvolutionFilter(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *image */);
+				(void *)getStackedPointer(3) /* void *image */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTEREXT:
 			nfglGetConvolutionFilterEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *image */);
+				(void *)getStackedPointer(3) /* void *image */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFV:
 			nfglGetConvolutionParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFVEXT:
 			nfglGetConvolutionParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIV:
 			nfglGetConvolutionParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIVEXT:
 			nfglGetConvolutionParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERXVOES:
 			nfglGetConvolutionParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGLENGTHMESA:
 			ret = nfglGetDebugLogLengthMESA(
@@ -4339,68 +4339,68 @@
 				getStackedParameter(1) /* GLenum logType */,
 				getStackedParameter(2) /* GLenum shaderType */,
 				getStackedParameter(3) /* GLsizei maxLength */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *length */,
-				(GLcharARB *)Atari2HostAddr(getStackedParameter(5)) /* GLcharARB *debugLog */);
+				(GLsizei *)getStackedPointer(4) /* GLsizei *length */,
+				(GLcharARB *)getStackedPointer(5) /* GLcharARB *debugLog */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOG:
 			ret = nfglGetDebugMessageLog(
 				getStackedParameter(0) /* GLuint count */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(2)) /* GLenum *sources */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(3)) /* GLenum *types */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *ids */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *severities */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(6)) /* GLsizei *lengths */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(7)) /* GLchar *messageLog */);
+				(GLenum *)getStackedPointer(2) /* GLenum *sources */,
+				(GLenum *)getStackedPointer(3) /* GLenum *types */,
+				(GLuint *)getStackedPointer(4) /* GLuint *ids */,
+				(GLenum *)getStackedPointer(5) /* GLenum *severities */,
+				(GLsizei *)getStackedPointer(6) /* GLsizei *lengths */,
+				(GLchar *)getStackedPointer(7) /* GLchar *messageLog */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGAMD:
 			ret = nfglGetDebugMessageLogAMD(
 				getStackedParameter(0) /* GLuint count */,
 				getStackedParameter(1) /* GLsizei bufsize */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(2)) /* GLenum *categories */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *severities */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *ids */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(5)) /* GLsizei *lengths */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *message */);
+				(GLenum *)getStackedPointer(2) /* GLenum *categories */,
+				(GLuint *)getStackedPointer(3) /* GLuint *severities */,
+				(GLuint *)getStackedPointer(4) /* GLuint *ids */,
+				(GLsizei *)getStackedPointer(5) /* GLsizei *lengths */,
+				(GLchar *)getStackedPointer(6) /* GLchar *message */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGARB:
 			ret = nfglGetDebugMessageLogARB(
 				getStackedParameter(0) /* GLuint count */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(2)) /* GLenum *sources */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(3)) /* GLenum *types */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *ids */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *severities */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(6)) /* GLsizei *lengths */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(7)) /* GLchar *messageLog */);
+				(GLenum *)getStackedPointer(2) /* GLenum *sources */,
+				(GLenum *)getStackedPointer(3) /* GLenum *types */,
+				(GLuint *)getStackedPointer(4) /* GLuint *ids */,
+				(GLenum *)getStackedPointer(5) /* GLenum *severities */,
+				(GLsizei *)getStackedPointer(6) /* GLsizei *lengths */,
+				(GLchar *)getStackedPointer(7) /* GLchar *messageLog */);
 			break;
 		case NFOSMESA_GLGETDETAILTEXFUNCSGIS:
 			nfglGetDetailTexFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *points */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *points */);
 			break;
 		case NFOSMESA_GLGETDOUBLEINDEXEDVEXT:
 			nfglGetDoubleIndexedvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *data */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *data */);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_V:
 			nfglGetDoublei_v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *data */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *data */);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_VEXT:
 			nfglGetDoublei_vEXT(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETDOUBLEV:
 			nfglGetDoublev(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(1) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETERROR:
 			ret = nfglGetError();
@@ -4409,120 +4409,120 @@
 			nfglGetFenceivNV(
 				getStackedParameter(0) /* GLuint fence */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERFVNV:
 			nfglGetFinalCombinerInputParameterfvNV(
 				getStackedParameter(0) /* GLenum variable */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERIVNV:
 			nfglGetFinalCombinerInputParameterivNV(
 				getStackedParameter(0) /* GLenum variable */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFIRSTPERFQUERYIDINTEL:
 			nfglGetFirstPerfQueryIdINTEL(
-				(GLuint *)Atari2HostAddr(getStackedParameter(0)) /* GLuint *queryId */);
+				(GLuint *)getStackedPointer(0) /* GLuint *queryId */);
 			break;
 		case NFOSMESA_GLGETFIXEDVOES:
 			nfglGetFixedvOES(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(1) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETFLOATINDEXEDVEXT:
 			nfglGetFloatIndexedvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *data */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETFLOATI_V:
 			nfglGetFloati_v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *data */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETFLOATI_VEXT:
 			nfglGetFloati_vEXT(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFLOATV:
 			nfglGetFloatv(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFOGFUNCSGIS:
 			nfglGetFogFuncSGIS(
-				(GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* GLfloat *points */);
+				(GLfloat *)getStackedPointer(0) /* GLfloat *points */);
 			break;
 		case NFOSMESA_GLGETFRAGDATAINDEX:
 			ret = nfglGetFragDataIndex(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATION:
 			ret = nfglGetFragDataLocation(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATIONEXT:
 			ret = nfglGetFragDataLocationEXT(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTFVSGIX:
 			nfglGetFragmentLightfvSGIX(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTIVSGIX:
 			nfglGetFragmentLightivSGIX(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALFVSGIX:
 			nfglGetFragmentMaterialfvSGIX(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALIVSGIX:
 			nfglGetFragmentMaterialivSGIX(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIV:
 			nfglGetFramebufferAttachmentParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum attachment */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
 			nfglGetFramebufferAttachmentParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum attachment */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIV:
 			nfglGetFramebufferParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIVEXT:
 			nfglGetFramebufferParameterivEXT(
 				getStackedParameter(0) /* GLuint framebuffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETGRAPHICSRESETSTATUSARB:
 			ret = nfglGetGraphicsResetStatusARB();
@@ -4537,7 +4537,7 @@
 				getStackedParameter(1) /* GLboolean32 reset */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *values */);
+				(void *)getStackedPointer(4) /* void *values */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMEXT:
 			nfglGetHistogramEXT(
@@ -4545,37 +4545,37 @@
 				getStackedParameter(1) /* GLboolean32 reset */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *values */);
+				(void *)getStackedPointer(4) /* void *values */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFV:
 			nfglGetHistogramParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFVEXT:
 			nfglGetHistogramParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIV:
 			nfglGetHistogramParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIVEXT:
 			nfglGetHistogramParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERXVOES:
 			nfglGetHistogramParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETIMAGEHANDLEARB:
 			ret = nfglGetImageHandleARB(
@@ -4597,20 +4597,20 @@
 			nfglGetImageTransformParameterfvHP(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETIMAGETRANSFORMPARAMETERIVHP:
 			nfglGetImageTransformParameterivHP(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINFOLOGARB:
 			nfglGetInfoLogARB(
 				getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLsizei maxLength */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLcharARB *)Atari2HostAddr(getStackedParameter(3)) /* GLcharARB *infoLog */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLcharARB *)getStackedPointer(3) /* GLcharARB *infoLog */);
 			break;
 		case NFOSMESA_GLGETINSTRUMENTSSGIX:
 			ret = nfglGetInstrumentsSGIX();
@@ -4619,40 +4619,40 @@
 			nfglGetInteger64i_v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLint64 *data */);
+				(GLint64 *)getStackedPointer(2) /* GLint64 *data */);
 			break;
 		case NFOSMESA_GLGETINTEGER64V:
 			nfglGetInteger64v(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(1)) /* GLint64 *data */);
+				(GLint64 *)getStackedPointer(1) /* GLint64 *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERINDEXEDVEXT:
 			nfglGetIntegerIndexedvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *data */);
+				(GLint *)getStackedPointer(2) /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERI_V:
 			nfglGetIntegeri_v(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *data */);
+				(GLint *)getStackedPointer(2) /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64I_VNV:
 			nfglGetIntegerui64i_vNV(
 				getStackedParameter(0) /* GLenum value */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *result */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *result */);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64VNV:
 			nfglGetIntegerui64vNV(
 				getStackedParameter(0) /* GLenum value */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* GLuint64EXT *result */);
+				(GLuint64EXT *)getStackedPointer(1) /* GLuint64EXT *result */);
 			break;
 		case NFOSMESA_GLGETINTEGERV:
 			nfglGetIntegerv(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *params */);
+				(GLint *)getStackedPointer(1) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATI64V:
 			nfglGetInternalformati64v(
@@ -4660,7 +4660,7 @@
 				getStackedParameter(1) /* GLenum internalformat */,
 				getStackedParameter(2) /* GLenum pname */,
 				getStackedParameter(3) /* GLsizei bufSize */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(4)) /* GLint64 *params */);
+				(GLint64 *)getStackedPointer(4) /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATIV:
 			nfglGetInternalformativ(
@@ -4668,87 +4668,87 @@
 				getStackedParameter(1) /* GLenum internalformat */,
 				getStackedParameter(2) /* GLenum pname */,
 				getStackedParameter(3) /* GLsizei bufSize */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *params */);
+				(GLint *)getStackedPointer(4) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINVARIANTBOOLEANVEXT:
 			nfglGetInvariantBooleanvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *data */);
+				(GLboolean *)getStackedPointer(2) /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETINVARIANTFLOATVEXT:
 			nfglGetInvariantFloatvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *data */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETINVARIANTINTEGERVEXT:
 			nfglGetInvariantIntegervEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *data */);
+				(GLint *)getStackedPointer(2) /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETLIGHTFV:
 			nfglGetLightfv(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETLIGHTIV:
 			nfglGetLightiv(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETLIGHTXOES:
 			nfglGetLightxOES(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERFVSGIX:
 			nfglGetListParameterfvSGIX(
 				getStackedParameter(0) /* GLuint list */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERIVSGIX:
 			nfglGetListParameterivSGIX(
 				getStackedParameter(0) /* GLuint list */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTBOOLEANVEXT:
 			nfglGetLocalConstantBooleanvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *data */);
+				(GLboolean *)getStackedPointer(2) /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTFLOATVEXT:
 			nfglGetLocalConstantFloatvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *data */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTINTEGERVEXT:
 			nfglGetLocalConstantIntegervEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *data */);
+				(GLint *)getStackedPointer(2) /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERFVNV:
 			nfglGetMapAttribParameterfvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERIVNV:
 			nfglGetMapAttribParameterivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMAPCONTROLPOINTSNV:
 			nfglGetMapControlPointsNV(
@@ -4758,55 +4758,55 @@
 				getStackedParameter(3) /* GLsizei ustride */,
 				getStackedParameter(4) /* GLsizei vstride */,
 				getStackedParameter(5) /* GLboolean32 packed */,
-				(void *)Atari2HostAddr(getStackedParameter(6)) /* void *points */);
+				(void *)getStackedPointer(6) /* void *points */);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERFVNV:
 			nfglGetMapParameterfvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERIVNV:
 			nfglGetMapParameterivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMAPDV:
 			nfglGetMapdv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *v */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *v */);
 			break;
 		case NFOSMESA_GLGETMAPFV:
 			nfglGetMapfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *v */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETMAPIV:
 			nfglGetMapiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *v */);
+				(GLint *)getStackedPointer(2) /* GLint *v */);
 			break;
 		case NFOSMESA_GLGETMAPXVOES:
 			nfglGetMapxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *v */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *v */);
 			break;
 		case NFOSMESA_GLGETMATERIALFV:
 			nfglGetMaterialfv(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMATERIALIV:
 			nfglGetMaterialiv(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMATERIALXOES:
 			nfglGetMaterialxOES(
@@ -4820,7 +4820,7 @@
 				getStackedParameter(1) /* GLboolean32 reset */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *values */);
+				(void *)getStackedPointer(4) /* void *values */);
 			break;
 		case NFOSMESA_GLGETMINMAXEXT:
 			nfglGetMinmaxEXT(
@@ -4828,66 +4828,66 @@
 				getStackedParameter(1) /* GLboolean32 reset */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *values */);
+				(void *)getStackedPointer(4) /* void *values */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFV:
 			nfglGetMinmaxParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFVEXT:
 			nfglGetMinmaxParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIV:
 			nfglGetMinmaxParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIVEXT:
 			nfglGetMinmaxParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVFVEXT:
 			nfglGetMultiTexEnvfvEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVIVEXT:
 			nfglGetMultiTexEnvivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENDVEXT:
 			nfglGetMultiTexGendvEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENFVEXT:
 			nfglGetMultiTexGenfvEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENIVEXT:
 			nfglGetMultiTexGenivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXIMAGEEXT:
 			nfglGetMultiTexImageEXT(
@@ -4896,7 +4896,7 @@
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *pixels */);
+				(void *)getStackedPointer(5) /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERFVEXT:
 			nfglGetMultiTexLevelParameterfvEXT(
@@ -4904,7 +4904,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(4) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERIVEXT:
 			nfglGetMultiTexLevelParameterivEXT(
@@ -4912,246 +4912,246 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *params */);
+				(GLint *)getStackedPointer(4) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIIVEXT:
 			nfglGetMultiTexParameterIivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIUIVEXT:
 			nfglGetMultiTexParameterIuivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(3) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERFVEXT:
 			nfglGetMultiTexParameterfvEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIVEXT:
 			nfglGetMultiTexParameterivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFV:
 			nfglGetMultisamplefv(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *val */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *val */);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFVNV:
 			nfglGetMultisamplefvNV(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *val */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *val */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERIVEXT:
 			nfglGetNamedBufferParameterivEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERUI64VNV:
 			nfglGetNamedBufferParameterui64vNV(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPOINTERVEXT:
 			nfglGetNamedBufferPointervEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *params */);
+				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATAEXT:
 			nfglGetNamedBufferSubDataEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr size */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *data */);
+				(void *)getStackedPointer(3) /* void *data */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
 			nfglGetNamedFramebufferAttachmentParameterivEXT(
 				getStackedParameter(0) /* GLuint framebuffer */,
 				getStackedParameter(1) /* GLenum attachment */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT:
 			nfglGetNamedFramebufferParameterivEXT(
 				getStackedParameter(0) /* GLuint framebuffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT:
 			nfglGetNamedProgramLocalParameterIivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT:
 			nfglGetNamedProgramLocalParameterIuivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(3) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT:
 			nfglGetNamedProgramLocalParameterdvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT:
 			nfglGetNamedProgramLocalParameterfvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMSTRINGEXT:
 			nfglGetNamedProgramStringEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *string */);
+				(void *)getStackedPointer(3) /* void *string */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMIVEXT:
 			nfglGetNamedProgramivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT:
 			nfglGetNamedRenderbufferParameterivEXT(
 				getStackedParameter(0) /* GLuint renderbuffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGARB:
 			nfglGetNamedStringARB(
 				getStackedParameter(0) /* GLint namelen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */,
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *stringlen */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *string */);
+				(GLint *)getStackedPointer(3) /* GLint *stringlen */,
+				(GLchar *)getStackedPointer(4) /* GLchar *string */);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGIVARB:
 			nfglGetNamedStringivARB(
 				getStackedParameter(0) /* GLint namelen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */,
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNEXTPERFQUERYIDINTEL:
 			nfglGetNextPerfQueryIdINTEL(
 				getStackedParameter(0) /* GLuint queryId */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *nextQueryId */);
+				(GLuint *)getStackedPointer(1) /* GLuint *nextQueryId */);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERFVATI:
 			nfglGetObjectBufferfvATI(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERIVATI:
 			nfglGetObjectBufferivATI(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTLABEL:
 			nfglGetObjectLabel(
 				getStackedParameter(0) /* GLenum identifier */,
 				getStackedParameter(1) /* GLuint name */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *label */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(4) /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOBJECTLABELEXT:
 			nfglGetObjectLabelEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLuint object */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *label */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(4) /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERFVARB:
 			nfglGetObjectParameterfvARB(
 				getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVAPPLE:
 			nfglGetObjectParameterivAPPLE(
 				getStackedParameter(0) /* GLenum objectType */,
 				getStackedParameter(1) /* GLuint name */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVARB:
 			nfglGetObjectParameterivARB(
 				getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPTRLABEL:
 			nfglGetObjectPtrLabel(
-				(const void *)Atari2HostAddr(getStackedParameter(0)) /* const void *ptr */,
+				(const void *)getStackedPointer(0) /* const void *ptr */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *label */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYIVNV:
 			nfglGetOcclusionQueryivNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYUIVNV:
 			nfglGetOcclusionQueryuivNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENFVNV:
 			nfglGetPathColorGenfvNV(
 				getStackedParameter(0) /* GLenum color */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *value */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENIVNV:
 			nfglGetPathColorGenivNV(
 				getStackedParameter(0) /* GLenum color */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *value */);
+				(GLint *)getStackedPointer(2) /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPATHCOMMANDSNV:
 			nfglGetPathCommandsNV(
 				getStackedParameter(0) /* GLuint path */,
-				(GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* GLubyte *commands */);
+				(GLubyte *)getStackedPointer(1) /* GLubyte *commands */);
 			break;
 		case NFOSMESA_GLGETPATHCOORDSNV:
 			nfglGetPathCoordsNV(
 				getStackedParameter(0) /* GLuint path */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *coords */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *coords */);
 			break;
 		case NFOSMESA_GLGETPATHDASHARRAYNV:
 			nfglGetPathDashArrayNV(
 				getStackedParameter(0) /* GLuint path */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *dashArray */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *dashArray */);
 			break;
 		case NFOSMESA_GLGETPATHLENGTHNV:
 			ret = nfglGetPathLengthNV(
@@ -5165,339 +5165,339 @@
 				getStackedParameter(1) /* GLuint firstPathName */,
 				getStackedParameter(2) /* GLsizei numPaths */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* GLfloat *metrics */);
+				(GLfloat *)getStackedPointer(4) /* GLfloat *metrics */);
 			break;
 		case NFOSMESA_GLGETPATHMETRICSNV:
 			nfglGetPathMetricsNV(
 				getStackedParameter(0) /* GLbitfield metricQueryMask */,
 				getStackedParameter(1) /* GLsizei numPaths */,
 				getStackedParameter(2) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *paths */,
+				(const void *)getStackedPointer(3) /* const void *paths */,
 				getStackedParameter(4) /* GLuint pathBase */,
 				getStackedParameter(5) /* GLsizei stride */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(6)) /* GLfloat *metrics */);
+				(GLfloat *)getStackedPointer(6) /* GLfloat *metrics */);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERFVNV:
 			nfglGetPathParameterfvNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *value */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERIVNV:
 			nfglGetPathParameterivNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *value */);
+				(GLint *)getStackedPointer(2) /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPATHSPACINGNV:
 			nfglGetPathSpacingNV(
 				getStackedParameter(0) /* GLenum pathListMode */,
 				getStackedParameter(1) /* GLsizei numPaths */,
 				getStackedParameter(2) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *paths */,
+				(const void *)getStackedPointer(3) /* const void *paths */,
 				getStackedParameter(4) /* GLuint pathBase */,
 				getStackedFloat(5) /* GLfloat advanceScale */,
 				getStackedFloat(6) /* GLfloat kerningScale */,
 				getStackedParameter(7) /* GLenum transformType */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(8)) /* GLfloat *returnedSpacing */);
+				(GLfloat *)getStackedPointer(8) /* GLfloat *returnedSpacing */);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENFVNV:
 			nfglGetPathTexGenfvNV(
 				getStackedParameter(0) /* GLenum texCoordSet */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *value */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENIVNV:
 			nfglGetPathTexGenivNV(
 				getStackedParameter(0) /* GLenum texCoordSet */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *value */);
+				(GLint *)getStackedPointer(2) /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPERFCOUNTERINFOINTEL:
 			nfglGetPerfCounterInfoINTEL(
 				getStackedParameter(0) /* GLuint queryId */,
 				getStackedParameter(1) /* GLuint counterId */,
 				getStackedParameter(2) /* GLuint counterNameLength */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *counterName */,
+				(GLchar *)getStackedPointer(3) /* GLchar *counterName */,
 				getStackedParameter(4) /* GLuint counterDescLength */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(5)) /* GLchar *counterDesc */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(6)) /* GLuint *counterOffset */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(7)) /* GLuint *counterDataSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(8)) /* GLuint *counterTypeEnum */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(9)) /* GLuint *counterDataTypeEnum */,
-				(GLuint64 *)Atari2HostAddr(getStackedParameter(10)) /* GLuint64 *rawCounterMaxValue */);
+				(GLchar *)getStackedPointer(5) /* GLchar *counterDesc */,
+				(GLuint *)getStackedPointer(6) /* GLuint *counterOffset */,
+				(GLuint *)getStackedPointer(7) /* GLuint *counterDataSize */,
+				(GLuint *)getStackedPointer(8) /* GLuint *counterTypeEnum */,
+				(GLuint *)getStackedPointer(9) /* GLuint *counterDataTypeEnum */,
+				(GLuint64 *)getStackedPointer(10) /* GLuint64 *rawCounterMaxValue */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERDATAAMD:
 			nfglGetPerfMonitorCounterDataAMD(
 				getStackedParameter(0) /* GLuint monitor */,
 				getStackedParameter(1) /* GLenum pname */,
 				getStackedParameter(2) /* GLsizei dataSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *data */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *bytesWritten */);
+				(GLuint *)getStackedPointer(3) /* GLuint *data */,
+				(GLint *)getStackedPointer(4) /* GLint *bytesWritten */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERINFOAMD:
 			nfglGetPerfMonitorCounterInfoAMD(
 				getStackedParameter(0) /* GLuint group */,
 				getStackedParameter(1) /* GLuint counter */,
 				getStackedParameter(2) /* GLenum pname */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *data */);
+				(void *)getStackedPointer(3) /* void *data */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSTRINGAMD:
 			nfglGetPerfMonitorCounterStringAMD(
 				getStackedParameter(0) /* GLuint group */,
 				getStackedParameter(1) /* GLuint counter */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(4)) /* GLchar *counterString */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(4) /* GLchar *counterString */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSAMD:
 			nfglGetPerfMonitorCountersAMD(
 				getStackedParameter(0) /* GLuint group */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *numCounters */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *maxActiveCounters */,
+				(GLint *)getStackedPointer(1) /* GLint *numCounters */,
+				(GLint *)getStackedPointer(2) /* GLint *maxActiveCounters */,
 				getStackedParameter(3) /* GLsizei counterSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *counters */);
+				(GLuint *)getStackedPointer(4) /* GLuint *counters */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSTRINGAMD:
 			nfglGetPerfMonitorGroupStringAMD(
 				getStackedParameter(0) /* GLuint group */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *groupString */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *groupString */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSAMD:
 			nfglGetPerfMonitorGroupsAMD(
-				(GLint *)Atari2HostAddr(getStackedParameter(0)) /* GLint *numGroups */,
+				(GLint *)getStackedPointer(0) /* GLint *numGroups */,
 				getStackedParameter(1) /* GLsizei groupsSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *groups */);
+				(GLuint *)getStackedPointer(2) /* GLuint *groups */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYDATAINTEL:
 			nfglGetPerfQueryDataINTEL(
 				getStackedParameter(0) /* GLuint queryHandle */,
 				getStackedParameter(1) /* GLuint flags */,
 				getStackedParameter(2) /* GLsizei dataSize */,
-				(GLvoid *)Atari2HostAddr(getStackedParameter(3)) /* GLvoid *data */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *bytesWritten */);
+				(GLvoid *)getStackedPointer(3) /* GLvoid *data */,
+				(GLuint *)getStackedPointer(4) /* GLuint *bytesWritten */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYIDBYNAMEINTEL:
 			nfglGetPerfQueryIdByNameINTEL(
-				(GLchar *)Atari2HostAddr(getStackedParameter(0)) /* GLchar *queryName */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *queryId */);
+				(GLchar *)getStackedPointer(0) /* GLchar *queryName */,
+				(GLuint *)getStackedPointer(1) /* GLuint *queryId */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYINFOINTEL:
 			nfglGetPerfQueryInfoINTEL(
 				getStackedParameter(0) /* GLuint queryId */,
 				getStackedParameter(1) /* GLuint queryNameLength */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(2)) /* GLchar *queryName */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *dataSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *noCounters */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(5)) /* GLuint *noInstances */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(6)) /* GLuint *capsMask */);
+				(GLchar *)getStackedPointer(2) /* GLchar *queryName */,
+				(GLuint *)getStackedPointer(3) /* GLuint *dataSize */,
+				(GLuint *)getStackedPointer(4) /* GLuint *noCounters */,
+				(GLuint *)getStackedPointer(5) /* GLuint *noInstances */,
+				(GLuint *)getStackedPointer(6) /* GLuint *capsMask */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPFV:
 			nfglGetPixelMapfv(
 				getStackedParameter(0) /* GLenum map */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *values */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUIV:
 			nfglGetPixelMapuiv(
 				getStackedParameter(0) /* GLenum map */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *values */);
+				(GLuint *)getStackedPointer(1) /* GLuint *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUSV:
 			nfglGetPixelMapusv(
 				getStackedParameter(0) /* GLenum map */,
-				(GLushort *)Atari2HostAddr(getStackedParameter(1)) /* GLushort *values */);
+				(GLushort *)getStackedPointer(1) /* GLushort *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPXV:
 			nfglGetPixelMapxv(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLint size */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *values */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *values */);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERFVSGIS:
 			nfglGetPixelTexGenParameterfvSGIS(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERIVSGIS:
 			nfglGetPixelTexGenParameterivSGIS(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *params */);
+				(GLint *)getStackedPointer(1) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERFVEXT:
 			nfglGetPixelTransformParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERIVEXT:
 			nfglGetPixelTransformParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERINDEXEDVEXT:
 			nfglGetPointerIndexedvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *data */);
+				(void * *)getStackedPointer(2) /* void * *data */);
 			break;
 		case NFOSMESA_GLGETPOINTERI_VEXT:
 			nfglGetPointeri_vEXT(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *params */);
+				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERV:
 			nfglGetPointerv(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLvoid* *)Atari2HostAddr(getStackedParameter(1)) /* GLvoid* *params */);
+				(GLvoid* *)getStackedPointer(1) /* GLvoid* *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERVEXT:
 			nfglGetPointervEXT(
 				getStackedParameter(0) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(1)) /* void * *params */);
+				(void * *)getStackedPointer(1) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETPOLYGONSTIPPLE:
 			nfglGetPolygonStipple(
-				(GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* GLubyte *mask */);
+				(GLubyte *)getStackedPointer(0) /* GLubyte *mask */);
 			break;
 		case NFOSMESA_GLGETPROGRAMBINARY:
 			nfglGetProgramBinary(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(3)) /* GLenum *binaryFormat */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *binary */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLenum *)getStackedPointer(3) /* GLenum *binaryFormat */,
+				(void *)getStackedPointer(4) /* void *binary */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIIVNV:
 			nfglGetProgramEnvParameterIivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIUIVNV:
 			nfglGetProgramEnvParameterIuivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERDVARB:
 			nfglGetProgramEnvParameterdvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERFVARB:
 			nfglGetProgramEnvParameterfvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMINFOLOG:
 			nfglGetProgramInfoLog(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *infoLog */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETPROGRAMINTERFACEIV:
 			nfglGetProgramInterfaceiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum programInterface */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIIVNV:
 			nfglGetProgramLocalParameterIivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIUIVNV:
 			nfglGetProgramLocalParameterIuivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERDVARB:
 			nfglGetProgramLocalParameterdvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERFVARB:
 			nfglGetProgramLocalParameterfvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERDVNV:
 			nfglGetProgramNamedParameterdvNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERFVNV:
 			nfglGetProgramNamedParameterfvNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERDVNV:
 			nfglGetProgramParameterdvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERFVNV:
 			nfglGetProgramParameterfvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEINFOLOG:
 			nfglGetProgramPipelineInfoLog(
 				getStackedParameter(0) /* GLuint pipeline */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *infoLog */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEIV:
 			nfglGetProgramPipelineiv(
 				getStackedParameter(0) /* GLuint pipeline */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMREGISTERFVMESA:
 			nfglGetProgramRegisterfvMESA(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *v */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
+				(GLfloat *)getStackedPointer(3) /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEINDEX:
 			ret = nfglGetProgramResourceIndex(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum programInterface */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATION:
 			ret = nfglGetProgramResourceLocation(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum programInterface */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATIONINDEX:
 			ret = nfglGetProgramResourceLocationIndex(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum programInterface */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCENAME:
 			nfglGetProgramResourceName(
@@ -5505,8 +5505,8 @@
 				getStackedParameter(1) /* GLenum programInterface */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(5)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(4) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(5) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEIV:
 			nfglGetProgramResourceiv(
@@ -5514,213 +5514,213 @@
 				getStackedParameter(1) /* GLenum programInterface */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei propCount */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(4)) /* const GLenum *props */,
+				(const GLenum *)getStackedPointer(4) /* const GLenum *props */,
 				getStackedParameter(5) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(6)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(7)) /* GLint *params */);
+				(GLsizei *)getStackedPointer(6) /* GLsizei *length */,
+				(GLint *)getStackedPointer(7) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTAGEIV:
 			nfglGetProgramStageiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum shadertype */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *values */);
+				(GLint *)getStackedPointer(3) /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGARB:
 			nfglGetProgramStringARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void *)Atari2HostAddr(getStackedParameter(2)) /* void *string */);
+				(void *)getStackedPointer(2) /* void *string */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGNV:
 			nfglGetProgramStringNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* GLubyte *program */);
+				(GLubyte *)getStackedPointer(2) /* GLubyte *program */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSUBROUTINEPARAMETERUIVNV:
 			nfglGetProgramSubroutineParameteruivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *param */);
+				(GLuint *)getStackedPointer(2) /* GLuint *param */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIV:
 			nfglGetProgramiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVARB:
 			nfglGetProgramivARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVNV:
 			nfglGetProgramivNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYINDEXEDIV:
 			nfglGetQueryIndexediv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64V:
 			nfglGetQueryObjecti64v(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLint64 *params */);
+				(GLint64 *)getStackedPointer(2) /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64VEXT:
 			nfglGetQueryObjecti64vEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLint64 *params */);
+				(GLint64 *)getStackedPointer(2) /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIV:
 			nfglGetQueryObjectiv(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIVARB:
 			nfglGetQueryObjectivARB(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64V:
 			nfglGetQueryObjectui64v(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64 *params */);
+				(GLuint64 *)getStackedPointer(2) /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64VEXT:
 			nfglGetQueryObjectui64vEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64 *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64 *params */);
+				(GLuint64 *)getStackedPointer(2) /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIV:
 			nfglGetQueryObjectuiv(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIVARB:
 			nfglGetQueryObjectuivARB(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYIV:
 			nfglGetQueryiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYIVARB:
 			nfglGetQueryivARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIV:
 			nfglGetRenderbufferParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIVEXT:
 			nfglGetRenderbufferParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIIV:
 			nfglGetSamplerParameterIiv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIUIV:
 			nfglGetSamplerParameterIuiv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERFV:
 			nfglGetSamplerParameterfv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIV:
 			nfglGetSamplerParameteriv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTER:
 			nfglGetSeparableFilter(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *row */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *column */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *span */);
+				(void *)getStackedPointer(3) /* void *row */,
+				(void *)getStackedPointer(4) /* void *column */,
+				(void *)getStackedPointer(5) /* void *span */);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTEREXT:
 			nfglGetSeparableFilterEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *row */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *column */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *span */);
+				(void *)getStackedPointer(3) /* void *row */,
+				(void *)getStackedPointer(4) /* void *column */,
+				(void *)getStackedPointer(5) /* void *span */);
 			break;
 		case NFOSMESA_GLGETSHADERINFOLOG:
 			nfglGetShaderInfoLog(
 				getStackedParameter(0) /* GLuint shader */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *infoLog */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETSHADERPRECISIONFORMAT:
 			nfglGetShaderPrecisionFormat(
 				getStackedParameter(0) /* GLenum shadertype */,
 				getStackedParameter(1) /* GLenum precisiontype */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *range */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *precision */);
+				(GLint *)getStackedPointer(2) /* GLint *range */,
+				(GLint *)getStackedPointer(3) /* GLint *precision */);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCE:
 			nfglGetShaderSource(
 				getStackedParameter(0) /* GLuint shader */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(3)) /* GLchar *source */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLchar *)getStackedPointer(3) /* GLchar *source */);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCEARB:
 			nfglGetShaderSourceARB(
 				getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLsizei maxLength */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* GLsizei *length */,
-				(GLcharARB *)Atari2HostAddr(getStackedParameter(3)) /* GLcharARB *source */);
+				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
+				(GLcharARB *)getStackedPointer(3) /* GLcharARB *source */);
 			break;
 		case NFOSMESA_GLGETSHADERIV:
 			nfglGetShaderiv(
 				getStackedParameter(0) /* GLuint shader */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSHARPENTEXFUNCSGIS:
 			nfglGetSharpenTexFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *points */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *points */);
 			break;
 #if 0
 		case NFOSMESA_GLGETSTRING:
@@ -5739,79 +5739,79 @@
 			ret = nfglGetSubroutineIndex(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum shadertype */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETSUBROUTINEUNIFORMLOCATION:
 			ret = nfglGetSubroutineUniformLocation(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum shadertype */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETSYNCIV:
 			nfglGetSynciv(
-				(GLsync )Atari2HostAddr(getStackedParameter(0)) /* GLsync sync */,
+				(GLsync )getStackedPointer(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLenum pname */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *values */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERFVATI:
 			nfglGetTexBumpParameterfvATI(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* GLfloat *param */);
+				(GLfloat *)getStackedPointer(1) /* GLfloat *param */);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERIVATI:
 			nfglGetTexBumpParameterivATI(
 				getStackedParameter(0) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *param */);
+				(GLint *)getStackedPointer(1) /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETTEXENVFV:
 			nfglGetTexEnvfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXENVIV:
 			nfglGetTexEnviv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXENVXVOES:
 			nfglGetTexEnvxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXFILTERFUNCSGIS:
 			nfglGetTexFilterFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum filter */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *weights */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *weights */);
 			break;
 		case NFOSMESA_GLGETTEXGENDV:
 			nfglGetTexGendv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENFV:
 			nfglGetTexGenfv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENIV:
 			nfglGetTexGeniv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENXVOES:
 			nfglGetTexGenxvOES(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXIMAGE:
 			nfglGetTexImage(
@@ -5819,76 +5819,76 @@
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
-				(GLvoid *)Atari2HostAddr(getStackedParameter(4)) /* GLvoid *pixels */);
+				(GLvoid *)getStackedPointer(4) /* GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERFV:
 			nfglGetTexLevelParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERIV:
 			nfglGetTexLevelParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERXVOES:
 			nfglGetTexLevelParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(3)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(3) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIV:
 			nfglGetTexParameterIiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIVEXT:
 			nfglGetTexParameterIivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIV:
 			nfglGetTexParameterIuiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIVEXT:
 			nfglGetTexParameterIuivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERPOINTERVAPPLE:
 			nfglGetTexParameterPointervAPPLE(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *params */);
+				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERFV:
 			nfglGetTexParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIV:
 			nfglGetTexParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERXVOES:
 			nfglGetTexParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* GLfixed *params */);
+				(GLfixed *)getStackedPointer(2) /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREHANDLEARB:
 			ret = nfglGetTextureHandleARB(
@@ -5905,7 +5905,7 @@
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum format */,
 				getStackedParameter(4) /* GLenum type */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *pixels */);
+				(void *)getStackedPointer(5) /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERFVEXT:
 			nfglGetTextureLevelParameterfvEXT(
@@ -5913,7 +5913,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(4) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERIVEXT:
 			nfglGetTextureLevelParameterivEXT(
@@ -5921,35 +5921,35 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLint level */,
 				getStackedParameter(3) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *params */);
+				(GLint *)getStackedPointer(4) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIIVEXT:
 			nfglGetTextureParameterIivEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIUIVEXT:
 			nfglGetTextureParameterIuivEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(3) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERFVEXT:
 			nfglGetTextureParameterfvEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIVEXT:
 			nfglGetTextureParameterivEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURESAMPLERHANDLEARB:
 			ret = nfglGetTextureSamplerHandleARB(
@@ -5966,38 +5966,38 @@
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint address */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYING:
 			nfglGetTransformFeedbackVarying(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLsizei *)getStackedPointer(4) /* GLsizei *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLchar *)getStackedPointer(6) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGEXT:
 			nfglGetTransformFeedbackVaryingEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* GLsizei *size */,
-				(GLenum *)Atari2HostAddr(getStackedParameter(5)) /* GLenum *type */,
-				(GLchar *)Atari2HostAddr(getStackedParameter(6)) /* GLchar *name */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLsizei *)getStackedPointer(4) /* GLsizei *size */,
+				(GLenum *)getStackedPointer(5) /* GLenum *type */,
+				(GLchar *)getStackedPointer(6) /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGNV:
 			nfglGetTransformFeedbackVaryingNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLuint index */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *location */);
+				(GLint *)getStackedPointer(2) /* GLint *location */);
 			break;
 		case NFOSMESA_GLGETUNIFORMBLOCKINDEX:
 			ret = nfglGetUniformBlockIndex(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *uniformBlockName */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETUNIFORMBUFFERSIZEEXT:
 			ret = nfglGetUniformBufferSizeEXT(
@@ -6008,18 +6008,18 @@
 			nfglGetUniformIndices(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei uniformCount */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *uniformNames */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *uniformIndices */);
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *uniformNames */,
+				(GLuint *)getStackedPointer(3) /* GLuint *uniformIndices */);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATION:
 			ret = nfglGetUniformLocation(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATIONARB:
 			ret = nfglGetUniformLocationARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
-				(const GLcharARB *)Atari2HostAddr(getStackedParameter(1)) /* const GLcharARB *name */);
+				(const GLcharARB *)getStackedPointer(1) /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMOFFSETEXT:
 			ret = nfglGetUniformOffsetEXT(
@@ -6030,317 +6030,317 @@
 			nfglGetUniformSubroutineuiv(
 				getStackedParameter(0) /* GLenum shadertype */,
 				getStackedParameter(1) /* GLint location */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMDV:
 			nfglGetUniformdv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMFV:
 			nfglGetUniformfv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMFVARB:
 			nfglGetUniformfvARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLint location */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMI64VNV:
 			nfglGetUniformi64vNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLint64EXT *params */);
+				(GLint64EXT *)getStackedPointer(2) /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMIV:
 			nfglGetUniformiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMIVARB:
 			nfglGetUniformivARB(
 				getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLint location */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUI64VNV:
 			nfglGetUniformui64vNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIV:
 			nfglGetUniformuiv(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIVEXT:
 			nfglGetUniformuivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTFVATI:
 			nfglGetVariantArrayObjectfvATI(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTIVATI:
 			nfglGetVariantArrayObjectivATI(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTBOOLEANVEXT:
 			nfglGetVariantBooleanvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLboolean *)Atari2HostAddr(getStackedParameter(2)) /* GLboolean *data */);
+				(GLboolean *)getStackedPointer(2) /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTFLOATVEXT:
 			nfglGetVariantFloatvEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *data */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTINTEGERVEXT:
 			nfglGetVariantIntegervEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *data */);
+				(GLint *)getStackedPointer(2) /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTPOINTERVEXT:
 			nfglGetVariantPointervEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum value */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *data */);
+				(void * *)getStackedPointer(2) /* void * *data */);
 			break;
 		case NFOSMESA_GLGETVARYINGLOCATIONNV:
 			ret = nfglGetVaryingLocationNV(
 				getStackedParameter(0) /* GLuint program */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERI_VEXT:
 			nfglGetVertexArrayIntegeri_vEXT(
 				getStackedParameter(0) /* GLuint vaobj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *param */);
+				(GLint *)getStackedPointer(3) /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERVEXT:
 			nfglGetVertexArrayIntegervEXT(
 				getStackedParameter(0) /* GLuint vaobj */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *param */);
+				(GLint *)getStackedPointer(2) /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERI_VEXT:
 			nfglGetVertexArrayPointeri_vEXT(
 				getStackedParameter(0) /* GLuint vaobj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(3)) /* void * *param */);
+				(void * *)getStackedPointer(3) /* void * *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERVEXT:
 			nfglGetVertexArrayPointervEXT(
 				getStackedParameter(0) /* GLuint vaobj */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *param */);
+				(void * *)getStackedPointer(2) /* void * *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTFVATI:
 			nfglGetVertexAttribArrayObjectfvATI(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTIVATI:
 			nfglGetVertexAttribArrayObjectivATI(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIV:
 			nfglGetVertexAttribIiv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIVEXT:
 			nfglGetVertexAttribIivEXT(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIV:
 			nfglGetVertexAttribIuiv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIVEXT:
 			nfglGetVertexAttribIuivEXT(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDV:
 			nfglGetVertexAttribLdv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDVEXT:
 			nfglGetVertexAttribLdvEXT(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLI64VNV:
 			nfglGetVertexAttribLi64vNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLint64EXT *params */);
+				(GLint64EXT *)getStackedPointer(2) /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VARB:
 			nfglGetVertexAttribLui64vARB(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VNV:
 			nfglGetVertexAttribLui64vNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERV:
 			nfglGetVertexAttribPointerv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *pointer */);
+				(void * *)getStackedPointer(2) /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVARB:
 			nfglGetVertexAttribPointervARB(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *pointer */);
+				(void * *)getStackedPointer(2) /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVNV:
 			nfglGetVertexAttribPointervNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(void * *)Atari2HostAddr(getStackedParameter(2)) /* void * *pointer */);
+				(void * *)getStackedPointer(2) /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDV:
 			nfglGetVertexAttribdv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVARB:
 			nfglGetVertexAttribdvARB(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVNV:
 			nfglGetVertexAttribdvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(2) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFV:
 			nfglGetVertexAttribfv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVARB:
 			nfglGetVertexAttribfvARB(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVNV:
 			nfglGetVertexAttribfvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIV:
 			nfglGetVertexAttribiv(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVARB:
 			nfglGetVertexAttribivARB(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVNV:
 			nfglGetVertexAttribivNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMDVNV:
 			nfglGetVideoCaptureStreamdvNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMFVNV:
 			nfglGetVideoCaptureStreamfvNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMIVNV:
 			nfglGetVideoCaptureStreamivNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTUREIVNV:
 			nfglGetVideoCaptureivNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOI64VNV:
 			nfglGetVideoi64vNV(
 				getStackedParameter(0) /* GLuint video_slot */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLint64EXT *params */);
+				(GLint64EXT *)getStackedPointer(2) /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOIVNV:
 			nfglGetVideoivNV(
 				getStackedParameter(0) /* GLuint video_slot */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLint *)Atari2HostAddr(getStackedParameter(2)) /* GLint *params */);
+				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOUI64VNV:
 			nfglGetVideoui64vNV(
 				getStackedParameter(0) /* GLuint video_slot */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *params */);
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOUIVNV:
 			nfglGetVideouivNV(
 				getStackedParameter(0) /* GLuint video_slot */,
 				getStackedParameter(1) /* GLenum pname */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETNCOLORTABLEARB:
 			nfglGetnColorTableARB(
@@ -6348,14 +6348,14 @@
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *table */);
+				(void *)getStackedPointer(4) /* void *table */);
 			break;
 		case NFOSMESA_GLGETNCOMPRESSEDTEXIMAGEARB:
 			nfglGetnCompressedTexImageARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLint lod */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(3)) /* void *img */);
+				(void *)getStackedPointer(3) /* void *img */);
 			break;
 		case NFOSMESA_GLGETNCONVOLUTIONFILTERARB:
 			nfglGetnConvolutionFilterARB(
@@ -6363,7 +6363,7 @@
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *image */);
+				(void *)getStackedPointer(4) /* void *image */);
 			break;
 		case NFOSMESA_GLGETNHISTOGRAMARB:
 			nfglGetnHistogramARB(
@@ -6372,28 +6372,28 @@
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
 				getStackedParameter(4) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *values */);
+				(void *)getStackedPointer(5) /* void *values */);
 			break;
 		case NFOSMESA_GLGETNMAPDVARB:
 			nfglGetnMapdvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *v */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *v */);
 			break;
 		case NFOSMESA_GLGETNMAPFVARB:
 			nfglGetnMapfvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *v */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETNMAPIVARB:
 			nfglGetnMapivARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum query */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *v */);
+				(GLint *)getStackedPointer(3) /* GLint *v */);
 			break;
 		case NFOSMESA_GLGETNMINMAXARB:
 			nfglGetnMinmaxARB(
@@ -6402,30 +6402,30 @@
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
 				getStackedParameter(4) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *values */);
+				(void *)getStackedPointer(5) /* void *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPFVARB:
 			nfglGetnPixelMapfvARB(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* GLfloat *values */);
+				(GLfloat *)getStackedPointer(2) /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUIVARB:
 			nfglGetnPixelMapuivARB(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(2)) /* GLuint *values */);
+				(GLuint *)getStackedPointer(2) /* GLuint *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUSVARB:
 			nfglGetnPixelMapusvARB(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei bufSize */,
-				(GLushort *)Atari2HostAddr(getStackedParameter(2)) /* GLushort *values */);
+				(GLushort *)getStackedPointer(2) /* GLushort *values */);
 			break;
 		case NFOSMESA_GLGETNPOLYGONSTIPPLEARB:
 			nfglGetnPolygonStippleARB(
 				getStackedParameter(0) /* GLsizei bufSize */,
-				(GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* GLubyte *pattern */);
+				(GLubyte *)getStackedPointer(1) /* GLubyte *pattern */);
 			break;
 		case NFOSMESA_GLGETNSEPARABLEFILTERARB:
 			nfglGetnSeparableFilterARB(
@@ -6433,10 +6433,10 @@
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei rowBufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(4)) /* void *row */,
+				(void *)getStackedPointer(4) /* void *row */,
 				getStackedParameter(5) /* GLsizei columnBufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(6)) /* void *column */,
-				(void *)Atari2HostAddr(getStackedParameter(7)) /* void *span */);
+				(void *)getStackedPointer(6) /* void *column */,
+				(void *)getStackedPointer(7) /* void *span */);
 			break;
 		case NFOSMESA_GLGETNTEXIMAGEARB:
 			nfglGetnTexImageARB(
@@ -6445,35 +6445,35 @@
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLenum type */,
 				getStackedParameter(4) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(5)) /* void *img */);
+				(void *)getStackedPointer(5) /* void *img */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMDVARB:
 			nfglGetnUniformdvARB(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* GLdouble *params */);
+				(GLdouble *)getStackedPointer(3) /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMFVARB:
 			nfglGetnUniformfvARB(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* GLfloat *params */);
+				(GLfloat *)getStackedPointer(3) /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMIVARB:
 			nfglGetnUniformivARB(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLint *)Atari2HostAddr(getStackedParameter(3)) /* GLint *params */);
+				(GLint *)getStackedPointer(3) /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIVARB:
 			nfglGetnUniformuivARB(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(3)) /* GLuint *params */);
+				(GLuint *)getStackedPointer(3) /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORBSUN:
 			nfglGlobalAlphaFactorbSUN(
@@ -6534,7 +6534,7 @@
 		case NFOSMESA_GLIGLOOINTERFACESGIX:
 			nfglIglooInterfaceSGIX(
 				getStackedParameter(0) /* GLenum pname */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *params */);
+				(const void *)getStackedPointer(1) /* const void *params */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERFHP:
 			nfglImageTransformParameterfHP(
@@ -6546,7 +6546,7 @@
 			nfglImageTransformParameterfvHP(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERIHP:
 			nfglImageTransformParameteriHP(
@@ -6558,7 +6558,7 @@
 			nfglImageTransformParameterivHP(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 #if 0
 		case NFOSMESA_GLIMPORTSYNCEXT:
@@ -6591,20 +6591,20 @@
 			nfglIndexPointer(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(2) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLINDEXPOINTEREXT:
 			nfglIndexPointerEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLINDEXPOINTERLISTIBM:
 			nfglIndexPointerListIBM(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(2) /* const void * *pointer */,
 				getStackedParameter(3) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLINDEXD:
@@ -6613,7 +6613,7 @@
 			break;
 		case NFOSMESA_GLINDEXDV:
 			nfglIndexdv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *c */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *c */);
 			break;
 		case NFOSMESA_GLINDEXF:
 			nfglIndexf(
@@ -6621,7 +6621,7 @@
 			break;
 		case NFOSMESA_GLINDEXFV:
 			nfglIndexfv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *c */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *c */);
 			break;
 		case NFOSMESA_GLINDEXI:
 			nfglIndexi(
@@ -6629,7 +6629,7 @@
 			break;
 		case NFOSMESA_GLINDEXIV:
 			nfglIndexiv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *c */);
+				(const GLint *)getStackedPointer(0) /* const GLint *c */);
 			break;
 		case NFOSMESA_GLINDEXS:
 			nfglIndexs(
@@ -6637,7 +6637,7 @@
 			break;
 		case NFOSMESA_GLINDEXSV:
 			nfglIndexsv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *c */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *c */);
 			break;
 		case NFOSMESA_GLINDEXUB:
 			nfglIndexub(
@@ -6645,7 +6645,7 @@
 			break;
 		case NFOSMESA_GLINDEXUBV:
 			nfglIndexubv(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *c */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *c */);
 			break;
 		case NFOSMESA_GLINDEXXOES:
 			nfglIndexxOES(
@@ -6653,7 +6653,7 @@
 			break;
 		case NFOSMESA_GLINDEXXVOES:
 			nfglIndexxvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *component */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *component */);
 			break;
 		case NFOSMESA_GLINITNAMES:
 			nfglInitNames();
@@ -6667,18 +6667,18 @@
 		case NFOSMESA_GLINSERTEVENTMARKEREXT:
 			nfglInsertEventMarkerEXT(
 				getStackedParameter(0) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *marker */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *marker */);
 			break;
 		case NFOSMESA_GLINSTRUMENTSBUFFERSGIX:
 			nfglInstrumentsBufferSGIX(
 				getStackedParameter(0) /* GLsizei size */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *buffer */);
+				(GLint *)getStackedPointer(1) /* GLint *buffer */);
 			break;
 		case NFOSMESA_GLINTERLEAVEDARRAYS:
 			nfglInterleavedArrays(
 				getStackedParameter(0) /* GLenum format */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(2) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLINTERPOLATEPATHSNV:
 			nfglInterpolatePathsNV(
@@ -6701,13 +6701,13 @@
 			nfglInvalidateFramebuffer(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei numAttachments */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(2)) /* const GLenum *attachments */);
+				(const GLenum *)getStackedPointer(2) /* const GLenum *attachments */);
 			break;
 		case NFOSMESA_GLINVALIDATESUBFRAMEBUFFER:
 			nfglInvalidateSubFramebuffer(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei numAttachments */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(2)) /* const GLenum *attachments */,
+				(const GLenum *)getStackedPointer(2) /* const GLenum *attachments */,
 				getStackedParameter(3) /* GLint x */,
 				getStackedParameter(4) /* GLint y */,
 				getStackedParameter(5) /* GLsizei width */,
@@ -6799,7 +6799,7 @@
 		case NFOSMESA_GLISNAMEDSTRINGARB:
 			ret = nfglIsNamedStringARB(
 				getStackedParameter(0) /* GLint namelen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *name */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLISOBJECTBUFFERATI:
 			ret = nfglIsObjectBufferATI(
@@ -6868,7 +6868,7 @@
 			break;
 		case NFOSMESA_GLISSYNC:
 			ret = nfglIsSync(
-				(GLsync )Atari2HostAddr(getStackedParameter(0)) /* GLsync sync */);
+				(GLsync )getStackedPointer(0) /* GLsync sync */);
 			break;
 		case NFOSMESA_GLISTEXTURE:
 			ret = nfglIsTexture(
@@ -6917,7 +6917,7 @@
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLuint object */,
 				getStackedParameter(2) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(3)) /* const GLchar *label */);
+				(const GLchar *)getStackedPointer(3) /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLLIGHTENVISGIX:
 			nfglLightEnviSGIX(
@@ -6932,7 +6932,7 @@
 		case NFOSMESA_GLLIGHTMODELFV:
 			nfglLightModelfv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLIGHTMODELI:
 			nfglLightModeli(
@@ -6942,7 +6942,7 @@
 		case NFOSMESA_GLLIGHTMODELIV:
 			nfglLightModeliv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLIGHTMODELXOES:
 			nfglLightModelxOES(
@@ -6952,7 +6952,7 @@
 		case NFOSMESA_GLLIGHTMODELXVOES:
 			nfglLightModelxvOES(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *param */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLLIGHTF:
 			nfglLightf(
@@ -6964,7 +6964,7 @@
 			nfglLightfv(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLIGHTI:
 			nfglLighti(
@@ -6976,7 +6976,7 @@
 			nfglLightiv(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLIGHTXOES:
 			nfglLightxOES(
@@ -6988,7 +6988,7 @@
 			nfglLightxvOES(
 				getStackedParameter(0) /* GLenum light */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLLINESTIPPLE:
 			nfglLineStipple(
@@ -7025,7 +7025,7 @@
 			nfglListParameterfvSGIX(
 				getStackedParameter(0) /* GLuint list */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLISTPARAMETERISGIX:
 			nfglListParameteriSGIX(
@@ -7037,7 +7037,7 @@
 			nfglListParameterivSGIX(
 				getStackedParameter(0) /* GLuint list */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLOADIDENTITY:
 			nfglLoadIdentity();
@@ -7048,15 +7048,15 @@
 			break;
 		case NFOSMESA_GLLOADMATRIXD:
 			nfglLoadMatrixd(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADMATRIXF:
 			nfglLoadMatrixf(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADMATRIXXOES:
 			nfglLoadMatrixxOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *m */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLLOADNAME:
 			nfglLoadName(
@@ -7067,27 +7067,27 @@
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint id */,
 				getStackedParameter(2) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(3)) /* const GLubyte *program */);
+				(const GLubyte *)getStackedPointer(3) /* const GLubyte *program */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXD:
 			nfglLoadTransposeMatrixd(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXDARB:
 			nfglLoadTransposeMatrixdARB(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXF:
 			nfglLoadTransposeMatrixf(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXFARB:
 			nfglLoadTransposeMatrixfARB(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXXOES:
 			nfglLoadTransposeMatrixxOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *m */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLLOCKARRAYSEXT:
 			nfglLockArraysEXT(
@@ -7157,7 +7157,7 @@
 				getStackedDouble(3) /* GLdouble u2 */,
 				getStackedParameter(5) /* GLint stride */,
 				getStackedParameter(6) /* GLint order */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(7)) /* const GLdouble *points */);
+				(const GLdouble *)getStackedPointer(7) /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAP1F:
 			nfglMap1f(
@@ -7166,7 +7166,7 @@
 				getStackedFloat(2) /* GLfloat u2 */,
 				getStackedParameter(3) /* GLint stride */,
 				getStackedParameter(4) /* GLint order */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(5)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(5) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAP1XOES:
 			nfglMap1xOES(
@@ -7188,7 +7188,7 @@
 				getStackedDouble(9) /* GLdouble v2 */,
 				getStackedParameter(11) /* GLint vstride */,
 				getStackedParameter(12) /* GLint vorder */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(13)) /* const GLdouble *points */);
+				(const GLdouble *)getStackedPointer(13) /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAP2F:
 			nfglMap2f(
@@ -7201,7 +7201,7 @@
 				getStackedFloat(6) /* GLfloat v2 */,
 				getStackedParameter(7) /* GLint vstride */,
 				getStackedParameter(8) /* GLint vorder */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(9)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(9) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAP2XOES:
 			nfglMap2xOES(
@@ -7249,7 +7249,7 @@
 				getStackedParameter(5) /* GLint uorder */,
 				getStackedParameter(6) /* GLint vorder */,
 				getStackedParameter(7) /* GLboolean32 packed */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *points */);
+				(const void *)getStackedPointer(8) /* const void *points */);
 			break;
 		case NFOSMESA_GLMAPGRID1D:
 			nfglMapGrid1d(
@@ -7321,13 +7321,13 @@
 			nfglMapParameterfvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMAPPARAMETERIVNV:
 			nfglMapParameterivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 #if 0
 		case NFOSMESA_GLMAPTEXTURE2DINTEL:
@@ -7335,8 +7335,8 @@
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLbitfield access */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *stride */,
-				(const GLenum *)Atari2HostAddr(getStackedParameter(4)) /* const GLenum *layout */);
+				(const GLint *)getStackedPointer(3) /* const GLint *stride */,
+				(const GLenum *)getStackedPointer(4) /* const GLenum *layout */);
 			break;
 #endif
 		case NFOSMESA_GLMAPVERTEXATTRIB1DAPPLE:
@@ -7347,7 +7347,7 @@
 				getStackedDouble(4) /* GLdouble u2 */,
 				getStackedParameter(6) /* GLint stride */,
 				getStackedParameter(7) /* GLint order */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(8)) /* const GLdouble *points */);
+				(const GLdouble *)getStackedPointer(8) /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB1FAPPLE:
 			nfglMapVertexAttrib1fAPPLE(
@@ -7357,7 +7357,7 @@
 				getStackedFloat(3) /* GLfloat u2 */,
 				getStackedParameter(4) /* GLint stride */,
 				getStackedParameter(5) /* GLint order */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(6)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(6) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2DAPPLE:
 			nfglMapVertexAttrib2dAPPLE(
@@ -7371,7 +7371,7 @@
 				getStackedDouble(10) /* GLdouble v2 */,
 				getStackedParameter(12) /* GLint vstride */,
 				getStackedParameter(13) /* GLint vorder */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(14)) /* const GLdouble *points */);
+				(const GLdouble *)getStackedPointer(14) /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2FAPPLE:
 			nfglMapVertexAttrib2fAPPLE(
@@ -7385,7 +7385,7 @@
 				getStackedFloat(7) /* GLfloat v2 */,
 				getStackedParameter(8) /* GLint vstride */,
 				getStackedParameter(9) /* GLint vorder */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(10)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(10) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMATERIALF:
 			nfglMaterialf(
@@ -7397,7 +7397,7 @@
 			nfglMaterialfv(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMATERIALI:
 			nfglMateriali(
@@ -7409,7 +7409,7 @@
 			nfglMaterialiv(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMATERIALXOES:
 			nfglMaterialxOES(
@@ -7421,7 +7421,7 @@
 			nfglMaterialxvOES(
 				getStackedParameter(0) /* GLenum face */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *param */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLMATRIXFRUSTUMEXT:
 			nfglMatrixFrustumEXT(
@@ -7438,22 +7438,22 @@
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUBVARB:
 			nfglMatrixIndexubvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *indices */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *indices */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUIVARB:
 			nfglMatrixIndexuivARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *indices */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *indices */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUSVARB:
 			nfglMatrixIndexusvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *indices */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *indices */);
 			break;
 		case NFOSMESA_GLMATRIXLOADIDENTITYEXT:
 			nfglMatrixLoadIdentityEXT(
@@ -7462,22 +7462,22 @@
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEDEXT:
 			nfglMatrixLoadTransposedEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEFEXT:
 			nfglMatrixLoadTransposefEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADDEXT:
 			nfglMatrixLoaddEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADFEXT:
 			nfglMatrixLoadfEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMODE:
 			nfglMatrixMode(
@@ -7486,22 +7486,22 @@
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEDEXT:
 			nfglMatrixMultTransposedEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEFEXT:
 			nfglMatrixMultTransposefEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTDEXT:
 			nfglMatrixMultdEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTFEXT:
 			nfglMatrixMultfEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXORTHOEXT:
 			nfglMatrixOrthoEXT(
@@ -7595,68 +7595,68 @@
 			break;
 		case NFOSMESA_GLMULTMATRIXD:
 			nfglMultMatrixd(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTMATRIXF:
 			nfglMultMatrixf(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTMATRIXXOES:
 			nfglMultMatrixxOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *m */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXD:
 			nfglMultTransposeMatrixd(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXDARB:
 			nfglMultTransposeMatrixdARB(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *m */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXF:
 			nfglMultTransposeMatrixf(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXFARB:
 			nfglMultTransposeMatrixfARB(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *m */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXXOES:
 			nfglMultTransposeMatrixxOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *m */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYS:
 			nfglMultiDrawArrays(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *first */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* const GLsizei *count */,
+				(const GLint *)getStackedPointer(1) /* const GLint *first */,
+				(const GLsizei *)getStackedPointer(2) /* const GLsizei *count */,
 				getStackedParameter(3) /* GLsizei drawcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSEXT:
 			nfglMultiDrawArraysEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *first */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* const GLsizei *count */,
+				(const GLint *)getStackedPointer(1) /* const GLint *first */,
+				(const GLsizei *)getStackedPointer(2) /* const GLsizei *count */,
 				getStackedParameter(3) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECT:
 			nfglMultiDrawArraysIndirect(
 				getStackedParameter(0) /* GLenum mode */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *indirect */,
+				(const void *)getStackedPointer(1) /* const void *indirect */,
 				getStackedParameter(2) /* GLsizei drawcount */,
 				getStackedParameter(3) /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTAMD:
 			nfglMultiDrawArraysIndirectAMD(
 				getStackedParameter(0) /* GLenum mode */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *indirect */,
+				(const void *)getStackedPointer(1) /* const void *indirect */,
 				getStackedParameter(2) /* GLsizei primcount */,
 				getStackedParameter(3) /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV:
 			nfglMultiDrawArraysIndirectBindlessNV(
 				getStackedParameter(0) /* GLenum mode */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *indirect */,
+				(const void *)getStackedPointer(1) /* const void *indirect */,
 				getStackedParameter(2) /* GLsizei drawCount */,
 				getStackedParameter(3) /* GLsizei stride */,
 				getStackedParameter(4) /* GLint vertexBufferCount */);
@@ -7672,40 +7672,40 @@
 		case NFOSMESA_GLMULTIDRAWELEMENTARRAYAPPLE:
 			nfglMultiDrawElementArrayAPPLE(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *first */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* const GLsizei *count */,
+				(const GLint *)getStackedPointer(1) /* const GLint *first */,
+				(const GLsizei *)getStackedPointer(2) /* const GLsizei *count */,
 				getStackedParameter(3) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTS:
 			nfglMultiDrawElements(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(1)) /* const GLsizei *count */,
+				(const GLsizei *)getStackedPointer(1) /* const GLsizei *count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *const *)Atari2HostAddr(getStackedParameter(3)) /* const void *const *indices */,
+				(const void *const *)getStackedPointer(3) /* const void *const *indices */,
 				getStackedParameter(4) /* GLsizei drawcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSBASEVERTEX:
 			nfglMultiDrawElementsBaseVertex(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(1)) /* const GLsizei *count */,
+				(const GLsizei *)getStackedPointer(1) /* const GLsizei *count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *const *)Atari2HostAddr(getStackedParameter(3)) /* const void *const *indices */,
+				(const void *const *)getStackedPointer(3) /* const void *const *indices */,
 				getStackedParameter(4) /* GLsizei drawcount */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(5)) /* const GLint *basevertex */);
+				(const GLint *)getStackedPointer(5) /* const GLint *basevertex */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSEXT:
 			nfglMultiDrawElementsEXT(
 				getStackedParameter(0) /* GLenum mode */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(1)) /* const GLsizei *count */,
+				(const GLsizei *)getStackedPointer(1) /* const GLsizei *count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *const *)Atari2HostAddr(getStackedParameter(3)) /* const void *const *indices */,
+				(const void *const *)getStackedPointer(3) /* const void *const *indices */,
 				getStackedParameter(4) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECT:
 			nfglMultiDrawElementsIndirect(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *indirect */,
+				(const void *)getStackedPointer(2) /* const void *indirect */,
 				getStackedParameter(3) /* GLsizei drawcount */,
 				getStackedParameter(4) /* GLsizei stride */);
 			break;
@@ -7713,7 +7713,7 @@
 			nfglMultiDrawElementsIndirectAMD(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *indirect */,
+				(const void *)getStackedPointer(2) /* const void *indirect */,
 				getStackedParameter(3) /* GLsizei primcount */,
 				getStackedParameter(4) /* GLsizei stride */);
 			break;
@@ -7721,7 +7721,7 @@
 			nfglMultiDrawElementsIndirectBindlessNV(
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *indirect */,
+				(const void *)getStackedPointer(2) /* const void *indirect */,
 				getStackedParameter(3) /* GLsizei drawCount */,
 				getStackedParameter(4) /* GLsizei stride */,
 				getStackedParameter(5) /* GLint vertexBufferCount */);
@@ -7740,24 +7740,24 @@
 				getStackedParameter(0) /* GLenum mode */,
 				getStackedParameter(1) /* GLuint start */,
 				getStackedParameter(2) /* GLuint end */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *first */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(4)) /* const GLsizei *count */,
+				(const GLint *)getStackedPointer(3) /* const GLint *first */,
+				(const GLsizei *)getStackedPointer(4) /* const GLsizei *count */,
 				getStackedParameter(5) /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWARRAYSIBM:
 			nfglMultiModeDrawArraysIBM(
-				(const GLenum *)Atari2HostAddr(getStackedParameter(0)) /* const GLenum *mode */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *first */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(2)) /* const GLsizei *count */,
+				(const GLenum *)getStackedPointer(0) /* const GLenum *mode */,
+				(const GLint *)getStackedPointer(1) /* const GLint *first */,
+				(const GLsizei *)getStackedPointer(2) /* const GLsizei *count */,
 				getStackedParameter(3) /* GLsizei primcount */,
 				getStackedParameter(4) /* GLint modestride */);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWELEMENTSIBM:
 			nfglMultiModeDrawElementsIBM(
-				(const GLenum *)Atari2HostAddr(getStackedParameter(0)) /* const GLenum *mode */,
-				(const GLsizei *)Atari2HostAddr(getStackedParameter(1)) /* const GLsizei *count */,
+				(const GLenum *)getStackedPointer(0) /* const GLenum *mode */,
+				(const GLsizei *)getStackedPointer(1) /* const GLsizei *count */,
 				getStackedParameter(2) /* GLenum type */,
-				(const void *const *)Atari2HostAddr(getStackedParameter(3)) /* const void *const *indices */,
+				(const void *const *)getStackedPointer(3) /* const void *const *indices */,
 				getStackedParameter(4) /* GLsizei primcount */,
 				getStackedParameter(5) /* GLint modestride */);
 			break;
@@ -7776,7 +7776,7 @@
 		case NFOSMESA_GLMULTITEXCOORD1BVOES:
 			nfglMultiTexCoord1bvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1D:
 			nfglMultiTexCoord1d(
@@ -7791,12 +7791,12 @@
 		case NFOSMESA_GLMULTITEXCOORD1DV:
 			nfglMultiTexCoord1dv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DVARB:
 			nfglMultiTexCoord1dvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1F:
 			nfglMultiTexCoord1f(
@@ -7811,12 +7811,12 @@
 		case NFOSMESA_GLMULTITEXCOORD1FV:
 			nfglMultiTexCoord1fv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FVARB:
 			nfglMultiTexCoord1fvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1HNV:
 			nfglMultiTexCoord1hNV(
@@ -7826,7 +7826,7 @@
 		case NFOSMESA_GLMULTITEXCOORD1HVNV:
 			nfglMultiTexCoord1hvNV(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1I:
 			nfglMultiTexCoord1i(
@@ -7841,12 +7841,12 @@
 		case NFOSMESA_GLMULTITEXCOORD1IV:
 			nfglMultiTexCoord1iv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IVARB:
 			nfglMultiTexCoord1ivARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1S:
 			nfglMultiTexCoord1s(
@@ -7861,12 +7861,12 @@
 		case NFOSMESA_GLMULTITEXCOORD1SV:
 			nfglMultiTexCoord1sv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SVARB:
 			nfglMultiTexCoord1svARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1XOES:
 			nfglMultiTexCoord1xOES(
@@ -7876,7 +7876,7 @@
 		case NFOSMESA_GLMULTITEXCOORD1XVOES:
 			nfglMultiTexCoord1xvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2BOES:
 			nfglMultiTexCoord2bOES(
@@ -7887,7 +7887,7 @@
 		case NFOSMESA_GLMULTITEXCOORD2BVOES:
 			nfglMultiTexCoord2bvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2D:
 			nfglMultiTexCoord2d(
@@ -7904,12 +7904,12 @@
 		case NFOSMESA_GLMULTITEXCOORD2DV:
 			nfglMultiTexCoord2dv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DVARB:
 			nfglMultiTexCoord2dvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2F:
 			nfglMultiTexCoord2f(
@@ -7926,12 +7926,12 @@
 		case NFOSMESA_GLMULTITEXCOORD2FV:
 			nfglMultiTexCoord2fv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FVARB:
 			nfglMultiTexCoord2fvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2HNV:
 			nfglMultiTexCoord2hNV(
@@ -7942,7 +7942,7 @@
 		case NFOSMESA_GLMULTITEXCOORD2HVNV:
 			nfglMultiTexCoord2hvNV(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2I:
 			nfglMultiTexCoord2i(
@@ -7959,12 +7959,12 @@
 		case NFOSMESA_GLMULTITEXCOORD2IV:
 			nfglMultiTexCoord2iv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IVARB:
 			nfglMultiTexCoord2ivARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2S:
 			nfglMultiTexCoord2s(
@@ -7981,12 +7981,12 @@
 		case NFOSMESA_GLMULTITEXCOORD2SV:
 			nfglMultiTexCoord2sv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SVARB:
 			nfglMultiTexCoord2svARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2XOES:
 			nfglMultiTexCoord2xOES(
@@ -7997,7 +7997,7 @@
 		case NFOSMESA_GLMULTITEXCOORD2XVOES:
 			nfglMultiTexCoord2xvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3BOES:
 			nfglMultiTexCoord3bOES(
@@ -8009,7 +8009,7 @@
 		case NFOSMESA_GLMULTITEXCOORD3BVOES:
 			nfglMultiTexCoord3bvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3D:
 			nfglMultiTexCoord3d(
@@ -8028,12 +8028,12 @@
 		case NFOSMESA_GLMULTITEXCOORD3DV:
 			nfglMultiTexCoord3dv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DVARB:
 			nfglMultiTexCoord3dvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3F:
 			nfglMultiTexCoord3f(
@@ -8052,12 +8052,12 @@
 		case NFOSMESA_GLMULTITEXCOORD3FV:
 			nfglMultiTexCoord3fv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FVARB:
 			nfglMultiTexCoord3fvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3HNV:
 			nfglMultiTexCoord3hNV(
@@ -8069,7 +8069,7 @@
 		case NFOSMESA_GLMULTITEXCOORD3HVNV:
 			nfglMultiTexCoord3hvNV(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3I:
 			nfglMultiTexCoord3i(
@@ -8088,12 +8088,12 @@
 		case NFOSMESA_GLMULTITEXCOORD3IV:
 			nfglMultiTexCoord3iv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IVARB:
 			nfglMultiTexCoord3ivARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3S:
 			nfglMultiTexCoord3s(
@@ -8112,12 +8112,12 @@
 		case NFOSMESA_GLMULTITEXCOORD3SV:
 			nfglMultiTexCoord3sv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SVARB:
 			nfglMultiTexCoord3svARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3XOES:
 			nfglMultiTexCoord3xOES(
@@ -8129,7 +8129,7 @@
 		case NFOSMESA_GLMULTITEXCOORD3XVOES:
 			nfglMultiTexCoord3xvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4BOES:
 			nfglMultiTexCoord4bOES(
@@ -8142,7 +8142,7 @@
 		case NFOSMESA_GLMULTITEXCOORD4BVOES:
 			nfglMultiTexCoord4bvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4D:
 			nfglMultiTexCoord4d(
@@ -8163,12 +8163,12 @@
 		case NFOSMESA_GLMULTITEXCOORD4DV:
 			nfglMultiTexCoord4dv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DVARB:
 			nfglMultiTexCoord4dvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4F:
 			nfglMultiTexCoord4f(
@@ -8189,12 +8189,12 @@
 		case NFOSMESA_GLMULTITEXCOORD4FV:
 			nfglMultiTexCoord4fv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FVARB:
 			nfglMultiTexCoord4fvARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4HNV:
 			nfglMultiTexCoord4hNV(
@@ -8207,7 +8207,7 @@
 		case NFOSMESA_GLMULTITEXCOORD4HVNV:
 			nfglMultiTexCoord4hvNV(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4I:
 			nfglMultiTexCoord4i(
@@ -8228,12 +8228,12 @@
 		case NFOSMESA_GLMULTITEXCOORD4IV:
 			nfglMultiTexCoord4iv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IVARB:
 			nfglMultiTexCoord4ivARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4S:
 			nfglMultiTexCoord4s(
@@ -8254,12 +8254,12 @@
 		case NFOSMESA_GLMULTITEXCOORD4SV:
 			nfglMultiTexCoord4sv(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SVARB:
 			nfglMultiTexCoord4svARB(
 				getStackedParameter(0) /* GLenum target */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4XOES:
 			nfglMultiTexCoord4xOES(
@@ -8272,7 +8272,7 @@
 		case NFOSMESA_GLMULTITEXCOORD4XVOES:
 			nfglMultiTexCoord4xvOES(
 				getStackedParameter(0) /* GLenum texture */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP1UI:
 			nfglMultiTexCoordP1ui(
@@ -8284,7 +8284,7 @@
 			nfglMultiTexCoordP1uiv(
 				getStackedParameter(0) /* GLenum texture */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP2UI:
 			nfglMultiTexCoordP2ui(
@@ -8296,7 +8296,7 @@
 			nfglMultiTexCoordP2uiv(
 				getStackedParameter(0) /* GLenum texture */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP3UI:
 			nfglMultiTexCoordP3ui(
@@ -8308,7 +8308,7 @@
 			nfglMultiTexCoordP3uiv(
 				getStackedParameter(0) /* GLenum texture */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP4UI:
 			nfglMultiTexCoordP4ui(
@@ -8320,7 +8320,7 @@
 			nfglMultiTexCoordP4uiv(
 				getStackedParameter(0) /* GLenum texture */,
 				getStackedParameter(1) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDPOINTEREXT:
 			nfglMultiTexCoordPointerEXT(
@@ -8328,7 +8328,7 @@
 				getStackedParameter(1) /* GLint size */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLMULTITEXENVFEXT:
 			nfglMultiTexEnvfEXT(
@@ -8342,7 +8342,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXENVIEXT:
 			nfglMultiTexEnviEXT(
@@ -8356,7 +8356,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENDEXT:
 			nfglMultiTexGendEXT(
@@ -8370,7 +8370,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENFEXT:
 			nfglMultiTexGenfEXT(
@@ -8384,7 +8384,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENIEXT:
 			nfglMultiTexGeniEXT(
@@ -8398,7 +8398,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum coord */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE1DEXT:
 			nfglMultiTexImage1DEXT(
@@ -8410,7 +8410,7 @@
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *pixels */);
+				(const void *)getStackedPointer(8) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE2DEXT:
 			nfglMultiTexImage2DEXT(
@@ -8423,7 +8423,7 @@
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE3DEXT:
 			nfglMultiTexImage3DEXT(
@@ -8437,21 +8437,21 @@
 				getStackedParameter(7) /* GLint border */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *pixels */);
+				(const void *)getStackedPointer(10) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIIVEXT:
 			nfglMultiTexParameterIivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIUIVEXT:
 			nfglMultiTexParameterIuivEXT(
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERFEXT:
 			nfglMultiTexParameterfEXT(
@@ -8465,7 +8465,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIEXT:
 			nfglMultiTexParameteriEXT(
@@ -8479,7 +8479,7 @@
 				getStackedParameter(0) /* GLenum texunit */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXRENDERBUFFEREXT:
 			nfglMultiTexRenderbufferEXT(
@@ -8496,7 +8496,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLenum format */,
 				getStackedParameter(6) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *pixels */);
+				(const void *)getStackedPointer(7) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE2DEXT:
 			nfglMultiTexSubImage2DEXT(
@@ -8509,7 +8509,7 @@
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE3DEXT:
 			nfglMultiTexSubImage3DEXT(
@@ -8524,20 +8524,20 @@
 				getStackedParameter(8) /* GLsizei depth */,
 				getStackedParameter(9) /* GLenum format */,
 				getStackedParameter(10) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(11)) /* const void *pixels */);
+				(const void *)getStackedPointer(11) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERDATAEXT:
 			nfglNamedBufferDataEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *data */,
+				(const void *)getStackedPointer(2) /* const void *data */,
 				getStackedParameter(3) /* GLenum usage */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGEEXT:
 			nfglNamedBufferStorageEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *data */,
+				(const void *)getStackedPointer(2) /* const void *data */,
 				getStackedParameter(3) /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATAEXT:
@@ -8545,7 +8545,7 @@
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr size */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *data */);
+				(const void *)getStackedPointer(3) /* const void *data */);
 			break;
 		case NFOSMESA_GLNAMEDCOPYBUFFERSUBDATAEXT:
 			nfglNamedCopyBufferSubDataEXT(
@@ -8631,7 +8631,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4FEXT:
 			nfglNamedProgramLocalParameter4fEXT(
@@ -8648,7 +8648,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4IEXT:
 			nfglNamedProgramLocalParameterI4iEXT(
@@ -8665,7 +8665,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4UIEXT:
 			nfglNamedProgramLocalParameterI4uiEXT(
@@ -8682,7 +8682,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT:
 			nfglNamedProgramLocalParameters4fvEXT(
@@ -8690,7 +8690,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT:
 			nfglNamedProgramLocalParametersI4ivEXT(
@@ -8698,7 +8698,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(4)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(4) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT:
 			nfglNamedProgramLocalParametersI4uivEXT(
@@ -8706,7 +8706,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLuint index */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(4)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(4) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMSTRINGEXT:
 			nfglNamedProgramStringEXT(
@@ -8714,7 +8714,7 @@
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum format */,
 				getStackedParameter(3) /* GLsizei len */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *string */);
+				(const void *)getStackedPointer(4) /* const void *string */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEEXT:
 			nfglNamedRenderbufferStorageEXT(
@@ -8744,9 +8744,9 @@
 			nfglNamedStringARB(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLint namelen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *name */,
+				(const GLchar *)getStackedPointer(2) /* const GLchar *name */,
 				getStackedParameter(3) /* GLint stringlen */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(4)) /* const GLchar *string */);
+				(const GLchar *)getStackedPointer(4) /* const GLchar *string */);
 			break;
 		case NFOSMESA_GLNEWLIST:
 			nfglNewList(
@@ -8756,13 +8756,13 @@
 		case NFOSMESA_GLNEWOBJECTBUFFERATI:
 			ret = nfglNewObjectBufferATI(
 				getStackedParameter(0) /* GLsizei size */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *pointer */,
+				(const void *)getStackedPointer(1) /* const void *pointer */,
 				getStackedParameter(2) /* GLenum usage */);
 			break;
 		case NFOSMESA_GLNEWTRACEMESA:
 			nfglNewTraceMESA(
 				getStackedParameter(0) /* GLbitfield mask */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *traceName */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *traceName */);
 			break;
 		case NFOSMESA_GLNORMAL3B:
 			nfglNormal3b(
@@ -8772,7 +8772,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3BV:
 			nfglNormal3bv(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLNORMAL3D:
 			nfglNormal3d(
@@ -8782,7 +8782,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3DV:
 			nfglNormal3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLNORMAL3F:
 			nfglNormal3f(
@@ -8801,12 +8801,12 @@
 			break;
 		case NFOSMESA_GLNORMAL3FVERTEX3FVSUN:
 			nfglNormal3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLNORMAL3FV:
 			nfglNormal3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLNORMAL3HNV:
 			nfglNormal3hNV(
@@ -8816,7 +8816,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3HVNV:
 			nfglNormal3hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLNORMAL3I:
 			nfglNormal3i(
@@ -8826,7 +8826,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3IV:
 			nfglNormal3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLNORMAL3S:
 			nfglNormal3s(
@@ -8836,7 +8836,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3SV:
 			nfglNormal3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLNORMAL3XOES:
 			nfglNormal3xOES(
@@ -8846,7 +8846,7 @@
 			break;
 		case NFOSMESA_GLNORMAL3XVOES:
 			nfglNormal3xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLNORMALFORMATNV:
 			nfglNormalFormatNV(
@@ -8861,32 +8861,32 @@
 		case NFOSMESA_GLNORMALP3UIV:
 			nfglNormalP3uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLNORMALPOINTER:
 			nfglNormalPointer(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(2) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLNORMALPOINTEREXT:
 			nfglNormalPointerEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLNORMALPOINTERLISTIBM:
 			nfglNormalPointerListIBM(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(2) /* const void * *pointer */,
 				getStackedParameter(3) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLNORMALPOINTERVINTEL:
 			nfglNormalPointervINTEL(
 				getStackedParameter(0) /* GLenum type */,
-				(const void * *)Atari2HostAddr(getStackedParameter(1)) /* const void * *pointer */);
+				(const void * *)getStackedPointer(1) /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3BATI:
 			nfglNormalStream3bATI(
@@ -8898,7 +8898,7 @@
 		case NFOSMESA_GLNORMALSTREAM3BVATI:
 			nfglNormalStream3bvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3DATI:
 			nfglNormalStream3dATI(
@@ -8910,7 +8910,7 @@
 		case NFOSMESA_GLNORMALSTREAM3DVATI:
 			nfglNormalStream3dvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *coords */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3FATI:
 			nfglNormalStream3fATI(
@@ -8922,7 +8922,7 @@
 		case NFOSMESA_GLNORMALSTREAM3FVATI:
 			nfglNormalStream3fvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *coords */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3IATI:
 			nfglNormalStream3iATI(
@@ -8934,7 +8934,7 @@
 		case NFOSMESA_GLNORMALSTREAM3IVATI:
 			nfglNormalStream3ivATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *coords */);
+				(const GLint *)getStackedPointer(1) /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3SATI:
 			nfglNormalStream3sATI(
@@ -8946,20 +8946,20 @@
 		case NFOSMESA_GLNORMALSTREAM3SVATI:
 			nfglNormalStream3svATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *coords */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLOBJECTLABEL:
 			nfglObjectLabel(
 				getStackedParameter(0) /* GLenum identifier */,
 				getStackedParameter(1) /* GLuint name */,
 				getStackedParameter(2) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(3)) /* const GLchar *label */);
+				(const GLchar *)getStackedPointer(3) /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLOBJECTPTRLABEL:
 			nfglObjectPtrLabel(
-				(const void *)Atari2HostAddr(getStackedParameter(0)) /* const void *ptr */,
+				(const void *)getStackedPointer(0) /* const void *ptr */,
 				getStackedParameter(1) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *label */);
+				(const GLchar *)getStackedPointer(2) /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLOBJECTPURGEABLEAPPLE:
 			ret = nfglObjectPurgeableAPPLE(
@@ -9027,7 +9027,7 @@
 		case NFOSMESA_GLPATCHPARAMETERFV:
 			nfglPatchParameterfv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *values */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLPATCHPARAMETERI:
 			nfglPatchParameteri(
@@ -9039,23 +9039,23 @@
 				getStackedParameter(0) /* GLenum color */,
 				getStackedParameter(1) /* GLenum genMode */,
 				getStackedParameter(2) /* GLenum colorFormat */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *coeffs */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *coeffs */);
 			break;
 		case NFOSMESA_GLPATHCOMMANDSNV:
 			nfglPathCommandsNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLsizei numCommands */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *commands */,
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *commands */,
 				getStackedParameter(3) /* GLsizei numCoords */,
 				getStackedParameter(4) /* GLenum coordType */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *coords */);
+				(const void *)getStackedPointer(5) /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHCOORDSNV:
 			nfglPathCoordsNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLsizei numCoords */,
 				getStackedParameter(2) /* GLenum coordType */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *coords */);
+				(const void *)getStackedPointer(3) /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHCOVERDEPTHFUNCNV:
 			nfglPathCoverDepthFuncNV(
@@ -9065,7 +9065,7 @@
 			nfglPathDashArrayNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLsizei dashCount */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *dashArray */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *dashArray */);
 			break;
 		case NFOSMESA_GLPATHFOGGENNV:
 			nfglPathFogGenNV(
@@ -9075,7 +9075,7 @@
 			nfglPathGlyphRangeNV(
 				getStackedParameter(0) /* GLuint firstPathName */,
 				getStackedParameter(1) /* GLenum fontTarget */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *fontName */,
+				(const void *)getStackedPointer(2) /* const void *fontName */,
 				getStackedParameter(3) /* GLbitfield fontStyle */,
 				getStackedParameter(4) /* GLuint firstGlyph */,
 				getStackedParameter(5) /* GLsizei numGlyphs */,
@@ -9087,11 +9087,11 @@
 			nfglPathGlyphsNV(
 				getStackedParameter(0) /* GLuint firstPathName */,
 				getStackedParameter(1) /* GLenum fontTarget */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *fontName */,
+				(const void *)getStackedPointer(2) /* const void *fontName */,
 				getStackedParameter(3) /* GLbitfield fontStyle */,
 				getStackedParameter(4) /* GLsizei numGlyphs */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *charcodes */,
+				(const void *)getStackedPointer(6) /* const void *charcodes */,
 				getStackedParameter(7) /* GLenum handleMissingGlyphs */,
 				getStackedParameter(8) /* GLuint pathParameterTemplate */,
 				getStackedFloat(9) /* GLfloat emScale */);
@@ -9106,7 +9106,7 @@
 			nfglPathParameterfvNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPATHPARAMETERINV:
 			nfglPathParameteriNV(
@@ -9118,7 +9118,7 @@
 			nfglPathParameterivNV(
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPATHSTENCILDEPTHOFFSETNV:
 			nfglPathStencilDepthOffsetNV(
@@ -9136,7 +9136,7 @@
 				getStackedParameter(0) /* GLuint path */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLsizei length */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pathString */);
+				(const void *)getStackedPointer(3) /* const void *pathString */);
 			break;
 		case NFOSMESA_GLPATHSUBCOMMANDSNV:
 			nfglPathSubCommandsNV(
@@ -9144,10 +9144,10 @@
 				getStackedParameter(1) /* GLsizei commandStart */,
 				getStackedParameter(2) /* GLsizei commandsToDelete */,
 				getStackedParameter(3) /* GLsizei numCommands */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(4)) /* const GLubyte *commands */,
+				(const GLubyte *)getStackedPointer(4) /* const GLubyte *commands */,
 				getStackedParameter(5) /* GLsizei numCoords */,
 				getStackedParameter(6) /* GLenum coordType */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *coords */);
+				(const void *)getStackedPointer(7) /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHSUBCOORDSNV:
 			nfglPathSubCoordsNV(
@@ -9155,14 +9155,14 @@
 				getStackedParameter(1) /* GLsizei coordStart */,
 				getStackedParameter(2) /* GLsizei numCoords */,
 				getStackedParameter(3) /* GLenum coordType */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *coords */);
+				(const void *)getStackedPointer(4) /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHTEXGENNV:
 			nfglPathTexGenNV(
 				getStackedParameter(0) /* GLenum texCoordSet */,
 				getStackedParameter(1) /* GLenum genMode */,
 				getStackedParameter(2) /* GLint components */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *coeffs */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *coeffs */);
 			break;
 		case NFOSMESA_GLPAUSETRANSFORMFEEDBACK:
 			nfglPauseTransformFeedback();
@@ -9174,31 +9174,31 @@
 			nfglPixelDataRangeNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei length */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLPIXELMAPFV:
 			nfglPixelMapfv(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei mapsize */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *values */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPUIV:
 			nfglPixelMapuiv(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei mapsize */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *values */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPUSV:
 			nfglPixelMapusv(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLsizei mapsize */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(2)) /* const GLushort *values */);
+				(const GLushort *)getStackedPointer(2) /* const GLushort *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPX:
 			nfglPixelMapx(
 				getStackedParameter(0) /* GLenum map */,
 				getStackedParameter(1) /* GLint size */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *values */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *values */);
 			break;
 		case NFOSMESA_GLPIXELSTOREF:
 			nfglPixelStoref(
@@ -9223,7 +9223,7 @@
 		case NFOSMESA_GLPIXELTEXGENPARAMETERFVSGIS:
 			nfglPixelTexGenParameterfvSGIS(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERISGIS:
 			nfglPixelTexGenParameteriSGIS(
@@ -9233,7 +9233,7 @@
 		case NFOSMESA_GLPIXELTEXGENPARAMETERIVSGIS:
 			nfglPixelTexGenParameterivSGIS(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENSGIX:
 			nfglPixelTexGenSGIX(
@@ -9264,7 +9264,7 @@
 			nfglPixelTransformParameterfvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERIEXT:
 			nfglPixelTransformParameteriEXT(
@@ -9276,7 +9276,7 @@
 			nfglPixelTransformParameterivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPIXELZOOM:
 			nfglPixelZoom(
@@ -9294,10 +9294,10 @@
 				getStackedParameter(1) /* GLsizei startSegment */,
 				getStackedParameter(2) /* GLsizei numSegments */,
 				getStackedFloat(3) /* GLfloat distance */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* GLfloat *x */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(5)) /* GLfloat *y */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(6)) /* GLfloat *tangentX */,
-				(GLfloat *)Atari2HostAddr(getStackedParameter(7)) /* GLfloat *tangentY */);
+				(GLfloat *)getStackedPointer(4) /* GLfloat *x */,
+				(GLfloat *)getStackedPointer(5) /* GLfloat *y */,
+				(GLfloat *)getStackedPointer(6) /* GLfloat *tangentX */,
+				(GLfloat *)getStackedPointer(7) /* GLfloat *tangentY */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERF:
 			nfglPointParameterf(
@@ -9322,22 +9322,22 @@
 		case NFOSMESA_GLPOINTPARAMETERFV:
 			nfglPointParameterfv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVARB:
 			nfglPointParameterfvARB(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVEXT:
 			nfglPointParameterfvEXT(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVSGIS:
 			nfglPointParameterfvSGIS(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERI:
 			nfglPointParameteri(
@@ -9352,17 +9352,17 @@
 		case NFOSMESA_GLPOINTPARAMETERIV:
 			nfglPointParameteriv(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERIVNV:
 			nfglPointParameterivNV(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERXVOES:
 			nfglPointParameterxvOES(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLPOINTSIZE:
 			nfglPointSize(
@@ -9372,7 +9372,7 @@
 			nfglPointSizePointerAPPLE(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(2) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLPOINTSIZEXOES:
 			nfglPointSizexOES(
@@ -9380,11 +9380,11 @@
 			break;
 		case NFOSMESA_GLPOLLASYNCSGIX:
 			ret = nfglPollAsyncSGIX(
-				(GLuint *)Atari2HostAddr(getStackedParameter(0)) /* GLuint *markerp */);
+				(GLuint *)getStackedPointer(0) /* GLuint *markerp */);
 			break;
 		case NFOSMESA_GLPOLLINSTRUMENTSSGIX:
 			ret = nfglPollInstrumentsSGIX(
-				(GLint *)Atari2HostAddr(getStackedParameter(0)) /* GLint *marker_p */);
+				(GLint *)getStackedPointer(0) /* GLint *marker_p */);
 			break;
 		case NFOSMESA_GLPOLYGONMODE:
 			nfglPolygonMode(
@@ -9408,7 +9408,7 @@
 			break;
 		case NFOSMESA_GLPOLYGONSTIPPLE:
 			nfglPolygonStipple(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *mask */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *mask */);
 			break;
 		case NFOSMESA_GLPOPATTRIB:
 			nfglPopAttrib();
@@ -9472,26 +9472,26 @@
 		case NFOSMESA_GLPRIORITIZETEXTURES:
 			nfglPrioritizeTextures(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */,
-				(const GLclampf *)Atari2HostAddr(getStackedParameter(2)) /* const GLclampf *priorities */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */,
+				(const GLclampf *)getStackedPointer(2) /* const GLclampf *priorities */);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESEXT:
 			nfglPrioritizeTexturesEXT(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */,
-				(const GLclampf *)Atari2HostAddr(getStackedParameter(2)) /* const GLclampf *priorities */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */,
+				(const GLclampf *)getStackedPointer(2) /* const GLclampf *priorities */);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESXOES:
 			nfglPrioritizeTexturesxOES(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *textures */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *priorities */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *textures */,
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *priorities */);
 			break;
 		case NFOSMESA_GLPROGRAMBINARY:
 			nfglProgramBinary(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLenum binaryFormat */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *binary */,
+				(const void *)getStackedPointer(2) /* const void *binary */,
 				getStackedParameter(3) /* GLsizei length */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIIVNV:
@@ -9500,7 +9500,7 @@
 				getStackedParameter(1) /* GLuint bindingIndex */,
 				getStackedParameter(2) /* GLuint wordIndex */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(4)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(4) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIUIVNV:
 			nfglProgramBufferParametersIuivNV(
@@ -9508,7 +9508,7 @@
 				getStackedParameter(1) /* GLuint bindingIndex */,
 				getStackedParameter(2) /* GLuint wordIndex */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(4)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(4) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSFVNV:
 			nfglProgramBufferParametersfvNV(
@@ -9516,14 +9516,14 @@
 				getStackedParameter(1) /* GLuint bindingIndex */,
 				getStackedParameter(2) /* GLuint wordIndex */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *params */);
 			break;
 #if 0
 		case NFOSMESA_GLPROGRAMCALLBACKMESA:
 			nfglProgramCallbackMESA(
 				getStackedParameter(0) /* GLenum target */,
-				(GLprogramcallbackMESA )Atari2HostAddr(getStackedParameter(1)) /* GLprogramcallbackMESA callback */,
-				(GLvoid *)Atari2HostAddr(getStackedParameter(2)) /* GLvoid *data */);
+				(GLprogramcallbackMESA )getStackedPointer(1) /* GLprogramcallbackMESA callback */,
+				(GLvoid *)getStackedPointer(2) /* GLvoid *data */);
 			break;
 #endif
 		case NFOSMESA_GLPROGRAMENVPARAMETER4DARB:
@@ -9539,7 +9539,7 @@
 			nfglProgramEnvParameter4dvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4FARB:
 			nfglProgramEnvParameter4fARB(
@@ -9554,7 +9554,7 @@
 			nfglProgramEnvParameter4fvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4INV:
 			nfglProgramEnvParameterI4iNV(
@@ -9569,7 +9569,7 @@
 			nfglProgramEnvParameterI4ivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4UINV:
 			nfglProgramEnvParameterI4uiNV(
@@ -9584,28 +9584,28 @@
 			nfglProgramEnvParameterI4uivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERS4FVEXT:
 			nfglProgramEnvParameters4fvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4IVNV:
 			nfglProgramEnvParametersI4ivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4UIVNV:
 			nfglProgramEnvParametersI4uivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4DARB:
 			nfglProgramLocalParameter4dARB(
@@ -9620,7 +9620,7 @@
 			nfglProgramLocalParameter4dvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4FARB:
 			nfglProgramLocalParameter4fARB(
@@ -9635,7 +9635,7 @@
 			nfglProgramLocalParameter4fvARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4INV:
 			nfglProgramLocalParameterI4iNV(
@@ -9650,7 +9650,7 @@
 			nfglProgramLocalParameterI4ivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4UINV:
 			nfglProgramLocalParameterI4uiNV(
@@ -9665,34 +9665,34 @@
 			nfglProgramLocalParameterI4uivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERS4FVEXT:
 			nfglProgramLocalParameters4fvEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4IVNV:
 			nfglProgramLocalParametersI4ivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4UIVNV:
 			nfglProgramLocalParametersI4uivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4DNV:
 			nfglProgramNamedParameter4dNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
 				getStackedDouble(3) /* GLdouble x */,
 				getStackedDouble(5) /* GLdouble y */,
 				getStackedDouble(7) /* GLdouble z */,
@@ -9702,14 +9702,14 @@
 			nfglProgramNamedParameter4dvNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *v */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4FNV:
 			nfglProgramNamedParameter4fNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
 				getStackedFloat(3) /* GLfloat x */,
 				getStackedFloat(4) /* GLfloat y */,
 				getStackedFloat(5) /* GLfloat z */,
@@ -9719,8 +9719,8 @@
 			nfglProgramNamedParameter4fvNV(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLsizei len */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *name */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *name */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4DNV:
 			nfglProgramParameter4dNV(
@@ -9735,7 +9735,7 @@
 			nfglProgramParameter4dvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4FNV:
 			nfglProgramParameter4fNV(
@@ -9750,7 +9750,7 @@
 			nfglProgramParameter4fvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERI:
 			nfglProgramParameteri(
@@ -9775,27 +9775,27 @@
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERS4FVNV:
 			nfglProgramParameters4fvNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMSTRINGARB:
 			nfglProgramStringARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum format */,
 				getStackedParameter(2) /* GLsizei len */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *string */);
+				(const void *)getStackedPointer(3) /* const void *string */);
 			break;
 		case NFOSMESA_GLPROGRAMSUBROUTINEPARAMETERSUIVNV:
 			nfglProgramSubroutineParametersuivNV(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1D:
 			nfglProgramUniform1d(
@@ -9814,14 +9814,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DVEXT:
 			nfglProgramUniform1dvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1F:
 			nfglProgramUniform1f(
@@ -9840,14 +9840,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FVEXT:
 			nfglProgramUniform1fvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I:
 			nfglProgramUniform1i(
@@ -9866,7 +9866,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(3) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IEXT:
 			nfglProgramUniform1iEXT(
@@ -9879,14 +9879,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IVEXT:
 			nfglProgramUniform1ivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI:
 			nfglProgramUniform1ui(
@@ -9905,7 +9905,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(3) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIEXT:
 			nfglProgramUniform1uiEXT(
@@ -9918,14 +9918,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIVEXT:
 			nfglProgramUniform1uivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2D:
 			nfglProgramUniform2d(
@@ -9946,14 +9946,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DVEXT:
 			nfglProgramUniform2dvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2F:
 			nfglProgramUniform2f(
@@ -9974,14 +9974,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FVEXT:
 			nfglProgramUniform2fvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I:
 			nfglProgramUniform2i(
@@ -10002,7 +10002,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(3) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IEXT:
 			nfglProgramUniform2iEXT(
@@ -10016,14 +10016,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IVEXT:
 			nfglProgramUniform2ivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI:
 			nfglProgramUniform2ui(
@@ -10044,7 +10044,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(3) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIEXT:
 			nfglProgramUniform2uiEXT(
@@ -10058,14 +10058,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIVEXT:
 			nfglProgramUniform2uivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3D:
 			nfglProgramUniform3d(
@@ -10088,14 +10088,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DVEXT:
 			nfglProgramUniform3dvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3F:
 			nfglProgramUniform3f(
@@ -10118,14 +10118,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FVEXT:
 			nfglProgramUniform3fvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I:
 			nfglProgramUniform3i(
@@ -10148,7 +10148,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(3) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IEXT:
 			nfglProgramUniform3iEXT(
@@ -10163,14 +10163,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IVEXT:
 			nfglProgramUniform3ivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI:
 			nfglProgramUniform3ui(
@@ -10193,7 +10193,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(3) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIEXT:
 			nfglProgramUniform3uiEXT(
@@ -10208,14 +10208,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIVEXT:
 			nfglProgramUniform3uivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4D:
 			nfglProgramUniform4d(
@@ -10240,14 +10240,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DVEXT:
 			nfglProgramUniform4dvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4F:
 			nfglProgramUniform4f(
@@ -10272,14 +10272,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FVEXT:
 			nfglProgramUniform4fvEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I:
 			nfglProgramUniform4i(
@@ -10304,7 +10304,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(3) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IEXT:
 			nfglProgramUniform4iEXT(
@@ -10320,14 +10320,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IVEXT:
 			nfglProgramUniform4ivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(3) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI:
 			nfglProgramUniform4ui(
@@ -10352,7 +10352,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(3) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIEXT:
 			nfglProgramUniform4uiEXT(
@@ -10368,14 +10368,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIVEXT:
 			nfglProgramUniform4uivEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64ARB:
 			nfglProgramUniformHandleui64ARB(
@@ -10394,14 +10394,14 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64 *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64 *values */);
+				(const GLuint64 *)getStackedPointer(3) /* const GLuint64 *values */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64VNV:
 			nfglProgramUniformHandleui64vNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64 *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64 *values */);
+				(const GLuint64 *)getStackedPointer(3) /* const GLuint64 *values */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DV:
 			nfglProgramUniformMatrix2dv(
@@ -10409,7 +10409,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DVEXT:
 			nfglProgramUniformMatrix2dvEXT(
@@ -10417,7 +10417,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FV:
 			nfglProgramUniformMatrix2fv(
@@ -10425,7 +10425,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FVEXT:
 			nfglProgramUniformMatrix2fvEXT(
@@ -10433,7 +10433,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DV:
 			nfglProgramUniformMatrix2x3dv(
@@ -10441,7 +10441,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DVEXT:
 			nfglProgramUniformMatrix2x3dvEXT(
@@ -10449,7 +10449,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FV:
 			nfglProgramUniformMatrix2x3fv(
@@ -10457,7 +10457,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FVEXT:
 			nfglProgramUniformMatrix2x3fvEXT(
@@ -10465,7 +10465,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DV:
 			nfglProgramUniformMatrix2x4dv(
@@ -10473,7 +10473,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DVEXT:
 			nfglProgramUniformMatrix2x4dvEXT(
@@ -10481,7 +10481,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FV:
 			nfglProgramUniformMatrix2x4fv(
@@ -10489,7 +10489,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FVEXT:
 			nfglProgramUniformMatrix2x4fvEXT(
@@ -10497,7 +10497,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DV:
 			nfglProgramUniformMatrix3dv(
@@ -10505,7 +10505,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DVEXT:
 			nfglProgramUniformMatrix3dvEXT(
@@ -10513,7 +10513,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FV:
 			nfglProgramUniformMatrix3fv(
@@ -10521,7 +10521,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FVEXT:
 			nfglProgramUniformMatrix3fvEXT(
@@ -10529,7 +10529,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DV:
 			nfglProgramUniformMatrix3x2dv(
@@ -10537,7 +10537,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DVEXT:
 			nfglProgramUniformMatrix3x2dvEXT(
@@ -10545,7 +10545,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FV:
 			nfglProgramUniformMatrix3x2fv(
@@ -10553,7 +10553,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FVEXT:
 			nfglProgramUniformMatrix3x2fvEXT(
@@ -10561,7 +10561,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DV:
 			nfglProgramUniformMatrix3x4dv(
@@ -10569,7 +10569,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DVEXT:
 			nfglProgramUniformMatrix3x4dvEXT(
@@ -10577,7 +10577,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FV:
 			nfglProgramUniformMatrix3x4fv(
@@ -10585,7 +10585,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FVEXT:
 			nfglProgramUniformMatrix3x4fvEXT(
@@ -10593,7 +10593,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DV:
 			nfglProgramUniformMatrix4dv(
@@ -10601,7 +10601,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DVEXT:
 			nfglProgramUniformMatrix4dvEXT(
@@ -10609,7 +10609,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FV:
 			nfglProgramUniformMatrix4fv(
@@ -10617,7 +10617,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FVEXT:
 			nfglProgramUniformMatrix4fvEXT(
@@ -10625,7 +10625,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DV:
 			nfglProgramUniformMatrix4x2dv(
@@ -10633,7 +10633,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DVEXT:
 			nfglProgramUniformMatrix4x2dvEXT(
@@ -10641,7 +10641,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FV:
 			nfglProgramUniformMatrix4x2fv(
@@ -10649,7 +10649,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FVEXT:
 			nfglProgramUniformMatrix4x2fvEXT(
@@ -10657,7 +10657,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DV:
 			nfglProgramUniformMatrix4x3dv(
@@ -10665,7 +10665,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DVEXT:
 			nfglProgramUniformMatrix4x3dvEXT(
@@ -10673,7 +10673,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(4)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(4) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FV:
 			nfglProgramUniformMatrix4x3fv(
@@ -10681,7 +10681,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FVEXT:
 			nfglProgramUniformMatrix4x3fvEXT(
@@ -10689,7 +10689,7 @@
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
 				getStackedParameter(3) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMUI64NV:
 			nfglProgramUniformui64NV(
@@ -10702,7 +10702,7 @@
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLint location */,
 				getStackedParameter(2) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(3) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMVERTEXLIMITNV:
 			nfglProgramVertexLimitNV(
@@ -10734,12 +10734,12 @@
 				getStackedParameter(0) /* GLenum source */,
 				getStackedParameter(1) /* GLuint id */,
 				getStackedParameter(2) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(3)) /* const GLchar *message */);
+				(const GLchar *)getStackedPointer(3) /* const GLchar *message */);
 			break;
 		case NFOSMESA_GLPUSHGROUPMARKEREXT:
 			nfglPushGroupMarkerEXT(
 				getStackedParameter(0) /* GLsizei length */,
-				(const GLchar *)Atari2HostAddr(getStackedParameter(1)) /* const GLchar *marker */);
+				(const GLchar *)getStackedPointer(1) /* const GLchar *marker */);
 			break;
 		case NFOSMESA_GLPUSHMATRIX:
 			nfglPushMatrix();
@@ -10755,8 +10755,8 @@
 			break;
 		case NFOSMESA_GLQUERYMATRIXXOES:
 			ret = nfglQueryMatrixxOES(
-				(GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* GLfixed *mantissa */,
-				(GLint *)Atari2HostAddr(getStackedParameter(1)) /* GLint *exponent */);
+				(GLfixed *)getStackedPointer(0) /* GLfixed *mantissa */,
+				(GLint *)getStackedPointer(1) /* GLint *exponent */);
 			break;
 		case NFOSMESA_GLQUERYOBJECTPARAMETERUIAMD:
 			nfglQueryObjectParameteruiAMD(
@@ -10772,7 +10772,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS2DV:
 			nfglRasterPos2dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2F:
 			nfglRasterPos2f(
@@ -10781,7 +10781,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS2FV:
 			nfglRasterPos2fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2I:
 			nfglRasterPos2i(
@@ -10790,7 +10790,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS2IV:
 			nfglRasterPos2iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2S:
 			nfglRasterPos2s(
@@ -10799,7 +10799,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS2SV:
 			nfglRasterPos2sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2XOES:
 			nfglRasterPos2xOES(
@@ -10808,7 +10808,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS2XVOES:
 			nfglRasterPos2xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLRASTERPOS3D:
 			nfglRasterPos3d(
@@ -10818,7 +10818,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS3DV:
 			nfglRasterPos3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3F:
 			nfglRasterPos3f(
@@ -10828,7 +10828,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS3FV:
 			nfglRasterPos3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3I:
 			nfglRasterPos3i(
@@ -10838,7 +10838,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS3IV:
 			nfglRasterPos3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3S:
 			nfglRasterPos3s(
@@ -10848,7 +10848,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS3SV:
 			nfglRasterPos3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3XOES:
 			nfglRasterPos3xOES(
@@ -10858,7 +10858,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS3XVOES:
 			nfglRasterPos3xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLRASTERPOS4D:
 			nfglRasterPos4d(
@@ -10869,7 +10869,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS4DV:
 			nfglRasterPos4dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4F:
 			nfglRasterPos4f(
@@ -10880,7 +10880,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS4FV:
 			nfglRasterPos4fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4I:
 			nfglRasterPos4i(
@@ -10891,7 +10891,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS4IV:
 			nfglRasterPos4iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4S:
 			nfglRasterPos4s(
@@ -10902,7 +10902,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS4SV:
 			nfglRasterPos4sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4XOES:
 			nfglRasterPos4xOES(
@@ -10913,7 +10913,7 @@
 			break;
 		case NFOSMESA_GLRASTERPOS4XVOES:
 			nfglRasterPos4xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLREADBUFFER:
 			nfglReadBuffer(
@@ -10931,7 +10931,7 @@
 				getStackedParameter(3) /* GLsizei height */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(GLvoid *)Atari2HostAddr(getStackedParameter(6)) /* GLvoid *pixels */);
+				(GLvoid *)getStackedPointer(6) /* GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLREADNPIXELSARB:
 			nfglReadnPixelsARB(
@@ -10942,7 +10942,7 @@
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
 				getStackedParameter(6) /* GLsizei bufSize */,
-				(void *)Atari2HostAddr(getStackedParameter(7)) /* void *data */);
+				(void *)getStackedPointer(7) /* void *data */);
 			break;
 		case NFOSMESA_GLRECTD:
 			nfglRectd(
@@ -10953,8 +10953,8 @@
 			break;
 		case NFOSMESA_GLRECTDV:
 			nfglRectdv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v1 */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v2 */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v1 */,
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v2 */);
 			break;
 		case NFOSMESA_GLRECTF:
 			nfglRectf(
@@ -10965,8 +10965,8 @@
 			break;
 		case NFOSMESA_GLRECTFV:
 			nfglRectfv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v1 */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v2 */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v1 */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v2 */);
 			break;
 		case NFOSMESA_GLRECTI:
 			nfglRecti(
@@ -10977,8 +10977,8 @@
 			break;
 		case NFOSMESA_GLRECTIV:
 			nfglRectiv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v1 */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v2 */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v1 */,
+				(const GLint *)getStackedPointer(1) /* const GLint *v2 */);
 			break;
 		case NFOSMESA_GLRECTS:
 			nfglRects(
@@ -10989,8 +10989,8 @@
 			break;
 		case NFOSMESA_GLRECTSV:
 			nfglRectsv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v1 */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v2 */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v1 */,
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v2 */);
 			break;
 		case NFOSMESA_GLRECTXOES:
 			nfglRectxOES(
@@ -11001,12 +11001,12 @@
 			break;
 		case NFOSMESA_GLRECTXVOES:
 			nfglRectxvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *v1 */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(1)) /* const GLfixed *v2 */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *v1 */,
+				(const GLfixed *)getStackedPointer(1) /* const GLfixed *v2 */);
 			break;
 		case NFOSMESA_GLREFERENCEPLANESGIX:
 			nfglReferencePlaneSGIX(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *equation */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *equation */);
 			break;
 		case NFOSMESA_GLRELEASESHADERCOMPILER:
 			nfglReleaseShaderCompiler();
@@ -11058,7 +11058,7 @@
 			nfglReplacementCodePointerSUN(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */);
+				(const void * *)getStackedPointer(2) /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBSUN:
 			nfglReplacementCodeubSUN(
@@ -11066,7 +11066,7 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBVSUN:
 			nfglReplacementCodeubvSUN(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *code */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FSUN:
 			nfglReplacementCodeuiColor3fVertex3fSUN(
@@ -11080,9 +11080,9 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FVSUN:
 			nfglReplacementCodeuiColor3fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FSUN:
 			nfglReplacementCodeuiColor4fNormal3fVertex3fSUN(
@@ -11100,10 +11100,10 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FVSUN:
 			nfglReplacementCodeuiColor4fNormal3fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FSUN:
 			nfglReplacementCodeuiColor4ubVertex3fSUN(
@@ -11118,9 +11118,9 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FVSUN:
 			nfglReplacementCodeuiColor4ubVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FSUN:
 			nfglReplacementCodeuiNormal3fVertex3fSUN(
@@ -11134,9 +11134,9 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FVSUN:
 			nfglReplacementCodeuiNormal3fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUISUN:
 			nfglReplacementCodeuiSUN(
@@ -11160,11 +11160,11 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
 			nfglReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(4)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(4) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FSUN:
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fSUN(
@@ -11180,10 +11180,10 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FVSUN:
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FSUN:
 			nfglReplacementCodeuiTexCoord2fVertex3fSUN(
@@ -11196,9 +11196,9 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FVSUN:
 			nfglReplacementCodeuiTexCoord2fVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FSUN:
 			nfglReplacementCodeuiVertex3fSUN(
@@ -11209,12 +11209,12 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FVSUN:
 			nfglReplacementCodeuiVertex3fvSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *rc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *rc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVSUN:
 			nfglReplacementCodeuivSUN(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *code */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSSUN:
 			nfglReplacementCodeusSUN(
@@ -11222,12 +11222,12 @@
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSVSUN:
 			nfglReplacementCodeusvSUN(
-				(const GLushort *)Atari2HostAddr(getStackedParameter(0)) /* const GLushort *code */);
+				(const GLushort *)getStackedPointer(0) /* const GLushort *code */);
 			break;
 		case NFOSMESA_GLREQUESTRESIDENTPROGRAMSNV:
 			nfglRequestResidentProgramsNV(
 				getStackedParameter(0) /* GLsizei n */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *programs */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLRESETHISTOGRAM:
 			nfglResetHistogram(
@@ -11336,13 +11336,13 @@
 			nfglSamplerParameterIiv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *param */);
+				(const GLint *)getStackedPointer(2) /* const GLint *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIUIV:
 			nfglSamplerParameterIuiv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *param */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERF:
 			nfglSamplerParameterf(
@@ -11354,7 +11354,7 @@
 			nfglSamplerParameterfv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *param */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERI:
 			nfglSamplerParameteri(
@@ -11366,7 +11366,7 @@
 			nfglSamplerParameteriv(
 				getStackedParameter(0) /* GLuint sampler */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *param */);
+				(const GLint *)getStackedPointer(2) /* const GLint *param */);
 			break;
 		case NFOSMESA_GLSCALED:
 			nfglScaled(
@@ -11397,7 +11397,7 @@
 			nfglScissorArrayv(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(2) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSCISSORINDEXED:
 			nfglScissorIndexed(
@@ -11410,7 +11410,7 @@
 		case NFOSMESA_GLSCISSORINDEXEDV:
 			nfglScissorIndexedv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3B:
 			nfglSecondaryColor3b(
@@ -11426,11 +11426,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BV:
 			nfglSecondaryColor3bv(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BVEXT:
 			nfglSecondaryColor3bvEXT(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3D:
 			nfglSecondaryColor3d(
@@ -11446,11 +11446,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DV:
 			nfglSecondaryColor3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DVEXT:
 			nfglSecondaryColor3dvEXT(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3F:
 			nfglSecondaryColor3f(
@@ -11466,11 +11466,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FV:
 			nfglSecondaryColor3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FVEXT:
 			nfglSecondaryColor3fvEXT(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HNV:
 			nfglSecondaryColor3hNV(
@@ -11480,7 +11480,7 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HVNV:
 			nfglSecondaryColor3hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3I:
 			nfglSecondaryColor3i(
@@ -11496,11 +11496,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IV:
 			nfglSecondaryColor3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IVEXT:
 			nfglSecondaryColor3ivEXT(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3S:
 			nfglSecondaryColor3s(
@@ -11516,11 +11516,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SV:
 			nfglSecondaryColor3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SVEXT:
 			nfglSecondaryColor3svEXT(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UB:
 			nfglSecondaryColor3ub(
@@ -11536,11 +11536,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBV:
 			nfglSecondaryColor3ubv(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBVEXT:
 			nfglSecondaryColor3ubvEXT(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UI:
 			nfglSecondaryColor3ui(
@@ -11556,11 +11556,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIV:
 			nfglSecondaryColor3uiv(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIVEXT:
 			nfglSecondaryColor3uivEXT(
-				(const GLuint *)Atari2HostAddr(getStackedParameter(0)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(0) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3US:
 			nfglSecondaryColor3us(
@@ -11576,11 +11576,11 @@
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USV:
 			nfglSecondaryColor3usv(
-				(const GLushort *)Atari2HostAddr(getStackedParameter(0)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(0) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USVEXT:
 			nfglSecondaryColor3usvEXT(
-				(const GLushort *)Atari2HostAddr(getStackedParameter(0)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(0) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORFORMATNV:
 			nfglSecondaryColorFormatNV(
@@ -11596,34 +11596,34 @@
 		case NFOSMESA_GLSECONDARYCOLORP3UIV:
 			nfglSecondaryColorP3uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *color */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTER:
 			nfglSecondaryColorPointer(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTEREXT:
 			nfglSecondaryColorPointerEXT(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTERLISTIBM:
 			nfglSecondaryColorPointerListIBM(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(3)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(3) /* const void * *pointer */,
 				getStackedParameter(4) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLSELECTBUFFER:
 			nfglSelectBuffer(
 				getStackedParameter(0) /* GLsizei size */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *buffer */);
+				(GLuint *)getStackedPointer(1) /* GLuint *buffer */);
 			break;
 		case NFOSMESA_GLSELECTPERFMONITORCOUNTERSAMD:
 			nfglSelectPerfMonitorCountersAMD(
@@ -11631,7 +11631,7 @@
 				getStackedParameter(1) /* GLboolean32 enable */,
 				getStackedParameter(2) /* GLuint group */,
 				getStackedParameter(3) /* GLint numCounters */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(4)) /* GLuint *counterList */);
+				(GLuint *)getStackedPointer(4) /* GLuint *counterList */);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2D:
 			nfglSeparableFilter2D(
@@ -11641,8 +11641,8 @@
 				getStackedParameter(3) /* GLsizei height */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *row */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *column */);
+				(const void *)getStackedPointer(6) /* const void *row */,
+				(const void *)getStackedPointer(7) /* const void *column */);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2DEXT:
 			nfglSeparableFilter2DEXT(
@@ -11652,8 +11652,8 @@
 				getStackedParameter(3) /* GLsizei height */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *row */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *column */);
+				(const void *)getStackedPointer(6) /* const void *row */,
+				(const void *)getStackedPointer(7) /* const void *column */);
 			break;
 		case NFOSMESA_GLSETFENCEAPPLE:
 			nfglSetFenceAPPLE(
@@ -11667,25 +11667,25 @@
 		case NFOSMESA_GLSETFRAGMENTSHADERCONSTANTATI:
 			nfglSetFragmentShaderConstantATI(
 				getStackedParameter(0) /* GLuint dst */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLSETINVARIANTEXT:
 			nfglSetInvariantEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *addr */);
+				(const void *)getStackedPointer(2) /* const void *addr */);
 			break;
 		case NFOSMESA_GLSETLOCALCONSTANTEXT:
 			nfglSetLocalConstantEXT(
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *addr */);
+				(const void *)getStackedPointer(2) /* const void *addr */);
 			break;
 		case NFOSMESA_GLSETMULTISAMPLEFVAMD:
 			nfglSetMultisamplefvAMD(
 				getStackedParameter(0) /* GLenum pname */,
 				getStackedParameter(1) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *val */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *val */);
 			break;
 		case NFOSMESA_GLSHADEMODEL:
 			nfglShadeModel(
@@ -11694,9 +11694,9 @@
 		case NFOSMESA_GLSHADERBINARY:
 			nfglShaderBinary(
 				getStackedParameter(0) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *shaders */,
+				(const GLuint *)getStackedPointer(1) /* const GLuint *shaders */,
 				getStackedParameter(2) /* GLenum binaryformat */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *binary */,
+				(const void *)getStackedPointer(3) /* const void *binary */,
 				getStackedParameter(4) /* GLsizei length */);
 			break;
 		case NFOSMESA_GLSHADEROP1EXT:
@@ -11724,15 +11724,15 @@
 			nfglShaderSource(
 				getStackedParameter(0) /* GLuint shader */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *string */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *length */);
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *string */,
+				(const GLint *)getStackedPointer(3) /* const GLint *length */);
 			break;
 		case NFOSMESA_GLSHADERSOURCEARB:
 			nfglShaderSourceARB(
 				getStackedParameter(0) /* GLhandleARB shaderObj */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLcharARB * *)Atari2HostAddr(getStackedParameter(2)) /* const GLcharARB * *string */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *length */);
+				(const GLcharARB * *)getStackedPointer(2) /* const GLcharARB * *string */,
+				(const GLint *)getStackedPointer(3) /* const GLint *length */);
 			break;
 		case NFOSMESA_GLSHADERSTORAGEBLOCKBINDING:
 			nfglShaderStorageBlockBinding(
@@ -11744,7 +11744,7 @@
 			nfglSharpenTexFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *points */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFSGIX:
 			nfglSpriteParameterfSGIX(
@@ -11754,7 +11754,7 @@
 		case NFOSMESA_GLSPRITEPARAMETERFVSGIX:
 			nfglSpriteParameterfvSGIX(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERISGIX:
 			nfglSpriteParameteriSGIX(
@@ -11764,7 +11764,7 @@
 		case NFOSMESA_GLSPRITEPARAMETERIVSGIX:
 			nfglSpriteParameterivSGIX(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(1) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLSTARTINSTRUMENTSSGIX:
 			nfglStartInstrumentsSGIX();
@@ -11778,12 +11778,12 @@
 			nfglStencilFillPathInstancedNV(
 				getStackedParameter(0) /* GLsizei numPaths */,
 				getStackedParameter(1) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *paths */,
+				(const void *)getStackedPointer(2) /* const void *paths */,
 				getStackedParameter(3) /* GLuint pathBase */,
 				getStackedParameter(4) /* GLenum fillMode */,
 				getStackedParameter(5) /* GLuint mask */,
 				getStackedParameter(6) /* GLenum transformType */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(7)) /* const GLfloat *transformValues */);
+				(const GLfloat *)getStackedPointer(7) /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILFILLPATHNV:
 			nfglStencilFillPathNV(
@@ -11849,12 +11849,12 @@
 			nfglStencilStrokePathInstancedNV(
 				getStackedParameter(0) /* GLsizei numPaths */,
 				getStackedParameter(1) /* GLenum pathNameType */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *paths */,
+				(const void *)getStackedPointer(2) /* const void *paths */,
 				getStackedParameter(3) /* GLuint pathBase */,
 				getStackedParameter(4) /* GLint reference */,
 				getStackedParameter(5) /* GLuint mask */,
 				getStackedParameter(6) /* GLenum transformType */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(7)) /* const GLfloat *transformValues */);
+				(const GLfloat *)getStackedPointer(7) /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILSTROKEPATHNV:
 			nfglStencilStrokePathNV(
@@ -11869,7 +11869,7 @@
 		case NFOSMESA_GLSTRINGMARKERGREMEDY:
 			nfglStringMarkerGREMEDY(
 				getStackedParameter(0) /* GLsizei len */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *string */);
+				(const void *)getStackedPointer(1) /* const void *string */);
 			break;
 		case NFOSMESA_GLSWAPAPPLE:
 			nfglSwapAPPLE();
@@ -11898,7 +11898,7 @@
 			break;
 		case NFOSMESA_GLTANGENT3BVEXT:
 			nfglTangent3bvEXT(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLTANGENT3DEXT:
 			nfglTangent3dEXT(
@@ -11908,7 +11908,7 @@
 			break;
 		case NFOSMESA_GLTANGENT3DVEXT:
 			nfglTangent3dvEXT(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTANGENT3FEXT:
 			nfglTangent3fEXT(
@@ -11918,7 +11918,7 @@
 			break;
 		case NFOSMESA_GLTANGENT3FVEXT:
 			nfglTangent3fvEXT(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTANGENT3IEXT:
 			nfglTangent3iEXT(
@@ -11928,7 +11928,7 @@
 			break;
 		case NFOSMESA_GLTANGENT3IVEXT:
 			nfglTangent3ivEXT(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTANGENT3SEXT:
 			nfglTangent3sEXT(
@@ -11938,13 +11938,13 @@
 			break;
 		case NFOSMESA_GLTANGENT3SVEXT:
 			nfglTangent3svEXT(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTANGENTPOINTEREXT:
 			nfglTangentPointerEXT(
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLTBUFFERMASK3DFX:
 			nfglTbufferMask3DFX(
@@ -12000,12 +12000,12 @@
 		case NFOSMESA_GLTEXBUMPPARAMETERFVATI:
 			nfglTexBumpParameterfvATI(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *param */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *param */);
 			break;
 		case NFOSMESA_GLTEXBUMPPARAMETERIVATI:
 			nfglTexBumpParameterivATI(
 				getStackedParameter(0) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *param */);
+				(const GLint *)getStackedPointer(1) /* const GLint *param */);
 			break;
 		case NFOSMESA_GLTEXCOORD1BOES:
 			nfglTexCoord1bOES(
@@ -12013,7 +12013,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1BVOES:
 			nfglTexCoord1bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD1D:
 			nfglTexCoord1d(
@@ -12021,7 +12021,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1DV:
 			nfglTexCoord1dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1F:
 			nfglTexCoord1f(
@@ -12029,7 +12029,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1FV:
 			nfglTexCoord1fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1HNV:
 			nfglTexCoord1hNV(
@@ -12037,7 +12037,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1HVNV:
 			nfglTexCoord1hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1I:
 			nfglTexCoord1i(
@@ -12045,7 +12045,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1IV:
 			nfglTexCoord1iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1S:
 			nfglTexCoord1s(
@@ -12053,7 +12053,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1SV:
 			nfglTexCoord1sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1XOES:
 			nfglTexCoord1xOES(
@@ -12061,7 +12061,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD1XVOES:
 			nfglTexCoord1xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD2BOES:
 			nfglTexCoord2bOES(
@@ -12070,7 +12070,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2BVOES:
 			nfglTexCoord2bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD2D:
 			nfglTexCoord2d(
@@ -12079,7 +12079,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2DV:
 			nfglTexCoord2dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2F:
 			nfglTexCoord2f(
@@ -12099,9 +12099,9 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR3FVERTEX3FVSUN:
 			nfglTexCoord2fColor3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUN:
 			nfglTexCoord2fColor4fNormal3fVertex3fSUN(
@@ -12120,10 +12120,10 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
 			nfglTexCoord2fColor4fNormal3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FSUN:
 			nfglTexCoord2fColor4ubVertex3fSUN(
@@ -12139,9 +12139,9 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FVSUN:
 			nfglTexCoord2fColor4ubVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FSUN:
 			nfglTexCoord2fNormal3fVertex3fSUN(
@@ -12156,9 +12156,9 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FVSUN:
 			nfglTexCoord2fNormal3fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FSUN:
 			nfglTexCoord2fVertex3fSUN(
@@ -12170,12 +12170,12 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FVSUN:
 			nfglTexCoord2fVertex3fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FV:
 			nfglTexCoord2fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2HNV:
 			nfglTexCoord2hNV(
@@ -12184,7 +12184,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2HVNV:
 			nfglTexCoord2hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2I:
 			nfglTexCoord2i(
@@ -12193,7 +12193,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2IV:
 			nfglTexCoord2iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2S:
 			nfglTexCoord2s(
@@ -12202,7 +12202,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2SV:
 			nfglTexCoord2sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2XOES:
 			nfglTexCoord2xOES(
@@ -12211,7 +12211,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD2XVOES:
 			nfglTexCoord2xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD3BOES:
 			nfglTexCoord3bOES(
@@ -12221,7 +12221,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3BVOES:
 			nfglTexCoord3bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD3D:
 			nfglTexCoord3d(
@@ -12231,7 +12231,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3DV:
 			nfglTexCoord3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3F:
 			nfglTexCoord3f(
@@ -12241,7 +12241,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3FV:
 			nfglTexCoord3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3HNV:
 			nfglTexCoord3hNV(
@@ -12251,7 +12251,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3HVNV:
 			nfglTexCoord3hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3I:
 			nfglTexCoord3i(
@@ -12261,7 +12261,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3IV:
 			nfglTexCoord3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3S:
 			nfglTexCoord3s(
@@ -12271,7 +12271,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3SV:
 			nfglTexCoord3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3XOES:
 			nfglTexCoord3xOES(
@@ -12281,7 +12281,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD3XVOES:
 			nfglTexCoord3xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD4BOES:
 			nfglTexCoord4bOES(
@@ -12292,7 +12292,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4BVOES:
 			nfglTexCoord4bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD4D:
 			nfglTexCoord4d(
@@ -12303,7 +12303,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4DV:
 			nfglTexCoord4dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4F:
 			nfglTexCoord4f(
@@ -12332,10 +12332,10 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FVSUN:
 			nfglTexCoord4fColor4fNormal3fVertex4fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *c */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *c */,
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *n */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FSUN:
 			nfglTexCoord4fVertex4fSUN(
@@ -12350,12 +12350,12 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FVSUN:
 			nfglTexCoord4fVertex4fvSUN(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *tc */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *tc */,
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FV:
 			nfglTexCoord4fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4HNV:
 			nfglTexCoord4hNV(
@@ -12366,7 +12366,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4HVNV:
 			nfglTexCoord4hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4I:
 			nfglTexCoord4i(
@@ -12377,7 +12377,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4IV:
 			nfglTexCoord4iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4S:
 			nfglTexCoord4s(
@@ -12388,7 +12388,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4SV:
 			nfglTexCoord4sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4XOES:
 			nfglTexCoord4xOES(
@@ -12399,7 +12399,7 @@
 			break;
 		case NFOSMESA_GLTEXCOORD4XVOES:
 			nfglTexCoord4xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDFORMATNV:
 			nfglTexCoordFormatNV(
@@ -12415,7 +12415,7 @@
 		case NFOSMESA_GLTEXCOORDP1UIV:
 			nfglTexCoordP1uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP2UI:
 			nfglTexCoordP2ui(
@@ -12425,7 +12425,7 @@
 		case NFOSMESA_GLTEXCOORDP2UIV:
 			nfglTexCoordP2uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP3UI:
 			nfglTexCoordP3ui(
@@ -12435,7 +12435,7 @@
 		case NFOSMESA_GLTEXCOORDP3UIV:
 			nfglTexCoordP3uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP4UI:
 			nfglTexCoordP4ui(
@@ -12445,14 +12445,14 @@
 		case NFOSMESA_GLTEXCOORDP4UIV:
 			nfglTexCoordP4uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *coords */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTER:
 			nfglTexCoordPointer(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(3)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(3) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTEREXT:
 			nfglTexCoordPointerEXT(
@@ -12460,21 +12460,21 @@
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERLISTIBM:
 			nfglTexCoordPointerListIBM(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(3)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(3) /* const void * *pointer */,
 				getStackedParameter(4) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERVINTEL:
 			nfglTexCoordPointervINTEL(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */);
+				(const void * *)getStackedPointer(2) /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLTEXENVF:
 			nfglTexEnvf(
@@ -12486,7 +12486,7 @@
 			nfglTexEnvfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXENVI:
 			nfglTexEnvi(
@@ -12498,7 +12498,7 @@
 			nfglTexEnviv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXENVXOES:
 			nfglTexEnvxOES(
@@ -12510,14 +12510,14 @@
 			nfglTexEnvxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXFILTERFUNCSGIS:
 			nfglTexFilterFuncSGIS(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum filter */,
 				getStackedParameter(2) /* GLsizei n */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *weights */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLTEXGEND:
 			nfglTexGend(
@@ -12529,7 +12529,7 @@
 			nfglTexGendv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLTEXGENF:
 			nfglTexGenf(
@@ -12541,7 +12541,7 @@
 			nfglTexGenfv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXGENI:
 			nfglTexGeni(
@@ -12553,7 +12553,7 @@
 			nfglTexGeniv(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXGENXOES:
 			nfglTexGenxOES(
@@ -12565,7 +12565,7 @@
 			nfglTexGenxvOES(
 				getStackedParameter(0) /* GLenum coord */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXIMAGE1D:
 			nfglTexImage1D(
@@ -12576,7 +12576,7 @@
 				getStackedParameter(4) /* GLint border */,
 				getStackedParameter(5) /* GLenum format */,
 				getStackedParameter(6) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(7)) /* const GLvoid *pixels */);
+				(const GLvoid *)getStackedPointer(7) /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE2D:
 			nfglTexImage2D(
@@ -12588,7 +12588,7 @@
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(8)) /* const GLvoid *pixels */);
+				(const GLvoid *)getStackedPointer(8) /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE2DMULTISAMPLE:
 			nfglTexImage2DMultisample(
@@ -12620,7 +12620,7 @@
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DEXT:
 			nfglTexImage3DEXT(
@@ -12633,7 +12633,7 @@
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DMULTISAMPLE:
 			nfglTexImage3DMultisample(
@@ -12668,7 +12668,7 @@
 				getStackedParameter(7) /* GLint border */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *pixels */);
+				(const void *)getStackedPointer(10) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXPAGECOMMITMENTARB:
 			nfglTexPageCommitmentARB(
@@ -12686,25 +12686,25 @@
 			nfglTexParameterIiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIVEXT:
 			nfglTexParameterIivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIV:
 			nfglTexParameterIuiv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIVEXT:
 			nfglTexParameterIuivEXT(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERF:
 			nfglTexParameterf(
@@ -12716,7 +12716,7 @@
 			nfglTexParameterfv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERI:
 			nfglTexParameteri(
@@ -12728,7 +12728,7 @@
 			nfglTexParameteriv(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(2) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERXOES:
 			nfglTexParameterxOES(
@@ -12740,7 +12740,7 @@
 			nfglTexParameterxvOES(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(2)) /* const GLfixed *params */);
+				(const GLfixed *)getStackedPointer(2) /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXRENDERBUFFERNV:
 			nfglTexRenderbufferNV(
@@ -12820,7 +12820,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(6)) /* const GLvoid *pixels */);
+				(const GLvoid *)getStackedPointer(6) /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE1DEXT:
 			nfglTexSubImage1DEXT(
@@ -12830,7 +12830,7 @@
 				getStackedParameter(3) /* GLsizei width */,
 				getStackedParameter(4) /* GLenum format */,
 				getStackedParameter(5) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(6)) /* const void *pixels */);
+				(const void *)getStackedPointer(6) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2D:
 			nfglTexSubImage2D(
@@ -12842,7 +12842,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLenum type */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(8)) /* const GLvoid *pixels */);
+				(const GLvoid *)getStackedPointer(8) /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2DEXT:
 			nfglTexSubImage2DEXT(
@@ -12854,7 +12854,7 @@
 				getStackedParameter(5) /* GLsizei height */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *pixels */);
+				(const void *)getStackedPointer(8) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3D:
 			nfglTexSubImage3D(
@@ -12868,7 +12868,7 @@
 				getStackedParameter(7) /* GLsizei depth */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *pixels */);
+				(const void *)getStackedPointer(10) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3DEXT:
 			nfglTexSubImage3DEXT(
@@ -12882,7 +12882,7 @@
 				getStackedParameter(7) /* GLsizei depth */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *pixels */);
+				(const void *)getStackedPointer(10) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE4DSGIS:
 			nfglTexSubImage4DSGIS(
@@ -12898,7 +12898,7 @@
 				getStackedParameter(9) /* GLsizei size4d */,
 				getStackedParameter(10) /* GLenum format */,
 				getStackedParameter(11) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(12)) /* const void *pixels */);
+				(const void *)getStackedPointer(12) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREBARRIERNV:
 			nfglTextureBarrierNV();
@@ -12940,7 +12940,7 @@
 				getStackedParameter(5) /* GLint border */,
 				getStackedParameter(6) /* GLenum format */,
 				getStackedParameter(7) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(8)) /* const void *pixels */);
+				(const void *)getStackedPointer(8) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DEXT:
 			nfglTextureImage2DEXT(
@@ -12953,7 +12953,7 @@
 				getStackedParameter(6) /* GLint border */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DMULTISAMPLECOVERAGENV:
 			nfglTextureImage2DMultisampleCoverageNV(
@@ -12988,7 +12988,7 @@
 				getStackedParameter(7) /* GLint border */,
 				getStackedParameter(8) /* GLenum format */,
 				getStackedParameter(9) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(10)) /* const void *pixels */);
+				(const void *)getStackedPointer(10) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DMULTISAMPLECOVERAGENV:
 			nfglTextureImage3DMultisampleCoverageNV(
@@ -13043,14 +13043,14 @@
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIUIVEXT:
 			nfglTextureParameterIuivEXT(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *params */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFEXT:
 			nfglTextureParameterfEXT(
@@ -13064,7 +13064,7 @@
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIEXT:
 			nfglTextureParameteriEXT(
@@ -13078,13 +13078,13 @@
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXTURERANGEAPPLE:
 			nfglTextureRangeAPPLE(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei length */,
-				(const void *)Atari2HostAddr(getStackedParameter(2)) /* const void *pointer */);
+				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLTEXTURERENDERBUFFEREXT:
 			nfglTextureRenderbufferEXT(
@@ -13160,7 +13160,7 @@
 				getStackedParameter(4) /* GLsizei width */,
 				getStackedParameter(5) /* GLenum format */,
 				getStackedParameter(6) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(7)) /* const void *pixels */);
+				(const void *)getStackedPointer(7) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE2DEXT:
 			nfglTextureSubImage2DEXT(
@@ -13173,7 +13173,7 @@
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLenum format */,
 				getStackedParameter(8) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(9)) /* const void *pixels */);
+				(const void *)getStackedPointer(9) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE3DEXT:
 			nfglTextureSubImage3DEXT(
@@ -13188,7 +13188,7 @@
 				getStackedParameter(8) /* GLsizei depth */,
 				getStackedParameter(9) /* GLenum format */,
 				getStackedParameter(10) /* GLenum type */,
-				(const void *)Atari2HostAddr(getStackedParameter(11)) /* const void *pixels */);
+				(const void *)getStackedPointer(11) /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREVIEW:
 			nfglTextureView(
@@ -13207,28 +13207,28 @@
 			break;
 		case NFOSMESA_GLTRACECOMMENTMESA:
 			nfglTraceCommentMESA(
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLubyte *comment */);
+				(const GLubyte *)getStackedPointer(0) /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACELISTMESA:
 			nfglTraceListMESA(
 				getStackedParameter(0) /* GLuint name */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *comment */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACEPOINTERMESA:
 			nfglTracePointerMESA(
-				(GLvoid *)Atari2HostAddr(getStackedParameter(0)) /* GLvoid *pointer */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *comment */);
+				(GLvoid *)getStackedPointer(0) /* GLvoid *pointer */,
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACEPOINTERRANGEMESA:
 			nfglTracePointerRangeMESA(
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(0)) /* const GLvoid *first */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(1)) /* const GLvoid *last */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *comment */);
+				(const GLvoid *)getStackedPointer(0) /* const GLvoid *first */,
+				(const GLvoid *)getStackedPointer(1) /* const GLvoid *last */,
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACETEXTUREMESA:
 			nfglTraceTextureMESA(
 				getStackedParameter(0) /* GLuint name */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *comment */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACKMATRIXNV:
 			nfglTrackMatrixNV(
@@ -13240,36 +13240,36 @@
 		case NFOSMESA_GLTRANSFORMFEEDBACKATTRIBSNV:
 			nfglTransformFeedbackAttribsNV(
 				getStackedParameter(0) /* GLuint count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *attribs */,
+				(const GLint *)getStackedPointer(1) /* const GLint *attribs */,
 				getStackedParameter(2) /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKSTREAMATTRIBSNV:
 			nfglTransformFeedbackStreamAttribsNV(
 				getStackedParameter(0) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *attribs */,
+				(const GLint *)getStackedPointer(1) /* const GLint *attribs */,
 				getStackedParameter(2) /* GLsizei nbuffers */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *bufstreams */,
+				(const GLint *)getStackedPointer(3) /* const GLint *bufstreams */,
 				getStackedParameter(4) /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGS:
 			nfglTransformFeedbackVaryings(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *varyings */,
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *varyings */,
 				getStackedParameter(3) /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSEXT:
 			nfglTransformFeedbackVaryingsEXT(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLchar *const *)Atari2HostAddr(getStackedParameter(2)) /* const GLchar *const *varyings */,
+				(const GLchar *const *)getStackedPointer(2) /* const GLchar *const *varyings */,
 				getStackedParameter(3) /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSNV:
 			nfglTransformFeedbackVaryingsNV(
 				getStackedParameter(0) /* GLuint program */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *locations */,
+				(const GLint *)getStackedPointer(2) /* const GLint *locations */,
 				getStackedParameter(3) /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMPATHNV:
@@ -13277,7 +13277,7 @@
 				getStackedParameter(0) /* GLuint resultPath */,
 				getStackedParameter(1) /* GLuint srcPath */,
 				getStackedParameter(2) /* GLenum transformType */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *transformValues */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLTRANSLATED:
 			nfglTranslated(
@@ -13306,7 +13306,7 @@
 			nfglUniform1dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1F:
 			nfglUniform1f(
@@ -13322,13 +13322,13 @@
 			nfglUniform1fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1FVARB:
 			nfglUniform1fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1I:
 			nfglUniform1i(
@@ -13344,7 +13344,7 @@
 			nfglUniform1i64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(2) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1IARB:
 			nfglUniform1iARB(
@@ -13355,13 +13355,13 @@
 			nfglUniform1iv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1IVARB:
 			nfglUniform1ivARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UI:
 			nfglUniform1ui(
@@ -13377,7 +13377,7 @@
 			nfglUniform1ui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(2) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UIEXT:
 			nfglUniform1uiEXT(
@@ -13388,13 +13388,13 @@
 			nfglUniform1uiv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UIVEXT:
 			nfglUniform1uivEXT(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2D:
 			nfglUniform2d(
@@ -13406,7 +13406,7 @@
 			nfglUniform2dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2F:
 			nfglUniform2f(
@@ -13424,13 +13424,13 @@
 			nfglUniform2fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2FVARB:
 			nfglUniform2fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2I:
 			nfglUniform2i(
@@ -13448,7 +13448,7 @@
 			nfglUniform2i64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(2) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2IARB:
 			nfglUniform2iARB(
@@ -13460,13 +13460,13 @@
 			nfglUniform2iv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2IVARB:
 			nfglUniform2ivARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UI:
 			nfglUniform2ui(
@@ -13484,7 +13484,7 @@
 			nfglUniform2ui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(2) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UIEXT:
 			nfglUniform2uiEXT(
@@ -13496,13 +13496,13 @@
 			nfglUniform2uiv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UIVEXT:
 			nfglUniform2uivEXT(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3D:
 			nfglUniform3d(
@@ -13515,7 +13515,7 @@
 			nfglUniform3dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3F:
 			nfglUniform3f(
@@ -13535,13 +13535,13 @@
 			nfglUniform3fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3FVARB:
 			nfglUniform3fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3I:
 			nfglUniform3i(
@@ -13561,7 +13561,7 @@
 			nfglUniform3i64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(2) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3IARB:
 			nfglUniform3iARB(
@@ -13574,13 +13574,13 @@
 			nfglUniform3iv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3IVARB:
 			nfglUniform3ivARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UI:
 			nfglUniform3ui(
@@ -13600,7 +13600,7 @@
 			nfglUniform3ui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(2) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UIEXT:
 			nfglUniform3uiEXT(
@@ -13613,13 +13613,13 @@
 			nfglUniform3uiv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UIVEXT:
 			nfglUniform3uivEXT(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4D:
 			nfglUniform4d(
@@ -13633,7 +13633,7 @@
 			nfglUniform4dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4F:
 			nfglUniform4f(
@@ -13655,13 +13655,13 @@
 			nfglUniform4fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4FVARB:
 			nfglUniform4fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4I:
 			nfglUniform4i(
@@ -13683,7 +13683,7 @@
 			nfglUniform4i64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLint64EXT *value */);
+				(const GLint64EXT *)getStackedPointer(2) /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4IARB:
 			nfglUniform4iARB(
@@ -13697,13 +13697,13 @@
 			nfglUniform4iv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4IVARB:
 			nfglUniform4ivARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(2)) /* const GLint *value */);
+				(const GLint *)getStackedPointer(2) /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UI:
 			nfglUniform4ui(
@@ -13725,7 +13725,7 @@
 			nfglUniform4ui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(2) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UIEXT:
 			nfglUniform4uiEXT(
@@ -13739,13 +13739,13 @@
 			nfglUniform4uiv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UIVEXT:
 			nfglUniform4uivEXT(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORMBLOCKBINDING:
 			nfglUniformBlockBinding(
@@ -13773,166 +13773,166 @@
 			nfglUniformHandleui64vARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64 *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64 *value */);
+				(const GLuint64 *)getStackedPointer(2) /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64VNV:
 			nfglUniformHandleui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64 *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64 *value */);
+				(const GLuint64 *)getStackedPointer(2) /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2DV:
 			nfglUniformMatrix2dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FV:
 			nfglUniformMatrix2fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FVARB:
 			nfglUniformMatrix2fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3DV:
 			nfglUniformMatrix2x3dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3FV:
 			nfglUniformMatrix2x3fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4DV:
 			nfglUniformMatrix2x4dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4FV:
 			nfglUniformMatrix2x4fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3DV:
 			nfglUniformMatrix3dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FV:
 			nfglUniformMatrix3fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FVARB:
 			nfglUniformMatrix3fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2DV:
 			nfglUniformMatrix3x2dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2FV:
 			nfglUniformMatrix3x2fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4DV:
 			nfglUniformMatrix3x4dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4FV:
 			nfglUniformMatrix3x4fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4DV:
 			nfglUniformMatrix4dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FV:
 			nfglUniformMatrix4fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FVARB:
 			nfglUniformMatrix4fvARB(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2DV:
 			nfglUniformMatrix4x2dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2FV:
 			nfglUniformMatrix4x2fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3DV:
 			nfglUniformMatrix4x3dv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *value */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3FV:
 			nfglUniformMatrix4x3fv(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
 				getStackedParameter(2) /* GLboolean32 transpose */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *value */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMSUBROUTINESUIV:
 			nfglUniformSubroutinesuiv(
 				getStackedParameter(0) /* GLenum shadertype */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *indices */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *indices */);
 			break;
 		case NFOSMESA_GLUNIFORMUI64NV:
 			nfglUniformui64NV(
@@ -13943,7 +13943,7 @@
 			nfglUniformui64vNV(
 				getStackedParameter(0) /* GLint location */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint64EXT *value */);
+				(const GLuint64EXT *)getStackedPointer(2) /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNLOCKARRAYSEXT:
 			nfglUnlockArraysEXT();
@@ -13974,7 +13974,7 @@
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLuint offset */,
 				getStackedParameter(2) /* GLsizei size */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */,
+				(const void *)getStackedPointer(3) /* const void *pointer */,
 				getStackedParameter(4) /* GLenum preserve */);
 			break;
 		case NFOSMESA_GLUSEPROGRAM:
@@ -14004,13 +14004,13 @@
 				getStackedParameter(0) /* GLvdpauSurfaceNV surface */,
 				getStackedParameter(1) /* GLenum pname */,
 				getStackedParameter(2) /* GLsizei bufSize */,
-				(GLsizei *)Atari2HostAddr(getStackedParameter(3)) /* GLsizei *length */,
-				(GLint *)Atari2HostAddr(getStackedParameter(4)) /* GLint *values */);
+				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
+				(GLint *)getStackedPointer(4) /* GLint *values */);
 			break;
 		case NFOSMESA_GLVDPAUINITNV:
 			nfglVDPAUInitNV(
-				(const void *)Atari2HostAddr(getStackedParameter(0)) /* const void *vdpDevice */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *getProcAddress */);
+				(const void *)getStackedPointer(0) /* const void *vdpDevice */,
+				(const void *)getStackedPointer(1) /* const void *getProcAddress */);
 			break;
 		case NFOSMESA_GLVDPAUISSURFACENV:
 			ret = nfglVDPAUIsSurfaceNV(
@@ -14019,21 +14019,21 @@
 		case NFOSMESA_GLVDPAUMAPSURFACESNV:
 			nfglVDPAUMapSurfacesNV(
 				getStackedParameter(0) /* GLsizei numSurfaces */,
-				(const GLvdpauSurfaceNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLvdpauSurfaceNV *surfaces */);
+				(const GLvdpauSurfaceNV *)getStackedPointer(1) /* const GLvdpauSurfaceNV *surfaces */);
 			break;
 		case NFOSMESA_GLVDPAUREGISTEROUTPUTSURFACENV:
 			ret = nfglVDPAURegisterOutputSurfaceNV(
-				(const void *)Atari2HostAddr(getStackedParameter(0)) /* const void *vdpSurface */,
+				(const void *)getStackedPointer(0) /* const void *vdpSurface */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLsizei numTextureNames */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *textureNames */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *textureNames */);
 			break;
 		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACENV:
 			ret = nfglVDPAURegisterVideoSurfaceNV(
-				(const void *)Atari2HostAddr(getStackedParameter(0)) /* const void *vdpSurface */,
+				(const void *)getStackedPointer(0) /* const void *vdpSurface */,
 				getStackedParameter(1) /* GLenum target */,
 				getStackedParameter(2) /* GLsizei numTextureNames */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *textureNames */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *textureNames */);
 			break;
 		case NFOSMESA_GLVDPAUSURFACEACCESSNV:
 			nfglVDPAUSurfaceAccessNV(
@@ -14043,7 +14043,7 @@
 		case NFOSMESA_GLVDPAUUNMAPSURFACESNV:
 			nfglVDPAUUnmapSurfacesNV(
 				getStackedParameter(0) /* GLsizei numSurface */,
-				(const GLvdpauSurfaceNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLvdpauSurfaceNV *surfaces */);
+				(const GLvdpauSurfaceNV *)getStackedPointer(1) /* const GLvdpauSurfaceNV *surfaces */);
 			break;
 		case NFOSMESA_GLVDPAUUNREGISTERSURFACENV:
 			nfglVDPAUUnregisterSurfaceNV(
@@ -14074,47 +14074,47 @@
 				getStackedParameter(0) /* GLuint id */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLuint stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *addr */);
+				(const void *)getStackedPointer(3) /* const void *addr */);
 			break;
 		case NFOSMESA_GLVARIANTBVEXT:
 			nfglVariantbvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *addr */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *addr */);
 			break;
 		case NFOSMESA_GLVARIANTDVEXT:
 			nfglVariantdvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *addr */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *addr */);
 			break;
 		case NFOSMESA_GLVARIANTFVEXT:
 			nfglVariantfvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *addr */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *addr */);
 			break;
 		case NFOSMESA_GLVARIANTIVEXT:
 			nfglVariantivEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *addr */);
+				(const GLint *)getStackedPointer(1) /* const GLint *addr */);
 			break;
 		case NFOSMESA_GLVARIANTSVEXT:
 			nfglVariantsvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *addr */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUBVEXT:
 			nfglVariantubvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *addr */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUIVEXT:
 			nfglVariantuivEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *addr */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUSVEXT:
 			nfglVariantusvEXT(
 				getStackedParameter(0) /* GLuint id */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *addr */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *addr */);
 			break;
 		case NFOSMESA_GLVERTEX2BOES:
 			nfglVertex2bOES(
@@ -14122,7 +14122,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2BVOES:
 			nfglVertex2bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX2D:
 			nfglVertex2d(
@@ -14131,7 +14131,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2DV:
 			nfglVertex2dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX2F:
 			nfglVertex2f(
@@ -14140,7 +14140,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2FV:
 			nfglVertex2fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX2HNV:
 			nfglVertex2hNV(
@@ -14149,7 +14149,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2HVNV:
 			nfglVertex2hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX2I:
 			nfglVertex2i(
@@ -14158,7 +14158,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2IV:
 			nfglVertex2iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX2S:
 			nfglVertex2s(
@@ -14167,7 +14167,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2SV:
 			nfglVertex2sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX2XOES:
 			nfglVertex2xOES(
@@ -14175,7 +14175,7 @@
 			break;
 		case NFOSMESA_GLVERTEX2XVOES:
 			nfglVertex2xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEX3BOES:
 			nfglVertex3bOES(
@@ -14184,7 +14184,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3BVOES:
 			nfglVertex3bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX3D:
 			nfglVertex3d(
@@ -14194,7 +14194,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3DV:
 			nfglVertex3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX3F:
 			nfglVertex3f(
@@ -14204,7 +14204,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3FV:
 			nfglVertex3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX3HNV:
 			nfglVertex3hNV(
@@ -14214,7 +14214,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3HVNV:
 			nfglVertex3hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX3I:
 			nfglVertex3i(
@@ -14224,7 +14224,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3IV:
 			nfglVertex3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX3S:
 			nfglVertex3s(
@@ -14234,7 +14234,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3SV:
 			nfglVertex3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX3XOES:
 			nfglVertex3xOES(
@@ -14243,7 +14243,7 @@
 			break;
 		case NFOSMESA_GLVERTEX3XVOES:
 			nfglVertex3xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEX4BOES:
 			nfglVertex4bOES(
@@ -14253,7 +14253,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4BVOES:
 			nfglVertex4bvOES(
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(0)) /* const GLbyte *coords */);
+				(const GLbyte *)getStackedPointer(0) /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX4D:
 			nfglVertex4d(
@@ -14264,7 +14264,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4DV:
 			nfglVertex4dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX4F:
 			nfglVertex4f(
@@ -14275,7 +14275,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4FV:
 			nfglVertex4fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX4HNV:
 			nfglVertex4hNV(
@@ -14286,7 +14286,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4HVNV:
 			nfglVertex4hvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX4I:
 			nfglVertex4i(
@@ -14297,7 +14297,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4IV:
 			nfglVertex4iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX4S:
 			nfglVertex4s(
@@ -14308,7 +14308,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4SV:
 			nfglVertex4sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX4XOES:
 			nfglVertex4xOES(
@@ -14318,7 +14318,7 @@
 			break;
 		case NFOSMESA_GLVERTEX4XVOES:
 			nfglVertex4xvOES(
-				(const GLfixed *)Atari2HostAddr(getStackedParameter(0)) /* const GLfixed *coords */);
+				(const GLfixed *)getStackedPointer(0) /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYBINDVERTEXBUFFEREXT:
 			nfglVertexArrayBindVertexBufferEXT(
@@ -14386,12 +14386,12 @@
 		case NFOSMESA_GLVERTEXARRAYRANGEAPPLE:
 			nfglVertexArrayRangeAPPLE(
 				getStackedParameter(0) /* GLsizei length */,
-				(void *)Atari2HostAddr(getStackedParameter(1)) /* void *pointer */);
+				(void *)getStackedPointer(1) /* void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYRANGENV:
 			nfglVertexArrayRangeNV(
 				getStackedParameter(0) /* GLsizei length */,
-				(const void *)Atari2HostAddr(getStackedParameter(1)) /* const void *pointer */);
+				(const void *)getStackedPointer(1) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYSECONDARYCOLOROFFSETEXT:
 			nfglVertexArraySecondaryColorOffsetEXT(
@@ -14512,17 +14512,17 @@
 		case NFOSMESA_GLVERTEXATTRIB1DV:
 			nfglVertexAttrib1dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVARB:
 			nfglVertexAttrib1dvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVNV:
 			nfglVertexAttrib1dvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1F:
 			nfglVertexAttrib1f(
@@ -14542,17 +14542,17 @@
 		case NFOSMESA_GLVERTEXATTRIB1FV:
 			nfglVertexAttrib1fv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVARB:
 			nfglVertexAttrib1fvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVNV:
 			nfglVertexAttrib1fvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1HNV:
 			nfglVertexAttrib1hNV(
@@ -14562,7 +14562,7 @@
 		case NFOSMESA_GLVERTEXATTRIB1HVNV:
 			nfglVertexAttrib1hvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1S:
 			nfglVertexAttrib1s(
@@ -14582,17 +14582,17 @@
 		case NFOSMESA_GLVERTEXATTRIB1SV:
 			nfglVertexAttrib1sv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVARB:
 			nfglVertexAttrib1svARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVNV:
 			nfglVertexAttrib1svNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2D:
 			nfglVertexAttrib2d(
@@ -14615,17 +14615,17 @@
 		case NFOSMESA_GLVERTEXATTRIB2DV:
 			nfglVertexAttrib2dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVARB:
 			nfglVertexAttrib2dvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVNV:
 			nfglVertexAttrib2dvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2F:
 			nfglVertexAttrib2f(
@@ -14648,17 +14648,17 @@
 		case NFOSMESA_GLVERTEXATTRIB2FV:
 			nfglVertexAttrib2fv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVARB:
 			nfglVertexAttrib2fvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVNV:
 			nfglVertexAttrib2fvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2HNV:
 			nfglVertexAttrib2hNV(
@@ -14669,7 +14669,7 @@
 		case NFOSMESA_GLVERTEXATTRIB2HVNV:
 			nfglVertexAttrib2hvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2S:
 			nfglVertexAttrib2s(
@@ -14692,17 +14692,17 @@
 		case NFOSMESA_GLVERTEXATTRIB2SV:
 			nfglVertexAttrib2sv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVARB:
 			nfglVertexAttrib2svARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVNV:
 			nfglVertexAttrib2svNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3D:
 			nfglVertexAttrib3d(
@@ -14728,17 +14728,17 @@
 		case NFOSMESA_GLVERTEXATTRIB3DV:
 			nfglVertexAttrib3dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVARB:
 			nfglVertexAttrib3dvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVNV:
 			nfglVertexAttrib3dvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3F:
 			nfglVertexAttrib3f(
@@ -14764,17 +14764,17 @@
 		case NFOSMESA_GLVERTEXATTRIB3FV:
 			nfglVertexAttrib3fv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVARB:
 			nfglVertexAttrib3fvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVNV:
 			nfglVertexAttrib3fvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3HNV:
 			nfglVertexAttrib3hNV(
@@ -14786,7 +14786,7 @@
 		case NFOSMESA_GLVERTEXATTRIB3HVNV:
 			nfglVertexAttrib3hvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3S:
 			nfglVertexAttrib3s(
@@ -14812,47 +14812,47 @@
 		case NFOSMESA_GLVERTEXATTRIB3SV:
 			nfglVertexAttrib3sv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVARB:
 			nfglVertexAttrib3svARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVNV:
 			nfglVertexAttrib3svNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBV:
 			nfglVertexAttrib4Nbv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBVARB:
 			nfglVertexAttrib4NbvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIV:
 			nfglVertexAttrib4Niv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIVARB:
 			nfglVertexAttrib4NivARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSV:
 			nfglVertexAttrib4Nsv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSVARB:
 			nfglVertexAttrib4NsvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUB:
 			nfglVertexAttrib4Nub(
@@ -14873,42 +14873,42 @@
 		case NFOSMESA_GLVERTEXATTRIB4NUBV:
 			nfglVertexAttrib4Nubv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBVARB:
 			nfglVertexAttrib4NubvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIV:
 			nfglVertexAttrib4Nuiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIVARB:
 			nfglVertexAttrib4NuivARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSV:
 			nfglVertexAttrib4Nusv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSVARB:
 			nfglVertexAttrib4NusvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BV:
 			nfglVertexAttrib4bv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BVARB:
 			nfglVertexAttrib4bvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4D:
 			nfglVertexAttrib4d(
@@ -14937,17 +14937,17 @@
 		case NFOSMESA_GLVERTEXATTRIB4DV:
 			nfglVertexAttrib4dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVARB:
 			nfglVertexAttrib4dvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVNV:
 			nfglVertexAttrib4dvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4F:
 			nfglVertexAttrib4f(
@@ -14976,17 +14976,17 @@
 		case NFOSMESA_GLVERTEXATTRIB4FV:
 			nfglVertexAttrib4fv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVARB:
 			nfglVertexAttrib4fvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVNV:
 			nfglVertexAttrib4fvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4HNV:
 			nfglVertexAttrib4hNV(
@@ -14999,17 +14999,17 @@
 		case NFOSMESA_GLVERTEXATTRIB4HVNV:
 			nfglVertexAttrib4hvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(1)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(1) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IV:
 			nfglVertexAttrib4iv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IVARB:
 			nfglVertexAttrib4ivARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4S:
 			nfglVertexAttrib4s(
@@ -15038,17 +15038,17 @@
 		case NFOSMESA_GLVERTEXATTRIB4SV:
 			nfglVertexAttrib4sv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVARB:
 			nfglVertexAttrib4svARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVNV:
 			nfglVertexAttrib4svNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBNV:
 			nfglVertexAttrib4ubNV(
@@ -15061,37 +15061,37 @@
 		case NFOSMESA_GLVERTEXATTRIB4UBV:
 			nfglVertexAttrib4ubv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVARB:
 			nfglVertexAttrib4ubvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVNV:
 			nfglVertexAttrib4ubvNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIV:
 			nfglVertexAttrib4uiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIVARB:
 			nfglVertexAttrib4uivARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USV:
 			nfglVertexAttrib4usv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USVARB:
 			nfglVertexAttrib4usvARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBARRAYOBJECTATI:
 			nfglVertexAttribArrayObjectATI(
@@ -15147,12 +15147,12 @@
 		case NFOSMESA_GLVERTEXATTRIBI1IV:
 			nfglVertexAttribI1iv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IVEXT:
 			nfglVertexAttribI1ivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UI:
 			nfglVertexAttribI1ui(
@@ -15167,12 +15167,12 @@
 		case NFOSMESA_GLVERTEXATTRIBI1UIV:
 			nfglVertexAttribI1uiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIVEXT:
 			nfglVertexAttribI1uivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2I:
 			nfglVertexAttribI2i(
@@ -15189,12 +15189,12 @@
 		case NFOSMESA_GLVERTEXATTRIBI2IV:
 			nfglVertexAttribI2iv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IVEXT:
 			nfglVertexAttribI2ivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UI:
 			nfglVertexAttribI2ui(
@@ -15211,12 +15211,12 @@
 		case NFOSMESA_GLVERTEXATTRIBI2UIV:
 			nfglVertexAttribI2uiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIVEXT:
 			nfglVertexAttribI2uivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3I:
 			nfglVertexAttribI3i(
@@ -15235,12 +15235,12 @@
 		case NFOSMESA_GLVERTEXATTRIBI3IV:
 			nfglVertexAttribI3iv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IVEXT:
 			nfglVertexAttribI3ivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UI:
 			nfglVertexAttribI3ui(
@@ -15259,22 +15259,22 @@
 		case NFOSMESA_GLVERTEXATTRIBI3UIV:
 			nfglVertexAttribI3uiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIVEXT:
 			nfglVertexAttribI3uivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BV:
 			nfglVertexAttribI4bv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BVEXT:
 			nfglVertexAttribI4bvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *v */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4I:
 			nfglVertexAttribI4i(
@@ -15295,32 +15295,32 @@
 		case NFOSMESA_GLVERTEXATTRIBI4IV:
 			nfglVertexAttribI4iv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IVEXT:
 			nfglVertexAttribI4ivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(1) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SV:
 			nfglVertexAttribI4sv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SVEXT:
 			nfglVertexAttribI4svEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBV:
 			nfglVertexAttribI4ubv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBVEXT:
 			nfglVertexAttribI4ubvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UI:
 			nfglVertexAttribI4ui(
@@ -15341,22 +15341,22 @@
 		case NFOSMESA_GLVERTEXATTRIBI4UIV:
 			nfglVertexAttribI4uiv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIVEXT:
 			nfglVertexAttribI4uivEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *v */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USV:
 			nfglVertexAttribI4usv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USVEXT:
 			nfglVertexAttribI4usvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *v */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIFORMAT:
 			nfglVertexAttribIFormat(
@@ -15378,7 +15378,7 @@
 				getStackedParameter(1) /* GLint size */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIPOINTEREXT:
 			nfglVertexAttribIPointerEXT(
@@ -15386,7 +15386,7 @@
 				getStackedParameter(1) /* GLint size */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1D:
 			nfglVertexAttribL1d(
@@ -15401,12 +15401,12 @@
 		case NFOSMESA_GLVERTEXATTRIBL1DV:
 			nfglVertexAttribL1dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DVEXT:
 			nfglVertexAttribL1dvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1I64NV:
 			nfglVertexAttribL1i64NV(
@@ -15416,7 +15416,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL1I64VNV:
 			nfglVertexAttribL1i64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLint64EXT *v */);
+				(const GLint64EXT *)getStackedPointer(1) /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64ARB:
 			nfglVertexAttribL1ui64ARB(
@@ -15431,12 +15431,12 @@
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VARB:
 			nfglVertexAttribL1ui64vARB(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint64EXT *v */);
+				(const GLuint64EXT *)getStackedPointer(1) /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VNV:
 			nfglVertexAttribL1ui64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint64EXT *v */);
+				(const GLuint64EXT *)getStackedPointer(1) /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2D:
 			nfglVertexAttribL2d(
@@ -15453,12 +15453,12 @@
 		case NFOSMESA_GLVERTEXATTRIBL2DV:
 			nfglVertexAttribL2dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DVEXT:
 			nfglVertexAttribL2dvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2I64NV:
 			nfglVertexAttribL2i64NV(
@@ -15469,7 +15469,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL2I64VNV:
 			nfglVertexAttribL2i64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLint64EXT *v */);
+				(const GLint64EXT *)getStackedPointer(1) /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2UI64NV:
 			nfglVertexAttribL2ui64NV(
@@ -15480,7 +15480,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL2UI64VNV:
 			nfglVertexAttribL2ui64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint64EXT *v */);
+				(const GLuint64EXT *)getStackedPointer(1) /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3D:
 			nfglVertexAttribL3d(
@@ -15499,12 +15499,12 @@
 		case NFOSMESA_GLVERTEXATTRIBL3DV:
 			nfglVertexAttribL3dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DVEXT:
 			nfglVertexAttribL3dvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3I64NV:
 			nfglVertexAttribL3i64NV(
@@ -15516,7 +15516,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL3I64VNV:
 			nfglVertexAttribL3i64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLint64EXT *v */);
+				(const GLint64EXT *)getStackedPointer(1) /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3UI64NV:
 			nfglVertexAttribL3ui64NV(
@@ -15528,7 +15528,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL3UI64VNV:
 			nfglVertexAttribL3ui64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint64EXT *v */);
+				(const GLuint64EXT *)getStackedPointer(1) /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4D:
 			nfglVertexAttribL4d(
@@ -15549,12 +15549,12 @@
 		case NFOSMESA_GLVERTEXATTRIBL4DV:
 			nfglVertexAttribL4dv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DVEXT:
 			nfglVertexAttribL4dvEXT(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4I64NV:
 			nfglVertexAttribL4i64NV(
@@ -15567,7 +15567,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL4I64VNV:
 			nfglVertexAttribL4i64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLint64EXT *v */);
+				(const GLint64EXT *)getStackedPointer(1) /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4UI64NV:
 			nfglVertexAttribL4ui64NV(
@@ -15580,7 +15580,7 @@
 		case NFOSMESA_GLVERTEXATTRIBL4UI64VNV:
 			nfglVertexAttribL4ui64vNV(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLuint64EXT *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint64EXT *v */);
+				(const GLuint64EXT *)getStackedPointer(1) /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLFORMAT:
 			nfglVertexAttribLFormat(
@@ -15602,7 +15602,7 @@
 				getStackedParameter(1) /* GLint size */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLPOINTEREXT:
 			nfglVertexAttribLPointerEXT(
@@ -15610,7 +15610,7 @@
 				getStackedParameter(1) /* GLint size */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP1UI:
 			nfglVertexAttribP1ui(
@@ -15624,7 +15624,7 @@
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLboolean32 normalized */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP2UI:
 			nfglVertexAttribP2ui(
@@ -15638,7 +15638,7 @@
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLboolean32 normalized */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP3UI:
 			nfglVertexAttribP3ui(
@@ -15652,7 +15652,7 @@
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLboolean32 normalized */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP4UI:
 			nfglVertexAttribP4ui(
@@ -15666,7 +15666,7 @@
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLboolean32 normalized */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(3)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(3) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPARAMETERIAMD:
 			nfglVertexAttribParameteriAMD(
@@ -15681,7 +15681,7 @@
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLboolean32 normalized */,
 				getStackedParameter(4) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *pointer */);
+				(const void *)getStackedPointer(5) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERARB:
 			nfglVertexAttribPointerARB(
@@ -15690,7 +15690,7 @@
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLboolean32 normalized */,
 				getStackedParameter(4) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(5)) /* const void *pointer */);
+				(const void *)getStackedPointer(5) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERNV:
 			nfglVertexAttribPointerNV(
@@ -15698,109 +15698,109 @@
 				getStackedParameter(1) /* GLint fsize */,
 				getStackedParameter(2) /* GLenum type */,
 				getStackedParameter(3) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1DVNV:
 			nfglVertexAttribs1dvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1FVNV:
 			nfglVertexAttribs1fvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1HVNV:
 			nfglVertexAttribs1hvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(2)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(2) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1SVNV:
 			nfglVertexAttribs1svNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(2)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(2) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2DVNV:
 			nfglVertexAttribs2dvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2FVNV:
 			nfglVertexAttribs2fvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2HVNV:
 			nfglVertexAttribs2hvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(2)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(2) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2SVNV:
 			nfglVertexAttribs2svNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(2)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(2) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3DVNV:
 			nfglVertexAttribs3dvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3FVNV:
 			nfglVertexAttribs3fvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3HVNV:
 			nfglVertexAttribs3hvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(2)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(2) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3SVNV:
 			nfglVertexAttribs3svNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(2)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(2) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4DVNV:
 			nfglVertexAttribs4dvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(2)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(2) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4FVNV:
 			nfglVertexAttribs4fvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4HVNV:
 			nfglVertexAttribs4hvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei n */,
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(2)) /* const GLhalfNV *v */);
+				(const GLhalfNV *)getStackedPointer(2) /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4SVNV:
 			nfglVertexAttribs4svNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(2)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(2) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4UBVNV:
 			nfglVertexAttribs4ubvNV(
 				getStackedParameter(0) /* GLuint index */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(2)) /* const GLubyte *v */);
+				(const GLubyte *)getStackedPointer(2) /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXBINDINGDIVISOR:
 			nfglVertexBindingDivisor(
@@ -15835,7 +15835,7 @@
 		case NFOSMESA_GLVERTEXP2UIV:
 			nfglVertexP2uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXP3UI:
 			nfglVertexP3ui(
@@ -15845,7 +15845,7 @@
 		case NFOSMESA_GLVERTEXP3UIV:
 			nfglVertexP3uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXP4UI:
 			nfglVertexP4ui(
@@ -15855,7 +15855,7 @@
 		case NFOSMESA_GLVERTEXP4UIV:
 			nfglVertexP4uiv(
 				getStackedParameter(0) /* GLenum type */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *value */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTSIZEFAPPLE:
 			nfglVertexPointSizefAPPLE(
@@ -15866,7 +15866,7 @@
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const GLvoid *)Atari2HostAddr(getStackedParameter(3)) /* const GLvoid *pointer */);
+				(const GLvoid *)getStackedPointer(3) /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTEREXT:
 			nfglVertexPointerEXT(
@@ -15874,21 +15874,21 @@
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
 				getStackedParameter(3) /* GLsizei count */,
-				(const void *)Atari2HostAddr(getStackedParameter(4)) /* const void *pointer */);
+				(const void *)getStackedPointer(4) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERLISTIBM:
 			nfglVertexPointerListIBM(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLint stride */,
-				(const void * *)Atari2HostAddr(getStackedParameter(3)) /* const void * *pointer */,
+				(const void * *)getStackedPointer(3) /* const void * *pointer */,
 				getStackedParameter(4) /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERVINTEL:
 			nfglVertexPointervINTEL(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
-				(const void * *)Atari2HostAddr(getStackedParameter(2)) /* const void * *pointer */);
+				(const void * *)getStackedPointer(2) /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1DATI:
 			nfglVertexStream1dATI(
@@ -15898,7 +15898,7 @@
 		case NFOSMESA_GLVERTEXSTREAM1DVATI:
 			nfglVertexStream1dvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *coords */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1FATI:
 			nfglVertexStream1fATI(
@@ -15908,7 +15908,7 @@
 		case NFOSMESA_GLVERTEXSTREAM1FVATI:
 			nfglVertexStream1fvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *coords */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1IATI:
 			nfglVertexStream1iATI(
@@ -15918,7 +15918,7 @@
 		case NFOSMESA_GLVERTEXSTREAM1IVATI:
 			nfglVertexStream1ivATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *coords */);
+				(const GLint *)getStackedPointer(1) /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1SATI:
 			nfglVertexStream1sATI(
@@ -15928,7 +15928,7 @@
 		case NFOSMESA_GLVERTEXSTREAM1SVATI:
 			nfglVertexStream1svATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *coords */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2DATI:
 			nfglVertexStream2dATI(
@@ -15939,7 +15939,7 @@
 		case NFOSMESA_GLVERTEXSTREAM2DVATI:
 			nfglVertexStream2dvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *coords */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2FATI:
 			nfglVertexStream2fATI(
@@ -15950,7 +15950,7 @@
 		case NFOSMESA_GLVERTEXSTREAM2FVATI:
 			nfglVertexStream2fvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *coords */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2IATI:
 			nfglVertexStream2iATI(
@@ -15961,7 +15961,7 @@
 		case NFOSMESA_GLVERTEXSTREAM2IVATI:
 			nfglVertexStream2ivATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *coords */);
+				(const GLint *)getStackedPointer(1) /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2SATI:
 			nfglVertexStream2sATI(
@@ -15972,7 +15972,7 @@
 		case NFOSMESA_GLVERTEXSTREAM2SVATI:
 			nfglVertexStream2svATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *coords */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3DATI:
 			nfglVertexStream3dATI(
@@ -15984,7 +15984,7 @@
 		case NFOSMESA_GLVERTEXSTREAM3DVATI:
 			nfglVertexStream3dvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *coords */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3FATI:
 			nfglVertexStream3fATI(
@@ -15996,7 +15996,7 @@
 		case NFOSMESA_GLVERTEXSTREAM3FVATI:
 			nfglVertexStream3fvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *coords */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3IATI:
 			nfglVertexStream3iATI(
@@ -16008,7 +16008,7 @@
 		case NFOSMESA_GLVERTEXSTREAM3IVATI:
 			nfglVertexStream3ivATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *coords */);
+				(const GLint *)getStackedPointer(1) /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3SATI:
 			nfglVertexStream3sATI(
@@ -16020,7 +16020,7 @@
 		case NFOSMESA_GLVERTEXSTREAM3SVATI:
 			nfglVertexStream3svATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *coords */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4DATI:
 			nfglVertexStream4dATI(
@@ -16033,7 +16033,7 @@
 		case NFOSMESA_GLVERTEXSTREAM4DVATI:
 			nfglVertexStream4dvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *coords */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4FATI:
 			nfglVertexStream4fATI(
@@ -16046,7 +16046,7 @@
 		case NFOSMESA_GLVERTEXSTREAM4FVATI:
 			nfglVertexStream4fvATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *coords */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4IATI:
 			nfglVertexStream4iATI(
@@ -16059,7 +16059,7 @@
 		case NFOSMESA_GLVERTEXSTREAM4IVATI:
 			nfglVertexStream4ivATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *coords */);
+				(const GLint *)getStackedPointer(1) /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4SATI:
 			nfglVertexStream4sATI(
@@ -16072,14 +16072,14 @@
 		case NFOSMESA_GLVERTEXSTREAM4SVATI:
 			nfglVertexStream4svATI(
 				getStackedParameter(0) /* GLenum stream */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *coords */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTPOINTEREXT:
 			nfglVertexWeightPointerEXT(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFEXT:
 			nfglVertexWeightfEXT(
@@ -16087,7 +16087,7 @@
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFVEXT:
 			nfglVertexWeightfvEXT(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *weight */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *weight */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHNV:
 			nfglVertexWeighthNV(
@@ -16095,34 +16095,34 @@
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHVNV:
 			nfglVertexWeighthvNV(
-				(const GLhalfNV *)Atari2HostAddr(getStackedParameter(0)) /* const GLhalfNV *weight */);
+				(const GLhalfNV *)getStackedPointer(0) /* const GLhalfNV *weight */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURENV:
 			ret = nfglVideoCaptureNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
-				(GLuint *)Atari2HostAddr(getStackedParameter(1)) /* GLuint *sequence_num */,
-				(GLuint64EXT *)Atari2HostAddr(getStackedParameter(2)) /* GLuint64EXT *capture_time */);
+				(GLuint *)getStackedPointer(1) /* GLuint *sequence_num */,
+				(GLuint64EXT *)getStackedPointer(2) /* GLuint64EXT *capture_time */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERDVNV:
 			nfglVideoCaptureStreamParameterdvNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(3)) /* const GLdouble *params */);
+				(const GLdouble *)getStackedPointer(3) /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERFVNV:
 			nfglVideoCaptureStreamParameterfvNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *params */);
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERIVNV:
 			nfglVideoCaptureStreamParameterivNV(
 				getStackedParameter(0) /* GLuint video_capture_slot */,
 				getStackedParameter(1) /* GLuint stream */,
 				getStackedParameter(2) /* GLenum pname */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(3)) /* const GLint *params */);
+				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
 		case NFOSMESA_GLVIEWPORT:
 			nfglViewport(
@@ -16135,7 +16135,7 @@
 			nfglViewportArrayv(
 				getStackedParameter(0) /* GLuint first */,
 				getStackedParameter(1) /* GLsizei count */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(2)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(2) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVIEWPORTINDEXEDF:
 			nfglViewportIndexedf(
@@ -16148,11 +16148,11 @@
 		case NFOSMESA_GLVIEWPORTINDEXEDFV:
 			nfglViewportIndexedfv(
 				getStackedParameter(0) /* GLuint index */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWAITSYNC:
 			nfglWaitSync(
-				(GLsync )Atari2HostAddr(getStackedParameter(0)) /* GLsync sync */,
+				(GLsync )getStackedPointer(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLbitfield flags */,
 				getStackedParameter64(2) /* GLuint64 timeout */);
 			break;
@@ -16160,55 +16160,55 @@
 			nfglWeightPathsNV(
 				getStackedParameter(0) /* GLuint resultPath */,
 				getStackedParameter(1) /* GLsizei numPaths */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(2)) /* const GLuint *paths */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(3)) /* const GLfloat *weights */);
+				(const GLuint *)getStackedPointer(2) /* const GLuint *paths */,
+				(const GLfloat *)getStackedPointer(3) /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTPOINTERARB:
 			nfglWeightPointerARB(
 				getStackedParameter(0) /* GLint size */,
 				getStackedParameter(1) /* GLenum type */,
 				getStackedParameter(2) /* GLsizei stride */,
-				(const void *)Atari2HostAddr(getStackedParameter(3)) /* const void *pointer */);
+				(const void *)getStackedPointer(3) /* const void *pointer */);
 			break;
 		case NFOSMESA_GLWEIGHTBVARB:
 			nfglWeightbvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLbyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLbyte *weights */);
+				(const GLbyte *)getStackedPointer(1) /* const GLbyte *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTDVARB:
 			nfglWeightdvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(1)) /* const GLdouble *weights */);
+				(const GLdouble *)getStackedPointer(1) /* const GLdouble *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTFVARB:
 			nfglWeightfvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(1)) /* const GLfloat *weights */);
+				(const GLfloat *)getStackedPointer(1) /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTIVARB:
 			nfglWeightivARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLint *)Atari2HostAddr(getStackedParameter(1)) /* const GLint *weights */);
+				(const GLint *)getStackedPointer(1) /* const GLint *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTSVARB:
 			nfglWeightsvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLshort *)Atari2HostAddr(getStackedParameter(1)) /* const GLshort *weights */);
+				(const GLshort *)getStackedPointer(1) /* const GLshort *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUBVARB:
 			nfglWeightubvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLubyte *)Atari2HostAddr(getStackedParameter(1)) /* const GLubyte *weights */);
+				(const GLubyte *)getStackedPointer(1) /* const GLubyte *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUIVARB:
 			nfglWeightuivARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLuint *)Atari2HostAddr(getStackedParameter(1)) /* const GLuint *weights */);
+				(const GLuint *)getStackedPointer(1) /* const GLuint *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUSVARB:
 			nfglWeightusvARB(
 				getStackedParameter(0) /* GLint size */,
-				(const GLushort *)Atari2HostAddr(getStackedParameter(1)) /* const GLushort *weights */);
+				(const GLushort *)getStackedPointer(1) /* const GLushort *weights */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2D:
 			nfglWindowPos2d(
@@ -16227,15 +16227,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS2DV:
 			nfglWindowPos2dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVARB:
 			nfglWindowPos2dvARB(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVMESA:
 			nfglWindowPos2dvMESA(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2F:
 			nfglWindowPos2f(
@@ -16254,15 +16254,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS2FV:
 			nfglWindowPos2fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVARB:
 			nfglWindowPos2fvARB(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVMESA:
 			nfglWindowPos2fvMESA(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2I:
 			nfglWindowPos2i(
@@ -16281,15 +16281,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS2IV:
 			nfglWindowPos2iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVARB:
 			nfglWindowPos2ivARB(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVMESA:
 			nfglWindowPos2ivMESA(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2S:
 			nfglWindowPos2s(
@@ -16308,15 +16308,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS2SV:
 			nfglWindowPos2sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVARB:
 			nfglWindowPos2svARB(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVMESA:
 			nfglWindowPos2svMESA(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3D:
 			nfglWindowPos3d(
@@ -16338,15 +16338,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS3DV:
 			nfglWindowPos3dv(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVARB:
 			nfglWindowPos3dvARB(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVMESA:
 			nfglWindowPos3dvMESA(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3F:
 			nfglWindowPos3f(
@@ -16368,15 +16368,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS3FV:
 			nfglWindowPos3fv(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVARB:
 			nfglWindowPos3fvARB(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVMESA:
 			nfglWindowPos3fvMESA(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3I:
 			nfglWindowPos3i(
@@ -16398,15 +16398,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS3IV:
 			nfglWindowPos3iv(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVARB:
 			nfglWindowPos3ivARB(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVMESA:
 			nfglWindowPos3ivMESA(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3S:
 			nfglWindowPos3s(
@@ -16428,15 +16428,15 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS3SV:
 			nfglWindowPos3sv(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVARB:
 			nfglWindowPos3svARB(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVMESA:
 			nfglWindowPos3svMESA(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4DMESA:
 			nfglWindowPos4dMESA(
@@ -16447,7 +16447,7 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS4DVMESA:
 			nfglWindowPos4dvMESA(
-				(const GLdouble *)Atari2HostAddr(getStackedParameter(0)) /* const GLdouble *v */);
+				(const GLdouble *)getStackedPointer(0) /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4FMESA:
 			nfglWindowPos4fMESA(
@@ -16458,7 +16458,7 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS4FVMESA:
 			nfglWindowPos4fvMESA(
-				(const GLfloat *)Atari2HostAddr(getStackedParameter(0)) /* const GLfloat *v */);
+				(const GLfloat *)getStackedPointer(0) /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4IMESA:
 			nfglWindowPos4iMESA(
@@ -16469,7 +16469,7 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS4IVMESA:
 			nfglWindowPos4ivMESA(
-				(const GLint *)Atari2HostAddr(getStackedParameter(0)) /* const GLint *v */);
+				(const GLint *)getStackedPointer(0) /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4SMESA:
 			nfglWindowPos4sMESA(
@@ -16480,7 +16480,7 @@
 			break;
 		case NFOSMESA_GLWINDOWPOS4SVMESA:
 			nfglWindowPos4svMESA(
-				(const GLshort *)Atari2HostAddr(getStackedParameter(0)) /* const GLshort *v */);
+				(const GLshort *)getStackedPointer(0) /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWRITEMASKEXT:
 			nfglWriteMaskEXT(
