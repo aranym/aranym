@@ -597,6 +597,7 @@ my %macros = (
 	'glFogfv' => 1,
 	'glFogiv' => 1,
 	'glGenTextures' => 1,
+	'glGetDoublev' => 1,
 	'glGetFloatv' => 1,
 	'glGetIntegerv' => 1,
 	'glIndexPointer' => 1,

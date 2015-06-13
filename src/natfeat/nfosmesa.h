@@ -150,6 +150,14 @@ protected:
 		return SDL_SwapBE32(u.i);
 	}
 
+	inline void Host2AtariFloatArray(Uint32 size, const GLfloat *src, GLfloat *dest)
+	{
+		Uint32 *p = (Uint32 *)dest;
+		for (Uint32 i=0;i<size;i++) {
+			p[i]=Host2AtariFloat(src[i]);
+		}
+	}
+
 	inline void Atari2HostFloatArray(Uint32 size, const Uint32 *src, GLfloat *dest)
 	{
 		for (Uint32 i=0;i<size;i++) {
@@ -177,6 +185,45 @@ protected:
 		u.i[1]=low;
 #endif
 		return u.d;
+	}
+
+	inline void Host2AtariDouble(GLdouble src, GLdouble *dst)
+	{
+		union {
+			GLdouble d;
+			Uint32 i[2];
+		} u;
+		Uint32 *p = (Uint32 *)dst;
+		
+		u.d = src;
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+		p[0] = SDL_SwapBE32(u.i[1]);
+		p[1] = SDL_SwapBE32(u.i[0]);
+#else
+		p[0] = u.i[0];
+		p[1] = u.i[1];
+#endif
+	}
+
+	inline void Host2AtariDoubleArray(Uint32 size, const GLdouble *src, GLdouble *dst)
+	{
+		union {
+			GLdouble d;
+			Uint32 i[2];
+		} u;
+		Uint32 *p = (Uint32 *)dst;
+		
+		for (Uint32 i=0;i<size;i++) {
+			u.d = *src++;
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+			p[0] = SDL_SwapBE32(u.i[1]);
+			p[1] = SDL_SwapBE32(u.i[0]);
+#else
+			p[0] = u.i[0];
+			p[1] = u.i[1];
+#endif
+			p += 2;
+		}
 	}
 
 	inline void Atari2HostDoubleArray(Uint32 size, const Uint32 *src, GLdouble *dest)

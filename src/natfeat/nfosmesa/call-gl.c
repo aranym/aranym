@@ -4469,8 +4469,7 @@ void OSMesaDriver::nfglGetDoublei_vEXT(GLenum pname, GLuint index, GLdouble *par
 void OSMesaDriver::nfglGetDoublev(GLenum pname, GLdouble *params)
 {
 	D(bug("nfosmesa: glGetDoublev(0x%x, %p)", pname, params));
-	/* TODO: NFOSMESA_GLGETDOUBLEV may need conversion */
-	fn.glGetDoublev(pname, params);
+FN_GLGETDOUBLEV(pname, params);
 }
 
 GLenum OSMesaDriver::nfglGetError(void)

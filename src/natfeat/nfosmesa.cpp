@@ -53,6 +53,40 @@
 
 #define M(m,row,col)  m[col*4+row]
 
+#ifndef GL_VIEWPORT_BOUNDS_RANGE
+#define GL_VIEWPORT_BOUNDS_RANGE          0x825D
+#endif
+#ifdef GL_DEPTH_BOUNDS_EXT
+#define GL_DEPTH_BOUNDS_EXT               0x8891
+#endif
+#ifndef GL_POINT_DISTANCE_ATTENUATION
+#define GL_POINT_DISTANCE_ATTENUATION_ARB 0x8129
+#endif
+#ifndef GL_CURRENT_RASTER_SECONDARY_COLOR
+#define GL_CURRENT_RASTER_SECONDARY_COLOR 0x845F
+#endif
+#ifndef GL_RGBA_SIGNED_COMPONENTS_EXT
+#define GL_RGBA_SIGNED_COMPONENTS_EXT     0x8C3C
+#endif
+#ifndef GL_NUM_COMPRESSED_TEXTURE_FORMATS
+#define GL_NUM_COMPRESSED_TEXTURE_FORMATS 0x86A2
+#endif
+#ifndef GL_COMPRESSED_TEXTURE_FORMATS
+#define GL_COMPRESSED_TEXTURE_FORMATS     0x86A3
+#endif
+#ifndef GL_TRANSPOSE_MODELVIEW_MATRIX
+#define GL_TRANSPOSE_MODELVIEW_MATRIX     0x84E3
+#endif
+#ifndef GL_TRANSPOSE_PROJECTION_MATRIX
+#define GL_TRANSPOSE_PROJECTION_MATRIX    0x84E4
+#endif
+#ifndef GL_TRANSPOSE_TEXTURE_MATRIX
+#define GL_TRANSPOSE_TEXTURE_MATRIX       0x84E5
+#endif
+#ifndef GL_TRANSPOSE_COLOR_MATRIX
+#define GL_TRANSPOSE_COLOR_MATRIX         0x84E6
+#endif
+
 /*--- Types ---*/
 
 typedef struct {
@@ -1890,6 +1924,71 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 #define FN_GLARRAYELEMENTEXT(i) fn.glArrayElement(i)
 #endif
 
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+static int nfglGetNumParams(GLenum pname)
+{
+	GLint count = 1;
+	
+	switch (pname)
+	{
+	case GL_ALIASED_LINE_WIDTH_RANGE:
+	case GL_ALIASED_POINT_SIZE_RANGE:
+	case GL_DEPTH_RANGE:
+	case GL_DEPTH_BOUNDS_EXT:
+	case GL_LINE_WIDTH_RANGE:
+	case GL_MAP1_GRID_DOMAIN:
+	case GL_MAP2_GRID_SEGMENTS:
+	case GL_MAX_VIEWPORT_DIMS:
+	case GL_POINT_SIZE_RANGE:
+	case GL_POLYGON_MODE:
+	case GL_VIEWPORT_BOUNDS_RANGE:
+	/* case GL_SMOOTH_LINE_WIDTH_RANGE: same as GL_LINE_WIDTH_RANGE */
+	/* case GL_SMOOTH_POINT_SIZE_RANGE: same as GL_POINT_SIZE_RANGE */
+		count = 2;
+		break;
+	case GL_CURRENT_NORMAL:
+	case GL_POINT_DISTANCE_ATTENUATION:
+		count = 3;
+		break;
+	case GL_ACCUM_CLEAR_VALUE:
+	case GL_BLEND_COLOR:
+	/* case GL_BLEND_COLOR_EXT: same as GL_BLEND_COLOR */
+	case GL_COLOR_CLEAR_VALUE:
+	case GL_COLOR_WRITEMASK:
+	case GL_CURRENT_COLOR:
+	case GL_CURRENT_RASTER_COLOR:
+	case GL_CURRENT_RASTER_POSITION:
+	case GL_CURRENT_RASTER_SECONDARY_COLOR:
+	case GL_CURRENT_RASTER_TEXTURE_COORDS:
+	case GL_CURRENT_SECONDARY_COLOR:
+	case GL_CURRENT_TEXTURE_COORDS:
+	case GL_FOG_COLOR:
+	case GL_LIGHT_MODEL_AMBIENT:
+	case GL_MAP2_GRID_DOMAIN:
+	case GL_RGBA_SIGNED_COMPONENTS_EXT:
+	case GL_SCISSOR_BOX:
+	case GL_VIEWPORT:
+		count = 4;
+		break;
+	case GL_COLOR_MATRIX:
+	case GL_MODELVIEW_MATRIX:
+	case GL_PROJECTION_MATRIX:
+	case GL_TEXTURE_MATRIX:
+	case GL_TRANSPOSE_MODELVIEW_MATRIX:
+	case GL_TRANSPOSE_PROJECTION_MATRIX:
+	case GL_TRANSPOSE_TEXTURE_MATRIX:
+	case GL_TRANSPOSE_COLOR_MATRIX:
+		count = 16;
+		break;
+	case GL_COMPRESSED_TEXTURE_FORMATS:
+		fn.glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &count);
+		break;
+	}
+	return count;
+}
+#endif
+
+
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLBINORMAL3DVEXT(v) GLdouble tmp[3]; \
 	Atari2HostDoublePtr(3, v, tmp); \
@@ -2519,21 +2618,59 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLGETFLOATV(pname, params) \
-	/* FIXME: some enums return more than 1 value */ \
-	GLfloat tmp[16]; \
-	Uint32 *p = (Uint32 *)params; \
-	fn.glGetFloatv(pname, tmp); \
-	*p = Host2AtariFloat(tmp[0])
+	int n; \
+	n = nfglGetNumParams(pname); \
+	if (n > 16) { \
+		GLfloat *tmp; \
+		tmp = (GLfloat *)malloc(n * sizeof(*tmp)); \
+		fn.glGetFloatv(pname, tmp); \
+		Host2AtariFloatArray(n, tmp, params); \
+		free(tmp); \
+	} else { \
+		GLfloat tmp[16]; \
+		fn.glGetFloatv(pname, tmp); \
+		Host2AtariFloatArray(n, tmp, params); \
+	}
 #else
 #define FN_GLGETFLOATV(pname, params)	fn.glGetFloatv(pname, params)
 #endif
 
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETDOUBLEV(pname, params) \
+	int n; \
+	n = nfglGetNumParams(pname); \
+	if (n > 16) { \
+		GLdouble *tmp; \
+		tmp = (GLdouble *)malloc(n * sizeof(*tmp)); \
+		fn.glGetDoublev(pname, tmp); \
+		Host2AtariDoubleArray(n, tmp, params); \
+		free(tmp); \
+	} else { \
+		GLdouble tmp[16]; \
+		fn.glGetDoublev(pname, tmp); \
+		Host2AtariDoubleArray(n, tmp, params); \
+	}
+#else
+#define FN_GLGETDOUBLEV(pname, params)	fn.glGetDoublev(pname, params)
+#endif
+
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETINTEGERV(pname, params) \
-	/* FIXME: some enums return more than 1 value */ \
-	GLint tmp[16]; \
-	fn.glGetIntegerv(pname, tmp); \
-	*params = SDL_SwapBE32(tmp[0])
+	int i, n; \
+	n = nfglGetNumParams(pname); \
+	if (n > 16) { \
+		GLint *tmp; \
+		tmp = (GLint *)malloc(n * sizeof(*tmp)); \
+		fn.glGetIntegerv(pname, tmp); \
+		for (i = 0; i < n; i++) \
+			params[i] = SDL_SwapBE32(tmp[i]); \
+		free(tmp); \
+	} else { \
+		GLint tmp[16]; \
+		fn.glGetIntegerv(pname, tmp); \
+		for (i = 0; i < n; i++) \
+			params[i] = SDL_SwapBE32(tmp[i]); \
+	}
 #else
 #define FN_GLGETINTEGERV(pname, params)	fn.glGetIntegerv(pname, params)
 #endif
