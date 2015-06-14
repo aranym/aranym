@@ -76,6 +76,7 @@ typedef struct {
 	GLsizei stride;
 	GLsizei count;
 	const GLvoid *pointer;
+	GLint ptrstride;
 } vertexarray_t;
 
 typedef struct {
@@ -302,8 +303,8 @@ protected:
 		Atari2HostIntArray(size, src, (GLuint *)dest);
 	}
 	
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	void *convertPixels(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+	void *convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
 	void nfglArrayElementHelper(GLint i);
 	void nfglInterleavedArraysHelper(GLenum format, GLsizei stride, const GLvoid *pointer);
 #endif

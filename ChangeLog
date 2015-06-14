@@ -1,4 +1,9 @@
 2015/06/14 - Thorsten
+nfosmesa: Add conversion macros for several functions
+937 more to go
+
+
+2015/06/14 - Thorsten
 nfosmesa: Fix passing/returning GLhandleARB parameters on MacOSX
 
 

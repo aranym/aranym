@@ -86,6 +86,12 @@
 #ifndef GL_TRANSPOSE_COLOR_MATRIX
 #define GL_TRANSPOSE_COLOR_MATRIX         0x84E6
 #endif
+#ifndef GL_DEPTH_STENCIL
+#define GL_DEPTH_STENCIL                  0x84F9
+#endif
+#ifndef GL_RG
+#define GL_RG                             0x8227
+#endif
 
 /*--- Types ---*/
 
@@ -1088,14 +1094,16 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 }
 
 
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
 
-void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels)
+void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels)
 {
 	GLsizei size, count;
 	GLubyte *ptr;
 	void *result;
 	
+	if (pixels == NULL)
+		return NULL;
 	switch (type)
 	{
 	case GL_UNSIGNED_BYTE:
@@ -1138,10 +1146,14 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLenum format, 
 	case GL_BLUE:
 	case GL_ALPHA:
 	case GL_LUMINANCE:
+	case GL_STENCIL_INDEX:
+	case GL_DEPTH_COMPONENT:
 	case 1:
 		count = 1;
 		break;
 	case GL_LUMINANCE_ALPHA:
+	case GL_DEPTH_STENCIL:
+	case GL_RG:
 	case 2:
 		count = 2;
 		break;
@@ -1160,7 +1172,8 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLenum format, 
 		return NULL;
 	}
 	
-	count *= width * height;
+	/* FIXME: glPixelStore parameters are not taken into account */
+	count *= width * height * depth;
 	result = malloc(size * count);
 	if (result == NULL)
 		return result;
@@ -2294,6 +2307,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].color.stride = stride; \
 	contexts[cur_context].color.count = -1; \
 	contexts[cur_context].color.pointer = pointer; \
+	contexts[cur_context].color.ptrstride = 0; \
 	fn.glColorPointer(size, type, stride, pointer)
 #else
 #define FN_GLCOLORPOINTER(size, type, stride, pointer)	fn.glColorPointer(size, type, stride, pointer)
@@ -2306,6 +2320,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].color.stride = stride; \
 	contexts[cur_context].color.count = count; \
 	contexts[cur_context].color.pointer = pointer; \
+	contexts[cur_context].color.ptrstride = 0; \
 	fn.glColorPointerEXT(size, type, stride, count, pointer)
 #else
 #define FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer)	fn.glColorPointerEXT(size, type, stride, count, pointer)
@@ -2313,8 +2328,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLORSUBTABLE(target, start, count, format, type, data)  \
-	void *tmp = convertPixels(count, 1, format, type, data); \
-	if (tmp) fn.glColorSubTable(target, start, count, format, type, tmp); \
+	void *tmp = convertPixels(count, 1, 1, format, type, data); \
+	fn.glColorSubTable(target, start, count, format, type, tmp); \
 	if (tmp != data) free(tmp)
 #else
 #define FN_GLCOLORSUBTABLE(target, start, count, format, type, data)	fn.glColorSubTable(target, start, count, format, type, data)
@@ -2322,8 +2337,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLORTABLE(target, internalformat, width, format, type, table) \
-	void *tmp = convertPixels(width, 1, format, type, table); \
-	if (tmp) fn.glColorTable(target, internalformat, width, format, type, tmp); \
+	void *tmp = convertPixels(width, 1, 1, format, type, table); \
+	fn.glColorTable(target, internalformat, width, format, type, tmp); \
 	if (tmp != table) free(tmp)
 #else
 #define FN_GLCOLORTABLE(target, internalformat, width, format, type, table)	fn.glColorTable(target, internalformat, width, format, type, table)
@@ -2480,6 +2495,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].edgeflag.stride = stride; \
 	contexts[cur_context].edgeflag.count = -1; \
 	contexts[cur_context].edgeflag.pointer = pointer; \
+	contexts[cur_context].edgeflag.ptrstride = 0; \
 	fn.glEdgeFlagPointer(stride, pointer)
 #else
 #define FN_GLEDGEFLAGPOINTER(stride, pointer)	fn.glEdgeFlagPointer(stride, pointer)
@@ -2683,6 +2699,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].index.stride = stride; \
 	contexts[cur_context].index.count = -1; \
 	contexts[cur_context].index.pointer = pointer; \
+	contexts[cur_context].index.ptrstride = 0; \
 	fn.glIndexPointer(type, stride, pointer)
 #else
 #define FN_GLINDEXPOINTER(type, stride, pointer)	fn.glIndexPointer(type, stride, pointer)
@@ -3446,6 +3463,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].normal.stride = stride; \
 	contexts[cur_context].normal.count = -1; \
 	contexts[cur_context].normal.pointer = pointer; \
+	contexts[cur_context].normal.ptrstride = 0; \
 	fn.glNormalPointer(type, stride, pointer)
 #else
 #define FN_GLNORMALPOINTER(type, stride, pointer)	fn.glNormalPointer(type, stride, pointer)
@@ -3458,6 +3476,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].normal.stride = stride; \
 	contexts[cur_context].normal.count = count; \
 	contexts[cur_context].normal.pointer = pointer; \
+	contexts[cur_context].normal.ptrstride = 0; \
 	fn.glNormalPointerEXT(type, stride, count, pointer)
 #else
 #define FN_GLNORMALPOINTEREXT(type, stride, count, pointer)	fn.glNormalPointerEXT(type, stride, count, pointer)
@@ -4163,6 +4182,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].texcoord.stride = stride; \
 	contexts[cur_context].texcoord.count = -1; \
 	contexts[cur_context].texcoord.pointer = pointer; \
+	contexts[cur_context].texcoord.ptrstride = 0; \
 	fn.glTexCoordPointer(size, type, stride, pointer)
 #else
 #define FN_GLTEXCOORDPOINTER(size, type, stride, pointer)	fn.glTexCoordPointer(size, type, stride, pointer)
@@ -4175,6 +4195,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].texcoord.stride = stride; \
 	contexts[cur_context].texcoord.count = count; \
 	contexts[cur_context].texcoord.pointer = pointer; \
+	contexts[cur_context].texcoord.ptrstride = 0; \
 	fn.glTexCoordPointerEXT(size, type, stride, count, pointer)
 #else
 #define FN_GLTEXCOORDPOINTEREXT(size, type, stride, count, pointer)	fn.glTexCoordPointerEXT(size, type, stride, count, pointer)
@@ -5068,6 +5089,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].vertex.stride = stride; \
 	contexts[cur_context].vertex.count = -1; \
 	contexts[cur_context].vertex.pointer = pointer; \
+	contexts[cur_context].vertex.ptrstride = 0; \
 	fn.glVertexPointer(size, type, stride, pointer)
 #else
 #define FN_GLVERTEXPOINTER(size, type, stride, pointer)	fn.glVertexPointer(size, type, stride, pointer)
@@ -5080,6 +5102,7 @@ static int nfglGetNumParams(GLenum pname)
 	contexts[cur_context].vertex.stride = stride; \
 	contexts[cur_context].vertex.count = count; \
 	contexts[cur_context].vertex.pointer = pointer; \
+	contexts[cur_context].vertex.ptrstride = 0; \
 	fn.glVertexPointerEXT(size, type, stride, count, pointer)
 #else
 #define FN_GLVERTEXPOINTEREXT(size, type, stride, count, pointer)	fn.glVertexPointerEXT(size, type, stride, count, pointer)
@@ -5461,6 +5484,390 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLWINDOWPOS4SVMESA(v)	fn.glWindowPos4svMESA(v)
 #endif
 
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLAREPROGRAMSRESIDENTNV(n, programs, residences) \
+	GLboolean res; \
+	if (programs) { \
+		GLuint *tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return 0; } \
+		Atari2HostIntArray(n, programs, tmp); \
+		res = fn.glAreProgramsResidentNV(n, tmp, residences); \
+		free(tmp); \
+	} else { \
+		res = fn.glAreProgramsResidentNV(n, programs, residences); \
+	} \
+	return res
+#else
+#define FN_GLAREPROGRAMSRESIDENTNV(n, programs, residences)	return fn.glAreProgramsResidentNV(n, programs, residences)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLBINDBUFFERSBASE(target, first, count, buffers) \
+	if (buffers) { \
+		GLuint *tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, buffers, tmp); \
+		fn.glBindBuffersBase(target, first, count, tmp); \
+		free(tmp); \
+	} else { \
+		fn.glBindBuffersBase(target, first, count, buffers); \
+	}
+#else
+#define FN_GLBINDBUFFERSBASE(target, first, count, buffers)	fn.glBindBuffersBase(target, first, count, buffers)
+#endif
+
+#define FN_GLBINDBUFFERSRANGE(target, first, count, buffers, offsets, sizes) \
+	GLuint *pbuffers; \
+	GLintptr *poffsets; \
+	GLsizeiptr *psizes; \
+	if (buffers) { \
+		pbuffers = (GLuint *)malloc(count * sizeof(*pbuffers)); \
+		if (!pbuffers) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, buffers, pbuffers); \
+	} else { \
+		pbuffers = NULL; \
+	} \
+	if (offsets) { \
+		poffsets = (GLintptr *)malloc(count * sizeof(*poffsets)); \
+		if (!poffsets) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *aoffsets = (const Uint32 *)offsets; \
+		for (int i = 0; i < count; i++) \
+			poffsets[i] = SDL_SwapBE32(aoffsets[i]); \
+	} else { \
+		poffsets = NULL; \
+	} \
+	if (sizes) { \
+		psizes = (GLsizeiptr *)malloc(count * sizeof(*psizes)); \
+		if (!psizes) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *asizes = (const Uint32 *)sizes; \
+		for (int i = 0; i < count; i++) \
+			psizes[i] = SDL_SwapBE32(asizes[i]); \
+	} else { \
+		psizes = NULL; \
+	} \
+	fn.glBindBuffersRange(target, first, count, pbuffers, poffsets, psizes); \
+	free(psizes); \
+	free(poffsets); \
+	free(pbuffers)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLBINDIMAGETEXTURES(first, count, textures) \
+	if (textures) { \
+		GLuint *tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, textures, tmp); \
+		fn.glBindImageTextures(first, count, tmp); \
+		free(tmp); \
+	} else { \
+		fn.glBindImageTextures(first, count, textures); \
+	}
+#else
+#define FN_GLBINDIMAGETEXTURES(first, count, textures)	fn.glBindImageTextures(first, count, textures)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLBINDSAMPLERS(first, count, samplers) \
+	if (samplers) { \
+		GLuint *tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, samplers, tmp); \
+		fn.glBindSamplers(first, count, tmp); \
+		free(tmp); \
+	} else { \
+		fn.glBindSamplers(first, count, samplers); \
+	}
+#else
+#define FN_GLBINDSAMPLERS(first, count, samples)	fn.glBindSamplers(first, count, samplers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLBINDTEXTURES(first, count, textures) \
+	if (textures) { \
+		GLuint *tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, textures, tmp); \
+		fn.glBindTextures(first, count, tmp); \
+		free(tmp); \
+	} else { \
+		fn.glBindTextures(first, count, textures); \
+	}
+#else
+#define FN_GLBINDTEXTURES(first, count, samples)	fn.glBindTextures(first, count, textures)
+#endif
+
+#define FN_GLBINDVERTEXBUFFERS(first, count, buffers, offsets, sizes) \
+	GLuint *pbuffers; \
+	GLintptr *poffsets; \
+	GLsizei *psizes; \
+	if (buffers) { \
+		pbuffers = (GLuint *)malloc(count * sizeof(*pbuffers)); \
+		if (!pbuffers) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntArray(count, buffers, pbuffers); \
+	} else { \
+		pbuffers = NULL; \
+	} \
+	if (offsets) { \
+		poffsets = (GLintptr *)malloc(count * sizeof(*poffsets)); \
+		if (!poffsets) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *aoffsets = (const Uint32 *)offsets; \
+		for (int i = 0; i < count; i++) \
+			poffsets[i] = SDL_SwapBE32(aoffsets[i]); \
+	} else { \
+		poffsets = NULL; \
+	} \
+	if (sizes) { \
+		psizes = (GLsizei *)malloc(count * sizeof(*psizes)); \
+		if (!psizes) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *asizes = (const Uint32 *)sizes; \
+		for (int i = 0; i < count; i++) \
+			psizes[i] = SDL_SwapBE32(asizes[i]); \
+	} else { \
+		psizes = NULL; \
+	} \
+	fn.glBindVertexBuffers(first, count, pbuffers, poffsets, psizes); \
+	free(psizes); \
+	free(poffsets); \
+	free(pbuffers)
+
 /* #define FN_GLULOOKAT(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ) */
+
+/* glBinormalPointerEXT belongs to never completed EXT_coordinate_frame */
+#define FN_GLBINORMALPOINTEREXT(type, stride, pointer) \
+	fn.glBinormalPointerEXT(type, stride, pointer)
+
+/* glTangentPointerEXT belongs to never completed EXT_coordinate_frame */
+#define FN_GLTANGENTPOINTEREXT(type, stride, pointer) \
+	fn.glTangentPointerEXT(type, stride, pointer)
+
+/* nothing to do */
+#define FN_GLBUFFERDATA(target, size, data, usage) \
+	fn.glBufferData(target, size, data, usage)
+
+/* nothing to do */
+#define FN_GLBUFFERDATAARB(target, size, data, usage) \
+	fn.glBufferDataARB(target, size, data, usage)
+
+/* nothing to do */
+#define FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage) \
+	fn.glNamedBufferDataEXT(buffer, size, data, usage)
+
+/* nothing to do */
+#define FN_GLBUFFERSTORAGE(target, size, data, flags) \
+	fn.glBufferStorage(target, size, data, flags)
+
+/* nothing to do */
+#define FN_GLNAMEDBUFFERSTORAGE(buffer, size, data, flags) \
+	fn.glNamedBufferStorage(buffer, size, data, flags)
+
+/* nothing to do */
+#define FN_GLBUFFERSUBDATA(target, offset, size, data) \
+	fn.glBufferSubData(target, offset, size, data)
+
+/* nothing to do */
+#define FN_GLBUFFERSUBDATAARB(target, offset, size, data) \
+	fn.glBufferSubDataARB(target, offset, size, data)
+
+/* nothing to do */
+#define FN_GLNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data) \
+	fn.glNamedBufferSubDataEXT(buffer, offset, size, data)
+
+/* nothing to do */
+#define FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data) \
+	fn.glClearBufferData(target, internalformat, format, type, data)
+
+/* nothing to do */
+#define FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data) \
+	fn.glClearNamedBufferDataEXT(buffer, internalformat, format, type, data)
+
+/* nothing to do */
+#define FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data) \
+	fn.glClearBufferSubData(target, internalformat, offset, size, format, type, data)
+
+/* nothing to do */
+#define FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data) \
+	fn.glClearNamedBufferSubDataEXT(buffer, internalformat, offset, size, format, type, data)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCLEARBUFFERIV(buffer, drawbuffer, value) \
+	if (value) { \
+		GLint tmp[4]; \
+		switch (buffer) { \
+			case GL_COLOR: Atari2HostIntPtr(4, value, tmp); break; \
+			case GL_STENCIL: \
+			case GL_DEPTH: Atari2HostIntPtr(1, value, tmp); break; \
+		} \
+		fn.glClearBufferiv(buffer, drawbuffer, tmp); \
+	} else { \
+		fn.glClearBufferiv(buffer, drawbuffer, value); \
+	}
+#else
+#define FN_GLCLEARBUFFERIV(buffer, drawbuffer, value) fn.glClearBufferiv(buffer, drawbuffer, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCLEARBUFFERUIV(buffer, drawbuffer, value) \
+	if (value) { \
+		GLuint tmp[4]; \
+		switch (buffer) { \
+			case GL_COLOR: Atari2HostIntPtr(4, value, tmp); break; \
+			case GL_STENCIL: \
+			case GL_DEPTH: Atari2HostIntPtr(1, value, tmp); break; \
+		} \
+		fn.glClearBufferuiv(buffer, drawbuffer, tmp); \
+	} else { \
+		fn.glClearBufferuiv(buffer, drawbuffer, value); \
+	}
+#else
+#define FN_GLCLEARBUFFERUIV(buffer, drawbuffer, value) fn.glClearBufferuiv(buffer, drawbuffer, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCLEARBUFFERFV(buffer, drawbuffer, value) \
+	if (value) { \
+		GLfloat tmp[4]; \
+		switch (buffer) { \
+			case GL_COLOR: Atari2HostFloatPtr(4, value, tmp); break; \
+			case GL_STENCIL: \
+			case GL_DEPTH: Atari2HostFloatPtr(1, value, tmp); break; \
+		} \
+		fn.glClearBufferfv(buffer, drawbuffer, tmp); \
+	} else { \
+		fn.glClearBufferfv(buffer, drawbuffer, value); \
+	}
+#else
+#define FN_GLCLEARBUFFERFV(buffer, drawbuffer, value) fn.glClearBufferfv(buffer, drawbuffer, value)
+#endif
+
+/* FIXME for glTexImage*:
+If a non-zero named buffer object is bound to the
+GL_PIXEL_UNPACK_BUFFER target (see glBindBuffer) while a texture image
+is specified, data is treated as a byte offset into the buffer object's
+data store.
+*/
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) \
+	void *tmp = convertPixels(width, 1, 1, format, tyoe); \
+	fn.glTexImage1D(target, level, internalformat, width, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) fn.glTexImage1D(target, level, internalformat, width, border, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCLEARTEXIMAGE(texture, level, format, type, data) \
+	/* \
+	 * FIXME: we need the dimensions of the texture, \
+	 * which are only avaiable through GL 4.5 glGetTextureParameter() \
+	 */ \
+	fn.glClearTexImage(texture, level, format, type, data)
+#else
+#define FN_GLCLEARTEXIMAGE(texture, level, format, type, data) fn.glClearTexImage(texture, level, format, type, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCLEARTEXSUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data) \
+	void *tmp = convertPixels(width, height, depth, format, type, data); \
+	fn.glClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, tmp); \
+	if (tmp != data) free(tmp)
+#else
+#define FN_GLCLEARTEXSUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data) fn.glClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
+	contexts[cur_context].color.size = size; \
+	contexts[cur_context].color.type = type; \
+	contexts[cur_context].color.stride = stride; \
+	contexts[cur_context].color.count = -1; \
+	contexts[cur_context].color.pointer = pointer; \
+	contexts[cur_context].color.ptrstride = ptrstride; \
+	fn.glColorPointerListIBM(size, type, stride, pointer, ptrstride)
+#else
+#define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride)	fn.glColorPointerListIBM(size, type, stride, pointer, ptrstride)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCOLORPOINTERVINTEL(size, type, pointer) \
+	contexts[cur_context].color.size = size; \
+	contexts[cur_context].color.type = type; \
+	contexts[cur_context].color.stride = 0; \
+	contexts[cur_context].color.count = -1; \
+	contexts[cur_context].color.pointer = pointer; \
+	contexts[cur_context].color.ptrstride = 0; \
+	fn.glColorPointervINTEL(size, type, pointer)
+#else
+#define FN_GLCOLORPOINTERVINTEL(size, type, pointer)	fn.glColorPointervINTEL(size, type, pointer)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCOLORSUBTABLEEXT(target, start, count, format, type, table) \
+	void *tmp = convertPixels(count, 1, 1, format, type, table); \
+	fn.glColorSubTableEXT(target, start, count, format, type, tmp); \
+	if (tmp != table) free(tmp)
+#else
+#define FN_GLCOLORSUBTABLEEXT(target, start, count, format, type, table) fn.glColorSubTableEXT(target, start, count, format, type, table)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCOLORTABLEEXT(target, internalformat, width, format, type, table) \
+	void *tmp = convertPixels(width, 1, 1, format, type, table); \
+	fn.glColorTableEXT(target, internalformat, width, format, type, tmp); \
+	if (tmp != table) free(tmp)
+#else
+#define FN_GLCOLORTABLEEXT(target, internalformat, width, format, type, table) fn.glColorTableEXT(target, internalformat, width, format, type, table)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOLORTABLEPARAMETERFV(target, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		Atari2HostFloatPtr(4, params, tmp); \
+		fn.glColorTableParameterfv(target, pname, tmp); \
+	} else { \
+		fn.glColorTableParameterfv(target, pname, params); \
+	}
+#else
+#define FN_GLCOLORTABLEPARAMETERFV(target, pname, params) fn.glColorTableParameterfv(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOLORTABLEPARAMETERFVSGI(target, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		Atari2HostFloatPtr(4, params, tmp); \
+		fn.glColorTableParameterfvSGI(target, pname, tmp); \
+	} else { \
+		fn.glColorTableParameterfvSGI(target, pname, params); \
+	}
+#else
+#define FN_GLCOLORTABLEPARAMETERFVSGI(target, pname, params) fn.glColorTableParameterfvSGI(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCOLORTABLEPARAMETERIV(target, pname, params) \
+	if (params) { \
+		GLint tmp[4]; \
+		Atari2HostIntPtr(4, params, tmp); \
+		fn.glColorTableParameteriv(target, pname, tmp); \
+	} else { \
+		fn.glColorTableParameteriv(target, pname, params); \
+	}
+#else
+#define FN_GLCOLORTABLEPARAMETERIV(target, pname, params) fn.glColorTableParameteriv(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCOLORTABLEPARAMETERIVSGI(target, pname, params) \
+	if (params) { \
+		GLint tmp[4]; \
+		Atari2HostIntPtr(4, params, tmp); \
+		fn.glColorTableParameterivSGI(target, pname, tmp); \
+	} else { \
+		fn.glColorTableParameterivSGI(target, pname, params); \
+	}
+#else
+#define FN_GLCOLORTABLEPARAMETERIVSGI(target, pname, params) fn.glColorTableParameterivSGI(target, pname, params)
+#endif
 
 #include "nfosmesa/call-gl.c"

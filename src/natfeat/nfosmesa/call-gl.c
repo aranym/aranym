@@ -48,7 +48,6 @@ void OSMesaDriver::nfglActiveTextureARB(GLenum texture)
 void OSMesaDriver::nfglActiveVaryingNV(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glActiveVaryingNV(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLACTIVEVARYINGNV may need conversion */
 	fn.glActiveVaryingNV(program, name);
 }
 
@@ -97,8 +96,7 @@ void OSMesaDriver::nfglApplyTextureEXT(GLenum mode)
 GLboolean OSMesaDriver::nfglAreProgramsResidentNV(GLsizei n, const GLuint *programs, GLboolean *residences)
 {
 	D(bug("nfosmesa: glAreProgramsResidentNV(%d, %p, %p)", n, programs, residences));
-	/* TODO: NFOSMESA_GLAREPROGRAMSRESIDENTNV may need conversion */
-	return fn.glAreProgramsResidentNV(n, programs, residences);
+FN_GLAREPROGRAMSRESIDENTNV(n, programs, residences);
 }
 
 GLboolean OSMesaDriver::nfglAreTexturesResident(GLsizei n, const GLuint *textures, GLboolean *residences)
@@ -248,14 +246,12 @@ void OSMesaDriver::nfglBeginVideoCaptureNV(GLuint video_capture_slot)
 void OSMesaDriver::nfglBindAttribLocation(GLuint program, GLuint index, const GLchar *name)
 {
 	D(bug("nfosmesa: glBindAttribLocation(%u, %u, %p)", program, index, name));
-	/* TODO: NFOSMESA_GLBINDATTRIBLOCATION may need conversion */
 	fn.glBindAttribLocation(program, index, name);
 }
 
 void OSMesaDriver::nfglBindAttribLocationARB(GLhandleARB programObj, GLuint index, const GLcharARB *name)
 {
 	D(bug("nfosmesa: glBindAttribLocationARB(%u, %u, %p)", programObj, index, name));
-	/* TODO: NFOSMESA_GLBINDATTRIBLOCATIONARB may need conversion */
 	fn.glBindAttribLocationARB(programObj, index, name);
 }
 
@@ -322,35 +318,30 @@ void OSMesaDriver::nfglBindBufferRangeNV(GLenum target, GLuint index, GLuint buf
 void OSMesaDriver::nfglBindBuffersBase(GLenum target, GLuint first, GLsizei count, const GLuint *buffers)
 {
 	D(bug("nfosmesa: glBindBuffersBase(0x%x, %u, %d, %p)", target, first, count, buffers));
-	/* TODO: NFOSMESA_GLBINDBUFFERSBASE may need conversion */
-	fn.glBindBuffersBase(target, first, count, buffers);
+FN_GLBINDBUFFERSBASE(target, first, count, buffers);
 }
 
 void OSMesaDriver::nfglBindBuffersRange(GLenum target, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizeiptr *sizes)
 {
 	D(bug("nfosmesa: glBindBuffersRange(0x%x, %u, %d, %p, %p, %p)", target, first, count, buffers, offsets, sizes));
-	/* TODO: NFOSMESA_GLBINDBUFFERSRANGE may need conversion */
-	fn.glBindBuffersRange(target, first, count, buffers, offsets, sizes);
+FN_GLBINDBUFFERSRANGE(target, first, count, buffers, offsets, sizes);
 }
 
 void OSMesaDriver::nfglBindFragDataLocation(GLuint program, GLuint color, const GLchar *name)
 {
 	D(bug("nfosmesa: glBindFragDataLocation(%u, %u, %p)", program, color, name));
-	/* TODO: NFOSMESA_GLBINDFRAGDATALOCATION may need conversion */
 	fn.glBindFragDataLocation(program, color, name);
 }
 
 void OSMesaDriver::nfglBindFragDataLocationEXT(GLuint program, GLuint color, const GLchar *name)
 {
 	D(bug("nfosmesa: glBindFragDataLocationEXT(%u, %u, %p)", program, color, name));
-	/* TODO: NFOSMESA_GLBINDFRAGDATALOCATIONEXT may need conversion */
 	fn.glBindFragDataLocationEXT(program, color, name);
 }
 
 void OSMesaDriver::nfglBindFragDataLocationIndexed(GLuint program, GLuint colorNumber, GLuint index, const GLchar *name)
 {
 	D(bug("nfosmesa: glBindFragDataLocationIndexed(%u, %u, %u, %p)", program, colorNumber, index, name));
-	/* TODO: NFOSMESA_GLBINDFRAGDATALOCATIONINDEXED may need conversion */
 	fn.glBindFragDataLocationIndexed(program, colorNumber, index, name);
 }
 
@@ -387,8 +378,7 @@ void OSMesaDriver::nfglBindImageTextureEXT(GLuint index, GLuint texture, GLint l
 void OSMesaDriver::nfglBindImageTextures(GLuint first, GLsizei count, const GLuint *textures)
 {
 	D(bug("nfosmesa: glBindImageTextures(%u, %d, %p)", first, count, textures));
-	/* TODO: NFOSMESA_GLBINDIMAGETEXTURES may need conversion */
-	fn.glBindImageTextures(first, count, textures);
+FN_GLBINDIMAGETEXTURES(first, count, textures);
 }
 
 GLuint OSMesaDriver::nfglBindLightParameterEXT(GLenum light, GLenum value)
@@ -454,8 +444,7 @@ void OSMesaDriver::nfglBindSampler(GLuint unit, GLuint sampler)
 void OSMesaDriver::nfglBindSamplers(GLuint first, GLsizei count, const GLuint *samplers)
 {
 	D(bug("nfosmesa: glBindSamplers(%u, %d, %p)", first, count, samplers));
-	/* TODO: NFOSMESA_GLBINDSAMPLERS may need conversion */
-	fn.glBindSamplers(first, count, samplers);
+FN_GLBINDSAMPLERS(first, count, samplers);
 }
 
 GLuint OSMesaDriver::nfglBindTexGenParameterEXT(GLenum unit, GLenum coord, GLenum value)
@@ -485,8 +474,7 @@ GLuint OSMesaDriver::nfglBindTextureUnitParameterEXT(GLenum unit, GLenum value)
 void OSMesaDriver::nfglBindTextures(GLuint first, GLsizei count, const GLuint *textures)
 {
 	D(bug("nfosmesa: glBindTextures(%u, %d, %p)", first, count, textures));
-	/* TODO: NFOSMESA_GLBINDTEXTURES may need conversion */
-	fn.glBindTextures(first, count, textures);
+FN_GLBINDTEXTURES(first, count, textures);
 }
 
 void OSMesaDriver::nfglBindTransformFeedback(GLenum target, GLuint id)
@@ -522,8 +510,7 @@ void OSMesaDriver::nfglBindVertexBuffer(GLuint bindingindex, GLuint buffer, GLin
 void OSMesaDriver::nfglBindVertexBuffers(GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizei *strides)
 {
 	D(bug("nfosmesa: glBindVertexBuffers(%u, %d, %p, %p, %p)", first, count, buffers, offsets, strides));
-	/* TODO: NFOSMESA_GLBINDVERTEXBUFFERS may need conversion */
-	fn.glBindVertexBuffers(first, count, buffers, offsets, strides);
+FN_GLBINDVERTEXBUFFERS(first, count, buffers, offsets, strides);
 }
 
 void OSMesaDriver::nfglBindVertexShaderEXT(GLuint id)
@@ -553,7 +540,6 @@ void OSMesaDriver::nfglBinormal3bEXT(GLbyte32 bx, GLbyte32 by, GLbyte32 bz)
 void OSMesaDriver::nfglBinormal3bvEXT(const GLbyte *v)
 {
 	D(bug("nfosmesa: glBinormal3bvEXT(%p)", v));
-	/* TODO: NFOSMESA_GLBINORMAL3BVEXT may need conversion */
 	fn.glBinormal3bvEXT(v);
 }
 
@@ -608,21 +594,18 @@ FN_GLBINORMAL3SVEXT(v);
 void OSMesaDriver::nfglBinormalPointerEXT(GLenum type, GLsizei stride, const void *pointer)
 {
 	D(bug("nfosmesa: glBinormalPointerEXT(0x%x, %d, %p)", type, stride, pointer));
-	/* TODO: NFOSMESA_GLBINORMALPOINTEREXT may need conversion */
-	fn.glBinormalPointerEXT(type, stride, pointer);
+FN_GLBINORMALPOINTEREXT(type, stride, pointer);
 }
 
 void OSMesaDriver::nfglBitmap(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap)
 {
 	D(bug("nfosmesa: glBitmap(%d, %d, %f, %f, %f, %f, %p)", width, height, xorig, yorig, xmove, ymove, bitmap));
-	/* TODO: NFOSMESA_GLBITMAP may need conversion */
 	fn.glBitmap(width, height, xorig, yorig, xmove, ymove, bitmap);
 }
 
 void OSMesaDriver::nfglBitmapxOES(GLsizei width, GLsizei height, GLfixed xorig, GLfixed yorig, GLfixed xmove, GLfixed ymove, const GLubyte *bitmap)
 {
 	D(bug("nfosmesa: glBitmapxOES(%d, %d, 0x%x, 0x%x, 0x%x, 0x%x, %p)", width, height, xorig, yorig, xmove, ymove, bitmap));
-	/* TODO: NFOSMESA_GLBITMAPXOES may need conversion */
 	fn.glBitmapxOES(width, height, xorig, yorig, xmove, ymove, bitmap);
 }
 
@@ -803,15 +786,13 @@ void OSMesaDriver::nfglBufferAddressRangeNV(GLenum pname, GLuint index, GLuint64
 void OSMesaDriver::nfglBufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
 {
 	D(bug("nfosmesa: glBufferData(0x%x, %ld, %p, 0x%x)", target, size, data, usage));
-	/* TODO: NFOSMESA_GLBUFFERDATA may need conversion */
-	fn.glBufferData(target, size, data, usage);
+FN_GLBUFFERDATA(target, size, data, usage);
 }
 
 void OSMesaDriver::nfglBufferDataARB(GLenum target, GLsizeiptrARB size, const void *data, GLenum usage)
 {
 	D(bug("nfosmesa: glBufferDataARB(0x%x, %ld, %p, 0x%x)", target, size, data, usage));
-	/* TODO: NFOSMESA_GLBUFFERDATAARB may need conversion */
-	fn.glBufferDataARB(target, size, data, usage);
+FN_GLBUFFERDATAARB(target, size, data, usage);
 }
 
 void OSMesaDriver::nfglBufferParameteriAPPLE(GLenum target, GLenum pname, GLint param)
@@ -823,22 +804,19 @@ void OSMesaDriver::nfglBufferParameteriAPPLE(GLenum target, GLenum pname, GLint 
 void OSMesaDriver::nfglBufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags)
 {
 	D(bug("nfosmesa: glBufferStorage(0x%x, %ld, %p, 0x%x)", target, size, data, flags));
-	/* TODO: NFOSMESA_GLBUFFERSTORAGE may need conversion */
-	fn.glBufferStorage(target, size, data, flags);
+FN_GLBUFFERSTORAGE(target, size, data, flags);
 }
 
 void OSMesaDriver::nfglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
 {
 	D(bug("nfosmesa: glBufferSubData(0x%x, %ld, %ld, %p)", target, offset, size, data));
-	/* TODO: NFOSMESA_GLBUFFERSUBDATA may need conversion */
-	fn.glBufferSubData(target, offset, size, data);
+FN_GLBUFFERSUBDATA(target, offset, size, data);
 }
 
 void OSMesaDriver::nfglBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const void *data)
 {
 	D(bug("nfosmesa: glBufferSubDataARB(0x%x, %ld, %ld, %p)", target, offset, size, data));
-	/* TODO: NFOSMESA_GLBUFFERSUBDATAARB may need conversion */
-	fn.glBufferSubDataARB(target, offset, size, data);
+FN_GLBUFFERSUBDATAARB(target, offset, size, data);
 }
 
 void OSMesaDriver::nfglCallList(GLuint list)
@@ -904,15 +882,13 @@ void OSMesaDriver::nfglClearAccumxOES(GLfixed red, GLfixed green, GLfixed blue, 
 void OSMesaDriver::nfglClearBufferData(GLenum target, GLenum internalformat, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearBufferData(0x%x, 0x%x, 0x%x, 0x%x, %p)", target, internalformat, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARBUFFERDATA may need conversion */
-	fn.glClearBufferData(target, internalformat, format, type, data);
+FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data);
 }
 
 void OSMesaDriver::nfglClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearBufferSubData(0x%x, 0x%x, %ld, %ld, 0x%x, 0x%x, %p)", target, internalformat, offset, size, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARBUFFERSUBDATA may need conversion */
-	fn.glClearBufferSubData(target, internalformat, offset, size, format, type, data);
+FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data);
 }
 
 void OSMesaDriver::nfglClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil)
@@ -924,22 +900,19 @@ void OSMesaDriver::nfglClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat de
 void OSMesaDriver::nfglClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value)
 {
 	D(bug("nfosmesa: glClearBufferfv(0x%x, %d, %p)", buffer, drawbuffer, value));
-	/* TODO: NFOSMESA_GLCLEARBUFFERFV may need conversion */
-	fn.glClearBufferfv(buffer, drawbuffer, value);
+FN_GLCLEARBUFFERFV(buffer, drawbuffer, value);
 }
 
 void OSMesaDriver::nfglClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint *value)
 {
 	D(bug("nfosmesa: glClearBufferiv(0x%x, %d, %p)", buffer, drawbuffer, value));
-	/* TODO: NFOSMESA_GLCLEARBUFFERIV may need conversion */
-	fn.glClearBufferiv(buffer, drawbuffer, value);
+FN_GLCLEARBUFFERIV(buffer, drawbuffer, value);
 }
 
 void OSMesaDriver::nfglClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint *value)
 {
 	D(bug("nfosmesa: glClearBufferuiv(0x%x, %d, %p)", buffer, drawbuffer, value));
-	/* TODO: NFOSMESA_GLCLEARBUFFERUIV may need conversion */
-	fn.glClearBufferuiv(buffer, drawbuffer, value);
+FN_GLCLEARBUFFERUIV(buffer, drawbuffer, value);
 }
 
 void OSMesaDriver::nfglClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
@@ -1011,15 +984,13 @@ void OSMesaDriver::nfglClearIndex(GLfloat c)
 void OSMesaDriver::nfglClearNamedBufferDataEXT(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearNamedBufferDataEXT(%u, 0x%x, 0x%x, 0x%x, %p)", buffer, internalformat, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARNAMEDBUFFERDATAEXT may need conversion */
-	fn.glClearNamedBufferDataEXT(buffer, internalformat, format, type, data);
+FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data);
 }
 
 void OSMesaDriver::nfglClearNamedBufferSubDataEXT(GLuint buffer, GLenum internalformat, GLsizeiptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearNamedBufferSubDataEXT(%u, 0x%x, %ld, %ld, 0x%x, 0x%x, %p)", buffer, internalformat, offset, size, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARNAMEDBUFFERSUBDATAEXT may need conversion */
-	fn.glClearNamedBufferSubDataEXT(buffer, internalformat, offset, size, format, type, data);
+FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data);
 }
 
 void OSMesaDriver::nfglClearStencil(GLint s)
@@ -1031,15 +1002,13 @@ void OSMesaDriver::nfglClearStencil(GLint s)
 void OSMesaDriver::nfglClearTexImage(GLuint texture, GLint level, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearTexImage(%u, %d, 0x%x, 0x%x, %p)", texture, level, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARTEXIMAGE may need conversion */
-	fn.glClearTexImage(texture, level, format, type, data);
+FN_GLCLEARTEXIMAGE(texture, level, format, type, data);
 }
 
 void OSMesaDriver::nfglClearTexSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glClearTexSubImage(%u, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, %p)", texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data));
-	/* TODO: NFOSMESA_GLCLEARTEXSUBIMAGE may need conversion */
-	fn.glClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
+FN_GLCLEARTEXSUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
 }
 
 void OSMesaDriver::nfglClientActiveTexture(GLenum texture)
@@ -1099,7 +1068,6 @@ void OSMesaDriver::nfglColor3b(GLbyte32 red, GLbyte32 green, GLbyte32 blue)
 void OSMesaDriver::nfglColor3bv(const GLbyte *v)
 {
 	D(bug("nfosmesa: glColor3bv(%p)", v));
-	/* TODO: NFOSMESA_GLCOLOR3BV may need conversion */
 	fn.glColor3bv(v);
 }
 
@@ -1184,7 +1152,6 @@ void OSMesaDriver::nfglColor3ub(GLubyte32 red, GLubyte32 green, GLubyte32 blue)
 void OSMesaDriver::nfglColor3ubv(const GLubyte *v)
 {
 	D(bug("nfosmesa: glColor3ubv(%p)", v));
-	/* TODO: NFOSMESA_GLCOLOR3UBV may need conversion */
 	fn.glColor3ubv(v);
 }
 
@@ -1233,7 +1200,6 @@ void OSMesaDriver::nfglColor4b(GLbyte32 red, GLbyte32 green, GLbyte32 blue, GLby
 void OSMesaDriver::nfglColor4bv(const GLbyte *v)
 {
 	D(bug("nfosmesa: glColor4bv(%p)", v));
-	/* TODO: NFOSMESA_GLCOLOR4BV may need conversion */
 	fn.glColor4bv(v);
 }
 
@@ -1342,7 +1308,6 @@ FN_GLCOLOR4UBVERTEX3FVSUN(c, v);
 void OSMesaDriver::nfglColor4ubv(const GLubyte *v)
 {
 	D(bug("nfosmesa: glColor4ubv(%p)", v));
-	/* TODO: NFOSMESA_GLCOLOR4UBV may need conversion */
 	fn.glColor4ubv(v);
 }
 
@@ -1469,15 +1434,13 @@ FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer);
 void OSMesaDriver::nfglColorPointerListIBM(GLint size, GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 {
 	D(bug("nfosmesa: glColorPointerListIBM(%d, 0x%x, %d, %p, %d)", size, type, stride, pointer, ptrstride));
-	/* TODO: NFOSMESA_GLCOLORPOINTERLISTIBM may need conversion */
-	fn.glColorPointerListIBM(size, type, stride, pointer, ptrstride);
+FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride);
 }
 
 void OSMesaDriver::nfglColorPointervINTEL(GLint size, GLenum type, const void * *pointer)
 {
 	D(bug("nfosmesa: glColorPointervINTEL(%d, 0x%x, %p)", size, type, pointer));
-	/* TODO: NFOSMESA_GLCOLORPOINTERVINTEL may need conversion */
-	fn.glColorPointervINTEL(size, type, pointer);
+FN_GLCOLORPOINTERVINTEL(size, type, pointer);
 }
 
 void OSMesaDriver::nfglColorSubTable(GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const void *data)
@@ -1489,8 +1452,7 @@ FN_GLCOLORSUBTABLE(target, start, count, format, type, data);
 void OSMesaDriver::nfglColorSubTableEXT(GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const void *data)
 {
 	D(bug("nfosmesa: glColorSubTableEXT(0x%x, %d, %d, 0x%x, 0x%x, %p)", target, start, count, format, type, data));
-	/* TODO: NFOSMESA_GLCOLORSUBTABLEEXT may need conversion */
-	fn.glColorSubTableEXT(target, start, count, format, type, data);
+FN_GLCOLORSUBTABLEEXT(target, start, count, format, type, data);
 }
 
 void OSMesaDriver::nfglColorTable(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *table)
@@ -1502,36 +1464,31 @@ FN_GLCOLORTABLE(target, internalformat, width, format, type, table);
 void OSMesaDriver::nfglColorTableEXT(GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const void *table)
 {
 	D(bug("nfosmesa: glColorTableEXT(0x%x, 0x%x, %d, 0x%x, 0x%x, %p)", target, internalFormat, width, format, type, table));
-	/* TODO: NFOSMESA_GLCOLORTABLEEXT may need conversion */
-	fn.glColorTableEXT(target, internalFormat, width, format, type, table);
+FN_GLCOLORTABLEEXT(target, internalFormat, width, format, type, table);
 }
 
 void OSMesaDriver::nfglColorTableParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 {
 	D(bug("nfosmesa: glColorTableParameterfv(0x%x, 0x%x, %p)", target, pname, params));
-	/* TODO: NFOSMESA_GLCOLORTABLEPARAMETERFV may need conversion */
-	fn.glColorTableParameterfv(target, pname, params);
+FN_GLCOLORTABLEPARAMETERFV(target, pname, params);
 }
 
 void OSMesaDriver::nfglColorTableParameterfvSGI(GLenum target, GLenum pname, const GLfloat *params)
 {
 	D(bug("nfosmesa: glColorTableParameterfvSGI(0x%x, 0x%x, %p)", target, pname, params));
-	/* TODO: NFOSMESA_GLCOLORTABLEPARAMETERFVSGI may need conversion */
-	fn.glColorTableParameterfvSGI(target, pname, params);
+FN_GLCOLORTABLEPARAMETERFVSGI(target, pname, params);
 }
 
 void OSMesaDriver::nfglColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
 {
 	D(bug("nfosmesa: glColorTableParameteriv(0x%x, 0x%x, %p)", target, pname, params));
-	/* TODO: NFOSMESA_GLCOLORTABLEPARAMETERIV may need conversion */
-	fn.glColorTableParameteriv(target, pname, params);
+FN_GLCOLORTABLEPARAMETERIV(target, pname, params);
 }
 
 void OSMesaDriver::nfglColorTableParameterivSGI(GLenum target, GLenum pname, const GLint *params)
 {
 	D(bug("nfosmesa: glColorTableParameterivSGI(0x%x, 0x%x, %p)", target, pname, params));
-	/* TODO: NFOSMESA_GLCOLORTABLEPARAMETERIVSGI may need conversion */
-	fn.glColorTableParameterivSGI(target, pname, params);
+FN_GLCOLORTABLEPARAMETERIVSGI(target, pname, params);
 }
 
 void OSMesaDriver::nfglColorTableSGI(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *table)
@@ -2130,7 +2087,6 @@ GLhandleARB OSMesaDriver::nfglCreateShaderObjectARB(GLenum shaderType)
 GLuint OSMesaDriver::nfglCreateShaderProgramEXT(GLenum type, const GLchar *string)
 {
 	D(bug("nfosmesa: glCreateShaderProgramEXT(0x%x, %p)", type, string));
-	/* TODO: NFOSMESA_GLCREATESHADERPROGRAMEXT may need conversion */
 	return fn.glCreateShaderProgramEXT(type, string);
 }
 
@@ -2227,21 +2183,18 @@ void OSMesaDriver::nfglDebugMessageEnableAMD(GLenum category, GLenum severity, G
 void OSMesaDriver::nfglDebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
 {
 	D(bug("nfosmesa: glDebugMessageInsert(0x%x, 0x%x, %u, 0x%x, %d, %p)", source, type, id, severity, length, buf));
-	/* TODO: NFOSMESA_GLDEBUGMESSAGEINSERT may need conversion */
 	fn.glDebugMessageInsert(source, type, id, severity, length, buf);
 }
 
 void OSMesaDriver::nfglDebugMessageInsertAMD(GLenum category, GLenum severity, GLuint id, GLsizei length, const GLchar *buf)
 {
 	D(bug("nfosmesa: glDebugMessageInsertAMD(0x%x, 0x%x, %u, %d, %p)", category, severity, id, length, buf));
-	/* TODO: NFOSMESA_GLDEBUGMESSAGEINSERTAMD may need conversion */
 	fn.glDebugMessageInsertAMD(category, severity, id, length, buf);
 }
 
 void OSMesaDriver::nfglDebugMessageInsertARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
 {
 	D(bug("nfosmesa: glDebugMessageInsertARB(0x%x, 0x%x, %u, 0x%x, %d, %p)", source, type, id, severity, length, buf));
-	/* TODO: NFOSMESA_GLDEBUGMESSAGEINSERTARB may need conversion */
 	fn.glDebugMessageInsertARB(source, type, id, severity, length, buf);
 }
 
@@ -2328,7 +2281,6 @@ void OSMesaDriver::nfglDeleteLists(GLuint list, GLsizei range)
 void OSMesaDriver::nfglDeleteNamedStringARB(GLint namelen, const GLchar *name)
 {
 	D(bug("nfosmesa: glDeleteNamedStringARB(%d, %p)", namelen, name));
-	/* TODO: NFOSMESA_GLDELETENAMEDSTRINGARB may need conversion */
 	fn.glDeleteNamedStringARB(namelen, name);
 }
 
@@ -4053,7 +4005,6 @@ void OSMesaDriver::nfglGetActiveUniformARB(GLhandleARB programObj, GLuint index,
 GLuint OSMesaDriver::nfglGetActiveUniformBlockIndex(GLuint program, const GLchar *uniformBlockName)
 {
 	D(bug("nfosmesa: glGetActiveUniformBlockIndex(%u, %p)", program, uniformBlockName));
-	/* TODO: NFOSMESA_GLGETACTIVEUNIFORMBLOCKINDEX may need conversion */
 	return fn.glGetActiveUniformBlockIndex(program, uniformBlockName);
 }
 
@@ -4123,14 +4074,12 @@ void OSMesaDriver::nfglGetAttachedShaders(GLuint program, GLsizei maxCount, GLsi
 GLint OSMesaDriver::nfglGetAttribLocation(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetAttribLocation(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETATTRIBLOCATION may need conversion */
 	return fn.glGetAttribLocation(program, name);
 }
 
 GLint OSMesaDriver::nfglGetAttribLocationARB(GLhandleARB programObj, const GLcharARB *name)
 {
 	D(bug("nfosmesa: glGetAttribLocationARB(%u, %p)", programObj, name));
-	/* TODO: NFOSMESA_GLGETATTRIBLOCATIONARB may need conversion */
 	return fn.glGetAttribLocationARB(programObj, name);
 }
 
@@ -4550,21 +4499,18 @@ void OSMesaDriver::nfglGetFogFuncSGIS(GLfloat *points)
 GLint OSMesaDriver::nfglGetFragDataIndex(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetFragDataIndex(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETFRAGDATAINDEX may need conversion */
 	return fn.glGetFragDataIndex(program, name);
 }
 
 GLint OSMesaDriver::nfglGetFragDataLocation(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetFragDataLocation(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETFRAGDATALOCATION may need conversion */
 	return fn.glGetFragDataLocation(program, name);
 }
 
 GLint OSMesaDriver::nfglGetFragDataLocationEXT(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetFragDataLocationEXT(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETFRAGDATALOCATIONEXT may need conversion */
 	return fn.glGetFragDataLocationEXT(program, name);
 }
 
@@ -5644,21 +5590,18 @@ void OSMesaDriver::nfglGetProgramRegisterfvMESA(GLenum target, GLsizei len, cons
 GLuint OSMesaDriver::nfglGetProgramResourceIndex(GLuint program, GLenum programInterface, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetProgramResourceIndex(%u, 0x%x, %p)", program, programInterface, name));
-	/* TODO: NFOSMESA_GLGETPROGRAMRESOURCEINDEX may need conversion */
 	return fn.glGetProgramResourceIndex(program, programInterface, name);
 }
 
 GLint OSMesaDriver::nfglGetProgramResourceLocation(GLuint program, GLenum programInterface, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetProgramResourceLocation(%u, 0x%x, %p)", program, programInterface, name));
-	/* TODO: NFOSMESA_GLGETPROGRAMRESOURCELOCATION may need conversion */
 	return fn.glGetProgramResourceLocation(program, programInterface, name);
 }
 
 GLint OSMesaDriver::nfglGetProgramResourceLocationIndex(GLuint program, GLenum programInterface, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetProgramResourceLocationIndex(%u, 0x%x, %p)", program, programInterface, name));
-	/* TODO: NFOSMESA_GLGETPROGRAMRESOURCELOCATIONINDEX may need conversion */
 	return fn.glGetProgramResourceLocationIndex(program, programInterface, name);
 }
 
@@ -5918,14 +5861,12 @@ const GLubyte * OSMesaDriver::nfglGetStringi(GLenum name, GLuint index)
 GLuint OSMesaDriver::nfglGetSubroutineIndex(GLuint program, GLenum shadertype, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetSubroutineIndex(%u, 0x%x, %p)", program, shadertype, name));
-	/* TODO: NFOSMESA_GLGETSUBROUTINEINDEX may need conversion */
 	return fn.glGetSubroutineIndex(program, shadertype, name);
 }
 
 GLint OSMesaDriver::nfglGetSubroutineUniformLocation(GLuint program, GLenum shadertype, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetSubroutineUniformLocation(%u, 0x%x, %p)", program, shadertype, name));
-	/* TODO: NFOSMESA_GLGETSUBROUTINEUNIFORMLOCATION may need conversion */
 	return fn.glGetSubroutineUniformLocation(program, shadertype, name);
 }
 
@@ -6194,7 +6135,6 @@ void OSMesaDriver::nfglGetTransformFeedbackVaryingNV(GLuint program, GLuint inde
 GLuint OSMesaDriver::nfglGetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName)
 {
 	D(bug("nfosmesa: glGetUniformBlockIndex(%u, %p)", program, uniformBlockName));
-	/* TODO: NFOSMESA_GLGETUNIFORMBLOCKINDEX may need conversion */
 	return fn.glGetUniformBlockIndex(program, uniformBlockName);
 }
 
@@ -6214,14 +6154,12 @@ void OSMesaDriver::nfglGetUniformIndices(GLuint program, GLsizei uniformCount, c
 GLint OSMesaDriver::nfglGetUniformLocation(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetUniformLocation(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETUNIFORMLOCATION may need conversion */
 	return fn.glGetUniformLocation(program, name);
 }
 
 GLint OSMesaDriver::nfglGetUniformLocationARB(GLhandleARB programObj, const GLcharARB *name)
 {
 	D(bug("nfosmesa: glGetUniformLocationARB(%u, %p)", programObj, name));
-	/* TODO: NFOSMESA_GLGETUNIFORMLOCATIONARB may need conversion */
 	return fn.glGetUniformLocationARB(programObj, name);
 }
 
@@ -6345,7 +6283,6 @@ void OSMesaDriver::nfglGetVariantPointervEXT(GLuint id, GLenum value, void * *da
 GLint OSMesaDriver::nfglGetVaryingLocationNV(GLuint program, const GLchar *name)
 {
 	D(bug("nfosmesa: glGetVaryingLocationNV(%u, %p)", program, name));
-	/* TODO: NFOSMESA_GLGETVARYINGLOCATIONNV may need conversion */
 	return fn.glGetVaryingLocationNV(program, name);
 }
 
@@ -6933,7 +6870,6 @@ void OSMesaDriver::nfglIndexub(GLubyte32 c)
 void OSMesaDriver::nfglIndexubv(const GLubyte *c)
 {
 	D(bug("nfosmesa: glIndexubv(%p)", c));
-	/* TODO: NFOSMESA_GLINDEXUBV may need conversion */
 	fn.glIndexubv(c);
 }
 
@@ -6965,7 +6901,6 @@ void OSMesaDriver::nfglInsertComponentEXT(GLuint res, GLuint src, GLuint num)
 void OSMesaDriver::nfglInsertEventMarkerEXT(GLsizei length, const GLchar *marker)
 {
 	D(bug("nfosmesa: glInsertEventMarkerEXT(%d, %p)", length, marker));
-	/* TODO: NFOSMESA_GLINSERTEVENTMARKEREXT may need conversion */
 	fn.glInsertEventMarkerEXT(length, marker);
 }
 
@@ -7125,7 +7060,6 @@ GLboolean OSMesaDriver::nfglIsNamedBufferResidentNV(GLuint buffer)
 GLboolean OSMesaDriver::nfglIsNamedStringARB(GLint namelen, const GLchar *name)
 {
 	D(bug("nfosmesa: glIsNamedStringARB(%d, %p)", namelen, name));
-	/* TODO: NFOSMESA_GLISNAMEDSTRINGARB may need conversion */
 	return fn.glIsNamedStringARB(namelen, name);
 }
 
@@ -7288,7 +7222,6 @@ GLboolean OSMesaDriver::nfglIsVertexAttribEnabledAPPLE(GLuint index, GLenum pnam
 void OSMesaDriver::nfglLabelObjectEXT(GLenum type, GLuint object, GLsizei length, const GLchar *label)
 {
 	D(bug("nfosmesa: glLabelObjectEXT(0x%x, %u, %d, %p)", type, object, length, label));
-	/* TODO: NFOSMESA_GLLABELOBJECTEXT may need conversion */
 	fn.glLabelObjectEXT(type, object, length, label);
 }
 
@@ -7474,7 +7407,6 @@ void OSMesaDriver::nfglLoadName(GLuint name)
 void OSMesaDriver::nfglLoadProgramNV(GLenum target, GLuint id, GLsizei len, const GLubyte *program)
 {
 	D(bug("nfosmesa: glLoadProgramNV(0x%x, %u, %d, %p)", target, id, len, program));
-	/* TODO: NFOSMESA_GLLOADPROGRAMNV may need conversion */
 	fn.glLoadProgramNV(target, id, len, program);
 }
 
@@ -7824,7 +7756,6 @@ void OSMesaDriver::nfglMatrixIndexPointerARB(GLint size, GLenum type, GLsizei st
 void OSMesaDriver::nfglMatrixIndexubvARB(GLint size, const GLubyte *indices)
 {
 	D(bug("nfosmesa: glMatrixIndexubvARB(%d, %p)", size, indices));
-	/* TODO: NFOSMESA_GLMATRIXINDEXUBVARB may need conversion */
 	fn.glMatrixIndexubvARB(size, indices);
 }
 
@@ -8182,7 +8113,6 @@ void OSMesaDriver::nfglMultiTexCoord1bOES(GLenum texture, GLbyte32 s)
 void OSMesaDriver::nfglMultiTexCoord1bvOES(GLenum texture, const GLbyte *coords)
 {
 	D(bug("nfosmesa: glMultiTexCoord1bvOES(0x%x, %p)", texture, coords));
-	/* TODO: NFOSMESA_GLMULTITEXCOORD1BVOES may need conversion */
 	fn.glMultiTexCoord1bvOES(texture, coords);
 }
 
@@ -8316,7 +8246,6 @@ void OSMesaDriver::nfglMultiTexCoord2bOES(GLenum texture, GLbyte32 s, GLbyte32 t
 void OSMesaDriver::nfglMultiTexCoord2bvOES(GLenum texture, const GLbyte *coords)
 {
 	D(bug("nfosmesa: glMultiTexCoord2bvOES(0x%x, %p)", texture, coords));
-	/* TODO: NFOSMESA_GLMULTITEXCOORD2BVOES may need conversion */
 	fn.glMultiTexCoord2bvOES(texture, coords);
 }
 
@@ -8450,7 +8379,6 @@ void OSMesaDriver::nfglMultiTexCoord3bOES(GLenum texture, GLbyte32 s, GLbyte32 t
 void OSMesaDriver::nfglMultiTexCoord3bvOES(GLenum texture, const GLbyte *coords)
 {
 	D(bug("nfosmesa: glMultiTexCoord3bvOES(0x%x, %p)", texture, coords));
-	/* TODO: NFOSMESA_GLMULTITEXCOORD3BVOES may need conversion */
 	fn.glMultiTexCoord3bvOES(texture, coords);
 }
 
@@ -8584,7 +8512,6 @@ void OSMesaDriver::nfglMultiTexCoord4bOES(GLenum texture, GLbyte32 s, GLbyte32 t
 void OSMesaDriver::nfglMultiTexCoord4bvOES(GLenum texture, const GLbyte *coords)
 {
 	D(bug("nfosmesa: glMultiTexCoord4bvOES(0x%x, %p)", texture, coords));
-	/* TODO: NFOSMESA_GLMULTITEXCOORD4BVOES may need conversion */
 	fn.glMultiTexCoord4bvOES(texture, coords);
 }
 
@@ -8924,8 +8851,7 @@ void OSMesaDriver::nfglMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLin
 void OSMesaDriver::nfglNamedBufferDataEXT(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage)
 {
 	D(bug("nfosmesa: glNamedBufferDataEXT(%u, %ld, %p, 0x%x)", buffer, size, data, usage));
-	/* TODO: NFOSMESA_GLNAMEDBUFFERDATAEXT may need conversion */
-	fn.glNamedBufferDataEXT(buffer, size, data, usage);
+FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage);
 }
 
 void OSMesaDriver::nfglNamedBufferStorageEXT(GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags)
@@ -8938,8 +8864,7 @@ void OSMesaDriver::nfglNamedBufferStorageEXT(GLuint buffer, GLsizeiptr size, con
 void OSMesaDriver::nfglNamedBufferSubDataEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
 {
 	D(bug("nfosmesa: glNamedBufferSubDataEXT(%u, %ld, %ld, %p)", buffer, offset, size, data));
-	/* TODO: NFOSMESA_GLNAMEDBUFFERSUBDATAEXT may need conversion */
-	fn.glNamedBufferSubDataEXT(buffer, offset, size, data);
+FN_GLNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data);
 }
 
 void OSMesaDriver::nfglNamedCopyBufferSubDataEXT(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
@@ -9097,7 +9022,6 @@ void OSMesaDriver::nfglNamedRenderbufferStorageMultisampleEXT(GLuint renderbuffe
 void OSMesaDriver::nfglNamedStringARB(GLenum type, GLint namelen, const GLchar *name, GLint stringlen, const GLchar *string)
 {
 	D(bug("nfosmesa: glNamedStringARB(0x%x, %d, %p, %d, %p)", type, namelen, name, stringlen, string));
-	/* TODO: NFOSMESA_GLNAMEDSTRINGARB may need conversion */
 	fn.glNamedStringARB(type, namelen, name, stringlen, string);
 }
 
@@ -9117,7 +9041,6 @@ GLuint OSMesaDriver::nfglNewObjectBufferATI(GLsizei size, const void *pointer, G
 void OSMesaDriver::nfglNewTraceMESA(GLbitfield mask, const GLubyte *traceName)
 {
 	D(bug("nfosmesa: glNewTraceMESA(0x%x, %p)", mask, traceName));
-	/* TODO: NFOSMESA_GLNEWTRACEMESA may need conversion */
 	fn.glNewTraceMESA(mask, traceName);
 }
 
@@ -9130,7 +9053,6 @@ void OSMesaDriver::nfglNormal3b(GLbyte32 nx, GLbyte32 ny, GLbyte32 nz)
 void OSMesaDriver::nfglNormal3bv(const GLbyte *v)
 {
 	D(bug("nfosmesa: glNormal3bv(%p)", v));
-	/* TODO: NFOSMESA_GLNORMAL3BV may need conversion */
 	fn.glNormal3bv(v);
 }
 
@@ -9273,7 +9195,6 @@ void OSMesaDriver::nfglNormalStream3bATI(GLenum stream, GLbyte32 nx, GLbyte32 ny
 void OSMesaDriver::nfglNormalStream3bvATI(GLenum stream, const GLbyte *coords)
 {
 	D(bug("nfosmesa: glNormalStream3bvATI(0x%x, %p)", stream, coords));
-	/* TODO: NFOSMESA_GLNORMALSTREAM3BVATI may need conversion */
 	fn.glNormalStream3bvATI(stream, coords);
 }
 
@@ -9328,7 +9249,6 @@ FN_GLNORMALSTREAM3SVATI(stream, coords);
 void OSMesaDriver::nfglObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label)
 {
 	D(bug("nfosmesa: glObjectLabel(0x%x, %u, %d, %p)", identifier, name, length, label));
-	/* TODO: NFOSMESA_GLOBJECTLABEL may need conversion */
 	fn.glObjectLabel(identifier, name, length, label);
 }
 
@@ -9834,7 +9754,6 @@ void OSMesaDriver::nfglPolygonOffsetxOES(GLfixed factor, GLfixed units)
 void OSMesaDriver::nfglPolygonStipple(const GLubyte *mask)
 {
 	D(bug("nfosmesa: glPolygonStipple(%p)", mask));
-	/* TODO: NFOSMESA_GLPOLYGONSTIPPLE may need conversion */
 	fn.glPolygonStipple(mask);
 }
 
@@ -10105,7 +10024,6 @@ void OSMesaDriver::nfglProgramLocalParametersI4uivNV(GLenum target, GLuint index
 void OSMesaDriver::nfglProgramNamedParameter4dNV(GLuint id, GLsizei len, const GLubyte *name, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
 	D(bug("nfosmesa: glProgramNamedParameter4dNV(%u, %d, %p, %f, %f, %f, %f)", id, len, name, x, y, z, w));
-	/* TODO: NFOSMESA_GLPROGRAMNAMEDPARAMETER4DNV may need conversion */
 	fn.glProgramNamedParameter4dNV(id, len, name, x, y, z, w);
 }
 
@@ -10118,7 +10036,6 @@ FN_GLPROGRAMNAMEDPARAMETER4DVNV(id, len, name, v);
 void OSMesaDriver::nfglProgramNamedParameter4fNV(GLuint id, GLsizei len, const GLubyte *name, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
 	D(bug("nfosmesa: glProgramNamedParameter4fNV(%u, %d, %p, %f, %f, %f, %f)", id, len, name, x, y, z, w));
-	/* TODO: NFOSMESA_GLPROGRAMNAMEDPARAMETER4FNV may need conversion */
 	fn.glProgramNamedParameter4fNV(id, len, name, x, y, z, w);
 }
 
@@ -11046,14 +10963,12 @@ void OSMesaDriver::nfglPushClientAttribDefaultEXT(GLbitfield mask)
 void OSMesaDriver::nfglPushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message)
 {
 	D(bug("nfosmesa: glPushDebugGroup(0x%x, %u, %d, %p)", source, id, length, message));
-	/* TODO: NFOSMESA_GLPUSHDEBUGGROUP may need conversion */
 	fn.glPushDebugGroup(source, id, length, message);
 }
 
 void OSMesaDriver::nfglPushGroupMarkerEXT(GLsizei length, const GLchar *marker)
 {
 	D(bug("nfosmesa: glPushGroupMarkerEXT(%d, %p)", length, marker));
-	/* TODO: NFOSMESA_GLPUSHGROUPMARKEREXT may need conversion */
 	fn.glPushGroupMarkerEXT(length, marker);
 }
 
@@ -11423,7 +11338,6 @@ void OSMesaDriver::nfglReplacementCodeubSUN(GLubyte32 code)
 void OSMesaDriver::nfglReplacementCodeubvSUN(const GLubyte *code)
 {
 	D(bug("nfosmesa: glReplacementCodeubvSUN(%p)", code));
-	/* TODO: NFOSMESA_GLREPLACEMENTCODEUBVSUN may need conversion */
 	fn.glReplacementCodeubvSUN(code);
 }
 
@@ -11795,14 +11709,12 @@ void OSMesaDriver::nfglSecondaryColor3bEXT(GLbyte32 red, GLbyte32 green, GLbyte3
 void OSMesaDriver::nfglSecondaryColor3bv(const GLbyte *v)
 {
 	D(bug("nfosmesa: glSecondaryColor3bv(%p)", v));
-	/* TODO: NFOSMESA_GLSECONDARYCOLOR3BV may need conversion */
 	fn.glSecondaryColor3bv(v);
 }
 
 void OSMesaDriver::nfglSecondaryColor3bvEXT(const GLbyte *v)
 {
 	D(bug("nfosmesa: glSecondaryColor3bvEXT(%p)", v));
-	/* TODO: NFOSMESA_GLSECONDARYCOLOR3BVEXT may need conversion */
 	fn.glSecondaryColor3bvEXT(v);
 }
 
@@ -11929,14 +11841,12 @@ void OSMesaDriver::nfglSecondaryColor3ubEXT(GLubyte32 red, GLubyte32 green, GLub
 void OSMesaDriver::nfglSecondaryColor3ubv(const GLubyte *v)
 {
 	D(bug("nfosmesa: glSecondaryColor3ubv(%p)", v));
-	/* TODO: NFOSMESA_GLSECONDARYCOLOR3UBV may need conversion */
 	fn.glSecondaryColor3ubv(v);
 }
 
 void OSMesaDriver::nfglSecondaryColor3ubvEXT(const GLubyte *v)
 {
 	D(bug("nfosmesa: glSecondaryColor3ubvEXT(%p)", v));
-	/* TODO: NFOSMESA_GLSECONDARYCOLOR3UBVEXT may need conversion */
 	fn.glSecondaryColor3ubvEXT(v);
 }
 
@@ -12318,7 +12228,6 @@ void OSMesaDriver::nfglTangent3bEXT(GLbyte32 tx, GLbyte32 ty, GLbyte32 tz)
 void OSMesaDriver::nfglTangent3bvEXT(const GLbyte *v)
 {
 	D(bug("nfosmesa: glTangent3bvEXT(%p)", v));
-	/* TODO: NFOSMESA_GLTANGENT3BVEXT may need conversion */
 	fn.glTangent3bvEXT(v);
 }
 
@@ -12373,8 +12282,7 @@ FN_GLTANGENT3SVEXT(v);
 void OSMesaDriver::nfglTangentPointerEXT(GLenum type, GLsizei stride, const void *pointer)
 {
 	D(bug("nfosmesa: glTangentPointerEXT(0x%x, %d, %p)", type, stride, pointer));
-	/* TODO: NFOSMESA_GLTANGENTPOINTEREXT may need conversion */
-	fn.glTangentPointerEXT(type, stride, pointer);
+FN_GLTANGENTPOINTEREXT(type, stride, pointer);
 }
 
 void OSMesaDriver::nfglTbufferMask3DFX(GLuint mask)
@@ -12460,7 +12368,6 @@ void OSMesaDriver::nfglTexCoord1bOES(GLbyte32 s)
 void OSMesaDriver::nfglTexCoord1bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glTexCoord1bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLTEXCOORD1BVOES may need conversion */
 	fn.glTexCoord1bvOES(coords);
 }
 
@@ -12546,7 +12453,6 @@ void OSMesaDriver::nfglTexCoord2bOES(GLbyte32 s, GLbyte32 t)
 void OSMesaDriver::nfglTexCoord2bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glTexCoord2bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLTEXCOORD2BVOES may need conversion */
 	fn.glTexCoord2bvOES(coords);
 }
 
@@ -12692,7 +12598,6 @@ void OSMesaDriver::nfglTexCoord3bOES(GLbyte32 s, GLbyte32 t, GLbyte32 r)
 void OSMesaDriver::nfglTexCoord3bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glTexCoord3bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLTEXCOORD3BVOES may need conversion */
 	fn.glTexCoord3bvOES(coords);
 }
 
@@ -12778,7 +12683,6 @@ void OSMesaDriver::nfglTexCoord4bOES(GLbyte32 s, GLbyte32 t, GLbyte32 r, GLbyte3
 void OSMesaDriver::nfglTexCoord4bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glTexCoord4bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLTEXCOORD4BVOES may need conversion */
 	fn.glTexCoord4bvOES(coords);
 }
 
@@ -13513,14 +13417,12 @@ void OSMesaDriver::nfglTraceAssertAttribMESA(GLbitfield attribMask)
 void OSMesaDriver::nfglTraceCommentMESA(const GLubyte *comment)
 {
 	D(bug("nfosmesa: glTraceCommentMESA(%p)", comment));
-	/* TODO: NFOSMESA_GLTRACECOMMENTMESA may need conversion */
 	fn.glTraceCommentMESA(comment);
 }
 
 void OSMesaDriver::nfglTraceListMESA(GLuint name, const GLubyte *comment)
 {
 	D(bug("nfosmesa: glTraceListMESA(%u, %p)", name, comment));
-	/* TODO: NFOSMESA_GLTRACELISTMESA may need conversion */
 	fn.glTraceListMESA(name, comment);
 }
 
@@ -13541,7 +13443,6 @@ void OSMesaDriver::nfglTracePointerRangeMESA(const GLvoid *first, const GLvoid *
 void OSMesaDriver::nfglTraceTextureMESA(GLuint name, const GLubyte *comment)
 {
 	D(bug("nfosmesa: glTraceTextureMESA(%u, %p)", name, comment));
-	/* TODO: NFOSMESA_GLTRACETEXTUREMESA may need conversion */
 	fn.glTraceTextureMESA(name, comment);
 }
 
@@ -14435,7 +14336,6 @@ void OSMesaDriver::nfglVariantPointerEXT(GLuint id, GLenum type, GLuint stride, 
 void OSMesaDriver::nfglVariantbvEXT(GLuint id, const GLbyte *addr)
 {
 	D(bug("nfosmesa: glVariantbvEXT(%u, %p)", id, addr));
-	/* TODO: NFOSMESA_GLVARIANTBVEXT may need conversion */
 	fn.glVariantbvEXT(id, addr);
 }
 
@@ -14470,7 +14370,6 @@ void OSMesaDriver::nfglVariantsvEXT(GLuint id, const GLshort *addr)
 void OSMesaDriver::nfglVariantubvEXT(GLuint id, const GLubyte *addr)
 {
 	D(bug("nfosmesa: glVariantubvEXT(%u, %p)", id, addr));
-	/* TODO: NFOSMESA_GLVARIANTUBVEXT may need conversion */
 	fn.glVariantubvEXT(id, addr);
 }
 
@@ -14497,7 +14396,6 @@ void OSMesaDriver::nfglVertex2bOES(GLbyte32 x)
 void OSMesaDriver::nfglVertex2bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glVertex2bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLVERTEX2BVOES may need conversion */
 	fn.glVertex2bvOES(coords);
 }
 
@@ -14583,7 +14481,6 @@ void OSMesaDriver::nfglVertex3bOES(GLbyte32 x, GLbyte32 y)
 void OSMesaDriver::nfglVertex3bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glVertex3bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLVERTEX3BVOES may need conversion */
 	fn.glVertex3bvOES(coords);
 }
 
@@ -14669,7 +14566,6 @@ void OSMesaDriver::nfglVertex4bOES(GLbyte32 x, GLbyte32 y, GLbyte32 z)
 void OSMesaDriver::nfglVertex4bvOES(const GLbyte *coords)
 {
 	D(bug("nfosmesa: glVertex4bvOES(%p)", coords));
-	/* TODO: NFOSMESA_GLVERTEX4BVOES may need conversion */
 	fn.glVertex4bvOES(coords);
 }
 
@@ -15243,14 +15139,12 @@ FN_GLVERTEXATTRIB3SVNV(index, v);
 void OSMesaDriver::nfglVertexAttrib4Nbv(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4Nbv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4NBV may need conversion */
 	fn.glVertexAttrib4Nbv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttrib4NbvARB(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4NbvARB(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4NBVARB may need conversion */
 	fn.glVertexAttrib4NbvARB(index, v);
 }
 
@@ -15293,14 +15187,12 @@ void OSMesaDriver::nfglVertexAttrib4NubARB(GLuint index, GLubyte32 x, GLubyte32 
 void OSMesaDriver::nfglVertexAttrib4Nubv(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4Nubv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4NUBV may need conversion */
 	fn.glVertexAttrib4Nubv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttrib4NubvARB(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4NubvARB(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4NUBVARB may need conversion */
 	fn.glVertexAttrib4NubvARB(index, v);
 }
 
@@ -15331,14 +15223,12 @@ FN_GLVERTEXATTRIB4NUSVARB(index, v);
 void OSMesaDriver::nfglVertexAttrib4bv(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4bv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4BV may need conversion */
 	fn.glVertexAttrib4bv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttrib4bvARB(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4bvARB(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4BVARB may need conversion */
 	fn.glVertexAttrib4bvARB(index, v);
 }
 
@@ -15483,21 +15373,18 @@ void OSMesaDriver::nfglVertexAttrib4ubNV(GLuint index, GLubyte32 x, GLubyte32 y,
 void OSMesaDriver::nfglVertexAttrib4ubv(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4ubv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4UBV may need conversion */
 	fn.glVertexAttrib4ubv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttrib4ubvARB(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4ubvARB(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4UBVARB may need conversion */
 	fn.glVertexAttrib4ubvARB(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttrib4ubvNV(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttrib4ubvNV(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIB4UBVNV may need conversion */
 	fn.glVertexAttrib4ubvNV(index, v);
 }
 
@@ -15720,14 +15607,12 @@ void OSMesaDriver::nfglVertexAttribI3uivEXT(GLuint index, const GLuint *v)
 void OSMesaDriver::nfglVertexAttribI4bv(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttribI4bv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIBI4BV may need conversion */
 	fn.glVertexAttribI4bv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttribI4bvEXT(GLuint index, const GLbyte *v)
 {
 	D(bug("nfosmesa: glVertexAttribI4bvEXT(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIBI4BVEXT may need conversion */
 	fn.glVertexAttribI4bvEXT(index, v);
 }
 
@@ -15774,14 +15659,12 @@ void OSMesaDriver::nfglVertexAttribI4svEXT(GLuint index, const GLshort *v)
 void OSMesaDriver::nfglVertexAttribI4ubv(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttribI4ubv(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIBI4UBV may need conversion */
 	fn.glVertexAttribI4ubv(index, v);
 }
 
 void OSMesaDriver::nfglVertexAttribI4ubvEXT(GLuint index, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttribI4ubvEXT(%u, %p)", index, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIBI4UBVEXT may need conversion */
 	fn.glVertexAttribI4ubvEXT(index, v);
 }
 
@@ -16276,7 +16159,6 @@ FN_GLVERTEXATTRIBS4SVNV(index, count, v);
 void OSMesaDriver::nfglVertexAttribs4ubvNV(GLuint index, GLsizei count, const GLubyte *v)
 {
 	D(bug("nfosmesa: glVertexAttribs4ubvNV(%u, %d, %p)", index, count, v));
-	/* TODO: NFOSMESA_GLVERTEXATTRIBS4UBVNV may need conversion */
 	fn.glVertexAttribs4ubvNV(index, count, v);
 }
 
@@ -16681,7 +16563,6 @@ void OSMesaDriver::nfglWeightPointerARB(GLint size, GLenum type, GLsizei stride,
 void OSMesaDriver::nfglWeightbvARB(GLint size, const GLbyte *weights)
 {
 	D(bug("nfosmesa: glWeightbvARB(%d, %p)", size, weights));
-	/* TODO: NFOSMESA_GLWEIGHTBVARB may need conversion */
 	fn.glWeightbvARB(size, weights);
 }
 
@@ -16716,7 +16597,6 @@ void OSMesaDriver::nfglWeightsvARB(GLint size, const GLshort *weights)
 void OSMesaDriver::nfglWeightubvARB(GLint size, const GLubyte *weights)
 {
 	D(bug("nfosmesa: glWeightubvARB(%d, %p)", size, weights));
-	/* TODO: NFOSMESA_GLWEIGHTUBVARB may need conversion */
 	fn.glWeightubvARB(size, weights);
 }
 
