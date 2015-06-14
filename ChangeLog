@@ -1,3 +1,7 @@
+2015/06/14 - Thorsten
+nfosmesa: Fix passing/returning GLhandleARB parameters on MacOSX
+
+
 2015/06/13 - Thorsten
 nfosmesa: convert Atari NULL to Host NULL when fetching pointer arguments
 

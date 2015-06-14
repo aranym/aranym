@@ -1120,9 +1120,9 @@ sub gen_dispatch() {
 			$ret = "";
 		} else {
 			$ret = "ret = ";
-			if ($return_type =~ /\*/ || defined($pointer_types{$return_type}))
+			if ($return_type =~ /\*/ || defined($pointer_types{$return_type}) || $return_type eq 'GLhandleARB')
 			{
-				$ret .= '(int32)(intptr_t)';
+				$ret .= '(uint32)(uintptr_t)';
 			}
 		}
 		my $argcount = $#$params + 1;
@@ -1152,6 +1152,11 @@ sub gen_dispatch() {
 				{
 					print "getStackedParameter64($paramnum)";
 					$paramnum += 2;
+				} elsif ($type eq 'GLhandleARB')
+				{
+					# legacy MacOSX headers declare GLhandleARB as void *
+					print "(GLhandleARB)getStackedParameter($paramnum)";
+					++$paramnum;
 				} else
 				{
 					print "getStackedParameter($paramnum)";

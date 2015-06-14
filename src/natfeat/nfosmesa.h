@@ -26,7 +26,9 @@
 #include "SDL_compat.h"
 #include <SDL_types.h>
 #include "SDL_opengl_wrapper.h"
+#ifdef HAVE_GL_OSMESA_H
 #include <GL/osmesa.h>
+#endif
 #include "../../atari/nfosmesa/gltypes.h"
 
 #include "nf_base.h"

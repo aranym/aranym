@@ -137,8 +137,8 @@
 			break;
 		case NFOSMESA_GLATTACHOBJECTARB:
 			nfglAttachObjectARB(
-				getStackedParameter(0) /* GLhandleARB containerObj */,
-				getStackedParameter(1) /* GLhandleARB obj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB containerObj */,
+				(GLhandleARB)getStackedParameter(1) /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLATTACHSHADER:
 			nfglAttachShader(
@@ -221,7 +221,7 @@
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATIONARB:
 			nfglBindAttribLocationARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
 				(const GLcharARB *)getStackedPointer(2) /* const GLcharARB *name */);
 			break;
@@ -927,7 +927,7 @@
 			break;
 		case NFOSMESA_GLCLEARDEBUGLOGMESA:
 			nfglClearDebugLogMESA(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum logType */,
 				getStackedParameter(2) /* GLenum shaderType */);
 			break;
@@ -1553,7 +1553,7 @@
 			break;
 		case NFOSMESA_GLCOMPILESHADERARB:
 			nfglCompileShaderARB(
-				getStackedParameter(0) /* GLhandleARB shaderObj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB shaderObj */);
 			break;
 		case NFOSMESA_GLCOMPILESHADERINCLUDEARB:
 			nfglCompileShaderIncludeARB(
@@ -2324,7 +2324,7 @@
 				getStackedParameter(1) /* GLenum coverMode */);
 			break;
 		case NFOSMESA_GLCREATEDEBUGOBJECTMESA:
-			ret = nfglCreateDebugObjectMESA();
+			ret = (uint32)(uintptr_t)nfglCreateDebugObjectMESA();
 			break;
 		case NFOSMESA_GLCREATEPERFQUERYINTEL:
 			nfglCreatePerfQueryINTEL(
@@ -2335,14 +2335,14 @@
 			ret = nfglCreateProgram();
 			break;
 		case NFOSMESA_GLCREATEPROGRAMOBJECTARB:
-			ret = nfglCreateProgramObjectARB();
+			ret = (uint32)(uintptr_t)nfglCreateProgramObjectARB();
 			break;
 		case NFOSMESA_GLCREATESHADER:
 			ret = nfglCreateShader(
 				getStackedParameter(0) /* GLenum type */);
 			break;
 		case NFOSMESA_GLCREATESHADEROBJECTARB:
-			ret = nfglCreateShaderObjectARB(
+			ret = (uint32)(uintptr_t)nfglCreateShaderObjectARB(
 				getStackedParameter(0) /* GLenum shaderType */);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMEXT:
@@ -2358,7 +2358,7 @@
 			break;
 #if 0
 		case NFOSMESA_GLCREATESYNCFROMCLEVENTARB:
-			ret = (int32)(intptr_t)nfglCreateSyncFromCLeventARB(
+			ret = (uint32)(uintptr_t)nfglCreateSyncFromCLeventARB(
 				(struct _cl_context *)getStackedPointer(0) /* struct _cl_context *context */,
 				(struct _cl_event *)getStackedPointer(1) /* struct _cl_event *event */,
 				getStackedParameter(2) /* GLbitfield flags */);
@@ -2550,7 +2550,7 @@
 			break;
 		case NFOSMESA_GLDELETEOBJECTARB:
 			nfglDeleteObjectARB(
-				getStackedParameter(0) /* GLhandleARB obj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLDELETEOBJECTBUFFERATI:
 			nfglDeleteObjectBufferATI(
@@ -2718,8 +2718,8 @@
 			break;
 		case NFOSMESA_GLDETACHOBJECTARB:
 			nfglDetachObjectARB(
-				getStackedParameter(0) /* GLhandleARB containerObj */,
-				getStackedParameter(1) /* GLhandleARB attachedObj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB containerObj */,
+				(GLhandleARB)getStackedParameter(1) /* GLhandleARB attachedObj */);
 			break;
 		case NFOSMESA_GLDETACHSHADER:
 			nfglDetachShader(
@@ -3324,7 +3324,7 @@
 			break;
 #if 0
 		case NFOSMESA_GLFENCESYNC:
-			ret = (int32)(intptr_t)nfglFenceSync(
+			ret = (uint32)(uintptr_t)nfglFenceSync(
 				getStackedParameter(0) /* GLenum condition */,
 				getStackedParameter(1) /* GLbitfield flags */);
 			break;
@@ -3946,7 +3946,7 @@
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIBARB:
 			nfglGetActiveAttribARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei maxLength */,
 				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
@@ -3992,7 +3992,7 @@
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMARB:
 			nfglGetActiveUniformARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLuint index */,
 				getStackedParameter(2) /* GLsizei maxLength */,
 				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
@@ -4060,7 +4060,7 @@
 			break;
 		case NFOSMESA_GLGETATTACHEDOBJECTSARB:
 			nfglGetAttachedObjectsARB(
-				getStackedParameter(0) /* GLhandleARB containerObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB containerObj */,
 				getStackedParameter(1) /* GLsizei maxCount */,
 				(GLsizei *)getStackedPointer(2) /* GLsizei *count */,
 				(GLhandleARB *)getStackedPointer(3) /* GLhandleARB *obj */);
@@ -4079,7 +4079,7 @@
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATIONARB:
 			ret = nfglGetAttribLocationARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				(const GLcharARB *)getStackedPointer(1) /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETBOOLEANINDEXEDVEXT:
@@ -4329,13 +4329,13 @@
 			break;
 		case NFOSMESA_GLGETDEBUGLOGLENGTHMESA:
 			ret = nfglGetDebugLogLengthMESA(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum logType */,
 				getStackedParameter(2) /* GLenum shaderType */);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGMESA:
 			nfglGetDebugLogMESA(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum logType */,
 				getStackedParameter(2) /* GLenum shaderType */,
 				getStackedParameter(3) /* GLsizei maxLength */,
@@ -4528,7 +4528,7 @@
 			ret = nfglGetGraphicsResetStatusARB();
 			break;
 		case NFOSMESA_GLGETHANDLEARB:
-			ret = nfglGetHandleARB(
+			ret = (uint32)(uintptr_t)nfglGetHandleARB(
 				getStackedParameter(0) /* GLenum pname */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAM:
@@ -4607,7 +4607,7 @@
 			break;
 		case NFOSMESA_GLGETINFOLOGARB:
 			nfglGetInfoLogARB(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLsizei maxLength */,
 				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
 				(GLcharARB *)getStackedPointer(3) /* GLcharARB *infoLog */);
@@ -5090,7 +5090,7 @@
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERFVARB:
 			nfglGetObjectParameterfvARB(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum pname */,
 				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
@@ -5103,7 +5103,7 @@
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVARB:
 			nfglGetObjectParameterivARB(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLenum pname */,
 				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
@@ -5706,7 +5706,7 @@
 			break;
 		case NFOSMESA_GLGETSHADERSOURCEARB:
 			nfglGetShaderSourceARB(
-				getStackedParameter(0) /* GLhandleARB obj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB obj */,
 				getStackedParameter(1) /* GLsizei maxLength */,
 				(GLsizei *)getStackedPointer(2) /* GLsizei *length */,
 				(GLcharARB *)getStackedPointer(3) /* GLcharARB *source */);
@@ -5724,13 +5724,13 @@
 			break;
 #if 0
 		case NFOSMESA_GLGETSTRING:
-			ret = (int32)(intptr_t)nfglGetString(
+			ret = (uint32)(uintptr_t)nfglGetString(
 				getStackedParameter(0) /* GLenum name */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLGETSTRINGI:
-			ret = (int32)(intptr_t)nfglGetStringi(
+			ret = (uint32)(uintptr_t)nfglGetStringi(
 				getStackedParameter(0) /* GLenum name */,
 				getStackedParameter(1) /* GLuint index */);
 			break;
@@ -6018,7 +6018,7 @@
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATIONARB:
 			ret = nfglGetUniformLocationARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				(const GLcharARB *)getStackedPointer(1) /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMOFFSETEXT:
@@ -6046,7 +6046,7 @@
 			break;
 		case NFOSMESA_GLGETUNIFORMFVARB:
 			nfglGetUniformfvARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLint location */,
 				(GLfloat *)getStackedPointer(2) /* GLfloat *params */);
 			break;
@@ -6064,7 +6064,7 @@
 			break;
 		case NFOSMESA_GLGETUNIFORMIVARB:
 			nfglGetUniformivARB(
-				getStackedParameter(0) /* GLhandleARB programObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */,
 				getStackedParameter(1) /* GLint location */,
 				(GLint *)getStackedPointer(2) /* GLint *params */);
 			break;
@@ -6562,7 +6562,7 @@
 			break;
 #if 0
 		case NFOSMESA_GLIMPORTSYNCEXT:
-			ret = (int32)(intptr_t)nfglImportSyncEXT(
+			ret = (uint32)(uintptr_t)nfglImportSyncEXT(
 				getStackedParameter(0) /* GLenum external_sync_type */,
 				getStackedParameter(1) /* GLintptr external_sync */,
 				getStackedParameter(2) /* GLbitfield flags */);
@@ -7009,7 +7009,7 @@
 			break;
 		case NFOSMESA_GLLINKPROGRAMARB:
 			nfglLinkProgramARB(
-				getStackedParameter(0) /* GLhandleARB programObj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLLISTBASE:
 			nfglListBase(
@@ -7218,21 +7218,21 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPBUFFER:
-			ret = (int32)(intptr_t)nfglMapBuffer(
+			ret = (uint32)(uintptr_t)nfglMapBuffer(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum access */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLMAPBUFFERARB:
-			ret = (int32)(intptr_t)nfglMapBufferARB(
+			ret = (uint32)(uintptr_t)nfglMapBufferARB(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum access */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLMAPBUFFERRANGE:
-			ret = (int32)(intptr_t)nfglMapBufferRange(
+			ret = (uint32)(uintptr_t)nfglMapBufferRange(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr length */,
@@ -7297,14 +7297,14 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFEREXT:
-			ret = (int32)(intptr_t)nfglMapNamedBufferEXT(
+			ret = (uint32)(uintptr_t)nfglMapNamedBufferEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLenum access */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFERRANGEEXT:
-			ret = (int32)(intptr_t)nfglMapNamedBufferRangeEXT(
+			ret = (uint32)(uintptr_t)nfglMapNamedBufferRangeEXT(
 				getStackedParameter(0) /* GLuint buffer */,
 				getStackedParameter(1) /* GLintptr offset */,
 				getStackedParameter(2) /* GLsizeiptr length */,
@@ -7313,7 +7313,7 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPOBJECTBUFFERATI:
-			ret = (int32)(intptr_t)nfglMapObjectBufferATI(
+			ret = (uint32)(uintptr_t)nfglMapObjectBufferATI(
 				getStackedParameter(0) /* GLuint buffer */);
 			break;
 #endif
@@ -7331,7 +7331,7 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPTEXTURE2DINTEL:
-			ret = (int32)(intptr_t)nfglMapTexture2DINTEL(
+			ret = (uint32)(uintptr_t)nfglMapTexture2DINTEL(
 				getStackedParameter(0) /* GLuint texture */,
 				getStackedParameter(1) /* GLint level */,
 				getStackedParameter(2) /* GLbitfield access */,
@@ -11729,7 +11729,7 @@
 			break;
 		case NFOSMESA_GLSHADERSOURCEARB:
 			nfglShaderSourceARB(
-				getStackedParameter(0) /* GLhandleARB shaderObj */,
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB shaderObj */,
 				getStackedParameter(1) /* GLsizei count */,
 				(const GLcharARB * *)getStackedPointer(2) /* const GLcharARB * *string */,
 				(const GLint *)getStackedPointer(3) /* const GLint *length */);
@@ -13983,7 +13983,7 @@
 			break;
 		case NFOSMESA_GLUSEPROGRAMOBJECTARB:
 			nfglUseProgramObjectARB(
-				getStackedParameter(0) /* GLhandleARB programObj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLUSEPROGRAMSTAGES:
 			nfglUseProgramStages(
@@ -14055,7 +14055,7 @@
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMARB:
 			nfglValidateProgramARB(
-				getStackedParameter(0) /* GLhandleARB programObj */);
+				(GLhandleARB)getStackedParameter(0) /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMPIPELINE:
 			nfglValidateProgramPipeline(
