@@ -39,11 +39,11 @@
 
 static PROC const LibFunc[]={ 
 #if WITH_PROTOTYPE_STRINGS
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, #type " " #gl #name #params, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, #type " OSMesa" #name #params, OSMesa ## name },
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #export, #type " " #gl #name #params, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { #export, #type " OSMesa" #name #params, OSMesa ## name },
 #else
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #gl #export, 0, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { "OSMesa" #export, 0, OSMesa ## name },
+#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #export, 0, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { #export, 0, OSMesa ## name },
 #endif
 	#include "glfuncs.h"		/* 12 OSMesa + 2664 GL functions */
 	#include "link-oldmesa.h"	/* 5 + 8 functions */

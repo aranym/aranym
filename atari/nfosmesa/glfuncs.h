@@ -513,7 +513,7 @@ GL_PROC(void, gl, ClearColorxOES, glClearColorxOES, CLEARCOLORXOES, (GLfixed red
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClearDebugLogMESA, glClearDebugLogMESA, CLEARDEBUGLOGMESA, (GLhandleARB obj, GLenum logType, GLenum shaderType), &obj, GL_void_return)
 #endif
-GL_PROC(void, gl, ClearDepth, glClearDepth, CLEARDEPTH, (GLclampd depth), &depth, GL_void_return)
+GL_PROC(void, gl, ClearDepth, glClearDepthd, CLEARDEPTH, (GLclampd depth), &depth, GL_void_return)
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClearDepthdNV, glClearDepthdNV, CLEARDEPTHDNV, (GLdouble depth), &depth, GL_void_return)
 #endif
@@ -1790,7 +1790,7 @@ GL_PROC(void, gl, FramebufferTextureLayerEXT, glFramebufferTextureLayerEXT, FRAM
 GL_PROC(void, gl, FreeObjectBufferATI, glFreeObjectBufferATI, FREEOBJECTBUFFERATI, (GLuint buffer), &buffer, GL_void_return)
 #endif
 GL_PROC(void, gl, FrontFace, glFrontFace, FRONTFACE, (GLenum mode), &mode, GL_void_return)
-GL_PROC(void, gl, Frustum, glFrustum, FRUSTUM, (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar), &left, GL_void_return)
+GL_PROC(void, gl, Frustum, glFrustumd, FRUSTUM, (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar), &left, GL_void_return)
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FrustumfOES, glFrustumfOES, FRUSTUMFOES, (GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f), &l, GL_void_return)
 #endif
@@ -4285,7 +4285,7 @@ GL_PROC(GLenum, gl, ObjectPurgeableAPPLE, glObjectPurgeableAPPLE, OBJECTPURGEABL
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLenum, gl, ObjectUnpurgeableAPPLE, glObjectUnpurgeableAPPLE, OBJECTUNPURGEABLEAPPLE, (GLenum objectType, GLuint name, GLenum option), &objectType, return (GLenum))
 #endif
-GL_PROC(void, gl, Ortho, glOrtho, ORTHO, (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar), &left, GL_void_return)
+GL_PROC(void, gl, Ortho, glOrthod, ORTHO, (GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar), &left, GL_void_return)
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, OrthofOES, glOrthofOES, ORTHOFOES, (GLfloat l, GLfloat r, GLfloat b, GLfloat t, GLfloat n, GLfloat f), &l, GL_void_return)
 #endif
@@ -7895,7 +7895,7 @@ GL_PROC(void, gl, WindowPos4svMESA, glWindowPos4svMESA, WINDOWPOS4SVMESA, (const
 GL_PROC(void, gl, WriteMaskEXT, glWriteMaskEXT, WRITEMASKEXT, (GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW), &res, GL_void_return)
 #endif
 
-GLU_PROC(void, glu, LookAt, gluLookAt, LOOKAT, (GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX, GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ), &eyeX, GL_void_return)
+GLU_PROC(void, glu, LookAt, gluLookAtd, LOOKAT, (GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX, GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ), &eyeX, GL_void_return)
 
 /* Functions generated: 12 OSMesa + 2664 GL + 1 GLU */
 

@@ -1,4 +1,8 @@
 2015/06/17 - Thorsten
+nfosmesa: fix some export names
+
+
+2015/06/17 - Thorsten
 nfosmesa: fix wrong parameter in glGetStringi
 
 
