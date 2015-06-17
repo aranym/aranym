@@ -13019,10 +13019,10 @@ void OSMesaDriver::nfglTexImage4DSGIS(GLenum target, GLint level, GLenum interna
 	fn.glTexImage4DSGIS(target, level, internalformat, width, height, depth, size4d, border, format, type, pixels);
 }
 
-void OSMesaDriver::nfglTexPageCommitmentARB(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident)
+void OSMesaDriver::nfglTexPageCommitmentARB(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit)
 {
-	D(bug("nfosmesa: glTexPageCommitmentARB(0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, zoffset, width, height, depth, resident));
-	fn.glTexPageCommitmentARB(target, level, xoffset, yoffset, zoffset, width, height, depth, resident);
+	D(bug("nfosmesa: glTexPageCommitmentARB(0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, zoffset, width, height, depth, commit));
+	fn.glTexPageCommitmentARB(target, level, xoffset, yoffset, zoffset, width, height, depth, commit);
 }
 
 void OSMesaDriver::nfglTexParameterIiv(GLenum target, GLenum pname, const GLint *params)
@@ -13286,10 +13286,10 @@ void OSMesaDriver::nfglTextureNormalEXT(GLenum mode)
 	fn.glTextureNormalEXT(mode);
 }
 
-void OSMesaDriver::nfglTexturePageCommitmentEXT(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident)
+void OSMesaDriver::nfglTexturePageCommitmentEXT(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit)
 {
-	D(bug("nfosmesa: glTexturePageCommitmentEXT(%u, %d, %d, %d, %d, %d, %d, %d, %d)", texture, level, xoffset, yoffset, zoffset, width, height, depth, resident));
-	fn.glTexturePageCommitmentEXT(texture, level, xoffset, yoffset, zoffset, width, height, depth, resident);
+	D(bug("nfosmesa: glTexturePageCommitmentEXT(%u, %d, %d, %d, %d, %d, %d, %d, %d)", texture, level, xoffset, yoffset, zoffset, width, height, depth, commit));
+	fn.glTexturePageCommitmentEXT(texture, level, xoffset, yoffset, zoffset, width, height, depth, commit);
 }
 
 void OSMesaDriver::nfglTextureParameterIivEXT(GLuint texture, GLenum target, GLenum pname, const GLint *params)
@@ -13452,9 +13452,9 @@ void OSMesaDriver::nfglTrackMatrixNV(GLenum target, GLuint address, GLenum matri
 	fn.glTrackMatrixNV(target, address, matrix, transform);
 }
 
-void OSMesaDriver::nfglTransformFeedbackAttribsNV(GLuint count, const GLint *attribs, GLenum bufferMode)
+void OSMesaDriver::nfglTransformFeedbackAttribsNV(GLsizei count, const GLint *attribs, GLenum bufferMode)
 {
-	D(bug("nfosmesa: glTransformFeedbackAttribsNV(%u, %p, 0x%x)", count, attribs, bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackAttribsNV(%d, %p, 0x%x)", count, attribs, bufferMode));
 	/* TODO: NFOSMESA_GLTRANSFORMFEEDBACKATTRIBSNV may need conversion */
 	fn.glTransformFeedbackAttribsNV(count, attribs, bufferMode);
 }
@@ -14387,10 +14387,10 @@ void OSMesaDriver::nfglVariantusvEXT(GLuint id, const GLushort *addr)
 	fn.glVariantusvEXT(id, addr);
 }
 
-void OSMesaDriver::nfglVertex2bOES(GLbyte32 x)
+void OSMesaDriver::nfglVertex2bOES(GLbyte32 x, GLbyte32 y)
 {
-	D(bug("nfosmesa: glVertex2bOES(%d)", x));
-	fn.glVertex2bOES(x);
+	D(bug("nfosmesa: glVertex2bOES(%d, %d)", x, y));
+	fn.glVertex2bOES(x, y);
 }
 
 void OSMesaDriver::nfglVertex2bvOES(const GLbyte *coords)
@@ -14472,10 +14472,10 @@ void OSMesaDriver::nfglVertex2xvOES(const GLfixed *coords)
 	fn.glVertex2xvOES(coords);
 }
 
-void OSMesaDriver::nfglVertex3bOES(GLbyte32 x, GLbyte32 y)
+void OSMesaDriver::nfglVertex3bOES(GLbyte32 x, GLbyte32 y, GLbyte32 z)
 {
-	D(bug("nfosmesa: glVertex3bOES(%d, %d)", x, y));
-	fn.glVertex3bOES(x, y);
+	D(bug("nfosmesa: glVertex3bOES(%d, %d, %d)", x, y, z));
+	fn.glVertex3bOES(x, y, z);
 }
 
 void OSMesaDriver::nfglVertex3bvOES(const GLbyte *coords)
@@ -14557,10 +14557,10 @@ void OSMesaDriver::nfglVertex3xvOES(const GLfixed *coords)
 	fn.glVertex3xvOES(coords);
 }
 
-void OSMesaDriver::nfglVertex4bOES(GLbyte32 x, GLbyte32 y, GLbyte32 z)
+void OSMesaDriver::nfglVertex4bOES(GLbyte32 x, GLbyte32 y, GLbyte32 z, GLbyte32 w)
 {
-	D(bug("nfosmesa: glVertex4bOES(%d, %d, %d)", x, y, z));
-	fn.glVertex4bOES(x, y, z);
+	D(bug("nfosmesa: glVertex4bOES(%d, %d, %d, %d)", x, y, z, w));
+	fn.glVertex4bOES(x, y, z, w);
 }
 
 void OSMesaDriver::nfglVertex4bvOES(const GLbyte *coords)

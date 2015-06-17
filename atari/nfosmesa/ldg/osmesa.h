@@ -47,7 +47,7 @@ extern "C" {
 #endif
 
 #ifndef APIENTRY
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 #define APIENTRY __stdcall
 #elif defined(__PUREC__)
 #define APIENTRY __CDECL
@@ -3197,7 +3197,7 @@ struct _gl_osmesa {
 	void APIENTRY (*TexImage3DMultisample)(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations);
 	void APIENTRY (*TexImage3DMultisampleCoverageNV)(GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations);
 	void APIENTRY (*TexImage4DSGIS)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLint border, GLenum format, GLenum type, const void *pixels);
-	void APIENTRY (*TexPageCommitmentARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident);
+	void APIENTRY (*TexPageCommitmentARB)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit);
 	void APIENTRY (*TexParameterIiv)(GLenum target, GLenum pname, const GLint *params);
 	void APIENTRY (*TexParameterIivEXT)(GLenum target, GLenum pname, const GLint *params);
 	void APIENTRY (*TexParameterIuiv)(GLenum target, GLenum pname, const GLuint *params);
@@ -3239,7 +3239,7 @@ struct _gl_osmesa {
 	void APIENTRY (*TextureLightEXT)(GLenum pname);
 	void APIENTRY (*TextureMaterialEXT)(GLenum face, GLenum mode);
 	void APIENTRY (*TextureNormalEXT)(GLenum mode);
-	void APIENTRY (*TexturePageCommitmentEXT)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident);
+	void APIENTRY (*TexturePageCommitmentEXT)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit);
 	void APIENTRY (*TextureParameterIivEXT)(GLuint texture, GLenum target, GLenum pname, const GLint *params);
 	void APIENTRY (*TextureParameterIuivEXT)(GLuint texture, GLenum target, GLenum pname, const GLuint *params);
 	void APIENTRY (*TextureParameterfEXT)(GLuint texture, GLenum target, GLenum pname, GLfloat param);
@@ -3265,7 +3265,7 @@ struct _gl_osmesa {
 	void APIENTRY (*TracePointerRangeMESA)(const GLvoid *first, const GLvoid *last, const GLubyte *comment);
 	void APIENTRY (*TraceTextureMESA)(GLuint name, const GLubyte *comment);
 	void APIENTRY (*TrackMatrixNV)(GLenum target, GLuint address, GLenum matrix, GLenum transform);
-	void APIENTRY (*TransformFeedbackAttribsNV)(GLuint count, const GLint *attribs, GLenum bufferMode);
+	void APIENTRY (*TransformFeedbackAttribsNV)(GLsizei count, const GLint *attribs, GLenum bufferMode);
 	void APIENTRY (*TransformFeedbackStreamAttribsNV)(GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode);
 	void APIENTRY (*TransformFeedbackVaryings)(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode);
 	void APIENTRY (*TransformFeedbackVaryingsEXT)(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode);
@@ -3410,7 +3410,7 @@ struct _gl_osmesa {
 	void APIENTRY (*VariantubvEXT)(GLuint id, const GLubyte *addr);
 	void APIENTRY (*VariantuivEXT)(GLuint id, const GLuint *addr);
 	void APIENTRY (*VariantusvEXT)(GLuint id, const GLushort *addr);
-	void APIENTRY (*Vertex2bOES)(GLbyte32 x);
+	void APIENTRY (*Vertex2bOES)(GLbyte32 x, GLbyte32 y);
 	void APIENTRY (*Vertex2bvOES)(const GLbyte *coords);
 	void APIENTRY (*Vertex2d)(GLdouble x, GLdouble y);
 	void APIENTRY (*Vertex2dv)(const GLdouble *v);
@@ -3424,7 +3424,7 @@ struct _gl_osmesa {
 	void APIENTRY (*Vertex2sv)(const GLshort *v);
 	void APIENTRY (*Vertex2xOES)(GLfixed x);
 	void APIENTRY (*Vertex2xvOES)(const GLfixed *coords);
-	void APIENTRY (*Vertex3bOES)(GLbyte32 x, GLbyte32 y);
+	void APIENTRY (*Vertex3bOES)(GLbyte32 x, GLbyte32 y, GLbyte32 z);
 	void APIENTRY (*Vertex3bvOES)(const GLbyte *coords);
 	void APIENTRY (*Vertex3d)(GLdouble x, GLdouble y, GLdouble z);
 	void APIENTRY (*Vertex3dv)(const GLdouble *v);
@@ -3438,7 +3438,7 @@ struct _gl_osmesa {
 	void APIENTRY (*Vertex3sv)(const GLshort *v);
 	void APIENTRY (*Vertex3xOES)(GLfixed x, GLfixed y);
 	void APIENTRY (*Vertex3xvOES)(const GLfixed *coords);
-	void APIENTRY (*Vertex4bOES)(GLbyte32 x, GLbyte32 y, GLbyte32 z);
+	void APIENTRY (*Vertex4bOES)(GLbyte32 x, GLbyte32 y, GLbyte32 z, GLbyte32 w);
 	void APIENTRY (*Vertex4bvOES)(const GLbyte *coords);
 	void APIENTRY (*Vertex4d)(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
 	void APIENTRY (*Vertex4dv)(const GLdouble *v);

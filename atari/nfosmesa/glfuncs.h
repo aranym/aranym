@@ -6024,7 +6024,7 @@ GL_PROC(void, gl, TexImage3DMultisampleCoverageNV, glTexImage3DMultisampleCovera
 GL_PROC(void, gl, TexImage4DSGIS, glTexImage4DSGIS, TEXIMAGE4DSGIS, (GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLint border, GLenum format, GLenum type, const void *pixels), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, TexPageCommitmentARB, glTexPageCommitmentARB, TEXPAGECOMMITMENTARB, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident), &target, GL_void_return)
+GL_PROC(void, gl, TexPageCommitmentARB, glTexPageCommitmentARB, TEXPAGECOMMITMENTARB, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TexParameterIiv, glTexParameterIiv, TEXPARAMETERIIV, (GLenum target, GLenum pname, const GLint *params), &target, GL_void_return)
@@ -6148,7 +6148,7 @@ GL_PROC(void, gl, TextureMaterialEXT, glTextureMaterialEXT, TEXTUREMATERIALEXT, 
 GL_PROC(void, gl, TextureNormalEXT, glTextureNormalEXT, TEXTURENORMALEXT, (GLenum mode), &mode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, TexturePageCommitmentEXT, glTexturePageCommitmentEXT, TEXTUREPAGECOMMITMENTEXT, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident), &texture, GL_void_return)
+GL_PROC(void, gl, TexturePageCommitmentEXT, glTexturePageCommitmentEXT, TEXTUREPAGECOMMITMENTEXT, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterIivEXT, glTextureParameterIivEXT, TEXTUREPARAMETERIIVEXT, (GLuint texture, GLenum target, GLenum pname, const GLint *params), &texture, GL_void_return)
@@ -6226,7 +6226,7 @@ GL_PROC(void, gl, TraceTextureMESA, glTraceTextureMESA, TRACETEXTUREMESA, (GLuin
 GL_PROC(void, gl, TrackMatrixNV, glTrackMatrixNV, TRACKMATRIXNV, (GLenum target, GLuint address, GLenum matrix, GLenum transform), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, TransformFeedbackAttribsNV, glTransformFeedbackAttribsNV, TRANSFORMFEEDBACKATTRIBSNV, (GLuint count, const GLint *attribs, GLenum bufferMode), &count, GL_void_return)
+GL_PROC(void, gl, TransformFeedbackAttribsNV, glTransformFeedbackAttribsNV, TRANSFORMFEEDBACKATTRIBSNV, (GLsizei count, const GLint *attribs, GLenum bufferMode), &count, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TransformFeedbackStreamAttribsNV, glTransformFeedbackStreamAttribsNV, TRANSFORMFEEDBACKSTREAMATTRIBSNV, (GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode), &count, GL_void_return)
@@ -6659,7 +6659,7 @@ GL_PROC(void, gl, VariantuivEXT, glVariantuivEXT, VARIANTUIVEXT, (GLuint id, con
 GL_PROC(void, gl, VariantusvEXT, glVariantusvEXT, VARIANTUSVEXT, (GLuint id, const GLushort *addr), &id, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, Vertex2bOES, glVertex2bOES, VERTEX2BOES, (GLbyte32 x), &x, GL_void_return)
+GL_PROC(void, gl, Vertex2bOES, glVertex2bOES, VERTEX2BOES, (GLbyte32 x, GLbyte32 y), &x, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, Vertex2bvOES, glVertex2bvOES, VERTEX2BVOES, (const GLbyte *coords), &coords, GL_void_return)
@@ -6699,7 +6699,7 @@ GL_PROC(void, gl, Vertex2xOES, glVertex2xOES, VERTEX2XOES, (GLfixed x), &x, GL_v
 GL_PROC(void, gl, Vertex2xvOES, glVertex2xvOES, VERTEX2XVOES, (const GLfixed *coords), &coords, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, Vertex3bOES, glVertex3bOES, VERTEX3BOES, (GLbyte32 x, GLbyte32 y), &x, GL_void_return)
+GL_PROC(void, gl, Vertex3bOES, glVertex3bOES, VERTEX3BOES, (GLbyte32 x, GLbyte32 y, GLbyte32 z), &x, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, Vertex3bvOES, glVertex3bvOES, VERTEX3BVOES, (const GLbyte *coords), &coords, GL_void_return)
@@ -6737,7 +6737,7 @@ GL_PROC(void, gl, Vertex3xOES, glVertex3xOES, VERTEX3XOES, (GLfixed x, GLfixed y
 GL_PROC(void, gl, Vertex3xvOES, glVertex3xvOES, VERTEX3XVOES, (const GLfixed *coords), &coords, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, Vertex4bOES, glVertex4bOES, VERTEX4BOES, (GLbyte32 x, GLbyte32 y, GLbyte32 z), &x, GL_void_return)
+GL_PROC(void, gl, Vertex4bOES, glVertex4bOES, VERTEX4BOES, (GLbyte32 x, GLbyte32 y, GLbyte32 z, GLbyte32 w), &x, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, Vertex4bvOES, glVertex4bvOES, VERTEX4BVOES, (const GLbyte *coords), &coords, GL_void_return)

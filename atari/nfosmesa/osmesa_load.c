@@ -4136,7 +4136,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.TexImage3DMultisampleCoverageNV);
 	gl.TexImage4DSGIS = (void APIENTRY (*)(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLint border, GLenum format, GLenum type, const void *pixels)) ldg_find("glTexImage4DSGIS", lib);
 	GL_CHECK(gl.TexImage4DSGIS);
-	gl.TexPageCommitmentARB = (void APIENTRY (*)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident)) ldg_find("glTexPageCommitmentARB", lib);
+	gl.TexPageCommitmentARB = (void APIENTRY (*)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit)) ldg_find("glTexPageCommitmentARB", lib);
 	GL_CHECK(gl.TexPageCommitmentARB);
 	gl.TexParameterIiv = (void APIENTRY (*)(GLenum target, GLenum pname, const GLint *params)) ldg_find("glTexParameterIiv", lib);
 	GL_CHECK(gl.TexParameterIiv);
@@ -4220,7 +4220,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.TextureMaterialEXT);
 	gl.TextureNormalEXT = (void APIENTRY (*)(GLenum mode)) ldg_find("glTextureNormalEXT", lib);
 	GL_CHECK(gl.TextureNormalEXT);
-	gl.TexturePageCommitmentEXT = (void APIENTRY (*)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 resident)) ldg_find("glTexturePageCommitmentEXT", lib);
+	gl.TexturePageCommitmentEXT = (void APIENTRY (*)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit)) ldg_find("glTexturePageCommitmentEXT", lib);
 	GL_CHECK(gl.TexturePageCommitmentEXT);
 	gl.TextureParameterIivEXT = (void APIENTRY (*)(GLuint texture, GLenum target, GLenum pname, const GLint *params)) ldg_find("glTextureParameterIivEXT", lib);
 	GL_CHECK(gl.TextureParameterIivEXT);
@@ -4272,7 +4272,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.TraceTextureMESA);
 	gl.TrackMatrixNV = (void APIENTRY (*)(GLenum target, GLuint address, GLenum matrix, GLenum transform)) ldg_find("glTrackMatrixNV", lib);
 	GL_CHECK(gl.TrackMatrixNV);
-	gl.TransformFeedbackAttribsNV = (void APIENTRY (*)(GLuint count, const GLint *attribs, GLenum bufferMode)) ldg_find("glTransformFeedbackAttribsNV", lib);
+	gl.TransformFeedbackAttribsNV = (void APIENTRY (*)(GLsizei count, const GLint *attribs, GLenum bufferMode)) ldg_find("glTransformFeedbackAttribsNV", lib);
 	GL_CHECK(gl.TransformFeedbackAttribsNV);
 	gl.TransformFeedbackStreamAttribsNV = (void APIENTRY (*)(GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode)) ldg_find("glTransformFeedbackStreamAttribsNV", lib);
 	GL_CHECK(gl.TransformFeedbackStreamAttribsNV);
@@ -4562,7 +4562,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.VariantuivEXT);
 	gl.VariantusvEXT = (void APIENTRY (*)(GLuint id, const GLushort *addr)) ldg_find("glVariantusvEXT", lib);
 	GL_CHECK(gl.VariantusvEXT);
-	gl.Vertex2bOES = (void APIENTRY (*)(GLbyte32 x)) ldg_find("glVertex2bOES", lib);
+	gl.Vertex2bOES = (void APIENTRY (*)(GLbyte32 x, GLbyte32 y)) ldg_find("glVertex2bOES", lib);
 	GL_CHECK(gl.Vertex2bOES);
 	gl.Vertex2bvOES = (void APIENTRY (*)(const GLbyte *coords)) ldg_find("glVertex2bvOES", lib);
 	GL_CHECK(gl.Vertex2bvOES);
@@ -4590,7 +4590,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.Vertex2xOES);
 	gl.Vertex2xvOES = (void APIENTRY (*)(const GLfixed *coords)) ldg_find("glVertex2xvOES", lib);
 	GL_CHECK(gl.Vertex2xvOES);
-	gl.Vertex3bOES = (void APIENTRY (*)(GLbyte32 x, GLbyte32 y)) ldg_find("glVertex3bOES", lib);
+	gl.Vertex3bOES = (void APIENTRY (*)(GLbyte32 x, GLbyte32 y, GLbyte32 z)) ldg_find("glVertex3bOES", lib);
 	GL_CHECK(gl.Vertex3bOES);
 	gl.Vertex3bvOES = (void APIENTRY (*)(const GLbyte *coords)) ldg_find("glVertex3bvOES", lib);
 	GL_CHECK(gl.Vertex3bvOES);
@@ -4618,7 +4618,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(gl.Vertex3xOES);
 	gl.Vertex3xvOES = (void APIENTRY (*)(const GLfixed *coords)) ldg_find("glVertex3xvOES", lib);
 	GL_CHECK(gl.Vertex3xvOES);
-	gl.Vertex4bOES = (void APIENTRY (*)(GLbyte32 x, GLbyte32 y, GLbyte32 z)) ldg_find("glVertex4bOES", lib);
+	gl.Vertex4bOES = (void APIENTRY (*)(GLbyte32 x, GLbyte32 y, GLbyte32 z, GLbyte32 w)) ldg_find("glVertex4bOES", lib);
 	GL_CHECK(gl.Vertex4bOES);
 	gl.Vertex4bvOES = (void APIENTRY (*)(const GLbyte *coords)) ldg_find("glVertex4bvOES", lib);
 	GL_CHECK(gl.Vertex4bvOES);

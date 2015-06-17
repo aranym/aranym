@@ -12680,7 +12680,7 @@
 				getStackedParameter(5) /* GLsizei width */,
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLsizei depth */,
-				getStackedParameter(8) /* GLboolean32 resident */);
+				getStackedParameter(8) /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIV:
 			nfglTexParameterIiv(
@@ -13036,7 +13036,7 @@
 				getStackedParameter(5) /* GLsizei width */,
 				getStackedParameter(6) /* GLsizei height */,
 				getStackedParameter(7) /* GLsizei depth */,
-				getStackedParameter(8) /* GLboolean32 resident */);
+				getStackedParameter(8) /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIIVEXT:
 			nfglTextureParameterIivEXT(
@@ -13239,7 +13239,7 @@
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKATTRIBSNV:
 			nfglTransformFeedbackAttribsNV(
-				getStackedParameter(0) /* GLuint count */,
+				getStackedParameter(0) /* GLsizei count */,
 				(const GLint *)getStackedPointer(1) /* const GLint *attribs */,
 				getStackedParameter(2) /* GLenum bufferMode */);
 			break;
@@ -14118,7 +14118,8 @@
 			break;
 		case NFOSMESA_GLVERTEX2BOES:
 			nfglVertex2bOES(
-				getStackedParameter(0) /* GLbyte32 x */);
+				getStackedParameter(0) /* GLbyte32 x */,
+				getStackedParameter(1) /* GLbyte32 y */);
 			break;
 		case NFOSMESA_GLVERTEX2BVOES:
 			nfglVertex2bvOES(
@@ -14180,7 +14181,8 @@
 		case NFOSMESA_GLVERTEX3BOES:
 			nfglVertex3bOES(
 				getStackedParameter(0) /* GLbyte32 x */,
-				getStackedParameter(1) /* GLbyte32 y */);
+				getStackedParameter(1) /* GLbyte32 y */,
+				getStackedParameter(2) /* GLbyte32 z */);
 			break;
 		case NFOSMESA_GLVERTEX3BVOES:
 			nfglVertex3bvOES(
@@ -14249,7 +14251,8 @@
 			nfglVertex4bOES(
 				getStackedParameter(0) /* GLbyte32 x */,
 				getStackedParameter(1) /* GLbyte32 y */,
-				getStackedParameter(2) /* GLbyte32 z */);
+				getStackedParameter(2) /* GLbyte32 z */,
+				getStackedParameter(3) /* GLbyte32 w */);
 			break;
 		case NFOSMESA_GLVERTEX4BVOES:
 			nfglVertex4bvOES(
