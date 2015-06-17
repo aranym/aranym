@@ -201,6 +201,7 @@ my %printf_formats = (
 	'GLenum' => '0x%x',
 	'GLbitfield' => '0x%x',
 	'GLfloat' => '%f',
+	'const GLfloat' => '%f',  # used in glClearNamedFramebufferfi
 	'GLclampf' => '%f',
 	'GLdouble' => '%f',
 	'GLclampd' => '%f',
@@ -403,7 +404,7 @@ sub gen_params()
 				$pointer = "";
 				if (!defined($printf_formats{$type}))
 				{
-					&warn("dont know how to printf values of type $type");
+					&warn("$key: dont know how to printf values of type $type");
 					$format = "%d";
 				} else
 				{
@@ -1100,7 +1101,7 @@ sub gen_calls() {
 		if (defined($macros{$function_name})) {
 			print "FN_${uppername}(${args});\n";
 		} else {
-			if ($ent->{any_pointer} == 2)
+			if ($ent->{any_pointer} == 2 && !defined($blacklist{$function_name}))
 			{
 #				&warn("$function_name may need conversion");
 				print "\t/* TODO: NFOSMESA_${uppername} may need conversion */\n";
@@ -1332,7 +1333,7 @@ EOF
 		# hack for old library exporting several functions as taking float arguments
 		$complete_name .= "f" if (defined($floatfuncs{$complete_name}));
 		$export = $gl . $function_name;
-		$export = $floatfuncs{$complete_name} if (defined($floatfuncs{$complete_name}));
+		$export = $floatfuncs{$export} if (defined($floatfuncs{$export}));
 
 		print("#if !defined(TINYGL_ONLY)\n") if (! defined($tinygl{$complete_name}));
 		if ($complete_name eq 'glGetString')
@@ -1845,6 +1846,7 @@ sub gen_tinyldglink() {
 	my $tinygl_count = 0;
 	my $ent;
 	my $prototype;
+	my $prototype_desc;
 	my $return_type;
 	my $function_name;
 	my $complete_name;
@@ -1877,6 +1879,7 @@ sub gen_tinyldglink() {
 		} else {
 			$ret = "return ";
 		}
+		$prototype_desc = $prototype;
 		if ($prototype eq "void")
 		{
 			$prototype = "NOTHING";
@@ -1890,7 +1893,7 @@ sub gen_tinyldglink() {
 		}
 		$glx = "";
 		$glx = "tinygl" if ($complete_name eq "information" || $complete_name eq "swapbuffer" || $complete_name eq "exception_error");
-		print "GL_PROC($return_type, $ret, \"${gl}${function_name}\", ${glx}${complete_name}, \"${return_type} ${complete_name}(${prototype})\", ($prototype), ($args))\n";
+		print "GL_PROC($return_type, $ret, \"${gl}${function_name}\", ${glx}${complete_name}, \"${return_type} ${complete_name}(${prototype_desc})\", ($prototype), ($args))\n";
 		$tinygl_count++;
 	}
 
