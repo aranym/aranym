@@ -123,7 +123,7 @@ const GLubyte* APIENTRY glGetStringi( GLenum name, GLuint index )
 			if (gl_strings[i]) {
 				params[0] = (unsigned long) cur_context;
 				params[1] = (unsigned long) name;
-				params[2] = (unsigned long) name;
+				params[2] = (unsigned long) index;
 				params[3] = (unsigned long) gl_strings[i];
 				(*HostCall_p)(NFOSMESA_PUTGLGETSTRINGI,cur_context,params);
 			} else {

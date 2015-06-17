@@ -1,4 +1,8 @@
 2015/06/17 - Thorsten
+nfosmesa: fix wrong parameter in glGetStringi
+
+
+2015/06/17 - Thorsten
 nfosmesa: cosmetic: fix prototype descriptions compiled into *.ldg
 
 
