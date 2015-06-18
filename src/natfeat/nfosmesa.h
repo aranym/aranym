@@ -44,6 +44,9 @@
 #define	NFOSMESA_INDEX_ARRAY	(1<<3)
 #define	NFOSMESA_EDGEFLAG_ARRAY	(1<<4)
 #define	NFOSMESA_TEXCOORD_ARRAY	(1<<5)
+#define	NFOSMESA_FOGCOORD_ARRAY	(1<<6)
+#define	NFOSMESA_2NDCOLOR_ARRAY	(1<<7)
+#define	NFOSMESA_ELEMENT_ARRAY	(1<<8)
 
 #define ATARI_SIZEOF_DOUBLE ((size_t)8)
 #define ATARI_SIZEOF_FLOAT ((size_t)4)
@@ -73,11 +76,23 @@
 typedef struct {
 	GLint size;
 	GLenum type;
-	GLsizei stride;
+	GLsizei atari_stride, host_stride, defstride;
+	GLsizei basesize;
 	GLsizei count;
-	const GLvoid *pointer;
+	GLsizei converted;
+	const GLvoid *atari_pointer;
+	void *host_pointer;
 	GLint ptrstride;
+	int vendor;
 } vertexarray_t;
+
+typedef struct {
+	GLuint id;
+	GLenum type;
+	GLuint first;
+	GLuint count;
+	void *ptr;
+} fbo_buffer;
 
 typedef struct {
 	OSMesaContext	ctx;
@@ -85,7 +100,26 @@ typedef struct {
 	void *dst_buffer;	/* Atari buffer */
 	GLenum type;
 	GLsizei width, height;
-
+	GLenum render_mode;
+	void *feedback_buffer_host, *feedback_buffer_atari;
+	GLenum feedback_buffer_type;
+	struct {
+		fbo_buffer array;
+		fbo_buffer atomic_counter;
+		fbo_buffer copy_read;
+		fbo_buffer copy_write;
+		fbo_buffer dispatch_indirect;
+		fbo_buffer draw_indirect;
+		fbo_buffer element_array;
+		fbo_buffer pixel_pack;
+		fbo_buffer pixel_unpack;
+		fbo_buffer query;
+		fbo_buffer shader_storage;
+		fbo_buffer texture;
+		fbo_buffer transform_feedback;
+		fbo_buffer uniform;
+	} buffer_bindings;
+	
 	/* conversion needed from srcformat to dstformat ? */
 	SDL_bool conversion;
 	GLenum srcformat, dstformat;
@@ -98,6 +132,9 @@ typedef struct {
 	vertexarray_t	texcoord;
 	vertexarray_t	index;
 	vertexarray_t	edgeflag;
+	vertexarray_t	fogcoord;
+	vertexarray_t	secondary_color;
+	vertexarray_t	element;
 } context_t;
 
 /*--- Class ---*/
@@ -303,11 +340,14 @@ protected:
 		Atari2HostIntArray(size, src, (GLuint *)dest);
 	}
 	
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
 	void *convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
+	void *convertArray(GLsizei count, GLenum type, const GLvoid *pixels);
 	void nfglArrayElementHelper(GLint i);
+	void convertClientArrays(GLsizei count);
+	void convertClientArray(GLsizei count, vertexarray_t &array);
+	void setupClientArray(vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer);
 	void nfglInterleavedArraysHelper(GLenum format, GLsizei stride, const GLvoid *pointer);
-#endif
+	void gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GLuint count);
 	
 	/* OSMesa functions */
 	Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );

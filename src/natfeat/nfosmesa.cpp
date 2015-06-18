@@ -49,7 +49,7 @@
 
 /*--- Defines ---*/
 
-#define EINVFN -32
+#define TOS_ENOSYS -32
 
 #define M(m,row,col)  m[col*4+row]
 
@@ -91,6 +91,87 @@
 #endif
 #ifndef GL_RG
 #define GL_RG                             0x8227
+#endif
+#ifndef GL_CONSTANT_COLOR0_NV
+#define GL_CONSTANT_COLOR0_NV             0x852A
+#endif
+#ifndef GL_CONSTANT_COLOR1_NV
+#define GL_CONSTANT_COLOR1_NV             0x852B
+#endif
+#ifndef GL_CULL_VERTEX_EYE_POSITION_EXT
+#define GL_CULL_VERTEX_EYE_POSITION_EXT   0x81AB
+#endif
+#ifndef GL_CULL_VERTEX_OBJECT_POSITION_EXT
+#define GL_CULL_VERTEX_OBJECT_POSITION_EXT 0x81AC
+#endif
+#ifndef GL_HALF_FLOAT
+#define GL_HALF_FLOAT 0x140B
+#endif
+#ifndef GL_ARRAY_BUFFER
+#define GL_ARRAY_BUFFER                   0x8892
+#endif
+#ifndef GL_ATOMIC_COUNTER_BUFFER
+#define GL_ATOMIC_COUNTER_BUFFER          0x92C0
+#endif
+#ifndef GL_COPY_READ_BUFFER
+#define GL_COPY_READ_BUFFER               0x8F36
+#endif
+#ifndef GL_COPY_WRITE_BUFFER
+#define GL_COPY_WRITE_BUFFER              0x8F37
+#endif
+#ifndef GL_DISPATCH_INDIRECT_BUFFER
+#define GL_DISPATCH_INDIRECT_BUFFER       0x90EE
+#endif
+#ifndef GL_DRAW_INDIRECT_BUFFER
+#define GL_DRAW_INDIRECT_BUFFER           0x8F3F
+#endif
+#ifndef GL_ELEMENT_ARRAY_BUFFER
+#define GL_ELEMENT_ARRAY_BUFFER           0x8893
+#endif
+#ifndef GL_PIXEL_PACK_BUFFER
+#define GL_PIXEL_PACK_BUFFER              0x88EB
+#endif
+#ifndef GL_PIXEL_UNPACK_BUFFER
+#define GL_PIXEL_UNPACK_BUFFER            0x88EC
+#endif
+#ifndef GL_QUERY_BUFFER
+#define GL_QUERY_BUFFER                   0x9192
+#endif
+#ifndef GL_SHADER_STORAGE_BUFFER
+#define GL_SHADER_STORAGE_BUFFER          0x90D2
+#endif
+#ifndef GL_TEXTURE_BUFFER
+#define GL_TEXTURE_BUFFER                 0x8C2A
+#endif
+#ifndef GL_TRANSFORM_FEEDBACK_BUFFER
+#define GL_TRANSFORM_FEEDBACK_BUFFER      0x8C8E
+#endif
+#ifndef GL_UNIFORM_BUFFER
+#define GL_UNIFORM_BUFFER                 0x8A11
+#endif
+#ifndef GL_SECONDARY_COLOR_ARRAY
+#define GL_SECONDARY_COLOR_ARRAY          0x845E
+#endif
+#ifndef GL_FIXED
+#define GL_FIXED                          0x140C
+#endif
+#ifndef GL_FRAGMENT_LIGHT_MODEL_AMBIENT_SGIX
+#define GL_FRAGMENT_LIGHT_MODEL_AMBIENT_SGIX 0x840A
+#endif
+#ifndef GL_TEXTURE_CLIPMAP_CENTER_SGIX
+#define GL_TEXTURE_CLIPMAP_CENTER_SGIX    0x8171
+#endif
+#ifndef GL_TEXTURE_CLIPMAP_OFFSET_SGIX
+#define GL_TEXTURE_CLIPMAP_OFFSET_SGIX    0x8173
+#endif
+#ifndef GL_TEXTURE_CLIPMAP_VIRTUAL_DEPTH_SGIX
+#define GL_TEXTURE_CLIPMAP_VIRTUAL_DEPTH_SGIX 0x8174
+#endif
+#ifndef GL_POST_TEXTURE_FILTER_BIAS_SGIX
+#define GL_POST_TEXTURE_FILTER_BIAS_SGIX  0x8179
+#endif
+#ifndef GL_POST_TEXTURE_FILTER_SCALE_SGIX
+#define GL_POST_TEXTURE_FILTER_SCALE_SGIX 0x817A
 #endif
 
 /*--- Types ---*/
@@ -140,7 +221,9 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 {
 	int32 ret = 0;
 	Uint32 *ctx_ptr;	/* Current parameter list */
-	
+
+#define Host2AtariIntPtr Atari2HostIntPtr
+
 	/* Read parameter on m68k stack */
 #define getStackedParameter(n) SDL_SwapBE32(ctx_ptr[n])
 #define getStackedParameter64(n) SDL_SwapBE64(*((Uint64 *)&ctx_ptr[n]))
@@ -148,7 +231,10 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 #define getStackedDouble(n) Atari2HostDouble(getStackedParameter(n), getStackedParameter(n + 1))
 #define getStackedPointer(n) (ctx_ptr[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
 
-	if (fncode != NFOSMESA_OSMESAPOSTPROCESS)
+	/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
+#define Host2AtariAddr(a) ((void *)((uintptr)(a) - MEMBaseDiff))
+
+	if (fncode != NFOSMESA_OSMESAPOSTPROCESS && fncode != GET_VERSION)
 	{
 		/*
 		 * OSMesaPostprocess() cannot be called after OSMesaMakeCurrent().
@@ -167,13 +253,13 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 			ret = LenglGetString(getStackedParameter(0),getStackedParameter(1));
 			break;
 		case NFOSMESA_PUTGLGETSTRING:
-			PutglGetString(getStackedParameter(0),getStackedParameter(1),(GLubyte *)Atari2HostAddr(getStackedParameter(2)));
+			PutglGetString(getStackedParameter(0),getStackedParameter(1),(GLubyte *)getStackedPointer(2));
 			break;
 		case NFOSMESA_LENGLGETSTRINGI:
-			ret = LenglGetStringi(getStackedParameter(0),getStackedParameter(1),getStackedParameter(1));
+			ret = LenglGetStringi(getStackedParameter(0),getStackedParameter(1),getStackedParameter(2));
 			break;
 		case NFOSMESA_PUTGLGETSTRINGI:
-			PutglGetStringi(getStackedParameter(0),getStackedParameter(1),getStackedParameter(2),(GLubyte *)Atari2HostAddr(getStackedParameter(3)));
+			PutglGetStringi(getStackedParameter(0),getStackedParameter(1),getStackedParameter(2),(GLubyte *)getStackedPointer(3));
 			break;
 
 		case NFOSMESA_OSMESACREATECONTEXT:
@@ -183,7 +269,7 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 			ret = OSMesaCreateContextExt(getStackedParameter(0),getStackedParameter(1),getStackedParameter(2),getStackedParameter(3),getStackedParameter(4));
 			break;
 		case NFOSMESA_OSMESADESTROYCONTEXT:
-			 OSMesaDestroyContext(getStackedParameter(0));
+			OSMesaDestroyContext(getStackedParameter(0));
 			break;
 		case NFOSMESA_OSMESAMAKECURRENT:
 			ret = OSMesaMakeCurrent(getStackedParameter(0),getStackedParameter(1),getStackedParameter(2),getStackedParameter(3),getStackedParameter(4));
@@ -195,31 +281,29 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 			OSMesaPixelStore(getStackedParameter(0),getStackedParameter(1));
 			break;
 		case NFOSMESA_OSMESAGETINTEGERV:
-			OSMesaGetIntegerv(getStackedParameter(0),(GLint *)Atari2HostAddr(getStackedParameter(1)));
+			OSMesaGetIntegerv(getStackedParameter(0), (GLint *)getStackedPointer(1));
 			break;
 		case NFOSMESA_OSMESAGETDEPTHBUFFER:
-			ret = OSMesaGetDepthBuffer(getStackedParameter(0),(GLint *)Atari2HostAddr(getStackedParameter(1)),(GLint *)Atari2HostAddr(getStackedParameter(2)),(GLint *)Atari2HostAddr(getStackedParameter(3)),(void **)Atari2HostAddr(getStackedParameter(4)));
+			ret = OSMesaGetDepthBuffer(getStackedParameter(0), (GLint *)getStackedPointer(1), (GLint *)getStackedPointer(2), (GLint *)getStackedPointer(3), (void **)getStackedPointer(4));
 			break;
 		case NFOSMESA_OSMESAGETCOLORBUFFER:
-			ret = OSMesaGetColorBuffer(getStackedParameter(0),(GLint *)Atari2HostAddr(getStackedParameter(1)),(GLint *)Atari2HostAddr(getStackedParameter(2)),(GLint *)Atari2HostAddr(getStackedParameter(3)),(void **)Atari2HostAddr(getStackedParameter(4)));
+			ret = OSMesaGetColorBuffer(getStackedParameter(0), (GLint *)getStackedPointer(1), (GLint *)getStackedPointer(2), (GLint *)getStackedPointer(3), (void **)getStackedPointer(4));
 			break;
 		case NFOSMESA_OSMESAGETPROCADDRESS:
 			/* FIXME: Native side do not need this */
-			ret = (int32) (0 != OSMesaGetProcAddress((const char *)Atari2HostAddr(getStackedParameter(0))));
+			ret = (int32) (0 != OSMesaGetProcAddress((const char *)getStackedPointer(0)));
 			break;
 		case NFOSMESA_OSMESACOLORCLAMP:
-#if OSMESA_VERSION >= OSMESA_VERSION_NUMBER(6, 4, 2)
-			OSMesaColorClamp(getStackedParameter(0));
-#else
-			ret = EINVFN;
-#endif
+			if (!fn.OSMesaColorClamp || GL_ISNOP(fn.OSMesaColorClamp))
+				ret = TOS_ENOSYS;
+			else
+				OSMesaColorClamp(getStackedParameter(0));
 			break;
 		case NFOSMESA_OSMESAPOSTPROCESS:
-#if OSMESA_VERSION >= OSMESA_VERSION_NUMBER(10, 0, 0)
-			OSMesaPostprocess(getStackedParameter(0), (const char *)Atari2HostAddr(getStackedParameter(1)), getStackedParameter(2));
-#else
-			ret = EINVFN;
-#endif
+			if (!fn.OSMesaPostprocess || GL_ISNOP(fn.OSMesaPostprocess))
+				ret = TOS_ENOSYS;
+			else
+				OSMesaPostprocess(getStackedParameter(0), (const char *)getStackedPointer(1), getStackedParameter(2));
 			break;
 
 		/*
@@ -272,7 +356,7 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 		case NFOSMESA_ENOSYS:
 		default:
 			D(bug("nfosmesa: unimplemented function #%d", fncode));
-			ret = EINVFN;
+			ret = TOS_ENOSYS;
 			break;
 	}
 /*	D(bug("nfosmesa: function returning with 0x%08x", ret));*/
@@ -473,7 +557,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	D(bug("nfosmesa: OSMesaCreateContextExt(0x%x,%d,%d,%d,0x%08x)",format,depthBits,stencilBits,accumBits,sharelist));
 
 	/* TODO: shared contexts */
-	if (sharelist || (num_contexts==MAX_OSMESA_CONTEXTS)) {
+	if (sharelist) {
 		return 0;
 	}
 
@@ -498,8 +582,10 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 		D(bug("nfosmesa: No free context found"));
 		return 0;
 	}
+	memset((void *)&(contexts[j]),0,sizeof(context_t));
+
 	share_ctx = NULL;
-	if (sharelist) {
+	if (sharelist > 0 && sharelist <= MAX_OSMESA_CONTEXTS) {
 		share_ctx = contexts[sharelist].ctx;
 	}
 
@@ -521,12 +607,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 	}
 
 	contexts[j].enabled_arrays=0;
-	memset((void *)&(contexts[j].vertex),0,sizeof(vertexarray_t));
-	memset((void *)&(contexts[j].normal),0,sizeof(vertexarray_t));
-	memset((void *)&(contexts[j].texcoord),0,sizeof(vertexarray_t));
-	memset((void *)&(contexts[j].color),0,sizeof(vertexarray_t));
-	memset((void *)&(contexts[j].index),0,sizeof(vertexarray_t));
-	memset((void *)&(contexts[j].edgeflag),0,sizeof(vertexarray_t));
+	contexts[j].render_mode = GL_RENDER;
 
 	D(bug("nfosmesa: format:0x%x -> 0x%x, conversion: %s", osmesa_format, format, contexts[j].conversion ? "true" : "false"));
 	D(bug("nfosmesa: depth=%d, stencil=%d, accum=%d", depthBits, stencilBits, accumBits));
@@ -557,8 +638,14 @@ void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
 	num_contexts--;
 	if (contexts[ctx].src_buffer) {
 		free(contexts[ctx].src_buffer);
+		contexts[ctx].src_buffer = NULL;
 	}
-	contexts[ctx].ctx=NULL;
+	if (contexts[ctx].feedback_buffer_host) {
+		free(contexts[ctx].feedback_buffer_host);
+		contexts[ctx].feedback_buffer_host = NULL;
+	}
+	contexts[ctx].feedback_buffer_type = 0;
+	contexts[ctx].ctx = NULL;
 	if (ctx == cur_context)
 		cur_context = 0;
 /*
@@ -644,17 +731,22 @@ void OSMesaDriver::OSMesaGetIntegerv(GLint pname, GLint *value )
 	D(bug("nfosmesa: OSMesaGetIntegerv(0x%x)", pname));
 	if (SelectContext(cur_context))
 		fn.OSMesaGetIntegerv(pname, &tmp);
-	*value = SDL_SwapBE32(tmp);
+	if (value)
+		*value = SDL_SwapBE32(tmp);
 }
 
 GLboolean OSMesaDriver::OSMesaGetDepthBuffer(Uint32 c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
 {
 	D(bug("nfosmesa: OSMesaGetDepthBuffer"));
 	SelectContext(c);
-	*width = 0;
-	*height = 0;
-	*bytesPerValue = 0;
-	*buffer = NULL;	/* Can not return pointer in host memory */
+	if (width)
+		*width = 0;
+	if (height)
+		*height = 0;
+	if (bytesPerValue)
+		*bytesPerValue = 0;
+	if (buffer)
+		*buffer = NULL;	/* Can not return pointer in host memory */
 	return GL_FALSE;
 }
 
@@ -662,10 +754,14 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer(Uint32 c, GLint *width, GLint *heig
 {
 	D(bug("nfosmesa: OSMesaGetColorBuffer(%u)", c));
 	SelectContext(c);
-	*width = 0;
-	*height = 0;
-	*format = 0;
-	*buffer = NULL;	/* Can not return pointer in host memory */
+	if (width)
+		*width = 0;
+	if (height)
+		*height = 0;
+	if (format)
+		*format = 0;
+	if (buffer)
+		*buffer = NULL;	/* Can not return pointer in host memory */
 	return GL_FALSE;
 }
 
@@ -716,7 +812,8 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 	OpenLibrary();
 	SelectContext(ctx);
 	const char *s = (const char *)fn.glGetString(name);
-	strcpy((char *)buffer, s ? s : "");
+	if (buffer)
+		strcpy((char *)buffer, s ? s : "");
 }
 
 Uint32 OSMesaDriver::LenglGetStringi(Uint32 ctx, GLenum name, GLuint index)
@@ -735,7 +832,8 @@ void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, GLubyt
 	OpenLibrary();
 	SelectContext(ctx);
 	const char *s = (const char *)fn.glGetStringi(name, index);
-	strcpy((char *)buffer, s ? s : "");
+	if (buffer)
+		strcpy((char *)buffer, s ? s : "");
 }
 
 void OSMesaDriver::ConvertContext(Uint32 ctx)
@@ -937,7 +1035,7 @@ void OSMesaDriver::ConvertContext16(Uint32 ctx)
 void OSMesaDriver::ConvertContext32(Uint32 ctx)
 {
 #define FLOAT_TO_INT(source, value, maximum) \
-	{	\
+	{ \
 		value = (int) (source * maximum ## .0); \
 		if (value>maximum) value=maximum; \
 		if (value<0) value=0; \
@@ -1094,8 +1192,6 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 }
 
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
-
 void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels)
 {
 	GLsizei size, count;
@@ -1110,6 +1206,9 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
 	case GL_BYTE:
 	case GL_UNSIGNED_BYTE_3_3_2:
 	case GL_UNSIGNED_BYTE_2_3_3_REV:
+    case GL_2_BYTES:
+    case GL_3_BYTES:
+    case GL_4_BYTES:
 	case 1:
 		return (void *)pixels;
 	case GL_UNSIGNED_SHORT:
@@ -1120,6 +1219,7 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
 	case GL_UNSIGNED_SHORT_4_4_4_4_REV:
 	case GL_UNSIGNED_SHORT_5_5_5_1:
 	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+    case GL_HALF_FLOAT:
 	case 2:
 		size = sizeof(GLushort);
 		break;
@@ -1129,6 +1229,7 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
 	case GL_UNSIGNED_INT_8_8_8_8_REV:
 	case GL_UNSIGNED_INT_10_10_10_2:
 	case GL_UNSIGNED_INT_2_10_10_10_REV:
+	case GL_FIXED:
 	case 4:
 		size = sizeof(GLuint);
 		break;
@@ -1187,568 +1288,409 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
 	return result;
 }
 
+void *OSMesaDriver::convertArray(GLsizei count, GLenum type, const GLvoid *pixels)
+{
+	return convertPixels(count, 1, 1, 1, type, pixels);
+}
+
+
+void OSMesaDriver::setupClientArray(vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer)
+{
+	array.size = size;
+	array.type = type;
+	array.count = count;
+	array.ptrstride = ptrstride;
+	GLsizei atari_defstride;
+	GLsizei basesize;
+	switch (type)
+	{
+	case GL_UNSIGNED_BYTE:
+	case GL_BYTE:
+	case GL_UNSIGNED_BYTE_3_3_2:
+	case GL_UNSIGNED_BYTE_2_3_3_REV:
+    case GL_2_BYTES:
+    case GL_3_BYTES:
+    case GL_4_BYTES:
+	case 1:
+		array.basesize = sizeof(Uint8);
+		basesize = sizeof(GLubyte);
+		break;
+	case GL_SHORT:
+	case GL_UNSIGNED_SHORT_5_6_5:
+	case GL_UNSIGNED_SHORT_5_6_5_REV:
+	case GL_UNSIGNED_SHORT_4_4_4_4:
+	case GL_UNSIGNED_SHORT_4_4_4_4_REV:
+	case GL_UNSIGNED_SHORT_5_5_5_1:
+	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+    case GL_HALF_FLOAT:
+	case 2:
+		array.basesize = sizeof(Uint16);
+		basesize = sizeof(GLshort);
+		break;
+	case GL_UNSIGNED_INT:
+	case GL_INT:
+	case GL_UNSIGNED_INT_8_8_8_8:
+	case GL_UNSIGNED_INT_8_8_8_8_REV:
+	case GL_UNSIGNED_INT_10_10_10_2:
+	case GL_UNSIGNED_INT_2_10_10_10_REV:
+	case GL_FIXED:
+	case 4:
+		array.basesize = sizeof(Uint32);
+		basesize = sizeof(GLint);
+		break;
+	case GL_FLOAT:
+		array.basesize = ATARI_SIZEOF_FLOAT;
+		basesize = sizeof(GLfloat);
+		break;
+	case GL_DOUBLE:
+		array.basesize = ATARI_SIZEOF_DOUBLE;
+		basesize = sizeof(GLdouble);
+		break;
+	default:
+		glSetError(GL_INVALID_ENUM);
+		return;
+	}
+	atari_defstride = size * array.basesize;
+	if (stride == 0)
+	{
+		stride = atari_defstride;
+	}
+	array.atari_stride = stride;
+	array.host_stride = size * basesize;
+	array.defstride = atari_defstride;
+	if (array.host_pointer != array.atari_pointer)
+	{
+		free(array.host_pointer);
+		array.host_pointer = NULL;
+	}
+	array.atari_pointer = pointer;
+	array.converted = 0;
+	array.vendor = 0;
+}
+
+
+void OSMesaDriver::convertClientArrays(GLsizei count)
+{
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_VERTEX_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].vertex;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glVertexPointerListIBM(array.size, array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.vendor == 2)
+			fn.glVertexPointervINTEL(array.size, array.type, (const void **)array.host_pointer);
+		else if (array.count > 0)
+			fn.glVertexPointerEXT(array.size, array.type, array.host_stride, array.count, array.host_pointer);
+		else
+			fn.glVertexPointer(array.size, array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_NORMAL_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].normal;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glNormalPointerListIBM(array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.vendor == 2)
+			fn.glNormalPointervINTEL(array.type, (const void **)array.host_pointer);
+		else if (array.count > 0)
+			fn.glNormalPointerEXT(array.type, array.host_stride, array.count, array.host_pointer);
+		else
+			fn.glNormalPointer(array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_COLOR_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].color;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glColorPointerListIBM(array.size, array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.vendor == 2)
+			fn.glColorPointervINTEL(array.size, array.type, (const void **)array.host_pointer);
+		if (array.count > 0)
+			fn.glColorPointerEXT(array.size, array.type, array.host_stride, array.count, array.host_pointer);
+		else
+			fn.glColorPointer(array.size, array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_INDEX_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].index;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glIndexPointerListIBM(array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.count > 0)
+			fn.glIndexPointerEXT(array.type, array.host_stride, array.count, array.host_pointer);
+		else
+			fn.glIndexPointer(array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_EDGEFLAG_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].edgeflag;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glEdgeFlagPointerListIBM(array.host_stride, (const GLboolean **)array.host_pointer, array.ptrstride);
+		else if (array.count > 0)
+			fn.glEdgeFlagPointerEXT(array.host_stride, array.count, (const GLboolean *)array.host_pointer);
+		else
+			fn.glEdgeFlagPointer(array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_TEXCOORD_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].texcoord;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glTexCoordPointerListIBM(array.size, array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.vendor == 2)
+			fn.glTexCoordPointervINTEL(array.size, array.type, (const void **)array.host_pointer);
+		else if (array.count > 0)
+			fn.glTexCoordPointerEXT(array.size, array.type, array.host_stride, array.count, array.host_pointer);
+		else
+			fn.glTexCoordPointer(array.size, array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_FOGCOORD_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].fogcoord;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glFogCoordPointerListIBM(array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.count >= 0)
+			fn.glFogCoordPointerEXT(array.type, array.host_stride, array.host_pointer);
+		else
+			fn.glFogCoordPointer(array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_2NDCOLOR_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].secondary_color;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glSecondaryColorPointerListIBM(array.size, array.type, array.host_stride, (const void **)array.host_pointer, array.ptrstride);
+		else if (array.count >= 0)
+			fn.glSecondaryColorPointerEXT(array.size, array.type, array.host_stride, array.host_pointer);
+		else
+			fn.glSecondaryColorPointer(array.size, array.type, array.host_stride, array.host_pointer);
+	}
+	if (contexts[cur_context].enabled_arrays & NFOSMESA_ELEMENT_ARRAY)
+	{
+		vertexarray_t &array = contexts[cur_context].element;
+		convertClientArray(count, array);
+		if (array.vendor == 1)
+			fn.glElementPointerAPPLE(array.type, array.host_pointer);
+		else if (array.vendor == 2)
+			fn.glElementPointerATI(array.type, array.host_pointer);
+	}
+}
+
+void OSMesaDriver::convertClientArray(GLsizei count, vertexarray_t &array)
+{
+	if (array.count > 0 && count > array.count)
+	{
+		D(bug("nfosmesa: convertClientArray: count %d might exceed array size %d", count, array.count));
+	}
+	if (array.host_pointer == NULL || count > array.converted)
+	{
+		if (array.basesize != 1 || array.atari_stride != array.defstride)
+		{
+			array.host_pointer = realloc(array.host_pointer, count * array.host_stride);
+			GLsizei n = count - array.converted;
+			for (GLsizei i = 0; i < n; i++)
+			{
+				const char *src = (const char *)array.atari_pointer + array.converted * array.atari_stride;
+				char *dst = (char *)array.host_pointer + array.converted * array.host_stride;
+				if (array.type == GL_FLOAT)
+					Atari2HostFloatArray(array.size, (const Uint32 *)src, (GLfloat *)dst);
+				else if (array.type == GL_DOUBLE)
+					Atari2HostDoubleArray(array.size, (const Uint32 *)src, (GLdouble *)dst);
+				else if (array.basesize == 1)
+					memcpy(dst, src, array.size);
+				else if (array.basesize == 2)
+					Atari2HostShortArray(array.size, (const Uint16 *)src, (GLushort *)dst);
+				else /* if (array.basesize == 4) */
+					Atari2HostIntArray(array.size, (const Uint32 *)src, (GLuint *)dst);
+				array.converted++;
+			}
+		} else
+		{
+			array.host_pointer = (void *)array.atari_pointer;
+			array.converted = count;
+		}
+	}
+}
+
 void OSMesaDriver::nfglArrayElementHelper(GLint i)
 {
-	int stride;
-	const GLubyte *ptr;
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_NORMAL_ARRAY) {
-		stride=contexts[cur_context].normal.stride;
-		ptr=(const GLubyte *)contexts[cur_context].normal.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].normal.size;
-			switch(contexts[cur_context].normal.type) {
-				case GL_SHORT:
-					stride *= sizeof(GLshort);
-					break;
-				case GL_INT:
-					stride *= sizeof(GLint);
-					break;
-				case GL_FLOAT:
-					stride *= ATARI_SIZEOF_FLOAT;
-					break;
-				case GL_DOUBLE:
-					stride *= ATARI_SIZEOF_DOUBLE;
-					break;
-			}
-		}
-		ptr += i*stride;
-		switch(contexts[cur_context].normal.type) {
-			case GL_BYTE:
-				nfglNormal3bv((const GLbyte *)ptr);
-				break;
-			case GL_SHORT:
-				nfglNormal3sv((const GLshort *)ptr);
-				break;
-			case GL_INT:
-				nfglNormal3iv((const GLint *)ptr);
-				break;
-			case GL_FLOAT:
-				nfglNormal3fv((const GLfloat *)ptr);
-				break;
-			case GL_DOUBLE:
-				nfglNormal3dv((const GLdouble *)ptr);
-				break;
-		}
-	}
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_INDEX_ARRAY) {
-		stride=contexts[cur_context].index.stride;
-		ptr=(const GLubyte *)contexts[cur_context].index.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].index.size;
-			switch(contexts[cur_context].index.type) {
-				case GL_SHORT:
-					stride *= sizeof(GLshort);
-					break;
-				case GL_INT:
-					stride *= sizeof(GLint);
-					break;
-				case GL_FLOAT:
-					stride *= ATARI_SIZEOF_FLOAT;
-					break;
-				case GL_DOUBLE:
-					stride *= ATARI_SIZEOF_DOUBLE;
-					break;
-			}
-		}
-		ptr += i*stride;
-		switch(contexts[cur_context].index.type) {
-			case GL_UNSIGNED_BYTE:
-				nfglIndexubv((const GLubyte *)ptr);
-				break;
-			case GL_SHORT:
-				nfglIndexsv((const GLshort *)ptr);
-				break;
-			case GL_INT:
-				nfglIndexiv((const GLint *)ptr);
-				break;
-			case GL_FLOAT:
-				nfglIndexfv((const GLfloat *)ptr);
-				break;
-			case GL_DOUBLE:
-				nfglIndexdv((const GLdouble *)ptr);
-				break;
-		}
-	}
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_COLOR_ARRAY) {
-		stride=contexts[cur_context].color.stride;
-		ptr=(const GLubyte *)contexts[cur_context].color.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].color.size;
-			switch(contexts[cur_context].color.type) {
-				case GL_SHORT:
-				case GL_UNSIGNED_SHORT:
-					stride *= sizeof(GLshort);
-					break;
-				case GL_INT:
-				case GL_UNSIGNED_INT:
-					stride *= sizeof(GLint);
-					break;
-				case GL_FLOAT:
-					stride *= ATARI_SIZEOF_FLOAT;
-					break;
-				case GL_DOUBLE:
-					stride *= ATARI_SIZEOF_DOUBLE;
-					break;
-			}
-		}
-		ptr += i*stride;
-		switch(contexts[cur_context].color.type) {
-			case GL_BYTE:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3bv((const GLbyte *)ptr);
-						break;
-					case 4:
-						nfglColor4bv((const GLbyte *)ptr);
-						break;
-				}
-				break;
-			case GL_UNSIGNED_BYTE:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3ubv((const GLubyte *)ptr);
-						break;
-					case 4:
-						nfglColor4ubv((const GLubyte *)ptr);
-						break;
-				}
-				break;
-			case GL_SHORT:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3sv((const GLshort *)ptr);
-						break;
-					case 4:
-						nfglColor4sv((const GLshort *)ptr);
-						break;
-				}
-				break;
-			case GL_UNSIGNED_SHORT:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3usv((const GLushort *)ptr);
-						break;
-					case 4:
-						nfglColor4usv((const GLushort *)ptr);
-						break;
-				}
-				break;
-			case GL_INT:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3iv((const GLint *)ptr);
-						break;
-					case 4:
-						nfglColor4iv((const GLint *)ptr);
-						break;
-				}
-				break;
-			case GL_UNSIGNED_INT:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3uiv((const GLuint *)ptr);
-						break;
-					case 4:
-						nfglColor4uiv((const GLuint *)ptr);
-						break;
-				}
-				break;
-			case GL_FLOAT:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3fv((const GLfloat *)ptr);
-						break;
-					case 4:
-						nfglColor4fv((const GLfloat *)ptr);
-						break;
-				}
-				break;
-			case GL_DOUBLE:
-				switch(contexts[cur_context].color.size) {
-					case 3:
-						nfglColor3dv((const GLdouble *)ptr);
-						break;
-					case 4:
-						nfglColor4dv((const GLdouble *)ptr);
-						break;
-				}
-				break;
-		}
-	}
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_EDGEFLAG_ARRAY) {
-		stride=contexts[cur_context].edgeflag.stride;
-		ptr=(const GLubyte *)contexts[cur_context].edgeflag.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].edgeflag.size;
-		}
-		ptr += i*stride;
-		nfglEdgeFlagv((const GLboolean *)ptr);
-	}
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_TEXCOORD_ARRAY) {
-		stride=contexts[cur_context].texcoord.stride;
-		ptr=(const GLubyte *)contexts[cur_context].texcoord.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].texcoord.size;
-			switch(contexts[cur_context].texcoord.type) {
-				case GL_SHORT:
-					stride *= sizeof(GLshort);
-					break;
-				case GL_INT:
-					stride *= sizeof(GLint);
-					break;
-				case GL_FLOAT:
-					stride *= ATARI_SIZEOF_FLOAT;
-					break;
-				case GL_DOUBLE:
-					stride *= ATARI_SIZEOF_DOUBLE;
-					break;
-			}
-		}
-		ptr += i*stride;
-		switch(contexts[cur_context].texcoord.type) {
-			case GL_SHORT:
-				switch(contexts[cur_context].texcoord.size) {
-					case 1:
-						nfglTexCoord1sv((const GLshort *)ptr);
-						break;
-					case 2:
-						nfglTexCoord2sv((const GLshort *)ptr);
-						break;
-					case 3:
-						nfglTexCoord3sv((const GLshort *)ptr);
-						break;
-					case 4:
-						nfglTexCoord4sv((const GLshort *)ptr);
-						break;
-				}
-				break;
-			case GL_INT:
-				switch(contexts[cur_context].texcoord.size) {
-					case 1:
-						nfglTexCoord1iv((const GLint *)ptr);
-						break;
-					case 2:
-						nfglTexCoord2iv((const GLint *)ptr);
-						break;
-					case 3:
-						nfglTexCoord3iv((const GLint *)ptr);
-						break;
-					case 4:
-						nfglTexCoord4iv((const GLint *)ptr);
-						break;
-				}
-				break;
-			case GL_FLOAT:
-				switch(contexts[cur_context].texcoord.size) {
-					case 1:
-						nfglTexCoord1fv((const GLfloat *)ptr);
-						break;
-					case 2:
-						nfglTexCoord2fv((const GLfloat *)ptr);
-						break;
-					case 3:
-						nfglTexCoord3fv((const GLfloat *)ptr);
-						break;
-					case 4:
-						nfglTexCoord4fv((const GLfloat *)ptr);
-						break;
-				}
-				break;
-			case GL_DOUBLE:
-				switch(contexts[cur_context].texcoord.size) {
-					case 1:
-						nfglTexCoord1dv((const GLdouble *)ptr);
-						break;
-					case 2:
-						nfglTexCoord2dv((const GLdouble *)ptr);
-						break;
-					case 3:
-						nfglTexCoord3dv((const GLdouble *)ptr);
-						break;
-					case 4:
-						nfglTexCoord4dv((const GLdouble *)ptr);
-						break;
-				}
-				break;
-		}
-	}
-
-	if(contexts[cur_context].enabled_arrays & NFOSMESA_VERTEX_ARRAY) {
-		stride=contexts[cur_context].vertex.stride;
-		ptr=(const GLubyte *)contexts[cur_context].vertex.pointer;
-		if(stride==0) {
-			stride = contexts[cur_context].vertex.size;
-			switch(contexts[cur_context].vertex.type) {
-				case GL_SHORT:
-					stride *= sizeof(GLshort);
-					break;
-				case GL_INT:
-					stride *= sizeof(GLint);
-					break;
-				case GL_FLOAT:
-					stride *= ATARI_SIZEOF_FLOAT;
-					break;
-				case GL_DOUBLE:
-					stride *= ATARI_SIZEOF_DOUBLE;
-					break;
-			}
-		}
-		ptr += i*stride;
-		switch(contexts[cur_context].vertex.type) {
-			case GL_SHORT:
-				switch(contexts[cur_context].vertex.size) {
-					case 2:
-						nfglVertex2sv((const GLshort *)ptr);
-						break;
-					case 3:
-						nfglVertex3sv((const GLshort *)ptr);
-						break;
-					case 4:
-						nfglVertex4sv((const GLshort *)ptr);
-						break;
-				}
-				break;
-			case GL_INT:
-				switch(contexts[cur_context].vertex.size) {
-					case 2:
-						nfglVertex2iv((const GLint *)ptr);
-						break;
-					case 3:
-						nfglVertex3iv((const GLint *)ptr);
-						break;
-					case 4:
-						nfglVertex4iv((const GLint *)ptr);
-						break;
-				}
-				break;
-			case GL_FLOAT:
-				switch(contexts[cur_context].vertex.size) {
-					case 2:
-						nfglVertex2fv((const GLfloat *)ptr);
-						break;
-					case 3:
-						nfglVertex3fv((const GLfloat *)ptr);
-						break;
-					case 4:
-						nfglVertex4fv((const GLfloat *)ptr);
-						break;
-				}
-				break;
-			case GL_DOUBLE:
-				switch(contexts[cur_context].vertex.size) {
-					case 2:
-						nfglVertex2dv((const GLdouble *)ptr);
-						break;
-					case 3:
-						nfglVertex3dv((const GLdouble *)ptr);
-						break;
-					case 4:
-						nfglVertex4dv((const GLdouble *)ptr);
-						break;
-				}
-				break;
-		}
-	}
+	convertClientArrays(i + 1);
+	fn.glArrayElement(i);
 }
 
 void OSMesaDriver::nfglInterleavedArraysHelper(GLenum format, GLsizei stride, const GLvoid *pointer)
 {
 	SDL_bool enable_texcoord, enable_normal, enable_color;
 	int texcoord_size, color_size, vertex_size;
-	int texcoord_stride, color_stride, vertex_stride, normal_stride;
-	GLubyte *texcoord_ptr,*normal_ptr,*color_ptr,*vertex_ptr;
+	const GLubyte *texcoord_ptr,*normal_ptr,*color_ptr,*vertex_ptr;
 	GLenum color_type;
+	int c, f;
+	int defstride;
+	
+	f = ATARI_SIZEOF_FLOAT;
+	c = f * ((4 * sizeof(GLubyte) + (f - 1)) / f);
+	
 	enable_texcoord=SDL_FALSE;
 	enable_normal=SDL_FALSE;
 	enable_color=SDL_FALSE;
 	texcoord_size=color_size=vertex_size=0;
-	texcoord_stride=color_stride=vertex_stride=normal_stride=stride;
-	texcoord_ptr=normal_ptr=color_ptr=vertex_ptr=(GLubyte *)pointer;
+	texcoord_ptr=normal_ptr=color_ptr=vertex_ptr=(const GLubyte *)pointer;
 	color_type = GL_FLOAT;
 	switch(format) {
 		case GL_V2F:
-			vertex_size=2;
+			vertex_size = 2;
+			defstride = 2 * f;
 			break;
 		case GL_V3F:
-			vertex_size=3;
+			vertex_size = 3;
+			defstride = 3 * f;
 			break;
 		case GL_C4UB_V2F:
-			vertex_size=2;
-			color_size=4;
-			enable_color=SDL_TRUE;
-			vertex_ptr += color_size*sizeof(GLubyte);
+			vertex_size = 2;
+			color_size = 4;
+			enable_color = SDL_TRUE;
+			vertex_ptr += c;
 			color_type = GL_UNSIGNED_BYTE;
-			if(stride==0) {
-				color_stride = vertex_stride =
-					(color_size*sizeof(GLubyte))+(vertex_size*ATARI_SIZEOF_FLOAT);
-			}
+			defstride = c + 2 * f;
 			break;
 		case GL_C4UB_V3F:
-			vertex_size=3;
-			color_size=4;
-			enable_color=SDL_TRUE;
-			vertex_ptr += color_size*sizeof(GLubyte);
+			vertex_size = 3;
+			color_size = 4;
+			enable_color = SDL_TRUE;
+			vertex_ptr += c;
 			color_type = GL_UNSIGNED_BYTE;
-			if(stride==0) {
-				color_stride = vertex_stride =
-					(color_size*sizeof(GLubyte))+(vertex_size*ATARI_SIZEOF_FLOAT);
-			}
+			defstride = c + 3 * f;
 			break;
 		case GL_C3F_V3F:
-			vertex_size=3;
-			color_size=3;
-			enable_color=SDL_TRUE;
-			vertex_ptr += color_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				color_stride = vertex_stride =
-					(color_size+vertex_size)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			color_size = 3;
+			enable_color = SDL_TRUE;
+			vertex_ptr += 3 * f;
+			defstride = 6 * f;
 			break;
 		case GL_N3F_V3F:
-			vertex_size=3;
-			enable_normal=SDL_TRUE;
-			vertex_ptr += 3*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				normal_stride = vertex_stride =
-					(vertex_size+3)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			enable_normal = SDL_TRUE;
+			vertex_ptr += 3 * f;
+			defstride = 6 * f;
 			break;
 		case GL_C4F_N3F_V3F:
-			vertex_size=3;
-			color_size=4;
-			enable_color=SDL_TRUE;
-			enable_normal=SDL_TRUE;
-			vertex_ptr +=(color_size+3)*ATARI_SIZEOF_FLOAT;
-			normal_ptr += color_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				normal_stride = vertex_stride = color_stride =
-					(color_size+vertex_size+3)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			color_size = 4;
+			enable_color = SDL_TRUE;
+			enable_normal = SDL_TRUE;
+			vertex_ptr += 7 * f;
+			normal_ptr += 4 * f;
+			defstride = 10 * f;
 			break;
 		case GL_T2F_V3F:
-			vertex_size=3;
-			texcoord_size=2;
-			enable_texcoord=SDL_TRUE;
-			vertex_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride =
-					(texcoord_size+vertex_size)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			texcoord_size = 2;
+			enable_texcoord = SDL_TRUE;
+			vertex_ptr += 2 * f;
+			defstride = 5 * f;
 			break;
 		case GL_T4F_V4F:
-			vertex_size=4;
-			texcoord_size=4;
-			enable_texcoord=SDL_TRUE;
-			vertex_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride =
-					(texcoord_size+vertex_size)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 4;
+			texcoord_size = 4;
+			enable_texcoord = SDL_TRUE;
+			vertex_ptr += 4 * f;
+			defstride = 8 * f;
 			break;
 		case GL_T2F_C4UB_V3F:
-			vertex_size=3;
-			texcoord_size=2;
-			color_size=4;
-			enable_texcoord=SDL_TRUE;
-			enable_color=SDL_TRUE;
-			vertex_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			vertex_ptr += color_size*sizeof(GLubyte);
-			color_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
+			vertex_size = 3;
+			texcoord_size = 2;
+			color_size = 4;
+			enable_texcoord = SDL_TRUE;
+			enable_color = SDL_TRUE;
+			vertex_ptr += c + 2 * f;
+			color_ptr += 2 * f;
 			color_type = GL_UNSIGNED_BYTE;
-			if(stride==0) {
-				texcoord_stride = vertex_stride = color_stride =
-					((texcoord_size+vertex_size)*ATARI_SIZEOF_FLOAT)+(color_size*sizeof(GLubyte));
-			}
+			defstride = c + 5 * f;
 			break;
 		case GL_T2F_C3F_V3F:
-			vertex_size=3;
-			texcoord_size=2;
-			color_size=3;
-			enable_texcoord=SDL_TRUE;
-			enable_color=SDL_TRUE;
-			vertex_ptr +=(texcoord_size+color_size)*ATARI_SIZEOF_FLOAT;
-			color_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride = color_stride =
-					(texcoord_size+vertex_size+color_size)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			texcoord_size = 2;
+			color_size = 3;
+			enable_texcoord = SDL_TRUE;
+			enable_color = SDL_TRUE;
+			vertex_ptr += 5 * f;
+			color_ptr += 2 * f;
+			defstride = 8 * f;
 			break;
 		case GL_T2F_N3F_V3F:
-			vertex_size=3;
-			texcoord_size=2;
-			enable_normal=SDL_TRUE;
-			enable_texcoord=SDL_TRUE;
-			vertex_ptr +=(texcoord_size+3)*ATARI_SIZEOF_FLOAT;
-			normal_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride = normal_stride =
-					(texcoord_size+vertex_size+3)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			texcoord_size = 2;
+			enable_normal = SDL_TRUE;
+			enable_texcoord = SDL_TRUE;
+			vertex_ptr += 5 * f;
+			normal_ptr += 2 * f;
+			defstride = 8 * f;
 			break;
 		case GL_T2F_C4F_N3F_V3F:
-			vertex_size=3;
-			texcoord_size=2;
-			color_size=4;
-			enable_normal=SDL_TRUE;
-			enable_texcoord=SDL_TRUE;
-			enable_color=SDL_TRUE;
-			vertex_ptr +=(texcoord_size+color_size+3)*ATARI_SIZEOF_FLOAT;
-			normal_ptr +=(texcoord_size+color_size)*ATARI_SIZEOF_FLOAT;
-			color_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride = color_stride = normal_stride =
-					(texcoord_size+vertex_size+color_size+3)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 3;
+			texcoord_size = 2;
+			color_size = 4;
+			enable_normal = SDL_TRUE;
+			enable_texcoord = SDL_TRUE;
+			enable_color = SDL_TRUE;
+			vertex_ptr += 9 * f;
+			normal_ptr += 6 * f;
+			color_ptr += 2 * f;
+			defstride = 12 * f;
 			break;
 		case GL_T4F_C4F_N3F_V4F:
-			vertex_size=4;
-			texcoord_size=4;
-			color_size=4;
-			enable_normal=SDL_TRUE;
-			enable_texcoord=SDL_TRUE;
-			enable_color=SDL_TRUE;
-			vertex_ptr +=(texcoord_size+color_size+3)*ATARI_SIZEOF_FLOAT;
-			normal_ptr +=(texcoord_size+color_size)*ATARI_SIZEOF_FLOAT;
-			color_ptr += texcoord_size*ATARI_SIZEOF_FLOAT;
-			if(stride==0) {
-				texcoord_stride = vertex_stride = color_stride = normal_stride =
-					(texcoord_size+vertex_size+color_size+3)*ATARI_SIZEOF_FLOAT;
-			}
+			vertex_size = 4;
+			texcoord_size = 4;
+			color_size = 4;
+			enable_normal = SDL_TRUE;
+			enable_texcoord = SDL_TRUE;
+			enable_color = SDL_TRUE;
+			vertex_ptr += 11 * f;
+			normal_ptr += 8 * f;
+			color_ptr += 4 * f;
+			defstride = 15 * f;
 			break;
+		default:
+			glSetError(GL_INVALID_ENUM);
+			return;
 	}
+
+	if (stride==0)
+	{
+		stride = defstride;
+	}
+
+	/*
+	 * FIXME:
+	 * calling the dispatch functions here would trace
+	 * calls to functions the client did not call directly
+	 */
 	nfglDisableClientState(GL_EDGE_FLAG_ARRAY);
 	nfglDisableClientState(GL_INDEX_ARRAY);
 	if(enable_normal) {
 		nfglEnableClientState(GL_NORMAL_ARRAY);
-		nfglNormalPointer(GL_FLOAT, normal_stride, (GLfloat *)normal_ptr);
+		nfglNormalPointer(GL_FLOAT, stride, normal_ptr);
 	} else {
 		nfglDisableClientState(GL_NORMAL_ARRAY);
 	}
 	if(enable_color) {
 		nfglEnableClientState(GL_COLOR_ARRAY);
-		if(color_type == GL_FLOAT) {
-			nfglColorPointer(color_size, GL_FLOAT, color_stride, (GLfloat *)color_ptr);
-		} else {
-			nfglColorPointer(color_size, GL_UNSIGNED_BYTE, color_stride, (GLubyte *)color_ptr);
-		}
+		nfglColorPointer(color_size, color_type, stride, color_ptr);
 	} else {
 		nfglDisableClientState(GL_COLOR_ARRAY);
 	}
 	if(enable_texcoord) {
 		nfglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		nfglTexCoordPointer(texcoord_size, GL_FLOAT, texcoord_stride, (GLfloat *)texcoord_ptr);
+		nfglTexCoordPointer(texcoord_size, GL_FLOAT, stride, texcoord_ptr);
 	} else {
 		nfglDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	nfglEnableClientState(GL_VERTEX_ARRAY);
-	nfglVertexPointer(vertex_size, GL_FLOAT, vertex_stride, (GLfloat *)vertex_ptr);
+	nfglVertexPointer(vertex_size, GL_FLOAT, stride, vertex_ptr);
 }
-#endif
 
 /*---
  * wrappers for functions that take float arguments, and sometimes only exist as
@@ -1888,6 +1830,112 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 
 /*--- conversion macros used in generated code ---*/
 
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+static int nfglGetNumParams(GLenum pname)
+{
+	GLint count = 1;
+	
+	switch (pname)
+	{
+	case GL_ALIASED_LINE_WIDTH_RANGE:
+	case GL_ALIASED_POINT_SIZE_RANGE:
+	case GL_DEPTH_RANGE:
+	case GL_DEPTH_BOUNDS_EXT:
+	case GL_LINE_WIDTH_RANGE:
+	case GL_MAP1_GRID_DOMAIN:
+	case GL_MAP2_GRID_SEGMENTS:
+	case GL_MAX_VIEWPORT_DIMS:
+	case GL_POINT_SIZE_RANGE:
+	case GL_POLYGON_MODE:
+	case GL_VIEWPORT_BOUNDS_RANGE:
+	/* case GL_SMOOTH_LINE_WIDTH_RANGE: same as GL_LINE_WIDTH_RANGE */
+	/* case GL_SMOOTH_POINT_SIZE_RANGE: same as GL_POINT_SIZE_RANGE */
+	case GL_TEXTURE_CLIPMAP_CENTER_SGIX:
+	case GL_TEXTURE_CLIPMAP_OFFSET_SGIX:
+	case GL_MAP1_TEXTURE_COORD_2:
+	case GL_MAP2_TEXTURE_COORD_2:
+		count = 2;
+		break;
+	case GL_CURRENT_NORMAL:
+	case GL_POINT_DISTANCE_ATTENUATION:
+	case GL_SPOT_DIRECTION:
+	case GL_COLOR_INDEXES:
+	case GL_TEXTURE_CLIPMAP_VIRTUAL_DEPTH_SGIX:
+	case GL_MAP1_NORMAL:
+	case GL_MAP1_TEXTURE_COORD_3:
+	case GL_MAP1_VERTEX_3:
+	case GL_MAP2_NORMAL:
+	case GL_MAP2_TEXTURE_COORD_3:
+	case GL_MAP2_VERTEX_3:
+		count = 3;
+		break;
+	case GL_ACCUM_CLEAR_VALUE:
+	case GL_BLEND_COLOR:
+	/* case GL_BLEND_COLOR_EXT: same as GL_BLEND_COLOR */
+	case GL_COLOR_CLEAR_VALUE:
+	case GL_COLOR_WRITEMASK:
+	case GL_CURRENT_COLOR:
+	case GL_CURRENT_RASTER_COLOR:
+	case GL_CURRENT_RASTER_POSITION:
+	case GL_CURRENT_RASTER_SECONDARY_COLOR:
+	case GL_CURRENT_RASTER_TEXTURE_COORDS:
+	case GL_CURRENT_SECONDARY_COLOR:
+	case GL_CURRENT_TEXTURE_COORDS:
+	case GL_FOG_COLOR:
+	case GL_LIGHT_MODEL_AMBIENT:
+	case GL_MAP2_GRID_DOMAIN:
+	case GL_RGBA_SIGNED_COMPONENTS_EXT:
+	case GL_SCISSOR_BOX:
+	case GL_VIEWPORT:
+	case GL_CONSTANT_COLOR0_NV:
+	case GL_CONSTANT_COLOR1_NV:
+	case GL_CULL_VERTEX_OBJECT_POSITION_EXT:
+	case GL_CULL_VERTEX_EYE_POSITION_EXT:
+	case GL_AMBIENT:
+	case GL_DIFFUSE:
+	case GL_SPECULAR:
+	case GL_POSITION:
+	case GL_EMISSION:
+	case GL_AMBIENT_AND_DIFFUSE:
+	case GL_FRAGMENT_LIGHT_MODEL_AMBIENT_SGIX:
+	case GL_CONVOLUTION_FILTER_SCALE:
+	case GL_CONVOLUTION_FILTER_BIAS:
+	case GL_CONVOLUTION_BORDER_COLOR:
+	case GL_TEXTURE_BORDER_COLOR:
+	case GL_POST_TEXTURE_FILTER_BIAS_SGIX:
+	case GL_POST_TEXTURE_FILTER_SCALE_SGIX:
+	case GL_TEXTURE_ENV_COLOR:
+	case GL_OBJECT_PLANE:
+	case GL_EYE_PLANE:
+	case GL_MAP1_COLOR_4:
+	case GL_MAP1_TEXTURE_COORD_4:
+	case GL_MAP1_VERTEX_4:
+	case GL_MAP2_COLOR_4:
+	case GL_MAP2_TEXTURE_COORD_4:
+	case GL_MAP2_VERTEX_4:
+	case GL_COLOR_TABLE_SCALE:
+	case GL_COLOR_TABLE_BIAS:
+		count = 4;
+		break;
+	case GL_COLOR_MATRIX:
+	case GL_MODELVIEW_MATRIX:
+	case GL_PROJECTION_MATRIX:
+	case GL_TEXTURE_MATRIX:
+	case GL_TRANSPOSE_MODELVIEW_MATRIX:
+	case GL_TRANSPOSE_PROJECTION_MATRIX:
+	case GL_TRANSPOSE_TEXTURE_MATRIX:
+	case GL_TRANSPOSE_COLOR_MATRIX:
+		count = 16;
+		break;
+	case GL_COMPRESSED_TEXTURE_FORMATS:
+		fn.glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &count);
+		break;
+	}
+	return count;
+}
+#endif
+
+
 #if NFOSMESA_NEED_INT_CONV
 
 #define FN_GLARETEXTURESRESIDENT(n, textures, residences) \
@@ -1939,67 +1987,6 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
-static int nfglGetNumParams(GLenum pname)
-{
-	GLint count = 1;
-	
-	switch (pname)
-	{
-	case GL_ALIASED_LINE_WIDTH_RANGE:
-	case GL_ALIASED_POINT_SIZE_RANGE:
-	case GL_DEPTH_RANGE:
-	case GL_DEPTH_BOUNDS_EXT:
-	case GL_LINE_WIDTH_RANGE:
-	case GL_MAP1_GRID_DOMAIN:
-	case GL_MAP2_GRID_SEGMENTS:
-	case GL_MAX_VIEWPORT_DIMS:
-	case GL_POINT_SIZE_RANGE:
-	case GL_POLYGON_MODE:
-	case GL_VIEWPORT_BOUNDS_RANGE:
-	/* case GL_SMOOTH_LINE_WIDTH_RANGE: same as GL_LINE_WIDTH_RANGE */
-	/* case GL_SMOOTH_POINT_SIZE_RANGE: same as GL_POINT_SIZE_RANGE */
-		count = 2;
-		break;
-	case GL_CURRENT_NORMAL:
-	case GL_POINT_DISTANCE_ATTENUATION:
-		count = 3;
-		break;
-	case GL_ACCUM_CLEAR_VALUE:
-	case GL_BLEND_COLOR:
-	/* case GL_BLEND_COLOR_EXT: same as GL_BLEND_COLOR */
-	case GL_COLOR_CLEAR_VALUE:
-	case GL_COLOR_WRITEMASK:
-	case GL_CURRENT_COLOR:
-	case GL_CURRENT_RASTER_COLOR:
-	case GL_CURRENT_RASTER_POSITION:
-	case GL_CURRENT_RASTER_SECONDARY_COLOR:
-	case GL_CURRENT_RASTER_TEXTURE_COORDS:
-	case GL_CURRENT_SECONDARY_COLOR:
-	case GL_CURRENT_TEXTURE_COORDS:
-	case GL_FOG_COLOR:
-	case GL_LIGHT_MODEL_AMBIENT:
-	case GL_MAP2_GRID_DOMAIN:
-	case GL_RGBA_SIGNED_COMPONENTS_EXT:
-	case GL_SCISSOR_BOX:
-	case GL_VIEWPORT:
-		count = 4;
-		break;
-	case GL_COLOR_MATRIX:
-	case GL_MODELVIEW_MATRIX:
-	case GL_PROJECTION_MATRIX:
-	case GL_TEXTURE_MATRIX:
-	case GL_TRANSPOSE_MODELVIEW_MATRIX:
-	case GL_TRANSPOSE_PROJECTION_MATRIX:
-	case GL_TRANSPOSE_TEXTURE_MATRIX:
-	case GL_TRANSPOSE_COLOR_MATRIX:
-		count = 16;
-		break;
-	case GL_COMPRESSED_TEXTURE_FORMATS:
-		fn.glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &count);
-		break;
-	}
-	return count;
-}
 #endif
 
 
@@ -2037,65 +2024,13 @@ static int nfglGetNumParams(GLenum pname)
 
 #define FN_GLCALLLISTS(n, type, lists) \
 	void *tmp; \
-	int i; \
-	GLshort *src16,*dst16; \
-	GLint *src32,*dst32; \
-	GLfloat *dstf; \
 	 \
-	if(n<=0) { \
+	if(n<=0 || !lists) { \
 		return; \
 	} \
-	switch(type) { \
-		case GL_BYTE: \
-		case GL_UNSIGNED_BYTE: \
-		case GL_2_BYTES: \
-		case GL_3_BYTES: \
-		case GL_4_BYTES: \
-			fn.glCallLists(n, type, lists); \
-			return; \
-		case GL_SHORT: \
-		case GL_UNSIGNED_SHORT: \
-			tmp = malloc(n*sizeof(GLshort)); \
-			if(!tmp) { \
-				return; \
-			} \
-			dst16 =(GLshort *)tmp; \
-			src16 =(GLshort *)lists; \
-			for(i=0;i<n;i++) { \
-				*dst16++ = SDL_SwapBE16(*src16++); \
-			} \
-			break; \
-		case GL_INT: \
-		case GL_UNSIGNED_INT: \
-			tmp = malloc(n*sizeof(GLint)); \
-			if(!tmp) { \
-				return; \
-			} \
-			dst32 =(GLint *)tmp; \
-			src32 =(GLint *)lists; \
-			for(i=0;i<n;i++) { \
-				*dst32++ = SDL_SwapBE32(*src32++); \
-			} \
-			break; \
-		case GL_FLOAT: \
-			tmp = malloc(n*sizeof(GLfloat)); \
-			if(!tmp) { \
-				return; \
-			} \
-			dstf =(GLfloat *)tmp; \
-			src32 = (GLint *)lists; \
-			for(i=0;i<n;i++) { \
-				*dstf++ = Atari2HostFloat(*src32++); \
-			} \
-			break; \
-		default: \
-			glSetError(GL_INVALID_ENUM); \
-			return; \
-	} \
+	tmp = convertArray(n, type, lists); \
 	fn.glCallLists(n, type, tmp); \
-	if(tmp) { \
-		free(tmp); \
-	}
+	if (tmp != lists) free(tmp)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCLIPPLANE(plane, equation)	GLdouble tmp[4]; \
@@ -2300,34 +2235,22 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLCOLORP4UIV(type, color)	fn.glColorP4uiv(type, color)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLORPOINTER(size, type, stride, pointer) \
-	contexts[cur_context].color.size = size; \
-	contexts[cur_context].color.type = type; \
-	contexts[cur_context].color.stride = stride; \
-	contexts[cur_context].color.count = -1; \
-	contexts[cur_context].color.pointer = pointer; \
-	contexts[cur_context].color.ptrstride = 0; \
-	fn.glColorPointer(size, type, stride, pointer)
-#else
-#define FN_GLCOLORPOINTER(size, type, stride, pointer)	fn.glColorPointer(size, type, stride, pointer)
-#endif
+	setupClientArray(contexts[cur_context].color, size, type, stride, -1, 0, pointer)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer) \
-	contexts[cur_context].color.size = size; \
-	contexts[cur_context].color.type = type; \
-	contexts[cur_context].color.stride = stride; \
-	contexts[cur_context].color.count = count; \
-	contexts[cur_context].color.pointer = pointer; \
-	contexts[cur_context].color.ptrstride = 0; \
-	fn.glColorPointerEXT(size, type, stride, count, pointer)
-#else
-#define FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer)	fn.glColorPointerEXT(size, type, stride, count, pointer)
-#endif
+	setupClientArray(contexts[cur_context].color, size, type, stride, count, 0, pointer)
+
+#define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].color, size, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].color.vendor = 1
+
+#define FN_GLCOLORPOINTERVINTEL(size, type, pointer) \
+	setupClientArray(contexts[cur_context].color, size, type, 0, -1, 0, pointer); \
+	contexts[cur_context].color.vendor = 2
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLCOLORSUBTABLE(target, start, count, format, type, data)  \
+#define FN_GLCOLORSUBTABLE(target, start, count, format, type, data) \
 	void *tmp = convertPixels(count, 1, 1, format, type, data); \
 	fn.glColorSubTable(target, start, count, format, type, tmp); \
 	if (tmp != data) free(tmp)
@@ -2379,7 +2302,6 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLDELETETEXTURESEXT(n, textures)	fn.glDeleteTexturesEXT(n, textures)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLDISABLECLIENTSTATE(array) \
 	switch(array) { \
 		case GL_VERTEX_ARRAY: \
@@ -2400,108 +2322,121 @@ static int nfglGetNumParams(GLenum pname)
 		case GL_TEXTURE_COORD_ARRAY: \
 			contexts[cur_context].enabled_arrays &= ~NFOSMESA_TEXCOORD_ARRAY; \
 			break; \
+		case GL_FOG_COORDINATE_ARRAY: \
+			contexts[cur_context].enabled_arrays &= ~NFOSMESA_FOGCOORD_ARRAY; \
+			break; \
+		case GL_SECONDARY_COLOR_ARRAY: \
+			contexts[cur_context].enabled_arrays &= ~NFOSMESA_2NDCOLOR_ARRAY; \
+			break; \
+		case GL_ELEMENT_ARRAY_APPLE: \
+			contexts[cur_context].enabled_arrays &= ~NFOSMESA_ELEMENT_ARRAY; \
+			break; \
 	} \
 	fn.glDisableClientState(array)
-#else
-#define FN_GLDISABLECLIENTSTATE(array)	fn.glDisableClientState(array)
-#endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLDRAWARRAYS(mode, first, count) \
-	{ \
-		int i; \
-		fn.glBegin(	mode); \
-		for(i=0;i<count;i++) { \
-			nfglArrayElement(first+i); \
-		} \
-		fn.glEnd(); \
-	}
-#else
-#define FN_GLDRAWARRAYS(mode, first, count)	fn.glDrawArrays(mode, first, count)
-#endif
+	convertClientArrays(first + count); \
+	fn.glDrawArrays(mode, first, count)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLDRAWARRAYSEXT(mode, first, count) \
+	convertClientArrays(first + count); \
+	fn.glDrawArraysEXT(mode, first, count)
+
+#define FN_GLDRAWARRAYSINSTANCED(mode, first, count, instancecount) \
+	convertClientArrays(first + count); \
+	fn.glDrawArraysInstanced(mode, first, count, instancecount)
+
 #define FN_GLDRAWELEMENTS(mode, count, type, indices) \
-	{ \
-		int i; \
-		Uint32 *ptr32; \
-		Uint16 *ptr16; \
-		Uint8 *ptr8; \
-		ptr32 =(Uint32 *)indices; \
-		ptr16 =(Uint16 *)indices; \
-		ptr8 =(Uint8 *)indices; \
-		fn.glBegin(	mode); \
-		for(i=0;i<count;i++) { \
-			switch(type) { \
-				case GL_UNSIGNED_BYTE: \
-					nfglArrayElement(ptr8[i]); \
-					break; \
-				case GL_UNSIGNED_SHORT: \
-					nfglArrayElement(SDL_SwapBE16(ptr16[i])); \
-					break; \
-				case GL_UNSIGNED_INT: \
-					nfglArrayElement(SDL_SwapBE32(ptr32[i])); \
-					break; \
-			} \
-		} \
-		fn.glEnd(); \
-	}	
-#else
-#define FN_GLDRAWELEMENTS(mode, count, type, indices)	fn.glDrawElements(mode, count, type, indices)
-#endif
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElements(mode, count, type, tmp); \
+	if (tmp != indices) free(tmp)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLDRAWELEMENTSBASEVERTEX(mode, count, type, indices, basevertex) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsBaseVertex(mode, count, type, tmp, basevertex); \
+	if (tmp != indices) free(tmp)
+
+
 #define FN_GLDRAWRANGEELEMENTS(mode, start, end, count, type, indices) \
-	{ \
-		int i; \
-		Uint32 *ptr32,i32; \
-		Uint16 *ptr16,i16; \
-		Uint8 *ptr8; \
-		ptr32 =(Uint32 *)indices; \
-		ptr16 =(Uint16 *)indices; \
-		ptr8 =(Uint8 *)indices; \
-		fn.glBegin(	mode); \
-		for(i=0;i<count;i++) { \
-			switch(type) { \
-				case GL_UNSIGNED_BYTE: \
-					if((ptr8[i]>=start) &&(ptr8[i]<=end)) { \
-						nfglArrayElement(ptr8[i]); \
-					} \
-					break; \
-				case GL_UNSIGNED_SHORT: \
-					i16=SDL_SwapBE16(ptr16[i]); \
-					if((i16>=start) &&(i16<=end)) { \
-						nfglArrayElement(i16); \
-					} \
-					break; \
-				case GL_UNSIGNED_INT: \
-					i32=SDL_SwapBE32(ptr32[i]); \
-					if((i32>=start) &&(i32<=end)) { \
-						nfglArrayElement(i32); \
-					} \
-					break; \
-			} \
-		} \
-		fn.glEnd(); \
-	}	
-#else
-#define FN_GLDRAWRANGEELEMENTS(mode, start, end, count, type, indices)	fn.glDrawRangeElements(mode, start, end, count, type, indices)
-#endif
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawRangeElements(mode, start, end, count, type, indices); \
+	if (tmp != indices) free(tmp)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLEDGEFLAGPOINTER(stride, pointer)  \
-	contexts[cur_context].edgeflag.size = 1; \
-	contexts[cur_context].edgeflag.type = GL_UNSIGNED_BYTE; \
-	contexts[cur_context].edgeflag.stride = stride; \
-	contexts[cur_context].edgeflag.count = -1; \
-	contexts[cur_context].edgeflag.pointer = pointer; \
-	contexts[cur_context].edgeflag.ptrstride = 0; \
-	fn.glEdgeFlagPointer(stride, pointer)
-#else
-#define FN_GLEDGEFLAGPOINTER(stride, pointer)	fn.glEdgeFlagPointer(stride, pointer)
-#endif
+#define FN_GLDRAWRANGEELEMENTSEXT(mode, start, end, count, type, indices) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawRangeElementsEXT(mode, start, end, count, type, indices); \
+	if (tmp != indices) free(tmp)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLDRAWRANGEELEMENTSBASEVERTEX(mode, start, end, count, type, indices, basevertex) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawRangeElementsBaseVertex(mode, start, end, count, type, indices, basevertex); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLEDGEFLAGPOINTER(stride, pointer) \
+	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, 0, pointer)
+
+#define FN_GLEDGEFLAGPOINTEREXT(stride, count, pointer) \
+	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, count, 0, pointer)
+
+#define FN_GLEDGEFLAGPOINTERLISTIBM(stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].edgeflag.vendor = 1
+
 #define FN_GLENABLECLIENTSTATE(array) \
 	switch(array) { \
 		case GL_VERTEX_ARRAY: \
@@ -2522,11 +2457,17 @@ static int nfglGetNumParams(GLenum pname)
 		case GL_TEXTURE_COORD_ARRAY: \
 			contexts[cur_context].enabled_arrays |= NFOSMESA_TEXCOORD_ARRAY; \
 			break; \
+		case GL_FOG_COORDINATE_ARRAY: \
+			contexts[cur_context].enabled_arrays |= NFOSMESA_FOGCOORD_ARRAY; \
+			break; \
+		case GL_SECONDARY_COLOR_ARRAY: \
+			contexts[cur_context].enabled_arrays |= NFOSMESA_2NDCOLOR_ARRAY; \
+			break; \
+		case GL_ELEMENT_ARRAY_APPLE: \
+			contexts[cur_context].enabled_arrays |= NFOSMESA_ELEMENT_ARRAY; \
+			break; \
 	} \
 	fn.glEnableClientState(array)
-#else
-#define FN_GLENABLECLIENTSTATE(array)	fn.glEnableClientState(array)
-#endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLEVALCOORD1DV(u)	GLdouble tmp[1]; \
@@ -2586,15 +2527,7 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLFOGFV(pname, params) \
 	GLfloat tmp[4]; \
-	int size; \
-	switch(pname) { \
-		case GL_FOG_COLOR: \
-			size=4; \
-			break; \
-		default: \
-			size=1; \
-			break; \
-	} \
+	int size = nfglGetNumParams(pname); \
 	Atari2HostFloatPtr(size, params, tmp); \
 	fn.glFogfv(pname, tmp)
 #else
@@ -2604,15 +2537,7 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLFOGIV(pname, params) \
 	GLint tmp[4]; \
-	int size; \
-	switch(pname) { \
-		case GL_FOG_COLOR: \
-			size=4; \
-			break; \
-		default: \
-			size=1; \
-			break; \
-	} \
+	int size = nfglGetNumParams(pname); \
 	Atari2HostIntPtr(size, params, tmp); \
 	fn.glFogiv(pname, tmp)
 #else
@@ -2692,18 +2617,15 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLGETINTEGERV(pname, params)	fn.glGetIntegerv(pname, params)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLINDEXPOINTER(type, stride, pointer) \
-	contexts[cur_context].index.size = 1; \
-	contexts[cur_context].index.type = type; \
-	contexts[cur_context].index.stride = stride; \
-	contexts[cur_context].index.count = -1; \
-	contexts[cur_context].index.pointer = pointer; \
-	contexts[cur_context].index.ptrstride = 0; \
-	fn.glIndexPointer(type, stride, pointer)
-#else
-#define FN_GLINDEXPOINTER(type, stride, pointer)	fn.glIndexPointer(type, stride, pointer)
-#endif
+	setupClientArray(contexts[cur_context].index, 1, type, stride, -1, 0, pointer)
+
+#define FN_GLINDEXPOINTEREXT(type, stride, count, pointer) \
+	setupClientArray(contexts[cur_context].index, 1, type, stride, count, 0, pointer)
+
+#define FN_GLINDEXPOINTERLISTIBM(type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].index, 1, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].index.vendor = 1
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLINDEXDV(c)	GLdouble tmp[1]; \
@@ -2746,15 +2668,7 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLLIGHTMODELFV(pname, params) \
 	GLfloat tmp[4]; \
-	int size; \
-	switch(pname) { \
-		case GL_LIGHT_MODEL_AMBIENT: \
-			size=4; \
-			break; \
-		default: \
-			size=1; \
-			break; \
-	} \
+	int size = nfglGetNumParams(pname); \
 	Atari2HostFloatPtr(size, params,tmp); \
 	fn.glLightModelfv(pname, tmp)
 #else
@@ -2764,15 +2678,7 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLLIGHTMODELIV(pname, params) \
 	GLint tmp[4]; \
-	int size; \
-	switch(pname) { \
-		case GL_LIGHT_MODEL_AMBIENT: \
-			size=4; \
-			break; \
-		default: \
-			size=1; \
-			break; \
-	} \
+	int size = nfglGetNumParams(pname); \
 	Atari2HostIntPtr(size, params, tmp); \
 	fn.glLightModeliv(pname, tmp)
 #else
@@ -2780,16 +2686,20 @@ static int nfglGetNumParams(GLenum pname)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLLIGHTFV(light, pname, params)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, params,tmp); \
+#define FN_GLLIGHTFV(light, pname, params) \
+	GLfloat tmp[4]; \
+	int size = nfglGetNumParams(pname); \
+	Atari2HostFloatPtr(size, params, tmp); \
 	fn.glLightfv(light, pname, tmp)
 #else
 #define FN_GLLIGHTFV(light, pname, params)	fn.glLightfv(light, pname, params)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLLIGHTIV(light, pname, params)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, params, tmp); \
+#define FN_GLLIGHTIV(light, pname, params) \
+	GLint tmp[4]; \
+	int size = nfglGetNumParams(pname); \
+	Atari2HostIntPtr(size, params, tmp); \
 	fn.glLightiv(light, pname, tmp)
 #else
 #define FN_GLLIGHTIV(light, pname, params)	fn.glLightiv(light, pname, params)
@@ -3456,31 +3366,39 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLNORMAL3SV(v)	fn.glNormal3sv(v)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLNORMALPOINTER(type, stride, pointer) \
-	contexts[cur_context].normal.size = 3; \
-	contexts[cur_context].normal.type = type; \
-	contexts[cur_context].normal.stride = stride; \
-	contexts[cur_context].normal.count = -1; \
-	contexts[cur_context].normal.pointer = pointer; \
-	contexts[cur_context].normal.ptrstride = 0; \
-	fn.glNormalPointer(type, stride, pointer)
-#else
-#define FN_GLNORMALPOINTER(type, stride, pointer)	fn.glNormalPointer(type, stride, pointer)
-#endif
+	setupClientArray(contexts[cur_context].normal, 3, type, stride, -1, 0, pointer)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLNORMALPOINTEREXT(type, stride, count, pointer) \
-	contexts[cur_context].normal.size = 3; \
-	contexts[cur_context].normal.type = type; \
-	contexts[cur_context].normal.stride = stride; \
-	contexts[cur_context].normal.count = count; \
-	contexts[cur_context].normal.pointer = pointer; \
-	contexts[cur_context].normal.ptrstride = 0; \
-	fn.glNormalPointerEXT(type, stride, count, pointer)
-#else
-#define FN_GLNORMALPOINTEREXT(type, stride, count, pointer)	fn.glNormalPointerEXT(type, stride, count, pointer)
-#endif
+	setupClientArray(contexts[cur_context].normal, 3, type, stride, count, 0, pointer)
+
+#define FN_GLNORMALPOINTERLISTIBM(type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].normal, 3, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].normal.vendor = 1
+
+#define FN_GLNORMALPOINTERVINTEL(type, pointer) \
+	setupClientArray(contexts[cur_context].normal, 3, type, 0, -1, 0, pointer); \
+	contexts[cur_context].normal.vendor = 2
+
+#define FN_GLFOGCOORDPOINTER(type, stride, pointer) \
+	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, -1, 0, pointer)
+
+#define FN_GLFOGCOORDPOINTEREXT(type, stride, pointer) \
+	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, 0, 0, pointer)
+
+#define FN_GLFOGCOORDPOINTERLISTIBM(type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].fogcoord.vendor = 1
+
+#define FN_GLSECONDARYCOLORPOINTER(size, type, stride, pointer) \
+	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, -1, 0, pointer)
+
+#define FN_GLSECONDARYCOLORPOINTEREXT(size, type, stride, pointer) \
+	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, 0, 0, pointer)
+
+#define FN_GLSECONDARYCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].secondary_color.vendor = 1
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLNORMALSTREAM3DVATI(stream, coords)	GLdouble tmp[3]; \
@@ -4175,31 +4093,19 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLTEXCOORD4SV(v)	fn.glTexCoord4sv(v)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORDPOINTER(size, type, stride, pointer) \
-	contexts[cur_context].texcoord.size = size; \
-	contexts[cur_context].texcoord.type = type; \
-	contexts[cur_context].texcoord.stride = stride; \
-	contexts[cur_context].texcoord.count = -1; \
-	contexts[cur_context].texcoord.pointer = pointer; \
-	contexts[cur_context].texcoord.ptrstride = 0; \
-	fn.glTexCoordPointer(size, type, stride, pointer)
-#else
-#define FN_GLTEXCOORDPOINTER(size, type, stride, pointer)	fn.glTexCoordPointer(size, type, stride, pointer)
-#endif
+	setupClientArray(contexts[cur_context].texcoord, size, type, stride, -1, 0, pointer)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORDPOINTEREXT(size, type, stride, count, pointer) \
-	contexts[cur_context].texcoord.size = size; \
-	contexts[cur_context].texcoord.type = type; \
-	contexts[cur_context].texcoord.stride = stride; \
-	contexts[cur_context].texcoord.count = count; \
-	contexts[cur_context].texcoord.pointer = pointer; \
-	contexts[cur_context].texcoord.ptrstride = 0; \
-	fn.glTexCoordPointerEXT(size, type, stride, count, pointer)
-#else
-#define FN_GLTEXCOORDPOINTEREXT(size, type, stride, count, pointer)	fn.glTexCoordPointerEXT(size, type, stride, count, pointer)
-#endif
+	setupClientArray(contexts[cur_context].texcoord, size, type, stride, count, 0, pointer)
+
+#define FN_GLTEXCOORDPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].texcoord, size, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].texcoord.vendor = 1
+
+#define FN_GLTEXCOORDPOINTERVINTEL(size, type, pointer) \
+	setupClientArray(contexts[cur_context].texcoord, size, type, 0, -1, 0, pointer); \
+	contexts[cur_context].texcoord.vendor = 2
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXENVFV(target, pname, params) \
@@ -5082,31 +4988,19 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLVERTEXATTRIBS4SVNV(index, count, v)	fn.glVertexAttribs4svNV(index, count, v)
 #endif
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXPOINTER(size, type, stride, pointer) \
-	contexts[cur_context].vertex.size = size; \
-	contexts[cur_context].vertex.type = type; \
-	contexts[cur_context].vertex.stride = stride; \
-	contexts[cur_context].vertex.count = -1; \
-	contexts[cur_context].vertex.pointer = pointer; \
-	contexts[cur_context].vertex.ptrstride = 0; \
-	fn.glVertexPointer(size, type, stride, pointer)
-#else
-#define FN_GLVERTEXPOINTER(size, type, stride, pointer)	fn.glVertexPointer(size, type, stride, pointer)
-#endif
+	setupClientArray(contexts[cur_context].vertex, size, type, stride, -1, 0, pointer)
 
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXPOINTEREXT(size, type, stride, count, pointer) \
-	contexts[cur_context].vertex.size = size; \
-	contexts[cur_context].vertex.type = type; \
-	contexts[cur_context].vertex.stride = stride; \
-	contexts[cur_context].vertex.count = count; \
-	contexts[cur_context].vertex.pointer = pointer; \
-	contexts[cur_context].vertex.ptrstride = 0; \
-	fn.glVertexPointerEXT(size, type, stride, count, pointer)
-#else
-#define FN_GLVERTEXPOINTEREXT(size, type, stride, count, pointer)	fn.glVertexPointerEXT(size, type, stride, count, pointer)
-#endif
+	setupClientArray(contexts[cur_context].vertex, size, type, stride, count, 0, pointer)
+
+#define FN_GLVERTEXPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
+	setupClientArray(contexts[cur_context].vertex, size, type, stride, -1, ptrstride, pointer); \
+	contexts[cur_context].vertex.vendor = 1
+
+#define FN_GLVERTEXPOINTERVINTEL(size, type, pointer) \
+	setupClientArray(contexts[cur_context].vertex, size, type, 0, -1, 0, pointer); \
+	contexts[cur_context].vertex.vendor = 2
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXSTREAM1DVATI(stream, coords)	GLdouble tmp[1]; \
@@ -5501,15 +5395,104 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLAREPROGRAMSRESIDENTNV(n, programs, residences)	return fn.glAreProgramsResidentNV(n, programs, residences)
 #endif
 
+void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GLuint count)
+{
+	fbo_buffer *fbo;
+	
+	switch (target) {
+	case GL_ARRAY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.array;
+		break;
+	case GL_ATOMIC_COUNTER_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.atomic_counter;
+		break;
+	case GL_COPY_READ_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.copy_read;
+		contexts[cur_context].buffer_bindings.copy_read.first = first;
+		contexts[cur_context].buffer_bindings.copy_read.first = count;
+		break;
+	case GL_COPY_WRITE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.copy_write;
+		break;
+	case GL_DISPATCH_INDIRECT_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.dispatch_indirect;
+		break;
+	case GL_DRAW_INDIRECT_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.draw_indirect;
+		break;
+	case GL_ELEMENT_ARRAY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.element_array;
+		break;
+	case GL_PIXEL_PACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.pixel_pack;
+		break;
+	case GL_PIXEL_UNPACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.pixel_unpack;
+		break;
+	case GL_QUERY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.query;
+		break;
+	case GL_SHADER_STORAGE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.shader_storage;
+		break;
+	case GL_TEXTURE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.texture;
+		break;
+	case GL_TRANSFORM_FEEDBACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.transform_feedback;
+		break;
+	case GL_UNIFORM_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.uniform;
+		break;
+	default:
+		return;
+	}
+	fbo->id = buffer;
+	fbo->first = first;
+	fbo->count = count;
+}
+
+#define FN_GLBINDBUFFER(target, buffer) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBuffer(target, buffer)
+
+#define FN_GLBINDBUFFERBASE(target, index, buffer) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferBase(target, index, buffer)
+
+#define FN_GLBINDBUFFERBASEEXT(target, index, buffer) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferBaseEXT(target, index, buffer)
+
+#define FN_GLBINDBUFFERBASENV(target, index, buffer) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferBaseNV(target, index, buffer)
+
+#define FN_GLBINDBUFFERRANGE(target, index, buffer, offset, size) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferRange(target, index, buffer, offset, size)
+
+#define FN_GLBINDBUFFERRANGEEXT(target, index, buffer, offset, size) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferRangeEXT(target, index, buffer, offset, size)
+
+#define FN_GLBINDBUFFERRANGENV(target, index, buffer, offset, size) \
+	gl_bind_buffer(target, buffer, 0, 0); \
+	fn.glBindBufferRangeNV(target, index, buffer, offset, size)
+
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLBINDBUFFERSBASE(target, first, count, buffers) \
 	if (buffers) { \
 		GLuint *tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
 		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
 		Atari2HostIntArray(count, buffers, tmp); \
+		for (GLsizei i = 0; i < count; i++) \
+			gl_bind_buffer(target, tmp[i], first + i, 0); \
 		fn.glBindBuffersBase(target, first, count, tmp); \
 		free(tmp); \
 	} else { \
+		for (GLsizei i = 0; i < count; i++) \
+			gl_bind_buffer(target, 0, first + i, 0); \
 		fn.glBindBuffersBase(target, first, count, buffers); \
 	}
 #else
@@ -5524,8 +5507,12 @@ static int nfglGetNumParams(GLenum pname)
 		pbuffers = (GLuint *)malloc(count * sizeof(*pbuffers)); \
 		if (!pbuffers) { glSetError(GL_OUT_OF_MEMORY); return; } \
 		Atari2HostIntArray(count, buffers, pbuffers); \
+		for (GLsizei i = 0; i < count; i++) \
+			gl_bind_buffer(target, pbuffers[i], first + i, 0); \
 	} else { \
 		pbuffers = NULL; \
+		for (GLsizei i = 0; i < count; i++) \
+			gl_bind_buffer(target, 0, first + i, 0); \
 	} \
 	if (offsets) { \
 		poffsets = (GLintptr *)malloc(count * sizeof(*poffsets)); \
@@ -5747,11 +5734,29 @@ data store.
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) \
-	void *tmp = convertPixels(width, 1, 1, format, tyoe); \
+	void *tmp = convertPixels(width, 1, 1, format, type, pixels); \
 	fn.glTexImage1D(target, level, internalformat, width, border, format, type, tmp); \
 	if (tmp != pixels) free(tmp)
 #else
 #define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) fn.glTexImage1D(target, level, internalformat, width, border, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels) \
+	void *tmp = convertPixels(width, height, 1, format, type, pixels); \
+	fn.glTexImage2D(target, level, internalformat, width, height, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels) fn.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLTEXIMAGE3D(target, level, internalformat, width, height, depth, border, format, type, pixels) \
+	void *tmp = convertPixels(width, height, depth, format, type, pixels); \
+	fn.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLTEXIMAGE3D(target, level, internalformat, width, height, depth, border, format, type, pixels) fn.glTexImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
@@ -5772,32 +5777,6 @@ data store.
 	if (tmp != data) free(tmp)
 #else
 #define FN_GLCLEARTEXSUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data) fn.glClearTexSubImage(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
-	contexts[cur_context].color.size = size; \
-	contexts[cur_context].color.type = type; \
-	contexts[cur_context].color.stride = stride; \
-	contexts[cur_context].color.count = -1; \
-	contexts[cur_context].color.pointer = pointer; \
-	contexts[cur_context].color.ptrstride = ptrstride; \
-	fn.glColorPointerListIBM(size, type, stride, pointer, ptrstride)
-#else
-#define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride)	fn.glColorPointerListIBM(size, type, stride, pointer, ptrstride)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLCOLORPOINTERVINTEL(size, type, pointer) \
-	contexts[cur_context].color.size = size; \
-	contexts[cur_context].color.type = type; \
-	contexts[cur_context].color.stride = 0; \
-	contexts[cur_context].color.count = -1; \
-	contexts[cur_context].color.pointer = pointer; \
-	contexts[cur_context].color.ptrstride = 0; \
-	fn.glColorPointervINTEL(size, type, pointer)
-#else
-#define FN_GLCOLORPOINTERVINTEL(size, type, pointer)	fn.glColorPointervINTEL(size, type, pointer)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
@@ -5868,6 +5847,1302 @@ data store.
 	}
 #else
 #define FN_GLCOLORTABLEPARAMETERIVSGI(target, pname, params) fn.glColorTableParameterivSGI(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCOLORTABLESGI(target, internalformat, width, format, type, table) \
+	void *tmp = convertPixels(width, 1, 1, format, type, table); \
+	fn.glColorTableSGI(target, internalformat, width, format, type, tmp); \
+	if (tmp != table) free(tmp)
+#else
+#define FN_GLCOLORTABLESGI(target, internalformat, width, format, type, table)	fn.glColorTableSGI(target, internalformat, width, format, type, table)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOMBINERPARAMETERFVNV(pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = 1; \
+		switch (pname) { \
+			case GL_CONSTANT_COLOR0_NV: \
+			case GL_CONSTANT_COLOR1_NV: size = 4; break; \
+		} \
+		Atari2HostFloatPtr(size, params, tmp); \
+		fn.glCombinerParameterfvNV(pname, tmp); \
+	} else { \
+		fn.glCombinerParameterfvNV(pname, params); \
+	}
+#else
+#define FN_GLCOMBINERPARAMETERFVNV(pname, params) fn.glCombinerParameterfvNV(pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCOMBINERPARAMETERIVNV(pname, params) \
+	if (params) { \
+		GLint tmp[4]; \
+		int size = 1; \
+		switch (pname) { \
+			case GL_CONSTANT_COLOR0_NV: \
+			case GL_CONSTANT_COLOR1_NV: size = 4; break; \
+		} \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glCombinerParameterivNV(pname, tmp); \
+	} else { \
+		fn.glCombinerParameterivNV(pname, params); \
+	}
+#else
+#define FN_GLCOMBINERPARAMETERIVNV(pname, params) fn.glCombinerParameterivNV(pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = 1; \
+		switch (pname) { \
+			case GL_CONSTANT_COLOR0_NV: \
+			case GL_CONSTANT_COLOR1_NV: size = 4; break; \
+		} \
+		Atari2HostFloatPtr(size, params, tmp); \
+		fn.glCombinerStageParameterfvNV(stage, pname, tmp); \
+	} else { \
+		fn.glCombinerStageParameterfvNV(stage, pname, params); \
+	}
+#else
+#define FN_GLCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) fn.glCombinerStageParameterfvNV(stage, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = 1; \
+		fn.glGetCombinerStageParameterfvNV(stage, pname, tmp); \
+		switch (pname) { \
+			case GL_CONSTANT_COLOR0_NV: \
+			case GL_CONSTANT_COLOR1_NV: size = 4; break; \
+		} \
+		Host2AtariFloatArray(size, tmp, params); \
+	} else { \
+		fn.glGetCombinerStageParameterfvNV(stage, pname, params); \
+	}
+#else
+#define FN_GLGETCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) fn.glGetCombinerStageParameterfvNV(stage, pname, params)
+#endif
+
+#define FN_GLCOMPILESHADERINCLUDEARB(shader, count, path, length) \
+	GLchar **ppath; \
+	GLint *plength; \
+	if (path) { \
+		ppath = (GLchar **)malloc(count * sizeof(*ppath)); \
+		if (!ppath) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *p = (const Uint32 *)path; \
+		/* FIXME: the pathnames here are meaningless to the host */ \
+		for (GLsizei i = 0; i < count; i++) \
+			ppath[i] = p[i] ? (GLchar *)Atari2HostAddr(SDL_SwapBE32(p[i])) : NULL; \
+	} else { \
+		ppath = NULL; \
+	} \
+	if (length) { \
+		plength = (GLint *)malloc(count * sizeof(*plength)); \
+		if (!plength) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(count, length, plength); \
+	} else { \
+		plength = NULL; \
+	} \
+	fn.glCompileShaderIncludeARB(shader, count, ppath, plength); \
+	free(plength); \
+	free(ppath)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE1D(target, level, internalformat, width, border, imageSize, data) \
+	fn.glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE2D(target, level, internalformat, width, height, border, imageSize, data) \
+	fn.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE3D(target, level, internalformat, width, height, depth, border, imageSize, data) \
+	fn.glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE1DARB(target, level, internalformat, width, border, imageSize, data) \
+	fn.glCompressedTexImage1DARB(target, level, internalformat, width, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE2DARB(target, level, internalformat, width, height, border, imageSize, data) \
+	fn.glCompressedTexImage2DARB(target, level, internalformat, width, height, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE3DARB(target, level, internalformat, width, height, depth, border, imageSize, data) \
+	fn.glCompressedTexImage3DARB(target, level, internalformat, width, height, depth, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE1D(target, level, xoffset, width, format, imageSize, data) \
+	fn.glCompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE2D(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
+	fn.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
+	fn.glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE1DARB(target, level, xoffset, width, format, imageSize, data) \
+	fn.glCompressedTexSubImage1DARB(target, level, xoffset, width, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
+	fn.glCompressedTexSubImage2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
+	fn.glCompressedTexSubImage3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE1DEXT(texture, target, level, internalformat, width, border, imageSize, bits) \
+	fn.glCompressedTextureImage1DEXT(texture, target, level, internalformat, width, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits) \
+	fn.glCompressedTextureImage2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits) \
+	fn.glCompressedTextureImage3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT(texture, target, level, xoffset, width, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage1DEXT(texture, target, level, xoffset, width, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONFILTER1D(target, internalformat, width, format, type, image) \
+	void *tmp = convertPixels(width, 1, 1, format, type, image); \
+	fn.glConvolutionFilter1D(target, internalformat, width, format, type, tmp); \
+	if (tmp != image) free(tmp)
+#else
+#define FN_GLCONVOLUTIONFILTER1D(target, internalformat, width, format, type, image) fn.glConvolutionFilter1D(target, internalformat, width, format, type, image)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONFILTER2D(target, internalformat, width, height, format, type, image) \
+	void *tmp = convertPixels(width, height, 1, format, type, image); \
+	fn.glConvolutionFilter2D(target, internalformat, width, height, format, type, tmp); \
+	if (tmp != image) free(tmp)
+#else
+#define FN_GLCONVOLUTIONFILTER2D(target, internalformat, width, height, format, type, image) fn.glConvolutionFilter2D(target, internalformat, width, height, format, type, image)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONFILTER1DEXT(target, internalformat, width, format, type, image) \
+	void *tmp = convertPixels(width, 1, 1, format, type, image); \
+	fn.glConvolutionFilter1DEXT(target, internalformat, width, format, type, tmp); \
+	if (tmp != image) free(tmp)
+#else
+#define FN_GLCONVOLUTIONFILTER1DEXT(target, internalformat, width, format, type, image) fn.glConvolutionFilter1DEXT(target, internalformat, width, format, type, image)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONFILTER2DEXT(target, internalformat, width, height, format, type, image) \
+	void *tmp = convertPixels(width, height, 1, format, type, image); \
+	fn.glConvolutionFilter2DEXT(target, internalformat, width, height, format, type, tmp); \
+	if (tmp != image) free(tmp)
+#else
+#define FN_GLCONVOLUTIONFILTER2DEXT(target, internalformat, width, height, format, type, image) fn.glConvolutionFilter2DEXT(target, internalformat, width, height, format, type, image)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONPARAMETERFV(target, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostFloatPtr(size, params, tmp); \
+		fn.glConvolutionParameterfv(target, pname, tmp); \
+	} else { \
+		fn.glConvolutionParameterfv(target, pname, params); \
+	}
+#else
+#define FN_GLCONVOLUTIONPARAMETERFV(target, pname, params) fn.glConvolutionParameterfv(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCONVOLUTIONPARAMETERFVEXT(target, pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostFloatPtr(size, params, tmp); \
+		fn.glConvolutionParameterfvEXT(target, pname, tmp); \
+	} else { \
+		fn.glConvolutionParameterfvEXT(target, pname, params); \
+	}
+#else
+#define FN_GLCONVOLUTIONPARAMETERFVEXT(target, pname, params) fn.glConvolutionParameterfvEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCONVOLUTIONPARAMETERIV(target, pname, params) \
+	if (params) { \
+		GLint tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glConvolutionParameteriv(target, pname, tmp); \
+	} else { \
+		fn.glConvolutionParameteriv(target, pname, params); \
+	}
+#else
+#define FN_GLCONVOLUTIONPARAMETERIV(target, pname, params) fn.glConvolutionParameteriv(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCONVOLUTIONPARAMETERIVEXT(target, pname, params) \
+	if (params) { \
+		GLint tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glConvolutionParameterivEXT(target, pname, tmp); \
+	} else { \
+		fn.glConvolutionParameterivEXT(target, pname, params); \
+	}
+#else
+#define FN_GLCONVOLUTIONPARAMETERIVEXT(target, pname, params) fn.glConvolutionParameterivEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCONVOLUTIONPARAMETERXVOES(target, pname, params) \
+	if (params) { \
+		GLfixed tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glConvolutionParameterxvOES(target, pname, tmp); \
+	} else { \
+		fn.glConvolutionParameterxvOES(target, pname, params); \
+	}
+#else
+#define FN_GLCONVOLUTIONPARAMETERXVOES(target, pname, params) fn.glConvolutionParameterxvOES(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOVERFILLPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues) \
+	void *tmp = convertArray(numPaths, pathNameType, paths); \
+	GLfloat *vals; \
+	if (transformValues && numPaths) { \
+		vals = (GLfloat *)malloc(numPaths * sizeof(*vals)); \
+		if (!vals) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostFloatPtr(numPaths, transformValues, vals); \
+	} else { \
+		vals = NULL; \
+	} \
+	fn.glCoverFillPathInstancedNV(numPaths, pathNameType, tmp, pathBase, coverMode, transformType, vals); \
+	free(vals); \
+	if (tmp != paths) free(tmp)
+#else
+#define FN_GLCOVERFILLPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues) \
+	fn.glCoverFillPathInstancedNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCOVERSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues) \
+	void *tmp = convertArray(numPaths, pathNameType, paths); \
+	GLfloat *vals; \
+	if (transformValues && numPaths) { \
+		vals = (GLfloat *)malloc(numPaths * sizeof(*vals)); \
+		if (!vals) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostFloatPtr(numPaths, transformValues, vals); \
+	} else { \
+		vals = NULL; \
+	} \
+	fn.glCoverStrokePathInstancedNV(numPaths, pathNameType, tmp, pathBase, coverMode, transformType, vals); \
+	free(vals); \
+	if (tmp != paths) free(tmp)
+#else
+#define FN_GLCOVERSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues) \
+	fn.glCoverStrokePathInstancedNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) \
+	GLuint tmp[1]; \
+	fn.glCreatePerfQueryINTEL(queryId, tmp); \
+	Host2AtariIntPtr(1, tmp, queryHandle)
+#else
+#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) fn.glCreatePerfQueryINTEL(queryId, queryHandle)
+#endif
+
+#define FN_GLCREATESHADERPROGRAMV(type, count, strings) \
+	GLchar **pstrings; \
+	if (strings && count) { \
+		pstrings = (GLchar **)malloc(count * sizeof(*pstrings)); \
+		if (!pstrings) { glSetError(GL_OUT_OF_MEMORY); return 0; } \
+		const Uint32 *p = (const Uint32 *)strings; \
+		for (GLsizei i = 0; i < count; i++) \
+			pstrings[i] = p[i] ? (GLchar *)Atari2HostAddr(SDL_SwapBE32(p[i])) : NULL; \
+	} else { \
+		pstrings = NULL; \
+	} \
+	GLuint ret = fn.glCreateShaderProgramv(type, count, pstrings); \
+	free(pstrings); \
+	return ret
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCULLPARAMETERDVEXT(pname, params) \
+	if (params) { \
+		GLdouble tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostDoublePtr(size, params, tmp); \
+		fn.glCullParameterdvEXT(pname, tmp); \
+	} else { \
+		fn.glCullParameterdvEXT(pname, params); \
+	}
+#else
+#define FN_GLCULLPARAMETERDVEXT(pname, params) fn.glCullParameterdvEXT(pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLCULLPARAMETERFVEXT(pname, params) \
+	if (params) { \
+		GLfloat tmp[4]; \
+		int size = nfglGetNumParams(pname); \
+		Atari2HostFloatPtr(size, params, tmp); \
+		fn.glCullParameterfvEXT(pname, tmp); \
+	} else { \
+		fn.glCullParameterfvEXT(pname, params); \
+	}
+#else
+#define FN_GLCULLPARAMETERFVEXT(pname, params) fn.glCullParameterfvEXT(pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDEBUGMESSAGECONTROL(source, type, severity, count, ids, enabled) \
+	GLuint *tmp; \
+	if (ids && count) { \
+		tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(count, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDebugMessageControl(source, type, severity, count, tmp, enabled); \
+	free(tmp)
+#else
+#define FN_GLDEBUGMESSAGECONTROL(source, type, severity, count, ids, enabled) \
+	fn.glDebugMessageControl(source, type, severity, count, ids, enabled)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDEBUGMESSAGECONTROLARB(source, type, severity, count, ids, enabled) \
+	GLuint *tmp; \
+	if (ids && count) { \
+		tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(count, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDebugMessageControlARB(source, type, severity, count, tmp, enabled); \
+	free(tmp)
+#else
+#define FN_GLDEBUGMESSAGECONTROLARB(source, type, severity, count, ids, enabled) \
+	fn.glDebugMessageControlARB(source, type, severity, count, ids, enabled)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDEBUGMESSAGEENABLEAMD(category, severity, count, ids, enabled) \
+	GLuint *tmp; \
+	if (ids && count) { \
+		tmp = (GLuint *)malloc(count * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(count, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDebugMessageEnableAMD(category, severity, count, tmp, enabled); \
+	free(tmp)
+#else
+#define FN_GLDEBUGMESSAGEENABLEAMD(category, severity, count, ids, enabled) \
+	fn.glDebugMessageEnableAMD(category, severity, count, ids, enabled)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEBUFFERS(n, buffers) \
+	GLuint *tmp; \
+	if (buffers && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, buffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteBuffers(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEBUFFERS(n, buffers) \
+	fn.glDeleteBuffers(n, buffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEBUFFERSARB(n, buffers) \
+	GLuint *tmp; \
+	if (buffers && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, buffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteBuffersARB(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEBUFFERSARB(n, buffers) \
+	fn.glDeleteBuffersARB(n, buffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEFENCESAPPLE(n, fences) \
+	GLuint *tmp; \
+	if (fences && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, fences, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteFencesAPPLE(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEFENCESAPPLE(n, fences) \
+	fn.glDeleteFencesAPPLE(n, fences)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEFENCESNV(n, fences) \
+	GLuint *tmp; \
+	if (fences && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, fences, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteFencesNV(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEFENCESNV(n, fences) \
+	fn.glDeleteFencesNV(n, fences)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEFRAMEBUFFERS(n, framebuffers) \
+	GLuint *tmp; \
+	if (framebuffers && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, framebuffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteFramebuffers(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEFRAMEBUFFERS(n, framebuffers) \
+	fn.glDeleteFramebuffers(n, framebuffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEFRAMEBUFFERSEXT(n, framebuffers) \
+	GLuint *tmp; \
+	if (framebuffers && n) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, framebuffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteFramebuffersEXT(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEFRAMEBUFFERSEXT(n, framebuffers) \
+	fn.glDeleteFramebuffersEXT(n, framebuffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETENAMESAMD(identifier, num, names) \
+	GLuint *tmp; \
+	if (num && names) { \
+		tmp = (GLuint *)malloc(num * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(num, names, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteNamesAMD(identifier, num, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETENAMESAMD(identifier, num, names) \
+	fn.glDeleteNamesAMD(identifier, num, names)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEOCCLUSIONQUERIESNV(n, ids) \
+	GLuint *tmp; \
+	if (n && ids) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteOcclusionQueriesNV(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEOCCLUSIONQUERIESNV(n, ids) \
+	fn.glDeleteOcclusionQueriesNV(n, ids)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLDEFORMATIONMAP3DSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
+	GLdouble tmp[3]; \
+	/* count(3) guessed from function name; has to be verified */ \
+	Atari2HostDoublePtr(3, points, tmp); \
+	fn.glDeformationMap3dSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, tmp)
+#else
+#define FN_GLDEFORMATIONMAP3DSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
+	fn.glDeformationMap3dSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLDEFORMATIONMAP3FSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
+	GLfloat tmp[3]; \
+	/* count(3) guessed from function name; has to be verified */ \
+	Atari2HostFloatPtr(3, points, tmp); \
+	fn.glDeformationMap3fSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, tmp)
+#else
+#define FN_GLDEFORMATIONMAP3FSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
+	fn.glDeformationMap3fSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEPERFMONITORSAMD(n, monitors) \
+	GLuint *tmp; \
+	if (n && monitors) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, monitors, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeletePerfMonitorsAMD(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEPERFMONITORSAMD(n, monitors) \
+	fn.glDeletePerfMonitorsAMD(n, monitors)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEPROGRAMPIPELINES(n, pipelines) \
+	GLuint *tmp; \
+	if (n && pipelines) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, pipelines, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteProgramPipelines(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEPROGRAMPIPELINES(n, pipelines) \
+	fn.glDeleteProgramPipelines(n, pipelines)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGENPERFMONITORSAMD(n, monitors) \
+	GLuint *tmp; \
+	if (n && monitors) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		fn.glGenPerfMonitorsAMD(n, tmp); \
+		Host2AtariIntPtr(n, tmp, monitors); \
+	} else { \
+		tmp = NULL; \
+		fn.glGenPerfMonitorsAMD(n, tmp); \
+	} \
+	free(tmp)
+#else
+#define FN_GLGENPERFMONITORSAMD(n, monitors) \
+	fn.glGenPerfMonitorsAMD(n, monitors)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEPROGRAMSARB(n, programs) \
+	GLuint *tmp; \
+	if (n && programs) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, programs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteProgramsARB(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEPROGRAMSARB(n, programs) \
+	fn.glDeleteProgramsARB(n, programs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEPROGRAMSNV(n, programs) \
+	GLuint *tmp; \
+	if (n && programs) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, programs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteProgramsNV(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEPROGRAMSNV(n, programs) \
+	fn.glDeleteProgramsNV(n, programs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEQUERIES(n, ids) \
+	GLuint *tmp; \
+	if (n && ids) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteQueries(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEQUERIES(n, ids) \
+	fn.glDeleteQueries(n, ids)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEQUERIESARB(n, ids) \
+	GLuint *tmp; \
+	if (n && ids) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteQueriesARB(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEQUERIESARB(n, ids) \
+	fn.glDeleteQueriesARB(n, ids)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETERENDERBUFFERS(n, renderbuffers) \
+	GLuint *tmp; \
+	if (n && renderbuffers) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, renderbuffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteRenderbuffers(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETERENDERBUFFERS(n, renderbuffers) \
+	fn.glDeleteRenderbuffers(n, renderbuffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETERENDERBUFFERSEXT(n, renderbuffers) \
+	GLuint *tmp; \
+	if (n && renderbuffers) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, renderbuffers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteRenderbuffersEXT(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETERENDERBUFFERSEXT(n, renderbuffers) \
+	fn.glDeleteRenderbuffersEXT(n, renderbuffers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETESAMPLERS(n, samplers) \
+	GLuint *tmp; \
+	if (n && samplers) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, samplers, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteSamplers(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETESAMPLERS(n, samplers) \
+	fn.glDeleteSamplers(n, samplers)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETETRANSFORMFEEDBACKS(n, ids) \
+	GLuint *tmp; \
+	if (n && ids) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteTransformFeedbacks(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETETRANSFORMFEEDBACKS(n, ids) \
+	fn.glDeleteTransformFeedbacks(n, ids)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETETRANSFORMFEEDBACKSNV(n, ids) \
+	GLuint *tmp; \
+	if (n && ids) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, ids, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteTransformFeedbacksNV(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETETRANSFORMFEEDBACKSNV(n, ids) \
+	fn.glDeleteTransformFeedbacksNV(n, ids)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEVERTEXARRAYS(n, arrays) \
+	GLuint *tmp; \
+	if (n && arrays) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, arrays, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteVertexArrays(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEVERTEXARRAYS(n, arrays) \
+	fn.glDeleteVertexArrays(n, arrays)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDELETEVERTEXARRAYSAPPLE(n, arrays) \
+	GLuint *tmp; \
+	if (n && arrays) { \
+		tmp = (GLuint *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, arrays, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDeleteVertexArraysAPPLE(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDELETEVERTEXARRAYSAPPLE(n, arrays) \
+	fn.glDeleteVertexArraysAPPLE(n, arrays)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLDEPTHRANGEARRAYV(first, count, v) \
+	GLdouble *tmp; \
+	if (count && v) { \
+		tmp = (GLdouble *)malloc(count * 2 * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostDoublePtr(count * 2, v, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDepthRangeArrayv(first, count, tmp); \
+	free(tmp)
+#else
+#define FN_GLDEPTHRANGEARRAYV(first, count, v) \
+	fn.glDepthRangeArrayv(first, count, v)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLDETAILTEXFUNCSGIS(target, n, points) \
+	GLfloat *tmp; \
+	if (n && points) { \
+		tmp = (GLfloat *)malloc(n * 2 * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostFloatPtr(n * 2, points, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDetailTexFuncSGIS(target, n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDETAILTEXFUNCSGIS(target, n, points) \
+	fn.glDetailTexFuncSGIS(target, n, points)
+#endif
+
+/*
+If a buffer is bound to the GL_DRAW_INDIRECT_BUFFER binding at the time
+of a call to glDrawArraysIndirect, indirect is interpreted as an
+offset, in basic machine units, into that buffer and the parameter data
+is read from the buffer rather than from client memory. 
+*/
+
+#define FN_GLDRAWARRAYSINDIRECT(mode, indirect) \
+	/* \
+	 * The parameters addressed by indirect are packed into a structure that takes the form (in C): \
+	 * \
+	 *    typedef  struct { \
+	 *        uint  count; \
+	 *        uint  primCount; \
+	 *        uint  first; \
+	 *        uint  baseInstance; \
+	 *    } DrawArraysIndirectCommand; \
+	 */ \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		indirect = Host2AtariAddr(indirect); \
+		fn.glDrawArraysIndirect(mode, indirect); \
+	} else if (indirect) { \
+		GLuint tmp[4]; \
+		Atari2HostIntPtr(4, (const GLuint *)indirect, tmp); \
+		GLuint count = tmp[0]; \
+		convertClientArrays(count); \
+		fn.glDrawArraysInstancedBaseInstance(mode, tmp[2], count, tmp[1], tmp[3]); \
+	}
+
+/*
+ * The parameters addressed by indirect are packed into a structure that takes the form (in C):
+ *
+ *    typedef  struct {
+ *        uint  count;
+ *        uint  primCount;
+ *        uint  firstIndex;
+ *        uint  baseVertex;
+ *        uint  baseInstance;
+ *    } DrawArraysIndirectCommand;
+ */
+#define FN_GLDRAWELEMENTSINDIRECT(mode, type, indirect) \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		indirect = Host2AtariAddr(indirect); \
+		fn.glDrawElementsIndirect(mode, type, indirect); \
+	} else if (indirect) { \
+		GLuint tmp[5]; \
+		Atari2HostIntPtr(5, (const GLuint *)indirect, tmp); \
+		GLuint count = tmp[0]; \
+		convertClientArrays(count); \
+		fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, (const void *)(uintptr)tmp[2], tmp[1], tmp[3], tmp[4]); \
+	}
+
+#define FN_GLDRAWELEMENTSINSTANCED(mode, count, type, indices, instancecount) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstanced(mode, count, type, tmp, instancecount); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLDRAWELEMENTSINSTANCEDARB(mode, count, type, indices, instancecount) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstancedARB(mode, count, type, tmp, instancecount); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLDRAWELEMENTSINSTANCEDEXT(mode, count, type, indices, instancecount) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstancedEXT(mode, count, type, tmp, instancecount); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLDRAWELEMENTSINSTANCEDBASEINSTANCE(mode, count, type, indices, instancecount, baseinstance) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstancedBaseInstance(mode, count, type, tmp, instancecount, baseinstance); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLDRAWELEMENTSINSTANCEDBASEVERTEX(mode, count, type, indices, instancecount, basevertex) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstancedBaseVertex(mode, count, type, tmp, instancecount, basevertex); \
+	if (tmp != indices) free(tmp)
+
+#define FN_GLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCE(mode, count, type, indices, instancecount, basevertex, baseinstance) \
+	void *tmp; \
+	convertClientArrays(count); \
+	switch(type) { \
+	case GL_UNSIGNED_BYTE: \
+	case GL_UNSIGNED_SHORT: \
+	case GL_UNSIGNED_INT: \
+		tmp = convertArray(count, type, indices); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, tmp, instancecount, basevertex, baseinstance); \
+	if (tmp != indices) free(tmp)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDRAWBUFFERS(n, bufs) \
+	GLenum *tmp; \
+	if (n && bufs) { \
+		tmp = (GLenum *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, bufs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDrawBuffers(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDRAWBUFFERS(n, bufs) \
+	fn.glDrawBuffers(n, bufs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDRAWBUFFERSARB(n, bufs) \
+	GLenum *tmp; \
+	if (n && bufs) { \
+		tmp = (GLenum *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, bufs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDrawBuffersARB(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDRAWBUFFERSARB(n, bufs) \
+	fn.glDrawBuffersARB(n, bufs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLDRAWBUFFERSATI(n, bufs) \
+	GLenum *tmp; \
+	if (n && bufs) { \
+		tmp = (GLenum *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, bufs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glDrawBuffersATI(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLDRAWBUFFERSATI(n, bufs) \
+	fn.glDrawBuffersATI(n, bufs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLDRAWPIXELS(width, height, format, type, pixels) \
+	void *tmp = convertPixels(width, height, 1, format, type, pixels); \
+	fn.glDrawPixels(width, height, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLDRAWPIXELS(width, height, format, type, pixels) \
+	fn.glDrawPixels(width, height, format, type, pixels)
+#endif
+
+/* nothing to do */
+#define FN_GLEDGEFLAGV(flag) \
+	fn.glEdgeFlagv(flag)
+
+#define FN_GLELEMENTPOINTERAPPLE(type, pointer) \
+	setupClientArray(contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
+	contexts[cur_context].element.vendor = 1
+
+#define FN_GLELEMENTPOINTERATI(type, pointer) \
+	setupClientArray(contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
+	contexts[cur_context].element.vendor = 2
+
+#define FN_GLDRAWELEMENTARRAYAPPLE(mode, first, count) \
+	convertClientArrays(first + count); \
+	fn.glDrawElementArrayAPPLE(mode, first, count)
+
+#define FN_GLDRAWELEMENTARRAYATI(mode, count) \
+	convertClientArrays(count); \
+	fn.glDrawElementArrayATI(mode, count)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLEVALCOORD1XVOES(coords) \
+	GLfixed tmp[1]; \
+	Atari2HostIntPtr(1, coords, tmp); \
+	fn.glEvalCoord1xvOES(tmp)
+#else
+#define FN_GLEVALCOORD1XVOES(coords) \
+	fn.glEvalCoord1xvOES(coords)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLEVALCOORD2XVOES(coords) \
+	GLfixed tmp[2]; \
+	Atari2HostIntPtr(2, coords, tmp); \
+	fn.glEvalCoord2xvOES(tmp)
+#else
+#define FN_GLEVALCOORD2XVOES(coords) \
+	fn.glEvalCoord2xvOES(coords)
+#endif
+
+#define FN_GLRENDERMODE(mode) \
+	GLenum render_mode = contexts[cur_context].render_mode; \
+	GLint ret = fn.glRenderMode(mode); \
+	switch (mode) { \
+	case GL_RENDER: \
+	case GL_SELECT: \
+	case GL_FEEDBACK: \
+		contexts[cur_context].render_mode = mode; \
+		break; \
+	} \
+	switch (render_mode) { \
+	case GL_FEEDBACK: \
+		if (ret > 0 && contexts[cur_context].feedback_buffer_host) { \
+			switch (contexts[cur_context].feedback_buffer_type) { \
+			case GL_FLOAT: \
+				Host2AtariFloatArray(ret, (const GLfloat *)contexts[cur_context].feedback_buffer_host, (GLfloat *)contexts[cur_context].feedback_buffer_atari); \
+				break; \
+			case GL_FIXED: \
+				Host2AtariIntPtr(ret, (const GLfixed *)contexts[cur_context].feedback_buffer_host, (Uint32 *)contexts[cur_context].feedback_buffer_atari); \
+				break; \
+			} \
+		} \
+		break; \
+	} \
+	return ret
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFEEDBACKBUFFER(size, type, buffer) \
+	contexts[cur_context].feedback_buffer_atari = buffer; \
+	free(contexts[cur_context].feedback_buffer_host); \
+	contexts[cur_context].feedback_buffer_host = malloc(size * sizeof(GLfloat)); \
+	if (!contexts[cur_context].feedback_buffer_host) { glSetError(GL_OUT_OF_MEMORY); return; } \
+	contexts[cur_context].feedback_buffer_type = GL_FLOAT; \
+	fn.glFeedbackBuffer(size, type, (GLfloat *)contexts[cur_context].feedback_buffer_host)
+#else
+#define FN_GLFEEDBACKBUFFER(size, type, buffer) \
+	fn.glFeedbackBuffer(size, type, buffer)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLFEEDBACKBUFFERXOES(size, type, buffer) \
+	contexts[cur_context].feedback_buffer_atari = (void *)buffer; \
+	free(contexts[cur_context].feedback_buffer_host); \
+	contexts[cur_context].feedback_buffer_host = malloc(size * sizeof(GLfixed)); \
+	if (!contexts[cur_context].feedback_buffer_host) { glSetError(GL_OUT_OF_MEMORY); return; } \
+	contexts[cur_context].feedback_buffer_type = GL_FIXED; \
+	fn.glFeedbackBufferxOES(size, type, (GLfixed *)contexts[cur_context].feedback_buffer_host)
+#else
+#define FN_GLFEEDBACKBUFFERXOES(size, type, buffer) \
+	fn.glFeedbackBufferxOES(size, type, buffer)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLEXECUTEPROGRAMNV(target, id, params) \
+	GLfloat tmp[4]; \
+	Atari2HostFloatPtr(4, params, tmp); \
+	fn.glExecuteProgramNV(target, id, tmp)
+#else
+#define FN_GLEXECUTEPROGRAMNV(size, type, buffer) \
+	fn.glExecuteProgramNV(target, id, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLFINISHASYNCSGIX(markerp) \
+	GLuint tmp[1]; \
+	GLint ret = fn.glFinishAsyncSGIX(tmp); \
+	if (ret) \
+		Host2AtariIntPtr(1, tmp, markerp); \
+	return ret
+#else
+#define FN_GLFINISHASYNCSGIX(markerp) \
+	return fn.glFinishAsyncSGIX(markerp)
+#endif
+
+#define FN_GLFLUSHVERTEXARRAYRANGEAPPLE(length, pointer) \
+	if (pointer == contexts[cur_context].vertex.atari_pointer) \
+		pointer = contexts[cur_context].vertex.host_pointer; \
+	fn.glFlushVertexArrayRangeAPPLE(length,	pointer)
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLFOGCOORDDV(coord) \
+	GLdouble tmp[1]; \
+	Atari2HostDoublePtr(1, coord, tmp); \
+	fn.glFogCoorddv(tmp)
+#else
+#define FN_GLFOGCOORDDV(coord) \
+	fn.glFogCoorddv(coord)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLFOGCOORDDVEXT(coord) \
+	GLdouble tmp[1]; \
+	Atari2HostDoublePtr(1, coord, tmp); \
+	fn.glFogCoorddvEXT(tmp)
+#else
+#define FN_GLFOGCOORDDVEXT(coord) \
+	fn.glFogCoorddvEXT(coord)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFOGCOORDFV(coord) \
+	GLfloat tmp[1]; \
+	Atari2HostFloatPtr(1, coord, tmp); \
+	fn.glFogCoordfv(tmp)
+#else
+#define FN_GLFOGCOORDFV(coord) \
+	fn.glFogCoordfv(coord)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFOGCOORDFVEXT(coord) \
+	GLfloat tmp[1]; \
+	Atari2HostFloatPtr(1, coord, tmp); \
+	fn.glFogCoordfvEXT(tmp)
+#else
+#define FN_GLFOGCOORDFVEXT(coord) \
+	fn.glFogCoordfvEXT(coord)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFOGFUNCSGIS(n, points) \
+	GLfloat *tmp; \
+	if (n && points) { \
+		tmp = (GLfloat *)malloc(n * 2 * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostFloatPtr(n * 2, points, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glFogFuncSGIS(n, tmp); \
+	free(tmp)
+#else
+#define FN_GLFOGFUNCSGIS(n, points) \
+	fn.glFogFuncSGIS(n, points)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLFOGXVOES(pname, param) \
+	GLfixed tmp[1]; \
+	Atari2HostIntPtr(1, param, tmp); \
+	fn.glFogxvOES(pname, tmp)
+#else
+#define FN_GLFOGXVOES(pname, param) \
+	fn.glFogxvOES(pname, param)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFRAGMENTLIGHTMODELFVSGIX(pname, params) \
+	GLfloat tmp[4]; \
+	int size = nfglGetNumParams(pname); \
+	Atari2HostFloatPtr(size, params, tmp); \
+	fn.glFragmentLightModelfvSGIX(pname, tmp)
+#else
+#define FN_GLFRAGMENTLIGHTMODELFVSGIX(pname, params) \
+	fn.glFragmentLightModelfvSGIX(pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLFRAGMENTLIGHTFVSGIX(light, pname, params) \
+	GLfloat tmp[4]; \
+	int size = nfglGetNumParams(pname); \
+	Atari2HostFloatPtr(size, params, tmp); \
+	fn.glFragmentLightfvSGIX(light, pname, tmp)
+#else
+#define FN_GLFRAGMENTLIGHTFVSGIX(light, pname, params) \
+	fn.glFragmentLightfvSGIX(light, pname, params)
 #endif
 
 #include "nfosmesa/call-gl.c"
