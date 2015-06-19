@@ -1,4 +1,9 @@
 2015/06/19 - Thorsten
+nfosmesa: Fix ldg interface for stupid programs that
+call GL functions without creating a context first
+
+
+2015/06/19 - Thorsten
 nfosmesa: Add conversion macros for several functions
 722 more to go
 

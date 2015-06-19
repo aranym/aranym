@@ -49,13 +49,13 @@
 static OSMesaContext oldmesa_ctx = NULL;
 static void *oldmesa_buffer = NULL;
 
-void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint height )
+void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint height)
 {
 	unsigned long buffer_size;
 	void *buffer = NULL;
-	GLenum	osmesa_format;
+	GLenum osmesa_format;
 	
-	switch(format)
+	switch (format)
 	{
 	case VDI_ARGB:
 	case DIRECT_VDI_ARGB:
