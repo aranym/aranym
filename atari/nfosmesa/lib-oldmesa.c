@@ -46,7 +46,8 @@
 
 /*--- Functions ---*/
 
-static OSMesaContext	oldmesa_ctx=NULL;
+static OSMesaContext oldmesa_ctx = NULL;
+static void *oldmesa_buffer = NULL;
 
 void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint height )
 {
@@ -54,37 +55,38 @@ void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint h
 	void *buffer = NULL;
 	GLenum	osmesa_format;
 	
-	switch(format) {
-		case VDI_ARGB:
-		case DIRECT_VDI_ARGB:
-			osmesa_format = OSMESA_ARGB;
-			break;
-		case VDI_RGB:
-			osmesa_format = OSMESA_RGB;
-			break;
-		default:
-			osmesa_format = format;
-			break;
+	switch(format)
+	{
+	case VDI_ARGB:
+	case DIRECT_VDI_ARGB:
+		osmesa_format = OSMESA_ARGB;
+		break;
+	case VDI_RGB:
+		osmesa_format = OSMESA_RGB;
+		break;
+	default:
+		osmesa_format = format;
+		break;
 	}
 
 	oldmesa_ctx = OSMesaCreateContext(osmesa_format, NULL);
-	if (!oldmesa_ctx) {
+	if (!oldmesa_ctx)
 		return NULL;
-	}
 
 	buffer_size = width * height;
-	if (osmesa_format != OSMESA_COLOR_INDEX) {
+	if (osmesa_format != OSMESA_COLOR_INDEX)
 		buffer_size <<= 2;
-	}
 
 	buffer = Atari_MxAlloc(buffer_size);
 
-	if (buffer == NULL) {
+	if (buffer == NULL)
+	{
 		OSMesaDestroyContext(oldmesa_ctx);
 		return NULL;
 	}
 
-	if (!OSMesaMakeCurrent(oldmesa_ctx, buffer, type, width, height)) {
+	if (!OSMesaMakeCurrent(oldmesa_ctx, buffer, type, width, height))
+	{
 		Mfree(buffer);
 		OSMesaDestroyContext(oldmesa_ctx);
 		return NULL;
@@ -94,14 +96,21 @@ void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint h
 	OSMesaPixelStore(OSMESA_Y_UP, 0);
 
 	memset(buffer, 0, buffer_size);
-	return (buffer);
+	oldmesa_buffer = buffer;
+	return buffer;
 }
 
 void APIENTRY OSMesaDestroyLDG(void)
 {
-	if (oldmesa_ctx) {
+	if (oldmesa_ctx)
+	{
 		OSMesaDestroyContext(oldmesa_ctx);
-		oldmesa_ctx=NULL;
+		oldmesa_ctx = NULL;
+	}
+	if (oldmesa_buffer)
+	{
+		Mfree(oldmesa_buffer);
+		oldmesa_buffer = NULL;
 	}
 }
 
@@ -124,7 +133,8 @@ GLsizei APIENTRY max_height(void)
 
 void *Atari_MxAlloc(unsigned long size)
 {
-	if (((Sversion()&0xFF)>=0x01) | (Sversion()>=0x1900)) {
+	if (((Sversion()&0xFF)>=0x01) | (Sversion()>=0x1900))
+	{
 		return (void *)Mxalloc(size, MX_PREFTTRAM);
 	}
 

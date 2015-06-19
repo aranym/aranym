@@ -4135,6 +4135,7 @@
 				getStackedParameter(1) /* GLenum pname */,
 				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
+#if 0
 		case NFOSMESA_GLGETBUFFERSUBDATA:
 			nfglGetBufferSubData(
 				getStackedParameter(0) /* GLenum target */,
@@ -4142,6 +4143,8 @@
 				getStackedParameter(2) /* GLsizeiptr size */,
 				(void *)getStackedPointer(3) /* void *data */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLGETBUFFERSUBDATAARB:
 			nfglGetBufferSubDataARB(
 				getStackedParameter(0) /* GLenum target */,
@@ -4149,6 +4152,7 @@
 				getStackedParameter(2) /* GLsizeiptrARB size */,
 				(void *)getStackedPointer(3) /* void *data */);
 			break;
+#endif
 		case NFOSMESA_GLGETCLIPPLANE:
 			nfglGetClipPlane(
 				getStackedParameter(0) /* GLenum plane */,

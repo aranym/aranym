@@ -71,6 +71,15 @@
 #define NFOSMESA_NEED_DOUBLE_CONV 0
 #endif
 
+#if 0 /* for testing compilation of the non-conversion case */
+#undef NFOSMESA_NEED_INT_CONV
+#define NFOSMESA_NEED_INT_CONV 0
+#undef NFOSMESA_NEED_FLOAT_CONV
+#define NFOSMESA_NEED_FLOAT_CONV 0
+#undef NFOSMESA_NEED_DOUBLE_CONV
+#define NFOSMESA_NEED_DOUBLE_CONV 0
+#endif
+
 /*--- Types ---*/
 
 typedef struct {
@@ -91,7 +100,8 @@ typedef struct {
 	GLenum type;
 	GLuint first;
 	GLuint count;
-	void *ptr;
+	void *host_pointer;
+	void *atari_pointer;
 } fbo_buffer;
 
 typedef struct {
@@ -340,6 +350,27 @@ protected:
 		Atari2HostIntArray(size, src, (GLuint *)dest);
 	}
 	
+	inline void Atari2HostInt64Array(Uint32 size, const Uint64 *src, GLuint64 *dest)
+	{
+		Uint32 i;
+		GLuint64 *tmp = dest;
+		
+		for (i=0;i<size;i++) {
+			tmp[i]=SDL_SwapBE64(src[i]);
+		}
+	}
+
+	inline void Atari2HostInt64Ptr(Uint32 size, const Uint64 *src, GLuint64 *dest)
+	{
+		Atari2HostInt64Array(size, src, dest);
+	}
+	
+	inline void Atari2HostInt64Ptr(Uint32 size, const Sint64 *src, GLint64 *dest)
+	{
+		Atari2HostInt64Array(size, (const Uint64 *)src, (GLuint64 *)dest);
+	}
+	
+	void *pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei &size, GLsizei &count);
 	void *convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
 	void *convertArray(GLsizei count, GLenum type, const GLvoid *pixels);
 	void nfglArrayElementHelper(GLint i);
