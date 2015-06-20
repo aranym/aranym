@@ -27,6 +27,7 @@
 
 #include "lib-osmesa.h"
 #include "lib-oldmesa.h"
+#include "lib-misc.h"
 
 /*--- Defines ---*/
 
@@ -89,6 +90,9 @@ void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint he
 	{
 		Mfree(buffer);
 		OSMesaDestroyContext(oldmesa_ctx);
+#ifdef TGL_ENABLE_CHECKS
+		gl_fatal_error(GL_OUT_OF_MEMORY, 13, "out of memory");
+#endif
 		return NULL;
 	}
 

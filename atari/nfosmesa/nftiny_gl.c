@@ -37,6 +37,231 @@
 
 #define WITH_PROTOTYPE_STRINGS 1
 
+/*--- functions that "throw" exceptions ---*/
+
+#ifdef TGL_ENABLE_CHECKS
+
+GLenum GLAPIENTRY glGetError(void)
+{
+	return (*HostCall_p)(NFOSMESA_GLGETERROR, cur_context, NULL);
+}
+
+static GLenum clear_gl_error(void)
+{
+	GLenum i;
+	
+	i = glGetError();
+	if (i != GL_NO_ERROR)
+	{
+		while (glGetError() != GL_NO_ERROR)
+			;
+	}
+	return i;
+}
+
+static void GLAPIENTRY check_glBindTexture(GLenum target, GLuint texture)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glBindTexture(target, texture);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 8, "glBindTexture: unsupported option");
+	}
+}
+#define glBindTexture check_glBindTexture
+
+static void GLAPIENTRY check_glTexImage2D(GLenum target, GLint level, GLint components, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glTexImage2D(target, level, components, width, height, border, format, type, pixels);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 7, "glTexImage2D: combination of parameters not handled");
+	}
+}
+#define glTexImage2D check_glTexImage2D
+
+static void GLAPIENTRY check_glTexEnvi(GLenum target, GLenum pname, GLint param)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glTexEnvi(target, pname, param);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 8, "glTexEnv: unsupported option");
+	}
+}
+#define glTexEnvi check_glTexEnvi
+
+static void GLAPIENTRY check_glTexParameteri(GLenum target, GLenum pname, GLint param)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glTexParameteri(target, pname, param);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 8, "glTexParameter: unsupported option");
+	}
+}
+#define glTexParameteri check_glTexParameteri
+
+static void GLAPIENTRY check_glPixelStorei(GLenum pname, GLint param)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glPixelStorei(pname, param);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 9, "glPixelStore: unsupported option");
+	}
+}
+#define glPixelStorei check_glPixelStorei
+
+static void GLAPIENTRY check_glGetIntegerv(GLenum pname, GLint *params)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glGetIntegerv(pname, params);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 3, "glGetIntegerv: option not implemented");
+	}
+}
+#define glGetIntegerv check_glGetIntegerv
+
+static void GLAPIENTRY check_glGetFloatv(GLenum pname, GLfloat *v)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glGetFloatv(pname, v);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 102, "glGetFloatv: option not implemented");
+	}
+}
+#define glGetFloatv check_glGetFloatv
+
+static void GLAPIENTRY check_glCallList(GLuint list)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glCallList(list);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 2, "glCallList: list not defined");
+	}
+}
+#define glCallList check_glCallList
+
+static void GLAPIENTRY check_glVertex2f(GLfloat x, GLfloat y)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glVertex2f(x, y);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+	}
+}
+#define glVertex2f check_glVertex2f
+
+static void GLAPIENTRY check_glVertex3f(GLfloat x, GLfloat y, GLfloat z)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glVertex3f(x, y, z);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+	}
+}
+#define glVertex3f check_glVertex3f
+
+static void GLAPIENTRY check_glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glVertex4f(x, y, z, w);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+	}
+}
+#define glVertex4f check_glVertex4f
+
+static void GLAPIENTRY check_glVertex3fv(const GLfloat *v)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glVertex3fv(v);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		if (e == GL_OUT_OF_MEMORY)
+			gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+		else
+			gl_fatal_error(e, 10, "glBegin: type not handled");
+	}
+}
+#define glVertex3fv check_glVertex3fv
+
+static void GLAPIENTRY check_glViewport(GLint x, GLint y, GLint width, GLint height)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glViewport(x, y, width, height);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		if (width <= 0 || height <= 0)
+			gl_fatal_error(e, 5, "glViewport: size too small");
+		else
+			gl_fatal_error(e, 4, "glViewport: error while resizing display");
+	}
+}
+#define glViewport check_glViewport
+
+static void GLAPIENTRY check_glEnable(GLenum cap)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glEnable(cap);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 103, "glEnableDisable: unsupported code");
+	}
+}
+#define glEnable check_glEnable
+
+static void GLAPIENTRY check_glDisable(GLenum cap)
+{
+	GLenum e;
+	
+	clear_gl_error();
+	glDisable(cap);
+	if ((e = glGetError()) != GL_NO_ERROR)
+	{
+		gl_fatal_error(e, 103, "glEnableDisable: unsupported code");
+	}
+}
+#define glDisable check_glDisable
+
+#endif /* TGL_ENABLE_CHECKS */
+
 /*--- LDG functions ---*/
 
 static PROC const LibFunc[]={ 

@@ -6,7 +6,7 @@ include ../CONFIGVARS
 # We create a coldfire binary, though.
 # (of course a v4e binary makes only sense when Aranym is emulating a FireBEE ;)
 #
-CFLAGS  = -O2 -fomit-frame-pointer -Wall -I.
+CFLAGS  = -O2 -fomit-frame-pointer -Wall -I. -DTGL_ENABLE_CHECKS
 ASFLAGS =
 LDFLAGS = -lldg -lgem
 

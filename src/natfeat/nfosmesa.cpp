@@ -638,6 +638,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 
 	contexts[j].enabled_arrays=0;
 	contexts[j].render_mode = GL_RENDER;
+	contexts[j].error_code = GL_NO_ERROR;
 
 	D(bug("nfosmesa: format:0x%x -> 0x%x, conversion: %s", osmesa_format, format, contexts[j].conversion ? "true" : "false"));
 	D(bug("nfosmesa: depth=%d, stencil=%d, accum=%d", depthBits, stencilBits, accumBits));
@@ -688,7 +689,6 @@ GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, memptr buffer, GLenum typ
 	GLboolean ret;
 	
 	D(bug("nfosmesa: OSMesaMakeCurrent(%u,$%08x,%d,%d,%d)",ctx,buffer,type,width,height));
-	bug("nfosmesa: OSMesaMakeCurrent(%u,$%08x,%d,%d,%d)",ctx,buffer,type,width,height); // YYY
 	if (ctx>MAX_OSMESA_CONTEXTS) {
 		return GL_FALSE;
 	}
@@ -1884,6 +1884,13 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 		fn.OSMesaMakeCurrent(contexts[ctx].ctx, draw_buffer, contexts[ctx].type, contexts[ctx].width, contexts[ctx].height);
 	}
 }
+
+
+#define FN_GLGETERROR() \
+	GLenum e = contexts[cur_context].error_code; \
+	contexts[cur_context].error_code = GL_NO_ERROR; \
+	if (e != GL_NO_ERROR) return e; \
+	return fn.glGetError()
 
 /*--- conversion macros used in generated code ---*/
 

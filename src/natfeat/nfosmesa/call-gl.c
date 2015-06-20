@@ -4230,7 +4230,7 @@ FN_GLGETDOUBLEV(pname, params);
 GLenum OSMesaDriver::nfglGetError(void)
 {
 	D(bug("nfosmesa: glGetError()"));
-	return fn.glGetError();
+FN_GLGETERROR();
 }
 
 void OSMesaDriver::nfglGetFenceivNV(GLuint fence, GLenum pname, GLint *params)

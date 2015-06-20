@@ -839,6 +839,7 @@ my %macros = (
 	'glGetDebugMessageLogARB' => 1,
 	'glDetailTexFuncSGIS' => 1,
 	'glGetDoublev' => 1,
+	'glGetError' => 1,
 	'glGetFloatv' => 1,
 	'glGetIntegerv' => 1,
 	'glIndexPointer' => 1,

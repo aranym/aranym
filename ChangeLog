@@ -1,4 +1,9 @@
 2015/06/19 - Thorsten
+nfosmesa: support exception_error callback (tiny_gl.ldg only)
+Update documentation
+
+
+2015/06/19 - Thorsten
 nfosmesa: Fix ldg interface for stupid programs that
 call GL functions without creating a context first
 

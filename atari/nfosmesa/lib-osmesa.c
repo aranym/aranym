@@ -47,7 +47,15 @@ OSMesaContext cur_context = 0;
 static struct nf_ops *nfOps;
 static unsigned long nfOSMesaId=0;
 
-int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
+static int do_nothing(int function_number, OSMesaContext ctx, void *first_param)
+{
+	(void) function_number;
+	(void) ctx;
+	(void) first_param;
+	return 0;
+}
+
+int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param) = do_nothing;
 
 /*--- Local functions ---*/
 
@@ -113,10 +121,10 @@ static int InstallHostCall(void)
 	/* TOS maybe, try the cookie */
 	if (nfOSMesaId==0) {
 		InitNatfeat();
-		if (nfOSMesaId!=0) {
-			HostCall_p = HostCall_natfeats;
-			return 1;
-		}
+	}
+	if (nfOSMesaId!=0) {
+		HostCall_p = HostCall_natfeats;
+		return 1;
 	}
 
 	return 0;
@@ -124,10 +132,8 @@ static int InstallHostCall(void)
 
 OSMesaContext APIENTRY OSMesaCreateContext( GLenum format, OSMesaContext sharelist )
 {
-	if (HostCall_p==NULL) {
-		if (!InstallHostCall()) {
-			return NULL;
-		}
+	if (!InstallHostCall()) {
+		return NULL;
 	}
 
 	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXT, cur_context, &format);
@@ -135,10 +141,8 @@ OSMesaContext APIENTRY OSMesaCreateContext( GLenum format, OSMesaContext shareli
 
 OSMesaContext APIENTRY OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
 {
-	if (HostCall_p==NULL) {
-		if (!InstallHostCall()) {
-			return NULL;
-		}
+	if (!InstallHostCall()) {
+		return NULL;
 	}
 
 	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, cur_context, &format);

@@ -630,6 +630,7 @@ typedef void GLvoid;
 #define GL_EXTENSIONS						0x1F03
 
 /* Errors */
+#define GL_NO_ERROR                         0
 #define GL_INVALID_VALUE					0x0501
 #define GL_INVALID_ENUM						0x0500
 #define GL_INVALID_OPERATION				0x0502

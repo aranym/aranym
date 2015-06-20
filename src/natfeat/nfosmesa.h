@@ -111,6 +111,7 @@ typedef struct {
 	GLenum type;
 	GLsizei width, height;
 	GLenum render_mode;
+	GLenum error_code;
 	void *feedback_buffer_host, *feedback_buffer_atari;
 	GLenum feedback_buffer_type;
 	struct {
@@ -171,7 +172,7 @@ protected:
 	static void *APIENTRY glNop(void);
 #define GL_ISNOP(f) ((void *(APIENTRY*)(void))(f) == glNop)
 
-	void glSetError(GLenum) { }
+	void glSetError(GLenum e) { contexts[cur_context].error_code = e; }
 
 	Uint32 LenglGetString(Uint32 ctx, GLenum name);
 	void PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer);

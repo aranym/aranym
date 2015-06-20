@@ -40,6 +40,7 @@
 /*--- Variables ---*/
 
 static GLubyte *gl_strings[7]={(GLubyte *)"",NULL,NULL,NULL,NULL};
+static void CALLBACK (*gl_exception)(GLenum param);
 
 /*--- Functions ---*/
 
@@ -162,17 +163,38 @@ void glOrthof( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat
 	(*HostCall_p)(NFOSMESA_GLORTHOF, cur_context, &left);
 }
 
+/* glClearDepthf() already exists in OpenGL/Mesa */
+
 void APIENTRY tinyglswapbuffer(void *buf)
 {
 	(*HostCall_p)(NFOSMESA_TINYGLSWAPBUFFER, cur_context, &buf);
 }
 
 
-/* NYI */
 void APIENTRY tinyglexception_error(void CALLBACK (*exception)(GLenum param))
 {
-	(void) exception;
+	gl_exception = exception;
 }
 
 
-/* glClearDepthf() already exists in OpenGL/Mesa */
+int gl_exception_error(GLenum exception)
+{
+	if (gl_exception)
+	{
+		(*gl_exception)(exception);
+		return 1;
+	}
+	return 0;
+}
+
+
+void gl_fatal_error(GLenum error, long except, const char *format)
+{
+	if (!gl_exception_error(except))
+	{
+		static char const err[] = "TinyGL: fatal error: ";
+		(void) Fwrite(2, sizeof(err) - 1, err);
+		(void) Fwrite(2, strlen(format), format);
+		(void) Fwrite(2, 2, "\r\n");
+	}
+}

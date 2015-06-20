@@ -29,13 +29,13 @@ applications. OSMesa is an OpenGL offscreen renderer, i.e. it renders
 images using host CPU in RAM. The result is then passed to the Atari
 application for final display.
 
-You can then substitute tiny_gl.ldg (or mesa_gl.ldg, but see BUGS below)
+You can then substitute tiny_gl.ldg (or osmesa.ldg, but see BUGS below)
 by the version contained in the archive. It is usually located in
 c:\gemsys\ldg or the applications directory.
 
-ARAnyM should have been compiled with OpenGL support (which it done by
+ARAnyM should have been compiled with OpenGL support (which is done by
 default if it can be autodetected), and of course also with NFOSMesa
-support (which is current not done by default and has to be enabled
+support (which is currently not done by default and has to be enabled
 with --enable-nfosmesa).
 
 For OSMesa to operate properly, you must have OSMesa host's libraries
@@ -48,6 +48,8 @@ LibGL = /path/to/libGL.so
 LibOSMesa = /path/to/libOSMesa.so
 
 LibGL may not be needed on all systems. 
+On some systems, the OSMesa interface is already part of the GL library,
+this case is auto-detected (and LibOSMesa is not needed)
 
 In previous versions of ARAnyM, there was also a ChannelSize option
 to select a different OSMesa version. This is no longer recommended,
@@ -59,10 +61,10 @@ BUGS
 
 - The cygwin version of ARAnyM currently does not support this feature.
 
-- the exception_error() function of tiny_gl.ldg is exported, but the
-  callback will never be called (due to limitations in the NF design).
-  You should check at least the return value from OSMesaCreateLDG() to
-  check for errors.
+- the exception_error() function of tiny_gl.ldg is exported, but it will
+  only be called for certain operations (compatible to the native tiny_gl).
+  When using osmesa.ldg, it is a no-op, and you should use glGetError()
+  instead to check for errors.
 
 - Due to the design, usually all parameters that are supported by the
   hosts OSMesa library can be set with glEnable() etc. Remember however,
@@ -70,7 +72,14 @@ BUGS
 
 - Only framebuffers of type OSMESA_RGB (GL_RGB, 24bit RGB) should be
   used currently. This is the format that screen.ldg expects to display
-  on the screen.
+  on the screen, and the only format that the native tiny_gl.ldg supports..
+  If you need some other format, you
+  a) have to use the full-featured osmesa.ldg
+  b) have to make sure that you call glFinish() when done drawing.
+     This is the function that converts the host buffer to the
+     format you requested. This may or may not also slow down the
+     framerate due to the additional conversion step.
+  c) are on your own on displaying the result.
 
 - some GLU functions that are exported in the native mesa_gl.ldg are
   not yet implemented.
@@ -81,3 +90,76 @@ BUGS
 
 - some functions that take pointers to arrays may not work yet on
   little-endian hosts.
+
+- If you need OSMesaPostprocess() (a function introduced in Mesa 10,x),
+  you cannot use OSMesaCreateLDG(), because that conveniently makes
+  the just created context current, and OSMesaPostprocess() must be
+  called before that. You should look at lib-oldmesa.c to see what that
+  function does and implement your own version in this case.
+
+- TinyGL exports some functions which take float arguments, but the
+  original OpenGL functions take doubles as arguments. For compatibility,
+  the tiny_gl.ldg exports only the float version, while osmesa.ldg
+  exports both. The header files define the OpenGL version to
+  the float versions. Functions that are affected by this are
+  - gluLookAt
+  - glFrustum
+  - glOrtho
+  - glClearDepth
+
+- Some functions that would return the address of some host buffer
+  are currently not implemented at all. These include:
+  - OSMesaGetDepthBuffer
+  - OSMesaGetColorBuffer
+  - glCreateSyncFromCLeventARB
+  - glDebugMessageCallback
+  - glDebugMessageCallbackAMD
+  - glDebugMessageCallbackARB
+  - glFenceSync
+  - glMapBuffer
+  - glMapBufferARB
+  - glMapBufferRange
+  - glMapObjectBufferATI
+  - glMapNamedBufferEXT
+  - glMapNamedBufferRangeEXT
+  - glMapTexture2DINTEL
+  - glImportSyncEXT
+  - glProgramCallbackMESA
+
+- Parameter checking is not as thorough as in the native implementation.
+  If you do something weird, you might crash the emulator.
+
+- Sharing contexts is not supported yet.
+
+- The interface in the ldg libraries is not thread-safe; consequently only
+  one context can be created at any time.
+
+- OSMesaGetProcAddress does not return a real address that can be called;
+  It can be used though to check wether the host function is available.
+
+
+ERROR CODES
+===========
+
+These codes are passed to the callback function installed with
+exception_error (taken from TinyGL):
+
+1L = out of memory (need exit)
+2L = list not defined (not need exit)
+3L = glGet: option not implemented (not need exit)
+4L = glViewport: error while resizing display (need exit)
+5L = glViewport: size too small (need exit)
+6L = Error allocating specular buffer (need exit)
+7L = glTexImage2D: combination of parameters not handled (need exit)
+8L = glTexParameter: unsupported option (not need exit)
+9L = glPixelStore: unsupported option (need exit)
+10L = glBegin: unsupported option (need exit)
+11L = No sharing available in TinyGL (not need exit)
+12L = zdither: not enough colors (not need exit)
+13L = Insufficient memory Perhaps not need to exit
+14L = can't save picture (not need exit)
+
+100L = Warning low memory level (<32KB) (not need exit)
+101L = Warning internal clipping error (not need exit)
+102L = Warning: unknown pname in glGetFloatv()
+103L = Warning: glEnableDisable: Option not supported (not need exit)

@@ -27,5 +27,7 @@
 
 void freeglGetString(void);
 int err_old_nfapi(void);
+int gl_exception_error(GLenum exception);
+void gl_fatal_error(GLenum error, long except, const char *format);
 
 #endif
