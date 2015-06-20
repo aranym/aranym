@@ -186,6 +186,16 @@ my %short_types = (
 );
 
 #
+# >32bit types that need special handling
+#
+my %longlong_types = (
+	'GLint64' => 1,
+	'GLint64EXT' => 1,
+	'GLuint64' => 1,
+	'GLuint64EXT' => 1,
+);
+
+#
 # format specifiers to print the various types,
 # only used for debug output
 #
@@ -837,10 +847,37 @@ my %macros = (
 	'glGetDebugMessageLog' => 1,
 	'glGetDebugMessageLogAMD' => 1,
 	'glGetDebugMessageLogARB' => 1,
-	'glDetailTexFuncSGIS' => 1,
+	'glGetDetailTexFuncSGIS' => 1,
 	'glGetDoublev' => 1,
+	'glGetDoubleIndexedvEXT' => 1,
+	'glGetDoublei_v' => 1,
+	'glGetDoublei_vEXT' => 1,
 	'glGetError' => 1,
+	'glGetFenceivNV' => 1,
+	'glGetFinalCombinerInputParameterfvNV' => 1,
+	'glGetFinalCombinerInputParameterivNV' => 1,
+	'glGetFixedvOES' => 1,
+	'glGetFirstPerfQueryIdINTEL' => 1,
 	'glGetFloatv' => 1,
+	'glGetFloatIndexedvEXT' => 1,
+	'glGetFloati_v' => 1,
+	'glGetFloati_vEXT' => 1,
+	'glGetFogFuncSGIS' => 1,
+	'glGetFragmentLightfvSGIX' => 1,
+	'glGetFragmentLightivSGIX' => 1,
+	'glGetFragmentMaterialfvSGIX' => 1,
+	'glGetFragmentMaterialivSGIX' => 1,
+	'glGetFramebufferAttachmentParameteriv' => 1,
+	'glGetFramebufferAttachmentParameterivEXT' => 1,
+	'glGetFramebufferParameteriv' => 1,
+	'glGetFramebufferParameterivEXT' => 1,
+	'glGetHistogram' => 1,
+	'glGetHistogramEXT' => 1,
+	'glGetHistogramParameterfv' => 1,
+	'glGetHistogramParameterfvEXT' => 1,
+	'glGetHistogramParameteriv' => 1,
+	'glGetHistogramParameterivEXT' => 1,
+	'glGetHistogramParameterxvOES' => 1,
 	'glGetIntegerv' => 1,
 	'glIndexPointer' => 1,
 	'glIndexPointerEXT' => 1,
@@ -1409,7 +1446,7 @@ sub gen_dispatch() {
 				{
 					print "getStackedFloat($paramnum)";
 					++$paramnum;
-				} elsif ($type eq 'GLint64' || $type eq 'GLint64EXT' || $type eq 'GLuint64' || $type eq 'GLuint64EXT')
+				} elsif (defined($longlong_types{$type}))
 				{
 					print "getStackedParameter64($paramnum)";
 					$paramnum += 2;
@@ -1707,7 +1744,7 @@ my %oldmesa = (
 #		],
 #	},
 #	'glDebug' => {
-#		'name' => 'glInit',
+#		'name' => 'glDebug',
 #		'gl' => '',
 #		'type' => 'void',
 #		'params' => [

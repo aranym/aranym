@@ -1,4 +1,9 @@
 2015/06/19 - Thorsten
+nfosmesa: Add conversion macros for several functions
+694 more to go
+
+
+2015/06/19 - Thorsten
 nfosmesa: support exception_error callback (tiny_gl.ldg only)
 Update documentation
 
