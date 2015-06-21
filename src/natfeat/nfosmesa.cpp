@@ -43,6 +43,13 @@
 #ifndef PRIu64
 #  define PRIu64 "llu"
 #endif
+#if SIZEOF_VOID_P >= 8
+#  define PRI_IPTR PRIu64
+#  define PRI_PTR "p"
+#else
+#  define PRI_IPTR "u"
+#  define PRI_PTR "p"
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -279,7 +286,7 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 #define getStackedPointer(n) (ctx_ptr[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
 
 	/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
-#define Host2AtariAddr(a) ((void *)((uintptr)(a) - MEMBaseDiff))
+#define Host2AtariAddr(a) ((void *)((uintptr_t)(a) - MEMBaseDiff))
 
 	if (fncode != NFOSMESA_OSMESAPOSTPROCESS && fncode != GET_VERSION)
 	{
@@ -1909,6 +1916,49 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 	contexts[cur_context].error_code = GL_NO_ERROR; \
 	if (e != GL_NO_ERROR) return e; \
 	return fn.glGetError()
+
+/*--- Functions that return a 64-bit value ---*/
+
+/*
+ * The NF interface currently only returns a single value in D0,
+ * so the call has to pass an extra parameter, the location where to
+ * store the result value
+ */
+#define FN_GLGETIMAGEHANDLEARB(texture, level, layered, layer, format) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetImageHandleARB(texture, level, layered, layer, format); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
+
+#define FN_GLGETIMAGEHANDLENV(texture, level, layered, layer, format) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetImageHandleNV(texture, level, layered, layer, format); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
+
+#define FN_GLGETTEXTUREHANDLEARB(texture) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetTextureHandleARB(texture); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
+
+#define FN_GLGETTEXTUREHANDLENV(texture) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetTextureHandleNV(texture); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
+
+#define FN_GLGETTEXTURESAMPLERHANDLEARB(texturem, sampler) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetTextureSamplerHandleARB(texture, sampler); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
+
+#define FN_GLGETTEXTURESAMPLERHANDLENV(texturem, sampler) \
+	GLuint64 *retaddr = (GLuint64 *)Atari2HostAddr(getParameter(2)); \
+	GLuint64 ret = fn.glGetTextureSamplerHandleNV(texture, sampler); \
+	*retaddr = SDL_SwapBE64(ret); \
+	return 0
 
 /*--- conversion macros used in generated code ---*/
 
@@ -6830,7 +6880,7 @@ is read from the buffer rather than from client memory.
 		Atari2HostIntPtr(5, (const GLuint *)indirect, tmp); \
 		GLuint count = tmp[0]; \
 		convertClientArrays(count); \
-		fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, (const void *)(uintptr)tmp[2], tmp[1], tmp[3], tmp[4]); \
+		fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, (const void *)(uintptr_t)tmp[2], tmp[1], tmp[3], tmp[4]); \
 	}
 
 #define FN_GLDRAWELEMENTSINSTANCED(mode, count, type, indices, instancecount) \
@@ -7863,8 +7913,8 @@ is read from the buffer rather than from client memory.
 	/* FIXME: glPixelStore parameters are not taken into account */ \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetColorTable(target, format, type, table); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)table; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)table; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)table; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)table; \
 	} else { \
 		result = pixelBuffer(width, 1, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -7905,8 +7955,8 @@ is read from the buffer rather than from client memory.
 	/* FIXME: glPixelStore parameters are not taken into account */ \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetColorTableEXT(target, format, type, table); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)table; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)table; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)table; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)table; \
 	} else { \
 		result = pixelBuffer(width, 1, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -7947,8 +7997,8 @@ is read from the buffer rather than from client memory.
 	/* FIXME: glPixelStore parameters are not taken into account */ \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetColorTableSGI(target, format, type, table); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)table; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)table; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)table; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)table; \
 	} else { \
 		result = pixelBuffer(width, 1, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -8146,8 +8196,8 @@ is read from the buffer rather than from client memory.
 	/* FIXME: glPixelStore parameters are not taken into account */ \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetConvolutionFilter(target, format, type, image); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)image; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)image; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)image; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)image; \
 	} else { \
 		result = pixelBuffer(width, height, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -8190,8 +8240,8 @@ is read from the buffer rather than from client memory.
 	/* FIXME: glPixelStore parameters are not taken into account */ \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetConvolutionFilterEXT(target, format, type, image); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)image; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)image; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)image; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)image; \
 	} else { \
 		result = pixelBuffer(width, height, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -8718,8 +8768,8 @@ is read from the buffer rather than from client memory.
 	if (width == 0) return; \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetHistogram(target, reset, format, type, values); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)values; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)values; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)values; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)values; \
 	} else { \
 		result = pixelBuffer(width, 1, 1, format, type, size, count); \
 		if (result == NULL) return; \
@@ -8764,8 +8814,8 @@ is read from the buffer rather than from client memory.
 	if (width == 0) return; \
 	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
 		fn.glGetHistogramEXT(target, reset, format, type, values); \
-		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr)values; \
-		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr)values; \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)values; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)values; \
 	} else { \
 		result = pixelBuffer(width, 1, 1, format, type, size, count); \
 		if (result == NULL) return; \

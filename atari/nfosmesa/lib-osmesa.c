@@ -47,7 +47,7 @@ OSMesaContext cur_context = 0;
 static struct nf_ops *nfOps;
 static unsigned long nfOSMesaId=0;
 
-static int do_nothing(int function_number, OSMesaContext ctx, void *first_param)
+static long do_nothing(unsigned long function_number, OSMesaContext ctx, void *first_param)
 {
 	(void) function_number;
 	(void) ctx;
@@ -55,11 +55,8 @@ static int do_nothing(int function_number, OSMesaContext ctx, void *first_param)
 	return 0;
 }
 
-int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param) = do_nothing;
-
-/*--- Local functions ---*/
-
-static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first_param);
+long (*HostCall_p)(unsigned long function_number, OSMesaContext ctx, void *first_param) = do_nothing;
+void (*HostCall64_p)(unsigned long function_number, OSMesaContext ctx, void *first_param, GLuint64 *retvalue);
 
 /*--- OSMesa functions redirectors ---*/
 
@@ -111,9 +108,14 @@ static void InitNatfeat(void)
 	}
 }
 
-static int HostCall_natfeats(int function_number, OSMesaContext ctx, void *first_param)
+static long HostCall_natfeats(unsigned long function_number, OSMesaContext ctx, void *first_param)
 {
 	return nfOps->call(nfOSMesaId+function_number,ctx,first_param);
+}
+
+static void HostCall_natfeats64(unsigned long function_number, OSMesaContext ctx, void *first_param, GLuint64 *retvalue)
+{
+	nfOps->call(nfOSMesaId+function_number, ctx, first_param, retvalue);
 }
 
 static int InstallHostCall(void)
@@ -124,6 +126,7 @@ static int InstallHostCall(void)
 	}
 	if (nfOSMesaId!=0) {
 		HostCall_p = HostCall_natfeats;
+		HostCall64_p = HostCall_natfeats64;
 		return 1;
 	}
 

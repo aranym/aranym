@@ -129,7 +129,6 @@ my %blacklist = (
 	'glDebugMessageCallback' => 1,
 	'glDebugMessageCallbackAMD' => 1,
 	'glDebugMessageCallbackARB' => 1,
-	'glFenceSync' => 1,
 	'glGetBufferSubData' => 1,
 	'glGetBufferSubDataARB' => 1,
 	'glMapBuffer' => 1,
@@ -147,7 +146,7 @@ my %blacklist = (
 # typedefs from headers that are already pointer types
 #
 my %pointer_types = (
-	'GLsync' => 1,
+#	'GLsync' => 1, # declared as pointer type, but actually is a handle
 	'GLDEBUGPROC' => 1,
 	'GLDEBUGPROCARB' => 1,
 	'GLDEBUGPROCAMD' => 1,
@@ -194,6 +193,16 @@ my %longlong_types = (
 	'GLuint64' => 1,
 	'GLuint64EXT' => 1,
 );
+my %longlong_rettypes = (
+	'GLint64' => 1,
+	'GLint64EXT' => 1,
+	'GLuint64' => 1,
+	'GLuint64EXT' => 1,
+	'GLintptr' => 1,
+	'GLsizeiptr' => 1,
+	'GLintptrARB' => 1,
+	'GLsizeiptrARB' => 1,
+);
 
 #
 # format specifiers to print the various types,
@@ -218,17 +227,17 @@ my %printf_formats = (
 	'GLdouble' => '%f',
 	'GLclampd' => '%f',
 	'GLfixed' => '0x%x',
-	'GLintptr' => '%ld',
-	'GLintptrARB' => '%ld',
-	'GLsizeiptr' => '%ld',
-	'GLsizeiptrARB' => '%ld',
+	'GLintptr' => '%" PRI_IPTR "',
+	'GLintptrARB' => '%" PRI_IPTR "',
+	'GLsizeiptr' => '%" PRI_IPTR "',
+	'GLsizeiptrARB' => '%" PRI_IPTR "',
 	'GLint64' => '%" PRId64 "',
 	'GLint64EXT' => '%" PRId64 "',
 	'GLuint64' => '%" PRIu64 "',
 	'GLuint64EXT' => '%" PRIu64 "',
 	'long' => '%ld',
 	'GLhandleARB' => '%u',
-	'GLsync' => '%p',
+	'GLsync' => '%" PRI_PTR "',
 	'GLvdpauSurfaceNV' => '%ld',
 	'GLDEBUGPROC' => '%p',
 	'GLDEBUGPROCAMD' => '%p',
@@ -878,6 +887,12 @@ my %macros = (
 	'glGetHistogramParameteriv' => 1,
 	'glGetHistogramParameterivEXT' => 1,
 	'glGetHistogramParameterxvOES' => 1,
+	'glGetImageHandleARB' => 1,
+	'glGetImageHandleNV' => 1,
+	'glGetTextureHandleARB' => 1,
+	'glGetTextureHandleNV' => 1,
+	'glGetTextureSamplerHandleARB' => 1,
+	'glGetTextureSamplerHandleNV' => 1,
 	'glGetIntegerv' => 1,
 	'glIndexPointer' => 1,
 	'glIndexPointerEXT' => 1,
@@ -1332,6 +1347,7 @@ sub gen_calls() {
 	my $args;
 	my $printf_format;
 	my $conversions_needed = 0;
+	my $num_longlongs = 0;
 	
 	gen_params();
 	foreach my $key (sort { sort_by_name } keys %functions) {
@@ -1352,6 +1368,11 @@ sub gen_calls() {
 			$ret = "return ";
 		}
 		print("#if 0\n") if ($gl ne 'gl' || defined($blacklist{$function_name}));
+		if (defined($longlong_types{$return_type}) && !defined($blacklist{$function_name}) && !defined($macros{$function_name}))
+		{
+			print "/* FIXME: $return_type cannot be returned */\n";
+			++$num_longlongs;
+		}
 		print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
 		print "{\n";
 		print "\tD(bug(\"nfosmesa: $function_name($printf_format)\"";
@@ -1375,6 +1396,7 @@ sub gen_calls() {
 		$glu_count++ if ($gl eq "glu");
 	}
 	print STDERR "$conversions_needed function(s) may need conversion macros\n" unless($conversions_needed == 0);
+	print STDERR "$num_longlongs function(s) may need attention\n" unless($num_longlongs == 0);
 #
 # emit trailer
 #
@@ -1418,7 +1440,7 @@ sub gen_dispatch() {
 			$ret = "";
 		} else {
 			$ret = "ret = ";
-			if ($return_type =~ /\*/ || defined($pointer_types{$return_type}) || $return_type eq 'GLhandleARB')
+			if ($return_type =~ /\*/ || defined($pointer_types{$return_type}) || $return_type eq 'GLhandleARB' || $return_type eq 'GLsync')
 			{
 				$ret .= '(uint32)(uintptr_t)';
 			}
@@ -1435,7 +1457,8 @@ sub gen_dispatch() {
 				my $type = $params->[$argc]->{type};
 				my $name = $params->[$argc]->{name};
 				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
-				if ($pointer ne "" || defined($pointer_types{$type})) {
+				if ($pointer ne "" || defined($pointer_types{$type}))
+				{
 					print "(${type} ${pointer})getStackedPointer($paramnum)";
 					++$paramnum;
 				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
@@ -1454,6 +1477,11 @@ sub gen_dispatch() {
 				{
 					# legacy MacOSX headers declare GLhandleARB as void *
 					print "(GLhandleARB)getStackedParameter($paramnum)";
+					++$paramnum;
+				} elsif ($type eq 'GLsync')
+				{
+					# GLsync declared as pointer type on host; need a cast here
+					print "(GLsync)getStackedParameter($paramnum)";
 					++$paramnum;
 				} else
 				{

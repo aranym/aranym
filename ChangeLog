@@ -1,3 +1,7 @@
+2015/06/21 - Thorsten
+nfosmesa: handle functions that return a 64-bit type
+
+
 2015/06/19 - Thorsten
 nfosmesa: Add conversion macros for several functions
 694 more to go

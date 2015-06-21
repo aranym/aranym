@@ -1017,7 +1017,7 @@
 			break;
 		case NFOSMESA_GLCLIENTWAITSYNC:
 			ret = nfglClientWaitSync(
-				(GLsync )getStackedPointer(0) /* GLsync sync */,
+				(GLsync)getStackedParameter(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLbitfield flags */,
 				getStackedParameter64(2) /* GLuint64 timeout */);
 			break;
@@ -2625,7 +2625,7 @@
 			break;
 		case NFOSMESA_GLDELETESYNC:
 			nfglDeleteSync(
-				(GLsync )getStackedPointer(0) /* GLsync sync */);
+				(GLsync)getStackedParameter(0) /* GLsync sync */);
 			break;
 		case NFOSMESA_GLDELETETEXTURES:
 			nfglDeleteTextures(
@@ -3322,13 +3322,11 @@
 				getStackedParameter(1) /* GLenum type */,
 				(const GLfixed *)getStackedPointer(2) /* const GLfixed *buffer */);
 			break;
-#if 0
 		case NFOSMESA_GLFENCESYNC:
 			ret = (uint32)(uintptr_t)nfglFenceSync(
 				getStackedParameter(0) /* GLenum condition */,
 				getStackedParameter(1) /* GLbitfield flags */);
 			break;
-#endif
 		case NFOSMESA_GLFINALCOMBINERINPUTNV:
 			nfglFinalCombinerInputNV(
 				getStackedParameter(0) /* GLenum variable */,
@@ -5753,7 +5751,7 @@
 			break;
 		case NFOSMESA_GLGETSYNCIV:
 			nfglGetSynciv(
-				(GLsync )getStackedPointer(0) /* GLsync sync */,
+				(GLsync)getStackedParameter(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLenum pname */,
 				getStackedParameter(2) /* GLsizei bufSize */,
 				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
@@ -6872,7 +6870,7 @@
 			break;
 		case NFOSMESA_GLISSYNC:
 			ret = nfglIsSync(
-				(GLsync )getStackedPointer(0) /* GLsync sync */);
+				(GLsync)getStackedParameter(0) /* GLsync sync */);
 			break;
 		case NFOSMESA_GLISTEXTURE:
 			ret = nfglIsTexture(
@@ -16159,7 +16157,7 @@
 			break;
 		case NFOSMESA_GLWAITSYNC:
 			nfglWaitSync(
-				(GLsync )getStackedPointer(0) /* GLsync sync */,
+				(GLsync)getStackedParameter(0) /* GLsync sync */,
 				getStackedParameter(1) /* GLbitfield flags */,
 				getStackedParameter64(2) /* GLuint64 timeout */);
 			break;

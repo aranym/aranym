@@ -287,31 +287,31 @@ FN_GLBINDBUFFERBASENV(target, index, buffer);
 
 void OSMesaDriver::nfglBindBufferOffsetEXT(GLenum target, GLuint index, GLuint buffer, GLintptr offset)
 {
-	D(bug("nfosmesa: glBindBufferOffsetEXT(0x%x, %u, %u, %ld)", target, index, buffer, offset));
+	D(bug("nfosmesa: glBindBufferOffsetEXT(0x%x, %u, %u, %" PRI_IPTR ")", target, index, buffer, offset));
 	fn.glBindBufferOffsetEXT(target, index, buffer, offset);
 }
 
 void OSMesaDriver::nfglBindBufferOffsetNV(GLenum target, GLuint index, GLuint buffer, GLintptr offset)
 {
-	D(bug("nfosmesa: glBindBufferOffsetNV(0x%x, %u, %u, %ld)", target, index, buffer, offset));
+	D(bug("nfosmesa: glBindBufferOffsetNV(0x%x, %u, %u, %" PRI_IPTR ")", target, index, buffer, offset));
 	fn.glBindBufferOffsetNV(target, index, buffer, offset);
 }
 
 void OSMesaDriver::nfglBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRange(0x%x, %u, %u, %ld, %ld)", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRange(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
 FN_GLBINDBUFFERRANGE(target, index, buffer, offset, size);
 }
 
 void OSMesaDriver::nfglBindBufferRangeEXT(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRangeEXT(0x%x, %u, %u, %ld, %ld)", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRangeEXT(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
 FN_GLBINDBUFFERRANGEEXT(target, index, buffer, offset, size);
 }
 
 void OSMesaDriver::nfglBindBufferRangeNV(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRangeNV(0x%x, %u, %u, %ld, %ld)", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRangeNV(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
 FN_GLBINDBUFFERRANGENV(target, index, buffer, offset, size);
 }
 
@@ -503,7 +503,7 @@ void OSMesaDriver::nfglBindVertexArrayAPPLE(GLuint array)
 
 void OSMesaDriver::nfglBindVertexBuffer(GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride)
 {
-	D(bug("nfosmesa: glBindVertexBuffer(%u, %u, %ld, %d)", bindingindex, buffer, offset, stride));
+	D(bug("nfosmesa: glBindVertexBuffer(%u, %u, %" PRI_IPTR ", %d)", bindingindex, buffer, offset, stride));
 	fn.glBindVertexBuffer(bindingindex, buffer, offset, stride);
 }
 
@@ -521,7 +521,7 @@ void OSMesaDriver::nfglBindVertexShaderEXT(GLuint id)
 
 void OSMesaDriver::nfglBindVideoCaptureStreamBufferNV(GLuint video_capture_slot, GLuint stream, GLenum frame_region, GLintptrARB offset)
 {
-	D(bug("nfosmesa: glBindVideoCaptureStreamBufferNV(%u, %u, 0x%x, %ld)", video_capture_slot, stream, frame_region, offset));
+	D(bug("nfosmesa: glBindVideoCaptureStreamBufferNV(%u, %u, 0x%x, %" PRI_IPTR ")", video_capture_slot, stream, frame_region, offset));
 	fn.glBindVideoCaptureStreamBufferNV(video_capture_slot, stream, frame_region, offset);
 }
 
@@ -779,19 +779,19 @@ void OSMesaDriver::nfglBlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1,
 
 void OSMesaDriver::nfglBufferAddressRangeNV(GLenum pname, GLuint index, GLuint64EXT address, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glBufferAddressRangeNV(0x%x, %u, %" PRIu64 ", %ld)", pname, index, address, length));
+	D(bug("nfosmesa: glBufferAddressRangeNV(0x%x, %u, %" PRIu64 ", %" PRI_IPTR ")", pname, index, address, length));
 	fn.glBufferAddressRangeNV(pname, index, address, length);
 }
 
 void OSMesaDriver::nfglBufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
 {
-	D(bug("nfosmesa: glBufferData(0x%x, %ld, %p, 0x%x)", target, size, data, usage));
+	D(bug("nfosmesa: glBufferData(0x%x, %" PRI_IPTR ", %p, 0x%x)", target, size, data, usage));
 FN_GLBUFFERDATA(target, size, data, usage);
 }
 
 void OSMesaDriver::nfglBufferDataARB(GLenum target, GLsizeiptrARB size, const void *data, GLenum usage)
 {
-	D(bug("nfosmesa: glBufferDataARB(0x%x, %ld, %p, 0x%x)", target, size, data, usage));
+	D(bug("nfosmesa: glBufferDataARB(0x%x, %" PRI_IPTR ", %p, 0x%x)", target, size, data, usage));
 FN_GLBUFFERDATAARB(target, size, data, usage);
 }
 
@@ -803,19 +803,19 @@ void OSMesaDriver::nfglBufferParameteriAPPLE(GLenum target, GLenum pname, GLint 
 
 void OSMesaDriver::nfglBufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags)
 {
-	D(bug("nfosmesa: glBufferStorage(0x%x, %ld, %p, 0x%x)", target, size, data, flags));
+	D(bug("nfosmesa: glBufferStorage(0x%x, %" PRI_IPTR ", %p, 0x%x)", target, size, data, flags));
 FN_GLBUFFERSTORAGE(target, size, data, flags);
 }
 
 void OSMesaDriver::nfglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
 {
-	D(bug("nfosmesa: glBufferSubData(0x%x, %ld, %ld, %p)", target, offset, size, data));
+	D(bug("nfosmesa: glBufferSubData(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %p)", target, offset, size, data));
 FN_GLBUFFERSUBDATA(target, offset, size, data);
 }
 
 void OSMesaDriver::nfglBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const void *data)
 {
-	D(bug("nfosmesa: glBufferSubDataARB(0x%x, %ld, %ld, %p)", target, offset, size, data));
+	D(bug("nfosmesa: glBufferSubDataARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %p)", target, offset, size, data));
 FN_GLBUFFERSUBDATAARB(target, offset, size, data);
 }
 
@@ -887,7 +887,7 @@ FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data);
 
 void OSMesaDriver::nfglClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 {
-	D(bug("nfosmesa: glClearBufferSubData(0x%x, 0x%x, %ld, %ld, 0x%x, 0x%x, %p)", target, internalformat, offset, size, format, type, data));
+	D(bug("nfosmesa: glClearBufferSubData(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x, 0x%x, %p)", target, internalformat, offset, size, format, type, data));
 FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data);
 }
 
@@ -989,7 +989,7 @@ FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data);
 
 void OSMesaDriver::nfglClearNamedBufferSubDataEXT(GLuint buffer, GLenum internalformat, GLsizeiptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 {
-	D(bug("nfosmesa: glClearNamedBufferSubDataEXT(%u, 0x%x, %ld, %ld, 0x%x, 0x%x, %p)", buffer, internalformat, offset, size, format, type, data));
+	D(bug("nfosmesa: glClearNamedBufferSubDataEXT(%u, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x, 0x%x, %p)", buffer, internalformat, offset, size, format, type, data));
 FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data);
 }
 
@@ -1037,7 +1037,7 @@ void OSMesaDriver::nfglClientAttribDefaultEXT(GLbitfield mask)
 
 GLenum OSMesaDriver::nfglClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-	D(bug("nfosmesa: glClientWaitSync(%p, 0x%x, %" PRIu64 ")", sync, flags, timeout));
+	D(bug("nfosmesa: glClientWaitSync(%" PRI_PTR ", 0x%x, %" PRIu64 ")", sync, flags, timeout));
 	return fn.glClientWaitSync(sync, flags, timeout);
 }
 
@@ -1787,7 +1787,7 @@ FN_GLCONVOLUTIONPARAMETERXVOES(target, pname, params);
 
 void OSMesaDriver::nfglCopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glCopyBufferSubData(0x%x, 0x%x, %ld, %ld, %ld)", readTarget, writeTarget, readOffset, writeOffset, size));
+	D(bug("nfosmesa: glCopyBufferSubData(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %" PRI_IPTR ")", readTarget, writeTarget, readOffset, writeOffset, size));
 	fn.glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
 
@@ -2329,7 +2329,7 @@ void OSMesaDriver::nfglDeleteShader(GLuint shader)
 
 void OSMesaDriver::nfglDeleteSync(GLsync sync)
 {
-	D(bug("nfosmesa: glDeleteSync(%p)", sync));
+	D(bug("nfosmesa: glDeleteSync(%" PRI_PTR ")", sync));
 	fn.glDeleteSync(sync);
 }
 
@@ -2551,7 +2551,7 @@ void OSMesaDriver::nfglDispatchComputeGroupSizeARB(GLuint num_groups_x, GLuint n
 
 void OSMesaDriver::nfglDispatchComputeIndirect(GLintptr indirect)
 {
-	D(bug("nfosmesa: glDispatchComputeIndirect(%ld)", indirect));
+	D(bug("nfosmesa: glDispatchComputeIndirect(%" PRI_IPTR ")", indirect));
 	fn.glDispatchComputeIndirect(indirect);
 }
 
@@ -3125,13 +3125,11 @@ void OSMesaDriver::nfglFeedbackBufferxOES(GLsizei n, GLenum type, const GLfixed 
 FN_GLFEEDBACKBUFFERXOES(n, type, buffer);
 }
 
-#if 0
 GLsync OSMesaDriver::nfglFenceSync(GLenum condition, GLbitfield flags)
 {
 	D(bug("nfosmesa: glFenceSync(0x%x, 0x%x)", condition, flags));
 	return fn.glFenceSync(condition, flags);
 }
-#endif
 
 void OSMesaDriver::nfglFinalCombinerInputNV(GLenum variable, GLenum input, GLenum mapping, GLenum componentUsage)
 {
@@ -3189,19 +3187,19 @@ FN_GLFLUSH();
 
 void OSMesaDriver::nfglFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glFlushMappedBufferRange(0x%x, %ld, %ld)", target, offset, length));
+	D(bug("nfosmesa: glFlushMappedBufferRange(0x%x, %" PRI_IPTR ", %" PRI_IPTR ")", target, offset, length));
 	fn.glFlushMappedBufferRange(target, offset, length);
 }
 
 void OSMesaDriver::nfglFlushMappedBufferRangeAPPLE(GLenum target, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glFlushMappedBufferRangeAPPLE(0x%x, %ld, %ld)", target, offset, size));
+	D(bug("nfosmesa: glFlushMappedBufferRangeAPPLE(0x%x, %" PRI_IPTR ", %" PRI_IPTR ")", target, offset, size));
 	fn.glFlushMappedBufferRangeAPPLE(target, offset, size);
 }
 
 void OSMesaDriver::nfglFlushMappedNamedBufferRangeEXT(GLuint buffer, GLintptr offset, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glFlushMappedNamedBufferRangeEXT(%u, %ld, %ld)", buffer, offset, length));
+	D(bug("nfosmesa: glFlushMappedNamedBufferRangeEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ")", buffer, offset, length));
 	fn.glFlushMappedNamedBufferRangeEXT(buffer, offset, length);
 }
 
@@ -3982,7 +3980,7 @@ FN_GLGETBUFFERPOINTERVARB(target, pname, params);
 #if 0
 void OSMesaDriver::nfglGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void *data)
 {
-	D(bug("nfosmesa: glGetBufferSubData(0x%x, %ld, %ld, %p)", target, offset, size, data));
+	D(bug("nfosmesa: glGetBufferSubData(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %p)", target, offset, size, data));
 	fn.glGetBufferSubData(target, offset, size, data);
 }
 #endif
@@ -3990,7 +3988,7 @@ void OSMesaDriver::nfglGetBufferSubData(GLenum target, GLintptr offset, GLsizeip
 #if 0
 void OSMesaDriver::nfglGetBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data)
 {
-	D(bug("nfosmesa: glGetBufferSubDataARB(0x%x, %ld, %ld, %p)", target, offset, size, data));
+	D(bug("nfosmesa: glGetBufferSubDataARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %p)", target, offset, size, data));
 	fn.glGetBufferSubDataARB(target, offset, size, data);
 }
 #endif
@@ -4412,13 +4410,13 @@ FN_GLGETHISTOGRAMPARAMETERXVOES(target, pname, params);
 GLuint64 OSMesaDriver::nfglGetImageHandleARB(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
 {
 	D(bug("nfosmesa: glGetImageHandleARB(%u, %d, %d, %d, 0x%x)", texture, level, layered, layer, format));
-	return fn.glGetImageHandleARB(texture, level, layered, layer, format);
+FN_GLGETIMAGEHANDLEARB(texture, level, layered, layer, format);
 }
 
 GLuint64 OSMesaDriver::nfglGetImageHandleNV(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
 {
 	D(bug("nfosmesa: glGetImageHandleNV(%u, %d, %d, %d, 0x%x)", texture, level, layered, layer, format));
-	return fn.glGetImageHandleNV(texture, level, layered, layer, format);
+FN_GLGETIMAGEHANDLENV(texture, level, layered, layer, format);
 }
 
 void OSMesaDriver::nfglGetImageTransformParameterfvHP(GLenum target, GLenum pname, GLfloat *params)
@@ -4830,7 +4828,7 @@ FN_GLGETNAMEDBUFFERPOINTERVEXT(buffer, pname, params);
 
 void OSMesaDriver::nfglGetNamedBufferSubDataEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, void *data)
 {
-	D(bug("nfosmesa: glGetNamedBufferSubDataEXT(%u, %ld, %ld, %p)", buffer, offset, size, data));
+	D(bug("nfosmesa: glGetNamedBufferSubDataEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", %p)", buffer, offset, size, data));
 	/* TODO: NFOSMESA_GLGETNAMEDBUFFERSUBDATAEXT may need conversion */
 	fn.glGetNamedBufferSubDataEXT(buffer, offset, size, data);
 }
@@ -5649,7 +5647,7 @@ GLint OSMesaDriver::nfglGetSubroutineUniformLocation(GLuint program, GLenum shad
 
 void OSMesaDriver::nfglGetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values)
 {
-	D(bug("nfosmesa: glGetSynciv(%p, 0x%x, %d, %p, %p)", sync, pname, bufSize, length, values));
+	D(bug("nfosmesa: glGetSynciv(%" PRI_PTR ", 0x%x, %d, %p, %p)", sync, pname, bufSize, length, values));
 	/* TODO: NFOSMESA_GLGETSYNCIV may need conversion */
 	fn.glGetSynciv(sync, pname, bufSize, length, values);
 }
@@ -5811,13 +5809,13 @@ void OSMesaDriver::nfglGetTexParameterxvOES(GLenum target, GLenum pname, GLfixed
 GLuint64 OSMesaDriver::nfglGetTextureHandleARB(GLuint texture)
 {
 	D(bug("nfosmesa: glGetTextureHandleARB(%u)", texture));
-	return fn.glGetTextureHandleARB(texture);
+FN_GLGETTEXTUREHANDLEARB(texture);
 }
 
 GLuint64 OSMesaDriver::nfglGetTextureHandleNV(GLuint texture)
 {
 	D(bug("nfosmesa: glGetTextureHandleNV(%u)", texture));
-	return fn.glGetTextureHandleNV(texture);
+FN_GLGETTEXTUREHANDLENV(texture);
 }
 
 void OSMesaDriver::nfglGetTextureImageEXT(GLuint texture, GLenum target, GLint level, GLenum format, GLenum type, void *pixels)
@@ -5872,13 +5870,13 @@ void OSMesaDriver::nfglGetTextureParameterivEXT(GLuint texture, GLenum target, G
 GLuint64 OSMesaDriver::nfglGetTextureSamplerHandleARB(GLuint texture, GLuint sampler)
 {
 	D(bug("nfosmesa: glGetTextureSamplerHandleARB(%u, %u)", texture, sampler));
-	return fn.glGetTextureSamplerHandleARB(texture, sampler);
+FN_GLGETTEXTURESAMPLERHANDLEARB(texture, sampler);
 }
 
 GLuint64 OSMesaDriver::nfglGetTextureSamplerHandleNV(GLuint texture, GLuint sampler)
 {
 	D(bug("nfosmesa: glGetTextureSamplerHandleNV(%u, %u)", texture, sampler));
-	return fn.glGetTextureSamplerHandleNV(texture, sampler);
+FN_GLGETTEXTURESAMPLERHANDLENV(texture, sampler);
 }
 
 void OSMesaDriver::nfglGetTrackMatrixivNV(GLenum target, GLuint address, GLenum pname, GLint *params)
@@ -6541,7 +6539,7 @@ void OSMesaDriver::nfglImageTransformParameterivHP(GLenum target, GLenum pname, 
 #if 0
 GLsync OSMesaDriver::nfglImportSyncEXT(GLenum external_sync_type, GLintptr external_sync, GLbitfield flags)
 {
-	D(bug("nfosmesa: glImportSyncEXT(0x%x, %ld, 0x%x)", external_sync_type, external_sync, flags));
+	D(bug("nfosmesa: glImportSyncEXT(0x%x, %" PRI_IPTR ", 0x%x)", external_sync_type, external_sync, flags));
 	return fn.glImportSyncEXT(external_sync_type, external_sync, flags);
 }
 #endif
@@ -6706,7 +6704,7 @@ void OSMesaDriver::nfglInvalidateBufferData(GLuint buffer)
 
 void OSMesaDriver::nfglInvalidateBufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glInvalidateBufferSubData(%u, %ld, %ld)", buffer, offset, length));
+	D(bug("nfosmesa: glInvalidateBufferSubData(%u, %" PRI_IPTR ", %" PRI_IPTR ")", buffer, offset, length));
 	fn.glInvalidateBufferSubData(buffer, offset, length);
 }
 
@@ -6930,7 +6928,7 @@ GLboolean OSMesaDriver::nfglIsShader(GLuint shader)
 
 GLboolean OSMesaDriver::nfglIsSync(GLsync sync)
 {
-	D(bug("nfosmesa: glIsSync(%p)", sync));
+	D(bug("nfosmesa: glIsSync(%" PRI_PTR ")", sync));
 	return fn.glIsSync(sync);
 }
 
@@ -7355,7 +7353,7 @@ void * OSMesaDriver::nfglMapBufferARB(GLenum target, GLenum access)
 #if 0
 void * OSMesaDriver::nfglMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
 {
-	D(bug("nfosmesa: glMapBufferRange(0x%x, %ld, %ld, 0x%x)", target, offset, length, access));
+	D(bug("nfosmesa: glMapBufferRange(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", target, offset, length, access));
 	return fn.glMapBufferRange(target, offset, length, access);
 }
 #endif
@@ -7414,7 +7412,7 @@ void * OSMesaDriver::nfglMapNamedBufferEXT(GLuint buffer, GLenum access)
 #if 0
 void * OSMesaDriver::nfglMapNamedBufferRangeEXT(GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access)
 {
-	D(bug("nfosmesa: glMapNamedBufferRangeEXT(%u, %ld, %ld, 0x%x)", buffer, offset, length, access));
+	D(bug("nfosmesa: glMapNamedBufferRangeEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", buffer, offset, length, access));
 	return fn.glMapNamedBufferRangeEXT(buffer, offset, length, access);
 }
 #endif
@@ -7792,7 +7790,7 @@ void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessNV(GLenum mode, const void
 
 void OSMesaDriver::nfglMultiDrawArraysIndirectCountARB(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(0x%x, %ld, %ld, %d, %d)", mode, indirect, drawcount, maxdrawcount, stride));
+	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", mode, indirect, drawcount, maxdrawcount, stride));
 	fn.glMultiDrawArraysIndirectCountARB(mode, indirect, drawcount, maxdrawcount, stride);
 }
 
@@ -7847,7 +7845,7 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessNV(GLenum mode, GLenum t
 
 void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(0x%x, 0x%x, %ld, %ld, %d, %d)", mode, type, indirect, drawcount, maxdrawcount, stride));
+	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", mode, type, indirect, drawcount, maxdrawcount, stride));
 	fn.glMultiDrawElementsIndirectCountARB(mode, type, indirect, drawcount, maxdrawcount, stride);
 }
 
@@ -8624,26 +8622,26 @@ void OSMesaDriver::nfglMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLin
 
 void OSMesaDriver::nfglNamedBufferDataEXT(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage)
 {
-	D(bug("nfosmesa: glNamedBufferDataEXT(%u, %ld, %p, 0x%x)", buffer, size, data, usage));
+	D(bug("nfosmesa: glNamedBufferDataEXT(%u, %" PRI_IPTR ", %p, 0x%x)", buffer, size, data, usage));
 FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage);
 }
 
 void OSMesaDriver::nfglNamedBufferStorageEXT(GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags)
 {
-	D(bug("nfosmesa: glNamedBufferStorageEXT(%u, %ld, %p, 0x%x)", buffer, size, data, flags));
+	D(bug("nfosmesa: glNamedBufferStorageEXT(%u, %" PRI_IPTR ", %p, 0x%x)", buffer, size, data, flags));
 	/* TODO: NFOSMESA_GLNAMEDBUFFERSTORAGEEXT may need conversion */
 	fn.glNamedBufferStorageEXT(buffer, size, data, flags);
 }
 
 void OSMesaDriver::nfglNamedBufferSubDataEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
 {
-	D(bug("nfosmesa: glNamedBufferSubDataEXT(%u, %ld, %ld, %p)", buffer, offset, size, data));
+	D(bug("nfosmesa: glNamedBufferSubDataEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", %p)", buffer, offset, size, data));
 FN_GLNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data);
 }
 
 void OSMesaDriver::nfglNamedCopyBufferSubDataEXT(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glNamedCopyBufferSubDataEXT(%u, %u, %ld, %ld, %ld)", readBuffer, writeBuffer, readOffset, writeOffset, size));
+	D(bug("nfosmesa: glNamedCopyBufferSubDataEXT(%u, %u, %" PRI_IPTR ", %" PRI_IPTR ", %" PRI_IPTR ")", readBuffer, writeBuffer, readOffset, writeOffset, size));
 	fn.glNamedCopyBufferSubDataEXT(readBuffer, writeBuffer, readOffset, writeOffset, size);
 }
 
@@ -12109,7 +12107,7 @@ void OSMesaDriver::nfglTexBufferEXT(GLenum target, GLenum internalformat, GLuint
 
 void OSMesaDriver::nfglTexBufferRange(GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glTexBufferRange(0x%x, 0x%x, %u, %ld, %ld)", target, internalformat, buffer, offset, size));
+	D(bug("nfosmesa: glTexBufferRange(0x%x, 0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, internalformat, buffer, offset, size));
 	fn.glTexBufferRange(target, internalformat, buffer, offset, size);
 }
 
@@ -12970,7 +12968,7 @@ void OSMesaDriver::nfglTextureBufferEXT(GLuint texture, GLenum target, GLenum in
 
 void OSMesaDriver::nfglTextureBufferRangeEXT(GLuint texture, GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glTextureBufferRangeEXT(%u, 0x%x, 0x%x, %u, %ld, %ld)", texture, target, internalformat, buffer, offset, size));
+	D(bug("nfosmesa: glTextureBufferRangeEXT(%u, 0x%x, 0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ")", texture, target, internalformat, buffer, offset, size));
 	fn.glTextureBufferRangeEXT(texture, target, internalformat, buffer, offset, size);
 }
 
@@ -14407,43 +14405,43 @@ void OSMesaDriver::nfglVertex4xvOES(const GLfixed *coords)
 
 void OSMesaDriver::nfglVertexArrayBindVertexBufferEXT(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride)
 {
-	D(bug("nfosmesa: glVertexArrayBindVertexBufferEXT(%u, %u, %u, %ld, %d)", vaobj, bindingindex, buffer, offset, stride));
+	D(bug("nfosmesa: glVertexArrayBindVertexBufferEXT(%u, %u, %u, %" PRI_IPTR ", %d)", vaobj, bindingindex, buffer, offset, stride));
 	fn.glVertexArrayBindVertexBufferEXT(vaobj, bindingindex, buffer, offset, stride);
 }
 
 void OSMesaDriver::nfglVertexArrayColorOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayColorOffsetEXT(%u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayColorOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
 	fn.glVertexArrayColorOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayEdgeFlagOffsetEXT(GLuint vaobj, GLuint buffer, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayEdgeFlagOffsetEXT(%u, %u, %d, %ld)", vaobj, buffer, stride, offset));
+	D(bug("nfosmesa: glVertexArrayEdgeFlagOffsetEXT(%u, %u, %d, %" PRI_IPTR ")", vaobj, buffer, stride, offset));
 	fn.glVertexArrayEdgeFlagOffsetEXT(vaobj, buffer, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayFogCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayFogCoordOffsetEXT(%u, %u, 0x%x, %d, %ld)", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayFogCoordOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
 	fn.glVertexArrayFogCoordOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayIndexOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayIndexOffsetEXT(%u, %u, 0x%x, %d, %ld)", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayIndexOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
 	fn.glVertexArrayIndexOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayMultiTexCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLenum texunit, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayMultiTexCoordOffsetEXT(%u, %u, 0x%x, %d, 0x%x, %d, %ld)", vaobj, buffer, texunit, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayMultiTexCoordOffsetEXT(%u, %u, 0x%x, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, texunit, size, type, stride, offset));
 	fn.glVertexArrayMultiTexCoordOffsetEXT(vaobj, buffer, texunit, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayNormalOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayNormalOffsetEXT(%u, %u, 0x%x, %d, %ld)", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayNormalOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
 	fn.glVertexArrayNormalOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
@@ -14469,13 +14467,13 @@ void OSMesaDriver::nfglVertexArrayRangeNV(GLsizei length, const void *pointer)
 
 void OSMesaDriver::nfglVertexArraySecondaryColorOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArraySecondaryColorOffsetEXT(%u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArraySecondaryColorOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
 	fn.glVertexArraySecondaryColorOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayTexCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayTexCoordOffsetEXT(%u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayTexCoordOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
 	fn.glVertexArrayTexCoordOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
@@ -14505,7 +14503,7 @@ void OSMesaDriver::nfglVertexArrayVertexAttribIFormatEXT(GLuint vaobj, GLuint at
 
 void OSMesaDriver::nfglVertexArrayVertexAttribIOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribIOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, index, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribIOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, stride, offset));
 	fn.glVertexArrayVertexAttribIOffsetEXT(vaobj, buffer, index, size, type, stride, offset);
 }
 
@@ -14517,13 +14515,13 @@ void OSMesaDriver::nfglVertexArrayVertexAttribLFormatEXT(GLuint vaobj, GLuint at
 
 void OSMesaDriver::nfglVertexArrayVertexAttribLOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribLOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, index, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribLOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, stride, offset));
 	fn.glVertexArrayVertexAttribLOffsetEXT(vaobj, buffer, index, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %d, %ld)", vaobj, buffer, index, size, type, normalized, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, normalized, stride, offset));
 	fn.glVertexArrayVertexAttribOffsetEXT(vaobj, buffer, index, size, type, normalized, stride, offset);
 }
 
@@ -14535,7 +14533,7 @@ void OSMesaDriver::nfglVertexArrayVertexBindingDivisorEXT(GLuint vaobj, GLuint b
 
 void OSMesaDriver::nfglVertexArrayVertexOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexOffsetEXT(%u, %u, %d, 0x%x, %d, %ld)", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
 	fn.glVertexArrayVertexOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
@@ -16303,7 +16301,7 @@ void OSMesaDriver::nfglViewportIndexedfv(GLuint index, const GLfloat *v)
 
 void OSMesaDriver::nfglWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
-	D(bug("nfosmesa: glWaitSync(%p, 0x%x, %" PRIu64 ")", sync, flags, timeout));
+	D(bug("nfosmesa: glWaitSync(%" PRI_PTR ", 0x%x, %" PRIu64 ")", sync, flags, timeout));
 	fn.glWaitSync(sync, flags, timeout);
 }
 

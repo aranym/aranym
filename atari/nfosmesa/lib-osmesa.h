@@ -34,7 +34,8 @@ typedef struct osmesa_context *OSMesaContext;
 
 extern OSMesaContext cur_context;
 
-extern int (*HostCall_p)(int function_number, OSMesaContext ctx, void *first_param);
+extern long (*HostCall_p)(unsigned long function_number, OSMesaContext ctx, void *first_param);
+extern void (*HostCall64_p)(unsigned long function_number, OSMesaContext ctx, void *first_param, GLuint64 *retvalue);
 
 /*--- Functions prototypes ---*/
 
