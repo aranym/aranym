@@ -4974,6 +4974,7 @@
 				getStackedParameter(1) /* GLenum pname */,
 				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
+#if 0
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATAEXT:
 			nfglGetNamedBufferSubDataEXT(
 				getStackedParameter(0) /* GLuint buffer */,
@@ -4981,6 +4982,7 @@
 				getStackedParameter(2) /* GLsizeiptr size */,
 				(void *)getStackedPointer(3) /* void *data */);
 			break;
+#endif
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
 			nfglGetNamedFramebufferAttachmentParameterivEXT(
 				getStackedParameter(0) /* GLuint framebuffer */,

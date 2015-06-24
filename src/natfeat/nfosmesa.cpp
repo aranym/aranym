@@ -53,6 +53,21 @@
 
 #define DEBUG 0
 #include "debug.h"
+#include "verify.h"
+
+/*--- Assumptions ---*/
+
+/* these native types must match the Atari types */
+verify(sizeof(GLshort) == 2);
+verify(sizeof(GLushort) == 2);
+verify(sizeof(GLint) == 4);
+verify(sizeof(GLuint) == 4);
+verify(sizeof(GLenum) == 4);
+verify(sizeof(GLsizei) == 4);
+verify(sizeof(GLfixed) == 4);
+verify(sizeof(GLfloat) == ATARI_SIZEOF_FLOAT);
+verify(sizeof(GLint64) == 8);
+verify(sizeof(GLuint64) == 8);
 
 /*--- Defines ---*/
 
@@ -225,6 +240,60 @@
 #ifndef GL_CURRENT_RASTER_NORMAL_SGIX
 #define GL_CURRENT_RASTER_NORMAL_SGIX     0x8406
 #endif
+#ifndef GL_EVAL_2D_NV
+#define GL_EVAL_2D_NV                     0x86C0
+#endif
+#ifndef GL_EVAL_TRIANGULAR_2D_NV
+#define GL_EVAL_TRIANGULAR_2D_NV          0x86C1
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB0_NV
+#define GL_EVAL_VERTEX_ATTRIB0_NV         0x86C6
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB1_NV
+#define GL_EVAL_VERTEX_ATTRIB1_NV         0x86C7
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB2_NV
+#define GL_EVAL_VERTEX_ATTRIB2_NV         0x86C8
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB3_NV
+#define GL_EVAL_VERTEX_ATTRIB3_NV         0x86C9
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB4_NV
+#define GL_EVAL_VERTEX_ATTRIB4_NV         0x86CA
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB5_NV
+#define GL_EVAL_VERTEX_ATTRIB5_NV         0x86CB
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB6_NV
+#define GL_EVAL_VERTEX_ATTRIB6_NV         0x86CC
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB7_NV
+#define GL_EVAL_VERTEX_ATTRIB7_NV         0x86CD
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB8_NV
+#define GL_EVAL_VERTEX_ATTRIB8_NV         0x86CE
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB9_NV
+#define GL_EVAL_VERTEX_ATTRIB9_NV         0x86CE
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB10_NV
+#define GL_EVAL_VERTEX_ATTRIB10_NV        0x86D0
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB11_NV
+#define GL_EVAL_VERTEX_ATTRIB11_NV        0x86D1
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB12_NV
+#define GL_EVAL_VERTEX_ATTRIB12_NV        0x86D2
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB13_NV
+#define GL_EVAL_VERTEX_ATTRIB13_NV        0x86D3
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB14_NV
+#define GL_EVAL_VERTEX_ATTRIB14_NV        0x86D4
+#endif
+#ifndef GL_EVAL_VERTEX_ATTRIB15_NV
+#define GL_EVAL_VERTEX_ATTRIB15_NV        0x86D5
+#endif
 
 /*--- Types ---*/
 
@@ -274,7 +343,7 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 	int32 ret = 0;
 	Uint32 *ctx_ptr;	/* Current parameter list */
 
-#define Host2AtariIntPtr Atari2HostIntPtr
+#define Host2AtariIntPtr   Atari2HostIntPtr
 #define Host2AtariShortPtr Atari2HostShortPtr
 #define Host2AtariInt64Ptr Atari2HostInt64Ptr
 
@@ -698,6 +767,11 @@ void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
 		contexts[ctx].feedback_buffer_host = NULL;
 	}
 	contexts[ctx].feedback_buffer_type = 0;
+	if (contexts[ctx].select_buffer_host) {
+		free(contexts[ctx].select_buffer_host);
+		contexts[ctx].select_buffer_host = NULL;
+	}
+	contexts[ctx].select_buffer_size = 0;
 	contexts[ctx].ctx = NULL;
 	if (ctx == cur_context)
 		cur_context = 0;
@@ -1257,7 +1331,7 @@ void OSMesaDriver::ConvertContext32(Uint32 ctx)
 }
 
 
-void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei &size, GLsizei &count)
+bool OSMesaDriver::pixelParams(GLenum format, GLenum type, GLsizei &size, GLsizei &count)
 {
 	switch (type)
 	{
@@ -1265,6 +1339,7 @@ void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GL
 	case GL_BYTE:
 	case GL_UNSIGNED_BYTE_3_3_2:
 	case GL_UNSIGNED_BYTE_2_3_3_REV:
+	case GL_BITMAP:
 	case 1:
 		size = sizeof(GLubyte);
 		break;
@@ -1295,7 +1370,7 @@ void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GL
 		break;
 	default:
 		glSetError(GL_INVALID_ENUM);
-		return NULL;
+		return false;
 	}
 	switch (format)
 	{
@@ -1306,6 +1381,7 @@ void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GL
 	case GL_LUMINANCE:
 	case GL_STENCIL_INDEX:
 	case GL_DEPTH_COMPONENT:
+	case GL_COLOR_INDEX:
 	case 1:
 		count = 1;
 		break;
@@ -1327,8 +1403,16 @@ void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GL
 		break;
 	default:
 		glSetError(GL_INVALID_ENUM);
-		return NULL;
+		return false;
 	}
+	return true;
+}
+
+
+void *OSMesaDriver::pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei &size, GLsizei &count)
+{
+	if (!pixelParams(format, type, size, count))
+		return NULL;
 	
 	/* FIXME: glPixelStore parameters are not taken into account */
 	count *= width * height * depth;
@@ -1353,6 +1437,7 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
     case GL_2_BYTES:
     case GL_3_BYTES:
     case GL_4_BYTES:
+	case GL_BITMAP:
 	case 1:
 		return (void *)pixels;
 	}
@@ -1362,7 +1447,7 @@ void *OSMesaDriver::convertPixels(GLsizei width, GLsizei height, GLsizei depth, 
 	/* FIXME: glPixelStore parameters are not taken into account */
 	ptr = (GLubyte *)result;
 	if (type == GL_FLOAT)
-		Atari2HostFloatArray(count, (const Uint32 *)pixels, (GLfloat *)ptr);
+		Atari2HostFloatArray(count, (const GLfloat *)pixels, (GLfloat *)ptr);
 	else if (size == 2)
 		Atari2HostShortArray(count, (const Uint16 *)pixels, (GLushort *)ptr);
 	else /* if (size == 4) */
@@ -1376,8 +1461,9 @@ void *OSMesaDriver::convertArray(GLsizei count, GLenum type, const GLvoid *pixel
 }
 
 
-void OSMesaDriver::setupClientArray(vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer)
+void OSMesaDriver::setupClientArray(GLenum texunit, vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer)
 {
+	UNUSED(texunit); // FIXME
 	array.size = size;
 	array.type = type;
 	array.count = count;
@@ -1393,6 +1479,7 @@ void OSMesaDriver::setupClientArray(vertexarray_t &array, GLint size, GLenum typ
     case GL_2_BYTES:
     case GL_3_BYTES:
     case GL_4_BYTES:
+	case GL_BITMAP:
 	case 1:
 		array.basesize = sizeof(Uint8);
 		basesize = sizeof(GLubyte);
@@ -1577,9 +1664,9 @@ void OSMesaDriver::convertClientArray(GLsizei count, vertexarray_t &array)
 				const char *src = (const char *)array.atari_pointer + array.converted * array.atari_stride;
 				char *dst = (char *)array.host_pointer + array.converted * array.host_stride;
 				if (array.type == GL_FLOAT)
-					Atari2HostFloatArray(array.size, (const Uint32 *)src, (GLfloat *)dst);
+					Atari2HostFloatArray(array.size, (const GLfloat *)src, (GLfloat *)dst);
 				else if (array.type == GL_DOUBLE)
-					Atari2HostDoubleArray(array.size, (const Uint32 *)src, (GLdouble *)dst);
+					Atari2HostDoubleArray(array.size, (const GLdouble *)src, (GLdouble *)dst);
 				else if (array.basesize == 1)
 					memcpy(dst, src, array.size);
 				else if (array.basesize == 2)
@@ -1917,6 +2004,41 @@ void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
 	if (e != GL_NO_ERROR) return e; \
 	return fn.glGetError()
 
+/*--- helper methods for object buffers ---*/
+
+vertexarray_t *OSMesaDriver::gl_get_array(GLenum pname)
+{
+	switch (pname)
+	{
+		case GL_VERTEX_ARRAY: return &contexts[cur_context].vertex;
+		case GL_NORMAL_ARRAY: return &contexts[cur_context].normal;
+		case GL_COLOR_ARRAY: return &contexts[cur_context].color;
+		case GL_INDEX_ARRAY: return &contexts[cur_context].index;
+		case GL_EDGE_FLAG_ARRAY: return &contexts[cur_context].edgeflag;
+		case GL_TEXTURE_COORD_ARRAY: return &contexts[cur_context].texcoord;
+		case GL_FOG_COORD_ARRAY: return &contexts[cur_context].fogcoord;
+		case GL_SECONDARY_COLOR_ARRAY: return &contexts[cur_context].secondary_color;
+		case GL_ELEMENT_ARRAY_BUFFER: return &contexts[cur_context].element;
+	}
+	return NULL;
+}
+
+gl_buffer_t *OSMesaDriver::gl_get_buffer(GLuint name)
+{
+	/* TODO */
+	UNUSED(name);
+	return NULL;
+}
+
+gl_buffer_t *OSMesaDriver::gl_make_buffer(GLuint name, GLsizei size, const void *pointer)
+{
+	/* TODO */
+	UNUSED(name);
+	UNUSED(size);
+	UNUSED(pointer);
+	return NULL;
+}
+
 /*--- Functions that return a 64-bit value ---*/
 
 /*
@@ -2000,6 +2122,7 @@ static int nfglGetNumParams(GLenum pname)
 	case GL_MAP2_NORMAL:
 	case GL_MAP2_TEXTURE_COORD_3:
 	case GL_MAP2_VERTEX_3:
+	case GL_EVAL_VERTEX_ATTRIB2_NV: /* vertex normal */
 		count = 3;
 		break;
 	case GL_ACCUM_CLEAR_VALUE:
@@ -2048,6 +2171,17 @@ static int nfglGetNumParams(GLenum pname)
 	case GL_MAP2_VERTEX_4:
 	case GL_COLOR_TABLE_SCALE:
 	case GL_COLOR_TABLE_BIAS:
+	case GL_EVAL_VERTEX_ATTRIB0_NV: /* vertex position */
+	case GL_EVAL_VERTEX_ATTRIB3_NV: /* primary color */
+	case GL_EVAL_VERTEX_ATTRIB4_NV: /* secondary color */
+	case GL_EVAL_VERTEX_ATTRIB8_NV: /* texture coord 0 */
+	case GL_EVAL_VERTEX_ATTRIB9_NV: /* texture coord 1 */
+	case GL_EVAL_VERTEX_ATTRIB10_NV: /* texture coord 2 */
+	case GL_EVAL_VERTEX_ATTRIB11_NV: /* texture coord 3 */
+	case GL_EVAL_VERTEX_ATTRIB12_NV: /* texture coord 4 */
+	case GL_EVAL_VERTEX_ATTRIB13_NV: /* texture coord 5 */
+	case GL_EVAL_VERTEX_ATTRIB14_NV: /* texture coord 6 */
+	case GL_EVAL_VERTEX_ATTRIB15_NV: /* texture coord 7 */
 		count = 4;
 		break;
 	case GL_COLOR_MATRIX:
@@ -2062,6 +2196,9 @@ static int nfglGetNumParams(GLenum pname)
 		break;
 	case GL_COMPRESSED_TEXTURE_FORMATS:
 		fn.glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &count);
+		break;
+	case GL_EVAL_VERTEX_ATTRIB1_NV: /* vertex weight */
+	case GL_EVAL_VERTEX_ATTRIB5_NV: /* fog coord */
 		break;
 	/* TODO: */
 	case GL_COMBINER_INPUT_NV:
@@ -2130,7 +2267,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLBINORMAL3DVEXT(v) GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glBinormal3dvEXT(tmp)
 #else
 #define FN_GLBINORMAL3DVEXT(v) 	fn.glBinormal3dvEXT(v)
@@ -2138,7 +2275,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLBINORMAL3FVEXT(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glBinormal3fvEXT(tmp)
 #else
 #define FN_GLBINORMAL3FVEXT(v)	fn.glBinormal3fvEXT(v)
@@ -2172,7 +2309,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCLIPPLANE(plane, equation)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, equation, tmp); \
+	Atari2HostDoubleArray(4, equation, tmp); \
 	fn.glClipPlane(plane, tmp)
 #else
 #define FN_GLCLIPPLANE(plane, equation)	fn.glClipPlane(plane, equation)
@@ -2180,7 +2317,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCLIPPLANEFOES(plane, equation)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, equation, tmp); \
+	Atari2HostFloatArray(4, equation, tmp); \
 	fn.glClipPlanefOES(plane, tmp)
 #else
 #define FN_GLCLIPPLANEFOES(plane, equation)	fn.glClipPlanefOES(plane, equation)
@@ -2196,7 +2333,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLOR3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glColor3dv(tmp)
 #else
 #define FN_GLCOLOR3DV(v)	fn.glColor3dv(v)
@@ -2204,8 +2341,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR3FVERTEX3FVSUN(c, v)	GLfloat tmp1[3], tmp2[3]; \
-	Atari2HostFloatPtr(3, c, tmp1); \
-	Atari2HostFloatPtr(3, v, tmp2); \
+	Atari2HostFloatArray(3, c, tmp1); \
+	Atari2HostFloatArray(3, v, tmp2); \
 	fn.glColor3fVertex3fvSUN(tmp1, tmp2)
 #else
 #define FN_GLCOLOR3FVERTEX3FVSUN(c, v)	fn.glColor3fVertex3fvSUN(c, v)
@@ -2213,7 +2350,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glColor3fv(tmp)
 #else
 #define FN_GLCOLOR3FV(v)	fn.glColor3fv(v)
@@ -2269,7 +2406,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLCOLOR4DV(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glColor4dv(tmp)
 #else
 #define FN_GLCOLOR4DV(v)	fn.glColor4dv(v)
@@ -2277,9 +2414,9 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR4FNORMAL3FVERTEX3FVSUN(c, n, v)	GLfloat tmp1[4],tmp2[3],tmp3[3]; \
-	Atari2HostFloatPtr(4, c, tmp1); \
-	Atari2HostFloatPtr(3, n, tmp2); \
-	Atari2HostFloatPtr(3, v, tmp3); \
+	Atari2HostFloatArray(4, c, tmp1); \
+	Atari2HostFloatArray(3, n, tmp2); \
+	Atari2HostFloatArray(3, v, tmp3); \
 	fn.glColor4fNormal3fVertex3fvSUN(tmp1, tmp2, tmp3)
 #else
 #define FN_GLCOLOR4FNORMAL3FVERTEX3FVSUN(c, n, v)	fn.glColor4fNormal3fVertex3fvSUN(c, n, v)
@@ -2287,7 +2424,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR4FV(v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glColor4fv(tmp)
 #else
 #define FN_GLCOLOR4FV(v)	fn.glColor4fv(v)
@@ -2319,7 +2456,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR4UBVERTEX2FVSUN(c, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glColor4ubVertex2fvSUN(c, tmp)
 #else
 #define FN_GLCOLOR4UBVERTEX2FVSUN(c, v)	fn.glColor4ubVertex2fvSUN(c, v)
@@ -2327,7 +2464,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCOLOR4UBVERTEX3FVSUN(c, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glColor4ubVertex3fvSUN(c, tmp)
 #else
 #define FN_GLCOLOR4UBVERTEX3FVSUN(c, v)	fn.glColor4ubVertex3fvSUN(c, v)
@@ -2374,17 +2511,25 @@ static int nfglGetNumParams(GLenum pname)
 #endif
 
 #define FN_GLCOLORPOINTER(size, type, stride, pointer) \
-	setupClientArray(contexts[cur_context].color, size, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].color, size, type, stride, -1, 0, pointer)
 
 #define FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer) \
-	setupClientArray(contexts[cur_context].color, size, type, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].color, size, type, stride, count, 0, pointer)
 
 #define FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].color, size, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].color, size, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].color.vendor = 1
 
 #define FN_GLCOLORPOINTERVINTEL(size, type, pointer) \
-	setupClientArray(contexts[cur_context].color, size, type, 0, -1, 0, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].color, size, type, 0, -1, 0, pointer); \
 	contexts[cur_context].color.vendor = 2
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
@@ -2566,13 +2711,19 @@ static int nfglGetNumParams(GLenum pname)
 	if (tmp != indices) free(tmp)
 
 #define FN_GLEDGEFLAGPOINTER(stride, pointer) \
-	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, 0, pointer)
 
 #define FN_GLEDGEFLAGPOINTEREXT(stride, count, pointer) \
-	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, count, 0, pointer)
 
 #define FN_GLEDGEFLAGPOINTERLISTIBM(stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].edgeflag, 1, GL_UNSIGNED_BYTE, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].edgeflag.vendor = 1
 
 #define FN_GLENABLECLIENTSTATE(array) \
@@ -2609,7 +2760,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLEVALCOORD1DV(u)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, u, tmp); \
+	Atari2HostDoubleArray(1, u, tmp); \
 	fn.glEvalCoord1dv(tmp)
 #else
 #define FN_GLEVALCOORD1DV(u)	fn.glEvalCoord1dv(u)
@@ -2617,7 +2768,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLEVALCOORD1FV(u)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, u, tmp); \
+	Atari2HostFloatArray(1, u, tmp); \
 	fn.glEvalCoord1fv(tmp)
 #else
 #define FN_GLEVALCOORD1FV(u)	fn.glEvalCoord1fv(u)
@@ -2625,7 +2776,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLEVALCOORD2DV(u)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, u, tmp); \
+	Atari2HostDoubleArray(2, u, tmp); \
 	fn.glEvalCoord2dv(tmp)
 #else
 #define FN_GLEVALCOORD2DV(u)	fn.glEvalCoord2dv(u)
@@ -2633,7 +2784,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLEVALCOORD2FV(u)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, u, tmp); \
+	Atari2HostFloatArray(2, u, tmp); \
 	fn.glEvalCoord2fv(tmp)
 #else
 #define FN_GLEVALCOORD2FV(u)	fn.glEvalCoord2fv(u)
@@ -2664,9 +2815,9 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLFOGFV(pname, params) \
-	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params, tmp); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glFogfv(pname, tmp)
 #else
 #define FN_GLFOGFV(pname, params)	fn.glFogfv(pname, params)
@@ -2674,8 +2825,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLFOGIV(pname, params) \
-	GLint tmp[4]; \
 	int size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
 	Atari2HostIntPtr(size, params, tmp); \
 	fn.glFogiv(pname, tmp)
 #else
@@ -2740,19 +2891,30 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLGETINTEGERV(pname, params)	fn.glGetIntegerv(pname, params)
 #endif
 
+#define FN_GLGETPOINTERV(pname, data) \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	gl_get_pointer(pname, texunit, data)
+
 #define FN_GLINDEXPOINTER(type, stride, pointer) \
-	setupClientArray(contexts[cur_context].index, 1, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].index, 1, type, stride, -1, 0, pointer)
 
 #define FN_GLINDEXPOINTEREXT(type, stride, count, pointer) \
-	setupClientArray(contexts[cur_context].index, 1, type, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].index, 1, type, stride, count, 0, pointer)
 
 #define FN_GLINDEXPOINTERLISTIBM(type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].index, 1, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].index, 1, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].index.vendor = 1
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLINDEXDV(c)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, c, tmp); \
+	Atari2HostDoubleArray(1, c, tmp); \
 	fn.glIndexdv(tmp)
 #else
 #define FN_GLINDEXDV(c)	fn.glIndexdv(c)
@@ -2760,7 +2922,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLINDEXFV(c)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, c, tmp); \
+	Atari2HostFloatArray(1, c, tmp); \
 	fn.glIndexfv(tmp)
 #else
 #define FN_GLINDEXFV(c)	fn.glIndexfv(c)
@@ -2792,7 +2954,7 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLLIGHTMODELFV(pname, params) \
 	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params,tmp); \
+	Atari2HostFloatArray(size, params,tmp); \
 	fn.glLightModelfv(pname, tmp)
 #else
 #define FN_GLLIGHTMODELFV(pname, params)	fn.glLightModelfv(pname, params)
@@ -2812,7 +2974,7 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLLIGHTFV(light, pname, params) \
 	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params, tmp); \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glLightfv(light, pname, tmp)
 #else
 #define FN_GLLIGHTFV(light, pname, params)	fn.glLightfv(light, pname, params)
@@ -2830,7 +2992,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLLOADMATRIXD(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glLoadMatrixd(tmp)
 #else
 #define FN_GLLOADMATRIXD(m)	fn.glLoadMatrixd(m)
@@ -2838,7 +3000,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLLOADMATRIXF(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glLoadMatrixf(tmp)
 #else
 #define FN_GLLOADMATRIXF(m)	fn.glLoadMatrixf(m)
@@ -2846,7 +3008,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLLOADTRANSPOSEMATRIXD(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glLoadTransposeMatrixd(tmp)
 #else
 #define FN_GLLOADTRANSPOSEMATRIXD(m)	fn.glLoadTransposeMatrixd(m)
@@ -2854,7 +3016,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLLOADTRANSPOSEMATRIXDARB(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glLoadTransposeMatrixdARB(tmp)
 #else
 #define FN_GLLOADTRANSPOSEMATRIXDARB(m)	fn.glLoadTransposeMatrixdARB(m)
@@ -2862,7 +3024,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLLOADTRANSPOSEMATRIXF(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glLoadTransposeMatrixf(m)
 #else
 #define FN_GLLOADTRANSPOSEMATRIXF(m)	fn.glLoadTransposeMatrixf(m)
@@ -2870,10 +3032,41 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLLOADTRANSPOSEMATRIXFARB(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glLoadTransposeMatrixfARB(m)
 #else
 #define FN_GLLOADTRANSPOSEMATRIXFARB(m)	fn.glLoadTransposeMatrixfARB(m)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+static GLint __glGetMap_Evalk(GLenum target)
+{
+	switch (target) {
+		case GL_MAP1_INDEX:
+		case GL_MAP1_TEXTURE_COORD_1:
+		case GL_MAP2_INDEX:
+		case GL_MAP2_TEXTURE_COORD_1:
+			return 1;
+		case GL_MAP1_TEXTURE_COORD_2:
+		case GL_MAP2_TEXTURE_COORD_2:
+			return 2;
+		case GL_MAP1_VERTEX_3:
+		case GL_MAP1_NORMAL:
+		case GL_MAP1_TEXTURE_COORD_3:
+		case GL_MAP2_VERTEX_3:
+		case GL_MAP2_NORMAL:
+		case GL_MAP2_TEXTURE_COORD_3:
+			return 3;
+		case GL_MAP1_VERTEX_4:
+		case GL_MAP1_COLOR_4:
+		case GL_MAP1_TEXTURE_COORD_4:
+		case GL_MAP2_VERTEX_4:
+		case GL_MAP2_COLOR_4:
+		case GL_MAP2_TEXTURE_COORD_4:
+		default:
+			return 4;
+	}
+}
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
@@ -2881,37 +3074,18 @@ static int nfglGetNumParams(GLenum pname)
 	{ \
 		GLdouble *tmp; \
 		const GLubyte *ptr; \
-		int size, i,j; \
+		GLint i; \
+		GLint size = __glGetMap_Evalk(target); \
 		 \
-		switch(target) { \
-			case GL_MAP1_INDEX: \
-			case GL_MAP1_TEXTURE_COORD_1: \
-				size=1; \
-				break; \
-			case GL_MAP1_TEXTURE_COORD_2: \
-				size=2; \
-				break; \
-			case GL_MAP1_VERTEX_3: \
-			case GL_MAP1_NORMAL: \
-			case GL_MAP1_TEXTURE_COORD_3: \
-				size=3; \
-				break; \
-			default: \
-				size=4; \
-				break; \
-		} \
 		tmp=(GLdouble *)malloc(size*order*sizeof(GLdouble)); \
-		if(tmp) { \
-			ptr =(const GLubyte *)points; \
-			for(i=0;i<order;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostDoublePtr(1, (const GLdouble *)&ptr[j * ATARI_SIZEOF_DOUBLE], &tmp[i*size+j]); \
-				} \
-				ptr += stride * ATARI_SIZEOF_DOUBLE; \
-			} \
-			fn.glMap1d(target, u1, u2, size, order, tmp); \
-			free(tmp); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		ptr =(const GLubyte *)points; \
+		for(i=0;i<order;i++) { \
+			Atari2HostDoubleArray(size, (const GLdouble *)ptr, &tmp[i*size]); \
+			ptr += stride * ATARI_SIZEOF_DOUBLE; \
 		} \
+		fn.glMap1d(target, u1, u2, size, order, tmp); \
+		free(tmp); \
 	}
 #else
 #define FN_GLMAP1D(target, u1, u2, stride, order, points)	fn.glMap1d(target, u1, u2, stride, order, points)
@@ -2922,37 +3096,18 @@ static int nfglGetNumParams(GLenum pname)
 	{ \
 		GLfloat *tmp; \
 		const GLubyte *ptr; \
-		int size, i,j; \
+		GLint i; \
+		GLint size = __glGetMap_Evalk(target); \
 		 \
-		switch(target) { \
-			case GL_MAP1_INDEX: \
-			case GL_MAP1_TEXTURE_COORD_1: \
-				size=1; \
-				break; \
-			case GL_MAP1_TEXTURE_COORD_2: \
-				size=2; \
-				break; \
-			case GL_MAP1_VERTEX_3: \
-			case GL_MAP1_NORMAL: \
-			case GL_MAP1_TEXTURE_COORD_3: \
-				size=3; \
-				break; \
-			default: \
-				size=4; \
-				break; \
-		} \
 		tmp=(GLfloat *)malloc(size*order*sizeof(GLfloat)); \
-		if(tmp) { \
-			ptr =(const GLubyte *)points; \
-			for(i=0;i<order;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostFloatPtr(1, (const GLfloat *)&ptr[j * ATARI_SIZEOF_FLOAT], &tmp[i*size+j]); \
-				} \
-				ptr += stride * ATARI_SIZEOF_FLOAT; \
-			} \
-			fn.glMap1f(target, u1, u2, size, order, tmp); \
-			free(tmp); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		ptr =(const GLubyte *)points; \
+		for(i=0;i<order;i++) { \
+			Atari2HostFloatArray(size, (const GLfloat *)ptr, &tmp[i*size]); \
+			ptr += stride * ATARI_SIZEOF_FLOAT; \
 		} \
+		fn.glMap1f(target, u1, u2, size, order, tmp); \
+		free(tmp); \
 	}
 #else
 #define FN_GLMAP1F(target, u1, u2, stride, order, points)	fn.glMap1f(target, u1, u2, stride, order, points)
@@ -2961,50 +3116,24 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMAP2D(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points) \
 	{ \
-		GLdouble *tmp1,*tmp2; \
-		const GLubyte *ptr1,*ptr2; \
-		int size, i,j; \
+		GLdouble *tmp; \
+		const GLubyte *ptr; \
+		GLint i, j; \
+		GLint size = __glGetMap_Evalk(target); \
 		 \
-		switch(target) { \
-			case GL_MAP2_INDEX: \
-			case GL_MAP2_TEXTURE_COORD_1: \
-				size=1; \
-				break; \
-			case GL_MAP2_TEXTURE_COORD_2: \
-				size=2; \
-				break; \
-			case GL_MAP2_VERTEX_3: \
-			case GL_MAP2_NORMAL: \
-			case GL_MAP2_TEXTURE_COORD_3: \
-				size=3; \
-				break; \
-			default: \
-				size=4; \
-				break; \
-		} \
-		tmp1=(GLdouble *)malloc(size*(uorder+vorder)*sizeof(GLdouble)); \
-		if(tmp1) { \
-			ptr1 =(const GLubyte *)points; \
-			for(i=0;i<uorder;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostDoublePtr(1, (const GLdouble *)&ptr1[j * ATARI_SIZEOF_DOUBLE], &tmp1[i*size+j]); \
-				} \
-				ptr1 += ustride * ATARI_SIZEOF_DOUBLE; \
+		tmp=(GLdouble *)malloc(size*uorder*vorder*sizeof(GLdouble)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		ptr =(const GLubyte *)points; \
+		for(i=0;i<uorder;i++) { \
+			for(j=0;j<vorder;j++) { \
+				Atari2HostDoubleArray(size, (const GLdouble *)&ptr[(i * ustride + j * vstride) * ATARI_SIZEOF_DOUBLE], &tmp[(i * vorder + j) * size]); \
 			} \
-			tmp2=&tmp1[uorder*size]; \
-			ptr2 =(const GLubyte *)points; \
-			for(i=0;i<vorder;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostDoublePtr(1, (const GLdouble *)&ptr2[j * ATARI_SIZEOF_DOUBLE], &tmp2[i*size+j]); \
-				} \
-				ptr2 += vstride * ATARI_SIZEOF_DOUBLE; \
-			} \
-			fn.glMap2d(target, \
-				u1, u2, size, uorder, \
-				v1, v2, size*uorder, vorder, tmp1 \
-			); \
-			free(tmp1); \
 		} \
+		fn.glMap2d(target, \
+			u1, u2, size*vorder, uorder, \
+			v1, v2, size, vorder, tmp \
+		); \
+		free(tmp); \
 	}
 #else
 #define FN_GLMAP2D(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)	fn.glMap2d(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)
@@ -3013,53 +3142,343 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMAP2F(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points) \
 	{ \
-		GLfloat *tmp1,*tmp2; \
-		const GLubyte *ptr1,*ptr2; \
-		int size, i,j; \
+		GLfloat *tmp; \
+		const GLubyte *ptr; \
+		GLint i,j; \
+		GLint size = __glGetMap_Evalk(target); \
 		 \
-		switch(target) { \
-			case GL_MAP2_INDEX: \
-			case GL_MAP2_TEXTURE_COORD_1: \
-				size=1; \
-				break; \
-			case GL_MAP2_TEXTURE_COORD_2: \
-				size=2; \
-				break; \
-			case GL_MAP2_VERTEX_3: \
-			case GL_MAP2_NORMAL: \
-			case GL_MAP2_TEXTURE_COORD_3: \
-				size=3; \
-				break; \
-			default: \
-				size=4; \
-				break; \
-		} \
-		tmp1=(GLfloat *)malloc(size*(uorder+vorder)*sizeof(GLfloat)); \
-		if(tmp1) { \
-			ptr1 =(const GLubyte *)points; \
-			for(i=0;i<uorder;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostFloatPtr(1, (const GLfloat *)&ptr1[j * ATARI_SIZEOF_FLOAT], &tmp1[i*size+j]); \
-				} \
-				ptr1 += ustride * ATARI_SIZEOF_FLOAT; \
+		tmp=(GLfloat *)malloc(size*uorder*vorder*sizeof(GLfloat)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		ptr =(const GLubyte *)points; \
+		for(i=0;i<uorder;i++) { \
+			for(j=0;j<vorder;j++) { \
+				Atari2HostFloatArray(size, (const GLfloat *)&ptr[(i * ustride + j * vstride) * ATARI_SIZEOF_FLOAT], &tmp[(i * vorder + j) * size]); \
 			} \
-			tmp2= &tmp1[uorder*size]; \
-			ptr2 =(GLubyte *)points; \
-			for(i=0;i<vorder;i++) { \
-				for(j=0;j<size;j++) { \
-					Atari2HostFloatPtr(1, (const GLfloat *)&ptr2[j * ATARI_SIZEOF_FLOAT], &tmp2[i*size+j]); \
-				} \
-				ptr2 += vstride * ATARI_SIZEOF_FLOAT; \
-			} \
-			fn.glMap2f(target, \
-				u1, u2, size, uorder, \
-				v1, v2, size*uorder, vorder, tmp1 \
-			); \
-			free(tmp1); \
 		} \
+		fn.glMap2f(target, \
+			u1, u2, size*vorder, uorder, \
+			v1, v2, size, vorder, tmp \
+		); \
+		free(tmp); \
 	}
 #else
 #define FN_GLMAP2F(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)	fn.glMap2f(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMAPFV(target, query, v) \
+	GLint order[2] = { 0, 0 }; \
+	GLint size; \
+	GLfloat *tmp; \
+	GLfloat tmpbuf[4]; \
+	switch (target) { \
+		case GL_MAP1_INDEX: \
+		case GL_MAP1_TEXTURE_COORD_1: \
+		case GL_MAP1_TEXTURE_COORD_2: \
+		case GL_MAP1_VERTEX_3: \
+		case GL_MAP1_NORMAL: \
+		case GL_MAP1_TEXTURE_COORD_3: \
+		case GL_MAP1_VERTEX_4: \
+		case GL_MAP1_COLOR_4: \
+		case GL_MAP1_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0) return; \
+				size *= order[0]; \
+				tmp = (GLfloat *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapfv(target, query, tmp); \
+				Host2AtariFloatArray(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapfv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariFloatArray(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapfv(target, query, tmpbuf); \
+				size = 1; \
+				Host2AtariFloatArray(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+		case GL_MAP2_INDEX: \
+		case GL_MAP2_TEXTURE_COORD_1: \
+		case GL_MAP2_TEXTURE_COORD_2: \
+		case GL_MAP2_VERTEX_3: \
+		case GL_MAP2_NORMAL: \
+		case GL_MAP2_TEXTURE_COORD_3: \
+		case GL_MAP2_VERTEX_4: \
+		case GL_MAP2_COLOR_4: \
+		case GL_MAP2_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0 || order[1] <= 0) return; \
+				size *= order[0] * order[1]; \
+				tmp = (GLfloat *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapfv(target, query, tmp); \
+				Host2AtariFloatArray(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapfv(target, query, tmpbuf); \
+				size = 4; \
+				Host2AtariFloatArray(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapfv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariFloatArray(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+	}
+#else
+#define FN_GLGETMAPFV(target, query, v) \
+	fn.glGetMapfv(target, query, v)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETMAPDV(target, query, v) \
+	GLint order[2] = { 0, 0 }; \
+	GLint size; \
+	GLdouble *tmp; \
+	GLdouble tmpbuf[4]; \
+	switch (target) { \
+		case GL_MAP1_INDEX: \
+		case GL_MAP1_TEXTURE_COORD_1: \
+		case GL_MAP1_TEXTURE_COORD_2: \
+		case GL_MAP1_VERTEX_3: \
+		case GL_MAP1_NORMAL: \
+		case GL_MAP1_TEXTURE_COORD_3: \
+		case GL_MAP1_VERTEX_4: \
+		case GL_MAP1_COLOR_4: \
+		case GL_MAP1_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0) return; \
+				size *= order[0]; \
+				tmp = (GLdouble *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapdv(target, query, tmp); \
+				Host2AtariDoubleArray(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapdv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariDoubleArray(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapdv(target, query, tmpbuf); \
+				size = 1; \
+				Host2AtariDoubleArray(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+		case GL_MAP2_INDEX: \
+		case GL_MAP2_TEXTURE_COORD_1: \
+		case GL_MAP2_TEXTURE_COORD_2: \
+		case GL_MAP2_VERTEX_3: \
+		case GL_MAP2_NORMAL: \
+		case GL_MAP2_TEXTURE_COORD_3: \
+		case GL_MAP2_VERTEX_4: \
+		case GL_MAP2_COLOR_4: \
+		case GL_MAP2_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0 || order[1] <= 0) return; \
+				size *= order[0] * order[1]; \
+				tmp = (GLdouble *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapdv(target, query, tmp); \
+				Host2AtariDoubleArray(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapdv(target, query, tmpbuf); \
+				size = 4; \
+				Host2AtariDoubleArray(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapdv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariDoubleArray(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+	}
+#else
+#define FN_GLGETMAPDV(target, query, v) \
+	fn.glGetMapdv(target, query, v)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMAPIV(target, query, v) \
+	GLint order[2] = { 0, 0 }; \
+	GLint size; \
+	GLint *tmp; \
+	GLint tmpbuf[4]; \
+	switch (target) { \
+		case GL_MAP1_INDEX: \
+		case GL_MAP1_TEXTURE_COORD_1: \
+		case GL_MAP1_TEXTURE_COORD_2: \
+		case GL_MAP1_VERTEX_3: \
+		case GL_MAP1_NORMAL: \
+		case GL_MAP1_TEXTURE_COORD_3: \
+		case GL_MAP1_VERTEX_4: \
+		case GL_MAP1_COLOR_4: \
+		case GL_MAP1_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0) return; \
+				size *= order[0]; \
+				tmp = (GLint *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapiv(target, query, tmp); \
+				Host2AtariIntPtr(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapiv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapiv(target, query, tmpbuf); \
+				size = 1; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+		case GL_MAP2_INDEX: \
+		case GL_MAP2_TEXTURE_COORD_1: \
+		case GL_MAP2_TEXTURE_COORD_2: \
+		case GL_MAP2_VERTEX_3: \
+		case GL_MAP2_NORMAL: \
+		case GL_MAP2_TEXTURE_COORD_3: \
+		case GL_MAP2_VERTEX_4: \
+		case GL_MAP2_COLOR_4: \
+		case GL_MAP2_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0 || order[1] <= 0) return; \
+				size *= order[0] * order[1]; \
+				tmp = (GLint *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapiv(target, query, tmp); \
+				Host2AtariIntPtr(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapiv(target, query, tmpbuf); \
+				size = 4; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapiv(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+	}
+#else
+#define FN_GLGETMAPIV(target, query, v) \
+	fn.glGetMapiv(target, query, v)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMAPXVOES(target, query, v) \
+	GLint order[2] = { 0, 0 }; \
+	GLint size; \
+	GLfixed *tmp; \
+	GLfixed tmpbuf[4]; \
+	switch (target) { \
+		case GL_MAP1_INDEX: \
+		case GL_MAP1_TEXTURE_COORD_1: \
+		case GL_MAP1_TEXTURE_COORD_2: \
+		case GL_MAP1_VERTEX_3: \
+		case GL_MAP1_NORMAL: \
+		case GL_MAP1_TEXTURE_COORD_3: \
+		case GL_MAP1_VERTEX_4: \
+		case GL_MAP1_COLOR_4: \
+		case GL_MAP1_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0) return; \
+				size *= order[0]; \
+				tmp = (GLfixed *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapxvOES(target, query, tmp); \
+				Host2AtariIntPtr(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapxvOES(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapxvOES(target, query, tmpbuf); \
+				size = 1; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+		case GL_MAP2_INDEX: \
+		case GL_MAP2_TEXTURE_COORD_1: \
+		case GL_MAP2_TEXTURE_COORD_2: \
+		case GL_MAP2_VERTEX_3: \
+		case GL_MAP2_NORMAL: \
+		case GL_MAP2_TEXTURE_COORD_3: \
+		case GL_MAP2_VERTEX_4: \
+		case GL_MAP2_COLOR_4: \
+		case GL_MAP2_TEXTURE_COORD_4: \
+			switch (query) { \
+			case GL_COEFF: \
+				size = __glGetMap_Evalk(target); \
+				fn.glGetMapiv(target, GL_ORDER, order); \
+				if (order[0] <= 0 || order[1] <= 0) return; \
+				size *= order[0] * order[1]; \
+				tmp = (GLfixed *)malloc(size * sizeof(*tmp)); \
+				if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+				fn.glGetMapxvOES(target, query, tmp); \
+				Host2AtariIntPtr(size, tmp, v); \
+				free(tmp); \
+				break; \
+			case GL_DOMAIN: \
+				fn.glGetMapxvOES(target, query, tmpbuf); \
+				size = 4; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			case GL_ORDER: \
+				fn.glGetMapxvOES(target, query, tmpbuf); \
+				size = 2; \
+				Host2AtariIntPtr(size, tmpbuf, v); \
+				break; \
+			} \
+			break; \
+	}
+#else
+#define FN_GLGETMAPXVOES(target, query, v) \
+	fn.glGetMapxvOES(target, query, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
@@ -3077,7 +3496,7 @@ static int nfglGetNumParams(GLenum pname)
 			size=4; \
 			break; \
 	} \
-	Atari2HostFloatPtr(size, params,tmp); \
+	Atari2HostFloatArray(size, params,tmp); \
 	fn.glMaterialfv(face, pname, tmp)
 #else
 #define FN_GLMATERIALFV(face, pname, params)	fn.glMaterialfv(face, pname, params)
@@ -3106,7 +3525,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTMATRIXD(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glMultMatrixd(tmp)
 #else
 #define FN_GLMULTMATRIXD(m)	fn.glMultMatrixd(m)
@@ -3114,7 +3533,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTMATRIXF(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glMultMatrixf(tmp)
 #else
 #define FN_GLMULTMATRIXF(m)	fn.glMultMatrixf(m)
@@ -3122,7 +3541,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTTRANSPOSEMATRIXD(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glMultTransposeMatrixd(tmp)
 #else
 #define FN_GLMULTTRANSPOSEMATRIXD(m)	fn.glMultTransposeMatrixd(m)
@@ -3130,7 +3549,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTTRANSPOSEMATRIXDARB(m)	GLdouble tmp[16]; \
-	Atari2HostDoublePtr(16, m, tmp); \
+	Atari2HostDoubleArray(16, m, tmp); \
 	fn.glMultTransposeMatrixdARB(tmp)
 #else
 #define FN_GLMULTTRANSPOSEMATRIXDARB(m)	fn.glMultTransposeMatrixdARB(m)
@@ -3138,7 +3557,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTTRANSPOSEMATRIXF(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glMultTransposeMatrixf(tmp)
 #else
 #define FN_GLMULTTRANSPOSEMATRIXF(m)	fn.glMultTransposeMatrixf(m)
@@ -3146,7 +3565,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTTRANSPOSEMATRIXFARB(m)	GLfloat tmp[16]; \
-	Atari2HostFloatPtr(16, m, tmp); \
+	Atari2HostFloatArray(16, m, tmp); \
 	fn.glMultTransposeMatrixfARB(tmp)
 #else
 #define FN_GLMULTTRANSPOSEMATRIXFARB(m)	fn.glMultTransposeMatrixfARB(m)
@@ -3154,7 +3573,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD1DV(target, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+	Atari2HostDoubleArray(1, v, tmp); \
 	fn.glMultiTexCoord1dv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD1DV(target, v)	fn.glMultiTexCoord1dv(target, v)
@@ -3162,7 +3581,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD1DVARB(target, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+	Atari2HostDoubleArray(1, v, tmp); \
 	fn.glMultiTexCoord1dvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD1DVARB(target, v)	fn.glMultiTexCoord1dvARB(target, v)
@@ -3170,7 +3589,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD1FV(target, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+	Atari2HostFloatArray(1, v, tmp); \
 	fn.glMultiTexCoord1fv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD1FV(target, v)	fn.glMultiTexCoord1fv(target, v)
@@ -3178,7 +3597,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD1FVARB(target, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+	Atari2HostFloatArray(1, v, tmp); \
 	fn.glMultiTexCoord1fvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD1FVARB(target, v)	fn.glMultiTexCoord1fvARB(target, v)
@@ -3226,7 +3645,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD2DV(target, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glMultiTexCoord2dv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD2DV(target, v)	fn.glMultiTexCoord2dv(target, v)
@@ -3234,7 +3653,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD2DVARB(target, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glMultiTexCoord2dvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD2DVARB(target, v)	fn.glMultiTexCoord2dvARB(target, v)
@@ -3242,7 +3661,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD2FV(target, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glMultiTexCoord2fv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD2FV(target, v)	fn.glMultiTexCoord2fv(target, v)
@@ -3250,7 +3669,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD2FVARB(target, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glMultiTexCoord2fvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD2FVARB(target, v)	fn.glMultiTexCoord2fvARB(target, v)
@@ -3298,7 +3717,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD3DV(target, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glMultiTexCoord3dv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD3DV(target, v)	fn.glMultiTexCoord3dv(target, v)
@@ -3306,7 +3725,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD3DVARB(target, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glMultiTexCoord3dvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD3DVARB(target, v)	fn.glMultiTexCoord3dvARB(target, v)
@@ -3314,7 +3733,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD3FV(target, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glMultiTexCoord3fv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD3FV(target, v)	fn.glMultiTexCoord3fv(target, v)
@@ -3322,7 +3741,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD3FVARB(target, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glMultiTexCoord3fvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD3FVARB(target, v)	fn.glMultiTexCoord3fvARB(target, v)
@@ -3370,7 +3789,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD4DV(target, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glMultiTexCoord4dv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD4DV(target, v)	fn.glMultiTexCoord4dv(target, v)
@@ -3378,7 +3797,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLMULTITEXCOORD4DVARB(target, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glMultiTexCoord4dvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD4DVARB(target, v)	fn.glMultiTexCoord4dvARB(target, v)
@@ -3386,7 +3805,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD4FV(target, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glMultiTexCoord4fv(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD4FV(target, v)	fn.glMultiTexCoord4fv(target, v)
@@ -3394,7 +3813,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLMULTITEXCOORD4FVARB(target, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glMultiTexCoord4fvARB(target, tmp)
 #else
 #define FN_GLMULTITEXCOORD4FVARB(target, v)	fn.glMultiTexCoord4fvARB(target, v)
@@ -3442,7 +3861,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLNORMAL3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glNormal3dv(tmp)
 #else
 #define FN_GLNORMAL3DV(v)	fn.glNormal3dv(v)
@@ -3450,8 +3869,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLNORMAL3FVERTEX3FVSUN(n, v)	GLfloat tmp1[3],tmp2[3]; \
-	Atari2HostFloatPtr(3, n, tmp1); \
-	Atari2HostFloatPtr(3, v, tmp2); \
+	Atari2HostFloatArray(3, n, tmp1); \
+	Atari2HostFloatArray(3, v, tmp2); \
 	fn.glNormal3fVertex3fvSUN(tmp1, tmp2)
 #else
 #define FN_GLNORMAL3FVERTEX3FVSUN(n, v)	fn.glNormal3fVertex3fvSUN(n, v)
@@ -3459,7 +3878,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLNORMAL3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glNormal3fv(tmp)
 #else
 #define FN_GLNORMAL3FV(v)	fn.glNormal3fv(v)
@@ -3490,42 +3909,62 @@ static int nfglGetNumParams(GLenum pname)
 #endif
 
 #define FN_GLNORMALPOINTER(type, stride, pointer) \
-	setupClientArray(contexts[cur_context].normal, 3, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].normal, 3, type, stride, -1, 0, pointer)
 
 #define FN_GLNORMALPOINTEREXT(type, stride, count, pointer) \
-	setupClientArray(contexts[cur_context].normal, 3, type, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].normal, 3, type, stride, count, 0, pointer)
 
 #define FN_GLNORMALPOINTERLISTIBM(type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].normal, 3, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].normal, 3, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].normal.vendor = 1
 
 #define FN_GLNORMALPOINTERVINTEL(type, pointer) \
-	setupClientArray(contexts[cur_context].normal, 3, type, 0, -1, 0, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].normal, 3, type, 0, -1, 0, pointer); \
 	contexts[cur_context].normal.vendor = 2
 
 #define FN_GLFOGCOORDPOINTER(type, stride, pointer) \
-	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].fogcoord, 1, type, stride, -1, 0, pointer)
 
 #define FN_GLFOGCOORDPOINTEREXT(type, stride, pointer) \
-	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, 0, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].fogcoord, 1, type, stride, 0, 0, pointer)
 
 #define FN_GLFOGCOORDPOINTERLISTIBM(type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].fogcoord, 1, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].fogcoord, 1, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].fogcoord.vendor = 1
 
 #define FN_GLSECONDARYCOLORPOINTER(size, type, stride, pointer) \
-	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].secondary_color, size, type, stride, -1, 0, pointer)
 
 #define FN_GLSECONDARYCOLORPOINTEREXT(size, type, stride, pointer) \
-	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, 0, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].secondary_color, size, type, stride, 0, 0, pointer)
 
 #define FN_GLSECONDARYCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].secondary_color, size, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].secondary_color, size, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].secondary_color.vendor = 1
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLNORMALSTREAM3DVATI(stream, coords)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, coords, tmp); \
+	Atari2HostDoubleArray(3, coords, tmp); \
 	fn.glNormalStream3dvATI(stream, tmp)
 #else
 #define FN_GLNORMALSTREAM3DVATI(stream, coords)	fn.glNormalStream3dvATI(stream, coords)
@@ -3533,7 +3972,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLNORMALSTREAM3FVATI(stream, coords)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, coords, tmp); \
+	Atari2HostFloatArray(3, coords, tmp); \
 	fn.glNormalStream3fvATI(stream, tmp)
 #else
 #define FN_GLNORMALSTREAM3FVATI(stream, coords)	fn.glNormalStream3fvATI(stream, coords)
@@ -3559,7 +3998,7 @@ static int nfglGetNumParams(GLenum pname)
 #define FN_GLPIXELMAPFV(map, mapsize, values)	GLfloat *tmp; \
 	tmp=(GLfloat *)malloc(mapsize*sizeof(GLfloat)); \
 	if(tmp) { \
-		Atari2HostFloatPtr(mapsize, values, tmp); \
+		Atari2HostFloatArray(mapsize, values, tmp); \
 		fn.glPixelMapfv(map, mapsize, tmp); \
 		free(tmp); \
 	}
@@ -3603,7 +4042,7 @@ static int nfglGetNumParams(GLenum pname)
 		tmp2=(GLclampf *)malloc(n*sizeof(GLclampf)); \
 		if(tmp2) { \
 			Atari2HostIntPtr(n, textures, tmp); \
-			Atari2HostFloatPtr(n, priorities, tmp2); \
+			Atari2HostFloatArray(n, priorities, tmp2); \
 			fn.glPrioritizeTextures(n, tmp, tmp2); \
 			free(tmp2); \
 		} \
@@ -3625,7 +4064,7 @@ static int nfglGetNumParams(GLenum pname)
 		tmp2=(GLclampf *)malloc(n*sizeof(GLclampf)); \
 		if(tmp2) { \
 			Atari2HostIntPtr(n, textures, tmp); \
-			Atari2HostFloatPtr(n, priorities, tmp2); \
+			Atari2HostFloatArray(n, priorities, tmp2); \
 			fn.glPrioritizeTexturesEXT(n, tmp, tmp2); \
 			free(tmp2); \
 		} \
@@ -3637,7 +4076,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLPROGRAMENVPARAMETER4DVARB(target, index, params)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, params, tmp); \
+	Atari2HostDoubleArray(4, params, tmp); \
 	fn.glProgramEnvParameter4dvARB(target, index, tmp)
 #else
 #define FN_GLPROGRAMENVPARAMETER4DVARB(target, index, params)	fn.glProgramEnvParameter4dvARB(target, index, params)
@@ -3645,7 +4084,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPROGRAMENVPARAMETER4FVARB(target, index, params)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, params, tmp); \
+	Atari2HostFloatArray(4, params, tmp); \
 	fn.glProgramEnvParameter4fvARB(target, index, tmp)
 #else
 #define FN_GLPROGRAMENVPARAMETER4FVARB(target, index, params)	fn.glProgramEnvParameter4fvARB(target, index, params)
@@ -3653,7 +4092,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLPROGRAMLOCALPARAMETER4DVARB(target, index, params)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, params, tmp); \
+	Atari2HostDoubleArray(4, params, tmp); \
 	fn.glProgramLocalParameter4dvARB(target, index, tmp)
 #else
 #define FN_GLPROGRAMLOCALPARAMETER4DVARB(target, index, params)	fn.glProgramLocalParameter4dvARB(target, index, params)
@@ -3661,7 +4100,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPROGRAMLOCALPARAMETER4FVARB(target, index, params)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, params, tmp); \
+	Atari2HostFloatArray(4, params, tmp); \
 	fn.glProgramLocalParameter4fvARB(target, index, tmp)
 #else
 #define FN_GLPROGRAMLOCALPARAMETER4FVARB(target, index, params)	fn.glProgramLocalParameter4fvARB(target, index, params)
@@ -3669,7 +4108,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLPROGRAMNAMEDPARAMETER4DVNV(id, len, name, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glProgramNamedParameter4dvNV(id, len, name, tmp)
 #else
 #define FN_GLPROGRAMNAMEDPARAMETER4DVNV(id, len, name, v)	fn.glProgramNamedParameter4dvNV(id, len, name, v)
@@ -3677,7 +4116,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPROGRAMNAMEDPARAMETER4FVNV(id, len, name, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glProgramNamedParameter4fvNV(id, len, name, tmp)
 #else
 #define FN_GLPROGRAMNAMEDPARAMETER4FVNV(id, len, name, v)	fn.glProgramNamedParameter4fvNV(id, len, name, v)
@@ -3685,7 +4124,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLPROGRAMPARAMETER4DVNV(target, index, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glProgramParameter4dvNV(target, index, tmp)
 #else
 #define FN_GLPROGRAMPARAMETER4DVNV(target, index, v)	fn.glProgramParameter4dvNV(target, index, v)
@@ -3693,7 +4132,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPROGRAMPARAMETER4FVNV(target, index, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glProgramParameter4fvNV(target, index, tmp)
 #else
 #define FN_GLPROGRAMPARAMETER4FVNV(target, index, v)	fn.glProgramParameter4fvNV(target, index, v)
@@ -3701,7 +4140,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLPROGRAMPARAMETERS4DVNV(target, index, count, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glProgramParameters4dvNV(target, index, count, tmp)
 #else
 #define FN_GLPROGRAMPARAMETERS4DVNV(target, index, count, v)	fn.glProgramParameters4dvNV(target, index, count, v)
@@ -3709,7 +4148,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPROGRAMPARAMETERS4FVNV(target, index, count, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glProgramParameters4fvNV(target, index, count, tmp)
 #else
 #define FN_GLPROGRAMPARAMETERS4FVNV(target, index, count, v)	fn.glProgramParameters4fvNV(target, index, count, v)
@@ -3717,7 +4156,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLRASTERPOS2DV(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glRasterPos2dv(tmp)
 #else
 #define FN_GLRASTERPOS2DV(v)	fn.glRasterPos2dv(v)
@@ -3725,7 +4164,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLRASTERPOS2FV(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glRasterPos2fv(tmp)
 #else
 #define FN_GLRASTERPOS2FV(v)	fn.glRasterPos2fv(v)
@@ -3749,7 +4188,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLRASTERPOS3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glRasterPos3dv(tmp)
 #else
 #define FN_GLRASTERPOS3DV(v)	fn.glRasterPos3dv(v)
@@ -3757,7 +4196,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLRASTERPOS3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glRasterPos3fv(tmp)
 #else
 #define FN_GLRASTERPOS3FV(v)	fn.glRasterPos3fv(v)
@@ -3781,7 +4220,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLRASTERPOS4DV(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glRasterPos4dv(tmp)
 #else
 #define FN_GLRASTERPOS4DV(v)	fn.glRasterPos4dv(v)
@@ -3789,7 +4228,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLRASTERPOS4FV(v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glRasterPos4fv(tmp)
 #else
 #define FN_GLRASTERPOS4FV(v)	fn.glRasterPos4fv(v)
@@ -3813,8 +4252,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLRECTDV(v1, v2)	GLdouble tmp1[4],tmp2[4]; \
-	Atari2HostDoublePtr(4, v1, tmp1); \
-	Atari2HostDoublePtr(4, v2, tmp2); \
+	Atari2HostDoubleArray(4, v1, tmp1); \
+	Atari2HostDoubleArray(4, v2, tmp2); \
 	fn.glRectdv(tmp1, tmp2)
 #else
 #define FN_GLRECTDV(v1, v2)	fn.glRectdv(v1, v2)
@@ -3822,8 +4261,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLRECTFV(v1, v2)	GLfloat tmp1[4],tmp2[4]; \
-	Atari2HostFloatPtr(4, v1, tmp1); \
-	Atari2HostFloatPtr(4, v2, tmp2); \
+	Atari2HostFloatArray(4, v1, tmp1); \
+	Atari2HostFloatArray(4, v2, tmp2); \
 	fn.glRectfv(tmp1, tmp2)
 #else
 #define FN_GLRECTFV(v1, v2)	fn.glRectfv(v1, v2)
@@ -3849,7 +4288,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLSECONDARYCOLOR3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glSecondaryColor3dv(tmp)
 #else
 #define FN_GLSECONDARYCOLOR3DV(v)	fn.glSecondaryColor3dv(v)
@@ -3857,7 +4296,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLSECONDARYCOLOR3DVEXT(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glSecondaryColor3dvEXT(tmp)
 #else
 #define FN_GLSECONDARYCOLOR3DVEXT(v)	fn.glSecondaryColor3dvEXT(v)
@@ -3865,7 +4304,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLSECONDARYCOLOR3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glSecondaryColor3fv(tmp)
 #else
 #define FN_GLSECONDARYCOLOR3FV(v)	fn.glSecondaryColor3fv(v)
@@ -3873,7 +4312,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLSECONDARYCOLOR3FVEXT(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glSecondaryColor3fvEXT(tmp)
 #else
 #define FN_GLSECONDARYCOLOR3FVEXT(v)	fn.glSecondaryColor3fvEXT(v)
@@ -3953,7 +4392,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTANGENT3DVEXT(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glTangent3dvEXT(tmp)
 #else
 #define FN_GLTANGENT3DVEXT(v)	fn.glTangent3dvEXT(v)
@@ -3961,7 +4400,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTANGENT3FVEXT(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glTangent3fvEXT(tmp)
 #else
 #define FN_GLTANGENT3FVEXT(v)	fn.glTangent3fvEXT(v)
@@ -3985,7 +4424,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORD1DV(v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+	Atari2HostDoubleArray(1, v, tmp); \
 	fn.glTexCoord1dv(tmp)
 #else
 #define FN_GLTEXCOORD1DV(v)	fn.glTexCoord1dv(v)
@@ -3993,7 +4432,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD1FV(v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+	Atari2HostFloatArray(1, v, tmp); \
 	fn.glTexCoord1fv(tmp)
 #else
 #define FN_GLTEXCOORD1FV(v)	fn.glTexCoord1fv(v)
@@ -4025,7 +4464,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORD2DV(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glTexCoord2dv(tmp)
 #else
 #define FN_GLTEXCOORD2DV(v)	fn.glTexCoord2dv(v)
@@ -4034,9 +4473,9 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FCOLOR3FVERTEX3FVSUN(tc, c, v) \
 	GLfloat tmp1[2],tmp2[3],tmp3[3]; \
-	Atari2HostFloatPtr(2, tc, tmp1); \
-	Atari2HostFloatPtr(3, c, tmp2); \
-	Atari2HostFloatPtr(3, v, tmp3); \
+	Atari2HostFloatArray(2, tc, tmp1); \
+	Atari2HostFloatArray(3, c, tmp2); \
+	Atari2HostFloatArray(3, v, tmp3); \
 	fn.glTexCoord2fColor3fVertex3fvSUN(tmp1, tmp2, tmp3)
 #else
 #define FN_GLTEXCOORD2FCOLOR3FVERTEX3FVSUN(tc, c, v)	fn.glTexCoord2fColor3fVertex3fvSUN(tc, c, v)
@@ -4045,10 +4484,10 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN(tc, c, n, v) \
 	GLfloat tmp1[2],tmp2[4],tmp3[3],tmp4[3]; \
-	Atari2HostFloatPtr(2, tc, tmp1); \
-	Atari2HostFloatPtr(4, c, tmp2); \
-	Atari2HostFloatPtr(3, n, tmp3); \
-	Atari2HostFloatPtr(3, v, tmp4); \
+	Atari2HostFloatArray(2, tc, tmp1); \
+	Atari2HostFloatArray(4, c, tmp2); \
+	Atari2HostFloatArray(3, n, tmp3); \
+	Atari2HostFloatArray(3, v, tmp4); \
 	fn.glTexCoord2fColor4fNormal3fVertex3fvSUN(tmp1, tmp2, tmp3, tmp4)
 #else
 #define FN_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN(tc, c, n, v)	fn.glTexCoord2fColor4fNormal3fVertex3fvSUN(tc, c, n, v)
@@ -4056,8 +4495,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FCOLOR4UBVERTEX3FVSUN(tc, c, v)	GLfloat tmp1[2],tmp2[3]; \
-	Atari2HostFloatPtr(2, tc, tmp1); \
-	Atari2HostFloatPtr(3, v, tmp2); \
+	Atari2HostFloatArray(2, tc, tmp1); \
+	Atari2HostFloatArray(3, v, tmp2); \
 	fn.glTexCoord2fColor4ubVertex3fvSUN(tmp1, c, tmp2)
 #else
 #define FN_GLTEXCOORD2FCOLOR4UBVERTEX3FVSUN(tc, c, v)	fn.glTexCoord2fColor4ubVertex3fvSUN(tc, c, v)
@@ -4065,9 +4504,9 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FNORMAL3FVERTEX3FVSUN(tc, n, v)	GLfloat tmp1[2],tmp2[3],tmp3[3]; \
-	Atari2HostFloatPtr(2, tc, tmp1); \
-	Atari2HostFloatPtr(3, n, tmp2); \
-	Atari2HostFloatPtr(3, v, tmp3); \
+	Atari2HostFloatArray(2, tc, tmp1); \
+	Atari2HostFloatArray(3, n, tmp2); \
+	Atari2HostFloatArray(3, v, tmp3); \
 	fn.glTexCoord2fNormal3fVertex3fvSUN(tmp1, tmp2, tmp3)
 #else
 #define FN_GLTEXCOORD2FNORMAL3FVERTEX3FVSUN(tc, n, v)	fn.glTexCoord2fNormal3fVertex3fvSUN(tc, n, v)
@@ -4075,8 +4514,8 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FVERTEX3FVSUN(tc, v)	GLfloat tmp1[2],tmp2[3]; \
-	Atari2HostFloatPtr(2, tc, tmp1); \
-	Atari2HostFloatPtr(3, v, tmp2); \
+	Atari2HostFloatArray(2, tc, tmp1); \
+	Atari2HostFloatArray(3, v, tmp2); \
 	fn.glTexCoord2fVertex3fvSUN(tmp1, tmp2)
 #else
 #define FN_GLTEXCOORD2FVERTEX3FVSUN(tc, v)	fn.glTexCoord2fVertex3fvSUN(tc, v)
@@ -4084,7 +4523,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD2FV(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glTexCoord2fv(tmp)
 #else
 #define FN_GLTEXCOORD2FV(v)	fn.glTexCoord2fv(v)
@@ -4116,7 +4555,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORD3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glTexCoord3dv(tmp)
 #else
 #define FN_GLTEXCOORD3DV(v)	fn.glTexCoord3dv(v)
@@ -4124,7 +4563,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glTexCoord3fv(tmp)
 #else
 #define FN_GLTEXCOORD3FV(v)	fn.glTexCoord3fv(v)
@@ -4156,7 +4595,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLTEXCOORD4DV(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glTexCoord4dv(tmp)
 #else
 #define FN_GLTEXCOORD4DV(v)	fn.glTexCoord4dv(v)
@@ -4165,10 +4604,10 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FVSUN(tc, c, n, v) \
 	GLfloat tmp1[4],tmp2[4],tmp3[3],tmp4[4]; \
-	Atari2HostFloatPtr(4, tc, tmp1); \
-	Atari2HostFloatPtr(4, c, tmp2); \
-	Atari2HostFloatPtr(3, n, tmp3); \
-	Atari2HostFloatPtr(4, v, tmp4); \
+	Atari2HostFloatArray(4, tc, tmp1); \
+	Atari2HostFloatArray(4, c, tmp2); \
+	Atari2HostFloatArray(3, n, tmp3); \
+	Atari2HostFloatArray(4, v, tmp4); \
 	fn.glTexCoord4fColor4fNormal3fVertex4fvSUN(tmp1, tmp2, tmp3, tmp4)
 #else
 #define FN_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FVSUN(tc, c, n, v)	fn.glTexCoord4fColor4fNormal3fVertex4fvSUN(tc, c, n, v)
@@ -4177,8 +4616,8 @@ static int nfglGetNumParams(GLenum pname)
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD4FVERTEX4FVSUN(tc, v) \
 	GLfloat tmp1[4],tmp2[4]; \
-	Atari2HostFloatPtr(4, tc, tmp1); \
-	Atari2HostFloatPtr(4, v, tmp2); \
+	Atari2HostFloatArray(4, tc, tmp1); \
+	Atari2HostFloatArray(4, v, tmp2); \
 	fn.glTexCoord4fVertex4fvSUN(tmp1, tmp2)
 #else
 #define FN_GLTEXCOORD4FVERTEX4FVSUN(tc, v)	fn.glTexCoord4fVertex4fvSUN(tc, v)
@@ -4186,7 +4625,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXCOORD4FV(v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glTexCoord4fv(tmp)
 #else
 #define FN_GLTEXCOORD4FV(v)	fn.glTexCoord4fv(v)
@@ -4217,783 +4656,896 @@ static int nfglGetNumParams(GLenum pname)
 #endif
 
 #define FN_GLTEXCOORDPOINTER(size, type, stride, pointer) \
-	setupClientArray(contexts[cur_context].texcoord, size, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].texcoord, size, type, stride, -1, 0, pointer)
 
 #define FN_GLTEXCOORDPOINTEREXT(size, type, stride, count, pointer) \
-	setupClientArray(contexts[cur_context].texcoord, size, type, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].texcoord, size, type, stride, count, 0, pointer)
 
 #define FN_GLTEXCOORDPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].texcoord, size, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].texcoord, size, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].texcoord.vendor = 1
 
 #define FN_GLTEXCOORDPOINTERVINTEL(size, type, pointer) \
-	setupClientArray(contexts[cur_context].texcoord, size, type, 0, -1, 0, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].texcoord, size, type, 0, -1, 0, pointer); \
 	contexts[cur_context].texcoord.vendor = 2
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXENVFV(target, pname, params) \
-	GLfloat tmp[4]; \
-	if(pname==GL_TEXTURE_ENV_COLOR) { \
-		Atari2HostFloatPtr(4, params, tmp); \
-	} else { \
-		Atari2HostFloatPtr(1, params, tmp); \
-	} \
+	GLint const size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glTexEnvfv(target, pname, tmp)
 #else
-#define FN_GLTEXENVFV(target, pname, params)	fn.glTexEnvfv(target, pname, params)
+#define FN_GLTEXENVFV(target, pname, params) \
+	fn.glTexEnvfv(target, pname, params)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLTEXENVIV(target, pname, params) \
-	GLint tmp[4]; \
-	if(pname==GL_TEXTURE_ENV_COLOR) { \
-		Atari2HostIntPtr(4, params, tmp); \
-	} else { \
-		Atari2HostIntPtr(1, params, tmp); \
-	} \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
 	fn.glTexEnviv(target, pname, tmp)
 #else
-#define FN_GLTEXENVIV(target, pname, params)	fn.glTexEnviv(target, pname, params)
+#define FN_GLTEXENVIV(target, pname, params) \
+	fn.glTexEnviv(target, pname, params)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLTEXGENDV(coord, pname, params)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, params, tmp); \
+#define FN_GLTEXGENDV(coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLdouble tmp[MAX(size, 16)]; \
+	Atari2HostDoubleArray(size, params, tmp); \
 	fn.glTexGendv(coord, pname, tmp)
 #else
-#define FN_GLTEXGENDV(coord, pname, params)	fn.glTexGendv(coord, pname, params)
+#define FN_GLTEXGENDV(coord, pname, params) \
+	fn.glTexGendv(coord, pname, params)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLTEXGENFV(coord, pname, params)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, params, tmp); \
+#define FN_GLTEXGENFV(coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glTexGenfv(coord, pname, tmp)
 #else
-#define FN_GLTEXGENFV(coord, pname, params)	fn.glTexGenfv(coord, pname, params)
+#define FN_GLTEXGENFV(coord, pname, params) \
+	fn.glTexGenfv(coord, pname, params)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLTEXGENIV(coord, pname, params)	GLint tmp[4]; \
+#define FN_GLTEXGENIV(coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
 	Atari2HostIntPtr(4, params, tmp); \
 	fn.glTexGeniv(coord, pname, tmp)
 #else
-#define FN_GLTEXGENIV(coord, pname, params)	fn.glTexGeniv(coord, pname, params)
+#define FN_GLTEXGENIV(coord, pname, params)	\
+	fn.glTexGeniv(coord, pname, params)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLTEXPARAMETERFV(target, pname, params) \
-	GLfloat tmp[4]; \
-	if(pname==GL_TEXTURE_BORDER_COLOR) \
-		Atari2HostFloatPtr(4, params, tmp); \
-	else \
-		Atari2HostFloatPtr(1, params, tmp); \
+	GLint size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glTexParameterfv(target, pname, tmp)
 #else
-#define FN_GLTEXPARAMETERFV(target, pname, params)	fn.glTexParameterfv(target, pname, params)
+#define FN_GLTEXPARAMETERFV(target, pname, params) \
+	fn.glTexParameterfv(target, pname, params)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLTEXPARAMETERIV(target, pname, params)	GLint tmp[4]; \
-	if(pname==GL_TEXTURE_BORDER_COLOR) \
-		Atari2HostIntPtr(4, params, tmp); \
-	else \
-		Atari2HostIntPtr(1, params, tmp); \
+#define FN_GLTEXPARAMETERIV(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
 	fn.glTexParameteriv(target, pname, tmp)
 #else
-#define FN_GLTEXPARAMETERIV(target, pname, params)	fn.glTexParameteriv(target, pname, params)
+#define FN_GLTEXPARAMETERIV(target, pname, params) \
+	fn.glTexParameteriv(target, pname, params)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM1FV(location, count, value)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, value, tmp); \
+#define FN_GLUNIFORM1FV(location, count, value)	\
+	GLint const size = 1 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
 	fn.glUniform1fv(location, count, tmp)
 #else
-#define FN_GLUNIFORM1FV(location, count, value)	fn.glUniform1fv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM1FVARB(location, count, value)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, value, tmp); \
-	fn.glUniform1fvARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM1FVARB(location, count, value)	fn.glUniform1fvARB(location, count, value)
+#define FN_GLUNIFORM1FV(location, count, value) \
+	fn.glUniform1fv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM1IV(location, count, value)	GLint tmp[1]; \
-	Atari2HostIntPtr(1, value, tmp); \
+#define FN_GLUNIFORM1IV(location, count, value) \
+	GLint const size = 1 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
 	fn.glUniform1iv(location, count, tmp)
 #else
-#define FN_GLUNIFORM1IV(location, count, value)	fn.glUniform1iv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM1IVARB(location, count, value)	GLint tmp[1]; \
-	Atari2HostIntPtr(1, value, tmp); \
-	fn.glUniform1ivARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM1IVARB(location, count, value)	fn.glUniform1ivARB(location, count, value)
+#define FN_GLUNIFORM1IV(location, count, value) \
+	fn.glUniform1iv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM2FV(location, count, value)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, value, tmp); \
+#define FN_GLUNIFORM2FV(location, count, value) \
+	GLint const size = 2 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
 	fn.glUniform2fv(location, count, tmp)
 #else
-#define FN_GLUNIFORM2FV(location, count, value)	fn.glUniform2fv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM2FVARB(location, count, value)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, value, tmp); \
-	fn.glUniform2fvARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM2FVARB(location, count, value)	fn.glUniform2fvARB(location, count, value)
+#define FN_GLUNIFORM2FV(location, count, value) \
+	fn.glUniform2fv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM2IV(location, count, value)	GLint tmp[2]; \
-	Atari2HostIntPtr(2, value, tmp); \
+#define FN_GLUNIFORM2IV(location, count, value) \
+	GLint const size = 2 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
 	fn.glUniform2iv(location, count, tmp)
 #else
-#define FN_GLUNIFORM2IV(location, count, value)	fn.glUniform2iv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM2IVARB(location, count, value)	GLint tmp[2]; \
-	Atari2HostIntPtr(2, value, tmp); \
-	fn.glUniform2ivARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM2IVARB(location, count, value)	fn.glUniform2ivARB(location, count, value)
+#define FN_GLUNIFORM2IV(location, count, value) \
+	fn.glUniform2iv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM3FV(location, count, value)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, value, tmp); \
+#define FN_GLUNIFORM3FV(location, count, value) \
+	GLint const size = 3 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
 	fn.glUniform3fv(location, count, tmp)
 #else
-#define FN_GLUNIFORM3FV(location, count, value)	fn.glUniform3fv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM3FVARB(location, count, value)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, value, tmp); \
-	fn.glUniform3fvARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM3FVARB(location, count, value)	fn.glUniform3fvARB(location, count, value)
+#define FN_GLUNIFORM3FV(location, count, value) \
+	fn.glUniform3fv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM3IV(location, count, value)	GLint tmp[3]; \
-	Atari2HostIntPtr(3, value, tmp); \
+#define FN_GLUNIFORM3IV(location, count, value) \
+	GLint const size = 3 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
 	fn.glUniform3iv(location, count, tmp)
 #else
-#define FN_GLUNIFORM3IV(location, count, value)	fn.glUniform3iv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM3IVARB(location, count, value)	GLint tmp[3]; \
-	Atari2HostIntPtr(3, value, tmp); \
-	fn.glUniform3ivARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM3IVARB(location, count, value)	fn.glUniform3ivARB(location, count, value)
+#define FN_GLUNIFORM3IV(location, count, value) \
+	fn.glUniform3iv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM4FV(location, count, value)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, value, tmp); \
+#define FN_GLUNIFORM4FV(location, count, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
 	fn.glUniform4fv(location, count, tmp)
 #else
-#define FN_GLUNIFORM4FV(location, count, value)	fn.glUniform4fv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLUNIFORM4FVARB(location, count, value)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, value, tmp); \
-	fn.glUniform4fvARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM4FVARB(location, count, value)	fn.glUniform4fvARB(location, count, value)
+#define FN_GLUNIFORM4FV(location, count, value) \
+	fn.glUniform4fv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM4IV(location, count, value)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, value, tmp); \
+#define FN_GLUNIFORM4IV(location, count, value) \
+	GLint const size = 4 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
 	fn.glUniform4iv(location, count, tmp)
 #else
-#define FN_GLUNIFORM4IV(location, count, value)	fn.glUniform4iv(location, count, value)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM4IVARB(location, count, value)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, value, tmp); \
-	fn.glUniform4ivARB(location, count, tmp)
-#else
-#define FN_GLUNIFORM4IVARB(location, count, value)	fn.glUniform4ivARB(location, count, value)
+#define FN_GLUNIFORM4IV(location, count, value) \
+	fn.glUniform4iv(location, count, value)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEX2DV(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+#define FN_GLVERTEX2DV(v) \
+	GLint const size = 2; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertex2dv(tmp)
 #else
-#define FN_GLVERTEX2DV(v)	fn.glVertex2dv(v)
+#define FN_GLVERTEX2DV(v) fn.glVertex2dv(v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEX2FV(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+#define FN_GLVERTEX2FV(v) \
+	GLint const size = 2; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertex2fv(tmp)
 #else
-#define FN_GLVERTEX2FV(v)	fn.glVertex2fv(v)
+#define FN_GLVERTEX2FV(v) fn.glVertex2fv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX2HVNV(v)	GLhalfNV tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEX2HVNV(v) \
+	GLint const size = 2; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex2hvNV(tmp)
 #else
 #define FN_GLVERTEX2HVNV(v)	fn.glVertex2hvNV(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX2IV(v)	GLint tmp[2]; \
-	Atari2HostIntPtr(2, v, tmp); \
+#define FN_GLVERTEX2IV(v) \
+	GLint const size = 2; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertex2iv(tmp)
 #else
 #define FN_GLVERTEX2IV(v)	fn.glVertex2iv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX2SV(v)	GLshort tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEX2SV(v) \
+	GLint const size = 2; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex2sv(tmp)
 #else
-#define FN_GLVERTEX2SV(v)	fn.glVertex2sv(v)
+#define FN_GLVERTEX2SV(v) fn.glVertex2sv(v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEX3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+#define FN_GLVERTEX3DV(v) \
+	GLint const size = 3; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertex3dv(tmp)
 #else
 #define FN_GLVERTEX3DV(v)	fn.glVertex3dv(v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEX3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+#define FN_GLVERTEX3FV(v) \
+	GLint const size = 3; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glVertex3fv(tmp)
 #else
 #define FN_GLVERTEX3FV(v)	fn.glVertex3fv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX3HVNV(v)	GLhalfNV tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEX3HVNV(v) \
+	GLint const size = 4; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex3hvNV(tmp)
 #else
 #define FN_GLVERTEX3HVNV(v)	fn.glVertex3hvNV(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX3IV(v)	GLint tmp[3]; \
-	Atari2HostIntPtr(3, v, tmp); \
+#define FN_GLVERTEX3IV(v) \
+	GLint const size = 3; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertex3iv(tmp)
 #else
-#define FN_GLVERTEX3IV(v)	fn.glVertex3iv(v)
+#define FN_GLVERTEX3IV(v) fn.glVertex3iv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX3SV(v)	GLshort tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEX3SV(v) \
+	GLint const size = 3; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex3sv(tmp)
 #else
-#define FN_GLVERTEX3SV(v)	fn.glVertex3sv(v)
+#define FN_GLVERTEX3SV(v) fn.glVertex3sv(v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEX4DV(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+#define FN_GLVERTEX4DV(v) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertex4dv(tmp)
 #else
-#define FN_GLVERTEX4DV(v)	fn.glVertex4dv(v)
+#define FN_GLVERTEX4DV(v) fn.glVertex4dv(v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEX4FV(v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+#define FN_GLVERTEX4FV(v) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertex4fv(tmp)
 #else
-#define FN_GLVERTEX4FV(v)	fn.glVertex4fv(v)
+#define FN_GLVERTEX4FV(v) fn.glVertex4fv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX4HVNV(v)	GLhalfNV tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEX4HVNV(v) \
+	GLint const size = 4; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex4hvNV(tmp)
 #else
-#define FN_GLVERTEX4HVNV(v)	fn.glVertex4hvNV(v)
+#define FN_GLVERTEX4HVNV(v) fn.glVertex4hvNV(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX4IV(v)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEX4IV(v) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertex4iv(tmp)
 #else
-#define FN_GLVERTEX4IV(v)	fn.glVertex4iv(v)
+#define FN_GLVERTEX4IV(v) fn.glVertex4iv(v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEX4SV(v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEX4SV(v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertex4sv(tmp)
 #else
-#define FN_GLVERTEX4SV(v)	fn.glVertex4sv(v)
+#define FN_GLVERTEX4SV(v) fn.glVertex4sv(v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB1DV(index, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1DV(index, v) \
+	GLint const size = 1; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib1dv(index, tmp)
 #else
 #define FN_GLVERTEXATTRIB1DV(index, v)	fn.glVertexAttrib1dv(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB1DVARB(index, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1DVARB(index, v) \
+	GLint const size = 1; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib1dvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1DVARB(index, v)	fn.glVertexAttrib1dvARB(index, v)
+#define FN_GLVERTEXATTRIB1DVARB(index, v) fn.glVertexAttrib1dvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB1DVNV(index, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1DVNV(index, v) \
+	GLint const size = 1; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib1dvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1DVNV(index, v)	fn.glVertexAttrib1dvNV(index, v)
+#define FN_GLVERTEXATTRIB1DVNV(index, v) fn.glVertexAttrib1dvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB1FV(index, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1FV(index, v) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib1fv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1FV(index, v)	fn.glVertexAttrib1fv(index, v)
+#define FN_GLVERTEXATTRIB1FV(index, v) fn.glVertexAttrib1fv(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB1FVARB(index, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1FVARB(index, v) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib1fvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1FVARB(index, v)	fn.glVertexAttrib1fvARB(index, v)
+#define FN_GLVERTEXATTRIB1FVARB(index, v) fn.glVertexAttrib1fvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB1FVNV(index, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1FVNV(index, v) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib1fvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1FVNV(index, v)	fn.glVertexAttrib1fvNV(index, v)
+#define FN_GLVERTEXATTRIB1FVNV(index, v) fn.glVertexAttrib1fvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB1HVNV(index, v)	GLhalfNV tmp[1]; \
-	Atari2HostShortPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1HVNV(index, v) \
+	GLint const size = 1; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib1hvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1HVNV(index, v)	fn.glVertexAttrib1hvNV(index, v)
+#define FN_GLVERTEXATTRIB1HVNV(index, v) fn.glVertexAttrib1hvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB1SV(index, v)	GLshort tmp[1]; \
-	Atari2HostShortPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1SV(index, v) \
+	GLint const size = 1; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib1sv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1SV(index, v)	fn.glVertexAttrib1sv(index, v)
+#define FN_GLVERTEXATTRIB1SV(index, v) fn.glVertexAttrib1sv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB1SVARB(index, v)	GLshort tmp[1]; \
-	Atari2HostShortPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1SVARB(index, v) \
+	GLint const size = 1; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib1svARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1SVARB(index, v)	fn.glVertexAttrib1svARB(index, v)
+#define FN_GLVERTEXATTRIB1SVARB(index, v) fn.glVertexAttrib1svARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB1SVNV(index, v)	GLshort tmp[1]; \
-	Atari2HostShortPtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIB1SVNV(index, v) \
+	GLint const size = 1; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib1svNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB1SVNV(index, v)	fn.glVertexAttrib1svNV(index, v)
+#define FN_GLVERTEXATTRIB1SVNV(index, v) fn.glVertexAttrib1svNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB2DV(index, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2DV(index, v) \
+	GLint const size = 2; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib2dv(index, tmp)
 #else
 #define FN_GLVERTEXATTRIB2DV(index, v)	fn.glVertexAttrib2dv(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB2DVARB(index, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2DVARB(index, v) \
+	GLint const size = 2; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib2dvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2DVARB(index, v)	fn.glVertexAttrib2dvARB(index, v)
+#define FN_GLVERTEXATTRIB2DVARB(index, v) fn.glVertexAttrib2dvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB2DVNV(index, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2DVNV(index, v) \
+	GLint const size = 2; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib2dvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2DVNV(index, v)	fn.glVertexAttrib2dvNV(index, v)
+#define FN_GLVERTEXATTRIB2DVNV(index, v) fn.glVertexAttrib2dvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB2FV(index, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2FV(index, v) \
+	GLint const size = 2; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib2fv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2FV(index, v)	fn.glVertexAttrib2fv(index, v)
+#define FN_GLVERTEXATTRIB2FV(index, v) fn.glVertexAttrib2fv(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB2FVARB(index, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2FVARB(index, v) \
+	GLint const size = 2; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib2fvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2FVARB(index, v)	fn.glVertexAttrib2fvARB(index, v)
+#define FN_GLVERTEXATTRIB2FVARB(index, v) fn.glVertexAttrib2fvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB2FVNV(index, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2FVNV(index, v) \
+	GLint const size = 2; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib2fvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2FVNV(index, v)	fn.glVertexAttrib2fvNV(index, v)
+#define FN_GLVERTEXATTRIB2FVNV(index, v) fn.glVertexAttrib2fvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB2HVNV(index, v)	GLhalfNV tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2HVNV(index, v) \
+	GLint const size = 2; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib2hvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2HVNV(index, v)	fn.glVertexAttrib2hvNV(index, v)
+#define FN_GLVERTEXATTRIB2HVNV(index, v) fn.glVertexAttrib2hvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB2SV(index, v)	GLshort tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2SV(index, v) \
+	GLint const size = 2; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib2sv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2SV(index, v)	fn.glVertexAttrib2sv(index, v)
+#define FN_GLVERTEXATTRIB2SV(index, v) fn.glVertexAttrib2sv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB2SVARB(index, v)	GLshort tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2SVARB(index, v) \
+	GLint const size = 2; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib2svARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2SVARB(index, v)	fn.glVertexAttrib2svARB(index, v)
+#define FN_GLVERTEXATTRIB2SVARB(index, v) fn.glVertexAttrib2svARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB2SVNV(index, v)	GLshort tmp[2]; \
-	Atari2HostShortPtr(2, v, tmp); \
+#define FN_GLVERTEXATTRIB2SVNV(index, v) \
+	GLint const size = 2; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib2svNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB2SVNV(index, v)	fn.glVertexAttrib2svNV(index, v)
+#define FN_GLVERTEXATTRIB2SVNV(index, v) fn.glVertexAttrib2svNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB3DV(index, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3DV(index, v) \
+	GLint const size = 3; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib3dv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3DV(index, v)	fn.glVertexAttrib3dv(index, v)
+#define FN_GLVERTEXATTRIB3DV(index, v) fn.glVertexAttrib3dv(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB3DVARB(index, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3DVARB(index, v) \
+	GLint const size = 3; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib3dvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3DVARB(index, v)	fn.glVertexAttrib3dvARB(index, v)
+#define FN_GLVERTEXATTRIB3DVARB(index, v) fn.glVertexAttrib3dvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB3DVNV(index, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3DVNV(index, v) \
+	GLint const size = 3; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib3dvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3DVNV(index, v)	fn.glVertexAttrib3dvNV(index, v)
+#define FN_GLVERTEXATTRIB3DVNV(index, v) fn.glVertexAttrib3dvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB3FV(index, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3FV(index, v) \
+	GLint const size = 3; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib3fv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3FV(index, v)	fn.glVertexAttrib3fv(index, v)
+#define FN_GLVERTEXATTRIB3FV(index, v) fn.glVertexAttrib3fv(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB3FVARB(index, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3FVARB(index, v) \
+	GLint const size = 3; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib3fvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3FVARB(index, v)	fn.glVertexAttrib3fvARB(index, v)
+#define FN_GLVERTEXATTRIB3FVARB(index, v) fn.glVertexAttrib3fvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB3FVNV(index, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3FVNV(index, v) \
+	GLint const size = 3; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib3fvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3FVNV(index, v)	fn.glVertexAttrib3fvNV(index, v)
+#define FN_GLVERTEXATTRIB3FVNV(index, v) fn.glVertexAttrib3fvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB3HVNV(index, v)	GLhalfNV tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3HVNV(index, v) \
+	GLint const size = 3; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib3hvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3HVNV(index, v)	fn.glVertexAttrib3hvNV(index, v)
+#define FN_GLVERTEXATTRIB3HVNV(index, v) fn.glVertexAttrib3hvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB3SV(index, v)	GLshort tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3SV(index, v) \
+	GLint const size = 3; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib3sv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3SV(index, v)	fn.glVertexAttrib3sv(index, v)
+#define FN_GLVERTEXATTRIB3SV(index, v) fn.glVertexAttrib3sv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB3SVARB(index, v)	GLshort tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3SVARB(index, v) \
+	GLint const size = 3; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib3svARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3SVARB(index, v)	fn.glVertexAttrib3svARB(index, v)
+#define FN_GLVERTEXATTRIB3SVARB(index, v) fn.glVertexAttrib3svARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB3SVNV(index, v)	GLshort tmp[3]; \
-	Atari2HostShortPtr(3, v, tmp); \
+#define FN_GLVERTEXATTRIB3SVNV(index, v) \
+	GLint const size = 3; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib3svNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB3SVNV(index, v)	fn.glVertexAttrib3svNV(index, v)
+#define FN_GLVERTEXATTRIB3SVNV(index, v) fn.glVertexAttrib3svNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NIV(index, v)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NIV(index, v) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4Niv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NIV(index, v)	fn.glVertexAttrib4Niv(index, v)
+#define FN_GLVERTEXATTRIB4NIV(index, v) fn.glVertexAttrib4Niv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NIVARB(index, v)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NIVARB(index, v) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4NivARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NIVARB(index, v)	fn.glVertexAttrib4NivARB(index, v)
+#define FN_GLVERTEXATTRIB4NIVARB(index, v) fn.glVertexAttrib4NivARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NSV(index, v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NSV(index, v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4Nsv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NSV(index, v)	fn.glVertexAttrib4Nsv(index, v)
+#define FN_GLVERTEXATTRIB4NSV(index, v) fn.glVertexAttrib4Nsv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NSVARB(index, v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NSVARB(index, v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4NsvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NSVARB(index, v)	fn.glVertexAttrib4NsvARB(index, v)
+#define FN_GLVERTEXATTRIB4NSVARB(index, v) fn.glVertexAttrib4NsvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NUIV(index, v)	GLuint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NUIV(index, v) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4Nuiv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NUIV(index, v)	fn.glVertexAttrib4Nuiv(index, v)
+#define FN_GLVERTEXATTRIB4NUIV(index, v) fn.glVertexAttrib4Nuiv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NUIVARB(index, v)	GLuint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NUIVARB(index, v) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4NuivARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NUIVARB(index, v)	fn.glVertexAttrib4NuivARB(index, v)
+#define FN_GLVERTEXATTRIB4NUIVARB(index, v) fn.glVertexAttrib4NuivARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NUSV(index, v)	GLushort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NUSV(index, v) \
+	GLint const size = 4; \
+	GLushort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4Nusv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NUSV(index, v)	fn.glVertexAttrib4Nusv(index, v)
+#define FN_GLVERTEXATTRIB4NUSV(index, v) fn.glVertexAttrib4Nusv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4NUSVARB(index, v)	GLushort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4NUSVARB(index, v) \
+	GLint const size = 4; \
+	GLushort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4NusvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4NUSVARB(index, v)	fn.glVertexAttrib4NusvARB(index, v)
+#define FN_GLVERTEXATTRIB4NUSVARB(index, v) fn.glVertexAttrib4NusvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB4DV(index, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4DV(index, v) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib4dv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4DV(index, v)	fn.glVertexAttrib4dv(index, v)
+#define FN_GLVERTEXATTRIB4DV(index, v) fn.glVertexAttrib4dv(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB4DVARB(index, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4DVARB(index, v) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib4dvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4DVARB(index, v)	fn.glVertexAttrib4dvARB(index, v)
+#define FN_GLVERTEXATTRIB4DVARB(index, v) fn.glVertexAttrib4dvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIB4DVNV(index, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4DVNV(index, v) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttrib4dvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4DVNV(index, v)	fn.glVertexAttrib4dvNV(index, v)
+#define FN_GLVERTEXATTRIB4DVNV(index, v) fn.glVertexAttrib4dvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB4FV(index, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4FV(index, v) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib4fv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4FV(index, v)	fn.glVertexAttrib4fv(index, v)
+#define FN_GLVERTEXATTRIB4FV(index, v) fn.glVertexAttrib4fv(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB4FVARB(index, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4FVARB(index, v) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib4fvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4FVARB(index, v)	fn.glVertexAttrib4fvARB(index, v)
+#define FN_GLVERTEXATTRIB4FVARB(index, v) fn.glVertexAttrib4fvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLVERTEXATTRIB4FVNV(index, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4FVNV(index, v) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, v, tmp); \
 	fn.glVertexAttrib4fvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4FVNV(index, v)	fn.glVertexAttrib4fvNV(index, v)
+#define FN_GLVERTEXATTRIB4FVNV(index, v) fn.glVertexAttrib4fvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4HVNV(index, v)	GLhalfNV tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4HVNV(index, v) \
+	GLint const size = 4; \
+	GLhalfNV tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4hvNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4HVNV(index, v)	fn.glVertexAttrib4hvNV(index, v)
+#define FN_GLVERTEXATTRIB4HVNV(index, v) fn.glVertexAttrib4hvNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4IV(index, v)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4IV(index, v) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4iv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4IV(index, v)	fn.glVertexAttrib4iv(index, v)
+#define FN_GLVERTEXATTRIB4IV(index, v) fn.glVertexAttrib4iv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4IVARB(index, v)	GLint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4IVARB(index, v) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4ivARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4IVARB(index, v)	fn.glVertexAttrib4ivARB(index, v)
+#define FN_GLVERTEXATTRIB4IVARB(index, v) fn.glVertexAttrib4ivARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4SV(index, v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4SV(index, v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4sv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4SV(index, v)	fn.glVertexAttrib4sv(index, v)
+#define FN_GLVERTEXATTRIB4SV(index, v) fn.glVertexAttrib4sv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4SVARB(index, v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4SVARB(index, v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4svARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4SVARB(index, v)	fn.glVertexAttrib4svARB(index, v)
+#define FN_GLVERTEXATTRIB4SVARB(index, v) fn.glVertexAttrib4svARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4SVNV(index, v)	GLshort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4SVNV(index, v) \
+	GLint const size = 4; \
+	GLshort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4svNV(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4SVNV(index, v)	fn.glVertexAttrib4svNV(index, v)
+#define FN_GLVERTEXATTRIB4SVNV(index, v) fn.glVertexAttrib4svNV(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4UIV(index, v)	GLuint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4UIV(index, v) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4uiv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4UIV(index, v)	fn.glVertexAttrib4uiv(index, v)
+#define FN_GLVERTEXATTRIB4UIV(index, v) fn.glVertexAttrib4uiv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4UIVARB(index, v)	GLuint tmp[4]; \
-	Atari2HostIntPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4UIVARB(index, v) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, v, tmp); \
 	fn.glVertexAttrib4uivARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4UIVARB(index, v)	fn.glVertexAttrib4uivARB(index, v)
+#define FN_GLVERTEXATTRIB4UIVARB(index, v) fn.glVertexAttrib4uivARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4USV(index, v)	GLushort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4USV(index, v) \
+	GLint const size = 4; \
+	GLushort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4usv(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4USV(index, v)	fn.glVertexAttrib4usv(index, v)
+#define FN_GLVERTEXATTRIB4USV(index, v) fn.glVertexAttrib4usv(index, v)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLVERTEXATTRIB4USVARB(index, v)	GLushort tmp[4]; \
-	Atari2HostShortPtr(4, v, tmp); \
+#define FN_GLVERTEXATTRIB4USVARB(index, v) \
+	GLint const size = 4; \
+	GLushort tmp[size]; \
+	Atari2HostShortPtr(size, v, tmp); \
 	fn.glVertexAttrib4usvARB(index, tmp)
 #else
-#define FN_GLVERTEXATTRIB4USVARB(index, v)	fn.glVertexAttrib4usvARB(index, v)
+#define FN_GLVERTEXATTRIB4USVARB(index, v) fn.glVertexAttrib4usvARB(index, v)
 #endif
 
 #if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLVERTEXATTRIBS1DVNV(index, count, v)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, v, tmp); \
+#define FN_GLVERTEXATTRIBS1DVNV(index, count, v) \
+	GLint const size = 1; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, v, tmp); \
 	fn.glVertexAttribs1dvNV(index, count, tmp)
 #else
-#define FN_GLVERTEXATTRIBS1DVNV(index, count, v)	fn.glVertexAttribs1dvNV(index, count, v)
+#define FN_GLVERTEXATTRIBS1DVNV(index, count, v) fn.glVertexAttribs1dvNV(index, count, v)
 #endif
 
+/* YYY */
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXATTRIBS1FVNV(index, count, v)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, v, tmp); \
+	Atari2HostFloatArray(1, v, tmp); \
 	fn.glVertexAttribs1fvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS1FVNV(index, count, v)	fn.glVertexAttribs1fvNV(index, count, v)
@@ -5017,7 +5569,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXATTRIBS2DVNV(index, count, v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glVertexAttribs2dvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS2DVNV(index, count, v)	fn.glVertexAttribs2dvNV(index, count, v)
@@ -5025,7 +5577,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXATTRIBS2FVNV(index, count, v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glVertexAttribs2fvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS2FVNV(index, count, v)	fn.glVertexAttribs2fvNV(index, count, v)
@@ -5049,7 +5601,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXATTRIBS3DVNV(index, count, v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glVertexAttribs3dvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS3DVNV(index, count, v)	fn.glVertexAttribs3dvNV(index, count, v)
@@ -5057,7 +5609,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXATTRIBS3FVNV(index, count, v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glVertexAttribs3fvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS3FVNV(index, count, v)	fn.glVertexAttribs3fvNV(index, count, v)
@@ -5081,7 +5633,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXATTRIBS4DVNV(index, count, v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glVertexAttribs4dvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS4DVNV(index, count, v)	fn.glVertexAttribs4dvNV(index, count, v)
@@ -5089,7 +5641,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXATTRIBS4FVNV(index, count, v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glVertexAttribs4fvNV(index, count, tmp)
 #else
 #define FN_GLVERTEXATTRIBS4FVNV(index, count, v)	fn.glVertexAttribs4fvNV(index, count, v)
@@ -5112,22 +5664,30 @@ static int nfglGetNumParams(GLenum pname)
 #endif
 
 #define FN_GLVERTEXPOINTER(size, type, stride, pointer) \
-	setupClientArray(contexts[cur_context].vertex, size, type, stride, -1, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].vertex, size, type, stride, -1, 0, pointer)
 
 #define FN_GLVERTEXPOINTEREXT(size, type, stride, count, pointer) \
-	setupClientArray(contexts[cur_context].vertex, size, type, stride, count, 0, pointer)
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].vertex, size, type, stride, count, 0, pointer)
 
 #define FN_GLVERTEXPOINTERLISTIBM(size, type, stride, pointer, ptrstride) \
-	setupClientArray(contexts[cur_context].vertex, size, type, stride, -1, ptrstride, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].vertex, size, type, stride, -1, ptrstride, pointer); \
 	contexts[cur_context].vertex.vendor = 1
 
 #define FN_GLVERTEXPOINTERVINTEL(size, type, pointer) \
-	setupClientArray(contexts[cur_context].vertex, size, type, 0, -1, 0, pointer); \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].vertex, size, type, 0, -1, 0, pointer); \
 	contexts[cur_context].vertex.vendor = 2
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXSTREAM1DVATI(stream, coords)	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, coords, tmp); \
+	Atari2HostDoubleArray(1, coords, tmp); \
 	fn.glVertexStream1dvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM1DVATI(stream, coords)	fn.glVertexStream1dvATI(stream, coords)
@@ -5135,7 +5695,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXSTREAM1FVATI(stream, coords)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, coords, tmp); \
+	Atari2HostFloatArray(1, coords, tmp); \
 	fn.glVertexStream1fvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM1FVATI(stream, coords)	fn.glVertexStream1fvATI(stream, coords)
@@ -5159,7 +5719,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXSTREAM2DVATI(stream, coords)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, coords, tmp); \
+	Atari2HostDoubleArray(2, coords, tmp); \
 	fn.glVertexStream2dvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM2DVATI(stream, coords)	fn.glVertexStream2dvATI(stream, coords)
@@ -5167,7 +5727,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXSTREAM2FVATI(stream, coords)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, coords, tmp); \
+	Atari2HostFloatArray(2, coords, tmp); \
 	fn.glVertexStream2fvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM2FVATI(stream, coords)	fn.glVertexStream2fvATI(stream, coords)
@@ -5191,7 +5751,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXSTREAM3DVATI(stream, coords)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, coords, tmp); \
+	Atari2HostDoubleArray(3, coords, tmp); \
 	fn.glVertexStream3dvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM3DVATI(stream, coords)	fn.glVertexStream3dvATI(stream, coords)
@@ -5199,7 +5759,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXSTREAM3FVATI(stream, coords)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, coords, tmp); \
+	Atari2HostFloatArray(3, coords, tmp); \
 	fn.glVertexStream3fvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM3FVATI(stream, coords)	fn.glVertexStream3fvATI(stream, coords)
@@ -5223,7 +5783,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLVERTEXSTREAM4DVATI(stream, coords)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, coords, tmp); \
+	Atari2HostDoubleArray(4, coords, tmp); \
 	fn.glVertexStream4dvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM4DVATI(stream, coords)	fn.glVertexStream4dvATI(stream, coords)
@@ -5231,7 +5791,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXSTREAM4FVATI(stream, coords)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, coords, tmp); \
+	Atari2HostFloatArray(4, coords, tmp); \
 	fn.glVertexStream4fvATI(stream, tmp)
 #else
 #define FN_GLVERTEXSTREAM4FVATI(stream, coords)	fn.glVertexStream4fvATI(stream, coords)
@@ -5255,7 +5815,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLVERTEXWEIGHTFVEXT(weight)	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, weight, tmp); \
+	Atari2HostFloatArray(1, weight, tmp); \
 	fn.glVertexWeightfvEXT(tmp)
 #else
 #define FN_GLVERTEXWEIGHTFVEXT(weight)	fn.glVertexWeightfvEXT(weight)
@@ -5271,7 +5831,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS2DV(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glWindowPos2dv(tmp)
 #else
 #define FN_GLWINDOWPOS2DV(v)	fn.glWindowPos2dv(v)
@@ -5279,7 +5839,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS2DVARB(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glWindowPos2dvARB(tmp)
 #else
 #define FN_GLWINDOWPOS2DVARB(v)	fn.glWindowPos2dvARB(v)
@@ -5287,7 +5847,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS2DVMESA(v)	GLdouble tmp[2]; \
-	Atari2HostDoublePtr(2, v, tmp); \
+	Atari2HostDoubleArray(2, v, tmp); \
 	fn.glWindowPos2dvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS2DVMESA(v)	fn.glWindowPos2dvMESA(v)
@@ -5295,7 +5855,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS2FV(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glWindowPos2fv(tmp)
 #else
 #define FN_GLWINDOWPOS2FV(v)	fn.glWindowPos2fv(v)
@@ -5303,7 +5863,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS2FVARB(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glWindowPos2fvARB(tmp)
 #else
 #define FN_GLWINDOWPOS2FVARB(v)	fn.glWindowPos2fvARB(v)
@@ -5311,7 +5871,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS2FVMESA(v)	GLfloat tmp[2]; \
-	Atari2HostFloatPtr(2, v, tmp); \
+	Atari2HostFloatArray(2, v, tmp); \
 	fn.glWindowPos2fvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS2FVMESA(v)	fn.glWindowPos2fvMESA(v)
@@ -5367,7 +5927,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS3DV(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glWindowPos3dv(tmp)
 #else
 #define FN_GLWINDOWPOS3DV(v)	fn.glWindowPos3dv(v)
@@ -5375,7 +5935,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS3DVARB(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glWindowPos3dvARB(tmp)
 #else
 #define FN_GLWINDOWPOS3DVARB(v)	fn.glWindowPos3dvARB(v)
@@ -5383,7 +5943,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS3DVMESA(v)	GLdouble tmp[3]; \
-	Atari2HostDoublePtr(3, v, tmp); \
+	Atari2HostDoubleArray(3, v, tmp); \
 	fn.glWindowPos3dvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS3DVMESA(v)	fn.glWindowPos3dvMESA(v)
@@ -5391,7 +5951,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS3FV(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glWindowPos3fv(tmp)
 #else
 #define FN_GLWINDOWPOS3FV(v)	fn.glWindowPos3fv(v)
@@ -5399,7 +5959,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS3FVARB(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glWindowPos3fvARB(tmp)
 #else
 #define FN_GLWINDOWPOS3FVARB(v)	fn.glWindowPos3fvARB(v)
@@ -5407,7 +5967,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS3FVMESA(v)	GLfloat tmp[3]; \
-	Atari2HostFloatPtr(3, v, tmp); \
+	Atari2HostFloatArray(3, v, tmp); \
 	fn.glWindowPos3fvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS3FVMESA(v)	fn.glWindowPos3fvMESA(v)
@@ -5463,7 +6023,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS4DVMESA(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glWindowPos4dvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS4DVMESA(v)	fn.glWindowPos4dvMESA(v)
@@ -5471,7 +6031,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLWINDOWPOS4DVMESA(v)	GLdouble tmp[4]; \
-	Atari2HostDoublePtr(4, v, tmp); \
+	Atari2HostDoubleArray(4, v, tmp); \
 	fn.glWindowPos4dvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS4DVMESA(v)	fn.glWindowPos4dvMESA(v)
@@ -5479,7 +6039,7 @@ static int nfglGetNumParams(GLenum pname)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLWINDOWPOS4FVMESA(v)	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, v, tmp); \
+	Atari2HostFloatArray(4, v, tmp); \
 	fn.glWindowPos4fvMESA(tmp)
 #else
 #define FN_GLWINDOWPOS4FVMESA(v)	fn.glWindowPos4fvMESA(v)
@@ -5573,6 +6133,68 @@ void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GL
 	fbo->id = buffer;
 	fbo->first = first;
 	fbo->count = count;
+}
+
+
+void OSMesaDriver::gl_get_pointer(GLenum target, GLuint index, void **data)
+{
+	fbo_buffer *fbo;
+	
+	UNUSED(index); // FIXME
+	switch (target) {
+	case GL_ARRAY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.array;
+		break;
+	case GL_ATOMIC_COUNTER_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.atomic_counter;
+		break;
+	case GL_COPY_READ_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.copy_read;
+		break;
+	case GL_COPY_WRITE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.copy_write;
+		break;
+	case GL_DISPATCH_INDIRECT_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.dispatch_indirect;
+		break;
+	case GL_DRAW_INDIRECT_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.draw_indirect;
+		break;
+	case GL_ELEMENT_ARRAY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.element_array;
+		break;
+	case GL_PIXEL_PACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.pixel_pack;
+		break;
+	case GL_PIXEL_UNPACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.pixel_unpack;
+		break;
+	case GL_QUERY_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.query;
+		break;
+	case GL_SHADER_STORAGE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.shader_storage;
+		break;
+	case GL_TEXTURE_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.texture;
+		break;
+	case GL_TRANSFORM_FEEDBACK_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.transform_feedback;
+		break;
+	case GL_UNIFORM_BUFFER:
+		fbo = &contexts[cur_context].buffer_bindings.uniform;
+		break;
+	case GL_SELECTION_BUFFER_POINTER:
+		*data = (void *)contexts[cur_context].select_buffer_atari;
+		return;
+	case GL_FEEDBACK_BUFFER_POINTER:
+		*data = (void *)contexts[cur_context].feedback_buffer_atari;
+		return;
+	default:
+		glSetError(GL_INVALID_ENUM);
+		return;
+	}
+	*data = fbo->atari_pointer; // not sure about this
 }
 
 #define FN_GLBINDBUFFER(target, buffer) \
@@ -5758,10 +6380,6 @@ void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GL
 	fn.glBufferDataARB(target, size, data, usage)
 
 /* nothing to do */
-#define FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage) \
-	fn.glNamedBufferDataEXT(buffer, size, data, usage)
-
-/* nothing to do */
 #define FN_GLBUFFERSTORAGE(target, size, data, flags) \
 	fn.glBufferStorage(target, size, data, flags)
 
@@ -5777,25 +6395,45 @@ void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GL
 #define FN_GLBUFFERSUBDATAARB(target, offset, size, data) \
 	fn.glBufferSubDataARB(target, offset, size, data)
 
-/* nothing to do */
-#define FN_GLNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data) \
-	fn.glNamedBufferSubDataEXT(buffer, offset, size, data)
-
-/* nothing to do */
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data) \
+	void *tmp = convertPixels(1, 1, 1, format, type, data); \
+	fn.glClearBufferData(target, internalformat, format, type, tmp); \
+	if (tmp != data) free(tmp)
+#else
 #define FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data) \
 	fn.glClearBufferData(target, internalformat, format, type, data)
+#endif
 
-/* nothing to do */
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data) \
+	void *tmp = convertPixels(1, 1, 1, format, type, data); \
+	fn.glClearNamedBufferDataEXT(buffer, internalformat, format, type, data); \
+	if (tmp != data) free(tmp)
+#else
 #define FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data) \
 	fn.glClearNamedBufferDataEXT(buffer, internalformat, format, type, data)
+#endif
 
-/* nothing to do */
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data) \
+	void *tmp = convertPixels(1, 1, 1, format, type, data); \
+	fn.glClearBufferSubData(target, internalformat, offset, size, format, type, tmp); \
+	if (tmp != data) free(tmp)
+#else
 #define FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data) \
 	fn.glClearBufferSubData(target, internalformat, offset, size, format, type, data)
+#endif
 
-/* nothing to do */
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data) \
+	void *tmp = convertPixels(1, 1, 1, format, type, data); \
+	fn.glClearNamedBufferSubDataEXT(buffer, internalformat, offset, size, format, type, tmp); \
+	if (tmp != data) free(tmp)
+#else
 #define FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data) \
 	fn.glClearNamedBufferSubDataEXT(buffer, internalformat, offset, size, format, type, data)
+#endif
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLCLEARBUFFERIV(buffer, drawbuffer, value) \
@@ -5836,9 +6474,9 @@ void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GL
 	if (value) { \
 		GLfloat tmp[4]; \
 		switch (buffer) { \
-			case GL_COLOR: Atari2HostFloatPtr(4, value, tmp); break; \
+			case GL_COLOR: Atari2HostFloatArray(4, value, tmp); break; \
 			case GL_STENCIL: \
-			case GL_DEPTH: Atari2HostFloatPtr(1, value, tmp); break; \
+			case GL_DEPTH: Atari2HostFloatArray(1, value, tmp); break; \
 		} \
 		fn.glClearBufferfv(buffer, drawbuffer, tmp); \
 	} else { \
@@ -5848,7 +6486,7 @@ void OSMesaDriver::gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GL
 #define FN_GLCLEARBUFFERFV(buffer, drawbuffer, value) fn.glClearBufferfv(buffer, drawbuffer, value)
 #endif
 
-/* FIXME for glTexImage*:
+/* FIXME for glTexImage*, glTexSubImage* etc:
 If a non-zero named buffer object is bound to the
 GL_PIXEL_UNPACK_BUFFER target (see glBindBuffer) while a texture image
 is specified, data is treated as a byte offset into the buffer object's
@@ -5861,7 +6499,8 @@ data store.
 	fn.glTexImage1D(target, level, internalformat, width, border, format, type, tmp); \
 	if (tmp != pixels) free(tmp)
 #else
-#define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) fn.glTexImage1D(target, level, internalformat, width, border, format, type, pixels)
+#define FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels) \
+	fn.glTexImage1D(target, level, internalformat, width, border, format, type, pixels)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
@@ -5870,7 +6509,8 @@ data store.
 	fn.glTexImage2D(target, level, internalformat, width, height, border, format, type, tmp); \
 	if (tmp != pixels) free(tmp)
 #else
-#define FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels) fn.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels)
+#define FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels) \
+	fn.glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
@@ -5924,7 +6564,7 @@ data store.
 #define FN_GLCOLORTABLEPARAMETERFV(target, pname, params) \
 	if (params) { \
 		GLfloat tmp[4]; \
-		Atari2HostFloatPtr(4, params, tmp); \
+		Atari2HostFloatArray(4, params, tmp); \
 		fn.glColorTableParameterfv(target, pname, tmp); \
 	} else { \
 		fn.glColorTableParameterfv(target, pname, params); \
@@ -5937,7 +6577,7 @@ data store.
 #define FN_GLCOLORTABLEPARAMETERFVSGI(target, pname, params) \
 	if (params) { \
 		GLfloat tmp[4]; \
-		Atari2HostFloatPtr(4, params, tmp); \
+		Atari2HostFloatArray(4, params, tmp); \
 		fn.glColorTableParameterfvSGI(target, pname, tmp); \
 	} else { \
 		fn.glColorTableParameterfvSGI(target, pname, params); \
@@ -5986,7 +6626,7 @@ data store.
 	if (params) { \
 		GLfloat tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostFloatPtr(size, params, tmp); \
+		Atari2HostFloatArray(size, params, tmp); \
 		fn.glCombinerParameterfvNV(pname, tmp); \
 	} else { \
 		fn.glCombinerParameterfvNV(pname, params); \
@@ -6014,7 +6654,7 @@ data store.
 	if (params) { \
 		GLfloat tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostFloatPtr(size, params, tmp); \
+		Atari2HostFloatArray(size, params, tmp); \
 		fn.glCombinerStageParameterfvNV(stage, pname, tmp); \
 	} else { \
 		fn.glCombinerStageParameterfvNV(stage, pname, params); \
@@ -6022,126 +6662,6 @@ data store.
 #else
 #define FN_GLCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) fn.glCombinerStageParameterfvNV(stage, pname, params)
 #endif
-
-#define FN_GLCOMPILESHADERINCLUDEARB(shader, count, path, length) \
-	GLchar **ppath; \
-	GLint *plength; \
-	if (path) { \
-		ppath = (GLchar **)malloc(count * sizeof(*ppath)); \
-		if (!ppath) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		const Uint32 *p = (const Uint32 *)path; \
-		/* FIXME: the pathnames here are meaningless to the host */ \
-		for (GLsizei i = 0; i < count; i++) \
-			ppath[i] = p[i] ? (GLchar *)Atari2HostAddr(SDL_SwapBE32(p[i])) : NULL; \
-	} else { \
-		ppath = NULL; \
-	} \
-	if (length) { \
-		plength = (GLint *)malloc(count * sizeof(*plength)); \
-		if (!plength) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostIntPtr(count, length, plength); \
-	} else { \
-		plength = NULL; \
-	} \
-	fn.glCompileShaderIncludeARB(shader, count, ppath, plength); \
-	free(plength); \
-	free(ppath)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits) \
-	fn.glCompressedMultiTexImage1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits) \
-	fn.glCompressedMultiTexImage2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits) \
-	fn.glCompressedMultiTexImage3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits) \
-	fn.glCompressedMultiTexSubImage1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
-	fn.glCompressedMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
-	fn.glCompressedMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE1D(target, level, internalformat, width, border, imageSize, data) \
-	fn.glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE2D(target, level, internalformat, width, height, border, imageSize, data) \
-	fn.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE3D(target, level, internalformat, width, height, depth, border, imageSize, data) \
-	fn.glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE1DARB(target, level, internalformat, width, border, imageSize, data) \
-	fn.glCompressedTexImage1DARB(target, level, internalformat, width, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE2DARB(target, level, internalformat, width, height, border, imageSize, data) \
-	fn.glCompressedTexImage2DARB(target, level, internalformat, width, height, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXIMAGE3DARB(target, level, internalformat, width, height, depth, border, imageSize, data) \
-	fn.glCompressedTexImage3DARB(target, level, internalformat, width, height, depth, border, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE1D(target, level, xoffset, width, format, imageSize, data) \
-	fn.glCompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE2D(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
-	fn.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
-	fn.glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE1DARB(target, level, xoffset, width, format, imageSize, data) \
-	fn.glCompressedTexSubImage1DARB(target, level, xoffset, width, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
-	fn.glCompressedTexSubImage2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXSUBIMAGE3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
-	fn.glCompressedTexSubImage3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTUREIMAGE1DEXT(texture, target, level, internalformat, width, border, imageSize, bits) \
-	fn.glCompressedTextureImage1DEXT(texture, target, level, internalformat, width, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTUREIMAGE2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits) \
-	fn.glCompressedTextureImage2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTUREIMAGE3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits) \
-	fn.glCompressedTextureImage3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT(texture, target, level, xoffset, width, format, imageSize, bits) \
-	fn.glCompressedTextureSubImage1DEXT(texture, target, level, xoffset, width, format, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
-	fn.glCompressedTextureSubImage2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
-
-/* nothing to do */
-#define FN_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
-	fn.glCompressedTextureSubImage3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
 
 #if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLCONVOLUTIONFILTER1D(target, internalformat, width, format, type, image) \
@@ -6184,7 +6704,7 @@ data store.
 	if (params) { \
 		GLfloat tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostFloatPtr(size, params, tmp); \
+		Atari2HostFloatArray(size, params, tmp); \
 		fn.glConvolutionParameterfv(target, pname, tmp); \
 	} else { \
 		fn.glConvolutionParameterfv(target, pname, params); \
@@ -6198,7 +6718,7 @@ data store.
 	if (params) { \
 		GLfloat tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostFloatPtr(size, params, tmp); \
+		Atari2HostFloatArray(size, params, tmp); \
 		fn.glConvolutionParameterfvEXT(target, pname, tmp); \
 	} else { \
 		fn.glConvolutionParameterfvEXT(target, pname, params); \
@@ -6256,7 +6776,7 @@ data store.
 	if (transformValues && numPaths) { \
 		vals = (GLfloat *)malloc(numPaths * sizeof(*vals)); \
 		if (!vals) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostFloatPtr(numPaths, transformValues, vals); \
+		Atari2HostFloatArray(numPaths, transformValues, vals); \
 	} else { \
 		vals = NULL; \
 	} \
@@ -6275,7 +6795,7 @@ data store.
 	if (transformValues && numPaths) { \
 		vals = (GLfloat *)malloc(numPaths * sizeof(*vals)); \
 		if (!vals) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostFloatPtr(numPaths, transformValues, vals); \
+		Atari2HostFloatArray(numPaths, transformValues, vals); \
 	} else { \
 		vals = NULL; \
 	} \
@@ -6285,15 +6805,6 @@ data store.
 #else
 #define FN_GLCOVERSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues) \
 	fn.glCoverStrokePathInstancedNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) \
-	GLuint tmp[1]; \
-	fn.glCreatePerfQueryINTEL(queryId, tmp); \
-	Host2AtariIntPtr(1, tmp, queryHandle)
-#else
-#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) fn.glCreatePerfQueryINTEL(queryId, queryHandle)
 #endif
 
 #define FN_GLCREATESHADERPROGRAMV(type, count, strings) \
@@ -6316,7 +6827,7 @@ data store.
 	if (params) { \
 		GLdouble tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostDoublePtr(size, params, tmp); \
+		Atari2HostDoubleArray(size, params, tmp); \
 		fn.glCullParameterdvEXT(pname, tmp); \
 	} else { \
 		fn.glCullParameterdvEXT(pname, params); \
@@ -6330,7 +6841,7 @@ data store.
 	if (params) { \
 		GLfloat tmp[4]; \
 		int size = nfglGetNumParams(pname); \
-		Atari2HostFloatPtr(size, params, tmp); \
+		Atari2HostFloatArray(size, params, tmp); \
 		fn.glCullParameterfvEXT(pname, tmp); \
 	} else { \
 		fn.glCullParameterfvEXT(pname, params); \
@@ -6530,7 +7041,7 @@ data store.
 #define FN_GLDEFORMATIONMAP3DSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
 	GLdouble tmp[3]; \
 	/* count(3) guessed from function name; has to be verified */ \
-	Atari2HostDoublePtr(3, points, tmp); \
+	Atari2HostDoubleArray(3, points, tmp); \
 	fn.glDeformationMap3dSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, tmp)
 #else
 #define FN_GLDEFORMATIONMAP3DSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
@@ -6541,7 +7052,7 @@ data store.
 #define FN_GLDEFORMATIONMAP3FSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
 	GLfloat tmp[3]; \
 	/* count(3) guessed from function name; has to be verified */ \
-	Atari2HostFloatPtr(3, points, tmp); \
+	Atari2HostFloatArray(3, points, tmp); \
 	fn.glDeformationMap3fSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, tmp)
 #else
 #define FN_GLDEFORMATIONMAP3FSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points) \
@@ -6786,7 +7297,7 @@ data store.
 	if (count && v) { \
 		tmp = (GLdouble *)malloc(count * 2 * sizeof(*tmp)); \
 		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostDoublePtr(count * 2, v, tmp); \
+		Atari2HostDoubleArray(count * 2, v, tmp); \
 	} else { \
 		tmp = NULL; \
 	} \
@@ -6803,7 +7314,7 @@ data store.
 	if (n && points) { \
 		tmp = (GLfloat *)malloc(n * 2 * sizeof(*tmp)); \
 		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostFloatPtr(n * 2, points, tmp); \
+		Atari2HostFloatArray(n * 2, points, tmp); \
 	} else { \
 		tmp = NULL; \
 	} \
@@ -7044,22 +7555,6 @@ is read from the buffer rather than from client memory.
 #define FN_GLEDGEFLAGV(flag) \
 	fn.glEdgeFlagv(flag)
 
-#define FN_GLELEMENTPOINTERAPPLE(type, pointer) \
-	setupClientArray(contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
-	contexts[cur_context].element.vendor = 1
-
-#define FN_GLELEMENTPOINTERATI(type, pointer) \
-	setupClientArray(contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
-	contexts[cur_context].element.vendor = 2
-
-#define FN_GLDRAWELEMENTARRAYAPPLE(mode, first, count) \
-	convertClientArrays(first + count); \
-	fn.glDrawElementArrayAPPLE(mode, first, count)
-
-#define FN_GLDRAWELEMENTARRAYATI(mode, count) \
-	convertClientArrays(count); \
-	fn.glDrawElementArrayATI(mode, count)
-
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLEVALCOORD1XVOES(coords) \
 	GLfixed tmp[1]; \
@@ -7103,6 +7598,11 @@ is read from the buffer rather than from client memory.
 			} \
 		} \
 		break; \
+	case GL_SELECT: \
+		if (ret > 0 && contexts[cur_context].select_buffer_host) { \
+			Host2AtariIntPtr(contexts[cur_context].select_buffer_size, contexts[cur_context].select_buffer_host, contexts[cur_context].select_buffer_atari); \
+		} \
+		break; \
 	} \
 	return ret
 
@@ -7132,10 +7632,23 @@ is read from the buffer rather than from client memory.
 	fn.glFeedbackBufferxOES(size, type, buffer)
 #endif
 
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLSELECTBUFFER(size, buffer) \
+	contexts[cur_context].select_buffer_atari = buffer; \
+	free(contexts[cur_context].select_buffer_host); \
+	contexts[cur_context].select_buffer_host = (GLuint *)calloc(size, sizeof(GLuint)); \
+	if (!contexts[cur_context].select_buffer_host) { glSetError(GL_OUT_OF_MEMORY); return; } \
+	contexts[cur_context].select_buffer_size = size; \
+	fn.glSelectBuffer(size, contexts[cur_context].select_buffer_host)
+#else
+#define FN_GLSELECTBUFFER(size, buffer) \
+	fn.glSelectBuffer(size, buffer)
+#endif
+
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLEXECUTEPROGRAMNV(target, id, params) \
 	GLfloat tmp[4]; \
-	Atari2HostFloatPtr(4, params, tmp); \
+	Atari2HostFloatArray(4, params, tmp); \
 	fn.glExecuteProgramNV(target, id, tmp)
 #else
 #define FN_GLEXECUTEPROGRAMNV(size, type, buffer) \
@@ -7162,7 +7675,7 @@ is read from the buffer rather than from client memory.
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLFOGCOORDDV(coord) \
 	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, coord, tmp); \
+	Atari2HostDoubleArray(1, coord, tmp); \
 	fn.glFogCoorddv(tmp)
 #else
 #define FN_GLFOGCOORDDV(coord) \
@@ -7172,7 +7685,7 @@ is read from the buffer rather than from client memory.
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLFOGCOORDDVEXT(coord) \
 	GLdouble tmp[1]; \
-	Atari2HostDoublePtr(1, coord, tmp); \
+	Atari2HostDoubleArray(1, coord, tmp); \
 	fn.glFogCoorddvEXT(tmp)
 #else
 #define FN_GLFOGCOORDDVEXT(coord) \
@@ -7182,7 +7695,7 @@ is read from the buffer rather than from client memory.
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLFOGCOORDFV(coord) \
 	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, coord, tmp); \
+	Atari2HostFloatArray(1, coord, tmp); \
 	fn.glFogCoordfv(tmp)
 #else
 #define FN_GLFOGCOORDFV(coord) \
@@ -7192,7 +7705,7 @@ is read from the buffer rather than from client memory.
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLFOGCOORDFVEXT(coord) \
 	GLfloat tmp[1]; \
-	Atari2HostFloatPtr(1, coord, tmp); \
+	Atari2HostFloatArray(1, coord, tmp); \
 	fn.glFogCoordfvEXT(tmp)
 #else
 #define FN_GLFOGCOORDFVEXT(coord) \
@@ -7205,7 +7718,7 @@ is read from the buffer rather than from client memory.
 	if (n && points) { \
 		tmp = (GLfloat *)malloc(n * 2 * sizeof(*tmp)); \
 		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostFloatPtr(n * 2, points, tmp); \
+		Atari2HostFloatArray(n * 2, points, tmp); \
 	} else { \
 		tmp = NULL; \
 	} \
@@ -7230,7 +7743,7 @@ is read from the buffer rather than from client memory.
 #define FN_GLFRAGMENTLIGHTMODELFVSGIX(pname, params) \
 	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params, tmp); \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glFragmentLightModelfvSGIX(pname, tmp)
 #else
 #define FN_GLFRAGMENTLIGHTMODELFVSGIX(pname, params) \
@@ -7241,7 +7754,7 @@ is read from the buffer rather than from client memory.
 #define FN_GLFRAGMENTLIGHTFVSGIX(light, pname, params) \
 	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params, tmp); \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glFragmentLightfvSGIX(light, pname, tmp)
 #else
 #define FN_GLFRAGMENTLIGHTFVSGIX(light, pname, params) \
@@ -7274,7 +7787,7 @@ is read from the buffer rather than from client memory.
 #define FN_GLFRAGMENTMATERIALFVSGIX(face, pname, params) \
 	GLfloat tmp[4]; \
 	int size = nfglGetNumParams(pname); \
-	Atari2HostFloatPtr(size, params, tmp); \
+	Atari2HostFloatArray(size, params, tmp); \
 	fn.glFragmentMaterialfvSGIX(face, pname, tmp)
 #else
 #define FN_GLFRAGMENTMATERIALFVSGIX(face, pname, params) \
@@ -7290,23 +7803,6 @@ is read from the buffer rather than from client memory.
 #else
 #define FN_GLFRAGMENTMATERIALIVSGIX(face, pname, params) \
 	fn.glFragmentMaterialivSGIX(face, pname, params)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs) \
-	GLenum *tmp; \
-	if (n && bufs) { \
-		tmp = (GLenum *)malloc(n * sizeof(*tmp)); \
-		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		Atari2HostIntPtr(n, bufs, tmp); \
-	} else { \
-		tmp = NULL; \
-	} \
-	fn.glFramebufferDrawBuffersEXT(framebuffer, n, tmp); \
-	free(tmp)
-#else
-#define FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs) \
-	fn.glFramebufferDrawBuffersEXT(framebuffer, n, bufs)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
@@ -7725,44 +8221,6 @@ is read from the buffer rather than from client memory.
 	fn.glGetActiveVaryingNV(program, index, bufSize, length, size, type, name)
 #endif
 
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLGETARRAYOBJECTFVATI(array, pname, params) \
-	GLint size = sizeof(GLfloat); \
-	switch (pname) { \
-		case GL_ARRAY_OBJECT_BUFFER_ATI: fn.glGetIntegerv(GL_OBJECT_BUFFER_SIZE_ATI, &size); break; \
-	} \
-	size /= sizeof(GLfloat); \
-	if (size) { \
-		GLfloat *tmp = (GLfloat *)malloc(size * sizeof(*tmp)); \
-		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		fn.glGetArrayObjectfvATI(array, pname, tmp); \
-		Host2AtariFloatArray(size, tmp, params); \
-		free(tmp); \
-	}
-#else
-#define FN_GLGETARRAYOBJECTFVATI(array, pname, params) \
-	fn.glGetArrayObjectfvATI(array, pname, params)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLGETARRAYOBJECTIVATI(array, pname, params) \
-	GLint size = sizeof(GLint); \
-	switch (pname) { \
-		case GL_ARRAY_OBJECT_BUFFER_ATI: fn.glGetIntegerv(GL_OBJECT_BUFFER_SIZE_ATI, &size); break; \
-	} \
-	size /= sizeof(GLint); \
-	if (size) { \
-		GLint *tmp = (GLint *)malloc(size * sizeof(*tmp)); \
-		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
-		fn.glGetArrayObjectivATI(array, pname, tmp); \
-		Host2AtariIntPtr(size, tmp, params); \
-		free(tmp); \
-	}
-#else
-#define FN_GLGETARRAYOBJECTIVATI(array, pname, params) \
-	fn.glGetArrayObjectivATI(array, pname, params)
-#endif
-
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETATTACHEDOBJECTSARB(containerObj, maxCount, count, obj) \
 	GLsizei size = 0; \
@@ -7847,12 +8305,6 @@ is read from the buffer rather than from client memory.
 	/* TODO */ \
 	*params = NULL
 
-#define FN_GLGETNAMEDBUFFERPOINTERVEXT(buffer, pname, params) \
-	void *tmp = NULL; \
-	fn.glGetNamedBufferPointervEXT(buffer, pname, &tmp); \
-	/* TODO */ \
-	*params = NULL
-
 #if NFOSMESA_NEED_DOUBLE_CONV
 #define FN_GLGETCLIPPLANE(plane, equation) \
 	GLdouble tmp[4]; \
@@ -7904,6 +8356,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetColorTable(target, format, type, table); \
 		return; \
@@ -7946,6 +8399,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetColorTable(target, format, type, table); \
 		return; \
@@ -7988,6 +8442,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetColorTable(target, format, type, table); \
 		return; \
@@ -8148,22 +8603,6 @@ is read from the buffer rather than from client memory.
 #define FN_GLGETCOMBINERSTAGEPARAMETERFVNV(stage, pname, params) fn.glGetCombinerStageParameterfvNV(stage, pname, params)
 #endif
 
-/* nothing to do */
-#define FN_GLGETCOMPRESSEDMULTITEXIMAGEEXT(texunit, target, lod, img) \
-	fn.glGetCompressedMultiTexImageEXT(texunit, target, lod, img)
-
-/* nothing to do */
-#define FN_GLGETCOMPRESSEDTEXIMAGE(target, level, img) \
-	fn.glGetCompressedTexImage(target, level, img)
-
-/* nothing to do */
-#define FN_GLGETCOMPRESSEDTEXIMAGEARB(target, level, img) \
-	fn.glGetCompressedTexImageARB(target, level, img)
-
-/* nothing to do */
-#define FN_GLGETCOMPRESSEDTEXTUREIMAGEEXT(texture, target, lod, img) \
-	fn.glGetCompressedTextureImageEXT(texture, target, lod, img)
-
 /*
  * If a non-zero named buffer object is bound to the GL_PIXEL_PACK_BUFFER
  * target (see glBindBuffer) while a convolution filter is requested,
@@ -8186,6 +8625,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetConvolutionFilter(target, format, type, image); \
 		return; \
@@ -8230,6 +8670,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetConvolutionFilterEXT(target, format, type, image); \
 		return; \
@@ -8461,48 +8902,6 @@ is read from the buffer rather than from client memory.
 	return fn.glGetDebugMessageLogARB(count, bufSize, sources, types, ids, severities, lengths, messageLog)
 #endif
 
-#if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLGETDOUBLEINDEXEDVEXT(pname, index, params) \
-	int n; \
-	n = nfglGetNumParams(pname); \
-	if (n > 16) { \
-		GLdouble *tmp; \
-		tmp = (GLdouble *)malloc(n * sizeof(*tmp)); \
-		fn.glGetDoubleIndexedvEXT(pname, index, tmp); \
-		Host2AtariDoubleArray(n, tmp, params); \
-		free(tmp); \
-	} else { \
-		GLdouble tmp[16]; \
-		fn.glGetDoubleIndexedvEXT(pname, index, tmp); \
-		Host2AtariDoubleArray(n, tmp, params); \
-	}
-#else
-#define FN_GLGETDOUBLEINDEXEDVEXT(pname, index, params) \
-	fn.glGetDoubleIndexedvEXT(pname, index, params)
-#endif
-
-#if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLGETDOUBLEI_V(pname, index, params) \
-	int n = nfglGetNumParams(pname); \
-	GLdouble tmp[MAX(n, 16)]; \
-	fn.glGetDoublei_v(pname, index, tmp); \
-	Host2AtariDoubleArray(n, tmp, params)
-#else
-#define FN_GLGETDOUBLEI_V(pname, index, params) \
-	fn.glGetDoublei_v(pname, index, params)
-#endif
-
-#if NFOSMESA_NEED_DOUBLE_CONV
-#define FN_GLGETDOUBLEI_VEXT(pname, index, params) \
-	int n = nfglGetNumParams(pname); \
-	GLdouble tmp[MAX(n, 16)]; \
-	fn.glGetDoublei_vEXT(pname, index, tmp); \
-	Host2AtariDoubleArray(n, tmp, params)
-#else
-#define FN_GLGETDOUBLEI_VEXT(pname, index, params) \
-	fn.glGetDoublei_vEXT(pname, index, params)
-#endif
-
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETFENCEIVNV(fence, pname, params) \
 	int size = nfglGetNumParams(pname); \
@@ -8545,22 +8944,6 @@ is read from the buffer rather than from client memory.
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLGETFIRSTPERFQUERYIDINTEL(queryId) \
-	if (queryId) { \
-		int size = 1; \
-		GLuint tmp[size]; \
-		fn.glGetFirstPerfQueryIdINTEL(tmp); \
-		Host2AtariIntPtr(size, tmp, queryId); \
-	} else { \
-		fn.glGetFirstPerfQueryIdINTEL(queryId); \
-	}
-#else
-#define FN_GLGETFIRSTPERFQUERYIDINTEL(queryId) \
-	fn.glGetFirstPerfQueryIdINTEL(queryId)
-#endif
-
-
-#if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETFIXEDVOES(pname, params) \
 	if (params) { \
 		int n = nfglGetNumParams(pname); \
@@ -8573,51 +8956,6 @@ is read from the buffer rather than from client memory.
 #else
 #define FN_GLGETFIXEDVOES(pname, params) \
 	fn.glGetFixedvOES(pname, params)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLGETFLOATINDEXEDVEXT(pname, index, params) \
-	if (params) { \
-		int n = nfglGetNumParams(pname); \
-		GLfloat tmp[MAX(n, 16)]; \
-		fn.glGetFloatIndexedvEXT(pname, index, tmp); \
-		Host2AtariFloatArray(n, tmp, params); \
-	} else { \
-		fn.glGetFloatIndexedvEXT(pname, index, params); \
-	}
-#else
-#define FN_GLGETFLOATINDEXEDVEXT(pname, index, params) \
-	fn.glGetFloatIndexedvEXT(pname, index, params)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLGETFLOATI_V(pname, index, params) \
-	if (params) { \
-		int n = nfglGetNumParams(pname); \
-		GLfloat tmp[MAX(n, 16)]; \
-		fn.glGetFloati_v(pname, index, tmp); \
-		Host2AtariFloatArray(n, tmp, params); \
-	} else { \
-		fn.glGetFloati_v(pname, index, params); \
-	}
-#else
-#define FN_GLGETFLOATI_V(pname, index, params) \
-	fn.glGetFloati_V(pname, index, params)
-#endif
-
-#if NFOSMESA_NEED_FLOAT_CONV
-#define FN_GLGETFLOATI_VEXT(pname, index, params) \
-	if (params) { \
-		int n = nfglGetNumParams(pname); \
-		GLfloat tmp[n]; \
-		fn.glGetFloati_vEXT(pname, index, tmp); \
-		Host2AtariFloatArray(n, tmp, params); \
-	} else { \
-		fn.glGetFloati_vEXT(pname, index, params); \
-	}
-#else
-#define FN_GLGETFLOATI_VEXT(pname, index, params) \
-	fn.glGetFloati_vEXT(pname, index, params)
 #endif
 
 #if NFOSMESA_NEED_FLOAT_CONV
@@ -8709,7 +9047,7 @@ is read from the buffer rather than from client memory.
 	}
 #else
 #define FN_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT(target, attachment, pname, params) \
-	fn.glGetFramebufferAttachmentParameteriv(EXTtarget, attachment, pname, params)
+	fn.glGetFramebufferAttachmentParameterivEXT(target, attachment, pname, params)
 #endif
 
 #if NFOSMESA_NEED_INT_CONV
@@ -8723,19 +9061,6 @@ is read from the buffer rather than from client memory.
 #else
 #define FN_GLGETFRAMEBUFFERPARAMETERIV(target, pname, params) \
 	fn.glGetFramebufferParameteriv(target, pname, params)
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLGETFRAMEBUFFERPARAMETERIVEXT(target, pname, params) \
-	GLint size = nfglGetNumParams(pname); \
-	if (params) { \
-		GLint tmp[MAX(size, 16)]; \
-		fn.glGetFramebufferParameterivEXT(target, pname, tmp); \
-		Host2AtariIntPtr(size, tmp, params); \
-	}
-#else
-#define FN_GLGETFRAMEBUFFERPARAMETERIVEXT(target, pname, params) \
-	fn.glGetFramebufferParameterivEXT(target, pname, params)
 #endif
 
 /*
@@ -8760,6 +9085,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetHistogram(target, reset, format, type, values); \
 		return; \
@@ -8806,6 +9132,7 @@ is read from the buffer rather than from client memory.
     case GL_2_BYTES: \
     case GL_3_BYTES: \
     case GL_4_BYTES: \
+	case GL_BITMAP: \
 	case 1: \
 		fn.glGetHistogramEXT(target, reset, format, type, values); \
 		return; \
@@ -8898,6 +9225,2881 @@ is read from the buffer rather than from client memory.
 #else
 #define FN_GLGETHISTOGRAMPARAMETERXVOES(target, pname, params) \
 	fn.glGetHistogramParameterxvOES(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETIMAGETRANSFORMPARAMETERFVHP(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetImageTransformParameterfvHP(target, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETIMAGETRANSFORMPARAMETERFVHP(target, pname, params) \
+	fn.glGetImageTransformParameterfvHP(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETIMAGETRANSFORMPARAMETERIVHP(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetImageTransformParameterivHP(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETIMAGETRANSFORMPARAMETERIVHP(target, pname, params) \
+	fn.glGetImageTransformParameterivHP(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGER64I_V(target, index, data) \
+	GLint size = nfglGetNumParams(target); \
+	if (data) { \
+		GLint64 tmp[MAX(size, 16)]; \
+		fn.glGetInteger64i_v(target, index, tmp); \
+		Host2AtariInt64Ptr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGER64I_V(target, index, data) \
+	fn.glGetInteger64i_v(target, index, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGER64V(pname, data) \
+	GLint size = nfglGetNumParams(pname); \
+	if (data) { \
+		GLint64 tmp[MAX(size, 16)]; \
+		fn.glGetInteger64v(pname, tmp); \
+		Host2AtariInt64Ptr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGER64V(pname, data) \
+	fn.glGetInteger64v(pname, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGERI_V(target, index, data) \
+	GLint size = nfglGetNumParams(target); \
+	if (data) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetIntegeri_v(target, index, tmp); \
+		Host2AtariIntPtr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGERI_V(target, index, data) \
+	fn.glGetIntegeri_v(target, index, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGERI_V(target, index, data) \
+	GLint size = nfglGetNumParams(target); \
+	if (data) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetIntegeri_v(target, index, tmp); \
+		Host2AtariIntPtr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGERI_V(target, index, data) \
+	fn.glGetIntegeri_v(target, index, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGERUI64I_VNV(value, index, data) \
+	GLint size = nfglGetNumParams(value); \
+	if (data) { \
+		GLuint64EXT tmp[MAX(size, 16)]; \
+		fn.glGetIntegerui64i_vNV(value, index, tmp); \
+		Host2AtariInt64Ptr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGERUI64I_VNV(value, index, data) \
+	fn.glGetIntegerui64i_vNV(value, index, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGERUI64VNV(value, data) \
+	GLint size = nfglGetNumParams(value); \
+	if (data) { \
+		GLuint64EXT tmp[MAX(size, 16)]; \
+		fn.glGetIntegerui64vNV(value, tmp); \
+		Host2AtariInt64Ptr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGERUI64VNV(value, data) \
+	fn.glGetIntegerui64vNV(value, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTERNALFORMATI64V(target, internalformat, pname, bufSize, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint64 tmp[size]; \
+		fn.glGetInternalformati64v(target, internalformat, pname, bufSize, tmp); \
+		Host2AtariInt64Ptr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETINTERNALFORMATI64V(target, internalformat, pname, bufSize, params) \
+	fn.glGetInternalformati64v(target, internalformat, pname, bufSize, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTERNALFORMATIV(target, internalformat, pname, bufSize, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[size]; \
+		fn.glGetInternalformativ(target, internalformat, pname, bufSize, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETINTERNALFORMATIV(target, internalformat, pname, bufSize, params) \
+	fn.glGetInternalformativ(target, internalformat, pname, bufSize, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETINVARIANTFLOATVEXT(id, value, data) \
+	GLint size = 1; \
+	if (data) { \
+		GLfloat tmp[size]; \
+		fn.glGetInvariantFloatvEXT(id, value, tmp); \
+		Host2AtariFloatArray(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINVARIANTFLOATVEXT(id, value, data) \
+	fn.glGetInvariantFloatvEXT(id, value, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINVARIANTINTEGERVEXT(id, value, data) \
+	GLint size = 1; \
+	if (data) { \
+		GLint tmp[size]; \
+		fn.glGetInvariantIntegervEXT(id, value, tmp); \
+		Host2AtariIntPtr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINVARIANTINTEGERVEXT(id, value, data) \
+	fn.glGetInvariantIntegervEXT(id, value, data)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETLIGHTFV(light, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetLightfv(light, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETLIGHTFV(light, pname, params) \
+	fn.glGetLightfv(light, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETLIGHTIV(light, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetLightiv(light, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETLIGHTIV(light, pname, params) \
+	fn.glGetLightiv(light, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETLIGHTXOES(light, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfixed tmp[MAX(size, 16)]; \
+		fn.glGetLightxOES(light, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETLIGHTXOES(light, pname, params) \
+	fn.glGetLightxOES(light, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETLISTPARAMETERFVSGIX(list, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[size]; \
+		fn.glGetListParameterfvSGIX(list, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETLISTPARAMETERFVSGIX(list, pname, params) \
+	fn.glGetListParameterfvSGIX(list, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLLISTPARAMETERFVSGIX(list, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[size]; \
+		Atari2HostFloatArray(size, params, tmp); \
+		fn.glListParameterfvSGIX(list, pname, tmp); \
+	}
+#else
+#define FN_GLLISTPARAMETERFVSGIX(list, pname, params) \
+	fn.glListParameterfvSGIX(list, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETLISTPARAMETERIVSGIX(list, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[size]; \
+		fn.glGetListParameterivSGIX(list, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETLISTPARAMETERIVSGIX(list, pname, params) \
+	fn.glGetListParameterivSGIX(list, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLLISTPARAMETERIVSGIX(list, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[size]; \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glListParameterivSGIX(list, pname, tmp); \
+	}
+#else
+#define FN_GLLISTPARAMETERIVSGIX(list, pname, params) \
+	fn.glListParameterivSGIX(list, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETLOCALCONSTANTFLOATVEXT(id, value, data) \
+	GLint size = 1; \
+	if (data) { \
+		GLfloat tmp[size]; \
+		fn.glGetLocalConstantFloatvEXT(id, value, tmp); \
+		Host2AtariFloatArray(size, tmp, data); \
+	}
+#else
+#define FN_GLGETLOCALCONSTANTFLOATVEXT(id, value, data) \
+	fn.glGetLocalConstantFloatvEXT(id, value, data)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETLOCALCONSTANTINTEGERVEXT(id, value, data) \
+	GLint size = 1; \
+	if (data) { \
+		GLint tmp[size]; \
+		fn.glGetLocalConstantIntegervEXT(id, value, tmp); \
+		Host2AtariIntPtr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETLOCALCONSTANTINTEGERVEXT(id, value, data) \
+	fn.glGetLocalConstantIntegervEXT(id, value, data)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_NV_evaluators
+ *
+ * Status: Discontinued.
+ *
+ * NVIDIA no longer supports this extension in driver updates after
+ * November 2002.  Instead, use conventional OpenGL evaluators or
+ * tessellate surfaces within your application.
+ */
+/*
+ * note that, unlike glMap2(), ustride and vstride here are in terms
+ * of bytes, not floats
+ */
+#if NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, uorder, vorder, packed, points) \
+	GLsizei size = 4; \
+	GLsizei count; \
+	GLsizei i, j; \
+	const char *src; \
+	void *tmp, *dst; \
+	GLsizei ustride_host, vstride_host; \
+	switch (target) { \
+		case GL_EVAL_2D_NV: \
+			count = uorder * vorder; \
+			break; \
+		case GL_EVAL_TRIANGULAR_2D_NV: \
+			if (uorder != vorder) { glSetError(GL_INVALID_OPERATION); return; } \
+			count = uorder * (uorder + 1) / 2; \
+			break; \
+		default: glSetError(GL_INVALID_ENUM); return; \
+	} \
+	switch (type) { \
+		case GL_FLOAT: \
+			vstride_host = size * sizeof(GLfloat); \
+			ustride_host = vorder * vstride_host; \
+			break; \
+		case GL_DOUBLE: \
+			vstride_host = size * sizeof(GLdouble); \
+			ustride_host = vorder * vstride_host; \
+			break; \
+		default: glSetError(GL_INVALID_ENUM); return; \
+	} \
+	if (index > 15) { glSetError(GL_INVALID_VALUE); return; } \
+	if (ustride < 0 || vstride < 0) { glSetError(GL_INVALID_VALUE); return; } \
+	tmp = malloc(count * ustride_host); \
+	if (tmp == NULL) glSetError(GL_OUT_OF_MEMORY); return; \
+	for (i = 0; i < uorder; i++) { \
+		for (j = 0; j < vorder; j++) { \
+			if (!packed) { \
+				src = (const char *)points + ustride * i + vstride * j; \
+			} else if (target == GL_EVAL_2D_NV) { \
+				src = (const char *)points + ustride * (j * uorder + i); \
+			} else { \
+				src = (const char *)points + ustride * (j * uorder + i - j * (j - 1) / 2); \
+			} \
+			dst = (char *)tmp + ustride_host * i + vstride_host * j; \
+			if (type == GL_FLOAT) \
+				Atari2HostFloatArray(size, (const GLfloat *)src, (GLfloat *)dst); \
+			else \
+				Atari2HostDoubleArray(size, (const GLdouble *)src, (GLdouble *)dst); \
+		} \
+	} \
+	fn.glMapControlPointsNV(target, index, type, ustride_host, vstride_host, uorder, vorder, GL_TRUE, tmp); \
+	free(tmp)
+	
+#define FN_GLGETMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, packed, points) \
+	GLsizei size = 4; \
+	GLsizei count; \
+	GLint uorder = 0, vorder = 0; \
+	GLsizei i, j; \
+	GLsizei ustride_host, vstride_host; \
+	const char *src; \
+	void *tmp, *dst; \
+	fn.glGetMapAttribParameterivNV(target, index, GL_MAP_ATTRIB_U_ORDER_NV, &uorder); \
+	fn.glGetMapAttribParameterivNV(target, index, GL_MAP_ATTRIB_V_ORDER_NV, &vorder); \
+	if (uorder <= 0 || vorder <= 0) return; \
+	switch (target) { \
+		case GL_EVAL_2D_NV: \
+			count = uorder * vorder; \
+			break; \
+		case GL_EVAL_TRIANGULAR_2D_NV: \
+			if (uorder != vorder) { glSetError(GL_INVALID_OPERATION); return; } \
+			count = uorder * (uorder + 1) / 2; \
+			break; \
+		default: glSetError(GL_INVALID_ENUM); return; \
+	} \
+	switch (type) { \
+		case GL_FLOAT: \
+			vstride_host = size * sizeof(GLfloat); \
+			ustride_host = vorder * vstride_host; \
+			break; \
+		case GL_DOUBLE: \
+			vstride_host = size * sizeof(GLdouble); \
+			ustride_host = vorder * vstride_host; \
+			break; \
+		default: glSetError(GL_INVALID_ENUM); return; \
+	} \
+	if (index > 15) { glSetError(GL_INVALID_VALUE); return; } \
+	if (ustride < 0 || vstride < 0) { glSetError(GL_INVALID_VALUE); return; } \
+	tmp = malloc(count * ustride_host); \
+	if (tmp == NULL) glSetError(GL_OUT_OF_MEMORY); return; \
+	fn.glGetMapControlPointsNV(target, index, type, ustride_host, vstride_host, GL_TRUE, tmp); \
+	for (i = 0; i < uorder; i++) { \
+		for (j = 0; j < vorder; j++) { \
+			if (!packed) { \
+				dst = (char *)points + ustride * i + vstride * j; \
+			} else if (target == GL_EVAL_2D_NV) { \
+				dst = (char *)points + ustride * (j * uorder + i); \
+			} else { \
+				dst = (char *)points + ustride * (j * uorder + i - j * (j - 1) / 2); \
+			} \
+			src = (const char *)tmp + ustride_host * i + vstride_host * j; \
+			if (type == GL_FLOAT) \
+				Host2AtariFloatArray(size, (const GLfloat *)src, (GLfloat *)dst); \
+			else \
+				Host2AtariDoubleArray(size, (const GLdouble *)src, (GLdouble *)dst); \
+		} \
+	} \
+	free(tmp)
+
+#else
+#define FN_GLMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, uorder, vorder, packed, points) \
+	fn.glMapControlPointsNV(target, index, type, ustride, vstride, uorder, vorder, packed, points)
+#define FN_GLGETMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, packed, points) \
+	fn.glGetMapControlPointsNV(target, index, type, ustride, vstride, packed, points)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMAPPARAMETERFVNV(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		Atari2HostFloatArray(size, params, tmp); \
+		fn.glMapParameterfvNV(target, pname, tmp); \
+	}
+#define FN_GLGETMAPPARAMETERFVNV(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMapParameterfvNV(target, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#define FN_GLMAPATTRIBPARAMETERFVNV(target, index, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		Atari2HostFloatArray(size, params, tmp); \
+		fn.glMapAttribParameterfvNV(target, index, pname, tmp); \
+	}
+#define FN_GLGETMAPATTRIBPARAMETERFVNV(target, index, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMapAttribParameterfvNV(target, index, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLMAPPARAMETERFVNV(target, pname, params) \
+	fn.glMapParameterfvNV(target, pname, params)
+#define FN_GLGETMAPPARAMETERFVNV(target, pname, params) \
+	fn.glGetMapParameterfvNV(target, pname, params)
+#define FN_GLMAPATTRIBPARAMETERFVNV(target, index, pname, params) \
+	fn.glMapAttribParameterfvNV(target, index, pname, params)
+#define FN_GLGETMAPATTRIBPARAMETERFVNV(target, index, pname, params) \
+	fn.glGetMapAttribParameterfvNV(target, index, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMAPPARAMETERIVNV(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glMapParameterivNV(target, pname, tmp); \
+	}
+#define FN_GLGETMAPPARAMETERIVNV(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMapParameterivNV(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#define FN_GLMAPATTRIBPARAMETERIVNV(target, index, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		Atari2HostIntPtr(size, params, tmp); \
+		fn.glMapAttribParameterivNV(target, index, pname, tmp); \
+	}
+#define FN_GLGETMAPATTRIBPARAMETERIVNV(target, index, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMapAttribParameterivNV(target, index, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLMAPPARAMETERIVNV(target, pname, params) \
+	fn.glMapParameterivNV(target, pname, params)
+#define FN_GLGETMAPPARAMETERIVNV(target, pname, params) \
+	fn.glGetMapParameterivNV(target, pname, params)
+#define FN_GLMAPATTRIBPARAMETERIVNV(target, index, pname, params) \
+	fn.glMapAttribParameterivNV(target, index, pname, params)
+#define FN_GLGETMAPATTRIBPARAMETERIVNV(target, index, pname, params) \
+	fn.glGetMapAttribParameterivNV(target, index, pname, params)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_INTEL_performance_query
+ */
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) \
+	GLuint tmp[1]; \
+	fn.glCreatePerfQueryINTEL(queryId, tmp); \
+	Host2AtariIntPtr(1, tmp, queryHandle)
+#else
+#define FN_GLCREATEPERFQUERYINTEL(queryId, queryHandle) \
+	fn.glCreatePerfQueryINTEL(queryId, queryHandle)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETFIRSTPERFQUERYIDINTEL(queryId) \
+	if (queryId) { \
+		int size = 1; \
+		GLuint tmp[size]; \
+		fn.glGetFirstPerfQueryIdINTEL(tmp); \
+		Host2AtariIntPtr(size, tmp, queryId); \
+	} else { \
+		fn.glGetFirstPerfQueryIdINTEL(queryId); \
+	}
+#else
+#define FN_GLGETFIRSTPERFQUERYIDINTEL(queryId) \
+	fn.glGetFirstPerfQueryIdINTEL(queryId)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNEXTPERFQUERYIDINTEL(queryId, nextQueryId) \
+	GLuint tmp[1]; \
+	fn.glGetNextPerfQueryIdINTEL(queryId, tmp); \
+	Host2AtariIntPtr(1, tmp, nextQueryId)
+#else
+#define FN_GLGETNEXTPERFQUERYIDINTEL(queryId, nextQueryId) \
+	fn.glGetNextPerfQueryIdINTEL(queryId, nextQueryId)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETPERFCOUNTERINFOINTEL(queryId, counterId, counterNameLength, counterName, counterDescLength, counterDesc, counterOffset, counterDataSize, counterTypeEnum, counterDataTypeEnum, rawCounterMaxValue) \
+	GLint const size = 1;\
+	GLuint offset[size]; \
+	GLuint datasize[size]; \
+	GLuint countertype[size]; \
+	GLuint datatype[size]; \
+	GLuint64 countermax[size]; \
+	fn.glGetPerfCounterInfoINTEL(queryId, counterId, counterNameLength, counterName, counterDescLength, counterDesc, offset, datasize, countertype, datatype, countermax); \
+	if (counterOffset) Host2AtariIntPtr(size, offset, counterOffset); \
+	if (counterDataSize) Host2AtariIntPtr(size, datasize, counterDataSize); \
+	if (counterTypeEnum) Host2AtariIntPtr(size, countertype, counterTypeEnum); \
+	if (counterDataTypeEnum) Host2AtariIntPtr(size, datatype, counterDataTypeEnum); \
+	if (rawCounterMaxValue) Host2AtariInt64Ptr(size, countermax, rawCounterMaxValue)
+#else
+#define FN_GLGETPERFCOUNTERINFOINTEL(queryId, counterId, counterNameLength, counterName, counterDescLength, counterDesc, counterOffset, counterDataSize, counterTypeEnum, counterDataTypeEnum, rawCounterMaxValue) \
+	fn.glGetPerfCounterInfoINTEL(queryId, counterId, counterNameLength, counterName, counterDescLength, counterDesc, counterOffset, counterDataSize, counterTypeEnum, counterDataTypeEnum, rawCounterMaxValue)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETPERFQUERYDATAINTEL(queryHandle, flags, dataSize, data, bytesWritten) \
+	GLuint bytes = 0;\
+	fn.glGetPerfQueryDataINTEL(queryHandle, flags, dataSize, data, &bytes); \
+	if (bytesWritten) Host2AtariIntPtr(1, &bytes, bytesWritten); \
+	if (bytes && data) Host2AtariIntPtr(bytes / sizeof(GLuint), (const GLuint *)data, (Uint32 *) data)
+#else
+#define FN_GLGETPERFQUERYDATAINTEL(queryHandle, flags, dataSize, data, bytesWritten) \
+	fn.glGetPerfQueryDataINTEL(queryHandle, flags, dataSize, data, bytesWritten)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETPERFQUERYIDBYNAMEINTEL(queryName, queryId) \
+	GLint const size = 1;\
+	GLuint tmp[size]; \
+	fn.glGetPerfQueryDataINTEL(queryName, tmp); \
+	if (queryId) Host2AtariIntPtr(1, tmp, queryId)
+#else
+#define FN_GLGETPERFQUERYIDBYNAMEINTEL(queryName, queryId) \
+	fn.glGetPerfQueryDataINTEL(queryName, qureyId)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETPERFQUERYINFOINTEL(queryId, queryNameLength, queryName, dataSize, noCounters, noInstances, capsMask) \
+	GLint const size = 1;\
+	GLuint datasize[size]; \
+	GLuint counters[size]; \
+	GLuint instances[size]; \
+	GLuint mask[size]; \
+	fn.glGetPerfQueryInfoINTEL(queryId, queryNameLength, queryName, datasize, counters, instances, mask); \
+	if (dataSize) Host2AtariIntPtr(size, datasize, dataSize); \
+	if (noCounters) Host2AtariIntPtr(size, counters, noCounters); \
+	if (noInstances) Host2AtariIntPtr(size, instances, noInstances); \
+	if (capsMask) Host2AtariIntPtr(size, mask, capsMask)
+#else
+#define FN_GLGETPERFQUERYINFOINTEL(queryId, queryNameLength, queryName, dataSize, noCounters, noInstances, capsMask) \
+	fn.glGetPerfQueryInfoINTEL(queryId, queryNameLength, queryName, dataSize, noCounters, noInstances, capsMask)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_EXT_direct_state_access
+ */
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETFLOATINDEXEDVEXT(pname, index, params) \
+	if (params) { \
+		int n = nfglGetNumParams(pname); \
+		GLfloat tmp[MAX(n, 16)]; \
+		fn.glGetFloatIndexedvEXT(pname, index, tmp); \
+		Host2AtariFloatArray(n, tmp, params); \
+	} else { \
+		fn.glGetFloatIndexedvEXT(pname, index, params); \
+	}
+#else
+#define FN_GLGETFLOATINDEXEDVEXT(pname, index, params) \
+	fn.glGetFloatIndexedvEXT(pname, index, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETDOUBLEINDEXEDVEXT(pname, index, params) \
+	int n; \
+	n = nfglGetNumParams(pname); \
+	if (n > 16) { \
+		GLdouble *tmp; \
+		tmp = (GLdouble *)malloc(n * sizeof(*tmp)); \
+		fn.glGetDoubleIndexedvEXT(pname, index, tmp); \
+		Host2AtariDoubleArray(n, tmp, params); \
+		free(tmp); \
+	} else { \
+		GLdouble tmp[16]; \
+		fn.glGetDoubleIndexedvEXT(pname, index, tmp); \
+		Host2AtariDoubleArray(n, tmp, params); \
+	}
+#else
+#define FN_GLGETDOUBLEINDEXEDVEXT(pname, index, params) \
+	fn.glGetDoubleIndexedvEXT(pname, index, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINTEGERINDEXEDVEXT(target, index, data) \
+	GLint size = nfglGetNumParams(target); \
+	if (data) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetIntegerIndexedvEXT(target, index, tmp); \
+		Host2AtariIntPtr(size, tmp, data); \
+	}
+#else
+#define FN_GLGETINTEGERINDEXEDVEXT(target, index, data) \
+	fn.glGetIntegerIndexedvEXT(target, index, data)
+#endif
+
+/* nothing to do */
+#define FN_GLGETCOMPRESSEDMULTITEXIMAGEEXT(texunit, target, lod, img) \
+	fn.glGetCompressedMultiTexImageEXT(texunit, target, lod, img)
+
+/* nothing to do */
+#define FN_GLGETCOMPRESSEDTEXIMAGE(target, level, img) \
+	fn.glGetCompressedTexImage(target, level, img)
+
+/* nothing to do */
+#define FN_GLGETCOMPRESSEDTEXIMAGEARB(target, level, img) \
+	fn.glGetCompressedTexImageARB(target, level, img)
+
+/* nothing to do */
+#define FN_GLGETCOMPRESSEDTEXTUREIMAGEEXT(texture, target, lod, img) \
+	fn.glGetCompressedTextureImageEXT(texture, target, lod, img)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits) \
+	fn.glCompressedMultiTexImage3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
+	fn.glCompressedMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE1D(target, level, internalformat, width, border, imageSize, data) \
+	fn.glCompressedTexImage1D(target, level, internalformat, width, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE2D(target, level, internalformat, width, height, border, imageSize, data) \
+	fn.glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE3D(target, level, internalformat, width, height, depth, border, imageSize, data) \
+	fn.glCompressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE1DARB(target, level, internalformat, width, border, imageSize, data) \
+	fn.glCompressedTexImage1DARB(target, level, internalformat, width, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE2DARB(target, level, internalformat, width, height, border, imageSize, data) \
+	fn.glCompressedTexImage2DARB(target, level, internalformat, width, height, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXIMAGE3DARB(target, level, internalformat, width, height, depth, border, imageSize, data) \
+	fn.glCompressedTexImage3DARB(target, level, internalformat, width, height, depth, border, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE1D(target, level, xoffset, width, format, imageSize, data) \
+	fn.glCompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE2D(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
+	fn.glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
+	fn.glCompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE1DARB(target, level, xoffset, width, format, imageSize, data) \
+	fn.glCompressedTexSubImage1DARB(target, level, xoffset, width, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data) \
+	fn.glCompressedTexSubImage2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXSUBIMAGE3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data) \
+	fn.glCompressedTexSubImage3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE1DEXT(texture, target, level, internalformat, width, border, imageSize, bits) \
+	fn.glCompressedTextureImage1DEXT(texture, target, level, internalformat, width, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits) \
+	fn.glCompressedTextureImage2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTUREIMAGE3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits) \
+	fn.glCompressedTextureImage3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT(texture, target, level, xoffset, width, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage1DEXT(texture, target, level, xoffset, width, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits) \
+	fn.glCompressedTextureSubImage3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits)
+
+/* nothing to do */
+#define FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage) \
+	fn.glNamedBufferDataEXT(buffer, size, data, usage)
+
+/* nothing to do */
+#define FN_GLNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data) \
+	fn.glNamedBufferSubDataEXT(buffer, offset, size, data)
+
+#define FN_GLGETNAMEDBUFFERPOINTERVEXT(buffer, pname, params) \
+	void *tmp = NULL; \
+	fn.glGetNamedBufferPointervEXT(buffer, pname, &tmp); \
+	/* TODO */ \
+	*params = NULL
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDBUFFERPARAMETERIVEXT(buffer, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetNamedBufferParameterivEXT(buffer, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETNAMEDBUFFERPARAMETERIVEXT(buffer, pname, params) \
+	fn.glGetNamedBufferParameterivEXT(buffer, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDBUFFERPARAMETERUI64VNV(buffer, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLuint64EXT tmp[MAX(size, 16)]; \
+		fn.glGetNamedBufferParameterui64vNV(buffer, pname, tmp); \
+		Host2AtariInt64Ptr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETNAMEDBUFFERPARAMETERUI64VNV(buffer, pname, params) \
+	fn.glGetNamedBufferParameterui64vNV(buffer, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT(framebuffer, attachment, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetNamedFramebufferAttachmentParameterivEXT(framebuffer, attachment, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT(framebuffer, attachment, pname, params) \
+	fn.glGetNamedFramebufferAttachmentParameterivEXT(framebuffer, attachment, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT(framebuffer, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetNamedFramebufferParameterivEXT(framebuffer, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT(framebuffer, pname, params) \
+	fn.glGetNamedFramebufferParameterivEXT(framebuffer, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT(renderbuffer, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetNamedRenderbufferParameterivEXT(renderbuffer, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT(renderbuffer, pname, params) \
+	fn.glGetNamedRenderbufferParameterivEXT(renderbuffer, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETFLOATI_VEXT(pname, index, params) \
+	if (params) { \
+		int n = nfglGetNumParams(pname); \
+		GLfloat tmp[n]; \
+		fn.glGetFloati_vEXT(pname, index, tmp); \
+		Host2AtariFloatArray(n, tmp, params); \
+	} else { \
+		fn.glGetFloati_vEXT(pname, index, params); \
+	}
+#else
+#define FN_GLGETFLOATI_VEXT(pname, index, params) \
+	fn.glGetFloati_vEXT(pname, index, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETDOUBLEI_VEXT(pname, index, params) \
+	int n = nfglGetNumParams(pname); \
+	GLdouble tmp[MAX(n, 16)]; \
+	fn.glGetDoublei_vEXT(pname, index, tmp); \
+	Host2AtariDoubleArray(n, tmp, params)
+#else
+#define FN_GLGETDOUBLEI_VEXT(pname, index, params) \
+	fn.glGetDoublei_vEXT(pname, index, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMULTITEXENVFVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMultiTexEnvfvEXT(texunit, target, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMULTITEXENVFVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexEnvfvEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXENVIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMultiTexEnvivEXT(texunit, target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMULTITEXENVIVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexEnvivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETMULTITEXGENDVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLdouble tmp[MAX(size, 16)]; \
+		fn.glGetMultiTexGendvEXT(texunit, coord, pname, tmp); \
+		Host2AtariDoubleArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMULTITEXGENDVEXT(texunit, coord, pname, params) \
+	fn.glGetMultiTexGendvEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMULTITEXGENFVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMultiTexGenfvEXT(texunit, coord, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMULTITEXGENFVEXT(texunit, coord, pname, params) \
+	fn.glGetMultiTexGenfvEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXGENIVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMultiTexGenivEXT(texunit, coord, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMULTITEXGENIVEXT(texunit, coord, pname, params) \
+	fn.glGetMultiTexGenivEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETMULTITEXIMAGEEXT(texunit, target, level, format, type, pixels) \
+	GLsizei size, count; \
+	GLint width = 0, height = 1, depth = 1; \
+	void *result = NULL; \
+	const void *src; \
+	void *dst; \
+	 \
+	switch (type) \
+	{ \
+	case GL_UNSIGNED_BYTE: \
+	case GL_BYTE: \
+	case GL_UNSIGNED_BYTE_3_3_2: \
+	case GL_UNSIGNED_BYTE_2_3_3_REV: \
+    case GL_2_BYTES: \
+    case GL_3_BYTES: \
+    case GL_4_BYTES: \
+	case GL_BITMAP: \
+	case 1: \
+		fn.glGetMultiTexImageEXT(texunit, target, level, format, type, pixels); \
+		return; \
+	} \
+	switch (target) { \
+	case GL_TEXTURE_1D: \
+	case GL_PROXY_TEXTURE_1D: \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_WIDTH, &width); \
+		break; \
+	case GL_TEXTURE_2D: \
+	case GL_PROXY_TEXTURE_2D: \
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_X: \
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_Y: \
+	case GL_TEXTURE_CUBE_MAP_POSITIVE_Z: \
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_X: \
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_Y: \
+	case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: \
+	case GL_PROXY_TEXTURE_CUBE_MAP: \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_WIDTH, &width); \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_HEIGHT, &height); \
+		break; \
+	case GL_TEXTURE_3D: \
+	case GL_PROXY_TEXTURE_3D: \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_WIDTH, &width); \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_HEIGHT, &height); \
+		fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, GL_TEXTURE_DEPTH, &depth); \
+		break; \
+	default: \
+		glSetError(GL_INVALID_ENUM); \
+		return; \
+	} \
+	if (width == 0 || height == 0 || depth == 0) return; \
+	/* FIXME: glPixelStore parameters are not taken into account */ \
+	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
+		fn.glGetMultiTexImageEXT(texunit, target, level, format, type, pixels); \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)pixels; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)pixels; \
+	} else { \
+		result = pixelBuffer(width, height, depth, format, type, size, count); \
+		if (result == NULL) return; \
+		fn.glGetMultiTexImageEXT(texunit, target, level, format, type, result); \
+		src = result; \
+		dst = pixels; \
+	} \
+	if (type == GL_FLOAT) \
+		Host2AtariFloatArray(count, (const GLfloat *)src, (GLfloat *)dst); \
+	else if (size == 2) \
+		Host2AtariShortPtr(count, (const GLushort *)src, (Uint16 *)dst); \
+	else /* if (size == 4) */ \
+		Atari2HostIntArray(count, (const GLuint *)src, (Uint32 *)dst); \
+	free(result)
+#else
+#define FN_GLGETMULTITEXIMAGEEXT(texunit, target, level, format, type, pixels) \
+	fn.glGetMultiTexImageEXT(texunit, target, level, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMULTITEXLEVELPARAMETERFVEXT(texunit, target, level, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexLevelParameterfvEXT(texunit, target, level, pname, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXLEVELPARAMETERFVEXT(texunit, target, level, pname, params) \
+	fn.glGetMultiTexLevelParameterfvEXT(texunit, target, level, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXLEVELPARAMETERIVEXT(texunit, target, level, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXLEVELPARAMETERIVEXT(texunit, target, level, pname, params) \
+	fn.glGetMultiTexLevelParameterivEXT(texunit, target, level, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXPARAMETERIIVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexParameterIivEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXPARAMETERIIVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexParameterIivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLuint tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexParameterIuivEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexParameterIuivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMULTITEXPARAMETERFVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexParameterfvEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXPARAMETERFVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexParameterfvEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTITEXPARAMETERIVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[MAX(size, 16)]; \
+	fn.glGetMultiTexParameterivEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETMULTITEXPARAMETERIVEXT(texunit, target, pname, params) \
+	fn.glGetMultiTexParameterivEXT(texunit, target, pname, params)
+#endif
+
+#define FN_GLMULTITEXCOORDPOINTEREXT(texunit, size, type, stride, pointer) \
+	setupClientArray(texunit, contexts[cur_context].texcoord, size, type, stride, -1, 0, pointer)
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXENVFVEXT(texunit, target, pname, params) \
+	GLint const size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
+	fn.glMultiTexEnvfvEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXENVFVEXT(texunit, target, pname, params) \
+	fn.glMultiTexEnvfvEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMULTITEXENVIVEXT(texunit, target, pname, params) \
+	GLint const size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glMultiTexEnvivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXENVIVEXT(texunit, target, pname, params) \
+	fn.glMultiTexEnvivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMULTITEXGENDVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLdouble tmp[MAX(size, 16)]; \
+	Atari2HostDoubleArray(size, params, tmp); \
+	fn.glMultiTexGendvEXT(texunit, coord, pname, tmp)
+#else
+#define FN_GLMULTITEXGENDVEXT(texunit, coord, pname, params) \
+	fn.glMultiTexGendvEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXGENFVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
+	fn.glMultiTexGenfvEXT(texunit, coord, pname, tmp)
+#else
+#define FN_GLMULTITEXGENFVEXT(texunit, coord, pname, params) \
+	fn.glMultiTexGenfvEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMULTITEXGENIVEXT(texunit, coord, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glMultiTexGenivEXT(texunit, coord, pname, tmp)
+#else
+#define FN_GLMULTITEXGENIVEXT(texunit, coord, pname, params) \
+	fn.glMultiTexGenivEXT(texunit, coord, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXPARAMETERFVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLfloat tmp[MAX(size, 16)]; \
+	Atari2HostFloatArray(size, params, tmp); \
+	fn.glMultiTexParameterfvEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXPARAMETERFVEXT(texunit, target, pname, params) \
+	fn.glMultiTexParameterfvEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMULTITEXPARAMETERIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glMultiTexParameterivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXPARAMETERIVEXT(texunit, target, pname, params) \
+	fn.glMultiTexParameterivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMULTITEXPARAMETERIIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glMultiTexParameterIivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXPARAMETERIIVEXT(texunit, target, pname, params) \
+	fn.glMultiTexParameterIivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLuint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glMultiTexParameterIuivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params) \
+	fn.glMultiTexParameterIuivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLTEXTUREPARAMETERIIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glTextureParameterIivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLTEXTUREPARAMETERIIVEXT(texunit, target, pname, params) \
+	fn.glTextureParameterIivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLTEXTUREPARAMETERIUIVEXT(texunit, target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	GLuint tmp[MAX(size, 16)]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glTextureParameterIuivEXT(texunit, target, pname, tmp)
+#else
+#define FN_GLTEXTUREPARAMETERIUIVEXT(texunit, target, pname, params) \
+	fn.glTextureParameterIuivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETTEXTUREPARAMETERIIVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[MAX(size, 16)]; \
+	fn.glGetTextureParameterIivEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETTEXTUREPARAMETERIIVEXT(texunit, target, pname, params) \
+	fn.glGetTextureParameterIivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETTEXTUREPARAMETERIUIVEXT(texunit, target, pname, params) \
+	GLint const size = 1; \
+	GLuint tmp[MAX(size, 16)]; \
+	fn.glGetTextureParameterIuivEXT(texunit, target, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETTEXTUREPARAMETERIUIVEXT(texunit, target, pname, params) \
+	fn.glGetTextureParameterIuivEXT(texunit, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, format, type, pixels) \
+	void *tmp = convertPixels(width, 1, 1, format, type, pixels); \
+	fn.glMultiTexImage1DEXT(texunit, target, level, internalformat, width, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, format, type, pixels) \
+	fn.glMultiTexImage1DEXT(texunit, target, level, internalformat, width, border, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, format, type, pixels) \
+	void *tmp = convertPixels(width, height, 1, format, type, pixels); \
+	fn.glMultiTexImage2DEXT(texunit, target, level, internalformat, width, height, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, format, type, pixels) \
+	fn.glMultiTexImage2DEXT(texunit, target, level, internalformat, width, height, border, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, format, type, pixels) \
+	void *tmp = convertPixels(width, height, 1, format, type, pixels); \
+	fn.glMultiTexImage3DEXT(texunit, target, level, internalformat, width, height, depth, border, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, format, type, pixels) \
+	fn.glMultiTexImage3DEXT(texunit, target, level, internalformat, width, height, depth, border, format, type, pixels)
+#endif
+
+#define FN_GLGETPOINTERINDEXEDVEXT(target, index, data) \
+	gl_get_pointer(target, index, data)
+
+#define FN_GLGETPOINTERI_VEXT(target, index, data) \
+	gl_get_pointer(target, index, data)
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMATRIXLOADTRANSPOSEDEXT(mode, m) \
+	GLint const size = 16; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, m, tmp); \
+	fn.glMatrixLoadTransposedEXT(mode, tmp)
+#else
+#define FN_GLMATRIXLOADTRANSPOSEDEXT(mode, m) \
+	fn.glMatrixLoadTransposedEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMATRIXLOADTRANSPOSEFEXT(mode, m) \
+	GLint const size = 16; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, m, tmp); \
+	fn.glMatrixLoadTransposefEXT(mode, tmp)
+#else
+#define FN_GLMATRIXLOADTRANSPOSEFEXT(mode, m) \
+	fn.glMatrixLoadTransposefEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMATRIXMULTTRANSPOSEDEXT(mode, m) \
+	GLint const size = 16; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, m, tmp); \
+	fn.glMatrixMultTransposedEXT(mode, tmp)
+#else
+#define FN_GLMATRIXMULTTRANSPOSEDEXT(mode, m) \
+	fn.glMatrixMultTransposedEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMATRIXMULTTRANSPOSEFEXT(mode, m) \
+	GLint const size = 16; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, m, tmp); \
+	fn.glMatrixMultTransposefEXT(mode, tmp)
+#else
+#define FN_GLMATRIXMULTTRANSPOSEFEXT(mode, m) \
+	fn.glMatrixMultTransposefEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMATRIXLOADDEXT(mode, m) \
+	GLint const size = 16; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, m, tmp); \
+	fn.glMatrixLoaddEXT(mode, tmp)
+#else
+#define FN_GLMATRIXLOADDEXT(mode, m) \
+	fn.glMatrixLoaddEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMATRIXLOADFEXT(mode, m) \
+	GLint const size = 16; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, m, tmp); \
+	fn.glMatrixLoadfEXT(mode, tmp)
+#else
+#define FN_GLMATRIXLOADFEXT(mode, m) \
+	fn.glMatrixLoadfEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLMATRIXMULTDEXT(mode, m) \
+	GLint const size = 16; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, m, tmp); \
+	fn.glMatrixMultdEXT(mode, tmp)
+#else
+#define FN_GLMATRIXMULTDEXT(mode, m) \
+	fn.glMatrixMultdEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMATRIXMULTFEXT(mode, m) \
+	GLint const size = 16; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, m, tmp); \
+	fn.glMatrixMultfEXT(mode, tmp)
+#else
+#define FN_GLMATRIXMULTFEXT(mode, m) \
+	fn.glMatrixMultfEXT(mode, m)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORM1FVEXT(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniform1fvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1FVEXT(program, location, count, value) \
+	fn.glProgramUniform1fvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORM2FVEXT(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniform2fvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2FVEXT(program, location, count, value) \
+	fn.glProgramUniform2fvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORM3FVEXT(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniform3fvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3FVEXT(program, location, count, value) \
+	fn.glProgramUniform3fvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORM4FVEXT(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniform4fvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4FVEXT(program, location, count, value) \
+	fn.glProgramUniform4fvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM1IVEXT(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform1ivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1IVEXT(program, location, count, value) \
+	fn.glProgramUniform1ivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM2IVEXT(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform2ivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2IVEXT(program, location, count, value) \
+	fn.glProgramUniform2ivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM3IVEXT(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform3ivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3IVEXT(program, location, count, value) \
+	fn.glProgramUniform3ivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM4IVEXT(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform4ivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4IVEXT(program, location, count, value) \
+	fn.glProgramUniform4ivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM1UIVEXT(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform1uivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1UIVEXT(program, location, count, value) \
+	fn.glProgramUniform1uivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM2UIVEXT(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform2uivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2UIVEXT(program, location, count, value) \
+	fn.glProgramUniform2uivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM3UIVEXT(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform3uivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3UIVEXT(program, location, count, value) \
+	fn.glProgramUniform3uivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM4UIVEXT(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glProgramUniform4uivEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4UIVEXT(program, location, count, value) \
+	fn.glProgramUniform4uivEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORM1DVEXT(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniform1dvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1DVEXT(program, location, count, value) \
+	fn.glProgramUniform1dvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORM2DVEXT(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniform2dvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2DVEXT(program, location, count, value) \
+	fn.glProgramUniform2dvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORM3DVEXT(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniform3dvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3DVEXT(program, location, count, value) \
+	fn.glProgramUniform3dvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORM4DVEXT(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniform4dvEXT(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4DVEXT(program, location, count, value) \
+	fn.glProgramUniform4dvEXT(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2FVEXT(program, location, count, transpose, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3FVEXT(program, location, count, transpose, value) \
+	GLint const size = 9 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4FVEXT(program, location, count, transpose, value) \
+	GLint const size = 16 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X3FVEXT(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x3fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X3FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x3fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X2FVEXT(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x2fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X2FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x2fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X4FVEXT(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x4fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X4FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x4fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X2FVEXT(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4x2fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X2FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x2fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X4FVEXT(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X4FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x4fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X3FVEXT(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4fvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X3FVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x3fvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2DVEXT(program, location, count, transpose, value) \
+	GLint const size = 4 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3DVEXT(program, location, count, transpose, value) \
+	GLint const size = 9 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4DVEXT(program, location, count, transpose, value) \
+	GLint const size = 16 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X3DVEXT(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x3dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X3DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x3dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X2DVEXT(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x2dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X2DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x2dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X4DVEXT(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x4dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X4DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x4dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X2DVEXT(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4x2dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X2DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x2dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X4DVEXT(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X4DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x4dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X3DVEXT(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4dvEXT(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X3DVEXT(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x3dvEXT(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT(program, target, index, count, params) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, params, tmp); \
+	fn.glNamedProgramLocalParameters4fvEXT(program, target, index, count, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT(program, target, index, count, params) \
+	fn.glNamedProgramLocalParameters4fvEXT(program, target, index, count, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT(program, target, index, count, params) \
+	GLint const size = 4 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glNamedProgramLocalParametersI4ivEXT(program, target, index, count, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT(program, target, index, count, params) \
+	fn.glNamedProgramLocalParametersI4ivEXT(program, target, index, count, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT(program, target, index, count, params) \
+	GLint const size = 4 * count; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glNamedProgramLocalParametersI4uivEXT(program, target, index, count, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT(program, target, index, count, params) \
+	fn.glNamedProgramLocalParametersI4uivEXT(program, target, index, count, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERI4IVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glNamedProgramLocalParameterI4ivEXT(program, target, index, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERI4IVEXT(program, target, index, params) \
+	fn.glNamedProgramLocalParameterI4ivEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERI4UIVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	Atari2HostIntPtr(size, params, tmp); \
+	fn.glNamedProgramLocalParameterI4uivEXT(program, target, index, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETERI4UIVEXT(program, target, index, params) \
+	fn.glNamedProgramLocalParameterI4uivEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETER4DVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	Atari2HostDoubleArray(size, params, tmp); \
+	fn.glNamedProgramLocalParameter4dvEXT(program, target, index, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETER4DVEXT(program, target, index, params) \
+	fn.glNamedProgramLocalParameter4dvEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLNAMEDPROGRAMLOCALPARAMETER4FVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, params, tmp); \
+	fn.glNamedProgramLocalParameter4fvEXT(program, target, index, tmp)
+#else
+#define FN_GLNAMEDPROGRAMLOCALPARAMETER4FVEXT(program, target, index, params) \
+	fn.glNamedProgramLocalParameter4fvEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLint tmp[size]; \
+	fn.glGetNamedProgramLocalParameterIivEXT(program, target, index, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT(program, target, index, params) \
+	fn.glGetNamedProgramLocalParameterIivEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLuint tmp[size]; \
+	fn.glGetNamedProgramLocalParameterIuivEXT(program, target, index, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT(program, target, index, params) \
+	fn.glGetNamedProgramLocalParameterIuivEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLdouble tmp[size]; \
+	fn.glGetNamedProgramLocalParameterdvEXT(program, target, index, tmp); \
+	if (params) Host2AtariDoubleArray(size, tmp, params)
+#else
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT(program, target, index, params) \
+	fn.glGetNamedProgramLocalParameterdvEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT(program, target, index, params) \
+	GLint const size = 4; \
+	GLfloat tmp[size]; \
+	fn.glGetNamedProgramLocalParameterfvEXT(program, target, index, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+#else
+#define FN_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT(program, target, index, params) \
+	fn.glGetNamedProgramLocalParameterfvEXT(program, target, index, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDPROGRAMIVEXT(program, target, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetNamedProgramivEXT(program, target, pname, tmp); \
+	Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETNAMEDPROGRAMIVEXT(program, target, pname, params) \
+	fn.glGetNamedProgramivEXT(program, target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETVERTEXARRAYINTEGERVEXT(vaobj, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetVertexArrayIntegervEXT(vaobj, pname, tmp); \
+	Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETVERTEXARRAYINTEGERVEXT(vaobj, pname, params) \
+	fn.glGetVertexArrayIntegervEXT(vaobj, pname, params)
+#endif
+
+// FIXME: need to track vertex arrays
+#define FN_GLGETVERTEXARRAYPOINTERVEXT(vaobj, pname, params) \
+	UNUSED(vaobj); \
+	UNUSED(pname); \
+	UNUSED(params); \
+	glSetError(GL_INVALID_OPERATION)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETVERTEXARRAYINTEGERI_VEXT(vaobj, index, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetVertexArrayIntegeri_vEXT(vaobj, index, pname, tmp); \
+	Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETVERTEXARRAYINTEGERI_VEXT(vaobj, index, pname, params) \
+	fn.glGetVertexArrayIntegeri_vEXT(vaobj, index, pname, params)
+#endif
+
+// FIXME: need to track vertex arrays
+#define FN_GLGETVERTEXARRAYPOINTERI_VEXT(vaobj, index, pname, params) \
+	UNUSED(vaobj); \
+	UNUSED(index); \
+	UNUSED(pname); \
+	UNUSED(params); \
+	glSetError(GL_INVALID_OPERATION)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_AMD_gpu_shader_int64
+ */
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM1I64VNV(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform1i64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1I64VNV(program, location, count, value) \
+	fn.glProgramUniform1i64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM2I64VNV(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform2i64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2I64VNV(program, location, count, value) \
+	fn.glProgramUniform2i64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM3I64VNV(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform3i64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3I64VNV(program, location, count, value) \
+	fn.glProgramUniform3i64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM4I64VNV(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform4i64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4I64VNV(program, location, count, value) \
+	fn.glProgramUniform4i64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM1UI64VNV(program, location, count, value) \
+	GLint const size = 1 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform1ui64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM1UI64VNV(program, location, count, value) \
+	fn.glProgramUniform1ui64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM2UI64VNV(program, location, count, value) \
+	GLint const size = 2 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform2ui64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM2UI64VNV(program, location, count, value) \
+	fn.glProgramUniform2ui64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM3UI64VNV(program, location, count, value) \
+	GLint const size = 3 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform3ui64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM3UI64VNV(program, location, count, value) \
+	fn.glProgramUniform3ui64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLPROGRAMUNIFORM4UI64VNV(program, location, count, value) \
+	GLint const size = 4 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glProgramUniform4ui64vNV(program, location, count, tmp)
+#else
+#define FN_GLPROGRAMUNIFORM4UI64VNV(program, location, count, value) \
+	fn.glProgramUniform4ui64vNV(program, location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM1I64VNV(location, count, value) \
+	GLint const size = 1 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform1i64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM1I64VNV(location, count, value) \
+	fn.glUniform1i64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM2I64VNV(location, count, value) \
+	GLint const size = 2 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform2i64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM2I64VNV(location, count, value) \
+	fn.glUniform2i64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM3I64VNV(location, count, value) \
+	GLint const size = 3 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform3i64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM3I64VNV(location, count, value) \
+	fn.glUniform3i64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM4I64VNV(location, count, value) \
+	GLint const size = 4 * count; \
+	GLint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform4i64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM4I64VNV(location, count, value) \
+	fn.glUniform4i64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM1UI64VNV(location, count, value) \
+	GLint const size = 1 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform1ui64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM1UI64VNV(location, count, value) \
+	fn.glUniform1ui64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM2UI64VNV(location, count, value) \
+	GLint const size = 2 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform2ui64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM2UI64VNV(location, count, value) \
+	fn.glUniform2ui64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM3UI64VNV(location, count, value) \
+	GLint const size = 1 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform3ui64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM3UI64VNV(location, count, value) \
+	fn.glUniform3ui64vNV(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM4UI64VNV(location, count, value) \
+	GLint const size = 1 * count; \
+	GLuint64EXT tmp[size]; \
+	Atari2HostInt64Ptr(size, value, tmp); \
+	fn.glUniform4ui64vNV(location, count, tmp)
+#else
+#define FN_GLUNIFORM4UI64VNV(location, count, value) \
+	fn.glUniform4ui64vNV(location, count, value)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_ATI_vertex_array_object
+ */
+#define FN_GLDELETEOBJECTBUFFERATI(buffer) nfglFreeObjectBufferATI(buffer)
+
+#define FN_GLNEWOBJECTBUFFERATI(size, pointer, usage) \
+	GLuint name = fn.glNewObjectBufferATI(size, pointer, usage); \
+	if (!name) return name; \
+	gl_buffer_t *buf = gl_make_buffer(name, size, pointer); \
+	if (buf) buf->usage = usage; \
+	return name
+
+#define FN_GLFREEOBJECTBUFFERATI(buffer) \
+	gl_buffer_t *buf = gl_get_buffer(buffer); \
+	if (buf) { \
+		free(buf->atari_buffer); \
+		buf->atari_buffer = NULL; \
+		free(buf->host_buffer); \
+		buf->host_buffer = NULL; \
+	}
+
+#define FN_GLUPDATEOBJECTBUFFERATI(buffer, offset, size, pointer, preserve) \
+	gl_buffer_t *buf = gl_get_buffer(buffer); \
+	if (!buf) buf = gl_make_buffer(buffer, offset + size, pointer); \
+	if (!buf) return; \
+	memcpy((char *)buf->atari_buffer + offset, pointer, size); \
+	convertClientArrays(0); \
+	fn.glUpdateObjectBufferATI(buffer, offset, size, buf->host_buffer, preserve)
+	
+#define FN_GLGETARRAYOBJECTFVATI(array, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	fn.glGetArrayObjectfvATI(array, pname, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+
+#define FN_GLGETARRAYOBJECTIVATI(array, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetArrayObjectivATI(array, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+
+#define FN_GLGETOBJECTBUFFERFVATI(buffer, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	fn.glGetObjectBufferfvATI(buffer, pname, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+
+#define FN_GLGETOBJECTBUFFERIVATI(buffer, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetObjectBufferivATI(buffer, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+
+#define FN_GLGETVARIANTARRAYOBJECTFVATI(id, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	fn.glGetVariantArrayObjectfvATI(id, pname, tmp); \
+	if (params) Host2AtariFloatArray(size, tmp, params)
+
+#define FN_GLGETVARIANTARRAYOBJECTIVATI(id, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetVariantArrayObjectivATI(id, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+
+#define FN_GLARRAYOBJECTATI(array, size, type, stride, buffer, offset) \
+	vertexarray_t *arr = gl_get_array(array); \
+	if (!arr) return; \
+	gl_buffer_t *buf = gl_get_buffer(buffer); \
+	if (!buf) return; \
+	arr->buffer_offset = offset; \
+	setupClientArray(0, *arr, size, type, stride, -1, 0, buf->atari_buffer + offset)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_ARB_shader_objects
+ */
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETINFOLOGARB(obj, maxLength, length, infoLog) \
+	GLint const size = 1; \
+	GLsizei tmp[size]; \
+	fn.glGetInfoLogARB(obj, maxLength, tmp, infoLog); \
+	if (length) Host2AtariIntPtr(size, tmp, length)
+#else
+#define FN_GLGETINFOLOGARB(obj, maxLength, length, infoLog) \
+	fn.glGetInfoLogARB(obj, maxLength, length, infoLog)
+#endif
+
+#define FN_GLSHADERSOURCEARB(shaderObj, count, strings, length) \
+	GLcharARB **pstrings; \
+	GLint *plength = NULL; \
+	if (strings && count) { \
+		pstrings = (GLcharARB **)malloc(count * sizeof(*pstrings)); \
+		if (!pstrings) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		if (length) { \
+			plength = (GLint *)malloc(count * sizeof(*plength)); \
+			if (!plength) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		} \
+		const Uint32 *p = (const Uint32 *)strings; \
+		for (GLsizei i = 0; i < count; i++) \
+			pstrings[i] = p[i] ? (GLcharARB *)Atari2HostAddr(SDL_SwapBE32(p[i])) : NULL; \
+		if (length) Atari2HostIntPtr(count, length, plength); \
+	} else { \
+		pstrings = NULL; \
+	} \
+	fn.glShaderSourceARB(shaderObj, count, (const GLcharARB **)pstrings, plength); \
+	free(plength); \
+	free(pstrings)
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORM1FVARB(location, count, value) \
+	GLint const size = 1 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniform1fvARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM1FVARB(location, count, value) \
+	fn.glUniform1fvARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM1IVARB(location, count, value) \
+	GLint const size = 1 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glUniform1ivARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM1IVARB(location, count, value) \
+	fn.glUniform1ivARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORM2FVARB(location, count, value) \
+	GLint const size = 2 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniform2fvARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM2FVARB(location, count, value) \
+	fn.glUniform2fvARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM2IVARB(location, count, value) \
+	GLint const size = 2 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glUniform2ivARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM2IVARB(location, count, value) \
+	fn.glUniform2ivARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORM3FVARB(location, count, value) \
+	GLint const size = 3 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniform3fvARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM3FVARB(location, count, value) \
+	fn.glUniform3fvARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM3IVARB(location, count, value) \
+	GLint const size = 3 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glUniform3ivARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM3IVARB(location, count, value) \
+	fn.glUniform3ivARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORM4FVARB(location, count, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniform4fvARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM4FVARB(location, count, value) \
+	fn.glUniform4fvARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLUNIFORM4IVARB(location, count, value) \
+	GLint const size = 4 * count; \
+	GLint tmp[size]; \
+	Atari2HostIntPtr(size, value, tmp); \
+	fn.glUniform4ivARB(location, count, tmp)
+#else
+#define FN_GLUNIFORM4IVARB(location, count, value) \
+	fn.glUniform4ivARB(location, count, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORMMATRIX2FVARB(location, count, transpose, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniformMatrix2fvARB(location, count, transpose, tmp)
+#else
+#define FN_GLUNIFORMMATRIX2FVARB(location, count, transpose, value) \
+	fn.glUniformMatrix2fvARB(location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORMMATRIX3FVARB(location, count, transpose, value) \
+	GLint const size = 9 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniformMatrix3fvARB(location, count, transpose, tmp)
+#else
+#define FN_GLUNIFORMMATRIX3FVARB(location, count, transpose, value) \
+	fn.glUniformMatrix3fvARB(location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLUNIFORMMATRIX4FVARB(location, count, transpose, value) \
+	GLint const size = 16 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glUniformMatrix4fvARB(location, count, transpose, tmp)
+#else
+#define FN_GLUNIFORMMATRIX4FVARB(location, count, transpose, value) \
+	fn.glUniformMatrix4fvARB(location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETOBJECTPARAMETERFVARB(obj, pname, params) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	fn.glGetObjectParameterfvARB(obj, pname, tmp); \
+	Host2AtariFloatArray(size, tmp, params)
+#else
+#define FN_GLGETOBJECTPARAMETERFVARB(obj, pname, params) \
+	fn.glGetObjectParameterfvARB(obj, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETOBJECTPARAMETERIVARB(obj, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetObjectParameterivARB(obj, pname, tmp); \
+	Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETOBJECTPARAMETERIVARB(obj, pname, params) \
+	fn.glGetObjectParameterivARB(obj, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETUNIFORMFVARB(obj, location, params) \
+	GLint const size = 1; \
+	GLfloat tmp[size]; \
+	fn.glGetUniformfvARB(obj, location, tmp); \
+	Host2AtariFloatArray(size, tmp, params)
+#else
+#define FN_GLGETUNIFORMFVARB(obj, location, params) \
+	fn.glGetUniformfvARB(obj, location, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETUNIFORMIVARB(obj, location, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetUniformivARB(obj, location, tmp); \
+	Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETUNIFORMIVARB(obj, location, params) \
+	fn.glGetUniformivARB(obj, location, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETSHADERSOURCEARB(obj, maxLength, length, source) \
+	GLint const size = 1; \
+	GLsizei tmp[size]; \
+	fn.glGetShaderSourceARB(obj, maxLength, tmp, source); \
+	if (length) Host2AtariIntPtr(size, tmp, length)
+#else
+#define FN_GLGETSHADERSOURCEARB(obj, maxLength, length, source) \
+	fn.glGetShaderSourceARB(obj, maxLength, length, source)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_ARB_shading_language_include
+ */
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDSTRINGIVARB(namelen, name, pname, params) \
+	GLint const size = 1; \
+	GLint tmp[size]; \
+	fn.glGetNamedStringivARB(namelen, name, pname, tmp); \
+	if (params) Host2AtariIntPtr(size, tmp, params)
+#else
+#define FN_GLGETNAMEDSTRINGIVARB(namelen, name, pname, params) \
+	fn.glGetNamedStringivARB(namelen, name, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNAMEDSTRINGARB(namelen, name, bufSize, stringlen, string) \
+	GLint const size = 1;\
+	GLint tmp[size]; \
+	fn.glGetNamedStringARB(namelen, name, bufSize, tmp, string); \
+	if (stringlen) Host2AtariIntPtr(size, tmp, stringlen)
+#else
+#define FN_GLGETNAMEDSTRINGARB(namelen, name, bufSize, stringlen, string) \
+	fn.glGetNamedStringARB(namelen, name, bufSize, stringlen, string)
+#endif
+
+#define FN_GLCOMPILESHADERINCLUDEARB(shader, count, path, length) \
+	GLchar **ppath; \
+	GLint *plength; \
+	if (path) { \
+		ppath = (GLchar **)malloc(count * sizeof(*ppath)); \
+		if (!ppath) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		const Uint32 *p = (const Uint32 *)path; \
+		/* FIXME: the pathnames here are meaningless to the host */ \
+		for (GLsizei i = 0; i < count; i++) \
+			ppath[i] = p[i] ? (GLchar *)Atari2HostAddr(SDL_SwapBE32(p[i])) : NULL; \
+	} else { \
+		ppath = NULL; \
+	} \
+	if (length) { \
+		plength = (GLint *)malloc(count * sizeof(*plength)); \
+		if (!plength) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(count, length, plength); \
+	} else { \
+		plength = NULL; \
+	} \
+	fn.glCompileShaderIncludeARB(shader, count, ppath, plength); \
+	free(plength); \
+	free(ppath)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_APPLE_element_array
+ */
+
+#define FN_GLELEMENTPOINTERAPPLE(type, pointer) \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
+	contexts[cur_context].element.vendor = 1
+
+#define FN_GLDRAWELEMENTARRAYAPPLE(mode, first, count) \
+	convertClientArrays(first + count); \
+	fn.glDrawElementArrayAPPLE(mode, first, count)
+
+#define FN_GLDRAWRANGEELEMENTARRAYAPPLE(mode, start, end, first, count) \
+	convertClientArrays(first + count); \
+	fn.glDrawRangeElementArrayAPPLE(mode, start, end, first, count)
+
+#define FN_GLMULTIDRAWELEMENTARRAYAPPLE(mode, first, count, primcount) \
+	GLsizei const size = primcount; \
+	GLint firstbuf[size]; \
+	GLsizei countbuf[size]; \
+	if (size <= 0) return; \
+	Atari2HostIntPtr(size, first, firstbuf); \
+	Atari2HostIntPtr(size, count, countbuf); \
+	for (GLsizei i = 0; i < size; i++) \
+		convertClientArrays(firstbuf[i] + countbuf[i]); \
+	fn.glMultiDrawElementArrayAPPLE(mode, firstbuf, countbuf, primcount)
+
+#define FN_GLMULTIDRAWRANGEELEMENTARRAYAPPLE(mode, start, end, first, count, primcount) \
+	GLsizei const size = primcount; \
+	GLint firstbuf[size]; \
+	GLsizei countbuf[size]; \
+	if (size <= 0) return; \
+	Atari2HostIntPtr(size, first, firstbuf); \
+	Atari2HostIntPtr(size, count, countbuf); \
+	for (GLsizei i = 0; i < size; i++) \
+		convertClientArrays(firstbuf[i] + countbuf[i]); \
+	fn.glMultiDrawRangeElementArrayAPPLE(mode, start, end, firstbuf, countbuf, primcount)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_ATI_element_array
+ */
+
+#define FN_GLELEMENTPOINTERATI(type, pointer) \
+	GLint texunit = 0; \
+	fn.glGetIntegerv(GL_CLIENT_ACTIVE_TEXTURE, &texunit); \
+	setupClientArray(texunit, contexts[cur_context].element, 1, type, 0, -1, 0, pointer); \
+	contexts[cur_context].element.vendor = 2
+
+#define FN_GLDRAWELEMENTARRAYATI(mode, count) \
+	convertClientArrays(count); \
+	fn.glDrawElementArrayATI(mode, count)
+
+#define FN_GLDRAWRANGEELEMENTARRAYATI(mode, start, end, count) \
+	convertClientArrays(count); \
+	fn.glDrawRangeElementArrayATI(mode, start, end, count)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Version 4.1
+ */
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETFLOATI_V(pname, index, params) \
+	if (params) { \
+		int n = nfglGetNumParams(pname); \
+		GLfloat tmp[MAX(n, 16)]; \
+		fn.glGetFloati_v(pname, index, tmp); \
+		Host2AtariFloatArray(n, tmp, params); \
+	} else { \
+		fn.glGetFloati_v(pname, index, params); \
+	}
+#else
+#define FN_GLGETFLOATI_V(pname, index, params) \
+	fn.glGetFloati_v(pname, index, params)
+#endif
+
+#if NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETDOUBLEI_V(pname, index, params) \
+	int n = nfglGetNumParams(pname); \
+	GLdouble tmp[MAX(n, 16)]; \
+	fn.glGetDoublei_v(pname, index, tmp); \
+	Host2AtariDoubleArray(n, tmp, params)
+#else
+#define FN_GLGETDOUBLEI_V(pname, index, params) \
+	fn.glGetDoublei_v(pname, index, params)
+#endif
+
+/* pname can only be PROGRAM_NAME_ASCII_ARB */
+#define FN_GLGETNAMEDPROGRAMSTRINGEXT(program, target, pname, string) \
+	fn.glGetNamedProgramStringEXT(program, target, pname, string)
+
+/* format can only be PROGRAM_STRING_ARB */
+#define FN_GLNAMEDPROGRAMSTRINGEXT(program, target, format, len, string) \
+	fn.glNamedProgramStringEXT(program, target, format, len, string)
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs) \
+	GLenum *tmp; \
+	if (n && bufs) { \
+		tmp = (GLenum *)malloc(n * sizeof(*tmp)); \
+		if (!tmp) { glSetError(GL_OUT_OF_MEMORY); return; } \
+		Atari2HostIntPtr(n, bufs, tmp); \
+	} else { \
+		tmp = NULL; \
+	} \
+	fn.glFramebufferDrawBuffersEXT(framebuffer, n, tmp); \
+	free(tmp)
+#else
+#define FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs) \
+	fn.glFramebufferDrawBuffersEXT(framebuffer, n, bufs)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETFRAMEBUFFERPARAMETERIVEXT(target, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetFramebufferParameterivEXT(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETFRAMEBUFFERPARAMETERIVEXT(target, pname, params) \
+	fn.glGetFramebufferParameterivEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, type, pixels) \
+	void *tmp = convertPixels(width, 1, 1, format, type, pixels); \
+	fn.glMultiTexSubImage1DEXT(texunit, target, level, xoffset, width, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, type, pixels) \
+	fn.glMultiTexSubImage1DEXT(texunit, target, level, xoffset, width, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, type, pixels) \
+	void *tmp = convertPixels(width, height, 1, format, type, pixels); \
+	fn.glMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, type, pixels) \
+	fn.glMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels) \
+	void *tmp = convertPixels(width, height, depth, format, type, pixels); \
+	fn.glMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, tmp); \
+	if (tmp != pixels) free(tmp)
+#else
+#define FN_GLMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels) \
+	fn.glMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2FV(program, location, count, transpose, value) \
+	GLint const size = 4 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3FV(program, location, count, transpose, value) \
+	GLint const size = 9 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4FV(program, location, count, transpose, value) \
+	GLint const size = 16 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X3FV(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x3fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X3FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x3fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X2FV(program, location, count, transpose, value) \
+	GLint const size = 6 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x2fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X2FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x2fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX2X4FV(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix2x4fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX2X4FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix2x4fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X2FV(program, location, count, transpose, value) \
+	GLint const size = 8 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix4x2fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X2FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x2fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX3X4FV(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX3X4FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix3x4fv(program, location, count, transpose, value)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLPROGRAMUNIFORMMATRIX4X3FV(program, location, count, transpose, value) \
+	GLint const size = 12 * count; \
+	GLfloat tmp[size]; \
+	Atari2HostFloatArray(size, value, tmp); \
+	fn.glProgramUniformMatrix3x4fv(program, location, count, transpose, tmp)
+#else
+#define FN_GLPROGRAMUNIFORMMATRIX4X3FV(program, location, count, transpose, value) \
+	fn.glProgramUniformMatrix4x3fv(program, location, count, transpose, value)
+#endif
+
+#define FN_GLGETPOINTERI_V(target, index, data) \
+	gl_get_pointer(target, index, data)
+
+/* -------------------------------------------------------------------------- */
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMATERIALFV(face, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMaterialfv(face, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMATERIALFV(face, pname, params) \
+	fn.glGetMaterialfv(face, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMATERIALIV(face, pname, params) \
+	GLint size = nfglGetNumParams(pname); \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMaterialiv(face, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMATERIALIV(face, pname, params) \
+	fn.glGetMaterialiv(face, pname, params)
+#endif
+
+
+/* glGetMaterialxOES??? should be *params */
+
+/*
+ * If a non-zero named buffer object is bound to the GL_PIXEL_PACK_BUFFER
+ * target (see glBindBuffer) while minimum and maximum pixel values are
+ * requested, values is treated as a byte offset into the buffer object's
+ * data store.     
+ */
+#if NFOSMESA_NEED_INT_CONV || NFOSMESA_NEED_FLOAT_CONV || NFOSMESA_NEED_DOUBLE_CONV
+#define FN_GLGETMINMAX(target, reset, format, type, values) \
+	GLsizei size, count; \
+	GLint width = 2; \
+	GLubyte result[4 * 2 * sizeof(GLdouble)]; \
+	const void *src; \
+	void *dst; \
+	 \
+	if (!pixelParams(format, type, size, count)) \
+		return; \
+	count *= width; \
+	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
+		fn.glGetMinmax(target, reset, format, type, values); \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)values; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)values; \
+	} else { \
+		fn.glGetMinmax(target, reset, format, type, result); \
+		src = result; \
+		dst = values; \
+	} \
+	if (type == GL_FLOAT) \
+		Host2AtariFloatArray(count, (const GLfloat *)src, (GLfloat *)dst); \
+	else if (size == 2) \
+		Host2AtariShortPtr(count, (const GLushort *)src, (Uint16 *)dst); \
+	else /* if (size == 4) */ \
+		Atari2HostIntArray(count, (const GLuint *)src, (Uint32 *)dst)
+#define FN_GLGETMINMAXEXT(target, reset, format, type, values) \
+	GLsizei size, count; \
+	GLint width = 2; \
+	GLubyte result[4 * 2 * sizeof(GLdouble)]; \
+	const void *src; \
+	void *dst; \
+	 \
+	if (!pixelParams(format, type, size, count)) \
+		return; \
+	count *= width; \
+	if (contexts[cur_context].buffer_bindings.pixel_pack.id) { \
+		fn.glGetMinmaxEXT(target, reset, format, type, values); \
+		src = (const char *)contexts[cur_context].buffer_bindings.pixel_pack.host_pointer + (uintptr_t)values; \
+		dst = (char *)contexts[cur_context].buffer_bindings.pixel_pack.atari_pointer + (uintptr_t)values; \
+	} else { \
+		fn.glGetMinmaxEXT(target, reset, format, type, result); \
+		src = result; \
+		dst = values; \
+	} \
+	if (type == GL_FLOAT) \
+		Host2AtariFloatArray(count, (const GLfloat *)src, (GLfloat *)dst); \
+	else if (size == 2) \
+		Host2AtariShortPtr(count, (const GLushort *)src, (Uint16 *)dst); \
+	else /* if (size == 4) */ \
+		Atari2HostIntArray(count, (const GLuint *)src, (Uint32 *)dst)
+#else
+#define FN_GLGETMINMAX(target, reset, format, type, values) \
+	fn.glGetMinmax(target, reset, format, type, values)
+#define FN_GLGETMINMAXEXT(target, reset, format, type, values) \
+	fn.glGetMinmaxEXT(target, reset, format, type, values)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMINMAXPARAMETERFV(target, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMinmaxParameterfv(target, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#define FN_GLGETMINMAXPARAMETERFVEXT(target, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMinmaxParameterfvEXT(target, pname, tmp); \
+		Host2AtariFloatArray(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMINMAXPARAMETERFV(target, pname, params) \
+	fn.glGetMinmaxParameterfv(target, pname, params)
+#define FN_GLGETMINMAXPARAMETERFVEXT(target, pname, params) \
+	fn.glGetMinmaxParameterfvEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMINMAXPARAMETERIV(target, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMinmaxParameteriv(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#define FN_GLGETMINMAXPARAMETERIVEXT(target, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMinmaxParameterivEXT(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETMINMAXPARAMETERIV(target, pname, params) \
+	fn.glGetMinmaxParameteriv(target, pname, params)
+#define FN_GLGETMINMAXPARAMETERIVEXT(target, pname, params) \
+	fn.glGetMinmaxParameterivEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_FLOAT_CONV
+#define FN_GLGETMULTISAMPLEFV(pname, index, val) \
+	GLint size = 2; \
+	if (val) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMultisamplefv(pname, index, tmp); \
+		Host2AtariFloatArray(size, tmp, val); \
+	}
+#define FN_GLGETMULTISAMPLEFVNV(pname, index, val) \
+	GLint size = 2; \
+	if (val) { \
+		GLfloat tmp[MAX(size, 16)]; \
+		fn.glGetMultisamplefvNV(pname, index, tmp); \
+		Host2AtariFloatArray(size, tmp, val); \
+	}
+#else
+#define FN_GLGETMULTISAMPLEFV(pname, index, val) \
+	fn.glGetMultisamplefv(pname, index, val)
+#define FN_GLGETMULTISAMPLEFVNV(pname, index, val) \
+	fn.glGetMultisamplefvNV(pname, index, val)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETMULTISAMPLEIVNV(pname, index, val) \
+	GLint size = 2; \
+	if (val) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetMultisampleivNV(pname, index, tmp); \
+		Host2AtariIntPtr(size, tmp, val); \
+	}
+#else
+#define FN_GLGETMULTISAMPLEIVNV(pname, index, val) \
+	fn.glGetMultisampleivNV(pname, index, val)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETRENDERBUFFERPARAMETERIVEXT(target, pname, params) \
+	GLint size = 1; \
+	if (params) { \
+		GLint tmp[MAX(size, 16)]; \
+		fn.glGetRenderbufferParameterivEXT(target, pname, tmp); \
+		Host2AtariIntPtr(size, tmp, params); \
+	}
+#else
+#define FN_GLGETRENDERBUFFERPARAMETERIVEXT(target, pname, params) \
+	fn.glGetRenderbufferParameterivEXT(target, pname, params)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETOBJECTLABEL(identifier, name, bufSize, length, label) \
+	GLint const size = 1;\
+	GLsizei tmp[size]; \
+	fn.glGetObjectLabel(identifier, name, bufSize, tmp, label); \
+	if (length) Host2AtariIntPtr(size, tmp, length)
+#else
+#define FN_GLGETOBJECTLABEL(identifier, name, bufSize, length, label) \
+	fn.glGetObjectLabel(identifier, name, bufSize, length, label)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETOBJECTLABELEXT(identifier, name, bufSize, length, label) \
+	GLint const size = 1;\
+	GLsizei tmp[size]; \
+	fn.glGetObjectLabelEXT(identifier, name, bufSize, tmp, label); \
+	if (length) Host2AtariIntPtr(size, tmp, length)
+#else
+#define FN_GLGETOBJECTLABELEXT(identifier, name, bufSize, length, label) \
+	fn.glGetObjectLabelEXT(identifier, name, bufSize, length, label)
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETOBJECTPTRLABEL(identifier, bufSize, length, label) \
+	GLint const size = 1;\
+	GLsizei tmp[size]; \
+	fn.glGetObjectPtrLabel(identifier, bufSize, tmp, label); \
+	if (length) Host2AtariIntPtr(size, tmp, length)
+#else
+#define FN_GLGETOBJECTPTRLABEL(identifier, bufSize, length, label) \
+	fn.glGetObjectPtrLabel(identifier, bufSize, length, label)
 #endif
 
 #include "nfosmesa/call-gl.c"

@@ -82,6 +82,15 @@
 
 /*--- Types ---*/
 
+typedef struct gl_buffer {
+	GLenum name;
+	GLsizei size;
+	char *atari_buffer;
+	char *host_buffer;
+	GLenum usage;
+	struct gl_buffer *next;
+} gl_buffer_t;
+
 typedef struct {
 	GLint size;
 	GLenum type;
@@ -93,6 +102,7 @@ typedef struct {
 	void *host_pointer;
 	GLint ptrstride;
 	int vendor;
+	GLsizei buffer_offset;
 } vertexarray_t;
 
 typedef struct {
@@ -112,8 +122,12 @@ typedef struct {
 	GLsizei width, height;
 	GLenum render_mode;
 	GLenum error_code;
-	void *feedback_buffer_host, *feedback_buffer_atari;
+	void *feedback_buffer_host;
+	void *feedback_buffer_atari;
 	GLenum feedback_buffer_type;
+	GLuint *select_buffer_host;
+	Uint32 *select_buffer_atari;
+	GLuint select_buffer_size;
 	struct {
 		fbo_buffer array;
 		fbo_buffer atomic_counter;
@@ -130,6 +144,8 @@ typedef struct {
 		fbo_buffer transform_feedback;
 		fbo_buffer uniform;
 	} buffer_bindings;
+	
+	gl_buffer_t *buffers;
 	
 	/* conversion needed from srcformat to dstformat ? */
 	SDL_bool conversion;
@@ -209,18 +225,14 @@ protected:
 		}
 	}
 
-	inline void Atari2HostFloatArray(Uint32 size, const Uint32 *src, GLfloat *dest)
+	inline void Atari2HostFloatArray(Uint32 size, const GLfloat *src, GLfloat *dest)
 	{
+		const Uint32 *p = (const Uint32 *)src;
 		for (Uint32 i=0;i<size;i++) {
-			dest[i]=Atari2HostFloat(SDL_SwapBE32(src[i]));
+			dest[i]=Atari2HostFloat(SDL_SwapBE32(p[i]));
 		}
 	}
 
-	inline void Atari2HostFloatPtr(Uint32 size, const GLfloat *src, GLfloat *dest)
-	{
-		Atari2HostFloatArray(size, (const Uint32 *)src, dest);
-	}
-	
 	inline GLdouble Atari2HostDouble(Uint32 high, Uint32 low)
 	{
 		union {
@@ -277,18 +289,14 @@ protected:
 		}
 	}
 
-	inline void Atari2HostDoubleArray(Uint32 size, const Uint32 *src, GLdouble *dest)
+	inline void Atari2HostDoubleArray(Uint32 size, const GLdouble *src, GLdouble *dest)
 	{
 		Uint32 i;
 		
+		const Uint32 *p = (const Uint32 *)src;
 		for (i=0;i<size;i++) {
-			dest[i]=Atari2HostDouble(SDL_SwapBE32(src[i<<1]),SDL_SwapBE32(src[(i<<1)+1]));
+			dest[i]=Atari2HostDouble(SDL_SwapBE32(p[i<<1]),SDL_SwapBE32(p[(i<<1)+1]));
 		}
-	}
-
-	inline void Atari2HostDoublePtr(Uint32 size, const GLdouble *src, GLdouble *dest)
-	{
-		Atari2HostDoubleArray(size, (const Uint32 *)src, dest);
 	}
 
 	inline void Atari2HostShortArray(Uint32 size, const Uint16 *src, GLushort *dest)
@@ -371,15 +379,21 @@ protected:
 		Atari2HostInt64Array(size, (const Uint64 *)src, (GLuint64 *)dest);
 	}
 	
+	bool pixelParams(GLenum format, GLenum type, GLsizei &size, GLsizei &count);
 	void *pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei &size, GLsizei &count);
 	void *convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);
 	void *convertArray(GLsizei count, GLenum type, const GLvoid *pixels);
 	void nfglArrayElementHelper(GLint i);
 	void convertClientArrays(GLsizei count);
 	void convertClientArray(GLsizei count, vertexarray_t &array);
-	void setupClientArray(vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer);
+	void setupClientArray(GLenum texunit, vertexarray_t &array, GLint size, GLenum type, GLsizei stride, GLsizei count, GLint ptrstride, const GLvoid *pointer);
 	void nfglInterleavedArraysHelper(GLenum format, GLsizei stride, const GLvoid *pointer);
 	void gl_bind_buffer(GLenum target, GLuint buffer, GLuint first, GLuint count);
+	void gl_get_pointer(GLenum target, GLuint index, void **data);
+	
+	gl_buffer_t *gl_get_buffer(GLuint name);
+	gl_buffer_t *gl_make_buffer(GLuint name, GLsizei size, const void *pointer);
+	vertexarray_t *gl_get_array(GLenum pname);
 	
 	/* OSMesa functions */
 	Uint32 OSMesaCreateContext( GLenum format, Uint32 sharelist );
