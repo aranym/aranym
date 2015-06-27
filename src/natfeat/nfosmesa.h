@@ -47,6 +47,9 @@
 #define	NFOSMESA_FOGCOORD_ARRAY	(1<<6)
 #define	NFOSMESA_2NDCOLOR_ARRAY	(1<<7)
 #define	NFOSMESA_ELEMENT_ARRAY	(1<<8)
+#define	NFOSMESA_VARIANT_ARRAY	(1<<9)
+#define	NFOSMESA_WEIGHT_ARRAY	(1<<10)
+#define	NFOSMESA_MATRIX_INDEX_ARRAY	(1<<11)
 
 #define ATARI_SIZEOF_DOUBLE ((size_t)8)
 #define ATARI_SIZEOF_FLOAT ((size_t)4)
@@ -88,8 +91,21 @@ typedef struct gl_buffer {
 	char *atari_buffer;
 	char *host_buffer;
 	GLenum usage;
+	GLboolean normalized;
 	struct gl_buffer *next;
 } gl_buffer_t;
+
+typedef enum {
+	NFOSMESA_VENDOR_NONE,
+	NFOSMESA_VENDOR_ARB,
+	NFOSMESA_VENDOR_EXT,
+	NFOSMESA_VENDOR_IBM,
+	NFOSMESA_VENDOR_SGI,
+	NFOSMESA_VENDOR_INTEL,
+	NFOSMESA_VENDOR_APPLE,
+	NFOSMESA_VENDOR_NV,
+	NFOSMESA_VENDOR_ATI
+} vendor_t;
 
 typedef struct {
 	GLint size;
@@ -98,11 +114,12 @@ typedef struct {
 	GLsizei basesize;
 	GLsizei count;
 	GLsizei converted;
-	const GLvoid *atari_pointer;
+	GLvoid *atari_pointer;
 	void *host_pointer;
 	GLint ptrstride;
-	int vendor;
+	vendor_t vendor;
 	GLsizei buffer_offset;
+	GLuint id;
 } vertexarray_t;
 
 typedef struct {
@@ -162,6 +179,9 @@ typedef struct {
 	vertexarray_t	fogcoord;
 	vertexarray_t	secondary_color;
 	vertexarray_t	element;
+	vertexarray_t	variant;
+	vertexarray_t	weight;
+	vertexarray_t	matrixindex;
 } context_t;
 
 /*--- Class ---*/

@@ -125,6 +125,9 @@ BUGS
   - glMapTexture2DINTEL
   - glImportSyncEXT
   - glProgramCallbackMESA
+  - glTextureRangeAPPLE
+  - glGetTexParameterPointervAPPLE
+  - glInstrumentsBufferSGIX
 
 - Parameter checking is not as thorough as in the native implementation.
   If you do something weird, you might crash the emulator.

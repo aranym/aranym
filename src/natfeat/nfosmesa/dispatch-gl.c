@@ -5870,12 +5870,14 @@
 				getStackedParameter(1) /* GLenum pname */,
 				(GLuint *)getStackedPointer(2) /* GLuint *params */);
 			break;
+#if 0
 		case NFOSMESA_GLGETTEXPARAMETERPOINTERVAPPLE:
 			nfglGetTexParameterPointervAPPLE(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLenum pname */,
 				(void * *)getStackedPointer(2) /* void * *params */);
 			break;
+#endif
 		case NFOSMESA_GLGETTEXPARAMETERFV:
 			nfglGetTexParameterfv(
 				getStackedParameter(0) /* GLenum target */,
@@ -6673,11 +6675,13 @@
 				getStackedParameter(0) /* GLsizei length */,
 				(const GLchar *)getStackedPointer(1) /* const GLchar *marker */);
 			break;
+#if 0
 		case NFOSMESA_GLINSTRUMENTSBUFFERSGIX:
 			nfglInstrumentsBufferSGIX(
 				getStackedParameter(0) /* GLsizei size */,
 				(GLint *)getStackedPointer(1) /* GLint *buffer */);
 			break;
+#endif
 		case NFOSMESA_GLINTERLEAVEDARRAYS:
 			nfglInterleavedArrays(
 				getStackedParameter(0) /* GLenum format */,
@@ -13084,12 +13088,14 @@
 				getStackedParameter(2) /* GLenum pname */,
 				(const GLint *)getStackedPointer(3) /* const GLint *params */);
 			break;
+#if 0
 		case NFOSMESA_GLTEXTURERANGEAPPLE:
 			nfglTextureRangeAPPLE(
 				getStackedParameter(0) /* GLenum target */,
 				getStackedParameter(1) /* GLsizei length */,
 				(const void *)getStackedPointer(2) /* const void *pointer */);
 			break;
+#endif
 		case NFOSMESA_GLTEXTURERENDERBUFFEREXT:
 			nfglTextureRenderbufferEXT(
 				getStackedParameter(0) /* GLuint texture */,
