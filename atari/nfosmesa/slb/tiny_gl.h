@@ -58,6 +58,9 @@ extern "C" {
 #ifndef GLAPIENTRY
 #define GLAPIENTRY APIENTRY
 #endif
+#ifndef APIENTRYP
+#define APIENTRYP APIENTRY *
+#endif
 #ifndef GLAPI
 #define GLAPI extern
 #endif
@@ -954,9 +957,16 @@ GLAPI void GLAPIENTRY glPolygonOffset(GLfloat factor, GLfloat units);
 #endif /* GL_VERSION_1_1 */
 
 #ifndef GL_VERSION_1_5
-#define GL_VERSION_1_5 1
-typedef ptrdiff_t GLintptr;
+#ifndef __GLintptr_defined
+#include <stddef.h>
 typedef ptrdiff_t GLsizeiptr;
+typedef ptrdiff_t GLintptr;
+#define __GLintptr_defined
+#endif
+#endif
+
+#ifdef __NFOSMESA_H__
+#include <GL/glext.h>
 #endif
 
 #ifndef GL_VERSION_2_0

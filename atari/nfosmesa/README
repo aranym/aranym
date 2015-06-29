@@ -72,10 +72,10 @@ BUGS
 
 - Only framebuffers of type OSMESA_RGB (GL_RGB, 24bit RGB) should be
   used currently. This is the format that screen.ldg expects to display
-  on the screen, and the only format that the native tiny_gl.ldg supports..
+  on the screen, and the only format that the native tiny_gl.ldg supports.
   If you need some other format, you
   a) have to use the full-featured osmesa.ldg
-  b) have to make sure that you call glFinish() when done drawing.
+  b) have to make sure that you call glFinish() or glFlush() when done drawing.
      This is the function that converts the host buffer to the
      format you requested. This may or may not also slow down the
      framerate due to the additional conversion step.
@@ -128,14 +128,17 @@ BUGS
   - glTextureRangeAPPLE
   - glGetTexParameterPointervAPPLE
   - glInstrumentsBufferSGIX
+  - glVDPAU*
 
 - Parameter checking is not as thorough as in the native implementation.
   If you do something weird, you might crash the emulator.
 
 - Sharing contexts is not supported yet.
 
-- The interface in the ldg libraries is not thread-safe; consequently only
+- The interface in the tiny_gl.ldg library is not thread-safe; consequently only
   one context can be created at any time.
+  To use more than one context in your application, you have to use osmesa.ldg
+  and create the context using OSMesaCreateContextExt
 
 - OSMesaGetProcAddress does not return a real address that can be called;
   It can be used though to check wether the host function is available.

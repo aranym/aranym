@@ -50,6 +50,7 @@
 #define	NFOSMESA_VARIANT_ARRAY	(1<<9)
 #define	NFOSMESA_WEIGHT_ARRAY	(1<<10)
 #define	NFOSMESA_MATRIX_INDEX_ARRAY	(1<<11)
+#define	NFOSMESA_REPLACEMENT_CODE_ARRAY	(1<<12)
 
 #define ATARI_SIZEOF_DOUBLE ((size_t)8)
 #define ATARI_SIZEOF_FLOAT ((size_t)4)
@@ -104,7 +105,8 @@ typedef enum {
 	NFOSMESA_VENDOR_INTEL,
 	NFOSMESA_VENDOR_APPLE,
 	NFOSMESA_VENDOR_NV,
-	NFOSMESA_VENDOR_ATI
+	NFOSMESA_VENDOR_ATI,
+	NFOSMESA_VENDOR_SUN
 } vendor_t;
 
 typedef struct {
@@ -182,6 +184,7 @@ typedef struct {
 	vertexarray_t	variant;
 	vertexarray_t	weight;
 	vertexarray_t	matrixindex;
+	vertexarray_t	replacement_code;
 } context_t;
 
 /*--- Class ---*/

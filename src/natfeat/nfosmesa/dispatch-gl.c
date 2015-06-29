@@ -14006,9 +14006,12 @@
 				getStackedParameter(0) /* GLenum type */,
 				getStackedParameter(1) /* GLuint program */);
 			break;
+#if 0
 		case NFOSMESA_GLVDPAUFININV:
 			nfglVDPAUFiniNV();
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUGETSURFACEIVNV:
 			nfglVDPAUGetSurfaceivNV(
 				getStackedParameter(0) /* GLvdpauSurfaceNV surface */,
@@ -14017,20 +14020,28 @@
 				(GLsizei *)getStackedPointer(3) /* GLsizei *length */,
 				(GLint *)getStackedPointer(4) /* GLint *values */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUINITNV:
 			nfglVDPAUInitNV(
 				(const void *)getStackedPointer(0) /* const void *vdpDevice */,
 				(const void *)getStackedPointer(1) /* const void *getProcAddress */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUISSURFACENV:
 			ret = nfglVDPAUIsSurfaceNV(
 				getStackedParameter(0) /* GLvdpauSurfaceNV surface */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUMAPSURFACESNV:
 			nfglVDPAUMapSurfacesNV(
 				getStackedParameter(0) /* GLsizei numSurfaces */,
 				(const GLvdpauSurfaceNV *)getStackedPointer(1) /* const GLvdpauSurfaceNV *surfaces */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUREGISTEROUTPUTSURFACENV:
 			ret = nfglVDPAURegisterOutputSurfaceNV(
 				(const void *)getStackedPointer(0) /* const void *vdpSurface */,
@@ -14038,6 +14049,8 @@
 				getStackedParameter(2) /* GLsizei numTextureNames */,
 				(const GLuint *)getStackedPointer(3) /* const GLuint *textureNames */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACENV:
 			ret = nfglVDPAURegisterVideoSurfaceNV(
 				(const void *)getStackedPointer(0) /* const void *vdpSurface */,
@@ -14045,20 +14058,27 @@
 				getStackedParameter(2) /* GLsizei numTextureNames */,
 				(const GLuint *)getStackedPointer(3) /* const GLuint *textureNames */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUSURFACEACCESSNV:
 			nfglVDPAUSurfaceAccessNV(
 				getStackedParameter(0) /* GLvdpauSurfaceNV surface */,
 				getStackedParameter(1) /* GLenum access */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUUNMAPSURFACESNV:
 			nfglVDPAUUnmapSurfacesNV(
 				getStackedParameter(0) /* GLsizei numSurface */,
 				(const GLvdpauSurfaceNV *)getStackedPointer(1) /* const GLvdpauSurfaceNV *surfaces */);
 			break;
+#endif
+#if 0
 		case NFOSMESA_GLVDPAUUNREGISTERSURFACENV:
 			nfglVDPAUUnregisterSurfaceNV(
 				getStackedParameter(0) /* GLvdpauSurfaceNV surface */);
 			break;
+#endif
 		case NFOSMESA_GLVALIDATEPROGRAM:
 			nfglValidateProgram(
 				getStackedParameter(0) /* GLuint program */);
