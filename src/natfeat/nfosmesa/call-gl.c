@@ -264,7 +264,7 @@ FN_GLBINDBUFFER(target, buffer);
 void OSMesaDriver::nfglBindBufferARB(GLenum target, GLuint buffer)
 {
 	D(bug("nfosmesa: glBindBufferARB(0x%x, %u)", target, buffer));
-	fn.glBindBufferARB(target, buffer);
+FN_GLBINDBUFFERARB(target, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferBase(GLenum target, GLuint index, GLuint buffer)
@@ -2099,7 +2099,7 @@ FN_GLDEBUGMESSAGECALLBACK(callback, userParam);
 void OSMesaDriver::nfglDebugMessageCallbackAMD(GLDEBUGPROCAMD callback, void *userParam)
 {
 	D(bug("nfosmesa: glDebugMessageCallbackAMD(%p, %p)", callback, userParam));
-	fn.glDebugMessageCallbackAMD(callback, userParam);
+FN_GLDEBUGMESSAGECALLBACKAMD(callback, userParam);
 }
 #endif
 
@@ -2107,7 +2107,7 @@ void OSMesaDriver::nfglDebugMessageCallbackAMD(GLDEBUGPROCAMD callback, void *us
 void OSMesaDriver::nfglDebugMessageCallbackARB(GLDEBUGPROCARB callback, const void *userParam)
 {
 	D(bug("nfosmesa: glDebugMessageCallbackARB(%p, %p)", callback, userParam));
-	fn.glDebugMessageCallbackARB(callback, userParam);
+FN_GLDEBUGMESSAGECALLBACKARB(callback, userParam);
 }
 #endif
 
@@ -2582,7 +2582,7 @@ FN_GLDRAWARRAYSINSTANCED(mode, first, count, instancecount);
 void OSMesaDriver::nfglDrawArraysInstancedARB(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
 {
 	D(bug("nfosmesa: glDrawArraysInstancedARB(0x%x, %d, %d, %d)", mode, first, count, primcount));
-	fn.glDrawArraysInstancedARB(mode, first, count, primcount);
+FN_GLDRAWARRAYSINSTANCEDARB(mode, first, count, primcount);
 }
 
 void OSMesaDriver::nfglDrawArraysInstancedBaseInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount, GLuint baseinstance)
@@ -2594,7 +2594,7 @@ void OSMesaDriver::nfglDrawArraysInstancedBaseInstance(GLenum mode, GLint first,
 void OSMesaDriver::nfglDrawArraysInstancedEXT(GLenum mode, GLint start, GLsizei count, GLsizei primcount)
 {
 	D(bug("nfosmesa: glDrawArraysInstancedEXT(0x%x, %d, %d, %d)", mode, start, count, primcount));
-	fn.glDrawArraysInstancedEXT(mode, start, count, primcount);
+FN_GLDRAWARRAYSINSTANCEDEXT(mode, start, count, primcount);
 }
 
 void OSMesaDriver::nfglDrawBuffer(GLenum mode)
@@ -3989,7 +3989,7 @@ FN_GLGETBUFFERSUBDATA(target, offset, size, data);
 void OSMesaDriver::nfglGetBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data)
 {
 	D(bug("nfosmesa: glGetBufferSubDataARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %p)", target, offset, size, data));
-	fn.glGetBufferSubDataARB(target, offset, size, data);
+FN_GLGETBUFFERSUBDATAARB(target, offset, size, data);
 }
 #endif
 
@@ -7077,7 +7077,7 @@ FN_GLMAPBUFFER(target, access);
 void * OSMesaDriver::nfglMapBufferARB(GLenum target, GLenum access)
 {
 	D(bug("nfosmesa: glMapBufferARB(0x%x, 0x%x)", target, access));
-	return fn.glMapBufferARB(target, access);
+FN_GLMAPBUFFERARB(target, access);
 }
 #endif
 

@@ -1,3 +1,7 @@
+2015/07/01 - Thorsten
+nfosmesa: a few fixes, and grouping of functions according to GL extension
+
+
 2015/06/29 - Thorsten
 nfosmesa: Add remaining conversion macros for several functions
 OpenGL 4.4 complete now; needs testing

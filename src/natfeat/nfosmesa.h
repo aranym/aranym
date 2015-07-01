@@ -226,6 +226,7 @@ protected:
 			GLfloat f;
 			Uint32 i;
 		} u;
+		// no SDL_SwapBE32() here; already done by getStackedParameter
 		u.i = value;
 		return u.f;
 	}
@@ -263,6 +264,8 @@ protected:
 			Uint32 i[2];
 		} u;
 
+		// no SDL_SwapBE32() here; already done by getStackedParameter
+		// but need to change order of the words
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
 		u.i[0]=low;
 		u.i[1]=high;
