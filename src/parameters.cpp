@@ -181,7 +181,28 @@ bx_options_t bx_options;
 static bx_atadevice_options_t *diskc = &bx_options.atadevice[0][0];
 static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 
+#if defined(__IRIX__)
+/* IRIX doesn't have a GL library versioning system */
+#define DEFAULT_OPENGL	"libGL.so"
+#elif defined(__MACOSX__)
+/* note: this is the Quertz version, not the X11 version */
+#define DEFAULT_OPENGL	"/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib"
+#elif defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
+/* note: this is the Windows version, not the cygwin version */
+#define DEFAULT_OPENGL	"opengl32.dll"
+#define DEFAULT_OSMESA  ""
+#elif defined(__QNXNTO__)
+#define DEFAULT_OPENGL	"libGL.so:libGL.so.3"
+#elif defined(__OpenBSD__)
+#define DEFAULT_OPENGL	"libGL.so:libGL.so.16.0:libGL.so.15.0:libGL.so.14.0"
+#else
+#define DEFAULT_OPENGL	"libGL.so:libGL.so.1"
+#endif
+#ifndef DEFAULT_OSMESA
+#define DEFAULT_OSMESA	"libOSMesa.so:libOSMesa.8.so:libOSMesa.7.so:libOSMesa.6.so"
+#endif
 
+ 
 // configuration file 
 /*************************************************************************/
 
@@ -558,6 +579,67 @@ bool stringToKeysym(bx_hotkey *keysym, const char *string)
 	return false;
 }
 
+/*
+ * split a pathlist into an array of strings.
+ * returns a single block of malloced memory
+ */
+char **split_pathlist(const char *pathlist)
+{
+	size_t size;
+	const char *p;
+	size_t cnt;
+	char *dst;
+	char **result;
+	
+	if (pathlist == NULL)
+		return NULL;
+	
+	/* count words */
+	cnt = 2;
+	p = pathlist;
+	while (*p != '\0')
+	{
+		if (*p == ';' || *p == ':')
+			cnt++;
+		p++;
+	}
+	
+	size = (p - pathlist) + cnt * (sizeof(char *) + 2);
+	result = (char **)malloc(size);
+	if (result == NULL)
+		return NULL;
+	
+	p = pathlist;
+	dst = (char *)(result + cnt);
+	cnt = 0;
+	p = pathlist;
+	while (*p != '\0')
+	{
+		result[cnt] = dst;
+		while (*p != '\0')
+		{
+			if (*p == ';' || *p == ':')
+			{
+				size_t len = dst - result[cnt];
+				if (*p == ':' && len == 1 && isalnum(p[-1]))
+				{
+					*dst++ = *p++;
+					continue;
+				}
+				break;
+			}
+			*dst++ = *p++;
+		}
+		*dst++ = '\0';
+		cnt++;
+		if (*p != '\0')
+			p++;
+	}
+	result[cnt] = NULL;
+	return result;
+}
+
+
 /*************************************************************************/
 struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
@@ -725,7 +807,7 @@ static void presave_video()
 struct Config_Tag opengl_conf[]={
 	{ "Enabled", Bool_Tag, &bx_options.opengl.enabled, 0, 0},
 	{ "Filtered", Bool_Tag, &bx_options.opengl.filtered, 0, 0},
-	{ "Library", Path_Tag, bx_options.opengl.library, sizeof(bx_options.opengl.library), 0},
+	{ "Library", String_Tag, bx_options.opengl.library, sizeof(bx_options.opengl.library), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -733,7 +815,7 @@ static void preset_opengl()
 {
   bx_options.opengl.enabled = false;
   bx_options.opengl.filtered = false;
-  strcpy(bx_options.opengl.library, "");
+  strcpy(bx_options.opengl.library, DEFAULT_OPENGL);
 }
 
 static void postload_opengl()
@@ -1170,8 +1252,8 @@ struct Config_Tag osmesa_conf[]={
 
 static void preset_osmesa() {
 	OSMESA_CONF(channel_size) = 0;
-	safe_strncpy(OSMESA_CONF(libgl), "libGL.so", sizeof(OSMESA_CONF(libgl)));
-	safe_strncpy(OSMESA_CONF(libosmesa), "libOSMesa.so", sizeof(OSMESA_CONF(libosmesa)));
+	safe_strncpy(OSMESA_CONF(libgl), DEFAULT_OPENGL, sizeof(OSMESA_CONF(libgl)));
+	safe_strncpy(OSMESA_CONF(libosmesa), DEFAULT_OSMESA, sizeof(OSMESA_CONF(libosmesa)));
 }
 
 static void postload_osmesa() {

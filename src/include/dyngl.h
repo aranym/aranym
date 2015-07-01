@@ -45,7 +45,7 @@ extern dyngl_funcs gl;
 
 /*--- Functions ---*/
 
-int dyngl_load(char *filename);
+int dyngl_load(const char *filename);
 
 #ifdef __cplusplus
 }

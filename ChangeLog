@@ -1,3 +1,7 @@
+2015/07/02 - Thorsten
+allow opengl libraries to be a colon separated list of names
+
+
 2015/07/01 - Thorsten
 nfosmesa: a few fixes, and grouping of functions according to GL extension
 

@@ -34,37 +34,26 @@ dyngl_funcs gl;
 
 /*--- Functions ---*/
 
-int dyngl_load(char *filename)
+int dyngl_load(const char *filename)
 {
-	int lib_loaded = 0;
+	int res = 1;
 	
-#ifndef OS_darwin
-	if (strlen(filename)>1) {
-		if (SDL_GL_LoadLibrary(filename)<0) {
-			fprintf(stderr, "Can not load OpenGL library from <%s>\n", filename);
-		} else {
-			lib_loaded = 1;
-		}
-	}
-#else
-	/* Just to make the compiler not complain about an unused filename parameter. */
-	filename = filename;
-#endif
-
-	if (!lib_loaded) {
+	if (filename != NULL && strlen(filename)>1) {
+		if (SDL_GL_LoadLibrary(filename)<0)
+			return -1;
+	} else {
 		/* Try to load default */
 		if (SDL_GL_LoadLibrary(NULL)<0) {
-			fprintf(stderr, "Can not load default OpenGL library\n");
-			return 0;
+			return -1;
 		}
-		fprintf(stderr, "Loaded default OpenGL library\n");
+		res = 0;
 	}
 
 #define GL_PROC(type, gl, name, export, upper, params, first, ret) gl.name = SDL_GL_GetProcAddress(#gl #name);
 #define GLU_PROC(type, gl, name, export, upper, params, first, ret)
 #include "../../atari/nfosmesa/glfuncs.h"
 
-	return 1;
+	return res;
 }
 
 #ifdef __cplusplus

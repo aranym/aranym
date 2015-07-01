@@ -42,9 +42,25 @@
 HostScreenOpenGL::HostScreenOpenGL(void)
 	: HostScreen()
 {
-	if (dyngl_load(bx_options.opengl.library)==0) {
-		fprintf(stderr, "Can not load OpenGL library: using software rendering mode\n");
+	int res;
+	char **path;
+	
+	res = -1;
+	path = split_pathlist(bx_options.opengl.library);
+	if (path != NULL)
+	{
+		for (int i = 0; res < 0 && path[i] != NULL; i++)
+			res = dyngl_load(path[i]);
+		free(path);
+	}
+	if (res<0) {
+		res = dyngl_load(NULL);
+	}
+	if (res<0) {
+		bug("Can not load OpenGL library: using software rendering mode");
 		bx_options.opengl.enabled = false;
+	} else if (res == 0) {
+		bug("Loaded default OpenGL library");
 	}
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	window = NULL;

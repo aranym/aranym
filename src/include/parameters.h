@@ -143,7 +143,7 @@ typedef struct {
 typedef struct {
   bool enabled;
   bool filtered;
-  char library[512];
+  char library[1024];
 } bx_opengl_options_t;
 
 // Ethernet options
@@ -195,8 +195,8 @@ typedef struct {
 // NfOSMesa options
 typedef struct {
 	uint32 channel_size;    /* If using libOSMesa[16|32], size of channel */
-	char libgl[256];		/* Pathname to libGL */
-	char libosmesa[256];	/* Pathname to libOSMesa */
+	char libgl[1024];		/* Pathname to libGL */
+	char libosmesa[1024];	/* Pathname to libOSMesa */
 } bx_nfosmesa_options_t;
 
 // NatFeats options
@@ -330,6 +330,7 @@ bool setConfigValue(const char *section_name, const char *key, const char *value
 
 char *keysymToString(char *buffer, const bx_hotkey *keysym);
 bool stringToKeysym(bx_hotkey *keysym, const char *string);
+char **split_pathlist(const char *pathlist);
 
 extern const char *getConfigFile();
 void setConfigFile(const char *filename);

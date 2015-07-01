@@ -405,6 +405,8 @@ protected:
 		Atari2HostInt64Array(size, (const Uint64 *)src, (GLuint64 *)dest);
 	}
 	
+	void *load_gl_library(const char *pathlist);
+	
 	bool pixelParams(GLenum format, GLenum type, GLsizei &size, GLsizei &count);
 	void *pixelBuffer(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei &size, GLsizei &count);
 	void *convertPixels(GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const GLvoid *pixels);

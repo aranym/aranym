@@ -762,6 +762,25 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 
 /*--- Protected functions ---*/
 
+void *OSMesaDriver::load_gl_library(const char *pathlist)
+{
+	void *handle;
+	char **path;
+	
+	handle = NULL;
+	path = split_pathlist(pathlist);
+	if (path != NULL)
+	{
+		for (int i = 0; handle == NULL && path[i] != NULL; i++)
+		{
+			handle = SDL_LoadObject(path[i]);
+		}
+		free(path);
+	}
+	return handle;
+}
+
+
 int OSMesaDriver::OpenLibrary(void)
 {
 #ifdef OS_darwin
@@ -793,12 +812,12 @@ int OSMesaDriver::OpenLibrary(void)
 
 	/* Load libOSMesa */
 	if (libosmesa_handle==NULL) {
-		libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+		libosmesa_handle=load_gl_library(bx_options.osmesa.libosmesa);
 #ifdef OS_darwin
 		/* If loading failed, try to load from executable directory */
 		if (libosmesa_handle==NULL) {
 			chdir(exedir);
-			libosmesa_handle=SDL_LoadObject(bx_options.osmesa.libosmesa);
+			libosmesa_handle=load_gl_library(bx_options.osmesa.libosmesa);
 			chdir(curdir);
 		}
 #endif
@@ -820,12 +839,16 @@ int OSMesaDriver::OpenLibrary(void)
 
 	/* Load LibGL if needed */
 	if ((libgl_handle==NULL) && libgl_needed) {
-		libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+		/*
+		 * FIXME: should probably reuse bx_options.opengl.library,
+		 * otherwise we might end up loading 2 different OpenGL libraries
+		 */
+		libgl_handle=load_gl_library(bx_options.osmesa.libgl);
 #ifdef OS_darwin
 		/* If loading failed, try to load from executable directory */
 		if (libgl_handle==NULL) {
 			chdir(exedir);
-			libgl_handle=SDL_LoadObject(bx_options.osmesa.libgl);
+			libgl_handle=load_gl_library(bx_options.osmesa.libgl);
 			chdir(curdir);
 		}
 #endif
