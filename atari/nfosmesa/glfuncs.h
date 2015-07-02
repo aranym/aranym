@@ -280,6 +280,9 @@ GL_PROC(void, gl, BindTexture, glBindTexture, BINDTEXTURE, (GLenum target, GLuin
 GL_PROC(void, gl, BindTextureEXT, glBindTextureEXT, BINDTEXTUREEXT, (GLenum target, GLuint texture), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, BindTextureUnit, glBindTextureUnit, BINDTEXTUREUNIT, (GLuint unit, GLuint texture), &unit, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(GLuint, gl, BindTextureUnitParameterEXT, glBindTextureUnitParameterEXT, BINDTEXTUREUNITPARAMETEREXT, (GLenum unit, GLenum value), &unit, return (GLuint))
 #endif
 #if !defined(TINYGL_ONLY)
@@ -350,6 +353,9 @@ GL_PROC(void, gl, Bitmap, glBitmap, BITMAP, (GLsizei width, GLsizei height, GLfl
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BitmapxOES, glBitmapxOES, BITMAPXOES, (GLsizei width, GLsizei height, GLfixed xorig, GLfixed yorig, GLfixed xmove, GLfixed ymove, const GLubyte *bitmap), &width, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, BlendBarrierKHR, glBlendBarrierKHR, BLENDBARRIERKHR, (void), NULL, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BlendBarrierNV, glBlendBarrierNV, BLENDBARRIERNV, (void), NULL, GL_void_return)
@@ -436,6 +442,9 @@ GL_PROC(void, gl, BlitFramebuffer, glBlitFramebuffer, BLITFRAMEBUFFER, (GLint sr
 GL_PROC(void, gl, BlitFramebufferEXT, glBlitFramebufferEXT, BLITFRAMEBUFFEREXT, (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter), &srcX0, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, BlitNamedFramebuffer, glBlitNamedFramebuffer, BLITNAMEDFRAMEBUFFER, (GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter), &readFramebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BufferAddressRangeNV, glBufferAddressRangeNV, BUFFERADDRESSRANGENV, (GLenum pname, GLuint index, GLuint64EXT address, GLsizeiptr length), &pname, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -443,6 +452,9 @@ GL_PROC(void, gl, BufferData, glBufferData, BUFFERDATA, (GLenum target, GLsizeip
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BufferDataARB, glBufferDataARB, BUFFERDATAARB, (GLenum target, GLsizeiptrARB size, const void *data, GLenum usage), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, BufferPageCommitmentARB, glBufferPageCommitmentARB, BUFFERPAGECOMMITMENTARB, (GLenum target, GLintptr offset, GLsizeiptr size, GLboolean32 commit), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BufferParameteriAPPLE, glBufferParameteriAPPLE, BUFFERPARAMETERIAPPLE, (GLenum target, GLenum pname, GLint param), &target, GL_void_return)
@@ -456,6 +468,9 @@ GL_PROC(void, gl, BufferSubData, glBufferSubData, BUFFERSUBDATA, (GLenum target,
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, BufferSubDataARB, glBufferSubDataARB, BUFFERSUBDATAARB, (GLenum target, GLintptrARB offset, GLsizeiptrARB size, const void *data), &target, GL_void_return)
 #endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CallCommandListNV, glCallCommandListNV, CALLCOMMANDLISTNV, (GLuint list), &list, GL_void_return)
+#endif
 GL_PROC(void, gl, CallList, glCallList, CALLLIST, (GLuint list), &list, GL_void_return)
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CallLists, glCallLists, CALLLISTS, (GLsizei n, GLenum type, const GLvoid *lists), &n, GL_void_return)
@@ -465,6 +480,9 @@ GL_PROC(GLenum, gl, CheckFramebufferStatus, glCheckFramebufferStatus, CHECKFRAME
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLenum, gl, CheckFramebufferStatusEXT, glCheckFramebufferStatusEXT, CHECKFRAMEBUFFERSTATUSEXT, (GLenum target), &target, return (GLenum))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLenum, gl, CheckNamedFramebufferStatus, glCheckNamedFramebufferStatus, CHECKNAMEDFRAMEBUFFERSTATUS, (GLuint framebuffer, GLenum target), &framebuffer, return (GLenum))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLenum, gl, CheckNamedFramebufferStatusEXT, glCheckNamedFramebufferStatusEXT, CHECKNAMEDFRAMEBUFFERSTATUSEXT, (GLuint framebuffer, GLenum target), &framebuffer, return (GLenum))
@@ -528,10 +546,28 @@ GL_PROC(void, gl, ClearDepthxOES, glClearDepthxOES, CLEARDEPTHXOES, (GLfixed dep
 GL_PROC(void, gl, ClearIndex, glClearIndex, CLEARINDEX, (GLfloat c), &c, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedBufferData, glClearNamedBufferData, CLEARNAMEDBUFFERDATA, (GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClearNamedBufferDataEXT, glClearNamedBufferDataEXT, CLEARNAMEDBUFFERDATAEXT, (GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedBufferSubData, glClearNamedBufferSubData, CLEARNAMEDBUFFERSUBDATA, (GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClearNamedBufferSubDataEXT, glClearNamedBufferSubDataEXT, CLEARNAMEDBUFFERSUBDATAEXT, (GLuint buffer, GLenum internalformat, GLsizeiptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedFramebufferfi, glClearNamedFramebufferfi, CLEARNAMEDFRAMEBUFFERFI, (GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedFramebufferfv, glClearNamedFramebufferfv, CLEARNAMEDFRAMEBUFFERFV, (GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat *value), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedFramebufferiv, glClearNamedFramebufferiv, CLEARNAMEDFRAMEBUFFERIV, (GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLint *value), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClearNamedFramebufferuiv, glClearNamedFramebufferuiv, CLEARNAMEDFRAMEBUFFERUIV, (GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLuint *value), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClearStencil, glClearStencil, CLEARSTENCIL, (GLint s), &s, GL_void_return)
@@ -556,6 +592,9 @@ GL_PROC(void, gl, ClientAttribDefaultEXT, glClientAttribDefaultEXT, CLIENTATTRIB
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLenum, gl, ClientWaitSync, glClientWaitSync, CLIENTWAITSYNC, (GLsync sync, GLbitfield flags, GLuint64 timeout), &sync, return (GLenum))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ClipControl, glClipControl, CLIPCONTROL, (GLenum origin, GLenum depth), &origin, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ClipPlane, glClipPlane, CLIPPLANE, (GLenum plane, const GLdouble *equation), &plane, GL_void_return)
@@ -795,6 +834,12 @@ GL_PROC(void, gl, CombinerParameterivNV, glCombinerParameterivNV, COMBINERPARAME
 GL_PROC(void, gl, CombinerStageParameterfvNV, glCombinerStageParameterfvNV, COMBINERSTAGEPARAMETERFVNV, (GLenum stage, GLenum pname, const GLfloat *params), &stage, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CommandListSegmentsNV, glCommandListSegmentsNV, COMMANDLISTSEGMENTSNV, (GLuint list, GLuint segments), &list, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CompileCommandListNV, glCompileCommandListNV, COMPILECOMMANDLISTNV, (GLuint list), &list, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CompileShader, glCompileShader, COMPILESHADER, (GLuint shader), &shader, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -867,10 +912,19 @@ GL_PROC(void, gl, CompressedTextureImage2DEXT, glCompressedTextureImage2DEXT, CO
 GL_PROC(void, gl, CompressedTextureImage3DEXT, glCompressedTextureImage3DEXT, COMPRESSEDTEXTUREIMAGE3DEXT, (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *bits), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CompressedTextureSubImage1D, glCompressedTextureSubImage1D, COMPRESSEDTEXTURESUBIMAGE1D, (GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CompressedTextureSubImage1DEXT, glCompressedTextureSubImage1DEXT, COMPRESSEDTEXTURESUBIMAGE1DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *bits), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CompressedTextureSubImage2D, glCompressedTextureSubImage2D, COMPRESSEDTEXTURESUBIMAGE2D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CompressedTextureSubImage2DEXT, glCompressedTextureSubImage2DEXT, COMPRESSEDTEXTURESUBIMAGE2DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *bits), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CompressedTextureSubImage3D, glCompressedTextureSubImage3D, COMPRESSEDTEXTURESUBIMAGE3D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CompressedTextureSubImage3DEXT, glCompressedTextureSubImage3DEXT, COMPRESSEDTEXTURESUBIMAGE3DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *bits), &texture, GL_void_return)
@@ -966,6 +1020,9 @@ GL_PROC(void, gl, CopyMultiTexSubImage2DEXT, glCopyMultiTexSubImage2DEXT, COPYMU
 GL_PROC(void, gl, CopyMultiTexSubImage3DEXT, glCopyMultiTexSubImage3DEXT, COPYMULTITEXSUBIMAGE3DEXT, (GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height), &texunit, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CopyNamedBufferSubData, glCopyNamedBufferSubData, COPYNAMEDBUFFERSUBDATA, (GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size), &readBuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CopyPathNV, glCopyPathNV, COPYPATHNV, (GLuint resultPath, GLuint srcPath), &resultPath, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -1008,10 +1065,19 @@ GL_PROC(void, gl, CopyTextureImage1DEXT, glCopyTextureImage1DEXT, COPYTEXTUREIMA
 GL_PROC(void, gl, CopyTextureImage2DEXT, glCopyTextureImage2DEXT, COPYTEXTUREIMAGE2DEXT, (GLuint texture, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CopyTextureSubImage1D, glCopyTextureSubImage1D, COPYTEXTURESUBIMAGE1D, (GLuint texture, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CopyTextureSubImage1DEXT, glCopyTextureSubImage1DEXT, COPYTEXTURESUBIMAGE1DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CopyTextureSubImage2D, glCopyTextureSubImage2D, COPYTEXTURESUBIMAGE2D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CopyTextureSubImage2DEXT, glCopyTextureSubImage2DEXT, COPYTEXTURESUBIMAGE2DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CopyTextureSubImage3D, glCopyTextureSubImage3D, COPYTEXTURESUBIMAGE3D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CopyTextureSubImage3DEXT, glCopyTextureSubImage3DEXT, COPYTEXTURESUBIMAGE3DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height), &texture, GL_void_return)
@@ -1029,7 +1095,22 @@ GL_PROC(void, gl, CoverStrokePathInstancedNV, glCoverStrokePathInstancedNV, COVE
 GL_PROC(void, gl, CoverStrokePathNV, glCoverStrokePathNV, COVERSTROKEPATHNV, (GLuint path, GLenum coverMode), &path, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CoverageModulationNV, glCoverageModulationNV, COVERAGEMODULATIONNV, (GLenum components), &components, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CoverageModulationTableNV, glCoverageModulationTableNV, COVERAGEMODULATIONTABLENV, (GLsizei n, const GLfloat *v), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateBuffers, glCreateBuffers, CREATEBUFFERS, (GLsizei n, GLuint *buffers), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateCommandListsNV, glCreateCommandListsNV, CREATECOMMANDLISTSNV, (GLsizei n, GLuint *lists), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(GLhandleARB, gl, CreateDebugObjectMESA, glCreateDebugObjectMESA, CREATEDEBUGOBJECTMESA, (void), NULL, return (GLhandleARB))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateFramebuffers, glCreateFramebuffers, CREATEFRAMEBUFFERS, (GLsizei n, GLuint *framebuffers), &n, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, CreatePerfQueryINTEL, glCreatePerfQueryINTEL, CREATEPERFQUERYINTEL, (GLuint queryId, GLuint *queryHandle), &queryId, GL_void_return)
@@ -1039,6 +1120,18 @@ GL_PROC(GLuint, gl, CreateProgram, glCreateProgram, CREATEPROGRAM, (void), NULL,
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLhandleARB, gl, CreateProgramObjectARB, glCreateProgramObjectARB, CREATEPROGRAMOBJECTARB, (void), NULL, return (GLhandleARB))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateProgramPipelines, glCreateProgramPipelines, CREATEPROGRAMPIPELINES, (GLsizei n, GLuint *pipelines), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateQueries, glCreateQueries, CREATEQUERIES, (GLenum target, GLsizei n, GLuint *ids), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateRenderbuffers, glCreateRenderbuffers, CREATERENDERBUFFERS, (GLsizei n, GLuint *renderbuffers), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateSamplers, glCreateSamplers, CREATESAMPLERS, (GLsizei n, GLuint *samplers), &n, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLuint, gl, CreateShader, glCreateShader, CREATESHADER, (GLenum type), &type, return (GLuint))
@@ -1053,7 +1146,19 @@ GL_PROC(GLuint, gl, CreateShaderProgramEXT, glCreateShaderProgramEXT, CREATESHAD
 GL_PROC(GLuint, gl, CreateShaderProgramv, glCreateShaderProgramv, CREATESHADERPROGRAMV, (GLenum type, GLsizei count, const GLchar *const *strings), &type, return (GLuint))
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateStatesNV, glCreateStatesNV, CREATESTATESNV, (GLsizei n, GLuint *states), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(GLsync, gl, CreateSyncFromCLeventARB, glCreateSyncFromCLeventARB, CREATESYNCFROMCLEVENTARB, (struct _cl_context *context, struct _cl_event *event, GLbitfield flags), &context, return (GLsync))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateTextures, glCreateTextures, CREATETEXTURES, (GLenum target, GLsizei n, GLuint *textures), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateTransformFeedbacks, glCreateTransformFeedbacks, CREATETRANSFORMFEEDBACKS, (GLsizei n, GLuint *ids), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, CreateVertexArrays, glCreateVertexArrays, CREATEVERTEXARRAYS, (GLsizei n, GLuint *arrays), &n, GL_void_return)
 #endif
 GL_PROC(void, gl, CullFace, glCullFace, CULLFACE, (GLenum mode), &mode, GL_void_return)
 #if !defined(TINYGL_ONLY)
@@ -1109,6 +1214,9 @@ GL_PROC(void, gl, DeleteBuffers, glDeleteBuffers, DELETEBUFFERS, (GLsizei n, con
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DeleteBuffersARB, glDeleteBuffersARB, DELETEBUFFERSARB, (GLsizei n, const GLuint *buffers), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DeleteCommandListsNV, glDeleteCommandListsNV, DELETECOMMANDLISTSNV, (GLsizei n, const GLuint *lists), &n, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DeleteFencesAPPLE, glDeleteFencesAPPLE, DELETEFENCESAPPLE, (GLsizei n, const GLuint *fences), &n, GL_void_return)
@@ -1179,6 +1287,9 @@ GL_PROC(void, gl, DeleteSamplers, glDeleteSamplers, DELETESAMPLERS, (GLsizei cou
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DeleteShader, glDeleteShader, DELETESHADER, (GLuint shader), &shader, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DeleteStatesNV, glDeleteStatesNV, DELETESTATESNV, (GLsizei n, const GLuint *states), &n, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DeleteSync, glDeleteSync, DELETESYNC, (GLsync sync), &sync, GL_void_return)
@@ -1262,6 +1373,9 @@ GL_PROC(void, gl, DisableTraceMESA, glDisableTraceMESA, DISABLETRACEMESA, (GLbit
 GL_PROC(void, gl, DisableVariantClientStateEXT, glDisableVariantClientStateEXT, DISABLEVARIANTCLIENTSTATEEXT, (GLuint id), &id, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DisableVertexArrayAttrib, glDisableVertexArrayAttrib, DISABLEVERTEXARRAYATTRIB, (GLuint vaobj, GLuint index), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DisableVertexArrayAttribEXT, glDisableVertexArrayAttribEXT, DISABLEVERTEXARRAYATTRIBEXT, (GLuint vaobj, GLuint index), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -1320,6 +1434,18 @@ GL_PROC(void, gl, DrawBuffersARB, glDrawBuffersARB, DRAWBUFFERSARB, (GLsizei n, 
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DrawBuffersATI, glDrawBuffersATI, DRAWBUFFERSATI, (GLsizei n, const GLenum *bufs), &n, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DrawCommandsAddressNV, glDrawCommandsAddressNV, DRAWCOMMANDSADDRESSNV, (GLenum primitiveMode, const GLuint64 *indirects, const GLsizei *sizes, GLuint count), &primitiveMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DrawCommandsNV, glDrawCommandsNV, DRAWCOMMANDSNV, (GLenum primitiveMode, GLuint buffer, const GLintptr *indirects, const GLsizei *sizes, GLuint count), &primitiveMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DrawCommandsStatesAddressNV, glDrawCommandsStatesAddressNV, DRAWCOMMANDSSTATESADDRESSNV, (const GLuint64 *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count), &indirects, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, DrawCommandsStatesNV, glDrawCommandsStatesNV, DRAWCOMMANDSSTATESNV, (GLuint buffer, const GLintptr *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, DrawElementArrayAPPLE, glDrawElementArrayAPPLE, DRAWELEMENTARRAYAPPLE, (GLenum mode, GLint first, GLsizei count), &mode, GL_void_return)
@@ -1431,6 +1557,9 @@ GL_PROC(void, gl, EnableTraceMESA, glEnableTraceMESA, ENABLETRACEMESA, (GLbitfie
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, EnableVariantClientStateEXT, glEnableVariantClientStateEXT, ENABLEVARIANTCLIENTSTATEEXT, (GLuint id), &id, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, EnableVertexArrayAttrib, glEnableVertexArrayAttrib, ENABLEVERTEXARRAYATTRIB, (GLuint vaobj, GLuint index), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, EnableVertexArrayAttribEXT, glEnableVertexArrayAttribEXT, ENABLEVERTEXARRAYATTRIBEXT, (GLuint vaobj, GLuint index), &vaobj, GL_void_return)
@@ -1598,6 +1727,9 @@ GL_PROC(void, gl, FlushMappedBufferRange, glFlushMappedBufferRange, FLUSHMAPPEDB
 GL_PROC(void, gl, FlushMappedBufferRangeAPPLE, glFlushMappedBufferRangeAPPLE, FLUSHMAPPEDBUFFERRANGEAPPLE, (GLenum target, GLintptr offset, GLsizeiptr size), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, FlushMappedNamedBufferRange, glFlushMappedNamedBufferRange, FLUSHMAPPEDNAMEDBUFFERRANGE, (GLuint buffer, GLintptr offset, GLsizeiptr length), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FlushMappedNamedBufferRangeEXT, glFlushMappedNamedBufferRangeEXT, FLUSHMAPPEDNAMEDBUFFERRANGEEXT, (GLuint buffer, GLintptr offset, GLsizeiptr length), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -1685,6 +1817,9 @@ GL_PROC(void, gl, FogxvOES, glFogxvOES, FOGXVOES, (GLenum pname, const GLfixed *
 GL_PROC(void, gl, FragmentColorMaterialSGIX, glFragmentColorMaterialSGIX, FRAGMENTCOLORMATERIALSGIX, (GLenum face, GLenum mode), &face, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, FragmentCoverageColorNV, glFragmentCoverageColorNV, FRAGMENTCOVERAGECOLORNV, (GLuint color), &color, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FragmentLightModelfSGIX, glFragmentLightModelfSGIX, FRAGMENTLIGHTMODELFSGIX, (GLenum pname, GLfloat param), &pname, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -1745,6 +1880,9 @@ GL_PROC(void, gl, FramebufferRenderbuffer, glFramebufferRenderbuffer, FRAMEBUFFE
 GL_PROC(void, gl, FramebufferRenderbufferEXT, glFramebufferRenderbufferEXT, FRAMEBUFFERRENDERBUFFEREXT, (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, FramebufferSampleLocationsfvNV, glFramebufferSampleLocationsfvNV, FRAMEBUFFERSAMPLELOCATIONSFVNV, (GLenum target, GLuint start, GLsizei count, const GLfloat *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FramebufferTexture, glFramebufferTexture, FRAMEBUFFERTEXTURE, (GLenum target, GLenum attachment, GLuint texture, GLint level), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -1785,6 +1923,9 @@ GL_PROC(void, gl, FramebufferTextureLayerARB, glFramebufferTextureLayerARB, FRAM
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FramebufferTextureLayerEXT, glFramebufferTextureLayerEXT, FRAMEBUFFERTEXTURELAYEREXT, (GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, FramebufferTextureMultiviewOVR, glFramebufferTextureMultiviewOVR, FRAMEBUFFERTEXTUREMULTIVIEWOVR, (GLenum target, GLenum attachment, GLuint texture, GLint level, GLint baseViewIndex, GLsizei numViews), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, FreeObjectBufferATI, glFreeObjectBufferATI, FREEOBJECTBUFFERATI, (GLuint buffer), &buffer, GL_void_return)
@@ -1888,6 +2029,9 @@ GL_PROC(void, gl, GenerateMipmapEXT, glGenerateMipmapEXT, GENERATEMIPMAPEXT, (GL
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GenerateMultiTexMipmapEXT, glGenerateMultiTexMipmapEXT, GENERATEMULTITEXMIPMAPEXT, (GLenum texunit, GLenum target), &texunit, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GenerateTextureMipmap, glGenerateTextureMipmap, GENERATETEXTUREMIPMAP, (GLuint texture), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GenerateTextureMipmapEXT, glGenerateTextureMipmapEXT, GENERATETEXTUREMIPMAPEXT, (GLuint texture, GLenum target), &texture, GL_void_return)
@@ -2037,6 +2181,9 @@ GL_PROC(void, gl, GetCombinerOutputParameterivNV, glGetCombinerOutputParameteriv
 GL_PROC(void, gl, GetCombinerStageParameterfvNV, glGetCombinerStageParameterfvNV, GETCOMBINERSTAGEPARAMETERFVNV, (GLenum stage, GLenum pname, GLfloat *params), &stage, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(GLuint, gl, GetCommandHeaderNV, glGetCommandHeaderNV, GETCOMMANDHEADERNV, (GLenum tokenID, GLuint size), &tokenID, return (GLuint))
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetCompressedMultiTexImageEXT, glGetCompressedMultiTexImageEXT, GETCOMPRESSEDMULTITEXIMAGEEXT, (GLenum texunit, GLenum target, GLint lod, void *img), &texunit, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -2046,7 +2193,13 @@ GL_PROC(void, gl, GetCompressedTexImage, glGetCompressedTexImage, GETCOMPRESSEDT
 GL_PROC(void, gl, GetCompressedTexImageARB, glGetCompressedTexImageARB, GETCOMPRESSEDTEXIMAGEARB, (GLenum target, GLint level, void *img), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetCompressedTextureImage, glGetCompressedTextureImage, GETCOMPRESSEDTEXTUREIMAGE, (GLuint texture, GLint level, GLsizei bufSize, void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetCompressedTextureImageEXT, glGetCompressedTextureImageEXT, GETCOMPRESSEDTEXTUREIMAGEEXT, (GLuint texture, GLenum target, GLint lod, void *img), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetCompressedTextureSubImage, glGetCompressedTextureSubImage, GETCOMPRESSEDTEXTURESUBIMAGE, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei bufSize, void *pixels), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetConvolutionFilter, glGetConvolutionFilter, GETCONVOLUTIONFILTER, (GLenum target, GLenum format, GLenum type, void *image), &target, GL_void_return)
@@ -2068,6 +2221,9 @@ GL_PROC(void, gl, GetConvolutionParameterivEXT, glGetConvolutionParameterivEXT, 
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetConvolutionParameterxvOES, glGetConvolutionParameterxvOES, GETCONVOLUTIONPARAMETERXVOES, (GLenum target, GLenum pname, GLfixed *params), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetCoverageModulationTableNV, glGetCoverageModulationTableNV, GETCOVERAGEMODULATIONTABLENV, (GLsizei bufsize, GLfloat *v), &bufsize, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLsizei, gl, GetDebugLogLengthMESA, glGetDebugLogLengthMESA, GETDEBUGLOGLENGTHMESA, (GLhandleARB obj, GLenum logType, GLenum shaderType), &obj, return (GLsizei))
@@ -2164,6 +2320,9 @@ GL_PROC(void, gl, GetFramebufferParameteriv, glGetFramebufferParameteriv, GETFRA
 GL_PROC(void, gl, GetFramebufferParameterivEXT, glGetFramebufferParameterivEXT, GETFRAMEBUFFERPARAMETERIVEXT, (GLuint framebuffer, GLenum pname, GLint *params), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(GLenum, gl, GetGraphicsResetStatus, glGetGraphicsResetStatus, GETGRAPHICSRESETSTATUS, (void), NULL, return (GLenum))
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(GLenum, gl, GetGraphicsResetStatusARB, glGetGraphicsResetStatusARB, GETGRAPHICSRESETSTATUSARB, (void), NULL, return (GLenum))
 #endif
 #if !defined(TINYGL_ONLY)
@@ -2227,6 +2386,9 @@ GL_PROC(void, gl, GetIntegerui64i_vNV, glGetIntegerui64i_vNV, GETINTEGERUI64I_VN
 GL_PROC(void, gl, GetIntegerui64vNV, glGetIntegerui64vNV, GETINTEGERUI64VNV, (GLenum value, GLuint64EXT *result), &value, GL_void_return)
 #endif
 GL_PROC(void, gl, GetIntegerv, glGetIntegerv, GETINTEGERV, (GLenum pname, GLint *params), &pname, GL_void_return)
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetInternalformatSampleivNV, glGetInternalformatSampleivNV, GETINTERNALFORMATSAMPLEIVNV, (GLenum target, GLenum internalformat, GLsizei samples, GLenum pname, GLsizei bufSize, GLint *params), &target, GL_void_return)
+#endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetInternalformati64v, glGetInternalformati64v, GETINTERNALFORMATI64V, (GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 *params), &target, GL_void_return)
 #endif
@@ -2363,19 +2525,37 @@ GL_PROC(void, gl, GetMultisamplefv, glGetMultisamplefv, GETMULTISAMPLEFV, (GLenu
 GL_PROC(void, gl, GetMultisamplefvNV, glGetMultisamplefvNV, GETMULTISAMPLEFVNV, (GLenum pname, GLuint index, GLfloat *val), &pname, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedBufferParameteri64v, glGetNamedBufferParameteri64v, GETNAMEDBUFFERPARAMETERI64V, (GLuint buffer, GLenum pname, GLint64 *params), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedBufferParameteriv, glGetNamedBufferParameteriv, GETNAMEDBUFFERPARAMETERIV, (GLuint buffer, GLenum pname, GLint *params), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedBufferParameterivEXT, glGetNamedBufferParameterivEXT, GETNAMEDBUFFERPARAMETERIVEXT, (GLuint buffer, GLenum pname, GLint *params), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedBufferParameterui64vNV, glGetNamedBufferParameterui64vNV, GETNAMEDBUFFERPARAMETERUI64VNV, (GLuint buffer, GLenum pname, GLuint64EXT *params), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedBufferPointerv, glGetNamedBufferPointerv, GETNAMEDBUFFERPOINTERV, (GLuint buffer, GLenum pname, void * *params), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedBufferPointervEXT, glGetNamedBufferPointervEXT, GETNAMEDBUFFERPOINTERVEXT, (GLuint buffer, GLenum pname, void * *params), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedBufferSubData, glGetNamedBufferSubData, GETNAMEDBUFFERSUBDATA, (GLuint buffer, GLintptr offset, GLsizeiptr size, void *data), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedBufferSubDataEXT, glGetNamedBufferSubDataEXT, GETNAMEDBUFFERSUBDATAEXT, (GLuint buffer, GLintptr offset, GLsizeiptr size, void *data), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedFramebufferAttachmentParameteriv, glGetNamedFramebufferAttachmentParameteriv, GETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIV, (GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedFramebufferAttachmentParameterivEXT, glGetNamedFramebufferAttachmentParameterivEXT, GETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT, (GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedFramebufferParameteriv, glGetNamedFramebufferParameteriv, GETNAMEDFRAMEBUFFERPARAMETERIV, (GLuint framebuffer, GLenum pname, GLint *param), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedFramebufferParameterivEXT, glGetNamedFramebufferParameterivEXT, GETNAMEDFRAMEBUFFERPARAMETERIVEXT, (GLuint framebuffer, GLenum pname, GLint *params), &framebuffer, GL_void_return)
@@ -2397,6 +2577,9 @@ GL_PROC(void, gl, GetNamedProgramStringEXT, glGetNamedProgramStringEXT, GETNAMED
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedProgramivEXT, glGetNamedProgramivEXT, GETNAMEDPROGRAMIVEXT, (GLuint program, GLenum target, GLenum pname, GLint *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetNamedRenderbufferParameteriv, glGetNamedRenderbufferParameteriv, GETNAMEDRENDERBUFFERPARAMETERIV, (GLuint renderbuffer, GLenum pname, GLint *params), &renderbuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetNamedRenderbufferParameterivEXT, glGetNamedRenderbufferParameterivEXT, GETNAMEDRENDERBUFFERPARAMETERIVEXT, (GLuint renderbuffer, GLenum pname, GLint *params), &renderbuffer, GL_void_return)
@@ -2615,6 +2798,9 @@ GL_PROC(GLint, gl, GetProgramResourceLocationIndex, glGetProgramResourceLocation
 GL_PROC(void, gl, GetProgramResourceName, glGetProgramResourceName, GETPROGRAMRESOURCENAME, (GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetProgramResourcefvNV, glGetProgramResourcefvNV, GETPROGRAMRESOURCEFVNV, (GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLfloat *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetProgramResourceiv, glGetProgramResourceiv, GETPROGRAMRESOURCEIV, (GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -2637,6 +2823,18 @@ GL_PROC(void, gl, GetProgramivARB, glGetProgramivARB, GETPROGRAMIVARB, (GLenum t
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetProgramivNV, glGetProgramivNV, GETPROGRAMIVNV, (GLuint id, GLenum pname, GLint *params), &id, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetQueryBufferObjecti64v, glGetQueryBufferObjecti64v, GETQUERYBUFFEROBJECTI64V, (GLuint id, GLuint buffer, GLenum pname, GLintptr offset), &id, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetQueryBufferObjectiv, glGetQueryBufferObjectiv, GETQUERYBUFFEROBJECTIV, (GLuint id, GLuint buffer, GLenum pname, GLintptr offset), &id, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetQueryBufferObjectui64v, glGetQueryBufferObjectui64v, GETQUERYBUFFEROBJECTUI64V, (GLuint id, GLuint buffer, GLenum pname, GLintptr offset), &id, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetQueryBufferObjectuiv, glGetQueryBufferObjectuiv, GETQUERYBUFFEROBJECTUIV, (GLuint id, GLuint buffer, GLenum pname, GLintptr offset), &id, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetQueryIndexediv, glGetQueryIndexediv, GETQUERYINDEXEDIV, (GLenum target, GLuint index, GLenum pname, GLint *params), &target, GL_void_return)
@@ -2712,6 +2910,9 @@ GL_PROC(void, gl, GetShaderiv, glGetShaderiv, GETSHADERIV, (GLuint shader, GLenu
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetSharpenTexFuncSGIS, glGetSharpenTexFuncSGIS, GETSHARPENTEXFUNCSGIS, (GLenum target, GLfloat *points), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLushort, gl, GetStageIndexNV, glGetStageIndexNV, GETSTAGEINDEXNV, (GLenum shadertype), &shadertype, return (GLushort))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_GETSTRING(const GLubyte *, gl, GetString, glGetString, GETSTRING, (GLenum name), &name, return (const GLubyte *))
@@ -2801,22 +3002,43 @@ GL_PROC(GLuint64, gl, GetTextureHandleARB, glGetTextureHandleARB, GETTEXTUREHAND
 GL_PROC(GLuint64, gl, GetTextureHandleNV, glGetTextureHandleNV, GETTEXTUREHANDLENV, (GLuint texture), &texture, return (GLuint64))
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureImage, glGetTextureImage, GETTEXTUREIMAGE, (GLuint texture, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureImageEXT, glGetTextureImageEXT, GETTEXTUREIMAGEEXT, (GLuint texture, GLenum target, GLint level, GLenum format, GLenum type, void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureLevelParameterfv, glGetTextureLevelParameterfv, GETTEXTURELEVELPARAMETERFV, (GLuint texture, GLint level, GLenum pname, GLfloat *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureLevelParameterfvEXT, glGetTextureLevelParameterfvEXT, GETTEXTURELEVELPARAMETERFVEXT, (GLuint texture, GLenum target, GLint level, GLenum pname, GLfloat *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureLevelParameteriv, glGetTextureLevelParameteriv, GETTEXTURELEVELPARAMETERIV, (GLuint texture, GLint level, GLenum pname, GLint *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureLevelParameterivEXT, glGetTextureLevelParameterivEXT, GETTEXTURELEVELPARAMETERIVEXT, (GLuint texture, GLenum target, GLint level, GLenum pname, GLint *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureParameterIiv, glGetTextureParameterIiv, GETTEXTUREPARAMETERIIV, (GLuint texture, GLenum pname, GLint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureParameterIivEXT, glGetTextureParameterIivEXT, GETTEXTUREPARAMETERIIVEXT, (GLuint texture, GLenum target, GLenum pname, GLint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureParameterIuiv, glGetTextureParameterIuiv, GETTEXTUREPARAMETERIUIV, (GLuint texture, GLenum pname, GLuint *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureParameterIuivEXT, glGetTextureParameterIuivEXT, GETTEXTUREPARAMETERIUIVEXT, (GLuint texture, GLenum target, GLenum pname, GLuint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureParameterfv, glGetTextureParameterfv, GETTEXTUREPARAMETERFV, (GLuint texture, GLenum pname, GLfloat *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureParameterfvEXT, glGetTextureParameterfvEXT, GETTEXTUREPARAMETERFVEXT, (GLuint texture, GLenum target, GLenum pname, GLfloat *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureParameteriv, glGetTextureParameteriv, GETTEXTUREPARAMETERIV, (GLuint texture, GLenum pname, GLint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTextureParameterivEXT, glGetTextureParameterivEXT, GETTEXTUREPARAMETERIVEXT, (GLuint texture, GLenum target, GLenum pname, GLint *params), &texture, GL_void_return)
@@ -2826,6 +3048,9 @@ GL_PROC(GLuint64, gl, GetTextureSamplerHandleARB, glGetTextureSamplerHandleARB, 
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLuint64, gl, GetTextureSamplerHandleNV, glGetTextureSamplerHandleNV, GETTEXTURESAMPLERHANDLENV, (GLuint texture, GLuint sampler), &texture, return (GLuint64))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTextureSubImage, glGetTextureSubImage, GETTEXTURESUBIMAGE, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void *pixels), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTrackMatrixivNV, glGetTrackMatrixivNV, GETTRACKMATRIXIVNV, (GLenum target, GLuint address, GLenum pname, GLint *params), &target, GL_void_return)
@@ -2838,6 +3063,15 @@ GL_PROC(void, gl, GetTransformFeedbackVaryingEXT, glGetTransformFeedbackVaryingE
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetTransformFeedbackVaryingNV, glGetTransformFeedbackVaryingNV, GETTRANSFORMFEEDBACKVARYINGNV, (GLuint program, GLuint index, GLint *location), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTransformFeedbacki64_v, glGetTransformFeedbacki64_v, GETTRANSFORMFEEDBACKI64_V, (GLuint xfb, GLenum pname, GLuint index, GLint64 *param), &xfb, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTransformFeedbacki_v, glGetTransformFeedbacki_v, GETTRANSFORMFEEDBACKI_V, (GLuint xfb, GLenum pname, GLuint index, GLint *param), &xfb, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetTransformFeedbackiv, glGetTransformFeedbackiv, GETTRANSFORMFEEDBACKIV, (GLuint xfb, GLenum pname, GLint *param), &xfb, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLuint, gl, GetUniformBlockIndex, glGetUniformBlockIndex, GETUNIFORMBLOCKINDEX, (GLuint program, const GLchar *uniformBlockName), &program, return (GLuint))
@@ -2909,6 +3143,12 @@ GL_PROC(void, gl, GetVariantPointervEXT, glGetVariantPointervEXT, GETVARIANTPOIN
 GL_PROC(GLint, gl, GetVaryingLocationNV, glGetVaryingLocationNV, GETVARYINGLOCATIONNV, (GLuint program, const GLchar *name), &program, return (GLint))
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetVertexArrayIndexed64iv, glGetVertexArrayIndexed64iv, GETVERTEXARRAYINDEXED64IV, (GLuint vaobj, GLuint index, GLenum pname, GLint64 *param), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetVertexArrayIndexediv, glGetVertexArrayIndexediv, GETVERTEXARRAYINDEXEDIV, (GLuint vaobj, GLuint index, GLenum pname, GLint *param), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetVertexArrayIntegeri_vEXT, glGetVertexArrayIntegeri_vEXT, GETVERTEXARRAYINTEGERI_VEXT, (GLuint vaobj, GLuint index, GLenum pname, GLint *param), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -2919,6 +3159,9 @@ GL_PROC(void, gl, GetVertexArrayPointeri_vEXT, glGetVertexArrayPointeri_vEXT, GE
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetVertexArrayPointervEXT, glGetVertexArrayPointervEXT, GETVERTEXARRAYPOINTERVEXT, (GLuint vaobj, GLenum pname, void * *param), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetVertexArrayiv, glGetVertexArrayiv, GETVERTEXARRAYIV, (GLuint vaobj, GLenum pname, GLint *param), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetVertexAttribArrayObjectfvATI, glGetVertexAttribArrayObjectfvATI, GETVERTEXATTRIBARRAYOBJECTFVATI, (GLuint index, GLenum pname, GLfloat *params), &index, GL_void_return)
@@ -3014,55 +3257,109 @@ GL_PROC(void, gl, GetVideoui64vNV, glGetVideoui64vNV, GETVIDEOUI64VNV, (GLuint v
 GL_PROC(void, gl, GetVideouivNV, glGetVideouivNV, GETVIDEOUIVNV, (GLuint video_slot, GLenum pname, GLuint *params), &video_slot, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnColorTable, glGetnColorTable, GETNCOLORTABLE, (GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnColorTableARB, glGetnColorTableARB, GETNCOLORTABLEARB, (GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnCompressedTexImage, glGetnCompressedTexImage, GETNCOMPRESSEDTEXIMAGE, (GLenum target, GLint lod, GLsizei bufSize, void *pixels), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnCompressedTexImageARB, glGetnCompressedTexImageARB, GETNCOMPRESSEDTEXIMAGEARB, (GLenum target, GLint lod, GLsizei bufSize, void *img), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnConvolutionFilter, glGetnConvolutionFilter, GETNCONVOLUTIONFILTER, (GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnConvolutionFilterARB, glGetnConvolutionFilterARB, GETNCONVOLUTIONFILTERARB, (GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnHistogram, glGetnHistogram, GETNHISTOGRAM, (GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnHistogramARB, glGetnHistogramARB, GETNHISTOGRAMARB, (GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnMapdv, glGetnMapdv, GETNMAPDV, (GLenum target, GLenum query, GLsizei bufSize, GLdouble *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnMapdvARB, glGetnMapdvARB, GETNMAPDVARB, (GLenum target, GLenum query, GLsizei bufSize, GLdouble *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnMapfv, glGetnMapfv, GETNMAPFV, (GLenum target, GLenum query, GLsizei bufSize, GLfloat *v), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnMapfvARB, glGetnMapfvARB, GETNMAPFVARB, (GLenum target, GLenum query, GLsizei bufSize, GLfloat *v), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnMapiv, glGetnMapiv, GETNMAPIV, (GLenum target, GLenum query, GLsizei bufSize, GLint *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnMapivARB, glGetnMapivARB, GETNMAPIVARB, (GLenum target, GLenum query, GLsizei bufSize, GLint *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnMinmax, glGetnMinmax, GETNMINMAX, (GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnMinmaxARB, glGetnMinmaxARB, GETNMINMAXARB, (GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnPixelMapfv, glGetnPixelMapfv, GETNPIXELMAPFV, (GLenum map, GLsizei bufSize, GLfloat *values), &map, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnPixelMapfvARB, glGetnPixelMapfvARB, GETNPIXELMAPFVARB, (GLenum map, GLsizei bufSize, GLfloat *values), &map, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnPixelMapuiv, glGetnPixelMapuiv, GETNPIXELMAPUIV, (GLenum map, GLsizei bufSize, GLuint *values), &map, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnPixelMapuivARB, glGetnPixelMapuivARB, GETNPIXELMAPUIVARB, (GLenum map, GLsizei bufSize, GLuint *values), &map, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnPixelMapusv, glGetnPixelMapusv, GETNPIXELMAPUSV, (GLenum map, GLsizei bufSize, GLushort *values), &map, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnPixelMapusvARB, glGetnPixelMapusvARB, GETNPIXELMAPUSVARB, (GLenum map, GLsizei bufSize, GLushort *values), &map, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnPolygonStipple, glGetnPolygonStipple, GETNPOLYGONSTIPPLE, (GLsizei bufSize, GLubyte *pattern), &bufSize, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnPolygonStippleARB, glGetnPolygonStippleARB, GETNPOLYGONSTIPPLEARB, (GLsizei bufSize, GLubyte *pattern), &bufSize, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnSeparableFilter, glGetnSeparableFilter, GETNSEPARABLEFILTER, (GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnSeparableFilterARB, glGetnSeparableFilterARB, GETNSEPARABLEFILTERARB, (GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnTexImage, glGetnTexImage, GETNTEXIMAGE, (GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnTexImageARB, glGetnTexImageARB, GETNTEXIMAGEARB, (GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *img), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnUniformdv, glGetnUniformdv, GETNUNIFORMDV, (GLuint program, GLint location, GLsizei bufSize, GLdouble *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnUniformdvARB, glGetnUniformdvARB, GETNUNIFORMDVARB, (GLuint program, GLint location, GLsizei bufSize, GLdouble *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnUniformfv, glGetnUniformfv, GETNUNIFORMFV, (GLuint program, GLint location, GLsizei bufSize, GLfloat *params), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnUniformfvARB, glGetnUniformfvARB, GETNUNIFORMFVARB, (GLuint program, GLint location, GLsizei bufSize, GLfloat *params), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnUniformiv, glGetnUniformiv, GETNUNIFORMIV, (GLuint program, GLint location, GLsizei bufSize, GLint *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnUniformivARB, glGetnUniformivARB, GETNUNIFORMIVARB, (GLuint program, GLint location, GLsizei bufSize, GLint *params), &program, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, GetnUniformuiv, glGetnUniformuiv, GETNUNIFORMUIV, (GLuint program, GLint location, GLsizei bufSize, GLuint *params), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, GetnUniformuivARB, glGetnUniformuivARB, GETNUNIFORMUIVARB, (GLuint program, GLint location, GLsizei bufSize, GLuint *params), &program, GL_void_return)
@@ -3202,6 +3499,12 @@ GL_PROC(void, gl, InvalidateBufferSubData, glInvalidateBufferSubData, INVALIDATE
 GL_PROC(void, gl, InvalidateFramebuffer, glInvalidateFramebuffer, INVALIDATEFRAMEBUFFER, (GLenum target, GLsizei numAttachments, const GLenum *attachments), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, InvalidateNamedFramebufferData, glInvalidateNamedFramebufferData, INVALIDATENAMEDFRAMEBUFFERDATA, (GLuint framebuffer, GLsizei numAttachments, const GLenum *attachments), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, InvalidateNamedFramebufferSubData, glInvalidateNamedFramebufferSubData, INVALIDATENAMEDFRAMEBUFFERSUBDATA, (GLuint framebuffer, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, InvalidateSubFramebuffer, glInvalidateSubFramebuffer, INVALIDATESUBFRAMEBUFFER, (GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -3221,6 +3524,9 @@ GL_PROC(GLboolean, gl, IsBufferARB, glIsBufferARB, ISBUFFERARB, (GLuint buffer),
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLboolean, gl, IsBufferResidentNV, glIsBufferResidentNV, ISBUFFERRESIDENTNV, (GLenum target), &target, return (GLboolean))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLboolean, gl, IsCommandListNV, glIsCommandListNV, ISCOMMANDLISTNV, (GLuint list), &list, return (GLboolean))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLboolean, gl, IsEnabled, glIsEnabled, ISENABLED, (GLenum cap), &cap, return (GLboolean))
@@ -3303,6 +3609,9 @@ GL_PROC(GLboolean, gl, IsSampler, glIsSampler, ISSAMPLER, (GLuint sampler), &sam
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLboolean, gl, IsShader, glIsShader, ISSHADER, (GLuint shader), &shader, return (GLboolean))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLboolean, gl, IsStateNV, glIsStateNV, ISSTATENV, (GLuint state), &state, return (GLboolean))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(GLboolean, gl, IsSync, glIsSync, ISSYNC, (GLsync sync), &sync, return (GLboolean))
@@ -3388,6 +3697,9 @@ GL_PROC(void, gl, LinkProgramARB, glLinkProgramARB, LINKPROGRAMARB, (GLhandleARB
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ListBase, glListBase, LISTBASE, (GLuint base), &base, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ListDrawCommandsStatesClientNV, glListDrawCommandsStatesClientNV, LISTDRAWCOMMANDSSTATESCLIENTNV, (GLuint list, GLuint segment, const void * *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count), &list, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ListParameterfSGIX, glListParameterfSGIX, LISTPARAMETERFSGIX, (GLuint list, GLenum pname, GLfloat param), &list, GL_void_return)
@@ -3522,7 +3834,13 @@ GL_PROC(void, gl, MapGrid2f, glMapGrid2f, MAPGRID2F, (GLint un, GLfloat u1, GLfl
 GL_PROC(void, gl, MapGrid2xOES, glMapGrid2xOES, MAPGRID2XOES, (GLint n, GLfixed u1, GLfixed u2, GLfixed v1, GLfixed v2), &n, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void *, gl, MapNamedBuffer, glMapNamedBuffer, MAPNAMEDBUFFER, (GLuint buffer, GLenum access), &buffer, return (void *))
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void *, gl, MapNamedBufferEXT, glMapNamedBufferEXT, MAPNAMEDBUFFEREXT, (GLuint buffer, GLenum access), &buffer, return (void *))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void *, gl, MapNamedBufferRange, glMapNamedBufferRange, MAPNAMEDBUFFERRANGE, (GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access), &buffer, return (void *))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void *, gl, MapNamedBufferRangeEXT, glMapNamedBufferRangeEXT, MAPNAMEDBUFFERRANGEEXT, (GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access), &buffer, return (void *))
@@ -3581,7 +3899,16 @@ GL_PROC(void, gl, MatrixIndexuivARB, glMatrixIndexuivARB, MATRIXINDEXUIVARB, (GL
 GL_PROC(void, gl, MatrixIndexusvARB, glMatrixIndexusvARB, MATRIXINDEXUSVARB, (GLint size, const GLushort *indices), &size, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixLoad3x2fNV, glMatrixLoad3x2fNV, MATRIXLOAD3X2FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixLoad3x3fNV, glMatrixLoad3x3fNV, MATRIXLOAD3X3FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MatrixLoadIdentityEXT, glMatrixLoadIdentityEXT, MATRIXLOADIDENTITYEXT, (GLenum mode), &mode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixLoadTranspose3x3fNV, glMatrixLoadTranspose3x3fNV, MATRIXLOADTRANSPOSE3X3FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MatrixLoadTransposedEXT, glMatrixLoadTransposedEXT, MATRIXLOADTRANSPOSEDEXT, (GLenum mode, const GLdouble *m), &mode, GL_void_return)
@@ -3596,6 +3923,15 @@ GL_PROC(void, gl, MatrixLoaddEXT, glMatrixLoaddEXT, MATRIXLOADDEXT, (GLenum mode
 GL_PROC(void, gl, MatrixLoadfEXT, glMatrixLoadfEXT, MATRIXLOADFEXT, (GLenum mode, const GLfloat *m), &mode, GL_void_return)
 #endif
 GL_PROC(void, gl, MatrixMode, glMatrixMode, MATRIXMODE, (GLenum mode), &mode, GL_void_return)
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixMult3x2fNV, glMatrixMult3x2fNV, MATRIXMULT3X2FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixMult3x3fNV, glMatrixMult3x3fNV, MATRIXMULT3X3FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MatrixMultTranspose3x3fNV, glMatrixMultTranspose3x3fNV, MATRIXMULTTRANSPOSE3X3FNV, (GLenum matrixMode, const GLfloat *m), &matrixMode, GL_void_return)
+#endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MatrixMultTransposedEXT, glMatrixMultTransposedEXT, MATRIXMULTTRANSPOSEDEXT, (GLenum mode, const GLdouble *m), &mode, GL_void_return)
 #endif
@@ -3637,6 +3973,9 @@ GL_PROC(void, gl, MatrixTranslatefEXT, glMatrixTranslatefEXT, MATRIXTRANSLATEFEX
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MemoryBarrier, glMemoryBarrier, MEMORYBARRIER, (GLbitfield barriers), &barriers, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MemoryBarrierByRegion, glMemoryBarrierByRegion, MEMORYBARRIERBYREGION, (GLbitfield barriers), &barriers, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MemoryBarrierEXT, glMemoryBarrierEXT, MEMORYBARRIEREXT, (GLbitfield barriers), &barriers, GL_void_return)
@@ -3688,6 +4027,9 @@ GL_PROC(void, gl, MultiDrawArraysIndirect, glMultiDrawArraysIndirect, MULTIDRAWA
 GL_PROC(void, gl, MultiDrawArraysIndirectAMD, glMultiDrawArraysIndirectAMD, MULTIDRAWARRAYSINDIRECTAMD, (GLenum mode, const void *indirect, GLsizei primcount, GLsizei stride), &mode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MultiDrawArraysIndirectBindlessCountNV, glMultiDrawArraysIndirectBindlessCountNV, MULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNV, (GLenum mode, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount), &mode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MultiDrawArraysIndirectBindlessNV, glMultiDrawArraysIndirectBindlessNV, MULTIDRAWARRAYSINDIRECTBINDLESSNV, (GLenum mode, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount), &mode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -3710,6 +4052,9 @@ GL_PROC(void, gl, MultiDrawElementsIndirect, glMultiDrawElementsIndirect, MULTID
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MultiDrawElementsIndirectAMD, glMultiDrawElementsIndirectAMD, MULTIDRAWELEMENTSINDIRECTAMD, (GLenum mode, GLenum type, const void *indirect, GLsizei primcount, GLsizei stride), &mode, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, MultiDrawElementsIndirectBindlessCountNV, glMultiDrawElementsIndirectBindlessCountNV, MULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNV, (GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount), &mode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, MultiDrawElementsIndirectBindlessNV, glMultiDrawElementsIndirectBindlessNV, MULTIDRAWELEMENTSINDIRECTBINDLESSNV, (GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount), &mode, GL_void_return)
@@ -4090,10 +4435,25 @@ GL_PROC(void, gl, MultiTexSubImage2DEXT, glMultiTexSubImage2DEXT, MULTITEXSUBIMA
 GL_PROC(void, gl, MultiTexSubImage3DEXT, glMultiTexSubImage3DEXT, MULTITEXSUBIMAGE3DEXT, (GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels), &texunit, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedBufferData, glNamedBufferData, NAMEDBUFFERDATA, (GLuint buffer, GLsizeiptr size, const void *data, GLenum usage), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedBufferDataEXT, glNamedBufferDataEXT, NAMEDBUFFERDATAEXT, (GLuint buffer, GLsizeiptr size, const void *data, GLenum usage), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedBufferPageCommitmentARB, glNamedBufferPageCommitmentARB, NAMEDBUFFERPAGECOMMITMENTARB, (GLuint buffer, GLintptr offset, GLsizeiptr size, GLboolean32 commit), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedBufferPageCommitmentEXT, glNamedBufferPageCommitmentEXT, NAMEDBUFFERPAGECOMMITMENTEXT, (GLuint buffer, GLintptr offset, GLsizeiptr size, GLboolean32 commit), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedBufferStorage, glNamedBufferStorage, NAMEDBUFFERSTORAGE, (GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedBufferStorageEXT, glNamedBufferStorageEXT, NAMEDBUFFERSTORAGEEXT, (GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags), &buffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedBufferSubData, glNamedBufferSubData, NAMEDBUFFERSUBDATA, (GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data), &buffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedBufferSubDataEXT, glNamedBufferSubDataEXT, NAMEDBUFFERSUBDATAEXT, (GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data), &buffer, GL_void_return)
@@ -4102,10 +4462,31 @@ GL_PROC(void, gl, NamedBufferSubDataEXT, glNamedBufferSubDataEXT, NAMEDBUFFERSUB
 GL_PROC(void, gl, NamedCopyBufferSubDataEXT, glNamedCopyBufferSubDataEXT, NAMEDCOPYBUFFERSUBDATAEXT, (GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size), &readBuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferDrawBuffer, glNamedFramebufferDrawBuffer, NAMEDFRAMEBUFFERDRAWBUFFER, (GLuint framebuffer, GLenum buf), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferDrawBuffers, glNamedFramebufferDrawBuffers, NAMEDFRAMEBUFFERDRAWBUFFERS, (GLuint framebuffer, GLsizei n, const GLenum *bufs), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferParameteri, glNamedFramebufferParameteri, NAMEDFRAMEBUFFERPARAMETERI, (GLuint framebuffer, GLenum pname, GLint param), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedFramebufferParameteriEXT, glNamedFramebufferParameteriEXT, NAMEDFRAMEBUFFERPARAMETERIEXT, (GLuint framebuffer, GLenum pname, GLint param), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferReadBuffer, glNamedFramebufferReadBuffer, NAMEDFRAMEBUFFERREADBUFFER, (GLuint framebuffer, GLenum src), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferRenderbuffer, glNamedFramebufferRenderbuffer, NAMEDFRAMEBUFFERRENDERBUFFER, (GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedFramebufferRenderbufferEXT, glNamedFramebufferRenderbufferEXT, NAMEDFRAMEBUFFERRENDERBUFFEREXT, (GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferSampleLocationsfvNV, glNamedFramebufferSampleLocationsfvNV, NAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV, (GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferTexture, glNamedFramebufferTexture, NAMEDFRAMEBUFFERTEXTURE, (GLuint framebuffer, GLenum attachment, GLuint texture, GLint level), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedFramebufferTexture1DEXT, glNamedFramebufferTexture1DEXT, NAMEDFRAMEBUFFERTEXTURE1DEXT, (GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level), &framebuffer, GL_void_return)
@@ -4121,6 +4502,9 @@ GL_PROC(void, gl, NamedFramebufferTextureEXT, glNamedFramebufferTextureEXT, NAME
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedFramebufferTextureFaceEXT, glNamedFramebufferTextureFaceEXT, NAMEDFRAMEBUFFERTEXTUREFACEEXT, (GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLenum face), &framebuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedFramebufferTextureLayer, glNamedFramebufferTextureLayer, NAMEDFRAMEBUFFERTEXTURELAYER, (GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer), &framebuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedFramebufferTextureLayerEXT, glNamedFramebufferTextureLayerEXT, NAMEDFRAMEBUFFERTEXTURELAYEREXT, (GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer), &framebuffer, GL_void_return)
@@ -4162,7 +4546,13 @@ GL_PROC(void, gl, NamedProgramLocalParametersI4uivEXT, glNamedProgramLocalParame
 GL_PROC(void, gl, NamedProgramStringEXT, glNamedProgramStringEXT, NAMEDPROGRAMSTRINGEXT, (GLuint program, GLenum target, GLenum format, GLsizei len, const void *string), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedRenderbufferStorage, glNamedRenderbufferStorage, NAMEDRENDERBUFFERSTORAGE, (GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height), &renderbuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedRenderbufferStorageEXT, glNamedRenderbufferStorageEXT, NAMEDRENDERBUFFERSTORAGEEXT, (GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height), &renderbuffer, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, NamedRenderbufferStorageMultisample, glNamedRenderbufferStorageMultisample, NAMEDRENDERBUFFERSTORAGEMULTISAMPLE, (GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height), &renderbuffer, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, NamedRenderbufferStorageMultisampleCoverageEXT, glNamedRenderbufferStorageMultisampleCoverageEXT, NAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXT, (GLuint renderbuffer, GLsizei coverageSamples, GLsizei colorSamples, GLenum internalformat, GLsizei width, GLsizei height), &renderbuffer, GL_void_return)
@@ -4332,10 +4722,19 @@ GL_PROC(void, gl, PathDashArrayNV, glPathDashArrayNV, PATHDASHARRAYNV, (GLuint p
 GL_PROC(void, gl, PathFogGenNV, glPathFogGenNV, PATHFOGGENNV, (GLenum genMode), &genMode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(GLenum, gl, PathGlyphIndexArrayNV, glPathGlyphIndexArrayNV, PATHGLYPHINDEXARRAYNV, (GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale), &firstPathName, return (GLenum))
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLenum, gl, PathGlyphIndexRangeNV, glPathGlyphIndexRangeNV, PATHGLYPHINDEXRANGENV, (GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint pathParameterTemplate, GLfloat emScale, GLuint *baseAndCount), &fontTarget, return (GLenum))
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, PathGlyphRangeNV, glPathGlyphRangeNV, PATHGLYPHRANGENV, (GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyph, GLsizei numGlyphs, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale), &firstPathName, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, PathGlyphsNV, glPathGlyphsNV, PATHGLYPHSNV, (GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLsizei numGlyphs, GLenum type, const void *charcodes, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale), &firstPathName, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(GLenum, gl, PathMemoryGlyphIndexArrayNV, glPathMemoryGlyphIndexArrayNV, PATHMEMORYGLYPHINDEXARRAYNV, (GLuint firstPathName, GLenum fontTarget, GLsizeiptr fontSize, const void *fontData, GLsizei faceIndex, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale), &firstPathName, return (GLenum))
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, PathParameterfNV, glPathParameterfNV, PATHPARAMETERFNV, (GLuint path, GLenum pname, GLfloat value), &path, GL_void_return)
@@ -4496,6 +4895,9 @@ GL_PROC(GLint, gl, PollInstrumentsSGIX, glPollInstrumentsSGIX, POLLINSTRUMENTSSG
 #endif
 GL_PROC(void, gl, PolygonMode, glPolygonMode, POLYGONMODE, (GLenum face, GLenum mode), &face, GL_void_return)
 GL_PROC(void, gl, PolygonOffset, glPolygonOffset, POLYGONOFFSET, (GLfloat factor, GLfloat units), &factor, GL_void_return)
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, PolygonOffsetClampEXT, glPolygonOffsetClampEXT, POLYGONOFFSETCLAMPEXT, (GLfloat factor, GLfloat units, GLfloat clamp), &factor, GL_void_return)
+#endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, PolygonOffsetEXT, glPolygonOffsetEXT, POLYGONOFFSETEXT, (GLfloat factor, GLfloat bias), &factor, GL_void_return)
 #endif
@@ -4662,6 +5064,9 @@ GL_PROC(void, gl, ProgramParameters4dvNV, glProgramParameters4dvNV, PROGRAMPARAM
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ProgramParameters4fvNV, glProgramParameters4fvNV, PROGRAMPARAMETERS4FVNV, (GLenum target, GLuint index, GLsizei count, const GLfloat *v), &target, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ProgramPathFragmentInputGenNV, glProgramPathFragmentInputGenNV, PROGRAMPATHFRAGMENTINPUTGENNV, (GLuint program, GLint location, GLenum genMode, GLint components, const GLfloat *coeffs), &program, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ProgramStringARB, glProgramStringARB, PROGRAMSTRINGARB, (GLenum target, GLenum format, GLsizei len, const void *string), &target, GL_void_return)
@@ -5161,6 +5566,9 @@ GL_PROC(void, gl, RasterPos4xOES, glRasterPos4xOES, RASTERPOS4XOES, (GLfixed x, 
 GL_PROC(void, gl, RasterPos4xvOES, glRasterPos4xvOES, RASTERPOS4XVOES, (const GLfixed *coords), &coords, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, RasterSamplesEXT, glRasterSamplesEXT, RASTERSAMPLESEXT, (GLuint samples, GLboolean32 fixedsamplelocations), &samples, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ReadBuffer, glReadBuffer, READBUFFER, (GLenum mode), &mode, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -5168,6 +5576,9 @@ GL_PROC(void, gl, ReadInstrumentsSGIX, glReadInstrumentsSGIX, READINSTRUMENTSSGI
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ReadPixels, glReadPixels, READPIXELS, (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels), &x, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ReadnPixels, glReadnPixels, READNPIXELS, (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data), &x, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ReadnPixelsARB, glReadnPixelsARB, READNPIXELSARB, (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data), &x, GL_void_return)
@@ -5310,6 +5721,9 @@ GL_PROC(void, gl, ResetMinmaxEXT, glResetMinmaxEXT, RESETMINMAXEXT, (GLenum targ
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ResizeBuffersMESA, glResizeBuffersMESA, RESIZEBUFFERSMESA, (void), NULL, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, ResolveDepthValuesNV, glResolveDepthValuesNV, RESOLVEDEPTHVALUESNV, (void), NULL, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, ResumeTransformFeedback, glResumeTransformFeedback, RESUMETRANSFORMFEEDBACK, (void), NULL, GL_void_return)
@@ -5586,6 +6000,9 @@ GL_PROC(void, gl, SpriteParameterivSGIX, glSpriteParameterivSGIX, SPRITEPARAMETE
 GL_PROC(void, gl, StartInstrumentsSGIX, glStartInstrumentsSGIX, STARTINSTRUMENTSSGIX, (void), NULL, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, StateCaptureNV, glStateCaptureNV, STATECAPTURENV, (GLuint state, GLenum mode), &state, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, StencilClearTagEXT, glStencilClearTagEXT, STENCILCLEARTAGEXT, (GLsizei stencilTagBits, GLuint stencilClearTag), &stencilTagBits, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
@@ -5628,10 +6045,25 @@ GL_PROC(void, gl, StencilStrokePathInstancedNV, glStencilStrokePathInstancedNV, 
 GL_PROC(void, gl, StencilStrokePathNV, glStencilStrokePathNV, STENCILSTROKEPATHNV, (GLuint path, GLint reference, GLuint mask), &path, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, StencilThenCoverFillPathInstancedNV, glStencilThenCoverFillPathInstancedNV, STENCILTHENCOVERFILLPATHINSTANCEDNV, (GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum fillMode, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues), &numPaths, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, StencilThenCoverFillPathNV, glStencilThenCoverFillPathNV, STENCILTHENCOVERFILLPATHNV, (GLuint path, GLenum fillMode, GLuint mask, GLenum coverMode), &path, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, StencilThenCoverStrokePathInstancedNV, glStencilThenCoverStrokePathInstancedNV, STENCILTHENCOVERSTROKEPATHINSTANCEDNV, (GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLint reference, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues), &numPaths, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, StencilThenCoverStrokePathNV, glStencilThenCoverStrokePathNV, STENCILTHENCOVERSTROKEPATHNV, (GLuint path, GLint reference, GLuint mask, GLenum coverMode), &path, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, StopInstrumentsSGIX, glStopInstrumentsSGIX, STOPINSTRUMENTSSGIX, (GLint marker), &marker, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, StringMarkerGREMEDY, glStringMarkerGREMEDY, STRINGMARKERGREMEDY, (GLsizei len, const void *string), &len, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, SubpixelPrecisionBiasNV, glSubpixelPrecisionBiasNV, SUBPIXELPRECISIONBIASNV, (GLuint xbits, GLuint ybits), &xbits, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, SwapAPPLE, glSwapAPPLE, SWAPAPPLE, (void), NULL, GL_void_return)
@@ -6103,10 +6535,19 @@ GL_PROC(void, gl, TexSubImage3DEXT, glTexSubImage3DEXT, TEXSUBIMAGE3DEXT, (GLenu
 GL_PROC(void, gl, TexSubImage4DSGIS, glTexSubImage4DSGIS, TEXSUBIMAGE4DSGIS, (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint woffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLenum format, GLenum type, const void *pixels), &target, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureBarrier, glTextureBarrier, TEXTUREBARRIER, (void), NULL, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureBarrierNV, glTextureBarrierNV, TEXTUREBARRIERNV, (void), NULL, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureBuffer, glTextureBuffer, TEXTUREBUFFER, (GLuint texture, GLenum internalformat, GLuint buffer), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureBufferEXT, glTextureBufferEXT, TEXTUREBUFFEREXT, (GLuint texture, GLenum target, GLenum internalformat, GLuint buffer), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureBufferRange, glTextureBufferRange, TEXTUREBUFFERRANGE, (GLuint texture, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureBufferRangeEXT, glTextureBufferRangeEXT, TEXTUREBUFFERRANGEEXT, (GLuint texture, GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size), &texture, GL_void_return)
@@ -6151,19 +6592,37 @@ GL_PROC(void, gl, TextureNormalEXT, glTextureNormalEXT, TEXTURENORMALEXT, (GLenu
 GL_PROC(void, gl, TexturePageCommitmentEXT, glTexturePageCommitmentEXT, TEXTUREPAGECOMMITMENTEXT, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameterIiv, glTextureParameterIiv, TEXTUREPARAMETERIIV, (GLuint texture, GLenum pname, const GLint *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterIivEXT, glTextureParameterIivEXT, TEXTUREPARAMETERIIVEXT, (GLuint texture, GLenum target, GLenum pname, const GLint *params), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameterIuiv, glTextureParameterIuiv, TEXTUREPARAMETERIUIV, (GLuint texture, GLenum pname, const GLuint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterIuivEXT, glTextureParameterIuivEXT, TEXTUREPARAMETERIUIVEXT, (GLuint texture, GLenum target, GLenum pname, const GLuint *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameterf, glTextureParameterf, TEXTUREPARAMETERF, (GLuint texture, GLenum pname, GLfloat param), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterfEXT, glTextureParameterfEXT, TEXTUREPARAMETERFEXT, (GLuint texture, GLenum target, GLenum pname, GLfloat param), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameterfv, glTextureParameterfv, TEXTUREPARAMETERFV, (GLuint texture, GLenum pname, const GLfloat *param), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterfvEXT, glTextureParameterfvEXT, TEXTUREPARAMETERFVEXT, (GLuint texture, GLenum target, GLenum pname, const GLfloat *params), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameteri, glTextureParameteri, TEXTUREPARAMETERI, (GLuint texture, GLenum pname, GLint param), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameteriEXT, glTextureParameteriEXT, TEXTUREPARAMETERIEXT, (GLuint texture, GLenum target, GLenum pname, GLint param), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureParameteriv, glTextureParameteriv, TEXTUREPARAMETERIV, (GLuint texture, GLenum pname, const GLint *param), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureParameterivEXT, glTextureParameterivEXT, TEXTUREPARAMETERIVEXT, (GLuint texture, GLenum target, GLenum pname, const GLint *params), &texture, GL_void_return)
@@ -6175,16 +6634,31 @@ GL_PROC(void, gl, TextureRangeAPPLE, glTextureRangeAPPLE, TEXTURERANGEAPPLE, (GL
 GL_PROC(void, gl, TextureRenderbufferEXT, glTextureRenderbufferEXT, TEXTURERENDERBUFFEREXT, (GLuint texture, GLenum target, GLuint renderbuffer), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureStorage1D, glTextureStorage1D, TEXTURESTORAGE1D, (GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureStorage1DEXT, glTextureStorage1DEXT, TEXTURESTORAGE1DEXT, (GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureStorage2D, glTextureStorage2D, TEXTURESTORAGE2D, (GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureStorage2DEXT, glTextureStorage2DEXT, TEXTURESTORAGE2DEXT, (GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureStorage2DMultisample, glTextureStorage2DMultisample, TEXTURESTORAGE2DMULTISAMPLE, (GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureStorage2DMultisampleEXT, glTextureStorage2DMultisampleEXT, TEXTURESTORAGE2DMULTISAMPLEEXT, (GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureStorage3D, glTextureStorage3D, TEXTURESTORAGE3D, (GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureStorage3DEXT, glTextureStorage3DEXT, TEXTURESTORAGE3DEXT, (GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureStorage3DMultisample, glTextureStorage3DMultisample, TEXTURESTORAGE3DMULTISAMPLE, (GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureStorage3DMultisampleEXT, glTextureStorage3DMultisampleEXT, TEXTURESTORAGE3DMULTISAMPLEEXT, (GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations), &texture, GL_void_return)
@@ -6193,10 +6667,19 @@ GL_PROC(void, gl, TextureStorage3DMultisampleEXT, glTextureStorage3DMultisampleE
 GL_PROC(void, gl, TextureStorageSparseAMD, glTextureStorageSparseAMD, TEXTURESTORAGESPARSEAMD, (GLuint texture, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureSubImage1D, glTextureSubImage1D, TEXTURESUBIMAGE1D, (GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureSubImage1DEXT, glTextureSubImage1DEXT, TEXTURESUBIMAGE1DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureSubImage2D, glTextureSubImage2D, TEXTURESUBIMAGE2D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureSubImage2DEXT, glTextureSubImage2DEXT, TEXTURESUBIMAGE2DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TextureSubImage3D, glTextureSubImage3D, TEXTURESUBIMAGE3D, (GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TextureSubImage3DEXT, glTextureSubImage3DEXT, TEXTURESUBIMAGE3DEXT, (GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels), &texture, GL_void_return)
@@ -6227,6 +6710,12 @@ GL_PROC(void, gl, TrackMatrixNV, glTrackMatrixNV, TRACKMATRIXNV, (GLenum target,
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TransformFeedbackAttribsNV, glTransformFeedbackAttribsNV, TRANSFORMFEEDBACKATTRIBSNV, (GLsizei count, const GLint *attribs, GLenum bufferMode), &count, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TransformFeedbackBufferBase, glTransformFeedbackBufferBase, TRANSFORMFEEDBACKBUFFERBASE, (GLuint xfb, GLuint index, GLuint buffer), &xfb, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, TransformFeedbackBufferRange, glTransformFeedbackBufferRange, TRANSFORMFEEDBACKBUFFERRANGE, (GLuint xfb, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size), &xfb, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, TransformFeedbackStreamAttribsNV, glTransformFeedbackStreamAttribsNV, TRANSFORMFEEDBACKSTREAMATTRIBSNV, (GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode), &count, GL_void_return)
@@ -6566,6 +7055,9 @@ GL_PROC(GLboolean, gl, UnmapBuffer, glUnmapBuffer, UNMAPBUFFER, (GLenum target),
 GL_PROC(GLboolean, gl, UnmapBufferARB, glUnmapBufferARB, UNMAPBUFFERARB, (GLenum target), &target, return (GLboolean))
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(GLboolean, gl, UnmapNamedBuffer, glUnmapNamedBuffer, UNMAPNAMEDBUFFER, (GLuint buffer), &buffer, return (GLboolean))
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(GLboolean, gl, UnmapNamedBufferEXT, glUnmapNamedBufferEXT, UNMAPNAMEDBUFFEREXT, (GLuint buffer), &buffer, return (GLboolean))
 #endif
 #if !defined(TINYGL_ONLY)
@@ -6777,13 +7269,31 @@ GL_PROC(void, gl, Vertex4xOES, glVertex4xOES, VERTEX4XOES, (GLfixed x, GLfixed y
 GL_PROC(void, gl, Vertex4xvOES, glVertex4xvOES, VERTEX4XVOES, (const GLfixed *coords), &coords, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayAttribBinding, glVertexArrayAttribBinding, VERTEXARRAYATTRIBBINDING, (GLuint vaobj, GLuint attribindex, GLuint bindingindex), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayAttribFormat, glVertexArrayAttribFormat, VERTEXARRAYATTRIBFORMAT, (GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean32 normalized, GLuint relativeoffset), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayAttribIFormat, glVertexArrayAttribIFormat, VERTEXARRAYATTRIBIFORMAT, (GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayAttribLFormat, glVertexArrayAttribLFormat, VERTEXARRAYATTRIBLFORMAT, (GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayBindVertexBufferEXT, glVertexArrayBindVertexBufferEXT, VERTEXARRAYBINDVERTEXBUFFEREXT, (GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayBindingDivisor, glVertexArrayBindingDivisor, VERTEXARRAYBINDINGDIVISOR, (GLuint vaobj, GLuint bindingindex, GLuint divisor), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayColorOffsetEXT, glVertexArrayColorOffsetEXT, VERTEXARRAYCOLOROFFSETEXT, (GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayEdgeFlagOffsetEXT, glVertexArrayEdgeFlagOffsetEXT, VERTEXARRAYEDGEFLAGOFFSETEXT, (GLuint vaobj, GLuint buffer, GLsizei stride, GLintptr offset), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayElementBuffer, glVertexArrayElementBuffer, VERTEXARRAYELEMENTBUFFER, (GLuint vaobj, GLuint buffer), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayFogCoordOffsetEXT, glVertexArrayFogCoordOffsetEXT, VERTEXARRAYFOGCOORDOFFSETEXT, (GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset), &vaobj, GL_void_return)
@@ -6838,6 +7348,12 @@ GL_PROC(void, gl, VertexArrayVertexAttribOffsetEXT, glVertexArrayVertexAttribOff
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayVertexBindingDivisorEXT, glVertexArrayVertexBindingDivisorEXT, VERTEXARRAYVERTEXBINDINGDIVISOREXT, (GLuint vaobj, GLuint bindingindex, GLuint divisor), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayVertexBuffer, glVertexArrayVertexBuffer, VERTEXARRAYVERTEXBUFFER, (GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride), &vaobj, GL_void_return)
+#endif
+#if !defined(TINYGL_ONLY)
+GL_PROC(void, gl, VertexArrayVertexBuffers, glVertexArrayVertexBuffers, VERTEXARRAYVERTEXBUFFERS, (GLuint vaobj, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizei *strides), &vaobj, GL_void_return)
 #endif
 #if !defined(TINYGL_ONLY)
 GL_PROC(void, gl, VertexArrayVertexOffsetEXT, glVertexArrayVertexOffsetEXT, VERTEXARRAYVERTEXOFFSETEXT, (GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset), &vaobj, GL_void_return)
@@ -7897,7 +8413,7 @@ GL_PROC(void, gl, WriteMaskEXT, glWriteMaskEXT, WRITEMASKEXT, (GLuint res, GLuin
 
 GLU_PROC(void, glu, LookAt, gluLookAtd, LOOKAT, (GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX, GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ), &eyeX, GL_void_return)
 
-/* Functions generated: 12 OSMesa + 2664 GL + 1 GLU */
+/* Functions generated: 12 OSMesa + 2836 GL + 1 GLU */
 
 #undef GL_PROC
 #undef GLU_PROC

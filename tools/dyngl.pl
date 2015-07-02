@@ -36,8 +36,8 @@
 #            This is not done automatically, because the numbers must not change for old functions.
 #          - If new types are used in the prototypes, add them to atari/nfosmesa/gltypes.h
 #
-#     The current version (API Version 2) was generated from <GL/gl.h> on Linux,
-#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, $Revision: 26745 $Date: 2014-05-21 03:12:26)
+#     The current version (API Version 3) was generated from <GL/gl.h> on Linux,
+#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, $Revision: 31191 $Date: 2015-05-14 06:31:39 -0400
 #     and osmesa.h from Mesa 10.1.4.
 #
 # -macros:
@@ -132,12 +132,15 @@ my %blacklist = (
 	'glGetBufferSubData' => 1,
 	'glGetBufferSubDataARB' => 1,
 	'glGetNamedBufferSubDataEXT' => 1,
+	'glGetNamedBufferSubData' => 1,
 	'glMapBuffer' => 1,
 	'glMapBufferARB' => 1,
 	'glMapBufferRange' => 1,
 	'glMapObjectBufferATI' => 1,
 	'glMapNamedBufferEXT' => 1,
 	'glMapNamedBufferRangeEXT' => 1,
+	'glMapNamedBuffer' => 1,
+	'glMapNamedBufferRange' => 1,
 	'glMapTexture2DINTEL' => 1,
 	'glImportSyncEXT' => 1,
 	'glProgramCallbackMESA' => 1,
@@ -552,6 +555,9 @@ sub read_includes()
 							if ($pointer) {
 								$type =~ s/ *$//;
 							}
+							if ($param =~ /\[([0-9]+)\]$/) {
+								$pointer = 1;
+							}
 							my %param = ('type' => $type, 'name' => $name, 'pointer' => $pointer);
 							push @params, \%param;
 						} else {
@@ -729,7 +735,7 @@ my %macros = (
 	'glFramebufferTexture3DEXT' => 0,
 	'glFramebufferRenderbufferEXT' => 0,
 	'glGetFramebufferAttachmentParameterivEXT' => 1,
-	'glGenerateMipmapEXT' => -1,
+	'glGenerateMipmapEXT' => 0,
 
 	# GL_AMD_name_gen_delete
 	'glGenNamesAMD' => 1,
@@ -1337,7 +1343,10 @@ my %macros = (
 	'glGetPathColorGenfvNV' => 1,
 	'glGetPathTexGenivNV' => 1,
 	'glGetPathTexGenfvNV' => 1,
-
+	
+	# GL_NV_internalformat_sample_query
+	'glGetInternalformatSampleivNV' => 1,
+	
 	# GL_AMD_performance_monitor
 	'glGetPerfMonitorGroupsAMD' => 1,
 	'glGetPerfMonitorCountersAMD' => 1,
@@ -2210,6 +2219,62 @@ my %macros = (
 	'glWeightPointerARB' => 1,
 	'glVertexBlendARB' => 0,
 
+	# GL_ARB_sparse_buffer
+	'glBufferPageCommitmentARB' => 0,
+	'glNamedBufferPageCommitmentEXT' => 0,
+	'glNamedBufferPageCommitmentARB' => 0,
+	
+	# GL_KHR_blend_equation_advanced
+	'glBlendBarrierKHR' => 0,
+	
+	# GL_EXT_polygon_offset_clamp
+	'glPolygonOffsetClampEXT' => 0,
+	
+	# GL_EXT_raster_multisample
+	'glRasterSamplesEXT' => 0,
+	
+	# GL_NV_bindless_multi_draw_indirect_count
+	'glMultiDrawArraysIndirectBindlessCountNV' => 1,
+	'glMultiDrawElementsIndirectBindlessCountNV' => 1,
+	
+	# GL_NV_command_list
+	'glCreateStatesNV' => 1,
+	'glDeleteStatesNV' => 1,
+	'glIsStateNV' => 0,
+	'glStateCaptureNV' => 0,
+	'glGetCommandHeaderNV' => 0,
+	'glGetStageIndexNV' => 0,
+	'glDrawCommandsNV' => 1,
+	'glDrawCommandsAddressNV' => 1,
+	'glDrawCommandsStatesNV' => 1,
+	'glDrawCommandsStatesAddressNV' => 1,
+	'glCreateCommandListsNV' => 1,
+	'glDeleteCommandListsNV' => 1,
+	'glIsCommandListNV' => 0,
+	'glListDrawCommandsStatesClientNV' => 1,
+	'glCommandListSegmentsNV' => 0,
+	'glCompileCommandListNV' => 0,
+	'glCallCommandListNV' => 0,
+	
+	# GL_NV_conservative_raster
+	'glSubpixelPrecisionBiasNV' => 0,
+	
+	# GL_NV_fragment_coverage_to_color
+	'glFragmentCoverageColorNV' => 0,
+	
+	# GL_NV_framebuffer_mixed_samples
+	'glCoverageModulationTableNV' => 1,
+	'glGetCoverageModulationTableNV' => 1,
+	'glCoverageModulationNV' => 0,
+	
+	# GL_NV_sample_locations
+	'glFramebufferSampleLocationsfvNV' => 1,
+	'glNamedFramebufferSampleLocationsfvNV' => 1,
+	'glResolveDepthValuesNV' => 0,
+	
+	# GL_OVR_multiview
+	'glFramebufferTextureMultiviewOVR' => 0,
+	
 	# Version 1.1
 	'glAccum' => 0,
 	'glAlphaFunc' => 0,
@@ -3193,6 +3258,130 @@ my %macros = (
 	'glBindSamplers' => 1,
 	'glBindImageTextures' => 1,
 	'glBindVertexBuffers' => 1,
+	
+	# Version 4.5
+	'glBindTextureUnit' => 0,
+	'glBlitNamedFramebuffer' => 0,
+	'glCheckNamedFramebufferStatus' => 0,
+	'glClearNamedBufferData' => 1,
+	'glClearNamedBufferSubData' => 1,
+	'glClearNamedFramebufferfi' => 0,
+	'glClearNamedFramebufferfv' => 1,
+	'glClearNamedFramebufferiv' => 1,
+	'glClearNamedFramebufferuiv' => 1,
+	'glClipControl' => 0,
+	'glCompressedTextureSubImage1D' => 1,
+	'glCompressedTextureSubImage2D' => 1,
+	'glCompressedTextureSubImage3D' => 1,
+	'glCopyNamedBufferSubData' => 0,
+	'glCopyTextureSubImage1D' => 0,
+	'glCopyTextureSubImage2D' => 0,
+	'glCopyTextureSubImage3D' => 0,
+	'glCreateBuffers' => 1,
+	'glCreateFramebuffers' => 1,
+	'glCreateProgramPipelines' => 1,
+	'glCreateQueries' => 1,
+	'glCreateRenderbuffers' => 1,
+	'glCreateSamplers' => 1,
+	'glCreateTextures' => 1,
+	'glCreateTransformFeedbacks' => 1,
+	'glCreateVertexArrays' => 1,
+	'glDisableVertexArrayAttrib' => 0,
+	'glEnableVertexArrayAttrib' => 0,
+	'glFlushMappedNamedBufferRange' => 0,
+	'glGenerateTextureMipmap' => 0,
+	'glGetCompressedTextureImage' => 1,
+	'glGetCompressedTextureSubImage' => 1,
+	'glGetGraphicsResetStatus' => 0,
+	'glGetNamedBufferParameteri64v' => 1,
+	'glGetNamedBufferParameteriv' => 1,
+	'glGetNamedBufferPointerv' => 1,
+	'glGetNamedBufferSubData' => 1,
+	'glGetNamedFramebufferAttachmentParameteriv' => 1,
+	'glGetNamedFramebufferParameteriv' => 1,
+	'glGetNamedRenderbufferParameteriv' => 1,
+	'glGetQueryBufferObjecti64v' => 0,
+	'glGetQueryBufferObjectiv' => 0,
+	'glGetQueryBufferObjectui64v' => 0,
+	'glGetQueryBufferObjectuiv' => 0,
+	'glGetTextureImage' => 1,
+	'glGetTextureLevelParameterfv' => 1,
+	'glGetTextureLevelParameteriv' => 1,
+	'glGetTextureParameterIiv' => 1,
+	'glGetTextureParameterIuiv' => 1,
+	'glGetTextureParameterfv' => 1,
+	'glGetTextureParameteriv' => 1,
+	'glGetTextureSubImage' => 1,
+	'glGetTransformFeedbacki64_v' => 1,
+	'glGetTransformFeedbacki_v' => 1,
+	'glGetTransformFeedbackiv' => 1,
+	'glGetVertexArrayIndexed64iv' => 1,
+	'glGetVertexArrayIndexediv' => 1,
+	'glGetVertexArrayiv' => 1,
+	'glGetnColorTable' => 1,
+	'glGetnCompressedTexImage' => 1,
+	'glGetnConvolutionFilter' => 1,
+	'glGetnHistogram' => 1,
+	'glGetnMapdv' => 1,
+	'glGetnMapfv' => 1,
+	'glGetnMapiv' => 1,
+	'glGetnMinmax' => 1,
+	'glGetnPixelMapfv' => 1,
+	'glGetnPixelMapuiv' => 1,
+	'glGetnPixelMapusv' => 1,
+	'glGetnPolygonStipple' => 0,
+	'glGetnSeparableFilter' => 1,
+	'glGetnTexImage' => 1,
+	'glGetnUniformdv' => 1,
+	'glGetnUniformfv' => 1,
+	'glGetnUniformiv' => 1,
+	'glGetnUniformuiv' => 1,
+	'glInvalidateNamedFramebufferData' => 1,
+	'glInvalidateNamedFramebufferSubData' => 1,
+	'glMapNamedBuffer' => 1,
+	'glMapNamedBufferRange' => 1,
+	'glMemoryBarrierByRegion' => 0,
+	'glNamedBufferData' => 1,
+	'glNamedBufferStorage' => 1,
+	'glNamedBufferSubData' => 1,
+	'glNamedFramebufferDrawBuffer' => 0,
+	'glNamedFramebufferDrawBuffers' => 1,
+	'glNamedFramebufferParameteri' => 0,
+	'glNamedFramebufferReadBuffer' => 0,
+	'glNamedFramebufferRenderbuffer' => 0,
+	'glNamedFramebufferTexture' => 0,
+	'glNamedFramebufferTextureLayer' => 0,
+	'glNamedRenderbufferStorage' => 0,
+	'glNamedRenderbufferStorageMultisample' => 0,
+	'glReadnPixels' => 1,
+	'glTextureBarrier' => 0,
+	'glTextureBuffer' => 0,
+	'glTextureBufferRange' => 0,
+	'glTextureParameterIiv' => 1,
+	'glTextureParameterIuiv' => 1,
+	'glTextureParameterf' => 0,
+	'glTextureParameterfv' => 1,
+	'glTextureParameteri' => 0,
+	'glTextureParameteriv' => 1,
+	'glTextureStorage1D' => 0,
+	'glTextureStorage2D' => 0,
+	'glTextureStorage2DMultisample' => 0,
+	'glTextureStorage3D' => 0,
+	'glTextureStorage3DMultisample' => 0,
+	'glTextureSubImage1D' => 1,
+	'glTextureSubImage2D' => 1,
+	'glTextureSubImage3D' => 1,
+	'glTransformFeedbackBufferBase' => 0,
+	'glTransformFeedbackBufferRange' => 0,
+	'glUnmapNamedBuffer' => 0,
+	'glVertexArrayAttribBinding' => 0,
+	'glVertexArrayAttribFormat' => 0,
+	'glVertexArrayAttribIFormat' => 0,
+	'glVertexArrayAttribLFormat' => 0,
+	'glVertexArrayBindingDivisor' => 0,
+	'glVertexArrayElementBuffer' => 0,
+	'glVertexArrayVertexBuffer' => 0,
+	'glVertexArrayVertexBuffers' => 1,
 );
 
 

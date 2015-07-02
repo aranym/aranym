@@ -1,4 +1,8 @@
 2015/07/02 - Thorsten
+nfosmesa: update to OpenGL 4.5, adding 172 functions
+
+
+2015/07/02 - Thorsten
 allow opengl libraries to be a colon separated list of names
 
 

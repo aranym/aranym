@@ -26,7 +26,7 @@
 /* if you change anything in the enum {} below you have to increase 
    this ARANFOSMESA_NFAPI_VERSION!
 */
-#define ARANFOSMESA_NFAPI_VERSION	2
+#define ARANFOSMESA_NFAPI_VERSION	3
 
 enum {
 	NFOSMESA_ENOSYS = 0xffff,

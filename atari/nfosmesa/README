@@ -11,7 +11,7 @@ osmesa.ldg
 This is the replacement of mesa_gl, using the NFOSMesa native
 feature of ARAnyM for offscreen rendering. It implements all
 functions of tiny_gl, and most of the other functions up to
-OpenGL standard 4.4 (about 2700 functions).
+OpenGL standard 4.5 (about 2800 functions).
 
 
 nfosmesa.xdd
@@ -88,10 +88,7 @@ BUGS
   from other languages than GNU-C. The library (and also the hosts
   OSMesa library) will expect them to be in 64bit IEEE-754 format.
 
-- some functions that take pointers to arrays may not work yet on
-  little-endian hosts.
-
-- If you need OSMesaPostprocess() (a function introduced in Mesa 10,x),
+- If you need OSMesaPostprocess() (a function introduced in Mesa 10.x),
   you cannot use OSMesaCreateLDG(), because that conveniently makes
   the just created context current, and OSMesaPostprocess() must be
   called before that. You should look at lib-oldmesa.c to see what that
@@ -120,8 +117,8 @@ BUGS
   - glMapBufferARB
   - glMapBufferRange
   - glMapObjectBufferATI
-  - glMapNamedBufferEXT
-  - glMapNamedBufferRangeEXT
+  - glMapNamedBuffer{EXT}
+  - glMapNamedBufferRange{EXT}
   - glMapTexture2DINTEL
   - glImportSyncEXT
   - glProgramCallbackMESA

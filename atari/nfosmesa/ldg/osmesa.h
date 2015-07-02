@@ -1248,6 +1248,7 @@ struct _gl_osmesa {
 	GLuint APIENTRY (*BindTexGenParameterEXT)(GLenum unit, GLenum coord, GLenum value);
 	void APIENTRY (*BindTexture)(GLenum target, GLuint texture);
 	void APIENTRY (*BindTextureEXT)(GLenum target, GLuint texture);
+	void APIENTRY (*BindTextureUnit)(GLuint unit, GLuint texture);
 	GLuint APIENTRY (*BindTextureUnitParameterEXT)(GLenum unit, GLenum value);
 	void APIENTRY (*BindTextures)(GLuint first, GLsizei count, const GLuint *textures);
 	void APIENTRY (*BindTransformFeedback)(GLenum target, GLuint id);
@@ -1272,6 +1273,7 @@ struct _gl_osmesa {
 	void APIENTRY (*BinormalPointerEXT)(GLenum type, GLsizei stride, const void *pointer);
 	void APIENTRY (*Bitmap)(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
 	void APIENTRY (*BitmapxOES)(GLsizei width, GLsizei height, GLfixed xorig, GLfixed yorig, GLfixed xmove, GLfixed ymove, const GLubyte *bitmap);
+	void APIENTRY (*BlendBarrierKHR)(void);
 	void APIENTRY (*BlendBarrierNV)(void);
 	void APIENTRY (*BlendColor)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
 	void APIENTRY (*BlendColorEXT)(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
@@ -1300,17 +1302,21 @@ struct _gl_osmesa {
 	void APIENTRY (*BlendParameteriNV)(GLenum pname, GLint value);
 	void APIENTRY (*BlitFramebuffer)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 	void APIENTRY (*BlitFramebufferEXT)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+	void APIENTRY (*BlitNamedFramebuffer)(GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 	void APIENTRY (*BufferAddressRangeNV)(GLenum pname, GLuint index, GLuint64EXT address, GLsizeiptr length);
 	void APIENTRY (*BufferData)(GLenum target, GLsizeiptr size, const void *data, GLenum usage);
 	void APIENTRY (*BufferDataARB)(GLenum target, GLsizeiptrARB size, const void *data, GLenum usage);
+	void APIENTRY (*BufferPageCommitmentARB)(GLenum target, GLintptr offset, GLsizeiptr size, GLboolean32 commit);
 	void APIENTRY (*BufferParameteriAPPLE)(GLenum target, GLenum pname, GLint param);
 	void APIENTRY (*BufferStorage)(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);
 	void APIENTRY (*BufferSubData)(GLenum target, GLintptr offset, GLsizeiptr size, const void *data);
 	void APIENTRY (*BufferSubDataARB)(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const void *data);
+	void APIENTRY (*CallCommandListNV)(GLuint list);
 	void APIENTRY (*CallList)(GLuint list);
 	void APIENTRY (*CallLists)(GLsizei n, GLenum type, const GLvoid *lists);
 	GLenum APIENTRY (*CheckFramebufferStatus)(GLenum target);
 	GLenum APIENTRY (*CheckFramebufferStatusEXT)(GLenum target);
+	GLenum APIENTRY (*CheckNamedFramebufferStatus)(GLuint framebuffer, GLenum target);
 	GLenum APIENTRY (*CheckNamedFramebufferStatusEXT)(GLuint framebuffer, GLenum target);
 	void APIENTRY (*ClampColor)(GLenum target, GLenum clamp);
 	void APIENTRY (*ClampColorARB)(GLenum target, GLenum clamp);
@@ -1334,8 +1340,14 @@ struct _gl_osmesa {
 	void APIENTRY (*ClearDepthfOES)(GLclampf depth);
 	void APIENTRY (*ClearDepthxOES)(GLfixed depth);
 	void APIENTRY (*ClearIndex)(GLfloat c);
+	void APIENTRY (*ClearNamedBufferData)(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data);
 	void APIENTRY (*ClearNamedBufferDataEXT)(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data);
+	void APIENTRY (*ClearNamedBufferSubData)(GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data);
 	void APIENTRY (*ClearNamedBufferSubDataEXT)(GLuint buffer, GLenum internalformat, GLsizeiptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data);
+	void APIENTRY (*ClearNamedFramebufferfi)(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil);
+	void APIENTRY (*ClearNamedFramebufferfv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat *value);
+	void APIENTRY (*ClearNamedFramebufferiv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLint *value);
+	void APIENTRY (*ClearNamedFramebufferuiv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLuint *value);
 	void APIENTRY (*ClearStencil)(GLint s);
 	void APIENTRY (*ClearTexImage)(GLuint texture, GLint level, GLenum format, GLenum type, const void *data);
 	void APIENTRY (*ClearTexSubImage)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data);
@@ -1344,6 +1356,7 @@ struct _gl_osmesa {
 	void APIENTRY (*ClientActiveVertexStreamATI)(GLenum stream);
 	void APIENTRY (*ClientAttribDefaultEXT)(GLbitfield mask);
 	GLenum APIENTRY (*ClientWaitSync)(GLsync sync, GLbitfield flags, GLuint64 timeout);
+	void APIENTRY (*ClipControl)(GLenum origin, GLenum depth);
 	void APIENTRY (*ClipPlane)(GLenum plane, const GLdouble *equation);
 	void APIENTRY (*ClipPlanefOES)(GLenum plane, const GLfloat *equation);
 	void APIENTRY (*ClipPlanexOES)(GLenum plane, const GLfixed *equation);
@@ -1427,6 +1440,8 @@ struct _gl_osmesa {
 	void APIENTRY (*CombinerParameteriNV)(GLenum pname, GLint param);
 	void APIENTRY (*CombinerParameterivNV)(GLenum pname, const GLint *params);
 	void APIENTRY (*CombinerStageParameterfvNV)(GLenum stage, GLenum pname, const GLfloat *params);
+	void APIENTRY (*CommandListSegmentsNV)(GLuint list, GLuint segments);
+	void APIENTRY (*CompileCommandListNV)(GLuint list);
 	void APIENTRY (*CompileShader)(GLuint shader);
 	void APIENTRY (*CompileShaderARB)(GLhandleARB shaderObj);
 	void APIENTRY (*CompileShaderIncludeARB)(GLuint shader, GLsizei count, const GLchar *const *path, const GLint *length);
@@ -1451,8 +1466,11 @@ struct _gl_osmesa {
 	void APIENTRY (*CompressedTextureImage1DEXT)(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void *bits);
 	void APIENTRY (*CompressedTextureImage2DEXT)(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *bits);
 	void APIENTRY (*CompressedTextureImage3DEXT)(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *bits);
+	void APIENTRY (*CompressedTextureSubImage1D)(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data);
 	void APIENTRY (*CompressedTextureSubImage1DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *bits);
+	void APIENTRY (*CompressedTextureSubImage2D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data);
 	void APIENTRY (*CompressedTextureSubImage2DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *bits);
+	void APIENTRY (*CompressedTextureSubImage3D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data);
 	void APIENTRY (*CompressedTextureSubImage3DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *bits);
 	void APIENTRY (*ConvolutionFilter1D)(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *image);
 	void APIENTRY (*ConvolutionFilter1DEXT)(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *image);
@@ -1484,6 +1502,7 @@ struct _gl_osmesa {
 	void APIENTRY (*CopyMultiTexSubImage1DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 	void APIENTRY (*CopyMultiTexSubImage2DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*CopyMultiTexSubImage3DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+	void APIENTRY (*CopyNamedBufferSubData)(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
 	void APIENTRY (*CopyPathNV)(GLuint resultPath, GLuint srcPath);
 	void APIENTRY (*CopyPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type);
 	void APIENTRY (*CopyTexImage1D)(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
@@ -1498,22 +1517,38 @@ struct _gl_osmesa {
 	void APIENTRY (*CopyTexSubImage3DEXT)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*CopyTextureImage1DEXT)(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
 	void APIENTRY (*CopyTextureImage2DEXT)(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
+	void APIENTRY (*CopyTextureSubImage1D)(GLuint texture, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
 	void APIENTRY (*CopyTextureSubImage1DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
+	void APIENTRY (*CopyTextureSubImage2D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*CopyTextureSubImage2DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+	void APIENTRY (*CopyTextureSubImage3D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*CopyTextureSubImage3DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*CoverFillPathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum coverMode, GLenum transformType, const GLfloat *transformValues);
 	void APIENTRY (*CoverFillPathNV)(GLuint path, GLenum coverMode);
 	void APIENTRY (*CoverStrokePathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum coverMode, GLenum transformType, const GLfloat *transformValues);
 	void APIENTRY (*CoverStrokePathNV)(GLuint path, GLenum coverMode);
+	void APIENTRY (*CoverageModulationNV)(GLenum components);
+	void APIENTRY (*CoverageModulationTableNV)(GLsizei n, const GLfloat *v);
+	void APIENTRY (*CreateBuffers)(GLsizei n, GLuint *buffers);
+	void APIENTRY (*CreateCommandListsNV)(GLsizei n, GLuint *lists);
 	GLhandleARB APIENTRY (*CreateDebugObjectMESA)(void);
+	void APIENTRY (*CreateFramebuffers)(GLsizei n, GLuint *framebuffers);
 	void APIENTRY (*CreatePerfQueryINTEL)(GLuint queryId, GLuint *queryHandle);
 	GLuint APIENTRY (*CreateProgram)(void);
 	GLhandleARB APIENTRY (*CreateProgramObjectARB)(void);
+	void APIENTRY (*CreateProgramPipelines)(GLsizei n, GLuint *pipelines);
+	void APIENTRY (*CreateQueries)(GLenum target, GLsizei n, GLuint *ids);
+	void APIENTRY (*CreateRenderbuffers)(GLsizei n, GLuint *renderbuffers);
+	void APIENTRY (*CreateSamplers)(GLsizei n, GLuint *samplers);
 	GLuint APIENTRY (*CreateShader)(GLenum type);
 	GLhandleARB APIENTRY (*CreateShaderObjectARB)(GLenum shaderType);
 	GLuint APIENTRY (*CreateShaderProgramEXT)(GLenum type, const GLchar *string);
 	GLuint APIENTRY (*CreateShaderProgramv)(GLenum type, GLsizei count, const GLchar *const *strings);
+	void APIENTRY (*CreateStatesNV)(GLsizei n, GLuint *states);
 	GLsync APIENTRY (*CreateSyncFromCLeventARB)(struct _cl_context *context, struct _cl_event *event, GLbitfield flags);
+	void APIENTRY (*CreateTextures)(GLenum target, GLsizei n, GLuint *textures);
+	void APIENTRY (*CreateTransformFeedbacks)(GLsizei n, GLuint *ids);
+	void APIENTRY (*CreateVertexArrays)(GLsizei n, GLuint *arrays);
 	void APIENTRY (*CullFace)(GLenum mode);
 	void APIENTRY (*CullParameterdvEXT)(GLenum pname, GLdouble *params);
 	void APIENTRY (*CullParameterfvEXT)(GLenum pname, GLfloat *params);
@@ -1533,6 +1568,7 @@ struct _gl_osmesa {
 	void APIENTRY (*DeleteAsyncMarkersSGIX)(GLuint marker, GLsizei range);
 	void APIENTRY (*DeleteBuffers)(GLsizei n, const GLuint *buffers);
 	void APIENTRY (*DeleteBuffersARB)(GLsizei n, const GLuint *buffers);
+	void APIENTRY (*DeleteCommandListsNV)(GLsizei n, const GLuint *lists);
 	void APIENTRY (*DeleteFencesAPPLE)(GLsizei n, const GLuint *fences);
 	void APIENTRY (*DeleteFencesNV)(GLsizei n, const GLuint *fences);
 	void APIENTRY (*DeleteFragmentShaderATI)(GLuint id);
@@ -1557,6 +1593,7 @@ struct _gl_osmesa {
 	void APIENTRY (*DeleteRenderbuffersEXT)(GLsizei n, const GLuint *renderbuffers);
 	void APIENTRY (*DeleteSamplers)(GLsizei count, const GLuint *samplers);
 	void APIENTRY (*DeleteShader)(GLuint shader);
+	void APIENTRY (*DeleteStatesNV)(GLsizei n, const GLuint *states);
 	void APIENTRY (*DeleteSync)(GLsync sync);
 	void APIENTRY (*DeleteTextures)(GLsizei n, const GLuint *textures);
 	void APIENTRY (*DeleteTexturesEXT)(GLsizei n, const GLuint *textures);
@@ -1586,6 +1623,7 @@ struct _gl_osmesa {
 	void APIENTRY (*DisableIndexedEXT)(GLenum target, GLuint index);
 	void APIENTRY (*DisableTraceMESA)(GLbitfield mask);
 	void APIENTRY (*DisableVariantClientStateEXT)(GLuint id);
+	void APIENTRY (*DisableVertexArrayAttrib)(GLuint vaobj, GLuint index);
 	void APIENTRY (*DisableVertexArrayAttribEXT)(GLuint vaobj, GLuint index);
 	void APIENTRY (*DisableVertexArrayEXT)(GLuint vaobj, GLenum array);
 	void APIENTRY (*DisableVertexAttribAPPLE)(GLuint index, GLenum pname);
@@ -1606,6 +1644,10 @@ struct _gl_osmesa {
 	void APIENTRY (*DrawBuffers)(GLsizei n, const GLenum *bufs);
 	void APIENTRY (*DrawBuffersARB)(GLsizei n, const GLenum *bufs);
 	void APIENTRY (*DrawBuffersATI)(GLsizei n, const GLenum *bufs);
+	void APIENTRY (*DrawCommandsAddressNV)(GLenum primitiveMode, const GLuint64 *indirects, const GLsizei *sizes, GLuint count);
+	void APIENTRY (*DrawCommandsNV)(GLenum primitiveMode, GLuint buffer, const GLintptr *indirects, const GLsizei *sizes, GLuint count);
+	void APIENTRY (*DrawCommandsStatesAddressNV)(const GLuint64 *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count);
+	void APIENTRY (*DrawCommandsStatesNV)(GLuint buffer, const GLintptr *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count);
 	void APIENTRY (*DrawElementArrayAPPLE)(GLenum mode, GLint first, GLsizei count);
 	void APIENTRY (*DrawElementArrayATI)(GLenum mode, GLsizei count);
 	void APIENTRY (*DrawElements)(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices);
@@ -1645,6 +1687,7 @@ struct _gl_osmesa {
 	void APIENTRY (*EnableIndexedEXT)(GLenum target, GLuint index);
 	void APIENTRY (*EnableTraceMESA)(GLbitfield mask);
 	void APIENTRY (*EnableVariantClientStateEXT)(GLuint id);
+	void APIENTRY (*EnableVertexArrayAttrib)(GLuint vaobj, GLuint index);
 	void APIENTRY (*EnableVertexArrayAttribEXT)(GLuint vaobj, GLuint index);
 	void APIENTRY (*EnableVertexArrayEXT)(GLuint vaobj, GLenum array);
 	void APIENTRY (*EnableVertexAttribAPPLE)(GLuint index, GLenum pname);
@@ -1702,6 +1745,7 @@ struct _gl_osmesa {
 	void APIENTRY (*Flush)(void);
 	void APIENTRY (*FlushMappedBufferRange)(GLenum target, GLintptr offset, GLsizeiptr length);
 	void APIENTRY (*FlushMappedBufferRangeAPPLE)(GLenum target, GLintptr offset, GLsizeiptr size);
+	void APIENTRY (*FlushMappedNamedBufferRange)(GLuint buffer, GLintptr offset, GLsizeiptr length);
 	void APIENTRY (*FlushMappedNamedBufferRangeEXT)(GLuint buffer, GLintptr offset, GLsizeiptr length);
 	void APIENTRY (*FlushPixelDataRangeNV)(GLenum target);
 	void APIENTRY (*FlushRasterSGIX)(void);
@@ -1731,6 +1775,7 @@ struct _gl_osmesa {
 	void APIENTRY (*FogxOES)(GLenum pname, GLfixed param);
 	void APIENTRY (*FogxvOES)(GLenum pname, const GLfixed *param);
 	void APIENTRY (*FragmentColorMaterialSGIX)(GLenum face, GLenum mode);
+	void APIENTRY (*FragmentCoverageColorNV)(GLuint color);
 	void APIENTRY (*FragmentLightModelfSGIX)(GLenum pname, GLfloat param);
 	void APIENTRY (*FragmentLightModelfvSGIX)(GLenum pname, const GLfloat *params);
 	void APIENTRY (*FragmentLightModeliSGIX)(GLenum pname, GLint param);
@@ -1751,6 +1796,7 @@ struct _gl_osmesa {
 	void APIENTRY (*FramebufferReadBufferEXT)(GLuint framebuffer, GLenum mode);
 	void APIENTRY (*FramebufferRenderbuffer)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 	void APIENTRY (*FramebufferRenderbufferEXT)(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+	void APIENTRY (*FramebufferSampleLocationsfvNV)(GLenum target, GLuint start, GLsizei count, const GLfloat *v);
 	void APIENTRY (*FramebufferTexture)(GLenum target, GLenum attachment, GLuint texture, GLint level);
 	void APIENTRY (*FramebufferTexture1D)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
 	void APIENTRY (*FramebufferTexture1DEXT)(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
@@ -1765,6 +1811,7 @@ struct _gl_osmesa {
 	void APIENTRY (*FramebufferTextureLayer)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	void APIENTRY (*FramebufferTextureLayerARB)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	void APIENTRY (*FramebufferTextureLayerEXT)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer);
+	void APIENTRY (*FramebufferTextureMultiviewOVR)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint baseViewIndex, GLsizei numViews);
 	void APIENTRY (*FreeObjectBufferATI)(GLuint buffer);
 	void APIENTRY (*FrontFace)(GLenum mode);
 	void APIENTRY (*Frustum)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
@@ -1803,6 +1850,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GenerateMipmap)(GLenum target);
 	void APIENTRY (*GenerateMipmapEXT)(GLenum target);
 	void APIENTRY (*GenerateMultiTexMipmapEXT)(GLenum texunit, GLenum target);
+	void APIENTRY (*GenerateTextureMipmap)(GLuint texture);
 	void APIENTRY (*GenerateTextureMipmapEXT)(GLuint texture, GLenum target);
 	void APIENTRY (*GetActiveAtomicCounterBufferiv)(GLuint program, GLuint bufferIndex, GLenum pname, GLint *params);
 	void APIENTRY (*GetActiveAttrib)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
@@ -1852,10 +1900,13 @@ struct _gl_osmesa {
 	void APIENTRY (*GetCombinerOutputParameterfvNV)(GLenum stage, GLenum portion, GLenum pname, GLfloat *params);
 	void APIENTRY (*GetCombinerOutputParameterivNV)(GLenum stage, GLenum portion, GLenum pname, GLint *params);
 	void APIENTRY (*GetCombinerStageParameterfvNV)(GLenum stage, GLenum pname, GLfloat *params);
+	GLuint APIENTRY (*GetCommandHeaderNV)(GLenum tokenID, GLuint size);
 	void APIENTRY (*GetCompressedMultiTexImageEXT)(GLenum texunit, GLenum target, GLint lod, void *img);
 	void APIENTRY (*GetCompressedTexImage)(GLenum target, GLint level, void *img);
 	void APIENTRY (*GetCompressedTexImageARB)(GLenum target, GLint level, void *img);
+	void APIENTRY (*GetCompressedTextureImage)(GLuint texture, GLint level, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetCompressedTextureImageEXT)(GLuint texture, GLenum target, GLint lod, void *img);
+	void APIENTRY (*GetCompressedTextureSubImage)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetConvolutionFilter)(GLenum target, GLenum format, GLenum type, void *image);
 	void APIENTRY (*GetConvolutionFilterEXT)(GLenum target, GLenum format, GLenum type, void *image);
 	void APIENTRY (*GetConvolutionParameterfv)(GLenum target, GLenum pname, GLfloat *params);
@@ -1863,6 +1914,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GetConvolutionParameteriv)(GLenum target, GLenum pname, GLint *params);
 	void APIENTRY (*GetConvolutionParameterivEXT)(GLenum target, GLenum pname, GLint *params);
 	void APIENTRY (*GetConvolutionParameterxvOES)(GLenum target, GLenum pname, GLfixed *params);
+	void APIENTRY (*GetCoverageModulationTableNV)(GLsizei bufsize, GLfloat *v);
 	GLsizei APIENTRY (*GetDebugLogLengthMESA)(GLhandleARB obj, GLenum logType, GLenum shaderType);
 	void APIENTRY (*GetDebugLogMESA)(GLhandleARB obj, GLenum logType, GLenum shaderType, GLsizei maxLength, GLsizei *length, GLcharARB *debugLog);
 	GLuint APIENTRY (*GetDebugMessageLog)(GLuint count, GLsizei bufSize, GLenum *sources, GLenum *types, GLuint *ids, GLenum *severities, GLsizei *lengths, GLchar *messageLog);
@@ -1895,6 +1947,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GetFramebufferAttachmentParameterivEXT)(GLenum target, GLenum attachment, GLenum pname, GLint *params);
 	void APIENTRY (*GetFramebufferParameteriv)(GLenum target, GLenum pname, GLint *params);
 	void APIENTRY (*GetFramebufferParameterivEXT)(GLuint framebuffer, GLenum pname, GLint *params);
+	GLenum APIENTRY (*GetGraphicsResetStatus)(void);
 	GLenum APIENTRY (*GetGraphicsResetStatusARB)(void);
 	GLhandleARB APIENTRY (*GetHandleARB)(GLenum pname);
 	void APIENTRY (*GetHistogram)(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values);
@@ -1917,6 +1970,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GetIntegerui64i_vNV)(GLenum value, GLuint index, GLuint64EXT *result);
 	void APIENTRY (*GetIntegerui64vNV)(GLenum value, GLuint64EXT *result);
 	void APIENTRY (*GetIntegerv)(GLenum pname, GLint *params);
+	void APIENTRY (*GetInternalformatSampleivNV)(GLenum target, GLenum internalformat, GLsizei samples, GLenum pname, GLsizei bufSize, GLint *params);
 	void APIENTRY (*GetInternalformati64v)(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 *params);
 	void APIENTRY (*GetInternalformativ)(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params);
 	void APIENTRY (*GetInvariantBooleanvEXT)(GLuint id, GLenum value, GLboolean *data);
@@ -1962,11 +2016,17 @@ struct _gl_osmesa {
 	void APIENTRY (*GetMultiTexParameterivEXT)(GLenum texunit, GLenum target, GLenum pname, GLint *params);
 	void APIENTRY (*GetMultisamplefv)(GLenum pname, GLuint index, GLfloat *val);
 	void APIENTRY (*GetMultisamplefvNV)(GLenum pname, GLuint index, GLfloat *val);
+	void APIENTRY (*GetNamedBufferParameteri64v)(GLuint buffer, GLenum pname, GLint64 *params);
+	void APIENTRY (*GetNamedBufferParameteriv)(GLuint buffer, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedBufferParameterivEXT)(GLuint buffer, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedBufferParameterui64vNV)(GLuint buffer, GLenum pname, GLuint64EXT *params);
+	void APIENTRY (*GetNamedBufferPointerv)(GLuint buffer, GLenum pname, void * *params);
 	void APIENTRY (*GetNamedBufferPointervEXT)(GLuint buffer, GLenum pname, void * *params);
+	void APIENTRY (*GetNamedBufferSubData)(GLuint buffer, GLintptr offset, GLsizeiptr size, void *data);
 	void APIENTRY (*GetNamedBufferSubDataEXT)(GLuint buffer, GLintptr offset, GLsizeiptr size, void *data);
+	void APIENTRY (*GetNamedFramebufferAttachmentParameteriv)(GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedFramebufferAttachmentParameterivEXT)(GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params);
+	void APIENTRY (*GetNamedFramebufferParameteriv)(GLuint framebuffer, GLenum pname, GLint *param);
 	void APIENTRY (*GetNamedFramebufferParameterivEXT)(GLuint framebuffer, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedProgramLocalParameterIivEXT)(GLuint program, GLenum target, GLuint index, GLint *params);
 	void APIENTRY (*GetNamedProgramLocalParameterIuivEXT)(GLuint program, GLenum target, GLuint index, GLuint *params);
@@ -1974,6 +2034,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GetNamedProgramLocalParameterfvEXT)(GLuint program, GLenum target, GLuint index, GLfloat *params);
 	void APIENTRY (*GetNamedProgramStringEXT)(GLuint program, GLenum target, GLenum pname, void *string);
 	void APIENTRY (*GetNamedProgramivEXT)(GLuint program, GLenum target, GLenum pname, GLint *params);
+	void APIENTRY (*GetNamedRenderbufferParameteriv)(GLuint renderbuffer, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedRenderbufferParameterivEXT)(GLuint renderbuffer, GLenum pname, GLint *params);
 	void APIENTRY (*GetNamedStringARB)(GLint namelen, const GLchar *name, GLsizei bufSize, GLint *stringlen, GLchar *string);
 	void APIENTRY (*GetNamedStringivARB)(GLint namelen, const GLchar *name, GLenum pname, GLint *params);
@@ -2046,6 +2107,7 @@ struct _gl_osmesa {
 	GLint APIENTRY (*GetProgramResourceLocation)(GLuint program, GLenum programInterface, const GLchar *name);
 	GLint APIENTRY (*GetProgramResourceLocationIndex)(GLuint program, GLenum programInterface, const GLchar *name);
 	void APIENTRY (*GetProgramResourceName)(GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name);
+	void APIENTRY (*GetProgramResourcefvNV)(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLfloat *params);
 	void APIENTRY (*GetProgramResourceiv)(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params);
 	void APIENTRY (*GetProgramStageiv)(GLuint program, GLenum shadertype, GLenum pname, GLint *values);
 	void APIENTRY (*GetProgramStringARB)(GLenum target, GLenum pname, void *string);
@@ -2054,6 +2116,10 @@ struct _gl_osmesa {
 	void APIENTRY (*GetProgramiv)(GLuint program, GLenum pname, GLint *params);
 	void APIENTRY (*GetProgramivARB)(GLenum target, GLenum pname, GLint *params);
 	void APIENTRY (*GetProgramivNV)(GLuint id, GLenum pname, GLint *params);
+	void APIENTRY (*GetQueryBufferObjecti64v)(GLuint id, GLuint buffer, GLenum pname, GLintptr offset);
+	void APIENTRY (*GetQueryBufferObjectiv)(GLuint id, GLuint buffer, GLenum pname, GLintptr offset);
+	void APIENTRY (*GetQueryBufferObjectui64v)(GLuint id, GLuint buffer, GLenum pname, GLintptr offset);
+	void APIENTRY (*GetQueryBufferObjectuiv)(GLuint id, GLuint buffer, GLenum pname, GLintptr offset);
 	void APIENTRY (*GetQueryIndexediv)(GLenum target, GLuint index, GLenum pname, GLint *params);
 	void APIENTRY (*GetQueryObjecti64v)(GLuint id, GLenum pname, GLint64 *params);
 	void APIENTRY (*GetQueryObjecti64vEXT)(GLuint id, GLenum pname, GLint64 *params);
@@ -2079,6 +2145,7 @@ struct _gl_osmesa {
 	void APIENTRY (*GetShaderSourceARB)(GLhandleARB obj, GLsizei maxLength, GLsizei *length, GLcharARB *source);
 	void APIENTRY (*GetShaderiv)(GLuint shader, GLenum pname, GLint *params);
 	void APIENTRY (*GetSharpenTexFuncSGIS)(GLenum target, GLfloat *points);
+	GLushort APIENTRY (*GetStageIndexNV)(GLenum shadertype);
 	const GLubyte * APIENTRY (*GetString)(GLenum name);
 	const GLubyte * APIENTRY (*GetStringi)(GLenum name, GLuint index);
 	GLuint APIENTRY (*GetSubroutineIndex)(GLuint program, GLenum shadertype, const GLchar *name);
@@ -2108,19 +2175,30 @@ struct _gl_osmesa {
 	void APIENTRY (*GetTexParameterxvOES)(GLenum target, GLenum pname, GLfixed *params);
 	GLuint64 APIENTRY (*GetTextureHandleARB)(GLuint texture);
 	GLuint64 APIENTRY (*GetTextureHandleNV)(GLuint texture);
+	void APIENTRY (*GetTextureImage)(GLuint texture, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetTextureImageEXT)(GLuint texture, GLenum target, GLint level, GLenum format, GLenum type, void *pixels);
+	void APIENTRY (*GetTextureLevelParameterfv)(GLuint texture, GLint level, GLenum pname, GLfloat *params);
 	void APIENTRY (*GetTextureLevelParameterfvEXT)(GLuint texture, GLenum target, GLint level, GLenum pname, GLfloat *params);
+	void APIENTRY (*GetTextureLevelParameteriv)(GLuint texture, GLint level, GLenum pname, GLint *params);
 	void APIENTRY (*GetTextureLevelParameterivEXT)(GLuint texture, GLenum target, GLint level, GLenum pname, GLint *params);
+	void APIENTRY (*GetTextureParameterIiv)(GLuint texture, GLenum pname, GLint *params);
 	void APIENTRY (*GetTextureParameterIivEXT)(GLuint texture, GLenum target, GLenum pname, GLint *params);
+	void APIENTRY (*GetTextureParameterIuiv)(GLuint texture, GLenum pname, GLuint *params);
 	void APIENTRY (*GetTextureParameterIuivEXT)(GLuint texture, GLenum target, GLenum pname, GLuint *params);
+	void APIENTRY (*GetTextureParameterfv)(GLuint texture, GLenum pname, GLfloat *params);
 	void APIENTRY (*GetTextureParameterfvEXT)(GLuint texture, GLenum target, GLenum pname, GLfloat *params);
+	void APIENTRY (*GetTextureParameteriv)(GLuint texture, GLenum pname, GLint *params);
 	void APIENTRY (*GetTextureParameterivEXT)(GLuint texture, GLenum target, GLenum pname, GLint *params);
 	GLuint64 APIENTRY (*GetTextureSamplerHandleARB)(GLuint texture, GLuint sampler);
 	GLuint64 APIENTRY (*GetTextureSamplerHandleNV)(GLuint texture, GLuint sampler);
+	void APIENTRY (*GetTextureSubImage)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetTrackMatrixivNV)(GLenum target, GLuint address, GLenum pname, GLint *params);
 	void APIENTRY (*GetTransformFeedbackVarying)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLsizei *size, GLenum *type, GLchar *name);
 	void APIENTRY (*GetTransformFeedbackVaryingEXT)(GLuint program, GLuint index, GLsizei bufSize, GLsizei *length, GLsizei *size, GLenum *type, GLchar *name);
 	void APIENTRY (*GetTransformFeedbackVaryingNV)(GLuint program, GLuint index, GLint *location);
+	void APIENTRY (*GetTransformFeedbacki64_v)(GLuint xfb, GLenum pname, GLuint index, GLint64 *param);
+	void APIENTRY (*GetTransformFeedbacki_v)(GLuint xfb, GLenum pname, GLuint index, GLint *param);
+	void APIENTRY (*GetTransformFeedbackiv)(GLuint xfb, GLenum pname, GLint *param);
 	GLuint APIENTRY (*GetUniformBlockIndex)(GLuint program, const GLchar *uniformBlockName);
 	GLint APIENTRY (*GetUniformBufferSizeEXT)(GLuint program, GLint location);
 	void APIENTRY (*GetUniformIndices)(GLuint program, GLsizei uniformCount, const GLchar *const *uniformNames, GLuint *uniformIndices);
@@ -2144,10 +2222,13 @@ struct _gl_osmesa {
 	void APIENTRY (*GetVariantIntegervEXT)(GLuint id, GLenum value, GLint *data);
 	void APIENTRY (*GetVariantPointervEXT)(GLuint id, GLenum value, void * *data);
 	GLint APIENTRY (*GetVaryingLocationNV)(GLuint program, const GLchar *name);
+	void APIENTRY (*GetVertexArrayIndexed64iv)(GLuint vaobj, GLuint index, GLenum pname, GLint64 *param);
+	void APIENTRY (*GetVertexArrayIndexediv)(GLuint vaobj, GLuint index, GLenum pname, GLint *param);
 	void APIENTRY (*GetVertexArrayIntegeri_vEXT)(GLuint vaobj, GLuint index, GLenum pname, GLint *param);
 	void APIENTRY (*GetVertexArrayIntegervEXT)(GLuint vaobj, GLenum pname, GLint *param);
 	void APIENTRY (*GetVertexArrayPointeri_vEXT)(GLuint vaobj, GLuint index, GLenum pname, void * *param);
 	void APIENTRY (*GetVertexArrayPointervEXT)(GLuint vaobj, GLenum pname, void * *param);
+	void APIENTRY (*GetVertexArrayiv)(GLuint vaobj, GLenum pname, GLint *param);
 	void APIENTRY (*GetVertexAttribArrayObjectfvATI)(GLuint index, GLenum pname, GLfloat *params);
 	void APIENTRY (*GetVertexAttribArrayObjectivATI)(GLuint index, GLenum pname, GLint *params);
 	void APIENTRY (*GetVertexAttribIiv)(GLuint index, GLenum pname, GLint *params);
@@ -2179,23 +2260,41 @@ struct _gl_osmesa {
 	void APIENTRY (*GetVideoivNV)(GLuint video_slot, GLenum pname, GLint *params);
 	void APIENTRY (*GetVideoui64vNV)(GLuint video_slot, GLenum pname, GLuint64EXT *params);
 	void APIENTRY (*GetVideouivNV)(GLuint video_slot, GLenum pname, GLuint *params);
+	void APIENTRY (*GetnColorTable)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table);
 	void APIENTRY (*GetnColorTableARB)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table);
+	void APIENTRY (*GetnCompressedTexImage)(GLenum target, GLint lod, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetnCompressedTexImageARB)(GLenum target, GLint lod, GLsizei bufSize, void *img);
+	void APIENTRY (*GetnConvolutionFilter)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image);
 	void APIENTRY (*GetnConvolutionFilterARB)(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image);
+	void APIENTRY (*GetnHistogram)(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values);
 	void APIENTRY (*GetnHistogramARB)(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values);
+	void APIENTRY (*GetnMapdv)(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v);
 	void APIENTRY (*GetnMapdvARB)(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v);
+	void APIENTRY (*GetnMapfv)(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v);
 	void APIENTRY (*GetnMapfvARB)(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v);
+	void APIENTRY (*GetnMapiv)(GLenum target, GLenum query, GLsizei bufSize, GLint *v);
 	void APIENTRY (*GetnMapivARB)(GLenum target, GLenum query, GLsizei bufSize, GLint *v);
+	void APIENTRY (*GetnMinmax)(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values);
 	void APIENTRY (*GetnMinmaxARB)(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values);
+	void APIENTRY (*GetnPixelMapfv)(GLenum map, GLsizei bufSize, GLfloat *values);
 	void APIENTRY (*GetnPixelMapfvARB)(GLenum map, GLsizei bufSize, GLfloat *values);
+	void APIENTRY (*GetnPixelMapuiv)(GLenum map, GLsizei bufSize, GLuint *values);
 	void APIENTRY (*GetnPixelMapuivARB)(GLenum map, GLsizei bufSize, GLuint *values);
+	void APIENTRY (*GetnPixelMapusv)(GLenum map, GLsizei bufSize, GLushort *values);
 	void APIENTRY (*GetnPixelMapusvARB)(GLenum map, GLsizei bufSize, GLushort *values);
+	void APIENTRY (*GetnPolygonStipple)(GLsizei bufSize, GLubyte *pattern);
 	void APIENTRY (*GetnPolygonStippleARB)(GLsizei bufSize, GLubyte *pattern);
+	void APIENTRY (*GetnSeparableFilter)(GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span);
 	void APIENTRY (*GetnSeparableFilterARB)(GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span);
+	void APIENTRY (*GetnTexImage)(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels);
 	void APIENTRY (*GetnTexImageARB)(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *img);
+	void APIENTRY (*GetnUniformdv)(GLuint program, GLint location, GLsizei bufSize, GLdouble *params);
 	void APIENTRY (*GetnUniformdvARB)(GLuint program, GLint location, GLsizei bufSize, GLdouble *params);
+	void APIENTRY (*GetnUniformfv)(GLuint program, GLint location, GLsizei bufSize, GLfloat *params);
 	void APIENTRY (*GetnUniformfvARB)(GLuint program, GLint location, GLsizei bufSize, GLfloat *params);
+	void APIENTRY (*GetnUniformiv)(GLuint program, GLint location, GLsizei bufSize, GLint *params);
 	void APIENTRY (*GetnUniformivARB)(GLuint program, GLint location, GLsizei bufSize, GLint *params);
+	void APIENTRY (*GetnUniformuiv)(GLuint program, GLint location, GLsizei bufSize, GLuint *params);
 	void APIENTRY (*GetnUniformuivARB)(GLuint program, GLint location, GLsizei bufSize, GLuint *params);
 	void APIENTRY (*GlobalAlphaFactorbSUN)(GLbyte32 factor);
 	void APIENTRY (*GlobalAlphaFactordSUN)(GLdouble factor);
@@ -2243,6 +2342,8 @@ struct _gl_osmesa {
 	void APIENTRY (*InvalidateBufferData)(GLuint buffer);
 	void APIENTRY (*InvalidateBufferSubData)(GLuint buffer, GLintptr offset, GLsizeiptr length);
 	void APIENTRY (*InvalidateFramebuffer)(GLenum target, GLsizei numAttachments, const GLenum *attachments);
+	void APIENTRY (*InvalidateNamedFramebufferData)(GLuint framebuffer, GLsizei numAttachments, const GLenum *attachments);
+	void APIENTRY (*InvalidateNamedFramebufferSubData)(GLuint framebuffer, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*InvalidateSubFramebuffer)(GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*InvalidateTexImage)(GLuint texture, GLint level);
 	void APIENTRY (*InvalidateTexSubImage)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth);
@@ -2250,6 +2351,7 @@ struct _gl_osmesa {
 	GLboolean APIENTRY (*IsBuffer)(GLuint buffer);
 	GLboolean APIENTRY (*IsBufferARB)(GLuint buffer);
 	GLboolean APIENTRY (*IsBufferResidentNV)(GLenum target);
+	GLboolean APIENTRY (*IsCommandListNV)(GLuint list);
 	GLboolean APIENTRY (*IsEnabled)(GLenum cap);
 	GLboolean APIENTRY (*IsEnabledIndexedEXT)(GLenum target, GLuint index);
 	GLboolean APIENTRY (*IsEnabledi)(GLenum target, GLuint index);
@@ -2278,6 +2380,7 @@ struct _gl_osmesa {
 	GLboolean APIENTRY (*IsRenderbufferEXT)(GLuint renderbuffer);
 	GLboolean APIENTRY (*IsSampler)(GLuint sampler);
 	GLboolean APIENTRY (*IsShader)(GLuint shader);
+	GLboolean APIENTRY (*IsStateNV)(GLuint state);
 	GLboolean APIENTRY (*IsSync)(GLsync sync);
 	GLboolean APIENTRY (*IsTexture)(GLuint texture);
 	GLboolean APIENTRY (*IsTextureEXT)(GLuint texture);
@@ -2309,6 +2412,7 @@ struct _gl_osmesa {
 	void APIENTRY (*LinkProgram)(GLuint program);
 	void APIENTRY (*LinkProgramARB)(GLhandleARB programObj);
 	void APIENTRY (*ListBase)(GLuint base);
+	void APIENTRY (*ListDrawCommandsStatesClientNV)(GLuint list, GLuint segment, const void * *indirects, const GLsizei *sizes, const GLuint *states, const GLuint *fbos, GLuint count);
 	void APIENTRY (*ListParameterfSGIX)(GLuint list, GLenum pname, GLfloat param);
 	void APIENTRY (*ListParameterfvSGIX)(GLuint list, GLenum pname, const GLfloat *params);
 	void APIENTRY (*ListParameteriSGIX)(GLuint list, GLenum pname, GLint param);
@@ -2355,7 +2459,9 @@ struct _gl_osmesa {
 	void APIENTRY (*MapGrid2d)(GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2);
 	void APIENTRY (*MapGrid2f)(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2);
 	void APIENTRY (*MapGrid2xOES)(GLint n, GLfixed u1, GLfixed u2, GLfixed v1, GLfixed v2);
+	void * APIENTRY (*MapNamedBuffer)(GLuint buffer, GLenum access);
 	void * APIENTRY (*MapNamedBufferEXT)(GLuint buffer, GLenum access);
+	void * APIENTRY (*MapNamedBufferRange)(GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access);
 	void * APIENTRY (*MapNamedBufferRangeEXT)(GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access);
 	void * APIENTRY (*MapObjectBufferATI)(GLuint buffer);
 	void APIENTRY (*MapParameterfvNV)(GLenum target, GLenum pname, const GLfloat *params);
@@ -2376,12 +2482,18 @@ struct _gl_osmesa {
 	void APIENTRY (*MatrixIndexubvARB)(GLint size, const GLubyte *indices);
 	void APIENTRY (*MatrixIndexuivARB)(GLint size, const GLuint *indices);
 	void APIENTRY (*MatrixIndexusvARB)(GLint size, const GLushort *indices);
+	void APIENTRY (*MatrixLoad3x2fNV)(GLenum matrixMode, const GLfloat *m);
+	void APIENTRY (*MatrixLoad3x3fNV)(GLenum matrixMode, const GLfloat *m);
 	void APIENTRY (*MatrixLoadIdentityEXT)(GLenum mode);
+	void APIENTRY (*MatrixLoadTranspose3x3fNV)(GLenum matrixMode, const GLfloat *m);
 	void APIENTRY (*MatrixLoadTransposedEXT)(GLenum mode, const GLdouble *m);
 	void APIENTRY (*MatrixLoadTransposefEXT)(GLenum mode, const GLfloat *m);
 	void APIENTRY (*MatrixLoaddEXT)(GLenum mode, const GLdouble *m);
 	void APIENTRY (*MatrixLoadfEXT)(GLenum mode, const GLfloat *m);
 	void APIENTRY (*MatrixMode)(GLenum mode);
+	void APIENTRY (*MatrixMult3x2fNV)(GLenum matrixMode, const GLfloat *m);
+	void APIENTRY (*MatrixMult3x3fNV)(GLenum matrixMode, const GLfloat *m);
+	void APIENTRY (*MatrixMultTranspose3x3fNV)(GLenum matrixMode, const GLfloat *m);
 	void APIENTRY (*MatrixMultTransposedEXT)(GLenum mode, const GLdouble *m);
 	void APIENTRY (*MatrixMultTransposefEXT)(GLenum mode, const GLfloat *m);
 	void APIENTRY (*MatrixMultdEXT)(GLenum mode, const GLdouble *m);
@@ -2396,6 +2508,7 @@ struct _gl_osmesa {
 	void APIENTRY (*MatrixTranslatedEXT)(GLenum mode, GLdouble x, GLdouble y, GLdouble z);
 	void APIENTRY (*MatrixTranslatefEXT)(GLenum mode, GLfloat x, GLfloat y, GLfloat z);
 	void APIENTRY (*MemoryBarrier)(GLbitfield barriers);
+	void APIENTRY (*MemoryBarrierByRegion)(GLbitfield barriers);
 	void APIENTRY (*MemoryBarrierEXT)(GLbitfield barriers);
 	void APIENTRY (*MinSampleShading)(GLfloat value);
 	void APIENTRY (*MinSampleShadingARB)(GLfloat value);
@@ -2413,6 +2526,7 @@ struct _gl_osmesa {
 	void APIENTRY (*MultiDrawArraysEXT)(GLenum mode, const GLint *first, const GLsizei *count, GLsizei primcount);
 	void APIENTRY (*MultiDrawArraysIndirect)(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride);
 	void APIENTRY (*MultiDrawArraysIndirectAMD)(GLenum mode, const void *indirect, GLsizei primcount, GLsizei stride);
+	void APIENTRY (*MultiDrawArraysIndirectBindlessCountNV)(GLenum mode, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount);
 	void APIENTRY (*MultiDrawArraysIndirectBindlessNV)(GLenum mode, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount);
 	void APIENTRY (*MultiDrawArraysIndirectCountARB)(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 	void APIENTRY (*MultiDrawElementArrayAPPLE)(GLenum mode, const GLint *first, const GLsizei *count, GLsizei primcount);
@@ -2421,6 +2535,7 @@ struct _gl_osmesa {
 	void APIENTRY (*MultiDrawElementsEXT)(GLenum mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei primcount);
 	void APIENTRY (*MultiDrawElementsIndirect)(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride);
 	void APIENTRY (*MultiDrawElementsIndirectAMD)(GLenum mode, GLenum type, const void *indirect, GLsizei primcount, GLsizei stride);
+	void APIENTRY (*MultiDrawElementsIndirectBindlessCountNV)(GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount);
 	void APIENTRY (*MultiDrawElementsIndirectBindlessNV)(GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount);
 	void APIENTRY (*MultiDrawElementsIndirectCountARB)(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 	void APIENTRY (*MultiDrawRangeElementArrayAPPLE)(GLenum mode, GLuint start, GLuint end, const GLint *first, const GLsizei *count, GLsizei primcount);
@@ -2547,17 +2662,30 @@ struct _gl_osmesa {
 	void APIENTRY (*MultiTexSubImage1DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*MultiTexSubImage2DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*MultiTexSubImage3DEXT)(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
+	void APIENTRY (*NamedBufferData)(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage);
 	void APIENTRY (*NamedBufferDataEXT)(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage);
+	void APIENTRY (*NamedBufferPageCommitmentARB)(GLuint buffer, GLintptr offset, GLsizeiptr size, GLboolean32 commit);
+	void APIENTRY (*NamedBufferPageCommitmentEXT)(GLuint buffer, GLintptr offset, GLsizeiptr size, GLboolean32 commit);
+	void APIENTRY (*NamedBufferStorage)(GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags);
 	void APIENTRY (*NamedBufferStorageEXT)(GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags);
+	void APIENTRY (*NamedBufferSubData)(GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data);
 	void APIENTRY (*NamedBufferSubDataEXT)(GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data);
 	void APIENTRY (*NamedCopyBufferSubDataEXT)(GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+	void APIENTRY (*NamedFramebufferDrawBuffer)(GLuint framebuffer, GLenum buf);
+	void APIENTRY (*NamedFramebufferDrawBuffers)(GLuint framebuffer, GLsizei n, const GLenum *bufs);
+	void APIENTRY (*NamedFramebufferParameteri)(GLuint framebuffer, GLenum pname, GLint param);
 	void APIENTRY (*NamedFramebufferParameteriEXT)(GLuint framebuffer, GLenum pname, GLint param);
+	void APIENTRY (*NamedFramebufferReadBuffer)(GLuint framebuffer, GLenum src);
+	void APIENTRY (*NamedFramebufferRenderbuffer)(GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
 	void APIENTRY (*NamedFramebufferRenderbufferEXT)(GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer);
+	void APIENTRY (*NamedFramebufferSampleLocationsfvNV)(GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v);
+	void APIENTRY (*NamedFramebufferTexture)(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level);
 	void APIENTRY (*NamedFramebufferTexture1DEXT)(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
 	void APIENTRY (*NamedFramebufferTexture2DEXT)(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level);
 	void APIENTRY (*NamedFramebufferTexture3DEXT)(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset);
 	void APIENTRY (*NamedFramebufferTextureEXT)(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level);
 	void APIENTRY (*NamedFramebufferTextureFaceEXT)(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLenum face);
+	void APIENTRY (*NamedFramebufferTextureLayer)(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	void APIENTRY (*NamedFramebufferTextureLayerEXT)(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer);
 	void APIENTRY (*NamedProgramLocalParameter4dEXT)(GLuint program, GLenum target, GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
 	void APIENTRY (*NamedProgramLocalParameter4dvEXT)(GLuint program, GLenum target, GLuint index, const GLdouble *params);
@@ -2571,7 +2699,9 @@ struct _gl_osmesa {
 	void APIENTRY (*NamedProgramLocalParametersI4ivEXT)(GLuint program, GLenum target, GLuint index, GLsizei count, const GLint *params);
 	void APIENTRY (*NamedProgramLocalParametersI4uivEXT)(GLuint program, GLenum target, GLuint index, GLsizei count, const GLuint *params);
 	void APIENTRY (*NamedProgramStringEXT)(GLuint program, GLenum target, GLenum format, GLsizei len, const void *string);
+	void APIENTRY (*NamedRenderbufferStorage)(GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height);
 	void APIENTRY (*NamedRenderbufferStorageEXT)(GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height);
+	void APIENTRY (*NamedRenderbufferStorageMultisample)(GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 	void APIENTRY (*NamedRenderbufferStorageMultisampleCoverageEXT)(GLuint renderbuffer, GLsizei coverageSamples, GLsizei colorSamples, GLenum internalformat, GLsizei width, GLsizei height);
 	void APIENTRY (*NamedRenderbufferStorageMultisampleEXT)(GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
 	void APIENTRY (*NamedStringARB)(GLenum type, GLint namelen, const GLchar *name, GLint stringlen, const GLchar *string);
@@ -2632,8 +2762,11 @@ struct _gl_osmesa {
 	void APIENTRY (*PathCoverDepthFuncNV)(GLenum func);
 	void APIENTRY (*PathDashArrayNV)(GLuint path, GLsizei dashCount, const GLfloat *dashArray);
 	void APIENTRY (*PathFogGenNV)(GLenum genMode);
+	GLenum APIENTRY (*PathGlyphIndexArrayNV)(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale);
+	GLenum APIENTRY (*PathGlyphIndexRangeNV)(GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint pathParameterTemplate, GLfloat emScale, GLuint *baseAndCount);
 	void APIENTRY (*PathGlyphRangeNV)(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyph, GLsizei numGlyphs, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale);
 	void APIENTRY (*PathGlyphsNV)(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLsizei numGlyphs, GLenum type, const void *charcodes, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale);
+	GLenum APIENTRY (*PathMemoryGlyphIndexArrayNV)(GLuint firstPathName, GLenum fontTarget, GLsizeiptr fontSize, const void *fontData, GLsizei faceIndex, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale);
 	void APIENTRY (*PathParameterfNV)(GLuint path, GLenum pname, GLfloat value);
 	void APIENTRY (*PathParameterfvNV)(GLuint path, GLenum pname, const GLfloat *value);
 	void APIENTRY (*PathParameteriNV)(GLuint path, GLenum pname, GLint value);
@@ -2689,6 +2822,7 @@ struct _gl_osmesa {
 	GLint APIENTRY (*PollInstrumentsSGIX)(GLint *marker_p);
 	void APIENTRY (*PolygonMode)(GLenum face, GLenum mode);
 	void APIENTRY (*PolygonOffset)(GLfloat factor, GLfloat units);
+	void APIENTRY (*PolygonOffsetClampEXT)(GLfloat factor, GLfloat units, GLfloat clamp);
 	void APIENTRY (*PolygonOffsetEXT)(GLfloat factor, GLfloat bias);
 	void APIENTRY (*PolygonOffsetxOES)(GLfixed factor, GLfixed units);
 	void APIENTRY (*PolygonStipple)(const GLubyte *mask);
@@ -2746,6 +2880,7 @@ struct _gl_osmesa {
 	void APIENTRY (*ProgramParameteriEXT)(GLuint program, GLenum pname, GLint value);
 	void APIENTRY (*ProgramParameters4dvNV)(GLenum target, GLuint index, GLsizei count, const GLdouble *v);
 	void APIENTRY (*ProgramParameters4fvNV)(GLenum target, GLuint index, GLsizei count, const GLfloat *v);
+	void APIENTRY (*ProgramPathFragmentInputGenNV)(GLuint program, GLint location, GLenum genMode, GLint components, const GLfloat *coeffs);
 	void APIENTRY (*ProgramStringARB)(GLenum target, GLenum format, GLsizei len, const void *string);
 	void APIENTRY (*ProgramSubroutineParametersuivNV)(GLenum target, GLsizei count, const GLuint *params);
 	void APIENTRY (*ProgramUniform1d)(GLuint program, GLint location, GLdouble v0);
@@ -2913,9 +3048,11 @@ struct _gl_osmesa {
 	void APIENTRY (*RasterPos4sv)(const GLshort *v);
 	void APIENTRY (*RasterPos4xOES)(GLfixed x, GLfixed y, GLfixed z, GLfixed w);
 	void APIENTRY (*RasterPos4xvOES)(const GLfixed *coords);
+	void APIENTRY (*RasterSamplesEXT)(GLuint samples, GLboolean32 fixedsamplelocations);
 	void APIENTRY (*ReadBuffer)(GLenum mode);
 	void APIENTRY (*ReadInstrumentsSGIX)(GLint marker);
 	void APIENTRY (*ReadPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels);
+	void APIENTRY (*ReadnPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data);
 	void APIENTRY (*ReadnPixelsARB)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data);
 	void APIENTRY (*Rectd)(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
 	void APIENTRY (*Rectdv)(const GLdouble *v1, const GLdouble *v2);
@@ -2964,6 +3101,7 @@ struct _gl_osmesa {
 	void APIENTRY (*ResetMinmax)(GLenum target);
 	void APIENTRY (*ResetMinmaxEXT)(GLenum target);
 	void APIENTRY (*ResizeBuffersMESA)(void);
+	void APIENTRY (*ResolveDepthValuesNV)(void);
 	void APIENTRY (*ResumeTransformFeedback)(void);
 	void APIENTRY (*ResumeTransformFeedbackNV)(void);
 	void APIENTRY (*Rotated)(GLdouble angle, GLdouble x, GLdouble y, GLdouble z);
@@ -3058,6 +3196,7 @@ struct _gl_osmesa {
 	void APIENTRY (*SpriteParameteriSGIX)(GLenum pname, GLint param);
 	void APIENTRY (*SpriteParameterivSGIX)(GLenum pname, const GLint *params);
 	void APIENTRY (*StartInstrumentsSGIX)(void);
+	void APIENTRY (*StateCaptureNV)(GLuint state, GLenum mode);
 	void APIENTRY (*StencilClearTagEXT)(GLsizei stencilTagBits, GLuint stencilClearTag);
 	void APIENTRY (*StencilFillPathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum fillMode, GLuint mask, GLenum transformType, const GLfloat *transformValues);
 	void APIENTRY (*StencilFillPathNV)(GLuint path, GLenum fillMode, GLuint mask);
@@ -3072,8 +3211,13 @@ struct _gl_osmesa {
 	void APIENTRY (*StencilOpValueAMD)(GLenum face, GLuint value);
 	void APIENTRY (*StencilStrokePathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLint reference, GLuint mask, GLenum transformType, const GLfloat *transformValues);
 	void APIENTRY (*StencilStrokePathNV)(GLuint path, GLint reference, GLuint mask);
+	void APIENTRY (*StencilThenCoverFillPathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum fillMode, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues);
+	void APIENTRY (*StencilThenCoverFillPathNV)(GLuint path, GLenum fillMode, GLuint mask, GLenum coverMode);
+	void APIENTRY (*StencilThenCoverStrokePathInstancedNV)(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLint reference, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues);
+	void APIENTRY (*StencilThenCoverStrokePathNV)(GLuint path, GLint reference, GLuint mask, GLenum coverMode);
 	void APIENTRY (*StopInstrumentsSGIX)(GLint marker);
 	void APIENTRY (*StringMarkerGREMEDY)(GLsizei len, const void *string);
+	void APIENTRY (*SubpixelPrecisionBiasNV)(GLuint xbits, GLuint ybits);
 	void APIENTRY (*SwapAPPLE)(void);
 	void APIENTRY (*SwizzleEXT)(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW);
 	void APIENTRY (*SyncTextureINTEL)(GLuint texture);
@@ -3235,8 +3379,11 @@ struct _gl_osmesa {
 	void APIENTRY (*TexSubImage3D)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TexSubImage3DEXT)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TexSubImage4DSGIS)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint woffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLenum format, GLenum type, const void *pixels);
+	void APIENTRY (*TextureBarrier)(void);
 	void APIENTRY (*TextureBarrierNV)(void);
+	void APIENTRY (*TextureBuffer)(GLuint texture, GLenum internalformat, GLuint buffer);
 	void APIENTRY (*TextureBufferEXT)(GLuint texture, GLenum target, GLenum internalformat, GLuint buffer);
+	void APIENTRY (*TextureBufferRange)(GLuint texture, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size);
 	void APIENTRY (*TextureBufferRangeEXT)(GLuint texture, GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size);
 	void APIENTRY (*TextureColorMaskSGIS)(GLboolean32 red, GLboolean32 green, GLboolean32 blue, GLboolean32 alpha);
 	void APIENTRY (*TextureFogSGIX)(GLenum pname);
@@ -3251,22 +3398,36 @@ struct _gl_osmesa {
 	void APIENTRY (*TextureMaterialEXT)(GLenum face, GLenum mode);
 	void APIENTRY (*TextureNormalEXT)(GLenum mode);
 	void APIENTRY (*TexturePageCommitmentEXT)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit);
+	void APIENTRY (*TextureParameterIiv)(GLuint texture, GLenum pname, const GLint *params);
 	void APIENTRY (*TextureParameterIivEXT)(GLuint texture, GLenum target, GLenum pname, const GLint *params);
+	void APIENTRY (*TextureParameterIuiv)(GLuint texture, GLenum pname, const GLuint *params);
 	void APIENTRY (*TextureParameterIuivEXT)(GLuint texture, GLenum target, GLenum pname, const GLuint *params);
+	void APIENTRY (*TextureParameterf)(GLuint texture, GLenum pname, GLfloat param);
 	void APIENTRY (*TextureParameterfEXT)(GLuint texture, GLenum target, GLenum pname, GLfloat param);
+	void APIENTRY (*TextureParameterfv)(GLuint texture, GLenum pname, const GLfloat *param);
 	void APIENTRY (*TextureParameterfvEXT)(GLuint texture, GLenum target, GLenum pname, const GLfloat *params);
+	void APIENTRY (*TextureParameteri)(GLuint texture, GLenum pname, GLint param);
 	void APIENTRY (*TextureParameteriEXT)(GLuint texture, GLenum target, GLenum pname, GLint param);
+	void APIENTRY (*TextureParameteriv)(GLuint texture, GLenum pname, const GLint *param);
 	void APIENTRY (*TextureParameterivEXT)(GLuint texture, GLenum target, GLenum pname, const GLint *params);
 	void APIENTRY (*TextureRangeAPPLE)(GLenum target, GLsizei length, const void *pointer);
 	void APIENTRY (*TextureRenderbufferEXT)(GLuint texture, GLenum target, GLuint renderbuffer);
+	void APIENTRY (*TextureStorage1D)(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width);
 	void APIENTRY (*TextureStorage1DEXT)(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width);
+	void APIENTRY (*TextureStorage2D)(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
 	void APIENTRY (*TextureStorage2DEXT)(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+	void APIENTRY (*TextureStorage2DMultisample)(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations);
 	void APIENTRY (*TextureStorage2DMultisampleEXT)(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations);
+	void APIENTRY (*TextureStorage3D)(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth);
 	void APIENTRY (*TextureStorage3DEXT)(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth);
+	void APIENTRY (*TextureStorage3DMultisample)(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations);
 	void APIENTRY (*TextureStorage3DMultisampleEXT)(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations);
 	void APIENTRY (*TextureStorageSparseAMD)(GLuint texture, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags);
+	void APIENTRY (*TextureSubImage1D)(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TextureSubImage1DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
+	void APIENTRY (*TextureSubImage2D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TextureSubImage2DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+	void APIENTRY (*TextureSubImage3D)(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TextureSubImage3DEXT)(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels);
 	void APIENTRY (*TextureView)(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat, GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers);
 	void APIENTRY (*TraceAssertAttribMESA)(GLbitfield attribMask);
@@ -3277,6 +3438,8 @@ struct _gl_osmesa {
 	void APIENTRY (*TraceTextureMESA)(GLuint name, const GLubyte *comment);
 	void APIENTRY (*TrackMatrixNV)(GLenum target, GLuint address, GLenum matrix, GLenum transform);
 	void APIENTRY (*TransformFeedbackAttribsNV)(GLsizei count, const GLint *attribs, GLenum bufferMode);
+	void APIENTRY (*TransformFeedbackBufferBase)(GLuint xfb, GLuint index, GLuint buffer);
+	void APIENTRY (*TransformFeedbackBufferRange)(GLuint xfb, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
 	void APIENTRY (*TransformFeedbackStreamAttribsNV)(GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode);
 	void APIENTRY (*TransformFeedbackVaryings)(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode);
 	void APIENTRY (*TransformFeedbackVaryingsEXT)(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode);
@@ -3390,6 +3553,7 @@ struct _gl_osmesa {
 	void APIENTRY (*UnlockArraysEXT)(void);
 	GLboolean APIENTRY (*UnmapBuffer)(GLenum target);
 	GLboolean APIENTRY (*UnmapBufferARB)(GLenum target);
+	GLboolean APIENTRY (*UnmapNamedBuffer)(GLuint buffer);
 	GLboolean APIENTRY (*UnmapNamedBufferEXT)(GLuint buffer);
 	void APIENTRY (*UnmapObjectBufferATI)(GLuint buffer);
 	void APIENTRY (*UnmapTexture2DINTEL)(GLuint texture, GLint level);
@@ -3463,9 +3627,15 @@ struct _gl_osmesa {
 	void APIENTRY (*Vertex4sv)(const GLshort *v);
 	void APIENTRY (*Vertex4xOES)(GLfixed x, GLfixed y, GLfixed z);
 	void APIENTRY (*Vertex4xvOES)(const GLfixed *coords);
+	void APIENTRY (*VertexArrayAttribBinding)(GLuint vaobj, GLuint attribindex, GLuint bindingindex);
+	void APIENTRY (*VertexArrayAttribFormat)(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean32 normalized, GLuint relativeoffset);
+	void APIENTRY (*VertexArrayAttribIFormat)(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset);
+	void APIENTRY (*VertexArrayAttribLFormat)(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset);
 	void APIENTRY (*VertexArrayBindVertexBufferEXT)(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
+	void APIENTRY (*VertexArrayBindingDivisor)(GLuint vaobj, GLuint bindingindex, GLuint divisor);
 	void APIENTRY (*VertexArrayColorOffsetEXT)(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexArrayEdgeFlagOffsetEXT)(GLuint vaobj, GLuint buffer, GLsizei stride, GLintptr offset);
+	void APIENTRY (*VertexArrayElementBuffer)(GLuint vaobj, GLuint buffer);
 	void APIENTRY (*VertexArrayFogCoordOffsetEXT)(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexArrayIndexOffsetEXT)(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexArrayMultiTexCoordOffsetEXT)(GLuint vaobj, GLuint buffer, GLenum texunit, GLint size, GLenum type, GLsizei stride, GLintptr offset);
@@ -3484,6 +3654,8 @@ struct _gl_osmesa {
 	void APIENTRY (*VertexArrayVertexAttribLOffsetEXT)(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexArrayVertexAttribOffsetEXT)(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexArrayVertexBindingDivisorEXT)(GLuint vaobj, GLuint bindingindex, GLuint divisor);
+	void APIENTRY (*VertexArrayVertexBuffer)(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
+	void APIENTRY (*VertexArrayVertexBuffers)(GLuint vaobj, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizei *strides);
 	void APIENTRY (*VertexArrayVertexOffsetEXT)(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset);
 	void APIENTRY (*VertexAttrib1d)(GLuint index, GLdouble x);
 	void APIENTRY (*VertexAttrib1dARB)(GLuint index, GLdouble x);
@@ -4034,6 +4206,8 @@ extern struct _gl_osmesa gl;
 #define glBindTexture (gl.BindTexture)
 #undef glBindTextureEXT
 #define glBindTextureEXT (gl.BindTextureEXT)
+#undef glBindTextureUnit
+#define glBindTextureUnit (gl.BindTextureUnit)
 #undef glBindTextureUnitParameterEXT
 #define glBindTextureUnitParameterEXT (gl.BindTextureUnitParameterEXT)
 #undef glBindTextures
@@ -4082,6 +4256,8 @@ extern struct _gl_osmesa gl;
 #define glBitmap (gl.Bitmap)
 #undef glBitmapxOES
 #define glBitmapxOES (gl.BitmapxOES)
+#undef glBlendBarrierKHR
+#define glBlendBarrierKHR (gl.BlendBarrierKHR)
 #undef glBlendBarrierNV
 #define glBlendBarrierNV (gl.BlendBarrierNV)
 #undef glBlendColor
@@ -4138,12 +4314,16 @@ extern struct _gl_osmesa gl;
 #define glBlitFramebuffer (gl.BlitFramebuffer)
 #undef glBlitFramebufferEXT
 #define glBlitFramebufferEXT (gl.BlitFramebufferEXT)
+#undef glBlitNamedFramebuffer
+#define glBlitNamedFramebuffer (gl.BlitNamedFramebuffer)
 #undef glBufferAddressRangeNV
 #define glBufferAddressRangeNV (gl.BufferAddressRangeNV)
 #undef glBufferData
 #define glBufferData (gl.BufferData)
 #undef glBufferDataARB
 #define glBufferDataARB (gl.BufferDataARB)
+#undef glBufferPageCommitmentARB
+#define glBufferPageCommitmentARB (gl.BufferPageCommitmentARB)
 #undef glBufferParameteriAPPLE
 #define glBufferParameteriAPPLE (gl.BufferParameteriAPPLE)
 #undef glBufferStorage
@@ -4152,6 +4332,8 @@ extern struct _gl_osmesa gl;
 #define glBufferSubData (gl.BufferSubData)
 #undef glBufferSubDataARB
 #define glBufferSubDataARB (gl.BufferSubDataARB)
+#undef glCallCommandListNV
+#define glCallCommandListNV (gl.CallCommandListNV)
 #undef glCallList
 #define glCallList (gl.CallList)
 #undef glCallLists
@@ -4160,6 +4342,8 @@ extern struct _gl_osmesa gl;
 #define glCheckFramebufferStatus (gl.CheckFramebufferStatus)
 #undef glCheckFramebufferStatusEXT
 #define glCheckFramebufferStatusEXT (gl.CheckFramebufferStatusEXT)
+#undef glCheckNamedFramebufferStatus
+#define glCheckNamedFramebufferStatus (gl.CheckNamedFramebufferStatus)
 #undef glCheckNamedFramebufferStatusEXT
 #define glCheckNamedFramebufferStatusEXT (gl.CheckNamedFramebufferStatusEXT)
 #undef glClampColor
@@ -4206,10 +4390,22 @@ extern struct _gl_osmesa gl;
 #define glClearDepthxOES (gl.ClearDepthxOES)
 #undef glClearIndex
 #define glClearIndex (gl.ClearIndex)
+#undef glClearNamedBufferData
+#define glClearNamedBufferData (gl.ClearNamedBufferData)
 #undef glClearNamedBufferDataEXT
 #define glClearNamedBufferDataEXT (gl.ClearNamedBufferDataEXT)
+#undef glClearNamedBufferSubData
+#define glClearNamedBufferSubData (gl.ClearNamedBufferSubData)
 #undef glClearNamedBufferSubDataEXT
 #define glClearNamedBufferSubDataEXT (gl.ClearNamedBufferSubDataEXT)
+#undef glClearNamedFramebufferfi
+#define glClearNamedFramebufferfi (gl.ClearNamedFramebufferfi)
+#undef glClearNamedFramebufferfv
+#define glClearNamedFramebufferfv (gl.ClearNamedFramebufferfv)
+#undef glClearNamedFramebufferiv
+#define glClearNamedFramebufferiv (gl.ClearNamedFramebufferiv)
+#undef glClearNamedFramebufferuiv
+#define glClearNamedFramebufferuiv (gl.ClearNamedFramebufferuiv)
 #undef glClearStencil
 #define glClearStencil (gl.ClearStencil)
 #undef glClearTexImage
@@ -4226,6 +4422,8 @@ extern struct _gl_osmesa gl;
 #define glClientAttribDefaultEXT (gl.ClientAttribDefaultEXT)
 #undef glClientWaitSync
 #define glClientWaitSync (gl.ClientWaitSync)
+#undef glClipControl
+#define glClipControl (gl.ClipControl)
 #undef glClipPlane
 #define glClipPlane (gl.ClipPlane)
 #undef glClipPlanefOES
@@ -4392,6 +4590,10 @@ extern struct _gl_osmesa gl;
 #define glCombinerParameterivNV (gl.CombinerParameterivNV)
 #undef glCombinerStageParameterfvNV
 #define glCombinerStageParameterfvNV (gl.CombinerStageParameterfvNV)
+#undef glCommandListSegmentsNV
+#define glCommandListSegmentsNV (gl.CommandListSegmentsNV)
+#undef glCompileCommandListNV
+#define glCompileCommandListNV (gl.CompileCommandListNV)
 #undef glCompileShader
 #define glCompileShader (gl.CompileShader)
 #undef glCompileShaderARB
@@ -4440,10 +4642,16 @@ extern struct _gl_osmesa gl;
 #define glCompressedTextureImage2DEXT (gl.CompressedTextureImage2DEXT)
 #undef glCompressedTextureImage3DEXT
 #define glCompressedTextureImage3DEXT (gl.CompressedTextureImage3DEXT)
+#undef glCompressedTextureSubImage1D
+#define glCompressedTextureSubImage1D (gl.CompressedTextureSubImage1D)
 #undef glCompressedTextureSubImage1DEXT
 #define glCompressedTextureSubImage1DEXT (gl.CompressedTextureSubImage1DEXT)
+#undef glCompressedTextureSubImage2D
+#define glCompressedTextureSubImage2D (gl.CompressedTextureSubImage2D)
 #undef glCompressedTextureSubImage2DEXT
 #define glCompressedTextureSubImage2DEXT (gl.CompressedTextureSubImage2DEXT)
+#undef glCompressedTextureSubImage3D
+#define glCompressedTextureSubImage3D (gl.CompressedTextureSubImage3D)
 #undef glCompressedTextureSubImage3DEXT
 #define glCompressedTextureSubImage3DEXT (gl.CompressedTextureSubImage3DEXT)
 #undef glConvolutionFilter1D
@@ -4506,6 +4714,8 @@ extern struct _gl_osmesa gl;
 #define glCopyMultiTexSubImage2DEXT (gl.CopyMultiTexSubImage2DEXT)
 #undef glCopyMultiTexSubImage3DEXT
 #define glCopyMultiTexSubImage3DEXT (gl.CopyMultiTexSubImage3DEXT)
+#undef glCopyNamedBufferSubData
+#define glCopyNamedBufferSubData (gl.CopyNamedBufferSubData)
 #undef glCopyPathNV
 #define glCopyPathNV (gl.CopyPathNV)
 #undef glCopyPixels
@@ -4534,10 +4744,16 @@ extern struct _gl_osmesa gl;
 #define glCopyTextureImage1DEXT (gl.CopyTextureImage1DEXT)
 #undef glCopyTextureImage2DEXT
 #define glCopyTextureImage2DEXT (gl.CopyTextureImage2DEXT)
+#undef glCopyTextureSubImage1D
+#define glCopyTextureSubImage1D (gl.CopyTextureSubImage1D)
 #undef glCopyTextureSubImage1DEXT
 #define glCopyTextureSubImage1DEXT (gl.CopyTextureSubImage1DEXT)
+#undef glCopyTextureSubImage2D
+#define glCopyTextureSubImage2D (gl.CopyTextureSubImage2D)
 #undef glCopyTextureSubImage2DEXT
 #define glCopyTextureSubImage2DEXT (gl.CopyTextureSubImage2DEXT)
+#undef glCopyTextureSubImage3D
+#define glCopyTextureSubImage3D (gl.CopyTextureSubImage3D)
 #undef glCopyTextureSubImage3DEXT
 #define glCopyTextureSubImage3DEXT (gl.CopyTextureSubImage3DEXT)
 #undef glCoverFillPathInstancedNV
@@ -4548,14 +4764,32 @@ extern struct _gl_osmesa gl;
 #define glCoverStrokePathInstancedNV (gl.CoverStrokePathInstancedNV)
 #undef glCoverStrokePathNV
 #define glCoverStrokePathNV (gl.CoverStrokePathNV)
+#undef glCoverageModulationNV
+#define glCoverageModulationNV (gl.CoverageModulationNV)
+#undef glCoverageModulationTableNV
+#define glCoverageModulationTableNV (gl.CoverageModulationTableNV)
+#undef glCreateBuffers
+#define glCreateBuffers (gl.CreateBuffers)
+#undef glCreateCommandListsNV
+#define glCreateCommandListsNV (gl.CreateCommandListsNV)
 #undef glCreateDebugObjectMESA
 #define glCreateDebugObjectMESA (gl.CreateDebugObjectMESA)
+#undef glCreateFramebuffers
+#define glCreateFramebuffers (gl.CreateFramebuffers)
 #undef glCreatePerfQueryINTEL
 #define glCreatePerfQueryINTEL (gl.CreatePerfQueryINTEL)
 #undef glCreateProgram
 #define glCreateProgram (gl.CreateProgram)
 #undef glCreateProgramObjectARB
 #define glCreateProgramObjectARB (gl.CreateProgramObjectARB)
+#undef glCreateProgramPipelines
+#define glCreateProgramPipelines (gl.CreateProgramPipelines)
+#undef glCreateQueries
+#define glCreateQueries (gl.CreateQueries)
+#undef glCreateRenderbuffers
+#define glCreateRenderbuffers (gl.CreateRenderbuffers)
+#undef glCreateSamplers
+#define glCreateSamplers (gl.CreateSamplers)
 #undef glCreateShader
 #define glCreateShader (gl.CreateShader)
 #undef glCreateShaderObjectARB
@@ -4564,8 +4798,16 @@ extern struct _gl_osmesa gl;
 #define glCreateShaderProgramEXT (gl.CreateShaderProgramEXT)
 #undef glCreateShaderProgramv
 #define glCreateShaderProgramv (gl.CreateShaderProgramv)
+#undef glCreateStatesNV
+#define glCreateStatesNV (gl.CreateStatesNV)
 #undef glCreateSyncFromCLeventARB
 #define glCreateSyncFromCLeventARB (gl.CreateSyncFromCLeventARB)
+#undef glCreateTextures
+#define glCreateTextures (gl.CreateTextures)
+#undef glCreateTransformFeedbacks
+#define glCreateTransformFeedbacks (gl.CreateTransformFeedbacks)
+#undef glCreateVertexArrays
+#define glCreateVertexArrays (gl.CreateVertexArrays)
 #undef glCullFace
 #define glCullFace (gl.CullFace)
 #undef glCullParameterdvEXT
@@ -4604,6 +4846,8 @@ extern struct _gl_osmesa gl;
 #define glDeleteBuffers (gl.DeleteBuffers)
 #undef glDeleteBuffersARB
 #define glDeleteBuffersARB (gl.DeleteBuffersARB)
+#undef glDeleteCommandListsNV
+#define glDeleteCommandListsNV (gl.DeleteCommandListsNV)
 #undef glDeleteFencesAPPLE
 #define glDeleteFencesAPPLE (gl.DeleteFencesAPPLE)
 #undef glDeleteFencesNV
@@ -4652,6 +4896,8 @@ extern struct _gl_osmesa gl;
 #define glDeleteSamplers (gl.DeleteSamplers)
 #undef glDeleteShader
 #define glDeleteShader (gl.DeleteShader)
+#undef glDeleteStatesNV
+#define glDeleteStatesNV (gl.DeleteStatesNV)
 #undef glDeleteSync
 #define glDeleteSync (gl.DeleteSync)
 #undef glDeleteTextures
@@ -4710,6 +4956,8 @@ extern struct _gl_osmesa gl;
 #define glDisableTraceMESA (gl.DisableTraceMESA)
 #undef glDisableVariantClientStateEXT
 #define glDisableVariantClientStateEXT (gl.DisableVariantClientStateEXT)
+#undef glDisableVertexArrayAttrib
+#define glDisableVertexArrayAttrib (gl.DisableVertexArrayAttrib)
 #undef glDisableVertexArrayAttribEXT
 #define glDisableVertexArrayAttribEXT (gl.DisableVertexArrayAttribEXT)
 #undef glDisableVertexArrayEXT
@@ -4750,6 +4998,14 @@ extern struct _gl_osmesa gl;
 #define glDrawBuffersARB (gl.DrawBuffersARB)
 #undef glDrawBuffersATI
 #define glDrawBuffersATI (gl.DrawBuffersATI)
+#undef glDrawCommandsAddressNV
+#define glDrawCommandsAddressNV (gl.DrawCommandsAddressNV)
+#undef glDrawCommandsNV
+#define glDrawCommandsNV (gl.DrawCommandsNV)
+#undef glDrawCommandsStatesAddressNV
+#define glDrawCommandsStatesAddressNV (gl.DrawCommandsStatesAddressNV)
+#undef glDrawCommandsStatesNV
+#define glDrawCommandsStatesNV (gl.DrawCommandsStatesNV)
 #undef glDrawElementArrayAPPLE
 #define glDrawElementArrayAPPLE (gl.DrawElementArrayAPPLE)
 #undef glDrawElementArrayATI
@@ -4828,6 +5084,8 @@ extern struct _gl_osmesa gl;
 #define glEnableTraceMESA (gl.EnableTraceMESA)
 #undef glEnableVariantClientStateEXT
 #define glEnableVariantClientStateEXT (gl.EnableVariantClientStateEXT)
+#undef glEnableVertexArrayAttrib
+#define glEnableVertexArrayAttrib (gl.EnableVertexArrayAttrib)
 #undef glEnableVertexArrayAttribEXT
 #define glEnableVertexArrayAttribEXT (gl.EnableVertexArrayAttribEXT)
 #undef glEnableVertexArrayEXT
@@ -4942,6 +5200,8 @@ extern struct _gl_osmesa gl;
 #define glFlushMappedBufferRange (gl.FlushMappedBufferRange)
 #undef glFlushMappedBufferRangeAPPLE
 #define glFlushMappedBufferRangeAPPLE (gl.FlushMappedBufferRangeAPPLE)
+#undef glFlushMappedNamedBufferRange
+#define glFlushMappedNamedBufferRange (gl.FlushMappedNamedBufferRange)
 #undef glFlushMappedNamedBufferRangeEXT
 #define glFlushMappedNamedBufferRangeEXT (gl.FlushMappedNamedBufferRangeEXT)
 #undef glFlushPixelDataRangeNV
@@ -5000,6 +5260,8 @@ extern struct _gl_osmesa gl;
 #define glFogxvOES (gl.FogxvOES)
 #undef glFragmentColorMaterialSGIX
 #define glFragmentColorMaterialSGIX (gl.FragmentColorMaterialSGIX)
+#undef glFragmentCoverageColorNV
+#define glFragmentCoverageColorNV (gl.FragmentCoverageColorNV)
 #undef glFragmentLightModelfSGIX
 #define glFragmentLightModelfSGIX (gl.FragmentLightModelfSGIX)
 #undef glFragmentLightModelfvSGIX
@@ -5040,6 +5302,8 @@ extern struct _gl_osmesa gl;
 #define glFramebufferRenderbuffer (gl.FramebufferRenderbuffer)
 #undef glFramebufferRenderbufferEXT
 #define glFramebufferRenderbufferEXT (gl.FramebufferRenderbufferEXT)
+#undef glFramebufferSampleLocationsfvNV
+#define glFramebufferSampleLocationsfvNV (gl.FramebufferSampleLocationsfvNV)
 #undef glFramebufferTexture
 #define glFramebufferTexture (gl.FramebufferTexture)
 #undef glFramebufferTexture1D
@@ -5068,6 +5332,8 @@ extern struct _gl_osmesa gl;
 #define glFramebufferTextureLayerARB (gl.FramebufferTextureLayerARB)
 #undef glFramebufferTextureLayerEXT
 #define glFramebufferTextureLayerEXT (gl.FramebufferTextureLayerEXT)
+#undef glFramebufferTextureMultiviewOVR
+#define glFramebufferTextureMultiviewOVR (gl.FramebufferTextureMultiviewOVR)
 #undef glFreeObjectBufferATI
 #define glFreeObjectBufferATI (gl.FreeObjectBufferATI)
 #undef glFrontFace
@@ -5144,6 +5410,8 @@ extern struct _gl_osmesa gl;
 #define glGenerateMipmapEXT (gl.GenerateMipmapEXT)
 #undef glGenerateMultiTexMipmapEXT
 #define glGenerateMultiTexMipmapEXT (gl.GenerateMultiTexMipmapEXT)
+#undef glGenerateTextureMipmap
+#define glGenerateTextureMipmap (gl.GenerateTextureMipmap)
 #undef glGenerateTextureMipmapEXT
 #define glGenerateTextureMipmapEXT (gl.GenerateTextureMipmapEXT)
 #undef glGetActiveAtomicCounterBufferiv
@@ -5242,14 +5510,20 @@ extern struct _gl_osmesa gl;
 #define glGetCombinerOutputParameterivNV (gl.GetCombinerOutputParameterivNV)
 #undef glGetCombinerStageParameterfvNV
 #define glGetCombinerStageParameterfvNV (gl.GetCombinerStageParameterfvNV)
+#undef glGetCommandHeaderNV
+#define glGetCommandHeaderNV (gl.GetCommandHeaderNV)
 #undef glGetCompressedMultiTexImageEXT
 #define glGetCompressedMultiTexImageEXT (gl.GetCompressedMultiTexImageEXT)
 #undef glGetCompressedTexImage
 #define glGetCompressedTexImage (gl.GetCompressedTexImage)
 #undef glGetCompressedTexImageARB
 #define glGetCompressedTexImageARB (gl.GetCompressedTexImageARB)
+#undef glGetCompressedTextureImage
+#define glGetCompressedTextureImage (gl.GetCompressedTextureImage)
 #undef glGetCompressedTextureImageEXT
 #define glGetCompressedTextureImageEXT (gl.GetCompressedTextureImageEXT)
+#undef glGetCompressedTextureSubImage
+#define glGetCompressedTextureSubImage (gl.GetCompressedTextureSubImage)
 #undef glGetConvolutionFilter
 #define glGetConvolutionFilter (gl.GetConvolutionFilter)
 #undef glGetConvolutionFilterEXT
@@ -5264,6 +5538,8 @@ extern struct _gl_osmesa gl;
 #define glGetConvolutionParameterivEXT (gl.GetConvolutionParameterivEXT)
 #undef glGetConvolutionParameterxvOES
 #define glGetConvolutionParameterxvOES (gl.GetConvolutionParameterxvOES)
+#undef glGetCoverageModulationTableNV
+#define glGetCoverageModulationTableNV (gl.GetCoverageModulationTableNV)
 #undef glGetDebugLogLengthMESA
 #define glGetDebugLogLengthMESA (gl.GetDebugLogLengthMESA)
 #undef glGetDebugLogMESA
@@ -5328,6 +5604,8 @@ extern struct _gl_osmesa gl;
 #define glGetFramebufferParameteriv (gl.GetFramebufferParameteriv)
 #undef glGetFramebufferParameterivEXT
 #define glGetFramebufferParameterivEXT (gl.GetFramebufferParameterivEXT)
+#undef glGetGraphicsResetStatus
+#define glGetGraphicsResetStatus (gl.GetGraphicsResetStatus)
 #undef glGetGraphicsResetStatusARB
 #define glGetGraphicsResetStatusARB (gl.GetGraphicsResetStatusARB)
 #undef glGetHandleARB
@@ -5372,6 +5650,8 @@ extern struct _gl_osmesa gl;
 #define glGetIntegerui64vNV (gl.GetIntegerui64vNV)
 #undef glGetIntegerv
 #define glGetIntegerv (gl.GetIntegerv)
+#undef glGetInternalformatSampleivNV
+#define glGetInternalformatSampleivNV (gl.GetInternalformatSampleivNV)
 #undef glGetInternalformati64v
 #define glGetInternalformati64v (gl.GetInternalformati64v)
 #undef glGetInternalformativ
@@ -5462,16 +5742,28 @@ extern struct _gl_osmesa gl;
 #define glGetMultisamplefv (gl.GetMultisamplefv)
 #undef glGetMultisamplefvNV
 #define glGetMultisamplefvNV (gl.GetMultisamplefvNV)
+#undef glGetNamedBufferParameteri64v
+#define glGetNamedBufferParameteri64v (gl.GetNamedBufferParameteri64v)
+#undef glGetNamedBufferParameteriv
+#define glGetNamedBufferParameteriv (gl.GetNamedBufferParameteriv)
 #undef glGetNamedBufferParameterivEXT
 #define glGetNamedBufferParameterivEXT (gl.GetNamedBufferParameterivEXT)
 #undef glGetNamedBufferParameterui64vNV
 #define glGetNamedBufferParameterui64vNV (gl.GetNamedBufferParameterui64vNV)
+#undef glGetNamedBufferPointerv
+#define glGetNamedBufferPointerv (gl.GetNamedBufferPointerv)
 #undef glGetNamedBufferPointervEXT
 #define glGetNamedBufferPointervEXT (gl.GetNamedBufferPointervEXT)
+#undef glGetNamedBufferSubData
+#define glGetNamedBufferSubData (gl.GetNamedBufferSubData)
 #undef glGetNamedBufferSubDataEXT
 #define glGetNamedBufferSubDataEXT (gl.GetNamedBufferSubDataEXT)
+#undef glGetNamedFramebufferAttachmentParameteriv
+#define glGetNamedFramebufferAttachmentParameteriv (gl.GetNamedFramebufferAttachmentParameteriv)
 #undef glGetNamedFramebufferAttachmentParameterivEXT
 #define glGetNamedFramebufferAttachmentParameterivEXT (gl.GetNamedFramebufferAttachmentParameterivEXT)
+#undef glGetNamedFramebufferParameteriv
+#define glGetNamedFramebufferParameteriv (gl.GetNamedFramebufferParameteriv)
 #undef glGetNamedFramebufferParameterivEXT
 #define glGetNamedFramebufferParameterivEXT (gl.GetNamedFramebufferParameterivEXT)
 #undef glGetNamedProgramLocalParameterIivEXT
@@ -5486,6 +5778,8 @@ extern struct _gl_osmesa gl;
 #define glGetNamedProgramStringEXT (gl.GetNamedProgramStringEXT)
 #undef glGetNamedProgramivEXT
 #define glGetNamedProgramivEXT (gl.GetNamedProgramivEXT)
+#undef glGetNamedRenderbufferParameteriv
+#define glGetNamedRenderbufferParameteriv (gl.GetNamedRenderbufferParameteriv)
 #undef glGetNamedRenderbufferParameterivEXT
 #define glGetNamedRenderbufferParameterivEXT (gl.GetNamedRenderbufferParameterivEXT)
 #undef glGetNamedStringARB
@@ -5630,6 +5924,8 @@ extern struct _gl_osmesa gl;
 #define glGetProgramResourceLocationIndex (gl.GetProgramResourceLocationIndex)
 #undef glGetProgramResourceName
 #define glGetProgramResourceName (gl.GetProgramResourceName)
+#undef glGetProgramResourcefvNV
+#define glGetProgramResourcefvNV (gl.GetProgramResourcefvNV)
 #undef glGetProgramResourceiv
 #define glGetProgramResourceiv (gl.GetProgramResourceiv)
 #undef glGetProgramStageiv
@@ -5646,6 +5942,14 @@ extern struct _gl_osmesa gl;
 #define glGetProgramivARB (gl.GetProgramivARB)
 #undef glGetProgramivNV
 #define glGetProgramivNV (gl.GetProgramivNV)
+#undef glGetQueryBufferObjecti64v
+#define glGetQueryBufferObjecti64v (gl.GetQueryBufferObjecti64v)
+#undef glGetQueryBufferObjectiv
+#define glGetQueryBufferObjectiv (gl.GetQueryBufferObjectiv)
+#undef glGetQueryBufferObjectui64v
+#define glGetQueryBufferObjectui64v (gl.GetQueryBufferObjectui64v)
+#undef glGetQueryBufferObjectuiv
+#define glGetQueryBufferObjectuiv (gl.GetQueryBufferObjectuiv)
 #undef glGetQueryIndexediv
 #define glGetQueryIndexediv (gl.GetQueryIndexediv)
 #undef glGetQueryObjecti64v
@@ -5696,6 +6000,8 @@ extern struct _gl_osmesa gl;
 #define glGetShaderiv (gl.GetShaderiv)
 #undef glGetSharpenTexFuncSGIS
 #define glGetSharpenTexFuncSGIS (gl.GetSharpenTexFuncSGIS)
+#undef glGetStageIndexNV
+#define glGetStageIndexNV (gl.GetStageIndexNV)
 #undef glGetString
 #define glGetString (gl.GetString)
 #undef glGetStringi
@@ -5754,24 +6060,40 @@ extern struct _gl_osmesa gl;
 #define glGetTextureHandleARB (gl.GetTextureHandleARB)
 #undef glGetTextureHandleNV
 #define glGetTextureHandleNV (gl.GetTextureHandleNV)
+#undef glGetTextureImage
+#define glGetTextureImage (gl.GetTextureImage)
 #undef glGetTextureImageEXT
 #define glGetTextureImageEXT (gl.GetTextureImageEXT)
+#undef glGetTextureLevelParameterfv
+#define glGetTextureLevelParameterfv (gl.GetTextureLevelParameterfv)
 #undef glGetTextureLevelParameterfvEXT
 #define glGetTextureLevelParameterfvEXT (gl.GetTextureLevelParameterfvEXT)
+#undef glGetTextureLevelParameteriv
+#define glGetTextureLevelParameteriv (gl.GetTextureLevelParameteriv)
 #undef glGetTextureLevelParameterivEXT
 #define glGetTextureLevelParameterivEXT (gl.GetTextureLevelParameterivEXT)
+#undef glGetTextureParameterIiv
+#define glGetTextureParameterIiv (gl.GetTextureParameterIiv)
 #undef glGetTextureParameterIivEXT
 #define glGetTextureParameterIivEXT (gl.GetTextureParameterIivEXT)
+#undef glGetTextureParameterIuiv
+#define glGetTextureParameterIuiv (gl.GetTextureParameterIuiv)
 #undef glGetTextureParameterIuivEXT
 #define glGetTextureParameterIuivEXT (gl.GetTextureParameterIuivEXT)
+#undef glGetTextureParameterfv
+#define glGetTextureParameterfv (gl.GetTextureParameterfv)
 #undef glGetTextureParameterfvEXT
 #define glGetTextureParameterfvEXT (gl.GetTextureParameterfvEXT)
+#undef glGetTextureParameteriv
+#define glGetTextureParameteriv (gl.GetTextureParameteriv)
 #undef glGetTextureParameterivEXT
 #define glGetTextureParameterivEXT (gl.GetTextureParameterivEXT)
 #undef glGetTextureSamplerHandleARB
 #define glGetTextureSamplerHandleARB (gl.GetTextureSamplerHandleARB)
 #undef glGetTextureSamplerHandleNV
 #define glGetTextureSamplerHandleNV (gl.GetTextureSamplerHandleNV)
+#undef glGetTextureSubImage
+#define glGetTextureSubImage (gl.GetTextureSubImage)
 #undef glGetTrackMatrixivNV
 #define glGetTrackMatrixivNV (gl.GetTrackMatrixivNV)
 #undef glGetTransformFeedbackVarying
@@ -5780,6 +6102,12 @@ extern struct _gl_osmesa gl;
 #define glGetTransformFeedbackVaryingEXT (gl.GetTransformFeedbackVaryingEXT)
 #undef glGetTransformFeedbackVaryingNV
 #define glGetTransformFeedbackVaryingNV (gl.GetTransformFeedbackVaryingNV)
+#undef glGetTransformFeedbacki64_v
+#define glGetTransformFeedbacki64_v (gl.GetTransformFeedbacki64_v)
+#undef glGetTransformFeedbacki_v
+#define glGetTransformFeedbacki_v (gl.GetTransformFeedbacki_v)
+#undef glGetTransformFeedbackiv
+#define glGetTransformFeedbackiv (gl.GetTransformFeedbackiv)
 #undef glGetUniformBlockIndex
 #define glGetUniformBlockIndex (gl.GetUniformBlockIndex)
 #undef glGetUniformBufferSizeEXT
@@ -5826,6 +6154,10 @@ extern struct _gl_osmesa gl;
 #define glGetVariantPointervEXT (gl.GetVariantPointervEXT)
 #undef glGetVaryingLocationNV
 #define glGetVaryingLocationNV (gl.GetVaryingLocationNV)
+#undef glGetVertexArrayIndexed64iv
+#define glGetVertexArrayIndexed64iv (gl.GetVertexArrayIndexed64iv)
+#undef glGetVertexArrayIndexediv
+#define glGetVertexArrayIndexediv (gl.GetVertexArrayIndexediv)
 #undef glGetVertexArrayIntegeri_vEXT
 #define glGetVertexArrayIntegeri_vEXT (gl.GetVertexArrayIntegeri_vEXT)
 #undef glGetVertexArrayIntegervEXT
@@ -5834,6 +6166,8 @@ extern struct _gl_osmesa gl;
 #define glGetVertexArrayPointeri_vEXT (gl.GetVertexArrayPointeri_vEXT)
 #undef glGetVertexArrayPointervEXT
 #define glGetVertexArrayPointervEXT (gl.GetVertexArrayPointervEXT)
+#undef glGetVertexArrayiv
+#define glGetVertexArrayiv (gl.GetVertexArrayiv)
 #undef glGetVertexAttribArrayObjectfvATI
 #define glGetVertexAttribArrayObjectfvATI (gl.GetVertexAttribArrayObjectfvATI)
 #undef glGetVertexAttribArrayObjectivATI
@@ -5896,40 +6230,76 @@ extern struct _gl_osmesa gl;
 #define glGetVideoui64vNV (gl.GetVideoui64vNV)
 #undef glGetVideouivNV
 #define glGetVideouivNV (gl.GetVideouivNV)
+#undef glGetnColorTable
+#define glGetnColorTable (gl.GetnColorTable)
 #undef glGetnColorTableARB
 #define glGetnColorTableARB (gl.GetnColorTableARB)
+#undef glGetnCompressedTexImage
+#define glGetnCompressedTexImage (gl.GetnCompressedTexImage)
 #undef glGetnCompressedTexImageARB
 #define glGetnCompressedTexImageARB (gl.GetnCompressedTexImageARB)
+#undef glGetnConvolutionFilter
+#define glGetnConvolutionFilter (gl.GetnConvolutionFilter)
 #undef glGetnConvolutionFilterARB
 #define glGetnConvolutionFilterARB (gl.GetnConvolutionFilterARB)
+#undef glGetnHistogram
+#define glGetnHistogram (gl.GetnHistogram)
 #undef glGetnHistogramARB
 #define glGetnHistogramARB (gl.GetnHistogramARB)
+#undef glGetnMapdv
+#define glGetnMapdv (gl.GetnMapdv)
 #undef glGetnMapdvARB
 #define glGetnMapdvARB (gl.GetnMapdvARB)
+#undef glGetnMapfv
+#define glGetnMapfv (gl.GetnMapfv)
 #undef glGetnMapfvARB
 #define glGetnMapfvARB (gl.GetnMapfvARB)
+#undef glGetnMapiv
+#define glGetnMapiv (gl.GetnMapiv)
 #undef glGetnMapivARB
 #define glGetnMapivARB (gl.GetnMapivARB)
+#undef glGetnMinmax
+#define glGetnMinmax (gl.GetnMinmax)
 #undef glGetnMinmaxARB
 #define glGetnMinmaxARB (gl.GetnMinmaxARB)
+#undef glGetnPixelMapfv
+#define glGetnPixelMapfv (gl.GetnPixelMapfv)
 #undef glGetnPixelMapfvARB
 #define glGetnPixelMapfvARB (gl.GetnPixelMapfvARB)
+#undef glGetnPixelMapuiv
+#define glGetnPixelMapuiv (gl.GetnPixelMapuiv)
 #undef glGetnPixelMapuivARB
 #define glGetnPixelMapuivARB (gl.GetnPixelMapuivARB)
+#undef glGetnPixelMapusv
+#define glGetnPixelMapusv (gl.GetnPixelMapusv)
 #undef glGetnPixelMapusvARB
 #define glGetnPixelMapusvARB (gl.GetnPixelMapusvARB)
+#undef glGetnPolygonStipple
+#define glGetnPolygonStipple (gl.GetnPolygonStipple)
 #undef glGetnPolygonStippleARB
 #define glGetnPolygonStippleARB (gl.GetnPolygonStippleARB)
+#undef glGetnSeparableFilter
+#define glGetnSeparableFilter (gl.GetnSeparableFilter)
 #undef glGetnSeparableFilterARB
 #define glGetnSeparableFilterARB (gl.GetnSeparableFilterARB)
+#undef glGetnTexImage
+#define glGetnTexImage (gl.GetnTexImage)
 #undef glGetnTexImageARB
 #define glGetnTexImageARB (gl.GetnTexImageARB)
+#undef glGetnUniformdv
+#define glGetnUniformdv (gl.GetnUniformdv)
 #undef glGetnUniformdvARB
 #define glGetnUniformdvARB (gl.GetnUniformdvARB)
+#undef glGetnUniformfv
+#define glGetnUniformfv (gl.GetnUniformfv)
 #undef glGetnUniformfvARB
 #define glGetnUniformfvARB (gl.GetnUniformfvARB)
+#undef glGetnUniformiv
+#define glGetnUniformiv (gl.GetnUniformiv)
 #undef glGetnUniformivARB
 #define glGetnUniformivARB (gl.GetnUniformivARB)
+#undef glGetnUniformuiv
+#define glGetnUniformuiv (gl.GetnUniformuiv)
 #undef glGetnUniformuivARB
 #define glGetnUniformuivARB (gl.GetnUniformuivARB)
 #undef glGlobalAlphaFactorbSUN
@@ -6024,6 +6394,10 @@ extern struct _gl_osmesa gl;
 #define glInvalidateBufferSubData (gl.InvalidateBufferSubData)
 #undef glInvalidateFramebuffer
 #define glInvalidateFramebuffer (gl.InvalidateFramebuffer)
+#undef glInvalidateNamedFramebufferData
+#define glInvalidateNamedFramebufferData (gl.InvalidateNamedFramebufferData)
+#undef glInvalidateNamedFramebufferSubData
+#define glInvalidateNamedFramebufferSubData (gl.InvalidateNamedFramebufferSubData)
 #undef glInvalidateSubFramebuffer
 #define glInvalidateSubFramebuffer (gl.InvalidateSubFramebuffer)
 #undef glInvalidateTexImage
@@ -6038,6 +6412,8 @@ extern struct _gl_osmesa gl;
 #define glIsBufferARB (gl.IsBufferARB)
 #undef glIsBufferResidentNV
 #define glIsBufferResidentNV (gl.IsBufferResidentNV)
+#undef glIsCommandListNV
+#define glIsCommandListNV (gl.IsCommandListNV)
 #undef glIsEnabled
 #define glIsEnabled (gl.IsEnabled)
 #undef glIsEnabledIndexedEXT
@@ -6094,6 +6470,8 @@ extern struct _gl_osmesa gl;
 #define glIsSampler (gl.IsSampler)
 #undef glIsShader
 #define glIsShader (gl.IsShader)
+#undef glIsStateNV
+#define glIsStateNV (gl.IsStateNV)
 #undef glIsSync
 #define glIsSync (gl.IsSync)
 #undef glIsTexture
@@ -6156,6 +6534,8 @@ extern struct _gl_osmesa gl;
 #define glLinkProgramARB (gl.LinkProgramARB)
 #undef glListBase
 #define glListBase (gl.ListBase)
+#undef glListDrawCommandsStatesClientNV
+#define glListDrawCommandsStatesClientNV (gl.ListDrawCommandsStatesClientNV)
 #undef glListParameterfSGIX
 #define glListParameterfSGIX (gl.ListParameterfSGIX)
 #undef glListParameterfvSGIX
@@ -6248,8 +6628,12 @@ extern struct _gl_osmesa gl;
 #define glMapGrid2f (gl.MapGrid2f)
 #undef glMapGrid2xOES
 #define glMapGrid2xOES (gl.MapGrid2xOES)
+#undef glMapNamedBuffer
+#define glMapNamedBuffer (gl.MapNamedBuffer)
 #undef glMapNamedBufferEXT
 #define glMapNamedBufferEXT (gl.MapNamedBufferEXT)
+#undef glMapNamedBufferRange
+#define glMapNamedBufferRange (gl.MapNamedBufferRange)
 #undef glMapNamedBufferRangeEXT
 #define glMapNamedBufferRangeEXT (gl.MapNamedBufferRangeEXT)
 #undef glMapObjectBufferATI
@@ -6290,8 +6674,14 @@ extern struct _gl_osmesa gl;
 #define glMatrixIndexuivARB (gl.MatrixIndexuivARB)
 #undef glMatrixIndexusvARB
 #define glMatrixIndexusvARB (gl.MatrixIndexusvARB)
+#undef glMatrixLoad3x2fNV
+#define glMatrixLoad3x2fNV (gl.MatrixLoad3x2fNV)
+#undef glMatrixLoad3x3fNV
+#define glMatrixLoad3x3fNV (gl.MatrixLoad3x3fNV)
 #undef glMatrixLoadIdentityEXT
 #define glMatrixLoadIdentityEXT (gl.MatrixLoadIdentityEXT)
+#undef glMatrixLoadTranspose3x3fNV
+#define glMatrixLoadTranspose3x3fNV (gl.MatrixLoadTranspose3x3fNV)
 #undef glMatrixLoadTransposedEXT
 #define glMatrixLoadTransposedEXT (gl.MatrixLoadTransposedEXT)
 #undef glMatrixLoadTransposefEXT
@@ -6302,6 +6692,12 @@ extern struct _gl_osmesa gl;
 #define glMatrixLoadfEXT (gl.MatrixLoadfEXT)
 #undef glMatrixMode
 #define glMatrixMode (gl.MatrixMode)
+#undef glMatrixMult3x2fNV
+#define glMatrixMult3x2fNV (gl.MatrixMult3x2fNV)
+#undef glMatrixMult3x3fNV
+#define glMatrixMult3x3fNV (gl.MatrixMult3x3fNV)
+#undef glMatrixMultTranspose3x3fNV
+#define glMatrixMultTranspose3x3fNV (gl.MatrixMultTranspose3x3fNV)
 #undef glMatrixMultTransposedEXT
 #define glMatrixMultTransposedEXT (gl.MatrixMultTransposedEXT)
 #undef glMatrixMultTransposefEXT
@@ -6330,6 +6726,8 @@ extern struct _gl_osmesa gl;
 #define glMatrixTranslatefEXT (gl.MatrixTranslatefEXT)
 #undef glMemoryBarrier
 #define glMemoryBarrier (gl.MemoryBarrier)
+#undef glMemoryBarrierByRegion
+#define glMemoryBarrierByRegion (gl.MemoryBarrierByRegion)
 #undef glMemoryBarrierEXT
 #define glMemoryBarrierEXT (gl.MemoryBarrierEXT)
 #undef glMinSampleShading
@@ -6364,6 +6762,8 @@ extern struct _gl_osmesa gl;
 #define glMultiDrawArraysIndirect (gl.MultiDrawArraysIndirect)
 #undef glMultiDrawArraysIndirectAMD
 #define glMultiDrawArraysIndirectAMD (gl.MultiDrawArraysIndirectAMD)
+#undef glMultiDrawArraysIndirectBindlessCountNV
+#define glMultiDrawArraysIndirectBindlessCountNV (gl.MultiDrawArraysIndirectBindlessCountNV)
 #undef glMultiDrawArraysIndirectBindlessNV
 #define glMultiDrawArraysIndirectBindlessNV (gl.MultiDrawArraysIndirectBindlessNV)
 #undef glMultiDrawArraysIndirectCountARB
@@ -6380,6 +6780,8 @@ extern struct _gl_osmesa gl;
 #define glMultiDrawElementsIndirect (gl.MultiDrawElementsIndirect)
 #undef glMultiDrawElementsIndirectAMD
 #define glMultiDrawElementsIndirectAMD (gl.MultiDrawElementsIndirectAMD)
+#undef glMultiDrawElementsIndirectBindlessCountNV
+#define glMultiDrawElementsIndirectBindlessCountNV (gl.MultiDrawElementsIndirectBindlessCountNV)
 #undef glMultiDrawElementsIndirectBindlessNV
 #define glMultiDrawElementsIndirectBindlessNV (gl.MultiDrawElementsIndirectBindlessNV)
 #undef glMultiDrawElementsIndirectCountARB
@@ -6632,18 +7034,42 @@ extern struct _gl_osmesa gl;
 #define glMultiTexSubImage2DEXT (gl.MultiTexSubImage2DEXT)
 #undef glMultiTexSubImage3DEXT
 #define glMultiTexSubImage3DEXT (gl.MultiTexSubImage3DEXT)
+#undef glNamedBufferData
+#define glNamedBufferData (gl.NamedBufferData)
 #undef glNamedBufferDataEXT
 #define glNamedBufferDataEXT (gl.NamedBufferDataEXT)
+#undef glNamedBufferPageCommitmentARB
+#define glNamedBufferPageCommitmentARB (gl.NamedBufferPageCommitmentARB)
+#undef glNamedBufferPageCommitmentEXT
+#define glNamedBufferPageCommitmentEXT (gl.NamedBufferPageCommitmentEXT)
+#undef glNamedBufferStorage
+#define glNamedBufferStorage (gl.NamedBufferStorage)
 #undef glNamedBufferStorageEXT
 #define glNamedBufferStorageEXT (gl.NamedBufferStorageEXT)
+#undef glNamedBufferSubData
+#define glNamedBufferSubData (gl.NamedBufferSubData)
 #undef glNamedBufferSubDataEXT
 #define glNamedBufferSubDataEXT (gl.NamedBufferSubDataEXT)
 #undef glNamedCopyBufferSubDataEXT
 #define glNamedCopyBufferSubDataEXT (gl.NamedCopyBufferSubDataEXT)
+#undef glNamedFramebufferDrawBuffer
+#define glNamedFramebufferDrawBuffer (gl.NamedFramebufferDrawBuffer)
+#undef glNamedFramebufferDrawBuffers
+#define glNamedFramebufferDrawBuffers (gl.NamedFramebufferDrawBuffers)
+#undef glNamedFramebufferParameteri
+#define glNamedFramebufferParameteri (gl.NamedFramebufferParameteri)
 #undef glNamedFramebufferParameteriEXT
 #define glNamedFramebufferParameteriEXT (gl.NamedFramebufferParameteriEXT)
+#undef glNamedFramebufferReadBuffer
+#define glNamedFramebufferReadBuffer (gl.NamedFramebufferReadBuffer)
+#undef glNamedFramebufferRenderbuffer
+#define glNamedFramebufferRenderbuffer (gl.NamedFramebufferRenderbuffer)
 #undef glNamedFramebufferRenderbufferEXT
 #define glNamedFramebufferRenderbufferEXT (gl.NamedFramebufferRenderbufferEXT)
+#undef glNamedFramebufferSampleLocationsfvNV
+#define glNamedFramebufferSampleLocationsfvNV (gl.NamedFramebufferSampleLocationsfvNV)
+#undef glNamedFramebufferTexture
+#define glNamedFramebufferTexture (gl.NamedFramebufferTexture)
 #undef glNamedFramebufferTexture1DEXT
 #define glNamedFramebufferTexture1DEXT (gl.NamedFramebufferTexture1DEXT)
 #undef glNamedFramebufferTexture2DEXT
@@ -6654,6 +7080,8 @@ extern struct _gl_osmesa gl;
 #define glNamedFramebufferTextureEXT (gl.NamedFramebufferTextureEXT)
 #undef glNamedFramebufferTextureFaceEXT
 #define glNamedFramebufferTextureFaceEXT (gl.NamedFramebufferTextureFaceEXT)
+#undef glNamedFramebufferTextureLayer
+#define glNamedFramebufferTextureLayer (gl.NamedFramebufferTextureLayer)
 #undef glNamedFramebufferTextureLayerEXT
 #define glNamedFramebufferTextureLayerEXT (gl.NamedFramebufferTextureLayerEXT)
 #undef glNamedProgramLocalParameter4dEXT
@@ -6680,8 +7108,12 @@ extern struct _gl_osmesa gl;
 #define glNamedProgramLocalParametersI4uivEXT (gl.NamedProgramLocalParametersI4uivEXT)
 #undef glNamedProgramStringEXT
 #define glNamedProgramStringEXT (gl.NamedProgramStringEXT)
+#undef glNamedRenderbufferStorage
+#define glNamedRenderbufferStorage (gl.NamedRenderbufferStorage)
 #undef glNamedRenderbufferStorageEXT
 #define glNamedRenderbufferStorageEXT (gl.NamedRenderbufferStorageEXT)
+#undef glNamedRenderbufferStorageMultisample
+#define glNamedRenderbufferStorageMultisample (gl.NamedRenderbufferStorageMultisample)
 #undef glNamedRenderbufferStorageMultisampleCoverageEXT
 #define glNamedRenderbufferStorageMultisampleCoverageEXT (gl.NamedRenderbufferStorageMultisampleCoverageEXT)
 #undef glNamedRenderbufferStorageMultisampleEXT
@@ -6802,10 +7234,16 @@ extern struct _gl_osmesa gl;
 #define glPathDashArrayNV (gl.PathDashArrayNV)
 #undef glPathFogGenNV
 #define glPathFogGenNV (gl.PathFogGenNV)
+#undef glPathGlyphIndexArrayNV
+#define glPathGlyphIndexArrayNV (gl.PathGlyphIndexArrayNV)
+#undef glPathGlyphIndexRangeNV
+#define glPathGlyphIndexRangeNV (gl.PathGlyphIndexRangeNV)
 #undef glPathGlyphRangeNV
 #define glPathGlyphRangeNV (gl.PathGlyphRangeNV)
 #undef glPathGlyphsNV
 #define glPathGlyphsNV (gl.PathGlyphsNV)
+#undef glPathMemoryGlyphIndexArrayNV
+#define glPathMemoryGlyphIndexArrayNV (gl.PathMemoryGlyphIndexArrayNV)
 #undef glPathParameterfNV
 #define glPathParameterfNV (gl.PathParameterfNV)
 #undef glPathParameterfvNV
@@ -6916,6 +7354,8 @@ extern struct _gl_osmesa gl;
 #define glPolygonMode (gl.PolygonMode)
 #undef glPolygonOffset
 #define glPolygonOffset (gl.PolygonOffset)
+#undef glPolygonOffsetClampEXT
+#define glPolygonOffsetClampEXT (gl.PolygonOffsetClampEXT)
 #undef glPolygonOffsetEXT
 #define glPolygonOffsetEXT (gl.PolygonOffsetEXT)
 #undef glPolygonOffsetxOES
@@ -7030,6 +7470,8 @@ extern struct _gl_osmesa gl;
 #define glProgramParameters4dvNV (gl.ProgramParameters4dvNV)
 #undef glProgramParameters4fvNV
 #define glProgramParameters4fvNV (gl.ProgramParameters4fvNV)
+#undef glProgramPathFragmentInputGenNV
+#define glProgramPathFragmentInputGenNV (gl.ProgramPathFragmentInputGenNV)
 #undef glProgramStringARB
 #define glProgramStringARB (gl.ProgramStringARB)
 #undef glProgramSubroutineParametersuivNV
@@ -7364,12 +7806,16 @@ extern struct _gl_osmesa gl;
 #define glRasterPos4xOES (gl.RasterPos4xOES)
 #undef glRasterPos4xvOES
 #define glRasterPos4xvOES (gl.RasterPos4xvOES)
+#undef glRasterSamplesEXT
+#define glRasterSamplesEXT (gl.RasterSamplesEXT)
 #undef glReadBuffer
 #define glReadBuffer (gl.ReadBuffer)
 #undef glReadInstrumentsSGIX
 #define glReadInstrumentsSGIX (gl.ReadInstrumentsSGIX)
 #undef glReadPixels
 #define glReadPixels (gl.ReadPixels)
+#undef glReadnPixels
+#define glReadnPixels (gl.ReadnPixels)
 #undef glReadnPixelsARB
 #define glReadnPixelsARB (gl.ReadnPixelsARB)
 #undef glRectd
@@ -7466,6 +7912,8 @@ extern struct _gl_osmesa gl;
 #define glResetMinmaxEXT (gl.ResetMinmaxEXT)
 #undef glResizeBuffersMESA
 #define glResizeBuffersMESA (gl.ResizeBuffersMESA)
+#undef glResolveDepthValuesNV
+#define glResolveDepthValuesNV (gl.ResolveDepthValuesNV)
 #undef glResumeTransformFeedback
 #define glResumeTransformFeedback (gl.ResumeTransformFeedback)
 #undef glResumeTransformFeedbackNV
@@ -7654,6 +8102,8 @@ extern struct _gl_osmesa gl;
 #define glSpriteParameterivSGIX (gl.SpriteParameterivSGIX)
 #undef glStartInstrumentsSGIX
 #define glStartInstrumentsSGIX (gl.StartInstrumentsSGIX)
+#undef glStateCaptureNV
+#define glStateCaptureNV (gl.StateCaptureNV)
 #undef glStencilClearTagEXT
 #define glStencilClearTagEXT (gl.StencilClearTagEXT)
 #undef glStencilFillPathInstancedNV
@@ -7682,10 +8132,20 @@ extern struct _gl_osmesa gl;
 #define glStencilStrokePathInstancedNV (gl.StencilStrokePathInstancedNV)
 #undef glStencilStrokePathNV
 #define glStencilStrokePathNV (gl.StencilStrokePathNV)
+#undef glStencilThenCoverFillPathInstancedNV
+#define glStencilThenCoverFillPathInstancedNV (gl.StencilThenCoverFillPathInstancedNV)
+#undef glStencilThenCoverFillPathNV
+#define glStencilThenCoverFillPathNV (gl.StencilThenCoverFillPathNV)
+#undef glStencilThenCoverStrokePathInstancedNV
+#define glStencilThenCoverStrokePathInstancedNV (gl.StencilThenCoverStrokePathInstancedNV)
+#undef glStencilThenCoverStrokePathNV
+#define glStencilThenCoverStrokePathNV (gl.StencilThenCoverStrokePathNV)
 #undef glStopInstrumentsSGIX
 #define glStopInstrumentsSGIX (gl.StopInstrumentsSGIX)
 #undef glStringMarkerGREMEDY
 #define glStringMarkerGREMEDY (gl.StringMarkerGREMEDY)
+#undef glSubpixelPrecisionBiasNV
+#define glSubpixelPrecisionBiasNV (gl.SubpixelPrecisionBiasNV)
 #undef glSwapAPPLE
 #define glSwapAPPLE (gl.SwapAPPLE)
 #undef glSwizzleEXT
@@ -8008,10 +8468,16 @@ extern struct _gl_osmesa gl;
 #define glTexSubImage3DEXT (gl.TexSubImage3DEXT)
 #undef glTexSubImage4DSGIS
 #define glTexSubImage4DSGIS (gl.TexSubImage4DSGIS)
+#undef glTextureBarrier
+#define glTextureBarrier (gl.TextureBarrier)
 #undef glTextureBarrierNV
 #define glTextureBarrierNV (gl.TextureBarrierNV)
+#undef glTextureBuffer
+#define glTextureBuffer (gl.TextureBuffer)
 #undef glTextureBufferEXT
 #define glTextureBufferEXT (gl.TextureBufferEXT)
+#undef glTextureBufferRange
+#define glTextureBufferRange (gl.TextureBufferRange)
 #undef glTextureBufferRangeEXT
 #define glTextureBufferRangeEXT (gl.TextureBufferRangeEXT)
 #undef glTextureColorMaskSGIS
@@ -8040,38 +8506,66 @@ extern struct _gl_osmesa gl;
 #define glTextureNormalEXT (gl.TextureNormalEXT)
 #undef glTexturePageCommitmentEXT
 #define glTexturePageCommitmentEXT (gl.TexturePageCommitmentEXT)
+#undef glTextureParameterIiv
+#define glTextureParameterIiv (gl.TextureParameterIiv)
 #undef glTextureParameterIivEXT
 #define glTextureParameterIivEXT (gl.TextureParameterIivEXT)
+#undef glTextureParameterIuiv
+#define glTextureParameterIuiv (gl.TextureParameterIuiv)
 #undef glTextureParameterIuivEXT
 #define glTextureParameterIuivEXT (gl.TextureParameterIuivEXT)
+#undef glTextureParameterf
+#define glTextureParameterf (gl.TextureParameterf)
 #undef glTextureParameterfEXT
 #define glTextureParameterfEXT (gl.TextureParameterfEXT)
+#undef glTextureParameterfv
+#define glTextureParameterfv (gl.TextureParameterfv)
 #undef glTextureParameterfvEXT
 #define glTextureParameterfvEXT (gl.TextureParameterfvEXT)
+#undef glTextureParameteri
+#define glTextureParameteri (gl.TextureParameteri)
 #undef glTextureParameteriEXT
 #define glTextureParameteriEXT (gl.TextureParameteriEXT)
+#undef glTextureParameteriv
+#define glTextureParameteriv (gl.TextureParameteriv)
 #undef glTextureParameterivEXT
 #define glTextureParameterivEXT (gl.TextureParameterivEXT)
 #undef glTextureRangeAPPLE
 #define glTextureRangeAPPLE (gl.TextureRangeAPPLE)
 #undef glTextureRenderbufferEXT
 #define glTextureRenderbufferEXT (gl.TextureRenderbufferEXT)
+#undef glTextureStorage1D
+#define glTextureStorage1D (gl.TextureStorage1D)
 #undef glTextureStorage1DEXT
 #define glTextureStorage1DEXT (gl.TextureStorage1DEXT)
+#undef glTextureStorage2D
+#define glTextureStorage2D (gl.TextureStorage2D)
 #undef glTextureStorage2DEXT
 #define glTextureStorage2DEXT (gl.TextureStorage2DEXT)
+#undef glTextureStorage2DMultisample
+#define glTextureStorage2DMultisample (gl.TextureStorage2DMultisample)
 #undef glTextureStorage2DMultisampleEXT
 #define glTextureStorage2DMultisampleEXT (gl.TextureStorage2DMultisampleEXT)
+#undef glTextureStorage3D
+#define glTextureStorage3D (gl.TextureStorage3D)
 #undef glTextureStorage3DEXT
 #define glTextureStorage3DEXT (gl.TextureStorage3DEXT)
+#undef glTextureStorage3DMultisample
+#define glTextureStorage3DMultisample (gl.TextureStorage3DMultisample)
 #undef glTextureStorage3DMultisampleEXT
 #define glTextureStorage3DMultisampleEXT (gl.TextureStorage3DMultisampleEXT)
 #undef glTextureStorageSparseAMD
 #define glTextureStorageSparseAMD (gl.TextureStorageSparseAMD)
+#undef glTextureSubImage1D
+#define glTextureSubImage1D (gl.TextureSubImage1D)
 #undef glTextureSubImage1DEXT
 #define glTextureSubImage1DEXT (gl.TextureSubImage1DEXT)
+#undef glTextureSubImage2D
+#define glTextureSubImage2D (gl.TextureSubImage2D)
 #undef glTextureSubImage2DEXT
 #define glTextureSubImage2DEXT (gl.TextureSubImage2DEXT)
+#undef glTextureSubImage3D
+#define glTextureSubImage3D (gl.TextureSubImage3D)
 #undef glTextureSubImage3DEXT
 #define glTextureSubImage3DEXT (gl.TextureSubImage3DEXT)
 #undef glTextureView
@@ -8092,6 +8586,10 @@ extern struct _gl_osmesa gl;
 #define glTrackMatrixNV (gl.TrackMatrixNV)
 #undef glTransformFeedbackAttribsNV
 #define glTransformFeedbackAttribsNV (gl.TransformFeedbackAttribsNV)
+#undef glTransformFeedbackBufferBase
+#define glTransformFeedbackBufferBase (gl.TransformFeedbackBufferBase)
+#undef glTransformFeedbackBufferRange
+#define glTransformFeedbackBufferRange (gl.TransformFeedbackBufferRange)
 #undef glTransformFeedbackStreamAttribsNV
 #define glTransformFeedbackStreamAttribsNV (gl.TransformFeedbackStreamAttribsNV)
 #undef glTransformFeedbackVaryings
@@ -8318,6 +8816,8 @@ extern struct _gl_osmesa gl;
 #define glUnmapBuffer (gl.UnmapBuffer)
 #undef glUnmapBufferARB
 #define glUnmapBufferARB (gl.UnmapBufferARB)
+#undef glUnmapNamedBuffer
+#define glUnmapNamedBuffer (gl.UnmapNamedBuffer)
 #undef glUnmapNamedBufferEXT
 #define glUnmapNamedBufferEXT (gl.UnmapNamedBufferEXT)
 #undef glUnmapObjectBufferATI
@@ -8464,12 +8964,24 @@ extern struct _gl_osmesa gl;
 #define glVertex4xOES (gl.Vertex4xOES)
 #undef glVertex4xvOES
 #define glVertex4xvOES (gl.Vertex4xvOES)
+#undef glVertexArrayAttribBinding
+#define glVertexArrayAttribBinding (gl.VertexArrayAttribBinding)
+#undef glVertexArrayAttribFormat
+#define glVertexArrayAttribFormat (gl.VertexArrayAttribFormat)
+#undef glVertexArrayAttribIFormat
+#define glVertexArrayAttribIFormat (gl.VertexArrayAttribIFormat)
+#undef glVertexArrayAttribLFormat
+#define glVertexArrayAttribLFormat (gl.VertexArrayAttribLFormat)
 #undef glVertexArrayBindVertexBufferEXT
 #define glVertexArrayBindVertexBufferEXT (gl.VertexArrayBindVertexBufferEXT)
+#undef glVertexArrayBindingDivisor
+#define glVertexArrayBindingDivisor (gl.VertexArrayBindingDivisor)
 #undef glVertexArrayColorOffsetEXT
 #define glVertexArrayColorOffsetEXT (gl.VertexArrayColorOffsetEXT)
 #undef glVertexArrayEdgeFlagOffsetEXT
 #define glVertexArrayEdgeFlagOffsetEXT (gl.VertexArrayEdgeFlagOffsetEXT)
+#undef glVertexArrayElementBuffer
+#define glVertexArrayElementBuffer (gl.VertexArrayElementBuffer)
 #undef glVertexArrayFogCoordOffsetEXT
 #define glVertexArrayFogCoordOffsetEXT (gl.VertexArrayFogCoordOffsetEXT)
 #undef glVertexArrayIndexOffsetEXT
@@ -8506,6 +9018,10 @@ extern struct _gl_osmesa gl;
 #define glVertexArrayVertexAttribOffsetEXT (gl.VertexArrayVertexAttribOffsetEXT)
 #undef glVertexArrayVertexBindingDivisorEXT
 #define glVertexArrayVertexBindingDivisorEXT (gl.VertexArrayVertexBindingDivisorEXT)
+#undef glVertexArrayVertexBuffer
+#define glVertexArrayVertexBuffer (gl.VertexArrayVertexBuffer)
+#undef glVertexArrayVertexBuffers
+#define glVertexArrayVertexBuffers (gl.VertexArrayVertexBuffers)
 #undef glVertexArrayVertexOffsetEXT
 #define glVertexArrayVertexOffsetEXT (gl.VertexArrayVertexOffsetEXT)
 #undef glVertexAttrib1d
@@ -9242,6 +9758,6 @@ extern struct _gl_osmesa gl;
 
 
 
-/* Functions generated: 12 OSMesa + 2666 GL + 2 GLU */
+/* Functions generated: 12 OSMesa + 2838 GL + 2 GLU */
 
 #endif /* __NFOSMESA_H__ */
