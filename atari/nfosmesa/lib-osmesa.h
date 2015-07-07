@@ -30,17 +30,43 @@ typedef struct osmesa_context *OSMesaContext;
 
 #include "gltypes.h"
 
+#define MAX_OSMESA_CONTEXTS    16
+
+typedef struct {
+	void *oldmesa_buffer;
+	GLubyte *gl_strings[7];
+} gl_context;
+
+typedef struct {
+	struct gl_public pub;				/* must be fisrt element of structure */
+	OSMesaContext cur_context;
+	void CALLBACK (*gl_exception)(GLenum param);
+	gl_context contexts[MAX_OSMESA_CONTEXTS];
+} gl_private;
+
+#define CTX_TO_IDX(ctx) ((unsigned int)(ctx))
+
 /*--- Variables ---*/
 
-extern OSMesaContext cur_context;
-
 extern long (*HostCall_p)(unsigned long function_number, OSMesaContext ctx, void *first_param);
+#ifndef TINYGL_ONLY
 extern void (*HostCall64_p)(unsigned long function_number, OSMesaContext ctx, void *first_param, GLuint64 *retvalue);
+#endif
 
 /*--- Functions prototypes ---*/
 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) extern type APIENTRY OSMesa ## name params ;
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) extern type APIENTRY gl ## name params ;
-#include "glfuncs.h"
+void APIENTRY internal_OSMesaPixelStore(gl_private *private, GLint pname, GLint value);
+OSMesaContext APIENTRY internal_OSMesaCreateContext(gl_private *private, GLenum format, OSMesaContext sharelist);
+OSMesaContext APIENTRY internal_OSMesaCreateContextExt(gl_private *private, GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist);
+void APIENTRY internal_OSMesaDestroyContext(gl_private *private, OSMesaContext ctx);
+GLboolean APIENTRY internal_OSMesaMakeCurrent(gl_private *private, OSMesaContext ctx, void *buffer, GLenum type, GLsizei width, GLsizei height);
+OSMesaContext APIENTRY internal_OSMesaGetCurrentContext(gl_private *private);
+void APIENTRY internal_OSMesaPixelStore(gl_private *private, GLint pname, GLint value);
+void APIENTRY internal_OSMesaGetIntegerv(gl_private *private, GLint pname, GLint *value);
+GLboolean APIENTRY internal_OSMesaGetDepthBuffer(gl_private *private, OSMesaContext c, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer );
+GLboolean APIENTRY internal_OSMesaGetColorBuffer(gl_private *private, OSMesaContext c, GLint *width, GLint *height, GLint *format, void **buffer );
+OSMESAproc APIENTRY internal_OSMesaGetProcAddress(gl_private *private, const char *funcName);
+void APIENTRY internal_OSMesaColorClamp(gl_private *private, GLboolean32 enable);
+void APIENTRY internal_OSMesaPostprocess(gl_private *private, OSMesaContext osmesa, const char *filter, GLuint enable_value);
 
 #endif

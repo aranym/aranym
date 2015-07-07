@@ -1,3 +1,9 @@
+2015/07/07 - Thorsten
+osmesa(Atari side): Rework the way parameters are passed to shared
+libs, making them thread-safe and saving ~90k of code. Also creates
+an osmesa.slb now, reusing the NFAPI enums as function numbers.
+
+
 2015/07/02 - Thorsten
 nfosmesa: update to OpenGL 4.5, adding 172 functions
 

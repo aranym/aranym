@@ -49,8 +49,8 @@ int dyngl_load(const char *filename)
 		res = 0;
 	}
 
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) gl.name = SDL_GL_GetProcAddress(#gl #name);
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret)
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) gl.name = SDL_GL_GetProcAddress(#gl #name);
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #include "../../atari/nfosmesa/glfuncs.h"
 
 	return res;

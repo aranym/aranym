@@ -33,13 +33,17 @@
 
 /*--- Functions prototypes ---*/
 
-void *Atari_MxAlloc(unsigned long size);
 void err_init(const char *str);
 
-void *APIENTRY OSMesaCreateLDG( GLenum format, GLenum type, GLint width, GLint height );
+void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint height );
 void APIENTRY OSMesaDestroyLDG(void);
 GLsizei APIENTRY max_width(void);
 GLsizei APIENTRY max_height(void);
+
+void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLenum type, GLint width, GLint height );
+void APIENTRY internal_OSMesaDestroyLDG(gl_private *private);
+GLsizei APIENTRY internal_max_width(gl_private *private);
+GLsizei APIENTRY internal_max_height(gl_private *private);
 void APIENTRY glOrthof( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val );
 
 void APIENTRY glClearDepthf(GLfloat depth);

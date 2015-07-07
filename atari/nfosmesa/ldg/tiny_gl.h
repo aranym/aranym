@@ -26,7 +26,7 @@
 /*
  * load & initialize TinyGL
  */
-LDG *ldg_load_tiny_gl(const char *libname, _WORD *gl);
+struct gl_public *ldg_load_tiny_gl(const char *libname, _WORD *gl);
 
 /*
  * init TinyGL from already loaded lib
@@ -36,7 +36,7 @@ int ldg_init_tiny_gl(LDG *lib);
 /*
  * unload TinyGL
  */
-void ldg_unload_tiny_gl(LDG *lib, _WORD *gl);
+void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl);
 
 
 
@@ -1151,6 +1151,16 @@ typedef GLbyte GLbyte32;
 typedef GLhalfNV GLhalfNV32;
 #endif
 #endif
+
+/*
+ * Atari-specific structure for the shared libraries
+ */
+struct gl_public {
+	void *libhandle;
+	void *libexec;
+	void *(*m_alloc)(size_t);
+	void (*m_free)(void *);
+};
 
 #ifdef __cplusplus
 }

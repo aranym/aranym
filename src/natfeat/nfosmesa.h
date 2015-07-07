@@ -445,7 +445,7 @@ protected:
 
 	/* GL functions */
 	
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) type nf ## gl ## name params ;
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) type nf ## gl ## name proto ;
 #include "../../atari/nfosmesa/glfuncs.h"
 
 public:

@@ -3,8 +3,6 @@
 #endif
 #include <osbind.h>
 #include "nfosmesa_nfapi.h"
-#define NFOSMESA_NO_MANGLE
-#define TINYGL_ONLY
 #include <mint/basepage.h>
 #include "lib-osmesa.h"
 #include "lib-oldmesa.h"
@@ -26,8 +24,12 @@ typedef long __CDECL (*SLB_LFUNC)(BASEPAGE *pd, long fn, long nargs, ...);
 #undef AND
 #define NOTHING
 #define AND ,
-#define GL_PROC(type, ret, name, f, desc, proto, args) static type __CDECL slb_ ## f(BASEPAGE *base, long fn, long nwords, gl_private *private, void *first_param);
-#include "link-tinygl.h"
+#define NO_PROC
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) static void __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param, GLuint64 *retval);
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## OSMesa ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#include "glfuncs-bynum.h"
 
 static long __CDECL slb_libinit(BASEPAGE *base, long fn, long nwords, gl_private *private);
 
@@ -46,7 +48,7 @@ struct slb_head
 	void        *sl_next;                               /* used by MetaDOS loader */
 	long		slh_reserved[7];						/* Currently 0L and unused */
 	long		slh_no_funcs;							/* Number of functions */
-	SLB_LFUNC	slh_functions[NUM_TINYGL_PROCS + 1];	/* The function pointers */
+	SLB_LFUNC	slh_functions[NFOSMESA_LAST];			/* The function pointers */
 };
 
 
@@ -57,6 +59,8 @@ static long __CDECL slb_init(void);
 static void __CDECL slb_exit(void);
 static long __CDECL slb_open(BASEPAGE *bp);
 static long __CDECL slb_close(BASEPAGE *bp);
+
+static void __CDECL slb_nop(void);
 
 /*
  * The file header of a shared library
@@ -77,16 +81,19 @@ struct slb_head const _start = {
 	slh_names,
 	0,
 	{ 0, 0, 0, 0, 0, 0, 0 },
-	NUM_TINYGL_PROCS + 1,
+	NFOSMESA_LAST,
 	{
 		(SLB_LFUNC)slb_libinit,
 /* generate the function table */
-#define GL_PROC(type, ret, name, f, desc, proto, args) (SLB_LFUNC)slb_ ## f,
-#include "link-tinygl.h"
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## gl ## name,
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## OSMesa ## name,
+#define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## name,
+#define NO_PROC (SLB_LFUNC)slb_nop,
+#include "glfuncs-bynum.h"
 	}
 };
 
-static char const slh_name[] = "tiny_gl.slb";
+static char const slh_name[] = "osmesa.slb";
 
 #define unused __attribute__((__unused__))
 
@@ -100,28 +107,75 @@ static long __CDECL slb_libinit(BASEPAGE *__bp unused, long __fn unused, long __
 /* generate the function names */
 static char const *const slh_names[] = {
 	"glInit", /* slb_libinit */
-#define GL_PROC(type, ret, name, f, desc, proto, args) name,
-#include "link-tinygl.h"
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) #gl #name,
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) #gl #name,
+#define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) #name,
+#define NO_PROC 0,
+#include "glfuncs-bynum.h"
 	0
 };
 
+
+
 /* generate the wrapper functions */
 #define voidf /**/
-#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
-#define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret)
-#define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret)
 #define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) \
 static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
 { \
 	ret (*HostCall_p)(NFOSMESA_GL ## upper, private->cur_context, first_param); \
 }
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) \
+static void __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param, GLuint64 *retval) \
+{ \
+	(*HostCall64_p)(NFOSMESA_GL ## upper, private->cur_context, first_param, retval); \
+}
 #define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) \
-static type __CDECL slb_ ## gl ## name(BASEPAGE *bp unused, long fn unused, long nwords unused, gl_private *private, void *first_param) \
+static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
 { \
 	ret (*HostCall_p)(NFOSMESA_GLU ## upper, private->cur_context, first_param); \
 }
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) \
+static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
+{ \
+	ret (*HostCall_p)(NFOSMESA_OSMESA ## upper, private->cur_context, first_param); \
+}
+#define NO_OSMESAGETCURRENTCONTEXT
+#define NO_OSMESADESTROYCONTEXT
+#define NO_OSMESAMAKECURRENT
 #include "glfuncs.h"
 	
+
+static void __CDECL slb_nop(void)
+{
+}
+
+
+/* some functions do need special work */
+
+static OSMesaContext __CDECL slb_OSMesaGetCurrentContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
+{
+	return internal_OSMesaGetCurrentContext(private);
+}
+
+static void __CDECL slb_OSMesaDestroyContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+{
+	OSMesaContext ctx = *((OSMesaContext *)first_param);
+	return internal_OSMesaDestroyContext(private, ctx);
+}
+
+
+static GLboolean __CDECL slb_OSMesaMakeCurrent(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+{
+	GLboolean ret = (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT, private->cur_context, first_param);
+	if (ret)
+	{
+		OSMesaContext ctx = *((OSMesaContext *)first_param);
+		private->cur_context = ctx;
+	}
+	return ret;
+}
+
+
 
 /* entry points of TinyGL functions */
 static void *__CDECL slb_OSMesaCreateLDG(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
@@ -167,21 +221,21 @@ static void __CDECL slb_glOrthof(BASEPAGE *__bp unused, long __fn unused, long _
 }
 
 
-static void __CDECL slb_tinyglexception_error(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_exception_error(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
 {
 	void CALLBACK (*exception)(GLenum param) = *((void CALLBACK (**)(GLenum))first_param);
 	internal_tinyglexception_error(private, exception);
 }
 
 
-static void __CDECL slb_tinyglswapbuffer(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_swapbuffer(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
 {
 	void *buf = *((void **)first_param);
 	internal_tinyglswapbuffer(private, buf);
 }
 
 
-static void __CDECL slb_tinyglinformation(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private unused, void *first_param unused)
+static void __CDECL slb_information(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private unused, void *first_param unused)
 {
 	tinyglinformation();
 }
@@ -190,8 +244,8 @@ static void __CDECL slb_tinyglinformation(BASEPAGE *__bp unused, long __fn unuse
 
 int err_old_nfapi(void)
 {
-	/* not an error for TinyGL; the 83 functions should always be present */
-	return 0;
+	/* an error for Mesa_GL */
+	return 1;
 }
 
 
@@ -229,5 +283,5 @@ static long __CDECL slb_close(BASEPAGE *pd)
 
 void APIENTRY tinyglinformation(void)
 {
-	(void) Cconws("TinyGL NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER "\r\n");
+	(void) Cconws("Mesa library NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER "\r\n");
 }

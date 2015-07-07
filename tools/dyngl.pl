@@ -44,7 +44,7 @@
 #     Generate macro calls that are used to generate several tables.
 #     The macro must be defined before including the generated file
 #     and has the signature:
-#        GL_PROC(type, gl, name, export, upper, params, first, ret)
+#        GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #     with
 #        type: return type of function
 #        gl: group the function belongs to, either gl, glu or OSMesa
@@ -54,7 +54,8 @@
 #                and conflict with OpenGL functions of the same name
 #                that take double arguments.
 #        upper: name of function in uppercase
-#        params: prototype of the function, including parenthesis
+#        proto: prototype of the function, including parenthesis
+#        args: argument names of the function
 #        first: address of the first argument
 #        ret: code to return the function result, or GL_void_return
 #     Optionally, OSMESA_PROC() can be defined, with the same
@@ -110,13 +111,28 @@
 #
 #     Usage: dyngl.pl -tinyslbsource tools/glfuncs.h > atari/nfosmesa/tinygl_loadslb.c
 #
+#  -slbheader:
+#     Generate the atari header file needed to use osmesa.slb.
+#
+#     Usage: dyngl.pl -slbheader tools/glfuncs.h > atari/nfosmesa/slb/osmesa.h
+#
+#  -slbsource:
+#     Generate the atari source file that dynamically loads the functions
+#     from osmesa.slb.
+#
+#     Usage: dyngl.pl -slbsource tools/glfuncs.h > atari/nfosmesa/osmesa_loadslb.c
+#
 
 use strict;
+use Data::Dumper;
+
 
 my $me = "dyngl.pl";
 
 my %functions;
 my $warnings = 0;
+my $enumfile;
+my $inc_gltypes = "atari/nfosmesa/gltypes.h";
 
 #
 # functions which are not yet implemented,
@@ -581,6 +597,68 @@ sub read_includes()
 	
 	add_missing(\%missing);
 	fix_promotions();
+}
+
+sub read_enums()
+{
+	my $key;
+	my $ent;
+	my $line;
+	my $name;
+	my $funcno;
+	my $function_name;
+	my %byupper;
+	
+	die "$me: no enum file" unless defined($enumfile);
+
+	foreach my $key (keys %functions) {
+		$functions{$key}->{funcno} = 0;
+	}
+	if ( ! defined(open(FILE, $enumfile)) ) {
+		die "$me: couldn't open $enumfile: $!\n";
+	}
+
+	foreach my $key (keys %functions) {
+		my $uppername = uc($key);
+		# 'swapbuffer' is mangled to 'tinyglswapbuffer' to avoid name clashes
+		if ($key eq 'swapbuffer') {
+			$uppername = 'TINYGL' . $uppername;
+		}
+		# glGetString and glGetStringi are passed
+		# as LENGLGETSTRING and LENGLGETSTRINGI
+		if ($key eq 'glGetString' || $key eq 'glGetStringi') {
+			$uppername = 'LEN' . $uppername;
+		}
+		$byupper{$uppername} = $key;
+	}
+	# some functions from oldmesa have no direct NFAPI call
+	$functions{'OSMesaCreateLDG'}->{funcno} = 1384;
+	$functions{'OSMesaDestroyLDG'}->{funcno} = 1385;
+	$functions{'max_width'}->{funcno} = 1386;
+	$functions{'max_height'}->{funcno} = 1387;
+	$functions{'information'}->{funcno} = 1388;
+	$functions{'exception_error'}->{funcno} = 1389;
+	
+	while ($line = <FILE>) {
+		if ($line =~ /.*NFOSMESA_([a-zA-Z0-9_]+) = ([0-9]+).*/) {
+			$name = $1;
+			$funcno = $2;
+			if (exists($byupper{$name})) {
+				$functions{$byupper{$name}}->{funcno} = $funcno;
+				$functions{$byupper{$name}}->{nfapi} = 'NFOSMESA_' . $name;
+			}
+		}
+	}
+	close(FILE);
+	my $errors = 0;
+	foreach my $key (keys %functions) {
+		if (!$functions{$key}->{funcno})
+		{
+			&warn("no function number for $key");
+			++$errors;
+		}
+	}
+	die "$errors errors" unless ($errors == 0);
 }
 
 #
@@ -3485,9 +3563,139 @@ my %floatfuncs = (
 );
 
 
+my %oldmesa = (
+	'OSMesaCreateLDG' => {
+		'name' => 'OSMesaCreateLDG',
+		'gl' => '',
+		'type' => 'void *',
+		'params' => [
+			{ 'type' => 'GLenum', 'name' => 'format', 'pointer' => 0 },
+			{ 'type' => 'GLenum', 'name' => 'type', 'pointer' => 0 },
+			{ 'type' => 'GLint', 'name' => 'width', 'pointer' => 0 },
+			{ 'type' => 'GLint', 'name' => 'height', 'pointer' => 0 },
+		],
+	},
+	'OSMesaDestroyLDG' => {
+		'name' => 'OSMesaDestroyLDG',
+		'gl' => '',
+		'type' => 'void',
+		'params' => [
+		],
+	},
+	'max_width' => {
+		'name' => 'max_width',
+		'gl' => '',
+		'type' => 'GLsizei',
+		'params' => [
+		],
+	},
+	'max_height' => {
+		'name' => 'max_height',
+		'gl' => '',
+		'type' => 'GLsizei',
+		'params' => [
+		],
+	},
+	'glOrthof' => {
+		'name' => 'Orthof',
+		'gl' => 'gl',
+		'type' => 'void',
+		'params' => [
+			{ 'type' => 'GLfloat', 'name' => 'left', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'right', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'bottom', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'top', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'near_val', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'far_val', 'pointer' => 0 },
+		],
+	},
+	'glFrustumf' => {
+		'name' => 'Frustumf',
+		'gl' => 'gl',
+		'type' => 'void',
+		'params' => [
+			{ 'type' => 'GLfloat', 'name' => 'left', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'right', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'bottom', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'top', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'near_val', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'far_val', 'pointer' => 0 },
+		],
+	},
+	'gluLookAtf' => {
+		'name' => 'LookAtf',
+		'gl' => 'glu',
+		'type' => 'void',
+		'params' => [
+			{ 'type' => 'GLfloat', 'name' => 'eyeX', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'eyeY', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'eyeZ', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'centerX', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'centerY', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'centerZ', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'upX', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'upY', 'pointer' => 0 },
+			{ 'type' => 'GLfloat', 'name' => 'upZ', 'pointer' => 0 },
+		],
+	},
+	'swapbuffer' => {
+		'name' => 'swapbuffer',
+		'gl' => '',
+		'type' => 'void',
+		'params' => [
+			{ 'type' => 'void', 'name' => 'buffer', 'pointer' => 1 },
+		],
+	},
+	'exception_error' => {
+		'name' => 'exception_error',
+		'gl' => '',
+		'type' => 'void',
+		'params' => [
+			{ 'type' => 'void (CALLBACK *exception)(GLenum param)', 'name' => '', 'pointer' => 2 },
+		],
+	},
+	'information' => {
+		'name' => 'information',
+		'gl' => '',
+		'type' => 'void',
+		'params' => [
+		],
+	},
+#	'glInit' => {
+#		'name' => 'glInit',
+#		'gl' => '',
+#		'type' => 'void',
+#		'params' => [
+#			{ 'type' => 'void', 'name' => 'zbuffer', 'pointer' => 1 },
+#		],
+#	},
+#	'glClose' => {
+#		'name' => 'glClose',
+#		'gl' => '',
+#		'type' => 'void',
+#		'params' => [
+#		],
+#	},
+#	'glDebug' => {
+#		'name' => 'glDebug',
+#		'gl' => '',
+#		'type' => 'void',
+#		'params' => [
+#			{ 'type' => 'GLint', 'name' => 'mode', 'pointer' => 0 },
+#		],
+#	},
+);
+
+
 sub sort_by_name
 {
 	my $ret = $a cmp $b;
+	return $ret;
+}
+
+sub sort_by_value
+{
+	my $ret = $functions{$a}->{funcno} <=> $functions{$b}->{funcno};
 	return $ret;
 }
 
@@ -3710,6 +3918,25 @@ sub gen_protos() {
 EOF
 }
 
+
+sub first_param_addr($)
+{
+	my ($ent) = @_;
+	my $first_param;
+	if ($ent->{args} eq "")
+	{
+		$first_param = 'NULL';
+	} elsif ($ent->{name} eq "exception_error")
+	{
+		# hack for exception_error, which has a function pointer as argument
+		$first_param = '&exception';
+	} else {
+		my $params = $ent->{params};
+		$first_param = '&' . $params->[0]->{name};
+	}
+	return $first_param;
+}
+
 #
 # generate prototype macros
 #
@@ -3734,18 +3961,26 @@ sub gen_macros() {
 #
 	print << "EOF";
 #ifndef GL_GETSTRING
-#define GL_GETSTRING(type, gl, name, export, upper, params, first, ret) GL_PROC(type, gl, name, export, upper, params, first, ret)
-#define GL_GETSTRINGI(type, gl, name, export, upper, params, first, ret) GL_PROC(type, gl, name, export, upper, params, first, ret)
+#define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
 #ifndef GLU_PROC
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret) GL_PROC(type, gl, name, export, upper, params, first, ret)
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef GL_PROC64
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
 #ifndef OSMESA_PROC
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret)
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
 #undef GL_void_return
 #define GL_void_return
-
+#ifndef NOTHING
+#define NOTHING void
+#endif
+#ifndef AND
+#define AND
+#endif
 EOF
 
 	$lastgl = "";
@@ -3756,11 +3991,7 @@ EOF
 		my $args = $ent->{args};
 		my $params = $ent->{params};
 		$prototype = $ent->{proto};
-		if ($args eq "") {
-			$first_param = 'NULL';
-		} else {
-			$first_param = '&' . $params->[0]->{name};
-		}
+		$first_param = first_param_addr($ent);
 		$gl = $ent->{gl};
 		if ($lastgl ne $gl)
 		{
@@ -3781,20 +4012,36 @@ EOF
 		$export = $gl . $function_name;
 		$export = $floatfuncs{$export} if (defined($floatfuncs{$export}));
 
-		print("#if !defined(TINYGL_ONLY)\n") if (! defined($tinygl{$complete_name}));
+		if ($prototype eq "void")
+		{
+			$prototype = "NOTHING";
+		} else {
+			$prototype = "AND " . $prototype;
+		}
+
+		my $skip_for_tiny = ! defined($tinygl{$gl . $function_name});
+		print("#ifndef NO_" . uc($gl . $function_name) . "\n");
+		print("#if !defined(TINYGL_ONLY)\n") if ($skip_for_tiny);
 		if ($complete_name eq 'glGetString')
 		{
 			# hack for glGetString() which is handled separately
-			print "${prefix}_GETSTRING($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), $first_param, $ret)\n";
+			print "${prefix}_GETSTRING($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
 		} elsif ($complete_name eq 'glGetStringi')
 		{
 			# hack for glGetStringi() which is handled separately
-			print "${prefix}_GETSTRINGI($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), $first_param, $ret)\n";
+			print "${prefix}_GETSTRINGI($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
 		} else
 		{
-			print "${prefix}_PROC($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), $first_param, $ret)\n";
+			if (defined($longlong_rettypes{$return_type}))
+			{
+				$prefix .= '_PROC64';
+			} else {
+				$prefix .= '_PROC';
+			}
+			print "${prefix}($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
 		}
-		print("#endif\n") if (! defined($tinygl{$complete_name}));
+		print("#endif\n") if ($skip_for_tiny);
+		print("#endif\n");
 		$gl_count++ if ($gl eq "gl");
 		$glu_count++ if ($gl eq "glu");
 		$osmesa_count++ if ($gl eq "OSMesa");
@@ -3808,6 +4055,7 @@ EOF
 /* Functions generated: $osmesa_count OSMesa + $gl_count GL + $glu_count GLU */
 
 #undef GL_PROC
+#undef GL_PROC64
 #undef GLU_PROC
 #undef GL_GETSTRING
 #undef GL_GETSTRINGI
@@ -3817,128 +4065,149 @@ EOF
 }
 
 
-my %oldmesa = (
-	'OSMesaCreateLDG' => {
-		'name' => 'OSMesaCreateLDG',
-		'gl' => '',
-		'type' => 'void *',
-		'params' => [
-			{ 'type' => 'GLenum', 'name' => 'format', 'pointer' => 0 },
-			{ 'type' => 'GLenum', 'name' => 'type', 'pointer' => 0 },
-			{ 'type' => 'GLint', 'name' => 'width', 'pointer' => 0 },
-			{ 'type' => 'GLint', 'name' => 'height', 'pointer' => 0 },
-		],
-	},
-	'OSMesaDestroyLDG' => {
-		'name' => 'OSMesaDestroyLDG',
-		'gl' => '',
-		'type' => 'void',
-		'params' => [
-		],
-	},
-	'max_width' => {
-		'name' => 'max_width',
-		'gl' => '',
-		'type' => 'GLsizei',
-		'params' => [
-		],
-	},
-	'max_height' => {
-		'name' => 'max_height',
-		'gl' => '',
-		'type' => 'GLsizei',
-		'params' => [
-		],
-	},
-	'glOrthof' => {
-		'name' => 'Orthof',
-		'gl' => 'gl',
-		'type' => 'void',
-		'params' => [
-			{ 'type' => 'GLfloat', 'name' => 'left', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'right', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'bottom', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'top', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'near_val', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'far_val', 'pointer' => 0 },
-		],
-	},
-	'glFrustumf' => {
-		'name' => 'Frustumf',
-		'gl' => 'gl',
-		'type' => 'void',
-		'params' => [
-			{ 'type' => 'GLfloat', 'name' => 'left', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'right', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'bottom', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'top', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'near_val', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'far_val', 'pointer' => 0 },
-		],
-	},
-	'gluLookAtf' => {
-		'name' => 'LookAtf',
-		'gl' => 'glu',
-		'type' => 'void',
-		'params' => [
-			{ 'type' => 'GLfloat', 'name' => 'eyeX', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'eyeY', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'eyeZ', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'centerX', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'centerY', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'centerZ', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'upX', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'upY', 'pointer' => 0 },
-			{ 'type' => 'GLfloat', 'name' => 'upZ', 'pointer' => 0 },
-		],
-	},
-	'swapbuffer' => {
-		'name' => 'swapbuffer',
-		'gl' => '',
-		'type' => 'void',
-		'params' => [
-			{ 'type' => 'void', 'name' => 'buffer', 'pointer' => 1 },
-		],
-	},
-	'exception_error' => {
-		'name' => 'exception_error',
-		'gl' => '',
-		'type' => 'void',
-		'params' => [
-			{ 'type' => 'void (CALLBACK *exception)(GLenum param)', 'name' => '', 'pointer' => 2 },
-		],
-	},
-	'information' => {
-		'name' => 'information',
-		'gl' => '',
-		'type' => 'void',
-		'params' => [
-		],
-	},
-#	'glInit' => {
-#		'name' => 'glInit',
-#		'gl' => '',
-#		'type' => 'void',
-#		'params' => [
-#			{ 'type' => 'void', 'name' => 'zbuffer', 'pointer' => 1 },
-#		],
-#	},
-#	'glClose' => {
-#		'name' => 'glClose',
-#		'gl' => '',
-#		'type' => 'void',
-#		'params' => [
-#		],
-#	},
-#	'glDebug' => {
-#		'name' => 'glDebug',
-#		'gl' => '',
-#		'type' => 'void',
-#		'params' => [
-#			{ 'type' => 'GLint', 'name' => 'mode', 'pointer' => 0 },
-#		],
-#	},
-);
+#
+# generate prototype macros
+#
+sub gen_macros_bynumber() {
+	my $gl_count = 0;
+	my $glu_count = 0;
+	my $osmesa_count = 0;
+	my $first_param;
+	my $ret;
+	my $prototype;
+	my $return_type;
+	my $function_name;
+	my $complete_name;
+	my $export;
+	my $gl;
+	my $prefix;
+	my $lastfunc;
+	my $funcno;
+	my $empty_slots;
+	
+	add_missing(\%oldmesa);
+	gen_params();
+	read_enums();
+#
+# emit header
+#
+	print << "EOF";
+#ifndef GL_GETSTRING
+#define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef GLU_PROC
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef GL_PROC64
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef OSMESA_PROC
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#undef GL_void_return
+#define GL_void_return
+#ifndef NOTHING
+#define NOTHING void
+#endif
+#ifndef AND
+#define AND
+#endif
+EOF
+
+	$lastfunc = 1;
+	$empty_slots = 0;
+	foreach my $key (sort { sort_by_value } keys %functions) {
+		my $ent = $functions{$key};
+		$function_name = $ent->{name};
+		$funcno = $ent->{funcno};
+		while ($lastfunc != $funcno)
+		{
+			printf "/* %4d */ NO_PROC\n", $lastfunc;
+			++$lastfunc;
+			++$empty_slots;
+		}
+		printf "/* %4d */ ", $funcno;
+		if (!$function_name)
+		{
+			printf "NO_PROC /* $key */\n";
+			++$empty_slots;
+		} else
+		{
+			$return_type = $ent->{type};
+			my $args = $ent->{args};
+			my $params = $ent->{params};
+			$prototype = $ent->{proto};
+			$first_param = first_param_addr($ent);
+			$gl = $ent->{gl};
+			$complete_name = $gl . $function_name;
+			if ($return_type eq 'void') {
+				# GL_void_return defined to nothing in header, to avoid empty macro argument
+				$ret = 'GL_void_return';
+			} else {
+				$ret = "return ($return_type)";
+			}
+			$prefix = uc($gl);
+	
+			# hack for old library exporting several functions as taking float arguments
+			$complete_name .= "f" if (defined($floatfuncs{$complete_name}));
+			$export = $gl . $function_name;
+			$export = $floatfuncs{$export} if (defined($floatfuncs{$export}));
+	
+			if ($prototype eq "void")
+			{
+				$prototype = "NOTHING";
+			} else {
+				$prototype = "AND " . $prototype;
+			}
+	
+			if ($complete_name eq 'glGetString')
+			{
+				# hack for glGetString() which is handled separately
+				print "${prefix}_GETSTRING($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
+			} elsif ($complete_name eq 'glGetStringi')
+			{
+				# hack for glGetStringi() which is handled separately
+				print "${prefix}_GETSTRINGI($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
+			} else
+			{
+				if ($prefix eq '')
+				{
+					$prefix = 'TINYGL_PROC';
+					$gl = 'tinygl_';
+			    } elsif (defined($longlong_rettypes{$return_type}))
+				{
+					$prefix .= '_PROC64';
+				} else {
+					$prefix .= '_PROC';
+				}
+				print "${prefix}($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
+			}
+			$gl_count++ if ($gl eq "gl");
+			$glu_count++ if ($gl eq "glu");
+			$osmesa_count++ if ($gl eq "OSMesa");
+		}
+		$lastfunc = $funcno + 1;
+	}
+
+#
+# emit trailer
+#
+	print << "EOF";
+
+/* Functions generated: $osmesa_count OSMesa + $gl_count GL + $glu_count GLU + $empty_slots empty */
+
+#undef GL_PROC
+#undef GL_PROC64
+#undef GLU_PROC
+#undef GL_GETSTRING
+#undef GL_GETSTRINGI
+#undef OSMESA_PROC
+#undef NO_PROC
+#undef TINYGL_PROC
+#undef GL_void_return
+EOF
+}
 
 
 my $ldg_trailer = '
@@ -4031,7 +4300,7 @@ sub gen_ldgheader() {
 /*
  * load & initialize NFOSmesa
  */
-LDG *ldg_load_osmesa(const char *libname, _WORD *gl);
+struct gl_public *ldg_load_osmesa(const char *libname, _WORD *gl);
 
 /*
  * init NFOSmesa from already loaded lib
@@ -4041,12 +4310,12 @@ int ldg_init_osmesa(LDG *lib);
 /*
  * unload NFOSmesa
  */
-void ldg_unload_osmesa(LDG *lib, _WORD *gl);
+void ldg_unload_osmesa(struct gl_public *pub, _WORD *gl);
 
 
 EOF
 
-	my $filename = "atari/nfosmesa/gltypes.h";
+	my $filename = $inc_gltypes;
 	if ( ! defined(open(INC, $filename)) ) {
 		&warn("cannot include \"$filename\" in output file");
 		print '#include "gltypes.h"' . "\n";
@@ -4172,7 +4441,7 @@ sub gen_tinyldgheader() {
 /*
  * load & initialize TinyGL
  */
-LDG *ldg_load_tiny_gl(const char *libname, _WORD *gl);
+struct gl_public *ldg_load_tiny_gl(const char *libname, _WORD *gl);
 
 /*
  * init TinyGL from already loaded lib
@@ -4182,12 +4451,12 @@ int ldg_init_tiny_gl(LDG *lib);
 /*
  * unload TinyGL
  */
-void ldg_unload_tiny_gl(LDG *lib, _WORD *gl);
+void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl);
 
 
 EOF
 
-	my $filename = "atari/nfosmesa/gltypes.h";
+	my $filename = $inc_gltypes;
 	if ( ! defined(open(INC, $filename)) ) {
 		&warn("cannot include \"$filename\" in output file");
 		print '#include "gltypes.h"' . "\n";
@@ -4346,6 +4615,7 @@ sub gen_tinyldglink() {
 	print << "EOF";
 
 #undef GL_PROC
+#undef GL_PROC64
 #define NUM_TINYGL_PROCS $tinygl_count
 
 /* Functions generated: $tinygl_count */
@@ -4373,8 +4643,8 @@ sub ldg_export($)
 		# the function exported as "glOrtho" actually is glOrthof
 		chop($lookup);
 	}
-	print "\tgl.${glx}${function_name} = ($return_type APIENTRY (*)($prototype)) ldg_find(\"${lookup}\", lib);\n";
-	print "\tGL_CHECK(gl.${glx}${function_name});\n";
+	print "\tglp->${glx}${function_name} = ($return_type APIENTRY (*)($prototype)) ldg_find(\"${lookup}\", lib);\n";
+	print "\tGL_CHECK(glp->${glx}${function_name});\n";
 }
 
 
@@ -4394,6 +4664,7 @@ sub gen_ldgsource() {
  */
 
 #include <gem.h>
+#include <stdlib.h>
 #include <ldg.h>
 #define NFOSMESA_NO_MANGLE
 #include <ldg/osmesa.h>
@@ -4418,6 +4689,7 @@ struct _gl_osmesa gl;
 int ldg_init_osmesa(LDG *lib)
 {
 	int result = TRUE;
+	struct _gl_osmesa *glp = &gl;
 	
 EOF
 
@@ -4438,9 +4710,11 @@ EOF
 #undef GL_CHECK
 
 
-LDG *ldg_load_osmesa(const char *libname, _WORD *gl)
+struct gl_public *ldg_load_osmesa(const char *libname, _WORD *gl)
 {
 	LDG *lib;
+	struct gl_public *pub = NULL;
+	size_t len;
 	
 	if (libname == NULL)
 		libname = "osmesa.ldg";
@@ -4448,18 +4722,44 @@ LDG *ldg_load_osmesa(const char *libname, _WORD *gl)
 		gl = ldg_global;
 	lib = ldg_open(libname, gl);
 	if (lib != NULL)
-		ldg_init_osmesa(lib);
-	return lib;
+	{
+		long APIENTRY (*glInit)(void *) = (long APIENTRY (*)(void *))ldg_find("glInit", lib);
+		if (glInit)
+		{
+			len = (*glInit)(NULL);
+		} else
+		{
+			len = sizeof(*pub);
+		}
+		pub = (struct gl_public *)calloc(1, len);
+		if (pub)
+		{
+			pub->m_alloc = malloc;
+			pub->m_free = free;
+			if (glInit)
+				(*glInit)(pub);
+			pub->libhandle = lib;
+			ldg_init_osmesa(lib);
+		} else
+		{
+			ldg_close(lib, gl);
+		}
+	}
+	return pub;
 }
 
 
-void ldg_unload_osmesa(LDG *lib, _WORD *gl)
+void ldg_unload_osmesa(struct gl_public *pub, _WORD *gl)
 {
-	if (lib != NULL)
+	if (pub != NULL)
 	{
-		if (gl == NULL)
-			gl = ldg_global;
-		ldg_close(lib, gl);
+		if (pub->libhandle != NULL)
+		{
+			if (gl == NULL)
+				gl = ldg_global;
+			ldg_close((LDG *)pub->libhandle, gl);
+		}
+		pub->m_free(pub);
 	}
 }
 
@@ -4470,12 +4770,12 @@ void ldg_unload_osmesa(LDG *lib, _WORD *gl)
 
 int main(void)
 {
-	LDG *lib;
+	struct gl_public *pub;
 	
-	lib = ldg_load_osmesa(0, 0);
-	if (lib == NULL)
-		lib = ldg_load_osmesa("c:/gemsys/ldg/osmesa.ldg", 0);
-	if (lib == NULL)
+	pub = ldg_load_osmesa(0, 0);
+	if (pub == NULL)
+		pub = ldg_load_osmesa("c:/gemsys/ldg/osmesa.ldg", 0);
+	if (pub == NULL)
 	{
 		nf_debugprintf("osmesa.ldg not found\\n");
 		return 1;
@@ -4483,7 +4783,7 @@ int main(void)
 	nf_debugprintf("%s: %lx\\n", "glBegin", gl.Begin);
 	nf_debugprintf("%s: %lx\\n", "glOrtho", gl.Ortho);
 	nf_debugprintf("%s: %lx\\n", "glOrthof", gl.Orthof);
-	ldg_unload_osmesa(lib, NULL);
+	ldg_unload_osmesa(pub, NULL);
 	return 0;
 }
 
@@ -4508,6 +4808,7 @@ sub gen_tinyldgsource() {
  */
 
 #include <gem.h>
+#include <stdlib.h>
 #include <ldg.h>
 #define NFOSMESA_NO_MANGLE
 #include <ldg/tiny_gl.h>
@@ -4524,6 +4825,7 @@ struct _gl_tiny gl;
 int ldg_init_tiny_gl(LDG *lib)
 {
 	int result = TRUE;
+	struct _gl_tiny *glp = &gl;
 	
 EOF
 
@@ -4548,9 +4850,11 @@ EOF
 #undef GL_CHECK
 
 
-LDG *ldg_load_tiny_gl(const char *libname, _WORD *gl)
+struct gl_public *ldg_load_tiny_gl(const char *libname, _WORD *gl)
 {
 	LDG *lib;
+	struct gl_public *pub = NULL;
+	size_t len;
 	
 	if (libname == NULL)
 		libname = "tiny_gl.ldg";
@@ -4558,18 +4862,44 @@ LDG *ldg_load_tiny_gl(const char *libname, _WORD *gl)
 		gl = ldg_global;
 	lib = ldg_open(libname, gl);
 	if (lib != NULL)
-		ldg_init_tiny_gl(lib);
-	return lib;
+	{
+		long APIENTRY (*glInit)(void *) = (long APIENTRY (*)(void *))ldg_find("glInit", lib);
+		if (glInit)
+		{
+			len = (*glInit)(NULL);
+		} else
+		{
+			len = sizeof(*pub);
+		}
+		pub = (struct gl_public *)calloc(1, len);
+		if (pub)
+		{
+			pub->m_alloc = malloc;
+			pub->m_free = free;
+			if (glInit)
+				(*glInit)(pub);
+			pub->libhandle = lib;
+			ldg_init_tiny_gl(lib);
+		} else
+		{
+			ldg_close(lib, gl);
+		}
+	}
+	return pub;
 }
 
 
-void ldg_unload_tiny_gl(LDG *lib, _WORD *gl)
+void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl)
 {
-	if (lib != NULL)
+	if (pub != NULL)
 	{
-		if (gl == NULL)
-			gl = ldg_global;
-		ldg_close(lib, gl);
+		if (pub->libhandle != NULL)
+		{
+			if (gl == NULL)
+				gl = ldg_global;
+			ldg_close((LDG *)pub->libhandle, gl);
+		}
+		pub->m_free(pub);
 	}
 }
 
@@ -4580,19 +4910,19 @@ void ldg_unload_tiny_gl(LDG *lib, _WORD *gl)
 
 int main(void)
 {
-	LDG *lib;
+	struct gl_public *pub;
 	
-	lib = ldg_load_tiny_gl(0, 0);
-	if (lib == NULL)
-		lib = ldg_load_tiny_gl("c:/gemsys/ldg/tin_gl.ldg", 0);
-	if (lib == NULL)
+	pub = ldg_load_tiny_gl(0, 0);
+	if (pub == NULL)
+		pub = ldg_load_tiny_gl("c:/gemsys/ldg/tin_gl.ldg", 0);
+	if (pub == NULL)
 	{
 		nf_debugprintf("tiny_gl.ldg not found\\n");
 		return 1;
 	}
 	nf_debugprintf("%s: %lx\\n", "glBegin", gl.Begin);
 	nf_debugprintf("%s: %lx\\n", "glOrthof", gl.Orthof);
-	ldg_unload_tiny_gl(lib, NULL);
+	ldg_unload_tiny_gl(pub, NULL);
 	return 0;
 }
 #endif
@@ -4643,20 +4973,29 @@ sub gen_tinyslbheader() {
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * load & initialize TinyGL
  */
-long slb_load_tiny_gl(const char *path, long min_version);
+struct gl_public *slb_load_tiny_gl(const char *path);
 
 /*
  * unload TinyGL
  */
-void slb_unload_tiny_gl(void);
+void slb_unload_tiny_gl(struct gl_public *pub);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 EOF
 
-	my $filename = "atari/nfosmesa/gltypes.h";
+	my $filename = $inc_gltypes;
 	if ( ! defined(open(INC, $filename)) ) {
 		&warn("cannot include \"$filename\" in output file");
 		print '#include "gltypes.h"' . "\n";
@@ -4718,8 +5057,6 @@ EOF
 };
 
 extern struct _gl_tiny gl;
-extern SLB_HANDLE gl_slb;
-extern SLB_EXEC gl_exec;
 
 #ifdef __cplusplus
 }
@@ -4759,23 +5096,237 @@ EOF
 } # end of gen_tinyslbheader
 
 
-sub gen_tinyslbsource() {
+sub gen_slbheader() {
+	my $gl_count = 0;
+	my $glu_count = 0;
+	my $osmesa_count = 0;
 	my $ent;
-	my $key;
-	my $funcno;
-	my $function_name;
 	my $prototype;
 	my $return_type;
+	my $function_name;
 	my $gl;
 	my $glx;
 	my $args;
-	my $params;
-	my $nargs;
-	my $argcount;
-	my $ret;
+	my $key;
 	
 	add_missing(\%oldmesa);
 	gen_params();
+	read_enums();
+
+#
+# emit header
+#
+	print << "EOF";
+#ifndef __NFOSMESA_H__
+#define __NFOSMESA_H__
+
+#include <gem.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <mint/slb.h>
+
+#if !defined(__MSHORT__) && (defined(__PUREC__) && __PUREC__ < 0x400)
+# define __MSHORT__ 1
+#endif
+
+#if (!defined(__PUREC__) || !defined(__MSHORT__) || defined(__GEMLIB__)) && !defined(__USE_GEMLIB)
+#define __USE_GEMLIB 1
+#endif
+#ifndef _WORD
+# if defined(__GEMLIB__) || defined(__USE_GEMLIB)
+#  define _WORD short
+# else
+#  define _WORD int
+# endif
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*
+ * load & initialize NFOsmesa
+ */
+struct gl_public *slb_load_osmesa(const char *path);
+
+/*
+ * unload NFOsmesa
+ */
+void slb_unload_osmesa(struct gl_public *pub);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+EOF
+
+	my $filename = $inc_gltypes;
+	if ( ! defined(open(INC, $filename)) ) {
+		&warn("cannot include \"$filename\" in output file");
+		print '#include "gltypes.h"' . "\n";
+	} else {
+		my $line;
+		print "\n";
+		while ($line = <INC>) {
+			chomp($line);
+			print "$line\n";
+		}
+		print "\n";
+		close(INC)
+	}
+
+	print << "EOF";
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct _gl_osmesa {
+EOF
+
+	foreach $key (sort { sort_by_value } keys %functions) {
+		$ent = $functions{$key};
+		$function_name = $ent->{name};
+		$return_type = $ent->{type};
+		$args = $ent->{args};
+		$prototype = $ent->{proto};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+		print "\t${return_type} APIENTRY (*${glx}${function_name})(${prototype});\n";
+		$gl_count++ if ($gl eq "gl");
+		$glu_count++ if ($gl eq "glu");
+		$osmesa_count++ if ($gl eq "OSMesa");
+	}
+
+	print << "EOF";
+
+};
+
+extern struct _gl_osmesa gl;
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#ifndef NFOSMESA_NO_MANGLE
+EOF
+
+	foreach $key (sort { sort_by_value } keys %functions) {
+		$ent = $functions{$key};
+		$function_name = $ent->{name};
+		$return_type = $ent->{type};
+		$args = $ent->{args};
+		$prototype = $ent->{proto};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+		print "#undef ${gl}${function_name}\n";
+		print "#define ${gl}${function_name} (gl.${glx}${function_name})\n";
+	}
+
+#
+# emit trailer
+#
+	print << "EOF";
+
+#endif
+
+$ldg_trailer
+
+/* Functions generated: $osmesa_count OSMesa + $gl_count GL + $glu_count GLU */
+
+#endif /* __NFOSMESA_H__ */
+EOF
+} # end of gen_slbheader
+
+
+sub slb_export($)
+{
+	my ($ent) = @_;
+	my $function_name = $ent->{name};
+	my $return_type = $ent->{type};
+	my $prototype = $ent->{proto};
+	my $params = $ent->{params};
+	my $argcount = $#$params + 1;
+	my $args = $ent->{args};
+	my $gl = $ent->{gl};
+	my $funcno = $ent->{funcno};
+	my $nfapi = $ent->{nfapi};
+	my $glx = $gl;
+	my $ret;
+	my $first_param;
+	my $exectype1;
+	my $exectype2;
+	
+	$nfapi = '' if (!defined($nfapi));
+	
+	$glx = "" if ($glx eq "gl");
+	print "static $return_type APIENTRY exec_${gl}${function_name}($prototype)\n";
+	print "{\n";
+	my $nargs = 0;
+	for (my $argc = 0; $argc < $argcount; $argc++)
+	{
+		my $param = $params->[$argc];
+		my $type = $param->{type};
+		my $name = $param->{name};
+		my $pointer = $param->{pointer};
+		if ($type eq 'GLdouble' || $type eq 'GLclampd' || defined($longlong_types{$type}))
+		{
+			$nargs += 2;
+		} else {
+			$nargs += 1;
+		}
+	}
+	$first_param = first_param_addr($ent);
+	if ($args ne "") {
+		$args = ", " . $args;
+	}
+	$exectype1 = "long  __CDECL (*";
+	$exectype2 = ")(SLB_HANDLE, long, long, void *, void *)";
+	
+	if (defined($longlong_rettypes{$return_type}))
+	{
+		$exectype2 = ")(SLB_HANDLE, long, long, void *, void *, void *)";
+		print "\tGLuint64 __retval = 0;\n";
+	}
+	print "\t${exectype1}exec${exectype2} = (${exectype1}${exectype2})gl_exec;\n";
+	for (my $argc = 1; $argc < $argcount; $argc++)
+	{
+		my $param = $params->[$argc];
+		my $name = $param->{name};
+		print "\t(void)$name;\n";
+	}
+	if (defined($longlong_rettypes{$return_type}))
+	{
+		print "\t(*exec)(gl_slb, $funcno /* $nfapi */, SLB_NARGS(3), gl_pub, $first_param, &__retval);\n";
+		print "\treturn __retval;\n";
+	} else
+	{
+		if ($return_type eq 'void') {
+			$ret = '';
+		} else {
+			$ret = "return ($return_type)";
+		}
+		print "\t${ret}(*exec)(gl_slb, $funcno /* $nfapi */, SLB_NARGS(2), gl_pub, $first_param);\n";
+	}
+	print "}\n\n";
+}
+
+
+sub gen_tinyslbsource() {
+	my $ent;
+	my $key;
+	my $function_name;
+	my $gl;
+	my $glx;
+	
+	add_missing(\%oldmesa);
+	gen_params();
+	read_enums();
 
 #
 # emit header
@@ -4786,7 +5337,9 @@ sub gen_tinyslbsource() {
  */
 
 #include <gem.h>
+#include <stdlib.h>
 #include <mint/slb.h>
+#define NFOSMESA_NO_MANGLE
 #include <slb/tiny_gl.h>
 #include <mintbind.h>
 
@@ -4800,6 +5353,9 @@ sub gen_tinyslbsource() {
 #endif
 
 struct _gl_tiny gl;
+static SLB_HANDLE gl_slb;
+static SLB_EXEC gl_exec;
+static struct gl_public *gl_pub;
 
 /*
  * The "nwords" argument should actually only be a "short".
@@ -4816,10 +5372,6 @@ struct _gl_tiny gl;
 #undef SLB_NARGS
 #define SLB_NARGS(_nargs) SLB_NWORDS(_nargs * 2)
 
-#ifndef __slb_lexec_defined
-typedef long  __CDECL (*SLB_LEXEC)(SLB_HANDLE slb, long fn, long nwords, ...);
-#define __slb_lexec_defined 1
-#endif
 
 
 EOF
@@ -4838,46 +5390,14 @@ EOF
 			die "$me: $key should be exported to tinygl but is not defined";
 		}
 		$ent = $functions{$key};
-		$function_name = $ent->{name};
-		$return_type = $ent->{type};
-		$funcno = $tinygl{$key} - 1;
-		$prototype = $ent->{proto};
-		$params = $ent->{params};
-		$args = $ent->{args};
-		$gl = $ent->{gl};
-		$glx = $gl;
-		$glx = "" if ($glx eq "gl");
-		print "static $return_type APIENTRY exec_${gl}${function_name}($prototype)\n";
-		print "{\n";
-		$argcount = $#$params + 1;
-		$nargs = 0;
-		for (my $argc = 0; $argc < $argcount; $argc++)
-		{
-			my $param = $params->[$argc];
-			my $type = $param->{type};
-			my $name = $param->{name};
-			my $pointer = $param->{pointer};
-			if ($type eq 'GLdouble' || $type eq 'GLclampd' || $type eq 'GLint64' || $type eq 'GLint64EXT' || $type eq 'GLuint64' || $type eq 'GLuint64EXT')
-			{
-				$nargs += 2;
-			} else {
-				$nargs += 1;
-			}
-		}
-		print "\tSLB_LEXEC exec = (SLB_LEXEC)gl_exec;\n";
-		if ($return_type eq 'void') {
-			$ret = '';
-		} else {
-			$ret = "return ($return_type)";
-		}
-		$args = ", " . $args unless ($args eq "");
-		print "\t${ret}(*exec)(gl_slb, $funcno, SLB_NARGS($nargs)$args);\n";
-		print "}\n\n";
+		$ent->{funcno} = $tinygl{$key};
+		slb_export($ent);
 	}
 
 	print << "EOF";
 static void slb_init_tiny_gl(void)
 {
+	struct _gl_tiny *glp = &gl;
 EOF
 
 	foreach $key (sort { sort_tinygl_by_value } keys %tinygl) {
@@ -4886,12 +5406,11 @@ EOF
 			die "$me: $key should be exported to tinygl but is not defined";
 		}
 		$ent = $functions{$key};
-		$funcno = $tinygl{$key} - 1;
 		$function_name = $ent->{name};
 		$gl = $ent->{gl};
 		$glx = $gl;
 		$glx = "" if ($glx eq "gl");
-		print "\tgl.${glx}${function_name} = exec_${gl}${function_name};\n";
+		print "\tglp->${glx}${function_name} = exec_${gl}${function_name};\n";
 	}
 
 #
@@ -4901,29 +5420,194 @@ EOF
 }
 
 
-long slb_load_tiny_gl(const char *path, long min_version)
+struct gl_public *slb_load_tiny_gl(const char *path)
 {
 	long ret;
+	size_t len;
+	struct gl_public *pub = NULL;
 	
-	ret = Slbopen("tiny_gl.slb", path, min_version, &gl_slb, &gl_exec);
+	/*
+	 * Slbopen() checks the name of the file with the
+	 * compiled-in library name, so there is no way
+	 * to pass an alternative filename here
+	 */
+	ret = Slbopen("tiny_gl.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
-		slb_init_tiny_gl();
+		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;
+		
+		len = (*exec)(gl_slb, 0, SLB_NARGS(1), NULL);
+		pub = gl_pub = (struct gl_public *)calloc(1, len);
+		if (pub)
+		{
+			pub->m_alloc = malloc;
+			pub->m_free = free;
+			pub->libhandle = gl_slb;
+			pub->libexec = gl_exec;
+			(*exec)(gl_slb, 0, SLB_NARGS(1), pub);
+			slb_init_tiny_gl();
+		}
 	}
-	return ret;
+	return pub;
 }
 
 
-void slb_unload_tiny_gl(void)
+void slb_unload_tiny_gl(struct gl_public *pub)
 {
-	if (gl_slb != NULL)
+	if (pub != NULL)
 	{
-		Slbclose(gl_slb);
-		gl_slb = 0;
+		if (pub->libhandle != NULL)
+		{
+			Slbclose(pub->libhandle);
+			gl_slb = 0;
+		}
+		pub->m_free(pub);
 	}
 }
 EOF
 }  # end of generated source, and also of gen_tinyslbsource
+
+
+
+sub gen_slbsource() {
+	my $ent;
+	my $key;
+	my $function_name;
+	my $gl;
+	my $glx;
+	
+	add_missing(\%oldmesa);
+	gen_params();
+	read_enums();
+
+#
+# emit header
+#
+	print << "EOF";
+/* Bindings of osmesa.slb
+ * Compile this module and link it with the application client
+ */
+
+#include <gem.h>
+#include <stdlib.h>
+#include <mint/slb.h>
+#define NFOSMESA_NO_MANGLE
+#include <slb/osmesa.h>
+#include <mintbind.h>
+
+#ifndef TRUE
+# define TRUE 1
+# define FALSE 0
+#endif
+
+#ifdef __PUREC__
+#pragma warn -stv
+#endif
+
+struct _gl_osmesa gl;
+static SLB_HANDLE gl_slb;
+static SLB_EXEC gl_exec;
+static struct gl_public *gl_pub;
+
+/*
+ * The "nwords" argument should actually only be a "short".
+ * MagiC will expect it that way, with the actual arguments
+ * following.
+ * However, a "short" in the actual function definition
+ * will be treated as promoted to int.
+ * So we pass a long instead, with the upper half
+ * set to 1 + nwords to account for the extra space.
+ * This also has the benefit of keeping the stack longword aligned.
+ */
+#undef SLB_NWORDS
+#define SLB_NWORDS(_nwords) ((((long)(_nwords) + 1l) << 16) | (long)(_nwords))
+#undef SLB_NARGS
+#define SLB_NARGS(_nargs) SLB_NWORDS(_nargs * 2)
+
+
+EOF
+
+	foreach $key (keys %floatfuncs) {
+		print "#undef ${key}\n";
+	}
+	print "\n";
+
+#
+# emit wrapper functions
+#
+	foreach $key (sort { sort_by_value } keys %functions) {
+		$ent = $functions{$key};
+		slb_export($ent);
+	}
+
+	print << "EOF";
+static void slb_init_osmesa(void)
+{
+	struct _gl_osmesa *glp = &gl;
+EOF
+
+	foreach $key (sort { sort_by_value } keys %functions) {
+		$ent = $functions{$key};
+		$function_name = $ent->{name};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+		print "\tglp->${glx}${function_name} = exec_${gl}${function_name};\n";
+	}
+
+#
+# emit trailer
+#
+	print << "EOF";
+}
+
+
+struct gl_public *slb_load_osmesa(const char *path)
+{
+	long ret;
+	size_t len;
+	struct gl_public *pub = NULL;
+	
+	/*
+	 * Slbopen() checks the name of the file with the
+	 * compiled-in library name, so there is no way
+	 * to pass an alternative filename here
+	 */
+	ret = Slbopen("osmesa.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
+	if (ret >= 0)
+	{
+		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;
+		
+		len = (*exec)(gl_slb, 0, SLB_NARGS(1), NULL);
+		pub = gl_pub = (struct gl_public *)calloc(1, len);
+		if (pub)
+		{
+			pub->m_alloc = malloc;
+			pub->m_free = free;
+			pub->libhandle = gl_slb;
+			pub->libexec = gl_exec;
+			(*exec)(gl_slb, 0, SLB_NARGS(1), pub);
+			slb_init_osmesa();
+		}
+	}
+	return pub;
+}
+
+
+void slb_unload_osmesa(struct gl_public *pub)
+{
+	if (pub != NULL)
+	{
+		if (pub->libhandle != NULL)
+		{
+			Slbclose(pub->libhandle);
+			gl_slb = 0;
+		}
+		pub->m_free(pub);
+	}
+}
+EOF
+}  # end of generated source, and also of gen_slbsource
 
 
 
@@ -4935,7 +5619,19 @@ sub usage()
 #
 # main()
 #
+if ($ARGV[0] eq '-incfile') {
+	shift @ARGV;
+	$inc_gltypes = $ARGV[0];
+	shift @ARGV;
+}
+if ($ARGV[0] eq '-enums') {
+	shift @ARGV;
+	$enumfile = $ARGV[0];
+	shift @ARGV;
+}
+
 unshift(@ARGV, '-') unless @ARGV;
+
 if ($ARGV[0] eq '-protos') {
 	shift @ARGV;
 	print_header();
@@ -4945,7 +5641,11 @@ if ($ARGV[0] eq '-protos') {
 	shift @ARGV;
 	print_header();
 	read_includes();
-	gen_macros();
+	if (defined($enumfile)) {
+		gen_macros_bynumber();
+	} else {
+		gen_macros();
+	}
 } elsif ($ARGV[0] eq '-calls') {
 	shift @ARGV;
 	print_header();
@@ -4981,10 +5681,18 @@ if ($ARGV[0] eq '-protos') {
 	shift @ARGV;
 	read_includes();
 	gen_tinyslbheader();
+} elsif ($ARGV[0] eq '-slbheader') {
+	shift @ARGV;
+	read_includes();
+	gen_slbheader();
 } elsif ($ARGV[0] eq '-tinyslbsource') {
 	shift @ARGV;
 	read_includes();
 	gen_tinyslbsource();
+} elsif ($ARGV[0] eq '-slbsource') {
+	shift @ARGV;
+	read_includes();
+	gen_slbsource();
 } elsif ($ARGV[0] eq '-help' || $ARGV[0] eq '--help') {
 	shift @ARGV;
 	usage();

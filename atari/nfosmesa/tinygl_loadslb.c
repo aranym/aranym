@@ -3,7 +3,9 @@
  */
 
 #include <gem.h>
+#include <stdlib.h>
 #include <mint/slb.h>
+#define NFOSMESA_NO_MANGLE
 #include <slb/tiny_gl.h>
 #include <mintbind.h>
 
@@ -17,6 +19,9 @@
 #endif
 
 struct _gl_tiny gl;
+static SLB_HANDLE gl_slb;
+static SLB_EXEC gl_exec;
+static struct gl_public *gl_pub;
 
 /*
  * The "nwords" argument should actually only be a "short".
@@ -33,10 +38,6 @@ struct _gl_tiny gl;
 #undef SLB_NARGS
 #define SLB_NARGS(_nargs) SLB_NWORDS(_nargs * 2)
 
-#ifndef __slb_lexec_defined
-typedef long  __CDECL (*SLB_LEXEC)(SLB_HANDLE slb, long fn, long nwords, ...);
-#define __slb_lexec_defined 1
-#endif
 
 
 #undef glFrustum
@@ -46,608 +47,729 @@ typedef long  __CDECL (*SLB_LEXEC)(SLB_HANDLE slb, long fn, long nwords, ...);
 
 static void APIENTRY exec_information(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 0, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 1 /*  */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glBegin(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 1, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 2 /* NFOSMESA_GLBEGIN */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glClear(GLbitfield mask)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 2, SLB_NARGS(1), mask);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3 /* NFOSMESA_GLCLEAR */, SLB_NARGS(2), gl_pub, &mask);
 }
 
 static void APIENTRY exec_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 3, SLB_NARGS(4), red, green, blue, alpha);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)green;
+	(void)blue;
+	(void)alpha;
+	(*exec)(gl_slb, 4 /* NFOSMESA_GLCLEARCOLOR */, SLB_NARGS(2), gl_pub, &red);
 }
 
 static void APIENTRY exec_glColor3f(GLfloat red, GLfloat green, GLfloat blue)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 4, SLB_NARGS(3), red, green, blue);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)green;
+	(void)blue;
+	(*exec)(gl_slb, 5 /* NFOSMESA_GLCOLOR3F */, SLB_NARGS(2), gl_pub, &red);
 }
 
 static void APIENTRY exec_glDisable(GLenum cap)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 5, SLB_NARGS(1), cap);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 6 /* NFOSMESA_GLDISABLE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
 static void APIENTRY exec_glEnable(GLenum cap)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 6, SLB_NARGS(1), cap);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 7 /* NFOSMESA_GLENABLE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
 static void APIENTRY exec_glEnd(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 7, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 8 /* NFOSMESA_GLEND */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glLightfv(GLenum light, GLenum pname, const GLfloat *params)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 8, SLB_NARGS(3), light, pname, params);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 9 /* NFOSMESA_GLLIGHTFV */, SLB_NARGS(2), gl_pub, &light);
 }
 
 static void APIENTRY exec_glLoadIdentity(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 9, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 10 /* NFOSMESA_GLLOADIDENTITY */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glMaterialfv(GLenum face, GLenum pname, const GLfloat *params)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 10, SLB_NARGS(3), face, pname, params);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 11 /* NFOSMESA_GLMATERIALFV */, SLB_NARGS(2), gl_pub, &face);
 }
 
 static void APIENTRY exec_glMatrixMode(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 11, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 12 /* NFOSMESA_GLMATRIXMODE */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 12, SLB_NARGS(6), left, right, bottom, top, near_val, far_val);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)right;
+	(void)bottom;
+	(void)top;
+	(void)near_val;
+	(void)far_val;
+	(*exec)(gl_slb, 13 /* NFOSMESA_GLORTHOF */, SLB_NARGS(2), gl_pub, &left);
 }
 
 static void APIENTRY exec_glPopMatrix(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 13, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 14 /* NFOSMESA_GLPOPMATRIX */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glPushMatrix(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 14, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 15 /* NFOSMESA_GLPUSHMATRIX */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 15, SLB_NARGS(4), angle, x, y, z);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 16 /* NFOSMESA_GLROTATEF */, SLB_NARGS(2), gl_pub, &angle);
 }
 
 static void APIENTRY exec_glTexEnvi(GLenum target, GLenum pname, GLint param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 16, SLB_NARGS(3), target, pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)param;
+	(*exec)(gl_slb, 17 /* NFOSMESA_GLTEXENVI */, SLB_NARGS(2), gl_pub, &target);
 }
 
 static void APIENTRY exec_glTexParameteri(GLenum target, GLenum pname, GLint param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 17, SLB_NARGS(3), target, pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)param;
+	(*exec)(gl_slb, 18 /* NFOSMESA_GLTEXPARAMETERI */, SLB_NARGS(2), gl_pub, &target);
 }
 
 static void APIENTRY exec_glTranslatef(GLfloat x, GLfloat y, GLfloat z)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 18, SLB_NARGS(3), x, y, z);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 19 /* NFOSMESA_GLTRANSLATEF */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void APIENTRY exec_glVertex2f(GLfloat x, GLfloat y)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 19, SLB_NARGS(2), x, y);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(*exec)(gl_slb, 20 /* NFOSMESA_GLVERTEX2F */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void APIENTRY exec_glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 20, SLB_NARGS(3), x, y, z);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 21 /* NFOSMESA_GLVERTEX3F */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void * APIENTRY exec_OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint height)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (void *)(*exec)(gl_slb, 21, SLB_NARGS(4), format, type, width, height);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)type;
+	(void)width;
+	(void)height;
+	return (void *)(*exec)(gl_slb, 22 /*  */, SLB_NARGS(2), gl_pub, &format);
 }
 
 static void APIENTRY exec_OSMesaDestroyLDG(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 22, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 23 /*  */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glArrayElement(GLint i)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 23, SLB_NARGS(1), i);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 24 /* NFOSMESA_GLARRAYELEMENT */, SLB_NARGS(2), gl_pub, &i);
 }
 
 static void APIENTRY exec_glBindTexture(GLenum target, GLuint texture)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 24, SLB_NARGS(2), target, texture);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)texture;
+	(*exec)(gl_slb, 25 /* NFOSMESA_GLBINDTEXTURE */, SLB_NARGS(2), gl_pub, &target);
 }
 
 static void APIENTRY exec_glCallList(GLuint list)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 25, SLB_NARGS(1), list);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 26 /* NFOSMESA_GLCALLLIST */, SLB_NARGS(2), gl_pub, &list);
 }
 
 static void APIENTRY exec_glClearDepthf(GLfloat d)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 26, SLB_NARGS(1), d);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 27 /* NFOSMESA_GLCLEARDEPTHF */, SLB_NARGS(2), gl_pub, &d);
 }
 
 static void APIENTRY exec_glColor4f(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 27, SLB_NARGS(4), red, green, blue, alpha);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)green;
+	(void)blue;
+	(void)alpha;
+	(*exec)(gl_slb, 28 /* NFOSMESA_GLCOLOR4F */, SLB_NARGS(2), gl_pub, &red);
 }
 
 static void APIENTRY exec_glColor3fv(const GLfloat *v)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 28, SLB_NARGS(1), v);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 29 /* NFOSMESA_GLCOLOR3FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
 static void APIENTRY exec_glColor4fv(const GLfloat *v)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 29, SLB_NARGS(1), v);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 30 /* NFOSMESA_GLCOLOR4FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
 static void APIENTRY exec_glColorMaterial(GLenum face, GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 30, SLB_NARGS(2), face, mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)mode;
+	(*exec)(gl_slb, 31 /* NFOSMESA_GLCOLORMATERIAL */, SLB_NARGS(2), gl_pub, &face);
 }
 
 static void APIENTRY exec_glColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 31, SLB_NARGS(4), size, type, stride, pointer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)type;
+	(void)stride;
+	(void)pointer;
+	(*exec)(gl_slb, 32 /* NFOSMESA_GLCOLORPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
 static void APIENTRY exec_glCullFace(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 32, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 33 /* NFOSMESA_GLCULLFACE */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glDeleteTextures(GLsizei n, const GLuint *textures)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 33, SLB_NARGS(2), n, textures);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)textures;
+	(*exec)(gl_slb, 34 /* NFOSMESA_GLDELETETEXTURES */, SLB_NARGS(2), gl_pub, &n);
 }
 
 static void APIENTRY exec_glDisableClientState(GLenum array)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 34, SLB_NARGS(1), array);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 35 /* NFOSMESA_GLDISABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
 }
 
 static void APIENTRY exec_glEnableClientState(GLenum array)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 35, SLB_NARGS(1), array);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 36 /* NFOSMESA_GLENABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
 }
 
 static void APIENTRY exec_glEndList(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 36, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 37 /* NFOSMESA_GLENDLIST */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glEdgeFlag(GLboolean32 flag)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 37, SLB_NARGS(1), flag);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 38 /* NFOSMESA_GLEDGEFLAG */, SLB_NARGS(2), gl_pub, &flag);
 }
 
 static void APIENTRY exec_glFlush(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 38, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 39 /* NFOSMESA_GLFLUSH */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glFrontFace(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 39, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 40 /* NFOSMESA_GLFRONTFACE */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 40, SLB_NARGS(6), left, right, bottom, top, near_val, far_val);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)right;
+	(void)bottom;
+	(void)top;
+	(void)near_val;
+	(void)far_val;
+	(*exec)(gl_slb, 41 /* NFOSMESA_GLFRUSTUMF */, SLB_NARGS(2), gl_pub, &left);
 }
 
 static GLuint APIENTRY exec_glGenLists(GLsizei range)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (GLuint)(*exec)(gl_slb, 41, SLB_NARGS(1), range);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLuint)(*exec)(gl_slb, 42 /* NFOSMESA_GLGENLISTS */, SLB_NARGS(2), gl_pub, &range);
 }
 
 static void APIENTRY exec_glGenTextures(GLsizei n, GLuint *textures)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 42, SLB_NARGS(2), n, textures);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)textures;
+	(*exec)(gl_slb, 43 /* NFOSMESA_GLGENTEXTURES */, SLB_NARGS(2), gl_pub, &n);
 }
 
 static void APIENTRY exec_glGetFloatv(GLenum pname, GLfloat *params)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 43, SLB_NARGS(2), pname, params);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)params;
+	(*exec)(gl_slb, 44 /* NFOSMESA_GLGETFLOATV */, SLB_NARGS(2), gl_pub, &pname);
 }
 
 static void APIENTRY exec_glGetIntegerv(GLenum pname, GLint *params)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 44, SLB_NARGS(2), pname, params);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)params;
+	(*exec)(gl_slb, 45 /* NFOSMESA_GLGETINTEGERV */, SLB_NARGS(2), gl_pub, &pname);
 }
 
 static void APIENTRY exec_glHint(GLenum target, GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 45, SLB_NARGS(2), target, mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)mode;
+	(*exec)(gl_slb, 46 /* NFOSMESA_GLHINT */, SLB_NARGS(2), gl_pub, &target);
 }
 
 static void APIENTRY exec_glInitNames(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 46, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 47 /* NFOSMESA_GLINITNAMES */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static GLboolean APIENTRY exec_glIsList(GLuint list)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (GLboolean)(*exec)(gl_slb, 47, SLB_NARGS(1), list);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLboolean)(*exec)(gl_slb, 48 /* NFOSMESA_GLISLIST */, SLB_NARGS(2), gl_pub, &list);
 }
 
 static void APIENTRY exec_glLightf(GLenum light, GLenum pname, GLfloat param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 48, SLB_NARGS(3), light, pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)param;
+	(*exec)(gl_slb, 49 /* NFOSMESA_GLLIGHTF */, SLB_NARGS(2), gl_pub, &light);
 }
 
 static void APIENTRY exec_glLightModeli(GLenum pname, GLint param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 49, SLB_NARGS(2), pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)param;
+	(*exec)(gl_slb, 50 /* NFOSMESA_GLLIGHTMODELI */, SLB_NARGS(2), gl_pub, &pname);
 }
 
 static void APIENTRY exec_glLightModelfv(GLenum pname, const GLfloat *params)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 50, SLB_NARGS(2), pname, params);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)params;
+	(*exec)(gl_slb, 51 /* NFOSMESA_GLLIGHTMODELFV */, SLB_NARGS(2), gl_pub, &pname);
 }
 
 static void APIENTRY exec_glLoadMatrixf(const GLfloat *m)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 51, SLB_NARGS(1), m);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 52 /* NFOSMESA_GLLOADMATRIXF */, SLB_NARGS(2), gl_pub, &m);
 }
 
 static void APIENTRY exec_glLoadName(GLuint name)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 52, SLB_NARGS(1), name);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 53 /* NFOSMESA_GLLOADNAME */, SLB_NARGS(2), gl_pub, &name);
 }
 
 static void APIENTRY exec_glMaterialf(GLenum face, GLenum pname, GLfloat param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 53, SLB_NARGS(3), face, pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)param;
+	(*exec)(gl_slb, 54 /* NFOSMESA_GLMATERIALF */, SLB_NARGS(2), gl_pub, &face);
 }
 
 static void APIENTRY exec_glMultMatrixf(const GLfloat *m)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 54, SLB_NARGS(1), m);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 55 /* NFOSMESA_GLMULTMATRIXF */, SLB_NARGS(2), gl_pub, &m);
 }
 
 static void APIENTRY exec_glNewList(GLuint list, GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 55, SLB_NARGS(2), list, mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)mode;
+	(*exec)(gl_slb, 56 /* NFOSMESA_GLNEWLIST */, SLB_NARGS(2), gl_pub, &list);
 }
 
 static void APIENTRY exec_glNormal3f(GLfloat nx, GLfloat ny, GLfloat nz)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 56, SLB_NARGS(3), nx, ny, nz);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)ny;
+	(void)nz;
+	(*exec)(gl_slb, 57 /* NFOSMESA_GLNORMAL3F */, SLB_NARGS(2), gl_pub, &nx);
 }
 
 static void APIENTRY exec_glNormal3fv(const GLfloat *v)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 57, SLB_NARGS(1), v);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 58 /* NFOSMESA_GLNORMAL3FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
 static void APIENTRY exec_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 58, SLB_NARGS(3), type, stride, pointer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)stride;
+	(void)pointer;
+	(*exec)(gl_slb, 59 /* NFOSMESA_GLNORMALPOINTER */, SLB_NARGS(2), gl_pub, &type);
 }
 
 static void APIENTRY exec_glPixelStorei(GLenum pname, GLint param)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 59, SLB_NARGS(2), pname, param);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)param;
+	(*exec)(gl_slb, 60 /* NFOSMESA_GLPIXELSTOREI */, SLB_NARGS(2), gl_pub, &pname);
 }
 
 static void APIENTRY exec_glPolygonMode(GLenum face, GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 60, SLB_NARGS(2), face, mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)mode;
+	(*exec)(gl_slb, 61 /* NFOSMESA_GLPOLYGONMODE */, SLB_NARGS(2), gl_pub, &face);
 }
 
 static void APIENTRY exec_glPolygonOffset(GLfloat factor, GLfloat units)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 61, SLB_NARGS(2), factor, units);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)units;
+	(*exec)(gl_slb, 62 /* NFOSMESA_GLPOLYGONOFFSET */, SLB_NARGS(2), gl_pub, &factor);
 }
 
 static void APIENTRY exec_glPopName(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 62, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 63 /* NFOSMESA_GLPOPNAME */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glPushName(GLuint name)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 63, SLB_NARGS(1), name);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 64 /* NFOSMESA_GLPUSHNAME */, SLB_NARGS(2), gl_pub, &name);
 }
 
 static GLint APIENTRY exec_glRenderMode(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (GLint)(*exec)(gl_slb, 64, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLint)(*exec)(gl_slb, 65 /* NFOSMESA_GLRENDERMODE */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glSelectBuffer(GLsizei size, GLuint *buffer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 65, SLB_NARGS(2), size, buffer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)buffer;
+	(*exec)(gl_slb, 66 /* NFOSMESA_GLSELECTBUFFER */, SLB_NARGS(2), gl_pub, &size);
 }
 
 static void APIENTRY exec_glScalef(GLfloat x, GLfloat y, GLfloat z)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 66, SLB_NARGS(3), x, y, z);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 67 /* NFOSMESA_GLSCALEF */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void APIENTRY exec_glShadeModel(GLenum mode)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 67, SLB_NARGS(1), mode);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 68 /* NFOSMESA_GLSHADEMODEL */, SLB_NARGS(2), gl_pub, &mode);
 }
 
 static void APIENTRY exec_glTexCoord2f(GLfloat s, GLfloat t)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 68, SLB_NARGS(2), s, t);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)t;
+	(*exec)(gl_slb, 69 /* NFOSMESA_GLTEXCOORD2F */, SLB_NARGS(2), gl_pub, &s);
 }
 
 static void APIENTRY exec_glTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 69, SLB_NARGS(4), s, t, r, q);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)t;
+	(void)r;
+	(void)q;
+	(*exec)(gl_slb, 70 /* NFOSMESA_GLTEXCOORD4F */, SLB_NARGS(2), gl_pub, &s);
 }
 
 static void APIENTRY exec_glTexCoord2fv(const GLfloat *v)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 70, SLB_NARGS(1), v);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 71 /* NFOSMESA_GLTEXCOORD2FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
 static void APIENTRY exec_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 71, SLB_NARGS(4), size, type, stride, pointer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)type;
+	(void)stride;
+	(void)pointer;
+	(*exec)(gl_slb, 72 /* NFOSMESA_GLTEXCOORDPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
 static void APIENTRY exec_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 72, SLB_NARGS(9), target, level, internalformat, width, height, border, format, type, pixels);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)level;
+	(void)internalformat;
+	(void)width;
+	(void)height;
+	(void)border;
+	(void)format;
+	(void)type;
+	(void)pixels;
+	(*exec)(gl_slb, 73 /* NFOSMESA_GLTEXIMAGE2D */, SLB_NARGS(2), gl_pub, &target);
 }
 
 static void APIENTRY exec_glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 73, SLB_NARGS(4), x, y, z, w);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)z;
+	(void)w;
+	(*exec)(gl_slb, 74 /* NFOSMESA_GLVERTEX4F */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void APIENTRY exec_glVertex3fv(const GLfloat *v)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 74, SLB_NARGS(1), v);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 75 /* NFOSMESA_GLVERTEX3FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
 static void APIENTRY exec_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 75, SLB_NARGS(4), size, type, stride, pointer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)type;
+	(void)stride;
+	(void)pointer;
+	(*exec)(gl_slb, 76 /* NFOSMESA_GLVERTEXPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
 static void APIENTRY exec_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 76, SLB_NARGS(4), x, y, width, height);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)width;
+	(void)height;
+	(*exec)(gl_slb, 77 /* NFOSMESA_GLVIEWPORT */, SLB_NARGS(2), gl_pub, &x);
 }
 
 static void APIENTRY exec_swapbuffer(void *buffer)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 77, SLB_NARGS(1), buffer);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 78 /* NFOSMESA_TINYGLSWAPBUFFER */, SLB_NARGS(2), gl_pub, &buffer);
 }
 
 static GLsizei APIENTRY exec_max_width(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (GLsizei)(*exec)(gl_slb, 78, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLsizei)(*exec)(gl_slb, 79 /*  */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static GLsizei APIENTRY exec_max_height(void)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	return (GLsizei)(*exec)(gl_slb, 79, SLB_NARGS(0));
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLsizei)(*exec)(gl_slb, 80 /*  */, SLB_NARGS(2), gl_pub, NULL);
 }
 
 static void APIENTRY exec_glDeleteLists(GLuint list, GLsizei range)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 80, SLB_NARGS(2), list, range);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)range;
+	(*exec)(gl_slb, 81 /* NFOSMESA_GLDELETELISTS */, SLB_NARGS(2), gl_pub, &list);
 }
 
 static void APIENTRY exec_gluLookAtf(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ)
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 81, SLB_NARGS(9), eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)eyeY;
+	(void)eyeZ;
+	(void)centerX;
+	(void)centerY;
+	(void)centerZ;
+	(void)upX;
+	(void)upY;
+	(void)upZ;
+	(*exec)(gl_slb, 82 /* NFOSMESA_GLULOOKATF */, SLB_NARGS(2), gl_pub, &eyeX);
 }
 
 static void APIENTRY exec_exception_error(void (CALLBACK *exception)(GLenum param) )
 {
-	SLB_LEXEC exec = (SLB_LEXEC)gl_exec;
-	(*exec)(gl_slb, 82, SLB_NARGS(1), exception);
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 83 /*  */, SLB_NARGS(2), gl_pub, &exception);
 }
 
 static void slb_init_tiny_gl(void)
 {
-	gl.information = exec_information;
-	gl.Begin = exec_glBegin;
-	gl.Clear = exec_glClear;
-	gl.ClearColor = exec_glClearColor;
-	gl.Color3f = exec_glColor3f;
-	gl.Disable = exec_glDisable;
-	gl.Enable = exec_glEnable;
-	gl.End = exec_glEnd;
-	gl.Lightfv = exec_glLightfv;
-	gl.LoadIdentity = exec_glLoadIdentity;
-	gl.Materialfv = exec_glMaterialfv;
-	gl.MatrixMode = exec_glMatrixMode;
-	gl.Orthof = exec_glOrthof;
-	gl.PopMatrix = exec_glPopMatrix;
-	gl.PushMatrix = exec_glPushMatrix;
-	gl.Rotatef = exec_glRotatef;
-	gl.TexEnvi = exec_glTexEnvi;
-	gl.TexParameteri = exec_glTexParameteri;
-	gl.Translatef = exec_glTranslatef;
-	gl.Vertex2f = exec_glVertex2f;
-	gl.Vertex3f = exec_glVertex3f;
-	gl.OSMesaCreateLDG = exec_OSMesaCreateLDG;
-	gl.OSMesaDestroyLDG = exec_OSMesaDestroyLDG;
-	gl.ArrayElement = exec_glArrayElement;
-	gl.BindTexture = exec_glBindTexture;
-	gl.CallList = exec_glCallList;
-	gl.ClearDepthf = exec_glClearDepthf;
-	gl.Color4f = exec_glColor4f;
-	gl.Color3fv = exec_glColor3fv;
-	gl.Color4fv = exec_glColor4fv;
-	gl.ColorMaterial = exec_glColorMaterial;
-	gl.ColorPointer = exec_glColorPointer;
-	gl.CullFace = exec_glCullFace;
-	gl.DeleteTextures = exec_glDeleteTextures;
-	gl.DisableClientState = exec_glDisableClientState;
-	gl.EnableClientState = exec_glEnableClientState;
-	gl.EndList = exec_glEndList;
-	gl.EdgeFlag = exec_glEdgeFlag;
-	gl.Flush = exec_glFlush;
-	gl.FrontFace = exec_glFrontFace;
-	gl.Frustumf = exec_glFrustumf;
-	gl.GenLists = exec_glGenLists;
-	gl.GenTextures = exec_glGenTextures;
-	gl.GetFloatv = exec_glGetFloatv;
-	gl.GetIntegerv = exec_glGetIntegerv;
-	gl.Hint = exec_glHint;
-	gl.InitNames = exec_glInitNames;
-	gl.IsList = exec_glIsList;
-	gl.Lightf = exec_glLightf;
-	gl.LightModeli = exec_glLightModeli;
-	gl.LightModelfv = exec_glLightModelfv;
-	gl.LoadMatrixf = exec_glLoadMatrixf;
-	gl.LoadName = exec_glLoadName;
-	gl.Materialf = exec_glMaterialf;
-	gl.MultMatrixf = exec_glMultMatrixf;
-	gl.NewList = exec_glNewList;
-	gl.Normal3f = exec_glNormal3f;
-	gl.Normal3fv = exec_glNormal3fv;
-	gl.NormalPointer = exec_glNormalPointer;
-	gl.PixelStorei = exec_glPixelStorei;
-	gl.PolygonMode = exec_glPolygonMode;
-	gl.PolygonOffset = exec_glPolygonOffset;
-	gl.PopName = exec_glPopName;
-	gl.PushName = exec_glPushName;
-	gl.RenderMode = exec_glRenderMode;
-	gl.SelectBuffer = exec_glSelectBuffer;
-	gl.Scalef = exec_glScalef;
-	gl.ShadeModel = exec_glShadeModel;
-	gl.TexCoord2f = exec_glTexCoord2f;
-	gl.TexCoord4f = exec_glTexCoord4f;
-	gl.TexCoord2fv = exec_glTexCoord2fv;
-	gl.TexCoordPointer = exec_glTexCoordPointer;
-	gl.TexImage2D = exec_glTexImage2D;
-	gl.Vertex4f = exec_glVertex4f;
-	gl.Vertex3fv = exec_glVertex3fv;
-	gl.VertexPointer = exec_glVertexPointer;
-	gl.Viewport = exec_glViewport;
-	gl.swapbuffer = exec_swapbuffer;
-	gl.max_width = exec_max_width;
-	gl.max_height = exec_max_height;
-	gl.DeleteLists = exec_glDeleteLists;
-	gl.gluLookAtf = exec_gluLookAtf;
-	gl.exception_error = exec_exception_error;
+	struct _gl_tiny *glp = &gl;
+	glp->information = exec_information;
+	glp->Begin = exec_glBegin;
+	glp->Clear = exec_glClear;
+	glp->ClearColor = exec_glClearColor;
+	glp->Color3f = exec_glColor3f;
+	glp->Disable = exec_glDisable;
+	glp->Enable = exec_glEnable;
+	glp->End = exec_glEnd;
+	glp->Lightfv = exec_glLightfv;
+	glp->LoadIdentity = exec_glLoadIdentity;
+	glp->Materialfv = exec_glMaterialfv;
+	glp->MatrixMode = exec_glMatrixMode;
+	glp->Orthof = exec_glOrthof;
+	glp->PopMatrix = exec_glPopMatrix;
+	glp->PushMatrix = exec_glPushMatrix;
+	glp->Rotatef = exec_glRotatef;
+	glp->TexEnvi = exec_glTexEnvi;
+	glp->TexParameteri = exec_glTexParameteri;
+	glp->Translatef = exec_glTranslatef;
+	glp->Vertex2f = exec_glVertex2f;
+	glp->Vertex3f = exec_glVertex3f;
+	glp->OSMesaCreateLDG = exec_OSMesaCreateLDG;
+	glp->OSMesaDestroyLDG = exec_OSMesaDestroyLDG;
+	glp->ArrayElement = exec_glArrayElement;
+	glp->BindTexture = exec_glBindTexture;
+	glp->CallList = exec_glCallList;
+	glp->ClearDepthf = exec_glClearDepthf;
+	glp->Color4f = exec_glColor4f;
+	glp->Color3fv = exec_glColor3fv;
+	glp->Color4fv = exec_glColor4fv;
+	glp->ColorMaterial = exec_glColorMaterial;
+	glp->ColorPointer = exec_glColorPointer;
+	glp->CullFace = exec_glCullFace;
+	glp->DeleteTextures = exec_glDeleteTextures;
+	glp->DisableClientState = exec_glDisableClientState;
+	glp->EnableClientState = exec_glEnableClientState;
+	glp->EndList = exec_glEndList;
+	glp->EdgeFlag = exec_glEdgeFlag;
+	glp->Flush = exec_glFlush;
+	glp->FrontFace = exec_glFrontFace;
+	glp->Frustumf = exec_glFrustumf;
+	glp->GenLists = exec_glGenLists;
+	glp->GenTextures = exec_glGenTextures;
+	glp->GetFloatv = exec_glGetFloatv;
+	glp->GetIntegerv = exec_glGetIntegerv;
+	glp->Hint = exec_glHint;
+	glp->InitNames = exec_glInitNames;
+	glp->IsList = exec_glIsList;
+	glp->Lightf = exec_glLightf;
+	glp->LightModeli = exec_glLightModeli;
+	glp->LightModelfv = exec_glLightModelfv;
+	glp->LoadMatrixf = exec_glLoadMatrixf;
+	glp->LoadName = exec_glLoadName;
+	glp->Materialf = exec_glMaterialf;
+	glp->MultMatrixf = exec_glMultMatrixf;
+	glp->NewList = exec_glNewList;
+	glp->Normal3f = exec_glNormal3f;
+	glp->Normal3fv = exec_glNormal3fv;
+	glp->NormalPointer = exec_glNormalPointer;
+	glp->PixelStorei = exec_glPixelStorei;
+	glp->PolygonMode = exec_glPolygonMode;
+	glp->PolygonOffset = exec_glPolygonOffset;
+	glp->PopName = exec_glPopName;
+	glp->PushName = exec_glPushName;
+	glp->RenderMode = exec_glRenderMode;
+	glp->SelectBuffer = exec_glSelectBuffer;
+	glp->Scalef = exec_glScalef;
+	glp->ShadeModel = exec_glShadeModel;
+	glp->TexCoord2f = exec_glTexCoord2f;
+	glp->TexCoord4f = exec_glTexCoord4f;
+	glp->TexCoord2fv = exec_glTexCoord2fv;
+	glp->TexCoordPointer = exec_glTexCoordPointer;
+	glp->TexImage2D = exec_glTexImage2D;
+	glp->Vertex4f = exec_glVertex4f;
+	glp->Vertex3fv = exec_glVertex3fv;
+	glp->VertexPointer = exec_glVertexPointer;
+	glp->Viewport = exec_glViewport;
+	glp->swapbuffer = exec_swapbuffer;
+	glp->max_width = exec_max_width;
+	glp->max_height = exec_max_height;
+	glp->DeleteLists = exec_glDeleteLists;
+	glp->gluLookAtf = exec_gluLookAtf;
+	glp->exception_error = exec_exception_error;
 }
 
 
-long slb_load_tiny_gl(const char *path, long min_version)
+struct gl_public *slb_load_tiny_gl(const char *path)
 {
 	long ret;
+	size_t len;
+	struct gl_public *pub = NULL;
 	
-	ret = Slbopen("tiny_gl.slb", path, min_version, &gl_slb, &gl_exec);
+	/*
+	 * Slbopen() checks the name of the file with the
+	 * compiled-in library name, so there is no way
+	 * to pass an alternative filename here
+	 */
+	ret = Slbopen("tiny_gl.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
-		slb_init_tiny_gl();
+		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;
+		
+		len = (*exec)(gl_slb, 0, SLB_NARGS(1), NULL);
+		pub = gl_pub = (struct gl_public *)calloc(1, len);
+		if (pub)
+		{
+			pub->m_alloc = malloc;
+			pub->m_free = free;
+			pub->libhandle = gl_slb;
+			pub->libexec = gl_exec;
+			(*exec)(gl_slb, 0, SLB_NARGS(1), pub);
+			slb_init_tiny_gl();
+		}
 	}
-	return ret;
+	return pub;
 }
 
 
-void slb_unload_tiny_gl(void)
+void slb_unload_tiny_gl(struct gl_public *pub)
 {
-	if (gl_slb != NULL)
+	if (pub != NULL)
 	{
-		Slbclose(gl_slb);
-		gl_slb = 0;
+		if (pub->libhandle != NULL)
+		{
+			Slbclose(pub->libhandle);
+			gl_slb = 0;
+		}
+		pub->m_free(pub);
 	}
 }

@@ -133,12 +133,20 @@ BUGS
 - Sharing contexts is not supported yet.
 
 - The interface in the tiny_gl.ldg library is not thread-safe; consequently only
-  one context can be created at any time.
+  one context can be created at any time (only tiny_gl.ldg is affected by this,
+  osmesa.ldg, tiny_gl.slb and osmesa.slb are thread-safe).
   To use more than one context in your application, you have to use osmesa.ldg
-  and create the context using OSMesaCreateContextExt
+  and create the context using OSMesaCreateContextExt.
+  Note that the automatically generated loader code still uses some static
+  variables to call the actual functions.
+  Note also that screen.ldg currently seems to have a problem when called
+  from more than 1 process; the examples work around this by using a copy
+  of ldg_open() that loads a copy of the shared library instead.
 
 - OSMesaGetProcAddress does not return a real address that can be called;
   It can be used though to check wether the host function is available.
+
+- The loader code is almost as large as the shared library.
 
 
 ERROR CODES

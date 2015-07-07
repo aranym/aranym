@@ -25,17 +25,43 @@
 #include "lib-osmesa.h"
 #include "nfosmesa_nfapi.h"
 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret)
-#define GL_GETSTRING(type, gl, name, export, upper, params, first, ret)
-#define GL_GETSTRINGI(type, gl, name, export, upper, params, first, ret)
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) \
-type APIENTRY gl ## name params \
+extern gl_private *private;;
+
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret)
+#define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret)
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) \
+type APIENTRY gl ## name proto \
 { \
-	ret (*HostCall_p)(NFOSMESA_GL ## upper, cur_context, first); \
+	ret (*HostCall_p)(NFOSMESA_GL ## upper, private->cur_context, first); \
 }
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret) \
-type APIENTRY gl ## name params \
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) \
+type APIENTRY gl ## name proto \
 { \
-	ret (*HostCall_p)(NFOSMESA_GLU ## upper, cur_context, first); \
+	GLuint64 __retval = 0; \
+	(*HostCall64_p)(NFOSMESA_GL ## upper, private->cur_context, first, &__retval); \
+	return __retval; \
+}
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) \
+type APIENTRY gl ## name proto \
+{ \
+	ret (*HostCall_p)(NFOSMESA_GLU ## upper, private->cur_context, first); \
 }
 #include "glfuncs.h"
+
+void APIENTRY gluLookAtf( GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ )
+{
+	(*HostCall_p)(NFOSMESA_GLULOOKATF, private->cur_context, &eyeX);
+}
+
+void APIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
+{
+	(*HostCall_p)(NFOSMESA_GLFRUSTUMF, private->cur_context, &left);
+}
+
+void glOrthof( GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val )
+{
+	(*HostCall_p)(NFOSMESA_GLORTHOF, private->cur_context, &left);
+}
+
+/* glClearDepthf() already exists in OpenGL/Mesa */

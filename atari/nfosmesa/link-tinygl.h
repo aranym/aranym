@@ -90,6 +90,7 @@ GL_PROC(void, voidf, "gluLookAt", gluLookAtf, "void gluLookAtf(GLfloat eyeX, GLf
 GL_PROC(void, voidf, "exception_error", tinyglexception_error, "void exception_error(void (CALLBACK *exception)(GLenum param) )", (AND void (CALLBACK *exception)(GLenum param) ), (exception))
 
 #undef GL_PROC
+#undef GL_PROC64
 #define NUM_TINYGL_PROCS 83
 
 /* Functions generated: 83 */

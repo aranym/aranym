@@ -23,15 +23,24 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * load & initialize TinyGL
  */
-long slb_load_tiny_gl(const char *path, long min_version);
+struct gl_public *slb_load_tiny_gl(const char *path);
 
 /*
  * unload TinyGL
  */
-void slb_unload_tiny_gl(void);
+void slb_unload_tiny_gl(struct gl_public *pub);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -1147,6 +1156,16 @@ typedef GLhalfNV GLhalfNV32;
 #endif
 #endif
 
+/*
+ * Atari-specific structure for the shared libraries
+ */
+struct gl_public {
+	void *libhandle;
+	void *libexec;
+	void *(*m_alloc)(size_t);
+	void (*m_free)(void *);
+};
+
 #ifdef __cplusplus
 }
 #endif
@@ -1260,8 +1279,6 @@ struct _gl_tiny {
 };
 
 extern struct _gl_tiny gl;
-extern SLB_HANDLE gl_slb;
-extern SLB_EXEC gl_exec;
 
 #ifdef __cplusplus
 }

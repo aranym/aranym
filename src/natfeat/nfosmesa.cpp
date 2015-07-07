@@ -519,9 +519,9 @@ verify(sizeof(GLuint64) == 8);
 /*--- Types ---*/
 
 typedef struct {
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) type (APIENTRY *gl ## name) params ;
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret)
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) type (APIENTRY *OSMesa ## name) params ;
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) type (APIENTRY *gl ## name) proto ;
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) type (APIENTRY *OSMesa ## name) proto ;
 #include "../../atari/nfosmesa/glfuncs.h"
 } osmesa_funcs;
 
@@ -880,8 +880,8 @@ int OSMesaDriver::CloseLibrary(void)
 	}
 
 /* nullify OSMesa functions */
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) fn.OSMesa ## name = (type (APIENTRY *) params) 0;
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) 
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) fn.OSMesa ## name = (type (APIENTRY *) proto) 0;
 #include "../../atari/nfosmesa/glfuncs.h"
 
 	D(bug("nfosmesa: CloseLibrary(): libOSMesa unloaded"));
@@ -892,9 +892,9 @@ int OSMesaDriver::CloseLibrary(void)
 	}
 	
 /* nullify GL functions */
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) fn.gl ## name = (type (APIENTRY *) params) 0;
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret) 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret)
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) fn.gl ## name = (type (APIENTRY *) proto) 0;
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) 
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #include "../../atari/nfosmesa/glfuncs.h"
 
 	D(bug("nfosmesa: CloseLibrary(): libGL unloaded"));
@@ -911,11 +911,11 @@ void OSMesaDriver::InitPointersGL(void *handle)
 {
 	D(bug("nfosmesa: InitPointersGL()"));
 
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) \
-	fn.gl ## name = (type (APIENTRY *) params) SDL_LoadFunction(handle, "gl" #name); \
-	if (fn.gl ## name == 0) fn.gl ## name = (type (APIENTRY *) params)glNop;
-#define GLU_PROC(type, gl, name, export, upper, params, first, ret)
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret)
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) \
+	fn.gl ## name = (type (APIENTRY *) proto) SDL_LoadFunction(handle, "gl" #name); \
+	if (fn.gl ## name == 0) fn.gl ## name = (type (APIENTRY *) proto)glNop;
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #include "../../atari/nfosmesa/glfuncs.h"
 }
 
@@ -923,10 +923,10 @@ void OSMesaDriver::InitPointersOSMesa(void *handle)
 {
 	D(bug("nfosmesa: InitPointersOSMesa()"));
 
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) 
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) \
-	fn.OSMesa ## name = (type (APIENTRY *) params) SDL_LoadFunction(handle, "OSMesa" #name); \
-	if (fn.OSMesa ## name == 0) fn.OSMesa ## name = (type (APIENTRY *) params)glNop;
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) 
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) \
+	fn.OSMesa ## name = (type (APIENTRY *) proto) SDL_LoadFunction(handle, "OSMesa" #name); \
+	if (fn.OSMesa ## name == 0) fn.OSMesa ## name = (type (APIENTRY *) proto)glNop;
 #include "../../atari/nfosmesa/glfuncs.h"
 }
 

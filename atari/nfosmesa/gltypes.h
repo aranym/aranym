@@ -1110,6 +1110,16 @@ typedef GLhalfNV GLhalfNV32;
 #endif
 #endif
 
+/*
+ * Atari-specific structure for the shared libraries
+ */
+struct gl_public {
+	void *libhandle;
+	void *libexec;
+	void *(*m_alloc)(size_t);
+	void (*m_free)(void *);
+};
+
 #ifdef __cplusplus
 }
 #endif

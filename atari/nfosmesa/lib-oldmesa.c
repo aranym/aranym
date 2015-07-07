@@ -47,14 +47,13 @@
 
 /*--- Functions ---*/
 
-static OSMesaContext oldmesa_ctx = NULL;
-static void *oldmesa_buffer = NULL;
-
-void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint height)
+void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLenum type, GLint width, GLint height)
 {
-	unsigned long buffer_size;
+	size_t buffer_size;
 	void *buffer = NULL;
 	GLenum osmesa_format;
+	OSMesaContext oldmesa_ctx;
+	unsigned int ctx;
 	
 	switch (format)
 	{
@@ -70,77 +69,71 @@ void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint he
 		break;
 	}
 
-	oldmesa_ctx = OSMesaCreateContext(osmesa_format, NULL);
+	oldmesa_ctx = internal_OSMesaCreateContext(private, osmesa_format, NULL);
 	if (!oldmesa_ctx)
 		return NULL;
 
-	buffer_size = width * height;
+	buffer_size = (size_t)width * height;
 	if (osmesa_format != OSMESA_COLOR_INDEX)
 		buffer_size <<= 2;
 
-	buffer = Atari_MxAlloc(buffer_size);
-
+	buffer = private->pub.m_alloc(buffer_size);
+	
 	if (buffer == NULL)
 	{
-		OSMesaDestroyContext(oldmesa_ctx);
+		internal_OSMesaDestroyContext(private, oldmesa_ctx);
 		return NULL;
 	}
 
-	if (!OSMesaMakeCurrent(oldmesa_ctx, buffer, type, width, height))
+	if (!internal_OSMesaMakeCurrent(private, oldmesa_ctx, buffer, type, width, height))
 	{
-		Mfree(buffer);
-		OSMesaDestroyContext(oldmesa_ctx);
+		private->pub.m_free(buffer);
+		internal_OSMesaDestroyContext(private, oldmesa_ctx);
 #ifdef TGL_ENABLE_CHECKS
-		gl_fatal_error(GL_OUT_OF_MEMORY, 13, "out of memory");
+		gl_fatal_error(private, GL_OUT_OF_MEMORY, 13, "out of memory");
 #endif
 		return NULL;
 	}
 
 	/* OSMesa draws upside down */
-	OSMesaPixelStore(OSMESA_Y_UP, 0);
+	internal_OSMesaPixelStore(private, OSMESA_Y_UP, 0);
 
 	memset(buffer, 0, buffer_size);
-	oldmesa_buffer = buffer;
+	ctx = CTX_TO_IDX(oldmesa_ctx);
+	private->contexts[ctx].oldmesa_buffer = buffer;
 	return buffer;
 }
 
-void APIENTRY OSMesaDestroyLDG(void)
+
+void APIENTRY internal_OSMesaDestroyLDG(gl_private *private)
 {
-	if (oldmesa_ctx)
+	unsigned int ctx = CTX_TO_IDX(private->cur_context);
+	if (private->contexts[ctx].oldmesa_buffer)
 	{
-		OSMesaDestroyContext(oldmesa_ctx);
-		oldmesa_ctx = NULL;
+		private->pub.m_free(private->contexts[ctx].oldmesa_buffer);
+		private->contexts[ctx].oldmesa_buffer = NULL;
 	}
-	if (oldmesa_buffer)
+	if (private->cur_context)
 	{
-		Mfree(oldmesa_buffer);
-		oldmesa_buffer = NULL;
+		internal_OSMesaDestroyContext(private, private->cur_context);
+		private->cur_context = NULL;
 	}
 }
 
-GLsizei APIENTRY max_width(void)
-{
-	GLint value = 0;
-	
-	OSMesaGetIntegerv(OSMESA_MAX_WIDTH, &value);
-	return value;
-}
 
-GLsizei APIENTRY max_height(void)
+GLsizei APIENTRY internal_max_width(gl_private *private)
 {
 	GLint value = 0;
 	
-	OSMesaGetIntegerv(OSMESA_MAX_HEIGHT, &value);
+	internal_OSMesaGetIntegerv(private, OSMESA_MAX_WIDTH, &value);
 	return value;
 }
 
 
-void *Atari_MxAlloc(unsigned long size)
+GLsizei APIENTRY internal_max_height(gl_private *private)
 {
-	if (((Sversion()&0xFF)>=0x01) | (Sversion()>=0x1900))
-	{
-		return (void *)Mxalloc(size, MX_PREFTTRAM);
-	}
-
-	return (void *)Malloc(size);
+	GLint value = 0;
+	
+	internal_OSMesaGetIntegerv(private, OSMESA_MAX_HEIGHT, &value);
+	return value;
 }

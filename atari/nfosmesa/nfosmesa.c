@@ -33,73 +33,34 @@
 #include "lib-misc.h"
 #include "nfosmesa_nfapi.h"
 
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) extern type APIENTRY OSMesa ## name proto ;
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) extern type APIENTRY gl ## name proto ;
+#include "glfuncs.h"
+
 #define WITH_PROTOTYPE_STRINGS 1
 
-/*
- * Functions that return a 64-bit value.
- * The NF interface currently only returns a single value in D0,
- * so the call has to pass an extra parameter, the location where to
- * store the result value
- */
-static GLuint64 call_glGetImageHandleARB(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETIMAGEHANDLEARB, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetImageHandleARB call_glGetImageHandleARB
-
-static GLuint64 call_glGetImageHandleNV(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETIMAGEHANDLENV, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetImageHandleNV call_glGetImageHandleNV
-
-static GLuint64 call_glGetTextureHandleARB(GLuint texture)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETTEXTUREHANDLEARB, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetTextureHandleARB call_glGetTextureHandleARB
-
-static GLuint64 call_glGetTextureHandleNV(GLuint texture)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETTEXTUREHANDLENV, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetTextureHandleNV call_glGetTextureHandleNV
-
-static GLuint64 call_glGetTextureSamplerHandleARB(GLuint texture, GLuint sampler)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETTEXTURESAMPLERHANDLEARB, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetTextureSamplerHandleARB call_glGetTextureSamplerHandleARB
-
-static GLuint64 call_glGetTextureSamplerHandleNV(GLuint texture, GLuint sampler)
-{
-	GLuint64 ret = 0;
-	(*HostCall64_p)(NFOSMESA_GLGETTEXTURESAMPLERHANDLENV, cur_context, &texture, &ret);
-	return ret;
-}
-#define glGetTextureSamplerHandleNV call_glGetTextureSamplerHandleNV
+gl_private *private;
 
 /*--- LDG functions ---*/
 
+static long GLAPIENTRY ldg_libinit(gl_private *priv)
+{
+	private = priv;
+	internal_glInit(private);
+	return sizeof(*private);
+}
+
 static PROC const LibFunc[]={ 
 #if WITH_PROTOTYPE_STRINGS
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #export, #type " " #gl #name #params, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { #export, #type " OSMesa" #name #params, OSMesa ## name },
+	{ "glInit", "glInit(void *)", ldg_libinit },
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) { #export, #type " " #gl #name #proto, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) { #export, #type " OSMesa" #name #proto, OSMesa ## name },
 #else
-#define GL_PROC(type, gl, name, export, upper, params, first, ret) { #export, 0, gl ## name },
-#define OSMESA_PROC(type, gl, name, export, upper, params, first, ret) { #export, 0, OSMesa ## name },
+	{ "glInit", 0, ldg_libinit },
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) { #export, 0, gl ## name },
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) { #export, 0, OSMesa ## name },
 #endif
-	#include "glfuncs.h"		/* 12 OSMesa + 2664 GL functions + 1 GLU function */
+	#include "glfuncs.h"		/* 12 OSMesa + numerous GL functions + 1 GLU function */
 	#include "link-oldmesa.h"	/* 5 + 8 functions for compatibility with TinyGL */
 	{NULL, NULL, NULL}
 };

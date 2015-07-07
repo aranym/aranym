@@ -25,9 +25,18 @@
 
 /*--- Functions ---*/
 
-void freeglGetString(void);
+void internal_glInit(gl_private *private);
+
+const GLubyte* APIENTRY glGetString( GLenum name );
+const GLubyte* APIENTRY glGetStringi( GLenum name, GLuint index );
+
+const GLubyte* APIENTRY internal_glGetString( gl_private *private, GLenum name );
+const GLubyte* APIENTRY internal_glGetStringi( gl_private *private, GLenum name, GLuint index );
+void freeglGetString(gl_private *private, OSMesaContext ctx);
 int err_old_nfapi(void);
-int gl_exception_error(GLenum exception);
-void gl_fatal_error(GLenum error, long except, const char *format);
+int gl_exception_error(gl_private *private, GLenum exception);
+void gl_fatal_error(gl_private *private, GLenum error, long except, const char *format);
+void APIENTRY internal_tinyglexception_error(gl_private *private, void CALLBACK (*exception)(GLenum param));
+void APIENTRY internal_tinyglswapbuffer(gl_private *private, void *buf);
 
 #endif

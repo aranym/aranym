@@ -12,7 +12,7 @@ LDFLAGS = -lldg -lgem
 
 NOSTARTUP=yes
 
-OBJECTS = nfosmesa.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-gl.o natfeat.o natfeat_asm.o
+OBJECTS = nfosmesa.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-gl.o natfeat.o natfeat_asm.o
 
 ifeq ($(NOSTARTUP),yes)
 OBJECTS += crtinit.o libc.o
@@ -33,7 +33,7 @@ MV4E_FLAGS = -mcpu=5475
 
 all:	dirs m68k/osmesa.ldg v4e/osmesa.ldg \
 	m68k/tiny_gl.ldg v4e/tiny_gl.ldg \
-	m68k/tiny_gl.slb
+	m68k/tiny_gl.slb m68k/osmesa.slb
 
 
 crt0.o: crt0.S
@@ -55,6 +55,9 @@ lib-oldmesa_68k.o: lib-oldmesa.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
 
 lib-misc_68k.o: lib-misc.c
+	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
+
+lib-ldg_68k.o: lib-ldg.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
 
 lib-gl_68k.o: lib-gl.c
@@ -83,6 +86,9 @@ lib-oldmesa_v4e.o: lib-oldmesa.c
 lib-misc_v4e.o: lib-misc.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
+lib-ldg_v4e.o: lib-ldg.c
+	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
+
 lib-gl_v4e.o: lib-gl.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
@@ -93,7 +99,7 @@ natfeat_asm_v4e.o: ../natfeat/natfeat_asm.S
 	$(AM_V_CC)$(CC) $(ASFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
 
-TINY_OBJECTS = nftiny_gl.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-tinygl.o natfeat.o natfeat_asm.o 
+TINY_OBJECTS = nftiny_gl.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-tinygl.o natfeat.o natfeat_asm.o 
 
 ifeq ($(NOSTARTUP),yes)
 TINY_OBJECTS += crtinit.o libc.o
@@ -144,13 +150,21 @@ STRIPEX = ../tools/stripex
 # to be moved before the SLB header
 SLB_CFLAGS = -fno-unit-at-a-time -ffreestanding
 
-SLB_OBJS=tiny_gl_slb.o lib-tinygl_68k.o lib-osmesa_68k.o lib-oldmesa_68k.o lib-misc_68k.o libc_68k.o natfeat_68k.o natfeat_asm_68k.o
+TINYGL_SLB_OBJS=tiny_gl_slb.o lib-osmesa_68k.o lib-oldmesa_68k.o lib-misc_68k.o libc_68k.o natfeat_68k.o natfeat_asm_68k.o
+OSMESA_SLB_OBJS=osmesa_slb.o lib-osmesa_68k.o lib-oldmesa_68k.o lib-misc_68k.o libc_68k.o natfeat_68k.o natfeat_asm_68k.o
+
 # -mprg-flags,15 is fastload, load to ttram, mallocs from ttram, and bit3 required for SLBs
-m68k/tiny_gl.slb: $(SLB_OBJS) $(STRIPEX)
-	$(AM_V_LD)$(CC) $(M68K_FLAGS) -nostartfiles -nostdlib -Wl,--mprg-flags,15 -Wl,-b,a.out-mintprg -s -o $@ $(SLB_OBJS) -lgcc
+m68k/tiny_gl.slb: $(TINYGL_SLB_OBJS) $(STRIPEX)
+	$(AM_V_LD)$(CC) $(M68K_FLAGS) -nostartfiles -nostdlib -Wl,--mprg-flags,15 -Wl,-b,a.out-mintprg -s -o $@ $(TINYGL_SLB_OBJS) -lgcc
+	$(AM_V_at)$(STRIPEX) $@
+
+m68k/osmesa.slb: $(OSMESA_SLB_OBJS) $(STRIPEX)
+	$(AM_V_LD)$(CC) $(M68K_FLAGS) -nostartfiles -nostdlib -Wl,--mprg-flags,15 -Wl,-b,a.out-mintprg -s -o $@ $(OSMESA_SLB_OBJS) -lgcc
 	$(AM_V_at)$(STRIPEX) $@
 
 tiny_gl_slb.o: tiny_gl_slb.c
+	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) $(SLB_CFLAGS) -c -o $@ $<
+osmesa_slb.o: osmesa_slb.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) $(SLB_CFLAGS) -c -o $@ $<
 
 $(STRIPEX): ../tools/stripex.c

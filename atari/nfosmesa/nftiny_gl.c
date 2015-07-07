@@ -37,13 +37,15 @@
 
 #define WITH_PROTOTYPE_STRINGS 1
 
+gl_private *private;
+
 /*--- functions that "throw" exceptions ---*/
 
 #ifdef TGL_ENABLE_CHECKS
 
 GLenum GLAPIENTRY glGetError(void)
 {
-	return (*HostCall_p)(NFOSMESA_GLGETERROR, cur_context, NULL);
+	return (*HostCall_p)(NFOSMESA_GLGETERROR, private->cur_context, NULL);
 }
 
 static GLenum clear_gl_error(void)
@@ -67,7 +69,7 @@ static void GLAPIENTRY check_glBindTexture(GLenum target, GLuint texture)
 	glBindTexture(target, texture);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 8, "glBindTexture: unsupported option");
+		gl_fatal_error(private, e, 8, "glBindTexture: unsupported option");
 	}
 }
 #define glBindTexture check_glBindTexture
@@ -80,7 +82,7 @@ static void GLAPIENTRY check_glTexImage2D(GLenum target, GLint level, GLint comp
 	glTexImage2D(target, level, components, width, height, border, format, type, pixels);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 7, "glTexImage2D: combination of parameters not handled");
+		gl_fatal_error(private, e, 7, "glTexImage2D: combination of parameters not handled");
 	}
 }
 #define glTexImage2D check_glTexImage2D
@@ -93,7 +95,7 @@ static void GLAPIENTRY check_glTexEnvi(GLenum target, GLenum pname, GLint param)
 	glTexEnvi(target, pname, param);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 8, "glTexEnv: unsupported option");
+		gl_fatal_error(private, e, 8, "glTexEnv: unsupported option");
 	}
 }
 #define glTexEnvi check_glTexEnvi
@@ -106,7 +108,7 @@ static void GLAPIENTRY check_glTexParameteri(GLenum target, GLenum pname, GLint 
 	glTexParameteri(target, pname, param);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 8, "glTexParameter: unsupported option");
+		gl_fatal_error(private, e, 8, "glTexParameter: unsupported option");
 	}
 }
 #define glTexParameteri check_glTexParameteri
@@ -119,7 +121,7 @@ static void GLAPIENTRY check_glPixelStorei(GLenum pname, GLint param)
 	glPixelStorei(pname, param);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 9, "glPixelStore: unsupported option");
+		gl_fatal_error(private, e, 9, "glPixelStore: unsupported option");
 	}
 }
 #define glPixelStorei check_glPixelStorei
@@ -132,7 +134,7 @@ static void GLAPIENTRY check_glGetIntegerv(GLenum pname, GLint *params)
 	glGetIntegerv(pname, params);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 3, "glGetIntegerv: option not implemented");
+		gl_fatal_error(private, e, 3, "glGetIntegerv: option not implemented");
 	}
 }
 #define glGetIntegerv check_glGetIntegerv
@@ -145,7 +147,7 @@ static void GLAPIENTRY check_glGetFloatv(GLenum pname, GLfloat *v)
 	glGetFloatv(pname, v);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 102, "glGetFloatv: option not implemented");
+		gl_fatal_error(private, e, 102, "glGetFloatv: option not implemented");
 	}
 }
 #define glGetFloatv check_glGetFloatv
@@ -158,7 +160,7 @@ static void GLAPIENTRY check_glCallList(GLuint list)
 	glCallList(list);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 2, "glCallList: list not defined");
+		gl_fatal_error(private, e, 2, "glCallList: list not defined");
 	}
 }
 #define glCallList check_glCallList
@@ -171,7 +173,7 @@ static void GLAPIENTRY check_glVertex2f(GLfloat x, GLfloat y)
 	glVertex2f(x, y);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+		gl_fatal_error(private, e, 2, "unable to allocate GLVertex array");
 	}
 }
 #define glVertex2f check_glVertex2f
@@ -184,7 +186,7 @@ static void GLAPIENTRY check_glVertex3f(GLfloat x, GLfloat y, GLfloat z)
 	glVertex3f(x, y, z);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+		gl_fatal_error(private, e, 2, "unable to allocate GLVertex array");
 	}
 }
 #define glVertex3f check_glVertex3f
@@ -197,7 +199,7 @@ static void GLAPIENTRY check_glVertex4f(GLfloat x, GLfloat y, GLfloat z, GLfloat
 	glVertex4f(x, y, z, w);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+		gl_fatal_error(private, e, 2, "unable to allocate GLVertex array");
 	}
 }
 #define glVertex4f check_glVertex4f
@@ -211,9 +213,9 @@ static void GLAPIENTRY check_glVertex3fv(const GLfloat *v)
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
 		if (e == GL_OUT_OF_MEMORY)
-			gl_fatal_error(e, 2, "unable to allocate GLVertex array");
+			gl_fatal_error(private, e, 2, "unable to allocate GLVertex array");
 		else
-			gl_fatal_error(e, 10, "glBegin: type not handled");
+			gl_fatal_error(private, e, 10, "glBegin: type not handled");
 	}
 }
 #define glVertex3fv check_glVertex3fv
@@ -227,9 +229,9 @@ static void GLAPIENTRY check_glViewport(GLint x, GLint y, GLint width, GLint hei
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
 		if (width <= 0 || height <= 0)
-			gl_fatal_error(e, 5, "glViewport: size too small");
+			gl_fatal_error(private, e, 5, "glViewport: size too small");
 		else
-			gl_fatal_error(e, 4, "glViewport: error while resizing display");
+			gl_fatal_error(private, e, 4, "glViewport: error while resizing display");
 	}
 }
 #define glViewport check_glViewport
@@ -242,7 +244,7 @@ static void GLAPIENTRY check_glEnable(GLenum cap)
 	glEnable(cap);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 103, "glEnableDisable: unsupported code");
+		gl_fatal_error(private, e, 103, "glEnableDisable: unsupported code");
 	}
 }
 #define glEnable check_glEnable
@@ -255,7 +257,7 @@ static void GLAPIENTRY check_glDisable(GLenum cap)
 	glDisable(cap);
 	if ((e = glGetError()) != GL_NO_ERROR)
 	{
-		gl_fatal_error(e, 103, "glEnableDisable: unsupported code");
+		gl_fatal_error(private, e, 103, "glEnableDisable: unsupported code");
 	}
 }
 #define glDisable check_glDisable
@@ -264,10 +266,20 @@ static void GLAPIENTRY check_glDisable(GLenum cap)
 
 /*--- LDG functions ---*/
 
+static long GLAPIENTRY ldg_libinit(gl_private *priv)
+{
+	private = priv;
+	internal_glInit(private);
+	return sizeof(*private);
+}
+
+
 static PROC const LibFunc[]={ 
 #if WITH_PROTOTYPE_STRINGS
+	{ "glInit", "glInit(void *)", ldg_libinit },
 #define GL_PROC(type, ret, name, f, desc, proto, args) { name, desc, f },
 #else
+	{ "glInit", 0, ldg_libinit },
 #define GL_PROC(type, ret, name, f, desc, proto, args) { name, 0, f },
 #endif
 	#include "link-tinygl.h"	/* 83 functions */
