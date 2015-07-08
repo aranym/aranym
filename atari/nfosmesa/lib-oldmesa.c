@@ -73,10 +73,16 @@ void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLen
 	if (!oldmesa_ctx)
 		return NULL;
 
-	buffer_size = (size_t)width * height;
-	if (osmesa_format != OSMESA_COLOR_INDEX)
-		buffer_size <<= 2;
-
+	{
+		size_t wdwidth = (width + 15) >> 4;
+		size_t pitch = wdwidth << 1;
+		if (osmesa_format != OSMESA_COLOR_INDEX)
+			pitch <<= 5;
+		else
+			pitch <<= 3;
+		buffer_size = pitch * height;
+	}
+	
 	buffer = private->pub.m_alloc(buffer_size);
 	
 	if (buffer == NULL)
