@@ -1,3 +1,10 @@
+2015/07/14 - Thorsten
+nfosmesa: For FULLMMU, copy all input parameters to stack using Readxxx()
+before calling external functions; similar for output values.
+Can also be activated for normal operation, for proper BUSERROR
+reporting in case of faulty addresses.
+
+
 2015/07/08 - Thorsten
 OSMesaCreateLDG(atari side): round buffersize up to word boundaries,
 so that the framebuffer can be used for vro_cpyfm()

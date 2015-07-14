@@ -27,6 +27,8 @@ typedef long __CDECL (*SLB_LFUNC)(BASEPAGE *pd, long fn, long nargs, ...);
 #define NO_PROC
 #define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
 #define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) static void __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param, GLuint64 *retval);
+#define LENGL_PROC(type, glx, name, export, upper, proto, args, first, ret) static const GLubyte *__CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#define PUTGL_PROC(type, glx, name, export, upper, proto, args, first, ret) NO_PROC
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## OSMesa ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
 #define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
 #include "glfuncs-bynum.h"
@@ -86,6 +88,8 @@ struct slb_head const _start = {
 		(SLB_LFUNC)slb_libinit,
 /* generate the function table */
 #define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## gl ## name,
+#define LENGL_PROC(type, glx, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## gl ## name,
+#define PUTGL_PROC(type, glx, name, export, upper, proto, args, first, ret) NO_PROC
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## OSMesa ## name,
 #define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) (SLB_LFUNC)slb_ ## name,
 #define NO_PROC (SLB_LFUNC)slb_nop,
@@ -108,6 +112,8 @@ static long __CDECL slb_libinit(BASEPAGE *__bp unused, long __fn unused, long __
 static char const *const slh_names[] = {
 	"glInit", /* slb_libinit */
 #define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) #gl #name,
+#define LENGL_PROC(type, glx, name, export, upper, proto, args, first, ret) "gl" #name,
+#define PUTGL_PROC(type, glx, name, export, upper, proto, args, first, ret) NO_PROC
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) #gl #name,
 #define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) #name,
 #define NO_PROC 0,
@@ -142,6 +148,8 @@ static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, 
 #define NO_OSMESAGETCURRENTCONTEXT
 #define NO_OSMESADESTROYCONTEXT
 #define NO_OSMESAMAKECURRENT
+#define NO_GLGETSTRING
+#define NO_GLGETSTRINGI
 #include "glfuncs.h"
 	
 
@@ -151,6 +159,20 @@ static void __CDECL slb_nop(void)
 
 
 /* some functions do need special work */
+
+static const GLubyte *__CDECL slb_glGetString(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+{
+	GLenum *args = (GLenum *)first_param;
+	return internal_glGetString(private, args[0]);
+}
+
+
+static const GLubyte *__CDECL slb_glGetStringi(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+{
+	GLenum *args = (GLenum *)first_param;
+	return internal_glGetStringi(private, args[0], args[1]);
+}
+
 
 static OSMesaContext __CDECL slb_OSMesaGetCurrentContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
 {

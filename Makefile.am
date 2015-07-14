@@ -16,6 +16,7 @@ BUILT_SOURCES = \
 	version_date.h \
 	$(top_srcdir)/src/natfeat/nfosmesa/call-gl.c \
 	$(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c \
+	$(top_srcdir)/src/natfeat/nfosmesa/paramcount-gl.c \
 	$(top_srcdir)/atari/nfosmesa/glfuncs.h \
 	$(top_srcdir)/atari/nfosmesa/glfuncs-bynum.h \
 	$(top_srcdir)/atari/nfosmesa/ldg/osmesa.h \
@@ -154,6 +155,13 @@ $(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c: $(top_srcdir)/atari/nfosmesa/g
 		echo "$@ is out of date, but PERL not available" >&2; \
 	else \
 		$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
+	fi
+
+$(top_srcdir)/src/natfeat/nfosmesa/paramcount-gl.c: $(top_srcdir)/atari/nfosmesa/glfuncs.h $(DYNGL_PL)
+	$(AM_V_GEN)if test -z "$(PERL)"; then \
+		echo "$@ is out of date, but PERL not available" >&2; \
+	else \
+		$(PERL) $(DYNGL_PL) $(GLENUMS) -paramcount $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
 	fi
 
 $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h

@@ -1994,17 +1994,7 @@ if test "x$WANT_NFOSMESA" = "xyes"; then
 	fi
 	if test "$have_osmesa" = "no"; then
 		have_osmesa=yes
-		AC_CHECK_HEADERS(GL/osmesa.h, :, have_osmesa=no)
-		AC_CHECK_LIB(OSMesa, OSMesaCreateContext, :, have_osmesa=no)
-		case "$host_os" in
-			dnl For darwin the OSMesa include path is by default not defined
-			darwin*)
-				OSMESA_CFLAGS="-I/usr/X11R6/include/"
-				have_osmesa=yes
-				;;
-			*)
-				;;
-		esac
+		AC_CHECK_HEADERS(GL/osmesa.h)
 	fi
 	if test "$have_osmesa" = "yes"; then
 		CPPFLAGS="$CPPFLAGS $OSMESA_CFLAGS"

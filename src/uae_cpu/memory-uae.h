@@ -123,6 +123,11 @@ extern uintptr FastRAMBaseDiff;
 
 extern "C" void breakpt(void);
 
+
+static inline uae_u64 do_get_mem_quad(uae_u64 *a) {return SDL_SwapBE64(*a);}
+static inline void do_put_mem_quad(uae_u64 *a, uae_u64 v) {*a = SDL_SwapBE64(v);}
+
+
 #ifndef NOCHECKBOUNDARY
 static ALWAYS_INLINE bool test_ram_boundary(uaecptr addr, int size, bool super, bool write)
 {
@@ -184,6 +189,25 @@ static inline bool phys_valid_address(uaecptr addr, bool write, int sz)
 static inline bool phys_valid_address(uaecptr, bool, int) { return true; }
 #endif
 
+static inline uae_u64 phys_get_quad(uaecptr addr)
+{
+#ifdef ARAM_PAGE_CHECK
+    if (((addr ^ read_page) <= ARAM_PAGE_MASK))
+        return do_get_mem_quad((uae_u64*)(addr + read_offset));
+#endif
+#ifndef HW_SIGSEGV
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
+#endif
+    check_ram_boundary(addr, 8, false);
+    uae_u64 * const m = (uae_u64 *)phys_get_real_address(addr);
+#ifdef ARAM_PAGE_CHECK
+    read_page = addr;
+    read_offset = (uintptr)m - (uintptr)addr;
+#endif
+    return do_get_mem_quad(m);
+}
+
 static inline uae_u32 phys_get_long(uaecptr addr)
 {
 #ifdef ARAM_PAGE_CHECK
@@ -239,6 +263,30 @@ static inline uae_u32 phys_get_byte(uaecptr addr)
     read_offset = (uintptr)m - (uintptr)addr;
 #endif
     return do_get_mem_byte(m);
+}
+
+static inline void phys_put_quad(uaecptr addr, uae_u64 l)
+{
+#ifdef ARAM_PAGE_CHECK
+    if (((addr ^ write_page) <= ARAM_PAGE_MASK)) {
+        do_put_mem_quad((uae_u64*)(addr + write_offset), l);
+        return;
+    }
+#endif
+#ifndef HW_SIGSEGV
+    addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
+    if ((addr & 0xfff00000) == 0x00f00000) {
+        HWput_l(addr, l);
+        return;
+    } 
+#endif
+    check_ram_boundary(addr, 4, true);
+    uae_u64 * const m = (uae_u64 *)phys_get_real_address(addr);
+#ifdef ARAM_PAGE_CHECK
+    write_page = addr;
+    write_offset = (uintptr)m - (uintptr)addr;
+#endif
+    do_put_mem_quad(m, l);
 }
 
 static inline void phys_put_long(uaecptr addr, uae_u32 l)
@@ -324,6 +372,20 @@ static ALWAYS_INLINE uae_u8 *mmu_get_real_address(uaecptr addr, struct mmu_atc_l
 	return do_get_real_address(cl->phys + addr);
 }
 
+static ALWAYS_INLINE uae_u32 mmu_get_quad(uaecptr addr, int data)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 0, &cl)))
+		return do_get_mem_quad((uae_u64 *)mmu_get_real_address(addr, cl));
+	return mmu_get_quad_slow(addr, regs.s, data, cl);
+}
+
+static ALWAYS_INLINE uae_u64 get_quad(uaecptr addr)
+{
+	return mmu_get_quad(addr, 1);
+}
+
 static ALWAYS_INLINE uae_u32 mmu_get_long(uaecptr addr, int data, int size)
 {
 	struct mmu_atc_line *cl;
@@ -368,6 +430,21 @@ static ALWAYS_INLINE uae_u8 mmu_get_byte(uaecptr addr, int data, int size)
 static ALWAYS_INLINE uae_u8 get_byte(uaecptr addr)
 {
 	return mmu_get_byte(addr, 1, sz_byte);
+}
+
+static ALWAYS_INLINE void mmu_put_quad(uaecptr addr, uae_u64 val, int data)
+{
+	struct mmu_atc_line *cl;
+
+	if (likely(mmu_lookup(addr, data, 1, &cl)))
+		do_put_mem_quad((uae_u64 *)mmu_get_real_address(addr, cl), val);
+	else
+		mmu_put_quad_slow(addr, val, regs.s, data, cl);
+}
+
+static ALWAYS_INLINE void put_quad(uaecptr addr, uae_u32 val)
+{
+	mmu_put_quad(addr, val, 1);
 }
 
 static ALWAYS_INLINE void mmu_put_long(uaecptr addr, uae_u32 val, int data, int size)
@@ -501,9 +578,11 @@ static inline bool valid_address(uaecptr addr, bool write, int sz)
 
 #else
 
+#  define get_quad(a)			phys_get_quad(a)
 #  define get_long(a)			phys_get_long(a)
 #  define get_word(a)			phys_get_word(a)
 #  define get_byte(a)			phys_get_byte(a)
+#  define put_quad(a,b)			phys_put_quad(a,b)
 #  define put_long(a,b)			phys_put_long(a,b)
 #  define put_word(a,b)			phys_put_word(a,b)
 #  define put_byte(a,b)			phys_put_byte(a,b)

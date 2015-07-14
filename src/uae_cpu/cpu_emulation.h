@@ -66,10 +66,11 @@ extern uint8 *FakeIOBaseHost;
 // For HW operations
 // Read/WriteAtariIntXX
 //
+static inline uint64 ReadAtariInt64(memptr addr) {return phys_get_quad(addr);}
 static inline uint32 ReadAtariInt32(memptr addr) {return phys_get_long(addr);}
 static inline uint16 ReadAtariInt16(memptr addr) {return phys_get_word(addr);}
 static inline uint8 ReadAtariInt8(memptr addr) {return phys_get_byte(addr);}
-static inline void WriteAtariInt64(memptr addr, uint64 l) {phys_put_long(addr, (uint32_t)(l >> 32)); phys_put_long(addr + 4, l);}
+static inline void WriteAtariInt64(memptr addr, uint64 q) {phys_put_quad(addr, q);}
 static inline void WriteAtariInt32(memptr addr, uint32 l) {phys_put_long(addr, l);}
 static inline void WriteAtariInt16(memptr addr, uint16 w) {phys_put_word(addr, w);}
 static inline void WriteAtariInt8(memptr addr, uint8 b) {phys_put_byte(addr, b);}
@@ -91,10 +92,11 @@ static inline void WriteHWMemInt8(memptr addr, uint8 b) {do_put_mem_byte((uae_u8
 // Only data space
 // Read/WriteIntXX
 //
+static inline uint64 ReadInt64(memptr addr) {return get_quad(addr);}
 static inline uint32 ReadInt32(memptr addr) {return get_long(addr);}
 static inline uint16 ReadInt16(memptr addr) {return get_word(addr);}
 static inline uint8 ReadInt8(memptr addr) {return get_byte(addr);}
-static inline void WriteInt64(memptr addr, uint64 l) {put_long(addr, (uint32_t)(l >> 32)); put_long(addr + 4, l);}
+static inline void WriteInt64(memptr addr, uint64 q) {put_quad(addr, q);}
 static inline void WriteInt32(memptr addr, uint32 l) {put_long(addr, l);}
 static inline void WriteInt16(memptr addr, uint16 w) {put_word(addr, w);}
 static inline void WriteInt8(memptr addr, uint8 b) {put_byte(addr, b);}

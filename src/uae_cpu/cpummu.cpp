@@ -655,6 +655,15 @@ uae_u32 mmu_get_long_slow(uaecptr addr, int super, int data,
 	return do_get_mem_long((uae_u32 *)mmu_get_real_address(addr, cl));
 }
 
+
+uae_u64 mmu_get_quad_slow(uaecptr addr, int super, int data,
+						  struct mmu_atc_line *cl)
+{
+	uae_u64 h = mmu_get_long_slow(addr, super, data, sz_long, cl);
+	uae_u64 l = mmu_get_long_slow(addr + 4, super, data, sz_long, cl);
+	return (h << 32) | l;
+}
+
 REGPARAM2 void mmu_put_long_unaligned(uaecptr addr, uae_u32 val, int data)
 {
 	SAVE_EXCEPTION;
@@ -766,6 +775,13 @@ REGPARAM2 void mmu_put_long_slow(uaecptr addr, uae_u32 val, int super, int data,
 		goto redo;
 
 	do_put_mem_long((uae_u32 *)mmu_get_real_address(addr, cl), val);
+}
+
+REGPARAM2 void mmu_put_quad_slow(uaecptr addr, uae_u64 val, int super, int data,
+								 struct mmu_atc_line *cl)
+{
+	mmu_put_long_slow(addr, (uae_u32)(val >> 32), super, data, sz_long, cl);
+	mmu_put_long_slow(addr + 4, (uae_u32)(val), super, data, sz_long, cl);
 }
 
 uae_u32 sfc_get_long(uaecptr addr)

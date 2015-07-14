@@ -60,6 +60,9 @@
 #        ret: code to return the function result, or GL_void_return
 #     Optionally, OSMESA_PROC() can be defined, with the same
 #     signature, to process OSMesa functions.
+#     There is also a second set of macro calls GL_PROCM generated,
+#     with the same signature, but replacing "memptr" for any argument
+#     in the prototype that is a pointer type
 #
 #     Usage: dyngl.pl -macros tools/glfuncs.h > atari/nfosmesa/glfuncs.h
 #
@@ -432,9 +435,11 @@ sub gen_params()
 		my $argcount = $#$params + 1;
 		my $args = "";
 		my $prototype = "";
+		my $prototype_mem = "";
 		my $any_pointer = 0;
 		my $printf_format = "";
 		my $format;
+		my $type_mem;
 		for (my $argc = 0; $argc < $argcount; $argc++)
 		{
 			my $param = $params->[$argc];
@@ -444,7 +449,7 @@ sub gen_params()
 			$args .= ", " if ($argc != 0);
 			$args .= $name;
 			if ($pointer) {
-				if (!defined($byte_types{$type})) {
+				if (1 || !defined($byte_types{$type})) {
 					$any_pointer = 2;
 				} elsif ($any_pointer == 0) {
 					$any_pointer = 1;
@@ -455,25 +460,29 @@ sub gen_params()
 					$pointer = "*";
 				}
 				$format = "%p";
+				$type_mem = "memptr";
 			} else {
 				$pointer = "";
-				if (!defined($printf_formats{$type}))
+				$format = $printf_formats{$type};
+				if (!defined($format))
 				{
 					&warn("$key: dont know how to printf values of type $type");
 					$format = "%d";
-				} else
-				{
-					$format = $printf_formats{$type}
 				}
+				$type_mem = "$type";
 			}
 			$prototype .= ", " if ($argc != 0);
 			$prototype .= "${type} ${pointer}${name}";
+			$prototype_mem .= ", " if ($argc != 0);
+			$prototype_mem .= "${type_mem} ${name}";
 			$printf_format .= ", " if ($argc != 0);
 			$printf_format .= $format;
 		}
 		$prototype = "void" unless ($prototype ne "");
+		$prototype_mem = "void" unless ($prototype_mem ne "");
 		$ent->{args} = $args;
 		$ent->{proto} = $prototype;
+		$ent->{proto_mem} = $prototype_mem;
 		$ent->{any_pointer} = $any_pointer;
 		$ent->{printf_format} = $printf_format;
 	}
@@ -599,6 +608,7 @@ sub read_includes()
 	fix_promotions();
 }
 
+
 sub read_enums()
 {
 	my $key;
@@ -650,6 +660,7 @@ sub read_enums()
 		}
 	}
 	close(FILE);
+	
 	my $errors = 0;
 	foreach my $key (keys %functions) {
 		if (!$functions{$key}->{funcno})
@@ -759,15 +770,20 @@ my %macros = (
 	'glCullParameterdvEXT' => 1,
 	'glCullParameterfvEXT' => 1,
 
+	# GL_EXT_debug_marker
+	'glInsertEventMarkerEXT' => 1,
+	'glPushGroupMarkerEXT' => 1,
+	'glPopGroupMarkerEXT' => 0,
+	
 	# GL_ARB_debug_output
 	'glDebugMessageControlARB' => 1,
-	'glDebugMessageInsertARB' => 0,
+	'glDebugMessageInsertARB' => 1,
 	'glDebugMessageCallbackARB' => 1,
 	'glGetDebugMessageLogARB' => 1,
 
 	# GL_AMD_debug_output
 	'glDebugMessageEnableAMD' => 1,
-	'glDebugMessageInsertAMD' => 0,
+	'glDebugMessageInsertAMD' => 1,
 	'glDebugMessageCallbackAMD' => 1,
 	'glGetDebugMessageLogAMD' => 1,
 
@@ -880,7 +896,7 @@ my %macros = (
 
 	# GL_EXT_coordinate_frame
 	'glTangent3bEXT' => 0,
-	'glTangent3bvEXT' => 0,
+	'glTangent3bvEXT' => 1,
 	'glTangent3dEXT' => 0,
 	'glTangent3dvEXT' => 1,
 	'glTangent3fEXT' => 0,
@@ -890,7 +906,7 @@ my %macros = (
 	'glTangent3sEXT' => 0,
 	'glTangent3svEXT' => 1,
 	'glBinormal3bEXT' => 0,
-	'glBinormal3bvEXT' => 0,
+	'glBinormal3bvEXT' => 1,
 	'glBinormal3dEXT' => 0,
 	'glBinormal3dvEXT' => 1,
 	'glBinormal3fEXT' => 0,
@@ -1002,6 +1018,7 @@ my %macros = (
 	'glGetDoubleIndexedvEXT' => 1,
 	'glGetFloatIndexedvEXT' => 1,
 	'glGetPointerIndexedvEXT' => 1,
+	'glGetBooleanIndexedvEXT' => 1,
 	'glGetIntegerIndexedvEXT' => 1,
 	'glGetCompressedMultiTexImageEXT' => 1,
 	'glGetCompressedTextureImageEXT' => 1,
@@ -1121,8 +1138,8 @@ my %macros = (
 	
 	# GL_EXT_gpu_shader4
 	'glGetUniformuivEXT' => 1,
-	'glBindFragDataLocationEXT' => 0,
-	'glGetFragDataLocationEXT' => 0,
+	'glBindFragDataLocationEXT' => 1,
+	'glGetFragDataLocationEXT' => 1,
 	'glUniform1uiEXT' => 0,
 	'glUniform2uiEXT' => 0,
 	'glUniform3uiEXT' => 0,
@@ -1184,12 +1201,12 @@ my %macros = (
 	'glGenSymbolsEXT' => 0,
 	'glSetInvariantEXT' => 1,
 	'glSetLocalConstantEXT' => 1,
-	'glVariantbvEXT' => 0,
+	'glVariantbvEXT' => 1,
 	'glVariantsvEXT' => 1,
 	'glVariantivEXT' => 1,
 	'glVariantfvEXT' => 1,
 	'glVariantdvEXT' => 1,
-	'glVariantubvEXT' => 0,
+	'glVariantubvEXT' => 1,
 	'glVariantusvEXT' => 1,
 	'glVariantuivEXT' => 1,
 	'glVariantPointerEXT' => 1,
@@ -1201,21 +1218,24 @@ my %macros = (
 	'glBindTextureUnitParameterEXT' => 0,
 	'glBindParameterEXT' => 0,
 	'glIsVariantEnabledEXT' => 0,
-	'glGetVariantBooleanvEXT' => 0,
+	'glGetVariantBooleanvEXT' => 1,
 	'glGetVariantIntegervEXT' => 1,
 	'glGetVariantFloatvEXT' => 1,
 	'glGetVariantPointervEXT' => 1,
-	'glGetInvariantBooleanvEXT' => 0,
+	'glGetInvariantBooleanvEXT' => 1,
 	'glGetInvariantIntegervEXT' => 1,
 	'glGetInvariantFloatvEXT' => 1,
-	'glGetLocalConstantBooleanvEXT' => 0,
+	'glGetLocalConstantBooleanvEXT' => 1,
 	'glGetLocalConstantIntegervEXT' => 1,
 	'glGetLocalConstantFloatvEXT' => 1,
 
 	# GL_ARB_shading_language_include
-	'glGetNamedStringivARB' => 1,
+	'glNamedStringARB' => 1,
+	'glDeleteNamedStringARB' => 1,
 	'glCompileShaderIncludeARB' => 1,
+	'glIsNamedStringARB' => 1,
 	'glGetNamedStringARB' => 1,
+	'glGetNamedStringivARB' => 1,
 	
 	# GL_ATI_vertex_streams
 	'glVertexStream1sATI' => 0,
@@ -1251,7 +1271,7 @@ my %macros = (
 	'glVertexStream4dATI' => 0,
 	'glVertexStream4dvATI' => 1,
 	'glNormalStream3bATI' => 0,
-	'glNormalStream3bvATI' => 0,
+	'glNormalStream3bvATI' => 1,
 	'glNormalStream3sATI' => 0,
 	'glNormalStream3svATI' => 1,
 	'glNormalStream3iATI' => 0,
@@ -1266,7 +1286,7 @@ my %macros = (
 	
 	# GL_EXT_secondary_color
 	'glSecondaryColor3bEXT' => 0,
-	'glSecondaryColor3bvEXT' => 0,
+	'glSecondaryColor3bvEXT' => 1,
 	'glSecondaryColor3dEXT' => 0,
 	'glSecondaryColor3dvEXT' => 1,
 	'glSecondaryColor3fEXT' => 0,
@@ -1276,12 +1296,15 @@ my %macros = (
 	'glSecondaryColor3sEXT' => 0,
 	'glSecondaryColor3svEXT' => 1,
 	'glSecondaryColor3ubEXT' => 0,
-	'glSecondaryColor3ubvEXT' => 0,
+	'glSecondaryColor3ubvEXT' => 1,
 	'glSecondaryColor3uiEXT' => 0,
 	'glSecondaryColor3uivEXT' => 1,
 	'glSecondaryColor3usEXT' => 0,
 	'glSecondaryColor3usvEXT' => 1,
 	'glSecondaryColorPointerEXT' => 1,
+	
+	# GL_EXT_separate_shader_objects
+	'glCreateShaderProgramEXT' => 1,
 	
 	# GL_ATI_vertex_array_object
 	'glNewObjectBufferATI' => 1,
@@ -1336,7 +1359,7 @@ my %macros = (
 	'glGetObjectParameterivARB' => 1,
 	'glGetInfoLogARB' => 1,
 	'glGetAttachedObjectsARB' => 1,
-	'glGetUniformLocationARB' => 0,
+	'glGetUniformLocationARB' => 1,
 	'glGetActiveUniformARB' => 1,
 	'glGetUniformfvARB' => 1,
 	'glGetUniformivARB' => 1,
@@ -1389,7 +1412,7 @@ my %macros = (
 	'glCoverStrokePathInstancedNV' => 1,
 	'glGetPathParameterivNV' => 1,
 	'glGetPathParameterfvNV' => 1,
-	'glGetPathCommandsNV' => 0,
+	'glGetPathCommandsNV' => 1,
 	'glGetPathCoordsNV' => 1,
 	'glGetPathDashArrayNV' => 1,
 	'glGetPathMetricsNV' => 1,
@@ -1556,6 +1579,31 @@ my %macros = (
 	'glVertex2xvOES' => 1,
 	'glVertex3xvOES' => 1,
 	'glVertex4xvOES' => 1,
+	'glBitmapxOES' => 1,
+
+	# GL_OES_byte_coordinates
+	'glMultiTexCoord1bOES' => 0,
+	'glMultiTexCoord1bvOES' => 1,
+	'glMultiTexCoord2bOES' => 0,
+	'glMultiTexCoord2bvOES' => 1,
+	'glMultiTexCoord3bOES' => 0,
+	'glMultiTexCoord3bvOES' => 1,
+	'glMultiTexCoord4bOES' => 0,
+	'glMultiTexCoord4bvOES' => 1,
+	'glTexCoord1bOES' => 0,
+	'glTexCoord1bvOES' => 1,
+	'glTexCoord2bOES' => 0,
+	'glTexCoord2bvOES' => 1,
+	'glTexCoord3bOES' => 0,
+	'glTexCoord3bvOES' => 1,
+	'glTexCoord4bOES' => 0,
+	'glTexCoord4bvOES' => 1,
+	'glVertex2bOES' => 0,
+	'glVertex2bvOES' => 1,
+	'glVertex3bOES' => 0,
+	'glVertex3bvOES' => 1,
+	'glVertex4bOES' => 0,
+	'glVertex4bvOES' => 1,
 	
 	# GL_APPLE_vertex_array_range
 	'glVertexArrayRangeAPPLE' => 1,
@@ -1578,7 +1626,7 @@ my %macros = (
 	'glReplacementCodeubSUN' => 0,
 	'glReplacementCodeuivSUN' => 1,
 	'glReplacementCodeusvSUN' => 1,
-	'glReplacementCodeubvSUN' => 0,
+	'glReplacementCodeubvSUN' => 1,
 	'glReplacementCodePointerSUN' => 1,
 	
 	# GL_SUN_vertex
@@ -1734,9 +1782,9 @@ my %macros = (
 	'glIsProgramARB' => 0,
 	
 	# GL_NV_fragment_program
-	'glProgramNamedParameter4fNV' => 0,
+	'glProgramNamedParameter4fNV' => 1,
 	'glProgramNamedParameter4fvNV' => 1,
-	'glProgramNamedParameter4dNV' => 0,
+	'glProgramNamedParameter4dNV' => 1,
 	'glProgramNamedParameter4dvNV' => 1,
 	'glGetProgramNamedParameterfvNV' => 1,
 	'glGetProgramNamedParameterdvNV' => 1,
@@ -1750,14 +1798,14 @@ my %macros = (
 	'glGetProgramParameterdvNV' => 1,
 	'glGetProgramParameterfvNV' => 1,
 	'glGetProgramivNV' => 1,
-	'glGetProgramStringNV' => 0,
+	'glGetProgramStringNV' => 1,
 	'glGetTrackMatrixivNV' => 1,
 	'glGetVertexAttribdvNV' => 1,
 	'glGetVertexAttribfvNV' => 1,
 	'glGetVertexAttribivNV' => 1,
 	'glGetVertexAttribPointervNV' => 1,
 	'glIsProgramNV' => 0,
-	'glLoadProgramNV' => 0,
+	'glLoadProgramNV' => 1,
 	'glProgramParameter4dNV' => 0,
 	'glProgramParameter4dvNV' => 1,
 	'glProgramParameter4fNV' => 0,
@@ -1792,7 +1840,7 @@ my %macros = (
 	'glVertexAttrib4sNV' => 0,
 	'glVertexAttrib4svNV' => 1,
 	'glVertexAttrib4ubNV' => 0,
-	'glVertexAttrib4ubvNV' => 0,
+	'glVertexAttrib4ubvNV' => 1,
 	'glVertexAttribs1dvNV' => 1,
 	'glVertexAttribs1fvNV' => 1,
 	'glVertexAttribs1svNV' => 1,
@@ -1805,7 +1853,7 @@ my %macros = (
 	'glVertexAttribs4dvNV' => 1,
 	'glVertexAttribs4fvNV' => 1,
 	'glVertexAttribs4svNV' => 1,
-	'glVertexAttribs4ubvNV' => 0,
+	'glVertexAttribs4ubvNV' => 1,
 	
 	# GL_NV_vertex_program4
 	'glVertexAttribI1iEXT' => 0,
@@ -1824,9 +1872,9 @@ my %macros = (
 	'glVertexAttribI2uivEXT' => 1,
 	'glVertexAttribI3uivEXT' => 1,
 	'glVertexAttribI4uivEXT' => 1,
-	'glVertexAttribI4bvEXT' => 0,
+	'glVertexAttribI4bvEXT' => 1,
 	'glVertexAttribI4svEXT' => 1,
-	'glVertexAttribI4ubvEXT' => 0,
+	'glVertexAttribI4ubvEXT' => 1,
 	'glVertexAttribI4usvEXT' => 1,
 	'glVertexAttribIPointerEXT' => 1,
 	'glGetVertexAttribIivEXT' => 1,
@@ -1929,15 +1977,15 @@ my %macros = (
 
 	# GL_ARB_matrix_palette
 	'glCurrentPaletteMatrixARB' => 0,
-	'glMatrixIndexubvARB' => 0,
+	'glMatrixIndexubvARB' => 1,
 	'glMatrixIndexusvARB' => 1,
 	'glMatrixIndexuivARB' => 1,
 	'glMatrixIndexPointerARB' => 1,
 	
 	# GL_ARB_vertex_shader
-	'glBindAttribLocationARB' => 0,
+	'glBindAttribLocationARB' => 1,
 	'glGetActiveAttribARB' => 1,
-	'glGetAttribLocationARB' => 0,
+	'glGetAttribLocationARB' => 1,
 
 	# GL_ARB_vertex_program
 	'glVertexAttrib1dARB' => 0,
@@ -1958,14 +2006,14 @@ my %macros = (
 	'glVertexAttrib3fvARB' => 1,
 	'glVertexAttrib3sARB' => 0,
 	'glVertexAttrib3svARB' => 1,
-	'glVertexAttrib4NbvARB' => 0,
+	'glVertexAttrib4NbvARB' => 1,
 	'glVertexAttrib4NivARB' => 1,
 	'glVertexAttrib4NsvARB' => 1,
 	'glVertexAttrib4NubARB' => 0,
-	'glVertexAttrib4NubvARB' => 0,
+	'glVertexAttrib4NubvARB' => 1,
 	'glVertexAttrib4NuivARB' => 1,
 	'glVertexAttrib4NusvARB' => 1,
-	'glVertexAttrib4bvARB' => 0,
+	'glVertexAttrib4bvARB' => 1,
 	'glVertexAttrib4dARB' => 0,
 	'glVertexAttrib4dvARB' => 1,
 	'glVertexAttrib4fARB' => 0,
@@ -1973,7 +2021,7 @@ my %macros = (
 	'glVertexAttrib4ivARB' => 1,
 	'glVertexAttrib4sARB' => 0,
 	'glVertexAttrib4svARB' => 1,
-	'glVertexAttrib4ubvARB' => 0,
+	'glVertexAttrib4ubvARB' => 1,
 	'glVertexAttrib4uivARB' => 1,
 	'glVertexAttrib4usvARB' => 1,
 	'glVertexAttribPointerARB' => 1,
@@ -2029,7 +2077,7 @@ my %macros = (
 	'glGetDebugLogLengthMESA' => 0,
 
 	# GL_EXT_debug_label
-	'glLabelObjectEXT' => 0,
+	'glLabelObjectEXT' => 1,
 	'glGetObjectLabelEXT' => 1,
 
 	# GL_EXT_timer_query
@@ -2133,8 +2181,8 @@ my %macros = (
 	'glBindBufferOffsetNV' => 0,
 	'glBindBufferBaseNV' => 1,
 	'glTransformFeedbackVaryingsNV' => 1,
-	'glActiveVaryingNV' => 0,
-	'glGetVaryingLocationNV' => 0,
+	'glActiveVaryingNV' => 1,
+	'glGetVaryingLocationNV' => 1,
 	'glGetActiveVaryingNV' => 1,
 	'glGetTransformFeedbackVaryingNV' => 1,
 	'glTransformFeedbackStreamAttribsNV' => 1,
@@ -2163,7 +2211,7 @@ my %macros = (
 	'glGetnPixelMapfvARB' => 1,
 	'glGetnPixelMapuivARB' => 1,
 	'glGetnPixelMapusvARB' => 1,
-	'glGetnPolygonStippleARB' => 0,
+	'glGetnPolygonStippleARB' => 1,
 	'glGetnColorTableARB' => 1,
 	'glGetnConvolutionFilterARB' => 1,
 	'glGetnSeparableFilterARB' => 1,
@@ -2258,12 +2306,12 @@ my %macros = (
 	# GL_MESA_trace
 	'glEnableTraceMESA' => 0,
 	'glDisableTraceMESA' => 0,
-	'glNewTraceMESA' => 0,
+	'glNewTraceMESA' => 1,
 	'glEndTraceMESA' => 0,
 	'glTraceAssertAttribMESA' => 0,
-	'glTraceCommentMESA' => 0,
-	'glTraceTextureMESA' => 0,
-	'glTraceListMESA' => 0,
+	'glTraceCommentMESA' => 1,
+	'glTraceTextureMESA' => 1,
+	'glTraceListMESA' => 1,
 	'glTracePointerMESA' => 1,
 	'glTracePointerRangeMESA' => 1,
 
@@ -2286,12 +2334,12 @@ my %macros = (
 	'glGetBufferPointervARB' => 1,
 
 	# GL_ARB_vertex_blend
-	'glWeightbvARB' => 0,
+	'glWeightbvARB' => 1,
 	'glWeightsvARB' => 1,
 	'glWeightivARB' => 1,
 	'glWeightfvARB' => 1,
 	'glWeightdvARB' => 1,
-	'glWeightubvARB' => 0,
+	'glWeightubvARB' => 1,
 	'glWeightusvARB' => 1,
 	'glWeightuivARB' => 1,
 	'glWeightPointerARB' => 1,
@@ -2360,7 +2408,7 @@ my %macros = (
 	'glArrayElement' => 1,
 	'glBegin' => 0,
 	'glBindTexture' => 0,
-	'glBitmap' => 0,
+	'glBitmap' => 1,
 	'glBlendFunc' => 0,
 	'glCallList' => 0,
 	'glCallLists' => 1,
@@ -2372,7 +2420,7 @@ my %macros = (
 	'glClearStencil' => 0,
 	'glClipPlane' => 1,
 	'glColor3b' => 0,
-	'glColor3bv' => 0,
+	'glColor3bv' => 1,
 	'glColor3d' => 0,
 	'glColor3dv' => 1,
 	'glColor3f' => 0,
@@ -2382,13 +2430,13 @@ my %macros = (
 	'glColor3s' => 0,
 	'glColor3sv' => 1,
 	'glColor3ub' => 0,
-	'glColor3ubv' => 0,
+	'glColor3ubv' => 1,
 	'glColor3ui' => 0,
 	'glColor3uiv' => 1,
 	'glColor3us' => 0,
 	'glColor3usv' => 1,
 	'glColor4b' => 0,
-	'glColor4bv' => 0,
+	'glColor4bv' => 1,
 	'glColor4d' => 0,
 	'glColor4dv' => 1,
 	'glColor4f' => 0,
@@ -2398,7 +2446,7 @@ my %macros = (
 	'glColor4s' => 0,
 	'glColor4sv' => 1,
 	'glColor4ub' => 0,
-	'glColor4ubv' => 0,
+	'glColor4ubv' => 1,
 	'glColor4ui' => 0,
 	'glColor4uiv' => 1,
 	'glColor4us' => 0,
@@ -2453,7 +2501,7 @@ my %macros = (
 	'glFrustum' => 0,
 	'glGenLists' => 0,
 	'glGenTextures' => 1,
-	'glGetBooleanv' => 0,
+	'glGetBooleanv' => 1,
 	'glGetClipPlane' => 1,
 	'glGetDoublev' => 1,
 	'glGetError' => 1,
@@ -2470,7 +2518,7 @@ my %macros = (
 	'glGetPixelMapuiv' => 1,
 	'glGetPixelMapusv' => 1,
 	'glGetPointerv' => 1,
-	'glGetPolygonStipple' => 0,
+	'glGetPolygonStipple' => 1,
 	'glGetString' => 1,
 	'glGetTexEnvfv' => 1,
 	'glGetTexEnviv' => 1,
@@ -2494,7 +2542,7 @@ my %macros = (
 	'glIndexs' => 0,
 	'glIndexsv' => 1,
 	'glIndexub' => 0,
-	'glIndexubv' => 0,
+	'glIndexubv' => 1,
 	'glInitNames' => 0,
 	'glInterleavedArrays' => 1,
 	'glIsEnabled' => 0,
@@ -2533,7 +2581,7 @@ my %macros = (
 	'glMultMatrixf' => 1,
 	'glNewList' => 0,
 	'glNormal3b' => 0,
-	'glNormal3bv' => 0,
+	'glNormal3bv' => 1,
 	'glNormal3d' => 0,
 	'glNormal3dv' => 1,
 	'glNormal3f' => 0,
@@ -2556,7 +2604,7 @@ my %macros = (
 	'glPointSize' => 0,
 	'glPolygonMode' => 0,
 	'glPolygonOffset' => 0,
-	'glPolygonStipple' => 0,
+	'glPolygonStipple' => 1,
 	'glPopAttrib' => 0,
 	'glPopClientAttrib' => 0,
 	'glPopMatrix' => 0,
@@ -2794,7 +2842,7 @@ my %macros = (
 	'glFogCoorddv' => 1,
 	'glFogCoordPointer' => 1,
 	'glSecondaryColor3b' => 0,
-	'glSecondaryColor3bv' => 0,
+	'glSecondaryColor3bv' => 1,
 	'glSecondaryColor3d' => 0,
 	'glSecondaryColor3dv' => 1,
 	'glSecondaryColor3f' => 0,
@@ -2804,7 +2852,7 @@ my %macros = (
 	'glSecondaryColor3s' => 0,
 	'glSecondaryColor3sv' => 1,
 	'glSecondaryColor3ub' => 0,
-	'glSecondaryColor3ubv' => 0,
+	'glSecondaryColor3ubv' => 1,
 	'glSecondaryColor3ui' => 0,
 	'glSecondaryColor3uiv' => 1,
 	'glSecondaryColor3us' => 0,
@@ -2855,7 +2903,7 @@ my %macros = (
 	'glStencilFuncSeparate' => 0,
 	'glStencilMaskSeparate' => 0,
 	'glAttachShader' => 0,
-	'glBindAttribLocation' => 0,
+	'glBindAttribLocation' => 1,
 	'glCompileShader' => 0,
 	'glCreateProgram' => 0,
 	'glCreateShader' => 0,
@@ -2867,13 +2915,13 @@ my %macros = (
 	'glGetActiveAttrib' => 1,
 	'glGetActiveUniform' => 1,
 	'glGetAttachedShaders' => 1,
-	'glGetAttribLocation' => 0,
+	'glGetAttribLocation' => 1,
 	'glGetProgramiv' => 1,
 	'glGetProgramInfoLog' => 1,
 	'glGetShaderiv' => 1,
 	'glGetShaderInfoLog' => 1,
 	'glGetShaderSource' => 1,
-	'glGetUniformLocation' => 0,
+	'glGetUniformLocation' => 1,
 	'glGetUniformfv' => 1,
 	'glGetUniformiv' => 1,
 	'glGetVertexAttribdv' => 1,
@@ -2923,14 +2971,14 @@ my %macros = (
 	'glVertexAttrib3fv' => 1,
 	'glVertexAttrib3s' => 0,
 	'glVertexAttrib3sv' => 1,
-	'glVertexAttrib4Nbv' => 0,
+	'glVertexAttrib4Nbv' => 1,
 	'glVertexAttrib4Niv' => 1,
 	'glVertexAttrib4Nsv' => 1,
 	'glVertexAttrib4Nub' => 0,
-	'glVertexAttrib4Nubv' => 0,
+	'glVertexAttrib4Nubv' => 1,
 	'glVertexAttrib4Nuiv' => 1,
 	'glVertexAttrib4Nusv' => 1,
-	'glVertexAttrib4bv' => 0,
+	'glVertexAttrib4bv' => 1,
 	'glVertexAttrib4d' => 0,
 	'glVertexAttrib4dv' => 1,
 	'glVertexAttrib4f' => 0,
@@ -2938,7 +2986,7 @@ my %macros = (
 	'glVertexAttrib4iv' => 1,
 	'glVertexAttrib4s' => 0,
 	'glVertexAttrib4sv' => 1,
-	'glVertexAttrib4ubv' => 0,
+	'glVertexAttrib4ubv' => 1,
 	'glVertexAttrib4uiv' => 1,
 	'glVertexAttrib4usv' => 1,
 	'glVertexAttribPointer' => 1,
@@ -2953,7 +3001,7 @@ my %macros = (
 
 	# Version 3.0
 	'glColorMaski' => 0,
-	'glGetBooleani_v' => 0,
+	'glGetBooleani_v' => 1,
 	'glGetIntegeri_v' => 1,
 	'glEnablei' => 0,
 	'glDisablei' => 0,
@@ -2986,13 +3034,13 @@ my %macros = (
 	'glVertexAttribI2uiv' => 1,
 	'glVertexAttribI3uiv' => 1,
 	'glVertexAttribI4uiv' => 1,
-	'glVertexAttribI4bv' => 0,
+	'glVertexAttribI4bv' => 1,
 	'glVertexAttribI4sv' => 1,
-	'glVertexAttribI4ubv' => 0,
+	'glVertexAttribI4ubv' => 1,
 	'glVertexAttribI4usv' => 1,
 	'glGetUniformuiv' => 1,
-	'glBindFragDataLocation' => 0,
-	'glGetFragDataLocation' => 0,
+	'glBindFragDataLocation' => 1,
+	'glGetFragDataLocation' => 1,
 	'glUniform1ui' => 0,
 	'glUniform2ui' => 0,
 	'glUniform3ui' => 0,
@@ -3046,8 +3094,9 @@ my %macros = (
 	'glGetUniformIndices' => 1,
 	'glGetActiveUniformsiv' => 1,
 	'glGetActiveUniformName' => 1,
-	'glGetUniformBlockIndex' => 0,
+	'glGetUniformBlockIndex' => 1,
 	'glGetActiveUniformBlockiv' => 1,
+	'glGetActiveUniformBlockIndex' => 1,
 	'glGetActiveUniformBlockName' => 1,
 	'glUniformBlockBinding' => 0,
 	
@@ -3073,8 +3122,8 @@ my %macros = (
 	'glSampleMaski' => 0,
 	
 	# Version 3.3
-	'glBindFragDataLocationIndexed' => 0,
-	'glGetFragDataIndex' => 0,
+	'glBindFragDataLocationIndexed' => 1,
+	'glGetFragDataIndex' => 1,
 	'glGenSamplers' => 1,
 	'glDeleteSamplers' => 1,
 	'glIsSampler' => 0,
@@ -3158,8 +3207,8 @@ my %macros = (
 	'glUniformMatrix4x2dv' => 1,
 	'glUniformMatrix4x3dv' => 1,
 	'glGetUniformdv' => 1,
-	'glGetSubroutineUniformLocation' => 0,
-	'glGetSubroutineIndex' => 0,
+	'glGetSubroutineUniformLocation' => 1,
+	'glGetSubroutineIndex' => 1,
 	'glGetActiveSubroutineUniformiv' => 1,
 	'glGetActiveSubroutineUniformName' => 1,
 	'glGetActiveSubroutineName' => 1,
@@ -3300,11 +3349,11 @@ my %macros = (
 	'glMultiDrawArraysIndirect' => 1,
 	'glMultiDrawElementsIndirect' => 1,
 	'glGetProgramInterfaceiv' => 1,
-	'glGetProgramResourceIndex' => 0,
+	'glGetProgramResourceIndex' => 1,
 	'glGetProgramResourceName' => 1,
 	'glGetProgramResourceiv' => 1,
-	'glGetProgramResourceLocation' => 0,
-	'glGetProgramResourceLocationIndex' => 0,
+	'glGetProgramResourceLocation' => 1,
+	'glGetProgramResourceLocationIndex' => 1,
 	'glShaderStorageBlockBinding' => 0,
 	'glTexBufferRange' => 0,
 	'glTexStorage2DMultisample' => 0,
@@ -3317,11 +3366,11 @@ my %macros = (
 	'glVertexAttribBinding' => 0,
 	'glVertexBindingDivisor' => 0,
 	'glDebugMessageControl' => 1,
-	'glDebugMessageInsert' => 0,
+	'glDebugMessageInsert' => 1,
 	'glDebugMessageCallback' => 1,
 	'glGetDebugMessageLog' => 1,
-	'glPushDebugGroup' => 0,
-	'glObjectLabel' => 0,
+	'glPushDebugGroup' => 1,
+	'glObjectLabel' => 1,
 	'glGetObjectLabel' => 1,
 	'glObjectPtrLabel' => 1,
 	'glGetObjectPtrLabel' => 1,
@@ -3407,7 +3456,7 @@ my %macros = (
 	'glGetnPixelMapfv' => 1,
 	'glGetnPixelMapuiv' => 1,
 	'glGetnPixelMapusv' => 1,
-	'glGetnPolygonStipple' => 0,
+	'glGetnPolygonStipple' => 1,
 	'glGetnSeparableFilter' => 1,
 	'glGetnTexImage' => 1,
 	'glGetnUniformdv' => 1,
@@ -3707,6 +3756,7 @@ sub gen_calls() {
 	my $glu_count = 0;
 	my $ret;
 	my $prototype;
+	my $prototype_mem;
 	my $return_type;
 	my $function_name;
 	my $uppername;
@@ -3724,6 +3774,7 @@ sub gen_calls() {
 		$function_name = $gl . $ent->{name};
 		$return_type = $ent->{type};
 		$prototype = $ent->{proto};
+		$prototype_mem = $ent->{proto_mem};
 		$args = $ent->{args};
 		$printf_format = $ent->{printf_format};
 		$uppername = uc($function_name);
@@ -3740,7 +3791,17 @@ sub gen_calls() {
 			print "/* FIXME: $return_type cannot be returned */\n";
 			++$num_longlongs;
 		}
-		print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
+		if ($prototype ne $prototype_mem)
+		{
+			print "#if NFOSMESA_POINTER_AS_MEMARG\n";
+			print "$return_type OSMesaDriver::nf$function_name($prototype_mem)\n";
+			print "#else\n";
+			print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
+			print "#endif\n";
+		} else
+		{
+			print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
+		}
 		print "{\n";
 		print "\tD(bug(\"nfosmesa: $function_name($printf_format)\"";
 		print ", " unless ($args eq "");
@@ -3774,6 +3835,156 @@ EOF
 }
 
 
+sub add_glgetstring() {
+	my $funcno;
+	
+	$funcno = $functions{'glGetString'}->{funcno};
+	{
+		my %ent = (
+			'name' => 'GetString',
+			'gl' => 'LenGl',
+			'type' => 'GLuint',
+			'params' => [
+				{ 'type' => 'OSMesaContext', 'name' => 'ctx', 'pointer' => 0 },
+				{ 'type' => 'GLenum', 'name' => 'name', 'pointer' => 0 },
+			],
+			'funcno' => $funcno,
+		);
+		$functions{'glGetString'} = \%ent;
+	}
+	{
+		my %ent = (
+			'name' => 'GetString',
+			'gl' => 'PutGl',
+			'type' => 'void',
+			'params' => [
+				{ 'type' => 'OSMesaContext', 'name' => 'ctx', 'pointer' => 0 },
+				{ 'type' => 'GLenum', 'name' => 'name', 'pointer' => 0 },
+				{ 'type' => 'GLubyte', 'name' => 'buffer', 'pointer' => 1 },
+			],
+			'funcno' => $funcno + 1,
+		);
+		$functions{'putglGetString'} = \%ent;
+	}
+	
+	$funcno = $functions{'glGetStringi'}->{funcno};
+	{
+		my %ent = (
+			'name' => 'GetStringi',
+			'gl' => 'LenGl',
+			'type' => 'GLuint',
+			'params' => [
+				{ 'type' => 'OSMesaContext', 'name' => 'ctx', 'pointer' => 0 },
+				{ 'type' => 'GLenum', 'name' => 'name', 'pointer' => 0 },
+				{ 'type' => 'GLuint', 'name' => 'index', 'pointer' => 0 },
+			],
+			'funcno' => $funcno,
+		);
+		$functions{'glGetStringi'} = \%ent;
+	}
+	{
+		my %ent = (
+			'name' => 'GetStringi',
+			'gl' => 'PutGl',
+			'type' => 'void',
+			'params' => [
+				{ 'type' => 'OSMesaContext', 'name' => 'ctx', 'pointer' => 0 },
+				{ 'type' => 'GLenum', 'name' => 'name', 'pointer' => 0 },
+				{ 'type' => 'GLuint', 'name' => 'index', 'pointer' => 0 },
+				{ 'type' => 'GLubyte', 'name' => 'buffer', 'pointer' => 1 },
+			],
+			'funcno' => $funcno + 1,
+		);
+		$functions{'putglGetStringi'} = \%ent;
+	}
+}
+
+
+#
+# generate table of # of stacked parameters
+#
+sub gen_paramcount() {
+	my $prefix = "NFOSMESA_";
+	my $params;
+	my $gl;
+	my $function_name;
+	my $maxcount;
+	my $lastfunc;
+	my $funcno;
+	my $uppername;
+	
+	add_missing(\%oldmesa);
+	read_enums();
+	add_glgetstring();
+	gen_params();
+
+	print "static unsigned char const paramcount[NFOSMESA_LAST] = {\n";
+	print "\t0, /* GETVERSION */\n";
+	$maxcount = 0;
+	$lastfunc = 1;
+	
+	foreach my $key (sort { sort_by_value } keys %functions) {
+		my $ent = $functions{$key};
+		$gl = $ent->{gl};
+
+		$gl = $ent->{gl};
+		if (!defined($gl) || $gl eq '')
+		{
+			$function_name = $key;
+			$uppername = $function_name;
+		} else
+		{
+			$function_name = $gl . $ent->{name};
+			$uppername = ${prefix} . uc($function_name);
+		}
+
+		$funcno = $ent->{funcno};
+		while ($lastfunc != $funcno)
+		{
+			printf "\t0,\n";
+			++$lastfunc;
+		}
+		$params = $ent->{params};
+		
+		my $argcount = $#$params + 1;
+		
+		my $paramnum = 0;
+		if ($argcount > 0) {
+			for (my $argc = 0; $argc < $argcount; $argc++)
+			{
+				my $type = $params->[$argc]->{type};
+				my $name = $params->[$argc]->{name};
+				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
+				if ($pointer ne "" || defined($pointer_types{$type}))
+				{
+					++$paramnum;
+				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
+				{
+					$paramnum += 2;
+				} elsif (defined($longlong_types{$type}))
+				{
+					$paramnum += 2;
+				} elsif ($type eq 'GLhandleARB')
+				{
+					++$paramnum;
+				} elsif ($type eq 'GLsync')
+				{
+					++$paramnum;
+				} else
+				{
+					++$paramnum;
+				}
+			}
+		}
+		print "\t$paramnum, /* ${uppername} */\n";
+		$maxcount = $paramnum if ($paramnum > $maxcount);
+		$lastfunc = $funcno + 1;
+	}
+	print "};\n";
+	print "#define NFOSMESA_MAXPARAMS $maxcount\n"
+}
+
+
 #
 # generate case statements
 #
@@ -3781,7 +3992,6 @@ sub gen_dispatch() {
 	my $gl_count = 0;
 	my $glu_count = 0;
 	my $ret;
-	my $prototype;
 	my $prefix = "NFOSMESA_";
 	my $uppername;
 	my $params;
@@ -3796,7 +4006,6 @@ sub gen_dispatch() {
 		next if ($gl ne 'gl' && $gl ne 'glu');
 		$function_name = $gl . $ent->{name};
 		$return_type = $ent->{type};
-		$prototype = $ent->{proto};
 		$params = $ent->{params};
 		
 		$uppername = uc($function_name);
@@ -3817,45 +4026,45 @@ sub gen_dispatch() {
 		
 		if ($argcount > 0) {
 			my $paramnum = 0;
-			print "\n\t\t\t\t";
+			my $indent = "\n\t\t\t\t";
 			for (my $argc = 0; $argc < $argcount; $argc++)
 			{
-				print ",\n\t\t\t\t" unless ($argc == 0);
 				my $type = $params->[$argc]->{type};
 				my $name = $params->[$argc]->{name};
 				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
-				if ($pointer ne "" || defined($pointer_types{$type}))
+				my $comment = " /* ${type} ${pointer}${name} */";
+				my $comma = ($argc < ($argcount - 1)) ? "," : "";
+				if ($params->[$argc]->{pointer} || defined($pointer_types{$type}))
 				{
-					print "(${type} ${pointer})getStackedPointer($paramnum)";
+					print "${indent}getStackedPointer($paramnum, ${type} ${pointer})$comma $comment";
 					++$paramnum;
 				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
 				{
-					print "getStackedDouble($paramnum)";
+					print "${indent}getStackedDouble($paramnum)$comma $comment";
 					$paramnum += 2;
 				} elsif ($type eq 'GLfloat' || $type eq 'GLclampf')
 				{
-					print "getStackedFloat($paramnum)";
+					print "${indent}getStackedFloat($paramnum)$comma $comment";
 					++$paramnum;
 				} elsif (defined($longlong_types{$type}))
 				{
-					print "getStackedParameter64($paramnum)";
+					print "${indent}getStackedParameter64($paramnum)$comma $comment";
 					$paramnum += 2;
 				} elsif ($type eq 'GLhandleARB')
 				{
 					# legacy MacOSX headers declare GLhandleARB as void *
-					print "(GLhandleARB)getStackedParameter($paramnum)";
+					print "${indent}(GLhandleARB)getStackedParameter($paramnum)$comma $comment";
 					++$paramnum;
 				} elsif ($type eq 'GLsync')
 				{
 					# GLsync declared as pointer type on host; need a cast here
-					print "(GLsync)getStackedParameter($paramnum)";
+					print "${indent}(GLsync)getStackedParameter($paramnum)$comma $comment";
 					++$paramnum;
 				} else
 				{
-					print "getStackedParameter($paramnum)";
+					print "${indent}getStackedParameter($paramnum)$comma $comment";
 					++$paramnum;
 				}
-				print " /* ${type} ${pointer}${name} */";
 			}
 		}
 		print ");\n";
@@ -3947,6 +4156,7 @@ sub gen_macros() {
 	my $first_param;
 	my $ret;
 	my $prototype;
+	my $prototype_mem;
 	my $return_type;
 	my $function_name;
 	my $complete_name;
@@ -3960,6 +4170,9 @@ sub gen_macros() {
 # emit header
 #
 	print << "EOF";
+#ifndef GL_PROCM
+#define GL_PROCM(type, gl, name, export, upper, proto, args, first, ret)
+#endif
 #ifndef GL_GETSTRING
 #define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
@@ -3967,11 +4180,20 @@ sub gen_macros() {
 #ifndef GLU_PROC
 #define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
+#ifndef GLU_PROCM
+#define GLU_PROCM(type, gl, name, export, upper, proto, args, first, ret) GL_PROCM(type, gl, name, export, upper, proto, args, first, ret)
+#endif
 #ifndef GL_PROC64
 #define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
+#ifndef GL_PROC64M
+#define GL_PROC64M(type, gl, name, export, upper, proto, args, first, ret) GL_PROCM(type, gl, name, export, upper, proto, args, first, ret)
+#endif
 #ifndef OSMESA_PROC
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef OSMESA_PROCM
+#define OSMESA_PROCM(type, gl, name, export, upper, proto, args, first, ret)
 #endif
 #undef GL_void_return
 #define GL_void_return
@@ -3991,6 +4213,7 @@ EOF
 		my $args = $ent->{args};
 		my $params = $ent->{params};
 		$prototype = $ent->{proto};
+		$prototype_mem = $ent->{proto_mem};
 		$first_param = first_param_addr($ent);
 		$gl = $ent->{gl};
 		if ($lastgl ne $gl)
@@ -4015,8 +4238,10 @@ EOF
 		if ($prototype eq "void")
 		{
 			$prototype = "NOTHING";
+			$prototype_mem = "NOTHING";
 		} else {
 			$prototype = "AND " . $prototype;
+			$prototype_mem = "AND " . $prototype_mem;
 		}
 
 		my $skip_for_tiny = ! defined($tinygl{$gl . $function_name});
@@ -4039,6 +4264,7 @@ EOF
 				$prefix .= '_PROC';
 			}
 			print "${prefix}($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype), ($args), $first_param, $ret)\n";
+			print "${prefix}M($return_type, $gl, $function_name, $export, " . uc($function_name) . ", ($prototype_mem), ($args), $first_param, $ret)\n";
 		}
 		print("#endif\n") if ($skip_for_tiny);
 		print("#endif\n");
@@ -4055,11 +4281,15 @@ EOF
 /* Functions generated: $osmesa_count OSMesa + $gl_count GL + $glu_count GLU */
 
 #undef GL_PROC
+#undef GL_PROCM
 #undef GL_PROC64
+#undef GL_PROC64M
 #undef GLU_PROC
+#undef GLU_PROCM
 #undef GL_GETSTRING
 #undef GL_GETSTRINGI
 #undef OSMESA_PROC
+#undef OSMESA_PROCM
 #undef GL_void_return
 EOF
 }
@@ -4086,15 +4316,18 @@ sub gen_macros_bynumber() {
 	my $empty_slots;
 	
 	add_missing(\%oldmesa);
-	gen_params();
 	read_enums();
+	add_glgetstring();
+	gen_params();
 #
 # emit header
 #
 	print << "EOF";
-#ifndef GL_GETSTRING
-#define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
-#define GL_GETSTRINGI(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#ifndef LENGL_PROC
+#define LENGL_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#endif
+#ifndef PUTGL_PROC
+#define PUTGL_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #endif
 #ifndef GLU_PROC
 #define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) GL_PROC(type, gl, name, export, upper, proto, args, first, ret)
@@ -4202,6 +4435,8 @@ EOF
 #undef GLU_PROC
 #undef GL_GETSTRING
 #undef GL_GETSTRINGI
+#undef LENGL_PROC
+#undef PUTGL_PROC
 #undef OSMESA_PROC
 #undef NO_PROC
 #undef TINYGL_PROC
@@ -5110,8 +5345,8 @@ sub gen_slbheader() {
 	my $key;
 	
 	add_missing(\%oldmesa);
-	gen_params();
 	read_enums();
+	gen_params();
 
 #
 # emit header
@@ -5325,8 +5560,8 @@ sub gen_tinyslbsource() {
 	my $glx;
 	
 	add_missing(\%oldmesa);
-	gen_params();
 	read_enums();
+	gen_params();
 
 #
 # emit header
@@ -5477,8 +5712,8 @@ sub gen_slbsource() {
 	my $glx;
 	
 	add_missing(\%oldmesa);
-	gen_params();
 	read_enums();
+	gen_params();
 
 #
 # emit header
@@ -5656,6 +5891,11 @@ if ($ARGV[0] eq '-protos') {
 	print_header();
 	read_includes();
 	gen_dispatch();
+} elsif ($ARGV[0] eq '-paramcount') {
+	shift @ARGV;
+	print_header();
+	read_includes();
+	gen_paramcount();
 } elsif ($ARGV[0] eq '-ldgheader') {
 	shift @ARGV;
 	read_includes();
