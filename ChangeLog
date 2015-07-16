@@ -1,3 +1,8 @@
+2015/07/15 - Thorsten
+nfosmesa: support OSMesaGetProcAddress(); return a function pointer that can
+actually be called on the client side
+
+
 2015/07/14 - Thorsten
 nfosmesa: For FULLMMU, copy all input parameters to stack using Readxxx()
 before calling external functions; similar for output values.

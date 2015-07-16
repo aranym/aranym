@@ -274,11 +274,11 @@ my %printf_formats = (
 	'GLuint64EXT' => '%" PRIu64 "',
 	'long' => '%ld',
 	'GLhandleARB' => '%u',
-	'GLsync' => '%" PRI_PTR "',
-	'GLvdpauSurfaceNV' => '%ld',
-	'GLDEBUGPROC' => '%p',
-	'GLDEBUGPROCAMD' => '%p',
-	'GLDEBUGPROCARB' => '%p',
+	'GLsync' => '" PRI_PTR "',
+	'GLvdpauSurfaceNV' => '" PRI_IPTR "',
+	'GLDEBUGPROC' => '" PRI_PTR "',
+	'GLDEBUGPROCAMD' => '" PRI_PTR "',
+	'GLDEBUGPROCARB' => '" PRI_PTR "',
 	'GLprogramcallbackMESA' => '%p',
 	'OSMesaContext' => '%u',  # type is a pointer, but we return a handle instead
 );
@@ -434,6 +434,7 @@ sub gen_params()
 		my $params = $ent->{params};
 		my $argcount = $#$params + 1;
 		my $args = "";
+		my $debug_args = "";
 		my $prototype = "";
 		my $prototype_mem = "";
 		my $any_pointer = 0;
@@ -447,6 +448,7 @@ sub gen_params()
 			my $type = $param->{type};
 			my $name = $param->{name};
 			$args .= ", " if ($argc != 0);
+			$debug_args .= ", " if ($argc != 0);
 			$args .= $name;
 			if ($pointer) {
 				if (1 || !defined($byte_types{$type})) {
@@ -459,9 +461,17 @@ sub gen_params()
 				} else {
 					$pointer = "*";
 				}
-				$format = "%p";
+				$debug_args .= 'AtariOffset(' . $name . ')';
+				$format = '" PRI_PTR "';
 				$type_mem = "memptr";
 			} else {
+				if ($type eq 'GLsync')
+				{
+					$debug_args .= '(unsigned int)(uintptr_t)' . $name;
+				} else
+				{
+					$debug_args .= $name;
+				}
 				$pointer = "";
 				$format = $printf_formats{$type};
 				if (!defined($format))
@@ -481,6 +491,7 @@ sub gen_params()
 		$prototype = "void" unless ($prototype ne "");
 		$prototype_mem = "void" unless ($prototype_mem ne "");
 		$ent->{args} = $args;
+		$ent->{debug_args} = $debug_args;
 		$ent->{proto} = $prototype;
 		$ent->{proto_mem} = $prototype_mem;
 		$ent->{any_pointer} = $any_pointer;
@@ -3762,6 +3773,7 @@ sub gen_calls() {
 	my $uppername;
 	my $gl;
 	my $args;
+	my $debug_args;
 	my $printf_format;
 	my $conversions_needed = 0;
 	my $num_longlongs = 0;
@@ -3776,6 +3788,7 @@ sub gen_calls() {
 		$prototype = $ent->{proto};
 		$prototype_mem = $ent->{proto_mem};
 		$args = $ent->{args};
+		$debug_args = $ent->{debug_args};
 		$printf_format = $ent->{printf_format};
 		$uppername = uc($function_name);
 	
@@ -3805,7 +3818,7 @@ sub gen_calls() {
 		print "{\n";
 		print "\tD(bug(\"nfosmesa: $function_name($printf_format)\"";
 		print ", " unless ($args eq "");
-		print "$args));\n";
+		print "$debug_args));\n";
 		if (defined($macros{$function_name}) && $macros{$function_name} > 0) {
 			print "FN_${uppername}(${args});\n";
 		} else {
@@ -3901,17 +3914,20 @@ sub add_glgetstring() {
 
 
 #
-# generate table of # of stacked parameters
+# generate table of # of stacked parameters,
+# and now also table of function names
 #
 sub gen_paramcount() {
 	my $prefix = "NFOSMESA_";
 	my $params;
 	my $gl;
+	my $glx;
 	my $function_name;
 	my $maxcount;
 	my $lastfunc;
 	my $funcno;
 	my $uppername;
+	my $first;
 	
 	add_missing(\%oldmesa);
 	read_enums();
@@ -3923,11 +3939,11 @@ sub gen_paramcount() {
 	$maxcount = 0;
 	$lastfunc = 1;
 	
+	$first = 1;
 	foreach my $key (sort { sort_by_value } keys %functions) {
 		my $ent = $functions{$key};
 		$gl = $ent->{gl};
 
-		$gl = $ent->{gl};
 		if (!defined($gl) || $gl eq '')
 		{
 			$function_name = $key;
@@ -3941,8 +3957,10 @@ sub gen_paramcount() {
 		$funcno = $ent->{funcno};
 		while ($lastfunc != $funcno)
 		{
-			printf "\t0,\n";
+			printf ",\n"  unless($first);
+			printf "\t0";
 			++$lastfunc;
+			$first = 0;
 		}
 		$params = $ent->{params};
 		
@@ -3976,12 +3994,43 @@ sub gen_paramcount() {
 				}
 			}
 		}
-		print "\t$paramnum, /* ${uppername} */\n";
+		printf ",\n" unless($first);
+		print "\t$paramnum /* ${uppername} */";
 		$maxcount = $paramnum if ($paramnum > $maxcount);
 		$lastfunc = $funcno + 1;
+		$first = 0;
 	}
-	print "};\n";
-	print "#define NFOSMESA_MAXPARAMS $maxcount\n"
+	print "\n};\n";
+	print "#define NFOSMESA_MAXPARAMS $maxcount\n";
+	print "\n\n";
+	print "static struct {\n";
+	print "\tconst char *name;\n";
+	print "\tunsigned int funcno;\n";
+	print "} const functionnames[] = {\n";
+	$first = 1;
+	foreach my $key (sort { sort_by_name } keys %functions) {
+		my $ent = $functions{$key};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+
+		# skip the TinyGL only functions(like OSMesaCreatLDG) for this
+		next if (!defined($gl) || $gl eq '');
+		$function_name = $gl . $ent->{name};
+		$uppername = ${prefix} . uc($function_name);
+
+		# sigh. another hack for GetString etc.
+		next if ($function_name eq 'PutGlGetString');
+		next if ($function_name eq 'PutGlGetStringi');
+		$function_name = 'glGetString' if ($function_name eq 'LenGlGetString');
+		$function_name = 'glGetStringi' if ($function_name eq 'LenGlGetStringi');
+		
+		$funcno = $ent->{funcno};
+		printf ",\n"  unless($first);
+		print "\t{ \"${function_name}\", $uppername }";
+		$first = 0;
+	}
+	print "\n};\n";
 }
 
 
@@ -4501,8 +4550,11 @@ sub gen_ldgheader() {
 	my $glx;
 	my $args;
 	my $key;
+	my $lastfunc;
+	my $funcno;
 	
 	add_missing(\%oldmesa);
+	read_enums();
 	gen_params();
 
 #
@@ -4570,23 +4622,32 @@ EOF
 struct _gl_osmesa {
 EOF
 
-	foreach $key (sort { sort_by_name } keys %functions) {
+	$lastfunc = 1;
+	foreach $key (sort { sort_by_value } keys %functions) {
 		$ent = $functions{$key};
 		$function_name = $ent->{name};
+		$funcno = $ent->{funcno};
+		while ($lastfunc != $funcno)
+		{
+			printf "\t/* %4d */ void *__unused_%d;\n", $lastfunc - 1, $lastfunc - 1;
+			++$lastfunc;
+		}
 		$return_type = $ent->{type};
 		$args = $ent->{args};
 		$prototype = $ent->{proto};
 		$gl = $ent->{gl};
 		$glx = $gl;
 		$glx = "" if ($glx eq "gl");
-		print "\t${return_type} APIENTRY (*${glx}${function_name})(${prototype});\n";
+		printf "\t/* %4d */ ${return_type} APIENTRY (*${glx}${function_name})(${prototype});\n", $funcno - 1;
 		$gl_count++ if ($gl eq "gl");
 		$glu_count++ if ($gl eq "glu");
 		$osmesa_count++ if ($gl eq "OSMesa");
+		$lastfunc = $funcno + 1;
 	}
 
 	print << "EOF";
-
+	unsigned int __numfuncs;
+	OSMESAproc APIENTRY (*__old_OSMesaGetProcAddress)(const char *funcName);
 };
 
 extern struct _gl_osmesa gl;
@@ -4595,7 +4656,7 @@ extern struct _gl_osmesa gl;
 #ifndef NFOSMESA_NO_MANGLE
 EOF
 
-	foreach $key (sort { sort_by_name } keys %functions) {
+	foreach $key (sort { sort_by_value } keys %functions) {
 		$ent = $functions{$key};
 		$function_name = $ent->{name};
 		$return_type = $ent->{type};
@@ -4886,8 +4947,13 @@ sub ldg_export($)
 sub gen_ldgsource() {
 	my $ent;
 	my $key;
+	my $numfuncs;
+	my $function_name;
+	my $gl;
+	my $glx;
 	
 	add_missing(\%oldmesa);
+	read_enums();
 	gen_params();
 
 #
@@ -4921,6 +4987,17 @@ struct _gl_osmesa gl;
 # define GL_CHECK(x) if (x == 0) result = FALSE
 #endif
 
+
+static APIENTRY OSMESAproc real_OSMesaGetProcAddress(const char *funcname)
+{
+	unsigned int func = (unsigned int)((*gl.__old_OSMesaGetProcAddress)(funcname));
+	if (func == 0 || func > gl.__numfuncs)
+		return 0;
+	--func;
+	return (OSMESAproc)(((void **)(&gl))[func]);
+}
+
+
 int ldg_init_osmesa(LDG *lib)
 {
 	int result = TRUE;
@@ -4931,8 +5008,9 @@ EOF
 	foreach $key (keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
-	foreach $key (sort { sort_by_name } keys %functions) {
+	foreach $key (sort { sort_by_value } keys %functions) {
 		$ent = $functions{$key};
+		$numfuncs = $ent->{funcno};
 		ldg_export($ent);
 	}
 
@@ -4940,6 +5018,9 @@ EOF
 # emit trailer
 #
 	print << "EOF";
+	gl.__numfuncs = $numfuncs;
+	gl.__old_OSMesaGetProcAddress = gl.OSMesaGetProcAddress;
+	gl.OSMesaGetProcAddress = real_OSMesaGetProcAddress;
 	return result;
 }
 #undef GL_CHECK
@@ -5001,23 +5082,50 @@ void ldg_unload_osmesa(struct gl_public *pub, _WORD *gl)
 
 #ifdef TEST
 
-#include <mint/arch/nf_ops.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(void)
 {
 	struct gl_public *pub;
+	OSMESAproc p;
+	OSMesaContext ctx;
+	void *buffer;
+	int width = 32;
+	int height = 32;
 	
 	pub = ldg_load_osmesa(0, 0);
 	if (pub == NULL)
 		pub = ldg_load_osmesa("c:/gemsys/ldg/osmesa.ldg", 0);
 	if (pub == NULL)
 	{
-		nf_debugprintf("osmesa.ldg not found\\n");
+		fprintf(stderr, "osmesa.ldg not found\\n");
 		return 1;
 	}
-	nf_debugprintf("%s: %lx\\n", "glBegin", gl.Begin);
-	nf_debugprintf("%s: %lx\\n", "glOrtho", gl.Ortho);
-	nf_debugprintf("%s: %lx\\n", "glOrthof", gl.Orthof);
+	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 8, 16, NULL);
+	if (ctx == NULL)
+	{
+		fprintf(stderr, "can't create context\\n");
+		return 1;
+	}
+	buffer = malloc(width * height * 4);
+	gl.OSMesaMakeCurrent(ctx, buffer, OSMESA_RGB, width, height);
+	printf("GL_RENDERER   = %s\\n", (const char *) gl.GetString(GL_RENDERER));
+	printf("GL_VERSION    = %s\\n", (const char *) gl.GetString(GL_VERSION));
+	printf("GL_VENDOR     = %s\\n", (const char *) gl.GetString(GL_VENDOR));
+	printf("GL_EXTENSIONS = %s\\n", (const char *) gl.GetString(GL_EXTENSIONS));
+EOF
+	foreach $key (sort { sort_by_name } keys %functions) {
+		$ent = $functions{$key};
+		$function_name = $ent->{name};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+		print "\tp = gl.OSMesaGetProcAddress(\"${gl}${function_name}\");\n";
+		printf "\tprintf(\"%-30s: %%p\\n\", p);\n", ${gl} . ${function_name};
+	}
+	print << "EOF";
+	gl.OSMesaDestroyContext(ctx);
 	ldg_unload_osmesa(pub, NULL);
 	return 0;
 }
@@ -5141,7 +5249,7 @@ void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl)
 
 #ifdef TEST
 
-#include <mint/arch/nf_ops.h>
+#include <stdio.h>
 
 int main(void)
 {
@@ -5152,11 +5260,11 @@ int main(void)
 		pub = ldg_load_tiny_gl("c:/gemsys/ldg/tin_gl.ldg", 0);
 	if (pub == NULL)
 	{
-		nf_debugprintf("tiny_gl.ldg not found\\n");
+		fprintf(stderr, "tiny_gl.ldg not found\\n");
 		return 1;
 	}
-	nf_debugprintf("%s: %lx\\n", "glBegin", gl.Begin);
-	nf_debugprintf("%s: %lx\\n", "glOrthof", gl.Orthof);
+	printf("%s: %lx\\n", "glBegin", gl.Begin);
+	printf("%s: %lx\\n", "glOrthof", gl.Orthof);
 	ldg_unload_tiny_gl(pub, NULL);
 	return 0;
 }
@@ -5343,6 +5451,8 @@ sub gen_slbheader() {
 	my $glx;
 	my $args;
 	my $key;
+	my $lastfunc;
+	my $funcno;
 	
 	add_missing(\%oldmesa);
 	read_enums();
@@ -5421,23 +5531,32 @@ extern "C" {
 struct _gl_osmesa {
 EOF
 
+	$lastfunc = 1;
 	foreach $key (sort { sort_by_value } keys %functions) {
 		$ent = $functions{$key};
 		$function_name = $ent->{name};
+		$funcno = $ent->{funcno};
+		while ($lastfunc != $funcno)
+		{
+			printf "\t/* %4d */ void *__unused_%d;\n", $lastfunc - 1, $lastfunc - 1;
+			++$lastfunc;
+		}
 		$return_type = $ent->{type};
 		$args = $ent->{args};
 		$prototype = $ent->{proto};
 		$gl = $ent->{gl};
 		$glx = $gl;
 		$glx = "" if ($glx eq "gl");
-		print "\t${return_type} APIENTRY (*${glx}${function_name})(${prototype});\n";
+		printf "\t/* %4d */ ${return_type} APIENTRY (*${glx}${function_name})(${prototype});\n", $funcno - 1;
 		$gl_count++ if ($gl eq "gl");
 		$glu_count++ if ($gl eq "glu");
 		$osmesa_count++ if ($gl eq "OSMesa");
+		$lastfunc = $funcno + 1;
 	}
 
 	print << "EOF";
-
+	unsigned int __numfuncs;
+	OSMESAproc APIENTRY (*__old_OSMesaGetProcAddress)(const char *funcName);
 };
 
 extern struct _gl_osmesa gl;
@@ -5710,6 +5829,7 @@ sub gen_slbsource() {
 	my $function_name;
 	my $gl;
 	my $glx;
+	my $numfuncs;
 	
 	add_missing(\%oldmesa);
 	read_enums();
@@ -5776,6 +5896,18 @@ EOF
 	}
 
 	print << "EOF";
+
+
+static APIENTRY OSMESAproc real_OSMesaGetProcAddress(const char *funcname)
+{
+	unsigned int func = (unsigned int)((*gl.__old_OSMesaGetProcAddress)(funcname));
+	if (func == 0 || func > gl.__numfuncs)
+		return 0;
+	--func;
+	return (OSMESAproc)(((void **)(&gl))[func]);
+}
+
+
 static void slb_init_osmesa(void)
 {
 	struct _gl_osmesa *glp = &gl;
@@ -5783,6 +5915,7 @@ EOF
 
 	foreach $key (sort { sort_by_value } keys %functions) {
 		$ent = $functions{$key};
+		$numfuncs = $ent->{funcno};
 		$function_name = $ent->{name};
 		$gl = $ent->{gl};
 		$glx = $gl;
@@ -5794,6 +5927,9 @@ EOF
 # emit trailer
 #
 	print << "EOF";
+	gl.__numfuncs = $numfuncs;
+	gl.__old_OSMesaGetProcAddress = gl.OSMesaGetProcAddress;
+	gl.OSMesaGetProcAddress = real_OSMesaGetProcAddress;
 }
 
 
@@ -5841,6 +5977,57 @@ void slb_unload_osmesa(struct gl_public *pub)
 		pub->m_free(pub);
 	}
 }
+
+
+#ifdef TEST
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void)
+{
+	struct gl_public *pub;
+	OSMESAproc p;
+	OSMesaContext ctx;
+	void *buffer;
+	int width = 32;
+	int height = 32;
+	
+	pub = slb_load_osmesa(NULL);
+	if (pub == NULL)
+	{
+		fprintf(stderr, "osmesa.slb not found\\n");
+		return 1;
+	}
+	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 8, 16, NULL);
+	if (ctx == NULL)
+	{
+		fprintf(stderr, "can't create context\\n");
+		return 1;
+	}
+	buffer = malloc(width * height * 4);
+	gl.OSMesaMakeCurrent(ctx, buffer, OSMESA_RGB, width, height);
+	printf("GL_RENDERER   = %s\\n", (const char *) gl.GetString(GL_RENDERER));
+	printf("GL_VERSION    = %s\\n", (const char *) gl.GetString(GL_VERSION));
+	printf("GL_VENDOR     = %s\\n", (const char *) gl.GetString(GL_VENDOR));
+	printf("GL_EXTENSIONS = %s\\n", (const char *) gl.GetString(GL_EXTENSIONS));
+EOF
+	foreach $key (sort { sort_by_name } keys %functions) {
+		$ent = $functions{$key};
+		$function_name = $ent->{name};
+		$gl = $ent->{gl};
+		$glx = $gl;
+		$glx = "" if ($glx eq "gl");
+		print "\tp = gl.OSMesaGetProcAddress(\"${gl}${function_name}\");\n";
+		printf "\tprintf(\"%-30s: %%p\\n\", p);\n", ${gl} . ${function_name};
+	}
+	print << "EOF";
+	gl.OSMesaDestroyContext(ctx);
+	slb_unload_osmesa(pub);
+	return 0;
+}
+
+#endif
 EOF
 }  # end of generated source, and also of gen_slbsource
 

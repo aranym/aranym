@@ -67,7 +67,7 @@
 #ifdef FULLMMU
 #define NFOSMESA_POINTER_AS_MEMARG 1
 #else
-#define NFOSMESA_POINTER_AS_MEMARG 1
+#define NFOSMESA_POINTER_AS_MEMARG 0
 #endif
 
 #if defined(FULLMMU) || NFOSMESA_POINTER_AS_MEMARG
@@ -952,7 +952,7 @@ protected:
 	GLboolean OSMesaGetColorBuffer( Uint32 c, GLint *width, GLint *height, GLint *format, void **buffer );
 #endif
 	void OSMesaPostprocess(Uint32 ctx, const char *filter, GLuint enable_value);
-	void *OSMesaGetProcAddress( const char *funcName );
+	unsigned int OSMesaGetProcAddress( nfcmemptr funcName );
 	void OSMesaColorClamp(GLboolean enable);
 	
 	/* tinyGL functions */

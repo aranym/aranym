@@ -148,6 +148,7 @@ static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, 
 #define NO_OSMESAGETCURRENTCONTEXT
 #define NO_OSMESADESTROYCONTEXT
 #define NO_OSMESAMAKECURRENT
+#define NO_OSMESAGETPROCADDRESS
 #define NO_GLGETSTRING
 #define NO_GLGETSTRINGI
 #include "glfuncs.h"
@@ -195,6 +196,13 @@ static GLboolean __CDECL slb_OSMesaMakeCurrent(BASEPAGE *__bp unused, long __fn 
 		private->cur_context = ctx;
 	}
 	return ret;
+}
+
+
+static OSMESAproc __CDECL slb_OSMesaGetProcAddress(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+{
+	const char *funcname = *((const char *const *)first_param);
+	return internal_OSMesaGetProcAddress(private, funcname);
 }
 
 

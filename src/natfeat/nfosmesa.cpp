@@ -45,13 +45,12 @@
 #endif
 #if SIZEOF_VOID_P >= 8
 #  define PRI_IPTR PRIu64
-#  define PRI_PTR "p"
 #else
 #  define PRI_IPTR "u"
-#  define PRI_PTR "p"
 #endif
+#define PRI_PTR "0x%08x"
 
-#define DEBUG 0
+#define DEBUG 1
 #include "debug.h"
 #include "verify.h"
 
@@ -611,6 +610,7 @@ static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, GLuint 
 #define getStackedPointer(n, t) getStackedParameter(n)
 #define HostAddr(addr, t) (t)((addr) ? Atari2HostAddr(addr) : NULL)
 #define AtariAddr(addr, t) addr
+#define AtariOffset(addr) addr
 #define NFHost2AtariAddr(addr) (void *)(addr)
 #else
 #define getStackedParameter(n) SDL_SwapBE32(ctx_ptr[n])
@@ -622,6 +622,7 @@ static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, GLuint 
 #define AtariAddr(addr, t) (t)(addr)
 	/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
 #define NFHost2AtariAddr(addr) ((void *)((uintptr_t)(addr) - MEMBaseDiff))
+#define AtariOffset(addr) ((unsigned int)((uintptr_t)(addr) - MEMBaseDiff))
 #endif
 
 #include "nfosmesa/paramcount-gl.c"
@@ -670,7 +671,8 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 		 * FIXME: this will fail if ARAnyM already has a current context
 		 * that was created by a different MiNT process
 		 */
-		SelectContext(getParameter(0));
+		if (!SelectContext(getParameter(0)))
+			return ret;
 	}
 	
 	switch(fncode) {
@@ -757,11 +759,8 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 				getStackedPointer(4, void **) /* void **buffer */);
 			break;
 		case NFOSMESA_OSMESAGETPROCADDRESS:
-			{
-				GLubyte tmp[safe_strlen(getStackedPointer(0, const char *)) + 1], *funcName;
-				funcName = Atari2HostByteArray(sizeof(tmp), getStackedPointer(0, const GLubyte *), tmp);
-				ret = (int32) (0 != OSMesaGetProcAddress((const char *)funcName));
-			}
+			ret = OSMesaGetProcAddress(
+				getStackedPointer(0, const char *) /* const char *funcName */);
 			break;
 		case NFOSMESA_OSMESACOLORCLAMP:
 			if (!fn.OSMesaColorClamp || GL_ISNOP(fn.OSMesaColorClamp))
@@ -856,6 +855,25 @@ void *OSMesaDriver::load_gl_library(const char *pathlist)
 		{
 			handle = SDL_LoadObject(path[i]);
 		}
+#ifdef OS_darwin
+		/* If loading failed, try to load from executable directory */
+		if (handle==NULL) {
+			char exedir[MAXPATHLEN];
+			char curdir[MAXPATHLEN];
+			getcwd(curdir, MAXPATHLEN);
+			CFURLRef url = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
+			CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+			CFURLGetFileSystemRepresentation(url2, false, (UInt8 *)exedir, MAXPATHLEN);
+			CFRelease(url2);
+			CFRelease(url);
+			chdir(exedir);
+			for (int i = 0; handle == NULL && path[i] != NULL; i++)
+			{
+				handle = SDL_LoadObject(path[i]);
+			}
+			chdir(curdir);
+		}
+#endif
 		free(path);
 	}
 	return handle;
@@ -864,20 +882,8 @@ void *OSMesaDriver::load_gl_library(const char *pathlist)
 
 int OSMesaDriver::OpenLibrary(void)
 {
-#ifdef OS_darwin
-	char exedir[MAXPATHLEN];
-	char curdir[MAXPATHLEN];
-	getcwd(curdir, MAXPATHLEN);
-	CFURLRef url = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
-	CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
-	CFURLGetFileSystemRepresentation(url2, false, (UInt8 *)exedir, MAXPATHLEN);
-	CFRelease(url2);
-	CFRelease(url);
-#endif
 	bool libgl_needed = false;
 	
-	D(bug("nfosmesa: OpenLibrary()"));
-
 	/* Check if channel size is correct */
 	switch(bx_options.osmesa.channel_size) {
 		case 16:
@@ -894,14 +900,6 @@ int OSMesaDriver::OpenLibrary(void)
 	/* Load libOSMesa */
 	if (libosmesa_handle==NULL) {
 		libosmesa_handle=load_gl_library(bx_options.osmesa.libosmesa);
-#ifdef OS_darwin
-		/* If loading failed, try to load from executable directory */
-		if (libosmesa_handle==NULL) {
-			chdir(exedir);
-			libosmesa_handle=load_gl_library(bx_options.osmesa.libosmesa);
-			chdir(curdir);
-		}
-#endif
 		if (libosmesa_handle==NULL) {
 			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libosmesa));
 			panicbug("nfosmesa: %s: %s", bx_options.osmesa.libosmesa, SDL_GetError());
@@ -925,14 +923,6 @@ int OSMesaDriver::OpenLibrary(void)
 		 * otherwise we might end up loading 2 different OpenGL libraries
 		 */
 		libgl_handle=load_gl_library(bx_options.osmesa.libgl);
-#ifdef OS_darwin
-		/* If loading failed, try to load from executable directory */
-		if (libgl_handle==NULL) {
-			chdir(exedir);
-			libgl_handle=load_gl_library(bx_options.osmesa.libgl);
-			chdir(curdir);
-		}
-#endif
 		if (libgl_handle==NULL) {
 			D(bug("nfosmesa: Can not load '%s' library", bx_options.osmesa.libgl));
 			panicbug("nfosmesa: %s: %s", bx_options.osmesa.libgl, SDL_GetError());
@@ -1241,8 +1231,7 @@ Uint32 OSMesaDriver::OSMesaGetCurrentContext( void )
 void OSMesaDriver::OSMesaPixelStore(GLint pname, GLint value )
 {
 	D(bug("nfosmesa: OSMesaPixelStore(0x%x, %d)", pname, value));
-	if (SelectContext(cur_context))
-		fn.OSMesaPixelStore(pname, value);
+	fn.OSMesaPixelStore(pname, value);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -1254,8 +1243,7 @@ void OSMesaDriver::OSMesaGetIntegerv(GLint pname, GLint *value )
 	GLint tmp = 0;
 
 	D(bug("nfosmesa: OSMesaGetIntegerv(0x%x)", pname));
-	if (SelectContext(cur_context))
-		fn.OSMesaGetIntegerv(pname, &tmp);
+	fn.OSMesaGetIntegerv(pname, &tmp);
 	Host2AtariIntArray(1, &tmp, value);
 }
 
@@ -1301,19 +1289,53 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer(Uint32 c, GLint *width, GLint *heig
 	return GL_TRUE;
 }
 
-void *OSMesaDriver::OSMesaGetProcAddress( const char *funcName )
+unsigned int OSMesaDriver::OSMesaGetProcAddress( nfcmemptr funcname )
 {
-	D(bug("nfosmesa: OSMesaGetProcAddress(%s)", funcName));
-	OpenLibrary();
-	return (void *)fn.OSMesaGetProcAddress(funcName);
+	unsigned int ret = 0;
+	if (OpenLibrary() < 0 || !fn.OSMesaGetProcAddress || GL_ISNOP(fn.OSMesaGetProcAddress))
+		return 0;
+	char tmp[safe_strlen(funcname) + 1], *funcName;
+	funcName = Atari2HostByteArray(sizeof(tmp), funcname, tmp);
+	void *p = (void *)fn.OSMesaGetProcAddress(funcName);
+	/* WTF, the entry in the lookup table in OSMesa names it "OSMesaPixelsStore" */
+	if (p == 0 && funcName && strcmp(funcName, "OSMesaPixelStore") == 0)
+		p = (void *)fn.OSMesaGetProcAddress("OSMesaPixelsStore");
+	if (p)
+	{
+		/*
+		 * return the corresponding function number of the NF API,
+		 * allowing the atari side to look it up in a table and
+		 * return a usable function pointer.
+		 * Do a binary search here.
+		 */
+		int a, b, c;
+		int dir;
+		
+		a = 0;
+		b = (int)(sizeof(functionnames) / sizeof(functionnames[0]));
+		while (a < b)
+		{
+			c = (a + b) >> 1;				/* == ((a + b) / 2) */
+			dir = strcmp(funcName, functionnames[c].name);
+			if (dir == 0)
+			{
+				ret = functionnames[c].funcno;
+				break;
+			}
+			if (dir < 0)
+				b = c;
+			else
+				a = c + 1;
+		}
+	}
+	D(bug("nfosmesa: OSMesaGetProcAddress(\"%s\"): %p", funcName, p));
+	return ret;
 }
 
 void OSMesaDriver::OSMesaColorClamp(GLboolean enable)
 {
 	D(bug("nfosmesa: OSMesaColorClamp(%d)", enable));
 	OpenLibrary();
-	if (!SelectContext(cur_context))
-		return;
 	if (fn.OSMesaColorClamp)
 		fn.OSMesaColorClamp(enable);
 	else
@@ -1334,9 +1356,9 @@ void OSMesaDriver::OSMesaPostprocess(Uint32 ctx, const char *filter, GLuint enab
 
 Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 {
+	UNUSED(ctx);
 	D(bug("nfosmesa: LenglGetString(%u, 0x%x)", ctx, name));
-	OpenLibrary();
-	SelectContext(ctx);
+	if (!fn.glGetString) return 0;
 	const char *s = (const char *)fn.glGetString(name);
 	if (s == NULL) return 0;
 	return strlen(s);
@@ -1348,15 +1370,14 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, memptr buffer)
 void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 #endif
 {
-	D(bug("nfosmesa: PutglGetString(%u, 0x%x, %p)", ctx, name, buffer));
-	OpenLibrary();
-	SelectContext(ctx);
-	const char *s = (const char *)fn.glGetString(name);
+	UNUSED(ctx);
+	const char *s = (const char *)(fn.glGetString ? fn.glGetString(name) : 0);
+	D(bug("nfosmesa: PutglGetString(%u, 0x%x, " PRI_PTR "): %s", ctx, name, AtariOffset(buffer), s));
 	if (buffer)
 	{
 		if (!s) s = "";
 #if NFOSMESA_POINTER_AS_MEMARG
-		Host2AtariSafeStrncpy(buffer, s, strlen(s) + 1);
+		Host2AtariSafeStrncpy((char *)buffer, s, strlen(s) + 1);
 #else
 		strcpy((char *)buffer, s);
 #endif
@@ -1365,9 +1386,9 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 
 Uint32 OSMesaDriver::LenglGetStringi(Uint32 ctx, GLenum name, GLuint index)
 {
+	UNUSED(ctx);
 	D(bug("nfosmesa: LenglGetStringi(%u, 0x%x, %u)", ctx, name, index));
-	OpenLibrary();
-	SelectContext(ctx);
+	if (!fn.glGetStringi) return (Uint32)-1;
 	const char *s = (const char *)fn.glGetStringi(name, index);
 	if (s == NULL) return (Uint32)-1;
 	return strlen(s);
@@ -1379,15 +1400,14 @@ void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, memptr
 void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, GLubyte *buffer)
 #endif
 {
-	D(bug("nfosmesa: PutglGetStringi(%u, 0x%x, %d, %p)", ctx, name, index, buffer));
-	OpenLibrary();
-	SelectContext(ctx);
-	const char *s = (const char *)fn.glGetStringi(name, index);
+	UNUSED(ctx);
+	D(bug("nfosmesa: PutglGetStringi(%u, 0x%x, %d, " PRI_PTR ")", ctx, name, index, AtariOffset(buffer)));
+	const char *s = (const char *)(fn.glGetStringi ? fn.glGetStringi(name, index) : 0);
 	if (buffer)
 	{
 		if (!s) s = "";
 #if NFOSMESA_POINTER_AS_MEMARG
-		Host2AtariSafeStrncpy(buffer, s, strlen(s) + 1);
+		Host2AtariSafeStrncpy((char *)buffer, s, strlen(s) + 1);
 #else
 		strcpy((char *)buffer, s);
 #endif
@@ -7358,7 +7378,7 @@ data store.
 	GLint lengthbuf[MAX(count, 0)], *plength; \
 	ppstrings = Atari2HostPtrArray(count, strings, pstrings); \
 	plength = Atari2HostIntArray(count, length, lengthbuf); \
-	fn.glShaderSourceARB(shaderObj, count, (const GLcharARB **)pstrings, plength)
+	fn.glShaderSourceARB(shaderObj, count, (const GLcharARB **)ppstrings, plength)
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLUNIFORM1FVARB(location, count, value) \
@@ -10472,7 +10492,7 @@ data store.
 	GLdouble tmp[size]; \
 	GLubyte namebuf[safe_strlen(name) + 1], *pname;\
 	pname = Atari2HostByteArray(sizeof(namebuf), name, namebuf); \
-	fn.glGetProgramNamedParameterdvNV(id, len, namebuf, tmp); \
+	fn.glGetProgramNamedParameterdvNV(id, len, pname, tmp); \
 	Host2AtariDoubleArray(size, tmp, v)
 #else
 #define FN_GLGETPROGRAMNAMEDPARAMETERDVNV(id, len, name, v) \
@@ -10485,7 +10505,7 @@ data store.
 	GLfloat tmp[size]; \
 	GLubyte namebuf[safe_strlen(name) + 1], *pname;\
 	pname = Atari2HostByteArray(sizeof(namebuf), name, namebuf); \
-	fn.glGetProgramNamedParameterfvNV(id, len, namebuf, tmp); \
+	fn.glGetProgramNamedParameterfvNV(id, len, pname, tmp); \
 	Host2AtariFloatArray(size, tmp, v)
 #else
 #define FN_GLGETPROGRAMNAMEDPARAMETERFVNV(id, len, name, v) \
@@ -20062,7 +20082,7 @@ is read from the buffer rather than from client memory.
 	GLubyte binbuf[MAX(length, 0)], *pbin; \
 	ptmp = Atari2HostIntArray(count, shaders, tmp); \
 	pbin = Atari2HostByteArray(length, binary, binbuf); \
-	fn.glShaderBinary(count, ptmp, binaryformat, binbuf, length)
+	fn.glShaderBinary(count, ptmp, binaryformat, pbin, length)
 #else
 #define FN_GLSHADERBINARY(count, shaders, binaryformat, binary, length) \
 	fn.glShaderBinary(count, HostAddr(shaders, const GLuint *), binaryformat, HostAddr(binary, const void *), length)
@@ -21164,7 +21184,7 @@ is read from the buffer rather than from client memory.
 #define FN_GLBINDTEXTURES(first, count, textures) \
 	GLuint tmp[MAX(count, 0)], *ptmp; \
 	ptmp = Atari2HostIntArray(count, textures, tmp); \
-	fn.glBindTextures(first, count, tmp)
+	fn.glBindTextures(first, count, ptmp)
 #else
 #define FN_GLBINDTEXTURES(first, count, samples) \
 	fn.glBindTextures(first, count, HostAddr(textures, const GLuint *))

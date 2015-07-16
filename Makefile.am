@@ -168,14 +168,14 @@ $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL
 	$(AM_V_GEN)if test -z "$(PERL)"; then \
 		echo "$@ is out of date, but PERL not available" >&2; \
 	else \
-		$(PERL) $(DYNGL_PL) $(GLTYPES_H) -ldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
+		$(PERL) $(DYNGL_PL) $(GLTYPES_H) $(GLENUMS) -ldgheader $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
 	fi
 
 $(top_srcdir)/atari/nfosmesa/osmesa_load.c: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL)
 	$(AM_V_GEN)if test -z "$(PERL)"; then \
 		echo "$@ is out of date, but PERL not available" >&2; \
 	else \
-		$(PERL) $(DYNGL_PL) $(GLTYPES_H) -ldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
+		$(PERL) $(DYNGL_PL) $(GLTYPES_H) $(GLENUMS) -ldgsource $(top_srcdir)/tools/glfuncs.h > $$$$.tmp && mv $$$$.tmp $@ || { rm -f $$$$.tmp; false; } \
 	fi
 
 $(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h: $(top_srcdir)/tools/glfuncs.h $(DYNGL_PL) $(top_srcdir)/atari/nfosmesa/gltypes.h

@@ -253,7 +253,7 @@ void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl)
 
 #ifdef TEST
 
-#include <mint/arch/nf_ops.h>
+#include <stdio.h>
 
 int main(void)
 {
@@ -264,11 +264,11 @@ int main(void)
 		pub = ldg_load_tiny_gl("c:/gemsys/ldg/tin_gl.ldg", 0);
 	if (pub == NULL)
 	{
-		nf_debugprintf("tiny_gl.ldg not found\n");
+		fprintf(stderr, "tiny_gl.ldg not found\n");
 		return 1;
 	}
-	nf_debugprintf("%s: %lx\n", "glBegin", gl.Begin);
-	nf_debugprintf("%s: %lx\n", "glOrthof", gl.Orthof);
+	printf("%s: %lx\n", "glBegin", gl.Begin);
+	printf("%s: %lx\n", "glOrthof", gl.Orthof);
 	ldg_unload_tiny_gl(pub, NULL);
 	return 0;
 }

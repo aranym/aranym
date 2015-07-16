@@ -197,7 +197,10 @@ GLboolean APIENTRY internal_OSMesaGetColorBuffer(gl_private *private, OSMesaCont
 
 OSMESAproc APIENTRY internal_OSMesaGetProcAddress(gl_private *private, const char *funcName)
 {
-	return (OSMESAproc)(*HostCall_p)(NFOSMESA_OSMESAGETPROCADDRESS, private->cur_context, &funcName);
+	long func = (*HostCall_p)(NFOSMESA_OSMESAGETPROCADDRESS, private->cur_context, &funcName);
+	if (func == 0 || func > NFOSMESA_LAST)
+		return 0;
+	return (OSMESAproc)func;
 }
 
 void APIENTRY internal_OSMesaColorClamp(gl_private *private, GLboolean32 enable)

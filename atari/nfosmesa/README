@@ -85,7 +85,7 @@ BUGS
   not yet implemented.
 
 - Functions that take doubles as arguments might be difficult to call
-  from other languages than GNU-C. The library (and also the hosts
+  from languages other than GNU-C. The library (and also the hosts
   OSMesa library) will expect them to be in 64bit IEEE-754 format.
 
 - If you need OSMesaPostprocess() (a function introduced in Mesa 10.x),
@@ -143,8 +143,18 @@ BUGS
   from more than 1 process; the examples work around this by using a copy
   of ldg_open() that loads a copy of the shared library instead.
 
-- OSMesaGetProcAddress does not return a real address that can be called;
-  It can be used though to check wether the host function is available.
+- OSMesaGetProcAddress can now be used as expected (ie. you can use the
+  return value as a function pointer), provided that you use the generated
+  loader code, but there may be several reasons for the function to fail:
+  - You can only lookup functions that are known to the interface code.
+    Functions that are defined by a later standard will not be found,
+    even if they exist on the host, because the library does not know
+    how to call them.
+  - The functions must also be known to the shared library that was
+    actually loaded, in case the version differs.
+  - The function must also be known to ARAnyM. Again, this only matters
+    if the interface version differs.
+  - And finally, it must be found on the host.
 
 - The loader code is almost as large as the shared library.
 
