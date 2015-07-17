@@ -381,6 +381,129 @@ my %missing = (
 );
 
 
+#
+# hash of trivial lengths of pointer arguments
+#
+my %paramlens = (
+	# GL_NV_register_combiners
+	'glCombinerParameterfvNV' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glCombinerParameterivNV' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetCombinerInputParameterfvNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetCombinerInputParameterivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetCombinerOutputParameterfvNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetCombinerOutputParameterivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetFinalCombinerInputParameterfvNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetFinalCombinerInputParameterivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+
+	# GL_NV_register_combiners2
+	'glCombinerStageParameterfvNV' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetCombinerStageParameterfvNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+
+	# GL_ARB_transpose_matrix
+	'glLoadTransposeMatrixfARB' => [ { 'name' => 'm', 'inout' => 'in', 'len' => '16' } ],
+	'glLoadTransposeMatrixdARB' => [ { 'name' => 'm', 'inout' => 'in', 'len' => '16' } ],
+	'glMultTransposeMatrixdARB' => [ { 'name' => 'm', 'inout' => 'in', 'len' => '16' } ],
+	'glMultTransposeMatrixfARB' => [ { 'name' => 'm', 'inout' => 'in', 'len' => '16' } ],
+
+	# GL_ARB_shader_objects
+	'glGetInfoLogARB' => [
+		{ 'name' => 'length', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'infoLog', 'inout' => 'out', 'len' => 'maxLength', 'outlen' => '__length_tmp[0] + 1' },
+	],
+	'glUniform1fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform1ivARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform2fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform2ivARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform3fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform3ivARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform4fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glUniform4ivARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glUniformMatrix2fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glUniformMatrix3fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '9 * count' } ],
+	'glUniformMatrix4fvARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '16 * count' } ],
+	'glGetObjectParameterfvARB' => [ { 'name' => 'params', 'inout' => 'out', 'len' => '1' } ],
+	'glGetObjectParameterivARB' => [ { 'name' => 'params', 'inout' => 'out', 'len' => '1' } ],
+	'glGetUniformfvARB' => [ { 'name' => 'params', 'inout' => 'out', 'len' => '1' } ],
+	'glGetUniformivARB' => [ { 'name' => 'params', 'inout' => 'out', 'len' => '1' } ],
+	'glGetShaderSourceARB' => [
+		{ 'name' => 'length', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'source', 'inout' => 'out', 'len' => 'maxLength', 'outlen' => '__length_tmp[0] + 1' },
+	],
+	'glGetUniformLocationARB' => [ { 'name' => 'name', 'inout' => 'in', 'len' => 'safe_strlen(name)' } ],
+	'glGetActiveUniformARB' => [
+		{ 'name' => 'length', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'size', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'type', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'name', 'inout' => 'out', 'len' => 'maxLength', 'outlen' => '__length_tmp[0] + 1' },
+	],
+	'glGetAttachedObjectsARB' => [
+		{ 'name' => 'count', 'inout' => 'out', 'len' => '1' },
+		{ 'name' => 'obj', 'inout' => 'out', 'len' => 'maxCount', 'outlen' => '__count_tmp[0]' },
+	],
+
+	# GL_ARB_multitexture
+	'glMultiTexCoord1dvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '1' } ],
+	'glMultiTexCoord1fvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '1' } ],
+	'glMultiTexCoord1ivARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '1' } ],
+	'glMultiTexCoord1svARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '1' } ],
+	'glMultiTexCoord2dvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '2' } ],
+	'glMultiTexCoord2fvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '2' } ],
+	'glMultiTexCoord2ivARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '2' } ],
+	'glMultiTexCoord2svARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '2' } ],
+	'glMultiTexCoord3dvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '3' } ],
+	'glMultiTexCoord3fvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '3' } ],
+	'glMultiTexCoord3ivARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '3' } ],
+	'glMultiTexCoord3svARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '3' } ],
+	'glMultiTexCoord4dvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '4' } ],
+	'glMultiTexCoord4fvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '4' } ],
+	'glMultiTexCoord4svARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '4' } ],
+	'glMultiTexCoord4ivARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => '4' } ],
+
+	# GL_EXT_cull_vertex
+	'glCullParameterdvEXT' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glCullParameterfvEXT' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+
+	# GL_EXT_debug_marker
+	'glInsertEventMarkerEXT' => [ { 'name' => 'marker', 'inout' => 'in', 'len' => 'length > 0 ? length : safe_strlen(marker) + 1' } ],
+	'glPushGroupMarkerEXT' => [ { 'name' => 'marker', 'inout' => 'in', 'len' => 'length > 0 ? length : safe_strlen(marker) + 1' } ],
+
+	# GL_ARB_debug_output
+	'glDebugMessageControlARB' => [ { 'name' => 'ids', 'inout' => 'in', 'len' => 'count' } ],
+	'glDebugMessageInsertARB' => [ { 'name' => 'buf', 'inout' => 'in', 'len' => 'length >= 0 ? length : safe_strlen(buf) + 1' } ],
+	'glGetDebugMessageLogARB' => [
+		{ 'name' => 'sources', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'types', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'ids', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'severities', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'lengths', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'messageLog', 'inout' => 'out', 'len' => 'bufSize' },
+	],
+
+	# GL_AMD_debug_output
+	'glDebugMessageEnableAMD' => [ { 'name' => 'ids', 'inout' => 'in', 'len' => 'count' } ],
+	'glDebugMessageInsertAMD' => [ { 'name' => 'buf', 'inout' => 'in', 'len' => 'length >= 0 ? length : safe_strlen(buf) + 1' } ],
+	'glGetDebugMessageLogAMD' => [
+		{ 'name' => 'categories', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'ids', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'severities', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'lengths', 'inout' => 'out', 'len' => 'count', 'outlen' => '__ret' },
+		{ 'name' => 'message', 'inout' => 'out', 'len' => 'bufsize' },
+	],
+
+	# GL_APPLE_fence
+	'glGenFencesAPPLE' => [ { 'name' => 'fences', 'inout' => 'out', 'len' => 'n' } ],
+	'glDeleteFencesAPPLE' => [ { 'name' => 'fences', 'inout' => 'in', 'len' => 'n' } ],
+
+	# GL_NV_fence
+	'glDeleteFencesNV' => [ { 'name' => 'fences', 'inout' => 'in', 'len' => 'n' } ],
+	'glGenFencesNV' => [ { 'name' => 'fences', 'inout' => 'out', 'len' => 'n' } ],
+	'glGetFenceivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+
+	# GL_SGIS_detail_texture
+	'glDetailTexFuncSGIS' => [ { 'name' => 'points', 'inout' => 'in', 'len' => 'n * 2' } ],
+);
+
+
 sub add_missing($)
 {
 	my ($missing) = @_;
@@ -393,6 +516,113 @@ sub add_missing($)
 		$function_name = $gl . $ent->{name};
 		if (!defined($functions{$function_name})) {
 			$functions{$function_name} = $ent;
+		}
+	}
+}
+
+
+
+my %copy_funcs = (
+	'GLbyte' =>      { 'ifdef' => 'NFOSMESA_NEED_BYTE_CONV',   'copyin' => 'Atari2HostByteArray',   'copyout' => 'Host2AtariByteArray',   },
+	'GLubyte' =>     { 'ifdef' => 'NFOSMESA_NEED_BYTE_CONV',   'copyin' => 'Atari2HostByteArray',   'copyout' => 'Host2AtariByteArray',   },
+	'GLchar' =>      { 'ifdef' => 'NFOSMESA_NEED_BYTE_CONV',   'copyin' => 'Atari2HostByteArray',   'copyout' => 'Host2AtariByteArray',   },
+	'GLcharARB' =>   { 'ifdef' => 'NFOSMESA_NEED_BYTE_CONV',   'copyin' => 'Atari2HostByteArray',   'copyout' => 'Host2AtariByteArray',   },
+	'GLshort' =>     { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostShortArray',  'copyout' => 'Host2AtariIntArray',    },
+	'GLushort' =>    { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostShortArray',  'copyout' => 'Host2AtariIntArray',    },
+	'GLint' =>       { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostIntArray',    'copyout' => 'Host2AtariIntArray',    },
+	'GLsizei' =>     { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostIntArray',    'copyout' => 'Host2AtariIntArray',    },
+	'GLuint' =>      { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostIntArray',    'copyout' => 'Host2AtariIntArray',    },
+	'GLenum' =>      { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostIntArray',    'copyout' => 'Host2AtariIntArray',    },
+	'GLintptr' =>    { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostIntptrArray', 'copyout' => 'Host2AtariIntptrArray', },
+	'GLint64' =>     { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostInt64Array',  'copyout' => 'Host2AtariInt64Array',  },
+	'GLint64EXT' =>  { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostInt64Array',  'copyout' => 'Host2AtariInt64Array',  },
+	'GLuint64' =>    { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostInt64Array',  'copyout' => 'Host2AtariInt64Array',  },
+	'GLuint64EXT' => { 'ifdef' => 'NFOSMESA_NEED_INT_CONV',    'copyin' => 'Atari2HostInt64Array',  'copyout' => 'Host2AtariInt64Array',  },
+	'GLfloat' =>     { 'ifdef' => 'NFOSMESA_NEED_FLOAT_CONV',  'copyin' => 'Atari2HostFloatArray',  'copyout' => 'Host2AtariFloatArray',  },
+	'GLdouble' =>    { 'ifdef' => 'NFOSMESA_NEED_DOUBLE_CONV', 'copyin' => 'Atari2HostDoubleArray', 'copyout' => 'Host2AtariDoubleArray', },
+	'GLhandleARB' => { 'ifdef' => 'NFOSMESA_NEED_INT_CONV || defined(__APPLE__)', 'copyin' => 'Atari2HostHandleARB', 'copyout' => 'Host2AtariHandleARB', },
+);
+
+sub add_paramlens($)
+{
+	my ($lens) = @_;
+	my $function_name;
+	
+	foreach my $key (keys %{$lens}) {
+		my $len = $lens->{$key};
+		$function_name = $key;
+		my $ent = $functions{$function_name};
+		if (!defined($ent)) {
+			die "$me: unknown function $function_name";
+		}
+		my $params = $ent->{params};
+		my $argcount = $#$params + 1;
+		my $lenargcount = $#$len + 1;
+		my $argc;
+		my $param;
+		my %ifdefs = ();
+		for (my $lenargc = 0; $lenargc < $lenargcount; $lenargc++)
+		{
+			my $lenparam = $len->[$lenargc];
+			for ($argc = 0; $argc < $argcount; $argc++)
+			{
+				$param = $params->[$argc];
+				last if ($param->{name} eq $lenparam->{name});
+			}
+			die "$me: unknown parameter $lenparam->{name} in $function_name" unless ($argc < $argcount);
+			die "$me: parameter $lenparam->{name} in $function_name is not pointer" unless ($param->{pointer});
+			$param->{len} = $lenparam->{len};
+			my $type = $param->{type};
+			if (!defined($lenparam->{inout}))
+			{
+				if ($type =~ m/const/)
+				{
+					$lenparam->{inout} = 'in';
+				} else
+				{
+					$lenparam->{inout} = 'out';
+				}
+			} else
+			{
+				if ($type =~ m/const/)
+				{
+					if ($lenparam->{inout} ne 'in')
+					{
+						&warn("$me: $function_name($param->{name}): output type '$type' declared 'const'");
+					}
+				} else {
+					if ($lenparam->{inout} eq 'in')
+					{
+						# &warn("$me: $function_name($param->{name}): input type '$type' not declared 'const'");
+					}
+				}
+			}
+			my $basetype = $param->{type};
+			$basetype =~ s/const//;
+			$basetype =~ s/^ *//;
+			$basetype =~ s/ *$//;
+			die "$me: $function_name($param->{name}): don't know how to convert type '$basetype'" unless (defined($copy_funcs{$basetype}));
+			$param->{inout} = $lenparam->{inout};
+			$param->{outlen} = $lenparam->{outlen} if defined($lenparam->{outlen});
+			$param->{basetype} = $basetype;
+			$ifdefs{$copy_funcs{$basetype}->{ifdef}} = 1;
+		}
+		my $allfound = 1;
+		for ($argc = 0; $argc < $argcount; $argc++)
+		{
+			$param = $params->[$argc];
+			if ($param->{pointer} && !defined($param->{len}))
+			{
+				$allfound = 0;
+			}
+		}
+		if ($allfound)
+		{
+			$ent->{autogen} = 1;
+			$ent->{ifdefs} = join(' || ', keys %ifdefs);
+		} else
+		{
+			&warn("$me: $function_name cannot be generated automatically");
 		}
 	}
 }
@@ -434,6 +664,7 @@ sub gen_params()
 		my $params = $ent->{params};
 		my $argcount = $#$params + 1;
 		my $args = "";
+		my $noconv_args = "";
 		my $debug_args = "";
 		my $prototype = "";
 		my $prototype_mem = "";
@@ -448,8 +679,8 @@ sub gen_params()
 			my $type = $param->{type};
 			my $name = $param->{name};
 			$args .= ", " if ($argc != 0);
+			$noconv_args .= ", " if ($argc != 0);
 			$debug_args .= ", " if ($argc != 0);
-			$args .= $name;
 			if ($pointer) {
 				if (1 || !defined($byte_types{$type})) {
 					$any_pointer = 2;
@@ -464,8 +695,22 @@ sub gen_params()
 				$debug_args .= 'AtariOffset(' . $name . ')';
 				$format = '" PRI_PTR "';
 				$type_mem = "memptr";
+				if (defined($param->{len}))
+				{
+					if ($param->{'inout'} eq 'in' || $param->{'inout'} eq 'inout')
+					{
+						$args .= '__' . $name. '_ptmp';
+					} else
+					{
+						$args .= '__' . $name. '_tmp';
+					}
+				} else
+				{
+					$args .= $name;
+				}
+				$noconv_args .= "HostAddr($name, $type ${pointer})";
 			} else {
-				if ($type eq 'GLsync')
+				if ($type eq 'GLsync' || $type eq 'GLhandleARB')
 				{
 					$debug_args .= '(unsigned int)(uintptr_t)' . $name;
 				} else
@@ -480,6 +725,8 @@ sub gen_params()
 					$format = "%d";
 				}
 				$type_mem = "$type";
+				$args .= $name;
+				$noconv_args .= $name;
 			}
 			$prototype .= ", " if ($argc != 0);
 			$prototype .= "${type} ${pointer}${name}";
@@ -492,6 +739,7 @@ sub gen_params()
 		$prototype_mem = "void" unless ($prototype_mem ne "");
 		$ent->{args} = $args;
 		$ent->{debug_args} = $debug_args;
+		$ent->{noconv_args} = $noconv_args;
 		$ent->{proto} = $prototype;
 		$ent->{proto_mem} = $prototype_mem;
 		$ent->{any_pointer} = $any_pointer;
@@ -717,86 +965,86 @@ my %macros = (
 	'glCopyColorSubTableEXT' => 0,
 
 	# GL_NV_register_combiners
-	'glCombinerParameterfvNV' => 1,
+	'glCombinerParameterfvNV' => 2,
 	'glCombinerParameterfNV' => 0,
-	'glCombinerParameterivNV' => 1,
+	'glCombinerParameterivNV' => 2,
 	'glCombinerParameteriNV' => 0,
 	'glCombinerInputNV' => 0,
 	'glCombinerOutputNV' => 0,
 	'glFinalCombinerInputNV' => 0,
-	'glGetCombinerInputParameterfvNV' => 1,
-	'glGetCombinerInputParameterivNV' => 1,
-	'glGetCombinerOutputParameterfvNV' => 1,
-	'glGetCombinerOutputParameterivNV' => 1,
-	'glGetFinalCombinerInputParameterfvNV' => 1,
-	'glGetFinalCombinerInputParameterivNV' => 1,
+	'glGetCombinerInputParameterfvNV' => 2,
+	'glGetCombinerInputParameterivNV' => 2,
+	'glGetCombinerOutputParameterfvNV' => 2,
+	'glGetCombinerOutputParameterivNV' => 2,
+	'glGetFinalCombinerInputParameterfvNV' => 2,
+	'glGetFinalCombinerInputParameterivNV' => 2,
 
 	# GL_NV_register_combiners2
-	'glCombinerStageParameterfvNV' => 1,
-	'glGetCombinerStageParameterfvNV' => 1,
+	'glCombinerStageParameterfvNV' => 2,
+	'glGetCombinerStageParameterfvNV' => 2,
 
 	# GL_ARB_multitexture
 	'glActiveTextureARB' => 0,
 	'glClientActiveTextureARB' => 0,
 	'glMultiTexCoord1dARB' => 0,
-	'glMultiTexCoord1dvARB' => 1,
+	'glMultiTexCoord1dvARB' => 2,
 	'glMultiTexCoord1fARB' => 0,
-	'glMultiTexCoord1fvARB' => 1,
+	'glMultiTexCoord1fvARB' => 2,
 	'glMultiTexCoord1iARB' => 0,
-	'glMultiTexCoord1ivARB' => 1,
+	'glMultiTexCoord1ivARB' => 2,
 	'glMultiTexCoord1sARB' => 0,
-	'glMultiTexCoord1svARB' => 1,
+	'glMultiTexCoord1svARB' => 2,
 	'glMultiTexCoord2dARB' => 0,
-	'glMultiTexCoord2dvARB' => 1,
+	'glMultiTexCoord2dvARB' => 2,
 	'glMultiTexCoord2fARB' => 0,
-	'glMultiTexCoord2fvARB' => 1,
+	'glMultiTexCoord2fvARB' => 2,
 	'glMultiTexCoord2iARB' => 0,
-	'glMultiTexCoord2ivARB' => 1,
+	'glMultiTexCoord2ivARB' => 2,
 	'glMultiTexCoord2sARB' => 0,
-	'glMultiTexCoord2svARB' => 1,
+	'glMultiTexCoord2svARB' => 2,
 	'glMultiTexCoord3dARB' => 0,
-	'glMultiTexCoord3dvARB' => 1,
+	'glMultiTexCoord3dvARB' => 2,
 	'glMultiTexCoord3fARB' => 0,
-	'glMultiTexCoord3fvARB' => 1,
+	'glMultiTexCoord3fvARB' => 2,
 	'glMultiTexCoord3iARB' => 0,
-	'glMultiTexCoord3ivARB' => 1,
+	'glMultiTexCoord3ivARB' => 2,
 	'glMultiTexCoord3sARB' => 0,
-	'glMultiTexCoord3svARB' => 1,
+	'glMultiTexCoord3svARB' => 2,
 	'glMultiTexCoord4dARB' => 0,
-	'glMultiTexCoord4dvARB' => 1,
+	'glMultiTexCoord4dvARB' => 2,
 	'glMultiTexCoord4fARB' => 0,
-	'glMultiTexCoord4fvARB' => 1,
+	'glMultiTexCoord4fvARB' => 2,
 	'glMultiTexCoord4iARB' => 0,
-	'glMultiTexCoord4ivARB' => 1,
+	'glMultiTexCoord4ivARB' => 2,
 	'glMultiTexCoord4sARB' => 0,
-	'glMultiTexCoord4svARB' => 1,
+	'glMultiTexCoord4svARB' => 2,
 	
 	# GL_ARB_transpose_matrix
-	'glLoadTransposeMatrixdARB' => 1,
-	'glLoadTransposeMatrixfARB' => 1,
-	'glMultTransposeMatrixdARB' => 1,
-	'glMultTransposeMatrixfARB' => 1,
+	'glLoadTransposeMatrixdARB' => 2,
+	'glLoadTransposeMatrixfARB' => 2,
+	'glMultTransposeMatrixdARB' => 2,
+	'glMultTransposeMatrixfARB' => 2,
 
 	# GL_EXT_cull_vertex
-	'glCullParameterdvEXT' => 1,
-	'glCullParameterfvEXT' => 1,
+	'glCullParameterdvEXT' => 2,
+	'glCullParameterfvEXT' => 2,
 
 	# GL_EXT_debug_marker
-	'glInsertEventMarkerEXT' => 1,
-	'glPushGroupMarkerEXT' => 1,
+	'glInsertEventMarkerEXT' => 2,
+	'glPushGroupMarkerEXT' => 2,
 	'glPopGroupMarkerEXT' => 0,
 	
 	# GL_ARB_debug_output
-	'glDebugMessageControlARB' => 1,
-	'glDebugMessageInsertARB' => 1,
+	'glDebugMessageControlARB' => 2,
+	'glDebugMessageInsertARB' => 2,
 	'glDebugMessageCallbackARB' => 1,
-	'glGetDebugMessageLogARB' => 1,
+	'glGetDebugMessageLogARB' => 2,
 
 	# GL_AMD_debug_output
-	'glDebugMessageEnableAMD' => 1,
-	'glDebugMessageInsertAMD' => 1,
+	'glDebugMessageEnableAMD' => 2,
+	'glDebugMessageInsertAMD' => 2,
 	'glDebugMessageCallbackAMD' => 1,
-	'glGetDebugMessageLogAMD' => 1,
+	'glGetDebugMessageLogAMD' => 2,
 
 	# GL_SGIX_polynomial_ffd
 	'glDeformationMap3dSGIX' => 1,
@@ -805,8 +1053,8 @@ my %macros = (
 	'glLoadIdentityDeformationMapSGIX' => 0,
 
 	# GL_APPLE_fence
-	'glGenFencesAPPLE' => 1,
-	'glDeleteFencesAPPLE' => 1,
+	'glGenFencesAPPLE' => 2,
+	'glDeleteFencesAPPLE' => 2,
 	'glSetFenceAPPLE' => 0,
 	'glIsFenceAPPLE' => 0,
 	'glTestFenceAPPLE' => 0,
@@ -815,11 +1063,11 @@ my %macros = (
 	'glFinishObjectAPPLE' => 0,
 
 	# GL_NV_fence
-	'glDeleteFencesNV' => 1,
-	'glGenFencesNV' => 1,
+	'glDeleteFencesNV' => 2,
+	'glGenFencesNV' => 2,
 	'glIsFenceNV' => 0,
 	'glTestFenceNV' => 0,
-	'glGetFenceivNV' => 1,
+	'glGetFenceivNV' => 2,
 	'glFinishFenceNV' => 0,
 	'glSetFenceNV' => 0,
 	
@@ -854,7 +1102,7 @@ my %macros = (
 	'glIsVertexArrayAPPLE' => 0,
 	
 	# GL_SGIS_detail_texture
-	'glDetailTexFuncSGIS' => 1,
+	'glDetailTexFuncSGIS' => 0,
 	'glGetDetailTexFuncSGIS' => 1,
 	
 	# GL_ARB_draw_buffers
@@ -1355,26 +1603,26 @@ my %macros = (
 	'glUniform2iARB' => 0,
 	'glUniform3iARB' => 0,
 	'glUniform4iARB' => 0,
-	'glUniform1fvARB' => 1,
-	'glUniform2fvARB' => 1,
-	'glUniform3fvARB' => 1,
-	'glUniform4fvARB' => 1,
-	'glUniform1ivARB' => 1,
-	'glUniform2ivARB' => 1,
-	'glUniform3ivARB' => 1,
-	'glUniform4ivARB' => 1,
-	'glUniformMatrix2fvARB' => 1,
-	'glUniformMatrix3fvARB' => 1,
-	'glUniformMatrix4fvARB' => 1,
-	'glGetObjectParameterfvARB' => 1,
-	'glGetObjectParameterivARB' => 1,
-	'glGetInfoLogARB' => 1,
-	'glGetAttachedObjectsARB' => 1,
-	'glGetUniformLocationARB' => 1,
-	'glGetActiveUniformARB' => 1,
-	'glGetUniformfvARB' => 1,
-	'glGetUniformivARB' => 1,
-	'glGetShaderSourceARB' => 1,
+	'glUniform1fvARB' => 2,
+	'glUniform2fvARB' => 2,
+	'glUniform3fvARB' => 2,
+	'glUniform4fvARB' => 2,
+	'glUniform1ivARB' => 2,
+	'glUniform2ivARB' => 2,
+	'glUniform3ivARB' => 2,
+	'glUniform4ivARB' => 2,
+	'glUniformMatrix2fvARB' => 2,
+	'glUniformMatrix3fvARB' => 2,
+	'glUniformMatrix4fvARB' => 2,
+	'glGetObjectParameterfvARB' => 2,
+	'glGetObjectParameterivARB' => 2,
+	'glGetInfoLogARB' => 2,
+	'glGetAttachedObjectsARB' => 2,
+	'glGetUniformLocationARB' => 2,
+	'glGetActiveUniformARB' => 2,
+	'glGetUniformfvARB' => 2,
+	'glGetUniformivARB' => 2,
+	'glGetShaderSourceARB' => 2,
 	
 	# GL_APPLE_object_purgeable
 	'glObjectPurgeableAPPLE' => 0,
@@ -3766,6 +4014,7 @@ sub gen_calls() {
 	my $gl_count = 0;
 	my $glu_count = 0;
 	my $ret;
+	my $retvar;
 	my $prototype;
 	my $prototype_mem;
 	my $return_type;
@@ -3774,10 +4023,13 @@ sub gen_calls() {
 	my $gl;
 	my $args;
 	my $debug_args;
+	my $noconv_args;
 	my $printf_format;
 	my $conversions_needed = 0;
 	my $num_longlongs = 0;
+	my $num_autogen = 0;
 	
+	add_paramlens(\%paramlens);
 	gen_params();
 	foreach my $key (sort { sort_by_name } keys %functions) {
 		my $ent = $functions{$key};
@@ -3788,15 +4040,18 @@ sub gen_calls() {
 		$prototype = $ent->{proto};
 		$prototype_mem = $ent->{proto_mem};
 		$args = $ent->{args};
+		$noconv_args = $ent->{noconv_args};
 		$debug_args = $ent->{debug_args};
 		$printf_format = $ent->{printf_format};
 		$uppername = uc($function_name);
 	
 		if ($return_type eq "void")
 		{
+			$retvar = "";
 			$ret = "";
 		} else {
-			$ret = "return ";
+			$retvar = "$return_type __ret = ";
+			$ret = "return __ret";
 		}
 		print("#if 0\n") if ($gl ne 'gl' || defined($blacklist{$function_name}));
 		if (defined($longlong_types{$return_type}) && !defined($blacklist{$function_name}) && !defined($macros{$function_name}))
@@ -3819,16 +4074,75 @@ sub gen_calls() {
 		print "\tD(bug(\"nfosmesa: $function_name($printf_format)\"";
 		print ", " unless ($args eq "");
 		print "$debug_args));\n";
-		if (defined($macros{$function_name}) && $macros{$function_name} > 0) {
+		if (defined($macros{$function_name}) && $macros{$function_name} == 1) {
 			print "FN_${uppername}(${args});\n";
 		} else {
-			if ($ent->{any_pointer} == 2 && !defined($blacklist{$function_name}))
+			if ($ent->{any_pointer} == 2 && !defined($blacklist{$function_name}) && !defined($ent->{autogen}))
 			{
-#				&warn("$function_name may need conversion");
+				&warn("$function_name missing conversion");
 				print "\t/* TODO: NFOSMESA_${uppername} may need conversion */\n";
 				++$conversions_needed;
 			}
-			print "\t${ret}fn.${function_name}(${args});\n";
+			if (defined($ent->{autogen}))
+			{
+				my $params = $ent->{params};
+				my $argcount = $#$params + 1;
+				my $argc;
+				my $param;
+				printf "#if $ent->{ifdefs}\n";
+				for ($argc = 0; $argc < $argcount; $argc++)
+				{
+					$param = $params->[$argc];
+					my $name = $param->{name};
+					if ($param->{pointer} && defined($param->{len}))
+					{
+						my $init = '';
+						my $len = $param->{len};
+						if ($len eq '1') {
+							if ($param->{inout} eq 'out' || $param->{inout} eq 'inout')
+							{
+								$init = ' = { 0 }';
+							}
+						} elsif ($len =~ /\(/) {
+							;
+						} else {
+							$len = "MAX($len, 0)";
+						}
+						print "\tGLint const __${name}_size = $len;\n";
+						print "\t" . $param->{basetype} . ' __' . ${name} . '_tmp[__' . ${name} . '_size]' . "$init;\n";
+						if ($param->{inout} eq 'in' || $param->{inout} eq 'inout')
+						{
+							print "\t$param->{basetype} *__${name}_ptmp = $copy_funcs{$param->{basetype}}->{copyin}(__${name}_size, $name, __${name}_tmp);\n";
+						}
+					}
+				}
+				print "\t${retvar}fn.${function_name}(${args});\n";
+				for ($argc = 0; $argc < $argcount; $argc++)
+				{
+					$param = $params->[$argc];
+					my $name = $param->{name};
+					if ($param->{pointer} && defined($param->{len}))
+					{
+						if ($param->{inout} eq 'out' || $param->{inout} eq 'inout')
+						{
+							my $len;
+							if (defined($param->{outlen})) {
+								$len = "MIN($param->{outlen}, $param->{len})";
+							} else {
+								$len = "__${name}_size";
+							}
+							print "\t$copy_funcs{$param->{basetype}}->{copyout}($len, __${name}_tmp, $name);\n";
+						}
+					}
+				}
+				printf "#else\n";
+				print "\t${retvar}fn.${function_name}(${noconv_args});\n";
+				printf "#endif\n";
+				++$num_autogen;
+			} else {
+				print "\t${retvar}fn.${function_name}(${args});\n";
+			}
+			print "\t$ret;\n" unless($ret eq '');
 		}
 		print "}\n";
 		print("#endif\n") if ($gl ne 'gl' || defined($blacklist{$function_name}));
@@ -3844,6 +4158,7 @@ sub gen_calls() {
 	print << "EOF";
 
 /* Functions generated: $gl_count GL + $glu_count GLU */
+/* Automatically generated: $num_autogen */
 EOF
 }
 

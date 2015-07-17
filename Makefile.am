@@ -34,6 +34,8 @@ version_date.h: $(top_srcdir)/ChangeLog
 	echo '/* generated from ChangeLog */' > $@
 	sed -n '/^20[0-9][0-9]\/[0-9]*\/[0-9]/p' < $(top_srcdir)/ChangeLog | sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' >> $@
 
+built_sources: $(BUILT_SOURCES)
+
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir) $(DESTDIR)$(datadir)/atari $(DESTDIR)$(datadir)/atari/hostfs $(DESTDIR)$(datadir)/atari/nfcdrom $(DESTDIR)$(datadir)/atari/nfjpeg $(DESTDIR)$(datadir)/atari/nfosmesa $(DESTDIR)$(datadir)/atari/network $(DESTDIR)$(datadir)/atari/tools $(DESTDIR)$(datadir)/atari/sound $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(top_srcdir)/ChangeLog $(DESTDIR)$(docdir)/changelog

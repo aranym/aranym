@@ -1,3 +1,10 @@
+2015/07/17 - Thorsten
+nfosmesa: make it possible to semi-automatically generate most of
+the conversion code (needs descriptions of the parameters in the
+generator script)
+Deactivate DEBUG code accidentally left activated in last commit
+
+
 2015/07/15 - Thorsten
 nfosmesa: support OSMesaGetProcAddress(); return a function pointer that can
 actually be called on the client side
