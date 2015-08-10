@@ -549,10 +549,18 @@
 		CB2C9D431B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
 		CB2C9D441B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
 		CB2C9D451B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
+		CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
+		CBBC87031B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
+		CBBC87041B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
+		CBBC87051B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
 		CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
+		CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
 		CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
 		CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
 		CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
@@ -808,8 +816,6 @@
 		1732BC8F1245415900272489 /* audio_conv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_conv.h; sourceTree = "<group>"; };
 		1732BC941245415900272489 /* dirty_rects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dirty_rects.h; sourceTree = "<group>"; usesTabs = 1; };
 		1732BC951245415900272489 /* dyngl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyngl.h; sourceTree = "<group>"; };
-		1732BC961245415900272489 /* dyngl_gl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyngl_gl.h; sourceTree = "<group>"; };
-		1732BC971245415900272489 /* dyngl_glext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dyngl_glext.h; sourceTree = "<group>"; };
 		1732BC981245415900272489 /* host_surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host_surface.h; sourceTree = "<group>"; };
 		1732BC991245415900272489 /* host_surface_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host_surface_opengl.h; sourceTree = "<group>"; };
 		1732BC9A1245415900272489 /* hostscreen_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hostscreen_opengl.h; sourceTree = "<group>"; };
@@ -974,26 +980,8 @@
 		17798D840A652B51009733EB /* nfclipbrd_nfapi.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = nfclipbrd_nfapi.h; sourceTree = "<group>"; };
 		17798D850A652B51009733EB /* nfjpeg.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = nfjpeg.cpp; sourceTree = "<group>"; };
 		17798D860A652B51009733EB /* nfjpeg.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = nfjpeg.h; sourceTree = "<group>"; };
-		17798D880A652B51009733EB /* call-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "call-gen.pl"; sourceTree = "<group>"; };
 		17798D890A652B51009733EB /* call-gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "call-gl.c"; sourceTree = "<group>"; };
-		17798D8A0A652B51009733EB /* call-glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "call-glext.c"; sourceTree = "<group>"; };
-		17798D8B0A652B51009733EB /* dispatch-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "dispatch-gen.pl"; sourceTree = "<group>"; };
 		17798D8C0A652B51009733EB /* dispatch-gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "dispatch-gl.c"; sourceTree = "<group>"; };
-		17798D8D0A652B51009733EB /* dispatch-glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "dispatch-glext.c"; sourceTree = "<group>"; };
-		17798D8E0A652B51009733EB /* dispatch-osmesa.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "dispatch-osmesa.c"; sourceTree = "<group>"; };
-		17798D8F0A652B51009733EB /* load-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "load-gen.pl"; sourceTree = "<group>"; };
-		17798D900A652B51009733EB /* load-gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "load-gl.c"; sourceTree = "<group>"; };
-		17798D910A652B51009733EB /* load-glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "load-glext.c"; sourceTree = "<group>"; };
-		17798D920A652B51009733EB /* pointers-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "pointers-gen.pl"; sourceTree = "<group>"; };
-		17798D930A652B51009733EB /* pointers-gl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "pointers-gl.h"; sourceTree = "<group>"; };
-		17798D940A652B51009733EB /* pointers-glext.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "pointers-glext.h"; sourceTree = "<group>"; };
-		17798D950A652B51009733EB /* pointers-osmesa.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "pointers-osmesa.h"; sourceTree = "<group>"; };
-		17798D960A652B51009733EB /* proto-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "proto-gen.pl"; sourceTree = "<group>"; };
-		17798D970A652B51009733EB /* proto-gl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "proto-gl.h"; sourceTree = "<group>"; };
-		17798D980A652B51009733EB /* proto-glext.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = "proto-glext.h"; sourceTree = "<group>"; };
-		17798D990A652B51009733EB /* unload-gen.pl */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.script.perl; path = "unload-gen.pl"; sourceTree = "<group>"; };
-		17798D9A0A652B51009733EB /* unload-gl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "unload-gl.c"; sourceTree = "<group>"; };
-		17798D9B0A652B51009733EB /* unload-glext.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; path = "unload-glext.c"; sourceTree = "<group>"; };
 		17798D9C0A652B51009733EB /* nfosmesa.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa.cpp; sourceTree = "<group>"; };
 		17798D9D0A652B51009733EB /* nfosmesa.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = nfosmesa.h; sourceTree = "<group>"; };
 		17798D9E0A652B51009733EB /* nfpci.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; path = nfpci.cpp; sourceTree = "<group>"; };
@@ -1165,7 +1153,6 @@
 		B4844A6D0C7BA262003FE2D2 /* busybee.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = busybee.icns; path = darwin/busybee.icns; sourceTree = "<group>"; };
 		B4844A6F0C7BA262003FE2D2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = darwin/Info.plist; sourceTree = "<group>"; };
 		B4844A710C7BA262003FE2D2 /* PkgInfo */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = PkgInfo; path = darwin/PkgInfo; sourceTree = "<group>"; };
-		B4844A720C7BA262003FE2D2 /* sdl.m4 */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = sdl.m4; path = darwin/sdl.m4; sourceTree = "<group>"; };
 		B4844A730C7BA262003FE2D2 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = darwin/SDLMain.h; sourceTree = "<group>"; };
 		B4844A740C7BA262003FE2D2 /* SDLMain.M */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLMain.M; path = darwin/SDLMain.M; sourceTree = "<group>"; };
 		B491646E0C5406D900CFB5B0 /* dlgNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dlgNetwork.cpp; sourceTree = "<group>"; };
@@ -1179,8 +1166,16 @@
 		B4F337B90C480C4A00B3A0A9 /* sigsegv_darwin_x86.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = sigsegv_darwin_x86.cpp; path = darwin/sigsegv_darwin_x86.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		CB2C9D411B14E27200EC7BFA /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../../Makefile.am; sourceTree = SOURCE_ROOT; };
 		CB4679571AFA788C0090A72D /* externalScript.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = externalScript.sh; path = scripts/externalScript.sh; sourceTree = "<group>"; };
+		CBBC87001B5F97C000C0DABF /* glenums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glenums.h; sourceTree = "<group>"; };
+		CBBC87011B5F97DE00C0DABF /* glenums.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = glenums.c; path = ../../glenums.c; sourceTree = SOURCE_ROOT; };
 		CBCE37AD1B05B70200A19E4D /* maptab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maptab.h; sourceTree = "<group>"; };
 		CBCE37AE1B05B76100A19E4D /* maptab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maptab.cpp; sourceTree = "<group>"; };
+		CBD0F45C1B5CF72F0081A555 /* disasm-glue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "disasm-glue.h"; sourceTree = "<group>"; };
+		CBD0F45D1B5CF7450081A555 /* SDL_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_compat.h; sourceTree = "<group>"; };
+		CBD0F45E1B5CF7530081A555 /* SDL_opengl_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl_wrapper.h; sourceTree = "<group>"; };
+		CBD0F4931B5CFDC10081A555 /* verify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = verify.h; sourceTree = "<group>"; };
+		CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osmesa_context.cpp; sourceTree = "<group>"; };
+		CBD0F4991B5CFDE50081A555 /* osmesa_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osmesa_context.h; sourceTree = "<group>"; };
 		CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgHostfs.cpp; sourceTree = "<group>"; };
 		CBEA27BF1AF65A6900B12FC5 /* cpufunctbl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl.cpp; path = ../cpufunctbl.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBEA27C41AF65B2200B12FC5 /* cpufunctbl_i386.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpufunctbl_i386.cpp; path = ../cpufunctbl_i386.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1337,6 +1332,7 @@
 				170C2B850BB872920026484E /* dyngl.c */,
 				17798CEA0A652B50009733EB /* emul_op.cpp */,
 				17798CEB0A652B50009733EB /* fakeio.cpp */,
+				CBBC87011B5F97DE00C0DABF /* glenums.c */,
 				17798CF90A652B50009733EB /* hardware.cpp */,
 				17798CFC0A652B50009733EB /* host.cpp */,
 				17798CFA0A652B50009733EB /* host_audio.cpp */,
@@ -1408,6 +1404,9 @@
 		17798D010A652B50009733EB /* include */ = {
 			isa = PBXGroup;
 			children = (
+				CBD0F45E1B5CF7530081A555 /* SDL_opengl_wrapper.h */,
+				CBD0F45D1B5CF7450081A555 /* SDL_compat.h */,
+				CBD0F45C1B5CF72F0081A555 /* disasm-glue.h */,
 				17798D020A652B50009733EB /* acia.h */,
 				17798D030A652B50009733EB /* acsifdc.h */,
 				1732BC8E1245415900272489 /* adler32.h */,
@@ -1433,10 +1432,9 @@
 				17798D140A652B50009733EB /* dsp_cpu.h */,
 				17798D150A652B50009733EB /* dsp_disasm.h */,
 				1732BC951245415900272489 /* dyngl.h */,
-				1732BC961245415900272489 /* dyngl_gl.h */,
-				1732BC971245415900272489 /* dyngl_glext.h */,
 				17798D160A652B50009733EB /* emu_bochs.h */,
 				17798D170A652B50009733EB /* emul_op.h */,
+				CBBC87001B5F97C000C0DABF /* glenums.h */,
 				17798D190A652B50009733EB /* hardware.h */,
 				17798D1A0A652B50009733EB /* host.h */,
 				17798D1B0A652B50009733EB /* host_audio.h */,
@@ -1488,6 +1486,9 @@
 		17798D630A652B51009733EB /* natfeat */ = {
 			isa = PBXGroup;
 			children = (
+				CBD0F4991B5CFDE50081A555 /* osmesa_context.h */,
+				CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */,
+				CBD0F4931B5CFDC10081A555 /* verify.h */,
 				17798D650A652B51009733EB /* atari_example_gfa.lst */,
 				17798D640A652B51009733EB /* atari_example.c */,
 				17798D660A652B51009733EB /* atari_rootsec.h */,
@@ -1557,26 +1558,8 @@
 		17798D870A652B51009733EB /* nfosmesa */ = {
 			isa = PBXGroup;
 			children = (
-				17798D880A652B51009733EB /* call-gen.pl */,
 				17798D890A652B51009733EB /* call-gl.c */,
-				17798D8A0A652B51009733EB /* call-glext.c */,
-				17798D8B0A652B51009733EB /* dispatch-gen.pl */,
 				17798D8C0A652B51009733EB /* dispatch-gl.c */,
-				17798D8D0A652B51009733EB /* dispatch-glext.c */,
-				17798D8E0A652B51009733EB /* dispatch-osmesa.c */,
-				17798D8F0A652B51009733EB /* load-gen.pl */,
-				17798D900A652B51009733EB /* load-gl.c */,
-				17798D910A652B51009733EB /* load-glext.c */,
-				17798D920A652B51009733EB /* pointers-gen.pl */,
-				17798D930A652B51009733EB /* pointers-gl.h */,
-				17798D940A652B51009733EB /* pointers-glext.h */,
-				17798D950A652B51009733EB /* pointers-osmesa.h */,
-				17798D960A652B51009733EB /* proto-gen.pl */,
-				17798D970A652B51009733EB /* proto-gl.h */,
-				17798D980A652B51009733EB /* proto-glext.h */,
-				17798D990A652B51009733EB /* unload-gen.pl */,
-				17798D9A0A652B51009733EB /* unload-gl.c */,
-				17798D9B0A652B51009733EB /* unload-glext.c */,
 			);
 			path = nfosmesa;
 			sourceTree = "<group>";
@@ -1831,7 +1814,6 @@
 				17F10C631066C16500BDE380 /* clipbrd_darwin.M */,
 				B4844A6F0C7BA262003FE2D2 /* Info.plist */,
 				B4844A710C7BA262003FE2D2 /* PkgInfo */,
-				B4844A720C7BA262003FE2D2 /* sdl.m4 */,
 				B4C7EE931768552800B63B96 /* MachServer.c */,
 				B4C7EE941768552800B63B96 /* MachUser.c */,
 				F83B575D0C8B143300BA68D4 /* SDLHotkeysRefresh.M */,
@@ -2473,6 +2455,8 @@
 				CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */,
 				CBD862F31B2D8FA4003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
+				CBBC87051B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2596,6 +2580,8 @@
 				CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */,
 				CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
+				CBBC87041B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2718,6 +2704,8 @@
 				CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */,
 				CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
+				CBBC87031B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2850,6 +2838,8 @@
 				CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */,
 				CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
+				CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

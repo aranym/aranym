@@ -190,6 +190,27 @@ void guialert(const char *fmt, ...)
 }
 
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+SDL_GLContext SDL_GL_GetCurrentContext(void)
+{
+	return [NSOpenGLContext currentContext];
+}
+#endif
+
+
+/*
+ * Only called with ctx != 0,
+ * to restore the current SDL context
+ */
+void SDL_GL_SetCurrentContext(SDL_GLContext ctx)
+{
+    NSAutoreleasePool *pool;
+    pool = [[NSAutoreleasePool alloc] init];
+	NSOpenGLContext *nscontext = (NSOpenGLContext *)ctx;
+	[nscontext makeCurrentContext];
+    [pool release];
+}
+
 
 #ifdef main
 #  undef main

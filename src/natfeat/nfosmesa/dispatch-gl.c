@@ -4,42 +4,60 @@
  */
 
 		case NFOSMESA_GLACCUM:
+			D(funcname = "glAccum");
+			if (GL_ISAVAILABLE(glAccum))
 			nfglAccum(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedFloat(1)  /* GLfloat value */);
 			break;
 		case NFOSMESA_GLACCUMXOES:
+			D(funcname = "glAccumxOES");
+			if (GL_ISAVAILABLE(glAccumxOES))
 			nfglAccumxOES(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1)  /* GLfixed value */);
 			break;
 		case NFOSMESA_GLACTIVEPROGRAMEXT:
+			D(funcname = "glActiveProgramEXT");
+			if (GL_ISAVAILABLE(glActiveProgramEXT))
 			nfglActiveProgramEXT(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLACTIVESHADERPROGRAM:
+			D(funcname = "glActiveShaderProgram");
+			if (GL_ISAVAILABLE(glActiveShaderProgram))
 			nfglActiveShaderProgram(
 				getStackedParameter(0),  /* GLuint pipeline */
 				getStackedParameter(1)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLACTIVESTENCILFACEEXT:
+			D(funcname = "glActiveStencilFaceEXT");
+			if (GL_ISAVAILABLE(glActiveStencilFaceEXT))
 			nfglActiveStencilFaceEXT(
 				getStackedParameter(0)  /* GLenum face */);
 			break;
 		case NFOSMESA_GLACTIVETEXTURE:
+			D(funcname = "glActiveTexture");
+			if (GL_ISAVAILABLE(glActiveTexture))
 			nfglActiveTexture(
 				getStackedParameter(0)  /* GLenum texture */);
 			break;
 		case NFOSMESA_GLACTIVETEXTUREARB:
+			D(funcname = "glActiveTextureARB");
+			if (GL_ISAVAILABLE(glActiveTextureARB))
 			nfglActiveTextureARB(
 				getStackedParameter(0)  /* GLenum texture */);
 			break;
 		case NFOSMESA_GLACTIVEVARYINGNV:
+			D(funcname = "glActiveVaryingNV");
+			if (GL_ISAVAILABLE(glActiveVaryingNV))
 			nfglActiveVaryingNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLADDSWAPHINTRECTWIN:
+			D(funcname = "glAddSwapHintRectWIN");
+			if (GL_ISAVAILABLE(glAddSwapHintRectWIN))
 			nfglAddSwapHintRectWIN(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -47,6 +65,8 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP1ATI:
+			D(funcname = "glAlphaFragmentOp1ATI");
+			if (GL_ISAVAILABLE(glAlphaFragmentOp1ATI))
 			nfglAlphaFragmentOp1ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -56,6 +76,8 @@
 				getStackedParameter(5)  /* GLuint arg1Mod */);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP2ATI:
+			D(funcname = "glAlphaFragmentOp2ATI");
+			if (GL_ISAVAILABLE(glAlphaFragmentOp2ATI))
 			nfglAlphaFragmentOp2ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -68,6 +90,8 @@
 				getStackedParameter(8)  /* GLuint arg2Mod */);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP3ATI:
+			D(funcname = "glAlphaFragmentOp3ATI");
+			if (GL_ISAVAILABLE(glAlphaFragmentOp3ATI))
 			nfglAlphaFragmentOp3ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -83,46 +107,64 @@
 				getStackedParameter(11)  /* GLuint arg3Mod */);
 			break;
 		case NFOSMESA_GLALPHAFUNC:
+			D(funcname = "glAlphaFunc");
+			if (GL_ISAVAILABLE(glAlphaFunc))
 			nfglAlphaFunc(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedFloat(1)  /* GLclampf ref */);
 			break;
 		case NFOSMESA_GLALPHAFUNCXOES:
+			D(funcname = "glAlphaFuncxOES");
+			if (GL_ISAVAILABLE(glAlphaFuncxOES))
 			nfglAlphaFuncxOES(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedParameter(1)  /* GLfixed ref */);
 			break;
 		case NFOSMESA_GLAPPLYTEXTUREEXT:
+			D(funcname = "glApplyTextureEXT");
+			if (GL_ISAVAILABLE(glApplyTextureEXT))
 			nfglApplyTextureEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLAREPROGRAMSRESIDENTNV:
+			D(funcname = "glAreProgramsResidentNV");
+			if (GL_ISAVAILABLE(glAreProgramsResidentNV))
 			ret = nfglAreProgramsResidentNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *programs */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENT:
+			D(funcname = "glAreTexturesResident");
+			if (GL_ISAVAILABLE(glAreTexturesResident))
 			ret = nfglAreTexturesResident(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *textures */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENTEXT:
+			D(funcname = "glAreTexturesResidentEXT");
+			if (GL_ISAVAILABLE(glAreTexturesResidentEXT))
 			ret = nfglAreTexturesResidentEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *textures */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *residences */);
 			break;
 		case NFOSMESA_GLARRAYELEMENT:
+			D(funcname = "glArrayElement");
+			if (GL_ISAVAILABLE(glArrayElement))
 			nfglArrayElement(
 				getStackedParameter(0)  /* GLint i */);
 			break;
 		case NFOSMESA_GLARRAYELEMENTEXT:
+			D(funcname = "glArrayElementEXT");
+			if (GL_ISAVAILABLE(glArrayElementEXT))
 			nfglArrayElementEXT(
 				getStackedParameter(0)  /* GLint i */);
 			break;
 		case NFOSMESA_GLARRAYOBJECTATI:
+			D(funcname = "glArrayObjectATI");
+			if (GL_ISAVAILABLE(glArrayObjectATI))
 			nfglArrayObjectATI(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1),  /* GLint size */
@@ -132,128 +174,182 @@
 				getStackedParameter(5)  /* GLuint offset */);
 			break;
 		case NFOSMESA_GLASYNCMARKERSGIX:
+			D(funcname = "glAsyncMarkerSGIX");
+			if (GL_ISAVAILABLE(glAsyncMarkerSGIX))
 			nfglAsyncMarkerSGIX(
 				getStackedParameter(0)  /* GLuint marker */);
 			break;
 		case NFOSMESA_GLATTACHOBJECTARB:
+			D(funcname = "glAttachObjectARB");
+			if (GL_ISAVAILABLE(glAttachObjectARB))
 			nfglAttachObjectARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
 				(GLhandleARB)getStackedParameter(1)  /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLATTACHSHADER:
+			D(funcname = "glAttachShader");
+			if (GL_ISAVAILABLE(glAttachShader))
 			nfglAttachShader(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1)  /* GLuint shader */);
 			break;
 		case NFOSMESA_GLBEGIN:
+			D(funcname = "glBegin");
+			if (GL_ISAVAILABLE(glBegin))
 			nfglBegin(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDER:
+			D(funcname = "glBeginConditionalRender");
+			if (GL_ISAVAILABLE(glBeginConditionalRender))
 			nfglBeginConditionalRender(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDERNV:
+			D(funcname = "glBeginConditionalRenderNV");
+			if (GL_ISAVAILABLE(glBeginConditionalRenderNV))
 			nfglBeginConditionalRenderNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDERNVX:
+			D(funcname = "glBeginConditionalRenderNVX");
+			if (GL_ISAVAILABLE(glBeginConditionalRenderNVX))
 			nfglBeginConditionalRenderNVX(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBEGINFRAGMENTSHADERATI:
+			D(funcname = "glBeginFragmentShaderATI");
+			if (GL_ISAVAILABLE(glBeginFragmentShaderATI))
 			nfglBeginFragmentShaderATI();
 			break;
 		case NFOSMESA_GLBEGINOCCLUSIONQUERYNV:
+			D(funcname = "glBeginOcclusionQueryNV");
+			if (GL_ISAVAILABLE(glBeginOcclusionQueryNV))
 			nfglBeginOcclusionQueryNV(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBEGINPERFMONITORAMD:
+			D(funcname = "glBeginPerfMonitorAMD");
+			if (GL_ISAVAILABLE(glBeginPerfMonitorAMD))
 			nfglBeginPerfMonitorAMD(
 				getStackedParameter(0)  /* GLuint monitor */);
 			break;
 		case NFOSMESA_GLBEGINPERFQUERYINTEL:
+			D(funcname = "glBeginPerfQueryINTEL");
+			if (GL_ISAVAILABLE(glBeginPerfQueryINTEL))
 			nfglBeginPerfQueryINTEL(
 				getStackedParameter(0)  /* GLuint queryHandle */);
 			break;
 		case NFOSMESA_GLBEGINQUERY:
+			D(funcname = "glBeginQuery");
+			if (GL_ISAVAILABLE(glBeginQuery))
 			nfglBeginQuery(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBEGINQUERYARB:
+			D(funcname = "glBeginQueryARB");
+			if (GL_ISAVAILABLE(glBeginQueryARB))
 			nfglBeginQueryARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBEGINQUERYINDEXED:
+			D(funcname = "glBeginQueryIndexed");
+			if (GL_ISAVAILABLE(glBeginQueryIndexed))
 			nfglBeginQueryIndexed(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACK:
+			D(funcname = "glBeginTransformFeedback");
+			if (GL_ISAVAILABLE(glBeginTransformFeedback))
 			nfglBeginTransformFeedback(
 				getStackedParameter(0)  /* GLenum primitiveMode */);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACKEXT:
+			D(funcname = "glBeginTransformFeedbackEXT");
+			if (GL_ISAVAILABLE(glBeginTransformFeedbackEXT))
 			nfglBeginTransformFeedbackEXT(
 				getStackedParameter(0)  /* GLenum primitiveMode */);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACKNV:
+			D(funcname = "glBeginTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glBeginTransformFeedbackNV))
 			nfglBeginTransformFeedbackNV(
 				getStackedParameter(0)  /* GLenum primitiveMode */);
 			break;
 		case NFOSMESA_GLBEGINVERTEXSHADEREXT:
+			D(funcname = "glBeginVertexShaderEXT");
+			if (GL_ISAVAILABLE(glBeginVertexShaderEXT))
 			nfglBeginVertexShaderEXT();
 			break;
 		case NFOSMESA_GLBEGINVIDEOCAPTURENV:
+			D(funcname = "glBeginVideoCaptureNV");
+			if (GL_ISAVAILABLE(glBeginVideoCaptureNV))
 			nfglBeginVideoCaptureNV(
 				getStackedParameter(0)  /* GLuint video_capture_slot */);
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATION:
+			D(funcname = "glBindAttribLocation");
+			if (GL_ISAVAILABLE(glBindAttribLocation))
 			nfglBindAttribLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATIONARB:
+			D(funcname = "glBindAttribLocationARB");
+			if (GL_ISAVAILABLE(glBindAttribLocationARB))
 			nfglBindAttribLocationARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLBINDBUFFER:
+			D(funcname = "glBindBuffer");
+			if (GL_ISAVAILABLE(glBindBuffer))
 			nfglBindBuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLBINDBUFFERARB:
+			D(funcname = "glBindBufferARB");
+			if (GL_ISAVAILABLE(glBindBufferARB))
 			nfglBindBufferARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASE:
+			D(funcname = "glBindBufferBase");
+			if (GL_ISAVAILABLE(glBindBufferBase))
 			nfglBindBufferBase(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASEEXT:
+			D(funcname = "glBindBufferBaseEXT");
+			if (GL_ISAVAILABLE(glBindBufferBaseEXT))
 			nfglBindBufferBaseEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASENV:
+			D(funcname = "glBindBufferBaseNV");
+			if (GL_ISAVAILABLE(glBindBufferBaseNV))
 			nfglBindBufferBaseNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLBINDBUFFEROFFSETEXT:
+			D(funcname = "glBindBufferOffsetEXT");
+			if (GL_ISAVAILABLE(glBindBufferOffsetEXT))
 			nfglBindBufferOffsetEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -261,6 +357,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLBINDBUFFEROFFSETNV:
+			D(funcname = "glBindBufferOffsetNV");
+			if (GL_ISAVAILABLE(glBindBufferOffsetNV))
 			nfglBindBufferOffsetNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -268,6 +366,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGE:
+			D(funcname = "glBindBufferRange");
+			if (GL_ISAVAILABLE(glBindBufferRange))
 			nfglBindBufferRange(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -276,6 +376,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGEEXT:
+			D(funcname = "glBindBufferRangeEXT");
+			if (GL_ISAVAILABLE(glBindBufferRangeEXT))
 			nfglBindBufferRangeEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -284,6 +386,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGENV:
+			D(funcname = "glBindBufferRangeNV");
+			if (GL_ISAVAILABLE(glBindBufferRangeNV))
 			nfglBindBufferRangeNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -292,6 +396,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLBINDBUFFERSBASE:
+			D(funcname = "glBindBuffersBase");
+			if (GL_ISAVAILABLE(glBindBuffersBase))
 			nfglBindBuffersBase(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint first */
@@ -299,6 +405,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLBINDBUFFERSRANGE:
+			D(funcname = "glBindBuffersRange");
+			if (GL_ISAVAILABLE(glBindBuffersRange))
 			nfglBindBuffersRange(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint first */
@@ -308,18 +416,24 @@
 				getStackedPointer(5, const GLsizeiptr *)  /* const GLsizeiptr *sizes */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATION:
+			D(funcname = "glBindFragDataLocation");
+			if (GL_ISAVAILABLE(glBindFragDataLocation))
 			nfglBindFragDataLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint color */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONEXT:
+			D(funcname = "glBindFragDataLocationEXT");
+			if (GL_ISAVAILABLE(glBindFragDataLocationEXT))
 			nfglBindFragDataLocationEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint color */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONINDEXED:
+			D(funcname = "glBindFragDataLocationIndexed");
+			if (GL_ISAVAILABLE(glBindFragDataLocationIndexed))
 			nfglBindFragDataLocationIndexed(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint colorNumber */
@@ -327,20 +441,28 @@
 				getStackedPointer(3, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLBINDFRAGMENTSHADERATI:
+			D(funcname = "glBindFragmentShaderATI");
+			if (GL_ISAVAILABLE(glBindFragmentShaderATI))
 			nfglBindFragmentShaderATI(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBINDFRAMEBUFFER:
+			D(funcname = "glBindFramebuffer");
+			if (GL_ISAVAILABLE(glBindFramebuffer))
 			nfglBindFramebuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint framebuffer */);
 			break;
 		case NFOSMESA_GLBINDFRAMEBUFFEREXT:
+			D(funcname = "glBindFramebufferEXT");
+			if (GL_ISAVAILABLE(glBindFramebufferEXT))
 			nfglBindFramebufferEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint framebuffer */);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTURE:
+			D(funcname = "glBindImageTexture");
+			if (GL_ISAVAILABLE(glBindImageTexture))
 			nfglBindImageTexture(
 				getStackedParameter(0),  /* GLuint unit */
 				getStackedParameter(1),  /* GLuint texture */
@@ -351,6 +473,8 @@
 				getStackedParameter(6)  /* GLenum format */);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTUREEXT:
+			D(funcname = "glBindImageTextureEXT");
+			if (GL_ISAVAILABLE(glBindImageTextureEXT))
 			nfglBindImageTextureEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint texture */
@@ -361,117 +485,163 @@
 				getStackedParameter(6)  /* GLint format */);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTURES:
+			D(funcname = "glBindImageTextures");
+			if (GL_ISAVAILABLE(glBindImageTextures))
 			nfglBindImageTextures(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLBINDLIGHTPARAMETEREXT:
+			D(funcname = "glBindLightParameterEXT");
+			if (GL_ISAVAILABLE(glBindLightParameterEXT))
 			ret = nfglBindLightParameterEXT(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1)  /* GLenum value */);
 			break;
 		case NFOSMESA_GLBINDMATERIALPARAMETEREXT:
+			D(funcname = "glBindMaterialParameterEXT");
+			if (GL_ISAVAILABLE(glBindMaterialParameterEXT))
 			ret = nfglBindMaterialParameterEXT(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum value */);
 			break;
 		case NFOSMESA_GLBINDMULTITEXTUREEXT:
+			D(funcname = "glBindMultiTextureEXT");
+			if (GL_ISAVAILABLE(glBindMultiTextureEXT))
 			nfglBindMultiTextureEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
 				getStackedParameter(2)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLBINDPARAMETEREXT:
+			D(funcname = "glBindParameterEXT");
+			if (GL_ISAVAILABLE(glBindParameterEXT))
 			ret = nfglBindParameterEXT(
 				getStackedParameter(0)  /* GLenum value */);
 			break;
 		case NFOSMESA_GLBINDPROGRAMARB:
+			D(funcname = "glBindProgramARB");
+			if (GL_ISAVAILABLE(glBindProgramARB))
 			nfglBindProgramARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLBINDPROGRAMNV:
+			D(funcname = "glBindProgramNV");
+			if (GL_ISAVAILABLE(glBindProgramNV))
 			nfglBindProgramNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBINDPROGRAMPIPELINE:
+			D(funcname = "glBindProgramPipeline");
+			if (GL_ISAVAILABLE(glBindProgramPipeline))
 			nfglBindProgramPipeline(
 				getStackedParameter(0)  /* GLuint pipeline */);
 			break;
 		case NFOSMESA_GLBINDRENDERBUFFER:
+			D(funcname = "glBindRenderbuffer");
+			if (GL_ISAVAILABLE(glBindRenderbuffer))
 			nfglBindRenderbuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLBINDRENDERBUFFEREXT:
+			D(funcname = "glBindRenderbufferEXT");
+			if (GL_ISAVAILABLE(glBindRenderbufferEXT))
 			nfglBindRenderbufferEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLBINDSAMPLER:
+			D(funcname = "glBindSampler");
+			if (GL_ISAVAILABLE(glBindSampler))
 			nfglBindSampler(
 				getStackedParameter(0),  /* GLuint unit */
 				getStackedParameter(1)  /* GLuint sampler */);
 			break;
 		case NFOSMESA_GLBINDSAMPLERS:
+			D(funcname = "glBindSamplers");
+			if (GL_ISAVAILABLE(glBindSamplers))
 			nfglBindSamplers(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *samplers */);
 			break;
 		case NFOSMESA_GLBINDTEXGENPARAMETEREXT:
+			D(funcname = "glBindTexGenParameterEXT");
+			if (GL_ISAVAILABLE(glBindTexGenParameterEXT))
 			ret = nfglBindTexGenParameterEXT(
 				getStackedParameter(0),  /* GLenum unit */
 				getStackedParameter(1),  /* GLenum coord */
 				getStackedParameter(2)  /* GLenum value */);
 			break;
 		case NFOSMESA_GLBINDTEXTURE:
+			D(funcname = "glBindTexture");
+			if (GL_ISAVAILABLE(glBindTexture))
 			nfglBindTexture(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLBINDTEXTUREEXT:
+			D(funcname = "glBindTextureEXT");
+			if (GL_ISAVAILABLE(glBindTextureEXT))
 			nfglBindTextureEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLBINDTEXTUREUNIT:
+			D(funcname = "glBindTextureUnit");
+			if (GL_ISAVAILABLE(glBindTextureUnit))
 			nfglBindTextureUnit(
 				getStackedParameter(0),  /* GLuint unit */
 				getStackedParameter(1)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLBINDTEXTUREUNITPARAMETEREXT:
+			D(funcname = "glBindTextureUnitParameterEXT");
+			if (GL_ISAVAILABLE(glBindTextureUnitParameterEXT))
 			ret = nfglBindTextureUnitParameterEXT(
 				getStackedParameter(0),  /* GLenum unit */
 				getStackedParameter(1)  /* GLenum value */);
 			break;
 		case NFOSMESA_GLBINDTEXTURES:
+			D(funcname = "glBindTextures");
+			if (GL_ISAVAILABLE(glBindTextures))
 			nfglBindTextures(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLBINDTRANSFORMFEEDBACK:
+			D(funcname = "glBindTransformFeedback");
+			if (GL_ISAVAILABLE(glBindTransformFeedback))
 			nfglBindTransformFeedback(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBINDTRANSFORMFEEDBACKNV:
+			D(funcname = "glBindTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glBindTransformFeedbackNV))
 			nfglBindTransformFeedbackNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBINDVERTEXARRAY:
+			D(funcname = "glBindVertexArray");
+			if (GL_ISAVAILABLE(glBindVertexArray))
 			nfglBindVertexArray(
 				getStackedParameter(0)  /* GLuint array */);
 			break;
 		case NFOSMESA_GLBINDVERTEXARRAYAPPLE:
+			D(funcname = "glBindVertexArrayAPPLE");
+			if (GL_ISAVAILABLE(glBindVertexArrayAPPLE))
 			nfglBindVertexArrayAPPLE(
 				getStackedParameter(0)  /* GLuint array */);
 			break;
 		case NFOSMESA_GLBINDVERTEXBUFFER:
+			D(funcname = "glBindVertexBuffer");
+			if (GL_ISAVAILABLE(glBindVertexBuffer))
 			nfglBindVertexBuffer(
 				getStackedParameter(0),  /* GLuint bindingindex */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -479,6 +649,8 @@
 				getStackedParameter(3)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLBINDVERTEXBUFFERS:
+			D(funcname = "glBindVertexBuffers");
+			if (GL_ISAVAILABLE(glBindVertexBuffers))
 			nfglBindVertexBuffers(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
@@ -487,10 +659,14 @@
 				getStackedPointer(4, const GLsizei *)  /* const GLsizei *strides */);
 			break;
 		case NFOSMESA_GLBINDVERTEXSHADEREXT:
+			D(funcname = "glBindVertexShaderEXT");
+			if (GL_ISAVAILABLE(glBindVertexShaderEXT))
 			nfglBindVertexShaderEXT(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLBINDVIDEOCAPTURESTREAMBUFFERNV:
+			D(funcname = "glBindVideoCaptureStreamBufferNV");
+			if (GL_ISAVAILABLE(glBindVideoCaptureStreamBufferNV))
 			nfglBindVideoCaptureStreamBufferNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -498,6 +674,8 @@
 				getStackedParameter(3)  /* GLintptrARB offset */);
 			break;
 		case NFOSMESA_GLBINDVIDEOCAPTURESTREAMTEXTURENV:
+			D(funcname = "glBindVideoCaptureStreamTextureNV");
+			if (GL_ISAVAILABLE(glBindVideoCaptureStreamTextureNV))
 			nfglBindVideoCaptureStreamTextureNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -506,62 +684,86 @@
 				getStackedParameter(4)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLBINORMAL3BEXT:
+			D(funcname = "glBinormal3bEXT");
+			if (GL_ISAVAILABLE(glBinormal3bEXT))
 			nfglBinormal3bEXT(
 				getStackedParameter(0),  /* GLbyte32 bx */
 				getStackedParameter(1),  /* GLbyte32 by */
 				getStackedParameter(2)  /* GLbyte32 bz */);
 			break;
 		case NFOSMESA_GLBINORMAL3BVEXT:
+			D(funcname = "glBinormal3bvEXT");
+			if (GL_ISAVAILABLE(glBinormal3bvEXT))
 			nfglBinormal3bvEXT(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3DEXT:
+			D(funcname = "glBinormal3dEXT");
+			if (GL_ISAVAILABLE(glBinormal3dEXT))
 			nfglBinormal3dEXT(
 				getStackedDouble(0),  /* GLdouble bx */
 				getStackedDouble(2),  /* GLdouble by */
 				getStackedDouble(4)  /* GLdouble bz */);
 			break;
 		case NFOSMESA_GLBINORMAL3DVEXT:
+			D(funcname = "glBinormal3dvEXT");
+			if (GL_ISAVAILABLE(glBinormal3dvEXT))
 			nfglBinormal3dvEXT(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3FEXT:
+			D(funcname = "glBinormal3fEXT");
+			if (GL_ISAVAILABLE(glBinormal3fEXT))
 			nfglBinormal3fEXT(
 				getStackedFloat(0),  /* GLfloat bx */
 				getStackedFloat(1),  /* GLfloat by */
 				getStackedFloat(2)  /* GLfloat bz */);
 			break;
 		case NFOSMESA_GLBINORMAL3FVEXT:
+			D(funcname = "glBinormal3fvEXT");
+			if (GL_ISAVAILABLE(glBinormal3fvEXT))
 			nfglBinormal3fvEXT(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3IEXT:
+			D(funcname = "glBinormal3iEXT");
+			if (GL_ISAVAILABLE(glBinormal3iEXT))
 			nfglBinormal3iEXT(
 				getStackedParameter(0),  /* GLint bx */
 				getStackedParameter(1),  /* GLint by */
 				getStackedParameter(2)  /* GLint bz */);
 			break;
 		case NFOSMESA_GLBINORMAL3IVEXT:
+			D(funcname = "glBinormal3ivEXT");
+			if (GL_ISAVAILABLE(glBinormal3ivEXT))
 			nfglBinormal3ivEXT(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLBINORMAL3SEXT:
+			D(funcname = "glBinormal3sEXT");
+			if (GL_ISAVAILABLE(glBinormal3sEXT))
 			nfglBinormal3sEXT(
 				getStackedParameter(0),  /* GLshort32 bx */
 				getStackedParameter(1),  /* GLshort32 by */
 				getStackedParameter(2)  /* GLshort32 bz */);
 			break;
 		case NFOSMESA_GLBINORMAL3SVEXT:
+			D(funcname = "glBinormal3svEXT");
+			if (GL_ISAVAILABLE(glBinormal3svEXT))
 			nfglBinormal3svEXT(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLBINORMALPOINTEREXT:
+			D(funcname = "glBinormalPointerEXT");
+			if (GL_ISAVAILABLE(glBinormalPointerEXT))
 			nfglBinormalPointerEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLBITMAP:
+			D(funcname = "glBitmap");
+			if (GL_ISAVAILABLE(glBitmap))
 			nfglBitmap(
 				getStackedParameter(0),  /* GLsizei width */
 				getStackedParameter(1),  /* GLsizei height */
@@ -572,6 +774,8 @@
 				getStackedPointer(6, const GLubyte *)  /* const GLubyte *bitmap */);
 			break;
 		case NFOSMESA_GLBITMAPXOES:
+			D(funcname = "glBitmapxOES");
+			if (GL_ISAVAILABLE(glBitmapxOES))
 			nfglBitmapxOES(
 				getStackedParameter(0),  /* GLsizei width */
 				getStackedParameter(1),  /* GLsizei height */
@@ -582,12 +786,18 @@
 				getStackedPointer(6, const GLubyte *)  /* const GLubyte *bitmap */);
 			break;
 		case NFOSMESA_GLBLENDBARRIERKHR:
+			D(funcname = "glBlendBarrierKHR");
+			if (GL_ISAVAILABLE(glBlendBarrierKHR))
 			nfglBlendBarrierKHR();
 			break;
 		case NFOSMESA_GLBLENDBARRIERNV:
+			D(funcname = "glBlendBarrierNV");
+			if (GL_ISAVAILABLE(glBlendBarrierNV))
 			nfglBlendBarrierNV();
 			break;
 		case NFOSMESA_GLBLENDCOLOR:
+			D(funcname = "glBlendColor");
+			if (GL_ISAVAILABLE(glBlendColor))
 			nfglBlendColor(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
@@ -595,6 +805,8 @@
 				getStackedFloat(3)  /* GLfloat alpha */);
 			break;
 		case NFOSMESA_GLBLENDCOLOREXT:
+			D(funcname = "glBlendColorEXT");
+			if (GL_ISAVAILABLE(glBlendColorEXT))
 			nfglBlendColorEXT(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
@@ -602,6 +814,8 @@
 				getStackedFloat(3)  /* GLfloat alpha */);
 			break;
 		case NFOSMESA_GLBLENDCOLORXOES:
+			D(funcname = "glBlendColorxOES");
+			if (GL_ISAVAILABLE(glBlendColorxOES))
 			nfglBlendColorxOES(
 				getStackedParameter(0),  /* GLfixed red */
 				getStackedParameter(1),  /* GLfixed green */
@@ -609,73 +823,101 @@
 				getStackedParameter(3)  /* GLfixed alpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATION:
+			D(funcname = "glBlendEquation");
+			if (GL_ISAVAILABLE(glBlendEquation))
 			nfglBlendEquation(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONEXT:
+			D(funcname = "glBlendEquationEXT");
+			if (GL_ISAVAILABLE(glBlendEquationEXT))
 			nfglBlendEquationEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONINDEXEDAMD:
+			D(funcname = "glBlendEquationIndexedAMD");
+			if (GL_ISAVAILABLE(glBlendEquationIndexedAMD))
 			nfglBlendEquationIndexedAMD(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATE:
+			D(funcname = "glBlendEquationSeparate");
+			if (GL_ISAVAILABLE(glBlendEquationSeparate))
 			nfglBlendEquationSeparate(
 				getStackedParameter(0),  /* GLenum modeRGB */
 				getStackedParameter(1)  /* GLenum modeAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEATI:
+			D(funcname = "glBlendEquationSeparateATI");
+			if (GL_ISAVAILABLE(glBlendEquationSeparateATI))
 			nfglBlendEquationSeparateATI(
 				getStackedParameter(0),  /* GLenum equationRGB */
 				getStackedParameter(1)  /* GLenum equationAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEEXT:
+			D(funcname = "glBlendEquationSeparateEXT");
+			if (GL_ISAVAILABLE(glBlendEquationSeparateEXT))
 			nfglBlendEquationSeparateEXT(
 				getStackedParameter(0),  /* GLenum modeRGB */
 				getStackedParameter(1)  /* GLenum modeAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEINDEXEDAMD:
+			D(funcname = "glBlendEquationSeparateIndexedAMD");
+			if (GL_ISAVAILABLE(glBlendEquationSeparateIndexedAMD))
 			nfglBlendEquationSeparateIndexedAMD(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum modeRGB */
 				getStackedParameter(2)  /* GLenum modeAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEI:
+			D(funcname = "glBlendEquationSeparatei");
+			if (GL_ISAVAILABLE(glBlendEquationSeparatei))
 			nfglBlendEquationSeparatei(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum modeRGB */
 				getStackedParameter(2)  /* GLenum modeAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEIARB:
+			D(funcname = "glBlendEquationSeparateiARB");
+			if (GL_ISAVAILABLE(glBlendEquationSeparateiARB))
 			nfglBlendEquationSeparateiARB(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum modeRGB */
 				getStackedParameter(2)  /* GLenum modeAlpha */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONI:
+			D(funcname = "glBlendEquationi");
+			if (GL_ISAVAILABLE(glBlendEquationi))
 			nfglBlendEquationi(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONIARB:
+			D(funcname = "glBlendEquationiARB");
+			if (GL_ISAVAILABLE(glBlendEquationiARB))
 			nfglBlendEquationiARB(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLBLENDFUNC:
+			D(funcname = "glBlendFunc");
+			if (GL_ISAVAILABLE(glBlendFunc))
 			nfglBlendFunc(
 				getStackedParameter(0),  /* GLenum sfactor */
 				getStackedParameter(1)  /* GLenum dfactor */);
 			break;
 		case NFOSMESA_GLBLENDFUNCINDEXEDAMD:
+			D(funcname = "glBlendFuncIndexedAMD");
+			if (GL_ISAVAILABLE(glBlendFuncIndexedAMD))
 			nfglBlendFuncIndexedAMD(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum src */
 				getStackedParameter(2)  /* GLenum dst */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATE:
+			D(funcname = "glBlendFuncSeparate");
+			if (GL_ISAVAILABLE(glBlendFuncSeparate))
 			nfglBlendFuncSeparate(
 				getStackedParameter(0),  /* GLenum sfactorRGB */
 				getStackedParameter(1),  /* GLenum dfactorRGB */
@@ -683,6 +925,8 @@
 				getStackedParameter(3)  /* GLenum dfactorAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEEXT:
+			D(funcname = "glBlendFuncSeparateEXT");
+			if (GL_ISAVAILABLE(glBlendFuncSeparateEXT))
 			nfglBlendFuncSeparateEXT(
 				getStackedParameter(0),  /* GLenum sfactorRGB */
 				getStackedParameter(1),  /* GLenum dfactorRGB */
@@ -690,6 +934,8 @@
 				getStackedParameter(3)  /* GLenum dfactorAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEINGR:
+			D(funcname = "glBlendFuncSeparateINGR");
+			if (GL_ISAVAILABLE(glBlendFuncSeparateINGR))
 			nfglBlendFuncSeparateINGR(
 				getStackedParameter(0),  /* GLenum sfactorRGB */
 				getStackedParameter(1),  /* GLenum dfactorRGB */
@@ -697,6 +943,8 @@
 				getStackedParameter(3)  /* GLenum dfactorAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEINDEXEDAMD:
+			D(funcname = "glBlendFuncSeparateIndexedAMD");
+			if (GL_ISAVAILABLE(glBlendFuncSeparateIndexedAMD))
 			nfglBlendFuncSeparateIndexedAMD(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum srcRGB */
@@ -705,6 +953,8 @@
 				getStackedParameter(4)  /* GLenum dstAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEI:
+			D(funcname = "glBlendFuncSeparatei");
+			if (GL_ISAVAILABLE(glBlendFuncSeparatei))
 			nfglBlendFuncSeparatei(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum srcRGB */
@@ -713,6 +963,8 @@
 				getStackedParameter(4)  /* GLenum dstAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEIARB:
+			D(funcname = "glBlendFuncSeparateiARB");
+			if (GL_ISAVAILABLE(glBlendFuncSeparateiARB))
 			nfglBlendFuncSeparateiARB(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum srcRGB */
@@ -721,23 +973,31 @@
 				getStackedParameter(4)  /* GLenum dstAlpha */);
 			break;
 		case NFOSMESA_GLBLENDFUNCI:
+			D(funcname = "glBlendFunci");
+			if (GL_ISAVAILABLE(glBlendFunci))
 			nfglBlendFunci(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum src */
 				getStackedParameter(2)  /* GLenum dst */);
 			break;
 		case NFOSMESA_GLBLENDFUNCIARB:
+			D(funcname = "glBlendFunciARB");
+			if (GL_ISAVAILABLE(glBlendFunciARB))
 			nfglBlendFunciARB(
 				getStackedParameter(0),  /* GLuint buf */
 				getStackedParameter(1),  /* GLenum src */
 				getStackedParameter(2)  /* GLenum dst */);
 			break;
 		case NFOSMESA_GLBLENDPARAMETERINV:
+			D(funcname = "glBlendParameteriNV");
+			if (GL_ISAVAILABLE(glBlendParameteriNV))
 			nfglBlendParameteriNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint value */);
 			break;
 		case NFOSMESA_GLBLITFRAMEBUFFER:
+			D(funcname = "glBlitFramebuffer");
+			if (GL_ISAVAILABLE(glBlitFramebuffer))
 			nfglBlitFramebuffer(
 				getStackedParameter(0),  /* GLint srcX0 */
 				getStackedParameter(1),  /* GLint srcY0 */
@@ -751,6 +1011,8 @@
 				getStackedParameter(9)  /* GLenum filter */);
 			break;
 		case NFOSMESA_GLBLITFRAMEBUFFEREXT:
+			D(funcname = "glBlitFramebufferEXT");
+			if (GL_ISAVAILABLE(glBlitFramebufferEXT))
 			nfglBlitFramebufferEXT(
 				getStackedParameter(0),  /* GLint srcX0 */
 				getStackedParameter(1),  /* GLint srcY0 */
@@ -764,6 +1026,8 @@
 				getStackedParameter(9)  /* GLenum filter */);
 			break;
 		case NFOSMESA_GLBLITNAMEDFRAMEBUFFER:
+			D(funcname = "glBlitNamedFramebuffer");
+			if (GL_ISAVAILABLE(glBlitNamedFramebuffer))
 			nfglBlitNamedFramebuffer(
 				getStackedParameter(0),  /* GLuint readFramebuffer */
 				getStackedParameter(1),  /* GLuint drawFramebuffer */
@@ -779,6 +1043,8 @@
 				getStackedParameter(11)  /* GLenum filter */);
 			break;
 		case NFOSMESA_GLBUFFERADDRESSRANGENV:
+			D(funcname = "glBufferAddressRangeNV");
+			if (GL_ISAVAILABLE(glBufferAddressRangeNV))
 			nfglBufferAddressRangeNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
@@ -786,6 +1052,8 @@
 				getStackedParameter(4)  /* GLsizeiptr length */);
 			break;
 		case NFOSMESA_GLBUFFERDATA:
+			D(funcname = "glBufferData");
+			if (GL_ISAVAILABLE(glBufferData))
 			nfglBufferData(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -793,6 +1061,8 @@
 				getStackedParameter(3)  /* GLenum usage */);
 			break;
 		case NFOSMESA_GLBUFFERDATAARB:
+			D(funcname = "glBufferDataARB");
+			if (GL_ISAVAILABLE(glBufferDataARB))
 			nfglBufferDataARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizeiptrARB size */
@@ -800,6 +1070,8 @@
 				getStackedParameter(3)  /* GLenum usage */);
 			break;
 		case NFOSMESA_GLBUFFERPAGECOMMITMENTARB:
+			D(funcname = "glBufferPageCommitmentARB");
+			if (GL_ISAVAILABLE(glBufferPageCommitmentARB))
 			nfglBufferPageCommitmentARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -807,12 +1079,16 @@
 				getStackedParameter(3)  /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLBUFFERPARAMETERIAPPLE:
+			D(funcname = "glBufferParameteriAPPLE");
+			if (GL_ISAVAILABLE(glBufferParameteriAPPLE))
 			nfglBufferParameteriAPPLE(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLBUFFERSTORAGE:
+			D(funcname = "glBufferStorage");
+			if (GL_ISAVAILABLE(glBufferStorage))
 			nfglBufferStorage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -820,6 +1096,8 @@
 				getStackedParameter(3)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATA:
+			D(funcname = "glBufferSubData");
+			if (GL_ISAVAILABLE(glBufferSubData))
 			nfglBufferSubData(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -827,6 +1105,8 @@
 				getStackedPointer(3, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATAARB:
+			D(funcname = "glBufferSubDataARB");
+			if (GL_ISAVAILABLE(glBufferSubDataARB))
 			nfglBufferSubDataARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptrARB offset */
@@ -834,52 +1114,74 @@
 				getStackedPointer(3, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCALLCOMMANDLISTNV:
+			D(funcname = "glCallCommandListNV");
+			if (GL_ISAVAILABLE(glCallCommandListNV))
 			nfglCallCommandListNV(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
 		case NFOSMESA_GLCALLLIST:
+			D(funcname = "glCallList");
+			if (GL_ISAVAILABLE(glCallList))
 			nfglCallList(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
 		case NFOSMESA_GLCALLLISTS:
+			D(funcname = "glCallLists");
+			if (GL_ISAVAILABLE(glCallLists))
 			nfglCallLists(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLvoid *)  /* const GLvoid *lists */);
 			break;
 		case NFOSMESA_GLCHECKFRAMEBUFFERSTATUS:
+			D(funcname = "glCheckFramebufferStatus");
+			if (GL_ISAVAILABLE(glCheckFramebufferStatus))
 			ret = nfglCheckFramebufferStatus(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLCHECKFRAMEBUFFERSTATUSEXT:
+			D(funcname = "glCheckFramebufferStatusEXT");
+			if (GL_ISAVAILABLE(glCheckFramebufferStatusEXT))
 			ret = nfglCheckFramebufferStatusEXT(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLCHECKNAMEDFRAMEBUFFERSTATUS:
+			D(funcname = "glCheckNamedFramebufferStatus");
+			if (GL_ISAVAILABLE(glCheckNamedFramebufferStatus))
 			ret = nfglCheckNamedFramebufferStatus(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLCHECKNAMEDFRAMEBUFFERSTATUSEXT:
+			D(funcname = "glCheckNamedFramebufferStatusEXT");
+			if (GL_ISAVAILABLE(glCheckNamedFramebufferStatusEXT))
 			ret = nfglCheckNamedFramebufferStatusEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLCLAMPCOLOR:
+			D(funcname = "glClampColor");
+			if (GL_ISAVAILABLE(glClampColor))
 			nfglClampColor(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum clamp */);
 			break;
 		case NFOSMESA_GLCLAMPCOLORARB:
+			D(funcname = "glClampColorARB");
+			if (GL_ISAVAILABLE(glClampColorARB))
 			nfglClampColorARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum clamp */);
 			break;
 		case NFOSMESA_GLCLEAR:
+			D(funcname = "glClear");
+			if (GL_ISAVAILABLE(glClear))
 			nfglClear(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLCLEARACCUM:
+			D(funcname = "glClearAccum");
+			if (GL_ISAVAILABLE(glClearAccum))
 			nfglClearAccum(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
@@ -887,6 +1189,8 @@
 				getStackedFloat(3)  /* GLfloat alpha */);
 			break;
 		case NFOSMESA_GLCLEARACCUMXOES:
+			D(funcname = "glClearAccumxOES");
+			if (GL_ISAVAILABLE(glClearAccumxOES))
 			nfglClearAccumxOES(
 				getStackedParameter(0),  /* GLfixed red */
 				getStackedParameter(1),  /* GLfixed green */
@@ -894,6 +1198,8 @@
 				getStackedParameter(3)  /* GLfixed alpha */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERDATA:
+			D(funcname = "glClearBufferData");
+			if (GL_ISAVAILABLE(glClearBufferData))
 			nfglClearBufferData(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -902,6 +1208,8 @@
 				getStackedPointer(4, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERSUBDATA:
+			D(funcname = "glClearBufferSubData");
+			if (GL_ISAVAILABLE(glClearBufferSubData))
 			nfglClearBufferSubData(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -912,6 +1220,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERFI:
+			D(funcname = "glClearBufferfi");
+			if (GL_ISAVAILABLE(glClearBufferfi))
 			nfglClearBufferfi(
 				getStackedParameter(0),  /* GLenum buffer */
 				getStackedParameter(1),  /* GLint drawbuffer */
@@ -919,24 +1229,32 @@
 				getStackedParameter(3)  /* GLint stencil */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERFV:
+			D(funcname = "glClearBufferfv");
+			if (GL_ISAVAILABLE(glClearBufferfv))
 			nfglClearBufferfv(
 				getStackedParameter(0),  /* GLenum buffer */
 				getStackedParameter(1),  /* GLint drawbuffer */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERIV:
+			D(funcname = "glClearBufferiv");
+			if (GL_ISAVAILABLE(glClearBufferiv))
 			nfglClearBufferiv(
 				getStackedParameter(0),  /* GLenum buffer */
 				getStackedParameter(1),  /* GLint drawbuffer */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLCLEARBUFFERUIV:
+			D(funcname = "glClearBufferuiv");
+			if (GL_ISAVAILABLE(glClearBufferuiv))
 			nfglClearBufferuiv(
 				getStackedParameter(0),  /* GLenum buffer */
 				getStackedParameter(1),  /* GLint drawbuffer */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLCLEARCOLOR:
+			D(funcname = "glClearColor");
+			if (GL_ISAVAILABLE(glClearColor))
 			nfglClearColor(
 				getStackedFloat(0),  /* GLclampf red */
 				getStackedFloat(1),  /* GLclampf green */
@@ -944,6 +1262,8 @@
 				getStackedFloat(3)  /* GLclampf alpha */);
 			break;
 		case NFOSMESA_GLCLEARCOLORIIEXT:
+			D(funcname = "glClearColorIiEXT");
+			if (GL_ISAVAILABLE(glClearColorIiEXT))
 			nfglClearColorIiEXT(
 				getStackedParameter(0),  /* GLint red */
 				getStackedParameter(1),  /* GLint green */
@@ -951,6 +1271,8 @@
 				getStackedParameter(3)  /* GLint alpha */);
 			break;
 		case NFOSMESA_GLCLEARCOLORIUIEXT:
+			D(funcname = "glClearColorIuiEXT");
+			if (GL_ISAVAILABLE(glClearColorIuiEXT))
 			nfglClearColorIuiEXT(
 				getStackedParameter(0),  /* GLuint red */
 				getStackedParameter(1),  /* GLuint green */
@@ -958,6 +1280,8 @@
 				getStackedParameter(3)  /* GLuint alpha */);
 			break;
 		case NFOSMESA_GLCLEARCOLORXOES:
+			D(funcname = "glClearColorxOES");
+			if (GL_ISAVAILABLE(glClearColorxOES))
 			nfglClearColorxOES(
 				getStackedParameter(0),  /* GLfixed red */
 				getStackedParameter(1),  /* GLfixed green */
@@ -965,36 +1289,52 @@
 				getStackedParameter(3)  /* GLfixed alpha */);
 			break;
 		case NFOSMESA_GLCLEARDEBUGLOGMESA:
+			D(funcname = "glClearDebugLogMESA");
+			if (GL_ISAVAILABLE(glClearDebugLogMESA))
 			nfglClearDebugLogMESA(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
 				getStackedParameter(2)  /* GLenum shaderType */);
 			break;
 		case NFOSMESA_GLCLEARDEPTH:
+			D(funcname = "glClearDepth");
+			if (GL_ISAVAILABLE(glClearDepth))
 			nfglClearDepth(
 				getStackedDouble(0)  /* GLclampd depth */);
 			break;
 		case NFOSMESA_GLCLEARDEPTHDNV:
+			D(funcname = "glClearDepthdNV");
+			if (GL_ISAVAILABLE(glClearDepthdNV))
 			nfglClearDepthdNV(
 				getStackedDouble(0)  /* GLdouble depth */);
 			break;
 		case NFOSMESA_GLCLEARDEPTHF:
+			D(funcname = "glClearDepthf");
+			if (GL_ISAVAILABLE(glClearDepthf))
 			nfglClearDepthf(
 				getStackedFloat(0)  /* GLfloat d */);
 			break;
 		case NFOSMESA_GLCLEARDEPTHFOES:
+			D(funcname = "glClearDepthfOES");
+			if (GL_ISAVAILABLE(glClearDepthfOES))
 			nfglClearDepthfOES(
 				getStackedFloat(0)  /* GLclampf depth */);
 			break;
 		case NFOSMESA_GLCLEARDEPTHXOES:
+			D(funcname = "glClearDepthxOES");
+			if (GL_ISAVAILABLE(glClearDepthxOES))
 			nfglClearDepthxOES(
 				getStackedParameter(0)  /* GLfixed depth */);
 			break;
 		case NFOSMESA_GLCLEARINDEX:
+			D(funcname = "glClearIndex");
+			if (GL_ISAVAILABLE(glClearIndex))
 			nfglClearIndex(
 				getStackedFloat(0)  /* GLfloat c */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERDATA:
+			D(funcname = "glClearNamedBufferData");
+			if (GL_ISAVAILABLE(glClearNamedBufferData))
 			nfglClearNamedBufferData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1003,6 +1343,8 @@
 				getStackedPointer(4, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERDATAEXT:
+			D(funcname = "glClearNamedBufferDataEXT");
+			if (GL_ISAVAILABLE(glClearNamedBufferDataEXT))
 			nfglClearNamedBufferDataEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1011,6 +1353,8 @@
 				getStackedPointer(4, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERSUBDATA:
+			D(funcname = "glClearNamedBufferSubData");
+			if (GL_ISAVAILABLE(glClearNamedBufferSubData))
 			nfglClearNamedBufferSubData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1021,6 +1365,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERSUBDATAEXT:
+			D(funcname = "glClearNamedBufferSubDataEXT");
+			if (GL_ISAVAILABLE(glClearNamedBufferSubDataEXT))
 			nfglClearNamedBufferSubDataEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1031,6 +1377,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFI:
+			D(funcname = "glClearNamedFramebufferfi");
+			if (GL_ISAVAILABLE(glClearNamedFramebufferfi))
 			nfglClearNamedFramebufferfi(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum buffer */
@@ -1038,6 +1386,8 @@
 				getStackedParameter(3)  /* GLint stencil */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFV:
+			D(funcname = "glClearNamedFramebufferfv");
+			if (GL_ISAVAILABLE(glClearNamedFramebufferfv))
 			nfglClearNamedFramebufferfv(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum buffer */
@@ -1045,6 +1395,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERIV:
+			D(funcname = "glClearNamedFramebufferiv");
+			if (GL_ISAVAILABLE(glClearNamedFramebufferiv))
 			nfglClearNamedFramebufferiv(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum buffer */
@@ -1052,6 +1404,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERUIV:
+			D(funcname = "glClearNamedFramebufferuiv");
+			if (GL_ISAVAILABLE(glClearNamedFramebufferuiv))
 			nfglClearNamedFramebufferuiv(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum buffer */
@@ -1059,10 +1413,14 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLCLEARSTENCIL:
+			D(funcname = "glClearStencil");
+			if (GL_ISAVAILABLE(glClearStencil))
 			nfglClearStencil(
 				getStackedParameter(0)  /* GLint s */);
 			break;
 		case NFOSMESA_GLCLEARTEXIMAGE:
+			D(funcname = "glClearTexImage");
+			if (GL_ISAVAILABLE(glClearTexImage))
 			nfglClearTexImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -1071,6 +1429,8 @@
 				getStackedPointer(4, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLEARTEXSUBIMAGE:
+			D(funcname = "glClearTexSubImage");
+			if (GL_ISAVAILABLE(glClearTexSubImage))
 			nfglClearTexSubImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -1085,74 +1445,104 @@
 				getStackedPointer(10, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCLIENTACTIVETEXTURE:
+			D(funcname = "glClientActiveTexture");
+			if (GL_ISAVAILABLE(glClientActiveTexture))
 			nfglClientActiveTexture(
 				getStackedParameter(0)  /* GLenum texture */);
 			break;
 		case NFOSMESA_GLCLIENTACTIVETEXTUREARB:
+			D(funcname = "glClientActiveTextureARB");
+			if (GL_ISAVAILABLE(glClientActiveTextureARB))
 			nfglClientActiveTextureARB(
 				getStackedParameter(0)  /* GLenum texture */);
 			break;
 		case NFOSMESA_GLCLIENTACTIVEVERTEXSTREAMATI:
+			D(funcname = "glClientActiveVertexStreamATI");
+			if (GL_ISAVAILABLE(glClientActiveVertexStreamATI))
 			nfglClientActiveVertexStreamATI(
 				getStackedParameter(0)  /* GLenum stream */);
 			break;
 		case NFOSMESA_GLCLIENTATTRIBDEFAULTEXT:
+			D(funcname = "glClientAttribDefaultEXT");
+			if (GL_ISAVAILABLE(glClientAttribDefaultEXT))
 			nfglClientAttribDefaultEXT(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLCLIENTWAITSYNC:
+			D(funcname = "glClientWaitSync");
+			if (GL_ISAVAILABLE(glClientWaitSync))
 			ret = nfglClientWaitSync(
 				(GLsync)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLbitfield flags */
 				getStackedParameter64(2)  /* GLuint64 timeout */);
 			break;
 		case NFOSMESA_GLCLIPCONTROL:
+			D(funcname = "glClipControl");
+			if (GL_ISAVAILABLE(glClipControl))
 			nfglClipControl(
 				getStackedParameter(0),  /* GLenum origin */
 				getStackedParameter(1)  /* GLenum depth */);
 			break;
 		case NFOSMESA_GLCLIPPLANE:
+			D(funcname = "glClipPlane");
+			if (GL_ISAVAILABLE(glClipPlane))
 			nfglClipPlane(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *equation */);
 			break;
 		case NFOSMESA_GLCLIPPLANEFOES:
+			D(funcname = "glClipPlanefOES");
+			if (GL_ISAVAILABLE(glClipPlanefOES))
 			nfglClipPlanefOES(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *equation */);
 			break;
 		case NFOSMESA_GLCLIPPLANEXOES:
+			D(funcname = "glClipPlanexOES");
+			if (GL_ISAVAILABLE(glClipPlanexOES))
 			nfglClipPlanexOES(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *equation */);
 			break;
 		case NFOSMESA_GLCOLOR3B:
+			D(funcname = "glColor3b");
+			if (GL_ISAVAILABLE(glColor3b))
 			nfglColor3b(
 				getStackedParameter(0),  /* GLbyte32 red */
 				getStackedParameter(1),  /* GLbyte32 green */
 				getStackedParameter(2)  /* GLbyte32 blue */);
 			break;
 		case NFOSMESA_GLCOLOR3BV:
+			D(funcname = "glColor3bv");
+			if (GL_ISAVAILABLE(glColor3bv))
 			nfglColor3bv(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR3D:
+			D(funcname = "glColor3d");
+			if (GL_ISAVAILABLE(glColor3d))
 			nfglColor3d(
 				getStackedDouble(0),  /* GLdouble red */
 				getStackedDouble(2),  /* GLdouble green */
 				getStackedDouble(4)  /* GLdouble blue */);
 			break;
 		case NFOSMESA_GLCOLOR3DV:
+			D(funcname = "glColor3dv");
+			if (GL_ISAVAILABLE(glColor3dv))
 			nfglColor3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLCOLOR3F:
+			D(funcname = "glColor3f");
+			if (GL_ISAVAILABLE(glColor3f))
 			nfglColor3f(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
 				getStackedFloat(2)  /* GLfloat blue */);
 			break;
 		case NFOSMESA_GLCOLOR3FVERTEX3FSUN:
+			D(funcname = "glColor3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glColor3fVertex3fSUN))
 			nfglColor3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat r */
 				getStackedFloat(1),  /* GLfloat g */
@@ -1162,85 +1552,119 @@
 				getStackedFloat(5)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLCOLOR3FVERTEX3FVSUN:
+			D(funcname = "glColor3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glColor3fVertex3fvSUN))
 			nfglColor3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *c */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR3FV:
+			D(funcname = "glColor3fv");
+			if (GL_ISAVAILABLE(glColor3fv))
 			nfglColor3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR3HNV:
+			D(funcname = "glColor3hNV");
+			if (GL_ISAVAILABLE(glColor3hNV))
 			nfglColor3hNV(
 				getStackedParameter(0),  /* GLhalfNV32 red */
 				getStackedParameter(1),  /* GLhalfNV32 green */
 				getStackedParameter(2)  /* GLhalfNV32 blue */);
 			break;
 		case NFOSMESA_GLCOLOR3HVNV:
+			D(funcname = "glColor3hvNV");
+			if (GL_ISAVAILABLE(glColor3hvNV))
 			nfglColor3hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLCOLOR3I:
+			D(funcname = "glColor3i");
+			if (GL_ISAVAILABLE(glColor3i))
 			nfglColor3i(
 				getStackedParameter(0),  /* GLint red */
 				getStackedParameter(1),  /* GLint green */
 				getStackedParameter(2)  /* GLint blue */);
 			break;
 		case NFOSMESA_GLCOLOR3IV:
+			D(funcname = "glColor3iv");
+			if (GL_ISAVAILABLE(glColor3iv))
 			nfglColor3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLCOLOR3S:
+			D(funcname = "glColor3s");
+			if (GL_ISAVAILABLE(glColor3s))
 			nfglColor3s(
 				getStackedParameter(0),  /* GLshort32 red */
 				getStackedParameter(1),  /* GLshort32 green */
 				getStackedParameter(2)  /* GLshort32 blue */);
 			break;
 		case NFOSMESA_GLCOLOR3SV:
+			D(funcname = "glColor3sv");
+			if (GL_ISAVAILABLE(glColor3sv))
 			nfglColor3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLCOLOR3UB:
+			D(funcname = "glColor3ub");
+			if (GL_ISAVAILABLE(glColor3ub))
 			nfglColor3ub(
 				getStackedParameter(0),  /* GLubyte32 red */
 				getStackedParameter(1),  /* GLubyte32 green */
 				getStackedParameter(2)  /* GLubyte32 blue */);
 			break;
 		case NFOSMESA_GLCOLOR3UBV:
+			D(funcname = "glColor3ubv");
+			if (GL_ISAVAILABLE(glColor3ubv))
 			nfglColor3ubv(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR3UI:
+			D(funcname = "glColor3ui");
+			if (GL_ISAVAILABLE(glColor3ui))
 			nfglColor3ui(
 				getStackedParameter(0),  /* GLuint red */
 				getStackedParameter(1),  /* GLuint green */
 				getStackedParameter(2)  /* GLuint blue */);
 			break;
 		case NFOSMESA_GLCOLOR3UIV:
+			D(funcname = "glColor3uiv");
+			if (GL_ISAVAILABLE(glColor3uiv))
 			nfglColor3uiv(
 				getStackedPointer(0, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLCOLOR3US:
+			D(funcname = "glColor3us");
+			if (GL_ISAVAILABLE(glColor3us))
 			nfglColor3us(
 				getStackedParameter(0),  /* GLushort32 red */
 				getStackedParameter(1),  /* GLushort32 green */
 				getStackedParameter(2)  /* GLushort32 blue */);
 			break;
 		case NFOSMESA_GLCOLOR3USV:
+			D(funcname = "glColor3usv");
+			if (GL_ISAVAILABLE(glColor3usv))
 			nfglColor3usv(
 				getStackedPointer(0, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLCOLOR3XOES:
+			D(funcname = "glColor3xOES");
+			if (GL_ISAVAILABLE(glColor3xOES))
 			nfglColor3xOES(
 				getStackedParameter(0),  /* GLfixed red */
 				getStackedParameter(1),  /* GLfixed green */
 				getStackedParameter(2)  /* GLfixed blue */);
 			break;
 		case NFOSMESA_GLCOLOR3XVOES:
+			D(funcname = "glColor3xvOES");
+			if (GL_ISAVAILABLE(glColor3xvOES))
 			nfglColor3xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *components */);
 			break;
 		case NFOSMESA_GLCOLOR4B:
+			D(funcname = "glColor4b");
+			if (GL_ISAVAILABLE(glColor4b))
 			nfglColor4b(
 				getStackedParameter(0),  /* GLbyte32 red */
 				getStackedParameter(1),  /* GLbyte32 green */
@@ -1248,10 +1672,14 @@
 				getStackedParameter(3)  /* GLbyte32 alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4BV:
+			D(funcname = "glColor4bv");
+			if (GL_ISAVAILABLE(glColor4bv))
 			nfglColor4bv(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR4D:
+			D(funcname = "glColor4d");
+			if (GL_ISAVAILABLE(glColor4d))
 			nfglColor4d(
 				getStackedDouble(0),  /* GLdouble red */
 				getStackedDouble(2),  /* GLdouble green */
@@ -1259,10 +1687,14 @@
 				getStackedDouble(6)  /* GLdouble alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4DV:
+			D(funcname = "glColor4dv");
+			if (GL_ISAVAILABLE(glColor4dv))
 			nfglColor4dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLCOLOR4F:
+			D(funcname = "glColor4f");
+			if (GL_ISAVAILABLE(glColor4f))
 			nfglColor4f(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
@@ -1270,6 +1702,8 @@
 				getStackedFloat(3)  /* GLfloat alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glColor4fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glColor4fNormal3fVertex3fSUN))
 			nfglColor4fNormal3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat r */
 				getStackedFloat(1),  /* GLfloat g */
@@ -1283,16 +1717,22 @@
 				getStackedFloat(9)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLCOLOR4FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glColor4fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glColor4fNormal3fVertex3fvSUN))
 			nfglColor4fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *c */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4FV:
+			D(funcname = "glColor4fv");
+			if (GL_ISAVAILABLE(glColor4fv))
 			nfglColor4fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4HNV:
+			D(funcname = "glColor4hNV");
+			if (GL_ISAVAILABLE(glColor4hNV))
 			nfglColor4hNV(
 				getStackedParameter(0),  /* GLhalfNV32 red */
 				getStackedParameter(1),  /* GLhalfNV32 green */
@@ -1300,10 +1740,14 @@
 				getStackedParameter(3)  /* GLhalfNV32 alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4HVNV:
+			D(funcname = "glColor4hvNV");
+			if (GL_ISAVAILABLE(glColor4hvNV))
 			nfglColor4hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLCOLOR4I:
+			D(funcname = "glColor4i");
+			if (GL_ISAVAILABLE(glColor4i))
 			nfglColor4i(
 				getStackedParameter(0),  /* GLint red */
 				getStackedParameter(1),  /* GLint green */
@@ -1311,10 +1755,14 @@
 				getStackedParameter(3)  /* GLint alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4IV:
+			D(funcname = "glColor4iv");
+			if (GL_ISAVAILABLE(glColor4iv))
 			nfglColor4iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLCOLOR4S:
+			D(funcname = "glColor4s");
+			if (GL_ISAVAILABLE(glColor4s))
 			nfglColor4s(
 				getStackedParameter(0),  /* GLshort32 red */
 				getStackedParameter(1),  /* GLshort32 green */
@@ -1322,10 +1770,14 @@
 				getStackedParameter(3)  /* GLshort32 alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4SV:
+			D(funcname = "glColor4sv");
+			if (GL_ISAVAILABLE(glColor4sv))
 			nfglColor4sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UB:
+			D(funcname = "glColor4ub");
+			if (GL_ISAVAILABLE(glColor4ub))
 			nfglColor4ub(
 				getStackedParameter(0),  /* GLubyte32 red */
 				getStackedParameter(1),  /* GLubyte32 green */
@@ -1333,6 +1785,8 @@
 				getStackedParameter(3)  /* GLubyte32 alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX2FSUN:
+			D(funcname = "glColor4ubVertex2fSUN");
+			if (GL_ISAVAILABLE(glColor4ubVertex2fSUN))
 			nfglColor4ubVertex2fSUN(
 				getStackedParameter(0),  /* GLubyte32 r */
 				getStackedParameter(1),  /* GLubyte32 g */
@@ -1342,11 +1796,15 @@
 				getStackedFloat(5)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX2FVSUN:
+			D(funcname = "glColor4ubVertex2fvSUN");
+			if (GL_ISAVAILABLE(glColor4ubVertex2fvSUN))
 			nfglColor4ubVertex2fvSUN(
 				getStackedPointer(0, const GLubyte *),  /* const GLubyte *c */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FSUN:
+			D(funcname = "glColor4ubVertex3fSUN");
+			if (GL_ISAVAILABLE(glColor4ubVertex3fSUN))
 			nfglColor4ubVertex3fSUN(
 				getStackedParameter(0),  /* GLubyte32 r */
 				getStackedParameter(1),  /* GLubyte32 g */
@@ -1357,15 +1815,21 @@
 				getStackedFloat(6)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FVSUN:
+			D(funcname = "glColor4ubVertex3fvSUN");
+			if (GL_ISAVAILABLE(glColor4ubVertex3fvSUN))
 			nfglColor4ubVertex3fvSUN(
 				getStackedPointer(0, const GLubyte *),  /* const GLubyte *c */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UBV:
+			D(funcname = "glColor4ubv");
+			if (GL_ISAVAILABLE(glColor4ubv))
 			nfglColor4ubv(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLCOLOR4UI:
+			D(funcname = "glColor4ui");
+			if (GL_ISAVAILABLE(glColor4ui))
 			nfglColor4ui(
 				getStackedParameter(0),  /* GLuint red */
 				getStackedParameter(1),  /* GLuint green */
@@ -1373,10 +1837,14 @@
 				getStackedParameter(3)  /* GLuint alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4UIV:
+			D(funcname = "glColor4uiv");
+			if (GL_ISAVAILABLE(glColor4uiv))
 			nfglColor4uiv(
 				getStackedPointer(0, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLCOLOR4US:
+			D(funcname = "glColor4us");
+			if (GL_ISAVAILABLE(glColor4us))
 			nfglColor4us(
 				getStackedParameter(0),  /* GLushort32 red */
 				getStackedParameter(1),  /* GLushort32 green */
@@ -1384,10 +1852,14 @@
 				getStackedParameter(3)  /* GLushort32 alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4USV:
+			D(funcname = "glColor4usv");
+			if (GL_ISAVAILABLE(glColor4usv))
 			nfglColor4usv(
 				getStackedPointer(0, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLCOLOR4XOES:
+			D(funcname = "glColor4xOES");
+			if (GL_ISAVAILABLE(glColor4xOES))
 			nfglColor4xOES(
 				getStackedParameter(0),  /* GLfixed red */
 				getStackedParameter(1),  /* GLfixed green */
@@ -1395,16 +1867,22 @@
 				getStackedParameter(3)  /* GLfixed alpha */);
 			break;
 		case NFOSMESA_GLCOLOR4XVOES:
+			D(funcname = "glColor4xvOES");
+			if (GL_ISAVAILABLE(glColor4xvOES))
 			nfglColor4xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *components */);
 			break;
 		case NFOSMESA_GLCOLORFORMATNV:
+			D(funcname = "glColorFormatNV");
+			if (GL_ISAVAILABLE(glColorFormatNV))
 			nfglColorFormatNV(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP1ATI:
+			D(funcname = "glColorFragmentOp1ATI");
+			if (GL_ISAVAILABLE(glColorFragmentOp1ATI))
 			nfglColorFragmentOp1ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -1415,6 +1893,8 @@
 				getStackedParameter(6)  /* GLuint arg1Mod */);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP2ATI:
+			D(funcname = "glColorFragmentOp2ATI");
+			if (GL_ISAVAILABLE(glColorFragmentOp2ATI))
 			nfglColorFragmentOp2ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -1428,6 +1908,8 @@
 				getStackedParameter(9)  /* GLuint arg2Mod */);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP3ATI:
+			D(funcname = "glColorFragmentOp3ATI");
+			if (GL_ISAVAILABLE(glColorFragmentOp3ATI))
 			nfglColorFragmentOp3ATI(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint dst */
@@ -1444,6 +1926,8 @@
 				getStackedParameter(12)  /* GLuint arg3Mod */);
 			break;
 		case NFOSMESA_GLCOLORMASK:
+			D(funcname = "glColorMask");
+			if (GL_ISAVAILABLE(glColorMask))
 			nfglColorMask(
 				getStackedParameter(0),  /* GLboolean32 red */
 				getStackedParameter(1),  /* GLboolean32 green */
@@ -1451,6 +1935,8 @@
 				getStackedParameter(3)  /* GLboolean32 alpha */);
 			break;
 		case NFOSMESA_GLCOLORMASKINDEXEDEXT:
+			D(funcname = "glColorMaskIndexedEXT");
+			if (GL_ISAVAILABLE(glColorMaskIndexedEXT))
 			nfglColorMaskIndexedEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLboolean32 r */
@@ -1459,6 +1945,8 @@
 				getStackedParameter(4)  /* GLboolean32 a */);
 			break;
 		case NFOSMESA_GLCOLORMASKI:
+			D(funcname = "glColorMaski");
+			if (GL_ISAVAILABLE(glColorMaski))
 			nfglColorMaski(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLboolean32 r */
@@ -1467,31 +1955,43 @@
 				getStackedParameter(4)  /* GLboolean32 a */);
 			break;
 		case NFOSMESA_GLCOLORMATERIAL:
+			D(funcname = "glColorMaterial");
+			if (GL_ISAVAILABLE(glColorMaterial))
 			nfglColorMaterial(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLCOLORP3UI:
+			D(funcname = "glColorP3ui");
+			if (GL_ISAVAILABLE(glColorP3ui))
 			nfglColorP3ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint color */);
 			break;
 		case NFOSMESA_GLCOLORP3UIV:
+			D(funcname = "glColorP3uiv");
+			if (GL_ISAVAILABLE(glColorP3uiv))
 			nfglColorP3uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLCOLORP4UI:
+			D(funcname = "glColorP4ui");
+			if (GL_ISAVAILABLE(glColorP4ui))
 			nfglColorP4ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint color */);
 			break;
 		case NFOSMESA_GLCOLORP4UIV:
+			D(funcname = "glColorP4uiv");
+			if (GL_ISAVAILABLE(glColorP4uiv))
 			nfglColorP4uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLCOLORPOINTER:
+			D(funcname = "glColorPointer");
+			if (GL_ISAVAILABLE(glColorPointer))
 			nfglColorPointer(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -1499,6 +1999,8 @@
 				getStackedPointer(3, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLCOLORPOINTEREXT:
+			D(funcname = "glColorPointerEXT");
+			if (GL_ISAVAILABLE(glColorPointerEXT))
 			nfglColorPointerEXT(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -1507,6 +2009,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLCOLORPOINTERLISTIBM:
+			D(funcname = "glColorPointerListIBM");
+			if (GL_ISAVAILABLE(glColorPointerListIBM))
 			nfglColorPointerListIBM(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -1515,12 +2019,16 @@
 				getStackedParameter(4)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLCOLORPOINTERVINTEL:
+			D(funcname = "glColorPointervINTEL");
+			if (GL_ISAVAILABLE(glColorPointervINTEL))
 			nfglColorPointervINTEL(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void * *)  /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLE:
+			D(funcname = "glColorSubTable");
+			if (GL_ISAVAILABLE(glColorSubTable))
 			nfglColorSubTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei start */
@@ -1530,6 +2038,8 @@
 				getStackedPointer(5, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLEEXT:
+			D(funcname = "glColorSubTableEXT");
+			if (GL_ISAVAILABLE(glColorSubTableEXT))
 			nfglColorSubTableEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei start */
@@ -1539,6 +2049,8 @@
 				getStackedPointer(5, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOLORTABLE:
+			D(funcname = "glColorTable");
+			if (GL_ISAVAILABLE(glColorTable))
 			nfglColorTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1548,6 +2060,8 @@
 				getStackedPointer(5, const void *)  /* const void *table */);
 			break;
 		case NFOSMESA_GLCOLORTABLEEXT:
+			D(funcname = "glColorTableEXT");
+			if (GL_ISAVAILABLE(glColorTableEXT))
 			nfglColorTableEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalFormat */
@@ -1557,30 +2071,40 @@
 				getStackedPointer(5, const void *)  /* const void *table */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFV:
+			D(funcname = "glColorTableParameterfv");
+			if (GL_ISAVAILABLE(glColorTableParameterfv))
 			nfglColorTableParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFVSGI:
+			D(funcname = "glColorTableParameterfvSGI");
+			if (GL_ISAVAILABLE(glColorTableParameterfvSGI))
 			nfglColorTableParameterfvSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIV:
+			D(funcname = "glColorTableParameteriv");
+			if (GL_ISAVAILABLE(glColorTableParameteriv))
 			nfglColorTableParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIVSGI:
+			D(funcname = "glColorTableParameterivSGI");
+			if (GL_ISAVAILABLE(glColorTableParameterivSGI))
 			nfglColorTableParameterivSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOLORTABLESGI:
+			D(funcname = "glColorTableSGI");
+			if (GL_ISAVAILABLE(glColorTableSGI))
 			nfglColorTableSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1590,6 +2114,8 @@
 				getStackedPointer(5, const void *)  /* const void *table */);
 			break;
 		case NFOSMESA_GLCOMBINERINPUTNV:
+			D(funcname = "glCombinerInputNV");
+			if (GL_ISAVAILABLE(glCombinerInputNV))
 			nfglCombinerInputNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -1599,6 +2125,8 @@
 				getStackedParameter(5)  /* GLenum componentUsage */);
 			break;
 		case NFOSMESA_GLCOMBINEROUTPUTNV:
+			D(funcname = "glCombinerOutputNV");
+			if (GL_ISAVAILABLE(glCombinerOutputNV))
 			nfglCombinerOutputNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -1612,49 +2140,69 @@
 				getStackedParameter(9)  /* GLboolean32 muxSum */);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERFNV:
+			D(funcname = "glCombinerParameterfNV");
+			if (GL_ISAVAILABLE(glCombinerParameterfNV))
 			nfglCombinerParameterfNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERFVNV:
+			D(funcname = "glCombinerParameterfvNV");
+			if (GL_ISAVAILABLE(glCombinerParameterfvNV))
 			nfglCombinerParameterfvNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERINV:
+			D(funcname = "glCombinerParameteriNV");
+			if (GL_ISAVAILABLE(glCombinerParameteriNV))
 			nfglCombinerParameteriNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERIVNV:
+			D(funcname = "glCombinerParameterivNV");
+			if (GL_ISAVAILABLE(glCombinerParameterivNV))
 			nfglCombinerParameterivNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCOMBINERSTAGEPARAMETERFVNV:
+			D(funcname = "glCombinerStageParameterfvNV");
+			if (GL_ISAVAILABLE(glCombinerStageParameterfvNV))
 			nfglCombinerStageParameterfvNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCOMMANDLISTSEGMENTSNV:
+			D(funcname = "glCommandListSegmentsNV");
+			if (GL_ISAVAILABLE(glCommandListSegmentsNV))
 			nfglCommandListSegmentsNV(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1)  /* GLuint segments */);
 			break;
 		case NFOSMESA_GLCOMPILECOMMANDLISTNV:
+			D(funcname = "glCompileCommandListNV");
+			if (GL_ISAVAILABLE(glCompileCommandListNV))
 			nfglCompileCommandListNV(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
 		case NFOSMESA_GLCOMPILESHADER:
+			D(funcname = "glCompileShader");
+			if (GL_ISAVAILABLE(glCompileShader))
 			nfglCompileShader(
 				getStackedParameter(0)  /* GLuint shader */);
 			break;
 		case NFOSMESA_GLCOMPILESHADERARB:
+			D(funcname = "glCompileShaderARB");
+			if (GL_ISAVAILABLE(glCompileShaderARB))
 			nfglCompileShaderARB(
 				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB shaderObj */);
 			break;
 		case NFOSMESA_GLCOMPILESHADERINCLUDEARB:
+			D(funcname = "glCompileShaderIncludeARB");
+			if (GL_ISAVAILABLE(glCompileShaderIncludeARB))
 			nfglCompileShaderIncludeARB(
 				getStackedParameter(0),  /* GLuint shader */
 				getStackedParameter(1),  /* GLsizei count */
@@ -1662,6 +2210,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *length */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE1DEXT:
+			D(funcname = "glCompressedMultiTexImage1DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexImage1DEXT))
 			nfglCompressedMultiTexImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1673,6 +2223,8 @@
 				getStackedPointer(7, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE2DEXT:
+			D(funcname = "glCompressedMultiTexImage2DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexImage2DEXT))
 			nfglCompressedMultiTexImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1685,6 +2237,8 @@
 				getStackedPointer(8, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE3DEXT:
+			D(funcname = "glCompressedMultiTexImage3DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexImage3DEXT))
 			nfglCompressedMultiTexImage3DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1698,6 +2252,8 @@
 				getStackedPointer(9, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT:
+			D(funcname = "glCompressedMultiTexSubImage1DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage1DEXT))
 			nfglCompressedMultiTexSubImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1709,6 +2265,8 @@
 				getStackedPointer(7, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT:
+			D(funcname = "glCompressedMultiTexSubImage2DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage2DEXT))
 			nfglCompressedMultiTexSubImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1722,6 +2280,8 @@
 				getStackedPointer(9, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT:
+			D(funcname = "glCompressedMultiTexSubImage3DEXT");
+			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage3DEXT))
 			nfglCompressedMultiTexSubImage3DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -1737,6 +2297,8 @@
 				getStackedPointer(11, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1D:
+			D(funcname = "glCompressedTexImage1D");
+			if (GL_ISAVAILABLE(glCompressedTexImage1D))
 			nfglCompressedTexImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1747,6 +2309,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1DARB:
+			D(funcname = "glCompressedTexImage1DARB");
+			if (GL_ISAVAILABLE(glCompressedTexImage1DARB))
 			nfglCompressedTexImage1DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1757,6 +2321,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2D:
+			D(funcname = "glCompressedTexImage2D");
+			if (GL_ISAVAILABLE(glCompressedTexImage2D))
 			nfglCompressedTexImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1768,6 +2334,8 @@
 				getStackedPointer(7, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2DARB:
+			D(funcname = "glCompressedTexImage2DARB");
+			if (GL_ISAVAILABLE(glCompressedTexImage2DARB))
 			nfglCompressedTexImage2DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1779,6 +2347,8 @@
 				getStackedPointer(7, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3D:
+			D(funcname = "glCompressedTexImage3D");
+			if (GL_ISAVAILABLE(glCompressedTexImage3D))
 			nfglCompressedTexImage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1791,6 +2361,8 @@
 				getStackedPointer(8, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3DARB:
+			D(funcname = "glCompressedTexImage3DARB");
+			if (GL_ISAVAILABLE(glCompressedTexImage3DARB))
 			nfglCompressedTexImage3DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1803,6 +2375,8 @@
 				getStackedPointer(8, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1D:
+			D(funcname = "glCompressedTexSubImage1D");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage1D))
 			nfglCompressedTexSubImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1813,6 +2387,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1DARB:
+			D(funcname = "glCompressedTexSubImage1DARB");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage1DARB))
 			nfglCompressedTexSubImage1DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1823,6 +2399,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2D:
+			D(funcname = "glCompressedTexSubImage2D");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage2D))
 			nfglCompressedTexSubImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1835,6 +2413,8 @@
 				getStackedPointer(8, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2DARB:
+			D(funcname = "glCompressedTexSubImage2DARB");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage2DARB))
 			nfglCompressedTexSubImage2DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1847,6 +2427,8 @@
 				getStackedPointer(8, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3D:
+			D(funcname = "glCompressedTexSubImage3D");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage3D))
 			nfglCompressedTexSubImage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1861,6 +2443,8 @@
 				getStackedPointer(10, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3DARB:
+			D(funcname = "glCompressedTexSubImage3DARB");
+			if (GL_ISAVAILABLE(glCompressedTexSubImage3DARB))
 			nfglCompressedTexSubImage3DARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -1875,6 +2459,8 @@
 				getStackedPointer(10, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE1DEXT:
+			D(funcname = "glCompressedTextureImage1DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureImage1DEXT))
 			nfglCompressedTextureImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1886,6 +2472,8 @@
 				getStackedPointer(7, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE2DEXT:
+			D(funcname = "glCompressedTextureImage2DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureImage2DEXT))
 			nfglCompressedTextureImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1898,6 +2486,8 @@
 				getStackedPointer(8, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE3DEXT:
+			D(funcname = "glCompressedTextureImage3DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureImage3DEXT))
 			nfglCompressedTextureImage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1911,6 +2501,8 @@
 				getStackedPointer(9, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE1D:
+			D(funcname = "glCompressedTextureSubImage1D");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage1D))
 			nfglCompressedTextureSubImage1D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -1921,6 +2513,8 @@
 				getStackedPointer(6, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT:
+			D(funcname = "glCompressedTextureSubImage1DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage1DEXT))
 			nfglCompressedTextureSubImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1932,6 +2526,8 @@
 				getStackedPointer(7, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE2D:
+			D(funcname = "glCompressedTextureSubImage2D");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage2D))
 			nfglCompressedTextureSubImage2D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -1944,6 +2540,8 @@
 				getStackedPointer(8, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT:
+			D(funcname = "glCompressedTextureSubImage2DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage2DEXT))
 			nfglCompressedTextureSubImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1957,6 +2555,8 @@
 				getStackedPointer(9, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE3D:
+			D(funcname = "glCompressedTextureSubImage3D");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage3D))
 			nfglCompressedTextureSubImage3D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -1971,6 +2571,8 @@
 				getStackedPointer(10, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT:
+			D(funcname = "glCompressedTextureSubImage3DEXT");
+			if (GL_ISAVAILABLE(glCompressedTextureSubImage3DEXT))
 			nfglCompressedTextureSubImage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -1986,6 +2588,8 @@
 				getStackedPointer(11, const void *)  /* const void *bits */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1D:
+			D(funcname = "glConvolutionFilter1D");
+			if (GL_ISAVAILABLE(glConvolutionFilter1D))
 			nfglConvolutionFilter1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -1995,6 +2599,8 @@
 				getStackedPointer(5, const void *)  /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1DEXT:
+			D(funcname = "glConvolutionFilter1DEXT");
+			if (GL_ISAVAILABLE(glConvolutionFilter1DEXT))
 			nfglConvolutionFilter1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2004,6 +2610,8 @@
 				getStackedPointer(5, const void *)  /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2D:
+			D(funcname = "glConvolutionFilter2D");
+			if (GL_ISAVAILABLE(glConvolutionFilter2D))
 			nfglConvolutionFilter2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2014,6 +2622,8 @@
 				getStackedPointer(6, const void *)  /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2DEXT:
+			D(funcname = "glConvolutionFilter2DEXT");
+			if (GL_ISAVAILABLE(glConvolutionFilter2DEXT))
 			nfglConvolutionFilter2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2024,66 +2634,88 @@
 				getStackedPointer(6, const void *)  /* const void *image */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERF:
+			D(funcname = "glConvolutionParameterf");
+			if (GL_ISAVAILABLE(glConvolutionParameterf))
 			nfglConvolutionParameterf(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFEXT:
+			D(funcname = "glConvolutionParameterfEXT");
+			if (GL_ISAVAILABLE(glConvolutionParameterfEXT))
 			nfglConvolutionParameterfEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFV:
+			D(funcname = "glConvolutionParameterfv");
+			if (GL_ISAVAILABLE(glConvolutionParameterfv))
 			nfglConvolutionParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFVEXT:
+			D(funcname = "glConvolutionParameterfvEXT");
+			if (GL_ISAVAILABLE(glConvolutionParameterfvEXT))
 			nfglConvolutionParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERI:
+			D(funcname = "glConvolutionParameteri");
+			if (GL_ISAVAILABLE(glConvolutionParameteri))
 			nfglConvolutionParameteri(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIEXT:
+			D(funcname = "glConvolutionParameteriEXT");
+			if (GL_ISAVAILABLE(glConvolutionParameteriEXT))
 			nfglConvolutionParameteriEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIV:
+			D(funcname = "glConvolutionParameteriv");
+			if (GL_ISAVAILABLE(glConvolutionParameteriv))
 			nfglConvolutionParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIVEXT:
+			D(funcname = "glConvolutionParameterivEXT");
+			if (GL_ISAVAILABLE(glConvolutionParameterivEXT))
 			nfglConvolutionParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERXOES:
+			D(funcname = "glConvolutionParameterxOES");
+			if (GL_ISAVAILABLE(glConvolutionParameterxOES))
 			nfglConvolutionParameterxOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERXVOES:
+			D(funcname = "glConvolutionParameterxvOES");
+			if (GL_ISAVAILABLE(glConvolutionParameterxvOES))
 			nfglConvolutionParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLCOPYBUFFERSUBDATA:
+			D(funcname = "glCopyBufferSubData");
+			if (GL_ISAVAILABLE(glCopyBufferSubData))
 			nfglCopyBufferSubData(
 				getStackedParameter(0),  /* GLenum readTarget */
 				getStackedParameter(1),  /* GLenum writeTarget */
@@ -2092,6 +2724,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLCOPYCOLORSUBTABLE:
+			D(funcname = "glCopyColorSubTable");
+			if (GL_ISAVAILABLE(glCopyColorSubTable))
 			nfglCopyColorSubTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei start */
@@ -2100,6 +2734,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCOLORSUBTABLEEXT:
+			D(funcname = "glCopyColorSubTableEXT");
+			if (GL_ISAVAILABLE(glCopyColorSubTableEXT))
 			nfglCopyColorSubTableEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei start */
@@ -2108,6 +2744,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCOLORTABLE:
+			D(funcname = "glCopyColorTable");
+			if (GL_ISAVAILABLE(glCopyColorTable))
 			nfglCopyColorTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2116,6 +2754,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCOLORTABLESGI:
+			D(funcname = "glCopyColorTableSGI");
+			if (GL_ISAVAILABLE(glCopyColorTableSGI))
 			nfglCopyColorTableSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2124,6 +2764,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER1D:
+			D(funcname = "glCopyConvolutionFilter1D");
+			if (GL_ISAVAILABLE(glCopyConvolutionFilter1D))
 			nfglCopyConvolutionFilter1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2132,6 +2774,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER1DEXT:
+			D(funcname = "glCopyConvolutionFilter1DEXT");
+			if (GL_ISAVAILABLE(glCopyConvolutionFilter1DEXT))
 			nfglCopyConvolutionFilter1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2140,6 +2784,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER2D:
+			D(funcname = "glCopyConvolutionFilter2D");
+			if (GL_ISAVAILABLE(glCopyConvolutionFilter2D))
 			nfglCopyConvolutionFilter2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2149,6 +2795,8 @@
 				getStackedParameter(5)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER2DEXT:
+			D(funcname = "glCopyConvolutionFilter2DEXT");
+			if (GL_ISAVAILABLE(glCopyConvolutionFilter2DEXT))
 			nfglCopyConvolutionFilter2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -2158,6 +2806,8 @@
 				getStackedParameter(5)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYIMAGESUBDATA:
+			D(funcname = "glCopyImageSubData");
+			if (GL_ISAVAILABLE(glCopyImageSubData))
 			nfglCopyImageSubData(
 				getStackedParameter(0),  /* GLuint srcName */
 				getStackedParameter(1),  /* GLenum srcTarget */
@@ -2176,6 +2826,8 @@
 				getStackedParameter(14)  /* GLsizei srcDepth */);
 			break;
 		case NFOSMESA_GLCOPYIMAGESUBDATANV:
+			D(funcname = "glCopyImageSubDataNV");
+			if (GL_ISAVAILABLE(glCopyImageSubDataNV))
 			nfglCopyImageSubDataNV(
 				getStackedParameter(0),  /* GLuint srcName */
 				getStackedParameter(1),  /* GLenum srcTarget */
@@ -2194,6 +2846,8 @@
 				getStackedParameter(14)  /* GLsizei depth */);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXIMAGE1DEXT:
+			D(funcname = "glCopyMultiTexImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyMultiTexImage1DEXT))
 			nfglCopyMultiTexImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -2205,6 +2859,8 @@
 				getStackedParameter(7)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXIMAGE2DEXT:
+			D(funcname = "glCopyMultiTexImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyMultiTexImage2DEXT))
 			nfglCopyMultiTexImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -2217,6 +2873,8 @@
 				getStackedParameter(8)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE1DEXT:
+			D(funcname = "glCopyMultiTexSubImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyMultiTexSubImage1DEXT))
 			nfglCopyMultiTexSubImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -2227,6 +2885,8 @@
 				getStackedParameter(6)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE2DEXT:
+			D(funcname = "glCopyMultiTexSubImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyMultiTexSubImage2DEXT))
 			nfglCopyMultiTexSubImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -2239,6 +2899,8 @@
 				getStackedParameter(8)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE3DEXT:
+			D(funcname = "glCopyMultiTexSubImage3DEXT");
+			if (GL_ISAVAILABLE(glCopyMultiTexSubImage3DEXT))
 			nfglCopyMultiTexSubImage3DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -2252,6 +2914,8 @@
 				getStackedParameter(9)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYNAMEDBUFFERSUBDATA:
+			D(funcname = "glCopyNamedBufferSubData");
+			if (GL_ISAVAILABLE(glCopyNamedBufferSubData))
 			nfglCopyNamedBufferSubData(
 				getStackedParameter(0),  /* GLuint readBuffer */
 				getStackedParameter(1),  /* GLuint writeBuffer */
@@ -2260,11 +2924,15 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLCOPYPATHNV:
+			D(funcname = "glCopyPathNV");
+			if (GL_ISAVAILABLE(glCopyPathNV))
 			nfglCopyPathNV(
 				getStackedParameter(0),  /* GLuint resultPath */
 				getStackedParameter(1)  /* GLuint srcPath */);
 			break;
 		case NFOSMESA_GLCOPYPIXELS:
+			D(funcname = "glCopyPixels");
+			if (GL_ISAVAILABLE(glCopyPixels))
 			nfglCopyPixels(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -2273,6 +2941,8 @@
 				getStackedParameter(4)  /* GLenum type */);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE1D:
+			D(funcname = "glCopyTexImage1D");
+			if (GL_ISAVAILABLE(glCopyTexImage1D))
 			nfglCopyTexImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2283,6 +2953,8 @@
 				getStackedParameter(6)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE1DEXT:
+			D(funcname = "glCopyTexImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyTexImage1DEXT))
 			nfglCopyTexImage1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2293,6 +2965,8 @@
 				getStackedParameter(6)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE2D:
+			D(funcname = "glCopyTexImage2D");
+			if (GL_ISAVAILABLE(glCopyTexImage2D))
 			nfglCopyTexImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2304,6 +2978,8 @@
 				getStackedParameter(7)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE2DEXT:
+			D(funcname = "glCopyTexImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyTexImage2DEXT))
 			nfglCopyTexImage2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2315,6 +2991,8 @@
 				getStackedParameter(7)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE1D:
+			D(funcname = "glCopyTexSubImage1D");
+			if (GL_ISAVAILABLE(glCopyTexSubImage1D))
 			nfglCopyTexSubImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2324,6 +3002,8 @@
 				getStackedParameter(5)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE1DEXT:
+			D(funcname = "glCopyTexSubImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyTexSubImage1DEXT))
 			nfglCopyTexSubImage1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2333,6 +3013,8 @@
 				getStackedParameter(5)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE2D:
+			D(funcname = "glCopyTexSubImage2D");
+			if (GL_ISAVAILABLE(glCopyTexSubImage2D))
 			nfglCopyTexSubImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2344,6 +3026,8 @@
 				getStackedParameter(7)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE2DEXT:
+			D(funcname = "glCopyTexSubImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyTexSubImage2DEXT))
 			nfglCopyTexSubImage2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2355,6 +3039,8 @@
 				getStackedParameter(7)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE3D:
+			D(funcname = "glCopyTexSubImage3D");
+			if (GL_ISAVAILABLE(glCopyTexSubImage3D))
 			nfglCopyTexSubImage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2367,6 +3053,8 @@
 				getStackedParameter(8)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE3DEXT:
+			D(funcname = "glCopyTexSubImage3DEXT");
+			if (GL_ISAVAILABLE(glCopyTexSubImage3DEXT))
 			nfglCopyTexSubImage3DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -2379,6 +3067,8 @@
 				getStackedParameter(8)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXTUREIMAGE1DEXT:
+			D(funcname = "glCopyTextureImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyTextureImage1DEXT))
 			nfglCopyTextureImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -2390,6 +3080,8 @@
 				getStackedParameter(7)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXTUREIMAGE2DEXT:
+			D(funcname = "glCopyTextureImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyTextureImage2DEXT))
 			nfglCopyTextureImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -2402,6 +3094,8 @@
 				getStackedParameter(8)  /* GLint border */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE1D:
+			D(funcname = "glCopyTextureSubImage1D");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage1D))
 			nfglCopyTextureSubImage1D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -2411,6 +3105,8 @@
 				getStackedParameter(5)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE1DEXT:
+			D(funcname = "glCopyTextureSubImage1DEXT");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage1DEXT))
 			nfglCopyTextureSubImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -2421,6 +3117,8 @@
 				getStackedParameter(6)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE2D:
+			D(funcname = "glCopyTextureSubImage2D");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage2D))
 			nfglCopyTextureSubImage2D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -2432,6 +3130,8 @@
 				getStackedParameter(7)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE2DEXT:
+			D(funcname = "glCopyTextureSubImage2DEXT");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage2DEXT))
 			nfglCopyTextureSubImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -2444,6 +3144,8 @@
 				getStackedParameter(8)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE3D:
+			D(funcname = "glCopyTextureSubImage3D");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage3D))
 			nfglCopyTextureSubImage3D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -2456,6 +3158,8 @@
 				getStackedParameter(8)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE3DEXT:
+			D(funcname = "glCopyTextureSubImage3DEXT");
+			if (GL_ISAVAILABLE(glCopyTextureSubImage3DEXT))
 			nfglCopyTextureSubImage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -2469,6 +3173,8 @@
 				getStackedParameter(9)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLCOVERFILLPATHINSTANCEDNV:
+			D(funcname = "glCoverFillPathInstancedNV");
+			if (GL_ISAVAILABLE(glCoverFillPathInstancedNV))
 			nfglCoverFillPathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -2479,11 +3185,15 @@
 				getStackedPointer(6, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLCOVERFILLPATHNV:
+			D(funcname = "glCoverFillPathNV");
+			if (GL_ISAVAILABLE(glCoverFillPathNV))
 			nfglCoverFillPathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1)  /* GLenum coverMode */);
 			break;
 		case NFOSMESA_GLCOVERSTROKEPATHINSTANCEDNV:
+			D(funcname = "glCoverStrokePathInstancedNV");
+			if (GL_ISAVAILABLE(glCoverStrokePathInstancedNV))
 			nfglCoverStrokePathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -2494,95 +3204,135 @@
 				getStackedPointer(6, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLCOVERSTROKEPATHNV:
+			D(funcname = "glCoverStrokePathNV");
+			if (GL_ISAVAILABLE(glCoverStrokePathNV))
 			nfglCoverStrokePathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1)  /* GLenum coverMode */);
 			break;
 		case NFOSMESA_GLCOVERAGEMODULATIONNV:
+			D(funcname = "glCoverageModulationNV");
+			if (GL_ISAVAILABLE(glCoverageModulationNV))
 			nfglCoverageModulationNV(
 				getStackedParameter(0)  /* GLenum components */);
 			break;
 		case NFOSMESA_GLCOVERAGEMODULATIONTABLENV:
+			D(funcname = "glCoverageModulationTableNV");
+			if (GL_ISAVAILABLE(glCoverageModulationTableNV))
 			nfglCoverageModulationTableNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLCREATEBUFFERS:
+			D(funcname = "glCreateBuffers");
+			if (GL_ISAVAILABLE(glCreateBuffers))
 			nfglCreateBuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *buffers */);
 			break;
 		case NFOSMESA_GLCREATECOMMANDLISTSNV:
+			D(funcname = "glCreateCommandListsNV");
+			if (GL_ISAVAILABLE(glCreateCommandListsNV))
 			nfglCreateCommandListsNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *lists */);
 			break;
 		case NFOSMESA_GLCREATEDEBUGOBJECTMESA:
+			D(funcname = "glCreateDebugObjectMESA");
+			if (GL_ISAVAILABLE(glCreateDebugObjectMESA))
 			ret = (uint32)(uintptr_t)nfglCreateDebugObjectMESA();
 			break;
 		case NFOSMESA_GLCREATEFRAMEBUFFERS:
+			D(funcname = "glCreateFramebuffers");
+			if (GL_ISAVAILABLE(glCreateFramebuffers))
 			nfglCreateFramebuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLCREATEPERFQUERYINTEL:
+			D(funcname = "glCreatePerfQueryINTEL");
+			if (GL_ISAVAILABLE(glCreatePerfQueryINTEL))
 			nfglCreatePerfQueryINTEL(
 				getStackedParameter(0),  /* GLuint queryId */
 				getStackedPointer(1, GLuint *)  /* GLuint *queryHandle */);
 			break;
 		case NFOSMESA_GLCREATEPROGRAM:
+			D(funcname = "glCreateProgram");
+			if (GL_ISAVAILABLE(glCreateProgram))
 			ret = nfglCreateProgram();
 			break;
 		case NFOSMESA_GLCREATEPROGRAMOBJECTARB:
+			D(funcname = "glCreateProgramObjectARB");
+			if (GL_ISAVAILABLE(glCreateProgramObjectARB))
 			ret = (uint32)(uintptr_t)nfglCreateProgramObjectARB();
 			break;
 		case NFOSMESA_GLCREATEPROGRAMPIPELINES:
+			D(funcname = "glCreateProgramPipelines");
+			if (GL_ISAVAILABLE(glCreateProgramPipelines))
 			nfglCreateProgramPipelines(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *pipelines */);
 			break;
 		case NFOSMESA_GLCREATEQUERIES:
+			D(funcname = "glCreateQueries");
+			if (GL_ISAVAILABLE(glCreateQueries))
 			nfglCreateQueries(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLCREATERENDERBUFFERS:
+			D(funcname = "glCreateRenderbuffers");
+			if (GL_ISAVAILABLE(glCreateRenderbuffers))
 			nfglCreateRenderbuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLCREATESAMPLERS:
+			D(funcname = "glCreateSamplers");
+			if (GL_ISAVAILABLE(glCreateSamplers))
 			nfglCreateSamplers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *samplers */);
 			break;
 		case NFOSMESA_GLCREATESHADER:
+			D(funcname = "glCreateShader");
+			if (GL_ISAVAILABLE(glCreateShader))
 			ret = nfglCreateShader(
 				getStackedParameter(0)  /* GLenum type */);
 			break;
 		case NFOSMESA_GLCREATESHADEROBJECTARB:
+			D(funcname = "glCreateShaderObjectARB");
+			if (GL_ISAVAILABLE(glCreateShaderObjectARB))
 			ret = (uint32)(uintptr_t)nfglCreateShaderObjectARB(
 				getStackedParameter(0)  /* GLenum shaderType */);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMEXT:
+			D(funcname = "glCreateShaderProgramEXT");
+			if (GL_ISAVAILABLE(glCreateShaderProgramEXT))
 			ret = nfglCreateShaderProgramEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *string */);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMV:
+			D(funcname = "glCreateShaderProgramv");
+			if (GL_ISAVAILABLE(glCreateShaderProgramv))
 			ret = nfglCreateShaderProgramv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLchar *const *)  /* const GLchar *const *strings */);
 			break;
 		case NFOSMESA_GLCREATESTATESNV:
+			D(funcname = "glCreateStatesNV");
+			if (GL_ISAVAILABLE(glCreateStatesNV))
 			nfglCreateStatesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *states */);
 			break;
 #if 0
 		case NFOSMESA_GLCREATESYNCFROMCLEVENTARB:
+			D(funcname = "glCreateSyncFromCLeventARB");
+			if (GL_ISAVAILABLE(glCreateSyncFromCLeventARB))
 			ret = (uint32)(uintptr_t)nfglCreateSyncFromCLeventARB(
 				getStackedPointer(0, struct _cl_context *),  /* struct _cl_context *context */
 				getStackedPointer(1, struct _cl_event *),  /* struct _cl_event *event */
@@ -2590,41 +3340,57 @@
 			break;
 #endif
 		case NFOSMESA_GLCREATETEXTURES:
+			D(funcname = "glCreateTextures");
+			if (GL_ISAVAILABLE(glCreateTextures))
 			nfglCreateTextures(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, GLuint *)  /* GLuint *textures */);
 			break;
 		case NFOSMESA_GLCREATETRANSFORMFEEDBACKS:
+			D(funcname = "glCreateTransformFeedbacks");
+			if (GL_ISAVAILABLE(glCreateTransformFeedbacks))
 			nfglCreateTransformFeedbacks(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLCREATEVERTEXARRAYS:
+			D(funcname = "glCreateVertexArrays");
+			if (GL_ISAVAILABLE(glCreateVertexArrays))
 			nfglCreateVertexArrays(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *arrays */);
 			break;
 		case NFOSMESA_GLCULLFACE:
+			D(funcname = "glCullFace");
+			if (GL_ISAVAILABLE(glCullFace))
 			nfglCullFace(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLCULLPARAMETERDVEXT:
+			D(funcname = "glCullParameterdvEXT");
+			if (GL_ISAVAILABLE(glCullParameterdvEXT))
 			nfglCullParameterdvEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLCULLPARAMETERFVEXT:
+			D(funcname = "glCullParameterfvEXT");
+			if (GL_ISAVAILABLE(glCullParameterfvEXT))
 			nfglCullParameterfvEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLCURRENTPALETTEMATRIXARB:
+			D(funcname = "glCurrentPaletteMatrixARB");
+			if (GL_ISAVAILABLE(glCurrentPaletteMatrixARB))
 			nfglCurrentPaletteMatrixARB(
 				getStackedParameter(0)  /* GLint index */);
 			break;
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACK:
+			D(funcname = "glDebugMessageCallback");
+			if (GL_ISAVAILABLE(glDebugMessageCallback))
 			nfglDebugMessageCallback(
 				getStackedPointer(0, GLDEBUGPROC ),  /* GLDEBUGPROC callback */
 				getStackedPointer(1, const void *)  /* const void *userParam */);
@@ -2632,6 +3398,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKAMD:
+			D(funcname = "glDebugMessageCallbackAMD");
+			if (GL_ISAVAILABLE(glDebugMessageCallbackAMD))
 			nfglDebugMessageCallbackAMD(
 				getStackedPointer(0, GLDEBUGPROCAMD ),  /* GLDEBUGPROCAMD callback */
 				getStackedPointer(1, void *)  /* void *userParam */);
@@ -2639,12 +3407,16 @@
 #endif
 #if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKARB:
+			D(funcname = "glDebugMessageCallbackARB");
+			if (GL_ISAVAILABLE(glDebugMessageCallbackARB))
 			nfglDebugMessageCallbackARB(
 				getStackedPointer(0, GLDEBUGPROCARB ),  /* GLDEBUGPROCARB callback */
 				getStackedPointer(1, const void *)  /* const void *userParam */);
 			break;
 #endif
 		case NFOSMESA_GLDEBUGMESSAGECONTROL:
+			D(funcname = "glDebugMessageControl");
+			if (GL_ISAVAILABLE(glDebugMessageControl))
 			nfglDebugMessageControl(
 				getStackedParameter(0),  /* GLenum source */
 				getStackedParameter(1),  /* GLenum type */
@@ -2654,6 +3426,8 @@
 				getStackedParameter(5)  /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGECONTROLARB:
+			D(funcname = "glDebugMessageControlARB");
+			if (GL_ISAVAILABLE(glDebugMessageControlARB))
 			nfglDebugMessageControlARB(
 				getStackedParameter(0),  /* GLenum source */
 				getStackedParameter(1),  /* GLenum type */
@@ -2663,6 +3437,8 @@
 				getStackedParameter(5)  /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEENABLEAMD:
+			D(funcname = "glDebugMessageEnableAMD");
+			if (GL_ISAVAILABLE(glDebugMessageEnableAMD))
 			nfglDebugMessageEnableAMD(
 				getStackedParameter(0),  /* GLenum category */
 				getStackedParameter(1),  /* GLenum severity */
@@ -2671,6 +3447,8 @@
 				getStackedParameter(4)  /* GLboolean32 enabled */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERT:
+			D(funcname = "glDebugMessageInsert");
+			if (GL_ISAVAILABLE(glDebugMessageInsert))
 			nfglDebugMessageInsert(
 				getStackedParameter(0),  /* GLenum source */
 				getStackedParameter(1),  /* GLenum type */
@@ -2680,6 +3458,8 @@
 				getStackedPointer(5, const GLchar *)  /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTAMD:
+			D(funcname = "glDebugMessageInsertAMD");
+			if (GL_ISAVAILABLE(glDebugMessageInsertAMD))
 			nfglDebugMessageInsertAMD(
 				getStackedParameter(0),  /* GLenum category */
 				getStackedParameter(1),  /* GLenum severity */
@@ -2688,6 +3468,8 @@
 				getStackedPointer(4, const GLchar *)  /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTARB:
+			D(funcname = "glDebugMessageInsertARB");
+			if (GL_ISAVAILABLE(glDebugMessageInsertARB))
 			nfglDebugMessageInsertARB(
 				getStackedParameter(0),  /* GLenum source */
 				getStackedParameter(1),  /* GLenum type */
@@ -2697,10 +3479,14 @@
 				getStackedPointer(5, const GLchar *)  /* const GLchar *buf */);
 			break;
 		case NFOSMESA_GLDEFORMSGIX:
+			D(funcname = "glDeformSGIX");
+			if (GL_ISAVAILABLE(glDeformSGIX))
 			nfglDeformSGIX(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLDEFORMATIONMAP3DSGIX:
+			D(funcname = "glDeformationMap3dSGIX");
+			if (GL_ISAVAILABLE(glDeformationMap3dSGIX))
 			nfglDeformationMap3dSGIX(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble u1 */
@@ -2718,6 +3504,8 @@
 				getStackedPointer(19, const GLdouble *)  /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLDEFORMATIONMAP3FSGIX:
+			D(funcname = "glDeformationMap3fSGIX");
+			if (GL_ISAVAILABLE(glDeformationMap3fSGIX))
 			nfglDeformationMap3fSGIX(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat u1 */
@@ -2735,325 +3523,459 @@
 				getStackedPointer(13, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLDELETEASYNCMARKERSSGIX:
+			D(funcname = "glDeleteAsyncMarkersSGIX");
+			if (GL_ISAVAILABLE(glDeleteAsyncMarkersSGIX))
 			nfglDeleteAsyncMarkersSGIX(
 				getStackedParameter(0),  /* GLuint marker */
 				getStackedParameter(1)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLDELETEBUFFERS:
+			D(funcname = "glDeleteBuffers");
+			if (GL_ISAVAILABLE(glDeleteBuffers))
 			nfglDeleteBuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLDELETEBUFFERSARB:
+			D(funcname = "glDeleteBuffersARB");
+			if (GL_ISAVAILABLE(glDeleteBuffersARB))
 			nfglDeleteBuffersARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *buffers */);
 			break;
 		case NFOSMESA_GLDELETECOMMANDLISTSNV:
+			D(funcname = "glDeleteCommandListsNV");
+			if (GL_ISAVAILABLE(glDeleteCommandListsNV))
 			nfglDeleteCommandListsNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *lists */);
 			break;
 		case NFOSMESA_GLDELETEFENCESAPPLE:
+			D(funcname = "glDeleteFencesAPPLE");
+			if (GL_ISAVAILABLE(glDeleteFencesAPPLE))
 			nfglDeleteFencesAPPLE(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *fences */);
 			break;
 		case NFOSMESA_GLDELETEFENCESNV:
+			D(funcname = "glDeleteFencesNV");
+			if (GL_ISAVAILABLE(glDeleteFencesNV))
 			nfglDeleteFencesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *fences */);
 			break;
 		case NFOSMESA_GLDELETEFRAGMENTSHADERATI:
+			D(funcname = "glDeleteFragmentShaderATI");
+			if (GL_ISAVAILABLE(glDeleteFragmentShaderATI))
 			nfglDeleteFragmentShaderATI(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLDELETEFRAMEBUFFERS:
+			D(funcname = "glDeleteFramebuffers");
+			if (GL_ISAVAILABLE(glDeleteFramebuffers))
 			nfglDeleteFramebuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLDELETEFRAMEBUFFERSEXT:
+			D(funcname = "glDeleteFramebuffersEXT");
+			if (GL_ISAVAILABLE(glDeleteFramebuffersEXT))
 			nfglDeleteFramebuffersEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLDELETELISTS:
+			D(funcname = "glDeleteLists");
+			if (GL_ISAVAILABLE(glDeleteLists))
 			nfglDeleteLists(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLDELETENAMEDSTRINGARB:
+			D(funcname = "glDeleteNamedStringARB");
+			if (GL_ISAVAILABLE(glDeleteNamedStringARB))
 			nfglDeleteNamedStringARB(
 				getStackedParameter(0),  /* GLint namelen */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLDELETENAMESAMD:
+			D(funcname = "glDeleteNamesAMD");
+			if (GL_ISAVAILABLE(glDeleteNamesAMD))
 			nfglDeleteNamesAMD(
 				getStackedParameter(0),  /* GLenum identifier */
 				getStackedParameter(1),  /* GLuint num */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *names */);
 			break;
 		case NFOSMESA_GLDELETEOBJECTARB:
+			D(funcname = "glDeleteObjectARB");
+			if (GL_ISAVAILABLE(glDeleteObjectARB))
 			nfglDeleteObjectARB(
 				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLDELETEOBJECTBUFFERATI:
+			D(funcname = "glDeleteObjectBufferATI");
+			if (GL_ISAVAILABLE(glDeleteObjectBufferATI))
 			nfglDeleteObjectBufferATI(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLDELETEOCCLUSIONQUERIESNV:
+			D(funcname = "glDeleteOcclusionQueriesNV");
+			if (GL_ISAVAILABLE(glDeleteOcclusionQueriesNV))
 			nfglDeleteOcclusionQueriesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEPATHSNV:
+			D(funcname = "glDeletePathsNV");
+			if (GL_ISAVAILABLE(glDeletePathsNV))
 			nfglDeletePathsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLDELETEPERFMONITORSAMD:
+			D(funcname = "glDeletePerfMonitorsAMD");
+			if (GL_ISAVAILABLE(glDeletePerfMonitorsAMD))
 			nfglDeletePerfMonitorsAMD(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *monitors */);
 			break;
 		case NFOSMESA_GLDELETEPERFQUERYINTEL:
+			D(funcname = "glDeletePerfQueryINTEL");
+			if (GL_ISAVAILABLE(glDeletePerfQueryINTEL))
 			nfglDeletePerfQueryINTEL(
 				getStackedParameter(0)  /* GLuint queryHandle */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAM:
+			D(funcname = "glDeleteProgram");
+			if (GL_ISAVAILABLE(glDeleteProgram))
 			nfglDeleteProgram(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMPIPELINES:
+			D(funcname = "glDeleteProgramPipelines");
+			if (GL_ISAVAILABLE(glDeleteProgramPipelines))
 			nfglDeleteProgramPipelines(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *pipelines */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSARB:
+			D(funcname = "glDeleteProgramsARB");
+			if (GL_ISAVAILABLE(glDeleteProgramsARB))
 			nfglDeleteProgramsARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSNV:
+			D(funcname = "glDeleteProgramsNV");
+			if (GL_ISAVAILABLE(glDeleteProgramsNV))
 			nfglDeleteProgramsNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLDELETEQUERIES:
+			D(funcname = "glDeleteQueries");
+			if (GL_ISAVAILABLE(glDeleteQueries))
 			nfglDeleteQueries(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEQUERIESARB:
+			D(funcname = "glDeleteQueriesARB");
+			if (GL_ISAVAILABLE(glDeleteQueriesARB))
 			nfglDeleteQueriesARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERS:
+			D(funcname = "glDeleteRenderbuffers");
+			if (GL_ISAVAILABLE(glDeleteRenderbuffers))
 			nfglDeleteRenderbuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERSEXT:
+			D(funcname = "glDeleteRenderbuffersEXT");
+			if (GL_ISAVAILABLE(glDeleteRenderbuffersEXT))
 			nfglDeleteRenderbuffersEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLDELETESAMPLERS:
+			D(funcname = "glDeleteSamplers");
+			if (GL_ISAVAILABLE(glDeleteSamplers))
 			nfglDeleteSamplers(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *samplers */);
 			break;
 		case NFOSMESA_GLDELETESHADER:
+			D(funcname = "glDeleteShader");
+			if (GL_ISAVAILABLE(glDeleteShader))
 			nfglDeleteShader(
 				getStackedParameter(0)  /* GLuint shader */);
 			break;
 		case NFOSMESA_GLDELETESTATESNV:
+			D(funcname = "glDeleteStatesNV");
+			if (GL_ISAVAILABLE(glDeleteStatesNV))
 			nfglDeleteStatesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *states */);
 			break;
 		case NFOSMESA_GLDELETESYNC:
+			D(funcname = "glDeleteSync");
+			if (GL_ISAVAILABLE(glDeleteSync))
 			nfglDeleteSync(
 				(GLsync)getStackedParameter(0)  /* GLsync sync */);
 			break;
 		case NFOSMESA_GLDELETETEXTURES:
+			D(funcname = "glDeleteTextures");
+			if (GL_ISAVAILABLE(glDeleteTextures))
 			nfglDeleteTextures(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLDELETETEXTURESEXT:
+			D(funcname = "glDeleteTexturesEXT");
+			if (GL_ISAVAILABLE(glDeleteTexturesEXT))
 			nfglDeleteTexturesEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *textures */);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKS:
+			D(funcname = "glDeleteTransformFeedbacks");
+			if (GL_ISAVAILABLE(glDeleteTransformFeedbacks))
 			nfglDeleteTransformFeedbacks(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKSNV:
+			D(funcname = "glDeleteTransformFeedbacksNV");
+			if (GL_ISAVAILABLE(glDeleteTransformFeedbacksNV))
 			nfglDeleteTransformFeedbacksNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYS:
+			D(funcname = "glDeleteVertexArrays");
+			if (GL_ISAVAILABLE(glDeleteVertexArrays))
 			nfglDeleteVertexArrays(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *arrays */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYSAPPLE:
+			D(funcname = "glDeleteVertexArraysAPPLE");
+			if (GL_ISAVAILABLE(glDeleteVertexArraysAPPLE))
 			nfglDeleteVertexArraysAPPLE(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *arrays */);
 			break;
 		case NFOSMESA_GLDELETEVERTEXSHADEREXT:
+			D(funcname = "glDeleteVertexShaderEXT");
+			if (GL_ISAVAILABLE(glDeleteVertexShaderEXT))
 			nfglDeleteVertexShaderEXT(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLDEPTHBOUNDSEXT:
+			D(funcname = "glDepthBoundsEXT");
+			if (GL_ISAVAILABLE(glDepthBoundsEXT))
 			nfglDepthBoundsEXT(
 				getStackedDouble(0),  /* GLclampd zmin */
 				getStackedDouble(2)  /* GLclampd zmax */);
 			break;
 		case NFOSMESA_GLDEPTHBOUNDSDNV:
+			D(funcname = "glDepthBoundsdNV");
+			if (GL_ISAVAILABLE(glDepthBoundsdNV))
 			nfglDepthBoundsdNV(
 				getStackedDouble(0),  /* GLdouble zmin */
 				getStackedDouble(2)  /* GLdouble zmax */);
 			break;
 		case NFOSMESA_GLDEPTHFUNC:
+			D(funcname = "glDepthFunc");
+			if (GL_ISAVAILABLE(glDepthFunc))
 			nfglDepthFunc(
 				getStackedParameter(0)  /* GLenum func */);
 			break;
 		case NFOSMESA_GLDEPTHMASK:
+			D(funcname = "glDepthMask");
+			if (GL_ISAVAILABLE(glDepthMask))
 			nfglDepthMask(
 				getStackedParameter(0)  /* GLboolean32 flag */);
 			break;
 		case NFOSMESA_GLDEPTHRANGE:
+			D(funcname = "glDepthRange");
+			if (GL_ISAVAILABLE(glDepthRange))
 			nfglDepthRange(
 				getStackedDouble(0),  /* GLclampd zNear */
 				getStackedDouble(2)  /* GLclampd zFar */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEARRAYV:
+			D(funcname = "glDepthRangeArrayv");
+			if (GL_ISAVAILABLE(glDepthRangeArrayv))
 			nfglDepthRangeArrayv(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEINDEXED:
+			D(funcname = "glDepthRangeIndexed");
+			if (GL_ISAVAILABLE(glDepthRangeIndexed))
 			nfglDepthRangeIndexed(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble n */
 				getStackedDouble(3)  /* GLdouble f */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEDNV:
+			D(funcname = "glDepthRangedNV");
+			if (GL_ISAVAILABLE(glDepthRangedNV))
 			nfglDepthRangedNV(
 				getStackedDouble(0),  /* GLdouble zNear */
 				getStackedDouble(2)  /* GLdouble zFar */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEF:
+			D(funcname = "glDepthRangef");
+			if (GL_ISAVAILABLE(glDepthRangef))
 			nfglDepthRangef(
 				getStackedFloat(0),  /* GLfloat n */
 				getStackedFloat(1)  /* GLfloat f */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEFOES:
+			D(funcname = "glDepthRangefOES");
+			if (GL_ISAVAILABLE(glDepthRangefOES))
 			nfglDepthRangefOES(
 				getStackedFloat(0),  /* GLclampf n */
 				getStackedFloat(1)  /* GLclampf f */);
 			break;
 		case NFOSMESA_GLDEPTHRANGEXOES:
+			D(funcname = "glDepthRangexOES");
+			if (GL_ISAVAILABLE(glDepthRangexOES))
 			nfglDepthRangexOES(
 				getStackedParameter(0),  /* GLfixed n */
 				getStackedParameter(1)  /* GLfixed f */);
 			break;
 		case NFOSMESA_GLDETACHOBJECTARB:
+			D(funcname = "glDetachObjectARB");
+			if (GL_ISAVAILABLE(glDetachObjectARB))
 			nfglDetachObjectARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
 				(GLhandleARB)getStackedParameter(1)  /* GLhandleARB attachedObj */);
 			break;
 		case NFOSMESA_GLDETACHSHADER:
+			D(funcname = "glDetachShader");
+			if (GL_ISAVAILABLE(glDetachShader))
 			nfglDetachShader(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1)  /* GLuint shader */);
 			break;
 		case NFOSMESA_GLDETAILTEXFUNCSGIS:
+			D(funcname = "glDetailTexFuncSGIS");
+			if (GL_ISAVAILABLE(glDetailTexFuncSGIS))
 			nfglDetailTexFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLDISABLE:
+			D(funcname = "glDisable");
+			if (GL_ISAVAILABLE(glDisable))
 			nfglDisable(
 				getStackedParameter(0)  /* GLenum cap */);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATE:
+			D(funcname = "glDisableClientState");
+			if (GL_ISAVAILABLE(glDisableClientState))
 			nfglDisableClientState(
 				getStackedParameter(0)  /* GLenum array */);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATEINDEXEDEXT:
+			D(funcname = "glDisableClientStateIndexedEXT");
+			if (GL_ISAVAILABLE(glDisableClientStateIndexedEXT))
 			nfglDisableClientStateIndexedEXT(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATEIEXT:
+			D(funcname = "glDisableClientStateiEXT");
+			if (GL_ISAVAILABLE(glDisableClientStateiEXT))
 			nfglDisableClientStateiEXT(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLEINDEXEDEXT:
+			D(funcname = "glDisableIndexedEXT");
+			if (GL_ISAVAILABLE(glDisableIndexedEXT))
 			nfglDisableIndexedEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLETRACEMESA:
+			D(funcname = "glDisableTraceMESA");
+			if (GL_ISAVAILABLE(glDisableTraceMESA))
 			nfglDisableTraceMESA(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLDISABLEVARIANTCLIENTSTATEEXT:
+			D(funcname = "glDisableVariantClientStateEXT");
+			if (GL_ISAVAILABLE(glDisableVariantClientStateEXT))
 			nfglDisableVariantClientStateEXT(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYATTRIB:
+			D(funcname = "glDisableVertexArrayAttrib");
+			if (GL_ISAVAILABLE(glDisableVertexArrayAttrib))
 			nfglDisableVertexArrayAttrib(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYATTRIBEXT:
+			D(funcname = "glDisableVertexArrayAttribEXT");
+			if (GL_ISAVAILABLE(glDisableVertexArrayAttribEXT))
 			nfglDisableVertexArrayAttribEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYEXT:
+			D(funcname = "glDisableVertexArrayEXT");
+			if (GL_ISAVAILABLE(glDisableVertexArrayEXT))
 			nfglDisableVertexArrayEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLenum array */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBAPPLE:
+			D(funcname = "glDisableVertexAttribAPPLE");
+			if (GL_ISAVAILABLE(glDisableVertexAttribAPPLE))
 			nfglDisableVertexAttribAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBARRAY:
+			D(funcname = "glDisableVertexAttribArray");
+			if (GL_ISAVAILABLE(glDisableVertexAttribArray))
 			nfglDisableVertexAttribArray(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBARRAYARB:
+			D(funcname = "glDisableVertexAttribArrayARB");
+			if (GL_ISAVAILABLE(glDisableVertexAttribArrayARB))
 			nfglDisableVertexAttribArrayARB(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISABLEI:
+			D(funcname = "glDisablei");
+			if (GL_ISAVAILABLE(glDisablei))
 			nfglDisablei(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTE:
+			D(funcname = "glDispatchCompute");
+			if (GL_ISAVAILABLE(glDispatchCompute))
 			nfglDispatchCompute(
 				getStackedParameter(0),  /* GLuint num_groups_x */
 				getStackedParameter(1),  /* GLuint num_groups_y */
 				getStackedParameter(2)  /* GLuint num_groups_z */);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTEGROUPSIZEARB:
+			D(funcname = "glDispatchComputeGroupSizeARB");
+			if (GL_ISAVAILABLE(glDispatchComputeGroupSizeARB))
 			nfglDispatchComputeGroupSizeARB(
 				getStackedParameter(0),  /* GLuint num_groups_x */
 				getStackedParameter(1),  /* GLuint num_groups_y */
@@ -3063,27 +3985,37 @@
 				getStackedParameter(5)  /* GLuint group_size_z */);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTEINDIRECT:
+			D(funcname = "glDispatchComputeIndirect");
+			if (GL_ISAVAILABLE(glDispatchComputeIndirect))
 			nfglDispatchComputeIndirect(
 				getStackedParameter(0)  /* GLintptr indirect */);
 			break;
 		case NFOSMESA_GLDRAWARRAYS:
+			D(funcname = "glDrawArrays");
+			if (GL_ISAVAILABLE(glDrawArrays))
 			nfglDrawArrays(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
 				getStackedParameter(2)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSEXT:
+			D(funcname = "glDrawArraysEXT");
+			if (GL_ISAVAILABLE(glDrawArraysEXT))
 			nfglDrawArraysEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
 				getStackedParameter(2)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINDIRECT:
+			D(funcname = "glDrawArraysIndirect");
+			if (GL_ISAVAILABLE(glDrawArraysIndirect))
 			nfglDrawArraysIndirect(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const void *)  /* const void *indirect */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCED:
+			D(funcname = "glDrawArraysInstanced");
+			if (GL_ISAVAILABLE(glDrawArraysInstanced))
 			nfglDrawArraysInstanced(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
@@ -3091,6 +4023,8 @@
 				getStackedParameter(3)  /* GLsizei instancecount */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDARB:
+			D(funcname = "glDrawArraysInstancedARB");
+			if (GL_ISAVAILABLE(glDrawArraysInstancedARB))
 			nfglDrawArraysInstancedARB(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
@@ -3098,6 +4032,8 @@
 				getStackedParameter(3)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDBASEINSTANCE:
+			D(funcname = "glDrawArraysInstancedBaseInstance");
+			if (GL_ISAVAILABLE(glDrawArraysInstancedBaseInstance))
 			nfglDrawArraysInstancedBaseInstance(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
@@ -3106,6 +4042,8 @@
 				getStackedParameter(4)  /* GLuint baseinstance */);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDEXT:
+			D(funcname = "glDrawArraysInstancedEXT");
+			if (GL_ISAVAILABLE(glDrawArraysInstancedEXT))
 			nfglDrawArraysInstancedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint start */
@@ -3113,25 +4051,35 @@
 				getStackedParameter(3)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWBUFFER:
+			D(funcname = "glDrawBuffer");
+			if (GL_ISAVAILABLE(glDrawBuffer))
 			nfglDrawBuffer(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLDRAWBUFFERS:
+			D(funcname = "glDrawBuffers");
+			if (GL_ISAVAILABLE(glDrawBuffers))
 			nfglDrawBuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLenum *)  /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSARB:
+			D(funcname = "glDrawBuffersARB");
+			if (GL_ISAVAILABLE(glDrawBuffersARB))
 			nfglDrawBuffersARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLenum *)  /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSATI:
+			D(funcname = "glDrawBuffersATI");
+			if (GL_ISAVAILABLE(glDrawBuffersATI))
 			nfglDrawBuffersATI(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLenum *)  /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSADDRESSNV:
+			D(funcname = "glDrawCommandsAddressNV");
+			if (GL_ISAVAILABLE(glDrawCommandsAddressNV))
 			nfglDrawCommandsAddressNV(
 				getStackedParameter(0),  /* GLenum primitiveMode */
 				getStackedPointer(1, const GLuint64 *),  /* const GLuint64 *indirects */
@@ -3139,6 +4087,8 @@
 				getStackedParameter(3)  /* GLuint count */);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSNV:
+			D(funcname = "glDrawCommandsNV");
+			if (GL_ISAVAILABLE(glDrawCommandsNV))
 			nfglDrawCommandsNV(
 				getStackedParameter(0),  /* GLenum primitiveMode */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -3147,6 +4097,8 @@
 				getStackedParameter(4)  /* GLuint count */);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSSTATESADDRESSNV:
+			D(funcname = "glDrawCommandsStatesAddressNV");
+			if (GL_ISAVAILABLE(glDrawCommandsStatesAddressNV))
 			nfglDrawCommandsStatesAddressNV(
 				getStackedPointer(0, const GLuint64 *),  /* const GLuint64 *indirects */
 				getStackedPointer(1, const GLsizei *),  /* const GLsizei *sizes */
@@ -3155,6 +4107,8 @@
 				getStackedParameter(4)  /* GLuint count */);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSSTATESNV:
+			D(funcname = "glDrawCommandsStatesNV");
+			if (GL_ISAVAILABLE(glDrawCommandsStatesNV))
 			nfglDrawCommandsStatesNV(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedPointer(1, const GLintptr *),  /* const GLintptr *indirects */
@@ -3164,17 +4118,23 @@
 				getStackedParameter(5)  /* GLuint count */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTARRAYAPPLE:
+			D(funcname = "glDrawElementArrayAPPLE");
+			if (GL_ISAVAILABLE(glDrawElementArrayAPPLE))
 			nfglDrawElementArrayAPPLE(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
 				getStackedParameter(2)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTARRAYATI:
+			D(funcname = "glDrawElementArrayATI");
+			if (GL_ISAVAILABLE(glDrawElementArrayATI))
 			nfglDrawElementArrayATI(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTS:
+			D(funcname = "glDrawElements");
+			if (GL_ISAVAILABLE(glDrawElements))
 			nfglDrawElements(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3182,6 +4142,8 @@
 				getStackedPointer(3, const GLvoid *)  /* const GLvoid *indices */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSBASEVERTEX:
+			D(funcname = "glDrawElementsBaseVertex");
+			if (GL_ISAVAILABLE(glDrawElementsBaseVertex))
 			nfglDrawElementsBaseVertex(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3190,12 +4152,16 @@
 				getStackedParameter(4)  /* GLint basevertex */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINDIRECT:
+			D(funcname = "glDrawElementsIndirect");
+			if (GL_ISAVAILABLE(glDrawElementsIndirect))
 			nfglDrawElementsIndirect(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void *)  /* const void *indirect */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCED:
+			D(funcname = "glDrawElementsInstanced");
+			if (GL_ISAVAILABLE(glDrawElementsInstanced))
 			nfglDrawElementsInstanced(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3204,6 +4170,8 @@
 				getStackedParameter(4)  /* GLsizei instancecount */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDARB:
+			D(funcname = "glDrawElementsInstancedARB");
+			if (GL_ISAVAILABLE(glDrawElementsInstancedARB))
 			nfglDrawElementsInstancedARB(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3212,6 +4180,8 @@
 				getStackedParameter(4)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEINSTANCE:
+			D(funcname = "glDrawElementsInstancedBaseInstance");
+			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseInstance))
 			nfglDrawElementsInstancedBaseInstance(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3221,6 +4191,8 @@
 				getStackedParameter(5)  /* GLuint baseinstance */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEVERTEX:
+			D(funcname = "glDrawElementsInstancedBaseVertex");
+			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseVertex))
 			nfglDrawElementsInstancedBaseVertex(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3230,6 +4202,8 @@
 				getStackedParameter(5)  /* GLint basevertex */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCE:
+			D(funcname = "glDrawElementsInstancedBaseVertexBaseInstance");
+			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseVertexBaseInstance))
 			nfglDrawElementsInstancedBaseVertexBaseInstance(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3240,6 +4214,8 @@
 				getStackedParameter(6)  /* GLuint baseinstance */);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDEXT:
+			D(funcname = "glDrawElementsInstancedEXT");
+			if (GL_ISAVAILABLE(glDrawElementsInstancedEXT))
 			nfglDrawElementsInstancedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLsizei count */
@@ -3248,6 +4224,8 @@
 				getStackedParameter(4)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLDRAWMESHARRAYSSUN:
+			D(funcname = "glDrawMeshArraysSUN");
+			if (GL_ISAVAILABLE(glDrawMeshArraysSUN))
 			nfglDrawMeshArraysSUN(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint first */
@@ -3255,6 +4233,8 @@
 				getStackedParameter(3)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLDRAWPIXELS:
+			D(funcname = "glDrawPixels");
+			if (GL_ISAVAILABLE(glDrawPixels))
 			nfglDrawPixels(
 				getStackedParameter(0),  /* GLsizei width */
 				getStackedParameter(1),  /* GLsizei height */
@@ -3263,6 +4243,8 @@
 				getStackedPointer(4, const GLvoid *)  /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTARRAYAPPLE:
+			D(funcname = "glDrawRangeElementArrayAPPLE");
+			if (GL_ISAVAILABLE(glDrawRangeElementArrayAPPLE))
 			nfglDrawRangeElementArrayAPPLE(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -3271,6 +4253,8 @@
 				getStackedParameter(4)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTARRAYATI:
+			D(funcname = "glDrawRangeElementArrayATI");
+			if (GL_ISAVAILABLE(glDrawRangeElementArrayATI))
 			nfglDrawRangeElementArrayATI(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -3278,6 +4262,8 @@
 				getStackedParameter(3)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTS:
+			D(funcname = "glDrawRangeElements");
+			if (GL_ISAVAILABLE(glDrawRangeElements))
 			nfglDrawRangeElements(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -3287,6 +4273,8 @@
 				getStackedPointer(5, const void *)  /* const void *indices */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSBASEVERTEX:
+			D(funcname = "glDrawRangeElementsBaseVertex");
+			if (GL_ISAVAILABLE(glDrawRangeElementsBaseVertex))
 			nfglDrawRangeElementsBaseVertex(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -3297,6 +4285,8 @@
 				getStackedParameter(6)  /* GLint basevertex */);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSEXT:
+			D(funcname = "glDrawRangeElementsEXT");
+			if (GL_ISAVAILABLE(glDrawRangeElementsEXT))
 			nfglDrawRangeElementsEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -3306,6 +4296,8 @@
 				getStackedPointer(5, const void *)  /* const void *indices */);
 			break;
 		case NFOSMESA_GLDRAWTEXTURENV:
+			D(funcname = "glDrawTextureNV");
+			if (GL_ISAVAILABLE(glDrawTextureNV))
 			nfglDrawTextureNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLuint sampler */
@@ -3320,28 +4312,38 @@
 				getStackedFloat(10)  /* GLfloat t1 */);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACK:
+			D(funcname = "glDrawTransformFeedback");
+			if (GL_ISAVAILABLE(glDrawTransformFeedback))
 			nfglDrawTransformFeedback(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKINSTANCED:
+			D(funcname = "glDrawTransformFeedbackInstanced");
+			if (GL_ISAVAILABLE(glDrawTransformFeedbackInstanced))
 			nfglDrawTransformFeedbackInstanced(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint id */
 				getStackedParameter(2)  /* GLsizei instancecount */);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKNV:
+			D(funcname = "glDrawTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glDrawTransformFeedbackNV))
 			nfglDrawTransformFeedbackNV(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKSTREAM:
+			D(funcname = "glDrawTransformFeedbackStream");
+			if (GL_ISAVAILABLE(glDrawTransformFeedbackStream))
 			nfglDrawTransformFeedbackStream(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint id */
 				getStackedParameter(2)  /* GLuint stream */);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKSTREAMINSTANCED:
+			D(funcname = "glDrawTransformFeedbackStreamInstanced");
+			if (GL_ISAVAILABLE(glDrawTransformFeedbackStreamInstanced))
 			nfglDrawTransformFeedbackStreamInstanced(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint id */
@@ -3349,232 +4351,342 @@
 				getStackedParameter(3)  /* GLsizei instancecount */);
 			break;
 		case NFOSMESA_GLEDGEFLAG:
+			D(funcname = "glEdgeFlag");
+			if (GL_ISAVAILABLE(glEdgeFlag))
 			nfglEdgeFlag(
 				getStackedParameter(0)  /* GLboolean32 flag */);
 			break;
 		case NFOSMESA_GLEDGEFLAGFORMATNV:
+			D(funcname = "glEdgeFlagFormatNV");
+			if (GL_ISAVAILABLE(glEdgeFlagFormatNV))
 			nfglEdgeFlagFormatNV(
 				getStackedParameter(0)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTER:
+			D(funcname = "glEdgeFlagPointer");
+			if (GL_ISAVAILABLE(glEdgeFlagPointer))
 			nfglEdgeFlagPointer(
 				getStackedParameter(0),  /* GLsizei stride */
 				getStackedPointer(1, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTEREXT:
+			D(funcname = "glEdgeFlagPointerEXT");
+			if (GL_ISAVAILABLE(glEdgeFlagPointerEXT))
 			nfglEdgeFlagPointerEXT(
 				getStackedParameter(0),  /* GLsizei stride */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLboolean *)  /* const GLboolean *pointer */);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTERLISTIBM:
+			D(funcname = "glEdgeFlagPointerListIBM");
+			if (GL_ISAVAILABLE(glEdgeFlagPointerListIBM))
 			nfglEdgeFlagPointerListIBM(
 				getStackedParameter(0),  /* GLint stride */
 				getStackedPointer(1, const GLboolean * *),  /* const GLboolean * *pointer */
 				getStackedParameter(2)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLEDGEFLAGV:
+			D(funcname = "glEdgeFlagv");
+			if (GL_ISAVAILABLE(glEdgeFlagv))
 			nfglEdgeFlagv(
 				getStackedPointer(0, const GLboolean *)  /* const GLboolean *flag */);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERAPPLE:
+			D(funcname = "glElementPointerAPPLE");
+			if (GL_ISAVAILABLE(glElementPointerAPPLE))
 			nfglElementPointerAPPLE(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERATI:
+			D(funcname = "glElementPointerATI");
+			if (GL_ISAVAILABLE(glElementPointerATI))
 			nfglElementPointerATI(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLENABLE:
+			D(funcname = "glEnable");
+			if (GL_ISAVAILABLE(glEnable))
 			nfglEnable(
 				getStackedParameter(0)  /* GLenum cap */);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATE:
+			D(funcname = "glEnableClientState");
+			if (GL_ISAVAILABLE(glEnableClientState))
 			nfglEnableClientState(
 				getStackedParameter(0)  /* GLenum array */);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATEINDEXEDEXT:
+			D(funcname = "glEnableClientStateIndexedEXT");
+			if (GL_ISAVAILABLE(glEnableClientStateIndexedEXT))
 			nfglEnableClientStateIndexedEXT(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATEIEXT:
+			D(funcname = "glEnableClientStateiEXT");
+			if (GL_ISAVAILABLE(glEnableClientStateiEXT))
 			nfglEnableClientStateiEXT(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLEINDEXEDEXT:
+			D(funcname = "glEnableIndexedEXT");
+			if (GL_ISAVAILABLE(glEnableIndexedEXT))
 			nfglEnableIndexedEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLETRACEMESA:
+			D(funcname = "glEnableTraceMESA");
+			if (GL_ISAVAILABLE(glEnableTraceMESA))
 			nfglEnableTraceMESA(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLENABLEVARIANTCLIENTSTATEEXT:
+			D(funcname = "glEnableVariantClientStateEXT");
+			if (GL_ISAVAILABLE(glEnableVariantClientStateEXT))
 			nfglEnableVariantClientStateEXT(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYATTRIB:
+			D(funcname = "glEnableVertexArrayAttrib");
+			if (GL_ISAVAILABLE(glEnableVertexArrayAttrib))
 			nfglEnableVertexArrayAttrib(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYATTRIBEXT:
+			D(funcname = "glEnableVertexArrayAttribEXT");
+			if (GL_ISAVAILABLE(glEnableVertexArrayAttribEXT))
 			nfglEnableVertexArrayAttribEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYEXT:
+			D(funcname = "glEnableVertexArrayEXT");
+			if (GL_ISAVAILABLE(glEnableVertexArrayEXT))
 			nfglEnableVertexArrayEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLenum array */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBAPPLE:
+			D(funcname = "glEnableVertexAttribAPPLE");
+			if (GL_ISAVAILABLE(glEnableVertexAttribAPPLE))
 			nfglEnableVertexAttribAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBARRAY:
+			D(funcname = "glEnableVertexAttribArray");
+			if (GL_ISAVAILABLE(glEnableVertexAttribArray))
 			nfglEnableVertexAttribArray(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBARRAYARB:
+			D(funcname = "glEnableVertexAttribArrayARB");
+			if (GL_ISAVAILABLE(glEnableVertexAttribArrayARB))
 			nfglEnableVertexAttribArrayARB(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENABLEI:
+			D(funcname = "glEnablei");
+			if (GL_ISAVAILABLE(glEnablei))
 			nfglEnablei(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLEND:
+			D(funcname = "glEnd");
+			if (GL_ISAVAILABLE(glEnd))
 			nfglEnd();
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDER:
+			D(funcname = "glEndConditionalRender");
+			if (GL_ISAVAILABLE(glEndConditionalRender))
 			nfglEndConditionalRender();
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDERNV:
+			D(funcname = "glEndConditionalRenderNV");
+			if (GL_ISAVAILABLE(glEndConditionalRenderNV))
 			nfglEndConditionalRenderNV();
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDERNVX:
+			D(funcname = "glEndConditionalRenderNVX");
+			if (GL_ISAVAILABLE(glEndConditionalRenderNVX))
 			nfglEndConditionalRenderNVX();
 			break;
 		case NFOSMESA_GLENDFRAGMENTSHADERATI:
+			D(funcname = "glEndFragmentShaderATI");
+			if (GL_ISAVAILABLE(glEndFragmentShaderATI))
 			nfglEndFragmentShaderATI();
 			break;
 		case NFOSMESA_GLENDLIST:
+			D(funcname = "glEndList");
+			if (GL_ISAVAILABLE(glEndList))
 			nfglEndList();
 			break;
 		case NFOSMESA_GLENDOCCLUSIONQUERYNV:
+			D(funcname = "glEndOcclusionQueryNV");
+			if (GL_ISAVAILABLE(glEndOcclusionQueryNV))
 			nfglEndOcclusionQueryNV();
 			break;
 		case NFOSMESA_GLENDPERFMONITORAMD:
+			D(funcname = "glEndPerfMonitorAMD");
+			if (GL_ISAVAILABLE(glEndPerfMonitorAMD))
 			nfglEndPerfMonitorAMD(
 				getStackedParameter(0)  /* GLuint monitor */);
 			break;
 		case NFOSMESA_GLENDPERFQUERYINTEL:
+			D(funcname = "glEndPerfQueryINTEL");
+			if (GL_ISAVAILABLE(glEndPerfQueryINTEL))
 			nfglEndPerfQueryINTEL(
 				getStackedParameter(0)  /* GLuint queryHandle */);
 			break;
 		case NFOSMESA_GLENDQUERY:
+			D(funcname = "glEndQuery");
+			if (GL_ISAVAILABLE(glEndQuery))
 			nfglEndQuery(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLENDQUERYARB:
+			D(funcname = "glEndQueryARB");
+			if (GL_ISAVAILABLE(glEndQueryARB))
 			nfglEndQueryARB(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLENDQUERYINDEXED:
+			D(funcname = "glEndQueryIndexed");
+			if (GL_ISAVAILABLE(glEndQueryIndexed))
 			nfglEndQueryIndexed(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLENDTRACEMESA:
+			D(funcname = "glEndTraceMESA");
+			if (GL_ISAVAILABLE(glEndTraceMESA))
 			nfglEndTraceMESA();
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACK:
+			D(funcname = "glEndTransformFeedback");
+			if (GL_ISAVAILABLE(glEndTransformFeedback))
 			nfglEndTransformFeedback();
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACKEXT:
+			D(funcname = "glEndTransformFeedbackEXT");
+			if (GL_ISAVAILABLE(glEndTransformFeedbackEXT))
 			nfglEndTransformFeedbackEXT();
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACKNV:
+			D(funcname = "glEndTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glEndTransformFeedbackNV))
 			nfglEndTransformFeedbackNV();
 			break;
 		case NFOSMESA_GLENDVERTEXSHADEREXT:
+			D(funcname = "glEndVertexShaderEXT");
+			if (GL_ISAVAILABLE(glEndVertexShaderEXT))
 			nfglEndVertexShaderEXT();
 			break;
 		case NFOSMESA_GLENDVIDEOCAPTURENV:
+			D(funcname = "glEndVideoCaptureNV");
+			if (GL_ISAVAILABLE(glEndVideoCaptureNV))
 			nfglEndVideoCaptureNV(
 				getStackedParameter(0)  /* GLuint video_capture_slot */);
 			break;
 		case NFOSMESA_GLEVALCOORD1D:
+			D(funcname = "glEvalCoord1d");
+			if (GL_ISAVAILABLE(glEvalCoord1d))
 			nfglEvalCoord1d(
 				getStackedDouble(0)  /* GLdouble u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1DV:
+			D(funcname = "glEvalCoord1dv");
+			if (GL_ISAVAILABLE(glEvalCoord1dv))
 			nfglEvalCoord1dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1F:
+			D(funcname = "glEvalCoord1f");
+			if (GL_ISAVAILABLE(glEvalCoord1f))
 			nfglEvalCoord1f(
 				getStackedFloat(0)  /* GLfloat u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1FV:
+			D(funcname = "glEvalCoord1fv");
+			if (GL_ISAVAILABLE(glEvalCoord1fv))
 			nfglEvalCoord1fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1XOES:
+			D(funcname = "glEvalCoord1xOES");
+			if (GL_ISAVAILABLE(glEvalCoord1xOES))
 			nfglEvalCoord1xOES(
 				getStackedParameter(0)  /* GLfixed u */);
 			break;
 		case NFOSMESA_GLEVALCOORD1XVOES:
+			D(funcname = "glEvalCoord1xvOES");
+			if (GL_ISAVAILABLE(glEvalCoord1xvOES))
 			nfglEvalCoord1xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLEVALCOORD2D:
+			D(funcname = "glEvalCoord2d");
+			if (GL_ISAVAILABLE(glEvalCoord2d))
 			nfglEvalCoord2d(
 				getStackedDouble(0),  /* GLdouble u */
 				getStackedDouble(2)  /* GLdouble v */);
 			break;
 		case NFOSMESA_GLEVALCOORD2DV:
+			D(funcname = "glEvalCoord2dv");
+			if (GL_ISAVAILABLE(glEvalCoord2dv))
 			nfglEvalCoord2dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD2F:
+			D(funcname = "glEvalCoord2f");
+			if (GL_ISAVAILABLE(glEvalCoord2f))
 			nfglEvalCoord2f(
 				getStackedFloat(0),  /* GLfloat u */
 				getStackedFloat(1)  /* GLfloat v */);
 			break;
 		case NFOSMESA_GLEVALCOORD2FV:
+			D(funcname = "glEvalCoord2fv");
+			if (GL_ISAVAILABLE(glEvalCoord2fv))
 			nfglEvalCoord2fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *u */);
 			break;
 		case NFOSMESA_GLEVALCOORD2XOES:
+			D(funcname = "glEvalCoord2xOES");
+			if (GL_ISAVAILABLE(glEvalCoord2xOES))
 			nfglEvalCoord2xOES(
 				getStackedParameter(0),  /* GLfixed u */
 				getStackedParameter(1)  /* GLfixed v */);
 			break;
 		case NFOSMESA_GLEVALCOORD2XVOES:
+			D(funcname = "glEvalCoord2xvOES");
+			if (GL_ISAVAILABLE(glEvalCoord2xvOES))
 			nfglEvalCoord2xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLEVALMAPSNV:
+			D(funcname = "glEvalMapsNV");
+			if (GL_ISAVAILABLE(glEvalMapsNV))
 			nfglEvalMapsNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLEVALMESH1:
+			D(funcname = "glEvalMesh1");
+			if (GL_ISAVAILABLE(glEvalMesh1))
 			nfglEvalMesh1(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint i1 */
 				getStackedParameter(2)  /* GLint i2 */);
 			break;
 		case NFOSMESA_GLEVALMESH2:
+			D(funcname = "glEvalMesh2");
+			if (GL_ISAVAILABLE(glEvalMesh2))
 			nfglEvalMesh2(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLint i1 */
@@ -3583,44 +4695,60 @@
 				getStackedParameter(4)  /* GLint j2 */);
 			break;
 		case NFOSMESA_GLEVALPOINT1:
+			D(funcname = "glEvalPoint1");
+			if (GL_ISAVAILABLE(glEvalPoint1))
 			nfglEvalPoint1(
 				getStackedParameter(0)  /* GLint i */);
 			break;
 		case NFOSMESA_GLEVALPOINT2:
+			D(funcname = "glEvalPoint2");
+			if (GL_ISAVAILABLE(glEvalPoint2))
 			nfglEvalPoint2(
 				getStackedParameter(0),  /* GLint i */
 				getStackedParameter(1)  /* GLint j */);
 			break;
 		case NFOSMESA_GLEXECUTEPROGRAMNV:
+			D(funcname = "glExecuteProgramNV");
+			if (GL_ISAVAILABLE(glExecuteProgramNV))
 			nfglExecuteProgramNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint id */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLEXTRACTCOMPONENTEXT:
+			D(funcname = "glExtractComponentEXT");
+			if (GL_ISAVAILABLE(glExtractComponentEXT))
 			nfglExtractComponentEXT(
 				getStackedParameter(0),  /* GLuint res */
 				getStackedParameter(1),  /* GLuint src */
 				getStackedParameter(2)  /* GLuint num */);
 			break;
 		case NFOSMESA_GLFEEDBACKBUFFER:
+			D(funcname = "glFeedbackBuffer");
+			if (GL_ISAVAILABLE(glFeedbackBuffer))
 			nfglFeedbackBuffer(
 				getStackedParameter(0),  /* GLsizei size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *buffer */);
 			break;
 		case NFOSMESA_GLFEEDBACKBUFFERXOES:
+			D(funcname = "glFeedbackBufferxOES");
+			if (GL_ISAVAILABLE(glFeedbackBufferxOES))
 			nfglFeedbackBufferxOES(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *buffer */);
 			break;
 		case NFOSMESA_GLFENCESYNC:
+			D(funcname = "glFenceSync");
+			if (GL_ISAVAILABLE(glFenceSync))
 			ret = (uint32)(uintptr_t)nfglFenceSync(
 				getStackedParameter(0),  /* GLenum condition */
 				getStackedParameter(1)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLFINALCOMBINERINPUTNV:
+			D(funcname = "glFinalCombinerInputNV");
+			if (GL_ISAVAILABLE(glFinalCombinerInputNV))
 			nfglFinalCombinerInputNV(
 				getStackedParameter(0),  /* GLenum variable */
 				getStackedParameter(1),  /* GLenum input */
@@ -3628,98 +4756,142 @@
 				getStackedParameter(3)  /* GLenum componentUsage */);
 			break;
 		case NFOSMESA_GLFINISH:
+			D(funcname = "glFinish");
+			if (GL_ISAVAILABLE(glFinish))
 			nfglFinish();
 			break;
 		case NFOSMESA_GLFINISHASYNCSGIX:
+			D(funcname = "glFinishAsyncSGIX");
+			if (GL_ISAVAILABLE(glFinishAsyncSGIX))
 			ret = nfglFinishAsyncSGIX(
 				getStackedPointer(0, GLuint *)  /* GLuint *markerp */);
 			break;
 		case NFOSMESA_GLFINISHFENCEAPPLE:
+			D(funcname = "glFinishFenceAPPLE");
+			if (GL_ISAVAILABLE(glFinishFenceAPPLE))
 			nfglFinishFenceAPPLE(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLFINISHFENCENV:
+			D(funcname = "glFinishFenceNV");
+			if (GL_ISAVAILABLE(glFinishFenceNV))
 			nfglFinishFenceNV(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLFINISHOBJECTAPPLE:
+			D(funcname = "glFinishObjectAPPLE");
+			if (GL_ISAVAILABLE(glFinishObjectAPPLE))
 			nfglFinishObjectAPPLE(
 				getStackedParameter(0),  /* GLenum object */
 				getStackedParameter(1)  /* GLuint name */);
 			break;
 		case NFOSMESA_GLFINISHRENDERAPPLE:
+			D(funcname = "glFinishRenderAPPLE");
+			if (GL_ISAVAILABLE(glFinishRenderAPPLE))
 			nfglFinishRenderAPPLE();
 			break;
 		case NFOSMESA_GLFINISHTEXTURESUNX:
+			D(funcname = "glFinishTextureSUNX");
+			if (GL_ISAVAILABLE(glFinishTextureSUNX))
 			nfglFinishTextureSUNX();
 			break;
 		case NFOSMESA_GLFLUSH:
+			D(funcname = "glFlush");
+			if (GL_ISAVAILABLE(glFlush))
 			nfglFlush();
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDBUFFERRANGE:
+			D(funcname = "glFlushMappedBufferRange");
+			if (GL_ISAVAILABLE(glFlushMappedBufferRange))
 			nfglFlushMappedBufferRange(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
 				getStackedParameter(2)  /* GLsizeiptr length */);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDBUFFERRANGEAPPLE:
+			D(funcname = "glFlushMappedBufferRangeAPPLE");
+			if (GL_ISAVAILABLE(glFlushMappedBufferRangeAPPLE))
 			nfglFlushMappedBufferRangeAPPLE(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
 				getStackedParameter(2)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDNAMEDBUFFERRANGE:
+			D(funcname = "glFlushMappedNamedBufferRange");
+			if (GL_ISAVAILABLE(glFlushMappedNamedBufferRange))
 			nfglFlushMappedNamedBufferRange(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
 				getStackedParameter(2)  /* GLsizeiptr length */);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDNAMEDBUFFERRANGEEXT:
+			D(funcname = "glFlushMappedNamedBufferRangeEXT");
+			if (GL_ISAVAILABLE(glFlushMappedNamedBufferRangeEXT))
 			nfglFlushMappedNamedBufferRangeEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
 				getStackedParameter(2)  /* GLsizeiptr length */);
 			break;
 		case NFOSMESA_GLFLUSHPIXELDATARANGENV:
+			D(funcname = "glFlushPixelDataRangeNV");
+			if (GL_ISAVAILABLE(glFlushPixelDataRangeNV))
 			nfglFlushPixelDataRangeNV(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLFLUSHRASTERSGIX:
+			D(funcname = "glFlushRasterSGIX");
+			if (GL_ISAVAILABLE(glFlushRasterSGIX))
 			nfglFlushRasterSGIX();
 			break;
 		case NFOSMESA_GLFLUSHRENDERAPPLE:
+			D(funcname = "glFlushRenderAPPLE");
+			if (GL_ISAVAILABLE(glFlushRenderAPPLE))
 			nfglFlushRenderAPPLE();
 			break;
 		case NFOSMESA_GLFLUSHSTATICDATAIBM:
+			D(funcname = "glFlushStaticDataIBM");
+			if (GL_ISAVAILABLE(glFlushStaticDataIBM))
 			nfglFlushStaticDataIBM(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGEAPPLE:
+			D(funcname = "glFlushVertexArrayRangeAPPLE");
+			if (GL_ISAVAILABLE(glFlushVertexArrayRangeAPPLE))
 			nfglFlushVertexArrayRangeAPPLE(
 				getStackedParameter(0),  /* GLsizei length */
 				getStackedPointer(1, void *)  /* void *pointer */);
 			break;
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGENV:
+			D(funcname = "glFlushVertexArrayRangeNV");
+			if (GL_ISAVAILABLE(glFlushVertexArrayRangeNV))
 			nfglFlushVertexArrayRangeNV();
 			break;
 		case NFOSMESA_GLFOGCOORDFORMATNV:
+			D(funcname = "glFogCoordFormatNV");
+			if (GL_ISAVAILABLE(glFogCoordFormatNV))
 			nfglFogCoordFormatNV(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTER:
+			D(funcname = "glFogCoordPointer");
+			if (GL_ISAVAILABLE(glFogCoordPointer))
 			nfglFogCoordPointer(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTEREXT:
+			D(funcname = "glFogCoordPointerEXT");
+			if (GL_ISAVAILABLE(glFogCoordPointerEXT))
 			nfglFogCoordPointerEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTERLISTIBM:
+			D(funcname = "glFogCoordPointerListIBM");
+			if (GL_ISAVAILABLE(glFogCoordPointerListIBM))
 			nfglFogCoordPointerListIBM(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLint stride */
@@ -3727,187 +4899,263 @@
 				getStackedParameter(3)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLFOGCOORDD:
+			D(funcname = "glFogCoordd");
+			if (GL_ISAVAILABLE(glFogCoordd))
 			nfglFogCoordd(
 				getStackedDouble(0)  /* GLdouble coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDDEXT:
+			D(funcname = "glFogCoorddEXT");
+			if (GL_ISAVAILABLE(glFogCoorddEXT))
 			nfglFogCoorddEXT(
 				getStackedDouble(0)  /* GLdouble coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDDV:
+			D(funcname = "glFogCoorddv");
+			if (GL_ISAVAILABLE(glFogCoorddv))
 			nfglFogCoorddv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDDVEXT:
+			D(funcname = "glFogCoorddvEXT");
+			if (GL_ISAVAILABLE(glFogCoorddvEXT))
 			nfglFogCoorddvEXT(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDF:
+			D(funcname = "glFogCoordf");
+			if (GL_ISAVAILABLE(glFogCoordf))
 			nfglFogCoordf(
 				getStackedFloat(0)  /* GLfloat coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDFEXT:
+			D(funcname = "glFogCoordfEXT");
+			if (GL_ISAVAILABLE(glFogCoordfEXT))
 			nfglFogCoordfEXT(
 				getStackedFloat(0)  /* GLfloat coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDFV:
+			D(funcname = "glFogCoordfv");
+			if (GL_ISAVAILABLE(glFogCoordfv))
 			nfglFogCoordfv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDFVEXT:
+			D(funcname = "glFogCoordfvEXT");
+			if (GL_ISAVAILABLE(glFogCoordfvEXT))
 			nfglFogCoordfvEXT(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *coord */);
 			break;
 		case NFOSMESA_GLFOGCOORDHNV:
+			D(funcname = "glFogCoordhNV");
+			if (GL_ISAVAILABLE(glFogCoordhNV))
 			nfglFogCoordhNV(
 				getStackedParameter(0)  /* GLhalfNV32 fog */);
 			break;
 		case NFOSMESA_GLFOGCOORDHVNV:
+			D(funcname = "glFogCoordhvNV");
+			if (GL_ISAVAILABLE(glFogCoordhvNV))
 			nfglFogCoordhvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *fog */);
 			break;
 		case NFOSMESA_GLFOGFUNCSGIS:
+			D(funcname = "glFogFuncSGIS");
+			if (GL_ISAVAILABLE(glFogFuncSGIS))
 			nfglFogFuncSGIS(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLFOGF:
+			D(funcname = "glFogf");
+			if (GL_ISAVAILABLE(glFogf))
 			nfglFogf(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLFOGFV:
+			D(funcname = "glFogfv");
+			if (GL_ISAVAILABLE(glFogfv))
 			nfglFogfv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFOGI:
+			D(funcname = "glFogi");
+			if (GL_ISAVAILABLE(glFogi))
 			nfglFogi(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLFOGIV:
+			D(funcname = "glFogiv");
+			if (GL_ISAVAILABLE(glFogiv))
 			nfglFogiv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFOGXOES:
+			D(funcname = "glFogxOES");
+			if (GL_ISAVAILABLE(glFogxOES))
 			nfglFogxOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLFOGXVOES:
+			D(funcname = "glFogxvOES");
+			if (GL_ISAVAILABLE(glFogxvOES))
 			nfglFogxvOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLFRAGMENTCOLORMATERIALSGIX:
+			D(funcname = "glFragmentColorMaterialSGIX");
+			if (GL_ISAVAILABLE(glFragmentColorMaterialSGIX))
 			nfglFragmentColorMaterialSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLFRAGMENTCOVERAGECOLORNV:
+			D(funcname = "glFragmentCoverageColorNV");
+			if (GL_ISAVAILABLE(glFragmentCoverageColorNV))
 			nfglFragmentCoverageColorNV(
 				getStackedParameter(0)  /* GLuint color */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELFSGIX:
+			D(funcname = "glFragmentLightModelfSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightModelfSGIX))
 			nfglFragmentLightModelfSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELFVSGIX:
+			D(funcname = "glFragmentLightModelfvSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightModelfvSGIX))
 			nfglFragmentLightModelfvSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELISGIX:
+			D(funcname = "glFragmentLightModeliSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightModeliSGIX))
 			nfglFragmentLightModeliSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELIVSGIX:
+			D(funcname = "glFragmentLightModelivSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightModelivSGIX))
 			nfglFragmentLightModelivSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTFSGIX:
+			D(funcname = "glFragmentLightfSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightfSGIX))
 			nfglFragmentLightfSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTFVSGIX:
+			D(funcname = "glFragmentLightfvSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightfvSGIX))
 			nfglFragmentLightfvSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTISGIX:
+			D(funcname = "glFragmentLightiSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightiSGIX))
 			nfglFragmentLightiSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTIVSGIX:
+			D(funcname = "glFragmentLightivSGIX");
+			if (GL_ISAVAILABLE(glFragmentLightivSGIX))
 			nfglFragmentLightivSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALFSGIX:
+			D(funcname = "glFragmentMaterialfSGIX");
+			if (GL_ISAVAILABLE(glFragmentMaterialfSGIX))
 			nfglFragmentMaterialfSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALFVSGIX:
+			D(funcname = "glFragmentMaterialfvSGIX");
+			if (GL_ISAVAILABLE(glFragmentMaterialfvSGIX))
 			nfglFragmentMaterialfvSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALISGIX:
+			D(funcname = "glFragmentMaterialiSGIX");
+			if (GL_ISAVAILABLE(glFragmentMaterialiSGIX))
 			nfglFragmentMaterialiSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALIVSGIX:
+			D(funcname = "glFragmentMaterialivSGIX");
+			if (GL_ISAVAILABLE(glFragmentMaterialivSGIX))
 			nfglFragmentMaterialivSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLFRAMETERMINATORGREMEDY:
+			D(funcname = "glFrameTerminatorGREMEDY");
+			if (GL_ISAVAILABLE(glFrameTerminatorGREMEDY))
 			nfglFrameTerminatorGREMEDY();
 			break;
 		case NFOSMESA_GLFRAMEZOOMSGIX:
+			D(funcname = "glFrameZoomSGIX");
+			if (GL_ISAVAILABLE(glFrameZoomSGIX))
 			nfglFrameZoomSGIX(
 				getStackedParameter(0)  /* GLint factor */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERDRAWBUFFEREXT:
+			D(funcname = "glFramebufferDrawBufferEXT");
+			if (GL_ISAVAILABLE(glFramebufferDrawBufferEXT))
 			nfglFramebufferDrawBufferEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERDRAWBUFFERSEXT:
+			D(funcname = "glFramebufferDrawBuffersEXT");
+			if (GL_ISAVAILABLE(glFramebufferDrawBuffersEXT))
 			nfglFramebufferDrawBuffersEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLenum *)  /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERPARAMETERI:
+			D(funcname = "glFramebufferParameteri");
+			if (GL_ISAVAILABLE(glFramebufferParameteri))
 			nfglFramebufferParameteri(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERREADBUFFEREXT:
+			D(funcname = "glFramebufferReadBufferEXT");
+			if (GL_ISAVAILABLE(glFramebufferReadBufferEXT))
 			nfglFramebufferReadBufferEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERRENDERBUFFER:
+			D(funcname = "glFramebufferRenderbuffer");
+			if (GL_ISAVAILABLE(glFramebufferRenderbuffer))
 			nfglFramebufferRenderbuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3915,6 +5163,8 @@
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERRENDERBUFFEREXT:
+			D(funcname = "glFramebufferRenderbufferEXT");
+			if (GL_ISAVAILABLE(glFramebufferRenderbufferEXT))
 			nfglFramebufferRenderbufferEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3922,6 +5172,8 @@
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVNV:
+			D(funcname = "glFramebufferSampleLocationsfvNV");
+			if (GL_ISAVAILABLE(glFramebufferSampleLocationsfvNV))
 			nfglFramebufferSampleLocationsfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint start */
@@ -3929,6 +5181,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE:
+			D(funcname = "glFramebufferTexture");
+			if (GL_ISAVAILABLE(glFramebufferTexture))
 			nfglFramebufferTexture(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3936,6 +5190,8 @@
 				getStackedParameter(3)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE1D:
+			D(funcname = "glFramebufferTexture1D");
+			if (GL_ISAVAILABLE(glFramebufferTexture1D))
 			nfglFramebufferTexture1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3944,6 +5200,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE1DEXT:
+			D(funcname = "glFramebufferTexture1DEXT");
+			if (GL_ISAVAILABLE(glFramebufferTexture1DEXT))
 			nfglFramebufferTexture1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3952,6 +5210,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE2D:
+			D(funcname = "glFramebufferTexture2D");
+			if (GL_ISAVAILABLE(glFramebufferTexture2D))
 			nfglFramebufferTexture2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3960,6 +5220,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE2DEXT:
+			D(funcname = "glFramebufferTexture2DEXT");
+			if (GL_ISAVAILABLE(glFramebufferTexture2DEXT))
 			nfglFramebufferTexture2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3968,6 +5230,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE3D:
+			D(funcname = "glFramebufferTexture3D");
+			if (GL_ISAVAILABLE(glFramebufferTexture3D))
 			nfglFramebufferTexture3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3977,6 +5241,8 @@
 				getStackedParameter(5)  /* GLint zoffset */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE3DEXT:
+			D(funcname = "glFramebufferTexture3DEXT");
+			if (GL_ISAVAILABLE(glFramebufferTexture3DEXT))
 			nfglFramebufferTexture3DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3986,6 +5252,8 @@
 				getStackedParameter(5)  /* GLint zoffset */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREARB:
+			D(funcname = "glFramebufferTextureARB");
+			if (GL_ISAVAILABLE(glFramebufferTextureARB))
 			nfglFramebufferTextureARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -3993,6 +5261,8 @@
 				getStackedParameter(3)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREEXT:
+			D(funcname = "glFramebufferTextureEXT");
+			if (GL_ISAVAILABLE(glFramebufferTextureEXT))
 			nfglFramebufferTextureEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4000,6 +5270,8 @@
 				getStackedParameter(3)  /* GLint level */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREFACEARB:
+			D(funcname = "glFramebufferTextureFaceARB");
+			if (GL_ISAVAILABLE(glFramebufferTextureFaceARB))
 			nfglFramebufferTextureFaceARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4008,6 +5280,8 @@
 				getStackedParameter(4)  /* GLenum face */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREFACEEXT:
+			D(funcname = "glFramebufferTextureFaceEXT");
+			if (GL_ISAVAILABLE(glFramebufferTextureFaceEXT))
 			nfglFramebufferTextureFaceEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4016,6 +5290,8 @@
 				getStackedParameter(4)  /* GLenum face */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYER:
+			D(funcname = "glFramebufferTextureLayer");
+			if (GL_ISAVAILABLE(glFramebufferTextureLayer))
 			nfglFramebufferTextureLayer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4024,6 +5300,8 @@
 				getStackedParameter(4)  /* GLint layer */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYERARB:
+			D(funcname = "glFramebufferTextureLayerARB");
+			if (GL_ISAVAILABLE(glFramebufferTextureLayerARB))
 			nfglFramebufferTextureLayerARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4032,6 +5310,8 @@
 				getStackedParameter(4)  /* GLint layer */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYEREXT:
+			D(funcname = "glFramebufferTextureLayerEXT");
+			if (GL_ISAVAILABLE(glFramebufferTextureLayerEXT))
 			nfglFramebufferTextureLayerEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4040,6 +5320,8 @@
 				getStackedParameter(4)  /* GLint layer */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREMULTIVIEWOVR:
+			D(funcname = "glFramebufferTextureMultiviewOVR");
+			if (GL_ISAVAILABLE(glFramebufferTextureMultiviewOVR))
 			nfglFramebufferTextureMultiviewOVR(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4049,14 +5331,20 @@
 				getStackedParameter(5)  /* GLsizei numViews */);
 			break;
 		case NFOSMESA_GLFREEOBJECTBUFFERATI:
+			D(funcname = "glFreeObjectBufferATI");
+			if (GL_ISAVAILABLE(glFreeObjectBufferATI))
 			nfglFreeObjectBufferATI(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLFRONTFACE:
+			D(funcname = "glFrontFace");
+			if (GL_ISAVAILABLE(glFrontFace))
 			nfglFrontFace(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLFRUSTUM:
+			D(funcname = "glFrustum");
+			if (GL_ISAVAILABLE(glFrustum))
 			nfglFrustum(
 				getStackedDouble(0),  /* GLdouble left */
 				getStackedDouble(2),  /* GLdouble right */
@@ -4066,6 +5354,8 @@
 				getStackedDouble(10)  /* GLdouble zFar */);
 			break;
 		case NFOSMESA_GLFRUSTUMFOES:
+			D(funcname = "glFrustumfOES");
+			if (GL_ISAVAILABLE(glFrustumfOES))
 			nfglFrustumfOES(
 				getStackedFloat(0),  /* GLfloat l */
 				getStackedFloat(1),  /* GLfloat r */
@@ -4075,6 +5365,8 @@
 				getStackedFloat(5)  /* GLfloat f */);
 			break;
 		case NFOSMESA_GLFRUSTUMXOES:
+			D(funcname = "glFrustumxOES");
+			if (GL_ISAVAILABLE(glFrustumxOES))
 			nfglFrustumxOES(
 				getStackedParameter(0),  /* GLfixed l */
 				getStackedParameter(1),  /* GLfixed r */
@@ -4084,108 +5376,152 @@
 				getStackedParameter(5)  /* GLfixed f */);
 			break;
 		case NFOSMESA_GLGENASYNCMARKERSSGIX:
+			D(funcname = "glGenAsyncMarkersSGIX");
+			if (GL_ISAVAILABLE(glGenAsyncMarkersSGIX))
 			ret = nfglGenAsyncMarkersSGIX(
 				getStackedParameter(0)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLGENBUFFERS:
+			D(funcname = "glGenBuffers");
+			if (GL_ISAVAILABLE(glGenBuffers))
 			nfglGenBuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *buffers */);
 			break;
 		case NFOSMESA_GLGENBUFFERSARB:
+			D(funcname = "glGenBuffersARB");
+			if (GL_ISAVAILABLE(glGenBuffersARB))
 			nfglGenBuffersARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *buffers */);
 			break;
 		case NFOSMESA_GLGENFENCESAPPLE:
+			D(funcname = "glGenFencesAPPLE");
+			if (GL_ISAVAILABLE(glGenFencesAPPLE))
 			nfglGenFencesAPPLE(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *fences */);
 			break;
 		case NFOSMESA_GLGENFENCESNV:
+			D(funcname = "glGenFencesNV");
+			if (GL_ISAVAILABLE(glGenFencesNV))
 			nfglGenFencesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *fences */);
 			break;
 		case NFOSMESA_GLGENFRAGMENTSHADERSATI:
+			D(funcname = "glGenFragmentShadersATI");
+			if (GL_ISAVAILABLE(glGenFragmentShadersATI))
 			ret = nfglGenFragmentShadersATI(
 				getStackedParameter(0)  /* GLuint range */);
 			break;
 		case NFOSMESA_GLGENFRAMEBUFFERS:
+			D(funcname = "glGenFramebuffers");
+			if (GL_ISAVAILABLE(glGenFramebuffers))
 			nfglGenFramebuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLGENFRAMEBUFFERSEXT:
+			D(funcname = "glGenFramebuffersEXT");
+			if (GL_ISAVAILABLE(glGenFramebuffersEXT))
 			nfglGenFramebuffersEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *framebuffers */);
 			break;
 		case NFOSMESA_GLGENLISTS:
+			D(funcname = "glGenLists");
+			if (GL_ISAVAILABLE(glGenLists))
 			ret = nfglGenLists(
 				getStackedParameter(0)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLGENNAMESAMD:
+			D(funcname = "glGenNamesAMD");
+			if (GL_ISAVAILABLE(glGenNamesAMD))
 			nfglGenNamesAMD(
 				getStackedParameter(0),  /* GLenum identifier */
 				getStackedParameter(1),  /* GLuint num */
 				getStackedPointer(2, GLuint *)  /* GLuint *names */);
 			break;
 		case NFOSMESA_GLGENOCCLUSIONQUERIESNV:
+			D(funcname = "glGenOcclusionQueriesNV");
+			if (GL_ISAVAILABLE(glGenOcclusionQueriesNV))
 			nfglGenOcclusionQueriesNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENPATHSNV:
+			D(funcname = "glGenPathsNV");
+			if (GL_ISAVAILABLE(glGenPathsNV))
 			ret = nfglGenPathsNV(
 				getStackedParameter(0)  /* GLsizei range */);
 			break;
 		case NFOSMESA_GLGENPERFMONITORSAMD:
+			D(funcname = "glGenPerfMonitorsAMD");
+			if (GL_ISAVAILABLE(glGenPerfMonitorsAMD))
 			nfglGenPerfMonitorsAMD(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *monitors */);
 			break;
 		case NFOSMESA_GLGENPROGRAMPIPELINES:
+			D(funcname = "glGenProgramPipelines");
+			if (GL_ISAVAILABLE(glGenProgramPipelines))
 			nfglGenProgramPipelines(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *pipelines */);
 			break;
 		case NFOSMESA_GLGENPROGRAMSARB:
+			D(funcname = "glGenProgramsARB");
+			if (GL_ISAVAILABLE(glGenProgramsARB))
 			nfglGenProgramsARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *programs */);
 			break;
 		case NFOSMESA_GLGENPROGRAMSNV:
+			D(funcname = "glGenProgramsNV");
+			if (GL_ISAVAILABLE(glGenProgramsNV))
 			nfglGenProgramsNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *programs */);
 			break;
 		case NFOSMESA_GLGENQUERIES:
+			D(funcname = "glGenQueries");
+			if (GL_ISAVAILABLE(glGenQueries))
 			nfglGenQueries(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENQUERIESARB:
+			D(funcname = "glGenQueriesARB");
+			if (GL_ISAVAILABLE(glGenQueriesARB))
 			nfglGenQueriesARB(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERS:
+			D(funcname = "glGenRenderbuffers");
+			if (GL_ISAVAILABLE(glGenRenderbuffers))
 			nfglGenRenderbuffers(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERSEXT:
+			D(funcname = "glGenRenderbuffersEXT");
+			if (GL_ISAVAILABLE(glGenRenderbuffersEXT))
 			nfglGenRenderbuffersEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *renderbuffers */);
 			break;
 		case NFOSMESA_GLGENSAMPLERS:
+			D(funcname = "glGenSamplers");
+			if (GL_ISAVAILABLE(glGenSamplers))
 			nfglGenSamplers(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, GLuint *)  /* GLuint *samplers */);
 			break;
 		case NFOSMESA_GLGENSYMBOLSEXT:
+			D(funcname = "glGenSymbolsEXT");
+			if (GL_ISAVAILABLE(glGenSymbolsEXT))
 			ret = nfglGenSymbolsEXT(
 				getStackedParameter(0),  /* GLenum datatype */
 				getStackedParameter(1),  /* GLenum storagetype */
@@ -4193,62 +5529,88 @@
 				getStackedParameter(3)  /* GLuint components */);
 			break;
 		case NFOSMESA_GLGENTEXTURES:
+			D(funcname = "glGenTextures");
+			if (GL_ISAVAILABLE(glGenTextures))
 			nfglGenTextures(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *textures */);
 			break;
 		case NFOSMESA_GLGENTEXTURESEXT:
+			D(funcname = "glGenTexturesEXT");
+			if (GL_ISAVAILABLE(glGenTexturesEXT))
 			nfglGenTexturesEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *textures */);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKS:
+			D(funcname = "glGenTransformFeedbacks");
+			if (GL_ISAVAILABLE(glGenTransformFeedbacks))
 			nfglGenTransformFeedbacks(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKSNV:
+			D(funcname = "glGenTransformFeedbacksNV");
+			if (GL_ISAVAILABLE(glGenTransformFeedbacksNV))
 			nfglGenTransformFeedbacksNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYS:
+			D(funcname = "glGenVertexArrays");
+			if (GL_ISAVAILABLE(glGenVertexArrays))
 			nfglGenVertexArrays(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *arrays */);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYSAPPLE:
+			D(funcname = "glGenVertexArraysAPPLE");
+			if (GL_ISAVAILABLE(glGenVertexArraysAPPLE))
 			nfglGenVertexArraysAPPLE(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *arrays */);
 			break;
 		case NFOSMESA_GLGENVERTEXSHADERSEXT:
+			D(funcname = "glGenVertexShadersEXT");
+			if (GL_ISAVAILABLE(glGenVertexShadersEXT))
 			ret = nfglGenVertexShadersEXT(
 				getStackedParameter(0)  /* GLuint range */);
 			break;
 		case NFOSMESA_GLGENERATEMIPMAP:
+			D(funcname = "glGenerateMipmap");
+			if (GL_ISAVAILABLE(glGenerateMipmap))
 			nfglGenerateMipmap(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLGENERATEMIPMAPEXT:
+			D(funcname = "glGenerateMipmapEXT");
+			if (GL_ISAVAILABLE(glGenerateMipmapEXT))
 			nfglGenerateMipmapEXT(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLGENERATEMULTITEXMIPMAPEXT:
+			D(funcname = "glGenerateMultiTexMipmapEXT");
+			if (GL_ISAVAILABLE(glGenerateMultiTexMipmapEXT))
 			nfglGenerateMultiTexMipmapEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLGENERATETEXTUREMIPMAP:
+			D(funcname = "glGenerateTextureMipmap");
+			if (GL_ISAVAILABLE(glGenerateTextureMipmap))
 			nfglGenerateTextureMipmap(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLGENERATETEXTUREMIPMAPEXT:
+			D(funcname = "glGenerateTextureMipmapEXT");
+			if (GL_ISAVAILABLE(glGenerateTextureMipmapEXT))
 			nfglGenerateTextureMipmapEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLGETACTIVEATOMICCOUNTERBUFFERIV:
+			D(funcname = "glGetActiveAtomicCounterBufferiv");
+			if (GL_ISAVAILABLE(glGetActiveAtomicCounterBufferiv))
 			nfglGetActiveAtomicCounterBufferiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint bufferIndex */
@@ -4256,6 +5618,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIB:
+			D(funcname = "glGetActiveAttrib");
+			if (GL_ISAVAILABLE(glGetActiveAttrib))
 			nfglGetActiveAttrib(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
@@ -4266,6 +5630,8 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIBARB:
+			D(funcname = "glGetActiveAttribARB");
+			if (GL_ISAVAILABLE(glGetActiveAttribARB))
 			nfglGetActiveAttribARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
@@ -4276,6 +5642,8 @@
 				getStackedPointer(6, GLcharARB *)  /* GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINENAME:
+			D(funcname = "glGetActiveSubroutineName");
+			if (GL_ISAVAILABLE(glGetActiveSubroutineName))
 			nfglGetActiveSubroutineName(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
@@ -4285,6 +5653,8 @@
 				getStackedPointer(5, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMNAME:
+			D(funcname = "glGetActiveSubroutineUniformName");
+			if (GL_ISAVAILABLE(glGetActiveSubroutineUniformName))
 			nfglGetActiveSubroutineUniformName(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
@@ -4294,6 +5664,8 @@
 				getStackedPointer(5, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMIV:
+			D(funcname = "glGetActiveSubroutineUniformiv");
+			if (GL_ISAVAILABLE(glGetActiveSubroutineUniformiv))
 			nfglGetActiveSubroutineUniformiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
@@ -4302,6 +5674,8 @@
 				getStackedPointer(4, GLint *)  /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORM:
+			D(funcname = "glGetActiveUniform");
+			if (GL_ISAVAILABLE(glGetActiveUniform))
 			nfglGetActiveUniform(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
@@ -4312,6 +5686,8 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMARB:
+			D(funcname = "glGetActiveUniformARB");
+			if (GL_ISAVAILABLE(glGetActiveUniformARB))
 			nfglGetActiveUniformARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
@@ -4322,11 +5698,15 @@
 				getStackedPointer(6, GLcharARB *)  /* GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKINDEX:
+			D(funcname = "glGetActiveUniformBlockIndex");
+			if (GL_ISAVAILABLE(glGetActiveUniformBlockIndex))
 			ret = nfglGetActiveUniformBlockIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKNAME:
+			D(funcname = "glGetActiveUniformBlockName");
+			if (GL_ISAVAILABLE(glGetActiveUniformBlockName))
 			nfglGetActiveUniformBlockName(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint uniformBlockIndex */
@@ -4335,6 +5715,8 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKIV:
+			D(funcname = "glGetActiveUniformBlockiv");
+			if (GL_ISAVAILABLE(glGetActiveUniformBlockiv))
 			nfglGetActiveUniformBlockiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint uniformBlockIndex */
@@ -4342,6 +5724,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMNAME:
+			D(funcname = "glGetActiveUniformName");
+			if (GL_ISAVAILABLE(glGetActiveUniformName))
 			nfglGetActiveUniformName(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint uniformIndex */
@@ -4350,6 +5734,8 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *uniformName */);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMSIV:
+			D(funcname = "glGetActiveUniformsiv");
+			if (GL_ISAVAILABLE(glGetActiveUniformsiv))
 			nfglGetActiveUniformsiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei uniformCount */
@@ -4358,6 +5744,8 @@
 				getStackedPointer(4, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETACTIVEVARYINGNV:
+			D(funcname = "glGetActiveVaryingNV");
+			if (GL_ISAVAILABLE(glGetActiveVaryingNV))
 			nfglGetActiveVaryingNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
@@ -4368,18 +5756,24 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTFVATI:
+			D(funcname = "glGetArrayObjectfvATI");
+			if (GL_ISAVAILABLE(glGetArrayObjectfvATI))
 			nfglGetArrayObjectfvATI(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTIVATI:
+			D(funcname = "glGetArrayObjectivATI");
+			if (GL_ISAVAILABLE(glGetArrayObjectivATI))
 			nfglGetArrayObjectivATI(
 				getStackedParameter(0),  /* GLenum array */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETATTACHEDOBJECTSARB:
+			D(funcname = "glGetAttachedObjectsARB");
+			if (GL_ISAVAILABLE(glGetAttachedObjectsARB))
 			nfglGetAttachedObjectsARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
 				getStackedParameter(1),  /* GLsizei maxCount */
@@ -4387,6 +5781,8 @@
 				getStackedPointer(3, GLhandleARB *)  /* GLhandleARB *obj */);
 			break;
 		case NFOSMESA_GLGETATTACHEDSHADERS:
+			D(funcname = "glGetAttachedShaders");
+			if (GL_ISAVAILABLE(glGetAttachedShaders))
 			nfglGetAttachedShaders(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei maxCount */
@@ -4394,63 +5790,85 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *shaders */);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATION:
+			D(funcname = "glGetAttribLocation");
+			if (GL_ISAVAILABLE(glGetAttribLocation))
 			ret = nfglGetAttribLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATIONARB:
+			D(funcname = "glGetAttribLocationARB");
+			if (GL_ISAVAILABLE(glGetAttribLocationARB))
 			ret = nfglGetAttribLocationARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedPointer(1, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETBOOLEANINDEXEDVEXT:
+			D(funcname = "glGetBooleanIndexedvEXT");
+			if (GL_ISAVAILABLE(glGetBooleanIndexedvEXT))
 			nfglGetBooleanIndexedvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETBOOLEANI_V:
+			D(funcname = "glGetBooleani_v");
+			if (GL_ISAVAILABLE(glGetBooleani_v))
 			nfglGetBooleani_v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETBOOLEANV:
+			D(funcname = "glGetBooleanv");
+			if (GL_ISAVAILABLE(glGetBooleanv))
 			nfglGetBooleanv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLboolean *)  /* GLboolean *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERI64V:
+			D(funcname = "glGetBufferParameteri64v");
+			if (GL_ISAVAILABLE(glGetBufferParameteri64v))
 			nfglGetBufferParameteri64v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64 *)  /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIV:
+			D(funcname = "glGetBufferParameteriv");
+			if (GL_ISAVAILABLE(glGetBufferParameteriv))
 			nfglGetBufferParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIVARB:
+			D(funcname = "glGetBufferParameterivARB");
+			if (GL_ISAVAILABLE(glGetBufferParameterivARB))
 			nfglGetBufferParameterivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERUI64VNV:
+			D(funcname = "glGetBufferParameterui64vNV");
+			if (GL_ISAVAILABLE(glGetBufferParameterui64vNV))
 			nfglGetBufferParameterui64vNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERV:
+			D(funcname = "glGetBufferPointerv");
+			if (GL_ISAVAILABLE(glGetBufferPointerv))
 			nfglGetBufferPointerv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *params */);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERVARB:
+			D(funcname = "glGetBufferPointervARB");
+			if (GL_ISAVAILABLE(glGetBufferPointervARB))
 			nfglGetBufferPointervARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
@@ -4458,6 +5876,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLGETBUFFERSUBDATA:
+			D(funcname = "glGetBufferSubData");
+			if (GL_ISAVAILABLE(glGetBufferSubData))
 			nfglGetBufferSubData(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -4467,6 +5887,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLGETBUFFERSUBDATAARB:
+			D(funcname = "glGetBufferSubDataARB");
+			if (GL_ISAVAILABLE(glGetBufferSubDataARB))
 			nfglGetBufferSubDataARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptrARB offset */
@@ -4475,21 +5897,29 @@
 			break;
 #endif
 		case NFOSMESA_GLGETCLIPPLANE:
+			D(funcname = "glGetClipPlane");
+			if (GL_ISAVAILABLE(glGetClipPlane))
 			nfglGetClipPlane(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, GLdouble *)  /* GLdouble *equation */);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEFOES:
+			D(funcname = "glGetClipPlanefOES");
+			if (GL_ISAVAILABLE(glGetClipPlanefOES))
 			nfglGetClipPlanefOES(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *equation */);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEXOES:
+			D(funcname = "glGetClipPlanexOES");
+			if (GL_ISAVAILABLE(glGetClipPlanexOES))
 			nfglGetClipPlanexOES(
 				getStackedParameter(0),  /* GLenum plane */
 				getStackedPointer(1, GLfixed *)  /* GLfixed *equation */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLE:
+			D(funcname = "glGetColorTable");
+			if (GL_ISAVAILABLE(glGetColorTable))
 			nfglGetColorTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -4497,6 +5927,8 @@
 				getStackedPointer(3, void *)  /* void *table */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEEXT:
+			D(funcname = "glGetColorTableEXT");
+			if (GL_ISAVAILABLE(glGetColorTableEXT))
 			nfglGetColorTableEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -4504,42 +5936,56 @@
 				getStackedPointer(3, void *)  /* void *data */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFV:
+			D(funcname = "glGetColorTableParameterfv");
+			if (GL_ISAVAILABLE(glGetColorTableParameterfv))
 			nfglGetColorTableParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVEXT:
+			D(funcname = "glGetColorTableParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetColorTableParameterfvEXT))
 			nfglGetColorTableParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVSGI:
+			D(funcname = "glGetColorTableParameterfvSGI");
+			if (GL_ISAVAILABLE(glGetColorTableParameterfvSGI))
 			nfglGetColorTableParameterfvSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIV:
+			D(funcname = "glGetColorTableParameteriv");
+			if (GL_ISAVAILABLE(glGetColorTableParameteriv))
 			nfglGetColorTableParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVEXT:
+			D(funcname = "glGetColorTableParameterivEXT");
+			if (GL_ISAVAILABLE(glGetColorTableParameterivEXT))
 			nfglGetColorTableParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVSGI:
+			D(funcname = "glGetColorTableParameterivSGI");
+			if (GL_ISAVAILABLE(glGetColorTableParameterivSGI))
 			nfglGetColorTableParameterivSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOLORTABLESGI:
+			D(funcname = "glGetColorTableSGI");
+			if (GL_ISAVAILABLE(glGetColorTableSGI))
 			nfglGetColorTableSGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -4547,6 +5993,8 @@
 				getStackedPointer(3, void *)  /* void *table */);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERFVNV:
+			D(funcname = "glGetCombinerInputParameterfvNV");
+			if (GL_ISAVAILABLE(glGetCombinerInputParameterfvNV))
 			nfglGetCombinerInputParameterfvNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -4555,6 +6003,8 @@
 				getStackedPointer(4, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERIVNV:
+			D(funcname = "glGetCombinerInputParameterivNV");
+			if (GL_ISAVAILABLE(glGetCombinerInputParameterivNV))
 			nfglGetCombinerInputParameterivNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -4563,6 +6013,8 @@
 				getStackedPointer(4, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERFVNV:
+			D(funcname = "glGetCombinerOutputParameterfvNV");
+			if (GL_ISAVAILABLE(glGetCombinerOutputParameterfvNV))
 			nfglGetCombinerOutputParameterfvNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -4570,6 +6022,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERIVNV:
+			D(funcname = "glGetCombinerOutputParameterivNV");
+			if (GL_ISAVAILABLE(glGetCombinerOutputParameterivNV))
 			nfglGetCombinerOutputParameterivNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum portion */
@@ -4577,17 +6031,23 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCOMBINERSTAGEPARAMETERFVNV:
+			D(funcname = "glGetCombinerStageParameterfvNV");
+			if (GL_ISAVAILABLE(glGetCombinerStageParameterfvNV))
 			nfglGetCombinerStageParameterfvNV(
 				getStackedParameter(0),  /* GLenum stage */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCOMMANDHEADERNV:
+			D(funcname = "glGetCommandHeaderNV");
+			if (GL_ISAVAILABLE(glGetCommandHeaderNV))
 			ret = nfglGetCommandHeaderNV(
 				getStackedParameter(0),  /* GLenum tokenID */
 				getStackedParameter(1)  /* GLuint size */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDMULTITEXIMAGEEXT:
+			D(funcname = "glGetCompressedMultiTexImageEXT");
+			if (GL_ISAVAILABLE(glGetCompressedMultiTexImageEXT))
 			nfglGetCompressedMultiTexImageEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -4595,18 +6055,24 @@
 				getStackedPointer(3, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGE:
+			D(funcname = "glGetCompressedTexImage");
+			if (GL_ISAVAILABLE(glGetCompressedTexImage))
 			nfglGetCompressedTexImage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
 				getStackedPointer(2, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGEARB:
+			D(funcname = "glGetCompressedTexImageARB");
+			if (GL_ISAVAILABLE(glGetCompressedTexImageARB))
 			nfglGetCompressedTexImageARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
 				getStackedPointer(2, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTUREIMAGE:
+			D(funcname = "glGetCompressedTextureImage");
+			if (GL_ISAVAILABLE(glGetCompressedTextureImage))
 			nfglGetCompressedTextureImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -4614,6 +6080,8 @@
 				getStackedPointer(3, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTUREIMAGEEXT:
+			D(funcname = "glGetCompressedTextureImageEXT");
+			if (GL_ISAVAILABLE(glGetCompressedTextureImageEXT))
 			nfglGetCompressedTextureImageEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -4621,6 +6089,8 @@
 				getStackedPointer(3, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTURESUBIMAGE:
+			D(funcname = "glGetCompressedTextureSubImage");
+			if (GL_ISAVAILABLE(glGetCompressedTextureSubImage))
 			nfglGetCompressedTextureSubImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -4634,6 +6104,8 @@
 				getStackedPointer(9, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTER:
+			D(funcname = "glGetConvolutionFilter");
+			if (GL_ISAVAILABLE(glGetConvolutionFilter))
 			nfglGetConvolutionFilter(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -4641,6 +6113,8 @@
 				getStackedPointer(3, void *)  /* void *image */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTEREXT:
+			D(funcname = "glGetConvolutionFilterEXT");
+			if (GL_ISAVAILABLE(glGetConvolutionFilterEXT))
 			nfglGetConvolutionFilterEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -4648,47 +6122,63 @@
 				getStackedPointer(3, void *)  /* void *image */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFV:
+			D(funcname = "glGetConvolutionParameterfv");
+			if (GL_ISAVAILABLE(glGetConvolutionParameterfv))
 			nfglGetConvolutionParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFVEXT:
+			D(funcname = "glGetConvolutionParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetConvolutionParameterfvEXT))
 			nfglGetConvolutionParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIV:
+			D(funcname = "glGetConvolutionParameteriv");
+			if (GL_ISAVAILABLE(glGetConvolutionParameteriv))
 			nfglGetConvolutionParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIVEXT:
+			D(funcname = "glGetConvolutionParameterivEXT");
+			if (GL_ISAVAILABLE(glGetConvolutionParameterivEXT))
 			nfglGetConvolutionParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERXVOES:
+			D(funcname = "glGetConvolutionParameterxvOES");
+			if (GL_ISAVAILABLE(glGetConvolutionParameterxvOES))
 			nfglGetConvolutionParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETCOVERAGEMODULATIONTABLENV:
+			D(funcname = "glGetCoverageModulationTableNV");
+			if (GL_ISAVAILABLE(glGetCoverageModulationTableNV))
 			nfglGetCoverageModulationTableNV(
 				getStackedParameter(0),  /* GLsizei bufsize */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGLENGTHMESA:
+			D(funcname = "glGetDebugLogLengthMESA");
+			if (GL_ISAVAILABLE(glGetDebugLogLengthMESA))
 			ret = nfglGetDebugLogLengthMESA(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
 				getStackedParameter(2)  /* GLenum shaderType */);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGMESA:
+			D(funcname = "glGetDebugLogMESA");
+			if (GL_ISAVAILABLE(glGetDebugLogMESA))
 			nfglGetDebugLogMESA(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
@@ -4698,6 +6188,8 @@
 				getStackedPointer(5, GLcharARB *)  /* GLcharARB *debugLog */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOG:
+			D(funcname = "glGetDebugMessageLog");
+			if (GL_ISAVAILABLE(glGetDebugMessageLog))
 			ret = nfglGetDebugMessageLog(
 				getStackedParameter(0),  /* GLuint count */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -4709,6 +6201,8 @@
 				getStackedPointer(7, GLchar *)  /* GLchar *messageLog */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGAMD:
+			D(funcname = "glGetDebugMessageLogAMD");
+			if (GL_ISAVAILABLE(glGetDebugMessageLogAMD))
 			ret = nfglGetDebugMessageLogAMD(
 				getStackedParameter(0),  /* GLuint count */
 				getStackedParameter(1),  /* GLsizei bufsize */
@@ -4719,6 +6213,8 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *message */);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGARB:
+			D(funcname = "glGetDebugMessageLogARB");
+			if (GL_ISAVAILABLE(glGetDebugMessageLogARB))
 			ret = nfglGetDebugMessageLogARB(
 				getStackedParameter(0),  /* GLuint count */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -4730,130 +6226,178 @@
 				getStackedPointer(7, GLchar *)  /* GLchar *messageLog */);
 			break;
 		case NFOSMESA_GLGETDETAILTEXFUNCSGIS:
+			D(funcname = "glGetDetailTexFuncSGIS");
+			if (GL_ISAVAILABLE(glGetDetailTexFuncSGIS))
 			nfglGetDetailTexFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *points */);
 			break;
 		case NFOSMESA_GLGETDOUBLEINDEXEDVEXT:
+			D(funcname = "glGetDoubleIndexedvEXT");
+			if (GL_ISAVAILABLE(glGetDoubleIndexedvEXT))
 			nfglGetDoubleIndexedvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *data */);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_V:
+			D(funcname = "glGetDoublei_v");
+			if (GL_ISAVAILABLE(glGetDoublei_v))
 			nfglGetDoublei_v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *data */);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_VEXT:
+			D(funcname = "glGetDoublei_vEXT");
+			if (GL_ISAVAILABLE(glGetDoublei_vEXT))
 			nfglGetDoublei_vEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETDOUBLEV:
+			D(funcname = "glGetDoublev");
+			if (GL_ISAVAILABLE(glGetDoublev))
 			nfglGetDoublev(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETERROR:
+			D(funcname = "glGetError");
+			if (GL_ISAVAILABLE(glGetError))
 			ret = nfglGetError();
 			break;
 		case NFOSMESA_GLGETFENCEIVNV:
+			D(funcname = "glGetFenceivNV");
+			if (GL_ISAVAILABLE(glGetFenceivNV))
 			nfglGetFenceivNV(
 				getStackedParameter(0),  /* GLuint fence */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERFVNV:
+			D(funcname = "glGetFinalCombinerInputParameterfvNV");
+			if (GL_ISAVAILABLE(glGetFinalCombinerInputParameterfvNV))
 			nfglGetFinalCombinerInputParameterfvNV(
 				getStackedParameter(0),  /* GLenum variable */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERIVNV:
+			D(funcname = "glGetFinalCombinerInputParameterivNV");
+			if (GL_ISAVAILABLE(glGetFinalCombinerInputParameterivNV))
 			nfglGetFinalCombinerInputParameterivNV(
 				getStackedParameter(0),  /* GLenum variable */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFIRSTPERFQUERYIDINTEL:
+			D(funcname = "glGetFirstPerfQueryIdINTEL");
+			if (GL_ISAVAILABLE(glGetFirstPerfQueryIdINTEL))
 			nfglGetFirstPerfQueryIdINTEL(
 				getStackedPointer(0, GLuint *)  /* GLuint *queryId */);
 			break;
 		case NFOSMESA_GLGETFIXEDVOES:
+			D(funcname = "glGetFixedvOES");
+			if (GL_ISAVAILABLE(glGetFixedvOES))
 			nfglGetFixedvOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETFLOATINDEXEDVEXT:
+			D(funcname = "glGetFloatIndexedvEXT");
+			if (GL_ISAVAILABLE(glGetFloatIndexedvEXT))
 			nfglGetFloatIndexedvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETFLOATI_V:
+			D(funcname = "glGetFloati_v");
+			if (GL_ISAVAILABLE(glGetFloati_v))
 			nfglGetFloati_v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETFLOATI_VEXT:
+			D(funcname = "glGetFloati_vEXT");
+			if (GL_ISAVAILABLE(glGetFloati_vEXT))
 			nfglGetFloati_vEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFLOATV:
+			D(funcname = "glGetFloatv");
+			if (GL_ISAVAILABLE(glGetFloatv))
 			nfglGetFloatv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFOGFUNCSGIS:
+			D(funcname = "glGetFogFuncSGIS");
+			if (GL_ISAVAILABLE(glGetFogFuncSGIS))
 			nfglGetFogFuncSGIS(
 				getStackedPointer(0, GLfloat *)  /* GLfloat *points */);
 			break;
 		case NFOSMESA_GLGETFRAGDATAINDEX:
+			D(funcname = "glGetFragDataIndex");
+			if (GL_ISAVAILABLE(glGetFragDataIndex))
 			ret = nfglGetFragDataIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATION:
+			D(funcname = "glGetFragDataLocation");
+			if (GL_ISAVAILABLE(glGetFragDataLocation))
 			ret = nfglGetFragDataLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATIONEXT:
+			D(funcname = "glGetFragDataLocationEXT");
+			if (GL_ISAVAILABLE(glGetFragDataLocationEXT))
 			ret = nfglGetFragDataLocationEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTFVSGIX:
+			D(funcname = "glGetFragmentLightfvSGIX");
+			if (GL_ISAVAILABLE(glGetFragmentLightfvSGIX))
 			nfglGetFragmentLightfvSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTIVSGIX:
+			D(funcname = "glGetFragmentLightivSGIX");
+			if (GL_ISAVAILABLE(glGetFragmentLightivSGIX))
 			nfglGetFragmentLightivSGIX(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALFVSGIX:
+			D(funcname = "glGetFragmentMaterialfvSGIX");
+			if (GL_ISAVAILABLE(glGetFragmentMaterialfvSGIX))
 			nfglGetFragmentMaterialfvSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALIVSGIX:
+			D(funcname = "glGetFragmentMaterialivSGIX");
+			if (GL_ISAVAILABLE(glGetFragmentMaterialivSGIX))
 			nfglGetFragmentMaterialivSGIX(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIV:
+			D(funcname = "glGetFramebufferAttachmentParameteriv");
+			if (GL_ISAVAILABLE(glGetFramebufferAttachmentParameteriv))
 			nfglGetFramebufferAttachmentParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4861,6 +6405,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
+			D(funcname = "glGetFramebufferAttachmentParameterivEXT");
+			if (GL_ISAVAILABLE(glGetFramebufferAttachmentParameterivEXT))
 			nfglGetFramebufferAttachmentParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -4868,28 +6414,40 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIV:
+			D(funcname = "glGetFramebufferParameteriv");
+			if (GL_ISAVAILABLE(glGetFramebufferParameteriv))
 			nfglGetFramebufferParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIVEXT:
+			D(funcname = "glGetFramebufferParameterivEXT");
+			if (GL_ISAVAILABLE(glGetFramebufferParameterivEXT))
 			nfglGetFramebufferParameterivEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETGRAPHICSRESETSTATUS:
+			D(funcname = "glGetGraphicsResetStatus");
+			if (GL_ISAVAILABLE(glGetGraphicsResetStatus))
 			ret = nfglGetGraphicsResetStatus();
 			break;
 		case NFOSMESA_GLGETGRAPHICSRESETSTATUSARB:
+			D(funcname = "glGetGraphicsResetStatusARB");
+			if (GL_ISAVAILABLE(glGetGraphicsResetStatusARB))
 			ret = nfglGetGraphicsResetStatusARB();
 			break;
 		case NFOSMESA_GLGETHANDLEARB:
+			D(funcname = "glGetHandleARB");
+			if (GL_ISAVAILABLE(glGetHandleARB))
 			ret = (uint32)(uintptr_t)nfglGetHandleARB(
 				getStackedParameter(0)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAM:
+			D(funcname = "glGetHistogram");
+			if (GL_ISAVAILABLE(glGetHistogram))
 			nfglGetHistogram(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -4898,6 +6456,8 @@
 				getStackedPointer(4, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMEXT:
+			D(funcname = "glGetHistogramEXT");
+			if (GL_ISAVAILABLE(glGetHistogramEXT))
 			nfglGetHistogramEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -4906,36 +6466,48 @@
 				getStackedPointer(4, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFV:
+			D(funcname = "glGetHistogramParameterfv");
+			if (GL_ISAVAILABLE(glGetHistogramParameterfv))
 			nfglGetHistogramParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFVEXT:
+			D(funcname = "glGetHistogramParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetHistogramParameterfvEXT))
 			nfglGetHistogramParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIV:
+			D(funcname = "glGetHistogramParameteriv");
+			if (GL_ISAVAILABLE(glGetHistogramParameteriv))
 			nfglGetHistogramParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIVEXT:
+			D(funcname = "glGetHistogramParameterivEXT");
+			if (GL_ISAVAILABLE(glGetHistogramParameterivEXT))
 			nfglGetHistogramParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERXVOES:
+			D(funcname = "glGetHistogramParameterxvOES");
+			if (GL_ISAVAILABLE(glGetHistogramParameterxvOES))
 			nfglGetHistogramParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETIMAGEHANDLEARB:
+			D(funcname = "glGetImageHandleARB");
+			if (GL_ISAVAILABLE(glGetImageHandleARB))
 			ret = nfglGetImageHandleARB(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -4944,6 +6516,8 @@
 				getStackedParameter(4)  /* GLenum format */);
 			break;
 		case NFOSMESA_GLGETIMAGEHANDLENV:
+			D(funcname = "glGetImageHandleNV");
+			if (GL_ISAVAILABLE(glGetImageHandleNV))
 			ret = nfglGetImageHandleNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -4952,18 +6526,24 @@
 				getStackedParameter(4)  /* GLenum format */);
 			break;
 		case NFOSMESA_GLGETIMAGETRANSFORMPARAMETERFVHP:
+			D(funcname = "glGetImageTransformParameterfvHP");
+			if (GL_ISAVAILABLE(glGetImageTransformParameterfvHP))
 			nfglGetImageTransformParameterfvHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETIMAGETRANSFORMPARAMETERIVHP:
+			D(funcname = "glGetImageTransformParameterivHP");
+			if (GL_ISAVAILABLE(glGetImageTransformParameterivHP))
 			nfglGetImageTransformParameterivHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINFOLOGARB:
+			D(funcname = "glGetInfoLogARB");
+			if (GL_ISAVAILABLE(glGetInfoLogARB))
 			nfglGetInfoLogARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLsizei maxLength */
@@ -4971,48 +6551,66 @@
 				getStackedPointer(3, GLcharARB *)  /* GLcharARB *infoLog */);
 			break;
 		case NFOSMESA_GLGETINSTRUMENTSSGIX:
+			D(funcname = "glGetInstrumentsSGIX");
+			if (GL_ISAVAILABLE(glGetInstrumentsSGIX))
 			ret = nfglGetInstrumentsSGIX();
 			break;
 		case NFOSMESA_GLGETINTEGER64I_V:
+			D(funcname = "glGetInteger64i_v");
+			if (GL_ISAVAILABLE(glGetInteger64i_v))
 			nfglGetInteger64i_v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint64 *)  /* GLint64 *data */);
 			break;
 		case NFOSMESA_GLGETINTEGER64V:
+			D(funcname = "glGetInteger64v");
+			if (GL_ISAVAILABLE(glGetInteger64v))
 			nfglGetInteger64v(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLint64 *)  /* GLint64 *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERINDEXEDVEXT:
+			D(funcname = "glGetIntegerIndexedvEXT");
+			if (GL_ISAVAILABLE(glGetIntegerIndexedvEXT))
 			nfglGetIntegerIndexedvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint *)  /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERI_V:
+			D(funcname = "glGetIntegeri_v");
+			if (GL_ISAVAILABLE(glGetIntegeri_v))
 			nfglGetIntegeri_v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint *)  /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64I_VNV:
+			D(funcname = "glGetIntegerui64i_vNV");
+			if (GL_ISAVAILABLE(glGetIntegerui64i_vNV))
 			nfglGetIntegerui64i_vNV(
 				getStackedParameter(0),  /* GLenum value */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *result */);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64VNV:
+			D(funcname = "glGetIntegerui64vNV");
+			if (GL_ISAVAILABLE(glGetIntegerui64vNV))
 			nfglGetIntegerui64vNV(
 				getStackedParameter(0),  /* GLenum value */
 				getStackedPointer(1, GLuint64EXT *)  /* GLuint64EXT *result */);
 			break;
 		case NFOSMESA_GLGETINTEGERV:
+			D(funcname = "glGetIntegerv");
+			if (GL_ISAVAILABLE(glGetIntegerv))
 			nfglGetIntegerv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATSAMPLEIVNV:
+			D(funcname = "glGetInternalformatSampleivNV");
+			if (GL_ISAVAILABLE(glGetInternalformatSampleivNV))
 			nfglGetInternalformatSampleivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -5022,6 +6620,8 @@
 				getStackedPointer(5, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATI64V:
+			D(funcname = "glGetInternalformati64v");
+			if (GL_ISAVAILABLE(glGetInternalformati64v))
 			nfglGetInternalformati64v(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -5030,6 +6630,8 @@
 				getStackedPointer(4, GLint64 *)  /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATIV:
+			D(funcname = "glGetInternalformativ");
+			if (GL_ISAVAILABLE(glGetInternalformativ))
 			nfglGetInternalformativ(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -5038,72 +6640,96 @@
 				getStackedPointer(4, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETINVARIANTBOOLEANVEXT:
+			D(funcname = "glGetInvariantBooleanvEXT");
+			if (GL_ISAVAILABLE(glGetInvariantBooleanvEXT))
 			nfglGetInvariantBooleanvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETINVARIANTFLOATVEXT:
+			D(funcname = "glGetInvariantFloatvEXT");
+			if (GL_ISAVAILABLE(glGetInvariantFloatvEXT))
 			nfglGetInvariantFloatvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETINVARIANTINTEGERVEXT:
+			D(funcname = "glGetInvariantIntegervEXT");
+			if (GL_ISAVAILABLE(glGetInvariantIntegervEXT))
 			nfglGetInvariantIntegervEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLint *)  /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETLIGHTFV:
+			D(funcname = "glGetLightfv");
+			if (GL_ISAVAILABLE(glGetLightfv))
 			nfglGetLightfv(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETLIGHTIV:
+			D(funcname = "glGetLightiv");
+			if (GL_ISAVAILABLE(glGetLightiv))
 			nfglGetLightiv(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETLIGHTXOES:
+			D(funcname = "glGetLightxOES");
+			if (GL_ISAVAILABLE(glGetLightxOES))
 			nfglGetLightxOES(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERFVSGIX:
+			D(funcname = "glGetListParameterfvSGIX");
+			if (GL_ISAVAILABLE(glGetListParameterfvSGIX))
 			nfglGetListParameterfvSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERIVSGIX:
+			D(funcname = "glGetListParameterivSGIX");
+			if (GL_ISAVAILABLE(glGetListParameterivSGIX))
 			nfglGetListParameterivSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTBOOLEANVEXT:
+			D(funcname = "glGetLocalConstantBooleanvEXT");
+			if (GL_ISAVAILABLE(glGetLocalConstantBooleanvEXT))
 			nfglGetLocalConstantBooleanvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTFLOATVEXT:
+			D(funcname = "glGetLocalConstantFloatvEXT");
+			if (GL_ISAVAILABLE(glGetLocalConstantFloatvEXT))
 			nfglGetLocalConstantFloatvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTINTEGERVEXT:
+			D(funcname = "glGetLocalConstantIntegervEXT");
+			if (GL_ISAVAILABLE(glGetLocalConstantIntegervEXT))
 			nfglGetLocalConstantIntegervEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLint *)  /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERFVNV:
+			D(funcname = "glGetMapAttribParameterfvNV");
+			if (GL_ISAVAILABLE(glGetMapAttribParameterfvNV))
 			nfglGetMapAttribParameterfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -5111,6 +6737,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERIVNV:
+			D(funcname = "glGetMapAttribParameterivNV");
+			if (GL_ISAVAILABLE(glGetMapAttribParameterivNV))
 			nfglGetMapAttribParameterivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -5118,6 +6746,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMAPCONTROLPOINTSNV:
+			D(funcname = "glGetMapControlPointsNV");
+			if (GL_ISAVAILABLE(glGetMapControlPointsNV))
 			nfglGetMapControlPointsNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -5128,60 +6758,80 @@
 				getStackedPointer(6, void *)  /* void *points */);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERFVNV:
+			D(funcname = "glGetMapParameterfvNV");
+			if (GL_ISAVAILABLE(glGetMapParameterfvNV))
 			nfglGetMapParameterfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERIVNV:
+			D(funcname = "glGetMapParameterivNV");
+			if (GL_ISAVAILABLE(glGetMapParameterivNV))
 			nfglGetMapParameterivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMAPDV:
+			D(funcname = "glGetMapdv");
+			if (GL_ISAVAILABLE(glGetMapdv))
 			nfglGetMapdv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *v */);
 			break;
 		case NFOSMESA_GLGETMAPFV:
+			D(funcname = "glGetMapfv");
+			if (GL_ISAVAILABLE(glGetMapfv))
 			nfglGetMapfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETMAPIV:
+			D(funcname = "glGetMapiv");
+			if (GL_ISAVAILABLE(glGetMapiv))
 			nfglGetMapiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
 				getStackedPointer(2, GLint *)  /* GLint *v */);
 			break;
 		case NFOSMESA_GLGETMAPXVOES:
+			D(funcname = "glGetMapxvOES");
+			if (GL_ISAVAILABLE(glGetMapxvOES))
 			nfglGetMapxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *v */);
 			break;
 		case NFOSMESA_GLGETMATERIALFV:
+			D(funcname = "glGetMaterialfv");
+			if (GL_ISAVAILABLE(glGetMaterialfv))
 			nfglGetMaterialfv(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMATERIALIV:
+			D(funcname = "glGetMaterialiv");
+			if (GL_ISAVAILABLE(glGetMaterialiv))
 			nfglGetMaterialiv(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMATERIALXOES:
+			D(funcname = "glGetMaterialxOES");
+			if (GL_ISAVAILABLE(glGetMaterialxOES))
 			nfglGetMaterialxOES(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLGETMINMAX:
+			D(funcname = "glGetMinmax");
+			if (GL_ISAVAILABLE(glGetMinmax))
 			nfglGetMinmax(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -5190,6 +6840,8 @@
 				getStackedPointer(4, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETMINMAXEXT:
+			D(funcname = "glGetMinmaxEXT");
+			if (GL_ISAVAILABLE(glGetMinmaxEXT))
 			nfglGetMinmaxEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -5198,30 +6850,40 @@
 				getStackedPointer(4, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFV:
+			D(funcname = "glGetMinmaxParameterfv");
+			if (GL_ISAVAILABLE(glGetMinmaxParameterfv))
 			nfglGetMinmaxParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFVEXT:
+			D(funcname = "glGetMinmaxParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetMinmaxParameterfvEXT))
 			nfglGetMinmaxParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIV:
+			D(funcname = "glGetMinmaxParameteriv");
+			if (GL_ISAVAILABLE(glGetMinmaxParameteriv))
 			nfglGetMinmaxParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIVEXT:
+			D(funcname = "glGetMinmaxParameterivEXT");
+			if (GL_ISAVAILABLE(glGetMinmaxParameterivEXT))
 			nfglGetMinmaxParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVFVEXT:
+			D(funcname = "glGetMultiTexEnvfvEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexEnvfvEXT))
 			nfglGetMultiTexEnvfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5229,6 +6891,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVIVEXT:
+			D(funcname = "glGetMultiTexEnvivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexEnvivEXT))
 			nfglGetMultiTexEnvivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5236,6 +6900,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENDVEXT:
+			D(funcname = "glGetMultiTexGendvEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexGendvEXT))
 			nfglGetMultiTexGendvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -5243,6 +6909,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENFVEXT:
+			D(funcname = "glGetMultiTexGenfvEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexGenfvEXT))
 			nfglGetMultiTexGenfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -5250,6 +6918,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENIVEXT:
+			D(funcname = "glGetMultiTexGenivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexGenivEXT))
 			nfglGetMultiTexGenivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -5257,6 +6927,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXIMAGEEXT:
+			D(funcname = "glGetMultiTexImageEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexImageEXT))
 			nfglGetMultiTexImageEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5266,6 +6938,8 @@
 				getStackedPointer(5, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERFVEXT:
+			D(funcname = "glGetMultiTexLevelParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexLevelParameterfvEXT))
 			nfglGetMultiTexLevelParameterfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5274,6 +6948,8 @@
 				getStackedPointer(4, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERIVEXT:
+			D(funcname = "glGetMultiTexLevelParameterivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexLevelParameterivEXT))
 			nfglGetMultiTexLevelParameterivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5282,6 +6958,8 @@
 				getStackedPointer(4, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIIVEXT:
+			D(funcname = "glGetMultiTexParameterIivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexParameterIivEXT))
 			nfglGetMultiTexParameterIivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5289,6 +6967,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIUIVEXT:
+			D(funcname = "glGetMultiTexParameterIuivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexParameterIuivEXT))
 			nfglGetMultiTexParameterIuivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5296,6 +6976,8 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERFVEXT:
+			D(funcname = "glGetMultiTexParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexParameterfvEXT))
 			nfglGetMultiTexParameterfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5303,6 +6985,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIVEXT:
+			D(funcname = "glGetMultiTexParameterivEXT");
+			if (GL_ISAVAILABLE(glGetMultiTexParameterivEXT))
 			nfglGetMultiTexParameterivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -5310,48 +6994,64 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFV:
+			D(funcname = "glGetMultisamplefv");
+			if (GL_ISAVAILABLE(glGetMultisamplefv))
 			nfglGetMultisamplefv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *val */);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFVNV:
+			D(funcname = "glGetMultisamplefvNV");
+			if (GL_ISAVAILABLE(glGetMultisamplefvNV))
 			nfglGetMultisamplefvNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *val */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERI64V:
+			D(funcname = "glGetNamedBufferParameteri64v");
+			if (GL_ISAVAILABLE(glGetNamedBufferParameteri64v))
 			nfglGetNamedBufferParameteri64v(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64 *)  /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERIV:
+			D(funcname = "glGetNamedBufferParameteriv");
+			if (GL_ISAVAILABLE(glGetNamedBufferParameteriv))
 			nfglGetNamedBufferParameteriv(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERIVEXT:
+			D(funcname = "glGetNamedBufferParameterivEXT");
+			if (GL_ISAVAILABLE(glGetNamedBufferParameterivEXT))
 			nfglGetNamedBufferParameterivEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERUI64VNV:
+			D(funcname = "glGetNamedBufferParameterui64vNV");
+			if (GL_ISAVAILABLE(glGetNamedBufferParameterui64vNV))
 			nfglGetNamedBufferParameterui64vNV(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPOINTERV:
+			D(funcname = "glGetNamedBufferPointerv");
+			if (GL_ISAVAILABLE(glGetNamedBufferPointerv))
 			nfglGetNamedBufferPointerv(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPOINTERVEXT:
+			D(funcname = "glGetNamedBufferPointervEXT");
+			if (GL_ISAVAILABLE(glGetNamedBufferPointervEXT))
 			nfglGetNamedBufferPointervEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
@@ -5359,6 +7059,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATA:
+			D(funcname = "glGetNamedBufferSubData");
+			if (GL_ISAVAILABLE(glGetNamedBufferSubData))
 			nfglGetNamedBufferSubData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -5368,6 +7070,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATAEXT:
+			D(funcname = "glGetNamedBufferSubDataEXT");
+			if (GL_ISAVAILABLE(glGetNamedBufferSubDataEXT))
 			nfglGetNamedBufferSubDataEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -5376,6 +7080,8 @@
 			break;
 #endif
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIV:
+			D(funcname = "glGetNamedFramebufferAttachmentParameteriv");
+			if (GL_ISAVAILABLE(glGetNamedFramebufferAttachmentParameteriv))
 			nfglGetNamedFramebufferAttachmentParameteriv(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -5383,6 +7089,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
+			D(funcname = "glGetNamedFramebufferAttachmentParameterivEXT");
+			if (GL_ISAVAILABLE(glGetNamedFramebufferAttachmentParameterivEXT))
 			nfglGetNamedFramebufferAttachmentParameterivEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -5390,18 +7098,24 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIV:
+			D(funcname = "glGetNamedFramebufferParameteriv");
+			if (GL_ISAVAILABLE(glGetNamedFramebufferParameteriv))
 			nfglGetNamedFramebufferParameteriv(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT:
+			D(funcname = "glGetNamedFramebufferParameterivEXT");
+			if (GL_ISAVAILABLE(glGetNamedFramebufferParameterivEXT))
 			nfglGetNamedFramebufferParameterivEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT:
+			D(funcname = "glGetNamedProgramLocalParameterIivEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterIivEXT))
 			nfglGetNamedProgramLocalParameterIivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5409,6 +7123,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT:
+			D(funcname = "glGetNamedProgramLocalParameterIuivEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterIuivEXT))
 			nfglGetNamedProgramLocalParameterIuivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5416,6 +7132,8 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT:
+			D(funcname = "glGetNamedProgramLocalParameterdvEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterdvEXT))
 			nfglGetNamedProgramLocalParameterdvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5423,6 +7141,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT:
+			D(funcname = "glGetNamedProgramLocalParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterfvEXT))
 			nfglGetNamedProgramLocalParameterfvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5430,6 +7150,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMSTRINGEXT:
+			D(funcname = "glGetNamedProgramStringEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramStringEXT))
 			nfglGetNamedProgramStringEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5437,6 +7159,8 @@
 				getStackedPointer(3, void *)  /* void *string */);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMIVEXT:
+			D(funcname = "glGetNamedProgramivEXT");
+			if (GL_ISAVAILABLE(glGetNamedProgramivEXT))
 			nfglGetNamedProgramivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -5444,18 +7168,24 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDRENDERBUFFERPARAMETERIV:
+			D(funcname = "glGetNamedRenderbufferParameteriv");
+			if (GL_ISAVAILABLE(glGetNamedRenderbufferParameteriv))
 			nfglGetNamedRenderbufferParameteriv(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT:
+			D(funcname = "glGetNamedRenderbufferParameterivEXT");
+			if (GL_ISAVAILABLE(glGetNamedRenderbufferParameterivEXT))
 			nfglGetNamedRenderbufferParameterivEXT(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGARB:
+			D(funcname = "glGetNamedStringARB");
+			if (GL_ISAVAILABLE(glGetNamedStringARB))
 			nfglGetNamedStringARB(
 				getStackedParameter(0),  /* GLint namelen */
 				getStackedPointer(1, const GLchar *),  /* const GLchar *name */
@@ -5464,6 +7194,8 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *string */);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGIVARB:
+			D(funcname = "glGetNamedStringivARB");
+			if (GL_ISAVAILABLE(glGetNamedStringivARB))
 			nfglGetNamedStringivARB(
 				getStackedParameter(0),  /* GLint namelen */
 				getStackedPointer(1, const GLchar *),  /* const GLchar *name */
@@ -5471,23 +7203,31 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNEXTPERFQUERYIDINTEL:
+			D(funcname = "glGetNextPerfQueryIdINTEL");
+			if (GL_ISAVAILABLE(glGetNextPerfQueryIdINTEL))
 			nfglGetNextPerfQueryIdINTEL(
 				getStackedParameter(0),  /* GLuint queryId */
 				getStackedPointer(1, GLuint *)  /* GLuint *nextQueryId */);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERFVATI:
+			D(funcname = "glGetObjectBufferfvATI");
+			if (GL_ISAVAILABLE(glGetObjectBufferfvATI))
 			nfglGetObjectBufferfvATI(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERIVATI:
+			D(funcname = "glGetObjectBufferivATI");
+			if (GL_ISAVAILABLE(glGetObjectBufferivATI))
 			nfglGetObjectBufferivATI(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTLABEL:
+			D(funcname = "glGetObjectLabel");
+			if (GL_ISAVAILABLE(glGetObjectLabel))
 			nfglGetObjectLabel(
 				getStackedParameter(0),  /* GLenum identifier */
 				getStackedParameter(1),  /* GLuint name */
@@ -5496,6 +7236,8 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOBJECTLABELEXT:
+			D(funcname = "glGetObjectLabelEXT");
+			if (GL_ISAVAILABLE(glGetObjectLabelEXT))
 			nfglGetObjectLabelEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLuint object */
@@ -5504,12 +7246,16 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERFVARB:
+			D(funcname = "glGetObjectParameterfvARB");
+			if (GL_ISAVAILABLE(glGetObjectParameterfvARB))
 			nfglGetObjectParameterfvARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVAPPLE:
+			D(funcname = "glGetObjectParameterivAPPLE");
+			if (GL_ISAVAILABLE(glGetObjectParameterivAPPLE))
 			nfglGetObjectParameterivAPPLE(
 				getStackedParameter(0),  /* GLenum objectType */
 				getStackedParameter(1),  /* GLuint name */
@@ -5517,12 +7263,16 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVARB:
+			D(funcname = "glGetObjectParameterivARB");
+			if (GL_ISAVAILABLE(glGetObjectParameterivARB))
 			nfglGetObjectParameterivARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOBJECTPTRLABEL:
+			D(funcname = "glGetObjectPtrLabel");
+			if (GL_ISAVAILABLE(glGetObjectPtrLabel))
 			nfglGetObjectPtrLabel(
 				getStackedPointer(0, const void *),  /* const void *ptr */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -5530,51 +7280,69 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *label */);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYIVNV:
+			D(funcname = "glGetOcclusionQueryivNV");
+			if (GL_ISAVAILABLE(glGetOcclusionQueryivNV))
 			nfglGetOcclusionQueryivNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYUIVNV:
+			D(funcname = "glGetOcclusionQueryuivNV");
+			if (GL_ISAVAILABLE(glGetOcclusionQueryuivNV))
 			nfglGetOcclusionQueryuivNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENFVNV:
+			D(funcname = "glGetPathColorGenfvNV");
+			if (GL_ISAVAILABLE(glGetPathColorGenfvNV))
 			nfglGetPathColorGenfvNV(
 				getStackedParameter(0),  /* GLenum color */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENIVNV:
+			D(funcname = "glGetPathColorGenivNV");
+			if (GL_ISAVAILABLE(glGetPathColorGenivNV))
 			nfglGetPathColorGenivNV(
 				getStackedParameter(0),  /* GLenum color */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPATHCOMMANDSNV:
+			D(funcname = "glGetPathCommandsNV");
+			if (GL_ISAVAILABLE(glGetPathCommandsNV))
 			nfglGetPathCommandsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedPointer(1, GLubyte *)  /* GLubyte *commands */);
 			break;
 		case NFOSMESA_GLGETPATHCOORDSNV:
+			D(funcname = "glGetPathCoordsNV");
+			if (GL_ISAVAILABLE(glGetPathCoordsNV))
 			nfglGetPathCoordsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *coords */);
 			break;
 		case NFOSMESA_GLGETPATHDASHARRAYNV:
+			D(funcname = "glGetPathDashArrayNV");
+			if (GL_ISAVAILABLE(glGetPathDashArrayNV))
 			nfglGetPathDashArrayNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *dashArray */);
 			break;
 		case NFOSMESA_GLGETPATHLENGTHNV:
+			D(funcname = "glGetPathLengthNV");
+			if (GL_ISAVAILABLE(glGetPathLengthNV))
 			ret = nfglGetPathLengthNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei startSegment */
 				getStackedParameter(2)  /* GLsizei numSegments */);
 			break;
 		case NFOSMESA_GLGETPATHMETRICRANGENV:
+			D(funcname = "glGetPathMetricRangeNV");
+			if (GL_ISAVAILABLE(glGetPathMetricRangeNV))
 			nfglGetPathMetricRangeNV(
 				getStackedParameter(0),  /* GLbitfield metricQueryMask */
 				getStackedParameter(1),  /* GLuint firstPathName */
@@ -5583,6 +7351,8 @@
 				getStackedPointer(4, GLfloat *)  /* GLfloat *metrics */);
 			break;
 		case NFOSMESA_GLGETPATHMETRICSNV:
+			D(funcname = "glGetPathMetricsNV");
+			if (GL_ISAVAILABLE(glGetPathMetricsNV))
 			nfglGetPathMetricsNV(
 				getStackedParameter(0),  /* GLbitfield metricQueryMask */
 				getStackedParameter(1),  /* GLsizei numPaths */
@@ -5593,18 +7363,24 @@
 				getStackedPointer(6, GLfloat *)  /* GLfloat *metrics */);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERFVNV:
+			D(funcname = "glGetPathParameterfvNV");
+			if (GL_ISAVAILABLE(glGetPathParameterfvNV))
 			nfglGetPathParameterfvNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERIVNV:
+			D(funcname = "glGetPathParameterivNV");
+			if (GL_ISAVAILABLE(glGetPathParameterivNV))
 			nfglGetPathParameterivNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPATHSPACINGNV:
+			D(funcname = "glGetPathSpacingNV");
+			if (GL_ISAVAILABLE(glGetPathSpacingNV))
 			nfglGetPathSpacingNV(
 				getStackedParameter(0),  /* GLenum pathListMode */
 				getStackedParameter(1),  /* GLsizei numPaths */
@@ -5617,18 +7393,24 @@
 				getStackedPointer(8, GLfloat *)  /* GLfloat *returnedSpacing */);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENFVNV:
+			D(funcname = "glGetPathTexGenfvNV");
+			if (GL_ISAVAILABLE(glGetPathTexGenfvNV))
 			nfglGetPathTexGenfvNV(
 				getStackedParameter(0),  /* GLenum texCoordSet */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *value */);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENIVNV:
+			D(funcname = "glGetPathTexGenivNV");
+			if (GL_ISAVAILABLE(glGetPathTexGenivNV))
 			nfglGetPathTexGenivNV(
 				getStackedParameter(0),  /* GLenum texCoordSet */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *value */);
 			break;
 		case NFOSMESA_GLGETPERFCOUNTERINFOINTEL:
+			D(funcname = "glGetPerfCounterInfoINTEL");
+			if (GL_ISAVAILABLE(glGetPerfCounterInfoINTEL))
 			nfglGetPerfCounterInfoINTEL(
 				getStackedParameter(0),  /* GLuint queryId */
 				getStackedParameter(1),  /* GLuint counterId */
@@ -5643,6 +7425,8 @@
 				getStackedPointer(10, GLuint64 *)  /* GLuint64 *rawCounterMaxValue */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERDATAAMD:
+			D(funcname = "glGetPerfMonitorCounterDataAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorCounterDataAMD))
 			nfglGetPerfMonitorCounterDataAMD(
 				getStackedParameter(0),  /* GLuint monitor */
 				getStackedParameter(1),  /* GLenum pname */
@@ -5651,6 +7435,8 @@
 				getStackedPointer(4, GLint *)  /* GLint *bytesWritten */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERINFOAMD:
+			D(funcname = "glGetPerfMonitorCounterInfoAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorCounterInfoAMD))
 			nfglGetPerfMonitorCounterInfoAMD(
 				getStackedParameter(0),  /* GLuint group */
 				getStackedParameter(1),  /* GLuint counter */
@@ -5658,6 +7444,8 @@
 				getStackedPointer(3, void *)  /* void *data */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSTRINGAMD:
+			D(funcname = "glGetPerfMonitorCounterStringAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorCounterStringAMD))
 			nfglGetPerfMonitorCounterStringAMD(
 				getStackedParameter(0),  /* GLuint group */
 				getStackedParameter(1),  /* GLuint counter */
@@ -5666,6 +7454,8 @@
 				getStackedPointer(4, GLchar *)  /* GLchar *counterString */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSAMD:
+			D(funcname = "glGetPerfMonitorCountersAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorCountersAMD))
 			nfglGetPerfMonitorCountersAMD(
 				getStackedParameter(0),  /* GLuint group */
 				getStackedPointer(1, GLint *),  /* GLint *numCounters */
@@ -5674,6 +7464,8 @@
 				getStackedPointer(4, GLuint *)  /* GLuint *counters */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSTRINGAMD:
+			D(funcname = "glGetPerfMonitorGroupStringAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorGroupStringAMD))
 			nfglGetPerfMonitorGroupStringAMD(
 				getStackedParameter(0),  /* GLuint group */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -5681,12 +7473,16 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *groupString */);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSAMD:
+			D(funcname = "glGetPerfMonitorGroupsAMD");
+			if (GL_ISAVAILABLE(glGetPerfMonitorGroupsAMD))
 			nfglGetPerfMonitorGroupsAMD(
 				getStackedPointer(0, GLint *),  /* GLint *numGroups */
 				getStackedParameter(1),  /* GLsizei groupsSize */
 				getStackedPointer(2, GLuint *)  /* GLuint *groups */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYDATAINTEL:
+			D(funcname = "glGetPerfQueryDataINTEL");
+			if (GL_ISAVAILABLE(glGetPerfQueryDataINTEL))
 			nfglGetPerfQueryDataINTEL(
 				getStackedParameter(0),  /* GLuint queryHandle */
 				getStackedParameter(1),  /* GLuint flags */
@@ -5695,11 +7491,15 @@
 				getStackedPointer(4, GLuint *)  /* GLuint *bytesWritten */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYIDBYNAMEINTEL:
+			D(funcname = "glGetPerfQueryIdByNameINTEL");
+			if (GL_ISAVAILABLE(glGetPerfQueryIdByNameINTEL))
 			nfglGetPerfQueryIdByNameINTEL(
 				getStackedPointer(0, GLchar *),  /* GLchar *queryName */
 				getStackedPointer(1, GLuint *)  /* GLuint *queryId */);
 			break;
 		case NFOSMESA_GLGETPERFQUERYINFOINTEL:
+			D(funcname = "glGetPerfQueryInfoINTEL");
+			if (GL_ISAVAILABLE(glGetPerfQueryInfoINTEL))
 			nfglGetPerfQueryInfoINTEL(
 				getStackedParameter(0),  /* GLuint queryId */
 				getStackedParameter(1),  /* GLuint queryNameLength */
@@ -5710,75 +7510,103 @@
 				getStackedPointer(6, GLuint *)  /* GLuint *capsMask */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPFV:
+			D(funcname = "glGetPixelMapfv");
+			if (GL_ISAVAILABLE(glGetPixelMapfv))
 			nfglGetPixelMapfv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUIV:
+			D(funcname = "glGetPixelMapuiv");
+			if (GL_ISAVAILABLE(glGetPixelMapuiv))
 			nfglGetPixelMapuiv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedPointer(1, GLuint *)  /* GLuint *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUSV:
+			D(funcname = "glGetPixelMapusv");
+			if (GL_ISAVAILABLE(glGetPixelMapusv))
 			nfglGetPixelMapusv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedPointer(1, GLushort *)  /* GLushort *values */);
 			break;
 		case NFOSMESA_GLGETPIXELMAPXV:
+			D(funcname = "glGetPixelMapxv");
+			if (GL_ISAVAILABLE(glGetPixelMapxv))
 			nfglGetPixelMapxv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLint size */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *values */);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERFVSGIS:
+			D(funcname = "glGetPixelTexGenParameterfvSGIS");
+			if (GL_ISAVAILABLE(glGetPixelTexGenParameterfvSGIS))
 			nfglGetPixelTexGenParameterfvSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERIVSGIS:
+			D(funcname = "glGetPixelTexGenParameterivSGIS");
+			if (GL_ISAVAILABLE(glGetPixelTexGenParameterivSGIS))
 			nfglGetPixelTexGenParameterivSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERFVEXT:
+			D(funcname = "glGetPixelTransformParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetPixelTransformParameterfvEXT))
 			nfglGetPixelTransformParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERIVEXT:
+			D(funcname = "glGetPixelTransformParameterivEXT");
+			if (GL_ISAVAILABLE(glGetPixelTransformParameterivEXT))
 			nfglGetPixelTransformParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERINDEXEDVEXT:
+			D(funcname = "glGetPointerIndexedvEXT");
+			if (GL_ISAVAILABLE(glGetPointerIndexedvEXT))
 			nfglGetPointerIndexedvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, void * *)  /* void * *data */);
 			break;
 		case NFOSMESA_GLGETPOINTERI_VEXT:
+			D(funcname = "glGetPointeri_vEXT");
+			if (GL_ISAVAILABLE(glGetPointeri_vEXT))
 			nfglGetPointeri_vEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, void * *)  /* void * *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERV:
+			D(funcname = "glGetPointerv");
+			if (GL_ISAVAILABLE(glGetPointerv))
 			nfglGetPointerv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLvoid* *)  /* GLvoid* *params */);
 			break;
 		case NFOSMESA_GLGETPOINTERVEXT:
+			D(funcname = "glGetPointervEXT");
+			if (GL_ISAVAILABLE(glGetPointervEXT))
 			nfglGetPointervEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, void * *)  /* void * *params */);
 			break;
 		case NFOSMESA_GLGETPOLYGONSTIPPLE:
+			D(funcname = "glGetPolygonStipple");
+			if (GL_ISAVAILABLE(glGetPolygonStipple))
 			nfglGetPolygonStipple(
 				getStackedPointer(0, GLubyte *)  /* GLubyte *mask */);
 			break;
 		case NFOSMESA_GLGETPROGRAMBINARY:
+			D(funcname = "glGetProgramBinary");
+			if (GL_ISAVAILABLE(glGetProgramBinary))
 			nfglGetProgramBinary(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -5787,30 +7615,40 @@
 				getStackedPointer(4, void *)  /* void *binary */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIIVNV:
+			D(funcname = "glGetProgramEnvParameterIivNV");
+			if (GL_ISAVAILABLE(glGetProgramEnvParameterIivNV))
 			nfglGetProgramEnvParameterIivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIUIVNV:
+			D(funcname = "glGetProgramEnvParameterIuivNV");
+			if (GL_ISAVAILABLE(glGetProgramEnvParameterIuivNV))
 			nfglGetProgramEnvParameterIuivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERDVARB:
+			D(funcname = "glGetProgramEnvParameterdvARB");
+			if (GL_ISAVAILABLE(glGetProgramEnvParameterdvARB))
 			nfglGetProgramEnvParameterdvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERFVARB:
+			D(funcname = "glGetProgramEnvParameterfvARB");
+			if (GL_ISAVAILABLE(glGetProgramEnvParameterfvARB))
 			nfglGetProgramEnvParameterfvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMINFOLOG:
+			D(funcname = "glGetProgramInfoLog");
+			if (GL_ISAVAILABLE(glGetProgramInfoLog))
 			nfglGetProgramInfoLog(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -5818,6 +7656,8 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETPROGRAMINTERFACEIV:
+			D(funcname = "glGetProgramInterfaceiv");
+			if (GL_ISAVAILABLE(glGetProgramInterfaceiv))
 			nfglGetProgramInterfaceiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
@@ -5825,30 +7665,40 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIIVNV:
+			D(funcname = "glGetProgramLocalParameterIivNV");
+			if (GL_ISAVAILABLE(glGetProgramLocalParameterIivNV))
 			nfglGetProgramLocalParameterIivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIUIVNV:
+			D(funcname = "glGetProgramLocalParameterIuivNV");
+			if (GL_ISAVAILABLE(glGetProgramLocalParameterIuivNV))
 			nfglGetProgramLocalParameterIuivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERDVARB:
+			D(funcname = "glGetProgramLocalParameterdvARB");
+			if (GL_ISAVAILABLE(glGetProgramLocalParameterdvARB))
 			nfglGetProgramLocalParameterdvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERFVARB:
+			D(funcname = "glGetProgramLocalParameterfvARB");
+			if (GL_ISAVAILABLE(glGetProgramLocalParameterfvARB))
 			nfglGetProgramLocalParameterfvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERDVNV:
+			D(funcname = "glGetProgramNamedParameterdvNV");
+			if (GL_ISAVAILABLE(glGetProgramNamedParameterdvNV))
 			nfglGetProgramNamedParameterdvNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -5856,6 +7706,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERFVNV:
+			D(funcname = "glGetProgramNamedParameterfvNV");
+			if (GL_ISAVAILABLE(glGetProgramNamedParameterfvNV))
 			nfglGetProgramNamedParameterfvNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -5863,6 +7715,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERDVNV:
+			D(funcname = "glGetProgramParameterdvNV");
+			if (GL_ISAVAILABLE(glGetProgramParameterdvNV))
 			nfglGetProgramParameterdvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -5870,6 +7724,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERFVNV:
+			D(funcname = "glGetProgramParameterfvNV");
+			if (GL_ISAVAILABLE(glGetProgramParameterfvNV))
 			nfglGetProgramParameterfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -5877,6 +7733,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEINFOLOG:
+			D(funcname = "glGetProgramPipelineInfoLog");
+			if (GL_ISAVAILABLE(glGetProgramPipelineInfoLog))
 			nfglGetProgramPipelineInfoLog(
 				getStackedParameter(0),  /* GLuint pipeline */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -5884,12 +7742,16 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEIV:
+			D(funcname = "glGetProgramPipelineiv");
+			if (GL_ISAVAILABLE(glGetProgramPipelineiv))
 			nfglGetProgramPipelineiv(
 				getStackedParameter(0),  /* GLuint pipeline */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMREGISTERFVMESA:
+			D(funcname = "glGetProgramRegisterfvMESA");
+			if (GL_ISAVAILABLE(glGetProgramRegisterfvMESA))
 			nfglGetProgramRegisterfvMESA(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei len */
@@ -5897,24 +7759,32 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEINDEX:
+			D(funcname = "glGetProgramResourceIndex");
+			if (GL_ISAVAILABLE(glGetProgramResourceIndex))
 			ret = nfglGetProgramResourceIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATION:
+			D(funcname = "glGetProgramResourceLocation");
+			if (GL_ISAVAILABLE(glGetProgramResourceLocation))
 			ret = nfglGetProgramResourceLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATIONINDEX:
+			D(funcname = "glGetProgramResourceLocationIndex");
+			if (GL_ISAVAILABLE(glGetProgramResourceLocationIndex))
 			ret = nfglGetProgramResourceLocationIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCENAME:
+			D(funcname = "glGetProgramResourceName");
+			if (GL_ISAVAILABLE(glGetProgramResourceName))
 			nfglGetProgramResourceName(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
@@ -5924,6 +7794,8 @@
 				getStackedPointer(5, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEFVNV:
+			D(funcname = "glGetProgramResourcefvNV");
+			if (GL_ISAVAILABLE(glGetProgramResourcefvNV))
 			nfglGetProgramResourcefvNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
@@ -5935,6 +7807,8 @@
 				getStackedPointer(7, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEIV:
+			D(funcname = "glGetProgramResourceiv");
+			if (GL_ISAVAILABLE(glGetProgramResourceiv))
 			nfglGetProgramResourceiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum programInterface */
@@ -5946,6 +7820,8 @@
 				getStackedPointer(7, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTAGEIV:
+			D(funcname = "glGetProgramStageiv");
+			if (GL_ISAVAILABLE(glGetProgramStageiv))
 			nfglGetProgramStageiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
@@ -5953,42 +7829,56 @@
 				getStackedPointer(3, GLint *)  /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGARB:
+			D(funcname = "glGetProgramStringARB");
+			if (GL_ISAVAILABLE(glGetProgramStringARB))
 			nfglGetProgramStringARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void *)  /* void *string */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGNV:
+			D(funcname = "glGetProgramStringNV");
+			if (GL_ISAVAILABLE(glGetProgramStringNV))
 			nfglGetProgramStringNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLubyte *)  /* GLubyte *program */);
 			break;
 		case NFOSMESA_GLGETPROGRAMSUBROUTINEPARAMETERUIVNV:
+			D(funcname = "glGetProgramSubroutineParameteruivNV");
+			if (GL_ISAVAILABLE(glGetProgramSubroutineParameteruivNV))
 			nfglGetProgramSubroutineParameteruivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLuint *)  /* GLuint *param */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIV:
+			D(funcname = "glGetProgramiv");
+			if (GL_ISAVAILABLE(glGetProgramiv))
 			nfglGetProgramiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVARB:
+			D(funcname = "glGetProgramivARB");
+			if (GL_ISAVAILABLE(glGetProgramivARB))
 			nfglGetProgramivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVNV:
+			D(funcname = "glGetProgramivNV");
+			if (GL_ISAVAILABLE(glGetProgramivNV))
 			nfglGetProgramivNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTI64V:
+			D(funcname = "glGetQueryBufferObjecti64v");
+			if (GL_ISAVAILABLE(glGetQueryBufferObjecti64v))
 			nfglGetQueryBufferObjecti64v(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -5996,6 +7886,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTIV:
+			D(funcname = "glGetQueryBufferObjectiv");
+			if (GL_ISAVAILABLE(glGetQueryBufferObjectiv))
 			nfglGetQueryBufferObjectiv(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -6003,6 +7895,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTUI64V:
+			D(funcname = "glGetQueryBufferObjectui64v");
+			if (GL_ISAVAILABLE(glGetQueryBufferObjectui64v))
 			nfglGetQueryBufferObjectui64v(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -6010,6 +7904,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTUIV:
+			D(funcname = "glGetQueryBufferObjectuiv");
+			if (GL_ISAVAILABLE(glGetQueryBufferObjectuiv))
 			nfglGetQueryBufferObjectuiv(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -6017,6 +7913,8 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLGETQUERYINDEXEDIV:
+			D(funcname = "glGetQueryIndexediv");
+			if (GL_ISAVAILABLE(glGetQueryIndexediv))
 			nfglGetQueryIndexediv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -6024,102 +7922,136 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64V:
+			D(funcname = "glGetQueryObjecti64v");
+			if (GL_ISAVAILABLE(glGetQueryObjecti64v))
 			nfglGetQueryObjecti64v(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64 *)  /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64VEXT:
+			D(funcname = "glGetQueryObjecti64vEXT");
+			if (GL_ISAVAILABLE(glGetQueryObjecti64vEXT))
 			nfglGetQueryObjecti64vEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64 *)  /* GLint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIV:
+			D(funcname = "glGetQueryObjectiv");
+			if (GL_ISAVAILABLE(glGetQueryObjectiv))
 			nfglGetQueryObjectiv(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIVARB:
+			D(funcname = "glGetQueryObjectivARB");
+			if (GL_ISAVAILABLE(glGetQueryObjectivARB))
 			nfglGetQueryObjectivARB(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64V:
+			D(funcname = "glGetQueryObjectui64v");
+			if (GL_ISAVAILABLE(glGetQueryObjectui64v))
 			nfglGetQueryObjectui64v(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64 *)  /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64VEXT:
+			D(funcname = "glGetQueryObjectui64vEXT");
+			if (GL_ISAVAILABLE(glGetQueryObjectui64vEXT))
 			nfglGetQueryObjectui64vEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64 *)  /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIV:
+			D(funcname = "glGetQueryObjectuiv");
+			if (GL_ISAVAILABLE(glGetQueryObjectuiv))
 			nfglGetQueryObjectuiv(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIVARB:
+			D(funcname = "glGetQueryObjectuivARB");
+			if (GL_ISAVAILABLE(glGetQueryObjectuivARB))
 			nfglGetQueryObjectuivARB(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYIV:
+			D(funcname = "glGetQueryiv");
+			if (GL_ISAVAILABLE(glGetQueryiv))
 			nfglGetQueryiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETQUERYIVARB:
+			D(funcname = "glGetQueryivARB");
+			if (GL_ISAVAILABLE(glGetQueryivARB))
 			nfglGetQueryivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIV:
+			D(funcname = "glGetRenderbufferParameteriv");
+			if (GL_ISAVAILABLE(glGetRenderbufferParameteriv))
 			nfglGetRenderbufferParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIVEXT:
+			D(funcname = "glGetRenderbufferParameterivEXT");
+			if (GL_ISAVAILABLE(glGetRenderbufferParameterivEXT))
 			nfglGetRenderbufferParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIIV:
+			D(funcname = "glGetSamplerParameterIiv");
+			if (GL_ISAVAILABLE(glGetSamplerParameterIiv))
 			nfglGetSamplerParameterIiv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIUIV:
+			D(funcname = "glGetSamplerParameterIuiv");
+			if (GL_ISAVAILABLE(glGetSamplerParameterIuiv))
 			nfglGetSamplerParameterIuiv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERFV:
+			D(funcname = "glGetSamplerParameterfv");
+			if (GL_ISAVAILABLE(glGetSamplerParameterfv))
 			nfglGetSamplerParameterfv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIV:
+			D(funcname = "glGetSamplerParameteriv");
+			if (GL_ISAVAILABLE(glGetSamplerParameteriv))
 			nfglGetSamplerParameteriv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTER:
+			D(funcname = "glGetSeparableFilter");
+			if (GL_ISAVAILABLE(glGetSeparableFilter))
 			nfglGetSeparableFilter(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6129,6 +8061,8 @@
 				getStackedPointer(5, void *)  /* void *span */);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTEREXT:
+			D(funcname = "glGetSeparableFilterEXT");
+			if (GL_ISAVAILABLE(glGetSeparableFilterEXT))
 			nfglGetSeparableFilterEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6138,6 +8072,8 @@
 				getStackedPointer(5, void *)  /* void *span */);
 			break;
 		case NFOSMESA_GLGETSHADERINFOLOG:
+			D(funcname = "glGetShaderInfoLog");
+			if (GL_ISAVAILABLE(glGetShaderInfoLog))
 			nfglGetShaderInfoLog(
 				getStackedParameter(0),  /* GLuint shader */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -6145,6 +8081,8 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *infoLog */);
 			break;
 		case NFOSMESA_GLGETSHADERPRECISIONFORMAT:
+			D(funcname = "glGetShaderPrecisionFormat");
+			if (GL_ISAVAILABLE(glGetShaderPrecisionFormat))
 			nfglGetShaderPrecisionFormat(
 				getStackedParameter(0),  /* GLenum shadertype */
 				getStackedParameter(1),  /* GLenum precisiontype */
@@ -6152,6 +8090,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *precision */);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCE:
+			D(funcname = "glGetShaderSource");
+			if (GL_ISAVAILABLE(glGetShaderSource))
 			nfglGetShaderSource(
 				getStackedParameter(0),  /* GLuint shader */
 				getStackedParameter(1),  /* GLsizei bufSize */
@@ -6159,6 +8099,8 @@
 				getStackedPointer(3, GLchar *)  /* GLchar *source */);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCEARB:
+			D(funcname = "glGetShaderSourceARB");
+			if (GL_ISAVAILABLE(glGetShaderSourceARB))
 			nfglGetShaderSourceARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLsizei maxLength */
@@ -6166,46 +8108,62 @@
 				getStackedPointer(3, GLcharARB *)  /* GLcharARB *source */);
 			break;
 		case NFOSMESA_GLGETSHADERIV:
+			D(funcname = "glGetShaderiv");
+			if (GL_ISAVAILABLE(glGetShaderiv))
 			nfglGetShaderiv(
 				getStackedParameter(0),  /* GLuint shader */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETSHARPENTEXFUNCSGIS:
+			D(funcname = "glGetSharpenTexFuncSGIS");
+			if (GL_ISAVAILABLE(glGetSharpenTexFuncSGIS))
 			nfglGetSharpenTexFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *points */);
 			break;
 		case NFOSMESA_GLGETSTAGEINDEXNV:
+			D(funcname = "glGetStageIndexNV");
+			if (GL_ISAVAILABLE(glGetStageIndexNV))
 			ret = nfglGetStageIndexNV(
 				getStackedParameter(0)  /* GLenum shadertype */);
 			break;
 #if 0
 		case NFOSMESA_GLGETSTRING:
+			D(funcname = "glGetString");
+			if (GL_ISAVAILABLE(glGetString))
 			ret = (uint32)(uintptr_t)nfglGetString(
 				getStackedParameter(0)  /* GLenum name */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLGETSTRINGI:
+			D(funcname = "glGetStringi");
+			if (GL_ISAVAILABLE(glGetStringi))
 			ret = (uint32)(uintptr_t)nfglGetStringi(
 				getStackedParameter(0),  /* GLenum name */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 #endif
 		case NFOSMESA_GLGETSUBROUTINEINDEX:
+			D(funcname = "glGetSubroutineIndex");
+			if (GL_ISAVAILABLE(glGetSubroutineIndex))
 			ret = nfglGetSubroutineIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETSUBROUTINEUNIFORMLOCATION:
+			D(funcname = "glGetSubroutineUniformLocation");
+			if (GL_ISAVAILABLE(glGetSubroutineUniformLocation))
 			ret = nfglGetSubroutineUniformLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum shadertype */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETSYNCIV:
+			D(funcname = "glGetSynciv");
+			if (GL_ISAVAILABLE(glGetSynciv))
 			nfglGetSynciv(
 				(GLsync)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLenum pname */
@@ -6214,64 +8172,86 @@
 				getStackedPointer(4, GLint *)  /* GLint *values */);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERFVATI:
+			D(funcname = "glGetTexBumpParameterfvATI");
+			if (GL_ISAVAILABLE(glGetTexBumpParameterfvATI))
 			nfglGetTexBumpParameterfvATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLfloat *)  /* GLfloat *param */);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERIVATI:
+			D(funcname = "glGetTexBumpParameterivATI");
+			if (GL_ISAVAILABLE(glGetTexBumpParameterivATI))
 			nfglGetTexBumpParameterivATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETTEXENVFV:
+			D(funcname = "glGetTexEnvfv");
+			if (GL_ISAVAILABLE(glGetTexEnvfv))
 			nfglGetTexEnvfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXENVIV:
+			D(funcname = "glGetTexEnviv");
+			if (GL_ISAVAILABLE(glGetTexEnviv))
 			nfglGetTexEnviv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXENVXVOES:
+			D(funcname = "glGetTexEnvxvOES");
+			if (GL_ISAVAILABLE(glGetTexEnvxvOES))
 			nfglGetTexEnvxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXFILTERFUNCSGIS:
+			D(funcname = "glGetTexFilterFuncSGIS");
+			if (GL_ISAVAILABLE(glGetTexFilterFuncSGIS))
 			nfglGetTexFilterFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum filter */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *weights */);
 			break;
 		case NFOSMESA_GLGETTEXGENDV:
+			D(funcname = "glGetTexGendv");
+			if (GL_ISAVAILABLE(glGetTexGendv))
 			nfglGetTexGendv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENFV:
+			D(funcname = "glGetTexGenfv");
+			if (GL_ISAVAILABLE(glGetTexGenfv))
 			nfglGetTexGenfv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENIV:
+			D(funcname = "glGetTexGeniv");
+			if (GL_ISAVAILABLE(glGetTexGeniv))
 			nfglGetTexGeniv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXGENXVOES:
+			D(funcname = "glGetTexGenxvOES");
+			if (GL_ISAVAILABLE(glGetTexGenxvOES))
 			nfglGetTexGenxvOES(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXIMAGE:
+			D(funcname = "glGetTexImage");
+			if (GL_ISAVAILABLE(glGetTexImage))
 			nfglGetTexImage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -6280,6 +8260,8 @@
 				getStackedPointer(4, GLvoid *)  /* GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERFV:
+			D(funcname = "glGetTexLevelParameterfv");
+			if (GL_ISAVAILABLE(glGetTexLevelParameterfv))
 			nfglGetTexLevelParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -6287,6 +8269,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERIV:
+			D(funcname = "glGetTexLevelParameteriv");
+			if (GL_ISAVAILABLE(glGetTexLevelParameteriv))
 			nfglGetTexLevelParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -6294,6 +8278,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERXVOES:
+			D(funcname = "glGetTexLevelParameterxvOES");
+			if (GL_ISAVAILABLE(glGetTexLevelParameterxvOES))
 			nfglGetTexLevelParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -6301,24 +8287,32 @@
 				getStackedPointer(3, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIV:
+			D(funcname = "glGetTexParameterIiv");
+			if (GL_ISAVAILABLE(glGetTexParameterIiv))
 			nfglGetTexParameterIiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIVEXT:
+			D(funcname = "glGetTexParameterIivEXT");
+			if (GL_ISAVAILABLE(glGetTexParameterIivEXT))
 			nfglGetTexParameterIivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIV:
+			D(funcname = "glGetTexParameterIuiv");
+			if (GL_ISAVAILABLE(glGetTexParameterIuiv))
 			nfglGetTexParameterIuiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIVEXT:
+			D(funcname = "glGetTexParameterIuivEXT");
+			if (GL_ISAVAILABLE(glGetTexParameterIuivEXT))
 			nfglGetTexParameterIuivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
@@ -6326,6 +8320,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLGETTEXPARAMETERPOINTERVAPPLE:
+			D(funcname = "glGetTexParameterPointervAPPLE");
+			if (GL_ISAVAILABLE(glGetTexParameterPointervAPPLE))
 			nfglGetTexParameterPointervAPPLE(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
@@ -6333,32 +8329,44 @@
 			break;
 #endif
 		case NFOSMESA_GLGETTEXPARAMETERFV:
+			D(funcname = "glGetTexParameterfv");
+			if (GL_ISAVAILABLE(glGetTexParameterfv))
 			nfglGetTexParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIV:
+			D(funcname = "glGetTexParameteriv");
+			if (GL_ISAVAILABLE(glGetTexParameteriv))
 			nfglGetTexParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERXVOES:
+			D(funcname = "glGetTexParameterxvOES");
+			if (GL_ISAVAILABLE(glGetTexParameterxvOES))
 			nfglGetTexParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfixed *)  /* GLfixed *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREHANDLEARB:
+			D(funcname = "glGetTextureHandleARB");
+			if (GL_ISAVAILABLE(glGetTextureHandleARB))
 			ret = nfglGetTextureHandleARB(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLGETTEXTUREHANDLENV:
+			D(funcname = "glGetTextureHandleNV");
+			if (GL_ISAVAILABLE(glGetTextureHandleNV))
 			ret = nfglGetTextureHandleNV(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLGETTEXTUREIMAGE:
+			D(funcname = "glGetTextureImage");
+			if (GL_ISAVAILABLE(glGetTextureImage))
 			nfglGetTextureImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -6368,6 +8376,8 @@
 				getStackedPointer(5, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETTEXTUREIMAGEEXT:
+			D(funcname = "glGetTextureImageEXT");
+			if (GL_ISAVAILABLE(glGetTextureImageEXT))
 			nfglGetTextureImageEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6377,6 +8387,8 @@
 				getStackedPointer(5, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERFV:
+			D(funcname = "glGetTextureLevelParameterfv");
+			if (GL_ISAVAILABLE(glGetTextureLevelParameterfv))
 			nfglGetTextureLevelParameterfv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -6384,6 +8396,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERFVEXT:
+			D(funcname = "glGetTextureLevelParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetTextureLevelParameterfvEXT))
 			nfglGetTextureLevelParameterfvEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6392,6 +8406,8 @@
 				getStackedPointer(4, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERIV:
+			D(funcname = "glGetTextureLevelParameteriv");
+			if (GL_ISAVAILABLE(glGetTextureLevelParameteriv))
 			nfglGetTextureLevelParameteriv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -6399,6 +8415,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERIVEXT:
+			D(funcname = "glGetTextureLevelParameterivEXT");
+			if (GL_ISAVAILABLE(glGetTextureLevelParameterivEXT))
 			nfglGetTextureLevelParameterivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6407,12 +8425,16 @@
 				getStackedPointer(4, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIIV:
+			D(funcname = "glGetTextureParameterIiv");
+			if (GL_ISAVAILABLE(glGetTextureParameterIiv))
 			nfglGetTextureParameterIiv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIIVEXT:
+			D(funcname = "glGetTextureParameterIivEXT");
+			if (GL_ISAVAILABLE(glGetTextureParameterIivEXT))
 			nfglGetTextureParameterIivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6420,12 +8442,16 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIUIV:
+			D(funcname = "glGetTextureParameterIuiv");
+			if (GL_ISAVAILABLE(glGetTextureParameterIuiv))
 			nfglGetTextureParameterIuiv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIUIVEXT:
+			D(funcname = "glGetTextureParameterIuivEXT");
+			if (GL_ISAVAILABLE(glGetTextureParameterIuivEXT))
 			nfglGetTextureParameterIuivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6433,12 +8459,16 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERFV:
+			D(funcname = "glGetTextureParameterfv");
+			if (GL_ISAVAILABLE(glGetTextureParameterfv))
 			nfglGetTextureParameterfv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERFVEXT:
+			D(funcname = "glGetTextureParameterfvEXT");
+			if (GL_ISAVAILABLE(glGetTextureParameterfvEXT))
 			nfglGetTextureParameterfvEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6446,12 +8476,16 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIV:
+			D(funcname = "glGetTextureParameteriv");
+			if (GL_ISAVAILABLE(glGetTextureParameteriv))
 			nfglGetTextureParameteriv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIVEXT:
+			D(funcname = "glGetTextureParameterivEXT");
+			if (GL_ISAVAILABLE(glGetTextureParameterivEXT))
 			nfglGetTextureParameterivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -6459,16 +8493,22 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTEXTURESAMPLERHANDLEARB:
+			D(funcname = "glGetTextureSamplerHandleARB");
+			if (GL_ISAVAILABLE(glGetTextureSamplerHandleARB))
 			ret = nfglGetTextureSamplerHandleARB(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1)  /* GLuint sampler */);
 			break;
 		case NFOSMESA_GLGETTEXTURESAMPLERHANDLENV:
+			D(funcname = "glGetTextureSamplerHandleNV");
+			if (GL_ISAVAILABLE(glGetTextureSamplerHandleNV))
 			ret = nfglGetTextureSamplerHandleNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1)  /* GLuint sampler */);
 			break;
 		case NFOSMESA_GLGETTEXTURESUBIMAGE:
+			D(funcname = "glGetTextureSubImage");
+			if (GL_ISAVAILABLE(glGetTextureSubImage))
 			nfglGetTextureSubImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -6484,6 +8524,8 @@
 				getStackedPointer(11, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETTRACKMATRIXIVNV:
+			D(funcname = "glGetTrackMatrixivNV");
+			if (GL_ISAVAILABLE(glGetTrackMatrixivNV))
 			nfglGetTrackMatrixivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint address */
@@ -6491,6 +8533,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYING:
+			D(funcname = "glGetTransformFeedbackVarying");
+			if (GL_ISAVAILABLE(glGetTransformFeedbackVarying))
 			nfglGetTransformFeedbackVarying(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
@@ -6501,6 +8545,8 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGEXT:
+			D(funcname = "glGetTransformFeedbackVaryingEXT");
+			if (GL_ISAVAILABLE(glGetTransformFeedbackVaryingEXT))
 			nfglGetTransformFeedbackVaryingEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
@@ -6511,12 +8557,16 @@
 				getStackedPointer(6, GLchar *)  /* GLchar *name */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGNV:
+			D(funcname = "glGetTransformFeedbackVaryingNV");
+			if (GL_ISAVAILABLE(glGetTransformFeedbackVaryingNV))
 			nfglGetTransformFeedbackVaryingNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, GLint *)  /* GLint *location */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKI64_V:
+			D(funcname = "glGetTransformFeedbacki64_v");
+			if (GL_ISAVAILABLE(glGetTransformFeedbacki64_v))
 			nfglGetTransformFeedbacki64_v(
 				getStackedParameter(0),  /* GLuint xfb */
 				getStackedParameter(1),  /* GLenum pname */
@@ -6524,6 +8574,8 @@
 				getStackedPointer(3, GLint64 *)  /* GLint64 *param */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKI_V:
+			D(funcname = "glGetTransformFeedbacki_v");
+			if (GL_ISAVAILABLE(glGetTransformFeedbacki_v))
 			nfglGetTransformFeedbacki_v(
 				getStackedParameter(0),  /* GLuint xfb */
 				getStackedParameter(1),  /* GLenum pname */
@@ -6531,22 +8583,30 @@
 				getStackedPointer(3, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKIV:
+			D(funcname = "glGetTransformFeedbackiv");
+			if (GL_ISAVAILABLE(glGetTransformFeedbackiv))
 			nfglGetTransformFeedbackiv(
 				getStackedParameter(0),  /* GLuint xfb */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETUNIFORMBLOCKINDEX:
+			D(funcname = "glGetUniformBlockIndex");
+			if (GL_ISAVAILABLE(glGetUniformBlockIndex))
 			ret = nfglGetUniformBlockIndex(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *uniformBlockName */);
 			break;
 		case NFOSMESA_GLGETUNIFORMBUFFERSIZEEXT:
+			D(funcname = "glGetUniformBufferSizeEXT");
+			if (GL_ISAVAILABLE(glGetUniformBufferSizeEXT))
 			ret = nfglGetUniformBufferSizeEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1)  /* GLint location */);
 			break;
 		case NFOSMESA_GLGETUNIFORMINDICES:
+			D(funcname = "glGetUniformIndices");
+			if (GL_ISAVAILABLE(glGetUniformIndices))
 			nfglGetUniformIndices(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei uniformCount */
@@ -6554,122 +8614,164 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *uniformIndices */);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATION:
+			D(funcname = "glGetUniformLocation");
+			if (GL_ISAVAILABLE(glGetUniformLocation))
 			ret = nfglGetUniformLocation(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATIONARB:
+			D(funcname = "glGetUniformLocationARB");
+			if (GL_ISAVAILABLE(glGetUniformLocationARB))
 			ret = nfglGetUniformLocationARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedPointer(1, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMOFFSETEXT:
+			D(funcname = "glGetUniformOffsetEXT");
+			if (GL_ISAVAILABLE(glGetUniformOffsetEXT))
 			ret = nfglGetUniformOffsetEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1)  /* GLint location */);
 			break;
 		case NFOSMESA_GLGETUNIFORMSUBROUTINEUIV:
+			D(funcname = "glGetUniformSubroutineuiv");
+			if (GL_ISAVAILABLE(glGetUniformSubroutineuiv))
 			nfglGetUniformSubroutineuiv(
 				getStackedParameter(0),  /* GLenum shadertype */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMDV:
+			D(funcname = "glGetUniformdv");
+			if (GL_ISAVAILABLE(glGetUniformdv))
 			nfglGetUniformdv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMFV:
+			D(funcname = "glGetUniformfv");
+			if (GL_ISAVAILABLE(glGetUniformfv))
 			nfglGetUniformfv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMFVARB:
+			D(funcname = "glGetUniformfvARB");
+			if (GL_ISAVAILABLE(glGetUniformfvARB))
 			nfglGetUniformfvARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMI64VNV:
+			D(funcname = "glGetUniformi64vNV");
+			if (GL_ISAVAILABLE(glGetUniformi64vNV))
 			nfglGetUniformi64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLint64EXT *)  /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMIV:
+			D(funcname = "glGetUniformiv");
+			if (GL_ISAVAILABLE(glGetUniformiv))
 			nfglGetUniformiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMIVARB:
+			D(funcname = "glGetUniformivARB");
+			if (GL_ISAVAILABLE(glGetUniformivARB))
 			nfglGetUniformivARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUI64VNV:
+			D(funcname = "glGetUniformui64vNV");
+			if (GL_ISAVAILABLE(glGetUniformui64vNV))
 			nfglGetUniformui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIV:
+			D(funcname = "glGetUniformuiv");
+			if (GL_ISAVAILABLE(glGetUniformuiv))
 			nfglGetUniformuiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIVEXT:
+			D(funcname = "glGetUniformuivEXT");
+			if (GL_ISAVAILABLE(glGetUniformuivEXT))
 			nfglGetUniformuivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTFVATI:
+			D(funcname = "glGetVariantArrayObjectfvATI");
+			if (GL_ISAVAILABLE(glGetVariantArrayObjectfvATI))
 			nfglGetVariantArrayObjectfvATI(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTIVATI:
+			D(funcname = "glGetVariantArrayObjectivATI");
+			if (GL_ISAVAILABLE(glGetVariantArrayObjectivATI))
 			nfglGetVariantArrayObjectivATI(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVARIANTBOOLEANVEXT:
+			D(funcname = "glGetVariantBooleanvEXT");
+			if (GL_ISAVAILABLE(glGetVariantBooleanvEXT))
 			nfglGetVariantBooleanvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLboolean *)  /* GLboolean *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTFLOATVEXT:
+			D(funcname = "glGetVariantFloatvEXT");
+			if (GL_ISAVAILABLE(glGetVariantFloatvEXT))
 			nfglGetVariantFloatvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTINTEGERVEXT:
+			D(funcname = "glGetVariantIntegervEXT");
+			if (GL_ISAVAILABLE(glGetVariantIntegervEXT))
 			nfglGetVariantIntegervEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, GLint *)  /* GLint *data */);
 			break;
 		case NFOSMESA_GLGETVARIANTPOINTERVEXT:
+			D(funcname = "glGetVariantPointervEXT");
+			if (GL_ISAVAILABLE(glGetVariantPointervEXT))
 			nfglGetVariantPointervEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum value */
 				getStackedPointer(2, void * *)  /* void * *data */);
 			break;
 		case NFOSMESA_GLGETVARYINGLOCATIONNV:
+			D(funcname = "glGetVaryingLocationNV");
+			if (GL_ISAVAILABLE(glGetVaryingLocationNV))
 			ret = nfglGetVaryingLocationNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINDEXED64IV:
+			D(funcname = "glGetVertexArrayIndexed64iv");
+			if (GL_ISAVAILABLE(glGetVertexArrayIndexed64iv))
 			nfglGetVertexArrayIndexed64iv(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint index */
@@ -6677,6 +8779,8 @@
 				getStackedPointer(3, GLint64 *)  /* GLint64 *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINDEXEDIV:
+			D(funcname = "glGetVertexArrayIndexediv");
+			if (GL_ISAVAILABLE(glGetVertexArrayIndexediv))
 			nfglGetVertexArrayIndexediv(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint index */
@@ -6684,6 +8788,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERI_VEXT:
+			D(funcname = "glGetVertexArrayIntegeri_vEXT");
+			if (GL_ISAVAILABLE(glGetVertexArrayIntegeri_vEXT))
 			nfglGetVertexArrayIntegeri_vEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint index */
@@ -6691,12 +8797,16 @@
 				getStackedPointer(3, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERVEXT:
+			D(funcname = "glGetVertexArrayIntegervEXT");
+			if (GL_ISAVAILABLE(glGetVertexArrayIntegervEXT))
 			nfglGetVertexArrayIntegervEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERI_VEXT:
+			D(funcname = "glGetVertexArrayPointeri_vEXT");
+			if (GL_ISAVAILABLE(glGetVertexArrayPointeri_vEXT))
 			nfglGetVertexArrayPointeri_vEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint index */
@@ -6704,156 +8814,208 @@
 				getStackedPointer(3, void * *)  /* void * *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERVEXT:
+			D(funcname = "glGetVertexArrayPointervEXT");
+			if (GL_ISAVAILABLE(glGetVertexArrayPointervEXT))
 			nfglGetVertexArrayPointervEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYIV:
+			D(funcname = "glGetVertexArrayiv");
+			if (GL_ISAVAILABLE(glGetVertexArrayiv))
 			nfglGetVertexArrayiv(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *param */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTFVATI:
+			D(funcname = "glGetVertexAttribArrayObjectfvATI");
+			if (GL_ISAVAILABLE(glGetVertexAttribArrayObjectfvATI))
 			nfglGetVertexAttribArrayObjectfvATI(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTIVATI:
+			D(funcname = "glGetVertexAttribArrayObjectivATI");
+			if (GL_ISAVAILABLE(glGetVertexAttribArrayObjectivATI))
 			nfglGetVertexAttribArrayObjectivATI(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIV:
+			D(funcname = "glGetVertexAttribIiv");
+			if (GL_ISAVAILABLE(glGetVertexAttribIiv))
 			nfglGetVertexAttribIiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIVEXT:
+			D(funcname = "glGetVertexAttribIivEXT");
+			if (GL_ISAVAILABLE(glGetVertexAttribIivEXT))
 			nfglGetVertexAttribIivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIV:
+			D(funcname = "glGetVertexAttribIuiv");
+			if (GL_ISAVAILABLE(glGetVertexAttribIuiv))
 			nfglGetVertexAttribIuiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIVEXT:
+			D(funcname = "glGetVertexAttribIuivEXT");
+			if (GL_ISAVAILABLE(glGetVertexAttribIuivEXT))
 			nfglGetVertexAttribIuivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDV:
+			D(funcname = "glGetVertexAttribLdv");
+			if (GL_ISAVAILABLE(glGetVertexAttribLdv))
 			nfglGetVertexAttribLdv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDVEXT:
+			D(funcname = "glGetVertexAttribLdvEXT");
+			if (GL_ISAVAILABLE(glGetVertexAttribLdvEXT))
 			nfglGetVertexAttribLdvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLI64VNV:
+			D(funcname = "glGetVertexAttribLi64vNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribLi64vNV))
 			nfglGetVertexAttribLi64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64EXT *)  /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VARB:
+			D(funcname = "glGetVertexAttribLui64vARB");
+			if (GL_ISAVAILABLE(glGetVertexAttribLui64vARB))
 			nfglGetVertexAttribLui64vARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VNV:
+			D(funcname = "glGetVertexAttribLui64vNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribLui64vNV))
 			nfglGetVertexAttribLui64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERV:
+			D(funcname = "glGetVertexAttribPointerv");
+			if (GL_ISAVAILABLE(glGetVertexAttribPointerv))
 			nfglGetVertexAttribPointerv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVARB:
+			D(funcname = "glGetVertexAttribPointervARB");
+			if (GL_ISAVAILABLE(glGetVertexAttribPointervARB))
 			nfglGetVertexAttribPointervARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVNV:
+			D(funcname = "glGetVertexAttribPointervNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribPointervNV))
 			nfglGetVertexAttribPointervNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, void * *)  /* void * *pointer */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDV:
+			D(funcname = "glGetVertexAttribdv");
+			if (GL_ISAVAILABLE(glGetVertexAttribdv))
 			nfglGetVertexAttribdv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVARB:
+			D(funcname = "glGetVertexAttribdvARB");
+			if (GL_ISAVAILABLE(glGetVertexAttribdvARB))
 			nfglGetVertexAttribdvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVNV:
+			D(funcname = "glGetVertexAttribdvNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribdvNV))
 			nfglGetVertexAttribdvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFV:
+			D(funcname = "glGetVertexAttribfv");
+			if (GL_ISAVAILABLE(glGetVertexAttribfv))
 			nfglGetVertexAttribfv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVARB:
+			D(funcname = "glGetVertexAttribfvARB");
+			if (GL_ISAVAILABLE(glGetVertexAttribfvARB))
 			nfglGetVertexAttribfvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVNV:
+			D(funcname = "glGetVertexAttribfvNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribfvNV))
 			nfglGetVertexAttribfvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIV:
+			D(funcname = "glGetVertexAttribiv");
+			if (GL_ISAVAILABLE(glGetVertexAttribiv))
 			nfglGetVertexAttribiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVARB:
+			D(funcname = "glGetVertexAttribivARB");
+			if (GL_ISAVAILABLE(glGetVertexAttribivARB))
 			nfglGetVertexAttribivARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVNV:
+			D(funcname = "glGetVertexAttribivNV");
+			if (GL_ISAVAILABLE(glGetVertexAttribivNV))
 			nfglGetVertexAttribivNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMDVNV:
+			D(funcname = "glGetVideoCaptureStreamdvNV");
+			if (GL_ISAVAILABLE(glGetVideoCaptureStreamdvNV))
 			nfglGetVideoCaptureStreamdvNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -6861,6 +9023,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMFVNV:
+			D(funcname = "glGetVideoCaptureStreamfvNV");
+			if (GL_ISAVAILABLE(glGetVideoCaptureStreamfvNV))
 			nfglGetVideoCaptureStreamfvNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -6868,6 +9032,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMIVNV:
+			D(funcname = "glGetVideoCaptureStreamivNV");
+			if (GL_ISAVAILABLE(glGetVideoCaptureStreamivNV))
 			nfglGetVideoCaptureStreamivNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -6875,36 +9041,48 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTUREIVNV:
+			D(funcname = "glGetVideoCaptureivNV");
+			if (GL_ISAVAILABLE(glGetVideoCaptureivNV))
 			nfglGetVideoCaptureivNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOI64VNV:
+			D(funcname = "glGetVideoi64vNV");
+			if (GL_ISAVAILABLE(glGetVideoi64vNV))
 			nfglGetVideoi64vNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint64EXT *)  /* GLint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOIVNV:
+			D(funcname = "glGetVideoivNV");
+			if (GL_ISAVAILABLE(glGetVideoivNV))
 			nfglGetVideoivNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOUI64VNV:
+			D(funcname = "glGetVideoui64vNV");
+			if (GL_ISAVAILABLE(glGetVideoui64vNV))
 			nfglGetVideoui64vNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *params */);
 			break;
 		case NFOSMESA_GLGETVIDEOUIVNV:
+			D(funcname = "glGetVideouivNV");
+			if (GL_ISAVAILABLE(glGetVideouivNV))
 			nfglGetVideouivNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETNCOLORTABLE:
+			D(funcname = "glGetnColorTable");
+			if (GL_ISAVAILABLE(glGetnColorTable))
 			nfglGetnColorTable(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6913,6 +9091,8 @@
 				getStackedPointer(4, void *)  /* void *table */);
 			break;
 		case NFOSMESA_GLGETNCOLORTABLEARB:
+			D(funcname = "glGetnColorTableARB");
+			if (GL_ISAVAILABLE(glGetnColorTableARB))
 			nfglGetnColorTableARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6921,6 +9101,8 @@
 				getStackedPointer(4, void *)  /* void *table */);
 			break;
 		case NFOSMESA_GLGETNCOMPRESSEDTEXIMAGE:
+			D(funcname = "glGetnCompressedTexImage");
+			if (GL_ISAVAILABLE(glGetnCompressedTexImage))
 			nfglGetnCompressedTexImage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint lod */
@@ -6928,6 +9110,8 @@
 				getStackedPointer(3, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETNCOMPRESSEDTEXIMAGEARB:
+			D(funcname = "glGetnCompressedTexImageARB");
+			if (GL_ISAVAILABLE(glGetnCompressedTexImageARB))
 			nfglGetnCompressedTexImageARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint lod */
@@ -6935,6 +9119,8 @@
 				getStackedPointer(3, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETNCONVOLUTIONFILTER:
+			D(funcname = "glGetnConvolutionFilter");
+			if (GL_ISAVAILABLE(glGetnConvolutionFilter))
 			nfglGetnConvolutionFilter(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6943,6 +9129,8 @@
 				getStackedPointer(4, void *)  /* void *image */);
 			break;
 		case NFOSMESA_GLGETNCONVOLUTIONFILTERARB:
+			D(funcname = "glGetnConvolutionFilterARB");
+			if (GL_ISAVAILABLE(glGetnConvolutionFilterARB))
 			nfglGetnConvolutionFilterARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -6951,6 +9139,8 @@
 				getStackedPointer(4, void *)  /* void *image */);
 			break;
 		case NFOSMESA_GLGETNHISTOGRAM:
+			D(funcname = "glGetnHistogram");
+			if (GL_ISAVAILABLE(glGetnHistogram))
 			nfglGetnHistogram(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -6960,6 +9150,8 @@
 				getStackedPointer(5, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETNHISTOGRAMARB:
+			D(funcname = "glGetnHistogramARB");
+			if (GL_ISAVAILABLE(glGetnHistogramARB))
 			nfglGetnHistogramARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -6969,6 +9161,8 @@
 				getStackedPointer(5, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETNMAPDV:
+			D(funcname = "glGetnMapdv");
+			if (GL_ISAVAILABLE(glGetnMapdv))
 			nfglGetnMapdv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -6976,6 +9170,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *v */);
 			break;
 		case NFOSMESA_GLGETNMAPDVARB:
+			D(funcname = "glGetnMapdvARB");
+			if (GL_ISAVAILABLE(glGetnMapdvARB))
 			nfglGetnMapdvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -6983,6 +9179,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *v */);
 			break;
 		case NFOSMESA_GLGETNMAPFV:
+			D(funcname = "glGetnMapfv");
+			if (GL_ISAVAILABLE(glGetnMapfv))
 			nfglGetnMapfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -6990,6 +9188,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETNMAPFVARB:
+			D(funcname = "glGetnMapfvARB");
+			if (GL_ISAVAILABLE(glGetnMapfvARB))
 			nfglGetnMapfvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -6997,6 +9197,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *v */);
 			break;
 		case NFOSMESA_GLGETNMAPIV:
+			D(funcname = "glGetnMapiv");
+			if (GL_ISAVAILABLE(glGetnMapiv))
 			nfglGetnMapiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -7004,6 +9206,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *v */);
 			break;
 		case NFOSMESA_GLGETNMAPIVARB:
+			D(funcname = "glGetnMapivARB");
+			if (GL_ISAVAILABLE(glGetnMapivARB))
 			nfglGetnMapivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum query */
@@ -7011,6 +9215,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *v */);
 			break;
 		case NFOSMESA_GLGETNMINMAX:
+			D(funcname = "glGetnMinmax");
+			if (GL_ISAVAILABLE(glGetnMinmax))
 			nfglGetnMinmax(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -7020,6 +9226,8 @@
 				getStackedPointer(5, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETNMINMAXARB:
+			D(funcname = "glGetnMinmaxARB");
+			if (GL_ISAVAILABLE(glGetnMinmaxARB))
 			nfglGetnMinmaxARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLboolean32 reset */
@@ -7029,52 +9237,70 @@
 				getStackedPointer(5, void *)  /* void *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPFV:
+			D(funcname = "glGetnPixelMapfv");
+			if (GL_ISAVAILABLE(glGetnPixelMapfv))
 			nfglGetnPixelMapfv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPFVARB:
+			D(funcname = "glGetnPixelMapfvARB");
+			if (GL_ISAVAILABLE(glGetnPixelMapfvARB))
 			nfglGetnPixelMapfvARB(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUIV:
+			D(funcname = "glGetnPixelMapuiv");
+			if (GL_ISAVAILABLE(glGetnPixelMapuiv))
 			nfglGetnPixelMapuiv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLuint *)  /* GLuint *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUIVARB:
+			D(funcname = "glGetnPixelMapuivARB");
+			if (GL_ISAVAILABLE(glGetnPixelMapuivARB))
 			nfglGetnPixelMapuivARB(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLuint *)  /* GLuint *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUSV:
+			D(funcname = "glGetnPixelMapusv");
+			if (GL_ISAVAILABLE(glGetnPixelMapusv))
 			nfglGetnPixelMapusv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLushort *)  /* GLushort *values */);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUSVARB:
+			D(funcname = "glGetnPixelMapusvARB");
+			if (GL_ISAVAILABLE(glGetnPixelMapusvARB))
 			nfglGetnPixelMapusvARB(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei bufSize */
 				getStackedPointer(2, GLushort *)  /* GLushort *values */);
 			break;
 		case NFOSMESA_GLGETNPOLYGONSTIPPLE:
+			D(funcname = "glGetnPolygonStipple");
+			if (GL_ISAVAILABLE(glGetnPolygonStipple))
 			nfglGetnPolygonStipple(
 				getStackedParameter(0),  /* GLsizei bufSize */
 				getStackedPointer(1, GLubyte *)  /* GLubyte *pattern */);
 			break;
 		case NFOSMESA_GLGETNPOLYGONSTIPPLEARB:
+			D(funcname = "glGetnPolygonStippleARB");
+			if (GL_ISAVAILABLE(glGetnPolygonStippleARB))
 			nfglGetnPolygonStippleARB(
 				getStackedParameter(0),  /* GLsizei bufSize */
 				getStackedPointer(1, GLubyte *)  /* GLubyte *pattern */);
 			break;
 		case NFOSMESA_GLGETNSEPARABLEFILTER:
+			D(funcname = "glGetnSeparableFilter");
+			if (GL_ISAVAILABLE(glGetnSeparableFilter))
 			nfglGetnSeparableFilter(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -7086,6 +9312,8 @@
 				getStackedPointer(7, void *)  /* void *span */);
 			break;
 		case NFOSMESA_GLGETNSEPARABLEFILTERARB:
+			D(funcname = "glGetnSeparableFilterARB");
+			if (GL_ISAVAILABLE(glGetnSeparableFilterARB))
 			nfglGetnSeparableFilterARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -7097,6 +9325,8 @@
 				getStackedPointer(7, void *)  /* void *span */);
 			break;
 		case NFOSMESA_GLGETNTEXIMAGE:
+			D(funcname = "glGetnTexImage");
+			if (GL_ISAVAILABLE(glGetnTexImage))
 			nfglGetnTexImage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -7106,6 +9336,8 @@
 				getStackedPointer(5, void *)  /* void *pixels */);
 			break;
 		case NFOSMESA_GLGETNTEXIMAGEARB:
+			D(funcname = "glGetnTexImageARB");
+			if (GL_ISAVAILABLE(glGetnTexImageARB))
 			nfglGetnTexImageARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -7115,6 +9347,8 @@
 				getStackedPointer(5, void *)  /* void *img */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMDV:
+			D(funcname = "glGetnUniformdv");
+			if (GL_ISAVAILABLE(glGetnUniformdv))
 			nfglGetnUniformdv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7122,6 +9356,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMDVARB:
+			D(funcname = "glGetnUniformdvARB");
+			if (GL_ISAVAILABLE(glGetnUniformdvARB))
 			nfglGetnUniformdvARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7129,6 +9365,8 @@
 				getStackedPointer(3, GLdouble *)  /* GLdouble *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMFV:
+			D(funcname = "glGetnUniformfv");
+			if (GL_ISAVAILABLE(glGetnUniformfv))
 			nfglGetnUniformfv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7136,6 +9374,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMFVARB:
+			D(funcname = "glGetnUniformfvARB");
+			if (GL_ISAVAILABLE(glGetnUniformfvARB))
 			nfglGetnUniformfvARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7143,6 +9383,8 @@
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMIV:
+			D(funcname = "glGetnUniformiv");
+			if (GL_ISAVAILABLE(glGetnUniformiv))
 			nfglGetnUniformiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7150,6 +9392,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMIVARB:
+			D(funcname = "glGetnUniformivARB");
+			if (GL_ISAVAILABLE(glGetnUniformivARB))
 			nfglGetnUniformivARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7157,6 +9401,8 @@
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIV:
+			D(funcname = "glGetnUniformuiv");
+			if (GL_ISAVAILABLE(glGetnUniformuiv))
 			nfglGetnUniformuiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7164,6 +9410,8 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIVARB:
+			D(funcname = "glGetnUniformuivARB");
+			if (GL_ISAVAILABLE(glGetnUniformuivARB))
 			nfglGetnUniformuivARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -7171,48 +9419,70 @@
 				getStackedPointer(3, GLuint *)  /* GLuint *params */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORBSUN:
+			D(funcname = "glGlobalAlphaFactorbSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactorbSUN))
 			nfglGlobalAlphaFactorbSUN(
 				getStackedParameter(0)  /* GLbyte32 factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORDSUN:
+			D(funcname = "glGlobalAlphaFactordSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactordSUN))
 			nfglGlobalAlphaFactordSUN(
 				getStackedDouble(0)  /* GLdouble factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORFSUN:
+			D(funcname = "glGlobalAlphaFactorfSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactorfSUN))
 			nfglGlobalAlphaFactorfSUN(
 				getStackedFloat(0)  /* GLfloat factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORISUN:
+			D(funcname = "glGlobalAlphaFactoriSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactoriSUN))
 			nfglGlobalAlphaFactoriSUN(
 				getStackedParameter(0)  /* GLint factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORSSUN:
+			D(funcname = "glGlobalAlphaFactorsSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactorsSUN))
 			nfglGlobalAlphaFactorsSUN(
 				getStackedParameter(0)  /* GLshort32 factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUBSUN:
+			D(funcname = "glGlobalAlphaFactorubSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactorubSUN))
 			nfglGlobalAlphaFactorubSUN(
 				getStackedParameter(0)  /* GLubyte32 factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUISUN:
+			D(funcname = "glGlobalAlphaFactoruiSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactoruiSUN))
 			nfglGlobalAlphaFactoruiSUN(
 				getStackedParameter(0)  /* GLuint factor */);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUSSUN:
+			D(funcname = "glGlobalAlphaFactorusSUN");
+			if (GL_ISAVAILABLE(glGlobalAlphaFactorusSUN))
 			nfglGlobalAlphaFactorusSUN(
 				getStackedParameter(0)  /* GLushort32 factor */);
 			break;
 		case NFOSMESA_GLHINT:
+			D(funcname = "glHint");
+			if (GL_ISAVAILABLE(glHint))
 			nfglHint(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLHINTPGI:
+			D(funcname = "glHintPGI");
+			if (GL_ISAVAILABLE(glHintPGI))
 			nfglHintPGI(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLint mode */);
 			break;
 		case NFOSMESA_GLHISTOGRAM:
+			D(funcname = "glHistogram");
+			if (GL_ISAVAILABLE(glHistogram))
 			nfglHistogram(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei width */
@@ -7220,6 +9490,8 @@
 				getStackedParameter(3)  /* GLboolean32 sink */);
 			break;
 		case NFOSMESA_GLHISTOGRAMEXT:
+			D(funcname = "glHistogramEXT");
+			if (GL_ISAVAILABLE(glHistogramEXT))
 			nfglHistogramEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei width */
@@ -7227,29 +9499,39 @@
 				getStackedParameter(3)  /* GLboolean32 sink */);
 			break;
 		case NFOSMESA_GLIGLOOINTERFACESGIX:
+			D(funcname = "glIglooInterfaceSGIX");
+			if (GL_ISAVAILABLE(glIglooInterfaceSGIX))
 			nfglIglooInterfaceSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const void *)  /* const void *params */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERFHP:
+			D(funcname = "glImageTransformParameterfHP");
+			if (GL_ISAVAILABLE(glImageTransformParameterfHP))
 			nfglImageTransformParameterfHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERFVHP:
+			D(funcname = "glImageTransformParameterfvHP");
+			if (GL_ISAVAILABLE(glImageTransformParameterfvHP))
 			nfglImageTransformParameterfvHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERIHP:
+			D(funcname = "glImageTransformParameteriHP");
+			if (GL_ISAVAILABLE(glImageTransformParameteriHP))
 			nfglImageTransformParameteriHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERIVHP:
+			D(funcname = "glImageTransformParameterivHP");
+			if (GL_ISAVAILABLE(glImageTransformParameterivHP))
 			nfglImageTransformParameterivHP(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
@@ -7257,6 +9539,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLIMPORTSYNCEXT:
+			D(funcname = "glImportSyncEXT");
+			if (GL_ISAVAILABLE(glImportSyncEXT))
 			ret = (uint32)(uintptr_t)nfglImportSyncEXT(
 				getStackedParameter(0),  /* GLenum external_sync_type */
 				getStackedParameter(1),  /* GLintptr external_sync */
@@ -7264,31 +9548,43 @@
 			break;
 #endif
 		case NFOSMESA_GLINDEXFORMATNV:
+			D(funcname = "glIndexFormatNV");
+			if (GL_ISAVAILABLE(glIndexFormatNV))
 			nfglIndexFormatNV(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLINDEXFUNCEXT:
+			D(funcname = "glIndexFuncEXT");
+			if (GL_ISAVAILABLE(glIndexFuncEXT))
 			nfglIndexFuncEXT(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedFloat(1)  /* GLclampf ref */);
 			break;
 		case NFOSMESA_GLINDEXMASK:
+			D(funcname = "glIndexMask");
+			if (GL_ISAVAILABLE(glIndexMask))
 			nfglIndexMask(
 				getStackedParameter(0)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLINDEXMATERIALEXT:
+			D(funcname = "glIndexMaterialEXT");
+			if (GL_ISAVAILABLE(glIndexMaterialEXT))
 			nfglIndexMaterialEXT(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLINDEXPOINTER:
+			D(funcname = "glIndexPointer");
+			if (GL_ISAVAILABLE(glIndexPointer))
 			nfglIndexPointer(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLINDEXPOINTEREXT:
+			D(funcname = "glIndexPointerEXT");
+			if (GL_ISAVAILABLE(glIndexPointerEXT))
 			nfglIndexPointerEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
@@ -7296,6 +9592,8 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLINDEXPOINTERLISTIBM:
+			D(funcname = "glIndexPointerListIBM");
+			if (GL_ISAVAILABLE(glIndexPointerListIBM))
 			nfglIndexPointerListIBM(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLint stride */
@@ -7303,81 +9601,117 @@
 				getStackedParameter(3)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLINDEXD:
+			D(funcname = "glIndexd");
+			if (GL_ISAVAILABLE(glIndexd))
 			nfglIndexd(
 				getStackedDouble(0)  /* GLdouble c */);
 			break;
 		case NFOSMESA_GLINDEXDV:
+			D(funcname = "glIndexdv");
+			if (GL_ISAVAILABLE(glIndexdv))
 			nfglIndexdv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *c */);
 			break;
 		case NFOSMESA_GLINDEXF:
+			D(funcname = "glIndexf");
+			if (GL_ISAVAILABLE(glIndexf))
 			nfglIndexf(
 				getStackedFloat(0)  /* GLfloat c */);
 			break;
 		case NFOSMESA_GLINDEXFV:
+			D(funcname = "glIndexfv");
+			if (GL_ISAVAILABLE(glIndexfv))
 			nfglIndexfv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *c */);
 			break;
 		case NFOSMESA_GLINDEXI:
+			D(funcname = "glIndexi");
+			if (GL_ISAVAILABLE(glIndexi))
 			nfglIndexi(
 				getStackedParameter(0)  /* GLint c */);
 			break;
 		case NFOSMESA_GLINDEXIV:
+			D(funcname = "glIndexiv");
+			if (GL_ISAVAILABLE(glIndexiv))
 			nfglIndexiv(
 				getStackedPointer(0, const GLint *)  /* const GLint *c */);
 			break;
 		case NFOSMESA_GLINDEXS:
+			D(funcname = "glIndexs");
+			if (GL_ISAVAILABLE(glIndexs))
 			nfglIndexs(
 				getStackedParameter(0)  /* GLshort32 c */);
 			break;
 		case NFOSMESA_GLINDEXSV:
+			D(funcname = "glIndexsv");
+			if (GL_ISAVAILABLE(glIndexsv))
 			nfglIndexsv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *c */);
 			break;
 		case NFOSMESA_GLINDEXUB:
+			D(funcname = "glIndexub");
+			if (GL_ISAVAILABLE(glIndexub))
 			nfglIndexub(
 				getStackedParameter(0)  /* GLubyte32 c */);
 			break;
 		case NFOSMESA_GLINDEXUBV:
+			D(funcname = "glIndexubv");
+			if (GL_ISAVAILABLE(glIndexubv))
 			nfglIndexubv(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *c */);
 			break;
 		case NFOSMESA_GLINDEXXOES:
+			D(funcname = "glIndexxOES");
+			if (GL_ISAVAILABLE(glIndexxOES))
 			nfglIndexxOES(
 				getStackedParameter(0)  /* GLfixed component */);
 			break;
 		case NFOSMESA_GLINDEXXVOES:
+			D(funcname = "glIndexxvOES");
+			if (GL_ISAVAILABLE(glIndexxvOES))
 			nfglIndexxvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *component */);
 			break;
 		case NFOSMESA_GLINITNAMES:
+			D(funcname = "glInitNames");
+			if (GL_ISAVAILABLE(glInitNames))
 			nfglInitNames();
 			break;
 		case NFOSMESA_GLINSERTCOMPONENTEXT:
+			D(funcname = "glInsertComponentEXT");
+			if (GL_ISAVAILABLE(glInsertComponentEXT))
 			nfglInsertComponentEXT(
 				getStackedParameter(0),  /* GLuint res */
 				getStackedParameter(1),  /* GLuint src */
 				getStackedParameter(2)  /* GLuint num */);
 			break;
 		case NFOSMESA_GLINSERTEVENTMARKEREXT:
+			D(funcname = "glInsertEventMarkerEXT");
+			if (GL_ISAVAILABLE(glInsertEventMarkerEXT))
 			nfglInsertEventMarkerEXT(
 				getStackedParameter(0),  /* GLsizei length */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *marker */);
 			break;
 #if 0
 		case NFOSMESA_GLINSTRUMENTSBUFFERSGIX:
+			D(funcname = "glInstrumentsBufferSGIX");
+			if (GL_ISAVAILABLE(glInstrumentsBufferSGIX))
 			nfglInstrumentsBufferSGIX(
 				getStackedParameter(0),  /* GLsizei size */
 				getStackedPointer(1, GLint *)  /* GLint *buffer */);
 			break;
 #endif
 		case NFOSMESA_GLINTERLEAVEDARRAYS:
+			D(funcname = "glInterleavedArrays");
+			if (GL_ISAVAILABLE(glInterleavedArrays))
 			nfglInterleavedArrays(
 				getStackedParameter(0),  /* GLenum format */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLINTERPOLATEPATHSNV:
+			D(funcname = "glInterpolatePathsNV");
+			if (GL_ISAVAILABLE(glInterpolatePathsNV))
 			nfglInterpolatePathsNV(
 				getStackedParameter(0),  /* GLuint resultPath */
 				getStackedParameter(1),  /* GLuint pathA */
@@ -7385,28 +9719,38 @@
 				getStackedFloat(3)  /* GLfloat weight */);
 			break;
 		case NFOSMESA_GLINVALIDATEBUFFERDATA:
+			D(funcname = "glInvalidateBufferData");
+			if (GL_ISAVAILABLE(glInvalidateBufferData))
 			nfglInvalidateBufferData(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLINVALIDATEBUFFERSUBDATA:
+			D(funcname = "glInvalidateBufferSubData");
+			if (GL_ISAVAILABLE(glInvalidateBufferSubData))
 			nfglInvalidateBufferSubData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
 				getStackedParameter(2)  /* GLsizeiptr length */);
 			break;
 		case NFOSMESA_GLINVALIDATEFRAMEBUFFER:
+			D(funcname = "glInvalidateFramebuffer");
+			if (GL_ISAVAILABLE(glInvalidateFramebuffer))
 			nfglInvalidateFramebuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei numAttachments */
 				getStackedPointer(2, const GLenum *)  /* const GLenum *attachments */);
 			break;
 		case NFOSMESA_GLINVALIDATENAMEDFRAMEBUFFERDATA:
+			D(funcname = "glInvalidateNamedFramebufferData");
+			if (GL_ISAVAILABLE(glInvalidateNamedFramebufferData))
 			nfglInvalidateNamedFramebufferData(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLsizei numAttachments */
 				getStackedPointer(2, const GLenum *)  /* const GLenum *attachments */);
 			break;
 		case NFOSMESA_GLINVALIDATENAMEDFRAMEBUFFERSUBDATA:
+			D(funcname = "glInvalidateNamedFramebufferSubData");
+			if (GL_ISAVAILABLE(glInvalidateNamedFramebufferSubData))
 			nfglInvalidateNamedFramebufferSubData(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLsizei numAttachments */
@@ -7417,6 +9761,8 @@
 				getStackedParameter(6)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLINVALIDATESUBFRAMEBUFFER:
+			D(funcname = "glInvalidateSubFramebuffer");
+			if (GL_ISAVAILABLE(glInvalidateSubFramebuffer))
 			nfglInvalidateSubFramebuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei numAttachments */
@@ -7427,11 +9773,15 @@
 				getStackedParameter(6)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLINVALIDATETEXIMAGE:
+			D(funcname = "glInvalidateTexImage");
+			if (GL_ISAVAILABLE(glInvalidateTexImage))
 			nfglInvalidateTexImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1)  /* GLint level */);
 			break;
 		case NFOSMESA_GLINVALIDATETEXSUBIMAGE:
+			D(funcname = "glInvalidateTexSubImage");
+			if (GL_ISAVAILABLE(glInvalidateTexSubImage))
 			nfglInvalidateTexSubImage(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -7443,94 +9793,138 @@
 				getStackedParameter(7)  /* GLsizei depth */);
 			break;
 		case NFOSMESA_GLISASYNCMARKERSGIX:
+			D(funcname = "glIsAsyncMarkerSGIX");
+			if (GL_ISAVAILABLE(glIsAsyncMarkerSGIX))
 			ret = nfglIsAsyncMarkerSGIX(
 				getStackedParameter(0)  /* GLuint marker */);
 			break;
 		case NFOSMESA_GLISBUFFER:
+			D(funcname = "glIsBuffer");
+			if (GL_ISAVAILABLE(glIsBuffer))
 			ret = nfglIsBuffer(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLISBUFFERARB:
+			D(funcname = "glIsBufferARB");
+			if (GL_ISAVAILABLE(glIsBufferARB))
 			ret = nfglIsBufferARB(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLISBUFFERRESIDENTNV:
+			D(funcname = "glIsBufferResidentNV");
+			if (GL_ISAVAILABLE(glIsBufferResidentNV))
 			ret = nfglIsBufferResidentNV(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLISCOMMANDLISTNV:
+			D(funcname = "glIsCommandListNV");
+			if (GL_ISAVAILABLE(glIsCommandListNV))
 			ret = nfglIsCommandListNV(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
 		case NFOSMESA_GLISENABLED:
+			D(funcname = "glIsEnabled");
+			if (GL_ISAVAILABLE(glIsEnabled))
 			ret = nfglIsEnabled(
 				getStackedParameter(0)  /* GLenum cap */);
 			break;
 		case NFOSMESA_GLISENABLEDINDEXEDEXT:
+			D(funcname = "glIsEnabledIndexedEXT");
+			if (GL_ISAVAILABLE(glIsEnabledIndexedEXT))
 			ret = nfglIsEnabledIndexedEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLISENABLEDI:
+			D(funcname = "glIsEnabledi");
+			if (GL_ISAVAILABLE(glIsEnabledi))
 			ret = nfglIsEnabledi(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLISFENCEAPPLE:
+			D(funcname = "glIsFenceAPPLE");
+			if (GL_ISAVAILABLE(glIsFenceAPPLE))
 			ret = nfglIsFenceAPPLE(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLISFENCENV:
+			D(funcname = "glIsFenceNV");
+			if (GL_ISAVAILABLE(glIsFenceNV))
 			ret = nfglIsFenceNV(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLISFRAMEBUFFER:
+			D(funcname = "glIsFramebuffer");
+			if (GL_ISAVAILABLE(glIsFramebuffer))
 			ret = nfglIsFramebuffer(
 				getStackedParameter(0)  /* GLuint framebuffer */);
 			break;
 		case NFOSMESA_GLISFRAMEBUFFEREXT:
+			D(funcname = "glIsFramebufferEXT");
+			if (GL_ISAVAILABLE(glIsFramebufferEXT))
 			ret = nfglIsFramebufferEXT(
 				getStackedParameter(0)  /* GLuint framebuffer */);
 			break;
 		case NFOSMESA_GLISIMAGEHANDLERESIDENTARB:
+			D(funcname = "glIsImageHandleResidentARB");
+			if (GL_ISAVAILABLE(glIsImageHandleResidentARB))
 			ret = nfglIsImageHandleResidentARB(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLISIMAGEHANDLERESIDENTNV:
+			D(funcname = "glIsImageHandleResidentNV");
+			if (GL_ISAVAILABLE(glIsImageHandleResidentNV))
 			ret = nfglIsImageHandleResidentNV(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLISLIST:
+			D(funcname = "glIsList");
+			if (GL_ISAVAILABLE(glIsList))
 			ret = nfglIsList(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
 		case NFOSMESA_GLISNAMEAMD:
+			D(funcname = "glIsNameAMD");
+			if (GL_ISAVAILABLE(glIsNameAMD))
 			ret = nfglIsNameAMD(
 				getStackedParameter(0),  /* GLenum identifier */
 				getStackedParameter(1)  /* GLuint name */);
 			break;
 		case NFOSMESA_GLISNAMEDBUFFERRESIDENTNV:
+			D(funcname = "glIsNamedBufferResidentNV");
+			if (GL_ISAVAILABLE(glIsNamedBufferResidentNV))
 			ret = nfglIsNamedBufferResidentNV(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLISNAMEDSTRINGARB:
+			D(funcname = "glIsNamedStringARB");
+			if (GL_ISAVAILABLE(glIsNamedStringARB))
 			ret = nfglIsNamedStringARB(
 				getStackedParameter(0),  /* GLint namelen */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *name */);
 			break;
 		case NFOSMESA_GLISOBJECTBUFFERATI:
+			D(funcname = "glIsObjectBufferATI");
+			if (GL_ISAVAILABLE(glIsObjectBufferATI))
 			ret = nfglIsObjectBufferATI(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLISOCCLUSIONQUERYNV:
+			D(funcname = "glIsOcclusionQueryNV");
+			if (GL_ISAVAILABLE(glIsOcclusionQueryNV))
 			ret = nfglIsOcclusionQueryNV(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISPATHNV:
+			D(funcname = "glIsPathNV");
+			if (GL_ISAVAILABLE(glIsPathNV))
 			ret = nfglIsPathNV(
 				getStackedParameter(0)  /* GLuint path */);
 			break;
 		case NFOSMESA_GLISPOINTINFILLPATHNV:
+			D(funcname = "glIsPointInFillPathNV");
+			if (GL_ISAVAILABLE(glIsPointInFillPathNV))
 			ret = nfglIsPointInFillPathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLuint mask */
@@ -7538,102 +9932,150 @@
 				getStackedFloat(3)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLISPOINTINSTROKEPATHNV:
+			D(funcname = "glIsPointInStrokePathNV");
+			if (GL_ISAVAILABLE(glIsPointInStrokePathNV))
 			ret = nfglIsPointInStrokePathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedFloat(1),  /* GLfloat x */
 				getStackedFloat(2)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLISPROGRAM:
+			D(funcname = "glIsProgram");
+			if (GL_ISAVAILABLE(glIsProgram))
 			ret = nfglIsProgram(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLISPROGRAMARB:
+			D(funcname = "glIsProgramARB");
+			if (GL_ISAVAILABLE(glIsProgramARB))
 			ret = nfglIsProgramARB(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLISPROGRAMNV:
+			D(funcname = "glIsProgramNV");
+			if (GL_ISAVAILABLE(glIsProgramNV))
 			ret = nfglIsProgramNV(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISPROGRAMPIPELINE:
+			D(funcname = "glIsProgramPipeline");
+			if (GL_ISAVAILABLE(glIsProgramPipeline))
 			ret = nfglIsProgramPipeline(
 				getStackedParameter(0)  /* GLuint pipeline */);
 			break;
 		case NFOSMESA_GLISQUERY:
+			D(funcname = "glIsQuery");
+			if (GL_ISAVAILABLE(glIsQuery))
 			ret = nfglIsQuery(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISQUERYARB:
+			D(funcname = "glIsQueryARB");
+			if (GL_ISAVAILABLE(glIsQueryARB))
 			ret = nfglIsQueryARB(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISRENDERBUFFER:
+			D(funcname = "glIsRenderbuffer");
+			if (GL_ISAVAILABLE(glIsRenderbuffer))
 			ret = nfglIsRenderbuffer(
 				getStackedParameter(0)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLISRENDERBUFFEREXT:
+			D(funcname = "glIsRenderbufferEXT");
+			if (GL_ISAVAILABLE(glIsRenderbufferEXT))
 			ret = nfglIsRenderbufferEXT(
 				getStackedParameter(0)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLISSAMPLER:
+			D(funcname = "glIsSampler");
+			if (GL_ISAVAILABLE(glIsSampler))
 			ret = nfglIsSampler(
 				getStackedParameter(0)  /* GLuint sampler */);
 			break;
 		case NFOSMESA_GLISSHADER:
+			D(funcname = "glIsShader");
+			if (GL_ISAVAILABLE(glIsShader))
 			ret = nfglIsShader(
 				getStackedParameter(0)  /* GLuint shader */);
 			break;
 		case NFOSMESA_GLISSTATENV:
+			D(funcname = "glIsStateNV");
+			if (GL_ISAVAILABLE(glIsStateNV))
 			ret = nfglIsStateNV(
 				getStackedParameter(0)  /* GLuint state */);
 			break;
 		case NFOSMESA_GLISSYNC:
+			D(funcname = "glIsSync");
+			if (GL_ISAVAILABLE(glIsSync))
 			ret = nfglIsSync(
 				(GLsync)getStackedParameter(0)  /* GLsync sync */);
 			break;
 		case NFOSMESA_GLISTEXTURE:
+			D(funcname = "glIsTexture");
+			if (GL_ISAVAILABLE(glIsTexture))
 			ret = nfglIsTexture(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLISTEXTUREEXT:
+			D(funcname = "glIsTextureEXT");
+			if (GL_ISAVAILABLE(glIsTextureEXT))
 			ret = nfglIsTextureEXT(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLISTEXTUREHANDLERESIDENTARB:
+			D(funcname = "glIsTextureHandleResidentARB");
+			if (GL_ISAVAILABLE(glIsTextureHandleResidentARB))
 			ret = nfglIsTextureHandleResidentARB(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLISTEXTUREHANDLERESIDENTNV:
+			D(funcname = "glIsTextureHandleResidentNV");
+			if (GL_ISAVAILABLE(glIsTextureHandleResidentNV))
 			ret = nfglIsTextureHandleResidentNV(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLISTRANSFORMFEEDBACK:
+			D(funcname = "glIsTransformFeedback");
+			if (GL_ISAVAILABLE(glIsTransformFeedback))
 			ret = nfglIsTransformFeedback(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISTRANSFORMFEEDBACKNV:
+			D(funcname = "glIsTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glIsTransformFeedbackNV))
 			ret = nfglIsTransformFeedbackNV(
 				getStackedParameter(0)  /* GLuint id */);
 			break;
 		case NFOSMESA_GLISVARIANTENABLEDEXT:
+			D(funcname = "glIsVariantEnabledEXT");
+			if (GL_ISAVAILABLE(glIsVariantEnabledEXT))
 			ret = nfglIsVariantEnabledEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1)  /* GLenum cap */);
 			break;
 		case NFOSMESA_GLISVERTEXARRAY:
+			D(funcname = "glIsVertexArray");
+			if (GL_ISAVAILABLE(glIsVertexArray))
 			ret = nfglIsVertexArray(
 				getStackedParameter(0)  /* GLuint array */);
 			break;
 		case NFOSMESA_GLISVERTEXARRAYAPPLE:
+			D(funcname = "glIsVertexArrayAPPLE");
+			if (GL_ISAVAILABLE(glIsVertexArrayAPPLE))
 			ret = nfglIsVertexArrayAPPLE(
 				getStackedParameter(0)  /* GLuint array */);
 			break;
 		case NFOSMESA_GLISVERTEXATTRIBENABLEDAPPLE:
+			D(funcname = "glIsVertexAttribEnabledAPPLE");
+			if (GL_ISAVAILABLE(glIsVertexAttribEnabledAPPLE))
 			ret = nfglIsVertexAttribEnabledAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLLABELOBJECTEXT:
+			D(funcname = "glLabelObjectEXT");
+			if (GL_ISAVAILABLE(glLabelObjectEXT))
 			nfglLabelObjectEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLuint object */
@@ -7641,102 +10083,142 @@
 				getStackedPointer(3, const GLchar *)  /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLLIGHTENVISGIX:
+			D(funcname = "glLightEnviSGIX");
+			if (GL_ISAVAILABLE(glLightEnviSGIX))
 			nfglLightEnviSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLLIGHTMODELF:
+			D(funcname = "glLightModelf");
+			if (GL_ISAVAILABLE(glLightModelf))
 			nfglLightModelf(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLLIGHTMODELFV:
+			D(funcname = "glLightModelfv");
+			if (GL_ISAVAILABLE(glLightModelfv))
 			nfglLightModelfv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLIGHTMODELI:
+			D(funcname = "glLightModeli");
+			if (GL_ISAVAILABLE(glLightModeli))
 			nfglLightModeli(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLLIGHTMODELIV:
+			D(funcname = "glLightModeliv");
+			if (GL_ISAVAILABLE(glLightModeliv))
 			nfglLightModeliv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLIGHTMODELXOES:
+			D(funcname = "glLightModelxOES");
+			if (GL_ISAVAILABLE(glLightModelxOES))
 			nfglLightModelxOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLLIGHTMODELXVOES:
+			D(funcname = "glLightModelxvOES");
+			if (GL_ISAVAILABLE(glLightModelxvOES))
 			nfglLightModelxvOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLLIGHTF:
+			D(funcname = "glLightf");
+			if (GL_ISAVAILABLE(glLightf))
 			nfglLightf(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLLIGHTFV:
+			D(funcname = "glLightfv");
+			if (GL_ISAVAILABLE(glLightfv))
 			nfglLightfv(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLIGHTI:
+			D(funcname = "glLighti");
+			if (GL_ISAVAILABLE(glLighti))
 			nfglLighti(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLLIGHTIV:
+			D(funcname = "glLightiv");
+			if (GL_ISAVAILABLE(glLightiv))
 			nfglLightiv(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLIGHTXOES:
+			D(funcname = "glLightxOES");
+			if (GL_ISAVAILABLE(glLightxOES))
 			nfglLightxOES(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLLIGHTXVOES:
+			D(funcname = "glLightxvOES");
+			if (GL_ISAVAILABLE(glLightxvOES))
 			nfglLightxvOES(
 				getStackedParameter(0),  /* GLenum light */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLLINESTIPPLE:
+			D(funcname = "glLineStipple");
+			if (GL_ISAVAILABLE(glLineStipple))
 			nfglLineStipple(
 				getStackedParameter(0),  /* GLint factor */
 				getStackedParameter(1)  /* GLushort32 pattern */);
 			break;
 		case NFOSMESA_GLLINEWIDTH:
+			D(funcname = "glLineWidth");
+			if (GL_ISAVAILABLE(glLineWidth))
 			nfglLineWidth(
 				getStackedFloat(0)  /* GLfloat width */);
 			break;
 		case NFOSMESA_GLLINEWIDTHXOES:
+			D(funcname = "glLineWidthxOES");
+			if (GL_ISAVAILABLE(glLineWidthxOES))
 			nfglLineWidthxOES(
 				getStackedParameter(0)  /* GLfixed width */);
 			break;
 		case NFOSMESA_GLLINKPROGRAM:
+			D(funcname = "glLinkProgram");
+			if (GL_ISAVAILABLE(glLinkProgram))
 			nfglLinkProgram(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLLINKPROGRAMARB:
+			D(funcname = "glLinkProgramARB");
+			if (GL_ISAVAILABLE(glLinkProgramARB))
 			nfglLinkProgramARB(
 				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLLISTBASE:
+			D(funcname = "glListBase");
+			if (GL_ISAVAILABLE(glListBase))
 			nfglListBase(
 				getStackedParameter(0)  /* GLuint base */);
 			break;
 		case NFOSMESA_GLLISTDRAWCOMMANDSSTATESCLIENTNV:
+			D(funcname = "glListDrawCommandsStatesClientNV");
+			if (GL_ISAVAILABLE(glListDrawCommandsStatesClientNV))
 			nfglListDrawCommandsStatesClientNV(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLuint segment */
@@ -7747,53 +10229,75 @@
 				getStackedParameter(6)  /* GLuint count */);
 			break;
 		case NFOSMESA_GLLISTPARAMETERFSGIX:
+			D(funcname = "glListParameterfSGIX");
+			if (GL_ISAVAILABLE(glListParameterfSGIX))
 			nfglListParameterfSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLLISTPARAMETERFVSGIX:
+			D(funcname = "glListParameterfvSGIX");
+			if (GL_ISAVAILABLE(glListParameterfvSGIX))
 			nfglListParameterfvSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLLISTPARAMETERISGIX:
+			D(funcname = "glListParameteriSGIX");
+			if (GL_ISAVAILABLE(glListParameteriSGIX))
 			nfglListParameteriSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLLISTPARAMETERIVSGIX:
+			D(funcname = "glListParameterivSGIX");
+			if (GL_ISAVAILABLE(glListParameterivSGIX))
 			nfglListParameterivSGIX(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLLOADIDENTITY:
+			D(funcname = "glLoadIdentity");
+			if (GL_ISAVAILABLE(glLoadIdentity))
 			nfglLoadIdentity();
 			break;
 		case NFOSMESA_GLLOADIDENTITYDEFORMATIONMAPSGIX:
+			D(funcname = "glLoadIdentityDeformationMapSGIX");
+			if (GL_ISAVAILABLE(glLoadIdentityDeformationMapSGIX))
 			nfglLoadIdentityDeformationMapSGIX(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLLOADMATRIXD:
+			D(funcname = "glLoadMatrixd");
+			if (GL_ISAVAILABLE(glLoadMatrixd))
 			nfglLoadMatrixd(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADMATRIXF:
+			D(funcname = "glLoadMatrixf");
+			if (GL_ISAVAILABLE(glLoadMatrixf))
 			nfglLoadMatrixf(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADMATRIXXOES:
+			D(funcname = "glLoadMatrixxOES");
+			if (GL_ISAVAILABLE(glLoadMatrixxOES))
 			nfglLoadMatrixxOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLLOADNAME:
+			D(funcname = "glLoadName");
+			if (GL_ISAVAILABLE(glLoadName))
 			nfglLoadName(
 				getStackedParameter(0)  /* GLuint name */);
 			break;
 		case NFOSMESA_GLLOADPROGRAMNV:
+			D(funcname = "glLoadProgramNV");
+			if (GL_ISAVAILABLE(glLoadProgramNV))
 			nfglLoadProgramNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint id */
@@ -7801,87 +10305,127 @@
 				getStackedPointer(3, const GLubyte *)  /* const GLubyte *program */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXD:
+			D(funcname = "glLoadTransposeMatrixd");
+			if (GL_ISAVAILABLE(glLoadTransposeMatrixd))
 			nfglLoadTransposeMatrixd(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXDARB:
+			D(funcname = "glLoadTransposeMatrixdARB");
+			if (GL_ISAVAILABLE(glLoadTransposeMatrixdARB))
 			nfglLoadTransposeMatrixdARB(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXF:
+			D(funcname = "glLoadTransposeMatrixf");
+			if (GL_ISAVAILABLE(glLoadTransposeMatrixf))
 			nfglLoadTransposeMatrixf(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXFARB:
+			D(funcname = "glLoadTransposeMatrixfARB");
+			if (GL_ISAVAILABLE(glLoadTransposeMatrixfARB))
 			nfglLoadTransposeMatrixfARB(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXXOES:
+			D(funcname = "glLoadTransposeMatrixxOES");
+			if (GL_ISAVAILABLE(glLoadTransposeMatrixxOES))
 			nfglLoadTransposeMatrixxOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLLOCKARRAYSEXT:
+			D(funcname = "glLockArraysEXT");
+			if (GL_ISAVAILABLE(glLockArraysEXT))
 			nfglLockArraysEXT(
 				getStackedParameter(0),  /* GLint first */
 				getStackedParameter(1)  /* GLsizei count */);
 			break;
 		case NFOSMESA_GLLOGICOP:
+			D(funcname = "glLogicOp");
+			if (GL_ISAVAILABLE(glLogicOp))
 			nfglLogicOp(
 				getStackedParameter(0)  /* GLenum opcode */);
 			break;
 		case NFOSMESA_GLMAKEBUFFERNONRESIDENTNV:
+			D(funcname = "glMakeBufferNonResidentNV");
+			if (GL_ISAVAILABLE(glMakeBufferNonResidentNV))
 			nfglMakeBufferNonResidentNV(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLMAKEBUFFERRESIDENTNV:
+			D(funcname = "glMakeBufferResidentNV");
+			if (GL_ISAVAILABLE(glMakeBufferResidentNV))
 			nfglMakeBufferResidentNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum access */);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLENONRESIDENTARB:
+			D(funcname = "glMakeImageHandleNonResidentARB");
+			if (GL_ISAVAILABLE(glMakeImageHandleNonResidentARB))
 			nfglMakeImageHandleNonResidentARB(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLENONRESIDENTNV:
+			D(funcname = "glMakeImageHandleNonResidentNV");
+			if (GL_ISAVAILABLE(glMakeImageHandleNonResidentNV))
 			nfglMakeImageHandleNonResidentNV(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLERESIDENTARB:
+			D(funcname = "glMakeImageHandleResidentARB");
+			if (GL_ISAVAILABLE(glMakeImageHandleResidentARB))
 			nfglMakeImageHandleResidentARB(
 				getStackedParameter64(0),  /* GLuint64 handle */
 				getStackedParameter(2)  /* GLenum access */);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLERESIDENTNV:
+			D(funcname = "glMakeImageHandleResidentNV");
+			if (GL_ISAVAILABLE(glMakeImageHandleResidentNV))
 			nfglMakeImageHandleResidentNV(
 				getStackedParameter64(0),  /* GLuint64 handle */
 				getStackedParameter(2)  /* GLenum access */);
 			break;
 		case NFOSMESA_GLMAKENAMEDBUFFERNONRESIDENTNV:
+			D(funcname = "glMakeNamedBufferNonResidentNV");
+			if (GL_ISAVAILABLE(glMakeNamedBufferNonResidentNV))
 			nfglMakeNamedBufferNonResidentNV(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLMAKENAMEDBUFFERRESIDENTNV:
+			D(funcname = "glMakeNamedBufferResidentNV");
+			if (GL_ISAVAILABLE(glMakeNamedBufferResidentNV))
 			nfglMakeNamedBufferResidentNV(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1)  /* GLenum access */);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLENONRESIDENTARB:
+			D(funcname = "glMakeTextureHandleNonResidentARB");
+			if (GL_ISAVAILABLE(glMakeTextureHandleNonResidentARB))
 			nfglMakeTextureHandleNonResidentARB(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLENONRESIDENTNV:
+			D(funcname = "glMakeTextureHandleNonResidentNV");
+			if (GL_ISAVAILABLE(glMakeTextureHandleNonResidentNV))
 			nfglMakeTextureHandleNonResidentNV(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLERESIDENTARB:
+			D(funcname = "glMakeTextureHandleResidentARB");
+			if (GL_ISAVAILABLE(glMakeTextureHandleResidentARB))
 			nfglMakeTextureHandleResidentARB(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLERESIDENTNV:
+			D(funcname = "glMakeTextureHandleResidentNV");
+			if (GL_ISAVAILABLE(glMakeTextureHandleResidentNV))
 			nfglMakeTextureHandleResidentNV(
 				getStackedParameter64(0)  /* GLuint64 handle */);
 			break;
 		case NFOSMESA_GLMAP1D:
+			D(funcname = "glMap1d");
+			if (GL_ISAVAILABLE(glMap1d))
 			nfglMap1d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble u1 */
@@ -7891,6 +10435,8 @@
 				getStackedPointer(7, const GLdouble *)  /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAP1F:
+			D(funcname = "glMap1f");
+			if (GL_ISAVAILABLE(glMap1f))
 			nfglMap1f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat u1 */
@@ -7900,6 +10446,8 @@
 				getStackedPointer(5, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAP1XOES:
+			D(funcname = "glMap1xOES");
+			if (GL_ISAVAILABLE(glMap1xOES))
 			nfglMap1xOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLfixed u1 */
@@ -7909,6 +10457,8 @@
 				getStackedParameter(5)  /* GLfixed points */);
 			break;
 		case NFOSMESA_GLMAP2D:
+			D(funcname = "glMap2d");
+			if (GL_ISAVAILABLE(glMap2d))
 			nfglMap2d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble u1 */
@@ -7922,6 +10472,8 @@
 				getStackedPointer(13, const GLdouble *)  /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAP2F:
+			D(funcname = "glMap2f");
+			if (GL_ISAVAILABLE(glMap2f))
 			nfglMap2f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat u1 */
@@ -7935,6 +10487,8 @@
 				getStackedPointer(9, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAP2XOES:
+			D(funcname = "glMap2xOES");
+			if (GL_ISAVAILABLE(glMap2xOES))
 			nfglMap2xOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLfixed u1 */
@@ -7949,6 +10503,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPBUFFER:
+			D(funcname = "glMapBuffer");
+			if (GL_ISAVAILABLE(glMapBuffer))
 			ret = (uint32)(uintptr_t)nfglMapBuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum access */);
@@ -7956,6 +10512,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPBUFFERARB:
+			D(funcname = "glMapBufferARB");
+			if (GL_ISAVAILABLE(glMapBufferARB))
 			ret = (uint32)(uintptr_t)nfglMapBufferARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLenum access */);
@@ -7963,6 +10521,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPBUFFERRANGE:
+			D(funcname = "glMapBufferRange");
+			if (GL_ISAVAILABLE(glMapBufferRange))
 			ret = (uint32)(uintptr_t)nfglMapBufferRange(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -7971,6 +10531,8 @@
 			break;
 #endif
 		case NFOSMESA_GLMAPCONTROLPOINTSNV:
+			D(funcname = "glMapControlPointsNV");
+			if (GL_ISAVAILABLE(glMapControlPointsNV))
 			nfglMapControlPointsNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -7983,24 +10545,32 @@
 				getStackedPointer(8, const void *)  /* const void *points */);
 			break;
 		case NFOSMESA_GLMAPGRID1D:
+			D(funcname = "glMapGrid1d");
+			if (GL_ISAVAILABLE(glMapGrid1d))
 			nfglMapGrid1d(
 				getStackedParameter(0),  /* GLint un */
 				getStackedDouble(1),  /* GLdouble u1 */
 				getStackedDouble(3)  /* GLdouble u2 */);
 			break;
 		case NFOSMESA_GLMAPGRID1F:
+			D(funcname = "glMapGrid1f");
+			if (GL_ISAVAILABLE(glMapGrid1f))
 			nfglMapGrid1f(
 				getStackedParameter(0),  /* GLint un */
 				getStackedFloat(1),  /* GLfloat u1 */
 				getStackedFloat(2)  /* GLfloat u2 */);
 			break;
 		case NFOSMESA_GLMAPGRID1XOES:
+			D(funcname = "glMapGrid1xOES");
+			if (GL_ISAVAILABLE(glMapGrid1xOES))
 			nfglMapGrid1xOES(
 				getStackedParameter(0),  /* GLint n */
 				getStackedParameter(1),  /* GLfixed u1 */
 				getStackedParameter(2)  /* GLfixed u2 */);
 			break;
 		case NFOSMESA_GLMAPGRID2D:
+			D(funcname = "glMapGrid2d");
+			if (GL_ISAVAILABLE(glMapGrid2d))
 			nfglMapGrid2d(
 				getStackedParameter(0),  /* GLint un */
 				getStackedDouble(1),  /* GLdouble u1 */
@@ -8010,6 +10580,8 @@
 				getStackedDouble(8)  /* GLdouble v2 */);
 			break;
 		case NFOSMESA_GLMAPGRID2F:
+			D(funcname = "glMapGrid2f");
+			if (GL_ISAVAILABLE(glMapGrid2f))
 			nfglMapGrid2f(
 				getStackedParameter(0),  /* GLint un */
 				getStackedFloat(1),  /* GLfloat u1 */
@@ -8019,6 +10591,8 @@
 				getStackedFloat(5)  /* GLfloat v2 */);
 			break;
 		case NFOSMESA_GLMAPGRID2XOES:
+			D(funcname = "glMapGrid2xOES");
+			if (GL_ISAVAILABLE(glMapGrid2xOES))
 			nfglMapGrid2xOES(
 				getStackedParameter(0),  /* GLint n */
 				getStackedParameter(1),  /* GLfixed u1 */
@@ -8028,6 +10602,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFER:
+			D(funcname = "glMapNamedBuffer");
+			if (GL_ISAVAILABLE(glMapNamedBuffer))
 			ret = (uint32)(uintptr_t)nfglMapNamedBuffer(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1)  /* GLenum access */);
@@ -8035,6 +10611,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFEREXT:
+			D(funcname = "glMapNamedBufferEXT");
+			if (GL_ISAVAILABLE(glMapNamedBufferEXT))
 			ret = (uint32)(uintptr_t)nfglMapNamedBufferEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1)  /* GLenum access */);
@@ -8042,6 +10620,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFERRANGE:
+			D(funcname = "glMapNamedBufferRange");
+			if (GL_ISAVAILABLE(glMapNamedBufferRange))
 			ret = (uint32)(uintptr_t)nfglMapNamedBufferRange(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -8051,6 +10631,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPNAMEDBUFFERRANGEEXT:
+			D(funcname = "glMapNamedBufferRangeEXT");
+			if (GL_ISAVAILABLE(glMapNamedBufferRangeEXT))
 			ret = (uint32)(uintptr_t)nfglMapNamedBufferRangeEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -8060,17 +10642,23 @@
 #endif
 #if 0
 		case NFOSMESA_GLMAPOBJECTBUFFERATI:
+			D(funcname = "glMapObjectBufferATI");
+			if (GL_ISAVAILABLE(glMapObjectBufferATI))
 			ret = (uint32)(uintptr_t)nfglMapObjectBufferATI(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 #endif
 		case NFOSMESA_GLMAPPARAMETERFVNV:
+			D(funcname = "glMapParameterfvNV");
+			if (GL_ISAVAILABLE(glMapParameterfvNV))
 			nfglMapParameterfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMAPPARAMETERIVNV:
+			D(funcname = "glMapParameterivNV");
+			if (GL_ISAVAILABLE(glMapParameterivNV))
 			nfglMapParameterivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
@@ -8078,6 +10666,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLMAPTEXTURE2DINTEL:
+			D(funcname = "glMapTexture2DINTEL");
+			if (GL_ISAVAILABLE(glMapTexture2DINTEL))
 			ret = (uint32)(uintptr_t)nfglMapTexture2DINTEL(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -8087,6 +10677,8 @@
 			break;
 #endif
 		case NFOSMESA_GLMAPVERTEXATTRIB1DAPPLE:
+			D(funcname = "glMapVertexAttrib1dAPPLE");
+			if (GL_ISAVAILABLE(glMapVertexAttrib1dAPPLE))
 			nfglMapVertexAttrib1dAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint size */
@@ -8097,6 +10689,8 @@
 				getStackedPointer(8, const GLdouble *)  /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB1FAPPLE:
+			D(funcname = "glMapVertexAttrib1fAPPLE");
+			if (GL_ISAVAILABLE(glMapVertexAttrib1fAPPLE))
 			nfglMapVertexAttrib1fAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint size */
@@ -8107,6 +10701,8 @@
 				getStackedPointer(6, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2DAPPLE:
+			D(funcname = "glMapVertexAttrib2dAPPLE");
+			if (GL_ISAVAILABLE(glMapVertexAttrib2dAPPLE))
 			nfglMapVertexAttrib2dAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint size */
@@ -8121,6 +10717,8 @@
 				getStackedPointer(14, const GLdouble *)  /* const GLdouble *points */);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2FAPPLE:
+			D(funcname = "glMapVertexAttrib2fAPPLE");
+			if (GL_ISAVAILABLE(glMapVertexAttrib2fAPPLE))
 			nfglMapVertexAttrib2fAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint size */
@@ -8135,42 +10733,56 @@
 				getStackedPointer(10, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLMATERIALF:
+			D(funcname = "glMaterialf");
+			if (GL_ISAVAILABLE(glMaterialf))
 			nfglMaterialf(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLMATERIALFV:
+			D(funcname = "glMaterialfv");
+			if (GL_ISAVAILABLE(glMaterialfv))
 			nfglMaterialfv(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMATERIALI:
+			D(funcname = "glMateriali");
+			if (GL_ISAVAILABLE(glMateriali))
 			nfglMateriali(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLMATERIALIV:
+			D(funcname = "glMaterialiv");
+			if (GL_ISAVAILABLE(glMaterialiv))
 			nfglMaterialiv(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMATERIALXOES:
+			D(funcname = "glMaterialxOES");
+			if (GL_ISAVAILABLE(glMaterialxOES))
 			nfglMaterialxOES(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLMATERIALXVOES:
+			D(funcname = "glMaterialxvOES");
+			if (GL_ISAVAILABLE(glMaterialxvOES))
 			nfglMaterialxvOES(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *param */);
 			break;
 		case NFOSMESA_GLMATRIXFRUSTUMEXT:
+			D(funcname = "glMatrixFrustumEXT");
+			if (GL_ISAVAILABLE(glMatrixFrustumEXT))
 			nfglMatrixFrustumEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedDouble(1),  /* GLdouble left */
@@ -8181,6 +10793,8 @@
 				getStackedDouble(11)  /* GLdouble zFar */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXPOINTERARB:
+			D(funcname = "glMatrixIndexPointerARB");
+			if (GL_ISAVAILABLE(glMatrixIndexPointerARB))
 			nfglMatrixIndexPointerARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -8188,99 +10802,139 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUBVARB:
+			D(funcname = "glMatrixIndexubvARB");
+			if (GL_ISAVAILABLE(glMatrixIndexubvARB))
 			nfglMatrixIndexubvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *indices */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUIVARB:
+			D(funcname = "glMatrixIndexuivARB");
+			if (GL_ISAVAILABLE(glMatrixIndexuivARB))
 			nfglMatrixIndexuivARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *indices */);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUSVARB:
+			D(funcname = "glMatrixIndexusvARB");
+			if (GL_ISAVAILABLE(glMatrixIndexusvARB))
 			nfglMatrixIndexusvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *indices */);
 			break;
 		case NFOSMESA_GLMATRIXLOAD3X2FNV:
+			D(funcname = "glMatrixLoad3x2fNV");
+			if (GL_ISAVAILABLE(glMatrixLoad3x2fNV))
 			nfglMatrixLoad3x2fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOAD3X3FNV:
+			D(funcname = "glMatrixLoad3x3fNV");
+			if (GL_ISAVAILABLE(glMatrixLoad3x3fNV))
 			nfglMatrixLoad3x3fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADIDENTITYEXT:
+			D(funcname = "glMatrixLoadIdentityEXT");
+			if (GL_ISAVAILABLE(glMatrixLoadIdentityEXT))
 			nfglMatrixLoadIdentityEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSE3X3FNV:
+			D(funcname = "glMatrixLoadTranspose3x3fNV");
+			if (GL_ISAVAILABLE(glMatrixLoadTranspose3x3fNV))
 			nfglMatrixLoadTranspose3x3fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEDEXT:
+			D(funcname = "glMatrixLoadTransposedEXT");
+			if (GL_ISAVAILABLE(glMatrixLoadTransposedEXT))
 			nfglMatrixLoadTransposedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEFEXT:
+			D(funcname = "glMatrixLoadTransposefEXT");
+			if (GL_ISAVAILABLE(glMatrixLoadTransposefEXT))
 			nfglMatrixLoadTransposefEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADDEXT:
+			D(funcname = "glMatrixLoaddEXT");
+			if (GL_ISAVAILABLE(glMatrixLoaddEXT))
 			nfglMatrixLoaddEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXLOADFEXT:
+			D(funcname = "glMatrixLoadfEXT");
+			if (GL_ISAVAILABLE(glMatrixLoadfEXT))
 			nfglMatrixLoadfEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMODE:
+			D(funcname = "glMatrixMode");
+			if (GL_ISAVAILABLE(glMatrixMode))
 			nfglMatrixMode(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLMATRIXMULT3X2FNV:
+			D(funcname = "glMatrixMult3x2fNV");
+			if (GL_ISAVAILABLE(glMatrixMult3x2fNV))
 			nfglMatrixMult3x2fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULT3X3FNV:
+			D(funcname = "glMatrixMult3x3fNV");
+			if (GL_ISAVAILABLE(glMatrixMult3x3fNV))
 			nfglMatrixMult3x3fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSE3X3FNV:
+			D(funcname = "glMatrixMultTranspose3x3fNV");
+			if (GL_ISAVAILABLE(glMatrixMultTranspose3x3fNV))
 			nfglMatrixMultTranspose3x3fNV(
 				getStackedParameter(0),  /* GLenum matrixMode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEDEXT:
+			D(funcname = "glMatrixMultTransposedEXT");
+			if (GL_ISAVAILABLE(glMatrixMultTransposedEXT))
 			nfglMatrixMultTransposedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEFEXT:
+			D(funcname = "glMatrixMultTransposefEXT");
+			if (GL_ISAVAILABLE(glMatrixMultTransposefEXT))
 			nfglMatrixMultTransposefEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTDEXT:
+			D(funcname = "glMatrixMultdEXT");
+			if (GL_ISAVAILABLE(glMatrixMultdEXT))
 			nfglMatrixMultdEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMATRIXMULTFEXT:
+			D(funcname = "glMatrixMultfEXT");
+			if (GL_ISAVAILABLE(glMatrixMultfEXT))
 			nfglMatrixMultfEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMATRIXORTHOEXT:
+			D(funcname = "glMatrixOrthoEXT");
+			if (GL_ISAVAILABLE(glMatrixOrthoEXT))
 			nfglMatrixOrthoEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedDouble(1),  /* GLdouble left */
@@ -8291,14 +10945,20 @@
 				getStackedDouble(11)  /* GLdouble zFar */);
 			break;
 		case NFOSMESA_GLMATRIXPOPEXT:
+			D(funcname = "glMatrixPopEXT");
+			if (GL_ISAVAILABLE(glMatrixPopEXT))
 			nfglMatrixPopEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLMATRIXPUSHEXT:
+			D(funcname = "glMatrixPushEXT");
+			if (GL_ISAVAILABLE(glMatrixPushEXT))
 			nfglMatrixPushEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLMATRIXROTATEDEXT:
+			D(funcname = "glMatrixRotatedEXT");
+			if (GL_ISAVAILABLE(glMatrixRotatedEXT))
 			nfglMatrixRotatedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedDouble(1),  /* GLdouble angle */
@@ -8307,6 +10967,8 @@
 				getStackedDouble(7)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLMATRIXROTATEFEXT:
+			D(funcname = "glMatrixRotatefEXT");
+			if (GL_ISAVAILABLE(glMatrixRotatefEXT))
 			nfglMatrixRotatefEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedFloat(1),  /* GLfloat angle */
@@ -8315,6 +10977,8 @@
 				getStackedFloat(4)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLMATRIXSCALEDEXT:
+			D(funcname = "glMatrixScaledEXT");
+			if (GL_ISAVAILABLE(glMatrixScaledEXT))
 			nfglMatrixScaledEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedDouble(1),  /* GLdouble x */
@@ -8322,6 +10986,8 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLMATRIXSCALEFEXT:
+			D(funcname = "glMatrixScalefEXT");
+			if (GL_ISAVAILABLE(glMatrixScalefEXT))
 			nfglMatrixScalefEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedFloat(1),  /* GLfloat x */
@@ -8329,6 +10995,8 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLMATRIXTRANSLATEDEXT:
+			D(funcname = "glMatrixTranslatedEXT");
+			if (GL_ISAVAILABLE(glMatrixTranslatedEXT))
 			nfglMatrixTranslatedEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedDouble(1),  /* GLdouble x */
@@ -8336,6 +11004,8 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLMATRIXTRANSLATEFEXT:
+			D(funcname = "glMatrixTranslatefEXT");
+			if (GL_ISAVAILABLE(glMatrixTranslatefEXT))
 			nfglMatrixTranslatefEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedFloat(1),  /* GLfloat x */
@@ -8343,70 +11013,102 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLMEMORYBARRIER:
+			D(funcname = "glMemoryBarrier");
+			if (GL_ISAVAILABLE(glMemoryBarrier))
 			nfglMemoryBarrier(
 				getStackedParameter(0)  /* GLbitfield barriers */);
 			break;
 		case NFOSMESA_GLMEMORYBARRIERBYREGION:
+			D(funcname = "glMemoryBarrierByRegion");
+			if (GL_ISAVAILABLE(glMemoryBarrierByRegion))
 			nfglMemoryBarrierByRegion(
 				getStackedParameter(0)  /* GLbitfield barriers */);
 			break;
 		case NFOSMESA_GLMEMORYBARRIEREXT:
+			D(funcname = "glMemoryBarrierEXT");
+			if (GL_ISAVAILABLE(glMemoryBarrierEXT))
 			nfglMemoryBarrierEXT(
 				getStackedParameter(0)  /* GLbitfield barriers */);
 			break;
 		case NFOSMESA_GLMINSAMPLESHADING:
+			D(funcname = "glMinSampleShading");
+			if (GL_ISAVAILABLE(glMinSampleShading))
 			nfglMinSampleShading(
 				getStackedFloat(0)  /* GLfloat value */);
 			break;
 		case NFOSMESA_GLMINSAMPLESHADINGARB:
+			D(funcname = "glMinSampleShadingARB");
+			if (GL_ISAVAILABLE(glMinSampleShadingARB))
 			nfglMinSampleShadingARB(
 				getStackedFloat(0)  /* GLfloat value */);
 			break;
 		case NFOSMESA_GLMINMAX:
+			D(funcname = "glMinmax");
+			if (GL_ISAVAILABLE(glMinmax))
 			nfglMinmax(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLboolean32 sink */);
 			break;
 		case NFOSMESA_GLMINMAXEXT:
+			D(funcname = "glMinmaxEXT");
+			if (GL_ISAVAILABLE(glMinmaxEXT))
 			nfglMinmaxEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLboolean32 sink */);
 			break;
 		case NFOSMESA_GLMULTMATRIXD:
+			D(funcname = "glMultMatrixd");
+			if (GL_ISAVAILABLE(glMultMatrixd))
 			nfglMultMatrixd(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTMATRIXF:
+			D(funcname = "glMultMatrixf");
+			if (GL_ISAVAILABLE(glMultMatrixf))
 			nfglMultMatrixf(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTMATRIXXOES:
+			D(funcname = "glMultMatrixxOES");
+			if (GL_ISAVAILABLE(glMultMatrixxOES))
 			nfglMultMatrixxOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXD:
+			D(funcname = "glMultTransposeMatrixd");
+			if (GL_ISAVAILABLE(glMultTransposeMatrixd))
 			nfglMultTransposeMatrixd(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXDARB:
+			D(funcname = "glMultTransposeMatrixdARB");
+			if (GL_ISAVAILABLE(glMultTransposeMatrixdARB))
 			nfglMultTransposeMatrixdARB(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXF:
+			D(funcname = "glMultTransposeMatrixf");
+			if (GL_ISAVAILABLE(glMultTransposeMatrixf))
 			nfglMultTransposeMatrixf(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXFARB:
+			D(funcname = "glMultTransposeMatrixfARB");
+			if (GL_ISAVAILABLE(glMultTransposeMatrixfARB))
 			nfglMultTransposeMatrixfARB(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *m */);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXXOES:
+			D(funcname = "glMultTransposeMatrixxOES");
+			if (GL_ISAVAILABLE(glMultTransposeMatrixxOES))
 			nfglMultTransposeMatrixxOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *m */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYS:
+			D(funcname = "glMultiDrawArrays");
+			if (GL_ISAVAILABLE(glMultiDrawArrays))
 			nfglMultiDrawArrays(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLint *),  /* const GLint *first */
@@ -8414,6 +11116,8 @@
 				getStackedParameter(3)  /* GLsizei drawcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSEXT:
+			D(funcname = "glMultiDrawArraysEXT");
+			if (GL_ISAVAILABLE(glMultiDrawArraysEXT))
 			nfglMultiDrawArraysEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLint *),  /* const GLint *first */
@@ -8421,6 +11125,8 @@
 				getStackedParameter(3)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECT:
+			D(funcname = "glMultiDrawArraysIndirect");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirect))
 			nfglMultiDrawArraysIndirect(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const void *),  /* const void *indirect */
@@ -8428,6 +11134,8 @@
 				getStackedParameter(3)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTAMD:
+			D(funcname = "glMultiDrawArraysIndirectAMD");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectAMD))
 			nfglMultiDrawArraysIndirectAMD(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const void *),  /* const void *indirect */
@@ -8435,6 +11143,8 @@
 				getStackedParameter(3)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNV:
+			D(funcname = "glMultiDrawArraysIndirectBindlessCountNV");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectBindlessCountNV))
 			nfglMultiDrawArraysIndirectBindlessCountNV(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const void *),  /* const void *indirect */
@@ -8444,6 +11154,8 @@
 				getStackedParameter(5)  /* GLint vertexBufferCount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV:
+			D(funcname = "glMultiDrawArraysIndirectBindlessNV");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectBindlessNV))
 			nfglMultiDrawArraysIndirectBindlessNV(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const void *),  /* const void *indirect */
@@ -8452,6 +11164,8 @@
 				getStackedParameter(4)  /* GLint vertexBufferCount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNTARB:
+			D(funcname = "glMultiDrawArraysIndirectCountARB");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectCountARB))
 			nfglMultiDrawArraysIndirectCountARB(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLintptr indirect */
@@ -8460,6 +11174,8 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTARRAYAPPLE:
+			D(funcname = "glMultiDrawElementArrayAPPLE");
+			if (GL_ISAVAILABLE(glMultiDrawElementArrayAPPLE))
 			nfglMultiDrawElementArrayAPPLE(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLint *),  /* const GLint *first */
@@ -8467,6 +11183,8 @@
 				getStackedParameter(3)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTS:
+			D(funcname = "glMultiDrawElements");
+			if (GL_ISAVAILABLE(glMultiDrawElements))
 			nfglMultiDrawElements(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLsizei *),  /* const GLsizei *count */
@@ -8475,6 +11193,8 @@
 				getStackedParameter(4)  /* GLsizei drawcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSBASEVERTEX:
+			D(funcname = "glMultiDrawElementsBaseVertex");
+			if (GL_ISAVAILABLE(glMultiDrawElementsBaseVertex))
 			nfglMultiDrawElementsBaseVertex(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLsizei *),  /* const GLsizei *count */
@@ -8484,6 +11204,8 @@
 				getStackedPointer(5, const GLint *)  /* const GLint *basevertex */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSEXT:
+			D(funcname = "glMultiDrawElementsEXT");
+			if (GL_ISAVAILABLE(glMultiDrawElementsEXT))
 			nfglMultiDrawElementsEXT(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedPointer(1, const GLsizei *),  /* const GLsizei *count */
@@ -8492,6 +11214,8 @@
 				getStackedParameter(4)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECT:
+			D(funcname = "glMultiDrawElementsIndirect");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirect))
 			nfglMultiDrawElementsIndirect(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
@@ -8500,6 +11224,8 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTAMD:
+			D(funcname = "glMultiDrawElementsIndirectAMD");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectAMD))
 			nfglMultiDrawElementsIndirectAMD(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
@@ -8508,6 +11234,8 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNV:
+			D(funcname = "glMultiDrawElementsIndirectBindlessCountNV");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectBindlessCountNV))
 			nfglMultiDrawElementsIndirectBindlessCountNV(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
@@ -8518,6 +11246,8 @@
 				getStackedParameter(6)  /* GLint vertexBufferCount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTBINDLESSNV:
+			D(funcname = "glMultiDrawElementsIndirectBindlessNV");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectBindlessNV))
 			nfglMultiDrawElementsIndirectBindlessNV(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
@@ -8527,6 +11257,8 @@
 				getStackedParameter(5)  /* GLint vertexBufferCount */);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB:
+			D(funcname = "glMultiDrawElementsIndirectCountARB");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCountARB))
 			nfglMultiDrawElementsIndirectCountARB(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
@@ -8536,6 +11268,8 @@
 				getStackedParameter(5)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLMULTIDRAWRANGEELEMENTARRAYAPPLE:
+			D(funcname = "glMultiDrawRangeElementArrayAPPLE");
+			if (GL_ISAVAILABLE(glMultiDrawRangeElementArrayAPPLE))
 			nfglMultiDrawRangeElementArrayAPPLE(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLuint start */
@@ -8545,6 +11279,8 @@
 				getStackedParameter(5)  /* GLsizei primcount */);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWARRAYSIBM:
+			D(funcname = "glMultiModeDrawArraysIBM");
+			if (GL_ISAVAILABLE(glMultiModeDrawArraysIBM))
 			nfglMultiModeDrawArraysIBM(
 				getStackedPointer(0, const GLenum *),  /* const GLenum *mode */
 				getStackedPointer(1, const GLint *),  /* const GLint *first */
@@ -8553,6 +11289,8 @@
 				getStackedParameter(4)  /* GLint modestride */);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWELEMENTSIBM:
+			D(funcname = "glMultiModeDrawElementsIBM");
+			if (GL_ISAVAILABLE(glMultiModeDrawElementsIBM))
 			nfglMultiModeDrawElementsIBM(
 				getStackedPointer(0, const GLenum *),  /* const GLenum *mode */
 				getStackedPointer(1, const GLsizei *),  /* const GLsizei *count */
@@ -8562,6 +11300,8 @@
 				getStackedParameter(5)  /* GLint modestride */);
 			break;
 		case NFOSMESA_GLMULTITEXBUFFEREXT:
+			D(funcname = "glMultiTexBufferEXT");
+			if (GL_ISAVAILABLE(glMultiTexBufferEXT))
 			nfglMultiTexBufferEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -8569,237 +11309,327 @@
 				getStackedParameter(3)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1BOES:
+			D(funcname = "glMultiTexCoord1bOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord1bOES))
 			nfglMultiTexCoord1bOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1)  /* GLbyte32 s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1BVOES:
+			D(funcname = "glMultiTexCoord1bvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord1bvOES))
 			nfglMultiTexCoord1bvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1D:
+			D(funcname = "glMultiTexCoord1d");
+			if (GL_ISAVAILABLE(glMultiTexCoord1d))
 			nfglMultiTexCoord1d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1)  /* GLdouble s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DARB:
+			D(funcname = "glMultiTexCoord1dARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1dARB))
 			nfglMultiTexCoord1dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1)  /* GLdouble s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DV:
+			D(funcname = "glMultiTexCoord1dv");
+			if (GL_ISAVAILABLE(glMultiTexCoord1dv))
 			nfglMultiTexCoord1dv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DVARB:
+			D(funcname = "glMultiTexCoord1dvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1dvARB))
 			nfglMultiTexCoord1dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1F:
+			D(funcname = "glMultiTexCoord1f");
+			if (GL_ISAVAILABLE(glMultiTexCoord1f))
 			nfglMultiTexCoord1f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1)  /* GLfloat s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FARB:
+			D(funcname = "glMultiTexCoord1fARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1fARB))
 			nfglMultiTexCoord1fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1)  /* GLfloat s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FV:
+			D(funcname = "glMultiTexCoord1fv");
+			if (GL_ISAVAILABLE(glMultiTexCoord1fv))
 			nfglMultiTexCoord1fv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FVARB:
+			D(funcname = "glMultiTexCoord1fvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1fvARB))
 			nfglMultiTexCoord1fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1HNV:
+			D(funcname = "glMultiTexCoord1hNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord1hNV))
 			nfglMultiTexCoord1hNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLhalfNV32 s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1HVNV:
+			D(funcname = "glMultiTexCoord1hvNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord1hvNV))
 			nfglMultiTexCoord1hvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1I:
+			D(funcname = "glMultiTexCoord1i");
+			if (GL_ISAVAILABLE(glMultiTexCoord1i))
 			nfglMultiTexCoord1i(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLint s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IARB:
+			D(funcname = "glMultiTexCoord1iARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1iARB))
 			nfglMultiTexCoord1iARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLint s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IV:
+			D(funcname = "glMultiTexCoord1iv");
+			if (GL_ISAVAILABLE(glMultiTexCoord1iv))
 			nfglMultiTexCoord1iv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IVARB:
+			D(funcname = "glMultiTexCoord1ivARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1ivARB))
 			nfglMultiTexCoord1ivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1S:
+			D(funcname = "glMultiTexCoord1s");
+			if (GL_ISAVAILABLE(glMultiTexCoord1s))
 			nfglMultiTexCoord1s(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLshort32 s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SARB:
+			D(funcname = "glMultiTexCoord1sARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1sARB))
 			nfglMultiTexCoord1sARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLshort32 s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SV:
+			D(funcname = "glMultiTexCoord1sv");
+			if (GL_ISAVAILABLE(glMultiTexCoord1sv))
 			nfglMultiTexCoord1sv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SVARB:
+			D(funcname = "glMultiTexCoord1svARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord1svARB))
 			nfglMultiTexCoord1svARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1XOES:
+			D(funcname = "glMultiTexCoord1xOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord1xOES))
 			nfglMultiTexCoord1xOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1)  /* GLfixed s */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1XVOES:
+			D(funcname = "glMultiTexCoord1xvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord1xvOES))
 			nfglMultiTexCoord1xvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2BOES:
+			D(funcname = "glMultiTexCoord2bOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord2bOES))
 			nfglMultiTexCoord2bOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLbyte32 s */
 				getStackedParameter(2)  /* GLbyte32 t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2BVOES:
+			D(funcname = "glMultiTexCoord2bvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord2bvOES))
 			nfglMultiTexCoord2bvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2D:
+			D(funcname = "glMultiTexCoord2d");
+			if (GL_ISAVAILABLE(glMultiTexCoord2d))
 			nfglMultiTexCoord2d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
 				getStackedDouble(3)  /* GLdouble t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DARB:
+			D(funcname = "glMultiTexCoord2dARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2dARB))
 			nfglMultiTexCoord2dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
 				getStackedDouble(3)  /* GLdouble t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DV:
+			D(funcname = "glMultiTexCoord2dv");
+			if (GL_ISAVAILABLE(glMultiTexCoord2dv))
 			nfglMultiTexCoord2dv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DVARB:
+			D(funcname = "glMultiTexCoord2dvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2dvARB))
 			nfglMultiTexCoord2dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2F:
+			D(funcname = "glMultiTexCoord2f");
+			if (GL_ISAVAILABLE(glMultiTexCoord2f))
 			nfglMultiTexCoord2f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
 				getStackedFloat(2)  /* GLfloat t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FARB:
+			D(funcname = "glMultiTexCoord2fARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2fARB))
 			nfglMultiTexCoord2fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
 				getStackedFloat(2)  /* GLfloat t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FV:
+			D(funcname = "glMultiTexCoord2fv");
+			if (GL_ISAVAILABLE(glMultiTexCoord2fv))
 			nfglMultiTexCoord2fv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FVARB:
+			D(funcname = "glMultiTexCoord2fvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2fvARB))
 			nfglMultiTexCoord2fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2HNV:
+			D(funcname = "glMultiTexCoord2hNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord2hNV))
 			nfglMultiTexCoord2hNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLhalfNV32 s */
 				getStackedParameter(2)  /* GLhalfNV32 t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2HVNV:
+			D(funcname = "glMultiTexCoord2hvNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord2hvNV))
 			nfglMultiTexCoord2hvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2I:
+			D(funcname = "glMultiTexCoord2i");
+			if (GL_ISAVAILABLE(glMultiTexCoord2i))
 			nfglMultiTexCoord2i(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
 				getStackedParameter(2)  /* GLint t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IARB:
+			D(funcname = "glMultiTexCoord2iARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2iARB))
 			nfglMultiTexCoord2iARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
 				getStackedParameter(2)  /* GLint t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IV:
+			D(funcname = "glMultiTexCoord2iv");
+			if (GL_ISAVAILABLE(glMultiTexCoord2iv))
 			nfglMultiTexCoord2iv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IVARB:
+			D(funcname = "glMultiTexCoord2ivARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2ivARB))
 			nfglMultiTexCoord2ivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2S:
+			D(funcname = "glMultiTexCoord2s");
+			if (GL_ISAVAILABLE(glMultiTexCoord2s))
 			nfglMultiTexCoord2s(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
 				getStackedParameter(2)  /* GLshort32 t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SARB:
+			D(funcname = "glMultiTexCoord2sARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2sARB))
 			nfglMultiTexCoord2sARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
 				getStackedParameter(2)  /* GLshort32 t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SV:
+			D(funcname = "glMultiTexCoord2sv");
+			if (GL_ISAVAILABLE(glMultiTexCoord2sv))
 			nfglMultiTexCoord2sv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SVARB:
+			D(funcname = "glMultiTexCoord2svARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord2svARB))
 			nfglMultiTexCoord2svARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2XOES:
+			D(funcname = "glMultiTexCoord2xOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord2xOES))
 			nfglMultiTexCoord2xOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLfixed s */
 				getStackedParameter(2)  /* GLfixed t */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2XVOES:
+			D(funcname = "glMultiTexCoord2xvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord2xvOES))
 			nfglMultiTexCoord2xvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3BOES:
+			D(funcname = "glMultiTexCoord3bOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord3bOES))
 			nfglMultiTexCoord3bOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLbyte32 s */
@@ -8807,11 +11637,15 @@
 				getStackedParameter(3)  /* GLbyte32 r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3BVOES:
+			D(funcname = "glMultiTexCoord3bvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord3bvOES))
 			nfglMultiTexCoord3bvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3D:
+			D(funcname = "glMultiTexCoord3d");
+			if (GL_ISAVAILABLE(glMultiTexCoord3d))
 			nfglMultiTexCoord3d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
@@ -8819,6 +11653,8 @@
 				getStackedDouble(5)  /* GLdouble r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DARB:
+			D(funcname = "glMultiTexCoord3dARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3dARB))
 			nfglMultiTexCoord3dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
@@ -8826,16 +11662,22 @@
 				getStackedDouble(5)  /* GLdouble r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DV:
+			D(funcname = "glMultiTexCoord3dv");
+			if (GL_ISAVAILABLE(glMultiTexCoord3dv))
 			nfglMultiTexCoord3dv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DVARB:
+			D(funcname = "glMultiTexCoord3dvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3dvARB))
 			nfglMultiTexCoord3dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3F:
+			D(funcname = "glMultiTexCoord3f");
+			if (GL_ISAVAILABLE(glMultiTexCoord3f))
 			nfglMultiTexCoord3f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
@@ -8843,6 +11685,8 @@
 				getStackedFloat(3)  /* GLfloat r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FARB:
+			D(funcname = "glMultiTexCoord3fARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3fARB))
 			nfglMultiTexCoord3fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
@@ -8850,16 +11694,22 @@
 				getStackedFloat(3)  /* GLfloat r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FV:
+			D(funcname = "glMultiTexCoord3fv");
+			if (GL_ISAVAILABLE(glMultiTexCoord3fv))
 			nfglMultiTexCoord3fv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FVARB:
+			D(funcname = "glMultiTexCoord3fvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3fvARB))
 			nfglMultiTexCoord3fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3HNV:
+			D(funcname = "glMultiTexCoord3hNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord3hNV))
 			nfglMultiTexCoord3hNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLhalfNV32 s */
@@ -8867,11 +11717,15 @@
 				getStackedParameter(3)  /* GLhalfNV32 r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3HVNV:
+			D(funcname = "glMultiTexCoord3hvNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord3hvNV))
 			nfglMultiTexCoord3hvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3I:
+			D(funcname = "glMultiTexCoord3i");
+			if (GL_ISAVAILABLE(glMultiTexCoord3i))
 			nfglMultiTexCoord3i(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
@@ -8879,6 +11733,8 @@
 				getStackedParameter(3)  /* GLint r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IARB:
+			D(funcname = "glMultiTexCoord3iARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3iARB))
 			nfglMultiTexCoord3iARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
@@ -8886,16 +11742,22 @@
 				getStackedParameter(3)  /* GLint r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IV:
+			D(funcname = "glMultiTexCoord3iv");
+			if (GL_ISAVAILABLE(glMultiTexCoord3iv))
 			nfglMultiTexCoord3iv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IVARB:
+			D(funcname = "glMultiTexCoord3ivARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3ivARB))
 			nfglMultiTexCoord3ivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3S:
+			D(funcname = "glMultiTexCoord3s");
+			if (GL_ISAVAILABLE(glMultiTexCoord3s))
 			nfglMultiTexCoord3s(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
@@ -8903,6 +11765,8 @@
 				getStackedParameter(3)  /* GLshort32 r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SARB:
+			D(funcname = "glMultiTexCoord3sARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3sARB))
 			nfglMultiTexCoord3sARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
@@ -8910,16 +11774,22 @@
 				getStackedParameter(3)  /* GLshort32 r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SV:
+			D(funcname = "glMultiTexCoord3sv");
+			if (GL_ISAVAILABLE(glMultiTexCoord3sv))
 			nfglMultiTexCoord3sv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SVARB:
+			D(funcname = "glMultiTexCoord3svARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord3svARB))
 			nfglMultiTexCoord3svARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3XOES:
+			D(funcname = "glMultiTexCoord3xOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord3xOES))
 			nfglMultiTexCoord3xOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLfixed s */
@@ -8927,11 +11797,15 @@
 				getStackedParameter(3)  /* GLfixed r */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3XVOES:
+			D(funcname = "glMultiTexCoord3xvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord3xvOES))
 			nfglMultiTexCoord3xvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4BOES:
+			D(funcname = "glMultiTexCoord4bOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord4bOES))
 			nfglMultiTexCoord4bOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLbyte32 s */
@@ -8940,11 +11814,15 @@
 				getStackedParameter(4)  /* GLbyte32 q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4BVOES:
+			D(funcname = "glMultiTexCoord4bvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord4bvOES))
 			nfglMultiTexCoord4bvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4D:
+			D(funcname = "glMultiTexCoord4d");
+			if (GL_ISAVAILABLE(glMultiTexCoord4d))
 			nfglMultiTexCoord4d(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
@@ -8953,6 +11831,8 @@
 				getStackedDouble(7)  /* GLdouble q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DARB:
+			D(funcname = "glMultiTexCoord4dARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4dARB))
 			nfglMultiTexCoord4dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedDouble(1),  /* GLdouble s */
@@ -8961,16 +11841,22 @@
 				getStackedDouble(7)  /* GLdouble q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DV:
+			D(funcname = "glMultiTexCoord4dv");
+			if (GL_ISAVAILABLE(glMultiTexCoord4dv))
 			nfglMultiTexCoord4dv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DVARB:
+			D(funcname = "glMultiTexCoord4dvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4dvARB))
 			nfglMultiTexCoord4dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4F:
+			D(funcname = "glMultiTexCoord4f");
+			if (GL_ISAVAILABLE(glMultiTexCoord4f))
 			nfglMultiTexCoord4f(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
@@ -8979,6 +11865,8 @@
 				getStackedFloat(4)  /* GLfloat q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FARB:
+			D(funcname = "glMultiTexCoord4fARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4fARB))
 			nfglMultiTexCoord4fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLfloat s */
@@ -8987,16 +11875,22 @@
 				getStackedFloat(4)  /* GLfloat q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FV:
+			D(funcname = "glMultiTexCoord4fv");
+			if (GL_ISAVAILABLE(glMultiTexCoord4fv))
 			nfglMultiTexCoord4fv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FVARB:
+			D(funcname = "glMultiTexCoord4fvARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4fvARB))
 			nfglMultiTexCoord4fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4HNV:
+			D(funcname = "glMultiTexCoord4hNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord4hNV))
 			nfglMultiTexCoord4hNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLhalfNV32 s */
@@ -9005,11 +11899,15 @@
 				getStackedParameter(4)  /* GLhalfNV32 q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4HVNV:
+			D(funcname = "glMultiTexCoord4hvNV");
+			if (GL_ISAVAILABLE(glMultiTexCoord4hvNV))
 			nfglMultiTexCoord4hvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4I:
+			D(funcname = "glMultiTexCoord4i");
+			if (GL_ISAVAILABLE(glMultiTexCoord4i))
 			nfglMultiTexCoord4i(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
@@ -9018,6 +11916,8 @@
 				getStackedParameter(4)  /* GLint q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IARB:
+			D(funcname = "glMultiTexCoord4iARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4iARB))
 			nfglMultiTexCoord4iARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint s */
@@ -9026,16 +11926,22 @@
 				getStackedParameter(4)  /* GLint q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IV:
+			D(funcname = "glMultiTexCoord4iv");
+			if (GL_ISAVAILABLE(glMultiTexCoord4iv))
 			nfglMultiTexCoord4iv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IVARB:
+			D(funcname = "glMultiTexCoord4ivARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4ivARB))
 			nfglMultiTexCoord4ivARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4S:
+			D(funcname = "glMultiTexCoord4s");
+			if (GL_ISAVAILABLE(glMultiTexCoord4s))
 			nfglMultiTexCoord4s(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
@@ -9044,6 +11950,8 @@
 				getStackedParameter(4)  /* GLshort32 q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SARB:
+			D(funcname = "glMultiTexCoord4sARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4sARB))
 			nfglMultiTexCoord4sARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLshort32 s */
@@ -9052,16 +11960,22 @@
 				getStackedParameter(4)  /* GLshort32 q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SV:
+			D(funcname = "glMultiTexCoord4sv");
+			if (GL_ISAVAILABLE(glMultiTexCoord4sv))
 			nfglMultiTexCoord4sv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SVARB:
+			D(funcname = "glMultiTexCoord4svARB");
+			if (GL_ISAVAILABLE(glMultiTexCoord4svARB))
 			nfglMultiTexCoord4svARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4XOES:
+			D(funcname = "glMultiTexCoord4xOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord4xOES))
 			nfglMultiTexCoord4xOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLfixed s */
@@ -9070,59 +11984,79 @@
 				getStackedParameter(4)  /* GLfixed q */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4XVOES:
+			D(funcname = "glMultiTexCoord4xvOES");
+			if (GL_ISAVAILABLE(glMultiTexCoord4xvOES))
 			nfglMultiTexCoord4xvOES(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP1UI:
+			D(funcname = "glMultiTexCoordP1ui");
+			if (GL_ISAVAILABLE(glMultiTexCoordP1ui))
 			nfglMultiTexCoordP1ui(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP1UIV:
+			D(funcname = "glMultiTexCoordP1uiv");
+			if (GL_ISAVAILABLE(glMultiTexCoordP1uiv))
 			nfglMultiTexCoordP1uiv(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP2UI:
+			D(funcname = "glMultiTexCoordP2ui");
+			if (GL_ISAVAILABLE(glMultiTexCoordP2ui))
 			nfglMultiTexCoordP2ui(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP2UIV:
+			D(funcname = "glMultiTexCoordP2uiv");
+			if (GL_ISAVAILABLE(glMultiTexCoordP2uiv))
 			nfglMultiTexCoordP2uiv(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP3UI:
+			D(funcname = "glMultiTexCoordP3ui");
+			if (GL_ISAVAILABLE(glMultiTexCoordP3ui))
 			nfglMultiTexCoordP3ui(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP3UIV:
+			D(funcname = "glMultiTexCoordP3uiv");
+			if (GL_ISAVAILABLE(glMultiTexCoordP3uiv))
 			nfglMultiTexCoordP3uiv(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP4UI:
+			D(funcname = "glMultiTexCoordP4ui");
+			if (GL_ISAVAILABLE(glMultiTexCoordP4ui))
 			nfglMultiTexCoordP4ui(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP4UIV:
+			D(funcname = "glMultiTexCoordP4uiv");
+			if (GL_ISAVAILABLE(glMultiTexCoordP4uiv))
 			nfglMultiTexCoordP4uiv(
 				getStackedParameter(0),  /* GLenum texture */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDPOINTEREXT:
+			D(funcname = "glMultiTexCoordPointerEXT");
+			if (GL_ISAVAILABLE(glMultiTexCoordPointerEXT))
 			nfglMultiTexCoordPointerEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLint size */
@@ -9131,6 +12065,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLMULTITEXENVFEXT:
+			D(funcname = "glMultiTexEnvfEXT");
+			if (GL_ISAVAILABLE(glMultiTexEnvfEXT))
 			nfglMultiTexEnvfEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9138,6 +12074,8 @@
 				getStackedFloat(3)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLMULTITEXENVFVEXT:
+			D(funcname = "glMultiTexEnvfvEXT");
+			if (GL_ISAVAILABLE(glMultiTexEnvfvEXT))
 			nfglMultiTexEnvfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9145,6 +12083,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXENVIEXT:
+			D(funcname = "glMultiTexEnviEXT");
+			if (GL_ISAVAILABLE(glMultiTexEnviEXT))
 			nfglMultiTexEnviEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9152,6 +12092,8 @@
 				getStackedParameter(3)  /* GLint param */);
 			break;
 		case NFOSMESA_GLMULTITEXENVIVEXT:
+			D(funcname = "glMultiTexEnvivEXT");
+			if (GL_ISAVAILABLE(glMultiTexEnvivEXT))
 			nfglMultiTexEnvivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9159,6 +12101,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENDEXT:
+			D(funcname = "glMultiTexGendEXT");
+			if (GL_ISAVAILABLE(glMultiTexGendEXT))
 			nfglMultiTexGendEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9166,6 +12110,8 @@
 				getStackedDouble(3)  /* GLdouble param */);
 			break;
 		case NFOSMESA_GLMULTITEXGENDVEXT:
+			D(funcname = "glMultiTexGendvEXT");
+			if (GL_ISAVAILABLE(glMultiTexGendvEXT))
 			nfglMultiTexGendvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9173,6 +12119,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENFEXT:
+			D(funcname = "glMultiTexGenfEXT");
+			if (GL_ISAVAILABLE(glMultiTexGenfEXT))
 			nfglMultiTexGenfEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9180,6 +12128,8 @@
 				getStackedFloat(3)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLMULTITEXGENFVEXT:
+			D(funcname = "glMultiTexGenfvEXT");
+			if (GL_ISAVAILABLE(glMultiTexGenfvEXT))
 			nfglMultiTexGenfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9187,6 +12137,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXGENIEXT:
+			D(funcname = "glMultiTexGeniEXT");
+			if (GL_ISAVAILABLE(glMultiTexGeniEXT))
 			nfglMultiTexGeniEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9194,6 +12146,8 @@
 				getStackedParameter(3)  /* GLint param */);
 			break;
 		case NFOSMESA_GLMULTITEXGENIVEXT:
+			D(funcname = "glMultiTexGenivEXT");
+			if (GL_ISAVAILABLE(glMultiTexGenivEXT))
 			nfglMultiTexGenivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum coord */
@@ -9201,6 +12155,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE1DEXT:
+			D(funcname = "glMultiTexImage1DEXT");
+			if (GL_ISAVAILABLE(glMultiTexImage1DEXT))
 			nfglMultiTexImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9213,6 +12169,8 @@
 				getStackedPointer(8, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE2DEXT:
+			D(funcname = "glMultiTexImage2DEXT");
+			if (GL_ISAVAILABLE(glMultiTexImage2DEXT))
 			nfglMultiTexImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9226,6 +12184,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE3DEXT:
+			D(funcname = "glMultiTexImage3DEXT");
+			if (GL_ISAVAILABLE(glMultiTexImage3DEXT))
 			nfglMultiTexImage3DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9240,6 +12200,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIIVEXT:
+			D(funcname = "glMultiTexParameterIivEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameterIivEXT))
 			nfglMultiTexParameterIivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9247,6 +12209,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIUIVEXT:
+			D(funcname = "glMultiTexParameterIuivEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameterIuivEXT))
 			nfglMultiTexParameterIuivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9254,6 +12218,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERFEXT:
+			D(funcname = "glMultiTexParameterfEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameterfEXT))
 			nfglMultiTexParameterfEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9261,6 +12227,8 @@
 				getStackedFloat(3)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERFVEXT:
+			D(funcname = "glMultiTexParameterfvEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameterfvEXT))
 			nfglMultiTexParameterfvEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9268,6 +12236,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIEXT:
+			D(funcname = "glMultiTexParameteriEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameteriEXT))
 			nfglMultiTexParameteriEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9275,6 +12245,8 @@
 				getStackedParameter(3)  /* GLint param */);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIVEXT:
+			D(funcname = "glMultiTexParameterivEXT");
+			if (GL_ISAVAILABLE(glMultiTexParameterivEXT))
 			nfglMultiTexParameterivEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9282,12 +12254,16 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMULTITEXRENDERBUFFEREXT:
+			D(funcname = "glMultiTexRenderbufferEXT");
+			if (GL_ISAVAILABLE(glMultiTexRenderbufferEXT))
 			nfglMultiTexRenderbufferEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
 				getStackedParameter(2)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE1DEXT:
+			D(funcname = "glMultiTexSubImage1DEXT");
+			if (GL_ISAVAILABLE(glMultiTexSubImage1DEXT))
 			nfglMultiTexSubImage1DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9299,6 +12275,8 @@
 				getStackedPointer(7, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE2DEXT:
+			D(funcname = "glMultiTexSubImage2DEXT");
+			if (GL_ISAVAILABLE(glMultiTexSubImage2DEXT))
 			nfglMultiTexSubImage2DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9312,6 +12290,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE3DEXT:
+			D(funcname = "glMultiTexSubImage3DEXT");
+			if (GL_ISAVAILABLE(glMultiTexSubImage3DEXT))
 			nfglMultiTexSubImage3DEXT(
 				getStackedParameter(0),  /* GLenum texunit */
 				getStackedParameter(1),  /* GLenum target */
@@ -9327,6 +12307,8 @@
 				getStackedPointer(11, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERDATA:
+			D(funcname = "glNamedBufferData");
+			if (GL_ISAVAILABLE(glNamedBufferData))
 			nfglNamedBufferData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -9334,6 +12316,8 @@
 				getStackedParameter(3)  /* GLenum usage */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERDATAEXT:
+			D(funcname = "glNamedBufferDataEXT");
+			if (GL_ISAVAILABLE(glNamedBufferDataEXT))
 			nfglNamedBufferDataEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -9341,6 +12325,8 @@
 				getStackedParameter(3)  /* GLenum usage */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERPAGECOMMITMENTARB:
+			D(funcname = "glNamedBufferPageCommitmentARB");
+			if (GL_ISAVAILABLE(glNamedBufferPageCommitmentARB))
 			nfglNamedBufferPageCommitmentARB(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -9348,6 +12334,8 @@
 				getStackedParameter(3)  /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERPAGECOMMITMENTEXT:
+			D(funcname = "glNamedBufferPageCommitmentEXT");
+			if (GL_ISAVAILABLE(glNamedBufferPageCommitmentEXT))
 			nfglNamedBufferPageCommitmentEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -9355,6 +12343,8 @@
 				getStackedParameter(3)  /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGE:
+			D(funcname = "glNamedBufferStorage");
+			if (GL_ISAVAILABLE(glNamedBufferStorage))
 			nfglNamedBufferStorage(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -9362,6 +12352,8 @@
 				getStackedParameter(3)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGEEXT:
+			D(funcname = "glNamedBufferStorageEXT");
+			if (GL_ISAVAILABLE(glNamedBufferStorageEXT))
 			nfglNamedBufferStorageEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLsizeiptr size */
@@ -9369,6 +12361,8 @@
 				getStackedParameter(3)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATA:
+			D(funcname = "glNamedBufferSubData");
+			if (GL_ISAVAILABLE(glNamedBufferSubData))
 			nfglNamedBufferSubData(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -9376,6 +12370,8 @@
 				getStackedPointer(3, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATAEXT:
+			D(funcname = "glNamedBufferSubDataEXT");
+			if (GL_ISAVAILABLE(glNamedBufferSubDataEXT))
 			nfglNamedBufferSubDataEXT(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLintptr offset */
@@ -9383,6 +12379,8 @@
 				getStackedPointer(3, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLNAMEDCOPYBUFFERSUBDATAEXT:
+			D(funcname = "glNamedCopyBufferSubDataEXT");
+			if (GL_ISAVAILABLE(glNamedCopyBufferSubDataEXT))
 			nfglNamedCopyBufferSubDataEXT(
 				getStackedParameter(0),  /* GLuint readBuffer */
 				getStackedParameter(1),  /* GLuint writeBuffer */
@@ -9391,34 +12389,46 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERDRAWBUFFER:
+			D(funcname = "glNamedFramebufferDrawBuffer");
+			if (GL_ISAVAILABLE(glNamedFramebufferDrawBuffer))
 			nfglNamedFramebufferDrawBuffer(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum buf */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERDRAWBUFFERS:
+			D(funcname = "glNamedFramebufferDrawBuffers");
+			if (GL_ISAVAILABLE(glNamedFramebufferDrawBuffers))
 			nfglNamedFramebufferDrawBuffers(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLenum *)  /* const GLenum *bufs */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERPARAMETERI:
+			D(funcname = "glNamedFramebufferParameteri");
+			if (GL_ISAVAILABLE(glNamedFramebufferParameteri))
 			nfglNamedFramebufferParameteri(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERPARAMETERIEXT:
+			D(funcname = "glNamedFramebufferParameteriEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferParameteriEXT))
 			nfglNamedFramebufferParameteriEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERREADBUFFER:
+			D(funcname = "glNamedFramebufferReadBuffer");
+			if (GL_ISAVAILABLE(glNamedFramebufferReadBuffer))
 			nfglNamedFramebufferReadBuffer(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1)  /* GLenum src */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERRENDERBUFFER:
+			D(funcname = "glNamedFramebufferRenderbuffer");
+			if (GL_ISAVAILABLE(glNamedFramebufferRenderbuffer))
 			nfglNamedFramebufferRenderbuffer(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9426,6 +12436,8 @@
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERRENDERBUFFEREXT:
+			D(funcname = "glNamedFramebufferRenderbufferEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferRenderbufferEXT))
 			nfglNamedFramebufferRenderbufferEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9433,6 +12445,8 @@
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV:
+			D(funcname = "glNamedFramebufferSampleLocationsfvNV");
+			if (GL_ISAVAILABLE(glNamedFramebufferSampleLocationsfvNV))
 			nfglNamedFramebufferSampleLocationsfvNV(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLuint start */
@@ -9440,6 +12454,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE:
+			D(funcname = "glNamedFramebufferTexture");
+			if (GL_ISAVAILABLE(glNamedFramebufferTexture))
 			nfglNamedFramebufferTexture(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9447,6 +12463,8 @@
 				getStackedParameter(3)  /* GLint level */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE1DEXT:
+			D(funcname = "glNamedFramebufferTexture1DEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTexture1DEXT))
 			nfglNamedFramebufferTexture1DEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9455,6 +12473,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE2DEXT:
+			D(funcname = "glNamedFramebufferTexture2DEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTexture2DEXT))
 			nfglNamedFramebufferTexture2DEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9463,6 +12483,8 @@
 				getStackedParameter(4)  /* GLint level */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE3DEXT:
+			D(funcname = "glNamedFramebufferTexture3DEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTexture3DEXT))
 			nfglNamedFramebufferTexture3DEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9472,6 +12494,8 @@
 				getStackedParameter(5)  /* GLint zoffset */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTUREEXT:
+			D(funcname = "glNamedFramebufferTextureEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTextureEXT))
 			nfglNamedFramebufferTextureEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9479,6 +12503,8 @@
 				getStackedParameter(3)  /* GLint level */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTUREFACEEXT:
+			D(funcname = "glNamedFramebufferTextureFaceEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTextureFaceEXT))
 			nfglNamedFramebufferTextureFaceEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9487,6 +12513,8 @@
 				getStackedParameter(4)  /* GLenum face */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURELAYER:
+			D(funcname = "glNamedFramebufferTextureLayer");
+			if (GL_ISAVAILABLE(glNamedFramebufferTextureLayer))
 			nfglNamedFramebufferTextureLayer(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9495,6 +12523,8 @@
 				getStackedParameter(4)  /* GLint layer */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURELAYEREXT:
+			D(funcname = "glNamedFramebufferTextureLayerEXT");
+			if (GL_ISAVAILABLE(glNamedFramebufferTextureLayerEXT))
 			nfglNamedFramebufferTextureLayerEXT(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum attachment */
@@ -9503,6 +12533,8 @@
 				getStackedParameter(4)  /* GLint layer */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4DEXT:
+			D(funcname = "glNamedProgramLocalParameter4dEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4dEXT))
 			nfglNamedProgramLocalParameter4dEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9513,6 +12545,8 @@
 				getStackedDouble(9)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4DVEXT:
+			D(funcname = "glNamedProgramLocalParameter4dvEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4dvEXT))
 			nfglNamedProgramLocalParameter4dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9520,6 +12554,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4FEXT:
+			D(funcname = "glNamedProgramLocalParameter4fEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4fEXT))
 			nfglNamedProgramLocalParameter4fEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9530,6 +12566,8 @@
 				getStackedFloat(6)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4FVEXT:
+			D(funcname = "glNamedProgramLocalParameter4fvEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4fvEXT))
 			nfglNamedProgramLocalParameter4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9537,6 +12575,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4IEXT:
+			D(funcname = "glNamedProgramLocalParameterI4iEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4iEXT))
 			nfglNamedProgramLocalParameterI4iEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9547,6 +12587,8 @@
 				getStackedParameter(6)  /* GLint w */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4IVEXT:
+			D(funcname = "glNamedProgramLocalParameterI4ivEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4ivEXT))
 			nfglNamedProgramLocalParameterI4ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9554,6 +12596,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4UIEXT:
+			D(funcname = "glNamedProgramLocalParameterI4uiEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4uiEXT))
 			nfglNamedProgramLocalParameterI4uiEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9564,6 +12608,8 @@
 				getStackedParameter(6)  /* GLuint w */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4UIVEXT:
+			D(funcname = "glNamedProgramLocalParameterI4uivEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4uivEXT))
 			nfglNamedProgramLocalParameterI4uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9571,6 +12617,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT:
+			D(funcname = "glNamedProgramLocalParameters4fvEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParameters4fvEXT))
 			nfglNamedProgramLocalParameters4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9579,6 +12627,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT:
+			D(funcname = "glNamedProgramLocalParametersI4ivEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParametersI4ivEXT))
 			nfglNamedProgramLocalParametersI4ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9587,6 +12637,8 @@
 				getStackedPointer(4, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT:
+			D(funcname = "glNamedProgramLocalParametersI4uivEXT");
+			if (GL_ISAVAILABLE(glNamedProgramLocalParametersI4uivEXT))
 			nfglNamedProgramLocalParametersI4uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9595,6 +12647,8 @@
 				getStackedPointer(4, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMSTRINGEXT:
+			D(funcname = "glNamedProgramStringEXT");
+			if (GL_ISAVAILABLE(glNamedProgramStringEXT))
 			nfglNamedProgramStringEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum target */
@@ -9603,6 +12657,8 @@
 				getStackedPointer(4, const void *)  /* const void *string */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGE:
+			D(funcname = "glNamedRenderbufferStorage");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorage))
 			nfglNamedRenderbufferStorage(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -9610,6 +12666,8 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEEXT:
+			D(funcname = "glNamedRenderbufferStorageEXT");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorageEXT))
 			nfglNamedRenderbufferStorageEXT(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -9617,6 +12675,8 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLE:
+			D(funcname = "glNamedRenderbufferStorageMultisample");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisample))
 			nfglNamedRenderbufferStorageMultisample(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -9625,6 +12685,8 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXT:
+			D(funcname = "glNamedRenderbufferStorageMultisampleCoverageEXT");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleCoverageEXT))
 			nfglNamedRenderbufferStorageMultisampleCoverageEXT(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLsizei coverageSamples */
@@ -9634,6 +12696,8 @@
 				getStackedParameter(5)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEEXT:
+			D(funcname = "glNamedRenderbufferStorageMultisampleEXT");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleEXT))
 			nfglNamedRenderbufferStorageMultisampleEXT(
 				getStackedParameter(0),  /* GLuint renderbuffer */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -9642,6 +12706,8 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLNAMEDSTRINGARB:
+			D(funcname = "glNamedStringARB");
+			if (GL_ISAVAILABLE(glNamedStringARB))
 			nfglNamedStringARB(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLint namelen */
@@ -9650,48 +12716,66 @@
 				getStackedPointer(4, const GLchar *)  /* const GLchar *string */);
 			break;
 		case NFOSMESA_GLNEWLIST:
+			D(funcname = "glNewList");
+			if (GL_ISAVAILABLE(glNewList))
 			nfglNewList(
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLNEWOBJECTBUFFERATI:
+			D(funcname = "glNewObjectBufferATI");
+			if (GL_ISAVAILABLE(glNewObjectBufferATI))
 			ret = nfglNewObjectBufferATI(
 				getStackedParameter(0),  /* GLsizei size */
 				getStackedPointer(1, const void *),  /* const void *pointer */
 				getStackedParameter(2)  /* GLenum usage */);
 			break;
 		case NFOSMESA_GLNEWTRACEMESA:
+			D(funcname = "glNewTraceMESA");
+			if (GL_ISAVAILABLE(glNewTraceMESA))
 			nfglNewTraceMESA(
 				getStackedParameter(0),  /* GLbitfield mask */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *traceName */);
 			break;
 		case NFOSMESA_GLNORMAL3B:
+			D(funcname = "glNormal3b");
+			if (GL_ISAVAILABLE(glNormal3b))
 			nfglNormal3b(
 				getStackedParameter(0),  /* GLbyte32 nx */
 				getStackedParameter(1),  /* GLbyte32 ny */
 				getStackedParameter(2)  /* GLbyte32 nz */);
 			break;
 		case NFOSMESA_GLNORMAL3BV:
+			D(funcname = "glNormal3bv");
+			if (GL_ISAVAILABLE(glNormal3bv))
 			nfglNormal3bv(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLNORMAL3D:
+			D(funcname = "glNormal3d");
+			if (GL_ISAVAILABLE(glNormal3d))
 			nfglNormal3d(
 				getStackedDouble(0),  /* GLdouble nx */
 				getStackedDouble(2),  /* GLdouble ny */
 				getStackedDouble(4)  /* GLdouble nz */);
 			break;
 		case NFOSMESA_GLNORMAL3DV:
+			D(funcname = "glNormal3dv");
+			if (GL_ISAVAILABLE(glNormal3dv))
 			nfglNormal3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLNORMAL3F:
+			D(funcname = "glNormal3f");
+			if (GL_ISAVAILABLE(glNormal3f))
 			nfglNormal3f(
 				getStackedFloat(0),  /* GLfloat nx */
 				getStackedFloat(1),  /* GLfloat ny */
 				getStackedFloat(2)  /* GLfloat nz */);
 			break;
 		case NFOSMESA_GLNORMAL3FVERTEX3FSUN:
+			D(funcname = "glNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glNormal3fVertex3fSUN))
 			nfglNormal3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat nx */
 				getStackedFloat(1),  /* GLfloat ny */
@@ -9701,76 +12785,106 @@
 				getStackedFloat(5)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glNormal3fVertex3fvSUN))
 			nfglNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *n */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLNORMAL3FV:
+			D(funcname = "glNormal3fv");
+			if (GL_ISAVAILABLE(glNormal3fv))
 			nfglNormal3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLNORMAL3HNV:
+			D(funcname = "glNormal3hNV");
+			if (GL_ISAVAILABLE(glNormal3hNV))
 			nfglNormal3hNV(
 				getStackedParameter(0),  /* GLhalfNV32 nx */
 				getStackedParameter(1),  /* GLhalfNV32 ny */
 				getStackedParameter(2)  /* GLhalfNV32 nz */);
 			break;
 		case NFOSMESA_GLNORMAL3HVNV:
+			D(funcname = "glNormal3hvNV");
+			if (GL_ISAVAILABLE(glNormal3hvNV))
 			nfglNormal3hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLNORMAL3I:
+			D(funcname = "glNormal3i");
+			if (GL_ISAVAILABLE(glNormal3i))
 			nfglNormal3i(
 				getStackedParameter(0),  /* GLint nx */
 				getStackedParameter(1),  /* GLint ny */
 				getStackedParameter(2)  /* GLint nz */);
 			break;
 		case NFOSMESA_GLNORMAL3IV:
+			D(funcname = "glNormal3iv");
+			if (GL_ISAVAILABLE(glNormal3iv))
 			nfglNormal3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLNORMAL3S:
+			D(funcname = "glNormal3s");
+			if (GL_ISAVAILABLE(glNormal3s))
 			nfglNormal3s(
 				getStackedParameter(0),  /* GLshort32 nx */
 				getStackedParameter(1),  /* GLshort32 ny */
 				getStackedParameter(2)  /* GLshort32 nz */);
 			break;
 		case NFOSMESA_GLNORMAL3SV:
+			D(funcname = "glNormal3sv");
+			if (GL_ISAVAILABLE(glNormal3sv))
 			nfglNormal3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLNORMAL3XOES:
+			D(funcname = "glNormal3xOES");
+			if (GL_ISAVAILABLE(glNormal3xOES))
 			nfglNormal3xOES(
 				getStackedParameter(0),  /* GLfixed nx */
 				getStackedParameter(1),  /* GLfixed ny */
 				getStackedParameter(2)  /* GLfixed nz */);
 			break;
 		case NFOSMESA_GLNORMAL3XVOES:
+			D(funcname = "glNormal3xvOES");
+			if (GL_ISAVAILABLE(glNormal3xvOES))
 			nfglNormal3xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLNORMALFORMATNV:
+			D(funcname = "glNormalFormatNV");
+			if (GL_ISAVAILABLE(glNormalFormatNV))
 			nfglNormalFormatNV(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLNORMALP3UI:
+			D(funcname = "glNormalP3ui");
+			if (GL_ISAVAILABLE(glNormalP3ui))
 			nfglNormalP3ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLNORMALP3UIV:
+			D(funcname = "glNormalP3uiv");
+			if (GL_ISAVAILABLE(glNormalP3uiv))
 			nfglNormalP3uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLNORMALPOINTER:
+			D(funcname = "glNormalPointer");
+			if (GL_ISAVAILABLE(glNormalPointer))
 			nfglNormalPointer(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLNORMALPOINTEREXT:
+			D(funcname = "glNormalPointerEXT");
+			if (GL_ISAVAILABLE(glNormalPointerEXT))
 			nfglNormalPointerEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
@@ -9778,6 +12892,8 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLNORMALPOINTERLISTIBM:
+			D(funcname = "glNormalPointerListIBM");
+			if (GL_ISAVAILABLE(glNormalPointerListIBM))
 			nfglNormalPointerListIBM(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLint stride */
@@ -9785,11 +12901,15 @@
 				getStackedParameter(3)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLNORMALPOINTERVINTEL:
+			D(funcname = "glNormalPointervINTEL");
+			if (GL_ISAVAILABLE(glNormalPointervINTEL))
 			nfglNormalPointervINTEL(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const void * *)  /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3BATI:
+			D(funcname = "glNormalStream3bATI");
+			if (GL_ISAVAILABLE(glNormalStream3bATI))
 			nfglNormalStream3bATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLbyte32 nx */
@@ -9797,11 +12917,15 @@
 				getStackedParameter(3)  /* GLbyte32 nz */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3BVATI:
+			D(funcname = "glNormalStream3bvATI");
+			if (GL_ISAVAILABLE(glNormalStream3bvATI))
 			nfglNormalStream3bvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3DATI:
+			D(funcname = "glNormalStream3dATI");
+			if (GL_ISAVAILABLE(glNormalStream3dATI))
 			nfglNormalStream3dATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedDouble(1),  /* GLdouble nx */
@@ -9809,11 +12933,15 @@
 				getStackedDouble(5)  /* GLdouble nz */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3DVATI:
+			D(funcname = "glNormalStream3dvATI");
+			if (GL_ISAVAILABLE(glNormalStream3dvATI))
 			nfglNormalStream3dvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3FATI:
+			D(funcname = "glNormalStream3fATI");
+			if (GL_ISAVAILABLE(glNormalStream3fATI))
 			nfglNormalStream3fATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedFloat(1),  /* GLfloat nx */
@@ -9821,11 +12949,15 @@
 				getStackedFloat(3)  /* GLfloat nz */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3FVATI:
+			D(funcname = "glNormalStream3fvATI");
+			if (GL_ISAVAILABLE(glNormalStream3fvATI))
 			nfglNormalStream3fvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3IATI:
+			D(funcname = "glNormalStream3iATI");
+			if (GL_ISAVAILABLE(glNormalStream3iATI))
 			nfglNormalStream3iATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLint nx */
@@ -9833,11 +12965,15 @@
 				getStackedParameter(3)  /* GLint nz */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3IVATI:
+			D(funcname = "glNormalStream3ivATI");
+			if (GL_ISAVAILABLE(glNormalStream3ivATI))
 			nfglNormalStream3ivATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLint *)  /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3SATI:
+			D(funcname = "glNormalStream3sATI");
+			if (GL_ISAVAILABLE(glNormalStream3sATI))
 			nfglNormalStream3sATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLshort32 nx */
@@ -9845,11 +12981,15 @@
 				getStackedParameter(3)  /* GLshort32 nz */);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3SVATI:
+			D(funcname = "glNormalStream3svATI");
+			if (GL_ISAVAILABLE(glNormalStream3svATI))
 			nfglNormalStream3svATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLOBJECTLABEL:
+			D(funcname = "glObjectLabel");
+			if (GL_ISAVAILABLE(glObjectLabel))
 			nfglObjectLabel(
 				getStackedParameter(0),  /* GLenum identifier */
 				getStackedParameter(1),  /* GLuint name */
@@ -9857,24 +12997,32 @@
 				getStackedPointer(3, const GLchar *)  /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLOBJECTPTRLABEL:
+			D(funcname = "glObjectPtrLabel");
+			if (GL_ISAVAILABLE(glObjectPtrLabel))
 			nfglObjectPtrLabel(
 				getStackedPointer(0, const void *),  /* const void *ptr */
 				getStackedParameter(1),  /* GLsizei length */
 				getStackedPointer(2, const GLchar *)  /* const GLchar *label */);
 			break;
 		case NFOSMESA_GLOBJECTPURGEABLEAPPLE:
+			D(funcname = "glObjectPurgeableAPPLE");
+			if (GL_ISAVAILABLE(glObjectPurgeableAPPLE))
 			ret = nfglObjectPurgeableAPPLE(
 				getStackedParameter(0),  /* GLenum objectType */
 				getStackedParameter(1),  /* GLuint name */
 				getStackedParameter(2)  /* GLenum option */);
 			break;
 		case NFOSMESA_GLOBJECTUNPURGEABLEAPPLE:
+			D(funcname = "glObjectUnpurgeableAPPLE");
+			if (GL_ISAVAILABLE(glObjectUnpurgeableAPPLE))
 			ret = nfglObjectUnpurgeableAPPLE(
 				getStackedParameter(0),  /* GLenum objectType */
 				getStackedParameter(1),  /* GLuint name */
 				getStackedParameter(2)  /* GLenum option */);
 			break;
 		case NFOSMESA_GLORTHO:
+			D(funcname = "glOrtho");
+			if (GL_ISAVAILABLE(glOrtho))
 			nfglOrtho(
 				getStackedDouble(0),  /* GLdouble left */
 				getStackedDouble(2),  /* GLdouble right */
@@ -9884,6 +13032,8 @@
 				getStackedDouble(10)  /* GLdouble zFar */);
 			break;
 		case NFOSMESA_GLORTHOFOES:
+			D(funcname = "glOrthofOES");
+			if (GL_ISAVAILABLE(glOrthofOES))
 			nfglOrthofOES(
 				getStackedFloat(0),  /* GLfloat l */
 				getStackedFloat(1),  /* GLfloat r */
@@ -9893,6 +13043,8 @@
 				getStackedFloat(5)  /* GLfloat f */);
 			break;
 		case NFOSMESA_GLORTHOXOES:
+			D(funcname = "glOrthoxOES");
+			if (GL_ISAVAILABLE(glOrthoxOES))
 			nfglOrthoxOES(
 				getStackedParameter(0),  /* GLfixed l */
 				getStackedParameter(1),  /* GLfixed r */
@@ -9902,40 +13054,56 @@
 				getStackedParameter(5)  /* GLfixed f */);
 			break;
 		case NFOSMESA_GLPNTRIANGLESFATI:
+			D(funcname = "glPNTrianglesfATI");
+			if (GL_ISAVAILABLE(glPNTrianglesfATI))
 			nfglPNTrianglesfATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPNTRIANGLESIATI:
+			D(funcname = "glPNTrianglesiATI");
+			if (GL_ISAVAILABLE(glPNTrianglesiATI))
 			nfglPNTrianglesiATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPASSTEXCOORDATI:
+			D(funcname = "glPassTexCoordATI");
+			if (GL_ISAVAILABLE(glPassTexCoordATI))
 			nfglPassTexCoordATI(
 				getStackedParameter(0),  /* GLuint dst */
 				getStackedParameter(1),  /* GLuint coord */
 				getStackedParameter(2)  /* GLenum swizzle */);
 			break;
 		case NFOSMESA_GLPASSTHROUGH:
+			D(funcname = "glPassThrough");
+			if (GL_ISAVAILABLE(glPassThrough))
 			nfglPassThrough(
 				getStackedFloat(0)  /* GLfloat token */);
 			break;
 		case NFOSMESA_GLPASSTHROUGHXOES:
+			D(funcname = "glPassThroughxOES");
+			if (GL_ISAVAILABLE(glPassThroughxOES))
 			nfglPassThroughxOES(
 				getStackedParameter(0)  /* GLfixed token */);
 			break;
 		case NFOSMESA_GLPATCHPARAMETERFV:
+			D(funcname = "glPatchParameterfv");
+			if (GL_ISAVAILABLE(glPatchParameterfv))
 			nfglPatchParameterfv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLPATCHPARAMETERI:
+			D(funcname = "glPatchParameteri");
+			if (GL_ISAVAILABLE(glPatchParameteri))
 			nfglPatchParameteri(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint value */);
 			break;
 		case NFOSMESA_GLPATHCOLORGENNV:
+			D(funcname = "glPathColorGenNV");
+			if (GL_ISAVAILABLE(glPathColorGenNV))
 			nfglPathColorGenNV(
 				getStackedParameter(0),  /* GLenum color */
 				getStackedParameter(1),  /* GLenum genMode */
@@ -9943,6 +13111,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *coeffs */);
 			break;
 		case NFOSMESA_GLPATHCOMMANDSNV:
+			D(funcname = "glPathCommandsNV");
+			if (GL_ISAVAILABLE(glPathCommandsNV))
 			nfglPathCommandsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei numCommands */
@@ -9952,6 +13122,8 @@
 				getStackedPointer(5, const void *)  /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHCOORDSNV:
+			D(funcname = "glPathCoordsNV");
+			if (GL_ISAVAILABLE(glPathCoordsNV))
 			nfglPathCoordsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei numCoords */
@@ -9959,20 +13131,28 @@
 				getStackedPointer(3, const void *)  /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHCOVERDEPTHFUNCNV:
+			D(funcname = "glPathCoverDepthFuncNV");
+			if (GL_ISAVAILABLE(glPathCoverDepthFuncNV))
 			nfglPathCoverDepthFuncNV(
 				getStackedParameter(0)  /* GLenum func */);
 			break;
 		case NFOSMESA_GLPATHDASHARRAYNV:
+			D(funcname = "glPathDashArrayNV");
+			if (GL_ISAVAILABLE(glPathDashArrayNV))
 			nfglPathDashArrayNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei dashCount */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *dashArray */);
 			break;
 		case NFOSMESA_GLPATHFOGGENNV:
+			D(funcname = "glPathFogGenNV");
+			if (GL_ISAVAILABLE(glPathFogGenNV))
 			nfglPathFogGenNV(
 				getStackedParameter(0)  /* GLenum genMode */);
 			break;
 		case NFOSMESA_GLPATHGLYPHINDEXARRAYNV:
+			D(funcname = "glPathGlyphIndexArrayNV");
+			if (GL_ISAVAILABLE(glPathGlyphIndexArrayNV))
 			ret = nfglPathGlyphIndexArrayNV(
 				getStackedParameter(0),  /* GLuint firstPathName */
 				getStackedParameter(1),  /* GLenum fontTarget */
@@ -9984,6 +13164,8 @@
 				getStackedFloat(7)  /* GLfloat emScale */);
 			break;
 		case NFOSMESA_GLPATHGLYPHINDEXRANGENV:
+			D(funcname = "glPathGlyphIndexRangeNV");
+			if (GL_ISAVAILABLE(glPathGlyphIndexRangeNV))
 			ret = nfglPathGlyphIndexRangeNV(
 				getStackedParameter(0),  /* GLenum fontTarget */
 				getStackedPointer(1, const void *),  /* const void *fontName */
@@ -9993,6 +13175,8 @@
 				getStackedPointer(5, GLuint *)  /* GLuint *baseAndCount */);
 			break;
 		case NFOSMESA_GLPATHGLYPHRANGENV:
+			D(funcname = "glPathGlyphRangeNV");
+			if (GL_ISAVAILABLE(glPathGlyphRangeNV))
 			nfglPathGlyphRangeNV(
 				getStackedParameter(0),  /* GLuint firstPathName */
 				getStackedParameter(1),  /* GLenum fontTarget */
@@ -10005,6 +13189,8 @@
 				getStackedFloat(8)  /* GLfloat emScale */);
 			break;
 		case NFOSMESA_GLPATHGLYPHSNV:
+			D(funcname = "glPathGlyphsNV");
+			if (GL_ISAVAILABLE(glPathGlyphsNV))
 			nfglPathGlyphsNV(
 				getStackedParameter(0),  /* GLuint firstPathName */
 				getStackedParameter(1),  /* GLenum fontTarget */
@@ -10018,6 +13204,8 @@
 				getStackedFloat(9)  /* GLfloat emScale */);
 			break;
 		case NFOSMESA_GLPATHMEMORYGLYPHINDEXARRAYNV:
+			D(funcname = "glPathMemoryGlyphIndexArrayNV");
+			if (GL_ISAVAILABLE(glPathMemoryGlyphIndexArrayNV))
 			ret = nfglPathMemoryGlyphIndexArrayNV(
 				getStackedParameter(0),  /* GLuint firstPathName */
 				getStackedParameter(1),  /* GLenum fontTarget */
@@ -10030,41 +13218,55 @@
 				getStackedFloat(8)  /* GLfloat emScale */);
 			break;
 		case NFOSMESA_GLPATHPARAMETERFNV:
+			D(funcname = "glPathParameterfNV");
+			if (GL_ISAVAILABLE(glPathParameterfNV))
 			nfglPathParameterfNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat value */);
 			break;
 		case NFOSMESA_GLPATHPARAMETERFVNV:
+			D(funcname = "glPathParameterfvNV");
+			if (GL_ISAVAILABLE(glPathParameterfvNV))
 			nfglPathParameterfvNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPATHPARAMETERINV:
+			D(funcname = "glPathParameteriNV");
+			if (GL_ISAVAILABLE(glPathParameteriNV))
 			nfglPathParameteriNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint value */);
 			break;
 		case NFOSMESA_GLPATHPARAMETERIVNV:
+			D(funcname = "glPathParameterivNV");
+			if (GL_ISAVAILABLE(glPathParameterivNV))
 			nfglPathParameterivNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPATHSTENCILDEPTHOFFSETNV:
+			D(funcname = "glPathStencilDepthOffsetNV");
+			if (GL_ISAVAILABLE(glPathStencilDepthOffsetNV))
 			nfglPathStencilDepthOffsetNV(
 				getStackedFloat(0),  /* GLfloat factor */
 				getStackedFloat(1)  /* GLfloat units */);
 			break;
 		case NFOSMESA_GLPATHSTENCILFUNCNV:
+			D(funcname = "glPathStencilFuncNV");
+			if (GL_ISAVAILABLE(glPathStencilFuncNV))
 			nfglPathStencilFuncNV(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedParameter(1),  /* GLint ref */
 				getStackedParameter(2)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLPATHSTRINGNV:
+			D(funcname = "glPathStringNV");
+			if (GL_ISAVAILABLE(glPathStringNV))
 			nfglPathStringNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum format */
@@ -10072,6 +13274,8 @@
 				getStackedPointer(3, const void *)  /* const void *pathString */);
 			break;
 		case NFOSMESA_GLPATHSUBCOMMANDSNV:
+			D(funcname = "glPathSubCommandsNV");
+			if (GL_ISAVAILABLE(glPathSubCommandsNV))
 			nfglPathSubCommandsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei commandStart */
@@ -10083,6 +13287,8 @@
 				getStackedPointer(7, const void *)  /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHSUBCOORDSNV:
+			D(funcname = "glPathSubCoordsNV");
+			if (GL_ISAVAILABLE(glPathSubCoordsNV))
 			nfglPathSubCoordsNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei coordStart */
@@ -10091,6 +13297,8 @@
 				getStackedPointer(4, const void *)  /* const void *coords */);
 			break;
 		case NFOSMESA_GLPATHTEXGENNV:
+			D(funcname = "glPathTexGenNV");
+			if (GL_ISAVAILABLE(glPathTexGenNV))
 			nfglPathTexGenNV(
 				getStackedParameter(0),  /* GLenum texCoordSet */
 				getStackedParameter(1),  /* GLenum genMode */
@@ -10098,130 +13306,180 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *coeffs */);
 			break;
 		case NFOSMESA_GLPAUSETRANSFORMFEEDBACK:
+			D(funcname = "glPauseTransformFeedback");
+			if (GL_ISAVAILABLE(glPauseTransformFeedback))
 			nfglPauseTransformFeedback();
 			break;
 		case NFOSMESA_GLPAUSETRANSFORMFEEDBACKNV:
+			D(funcname = "glPauseTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glPauseTransformFeedbackNV))
 			nfglPauseTransformFeedbackNV();
 			break;
 		case NFOSMESA_GLPIXELDATARANGENV:
+			D(funcname = "glPixelDataRangeNV");
+			if (GL_ISAVAILABLE(glPixelDataRangeNV))
 			nfglPixelDataRangeNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei length */
 				getStackedPointer(2, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLPIXELMAPFV:
+			D(funcname = "glPixelMapfv");
+			if (GL_ISAVAILABLE(glPixelMapfv))
 			nfglPixelMapfv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei mapsize */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPUIV:
+			D(funcname = "glPixelMapuiv");
+			if (GL_ISAVAILABLE(glPixelMapuiv))
 			nfglPixelMapuiv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei mapsize */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPUSV:
+			D(funcname = "glPixelMapusv");
+			if (GL_ISAVAILABLE(glPixelMapusv))
 			nfglPixelMapusv(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLsizei mapsize */
 				getStackedPointer(2, const GLushort *)  /* const GLushort *values */);
 			break;
 		case NFOSMESA_GLPIXELMAPX:
+			D(funcname = "glPixelMapx");
+			if (GL_ISAVAILABLE(glPixelMapx))
 			nfglPixelMapx(
 				getStackedParameter(0),  /* GLenum map */
 				getStackedParameter(1),  /* GLint size */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *values */);
 			break;
 		case NFOSMESA_GLPIXELSTOREF:
+			D(funcname = "glPixelStoref");
+			if (GL_ISAVAILABLE(glPixelStoref))
 			nfglPixelStoref(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPIXELSTOREI:
+			D(funcname = "glPixelStorei");
+			if (GL_ISAVAILABLE(glPixelStorei))
 			nfglPixelStorei(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPIXELSTOREX:
+			D(funcname = "glPixelStorex");
+			if (GL_ISAVAILABLE(glPixelStorex))
 			nfglPixelStorex(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERFSGIS:
+			D(funcname = "glPixelTexGenParameterfSGIS");
+			if (GL_ISAVAILABLE(glPixelTexGenParameterfSGIS))
 			nfglPixelTexGenParameterfSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERFVSGIS:
+			D(funcname = "glPixelTexGenParameterfvSGIS");
+			if (GL_ISAVAILABLE(glPixelTexGenParameterfvSGIS))
 			nfglPixelTexGenParameterfvSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERISGIS:
+			D(funcname = "glPixelTexGenParameteriSGIS");
+			if (GL_ISAVAILABLE(glPixelTexGenParameteriSGIS))
 			nfglPixelTexGenParameteriSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERIVSGIS:
+			D(funcname = "glPixelTexGenParameterivSGIS");
+			if (GL_ISAVAILABLE(glPixelTexGenParameterivSGIS))
 			nfglPixelTexGenParameterivSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPIXELTEXGENSGIX:
+			D(funcname = "glPixelTexGenSGIX");
+			if (GL_ISAVAILABLE(glPixelTexGenSGIX))
 			nfglPixelTexGenSGIX(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERF:
+			D(funcname = "glPixelTransferf");
+			if (GL_ISAVAILABLE(glPixelTransferf))
 			nfglPixelTransferf(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERI:
+			D(funcname = "glPixelTransferi");
+			if (GL_ISAVAILABLE(glPixelTransferi))
 			nfglPixelTransferi(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERXOES:
+			D(funcname = "glPixelTransferxOES");
+			if (GL_ISAVAILABLE(glPixelTransferxOES))
 			nfglPixelTransferxOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERFEXT:
+			D(funcname = "glPixelTransformParameterfEXT");
+			if (GL_ISAVAILABLE(glPixelTransformParameterfEXT))
 			nfglPixelTransformParameterfEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERFVEXT:
+			D(funcname = "glPixelTransformParameterfvEXT");
+			if (GL_ISAVAILABLE(glPixelTransformParameterfvEXT))
 			nfglPixelTransformParameterfvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERIEXT:
+			D(funcname = "glPixelTransformParameteriEXT");
+			if (GL_ISAVAILABLE(glPixelTransformParameteriEXT))
 			nfglPixelTransformParameteriEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERIVEXT:
+			D(funcname = "glPixelTransformParameterivEXT");
+			if (GL_ISAVAILABLE(glPixelTransformParameterivEXT))
 			nfglPixelTransformParameterivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPIXELZOOM:
+			D(funcname = "glPixelZoom");
+			if (GL_ISAVAILABLE(glPixelZoom))
 			nfglPixelZoom(
 				getStackedFloat(0),  /* GLfloat xfactor */
 				getStackedFloat(1)  /* GLfloat yfactor */);
 			break;
 		case NFOSMESA_GLPIXELZOOMXOES:
+			D(funcname = "glPixelZoomxOES");
+			if (GL_ISAVAILABLE(glPixelZoomxOES))
 			nfglPixelZoomxOES(
 				getStackedParameter(0),  /* GLfixed xfactor */
 				getStackedParameter(1)  /* GLfixed yfactor */);
 			break;
 		case NFOSMESA_GLPOINTALONGPATHNV:
+			D(funcname = "glPointAlongPathNV");
+			if (GL_ISAVAILABLE(glPointAlongPathNV))
 			ret = nfglPointAlongPathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLsizei startSegment */
@@ -10233,141 +13491,203 @@
 				getStackedPointer(7, GLfloat *)  /* GLfloat *tangentY */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERF:
+			D(funcname = "glPointParameterf");
+			if (GL_ISAVAILABLE(glPointParameterf))
 			nfglPointParameterf(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFARB:
+			D(funcname = "glPointParameterfARB");
+			if (GL_ISAVAILABLE(glPointParameterfARB))
 			nfglPointParameterfARB(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFEXT:
+			D(funcname = "glPointParameterfEXT");
+			if (GL_ISAVAILABLE(glPointParameterfEXT))
 			nfglPointParameterfEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFSGIS:
+			D(funcname = "glPointParameterfSGIS");
+			if (GL_ISAVAILABLE(glPointParameterfSGIS))
 			nfglPointParameterfSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFV:
+			D(funcname = "glPointParameterfv");
+			if (GL_ISAVAILABLE(glPointParameterfv))
 			nfglPointParameterfv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVARB:
+			D(funcname = "glPointParameterfvARB");
+			if (GL_ISAVAILABLE(glPointParameterfvARB))
 			nfglPointParameterfvARB(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVEXT:
+			D(funcname = "glPointParameterfvEXT");
+			if (GL_ISAVAILABLE(glPointParameterfvEXT))
 			nfglPointParameterfvEXT(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVSGIS:
+			D(funcname = "glPointParameterfvSGIS");
+			if (GL_ISAVAILABLE(glPointParameterfvSGIS))
 			nfglPointParameterfvSGIS(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERI:
+			D(funcname = "glPointParameteri");
+			if (GL_ISAVAILABLE(glPointParameteri))
 			nfglPointParameteri(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERINV:
+			D(funcname = "glPointParameteriNV");
+			if (GL_ISAVAILABLE(glPointParameteriNV))
 			nfglPointParameteriNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERIV:
+			D(funcname = "glPointParameteriv");
+			if (GL_ISAVAILABLE(glPointParameteriv))
 			nfglPointParameteriv(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERIVNV:
+			D(funcname = "glPointParameterivNV");
+			if (GL_ISAVAILABLE(glPointParameterivNV))
 			nfglPointParameterivNV(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERXVOES:
+			D(funcname = "glPointParameterxvOES");
+			if (GL_ISAVAILABLE(glPointParameterxvOES))
 			nfglPointParameterxvOES(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLPOINTSIZE:
+			D(funcname = "glPointSize");
+			if (GL_ISAVAILABLE(glPointSize))
 			nfglPointSize(
 				getStackedFloat(0)  /* GLfloat size */);
 			break;
 		case NFOSMESA_GLPOINTSIZEPOINTERAPPLE:
+			D(funcname = "glPointSizePointerAPPLE");
+			if (GL_ISAVAILABLE(glPointSizePointerAPPLE))
 			nfglPointSizePointerAPPLE(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLPOINTSIZEXOES:
+			D(funcname = "glPointSizexOES");
+			if (GL_ISAVAILABLE(glPointSizexOES))
 			nfglPointSizexOES(
 				getStackedParameter(0)  /* GLfixed size */);
 			break;
 		case NFOSMESA_GLPOLLASYNCSGIX:
+			D(funcname = "glPollAsyncSGIX");
+			if (GL_ISAVAILABLE(glPollAsyncSGIX))
 			ret = nfglPollAsyncSGIX(
 				getStackedPointer(0, GLuint *)  /* GLuint *markerp */);
 			break;
 		case NFOSMESA_GLPOLLINSTRUMENTSSGIX:
+			D(funcname = "glPollInstrumentsSGIX");
+			if (GL_ISAVAILABLE(glPollInstrumentsSGIX))
 			ret = nfglPollInstrumentsSGIX(
 				getStackedPointer(0, GLint *)  /* GLint *marker_p */);
 			break;
 		case NFOSMESA_GLPOLYGONMODE:
+			D(funcname = "glPolygonMode");
+			if (GL_ISAVAILABLE(glPolygonMode))
 			nfglPolygonMode(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSET:
+			D(funcname = "glPolygonOffset");
+			if (GL_ISAVAILABLE(glPolygonOffset))
 			nfglPolygonOffset(
 				getStackedFloat(0),  /* GLfloat factor */
 				getStackedFloat(1)  /* GLfloat units */);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETCLAMPEXT:
+			D(funcname = "glPolygonOffsetClampEXT");
+			if (GL_ISAVAILABLE(glPolygonOffsetClampEXT))
 			nfglPolygonOffsetClampEXT(
 				getStackedFloat(0),  /* GLfloat factor */
 				getStackedFloat(1),  /* GLfloat units */
 				getStackedFloat(2)  /* GLfloat clamp */);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETEXT:
+			D(funcname = "glPolygonOffsetEXT");
+			if (GL_ISAVAILABLE(glPolygonOffsetEXT))
 			nfglPolygonOffsetEXT(
 				getStackedFloat(0),  /* GLfloat factor */
 				getStackedFloat(1)  /* GLfloat bias */);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETXOES:
+			D(funcname = "glPolygonOffsetxOES");
+			if (GL_ISAVAILABLE(glPolygonOffsetxOES))
 			nfglPolygonOffsetxOES(
 				getStackedParameter(0),  /* GLfixed factor */
 				getStackedParameter(1)  /* GLfixed units */);
 			break;
 		case NFOSMESA_GLPOLYGONSTIPPLE:
+			D(funcname = "glPolygonStipple");
+			if (GL_ISAVAILABLE(glPolygonStipple))
 			nfglPolygonStipple(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *mask */);
 			break;
 		case NFOSMESA_GLPOPATTRIB:
+			D(funcname = "glPopAttrib");
+			if (GL_ISAVAILABLE(glPopAttrib))
 			nfglPopAttrib();
 			break;
 		case NFOSMESA_GLPOPCLIENTATTRIB:
+			D(funcname = "glPopClientAttrib");
+			if (GL_ISAVAILABLE(glPopClientAttrib))
 			nfglPopClientAttrib();
 			break;
 		case NFOSMESA_GLPOPDEBUGGROUP:
+			D(funcname = "glPopDebugGroup");
+			if (GL_ISAVAILABLE(glPopDebugGroup))
 			nfglPopDebugGroup();
 			break;
 		case NFOSMESA_GLPOPGROUPMARKEREXT:
+			D(funcname = "glPopGroupMarkerEXT");
+			if (GL_ISAVAILABLE(glPopGroupMarkerEXT))
 			nfglPopGroupMarkerEXT();
 			break;
 		case NFOSMESA_GLPOPMATRIX:
+			D(funcname = "glPopMatrix");
+			if (GL_ISAVAILABLE(glPopMatrix))
 			nfglPopMatrix();
 			break;
 		case NFOSMESA_GLPOPNAME:
+			D(funcname = "glPopName");
+			if (GL_ISAVAILABLE(glPopName))
 			nfglPopName();
 			break;
 		case NFOSMESA_GLPRESENTFRAMEDUALFILLNV:
+			D(funcname = "glPresentFrameDualFillNV");
+			if (GL_ISAVAILABLE(glPresentFrameDualFillNV))
 			nfglPresentFrameDualFillNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter64(1),  /* GLuint64EXT minPresentTime */
@@ -10384,6 +13704,8 @@
 				getStackedParameter(13)  /* GLuint fill3 */);
 			break;
 		case NFOSMESA_GLPRESENTFRAMEKEYEDNV:
+			D(funcname = "glPresentFrameKeyedNV");
+			if (GL_ISAVAILABLE(glPresentFrameKeyedNV))
 			nfglPresentFrameKeyedNV(
 				getStackedParameter(0),  /* GLuint video_slot */
 				getStackedParameter64(1),  /* GLuint64EXT minPresentTime */
@@ -10398,35 +13720,49 @@
 				getStackedParameter(11)  /* GLuint key1 */);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTINDEX:
+			D(funcname = "glPrimitiveRestartIndex");
+			if (GL_ISAVAILABLE(glPrimitiveRestartIndex))
 			nfglPrimitiveRestartIndex(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTINDEXNV:
+			D(funcname = "glPrimitiveRestartIndexNV");
+			if (GL_ISAVAILABLE(glPrimitiveRestartIndexNV))
 			nfglPrimitiveRestartIndexNV(
 				getStackedParameter(0)  /* GLuint index */);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTNV:
+			D(funcname = "glPrimitiveRestartNV");
+			if (GL_ISAVAILABLE(glPrimitiveRestartNV))
 			nfglPrimitiveRestartNV();
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURES:
+			D(funcname = "glPrioritizeTextures");
+			if (GL_ISAVAILABLE(glPrioritizeTextures))
 			nfglPrioritizeTextures(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *textures */
 				getStackedPointer(2, const GLclampf *)  /* const GLclampf *priorities */);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESEXT:
+			D(funcname = "glPrioritizeTexturesEXT");
+			if (GL_ISAVAILABLE(glPrioritizeTexturesEXT))
 			nfglPrioritizeTexturesEXT(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *textures */
 				getStackedPointer(2, const GLclampf *)  /* const GLclampf *priorities */);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESXOES:
+			D(funcname = "glPrioritizeTexturesxOES");
+			if (GL_ISAVAILABLE(glPrioritizeTexturesxOES))
 			nfglPrioritizeTexturesxOES(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *textures */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *priorities */);
 			break;
 		case NFOSMESA_GLPROGRAMBINARY:
+			D(funcname = "glProgramBinary");
+			if (GL_ISAVAILABLE(glProgramBinary))
 			nfglProgramBinary(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum binaryFormat */
@@ -10434,6 +13770,8 @@
 				getStackedParameter(3)  /* GLsizei length */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIIVNV:
+			D(funcname = "glProgramBufferParametersIivNV");
+			if (GL_ISAVAILABLE(glProgramBufferParametersIivNV))
 			nfglProgramBufferParametersIivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint bindingIndex */
@@ -10442,6 +13780,8 @@
 				getStackedPointer(4, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIUIVNV:
+			D(funcname = "glProgramBufferParametersIuivNV");
+			if (GL_ISAVAILABLE(glProgramBufferParametersIuivNV))
 			nfglProgramBufferParametersIuivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint bindingIndex */
@@ -10450,6 +13790,8 @@
 				getStackedPointer(4, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSFVNV:
+			D(funcname = "glProgramBufferParametersfvNV");
+			if (GL_ISAVAILABLE(glProgramBufferParametersfvNV))
 			nfglProgramBufferParametersfvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint bindingIndex */
@@ -10459,6 +13801,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLPROGRAMCALLBACKMESA:
+			D(funcname = "glProgramCallbackMESA");
+			if (GL_ISAVAILABLE(glProgramCallbackMESA))
 			nfglProgramCallbackMESA(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedPointer(1, GLprogramcallbackMESA ),  /* GLprogramcallbackMESA callback */
@@ -10466,6 +13810,8 @@
 			break;
 #endif
 		case NFOSMESA_GLPROGRAMENVPARAMETER4DARB:
+			D(funcname = "glProgramEnvParameter4dARB");
+			if (GL_ISAVAILABLE(glProgramEnvParameter4dARB))
 			nfglProgramEnvParameter4dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10475,12 +13821,16 @@
 				getStackedDouble(8)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4DVARB:
+			D(funcname = "glProgramEnvParameter4dvARB");
+			if (GL_ISAVAILABLE(glProgramEnvParameter4dvARB))
 			nfglProgramEnvParameter4dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4FARB:
+			D(funcname = "glProgramEnvParameter4fARB");
+			if (GL_ISAVAILABLE(glProgramEnvParameter4fARB))
 			nfglProgramEnvParameter4fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10490,12 +13840,16 @@
 				getStackedFloat(5)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4FVARB:
+			D(funcname = "glProgramEnvParameter4fvARB");
+			if (GL_ISAVAILABLE(glProgramEnvParameter4fvARB))
 			nfglProgramEnvParameter4fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4INV:
+			D(funcname = "glProgramEnvParameterI4iNV");
+			if (GL_ISAVAILABLE(glProgramEnvParameterI4iNV))
 			nfglProgramEnvParameterI4iNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10505,12 +13859,16 @@
 				getStackedParameter(5)  /* GLint w */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4IVNV:
+			D(funcname = "glProgramEnvParameterI4ivNV");
+			if (GL_ISAVAILABLE(glProgramEnvParameterI4ivNV))
 			nfglProgramEnvParameterI4ivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4UINV:
+			D(funcname = "glProgramEnvParameterI4uiNV");
+			if (GL_ISAVAILABLE(glProgramEnvParameterI4uiNV))
 			nfglProgramEnvParameterI4uiNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10520,12 +13878,16 @@
 				getStackedParameter(5)  /* GLuint w */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4UIVNV:
+			D(funcname = "glProgramEnvParameterI4uivNV");
+			if (GL_ISAVAILABLE(glProgramEnvParameterI4uivNV))
 			nfglProgramEnvParameterI4uivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERS4FVEXT:
+			D(funcname = "glProgramEnvParameters4fvEXT");
+			if (GL_ISAVAILABLE(glProgramEnvParameters4fvEXT))
 			nfglProgramEnvParameters4fvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10533,6 +13895,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4IVNV:
+			D(funcname = "glProgramEnvParametersI4ivNV");
+			if (GL_ISAVAILABLE(glProgramEnvParametersI4ivNV))
 			nfglProgramEnvParametersI4ivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10540,6 +13904,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4UIVNV:
+			D(funcname = "glProgramEnvParametersI4uivNV");
+			if (GL_ISAVAILABLE(glProgramEnvParametersI4uivNV))
 			nfglProgramEnvParametersI4uivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10547,6 +13913,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4DARB:
+			D(funcname = "glProgramLocalParameter4dARB");
+			if (GL_ISAVAILABLE(glProgramLocalParameter4dARB))
 			nfglProgramLocalParameter4dARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10556,12 +13924,16 @@
 				getStackedDouble(8)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4DVARB:
+			D(funcname = "glProgramLocalParameter4dvARB");
+			if (GL_ISAVAILABLE(glProgramLocalParameter4dvARB))
 			nfglProgramLocalParameter4dvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4FARB:
+			D(funcname = "glProgramLocalParameter4fARB");
+			if (GL_ISAVAILABLE(glProgramLocalParameter4fARB))
 			nfglProgramLocalParameter4fARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10571,12 +13943,16 @@
 				getStackedFloat(5)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4FVARB:
+			D(funcname = "glProgramLocalParameter4fvARB");
+			if (GL_ISAVAILABLE(glProgramLocalParameter4fvARB))
 			nfglProgramLocalParameter4fvARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4INV:
+			D(funcname = "glProgramLocalParameterI4iNV");
+			if (GL_ISAVAILABLE(glProgramLocalParameterI4iNV))
 			nfglProgramLocalParameterI4iNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10586,12 +13962,16 @@
 				getStackedParameter(5)  /* GLint w */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4IVNV:
+			D(funcname = "glProgramLocalParameterI4ivNV");
+			if (GL_ISAVAILABLE(glProgramLocalParameterI4ivNV))
 			nfglProgramLocalParameterI4ivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4UINV:
+			D(funcname = "glProgramLocalParameterI4uiNV");
+			if (GL_ISAVAILABLE(glProgramLocalParameterI4uiNV))
 			nfglProgramLocalParameterI4uiNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10601,12 +13981,16 @@
 				getStackedParameter(5)  /* GLuint w */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4UIVNV:
+			D(funcname = "glProgramLocalParameterI4uivNV");
+			if (GL_ISAVAILABLE(glProgramLocalParameterI4uivNV))
 			nfglProgramLocalParameterI4uivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERS4FVEXT:
+			D(funcname = "glProgramLocalParameters4fvEXT");
+			if (GL_ISAVAILABLE(glProgramLocalParameters4fvEXT))
 			nfglProgramLocalParameters4fvEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10614,6 +13998,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4IVNV:
+			D(funcname = "glProgramLocalParametersI4ivNV");
+			if (GL_ISAVAILABLE(glProgramLocalParametersI4ivNV))
 			nfglProgramLocalParametersI4ivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10621,6 +14007,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4UIVNV:
+			D(funcname = "glProgramLocalParametersI4uivNV");
+			if (GL_ISAVAILABLE(glProgramLocalParametersI4uivNV))
 			nfglProgramLocalParametersI4uivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10628,6 +14016,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4DNV:
+			D(funcname = "glProgramNamedParameter4dNV");
+			if (GL_ISAVAILABLE(glProgramNamedParameter4dNV))
 			nfglProgramNamedParameter4dNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -10638,6 +14028,8 @@
 				getStackedDouble(9)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4DVNV:
+			D(funcname = "glProgramNamedParameter4dvNV");
+			if (GL_ISAVAILABLE(glProgramNamedParameter4dvNV))
 			nfglProgramNamedParameter4dvNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -10645,6 +14037,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4FNV:
+			D(funcname = "glProgramNamedParameter4fNV");
+			if (GL_ISAVAILABLE(glProgramNamedParameter4fNV))
 			nfglProgramNamedParameter4fNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -10655,6 +14049,8 @@
 				getStackedFloat(6)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4FVNV:
+			D(funcname = "glProgramNamedParameter4fvNV");
+			if (GL_ISAVAILABLE(glProgramNamedParameter4fvNV))
 			nfglProgramNamedParameter4fvNV(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLsizei len */
@@ -10662,6 +14058,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4DNV:
+			D(funcname = "glProgramParameter4dNV");
+			if (GL_ISAVAILABLE(glProgramParameter4dNV))
 			nfglProgramParameter4dNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10671,12 +14069,16 @@
 				getStackedDouble(8)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4DVNV:
+			D(funcname = "glProgramParameter4dvNV");
+			if (GL_ISAVAILABLE(glProgramParameter4dvNV))
 			nfglProgramParameter4dvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4FNV:
+			D(funcname = "glProgramParameter4fNV");
+			if (GL_ISAVAILABLE(glProgramParameter4fNV))
 			nfglProgramParameter4fNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10686,30 +14088,40 @@
 				getStackedFloat(5)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4FVNV:
+			D(funcname = "glProgramParameter4fvNV");
+			if (GL_ISAVAILABLE(glProgramParameter4fvNV))
 			nfglProgramParameter4fvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERI:
+			D(funcname = "glProgramParameteri");
+			if (GL_ISAVAILABLE(glProgramParameteri))
 			nfglProgramParameteri(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint value */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERIARB:
+			D(funcname = "glProgramParameteriARB");
+			if (GL_ISAVAILABLE(glProgramParameteriARB))
 			nfglProgramParameteriARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint value */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERIEXT:
+			D(funcname = "glProgramParameteriEXT");
+			if (GL_ISAVAILABLE(glProgramParameteriEXT))
 			nfglProgramParameteriEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint value */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERS4DVNV:
+			D(funcname = "glProgramParameters4dvNV");
+			if (GL_ISAVAILABLE(glProgramParameters4dvNV))
 			nfglProgramParameters4dvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10717,6 +14129,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERS4FVNV:
+			D(funcname = "glProgramParameters4fvNV");
+			if (GL_ISAVAILABLE(glProgramParameters4fvNV))
 			nfglProgramParameters4fvNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint index */
@@ -10724,6 +14138,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLPROGRAMPATHFRAGMENTINPUTGENNV:
+			D(funcname = "glProgramPathFragmentInputGenNV");
+			if (GL_ISAVAILABLE(glProgramPathFragmentInputGenNV))
 			nfglProgramPathFragmentInputGenNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10732,6 +14148,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *coeffs */);
 			break;
 		case NFOSMESA_GLPROGRAMSTRINGARB:
+			D(funcname = "glProgramStringARB");
+			if (GL_ISAVAILABLE(glProgramStringARB))
 			nfglProgramStringARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum format */
@@ -10739,24 +14157,32 @@
 				getStackedPointer(3, const void *)  /* const void *string */);
 			break;
 		case NFOSMESA_GLPROGRAMSUBROUTINEPARAMETERSUIVNV:
+			D(funcname = "glProgramSubroutineParametersuivNV");
+			if (GL_ISAVAILABLE(glProgramSubroutineParametersuivNV))
 			nfglProgramSubroutineParametersuivNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1D:
+			D(funcname = "glProgramUniform1d");
+			if (GL_ISAVAILABLE(glProgramUniform1d))
 			nfglProgramUniform1d(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedDouble(2)  /* GLdouble v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DEXT:
+			D(funcname = "glProgramUniform1dEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1dEXT))
 			nfglProgramUniform1dEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedDouble(2)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DV:
+			D(funcname = "glProgramUniform1dv");
+			if (GL_ISAVAILABLE(glProgramUniform1dv))
 			nfglProgramUniform1dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10764,6 +14190,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DVEXT:
+			D(funcname = "glProgramUniform1dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1dvEXT))
 			nfglProgramUniform1dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10771,18 +14199,24 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1F:
+			D(funcname = "glProgramUniform1f");
+			if (GL_ISAVAILABLE(glProgramUniform1f))
 			nfglProgramUniform1f(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedFloat(2)  /* GLfloat v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FEXT:
+			D(funcname = "glProgramUniform1fEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1fEXT))
 			nfglProgramUniform1fEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedFloat(2)  /* GLfloat v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FV:
+			D(funcname = "glProgramUniform1fv");
+			if (GL_ISAVAILABLE(glProgramUniform1fv))
 			nfglProgramUniform1fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10790,6 +14224,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FVEXT:
+			D(funcname = "glProgramUniform1fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1fvEXT))
 			nfglProgramUniform1fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10797,18 +14233,24 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I:
+			D(funcname = "glProgramUniform1i");
+			if (GL_ISAVAILABLE(glProgramUniform1i))
 			nfglProgramUniform1i(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLint v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64NV:
+			D(funcname = "glProgramUniform1i64NV");
+			if (GL_ISAVAILABLE(glProgramUniform1i64NV))
 			nfglProgramUniform1i64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLint64EXT x */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64VNV:
+			D(funcname = "glProgramUniform1i64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform1i64vNV))
 			nfglProgramUniform1i64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10816,12 +14258,16 @@
 				getStackedPointer(3, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IEXT:
+			D(funcname = "glProgramUniform1iEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1iEXT))
 			nfglProgramUniform1iEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLint v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IV:
+			D(funcname = "glProgramUniform1iv");
+			if (GL_ISAVAILABLE(glProgramUniform1iv))
 			nfglProgramUniform1iv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10829,6 +14275,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IVEXT:
+			D(funcname = "glProgramUniform1ivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1ivEXT))
 			nfglProgramUniform1ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10836,18 +14284,24 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI:
+			D(funcname = "glProgramUniform1ui");
+			if (GL_ISAVAILABLE(glProgramUniform1ui))
 			nfglProgramUniform1ui(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLuint v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64NV:
+			D(funcname = "glProgramUniform1ui64NV");
+			if (GL_ISAVAILABLE(glProgramUniform1ui64NV))
 			nfglProgramUniform1ui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLuint64EXT x */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64VNV:
+			D(funcname = "glProgramUniform1ui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform1ui64vNV))
 			nfglProgramUniform1ui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10855,12 +14309,16 @@
 				getStackedPointer(3, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIEXT:
+			D(funcname = "glProgramUniform1uiEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1uiEXT))
 			nfglProgramUniform1uiEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLuint v0 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIV:
+			D(funcname = "glProgramUniform1uiv");
+			if (GL_ISAVAILABLE(glProgramUniform1uiv))
 			nfglProgramUniform1uiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10868,6 +14326,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIVEXT:
+			D(funcname = "glProgramUniform1uivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform1uivEXT))
 			nfglProgramUniform1uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10875,6 +14335,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2D:
+			D(funcname = "glProgramUniform2d");
+			if (GL_ISAVAILABLE(glProgramUniform2d))
 			nfglProgramUniform2d(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10882,6 +14344,8 @@
 				getStackedDouble(4)  /* GLdouble v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DEXT:
+			D(funcname = "glProgramUniform2dEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2dEXT))
 			nfglProgramUniform2dEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10889,6 +14353,8 @@
 				getStackedDouble(4)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DV:
+			D(funcname = "glProgramUniform2dv");
+			if (GL_ISAVAILABLE(glProgramUniform2dv))
 			nfglProgramUniform2dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10896,6 +14362,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DVEXT:
+			D(funcname = "glProgramUniform2dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2dvEXT))
 			nfglProgramUniform2dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10903,6 +14371,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2F:
+			D(funcname = "glProgramUniform2f");
+			if (GL_ISAVAILABLE(glProgramUniform2f))
 			nfglProgramUniform2f(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10910,6 +14380,8 @@
 				getStackedFloat(3)  /* GLfloat v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FEXT:
+			D(funcname = "glProgramUniform2fEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2fEXT))
 			nfglProgramUniform2fEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10917,6 +14389,8 @@
 				getStackedFloat(3)  /* GLfloat v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FV:
+			D(funcname = "glProgramUniform2fv");
+			if (GL_ISAVAILABLE(glProgramUniform2fv))
 			nfglProgramUniform2fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10924,6 +14398,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FVEXT:
+			D(funcname = "glProgramUniform2fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2fvEXT))
 			nfglProgramUniform2fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10931,6 +14407,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I:
+			D(funcname = "glProgramUniform2i");
+			if (GL_ISAVAILABLE(glProgramUniform2i))
 			nfglProgramUniform2i(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10938,6 +14416,8 @@
 				getStackedParameter(3)  /* GLint v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64NV:
+			D(funcname = "glProgramUniform2i64NV");
+			if (GL_ISAVAILABLE(glProgramUniform2i64NV))
 			nfglProgramUniform2i64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10945,6 +14425,8 @@
 				getStackedParameter64(4)  /* GLint64EXT y */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64VNV:
+			D(funcname = "glProgramUniform2i64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform2i64vNV))
 			nfglProgramUniform2i64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10952,6 +14434,8 @@
 				getStackedPointer(3, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IEXT:
+			D(funcname = "glProgramUniform2iEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2iEXT))
 			nfglProgramUniform2iEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10959,6 +14443,8 @@
 				getStackedParameter(3)  /* GLint v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IV:
+			D(funcname = "glProgramUniform2iv");
+			if (GL_ISAVAILABLE(glProgramUniform2iv))
 			nfglProgramUniform2iv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10966,6 +14452,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IVEXT:
+			D(funcname = "glProgramUniform2ivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2ivEXT))
 			nfglProgramUniform2ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10973,6 +14461,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI:
+			D(funcname = "glProgramUniform2ui");
+			if (GL_ISAVAILABLE(glProgramUniform2ui))
 			nfglProgramUniform2ui(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10980,6 +14470,8 @@
 				getStackedParameter(3)  /* GLuint v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64NV:
+			D(funcname = "glProgramUniform2ui64NV");
+			if (GL_ISAVAILABLE(glProgramUniform2ui64NV))
 			nfglProgramUniform2ui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10987,6 +14479,8 @@
 				getStackedParameter64(4)  /* GLuint64EXT y */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64VNV:
+			D(funcname = "glProgramUniform2ui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform2ui64vNV))
 			nfglProgramUniform2ui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -10994,6 +14488,8 @@
 				getStackedPointer(3, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIEXT:
+			D(funcname = "glProgramUniform2uiEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2uiEXT))
 			nfglProgramUniform2uiEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11001,6 +14497,8 @@
 				getStackedParameter(3)  /* GLuint v1 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIV:
+			D(funcname = "glProgramUniform2uiv");
+			if (GL_ISAVAILABLE(glProgramUniform2uiv))
 			nfglProgramUniform2uiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11008,6 +14506,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIVEXT:
+			D(funcname = "glProgramUniform2uivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform2uivEXT))
 			nfglProgramUniform2uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11015,6 +14515,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3D:
+			D(funcname = "glProgramUniform3d");
+			if (GL_ISAVAILABLE(glProgramUniform3d))
 			nfglProgramUniform3d(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11023,6 +14525,8 @@
 				getStackedDouble(6)  /* GLdouble v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DEXT:
+			D(funcname = "glProgramUniform3dEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3dEXT))
 			nfglProgramUniform3dEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11031,6 +14535,8 @@
 				getStackedDouble(6)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DV:
+			D(funcname = "glProgramUniform3dv");
+			if (GL_ISAVAILABLE(glProgramUniform3dv))
 			nfglProgramUniform3dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11038,6 +14544,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DVEXT:
+			D(funcname = "glProgramUniform3dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3dvEXT))
 			nfglProgramUniform3dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11045,6 +14553,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3F:
+			D(funcname = "glProgramUniform3f");
+			if (GL_ISAVAILABLE(glProgramUniform3f))
 			nfglProgramUniform3f(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11053,6 +14563,8 @@
 				getStackedFloat(4)  /* GLfloat v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FEXT:
+			D(funcname = "glProgramUniform3fEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3fEXT))
 			nfglProgramUniform3fEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11061,6 +14573,8 @@
 				getStackedFloat(4)  /* GLfloat v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FV:
+			D(funcname = "glProgramUniform3fv");
+			if (GL_ISAVAILABLE(glProgramUniform3fv))
 			nfglProgramUniform3fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11068,6 +14582,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FVEXT:
+			D(funcname = "glProgramUniform3fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3fvEXT))
 			nfglProgramUniform3fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11075,6 +14591,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I:
+			D(funcname = "glProgramUniform3i");
+			if (GL_ISAVAILABLE(glProgramUniform3i))
 			nfglProgramUniform3i(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11083,6 +14601,8 @@
 				getStackedParameter(4)  /* GLint v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64NV:
+			D(funcname = "glProgramUniform3i64NV");
+			if (GL_ISAVAILABLE(glProgramUniform3i64NV))
 			nfglProgramUniform3i64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11091,6 +14611,8 @@
 				getStackedParameter64(6)  /* GLint64EXT z */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64VNV:
+			D(funcname = "glProgramUniform3i64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform3i64vNV))
 			nfglProgramUniform3i64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11098,6 +14620,8 @@
 				getStackedPointer(3, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IEXT:
+			D(funcname = "glProgramUniform3iEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3iEXT))
 			nfglProgramUniform3iEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11106,6 +14630,8 @@
 				getStackedParameter(4)  /* GLint v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IV:
+			D(funcname = "glProgramUniform3iv");
+			if (GL_ISAVAILABLE(glProgramUniform3iv))
 			nfglProgramUniform3iv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11113,6 +14639,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IVEXT:
+			D(funcname = "glProgramUniform3ivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3ivEXT))
 			nfglProgramUniform3ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11120,6 +14648,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI:
+			D(funcname = "glProgramUniform3ui");
+			if (GL_ISAVAILABLE(glProgramUniform3ui))
 			nfglProgramUniform3ui(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11128,6 +14658,8 @@
 				getStackedParameter(4)  /* GLuint v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64NV:
+			D(funcname = "glProgramUniform3ui64NV");
+			if (GL_ISAVAILABLE(glProgramUniform3ui64NV))
 			nfglProgramUniform3ui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11136,6 +14668,8 @@
 				getStackedParameter64(6)  /* GLuint64EXT z */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64VNV:
+			D(funcname = "glProgramUniform3ui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform3ui64vNV))
 			nfglProgramUniform3ui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11143,6 +14677,8 @@
 				getStackedPointer(3, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIEXT:
+			D(funcname = "glProgramUniform3uiEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3uiEXT))
 			nfglProgramUniform3uiEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11151,6 +14687,8 @@
 				getStackedParameter(4)  /* GLuint v2 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIV:
+			D(funcname = "glProgramUniform3uiv");
+			if (GL_ISAVAILABLE(glProgramUniform3uiv))
 			nfglProgramUniform3uiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11158,6 +14696,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIVEXT:
+			D(funcname = "glProgramUniform3uivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform3uivEXT))
 			nfglProgramUniform3uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11165,6 +14705,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4D:
+			D(funcname = "glProgramUniform4d");
+			if (GL_ISAVAILABLE(glProgramUniform4d))
 			nfglProgramUniform4d(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11174,6 +14716,8 @@
 				getStackedDouble(8)  /* GLdouble v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DEXT:
+			D(funcname = "glProgramUniform4dEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4dEXT))
 			nfglProgramUniform4dEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11183,6 +14727,8 @@
 				getStackedDouble(8)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DV:
+			D(funcname = "glProgramUniform4dv");
+			if (GL_ISAVAILABLE(glProgramUniform4dv))
 			nfglProgramUniform4dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11190,6 +14736,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DVEXT:
+			D(funcname = "glProgramUniform4dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4dvEXT))
 			nfglProgramUniform4dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11197,6 +14745,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4F:
+			D(funcname = "glProgramUniform4f");
+			if (GL_ISAVAILABLE(glProgramUniform4f))
 			nfglProgramUniform4f(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11206,6 +14756,8 @@
 				getStackedFloat(5)  /* GLfloat v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FEXT:
+			D(funcname = "glProgramUniform4fEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4fEXT))
 			nfglProgramUniform4fEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11215,6 +14767,8 @@
 				getStackedFloat(5)  /* GLfloat v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FV:
+			D(funcname = "glProgramUniform4fv");
+			if (GL_ISAVAILABLE(glProgramUniform4fv))
 			nfglProgramUniform4fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11222,6 +14776,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FVEXT:
+			D(funcname = "glProgramUniform4fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4fvEXT))
 			nfglProgramUniform4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11229,6 +14785,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I:
+			D(funcname = "glProgramUniform4i");
+			if (GL_ISAVAILABLE(glProgramUniform4i))
 			nfglProgramUniform4i(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11238,6 +14796,8 @@
 				getStackedParameter(5)  /* GLint v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64NV:
+			D(funcname = "glProgramUniform4i64NV");
+			if (GL_ISAVAILABLE(glProgramUniform4i64NV))
 			nfglProgramUniform4i64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11247,6 +14807,8 @@
 				getStackedParameter64(8)  /* GLint64EXT w */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64VNV:
+			D(funcname = "glProgramUniform4i64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform4i64vNV))
 			nfglProgramUniform4i64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11254,6 +14816,8 @@
 				getStackedPointer(3, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IEXT:
+			D(funcname = "glProgramUniform4iEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4iEXT))
 			nfglProgramUniform4iEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11263,6 +14827,8 @@
 				getStackedParameter(5)  /* GLint v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IV:
+			D(funcname = "glProgramUniform4iv");
+			if (GL_ISAVAILABLE(glProgramUniform4iv))
 			nfglProgramUniform4iv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11270,6 +14836,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IVEXT:
+			D(funcname = "glProgramUniform4ivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4ivEXT))
 			nfglProgramUniform4ivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11277,6 +14845,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI:
+			D(funcname = "glProgramUniform4ui");
+			if (GL_ISAVAILABLE(glProgramUniform4ui))
 			nfglProgramUniform4ui(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11286,6 +14856,8 @@
 				getStackedParameter(5)  /* GLuint v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64NV:
+			D(funcname = "glProgramUniform4ui64NV");
+			if (GL_ISAVAILABLE(glProgramUniform4ui64NV))
 			nfglProgramUniform4ui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11295,6 +14867,8 @@
 				getStackedParameter64(8)  /* GLuint64EXT w */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64VNV:
+			D(funcname = "glProgramUniform4ui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniform4ui64vNV))
 			nfglProgramUniform4ui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11302,6 +14876,8 @@
 				getStackedPointer(3, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIEXT:
+			D(funcname = "glProgramUniform4uiEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4uiEXT))
 			nfglProgramUniform4uiEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11311,6 +14887,8 @@
 				getStackedParameter(5)  /* GLuint v3 */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIV:
+			D(funcname = "glProgramUniform4uiv");
+			if (GL_ISAVAILABLE(glProgramUniform4uiv))
 			nfglProgramUniform4uiv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11318,6 +14896,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIVEXT:
+			D(funcname = "glProgramUniform4uivEXT");
+			if (GL_ISAVAILABLE(glProgramUniform4uivEXT))
 			nfglProgramUniform4uivEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11325,18 +14905,24 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64ARB:
+			D(funcname = "glProgramUniformHandleui64ARB");
+			if (GL_ISAVAILABLE(glProgramUniformHandleui64ARB))
 			nfglProgramUniformHandleui64ARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLuint64 value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64NV:
+			D(funcname = "glProgramUniformHandleui64NV");
+			if (GL_ISAVAILABLE(glProgramUniformHandleui64NV))
 			nfglProgramUniformHandleui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLuint64 value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64VARB:
+			D(funcname = "glProgramUniformHandleui64vARB");
+			if (GL_ISAVAILABLE(glProgramUniformHandleui64vARB))
 			nfglProgramUniformHandleui64vARB(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11344,6 +14930,8 @@
 				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *values */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64VNV:
+			D(funcname = "glProgramUniformHandleui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniformHandleui64vNV))
 			nfglProgramUniformHandleui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11351,6 +14939,8 @@
 				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *values */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DV:
+			D(funcname = "glProgramUniformMatrix2dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2dv))
 			nfglProgramUniformMatrix2dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11359,6 +14949,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DVEXT:
+			D(funcname = "glProgramUniformMatrix2dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2dvEXT))
 			nfglProgramUniformMatrix2dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11367,6 +14959,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FV:
+			D(funcname = "glProgramUniformMatrix2fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2fv))
 			nfglProgramUniformMatrix2fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11375,6 +14969,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FVEXT:
+			D(funcname = "glProgramUniformMatrix2fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2fvEXT))
 			nfglProgramUniformMatrix2fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11383,6 +14979,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DV:
+			D(funcname = "glProgramUniformMatrix2x3dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3dv))
 			nfglProgramUniformMatrix2x3dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11391,6 +14989,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DVEXT:
+			D(funcname = "glProgramUniformMatrix2x3dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3dvEXT))
 			nfglProgramUniformMatrix2x3dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11399,6 +14999,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FV:
+			D(funcname = "glProgramUniformMatrix2x3fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3fv))
 			nfglProgramUniformMatrix2x3fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11407,6 +15009,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FVEXT:
+			D(funcname = "glProgramUniformMatrix2x3fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3fvEXT))
 			nfglProgramUniformMatrix2x3fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11415,6 +15019,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DV:
+			D(funcname = "glProgramUniformMatrix2x4dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4dv))
 			nfglProgramUniformMatrix2x4dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11423,6 +15029,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DVEXT:
+			D(funcname = "glProgramUniformMatrix2x4dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4dvEXT))
 			nfglProgramUniformMatrix2x4dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11431,6 +15039,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FV:
+			D(funcname = "glProgramUniformMatrix2x4fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4fv))
 			nfglProgramUniformMatrix2x4fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11439,6 +15049,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FVEXT:
+			D(funcname = "glProgramUniformMatrix2x4fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4fvEXT))
 			nfglProgramUniformMatrix2x4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11447,6 +15059,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DV:
+			D(funcname = "glProgramUniformMatrix3dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3dv))
 			nfglProgramUniformMatrix3dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11455,6 +15069,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DVEXT:
+			D(funcname = "glProgramUniformMatrix3dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3dvEXT))
 			nfglProgramUniformMatrix3dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11463,6 +15079,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FV:
+			D(funcname = "glProgramUniformMatrix3fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3fv))
 			nfglProgramUniformMatrix3fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11471,6 +15089,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FVEXT:
+			D(funcname = "glProgramUniformMatrix3fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3fvEXT))
 			nfglProgramUniformMatrix3fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11479,6 +15099,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DV:
+			D(funcname = "glProgramUniformMatrix3x2dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2dv))
 			nfglProgramUniformMatrix3x2dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11487,6 +15109,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DVEXT:
+			D(funcname = "glProgramUniformMatrix3x2dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2dvEXT))
 			nfglProgramUniformMatrix3x2dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11495,6 +15119,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FV:
+			D(funcname = "glProgramUniformMatrix3x2fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2fv))
 			nfglProgramUniformMatrix3x2fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11503,6 +15129,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FVEXT:
+			D(funcname = "glProgramUniformMatrix3x2fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2fvEXT))
 			nfglProgramUniformMatrix3x2fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11511,6 +15139,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DV:
+			D(funcname = "glProgramUniformMatrix3x4dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4dv))
 			nfglProgramUniformMatrix3x4dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11519,6 +15149,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DVEXT:
+			D(funcname = "glProgramUniformMatrix3x4dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4dvEXT))
 			nfglProgramUniformMatrix3x4dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11527,6 +15159,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FV:
+			D(funcname = "glProgramUniformMatrix3x4fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4fv))
 			nfglProgramUniformMatrix3x4fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11535,6 +15169,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FVEXT:
+			D(funcname = "glProgramUniformMatrix3x4fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4fvEXT))
 			nfglProgramUniformMatrix3x4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11543,6 +15179,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DV:
+			D(funcname = "glProgramUniformMatrix4dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4dv))
 			nfglProgramUniformMatrix4dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11551,6 +15189,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DVEXT:
+			D(funcname = "glProgramUniformMatrix4dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4dvEXT))
 			nfglProgramUniformMatrix4dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11559,6 +15199,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FV:
+			D(funcname = "glProgramUniformMatrix4fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4fv))
 			nfglProgramUniformMatrix4fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11567,6 +15209,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FVEXT:
+			D(funcname = "glProgramUniformMatrix4fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4fvEXT))
 			nfglProgramUniformMatrix4fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11575,6 +15219,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DV:
+			D(funcname = "glProgramUniformMatrix4x2dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2dv))
 			nfglProgramUniformMatrix4x2dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11583,6 +15229,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DVEXT:
+			D(funcname = "glProgramUniformMatrix4x2dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2dvEXT))
 			nfglProgramUniformMatrix4x2dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11591,6 +15239,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FV:
+			D(funcname = "glProgramUniformMatrix4x2fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2fv))
 			nfglProgramUniformMatrix4x2fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11599,6 +15249,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FVEXT:
+			D(funcname = "glProgramUniformMatrix4x2fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2fvEXT))
 			nfglProgramUniformMatrix4x2fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11607,6 +15259,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DV:
+			D(funcname = "glProgramUniformMatrix4x3dv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3dv))
 			nfglProgramUniformMatrix4x3dv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11615,6 +15269,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DVEXT:
+			D(funcname = "glProgramUniformMatrix4x3dvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3dvEXT))
 			nfglProgramUniformMatrix4x3dvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11623,6 +15279,8 @@
 				getStackedPointer(4, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FV:
+			D(funcname = "glProgramUniformMatrix4x3fv");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3fv))
 			nfglProgramUniformMatrix4x3fv(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11631,6 +15289,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FVEXT:
+			D(funcname = "glProgramUniformMatrix4x3fvEXT");
+			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3fvEXT))
 			nfglProgramUniformMatrix4x3fvEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11639,12 +15299,16 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMUI64NV:
+			D(funcname = "glProgramUniformui64NV");
+			if (GL_ISAVAILABLE(glProgramUniformui64NV))
 			nfglProgramUniformui64NV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLuint64EXT value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMUI64VNV:
+			D(funcname = "glProgramUniformui64vNV");
+			if (GL_ISAVAILABLE(glProgramUniformui64vNV))
 			nfglProgramUniformui64vNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
@@ -11652,31 +15316,45 @@
 				getStackedPointer(3, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLPROGRAMVERTEXLIMITNV:
+			D(funcname = "glProgramVertexLimitNV");
+			if (GL_ISAVAILABLE(glProgramVertexLimitNV))
 			nfglProgramVertexLimitNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLint limit */);
 			break;
 		case NFOSMESA_GLPROVOKINGVERTEX:
+			D(funcname = "glProvokingVertex");
+			if (GL_ISAVAILABLE(glProvokingVertex))
 			nfglProvokingVertex(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLPROVOKINGVERTEXEXT:
+			D(funcname = "glProvokingVertexEXT");
+			if (GL_ISAVAILABLE(glProvokingVertexEXT))
 			nfglProvokingVertexEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLPUSHATTRIB:
+			D(funcname = "glPushAttrib");
+			if (GL_ISAVAILABLE(glPushAttrib))
 			nfglPushAttrib(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLPUSHCLIENTATTRIB:
+			D(funcname = "glPushClientAttrib");
+			if (GL_ISAVAILABLE(glPushClientAttrib))
 			nfglPushClientAttrib(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLPUSHCLIENTATTRIBDEFAULTEXT:
+			D(funcname = "glPushClientAttribDefaultEXT");
+			if (GL_ISAVAILABLE(glPushClientAttribDefaultEXT))
 			nfglPushClientAttribDefaultEXT(
 				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLPUSHDEBUGGROUP:
+			D(funcname = "glPushDebugGroup");
+			if (GL_ISAVAILABLE(glPushDebugGroup))
 			nfglPushDebugGroup(
 				getStackedParameter(0),  /* GLenum source */
 				getStackedParameter(1),  /* GLuint id */
@@ -11684,28 +15362,40 @@
 				getStackedPointer(3, const GLchar *)  /* const GLchar *message */);
 			break;
 		case NFOSMESA_GLPUSHGROUPMARKEREXT:
+			D(funcname = "glPushGroupMarkerEXT");
+			if (GL_ISAVAILABLE(glPushGroupMarkerEXT))
 			nfglPushGroupMarkerEXT(
 				getStackedParameter(0),  /* GLsizei length */
 				getStackedPointer(1, const GLchar *)  /* const GLchar *marker */);
 			break;
 		case NFOSMESA_GLPUSHMATRIX:
+			D(funcname = "glPushMatrix");
+			if (GL_ISAVAILABLE(glPushMatrix))
 			nfglPushMatrix();
 			break;
 		case NFOSMESA_GLPUSHNAME:
+			D(funcname = "glPushName");
+			if (GL_ISAVAILABLE(glPushName))
 			nfglPushName(
 				getStackedParameter(0)  /* GLuint name */);
 			break;
 		case NFOSMESA_GLQUERYCOUNTER:
+			D(funcname = "glQueryCounter");
+			if (GL_ISAVAILABLE(glQueryCounter))
 			nfglQueryCounter(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLQUERYMATRIXXOES:
+			D(funcname = "glQueryMatrixxOES");
+			if (GL_ISAVAILABLE(glQueryMatrixxOES))
 			ret = nfglQueryMatrixxOES(
 				getStackedPointer(0, GLfixed *),  /* GLfixed *mantissa */
 				getStackedPointer(1, GLint *)  /* GLint *exponent */);
 			break;
 		case NFOSMESA_GLQUERYOBJECTPARAMETERUIAMD:
+			D(funcname = "glQueryObjectParameteruiAMD");
+			if (GL_ISAVAILABLE(glQueryObjectParameteruiAMD))
 			nfglQueryObjectParameteruiAMD(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint id */
@@ -11713,101 +15403,143 @@
 				getStackedParameter(3)  /* GLuint param */);
 			break;
 		case NFOSMESA_GLRASTERPOS2D:
+			D(funcname = "glRasterPos2d");
+			if (GL_ISAVAILABLE(glRasterPos2d))
 			nfglRasterPos2d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLRASTERPOS2DV:
+			D(funcname = "glRasterPos2dv");
+			if (GL_ISAVAILABLE(glRasterPos2dv))
 			nfglRasterPos2dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2F:
+			D(funcname = "glRasterPos2f");
+			if (GL_ISAVAILABLE(glRasterPos2f))
 			nfglRasterPos2f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLRASTERPOS2FV:
+			D(funcname = "glRasterPos2fv");
+			if (GL_ISAVAILABLE(glRasterPos2fv))
 			nfglRasterPos2fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2I:
+			D(funcname = "glRasterPos2i");
+			if (GL_ISAVAILABLE(glRasterPos2i))
 			nfglRasterPos2i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1)  /* GLint y */);
 			break;
 		case NFOSMESA_GLRASTERPOS2IV:
+			D(funcname = "glRasterPos2iv");
+			if (GL_ISAVAILABLE(glRasterPos2iv))
 			nfglRasterPos2iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2S:
+			D(funcname = "glRasterPos2s");
+			if (GL_ISAVAILABLE(glRasterPos2s))
 			nfglRasterPos2s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLRASTERPOS2SV:
+			D(funcname = "glRasterPos2sv");
+			if (GL_ISAVAILABLE(glRasterPos2sv))
 			nfglRasterPos2sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS2XOES:
+			D(funcname = "glRasterPos2xOES");
+			if (GL_ISAVAILABLE(glRasterPos2xOES))
 			nfglRasterPos2xOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1)  /* GLfixed y */);
 			break;
 		case NFOSMESA_GLRASTERPOS2XVOES:
+			D(funcname = "glRasterPos2xvOES");
+			if (GL_ISAVAILABLE(glRasterPos2xvOES))
 			nfglRasterPos2xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLRASTERPOS3D:
+			D(funcname = "glRasterPos3d");
+			if (GL_ISAVAILABLE(glRasterPos3d))
 			nfglRasterPos3d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLRASTERPOS3DV:
+			D(funcname = "glRasterPos3dv");
+			if (GL_ISAVAILABLE(glRasterPos3dv))
 			nfglRasterPos3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3F:
+			D(funcname = "glRasterPos3f");
+			if (GL_ISAVAILABLE(glRasterPos3f))
 			nfglRasterPos3f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLRASTERPOS3FV:
+			D(funcname = "glRasterPos3fv");
+			if (GL_ISAVAILABLE(glRasterPos3fv))
 			nfglRasterPos3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3I:
+			D(funcname = "glRasterPos3i");
+			if (GL_ISAVAILABLE(glRasterPos3i))
 			nfglRasterPos3i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
 				getStackedParameter(2)  /* GLint z */);
 			break;
 		case NFOSMESA_GLRASTERPOS3IV:
+			D(funcname = "glRasterPos3iv");
+			if (GL_ISAVAILABLE(glRasterPos3iv))
 			nfglRasterPos3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3S:
+			D(funcname = "glRasterPos3s");
+			if (GL_ISAVAILABLE(glRasterPos3s))
 			nfglRasterPos3s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
 				getStackedParameter(2)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLRASTERPOS3SV:
+			D(funcname = "glRasterPos3sv");
+			if (GL_ISAVAILABLE(glRasterPos3sv))
 			nfglRasterPos3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS3XOES:
+			D(funcname = "glRasterPos3xOES");
+			if (GL_ISAVAILABLE(glRasterPos3xOES))
 			nfglRasterPos3xOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1),  /* GLfixed y */
 				getStackedParameter(2)  /* GLfixed z */);
 			break;
 		case NFOSMESA_GLRASTERPOS3XVOES:
+			D(funcname = "glRasterPos3xvOES");
+			if (GL_ISAVAILABLE(glRasterPos3xvOES))
 			nfglRasterPos3xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLRASTERPOS4D:
+			D(funcname = "glRasterPos4d");
+			if (GL_ISAVAILABLE(glRasterPos4d))
 			nfglRasterPos4d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
@@ -11815,10 +15547,14 @@
 				getStackedDouble(6)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLRASTERPOS4DV:
+			D(funcname = "glRasterPos4dv");
+			if (GL_ISAVAILABLE(glRasterPos4dv))
 			nfglRasterPos4dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4F:
+			D(funcname = "glRasterPos4f");
+			if (GL_ISAVAILABLE(glRasterPos4f))
 			nfglRasterPos4f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
@@ -11826,10 +15562,14 @@
 				getStackedFloat(3)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLRASTERPOS4FV:
+			D(funcname = "glRasterPos4fv");
+			if (GL_ISAVAILABLE(glRasterPos4fv))
 			nfglRasterPos4fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4I:
+			D(funcname = "glRasterPos4i");
+			if (GL_ISAVAILABLE(glRasterPos4i))
 			nfglRasterPos4i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -11837,10 +15577,14 @@
 				getStackedParameter(3)  /* GLint w */);
 			break;
 		case NFOSMESA_GLRASTERPOS4IV:
+			D(funcname = "glRasterPos4iv");
+			if (GL_ISAVAILABLE(glRasterPos4iv))
 			nfglRasterPos4iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4S:
+			D(funcname = "glRasterPos4s");
+			if (GL_ISAVAILABLE(glRasterPos4s))
 			nfglRasterPos4s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
@@ -11848,10 +15592,14 @@
 				getStackedParameter(3)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLRASTERPOS4SV:
+			D(funcname = "glRasterPos4sv");
+			if (GL_ISAVAILABLE(glRasterPos4sv))
 			nfglRasterPos4sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLRASTERPOS4XOES:
+			D(funcname = "glRasterPos4xOES");
+			if (GL_ISAVAILABLE(glRasterPos4xOES))
 			nfglRasterPos4xOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1),  /* GLfixed y */
@@ -11859,23 +15607,33 @@
 				getStackedParameter(3)  /* GLfixed w */);
 			break;
 		case NFOSMESA_GLRASTERPOS4XVOES:
+			D(funcname = "glRasterPos4xvOES");
+			if (GL_ISAVAILABLE(glRasterPos4xvOES))
 			nfglRasterPos4xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLRASTERSAMPLESEXT:
+			D(funcname = "glRasterSamplesEXT");
+			if (GL_ISAVAILABLE(glRasterSamplesEXT))
 			nfglRasterSamplesEXT(
 				getStackedParameter(0),  /* GLuint samples */
 				getStackedParameter(1)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLREADBUFFER:
+			D(funcname = "glReadBuffer");
+			if (GL_ISAVAILABLE(glReadBuffer))
 			nfglReadBuffer(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLREADINSTRUMENTSSGIX:
+			D(funcname = "glReadInstrumentsSGIX");
+			if (GL_ISAVAILABLE(glReadInstrumentsSGIX))
 			nfglReadInstrumentsSGIX(
 				getStackedParameter(0)  /* GLint marker */);
 			break;
 		case NFOSMESA_GLREADPIXELS:
+			D(funcname = "glReadPixels");
+			if (GL_ISAVAILABLE(glReadPixels))
 			nfglReadPixels(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -11886,6 +15644,8 @@
 				getStackedPointer(6, GLvoid *)  /* GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLREADNPIXELS:
+			D(funcname = "glReadnPixels");
+			if (GL_ISAVAILABLE(glReadnPixels))
 			nfglReadnPixels(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -11897,6 +15657,8 @@
 				getStackedPointer(7, void *)  /* void *data */);
 			break;
 		case NFOSMESA_GLREADNPIXELSARB:
+			D(funcname = "glReadnPixelsARB");
+			if (GL_ISAVAILABLE(glReadnPixelsARB))
 			nfglReadnPixelsARB(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -11908,6 +15670,8 @@
 				getStackedPointer(7, void *)  /* void *data */);
 			break;
 		case NFOSMESA_GLRECTD:
+			D(funcname = "glRectd");
+			if (GL_ISAVAILABLE(glRectd))
 			nfglRectd(
 				getStackedDouble(0),  /* GLdouble x1 */
 				getStackedDouble(2),  /* GLdouble y1 */
@@ -11915,11 +15679,15 @@
 				getStackedDouble(6)  /* GLdouble y2 */);
 			break;
 		case NFOSMESA_GLRECTDV:
+			D(funcname = "glRectdv");
+			if (GL_ISAVAILABLE(glRectdv))
 			nfglRectdv(
 				getStackedPointer(0, const GLdouble *),  /* const GLdouble *v1 */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v2 */);
 			break;
 		case NFOSMESA_GLRECTF:
+			D(funcname = "glRectf");
+			if (GL_ISAVAILABLE(glRectf))
 			nfglRectf(
 				getStackedFloat(0),  /* GLfloat x1 */
 				getStackedFloat(1),  /* GLfloat y1 */
@@ -11927,11 +15695,15 @@
 				getStackedFloat(3)  /* GLfloat y2 */);
 			break;
 		case NFOSMESA_GLRECTFV:
+			D(funcname = "glRectfv");
+			if (GL_ISAVAILABLE(glRectfv))
 			nfglRectfv(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *v1 */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v2 */);
 			break;
 		case NFOSMESA_GLRECTI:
+			D(funcname = "glRecti");
+			if (GL_ISAVAILABLE(glRecti))
 			nfglRecti(
 				getStackedParameter(0),  /* GLint x1 */
 				getStackedParameter(1),  /* GLint y1 */
@@ -11939,11 +15711,15 @@
 				getStackedParameter(3)  /* GLint y2 */);
 			break;
 		case NFOSMESA_GLRECTIV:
+			D(funcname = "glRectiv");
+			if (GL_ISAVAILABLE(glRectiv))
 			nfglRectiv(
 				getStackedPointer(0, const GLint *),  /* const GLint *v1 */
 				getStackedPointer(1, const GLint *)  /* const GLint *v2 */);
 			break;
 		case NFOSMESA_GLRECTS:
+			D(funcname = "glRects");
+			if (GL_ISAVAILABLE(glRects))
 			nfglRects(
 				getStackedParameter(0),  /* GLshort32 x1 */
 				getStackedParameter(1),  /* GLshort32 y1 */
@@ -11951,11 +15727,15 @@
 				getStackedParameter(3)  /* GLshort32 y2 */);
 			break;
 		case NFOSMESA_GLRECTSV:
+			D(funcname = "glRectsv");
+			if (GL_ISAVAILABLE(glRectsv))
 			nfglRectsv(
 				getStackedPointer(0, const GLshort *),  /* const GLshort *v1 */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v2 */);
 			break;
 		case NFOSMESA_GLRECTXOES:
+			D(funcname = "glRectxOES");
+			if (GL_ISAVAILABLE(glRectxOES))
 			nfglRectxOES(
 				getStackedParameter(0),  /* GLfixed x1 */
 				getStackedParameter(1),  /* GLfixed y1 */
@@ -11963,22 +15743,32 @@
 				getStackedParameter(3)  /* GLfixed y2 */);
 			break;
 		case NFOSMESA_GLRECTXVOES:
+			D(funcname = "glRectxvOES");
+			if (GL_ISAVAILABLE(glRectxvOES))
 			nfglRectxvOES(
 				getStackedPointer(0, const GLfixed *),  /* const GLfixed *v1 */
 				getStackedPointer(1, const GLfixed *)  /* const GLfixed *v2 */);
 			break;
 		case NFOSMESA_GLREFERENCEPLANESGIX:
+			D(funcname = "glReferencePlaneSGIX");
+			if (GL_ISAVAILABLE(glReferencePlaneSGIX))
 			nfglReferencePlaneSGIX(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *equation */);
 			break;
 		case NFOSMESA_GLRELEASESHADERCOMPILER:
+			D(funcname = "glReleaseShaderCompiler");
+			if (GL_ISAVAILABLE(glReleaseShaderCompiler))
 			nfglReleaseShaderCompiler();
 			break;
 		case NFOSMESA_GLRENDERMODE:
+			D(funcname = "glRenderMode");
+			if (GL_ISAVAILABLE(glRenderMode))
 			ret = nfglRenderMode(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGE:
+			D(funcname = "glRenderbufferStorage");
+			if (GL_ISAVAILABLE(glRenderbufferStorage))
 			nfglRenderbufferStorage(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -11986,6 +15776,8 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEEXT:
+			D(funcname = "glRenderbufferStorageEXT");
+			if (GL_ISAVAILABLE(glRenderbufferStorageEXT))
 			nfglRenderbufferStorageEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -11993,6 +15785,8 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLE:
+			D(funcname = "glRenderbufferStorageMultisample");
+			if (GL_ISAVAILABLE(glRenderbufferStorageMultisample))
 			nfglRenderbufferStorageMultisample(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -12001,6 +15795,8 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENV:
+			D(funcname = "glRenderbufferStorageMultisampleCoverageNV");
+			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleCoverageNV))
 			nfglRenderbufferStorageMultisampleCoverageNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei coverageSamples */
@@ -12010,6 +15806,8 @@
 				getStackedParameter(5)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLEEXT:
+			D(funcname = "glRenderbufferStorageMultisampleEXT");
+			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleEXT))
 			nfglRenderbufferStorageMultisampleEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -12018,20 +15816,28 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEPOINTERSUN:
+			D(funcname = "glReplacementCodePointerSUN");
+			if (GL_ISAVAILABLE(glReplacementCodePointerSUN))
 			nfglReplacementCodePointerSUN(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const void * *)  /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBSUN:
+			D(funcname = "glReplacementCodeubSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeubSUN))
 			nfglReplacementCodeubSUN(
 				getStackedParameter(0)  /* GLubyte32 code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBVSUN:
+			D(funcname = "glReplacementCodeubvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeubvSUN))
 			nfglReplacementCodeubvSUN(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiColor3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor3fVertex3fSUN))
 			nfglReplacementCodeuiColor3fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat r */
@@ -12042,12 +15848,16 @@
 				getStackedFloat(6)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiColor3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor3fVertex3fvSUN))
 			nfglReplacementCodeuiColor3fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *c */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiColor4fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor4fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiColor4fNormal3fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat r */
@@ -12062,6 +15872,8 @@
 				getStackedFloat(10)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiColor4fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor4fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiColor4fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *c */
@@ -12069,6 +15881,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiColor4ubVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor4ubVertex3fSUN))
 			nfglReplacementCodeuiColor4ubVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedParameter(1),  /* GLubyte32 r */
@@ -12080,12 +15894,16 @@
 				getStackedFloat(7)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiColor4ubVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiColor4ubVertex3fvSUN))
 			nfglReplacementCodeuiColor4ubVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLubyte *),  /* const GLubyte *c */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiNormal3fVertex3fSUN))
 			nfglReplacementCodeuiNormal3fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat nx */
@@ -12096,16 +15914,22 @@
 				getStackedFloat(6)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUISUN:
+			D(funcname = "glReplacementCodeuiSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiSUN))
 			nfglReplacementCodeuiSUN(
 				getStackedParameter(0)  /* GLuint code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat s */
@@ -12122,6 +15946,8 @@
 				getStackedFloat(12)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *tc */
@@ -12130,6 +15956,8 @@
 				getStackedPointer(4, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat s */
@@ -12142,6 +15970,8 @@
 				getStackedFloat(8)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *tc */
@@ -12149,6 +15979,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat s */
@@ -12158,12 +15990,16 @@
 				getStackedFloat(5)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiTexCoord2fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FSUN:
+			D(funcname = "glReplacementCodeuiVertex3fSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiVertex3fSUN))
 			nfglReplacementCodeuiVertex3fSUN(
 				getStackedParameter(0),  /* GLuint rc */
 				getStackedFloat(1),  /* GLfloat x */
@@ -12171,56 +16007,84 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FVSUN:
+			D(funcname = "glReplacementCodeuiVertex3fvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuiVertex3fvSUN))
 			nfglReplacementCodeuiVertex3fvSUN(
 				getStackedPointer(0, const GLuint *),  /* const GLuint *rc */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVSUN:
+			D(funcname = "glReplacementCodeuivSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeuivSUN))
 			nfglReplacementCodeuivSUN(
 				getStackedPointer(0, const GLuint *)  /* const GLuint *code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSSUN:
+			D(funcname = "glReplacementCodeusSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeusSUN))
 			nfglReplacementCodeusSUN(
 				getStackedParameter(0)  /* GLushort32 code */);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSVSUN:
+			D(funcname = "glReplacementCodeusvSUN");
+			if (GL_ISAVAILABLE(glReplacementCodeusvSUN))
 			nfglReplacementCodeusvSUN(
 				getStackedPointer(0, const GLushort *)  /* const GLushort *code */);
 			break;
 		case NFOSMESA_GLREQUESTRESIDENTPROGRAMSNV:
+			D(funcname = "glRequestResidentProgramsNV");
+			if (GL_ISAVAILABLE(glRequestResidentProgramsNV))
 			nfglRequestResidentProgramsNV(
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *programs */);
 			break;
 		case NFOSMESA_GLRESETHISTOGRAM:
+			D(funcname = "glResetHistogram");
+			if (GL_ISAVAILABLE(glResetHistogram))
 			nfglResetHistogram(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLRESETHISTOGRAMEXT:
+			D(funcname = "glResetHistogramEXT");
+			if (GL_ISAVAILABLE(glResetHistogramEXT))
 			nfglResetHistogramEXT(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLRESETMINMAX:
+			D(funcname = "glResetMinmax");
+			if (GL_ISAVAILABLE(glResetMinmax))
 			nfglResetMinmax(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLRESETMINMAXEXT:
+			D(funcname = "glResetMinmaxEXT");
+			if (GL_ISAVAILABLE(glResetMinmaxEXT))
 			nfglResetMinmaxEXT(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLRESIZEBUFFERSMESA:
+			D(funcname = "glResizeBuffersMESA");
+			if (GL_ISAVAILABLE(glResizeBuffersMESA))
 			nfglResizeBuffersMESA();
 			break;
 		case NFOSMESA_GLRESOLVEDEPTHVALUESNV:
+			D(funcname = "glResolveDepthValuesNV");
+			if (GL_ISAVAILABLE(glResolveDepthValuesNV))
 			nfglResolveDepthValuesNV();
 			break;
 		case NFOSMESA_GLRESUMETRANSFORMFEEDBACK:
+			D(funcname = "glResumeTransformFeedback");
+			if (GL_ISAVAILABLE(glResumeTransformFeedback))
 			nfglResumeTransformFeedback();
 			break;
 		case NFOSMESA_GLRESUMETRANSFORMFEEDBACKNV:
+			D(funcname = "glResumeTransformFeedbackNV");
+			if (GL_ISAVAILABLE(glResumeTransformFeedbackNV))
 			nfglResumeTransformFeedbackNV();
 			break;
 		case NFOSMESA_GLROTATED:
+			D(funcname = "glRotated");
+			if (GL_ISAVAILABLE(glRotated))
 			nfglRotated(
 				getStackedDouble(0),  /* GLdouble angle */
 				getStackedDouble(2),  /* GLdouble x */
@@ -12228,6 +16092,8 @@
 				getStackedDouble(6)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLROTATEF:
+			D(funcname = "glRotatef");
+			if (GL_ISAVAILABLE(glRotatef))
 			nfglRotatef(
 				getStackedFloat(0),  /* GLfloat angle */
 				getStackedFloat(1),  /* GLfloat x */
@@ -12235,6 +16101,8 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLROTATEXOES:
+			D(funcname = "glRotatexOES");
+			if (GL_ISAVAILABLE(glRotatexOES))
 			nfglRotatexOES(
 				getStackedParameter(0),  /* GLfixed angle */
 				getStackedParameter(1),  /* GLfixed x */
@@ -12242,117 +16110,161 @@
 				getStackedParameter(3)  /* GLfixed z */);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGE:
+			D(funcname = "glSampleCoverage");
+			if (GL_ISAVAILABLE(glSampleCoverage))
 			nfglSampleCoverage(
 				getStackedFloat(0),  /* GLfloat value */
 				getStackedParameter(1)  /* GLboolean32 invert */);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGEARB:
+			D(funcname = "glSampleCoverageARB");
+			if (GL_ISAVAILABLE(glSampleCoverageARB))
 			nfglSampleCoverageARB(
 				getStackedFloat(0),  /* GLfloat value */
 				getStackedParameter(1)  /* GLboolean32 invert */);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGEOES:
+			D(funcname = "glSampleCoverageOES");
+			if (GL_ISAVAILABLE(glSampleCoverageOES))
 			nfglSampleCoverageOES(
 				getStackedParameter(0),  /* GLfixed value */
 				getStackedParameter(1)  /* GLboolean32 invert */);
 			break;
 		case NFOSMESA_GLSAMPLEMAPATI:
+			D(funcname = "glSampleMapATI");
+			if (GL_ISAVAILABLE(glSampleMapATI))
 			nfglSampleMapATI(
 				getStackedParameter(0),  /* GLuint dst */
 				getStackedParameter(1),  /* GLuint interp */
 				getStackedParameter(2)  /* GLenum swizzle */);
 			break;
 		case NFOSMESA_GLSAMPLEMASKEXT:
+			D(funcname = "glSampleMaskEXT");
+			if (GL_ISAVAILABLE(glSampleMaskEXT))
 			nfglSampleMaskEXT(
 				getStackedFloat(0),  /* GLclampf value */
 				getStackedParameter(1)  /* GLboolean32 invert */);
 			break;
 		case NFOSMESA_GLSAMPLEMASKINDEXEDNV:
+			D(funcname = "glSampleMaskIndexedNV");
+			if (GL_ISAVAILABLE(glSampleMaskIndexedNV))
 			nfglSampleMaskIndexedNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLSAMPLEMASKSGIS:
+			D(funcname = "glSampleMaskSGIS");
+			if (GL_ISAVAILABLE(glSampleMaskSGIS))
 			nfglSampleMaskSGIS(
 				getStackedFloat(0),  /* GLclampf value */
 				getStackedParameter(1)  /* GLboolean32 invert */);
 			break;
 		case NFOSMESA_GLSAMPLEMASKI:
+			D(funcname = "glSampleMaski");
+			if (GL_ISAVAILABLE(glSampleMaski))
 			nfglSampleMaski(
 				getStackedParameter(0),  /* GLuint maskNumber */
 				getStackedParameter(1)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLSAMPLEPASS:
+			D(funcname = "glSamplePass");
+			if (GL_ISAVAILABLE(glSamplePass))
 			nfglSamplePass(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLSAMPLEPASSARB:
+			D(funcname = "glSamplePassARB");
+			if (GL_ISAVAILABLE(glSamplePassARB))
 			nfglSamplePassARB(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLSAMPLEPATTERNEXT:
+			D(funcname = "glSamplePatternEXT");
+			if (GL_ISAVAILABLE(glSamplePatternEXT))
 			nfglSamplePatternEXT(
 				getStackedParameter(0)  /* GLenum pattern */);
 			break;
 		case NFOSMESA_GLSAMPLEPATTERNSGIS:
+			D(funcname = "glSamplePatternSGIS");
+			if (GL_ISAVAILABLE(glSamplePatternSGIS))
 			nfglSamplePatternSGIS(
 				getStackedParameter(0)  /* GLenum pattern */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIIV:
+			D(funcname = "glSamplerParameterIiv");
+			if (GL_ISAVAILABLE(glSamplerParameterIiv))
 			nfglSamplerParameterIiv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIUIV:
+			D(funcname = "glSamplerParameterIuiv");
+			if (GL_ISAVAILABLE(glSamplerParameterIuiv))
 			nfglSamplerParameterIuiv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERF:
+			D(funcname = "glSamplerParameterf");
+			if (GL_ISAVAILABLE(glSamplerParameterf))
 			nfglSamplerParameterf(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERFV:
+			D(funcname = "glSamplerParameterfv");
+			if (GL_ISAVAILABLE(glSamplerParameterfv))
 			nfglSamplerParameterfv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERI:
+			D(funcname = "glSamplerParameteri");
+			if (GL_ISAVAILABLE(glSamplerParameteri))
 			nfglSamplerParameteri(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIV:
+			D(funcname = "glSamplerParameteriv");
+			if (GL_ISAVAILABLE(glSamplerParameteriv))
 			nfglSamplerParameteriv(
 				getStackedParameter(0),  /* GLuint sampler */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *param */);
 			break;
 		case NFOSMESA_GLSCALED:
+			D(funcname = "glScaled");
+			if (GL_ISAVAILABLE(glScaled))
 			nfglScaled(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLSCALEF:
+			D(funcname = "glScalef");
+			if (GL_ISAVAILABLE(glScalef))
 			nfglScalef(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLSCALEXOES:
+			D(funcname = "glScalexOES");
+			if (GL_ISAVAILABLE(glScalexOES))
 			nfglScalexOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1),  /* GLfixed y */
 				getStackedParameter(2)  /* GLfixed z */);
 			break;
 		case NFOSMESA_GLSCISSOR:
+			D(funcname = "glScissor");
+			if (GL_ISAVAILABLE(glScissor))
 			nfglScissor(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -12360,12 +16272,16 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLSCISSORARRAYV:
+			D(funcname = "glScissorArrayv");
+			if (GL_ISAVAILABLE(glScissorArrayv))
 			nfglScissorArrayv(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSCISSORINDEXED:
+			D(funcname = "glScissorIndexed");
+			if (GL_ISAVAILABLE(glScissorIndexed))
 			nfglScissorIndexed(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint left */
@@ -12374,197 +16290,275 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLSCISSORINDEXEDV:
+			D(funcname = "glScissorIndexedv");
+			if (GL_ISAVAILABLE(glScissorIndexedv))
 			nfglScissorIndexedv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3B:
+			D(funcname = "glSecondaryColor3b");
+			if (GL_ISAVAILABLE(glSecondaryColor3b))
 			nfglSecondaryColor3b(
 				getStackedParameter(0),  /* GLbyte32 red */
 				getStackedParameter(1),  /* GLbyte32 green */
 				getStackedParameter(2)  /* GLbyte32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BEXT:
+			D(funcname = "glSecondaryColor3bEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3bEXT))
 			nfglSecondaryColor3bEXT(
 				getStackedParameter(0),  /* GLbyte32 red */
 				getStackedParameter(1),  /* GLbyte32 green */
 				getStackedParameter(2)  /* GLbyte32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BV:
+			D(funcname = "glSecondaryColor3bv");
+			if (GL_ISAVAILABLE(glSecondaryColor3bv))
 			nfglSecondaryColor3bv(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BVEXT:
+			D(funcname = "glSecondaryColor3bvEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3bvEXT))
 			nfglSecondaryColor3bvEXT(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3D:
+			D(funcname = "glSecondaryColor3d");
+			if (GL_ISAVAILABLE(glSecondaryColor3d))
 			nfglSecondaryColor3d(
 				getStackedDouble(0),  /* GLdouble red */
 				getStackedDouble(2),  /* GLdouble green */
 				getStackedDouble(4)  /* GLdouble blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DEXT:
+			D(funcname = "glSecondaryColor3dEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3dEXT))
 			nfglSecondaryColor3dEXT(
 				getStackedDouble(0),  /* GLdouble red */
 				getStackedDouble(2),  /* GLdouble green */
 				getStackedDouble(4)  /* GLdouble blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DV:
+			D(funcname = "glSecondaryColor3dv");
+			if (GL_ISAVAILABLE(glSecondaryColor3dv))
 			nfglSecondaryColor3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DVEXT:
+			D(funcname = "glSecondaryColor3dvEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3dvEXT))
 			nfglSecondaryColor3dvEXT(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3F:
+			D(funcname = "glSecondaryColor3f");
+			if (GL_ISAVAILABLE(glSecondaryColor3f))
 			nfglSecondaryColor3f(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
 				getStackedFloat(2)  /* GLfloat blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FEXT:
+			D(funcname = "glSecondaryColor3fEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3fEXT))
 			nfglSecondaryColor3fEXT(
 				getStackedFloat(0),  /* GLfloat red */
 				getStackedFloat(1),  /* GLfloat green */
 				getStackedFloat(2)  /* GLfloat blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FV:
+			D(funcname = "glSecondaryColor3fv");
+			if (GL_ISAVAILABLE(glSecondaryColor3fv))
 			nfglSecondaryColor3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FVEXT:
+			D(funcname = "glSecondaryColor3fvEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3fvEXT))
 			nfglSecondaryColor3fvEXT(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HNV:
+			D(funcname = "glSecondaryColor3hNV");
+			if (GL_ISAVAILABLE(glSecondaryColor3hNV))
 			nfglSecondaryColor3hNV(
 				getStackedParameter(0),  /* GLhalfNV32 red */
 				getStackedParameter(1),  /* GLhalfNV32 green */
 				getStackedParameter(2)  /* GLhalfNV32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HVNV:
+			D(funcname = "glSecondaryColor3hvNV");
+			if (GL_ISAVAILABLE(glSecondaryColor3hvNV))
 			nfglSecondaryColor3hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3I:
+			D(funcname = "glSecondaryColor3i");
+			if (GL_ISAVAILABLE(glSecondaryColor3i))
 			nfglSecondaryColor3i(
 				getStackedParameter(0),  /* GLint red */
 				getStackedParameter(1),  /* GLint green */
 				getStackedParameter(2)  /* GLint blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IEXT:
+			D(funcname = "glSecondaryColor3iEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3iEXT))
 			nfglSecondaryColor3iEXT(
 				getStackedParameter(0),  /* GLint red */
 				getStackedParameter(1),  /* GLint green */
 				getStackedParameter(2)  /* GLint blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IV:
+			D(funcname = "glSecondaryColor3iv");
+			if (GL_ISAVAILABLE(glSecondaryColor3iv))
 			nfglSecondaryColor3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IVEXT:
+			D(funcname = "glSecondaryColor3ivEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3ivEXT))
 			nfglSecondaryColor3ivEXT(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3S:
+			D(funcname = "glSecondaryColor3s");
+			if (GL_ISAVAILABLE(glSecondaryColor3s))
 			nfglSecondaryColor3s(
 				getStackedParameter(0),  /* GLshort32 red */
 				getStackedParameter(1),  /* GLshort32 green */
 				getStackedParameter(2)  /* GLshort32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SEXT:
+			D(funcname = "glSecondaryColor3sEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3sEXT))
 			nfglSecondaryColor3sEXT(
 				getStackedParameter(0),  /* GLshort32 red */
 				getStackedParameter(1),  /* GLshort32 green */
 				getStackedParameter(2)  /* GLshort32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SV:
+			D(funcname = "glSecondaryColor3sv");
+			if (GL_ISAVAILABLE(glSecondaryColor3sv))
 			nfglSecondaryColor3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SVEXT:
+			D(funcname = "glSecondaryColor3svEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3svEXT))
 			nfglSecondaryColor3svEXT(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UB:
+			D(funcname = "glSecondaryColor3ub");
+			if (GL_ISAVAILABLE(glSecondaryColor3ub))
 			nfglSecondaryColor3ub(
 				getStackedParameter(0),  /* GLubyte32 red */
 				getStackedParameter(1),  /* GLubyte32 green */
 				getStackedParameter(2)  /* GLubyte32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBEXT:
+			D(funcname = "glSecondaryColor3ubEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3ubEXT))
 			nfglSecondaryColor3ubEXT(
 				getStackedParameter(0),  /* GLubyte32 red */
 				getStackedParameter(1),  /* GLubyte32 green */
 				getStackedParameter(2)  /* GLubyte32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBV:
+			D(funcname = "glSecondaryColor3ubv");
+			if (GL_ISAVAILABLE(glSecondaryColor3ubv))
 			nfglSecondaryColor3ubv(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBVEXT:
+			D(funcname = "glSecondaryColor3ubvEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3ubvEXT))
 			nfglSecondaryColor3ubvEXT(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UI:
+			D(funcname = "glSecondaryColor3ui");
+			if (GL_ISAVAILABLE(glSecondaryColor3ui))
 			nfglSecondaryColor3ui(
 				getStackedParameter(0),  /* GLuint red */
 				getStackedParameter(1),  /* GLuint green */
 				getStackedParameter(2)  /* GLuint blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIEXT:
+			D(funcname = "glSecondaryColor3uiEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3uiEXT))
 			nfglSecondaryColor3uiEXT(
 				getStackedParameter(0),  /* GLuint red */
 				getStackedParameter(1),  /* GLuint green */
 				getStackedParameter(2)  /* GLuint blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIV:
+			D(funcname = "glSecondaryColor3uiv");
+			if (GL_ISAVAILABLE(glSecondaryColor3uiv))
 			nfglSecondaryColor3uiv(
 				getStackedPointer(0, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIVEXT:
+			D(funcname = "glSecondaryColor3uivEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3uivEXT))
 			nfglSecondaryColor3uivEXT(
 				getStackedPointer(0, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3US:
+			D(funcname = "glSecondaryColor3us");
+			if (GL_ISAVAILABLE(glSecondaryColor3us))
 			nfglSecondaryColor3us(
 				getStackedParameter(0),  /* GLushort32 red */
 				getStackedParameter(1),  /* GLushort32 green */
 				getStackedParameter(2)  /* GLushort32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USEXT:
+			D(funcname = "glSecondaryColor3usEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3usEXT))
 			nfglSecondaryColor3usEXT(
 				getStackedParameter(0),  /* GLushort32 red */
 				getStackedParameter(1),  /* GLushort32 green */
 				getStackedParameter(2)  /* GLushort32 blue */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USV:
+			D(funcname = "glSecondaryColor3usv");
+			if (GL_ISAVAILABLE(glSecondaryColor3usv))
 			nfglSecondaryColor3usv(
 				getStackedPointer(0, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USVEXT:
+			D(funcname = "glSecondaryColor3usvEXT");
+			if (GL_ISAVAILABLE(glSecondaryColor3usvEXT))
 			nfglSecondaryColor3usvEXT(
 				getStackedPointer(0, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORFORMATNV:
+			D(funcname = "glSecondaryColorFormatNV");
+			if (GL_ISAVAILABLE(glSecondaryColorFormatNV))
 			nfglSecondaryColorFormatNV(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORP3UI:
+			D(funcname = "glSecondaryColorP3ui");
+			if (GL_ISAVAILABLE(glSecondaryColorP3ui))
 			nfglSecondaryColorP3ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint color */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORP3UIV:
+			D(funcname = "glSecondaryColorP3uiv");
+			if (GL_ISAVAILABLE(glSecondaryColorP3uiv))
 			nfglSecondaryColorP3uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *color */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTER:
+			D(funcname = "glSecondaryColorPointer");
+			if (GL_ISAVAILABLE(glSecondaryColorPointer))
 			nfglSecondaryColorPointer(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -12572,6 +16566,8 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTEREXT:
+			D(funcname = "glSecondaryColorPointerEXT");
+			if (GL_ISAVAILABLE(glSecondaryColorPointerEXT))
 			nfglSecondaryColorPointerEXT(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -12579,6 +16575,8 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTERLISTIBM:
+			D(funcname = "glSecondaryColorPointerListIBM");
+			if (GL_ISAVAILABLE(glSecondaryColorPointerListIBM))
 			nfglSecondaryColorPointerListIBM(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -12587,11 +16585,15 @@
 				getStackedParameter(4)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLSELECTBUFFER:
+			D(funcname = "glSelectBuffer");
+			if (GL_ISAVAILABLE(glSelectBuffer))
 			nfglSelectBuffer(
 				getStackedParameter(0),  /* GLsizei size */
 				getStackedPointer(1, GLuint *)  /* GLuint *buffer */);
 			break;
 		case NFOSMESA_GLSELECTPERFMONITORCOUNTERSAMD:
+			D(funcname = "glSelectPerfMonitorCountersAMD");
+			if (GL_ISAVAILABLE(glSelectPerfMonitorCountersAMD))
 			nfglSelectPerfMonitorCountersAMD(
 				getStackedParameter(0),  /* GLuint monitor */
 				getStackedParameter(1),  /* GLboolean32 enable */
@@ -12600,6 +16602,8 @@
 				getStackedPointer(4, GLuint *)  /* GLuint *counterList */);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2D:
+			D(funcname = "glSeparableFilter2D");
+			if (GL_ISAVAILABLE(glSeparableFilter2D))
 			nfglSeparableFilter2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -12611,6 +16615,8 @@
 				getStackedPointer(7, const void *)  /* const void *column */);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2DEXT:
+			D(funcname = "glSeparableFilter2DEXT");
+			if (GL_ISAVAILABLE(glSeparableFilter2DEXT))
 			nfglSeparableFilter2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -12622,42 +16628,58 @@
 				getStackedPointer(7, const void *)  /* const void *column */);
 			break;
 		case NFOSMESA_GLSETFENCEAPPLE:
+			D(funcname = "glSetFenceAPPLE");
+			if (GL_ISAVAILABLE(glSetFenceAPPLE))
 			nfglSetFenceAPPLE(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLSETFENCENV:
+			D(funcname = "glSetFenceNV");
+			if (GL_ISAVAILABLE(glSetFenceNV))
 			nfglSetFenceNV(
 				getStackedParameter(0),  /* GLuint fence */
 				getStackedParameter(1)  /* GLenum condition */);
 			break;
 		case NFOSMESA_GLSETFRAGMENTSHADERCONSTANTATI:
+			D(funcname = "glSetFragmentShaderConstantATI");
+			if (GL_ISAVAILABLE(glSetFragmentShaderConstantATI))
 			nfglSetFragmentShaderConstantATI(
 				getStackedParameter(0),  /* GLuint dst */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLSETINVARIANTEXT:
+			D(funcname = "glSetInvariantEXT");
+			if (GL_ISAVAILABLE(glSetInvariantEXT))
 			nfglSetInvariantEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void *)  /* const void *addr */);
 			break;
 		case NFOSMESA_GLSETLOCALCONSTANTEXT:
+			D(funcname = "glSetLocalConstantEXT");
+			if (GL_ISAVAILABLE(glSetLocalConstantEXT))
 			nfglSetLocalConstantEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void *)  /* const void *addr */);
 			break;
 		case NFOSMESA_GLSETMULTISAMPLEFVAMD:
+			D(funcname = "glSetMultisamplefvAMD");
+			if (GL_ISAVAILABLE(glSetMultisamplefvAMD))
 			nfglSetMultisamplefvAMD(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *val */);
 			break;
 		case NFOSMESA_GLSHADEMODEL:
+			D(funcname = "glShadeModel");
+			if (GL_ISAVAILABLE(glShadeModel))
 			nfglShadeModel(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLSHADERBINARY:
+			D(funcname = "glShaderBinary");
+			if (GL_ISAVAILABLE(glShaderBinary))
 			nfglShaderBinary(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, const GLuint *),  /* const GLuint *shaders */
@@ -12666,12 +16688,16 @@
 				getStackedParameter(4)  /* GLsizei length */);
 			break;
 		case NFOSMESA_GLSHADEROP1EXT:
+			D(funcname = "glShaderOp1EXT");
+			if (GL_ISAVAILABLE(glShaderOp1EXT))
 			nfglShaderOp1EXT(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint res */
 				getStackedParameter(2)  /* GLuint arg1 */);
 			break;
 		case NFOSMESA_GLSHADEROP2EXT:
+			D(funcname = "glShaderOp2EXT");
+			if (GL_ISAVAILABLE(glShaderOp2EXT))
 			nfglShaderOp2EXT(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint res */
@@ -12679,6 +16705,8 @@
 				getStackedParameter(3)  /* GLuint arg2 */);
 			break;
 		case NFOSMESA_GLSHADEROP3EXT:
+			D(funcname = "glShaderOp3EXT");
+			if (GL_ISAVAILABLE(glShaderOp3EXT))
 			nfglShaderOp3EXT(
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1),  /* GLuint res */
@@ -12687,6 +16715,8 @@
 				getStackedParameter(4)  /* GLuint arg3 */);
 			break;
 		case NFOSMESA_GLSHADERSOURCE:
+			D(funcname = "glShaderSource");
+			if (GL_ISAVAILABLE(glShaderSource))
 			nfglShaderSource(
 				getStackedParameter(0),  /* GLuint shader */
 				getStackedParameter(1),  /* GLsizei count */
@@ -12694,6 +16724,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *length */);
 			break;
 		case NFOSMESA_GLSHADERSOURCEARB:
+			D(funcname = "glShaderSourceARB");
+			if (GL_ISAVAILABLE(glShaderSourceARB))
 			nfglShaderSourceARB(
 				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB shaderObj */
 				getStackedParameter(1),  /* GLsizei count */
@@ -12701,51 +16733,71 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *length */);
 			break;
 		case NFOSMESA_GLSHADERSTORAGEBLOCKBINDING:
+			D(funcname = "glShaderStorageBlockBinding");
+			if (GL_ISAVAILABLE(glShaderStorageBlockBinding))
 			nfglShaderStorageBlockBinding(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint storageBlockIndex */
 				getStackedParameter(2)  /* GLuint storageBlockBinding */);
 			break;
 		case NFOSMESA_GLSHARPENTEXFUNCSGIS:
+			D(funcname = "glSharpenTexFuncSGIS");
+			if (GL_ISAVAILABLE(glSharpenTexFuncSGIS))
 			nfglSharpenTexFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *points */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFSGIX:
+			D(funcname = "glSpriteParameterfSGIX");
+			if (GL_ISAVAILABLE(glSpriteParameterfSGIX))
 			nfglSpriteParameterfSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFVSGIX:
+			D(funcname = "glSpriteParameterfvSGIX");
+			if (GL_ISAVAILABLE(glSpriteParameterfvSGIX))
 			nfglSpriteParameterfvSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERISGIX:
+			D(funcname = "glSpriteParameteriSGIX");
+			if (GL_ISAVAILABLE(glSpriteParameteriSGIX))
 			nfglSpriteParameteriSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERIVSGIX:
+			D(funcname = "glSpriteParameterivSGIX");
+			if (GL_ISAVAILABLE(glSpriteParameterivSGIX))
 			nfglSpriteParameterivSGIX(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLSTARTINSTRUMENTSSGIX:
+			D(funcname = "glStartInstrumentsSGIX");
+			if (GL_ISAVAILABLE(glStartInstrumentsSGIX))
 			nfglStartInstrumentsSGIX();
 			break;
 		case NFOSMESA_GLSTATECAPTURENV:
+			D(funcname = "glStateCaptureNV");
+			if (GL_ISAVAILABLE(glStateCaptureNV))
 			nfglStateCaptureNV(
 				getStackedParameter(0),  /* GLuint state */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLSTENCILCLEARTAGEXT:
+			D(funcname = "glStencilClearTagEXT");
+			if (GL_ISAVAILABLE(glStencilClearTagEXT))
 			nfglStencilClearTagEXT(
 				getStackedParameter(0),  /* GLsizei stencilTagBits */
 				getStackedParameter(1)  /* GLuint stencilClearTag */);
 			break;
 		case NFOSMESA_GLSTENCILFILLPATHINSTANCEDNV:
+			D(funcname = "glStencilFillPathInstancedNV");
+			if (GL_ISAVAILABLE(glStencilFillPathInstancedNV))
 			nfglStencilFillPathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -12757,18 +16809,24 @@
 				getStackedPointer(7, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILFILLPATHNV:
+			D(funcname = "glStencilFillPathNV");
+			if (GL_ISAVAILABLE(glStencilFillPathNV))
 			nfglStencilFillPathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum fillMode */
 				getStackedParameter(2)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILFUNC:
+			D(funcname = "glStencilFunc");
+			if (GL_ISAVAILABLE(glStencilFunc))
 			nfglStencilFunc(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedParameter(1),  /* GLint ref */
 				getStackedParameter(2)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILFUNCSEPARATE:
+			D(funcname = "glStencilFuncSeparate");
+			if (GL_ISAVAILABLE(glStencilFuncSeparate))
 			nfglStencilFuncSeparate(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum func */
@@ -12776,6 +16834,8 @@
 				getStackedParameter(3)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILFUNCSEPARATEATI:
+			D(funcname = "glStencilFuncSeparateATI");
+			if (GL_ISAVAILABLE(glStencilFuncSeparateATI))
 			nfglStencilFuncSeparateATI(
 				getStackedParameter(0),  /* GLenum frontfunc */
 				getStackedParameter(1),  /* GLenum backfunc */
@@ -12783,21 +16843,29 @@
 				getStackedParameter(3)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILMASK:
+			D(funcname = "glStencilMask");
+			if (GL_ISAVAILABLE(glStencilMask))
 			nfglStencilMask(
 				getStackedParameter(0)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILMASKSEPARATE:
+			D(funcname = "glStencilMaskSeparate");
+			if (GL_ISAVAILABLE(glStencilMaskSeparate))
 			nfglStencilMaskSeparate(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILOP:
+			D(funcname = "glStencilOp");
+			if (GL_ISAVAILABLE(glStencilOp))
 			nfglStencilOp(
 				getStackedParameter(0),  /* GLenum fail */
 				getStackedParameter(1),  /* GLenum zfail */
 				getStackedParameter(2)  /* GLenum zpass */);
 			break;
 		case NFOSMESA_GLSTENCILOPSEPARATE:
+			D(funcname = "glStencilOpSeparate");
+			if (GL_ISAVAILABLE(glStencilOpSeparate))
 			nfglStencilOpSeparate(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum sfail */
@@ -12805,6 +16873,8 @@
 				getStackedParameter(3)  /* GLenum dppass */);
 			break;
 		case NFOSMESA_GLSTENCILOPSEPARATEATI:
+			D(funcname = "glStencilOpSeparateATI");
+			if (GL_ISAVAILABLE(glStencilOpSeparateATI))
 			nfglStencilOpSeparateATI(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1),  /* GLenum sfail */
@@ -12812,11 +16882,15 @@
 				getStackedParameter(3)  /* GLenum dppass */);
 			break;
 		case NFOSMESA_GLSTENCILOPVALUEAMD:
+			D(funcname = "glStencilOpValueAMD");
+			if (GL_ISAVAILABLE(glStencilOpValueAMD))
 			nfglStencilOpValueAMD(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLSTENCILSTROKEPATHINSTANCEDNV:
+			D(funcname = "glStencilStrokePathInstancedNV");
+			if (GL_ISAVAILABLE(glStencilStrokePathInstancedNV))
 			nfglStencilStrokePathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -12828,12 +16902,16 @@
 				getStackedPointer(7, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILSTROKEPATHNV:
+			D(funcname = "glStencilStrokePathNV");
+			if (GL_ISAVAILABLE(glStencilStrokePathNV))
 			nfglStencilStrokePathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLint reference */
 				getStackedParameter(2)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERFILLPATHINSTANCEDNV:
+			D(funcname = "glStencilThenCoverFillPathInstancedNV");
+			if (GL_ISAVAILABLE(glStencilThenCoverFillPathInstancedNV))
 			nfglStencilThenCoverFillPathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -12846,6 +16924,8 @@
 				getStackedPointer(8, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERFILLPATHNV:
+			D(funcname = "glStencilThenCoverFillPathNV");
+			if (GL_ISAVAILABLE(glStencilThenCoverFillPathNV))
 			nfglStencilThenCoverFillPathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLenum fillMode */
@@ -12853,6 +16933,8 @@
 				getStackedParameter(3)  /* GLenum coverMode */);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERSTROKEPATHINSTANCEDNV:
+			D(funcname = "glStencilThenCoverStrokePathInstancedNV");
+			if (GL_ISAVAILABLE(glStencilThenCoverStrokePathInstancedNV))
 			nfglStencilThenCoverStrokePathInstancedNV(
 				getStackedParameter(0),  /* GLsizei numPaths */
 				getStackedParameter(1),  /* GLenum pathNameType */
@@ -12865,6 +16947,8 @@
 				getStackedPointer(8, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERSTROKEPATHNV:
+			D(funcname = "glStencilThenCoverStrokePathNV");
+			if (GL_ISAVAILABLE(glStencilThenCoverStrokePathNV))
 			nfglStencilThenCoverStrokePathNV(
 				getStackedParameter(0),  /* GLuint path */
 				getStackedParameter(1),  /* GLint reference */
@@ -12872,23 +16956,33 @@
 				getStackedParameter(3)  /* GLenum coverMode */);
 			break;
 		case NFOSMESA_GLSTOPINSTRUMENTSSGIX:
+			D(funcname = "glStopInstrumentsSGIX");
+			if (GL_ISAVAILABLE(glStopInstrumentsSGIX))
 			nfglStopInstrumentsSGIX(
 				getStackedParameter(0)  /* GLint marker */);
 			break;
 		case NFOSMESA_GLSTRINGMARKERGREMEDY:
+			D(funcname = "glStringMarkerGREMEDY");
+			if (GL_ISAVAILABLE(glStringMarkerGREMEDY))
 			nfglStringMarkerGREMEDY(
 				getStackedParameter(0),  /* GLsizei len */
 				getStackedPointer(1, const void *)  /* const void *string */);
 			break;
 		case NFOSMESA_GLSUBPIXELPRECISIONBIASNV:
+			D(funcname = "glSubpixelPrecisionBiasNV");
+			if (GL_ISAVAILABLE(glSubpixelPrecisionBiasNV))
 			nfglSubpixelPrecisionBiasNV(
 				getStackedParameter(0),  /* GLuint xbits */
 				getStackedParameter(1)  /* GLuint ybits */);
 			break;
 		case NFOSMESA_GLSWAPAPPLE:
+			D(funcname = "glSwapAPPLE");
+			if (GL_ISAVAILABLE(glSwapAPPLE))
 			nfglSwapAPPLE();
 			break;
 		case NFOSMESA_GLSWIZZLEEXT:
+			D(funcname = "glSwizzleEXT");
+			if (GL_ISAVAILABLE(glSwizzleEXT))
 			nfglSwizzleEXT(
 				getStackedParameter(0),  /* GLuint res */
 				getStackedParameter(1),  /* GLuint in */
@@ -12898,112 +16992,158 @@
 				getStackedParameter(5)  /* GLenum outW */);
 			break;
 		case NFOSMESA_GLSYNCTEXTUREINTEL:
+			D(funcname = "glSyncTextureINTEL");
+			if (GL_ISAVAILABLE(glSyncTextureINTEL))
 			nfglSyncTextureINTEL(
 				getStackedParameter(0)  /* GLuint texture */);
 			break;
 		case NFOSMESA_GLTAGSAMPLEBUFFERSGIX:
+			D(funcname = "glTagSampleBufferSGIX");
+			if (GL_ISAVAILABLE(glTagSampleBufferSGIX))
 			nfglTagSampleBufferSGIX();
 			break;
 		case NFOSMESA_GLTANGENT3BEXT:
+			D(funcname = "glTangent3bEXT");
+			if (GL_ISAVAILABLE(glTangent3bEXT))
 			nfglTangent3bEXT(
 				getStackedParameter(0),  /* GLbyte32 tx */
 				getStackedParameter(1),  /* GLbyte32 ty */
 				getStackedParameter(2)  /* GLbyte32 tz */);
 			break;
 		case NFOSMESA_GLTANGENT3BVEXT:
+			D(funcname = "glTangent3bvEXT");
+			if (GL_ISAVAILABLE(glTangent3bvEXT))
 			nfglTangent3bvEXT(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLTANGENT3DEXT:
+			D(funcname = "glTangent3dEXT");
+			if (GL_ISAVAILABLE(glTangent3dEXT))
 			nfglTangent3dEXT(
 				getStackedDouble(0),  /* GLdouble tx */
 				getStackedDouble(2),  /* GLdouble ty */
 				getStackedDouble(4)  /* GLdouble tz */);
 			break;
 		case NFOSMESA_GLTANGENT3DVEXT:
+			D(funcname = "glTangent3dvEXT");
+			if (GL_ISAVAILABLE(glTangent3dvEXT))
 			nfglTangent3dvEXT(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTANGENT3FEXT:
+			D(funcname = "glTangent3fEXT");
+			if (GL_ISAVAILABLE(glTangent3fEXT))
 			nfglTangent3fEXT(
 				getStackedFloat(0),  /* GLfloat tx */
 				getStackedFloat(1),  /* GLfloat ty */
 				getStackedFloat(2)  /* GLfloat tz */);
 			break;
 		case NFOSMESA_GLTANGENT3FVEXT:
+			D(funcname = "glTangent3fvEXT");
+			if (GL_ISAVAILABLE(glTangent3fvEXT))
 			nfglTangent3fvEXT(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTANGENT3IEXT:
+			D(funcname = "glTangent3iEXT");
+			if (GL_ISAVAILABLE(glTangent3iEXT))
 			nfglTangent3iEXT(
 				getStackedParameter(0),  /* GLint tx */
 				getStackedParameter(1),  /* GLint ty */
 				getStackedParameter(2)  /* GLint tz */);
 			break;
 		case NFOSMESA_GLTANGENT3IVEXT:
+			D(funcname = "glTangent3ivEXT");
+			if (GL_ISAVAILABLE(glTangent3ivEXT))
 			nfglTangent3ivEXT(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTANGENT3SEXT:
+			D(funcname = "glTangent3sEXT");
+			if (GL_ISAVAILABLE(glTangent3sEXT))
 			nfglTangent3sEXT(
 				getStackedParameter(0),  /* GLshort32 tx */
 				getStackedParameter(1),  /* GLshort32 ty */
 				getStackedParameter(2)  /* GLshort32 tz */);
 			break;
 		case NFOSMESA_GLTANGENT3SVEXT:
+			D(funcname = "glTangent3svEXT");
+			if (GL_ISAVAILABLE(glTangent3svEXT))
 			nfglTangent3svEXT(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTANGENTPOINTEREXT:
+			D(funcname = "glTangentPointerEXT");
+			if (GL_ISAVAILABLE(glTangentPointerEXT))
 			nfglTangentPointerEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1),  /* GLsizei stride */
 				getStackedPointer(2, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLTBUFFERMASK3DFX:
+			D(funcname = "glTbufferMask3DFX");
+			if (GL_ISAVAILABLE(glTbufferMask3DFX))
 			nfglTbufferMask3DFX(
 				getStackedParameter(0)  /* GLuint mask */);
 			break;
 		case NFOSMESA_GLTESSELLATIONFACTORAMD:
+			D(funcname = "glTessellationFactorAMD");
+			if (GL_ISAVAILABLE(glTessellationFactorAMD))
 			nfglTessellationFactorAMD(
 				getStackedFloat(0)  /* GLfloat factor */);
 			break;
 		case NFOSMESA_GLTESSELLATIONMODEAMD:
+			D(funcname = "glTessellationModeAMD");
+			if (GL_ISAVAILABLE(glTessellationModeAMD))
 			nfglTessellationModeAMD(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLTESTFENCEAPPLE:
+			D(funcname = "glTestFenceAPPLE");
+			if (GL_ISAVAILABLE(glTestFenceAPPLE))
 			ret = nfglTestFenceAPPLE(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLTESTFENCENV:
+			D(funcname = "glTestFenceNV");
+			if (GL_ISAVAILABLE(glTestFenceNV))
 			ret = nfglTestFenceNV(
 				getStackedParameter(0)  /* GLuint fence */);
 			break;
 		case NFOSMESA_GLTESTOBJECTAPPLE:
+			D(funcname = "glTestObjectAPPLE");
+			if (GL_ISAVAILABLE(glTestObjectAPPLE))
 			ret = nfglTestObjectAPPLE(
 				getStackedParameter(0),  /* GLenum object */
 				getStackedParameter(1)  /* GLuint name */);
 			break;
 		case NFOSMESA_GLTEXBUFFER:
+			D(funcname = "glTexBuffer");
+			if (GL_ISAVAILABLE(glTexBuffer))
 			nfglTexBuffer(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTEXBUFFERARB:
+			D(funcname = "glTexBufferARB");
+			if (GL_ISAVAILABLE(glTexBufferARB))
 			nfglTexBufferARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTEXBUFFEREXT:
+			D(funcname = "glTexBufferEXT");
+			if (GL_ISAVAILABLE(glTexBufferEXT))
 			nfglTexBufferEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTEXBUFFERRANGE:
+			D(funcname = "glTexBufferRange");
+			if (GL_ISAVAILABLE(glTexBufferRange))
 			nfglTexBufferRange(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -13012,95 +17152,139 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLTEXBUMPPARAMETERFVATI:
+			D(funcname = "glTexBumpParameterfvATI");
+			if (GL_ISAVAILABLE(glTexBumpParameterfvATI))
 			nfglTexBumpParameterfvATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *param */);
 			break;
 		case NFOSMESA_GLTEXBUMPPARAMETERIVATI:
+			D(funcname = "glTexBumpParameterivATI");
+			if (GL_ISAVAILABLE(glTexBumpParameterivATI))
 			nfglTexBumpParameterivATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedPointer(1, const GLint *)  /* const GLint *param */);
 			break;
 		case NFOSMESA_GLTEXCOORD1BOES:
+			D(funcname = "glTexCoord1bOES");
+			if (GL_ISAVAILABLE(glTexCoord1bOES))
 			nfglTexCoord1bOES(
 				getStackedParameter(0)  /* GLbyte32 s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1BVOES:
+			D(funcname = "glTexCoord1bvOES");
+			if (GL_ISAVAILABLE(glTexCoord1bvOES))
 			nfglTexCoord1bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD1D:
+			D(funcname = "glTexCoord1d");
+			if (GL_ISAVAILABLE(glTexCoord1d))
 			nfglTexCoord1d(
 				getStackedDouble(0)  /* GLdouble s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1DV:
+			D(funcname = "glTexCoord1dv");
+			if (GL_ISAVAILABLE(glTexCoord1dv))
 			nfglTexCoord1dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1F:
+			D(funcname = "glTexCoord1f");
+			if (GL_ISAVAILABLE(glTexCoord1f))
 			nfglTexCoord1f(
 				getStackedFloat(0)  /* GLfloat s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1FV:
+			D(funcname = "glTexCoord1fv");
+			if (GL_ISAVAILABLE(glTexCoord1fv))
 			nfglTexCoord1fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1HNV:
+			D(funcname = "glTexCoord1hNV");
+			if (GL_ISAVAILABLE(glTexCoord1hNV))
 			nfglTexCoord1hNV(
 				getStackedParameter(0)  /* GLhalfNV32 s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1HVNV:
+			D(funcname = "glTexCoord1hvNV");
+			if (GL_ISAVAILABLE(glTexCoord1hvNV))
 			nfglTexCoord1hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1I:
+			D(funcname = "glTexCoord1i");
+			if (GL_ISAVAILABLE(glTexCoord1i))
 			nfglTexCoord1i(
 				getStackedParameter(0)  /* GLint s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1IV:
+			D(funcname = "glTexCoord1iv");
+			if (GL_ISAVAILABLE(glTexCoord1iv))
 			nfglTexCoord1iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1S:
+			D(funcname = "glTexCoord1s");
+			if (GL_ISAVAILABLE(glTexCoord1s))
 			nfglTexCoord1s(
 				getStackedParameter(0)  /* GLshort32 s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1SV:
+			D(funcname = "glTexCoord1sv");
+			if (GL_ISAVAILABLE(glTexCoord1sv))
 			nfglTexCoord1sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD1XOES:
+			D(funcname = "glTexCoord1xOES");
+			if (GL_ISAVAILABLE(glTexCoord1xOES))
 			nfglTexCoord1xOES(
 				getStackedParameter(0)  /* GLfixed s */);
 			break;
 		case NFOSMESA_GLTEXCOORD1XVOES:
+			D(funcname = "glTexCoord1xvOES");
+			if (GL_ISAVAILABLE(glTexCoord1xvOES))
 			nfglTexCoord1xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD2BOES:
+			D(funcname = "glTexCoord2bOES");
+			if (GL_ISAVAILABLE(glTexCoord2bOES))
 			nfglTexCoord2bOES(
 				getStackedParameter(0),  /* GLbyte32 s */
 				getStackedParameter(1)  /* GLbyte32 t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2BVOES:
+			D(funcname = "glTexCoord2bvOES");
+			if (GL_ISAVAILABLE(glTexCoord2bvOES))
 			nfglTexCoord2bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD2D:
+			D(funcname = "glTexCoord2d");
+			if (GL_ISAVAILABLE(glTexCoord2d))
 			nfglTexCoord2d(
 				getStackedDouble(0),  /* GLdouble s */
 				getStackedDouble(2)  /* GLdouble t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2DV:
+			D(funcname = "glTexCoord2dv");
+			if (GL_ISAVAILABLE(glTexCoord2dv))
 			nfglTexCoord2dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2F:
+			D(funcname = "glTexCoord2f");
+			if (GL_ISAVAILABLE(glTexCoord2f))
 			nfglTexCoord2f(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1)  /* GLfloat t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR3FVERTEX3FSUN:
+			D(funcname = "glTexCoord2fColor3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor3fVertex3fSUN))
 			nfglTexCoord2fColor3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13112,12 +17296,16 @@
 				getStackedFloat(7)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR3FVERTEX3FVSUN:
+			D(funcname = "glTexCoord2fColor3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor3fVertex3fvSUN))
 			nfglTexCoord2fColor3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *c */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glTexCoord2fColor4fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor4fNormal3fVertex3fSUN))
 			nfglTexCoord2fColor4fNormal3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13133,6 +17321,8 @@
 				getStackedFloat(11)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glTexCoord2fColor4fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor4fNormal3fVertex3fvSUN))
 			nfglTexCoord2fColor4fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *c */
@@ -13140,6 +17330,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FSUN:
+			D(funcname = "glTexCoord2fColor4ubVertex3fSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor4ubVertex3fSUN))
 			nfglTexCoord2fColor4ubVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13152,12 +17344,16 @@
 				getStackedFloat(8)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FVSUN:
+			D(funcname = "glTexCoord2fColor4ubVertex3fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fColor4ubVertex3fvSUN))
 			nfglTexCoord2fColor4ubVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLubyte *),  /* const GLubyte *c */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FSUN:
+			D(funcname = "glTexCoord2fNormal3fVertex3fSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fNormal3fVertex3fSUN))
 			nfglTexCoord2fNormal3fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13169,12 +17365,16 @@
 				getStackedFloat(7)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FVSUN:
+			D(funcname = "glTexCoord2fNormal3fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fNormal3fVertex3fvSUN))
 			nfglTexCoord2fNormal3fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FSUN:
+			D(funcname = "glTexCoord2fVertex3fSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fVertex3fSUN))
 			nfglTexCoord2fVertex3fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13183,121 +17383,171 @@
 				getStackedFloat(4)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FVSUN:
+			D(funcname = "glTexCoord2fVertex3fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord2fVertex3fvSUN))
 			nfglTexCoord2fVertex3fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2FV:
+			D(funcname = "glTexCoord2fv");
+			if (GL_ISAVAILABLE(glTexCoord2fv))
 			nfglTexCoord2fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2HNV:
+			D(funcname = "glTexCoord2hNV");
+			if (GL_ISAVAILABLE(glTexCoord2hNV))
 			nfglTexCoord2hNV(
 				getStackedParameter(0),  /* GLhalfNV32 s */
 				getStackedParameter(1)  /* GLhalfNV32 t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2HVNV:
+			D(funcname = "glTexCoord2hvNV");
+			if (GL_ISAVAILABLE(glTexCoord2hvNV))
 			nfglTexCoord2hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2I:
+			D(funcname = "glTexCoord2i");
+			if (GL_ISAVAILABLE(glTexCoord2i))
 			nfglTexCoord2i(
 				getStackedParameter(0),  /* GLint s */
 				getStackedParameter(1)  /* GLint t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2IV:
+			D(funcname = "glTexCoord2iv");
+			if (GL_ISAVAILABLE(glTexCoord2iv))
 			nfglTexCoord2iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2S:
+			D(funcname = "glTexCoord2s");
+			if (GL_ISAVAILABLE(glTexCoord2s))
 			nfglTexCoord2s(
 				getStackedParameter(0),  /* GLshort32 s */
 				getStackedParameter(1)  /* GLshort32 t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2SV:
+			D(funcname = "glTexCoord2sv");
+			if (GL_ISAVAILABLE(glTexCoord2sv))
 			nfglTexCoord2sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD2XOES:
+			D(funcname = "glTexCoord2xOES");
+			if (GL_ISAVAILABLE(glTexCoord2xOES))
 			nfglTexCoord2xOES(
 				getStackedParameter(0),  /* GLfixed s */
 				getStackedParameter(1)  /* GLfixed t */);
 			break;
 		case NFOSMESA_GLTEXCOORD2XVOES:
+			D(funcname = "glTexCoord2xvOES");
+			if (GL_ISAVAILABLE(glTexCoord2xvOES))
 			nfglTexCoord2xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD3BOES:
+			D(funcname = "glTexCoord3bOES");
+			if (GL_ISAVAILABLE(glTexCoord3bOES))
 			nfglTexCoord3bOES(
 				getStackedParameter(0),  /* GLbyte32 s */
 				getStackedParameter(1),  /* GLbyte32 t */
 				getStackedParameter(2)  /* GLbyte32 r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3BVOES:
+			D(funcname = "glTexCoord3bvOES");
+			if (GL_ISAVAILABLE(glTexCoord3bvOES))
 			nfglTexCoord3bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD3D:
+			D(funcname = "glTexCoord3d");
+			if (GL_ISAVAILABLE(glTexCoord3d))
 			nfglTexCoord3d(
 				getStackedDouble(0),  /* GLdouble s */
 				getStackedDouble(2),  /* GLdouble t */
 				getStackedDouble(4)  /* GLdouble r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3DV:
+			D(funcname = "glTexCoord3dv");
+			if (GL_ISAVAILABLE(glTexCoord3dv))
 			nfglTexCoord3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3F:
+			D(funcname = "glTexCoord3f");
+			if (GL_ISAVAILABLE(glTexCoord3f))
 			nfglTexCoord3f(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
 				getStackedFloat(2)  /* GLfloat r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3FV:
+			D(funcname = "glTexCoord3fv");
+			if (GL_ISAVAILABLE(glTexCoord3fv))
 			nfglTexCoord3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3HNV:
+			D(funcname = "glTexCoord3hNV");
+			if (GL_ISAVAILABLE(glTexCoord3hNV))
 			nfglTexCoord3hNV(
 				getStackedParameter(0),  /* GLhalfNV32 s */
 				getStackedParameter(1),  /* GLhalfNV32 t */
 				getStackedParameter(2)  /* GLhalfNV32 r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3HVNV:
+			D(funcname = "glTexCoord3hvNV");
+			if (GL_ISAVAILABLE(glTexCoord3hvNV))
 			nfglTexCoord3hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3I:
+			D(funcname = "glTexCoord3i");
+			if (GL_ISAVAILABLE(glTexCoord3i))
 			nfglTexCoord3i(
 				getStackedParameter(0),  /* GLint s */
 				getStackedParameter(1),  /* GLint t */
 				getStackedParameter(2)  /* GLint r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3IV:
+			D(funcname = "glTexCoord3iv");
+			if (GL_ISAVAILABLE(glTexCoord3iv))
 			nfglTexCoord3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3S:
+			D(funcname = "glTexCoord3s");
+			if (GL_ISAVAILABLE(glTexCoord3s))
 			nfglTexCoord3s(
 				getStackedParameter(0),  /* GLshort32 s */
 				getStackedParameter(1),  /* GLshort32 t */
 				getStackedParameter(2)  /* GLshort32 r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3SV:
+			D(funcname = "glTexCoord3sv");
+			if (GL_ISAVAILABLE(glTexCoord3sv))
 			nfglTexCoord3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD3XOES:
+			D(funcname = "glTexCoord3xOES");
+			if (GL_ISAVAILABLE(glTexCoord3xOES))
 			nfglTexCoord3xOES(
 				getStackedParameter(0),  /* GLfixed s */
 				getStackedParameter(1),  /* GLfixed t */
 				getStackedParameter(2)  /* GLfixed r */);
 			break;
 		case NFOSMESA_GLTEXCOORD3XVOES:
+			D(funcname = "glTexCoord3xvOES");
+			if (GL_ISAVAILABLE(glTexCoord3xvOES))
 			nfglTexCoord3xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD4BOES:
+			D(funcname = "glTexCoord4bOES");
+			if (GL_ISAVAILABLE(glTexCoord4bOES))
 			nfglTexCoord4bOES(
 				getStackedParameter(0),  /* GLbyte32 s */
 				getStackedParameter(1),  /* GLbyte32 t */
@@ -13305,10 +17555,14 @@
 				getStackedParameter(3)  /* GLbyte32 q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4BVOES:
+			D(funcname = "glTexCoord4bvOES");
+			if (GL_ISAVAILABLE(glTexCoord4bvOES))
 			nfglTexCoord4bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORD4D:
+			D(funcname = "glTexCoord4d");
+			if (GL_ISAVAILABLE(glTexCoord4d))
 			nfglTexCoord4d(
 				getStackedDouble(0),  /* GLdouble s */
 				getStackedDouble(2),  /* GLdouble t */
@@ -13316,10 +17570,14 @@
 				getStackedDouble(6)  /* GLdouble q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4DV:
+			D(funcname = "glTexCoord4dv");
+			if (GL_ISAVAILABLE(glTexCoord4dv))
 			nfglTexCoord4dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4F:
+			D(funcname = "glTexCoord4f");
+			if (GL_ISAVAILABLE(glTexCoord4f))
 			nfglTexCoord4f(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13327,6 +17585,8 @@
 				getStackedFloat(3)  /* GLfloat q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FSUN:
+			D(funcname = "glTexCoord4fColor4fNormal3fVertex4fSUN");
+			if (GL_ISAVAILABLE(glTexCoord4fColor4fNormal3fVertex4fSUN))
 			nfglTexCoord4fColor4fNormal3fVertex4fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13345,6 +17605,8 @@
 				getStackedFloat(14)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FVSUN:
+			D(funcname = "glTexCoord4fColor4fNormal3fVertex4fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord4fColor4fNormal3fVertex4fvSUN))
 			nfglTexCoord4fColor4fNormal3fVertex4fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *),  /* const GLfloat *c */
@@ -13352,6 +17614,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FSUN:
+			D(funcname = "glTexCoord4fVertex4fSUN");
+			if (GL_ISAVAILABLE(glTexCoord4fVertex4fSUN))
 			nfglTexCoord4fVertex4fSUN(
 				getStackedFloat(0),  /* GLfloat s */
 				getStackedFloat(1),  /* GLfloat t */
@@ -13363,15 +17627,21 @@
 				getStackedFloat(7)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FVSUN:
+			D(funcname = "glTexCoord4fVertex4fvSUN");
+			if (GL_ISAVAILABLE(glTexCoord4fVertex4fvSUN))
 			nfglTexCoord4fVertex4fvSUN(
 				getStackedPointer(0, const GLfloat *),  /* const GLfloat *tc */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4FV:
+			D(funcname = "glTexCoord4fv");
+			if (GL_ISAVAILABLE(glTexCoord4fv))
 			nfglTexCoord4fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4HNV:
+			D(funcname = "glTexCoord4hNV");
+			if (GL_ISAVAILABLE(glTexCoord4hNV))
 			nfglTexCoord4hNV(
 				getStackedParameter(0),  /* GLhalfNV32 s */
 				getStackedParameter(1),  /* GLhalfNV32 t */
@@ -13379,10 +17649,14 @@
 				getStackedParameter(3)  /* GLhalfNV32 q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4HVNV:
+			D(funcname = "glTexCoord4hvNV");
+			if (GL_ISAVAILABLE(glTexCoord4hvNV))
 			nfglTexCoord4hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4I:
+			D(funcname = "glTexCoord4i");
+			if (GL_ISAVAILABLE(glTexCoord4i))
 			nfglTexCoord4i(
 				getStackedParameter(0),  /* GLint s */
 				getStackedParameter(1),  /* GLint t */
@@ -13390,10 +17664,14 @@
 				getStackedParameter(3)  /* GLint q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4IV:
+			D(funcname = "glTexCoord4iv");
+			if (GL_ISAVAILABLE(glTexCoord4iv))
 			nfglTexCoord4iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4S:
+			D(funcname = "glTexCoord4s");
+			if (GL_ISAVAILABLE(glTexCoord4s))
 			nfglTexCoord4s(
 				getStackedParameter(0),  /* GLshort32 s */
 				getStackedParameter(1),  /* GLshort32 t */
@@ -13401,10 +17679,14 @@
 				getStackedParameter(3)  /* GLshort32 q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4SV:
+			D(funcname = "glTexCoord4sv");
+			if (GL_ISAVAILABLE(glTexCoord4sv))
 			nfglTexCoord4sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLTEXCOORD4XOES:
+			D(funcname = "glTexCoord4xOES");
+			if (GL_ISAVAILABLE(glTexCoord4xOES))
 			nfglTexCoord4xOES(
 				getStackedParameter(0),  /* GLfixed s */
 				getStackedParameter(1),  /* GLfixed t */
@@ -13412,56 +17694,78 @@
 				getStackedParameter(3)  /* GLfixed q */);
 			break;
 		case NFOSMESA_GLTEXCOORD4XVOES:
+			D(funcname = "glTexCoord4xvOES");
+			if (GL_ISAVAILABLE(glTexCoord4xvOES))
 			nfglTexCoord4xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDFORMATNV:
+			D(funcname = "glTexCoordFormatNV");
+			if (GL_ISAVAILABLE(glTexCoordFormatNV))
 			nfglTexCoordFormatNV(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLTEXCOORDP1UI:
+			D(funcname = "glTexCoordP1ui");
+			if (GL_ISAVAILABLE(glTexCoordP1ui))
 			nfglTexCoordP1ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP1UIV:
+			D(funcname = "glTexCoordP1uiv");
+			if (GL_ISAVAILABLE(glTexCoordP1uiv))
 			nfglTexCoordP1uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP2UI:
+			D(funcname = "glTexCoordP2ui");
+			if (GL_ISAVAILABLE(glTexCoordP2ui))
 			nfglTexCoordP2ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP2UIV:
+			D(funcname = "glTexCoordP2uiv");
+			if (GL_ISAVAILABLE(glTexCoordP2uiv))
 			nfglTexCoordP2uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP3UI:
+			D(funcname = "glTexCoordP3ui");
+			if (GL_ISAVAILABLE(glTexCoordP3ui))
 			nfglTexCoordP3ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP3UIV:
+			D(funcname = "glTexCoordP3uiv");
+			if (GL_ISAVAILABLE(glTexCoordP3uiv))
 			nfglTexCoordP3uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP4UI:
+			D(funcname = "glTexCoordP4ui");
+			if (GL_ISAVAILABLE(glTexCoordP4ui))
 			nfglTexCoordP4ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDP4UIV:
+			D(funcname = "glTexCoordP4uiv");
+			if (GL_ISAVAILABLE(glTexCoordP4uiv))
 			nfglTexCoordP4uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *coords */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTER:
+			D(funcname = "glTexCoordPointer");
+			if (GL_ISAVAILABLE(glTexCoordPointer))
 			nfglTexCoordPointer(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -13469,6 +17773,8 @@
 				getStackedPointer(3, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTEREXT:
+			D(funcname = "glTexCoordPointerEXT");
+			if (GL_ISAVAILABLE(glTexCoordPointerEXT))
 			nfglTexCoordPointerEXT(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -13477,6 +17783,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERLISTIBM:
+			D(funcname = "glTexCoordPointerListIBM");
+			if (GL_ISAVAILABLE(glTexCoordPointerListIBM))
 			nfglTexCoordPointerListIBM(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -13485,48 +17793,64 @@
 				getStackedParameter(4)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERVINTEL:
+			D(funcname = "glTexCoordPointervINTEL");
+			if (GL_ISAVAILABLE(glTexCoordPointervINTEL))
 			nfglTexCoordPointervINTEL(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void * *)  /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLTEXENVF:
+			D(funcname = "glTexEnvf");
+			if (GL_ISAVAILABLE(glTexEnvf))
 			nfglTexEnvf(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLTEXENVFV:
+			D(funcname = "glTexEnvfv");
+			if (GL_ISAVAILABLE(glTexEnvfv))
 			nfglTexEnvfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXENVI:
+			D(funcname = "glTexEnvi");
+			if (GL_ISAVAILABLE(glTexEnvi))
 			nfglTexEnvi(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLTEXENVIV:
+			D(funcname = "glTexEnviv");
+			if (GL_ISAVAILABLE(glTexEnviv))
 			nfglTexEnviv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXENVXOES:
+			D(funcname = "glTexEnvxOES");
+			if (GL_ISAVAILABLE(glTexEnvxOES))
 			nfglTexEnvxOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLTEXENVXVOES:
+			D(funcname = "glTexEnvxvOES");
+			if (GL_ISAVAILABLE(glTexEnvxvOES))
 			nfglTexEnvxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXFILTERFUNCSGIS:
+			D(funcname = "glTexFilterFuncSGIS");
+			if (GL_ISAVAILABLE(glTexFilterFuncSGIS))
 			nfglTexFilterFuncSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum filter */
@@ -13534,54 +17858,72 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLTEXGEND:
+			D(funcname = "glTexGend");
+			if (GL_ISAVAILABLE(glTexGend))
 			nfglTexGend(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedDouble(2)  /* GLdouble param */);
 			break;
 		case NFOSMESA_GLTEXGENDV:
+			D(funcname = "glTexGendv");
+			if (GL_ISAVAILABLE(glTexGendv))
 			nfglTexGendv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLTEXGENF:
+			D(funcname = "glTexGenf");
+			if (GL_ISAVAILABLE(glTexGenf))
 			nfglTexGenf(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLTEXGENFV:
+			D(funcname = "glTexGenfv");
+			if (GL_ISAVAILABLE(glTexGenfv))
 			nfglTexGenfv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXGENI:
+			D(funcname = "glTexGeni");
+			if (GL_ISAVAILABLE(glTexGeni))
 			nfglTexGeni(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLTEXGENIV:
+			D(funcname = "glTexGeniv");
+			if (GL_ISAVAILABLE(glTexGeniv))
 			nfglTexGeniv(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXGENXOES:
+			D(funcname = "glTexGenxOES");
+			if (GL_ISAVAILABLE(glTexGenxOES))
 			nfglTexGenxOES(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLTEXGENXVOES:
+			D(funcname = "glTexGenxvOES");
+			if (GL_ISAVAILABLE(glTexGenxvOES))
 			nfglTexGenxvOES(
 				getStackedParameter(0),  /* GLenum coord */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXIMAGE1D:
+			D(funcname = "glTexImage1D");
+			if (GL_ISAVAILABLE(glTexImage1D))
 			nfglTexImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13593,6 +17935,8 @@
 				getStackedPointer(7, const GLvoid *)  /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE2D:
+			D(funcname = "glTexImage2D");
+			if (GL_ISAVAILABLE(glTexImage2D))
 			nfglTexImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13605,6 +17949,8 @@
 				getStackedPointer(8, const GLvoid *)  /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE2DMULTISAMPLE:
+			D(funcname = "glTexImage2DMultisample");
+			if (GL_ISAVAILABLE(glTexImage2DMultisample))
 			nfglTexImage2DMultisample(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -13614,6 +17960,8 @@
 				getStackedParameter(5)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXIMAGE2DMULTISAMPLECOVERAGENV:
+			D(funcname = "glTexImage2DMultisampleCoverageNV");
+			if (GL_ISAVAILABLE(glTexImage2DMultisampleCoverageNV))
 			nfglTexImage2DMultisampleCoverageNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei coverageSamples */
@@ -13624,6 +17972,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3D:
+			D(funcname = "glTexImage3D");
+			if (GL_ISAVAILABLE(glTexImage3D))
 			nfglTexImage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13637,6 +17987,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DEXT:
+			D(funcname = "glTexImage3DEXT");
+			if (GL_ISAVAILABLE(glTexImage3DEXT))
 			nfglTexImage3DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13650,6 +18002,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DMULTISAMPLE:
+			D(funcname = "glTexImage3DMultisample");
+			if (GL_ISAVAILABLE(glTexImage3DMultisample))
 			nfglTexImage3DMultisample(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -13660,6 +18014,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DMULTISAMPLECOVERAGENV:
+			D(funcname = "glTexImage3DMultisampleCoverageNV");
+			if (GL_ISAVAILABLE(glTexImage3DMultisampleCoverageNV))
 			nfglTexImage3DMultisampleCoverageNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei coverageSamples */
@@ -13671,6 +18027,8 @@
 				getStackedParameter(7)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXIMAGE4DSGIS:
+			D(funcname = "glTexImage4DSGIS");
+			if (GL_ISAVAILABLE(glTexImage4DSGIS))
 			nfglTexImage4DSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13685,6 +18043,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXPAGECOMMITMENTARB:
+			D(funcname = "glTexPageCommitmentARB");
+			if (GL_ISAVAILABLE(glTexPageCommitmentARB))
 			nfglTexPageCommitmentARB(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13697,83 +18057,111 @@
 				getStackedParameter(8)  /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIV:
+			D(funcname = "glTexParameterIiv");
+			if (GL_ISAVAILABLE(glTexParameterIiv))
 			nfglTexParameterIiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIVEXT:
+			D(funcname = "glTexParameterIivEXT");
+			if (GL_ISAVAILABLE(glTexParameterIivEXT))
 			nfglTexParameterIivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIV:
+			D(funcname = "glTexParameterIuiv");
+			if (GL_ISAVAILABLE(glTexParameterIuiv))
 			nfglTexParameterIuiv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIVEXT:
+			D(funcname = "glTexParameterIuivEXT");
+			if (GL_ISAVAILABLE(glTexParameterIuivEXT))
 			nfglTexParameterIuivEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERF:
+			D(funcname = "glTexParameterf");
+			if (GL_ISAVAILABLE(glTexParameterf))
 			nfglTexParameterf(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERFV:
+			D(funcname = "glTexParameterfv");
+			if (GL_ISAVAILABLE(glTexParameterfv))
 			nfglTexParameterfv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERI:
+			D(funcname = "glTexParameteri");
+			if (GL_ISAVAILABLE(glTexParameteri))
 			nfglTexParameteri(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIV:
+			D(funcname = "glTexParameteriv");
+			if (GL_ISAVAILABLE(glTexParameteriv))
 			nfglTexParameteriv(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERXOES:
+			D(funcname = "glTexParameterxOES");
+			if (GL_ISAVAILABLE(glTexParameterxOES))
 			nfglTexParameterxOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
 		case NFOSMESA_GLTEXPARAMETERXVOES:
+			D(funcname = "glTexParameterxvOES");
+			if (GL_ISAVAILABLE(glTexParameterxvOES))
 			nfglTexParameterxvOES(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfixed *)  /* const GLfixed *params */);
 			break;
 		case NFOSMESA_GLTEXRENDERBUFFERNV:
+			D(funcname = "glTexRenderbufferNV");
+			if (GL_ISAVAILABLE(glTexRenderbufferNV))
 			nfglTexRenderbufferNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLTEXSCISSORFUNCINTEL:
+			D(funcname = "glTexScissorFuncINTEL");
+			if (GL_ISAVAILABLE(glTexScissorFuncINTEL))
 			nfglTexScissorFuncINTEL(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum lfunc */
 				getStackedParameter(2)  /* GLenum hfunc */);
 			break;
 		case NFOSMESA_GLTEXSCISSORINTEL:
+			D(funcname = "glTexScissorINTEL");
+			if (GL_ISAVAILABLE(glTexScissorINTEL))
 			nfglTexScissorINTEL(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedFloat(1),  /* GLclampf tlow */
 				getStackedFloat(2)  /* GLclampf thigh */);
 			break;
 		case NFOSMESA_GLTEXSTORAGE1D:
+			D(funcname = "glTexStorage1D");
+			if (GL_ISAVAILABLE(glTexStorage1D))
 			nfglTexStorage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -13781,6 +18169,8 @@
 				getStackedParameter(3)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLTEXSTORAGE2D:
+			D(funcname = "glTexStorage2D");
+			if (GL_ISAVAILABLE(glTexStorage2D))
 			nfglTexStorage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -13789,6 +18179,8 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLTEXSTORAGE2DMULTISAMPLE:
+			D(funcname = "glTexStorage2DMultisample");
+			if (GL_ISAVAILABLE(glTexStorage2DMultisample))
 			nfglTexStorage2DMultisample(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -13798,6 +18190,8 @@
 				getStackedParameter(5)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXSTORAGE3D:
+			D(funcname = "glTexStorage3D");
+			if (GL_ISAVAILABLE(glTexStorage3D))
 			nfglTexStorage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -13807,6 +18201,8 @@
 				getStackedParameter(5)  /* GLsizei depth */);
 			break;
 		case NFOSMESA_GLTEXSTORAGE3DMULTISAMPLE:
+			D(funcname = "glTexStorage3DMultisample");
+			if (GL_ISAVAILABLE(glTexStorage3DMultisample))
 			nfglTexStorage3DMultisample(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -13817,6 +18213,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXSTORAGESPARSEAMD:
+			D(funcname = "glTexStorageSparseAMD");
+			if (GL_ISAVAILABLE(glTexStorageSparseAMD))
 			nfglTexStorageSparseAMD(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum internalFormat */
@@ -13827,6 +18225,8 @@
 				getStackedParameter(6)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE1D:
+			D(funcname = "glTexSubImage1D");
+			if (GL_ISAVAILABLE(glTexSubImage1D))
 			nfglTexSubImage1D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13837,6 +18237,8 @@
 				getStackedPointer(6, const GLvoid *)  /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE1DEXT:
+			D(funcname = "glTexSubImage1DEXT");
+			if (GL_ISAVAILABLE(glTexSubImage1DEXT))
 			nfglTexSubImage1DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13847,6 +18249,8 @@
 				getStackedPointer(6, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2D:
+			D(funcname = "glTexSubImage2D");
+			if (GL_ISAVAILABLE(glTexSubImage2D))
 			nfglTexSubImage2D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13859,6 +18263,8 @@
 				getStackedPointer(8, const GLvoid *)  /* const GLvoid *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2DEXT:
+			D(funcname = "glTexSubImage2DEXT");
+			if (GL_ISAVAILABLE(glTexSubImage2DEXT))
 			nfglTexSubImage2DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13871,6 +18277,8 @@
 				getStackedPointer(8, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3D:
+			D(funcname = "glTexSubImage3D");
+			if (GL_ISAVAILABLE(glTexSubImage3D))
 			nfglTexSubImage3D(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13885,6 +18293,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3DEXT:
+			D(funcname = "glTexSubImage3DEXT");
+			if (GL_ISAVAILABLE(glTexSubImage3DEXT))
 			nfglTexSubImage3DEXT(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13899,6 +18309,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE4DSGIS:
+			D(funcname = "glTexSubImage4DSGIS");
+			if (GL_ISAVAILABLE(glTexSubImage4DSGIS))
 			nfglTexSubImage4DSGIS(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLint level */
@@ -13915,18 +18327,26 @@
 				getStackedPointer(12, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREBARRIER:
+			D(funcname = "glTextureBarrier");
+			if (GL_ISAVAILABLE(glTextureBarrier))
 			nfglTextureBarrier();
 			break;
 		case NFOSMESA_GLTEXTUREBARRIERNV:
+			D(funcname = "glTextureBarrierNV");
+			if (GL_ISAVAILABLE(glTextureBarrierNV))
 			nfglTextureBarrierNV();
 			break;
 		case NFOSMESA_GLTEXTUREBUFFER:
+			D(funcname = "glTextureBuffer");
+			if (GL_ISAVAILABLE(glTextureBuffer))
 			nfglTextureBuffer(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum internalformat */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFEREXT:
+			D(funcname = "glTextureBufferEXT");
+			if (GL_ISAVAILABLE(glTextureBufferEXT))
 			nfglTextureBufferEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -13934,6 +18354,8 @@
 				getStackedParameter(3)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFERRANGE:
+			D(funcname = "glTextureBufferRange");
+			if (GL_ISAVAILABLE(glTextureBufferRange))
 			nfglTextureBufferRange(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum internalformat */
@@ -13942,6 +18364,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFERRANGEEXT:
+			D(funcname = "glTextureBufferRangeEXT");
+			if (GL_ISAVAILABLE(glTextureBufferRangeEXT))
 			nfglTextureBufferRangeEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -13951,6 +18375,8 @@
 				getStackedParameter(5)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLTEXTURECOLORMASKSGIS:
+			D(funcname = "glTextureColorMaskSGIS");
+			if (GL_ISAVAILABLE(glTextureColorMaskSGIS))
 			nfglTextureColorMaskSGIS(
 				getStackedParameter(0),  /* GLboolean32 red */
 				getStackedParameter(1),  /* GLboolean32 green */
@@ -13958,10 +18384,14 @@
 				getStackedParameter(3)  /* GLboolean32 alpha */);
 			break;
 		case NFOSMESA_GLTEXTUREFOGSGIX:
+			D(funcname = "glTextureFogSGIX");
+			if (GL_ISAVAILABLE(glTextureFogSGIX))
 			nfglTextureFogSGIX(
 				getStackedParameter(0)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE1DEXT:
+			D(funcname = "glTextureImage1DEXT");
+			if (GL_ISAVAILABLE(glTextureImage1DEXT))
 			nfglTextureImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -13974,6 +18404,8 @@
 				getStackedPointer(8, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DEXT:
+			D(funcname = "glTextureImage2DEXT");
+			if (GL_ISAVAILABLE(glTextureImage2DEXT))
 			nfglTextureImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -13987,6 +18419,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DMULTISAMPLECOVERAGENV:
+			D(funcname = "glTextureImage2DMultisampleCoverageNV");
+			if (GL_ISAVAILABLE(glTextureImage2DMultisampleCoverageNV))
 			nfglTextureImage2DMultisampleCoverageNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -13998,6 +18432,8 @@
 				getStackedParameter(7)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DMULTISAMPLENV:
+			D(funcname = "glTextureImage2DMultisampleNV");
+			if (GL_ISAVAILABLE(glTextureImage2DMultisampleNV))
 			nfglTextureImage2DMultisampleNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14008,6 +18444,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DEXT:
+			D(funcname = "glTextureImage3DEXT");
+			if (GL_ISAVAILABLE(glTextureImage3DEXT))
 			nfglTextureImage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14022,6 +18460,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DMULTISAMPLECOVERAGENV:
+			D(funcname = "glTextureImage3DMultisampleCoverageNV");
+			if (GL_ISAVAILABLE(glTextureImage3DMultisampleCoverageNV))
 			nfglTextureImage3DMultisampleCoverageNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14034,6 +18474,8 @@
 				getStackedParameter(8)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DMULTISAMPLENV:
+			D(funcname = "glTextureImage3DMultisampleNV");
+			if (GL_ISAVAILABLE(glTextureImage3DMultisampleNV))
 			nfglTextureImage3DMultisampleNV(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14045,19 +18487,27 @@
 				getStackedParameter(7)  /* GLboolean32 fixedSampleLocations */);
 			break;
 		case NFOSMESA_GLTEXTURELIGHTEXT:
+			D(funcname = "glTextureLightEXT");
+			if (GL_ISAVAILABLE(glTextureLightEXT))
 			nfglTextureLightEXT(
 				getStackedParameter(0)  /* GLenum pname */);
 			break;
 		case NFOSMESA_GLTEXTUREMATERIALEXT:
+			D(funcname = "glTextureMaterialEXT");
+			if (GL_ISAVAILABLE(glTextureMaterialEXT))
 			nfglTextureMaterialEXT(
 				getStackedParameter(0),  /* GLenum face */
 				getStackedParameter(1)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLTEXTURENORMALEXT:
+			D(funcname = "glTextureNormalEXT");
+			if (GL_ISAVAILABLE(glTextureNormalEXT))
 			nfglTextureNormalEXT(
 				getStackedParameter(0)  /* GLenum mode */);
 			break;
 		case NFOSMESA_GLTEXTUREPAGECOMMITMENTEXT:
+			D(funcname = "glTexturePageCommitmentEXT");
+			if (GL_ISAVAILABLE(glTexturePageCommitmentEXT))
 			nfglTexturePageCommitmentEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -14070,12 +18520,16 @@
 				getStackedParameter(8)  /* GLboolean32 commit */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIIV:
+			D(funcname = "glTextureParameterIiv");
+			if (GL_ISAVAILABLE(glTextureParameterIiv))
 			nfglTextureParameterIiv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIIVEXT:
+			D(funcname = "glTextureParameterIivEXT");
+			if (GL_ISAVAILABLE(glTextureParameterIivEXT))
 			nfglTextureParameterIivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14083,12 +18537,16 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIUIV:
+			D(funcname = "glTextureParameterIuiv");
+			if (GL_ISAVAILABLE(glTextureParameterIuiv))
 			nfglTextureParameterIuiv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIUIVEXT:
+			D(funcname = "glTextureParameterIuivEXT");
+			if (GL_ISAVAILABLE(glTextureParameterIuivEXT))
 			nfglTextureParameterIuivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14096,12 +18554,16 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERF:
+			D(funcname = "glTextureParameterf");
+			if (GL_ISAVAILABLE(glTextureParameterf))
 			nfglTextureParameterf(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedFloat(2)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFEXT:
+			D(funcname = "glTextureParameterfEXT");
+			if (GL_ISAVAILABLE(glTextureParameterfEXT))
 			nfglTextureParameterfEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14109,12 +18571,16 @@
 				getStackedFloat(3)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFV:
+			D(funcname = "glTextureParameterfv");
+			if (GL_ISAVAILABLE(glTextureParameterfv))
 			nfglTextureParameterfv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFVEXT:
+			D(funcname = "glTextureParameterfvEXT");
+			if (GL_ISAVAILABLE(glTextureParameterfvEXT))
 			nfglTextureParameterfvEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14122,12 +18588,16 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERI:
+			D(funcname = "glTextureParameteri");
+			if (GL_ISAVAILABLE(glTextureParameteri))
 			nfglTextureParameteri(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIEXT:
+			D(funcname = "glTextureParameteriEXT");
+			if (GL_ISAVAILABLE(glTextureParameteriEXT))
 			nfglTextureParameteriEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14135,12 +18605,16 @@
 				getStackedParameter(3)  /* GLint param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIV:
+			D(funcname = "glTextureParameteriv");
+			if (GL_ISAVAILABLE(glTextureParameteriv))
 			nfglTextureParameteriv(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *param */);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIVEXT:
+			D(funcname = "glTextureParameterivEXT");
+			if (GL_ISAVAILABLE(glTextureParameterivEXT))
 			nfglTextureParameterivEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14149,6 +18623,8 @@
 			break;
 #if 0
 		case NFOSMESA_GLTEXTURERANGEAPPLE:
+			D(funcname = "glTextureRangeAPPLE");
+			if (GL_ISAVAILABLE(glTextureRangeAPPLE))
 			nfglTextureRangeAPPLE(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei length */
@@ -14156,12 +18632,16 @@
 			break;
 #endif
 		case NFOSMESA_GLTEXTURERENDERBUFFEREXT:
+			D(funcname = "glTextureRenderbufferEXT");
+			if (GL_ISAVAILABLE(glTextureRenderbufferEXT))
 			nfglTextureRenderbufferEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
 				getStackedParameter(2)  /* GLuint renderbuffer */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE1D:
+			D(funcname = "glTextureStorage1D");
+			if (GL_ISAVAILABLE(glTextureStorage1D))
 			nfglTextureStorage1D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -14169,6 +18649,8 @@
 				getStackedParameter(3)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE1DEXT:
+			D(funcname = "glTextureStorage1DEXT");
+			if (GL_ISAVAILABLE(glTextureStorage1DEXT))
 			nfglTextureStorage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14177,6 +18659,8 @@
 				getStackedParameter(4)  /* GLsizei width */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2D:
+			D(funcname = "glTextureStorage2D");
+			if (GL_ISAVAILABLE(glTextureStorage2D))
 			nfglTextureStorage2D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -14185,6 +18669,8 @@
 				getStackedParameter(4)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DEXT:
+			D(funcname = "glTextureStorage2DEXT");
+			if (GL_ISAVAILABLE(glTextureStorage2DEXT))
 			nfglTextureStorage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14194,6 +18680,8 @@
 				getStackedParameter(5)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DMULTISAMPLE:
+			D(funcname = "glTextureStorage2DMultisample");
+			if (GL_ISAVAILABLE(glTextureStorage2DMultisample))
 			nfglTextureStorage2DMultisample(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -14203,6 +18691,8 @@
 				getStackedParameter(5)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DMULTISAMPLEEXT:
+			D(funcname = "glTextureStorage2DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTextureStorage2DMultisampleEXT))
 			nfglTextureStorage2DMultisampleEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14213,6 +18703,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3D:
+			D(funcname = "glTextureStorage3D");
+			if (GL_ISAVAILABLE(glTextureStorage3D))
 			nfglTextureStorage3D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLsizei levels */
@@ -14222,6 +18714,8 @@
 				getStackedParameter(5)  /* GLsizei depth */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DEXT:
+			D(funcname = "glTextureStorage3DEXT");
+			if (GL_ISAVAILABLE(glTextureStorage3DEXT))
 			nfglTextureStorage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14232,6 +18726,8 @@
 				getStackedParameter(6)  /* GLsizei depth */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DMULTISAMPLE:
+			D(funcname = "glTextureStorage3DMultisample");
+			if (GL_ISAVAILABLE(glTextureStorage3DMultisample))
 			nfglTextureStorage3DMultisample(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLsizei samples */
@@ -14242,6 +18738,8 @@
 				getStackedParameter(6)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DMULTISAMPLEEXT:
+			D(funcname = "glTextureStorage3DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTextureStorage3DMultisampleEXT))
 			nfglTextureStorage3DMultisampleEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14253,6 +18751,8 @@
 				getStackedParameter(7)  /* GLboolean32 fixedsamplelocations */);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGESPARSEAMD:
+			D(funcname = "glTextureStorageSparseAMD");
+			if (GL_ISAVAILABLE(glTextureStorageSparseAMD))
 			nfglTextureStorageSparseAMD(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14264,6 +18764,8 @@
 				getStackedParameter(7)  /* GLbitfield flags */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE1D:
+			D(funcname = "glTextureSubImage1D");
+			if (GL_ISAVAILABLE(glTextureSubImage1D))
 			nfglTextureSubImage1D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -14274,6 +18776,8 @@
 				getStackedPointer(6, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE1DEXT:
+			D(funcname = "glTextureSubImage1DEXT");
+			if (GL_ISAVAILABLE(glTextureSubImage1DEXT))
 			nfglTextureSubImage1DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14285,6 +18789,8 @@
 				getStackedPointer(7, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE2D:
+			D(funcname = "glTextureSubImage2D");
+			if (GL_ISAVAILABLE(glTextureSubImage2D))
 			nfglTextureSubImage2D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -14297,6 +18803,8 @@
 				getStackedPointer(8, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE2DEXT:
+			D(funcname = "glTextureSubImage2DEXT");
+			if (GL_ISAVAILABLE(glTextureSubImage2DEXT))
 			nfglTextureSubImage2DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14310,6 +18818,8 @@
 				getStackedPointer(9, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE3D:
+			D(funcname = "glTextureSubImage3D");
+			if (GL_ISAVAILABLE(glTextureSubImage3D))
 			nfglTextureSubImage3D(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLint level */
@@ -14324,6 +18834,8 @@
 				getStackedPointer(10, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE3DEXT:
+			D(funcname = "glTextureSubImage3DEXT");
+			if (GL_ISAVAILABLE(glTextureSubImage3DEXT))
 			nfglTextureSubImage3DEXT(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14339,6 +18851,8 @@
 				getStackedPointer(11, const void *)  /* const void *pixels */);
 			break;
 		case NFOSMESA_GLTEXTUREVIEW:
+			D(funcname = "glTextureView");
+			if (GL_ISAVAILABLE(glTextureView))
 			nfglTextureView(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1),  /* GLenum target */
@@ -14350,35 +18864,49 @@
 				getStackedParameter(7)  /* GLuint numlayers */);
 			break;
 		case NFOSMESA_GLTRACEASSERTATTRIBMESA:
+			D(funcname = "glTraceAssertAttribMESA");
+			if (GL_ISAVAILABLE(glTraceAssertAttribMESA))
 			nfglTraceAssertAttribMESA(
 				getStackedParameter(0)  /* GLbitfield attribMask */);
 			break;
 		case NFOSMESA_GLTRACECOMMENTMESA:
+			D(funcname = "glTraceCommentMESA");
+			if (GL_ISAVAILABLE(glTraceCommentMESA))
 			nfglTraceCommentMESA(
 				getStackedPointer(0, const GLubyte *)  /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACELISTMESA:
+			D(funcname = "glTraceListMESA");
+			if (GL_ISAVAILABLE(glTraceListMESA))
 			nfglTraceListMESA(
 				getStackedParameter(0),  /* GLuint name */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACEPOINTERMESA:
+			D(funcname = "glTracePointerMESA");
+			if (GL_ISAVAILABLE(glTracePointerMESA))
 			nfglTracePointerMESA(
 				getStackedPointer(0, GLvoid *),  /* GLvoid *pointer */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACEPOINTERRANGEMESA:
+			D(funcname = "glTracePointerRangeMESA");
+			if (GL_ISAVAILABLE(glTracePointerRangeMESA))
 			nfglTracePointerRangeMESA(
 				getStackedPointer(0, const GLvoid *),  /* const GLvoid *first */
 				getStackedPointer(1, const GLvoid *),  /* const GLvoid *last */
 				getStackedPointer(2, const GLubyte *)  /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACETEXTUREMESA:
+			D(funcname = "glTraceTextureMESA");
+			if (GL_ISAVAILABLE(glTraceTextureMESA))
 			nfglTraceTextureMESA(
 				getStackedParameter(0),  /* GLuint name */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *comment */);
 			break;
 		case NFOSMESA_GLTRACKMATRIXNV:
+			D(funcname = "glTrackMatrixNV");
+			if (GL_ISAVAILABLE(glTrackMatrixNV))
 			nfglTrackMatrixNV(
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLuint address */
@@ -14386,18 +18914,24 @@
 				getStackedParameter(3)  /* GLenum transform */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKATTRIBSNV:
+			D(funcname = "glTransformFeedbackAttribsNV");
+			if (GL_ISAVAILABLE(glTransformFeedbackAttribsNV))
 			nfglTransformFeedbackAttribsNV(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, const GLint *),  /* const GLint *attribs */
 				getStackedParameter(2)  /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKBUFFERBASE:
+			D(funcname = "glTransformFeedbackBufferBase");
+			if (GL_ISAVAILABLE(glTransformFeedbackBufferBase))
 			nfglTransformFeedbackBufferBase(
 				getStackedParameter(0),  /* GLuint xfb */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKBUFFERRANGE:
+			D(funcname = "glTransformFeedbackBufferRange");
+			if (GL_ISAVAILABLE(glTransformFeedbackBufferRange))
 			nfglTransformFeedbackBufferRange(
 				getStackedParameter(0),  /* GLuint xfb */
 				getStackedParameter(1),  /* GLuint index */
@@ -14406,6 +18940,8 @@
 				getStackedParameter(4)  /* GLsizeiptr size */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKSTREAMATTRIBSNV:
+			D(funcname = "glTransformFeedbackStreamAttribsNV");
+			if (GL_ISAVAILABLE(glTransformFeedbackStreamAttribsNV))
 			nfglTransformFeedbackStreamAttribsNV(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, const GLint *),  /* const GLint *attribs */
@@ -14414,6 +18950,8 @@
 				getStackedParameter(4)  /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGS:
+			D(funcname = "glTransformFeedbackVaryings");
+			if (GL_ISAVAILABLE(glTransformFeedbackVaryings))
 			nfglTransformFeedbackVaryings(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14421,6 +18959,8 @@
 				getStackedParameter(3)  /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSEXT:
+			D(funcname = "glTransformFeedbackVaryingsEXT");
+			if (GL_ISAVAILABLE(glTransformFeedbackVaryingsEXT))
 			nfglTransformFeedbackVaryingsEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14428,6 +18968,8 @@
 				getStackedParameter(3)  /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSNV:
+			D(funcname = "glTransformFeedbackVaryingsNV");
+			if (GL_ISAVAILABLE(glTransformFeedbackVaryingsNV))
 			nfglTransformFeedbackVaryingsNV(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14435,6 +18977,8 @@
 				getStackedParameter(3)  /* GLenum bufferMode */);
 			break;
 		case NFOSMESA_GLTRANSFORMPATHNV:
+			D(funcname = "glTransformPathNV");
+			if (GL_ISAVAILABLE(glTransformPathNV))
 			nfglTransformPathNV(
 				getStackedParameter(0),  /* GLuint resultPath */
 				getStackedParameter(1),  /* GLuint srcPath */
@@ -14442,231 +18986,311 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *transformValues */);
 			break;
 		case NFOSMESA_GLTRANSLATED:
+			D(funcname = "glTranslated");
+			if (GL_ISAVAILABLE(glTranslated))
 			nfglTranslated(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLTRANSLATEF:
+			D(funcname = "glTranslatef");
+			if (GL_ISAVAILABLE(glTranslatef))
 			nfglTranslatef(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLTRANSLATEXOES:
+			D(funcname = "glTranslatexOES");
+			if (GL_ISAVAILABLE(glTranslatexOES))
 			nfglTranslatexOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1),  /* GLfixed y */
 				getStackedParameter(2)  /* GLfixed z */);
 			break;
 		case NFOSMESA_GLUNIFORM1D:
+			D(funcname = "glUniform1d");
+			if (GL_ISAVAILABLE(glUniform1d))
 			nfglUniform1d(
 				getStackedParameter(0),  /* GLint location */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLUNIFORM1DV:
+			D(funcname = "glUniform1dv");
+			if (GL_ISAVAILABLE(glUniform1dv))
 			nfglUniform1dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1F:
+			D(funcname = "glUniform1f");
+			if (GL_ISAVAILABLE(glUniform1f))
 			nfglUniform1f(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1)  /* GLfloat v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1FARB:
+			D(funcname = "glUniform1fARB");
+			if (GL_ISAVAILABLE(glUniform1fARB))
 			nfglUniform1fARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1)  /* GLfloat v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1FV:
+			D(funcname = "glUniform1fv");
+			if (GL_ISAVAILABLE(glUniform1fv))
 			nfglUniform1fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1FVARB:
+			D(funcname = "glUniform1fvARB");
+			if (GL_ISAVAILABLE(glUniform1fvARB))
 			nfglUniform1fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1I:
+			D(funcname = "glUniform1i");
+			if (GL_ISAVAILABLE(glUniform1i))
 			nfglUniform1i(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLint v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1I64NV:
+			D(funcname = "glUniform1i64NV");
+			if (GL_ISAVAILABLE(glUniform1i64NV))
 			nfglUniform1i64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLint64EXT x */);
 			break;
 		case NFOSMESA_GLUNIFORM1I64VNV:
+			D(funcname = "glUniform1i64vNV");
+			if (GL_ISAVAILABLE(glUniform1i64vNV))
 			nfglUniform1i64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1IARB:
+			D(funcname = "glUniform1iARB");
+			if (GL_ISAVAILABLE(glUniform1iARB))
 			nfglUniform1iARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLint v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1IV:
+			D(funcname = "glUniform1iv");
+			if (GL_ISAVAILABLE(glUniform1iv))
 			nfglUniform1iv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1IVARB:
+			D(funcname = "glUniform1ivARB");
+			if (GL_ISAVAILABLE(glUniform1ivARB))
 			nfglUniform1ivARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UI:
+			D(funcname = "glUniform1ui");
+			if (GL_ISAVAILABLE(glUniform1ui))
 			nfglUniform1ui(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLuint v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64NV:
+			D(funcname = "glUniform1ui64NV");
+			if (GL_ISAVAILABLE(glUniform1ui64NV))
 			nfglUniform1ui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLuint64EXT x */);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64VNV:
+			D(funcname = "glUniform1ui64vNV");
+			if (GL_ISAVAILABLE(glUniform1ui64vNV))
 			nfglUniform1ui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UIEXT:
+			D(funcname = "glUniform1uiEXT");
+			if (GL_ISAVAILABLE(glUniform1uiEXT))
 			nfglUniform1uiEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLuint v0 */);
 			break;
 		case NFOSMESA_GLUNIFORM1UIV:
+			D(funcname = "glUniform1uiv");
+			if (GL_ISAVAILABLE(glUniform1uiv))
 			nfglUniform1uiv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UIVEXT:
+			D(funcname = "glUniform1uivEXT");
+			if (GL_ISAVAILABLE(glUniform1uivEXT))
 			nfglUniform1uivEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2D:
+			D(funcname = "glUniform2d");
+			if (GL_ISAVAILABLE(glUniform2d))
 			nfglUniform2d(
 				getStackedParameter(0),  /* GLint location */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLUNIFORM2DV:
+			D(funcname = "glUniform2dv");
+			if (GL_ISAVAILABLE(glUniform2dv))
 			nfglUniform2dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2F:
+			D(funcname = "glUniform2f");
+			if (GL_ISAVAILABLE(glUniform2f))
 			nfglUniform2f(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
 				getStackedFloat(2)  /* GLfloat v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2FARB:
+			D(funcname = "glUniform2fARB");
+			if (GL_ISAVAILABLE(glUniform2fARB))
 			nfglUniform2fARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
 				getStackedFloat(2)  /* GLfloat v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2FV:
+			D(funcname = "glUniform2fv");
+			if (GL_ISAVAILABLE(glUniform2fv))
 			nfglUniform2fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2FVARB:
+			D(funcname = "glUniform2fvARB");
+			if (GL_ISAVAILABLE(glUniform2fvARB))
 			nfglUniform2fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2I:
+			D(funcname = "glUniform2i");
+			if (GL_ISAVAILABLE(glUniform2i))
 			nfglUniform2i(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
 				getStackedParameter(2)  /* GLint v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2I64NV:
+			D(funcname = "glUniform2i64NV");
+			if (GL_ISAVAILABLE(glUniform2i64NV))
 			nfglUniform2i64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLint64EXT x */
 				getStackedParameter64(3)  /* GLint64EXT y */);
 			break;
 		case NFOSMESA_GLUNIFORM2I64VNV:
+			D(funcname = "glUniform2i64vNV");
+			if (GL_ISAVAILABLE(glUniform2i64vNV))
 			nfglUniform2i64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2IARB:
+			D(funcname = "glUniform2iARB");
+			if (GL_ISAVAILABLE(glUniform2iARB))
 			nfglUniform2iARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
 				getStackedParameter(2)  /* GLint v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2IV:
+			D(funcname = "glUniform2iv");
+			if (GL_ISAVAILABLE(glUniform2iv))
 			nfglUniform2iv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2IVARB:
+			D(funcname = "glUniform2ivARB");
+			if (GL_ISAVAILABLE(glUniform2ivARB))
 			nfglUniform2ivARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UI:
+			D(funcname = "glUniform2ui");
+			if (GL_ISAVAILABLE(glUniform2ui))
 			nfglUniform2ui(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
 				getStackedParameter(2)  /* GLuint v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64NV:
+			D(funcname = "glUniform2ui64NV");
+			if (GL_ISAVAILABLE(glUniform2ui64NV))
 			nfglUniform2ui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLuint64EXT x */
 				getStackedParameter64(3)  /* GLuint64EXT y */);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64VNV:
+			D(funcname = "glUniform2ui64vNV");
+			if (GL_ISAVAILABLE(glUniform2ui64vNV))
 			nfglUniform2ui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UIEXT:
+			D(funcname = "glUniform2uiEXT");
+			if (GL_ISAVAILABLE(glUniform2uiEXT))
 			nfglUniform2uiEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
 				getStackedParameter(2)  /* GLuint v1 */);
 			break;
 		case NFOSMESA_GLUNIFORM2UIV:
+			D(funcname = "glUniform2uiv");
+			if (GL_ISAVAILABLE(glUniform2uiv))
 			nfglUniform2uiv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UIVEXT:
+			D(funcname = "glUniform2uivEXT");
+			if (GL_ISAVAILABLE(glUniform2uivEXT))
 			nfglUniform2uivEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3D:
+			D(funcname = "glUniform3d");
+			if (GL_ISAVAILABLE(glUniform3d))
 			nfglUniform3d(
 				getStackedParameter(0),  /* GLint location */
 				getStackedDouble(1),  /* GLdouble x */
@@ -14674,12 +19298,16 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLUNIFORM3DV:
+			D(funcname = "glUniform3dv");
+			if (GL_ISAVAILABLE(glUniform3dv))
 			nfglUniform3dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3F:
+			D(funcname = "glUniform3f");
+			if (GL_ISAVAILABLE(glUniform3f))
 			nfglUniform3f(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
@@ -14687,6 +19315,8 @@
 				getStackedFloat(3)  /* GLfloat v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3FARB:
+			D(funcname = "glUniform3fARB");
+			if (GL_ISAVAILABLE(glUniform3fARB))
 			nfglUniform3fARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
@@ -14694,18 +19324,24 @@
 				getStackedFloat(3)  /* GLfloat v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3FV:
+			D(funcname = "glUniform3fv");
+			if (GL_ISAVAILABLE(glUniform3fv))
 			nfglUniform3fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3FVARB:
+			D(funcname = "glUniform3fvARB");
+			if (GL_ISAVAILABLE(glUniform3fvARB))
 			nfglUniform3fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3I:
+			D(funcname = "glUniform3i");
+			if (GL_ISAVAILABLE(glUniform3i))
 			nfglUniform3i(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
@@ -14713,6 +19349,8 @@
 				getStackedParameter(3)  /* GLint v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3I64NV:
+			D(funcname = "glUniform3i64NV");
+			if (GL_ISAVAILABLE(glUniform3i64NV))
 			nfglUniform3i64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLint64EXT x */
@@ -14720,12 +19358,16 @@
 				getStackedParameter64(5)  /* GLint64EXT z */);
 			break;
 		case NFOSMESA_GLUNIFORM3I64VNV:
+			D(funcname = "glUniform3i64vNV");
+			if (GL_ISAVAILABLE(glUniform3i64vNV))
 			nfglUniform3i64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3IARB:
+			D(funcname = "glUniform3iARB");
+			if (GL_ISAVAILABLE(glUniform3iARB))
 			nfglUniform3iARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
@@ -14733,18 +19375,24 @@
 				getStackedParameter(3)  /* GLint v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3IV:
+			D(funcname = "glUniform3iv");
+			if (GL_ISAVAILABLE(glUniform3iv))
 			nfglUniform3iv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3IVARB:
+			D(funcname = "glUniform3ivARB");
+			if (GL_ISAVAILABLE(glUniform3ivARB))
 			nfglUniform3ivARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UI:
+			D(funcname = "glUniform3ui");
+			if (GL_ISAVAILABLE(glUniform3ui))
 			nfglUniform3ui(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
@@ -14752,6 +19400,8 @@
 				getStackedParameter(3)  /* GLuint v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64NV:
+			D(funcname = "glUniform3ui64NV");
+			if (GL_ISAVAILABLE(glUniform3ui64NV))
 			nfglUniform3ui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLuint64EXT x */
@@ -14759,12 +19409,16 @@
 				getStackedParameter64(5)  /* GLuint64EXT z */);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64VNV:
+			D(funcname = "glUniform3ui64vNV");
+			if (GL_ISAVAILABLE(glUniform3ui64vNV))
 			nfglUniform3ui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UIEXT:
+			D(funcname = "glUniform3uiEXT");
+			if (GL_ISAVAILABLE(glUniform3uiEXT))
 			nfglUniform3uiEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
@@ -14772,18 +19426,24 @@
 				getStackedParameter(3)  /* GLuint v2 */);
 			break;
 		case NFOSMESA_GLUNIFORM3UIV:
+			D(funcname = "glUniform3uiv");
+			if (GL_ISAVAILABLE(glUniform3uiv))
 			nfglUniform3uiv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UIVEXT:
+			D(funcname = "glUniform3uivEXT");
+			if (GL_ISAVAILABLE(glUniform3uivEXT))
 			nfglUniform3uivEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4D:
+			D(funcname = "glUniform4d");
+			if (GL_ISAVAILABLE(glUniform4d))
 			nfglUniform4d(
 				getStackedParameter(0),  /* GLint location */
 				getStackedDouble(1),  /* GLdouble x */
@@ -14792,12 +19452,16 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLUNIFORM4DV:
+			D(funcname = "glUniform4dv");
+			if (GL_ISAVAILABLE(glUniform4dv))
 			nfglUniform4dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4F:
+			D(funcname = "glUniform4f");
+			if (GL_ISAVAILABLE(glUniform4f))
 			nfglUniform4f(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
@@ -14806,6 +19470,8 @@
 				getStackedFloat(4)  /* GLfloat v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4FARB:
+			D(funcname = "glUniform4fARB");
+			if (GL_ISAVAILABLE(glUniform4fARB))
 			nfglUniform4fARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedFloat(1),  /* GLfloat v0 */
@@ -14814,18 +19480,24 @@
 				getStackedFloat(4)  /* GLfloat v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4FV:
+			D(funcname = "glUniform4fv");
+			if (GL_ISAVAILABLE(glUniform4fv))
 			nfglUniform4fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4FVARB:
+			D(funcname = "glUniform4fvARB");
+			if (GL_ISAVAILABLE(glUniform4fvARB))
 			nfglUniform4fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4I:
+			D(funcname = "glUniform4i");
+			if (GL_ISAVAILABLE(glUniform4i))
 			nfglUniform4i(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
@@ -14834,6 +19506,8 @@
 				getStackedParameter(4)  /* GLint v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4I64NV:
+			D(funcname = "glUniform4i64NV");
+			if (GL_ISAVAILABLE(glUniform4i64NV))
 			nfglUniform4i64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLint64EXT x */
@@ -14842,12 +19516,16 @@
 				getStackedParameter64(7)  /* GLint64EXT w */);
 			break;
 		case NFOSMESA_GLUNIFORM4I64VNV:
+			D(funcname = "glUniform4i64vNV");
+			if (GL_ISAVAILABLE(glUniform4i64vNV))
 			nfglUniform4i64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint64EXT *)  /* const GLint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4IARB:
+			D(funcname = "glUniform4iARB");
+			if (GL_ISAVAILABLE(glUniform4iARB))
 			nfglUniform4iARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLint v0 */
@@ -14856,18 +19534,24 @@
 				getStackedParameter(4)  /* GLint v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4IV:
+			D(funcname = "glUniform4iv");
+			if (GL_ISAVAILABLE(glUniform4iv))
 			nfglUniform4iv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4IVARB:
+			D(funcname = "glUniform4ivARB");
+			if (GL_ISAVAILABLE(glUniform4ivARB))
 			nfglUniform4ivARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLint *)  /* const GLint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UI:
+			D(funcname = "glUniform4ui");
+			if (GL_ISAVAILABLE(glUniform4ui))
 			nfglUniform4ui(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
@@ -14876,6 +19560,8 @@
 				getStackedParameter(4)  /* GLuint v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64NV:
+			D(funcname = "glUniform4ui64NV");
+			if (GL_ISAVAILABLE(glUniform4ui64NV))
 			nfglUniform4ui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLuint64EXT x */
@@ -14884,12 +19570,16 @@
 				getStackedParameter64(7)  /* GLuint64EXT w */);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64VNV:
+			D(funcname = "glUniform4ui64vNV");
+			if (GL_ISAVAILABLE(glUniform4ui64vNV))
 			nfglUniform4ui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UIEXT:
+			D(funcname = "glUniform4uiEXT");
+			if (GL_ISAVAILABLE(glUniform4uiEXT))
 			nfglUniform4uiEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLuint v0 */
@@ -14898,52 +19588,70 @@
 				getStackedParameter(4)  /* GLuint v3 */);
 			break;
 		case NFOSMESA_GLUNIFORM4UIV:
+			D(funcname = "glUniform4uiv");
+			if (GL_ISAVAILABLE(glUniform4uiv))
 			nfglUniform4uiv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UIVEXT:
+			D(funcname = "glUniform4uivEXT");
+			if (GL_ISAVAILABLE(glUniform4uivEXT))
 			nfglUniform4uivEXT(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLUNIFORMBLOCKBINDING:
+			D(funcname = "glUniformBlockBinding");
+			if (GL_ISAVAILABLE(glUniformBlockBinding))
 			nfglUniformBlockBinding(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLuint uniformBlockIndex */
 				getStackedParameter(2)  /* GLuint uniformBlockBinding */);
 			break;
 		case NFOSMESA_GLUNIFORMBUFFEREXT:
+			D(funcname = "glUniformBufferEXT");
+			if (GL_ISAVAILABLE(glUniformBufferEXT))
 			nfglUniformBufferEXT(
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64ARB:
+			D(funcname = "glUniformHandleui64ARB");
+			if (GL_ISAVAILABLE(glUniformHandleui64ARB))
 			nfglUniformHandleui64ARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLuint64 value */);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64NV:
+			D(funcname = "glUniformHandleui64NV");
+			if (GL_ISAVAILABLE(glUniformHandleui64NV))
 			nfglUniformHandleui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLuint64 value */);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64VARB:
+			D(funcname = "glUniformHandleui64vARB");
+			if (GL_ISAVAILABLE(glUniformHandleui64vARB))
 			nfglUniformHandleui64vARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64VNV:
+			D(funcname = "glUniformHandleui64vNV");
+			if (GL_ISAVAILABLE(glUniformHandleui64vNV))
 			nfglUniformHandleui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2DV:
+			D(funcname = "glUniformMatrix2dv");
+			if (GL_ISAVAILABLE(glUniformMatrix2dv))
 			nfglUniformMatrix2dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14951,6 +19659,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FV:
+			D(funcname = "glUniformMatrix2fv");
+			if (GL_ISAVAILABLE(glUniformMatrix2fv))
 			nfglUniformMatrix2fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14958,6 +19668,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FVARB:
+			D(funcname = "glUniformMatrix2fvARB");
+			if (GL_ISAVAILABLE(glUniformMatrix2fvARB))
 			nfglUniformMatrix2fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14965,6 +19677,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3DV:
+			D(funcname = "glUniformMatrix2x3dv");
+			if (GL_ISAVAILABLE(glUniformMatrix2x3dv))
 			nfglUniformMatrix2x3dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14972,6 +19686,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3FV:
+			D(funcname = "glUniformMatrix2x3fv");
+			if (GL_ISAVAILABLE(glUniformMatrix2x3fv))
 			nfglUniformMatrix2x3fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14979,6 +19695,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4DV:
+			D(funcname = "glUniformMatrix2x4dv");
+			if (GL_ISAVAILABLE(glUniformMatrix2x4dv))
 			nfglUniformMatrix2x4dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14986,6 +19704,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4FV:
+			D(funcname = "glUniformMatrix2x4fv");
+			if (GL_ISAVAILABLE(glUniformMatrix2x4fv))
 			nfglUniformMatrix2x4fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -14993,6 +19713,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3DV:
+			D(funcname = "glUniformMatrix3dv");
+			if (GL_ISAVAILABLE(glUniformMatrix3dv))
 			nfglUniformMatrix3dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15000,6 +19722,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FV:
+			D(funcname = "glUniformMatrix3fv");
+			if (GL_ISAVAILABLE(glUniformMatrix3fv))
 			nfglUniformMatrix3fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15007,6 +19731,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FVARB:
+			D(funcname = "glUniformMatrix3fvARB");
+			if (GL_ISAVAILABLE(glUniformMatrix3fvARB))
 			nfglUniformMatrix3fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15014,6 +19740,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2DV:
+			D(funcname = "glUniformMatrix3x2dv");
+			if (GL_ISAVAILABLE(glUniformMatrix3x2dv))
 			nfglUniformMatrix3x2dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15021,6 +19749,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2FV:
+			D(funcname = "glUniformMatrix3x2fv");
+			if (GL_ISAVAILABLE(glUniformMatrix3x2fv))
 			nfglUniformMatrix3x2fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15028,6 +19758,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4DV:
+			D(funcname = "glUniformMatrix3x4dv");
+			if (GL_ISAVAILABLE(glUniformMatrix3x4dv))
 			nfglUniformMatrix3x4dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15035,6 +19767,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4FV:
+			D(funcname = "glUniformMatrix3x4fv");
+			if (GL_ISAVAILABLE(glUniformMatrix3x4fv))
 			nfglUniformMatrix3x4fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15042,6 +19776,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4DV:
+			D(funcname = "glUniformMatrix4dv");
+			if (GL_ISAVAILABLE(glUniformMatrix4dv))
 			nfglUniformMatrix4dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15049,6 +19785,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FV:
+			D(funcname = "glUniformMatrix4fv");
+			if (GL_ISAVAILABLE(glUniformMatrix4fv))
 			nfglUniformMatrix4fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15056,6 +19794,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FVARB:
+			D(funcname = "glUniformMatrix4fvARB");
+			if (GL_ISAVAILABLE(glUniformMatrix4fvARB))
 			nfglUniformMatrix4fvARB(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15063,6 +19803,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2DV:
+			D(funcname = "glUniformMatrix4x2dv");
+			if (GL_ISAVAILABLE(glUniformMatrix4x2dv))
 			nfglUniformMatrix4x2dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15070,6 +19812,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2FV:
+			D(funcname = "glUniformMatrix4x2fv");
+			if (GL_ISAVAILABLE(glUniformMatrix4x2fv))
 			nfglUniformMatrix4x2fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15077,6 +19821,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3DV:
+			D(funcname = "glUniformMatrix4x3dv");
+			if (GL_ISAVAILABLE(glUniformMatrix4x3dv))
 			nfglUniformMatrix4x3dv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15084,6 +19830,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *value */);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3FV:
+			D(funcname = "glUniformMatrix4x3fv");
+			if (GL_ISAVAILABLE(glUniformMatrix4x3fv))
 			nfglUniformMatrix4x3fv(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
@@ -15091,51 +19839,73 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *value */);
 			break;
 		case NFOSMESA_GLUNIFORMSUBROUTINESUIV:
+			D(funcname = "glUniformSubroutinesuiv");
+			if (GL_ISAVAILABLE(glUniformSubroutinesuiv))
 			nfglUniformSubroutinesuiv(
 				getStackedParameter(0),  /* GLenum shadertype */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint *)  /* const GLuint *indices */);
 			break;
 		case NFOSMESA_GLUNIFORMUI64NV:
+			D(funcname = "glUniformui64NV");
+			if (GL_ISAVAILABLE(glUniformui64NV))
 			nfglUniformui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLuint64EXT value */);
 			break;
 		case NFOSMESA_GLUNIFORMUI64VNV:
+			D(funcname = "glUniformui64vNV");
+			if (GL_ISAVAILABLE(glUniformui64vNV))
 			nfglUniformui64vNV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLuint64EXT *)  /* const GLuint64EXT *value */);
 			break;
 		case NFOSMESA_GLUNLOCKARRAYSEXT:
+			D(funcname = "glUnlockArraysEXT");
+			if (GL_ISAVAILABLE(glUnlockArraysEXT))
 			nfglUnlockArraysEXT();
 			break;
 		case NFOSMESA_GLUNMAPBUFFER:
+			D(funcname = "glUnmapBuffer");
+			if (GL_ISAVAILABLE(glUnmapBuffer))
 			ret = nfglUnmapBuffer(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLUNMAPBUFFERARB:
+			D(funcname = "glUnmapBufferARB");
+			if (GL_ISAVAILABLE(glUnmapBufferARB))
 			ret = nfglUnmapBufferARB(
 				getStackedParameter(0)  /* GLenum target */);
 			break;
 		case NFOSMESA_GLUNMAPNAMEDBUFFER:
+			D(funcname = "glUnmapNamedBuffer");
+			if (GL_ISAVAILABLE(glUnmapNamedBuffer))
 			ret = nfglUnmapNamedBuffer(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLUNMAPNAMEDBUFFEREXT:
+			D(funcname = "glUnmapNamedBufferEXT");
+			if (GL_ISAVAILABLE(glUnmapNamedBufferEXT))
 			ret = nfglUnmapNamedBufferEXT(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLUNMAPOBJECTBUFFERATI:
+			D(funcname = "glUnmapObjectBufferATI");
+			if (GL_ISAVAILABLE(glUnmapObjectBufferATI))
 			nfglUnmapObjectBufferATI(
 				getStackedParameter(0)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLUNMAPTEXTURE2DINTEL:
+			D(funcname = "glUnmapTexture2DINTEL");
+			if (GL_ISAVAILABLE(glUnmapTexture2DINTEL))
 			nfglUnmapTexture2DINTEL(
 				getStackedParameter(0),  /* GLuint texture */
 				getStackedParameter(1)  /* GLint level */);
 			break;
 		case NFOSMESA_GLUPDATEOBJECTBUFFERATI:
+			D(funcname = "glUpdateObjectBufferATI");
+			if (GL_ISAVAILABLE(glUpdateObjectBufferATI))
 			nfglUpdateObjectBufferATI(
 				getStackedParameter(0),  /* GLuint buffer */
 				getStackedParameter(1),  /* GLuint offset */
@@ -15144,31 +19914,43 @@
 				getStackedParameter(4)  /* GLenum preserve */);
 			break;
 		case NFOSMESA_GLUSEPROGRAM:
+			D(funcname = "glUseProgram");
+			if (GL_ISAVAILABLE(glUseProgram))
 			nfglUseProgram(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLUSEPROGRAMOBJECTARB:
+			D(funcname = "glUseProgramObjectARB");
+			if (GL_ISAVAILABLE(glUseProgramObjectARB))
 			nfglUseProgramObjectARB(
 				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLUSEPROGRAMSTAGES:
+			D(funcname = "glUseProgramStages");
+			if (GL_ISAVAILABLE(glUseProgramStages))
 			nfglUseProgramStages(
 				getStackedParameter(0),  /* GLuint pipeline */
 				getStackedParameter(1),  /* GLbitfield stages */
 				getStackedParameter(2)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLUSESHADERPROGRAMEXT:
+			D(funcname = "glUseShaderProgramEXT");
+			if (GL_ISAVAILABLE(glUseShaderProgramEXT))
 			nfglUseShaderProgramEXT(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint program */);
 			break;
 #if 0
 		case NFOSMESA_GLVDPAUFININV:
+			D(funcname = "glVDPAUFiniNV");
+			if (GL_ISAVAILABLE(glVDPAUFiniNV))
 			nfglVDPAUFiniNV();
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUGETSURFACEIVNV:
+			D(funcname = "glVDPAUGetSurfaceivNV");
+			if (GL_ISAVAILABLE(glVDPAUGetSurfaceivNV))
 			nfglVDPAUGetSurfaceivNV(
 				getStackedParameter(0),  /* GLvdpauSurfaceNV surface */
 				getStackedParameter(1),  /* GLenum pname */
@@ -15179,6 +19961,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUINITNV:
+			D(funcname = "glVDPAUInitNV");
+			if (GL_ISAVAILABLE(glVDPAUInitNV))
 			nfglVDPAUInitNV(
 				getStackedPointer(0, const void *),  /* const void *vdpDevice */
 				getStackedPointer(1, const void *)  /* const void *getProcAddress */);
@@ -15186,12 +19970,16 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUISSURFACENV:
+			D(funcname = "glVDPAUIsSurfaceNV");
+			if (GL_ISAVAILABLE(glVDPAUIsSurfaceNV))
 			ret = nfglVDPAUIsSurfaceNV(
 				getStackedParameter(0)  /* GLvdpauSurfaceNV surface */);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUMAPSURFACESNV:
+			D(funcname = "glVDPAUMapSurfacesNV");
+			if (GL_ISAVAILABLE(glVDPAUMapSurfacesNV))
 			nfglVDPAUMapSurfacesNV(
 				getStackedParameter(0),  /* GLsizei numSurfaces */
 				getStackedPointer(1, const GLvdpauSurfaceNV *)  /* const GLvdpauSurfaceNV *surfaces */);
@@ -15199,6 +19987,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUREGISTEROUTPUTSURFACENV:
+			D(funcname = "glVDPAURegisterOutputSurfaceNV");
+			if (GL_ISAVAILABLE(glVDPAURegisterOutputSurfaceNV))
 			ret = nfglVDPAURegisterOutputSurfaceNV(
 				getStackedPointer(0, const void *),  /* const void *vdpSurface */
 				getStackedParameter(1),  /* GLenum target */
@@ -15208,6 +19998,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACENV:
+			D(funcname = "glVDPAURegisterVideoSurfaceNV");
+			if (GL_ISAVAILABLE(glVDPAURegisterVideoSurfaceNV))
 			ret = nfglVDPAURegisterVideoSurfaceNV(
 				getStackedPointer(0, const void *),  /* const void *vdpSurface */
 				getStackedParameter(1),  /* GLenum target */
@@ -15217,6 +20009,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUSURFACEACCESSNV:
+			D(funcname = "glVDPAUSurfaceAccessNV");
+			if (GL_ISAVAILABLE(glVDPAUSurfaceAccessNV))
 			nfglVDPAUSurfaceAccessNV(
 				getStackedParameter(0),  /* GLvdpauSurfaceNV surface */
 				getStackedParameter(1)  /* GLenum access */);
@@ -15224,6 +20018,8 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUUNMAPSURFACESNV:
+			D(funcname = "glVDPAUUnmapSurfacesNV");
+			if (GL_ISAVAILABLE(glVDPAUUnmapSurfacesNV))
 			nfglVDPAUUnmapSurfacesNV(
 				getStackedParameter(0),  /* GLsizei numSurface */
 				getStackedPointer(1, const GLvdpauSurfaceNV *)  /* const GLvdpauSurfaceNV *surfaces */);
@@ -15231,23 +20027,33 @@
 #endif
 #if 0
 		case NFOSMESA_GLVDPAUUNREGISTERSURFACENV:
+			D(funcname = "glVDPAUUnregisterSurfaceNV");
+			if (GL_ISAVAILABLE(glVDPAUUnregisterSurfaceNV))
 			nfglVDPAUUnregisterSurfaceNV(
 				getStackedParameter(0)  /* GLvdpauSurfaceNV surface */);
 			break;
 #endif
 		case NFOSMESA_GLVALIDATEPROGRAM:
+			D(funcname = "glValidateProgram");
+			if (GL_ISAVAILABLE(glValidateProgram))
 			nfglValidateProgram(
 				getStackedParameter(0)  /* GLuint program */);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMARB:
+			D(funcname = "glValidateProgramARB");
+			if (GL_ISAVAILABLE(glValidateProgramARB))
 			nfglValidateProgramARB(
 				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMPIPELINE:
+			D(funcname = "glValidateProgramPipeline");
+			if (GL_ISAVAILABLE(glValidateProgramPipeline))
 			nfglValidateProgramPipeline(
 				getStackedParameter(0)  /* GLuint pipeline */);
 			break;
 		case NFOSMESA_GLVARIANTARRAYOBJECTATI:
+			D(funcname = "glVariantArrayObjectATI");
+			if (GL_ISAVAILABLE(glVariantArrayObjectATI))
 			nfglVariantArrayObjectATI(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum type */
@@ -15256,6 +20062,8 @@
 				getStackedParameter(4)  /* GLuint offset */);
 			break;
 		case NFOSMESA_GLVARIANTPOINTEREXT:
+			D(funcname = "glVariantPointerEXT");
+			if (GL_ISAVAILABLE(glVariantPointerEXT))
 			nfglVariantPointerEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedParameter(1),  /* GLenum type */
@@ -15263,177 +20071,251 @@
 				getStackedPointer(3, const void *)  /* const void *addr */);
 			break;
 		case NFOSMESA_GLVARIANTBVEXT:
+			D(funcname = "glVariantbvEXT");
+			if (GL_ISAVAILABLE(glVariantbvEXT))
 			nfglVariantbvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *addr */);
 			break;
 		case NFOSMESA_GLVARIANTDVEXT:
+			D(funcname = "glVariantdvEXT");
+			if (GL_ISAVAILABLE(glVariantdvEXT))
 			nfglVariantdvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *addr */);
 			break;
 		case NFOSMESA_GLVARIANTFVEXT:
+			D(funcname = "glVariantfvEXT");
+			if (GL_ISAVAILABLE(glVariantfvEXT))
 			nfglVariantfvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *addr */);
 			break;
 		case NFOSMESA_GLVARIANTIVEXT:
+			D(funcname = "glVariantivEXT");
+			if (GL_ISAVAILABLE(glVariantivEXT))
 			nfglVariantivEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLint *)  /* const GLint *addr */);
 			break;
 		case NFOSMESA_GLVARIANTSVEXT:
+			D(funcname = "glVariantsvEXT");
+			if (GL_ISAVAILABLE(glVariantsvEXT))
 			nfglVariantsvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUBVEXT:
+			D(funcname = "glVariantubvEXT");
+			if (GL_ISAVAILABLE(glVariantubvEXT))
 			nfglVariantubvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUIVEXT:
+			D(funcname = "glVariantuivEXT");
+			if (GL_ISAVAILABLE(glVariantuivEXT))
 			nfglVariantuivEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *addr */);
 			break;
 		case NFOSMESA_GLVARIANTUSVEXT:
+			D(funcname = "glVariantusvEXT");
+			if (GL_ISAVAILABLE(glVariantusvEXT))
 			nfglVariantusvEXT(
 				getStackedParameter(0),  /* GLuint id */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *addr */);
 			break;
 		case NFOSMESA_GLVERTEX2BOES:
+			D(funcname = "glVertex2bOES");
+			if (GL_ISAVAILABLE(glVertex2bOES))
 			nfglVertex2bOES(
 				getStackedParameter(0),  /* GLbyte32 x */
 				getStackedParameter(1)  /* GLbyte32 y */);
 			break;
 		case NFOSMESA_GLVERTEX2BVOES:
+			D(funcname = "glVertex2bvOES");
+			if (GL_ISAVAILABLE(glVertex2bvOES))
 			nfglVertex2bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX2D:
+			D(funcname = "glVertex2d");
+			if (GL_ISAVAILABLE(glVertex2d))
 			nfglVertex2d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEX2DV:
+			D(funcname = "glVertex2dv");
+			if (GL_ISAVAILABLE(glVertex2dv))
 			nfglVertex2dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX2F:
+			D(funcname = "glVertex2f");
+			if (GL_ISAVAILABLE(glVertex2f))
 			nfglVertex2f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLVERTEX2FV:
+			D(funcname = "glVertex2fv");
+			if (GL_ISAVAILABLE(glVertex2fv))
 			nfglVertex2fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX2HNV:
+			D(funcname = "glVertex2hNV");
+			if (GL_ISAVAILABLE(glVertex2hNV))
 			nfglVertex2hNV(
 				getStackedParameter(0),  /* GLhalfNV32 x */
 				getStackedParameter(1)  /* GLhalfNV32 y */);
 			break;
 		case NFOSMESA_GLVERTEX2HVNV:
+			D(funcname = "glVertex2hvNV");
+			if (GL_ISAVAILABLE(glVertex2hvNV))
 			nfglVertex2hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX2I:
+			D(funcname = "glVertex2i");
+			if (GL_ISAVAILABLE(glVertex2i))
 			nfglVertex2i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1)  /* GLint y */);
 			break;
 		case NFOSMESA_GLVERTEX2IV:
+			D(funcname = "glVertex2iv");
+			if (GL_ISAVAILABLE(glVertex2iv))
 			nfglVertex2iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX2S:
+			D(funcname = "glVertex2s");
+			if (GL_ISAVAILABLE(glVertex2s))
 			nfglVertex2s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLVERTEX2SV:
+			D(funcname = "glVertex2sv");
+			if (GL_ISAVAILABLE(glVertex2sv))
 			nfglVertex2sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX2XOES:
+			D(funcname = "glVertex2xOES");
+			if (GL_ISAVAILABLE(glVertex2xOES))
 			nfglVertex2xOES(
 				getStackedParameter(0)  /* GLfixed x */);
 			break;
 		case NFOSMESA_GLVERTEX2XVOES:
+			D(funcname = "glVertex2xvOES");
+			if (GL_ISAVAILABLE(glVertex2xvOES))
 			nfglVertex2xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEX3BOES:
+			D(funcname = "glVertex3bOES");
+			if (GL_ISAVAILABLE(glVertex3bOES))
 			nfglVertex3bOES(
 				getStackedParameter(0),  /* GLbyte32 x */
 				getStackedParameter(1),  /* GLbyte32 y */
 				getStackedParameter(2)  /* GLbyte32 z */);
 			break;
 		case NFOSMESA_GLVERTEX3BVOES:
+			D(funcname = "glVertex3bvOES");
+			if (GL_ISAVAILABLE(glVertex3bvOES))
 			nfglVertex3bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX3D:
+			D(funcname = "glVertex3d");
+			if (GL_ISAVAILABLE(glVertex3d))
 			nfglVertex3d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEX3DV:
+			D(funcname = "glVertex3dv");
+			if (GL_ISAVAILABLE(glVertex3dv))
 			nfglVertex3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX3F:
+			D(funcname = "glVertex3f");
+			if (GL_ISAVAILABLE(glVertex3f))
 			nfglVertex3f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLVERTEX3FV:
+			D(funcname = "glVertex3fv");
+			if (GL_ISAVAILABLE(glVertex3fv))
 			nfglVertex3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX3HNV:
+			D(funcname = "glVertex3hNV");
+			if (GL_ISAVAILABLE(glVertex3hNV))
 			nfglVertex3hNV(
 				getStackedParameter(0),  /* GLhalfNV32 x */
 				getStackedParameter(1),  /* GLhalfNV32 y */
 				getStackedParameter(2)  /* GLhalfNV32 z */);
 			break;
 		case NFOSMESA_GLVERTEX3HVNV:
+			D(funcname = "glVertex3hvNV");
+			if (GL_ISAVAILABLE(glVertex3hvNV))
 			nfglVertex3hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX3I:
+			D(funcname = "glVertex3i");
+			if (GL_ISAVAILABLE(glVertex3i))
 			nfglVertex3i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
 				getStackedParameter(2)  /* GLint z */);
 			break;
 		case NFOSMESA_GLVERTEX3IV:
+			D(funcname = "glVertex3iv");
+			if (GL_ISAVAILABLE(glVertex3iv))
 			nfglVertex3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX3S:
+			D(funcname = "glVertex3s");
+			if (GL_ISAVAILABLE(glVertex3s))
 			nfglVertex3s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
 				getStackedParameter(2)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLVERTEX3SV:
+			D(funcname = "glVertex3sv");
+			if (GL_ISAVAILABLE(glVertex3sv))
 			nfglVertex3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX3XOES:
+			D(funcname = "glVertex3xOES");
+			if (GL_ISAVAILABLE(glVertex3xOES))
 			nfglVertex3xOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1)  /* GLfixed y */);
 			break;
 		case NFOSMESA_GLVERTEX3XVOES:
+			D(funcname = "glVertex3xvOES");
+			if (GL_ISAVAILABLE(glVertex3xvOES))
 			nfglVertex3xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEX4BOES:
+			D(funcname = "glVertex4bOES");
+			if (GL_ISAVAILABLE(glVertex4bOES))
 			nfglVertex4bOES(
 				getStackedParameter(0),  /* GLbyte32 x */
 				getStackedParameter(1),  /* GLbyte32 y */
@@ -15441,10 +20323,14 @@
 				getStackedParameter(3)  /* GLbyte32 w */);
 			break;
 		case NFOSMESA_GLVERTEX4BVOES:
+			D(funcname = "glVertex4bvOES");
+			if (GL_ISAVAILABLE(glVertex4bvOES))
 			nfglVertex4bvOES(
 				getStackedPointer(0, const GLbyte *)  /* const GLbyte *coords */);
 			break;
 		case NFOSMESA_GLVERTEX4D:
+			D(funcname = "glVertex4d");
+			if (GL_ISAVAILABLE(glVertex4d))
 			nfglVertex4d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
@@ -15452,10 +20338,14 @@
 				getStackedDouble(6)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEX4DV:
+			D(funcname = "glVertex4dv");
+			if (GL_ISAVAILABLE(glVertex4dv))
 			nfglVertex4dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEX4F:
+			D(funcname = "glVertex4f");
+			if (GL_ISAVAILABLE(glVertex4f))
 			nfglVertex4f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
@@ -15463,10 +20353,14 @@
 				getStackedFloat(3)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLVERTEX4FV:
+			D(funcname = "glVertex4fv");
+			if (GL_ISAVAILABLE(glVertex4fv))
 			nfglVertex4fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEX4HNV:
+			D(funcname = "glVertex4hNV");
+			if (GL_ISAVAILABLE(glVertex4hNV))
 			nfglVertex4hNV(
 				getStackedParameter(0),  /* GLhalfNV32 x */
 				getStackedParameter(1),  /* GLhalfNV32 y */
@@ -15474,10 +20368,14 @@
 				getStackedParameter(3)  /* GLhalfNV32 w */);
 			break;
 		case NFOSMESA_GLVERTEX4HVNV:
+			D(funcname = "glVertex4hvNV");
+			if (GL_ISAVAILABLE(glVertex4hvNV))
 			nfglVertex4hvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEX4I:
+			D(funcname = "glVertex4i");
+			if (GL_ISAVAILABLE(glVertex4i))
 			nfglVertex4i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -15485,10 +20383,14 @@
 				getStackedParameter(3)  /* GLint w */);
 			break;
 		case NFOSMESA_GLVERTEX4IV:
+			D(funcname = "glVertex4iv");
+			if (GL_ISAVAILABLE(glVertex4iv))
 			nfglVertex4iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEX4S:
+			D(funcname = "glVertex4s");
+			if (GL_ISAVAILABLE(glVertex4s))
 			nfglVertex4s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
@@ -15496,26 +20398,36 @@
 				getStackedParameter(3)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLVERTEX4SV:
+			D(funcname = "glVertex4sv");
+			if (GL_ISAVAILABLE(glVertex4sv))
 			nfglVertex4sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEX4XOES:
+			D(funcname = "glVertex4xOES");
+			if (GL_ISAVAILABLE(glVertex4xOES))
 			nfglVertex4xOES(
 				getStackedParameter(0),  /* GLfixed x */
 				getStackedParameter(1),  /* GLfixed y */
 				getStackedParameter(2)  /* GLfixed z */);
 			break;
 		case NFOSMESA_GLVERTEX4XVOES:
+			D(funcname = "glVertex4xvOES");
+			if (GL_ISAVAILABLE(glVertex4xvOES))
 			nfglVertex4xvOES(
 				getStackedPointer(0, const GLfixed *)  /* const GLfixed *coords */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBBINDING:
+			D(funcname = "glVertexArrayAttribBinding");
+			if (GL_ISAVAILABLE(glVertexArrayAttribBinding))
 			nfglVertexArrayAttribBinding(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
 				getStackedParameter(2)  /* GLuint bindingindex */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBFORMAT:
+			D(funcname = "glVertexArrayAttribFormat");
+			if (GL_ISAVAILABLE(glVertexArrayAttribFormat))
 			nfglVertexArrayAttribFormat(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15525,6 +20437,8 @@
 				getStackedParameter(5)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBIFORMAT:
+			D(funcname = "glVertexArrayAttribIFormat");
+			if (GL_ISAVAILABLE(glVertexArrayAttribIFormat))
 			nfglVertexArrayAttribIFormat(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15533,6 +20447,8 @@
 				getStackedParameter(4)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBLFORMAT:
+			D(funcname = "glVertexArrayAttribLFormat");
+			if (GL_ISAVAILABLE(glVertexArrayAttribLFormat))
 			nfglVertexArrayAttribLFormat(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15541,6 +20457,8 @@
 				getStackedParameter(4)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYBINDVERTEXBUFFEREXT:
+			D(funcname = "glVertexArrayBindVertexBufferEXT");
+			if (GL_ISAVAILABLE(glVertexArrayBindVertexBufferEXT))
 			nfglVertexArrayBindVertexBufferEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint bindingindex */
@@ -15549,12 +20467,16 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYBINDINGDIVISOR:
+			D(funcname = "glVertexArrayBindingDivisor");
+			if (GL_ISAVAILABLE(glVertexArrayBindingDivisor))
 			nfglVertexArrayBindingDivisor(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint bindingindex */
 				getStackedParameter(2)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYCOLOROFFSETEXT:
+			D(funcname = "glVertexArrayColorOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayColorOffsetEXT))
 			nfglVertexArrayColorOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15564,6 +20486,8 @@
 				getStackedParameter(5)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYEDGEFLAGOFFSETEXT:
+			D(funcname = "glVertexArrayEdgeFlagOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayEdgeFlagOffsetEXT))
 			nfglVertexArrayEdgeFlagOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15571,11 +20495,15 @@
 				getStackedParameter(3)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYELEMENTBUFFER:
+			D(funcname = "glVertexArrayElementBuffer");
+			if (GL_ISAVAILABLE(glVertexArrayElementBuffer))
 			nfglVertexArrayElementBuffer(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1)  /* GLuint buffer */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYFOGCOORDOFFSETEXT:
+			D(funcname = "glVertexArrayFogCoordOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayFogCoordOffsetEXT))
 			nfglVertexArrayFogCoordOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15584,6 +20512,8 @@
 				getStackedParameter(4)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYINDEXOFFSETEXT:
+			D(funcname = "glVertexArrayIndexOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayIndexOffsetEXT))
 			nfglVertexArrayIndexOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15592,6 +20522,8 @@
 				getStackedParameter(4)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYMULTITEXCOORDOFFSETEXT:
+			D(funcname = "glVertexArrayMultiTexCoordOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayMultiTexCoordOffsetEXT))
 			nfglVertexArrayMultiTexCoordOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15602,6 +20534,8 @@
 				getStackedParameter(6)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYNORMALOFFSETEXT:
+			D(funcname = "glVertexArrayNormalOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayNormalOffsetEXT))
 			nfglVertexArrayNormalOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15610,21 +20544,29 @@
 				getStackedParameter(4)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYPARAMETERIAPPLE:
+			D(funcname = "glVertexArrayParameteriAPPLE");
+			if (GL_ISAVAILABLE(glVertexArrayParameteriAPPLE))
 			nfglVertexArrayParameteriAPPLE(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYRANGEAPPLE:
+			D(funcname = "glVertexArrayRangeAPPLE");
+			if (GL_ISAVAILABLE(glVertexArrayRangeAPPLE))
 			nfglVertexArrayRangeAPPLE(
 				getStackedParameter(0),  /* GLsizei length */
 				getStackedPointer(1, void *)  /* void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYRANGENV:
+			D(funcname = "glVertexArrayRangeNV");
+			if (GL_ISAVAILABLE(glVertexArrayRangeNV))
 			nfglVertexArrayRangeNV(
 				getStackedParameter(0),  /* GLsizei length */
 				getStackedPointer(1, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYSECONDARYCOLOROFFSETEXT:
+			D(funcname = "glVertexArraySecondaryColorOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArraySecondaryColorOffsetEXT))
 			nfglVertexArraySecondaryColorOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15634,6 +20576,8 @@
 				getStackedParameter(5)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYTEXCOORDOFFSETEXT:
+			D(funcname = "glVertexArrayTexCoordOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayTexCoordOffsetEXT))
 			nfglVertexArrayTexCoordOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15643,18 +20587,24 @@
 				getStackedParameter(5)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBBINDINGEXT:
+			D(funcname = "glVertexArrayVertexAttribBindingEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribBindingEXT))
 			nfglVertexArrayVertexAttribBindingEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
 				getStackedParameter(2)  /* GLuint bindingindex */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBDIVISOREXT:
+			D(funcname = "glVertexArrayVertexAttribDivisorEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribDivisorEXT))
 			nfglVertexArrayVertexAttribDivisorEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBFORMATEXT:
+			D(funcname = "glVertexArrayVertexAttribFormatEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribFormatEXT))
 			nfglVertexArrayVertexAttribFormatEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15664,6 +20614,8 @@
 				getStackedParameter(5)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBIFORMATEXT:
+			D(funcname = "glVertexArrayVertexAttribIFormatEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribIFormatEXT))
 			nfglVertexArrayVertexAttribIFormatEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15672,6 +20624,8 @@
 				getStackedParameter(4)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBIOFFSETEXT:
+			D(funcname = "glVertexArrayVertexAttribIOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribIOffsetEXT))
 			nfglVertexArrayVertexAttribIOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15682,6 +20636,8 @@
 				getStackedParameter(6)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBLFORMATEXT:
+			D(funcname = "glVertexArrayVertexAttribLFormatEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribLFormatEXT))
 			nfglVertexArrayVertexAttribLFormatEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint attribindex */
@@ -15690,6 +20646,8 @@
 				getStackedParameter(4)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBLOFFSETEXT:
+			D(funcname = "glVertexArrayVertexAttribLOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribLOffsetEXT))
 			nfglVertexArrayVertexAttribLOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15700,6 +20658,8 @@
 				getStackedParameter(6)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBOFFSETEXT:
+			D(funcname = "glVertexArrayVertexAttribOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexAttribOffsetEXT))
 			nfglVertexArrayVertexAttribOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15711,12 +20671,16 @@
 				getStackedParameter(7)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBINDINGDIVISOREXT:
+			D(funcname = "glVertexArrayVertexBindingDivisorEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexBindingDivisorEXT))
 			nfglVertexArrayVertexBindingDivisorEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint bindingindex */
 				getStackedParameter(2)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBUFFER:
+			D(funcname = "glVertexArrayVertexBuffer");
+			if (GL_ISAVAILABLE(glVertexArrayVertexBuffer))
 			nfglVertexArrayVertexBuffer(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint bindingindex */
@@ -15725,6 +20689,8 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBUFFERS:
+			D(funcname = "glVertexArrayVertexBuffers");
+			if (GL_ISAVAILABLE(glVertexArrayVertexBuffers))
 			nfglVertexArrayVertexBuffers(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint first */
@@ -15734,6 +20700,8 @@
 				getStackedPointer(5, const GLsizei *)  /* const GLsizei *strides */);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXOFFSETEXT:
+			D(funcname = "glVertexArrayVertexOffsetEXT");
+			if (GL_ISAVAILABLE(glVertexArrayVertexOffsetEXT))
 			nfglVertexArrayVertexOffsetEXT(
 				getStackedParameter(0),  /* GLuint vaobj */
 				getStackedParameter(1),  /* GLuint buffer */
@@ -15743,216 +20711,298 @@
 				getStackedParameter(5)  /* GLintptr offset */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1D:
+			D(funcname = "glVertexAttrib1d");
+			if (GL_ISAVAILABLE(glVertexAttrib1d))
 			nfglVertexAttrib1d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DARB:
+			D(funcname = "glVertexAttrib1dARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1dARB))
 			nfglVertexAttrib1dARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DNV:
+			D(funcname = "glVertexAttrib1dNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1dNV))
 			nfglVertexAttrib1dNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DV:
+			D(funcname = "glVertexAttrib1dv");
+			if (GL_ISAVAILABLE(glVertexAttrib1dv))
 			nfglVertexAttrib1dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVARB:
+			D(funcname = "glVertexAttrib1dvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1dvARB))
 			nfglVertexAttrib1dvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVNV:
+			D(funcname = "glVertexAttrib1dvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1dvNV))
 			nfglVertexAttrib1dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1F:
+			D(funcname = "glVertexAttrib1f");
+			if (GL_ISAVAILABLE(glVertexAttrib1f))
 			nfglVertexAttrib1f(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1)  /* GLfloat x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FARB:
+			D(funcname = "glVertexAttrib1fARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1fARB))
 			nfglVertexAttrib1fARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1)  /* GLfloat x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FNV:
+			D(funcname = "glVertexAttrib1fNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1fNV))
 			nfglVertexAttrib1fNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1)  /* GLfloat x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FV:
+			D(funcname = "glVertexAttrib1fv");
+			if (GL_ISAVAILABLE(glVertexAttrib1fv))
 			nfglVertexAttrib1fv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVARB:
+			D(funcname = "glVertexAttrib1fvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1fvARB))
 			nfglVertexAttrib1fvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVNV:
+			D(funcname = "glVertexAttrib1fvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1fvNV))
 			nfglVertexAttrib1fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1HNV:
+			D(funcname = "glVertexAttrib1hNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1hNV))
 			nfglVertexAttrib1hNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLhalfNV32 x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1HVNV:
+			D(funcname = "glVertexAttrib1hvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1hvNV))
 			nfglVertexAttrib1hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1S:
+			D(funcname = "glVertexAttrib1s");
+			if (GL_ISAVAILABLE(glVertexAttrib1s))
 			nfglVertexAttrib1s(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLshort32 x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SARB:
+			D(funcname = "glVertexAttrib1sARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1sARB))
 			nfglVertexAttrib1sARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLshort32 x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SNV:
+			D(funcname = "glVertexAttrib1sNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1sNV))
 			nfglVertexAttrib1sNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLshort32 x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SV:
+			D(funcname = "glVertexAttrib1sv");
+			if (GL_ISAVAILABLE(glVertexAttrib1sv))
 			nfglVertexAttrib1sv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVARB:
+			D(funcname = "glVertexAttrib1svARB");
+			if (GL_ISAVAILABLE(glVertexAttrib1svARB))
 			nfglVertexAttrib1svARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVNV:
+			D(funcname = "glVertexAttrib1svNV");
+			if (GL_ISAVAILABLE(glVertexAttrib1svNV))
 			nfglVertexAttrib1svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2D:
+			D(funcname = "glVertexAttrib2d");
+			if (GL_ISAVAILABLE(glVertexAttrib2d))
 			nfglVertexAttrib2d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DARB:
+			D(funcname = "glVertexAttrib2dARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2dARB))
 			nfglVertexAttrib2dARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DNV:
+			D(funcname = "glVertexAttrib2dNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2dNV))
 			nfglVertexAttrib2dNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DV:
+			D(funcname = "glVertexAttrib2dv");
+			if (GL_ISAVAILABLE(glVertexAttrib2dv))
 			nfglVertexAttrib2dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVARB:
+			D(funcname = "glVertexAttrib2dvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2dvARB))
 			nfglVertexAttrib2dvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVNV:
+			D(funcname = "glVertexAttrib2dvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2dvNV))
 			nfglVertexAttrib2dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2F:
+			D(funcname = "glVertexAttrib2f");
+			if (GL_ISAVAILABLE(glVertexAttrib2f))
 			nfglVertexAttrib2f(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
 				getStackedFloat(2)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FARB:
+			D(funcname = "glVertexAttrib2fARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2fARB))
 			nfglVertexAttrib2fARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
 				getStackedFloat(2)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FNV:
+			D(funcname = "glVertexAttrib2fNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2fNV))
 			nfglVertexAttrib2fNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
 				getStackedFloat(2)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FV:
+			D(funcname = "glVertexAttrib2fv");
+			if (GL_ISAVAILABLE(glVertexAttrib2fv))
 			nfglVertexAttrib2fv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVARB:
+			D(funcname = "glVertexAttrib2fvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2fvARB))
 			nfglVertexAttrib2fvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVNV:
+			D(funcname = "glVertexAttrib2fvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2fvNV))
 			nfglVertexAttrib2fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2HNV:
+			D(funcname = "glVertexAttrib2hNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2hNV))
 			nfglVertexAttrib2hNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLhalfNV32 x */
 				getStackedParameter(2)  /* GLhalfNV32 y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2HVNV:
+			D(funcname = "glVertexAttrib2hvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2hvNV))
 			nfglVertexAttrib2hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2S:
+			D(funcname = "glVertexAttrib2s");
+			if (GL_ISAVAILABLE(glVertexAttrib2s))
 			nfglVertexAttrib2s(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
 				getStackedParameter(2)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SARB:
+			D(funcname = "glVertexAttrib2sARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2sARB))
 			nfglVertexAttrib2sARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
 				getStackedParameter(2)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SNV:
+			D(funcname = "glVertexAttrib2sNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2sNV))
 			nfglVertexAttrib2sNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
 				getStackedParameter(2)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SV:
+			D(funcname = "glVertexAttrib2sv");
+			if (GL_ISAVAILABLE(glVertexAttrib2sv))
 			nfglVertexAttrib2sv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVARB:
+			D(funcname = "glVertexAttrib2svARB");
+			if (GL_ISAVAILABLE(glVertexAttrib2svARB))
 			nfglVertexAttrib2svARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVNV:
+			D(funcname = "glVertexAttrib2svNV");
+			if (GL_ISAVAILABLE(glVertexAttrib2svNV))
 			nfglVertexAttrib2svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3D:
+			D(funcname = "glVertexAttrib3d");
+			if (GL_ISAVAILABLE(glVertexAttrib3d))
 			nfglVertexAttrib3d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -15960,6 +21010,8 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DARB:
+			D(funcname = "glVertexAttrib3dARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3dARB))
 			nfglVertexAttrib3dARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -15967,6 +21019,8 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DNV:
+			D(funcname = "glVertexAttrib3dNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3dNV))
 			nfglVertexAttrib3dNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -15974,21 +21028,29 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DV:
+			D(funcname = "glVertexAttrib3dv");
+			if (GL_ISAVAILABLE(glVertexAttrib3dv))
 			nfglVertexAttrib3dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVARB:
+			D(funcname = "glVertexAttrib3dvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3dvARB))
 			nfglVertexAttrib3dvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVNV:
+			D(funcname = "glVertexAttrib3dvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3dvNV))
 			nfglVertexAttrib3dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3F:
+			D(funcname = "glVertexAttrib3f");
+			if (GL_ISAVAILABLE(glVertexAttrib3f))
 			nfglVertexAttrib3f(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -15996,6 +21058,8 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FARB:
+			D(funcname = "glVertexAttrib3fARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3fARB))
 			nfglVertexAttrib3fARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -16003,6 +21067,8 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FNV:
+			D(funcname = "glVertexAttrib3fNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3fNV))
 			nfglVertexAttrib3fNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -16010,21 +21076,29 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FV:
+			D(funcname = "glVertexAttrib3fv");
+			if (GL_ISAVAILABLE(glVertexAttrib3fv))
 			nfglVertexAttrib3fv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVARB:
+			D(funcname = "glVertexAttrib3fvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3fvARB))
 			nfglVertexAttrib3fvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVNV:
+			D(funcname = "glVertexAttrib3fvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3fvNV))
 			nfglVertexAttrib3fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3HNV:
+			D(funcname = "glVertexAttrib3hNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3hNV))
 			nfglVertexAttrib3hNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLhalfNV32 x */
@@ -16032,11 +21106,15 @@
 				getStackedParameter(3)  /* GLhalfNV32 z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3HVNV:
+			D(funcname = "glVertexAttrib3hvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3hvNV))
 			nfglVertexAttrib3hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3S:
+			D(funcname = "glVertexAttrib3s");
+			if (GL_ISAVAILABLE(glVertexAttrib3s))
 			nfglVertexAttrib3s(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16044,6 +21122,8 @@
 				getStackedParameter(3)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SARB:
+			D(funcname = "glVertexAttrib3sARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3sARB))
 			nfglVertexAttrib3sARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16051,6 +21131,8 @@
 				getStackedParameter(3)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SNV:
+			D(funcname = "glVertexAttrib3sNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3sNV))
 			nfglVertexAttrib3sNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16058,51 +21140,71 @@
 				getStackedParameter(3)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SV:
+			D(funcname = "glVertexAttrib3sv");
+			if (GL_ISAVAILABLE(glVertexAttrib3sv))
 			nfglVertexAttrib3sv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVARB:
+			D(funcname = "glVertexAttrib3svARB");
+			if (GL_ISAVAILABLE(glVertexAttrib3svARB))
 			nfglVertexAttrib3svARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVNV:
+			D(funcname = "glVertexAttrib3svNV");
+			if (GL_ISAVAILABLE(glVertexAttrib3svNV))
 			nfglVertexAttrib3svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBV:
+			D(funcname = "glVertexAttrib4Nbv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nbv))
 			nfglVertexAttrib4Nbv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBVARB:
+			D(funcname = "glVertexAttrib4NbvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NbvARB))
 			nfglVertexAttrib4NbvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIV:
+			D(funcname = "glVertexAttrib4Niv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Niv))
 			nfglVertexAttrib4Niv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIVARB:
+			D(funcname = "glVertexAttrib4NivARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NivARB))
 			nfglVertexAttrib4NivARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSV:
+			D(funcname = "glVertexAttrib4Nsv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nsv))
 			nfglVertexAttrib4Nsv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSVARB:
+			D(funcname = "glVertexAttrib4NsvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NsvARB))
 			nfglVertexAttrib4NsvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUB:
+			D(funcname = "glVertexAttrib4Nub");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nub))
 			nfglVertexAttrib4Nub(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLubyte32 x */
@@ -16111,6 +21213,8 @@
 				getStackedParameter(4)  /* GLubyte32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBARB:
+			D(funcname = "glVertexAttrib4NubARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NubARB))
 			nfglVertexAttrib4NubARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLubyte32 x */
@@ -16119,46 +21223,64 @@
 				getStackedParameter(4)  /* GLubyte32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBV:
+			D(funcname = "glVertexAttrib4Nubv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nubv))
 			nfglVertexAttrib4Nubv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBVARB:
+			D(funcname = "glVertexAttrib4NubvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NubvARB))
 			nfglVertexAttrib4NubvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIV:
+			D(funcname = "glVertexAttrib4Nuiv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nuiv))
 			nfglVertexAttrib4Nuiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIVARB:
+			D(funcname = "glVertexAttrib4NuivARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NuivARB))
 			nfglVertexAttrib4NuivARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSV:
+			D(funcname = "glVertexAttrib4Nusv");
+			if (GL_ISAVAILABLE(glVertexAttrib4Nusv))
 			nfglVertexAttrib4Nusv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSVARB:
+			D(funcname = "glVertexAttrib4NusvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4NusvARB))
 			nfglVertexAttrib4NusvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BV:
+			D(funcname = "glVertexAttrib4bv");
+			if (GL_ISAVAILABLE(glVertexAttrib4bv))
 			nfglVertexAttrib4bv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BVARB:
+			D(funcname = "glVertexAttrib4bvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4bvARB))
 			nfglVertexAttrib4bvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4D:
+			D(funcname = "glVertexAttrib4d");
+			if (GL_ISAVAILABLE(glVertexAttrib4d))
 			nfglVertexAttrib4d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16167,6 +21289,8 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DARB:
+			D(funcname = "glVertexAttrib4dARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4dARB))
 			nfglVertexAttrib4dARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16175,6 +21299,8 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DNV:
+			D(funcname = "glVertexAttrib4dNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4dNV))
 			nfglVertexAttrib4dNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16183,21 +21309,29 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DV:
+			D(funcname = "glVertexAttrib4dv");
+			if (GL_ISAVAILABLE(glVertexAttrib4dv))
 			nfglVertexAttrib4dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVARB:
+			D(funcname = "glVertexAttrib4dvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4dvARB))
 			nfglVertexAttrib4dvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVNV:
+			D(funcname = "glVertexAttrib4dvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4dvNV))
 			nfglVertexAttrib4dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4F:
+			D(funcname = "glVertexAttrib4f");
+			if (GL_ISAVAILABLE(glVertexAttrib4f))
 			nfglVertexAttrib4f(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -16206,6 +21340,8 @@
 				getStackedFloat(4)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FARB:
+			D(funcname = "glVertexAttrib4fARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4fARB))
 			nfglVertexAttrib4fARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -16214,6 +21350,8 @@
 				getStackedFloat(4)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FNV:
+			D(funcname = "glVertexAttrib4fNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4fNV))
 			nfglVertexAttrib4fNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -16222,21 +21360,29 @@
 				getStackedFloat(4)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FV:
+			D(funcname = "glVertexAttrib4fv");
+			if (GL_ISAVAILABLE(glVertexAttrib4fv))
 			nfglVertexAttrib4fv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVARB:
+			D(funcname = "glVertexAttrib4fvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4fvARB))
 			nfglVertexAttrib4fvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVNV:
+			D(funcname = "glVertexAttrib4fvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4fvNV))
 			nfglVertexAttrib4fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4HNV:
+			D(funcname = "glVertexAttrib4hNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4hNV))
 			nfglVertexAttrib4hNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLhalfNV32 x */
@@ -16245,21 +21391,29 @@
 				getStackedParameter(4)  /* GLhalfNV32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4HVNV:
+			D(funcname = "glVertexAttrib4hvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4hvNV))
 			nfglVertexAttrib4hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IV:
+			D(funcname = "glVertexAttrib4iv");
+			if (GL_ISAVAILABLE(glVertexAttrib4iv))
 			nfglVertexAttrib4iv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IVARB:
+			D(funcname = "glVertexAttrib4ivARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4ivARB))
 			nfglVertexAttrib4ivARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4S:
+			D(funcname = "glVertexAttrib4s");
+			if (GL_ISAVAILABLE(glVertexAttrib4s))
 			nfglVertexAttrib4s(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16268,6 +21422,8 @@
 				getStackedParameter(4)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SARB:
+			D(funcname = "glVertexAttrib4sARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4sARB))
 			nfglVertexAttrib4sARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16276,6 +21432,8 @@
 				getStackedParameter(4)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SNV:
+			D(funcname = "glVertexAttrib4sNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4sNV))
 			nfglVertexAttrib4sNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -16284,21 +21442,29 @@
 				getStackedParameter(4)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SV:
+			D(funcname = "glVertexAttrib4sv");
+			if (GL_ISAVAILABLE(glVertexAttrib4sv))
 			nfglVertexAttrib4sv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVARB:
+			D(funcname = "glVertexAttrib4svARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4svARB))
 			nfglVertexAttrib4svARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVNV:
+			D(funcname = "glVertexAttrib4svNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4svNV))
 			nfglVertexAttrib4svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBNV:
+			D(funcname = "glVertexAttrib4ubNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4ubNV))
 			nfglVertexAttrib4ubNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLubyte32 x */
@@ -16307,41 +21473,57 @@
 				getStackedParameter(4)  /* GLubyte32 w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBV:
+			D(funcname = "glVertexAttrib4ubv");
+			if (GL_ISAVAILABLE(glVertexAttrib4ubv))
 			nfglVertexAttrib4ubv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVARB:
+			D(funcname = "glVertexAttrib4ubvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4ubvARB))
 			nfglVertexAttrib4ubvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVNV:
+			D(funcname = "glVertexAttrib4ubvNV");
+			if (GL_ISAVAILABLE(glVertexAttrib4ubvNV))
 			nfglVertexAttrib4ubvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIV:
+			D(funcname = "glVertexAttrib4uiv");
+			if (GL_ISAVAILABLE(glVertexAttrib4uiv))
 			nfglVertexAttrib4uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIVARB:
+			D(funcname = "glVertexAttrib4uivARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4uivARB))
 			nfglVertexAttrib4uivARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USV:
+			D(funcname = "glVertexAttrib4usv");
+			if (GL_ISAVAILABLE(glVertexAttrib4usv))
 			nfglVertexAttrib4usv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USVARB:
+			D(funcname = "glVertexAttrib4usvARB");
+			if (GL_ISAVAILABLE(glVertexAttrib4usvARB))
 			nfglVertexAttrib4usvARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBARRAYOBJECTATI:
+			D(funcname = "glVertexAttribArrayObjectATI");
+			if (GL_ISAVAILABLE(glVertexAttribArrayObjectATI))
 			nfglVertexAttribArrayObjectATI(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16352,21 +21534,29 @@
 				getStackedParameter(6)  /* GLuint offset */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBBINDING:
+			D(funcname = "glVertexAttribBinding");
+			if (GL_ISAVAILABLE(glVertexAttribBinding))
 			nfglVertexAttribBinding(
 				getStackedParameter(0),  /* GLuint attribindex */
 				getStackedParameter(1)  /* GLuint bindingindex */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBDIVISOR:
+			D(funcname = "glVertexAttribDivisor");
+			if (GL_ISAVAILABLE(glVertexAttribDivisor))
 			nfglVertexAttribDivisor(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBDIVISORARB:
+			D(funcname = "glVertexAttribDivisorARB");
+			if (GL_ISAVAILABLE(glVertexAttribDivisorARB))
 			nfglVertexAttribDivisorARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBFORMAT:
+			D(funcname = "glVertexAttribFormat");
+			if (GL_ISAVAILABLE(glVertexAttribFormat))
 			nfglVertexAttribFormat(
 				getStackedParameter(0),  /* GLuint attribindex */
 				getStackedParameter(1),  /* GLint size */
@@ -16375,6 +21565,8 @@
 				getStackedParameter(4)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBFORMATNV:
+			D(funcname = "glVertexAttribFormatNV");
+			if (GL_ISAVAILABLE(glVertexAttribFormatNV))
 			nfglVertexAttribFormatNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16383,90 +21575,124 @@
 				getStackedParameter(4)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1I:
+			D(funcname = "glVertexAttribI1i");
+			if (GL_ISAVAILABLE(glVertexAttribI1i))
 			nfglVertexAttribI1i(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLint x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IEXT:
+			D(funcname = "glVertexAttribI1iEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI1iEXT))
 			nfglVertexAttribI1iEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLint x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IV:
+			D(funcname = "glVertexAttribI1iv");
+			if (GL_ISAVAILABLE(glVertexAttribI1iv))
 			nfglVertexAttribI1iv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IVEXT:
+			D(funcname = "glVertexAttribI1ivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI1ivEXT))
 			nfglVertexAttribI1ivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UI:
+			D(funcname = "glVertexAttribI1ui");
+			if (GL_ISAVAILABLE(glVertexAttribI1ui))
 			nfglVertexAttribI1ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLuint x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIEXT:
+			D(funcname = "glVertexAttribI1uiEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI1uiEXT))
 			nfglVertexAttribI1uiEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLuint x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIV:
+			D(funcname = "glVertexAttribI1uiv");
+			if (GL_ISAVAILABLE(glVertexAttribI1uiv))
 			nfglVertexAttribI1uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIVEXT:
+			D(funcname = "glVertexAttribI1uivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI1uivEXT))
 			nfglVertexAttribI1uivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2I:
+			D(funcname = "glVertexAttribI2i");
+			if (GL_ISAVAILABLE(glVertexAttribI2i))
 			nfglVertexAttribI2i(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
 				getStackedParameter(2)  /* GLint y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IEXT:
+			D(funcname = "glVertexAttribI2iEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI2iEXT))
 			nfglVertexAttribI2iEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
 				getStackedParameter(2)  /* GLint y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IV:
+			D(funcname = "glVertexAttribI2iv");
+			if (GL_ISAVAILABLE(glVertexAttribI2iv))
 			nfglVertexAttribI2iv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IVEXT:
+			D(funcname = "glVertexAttribI2ivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI2ivEXT))
 			nfglVertexAttribI2ivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UI:
+			D(funcname = "glVertexAttribI2ui");
+			if (GL_ISAVAILABLE(glVertexAttribI2ui))
 			nfglVertexAttribI2ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
 				getStackedParameter(2)  /* GLuint y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIEXT:
+			D(funcname = "glVertexAttribI2uiEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI2uiEXT))
 			nfglVertexAttribI2uiEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
 				getStackedParameter(2)  /* GLuint y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIV:
+			D(funcname = "glVertexAttribI2uiv");
+			if (GL_ISAVAILABLE(glVertexAttribI2uiv))
 			nfglVertexAttribI2uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIVEXT:
+			D(funcname = "glVertexAttribI2uivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI2uivEXT))
 			nfglVertexAttribI2uivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3I:
+			D(funcname = "glVertexAttribI3i");
+			if (GL_ISAVAILABLE(glVertexAttribI3i))
 			nfglVertexAttribI3i(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
@@ -16474,6 +21700,8 @@
 				getStackedParameter(3)  /* GLint z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IEXT:
+			D(funcname = "glVertexAttribI3iEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI3iEXT))
 			nfglVertexAttribI3iEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
@@ -16481,16 +21709,22 @@
 				getStackedParameter(3)  /* GLint z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IV:
+			D(funcname = "glVertexAttribI3iv");
+			if (GL_ISAVAILABLE(glVertexAttribI3iv))
 			nfglVertexAttribI3iv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IVEXT:
+			D(funcname = "glVertexAttribI3ivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI3ivEXT))
 			nfglVertexAttribI3ivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UI:
+			D(funcname = "glVertexAttribI3ui");
+			if (GL_ISAVAILABLE(glVertexAttribI3ui))
 			nfglVertexAttribI3ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
@@ -16498,6 +21732,8 @@
 				getStackedParameter(3)  /* GLuint z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIEXT:
+			D(funcname = "glVertexAttribI3uiEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI3uiEXT))
 			nfglVertexAttribI3uiEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
@@ -16505,26 +21741,36 @@
 				getStackedParameter(3)  /* GLuint z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIV:
+			D(funcname = "glVertexAttribI3uiv");
+			if (GL_ISAVAILABLE(glVertexAttribI3uiv))
 			nfglVertexAttribI3uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIVEXT:
+			D(funcname = "glVertexAttribI3uivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI3uivEXT))
 			nfglVertexAttribI3uivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BV:
+			D(funcname = "glVertexAttribI4bv");
+			if (GL_ISAVAILABLE(glVertexAttribI4bv))
 			nfglVertexAttribI4bv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BVEXT:
+			D(funcname = "glVertexAttribI4bvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4bvEXT))
 			nfglVertexAttribI4bvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4I:
+			D(funcname = "glVertexAttribI4i");
+			if (GL_ISAVAILABLE(glVertexAttribI4i))
 			nfglVertexAttribI4i(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
@@ -16533,6 +21779,8 @@
 				getStackedParameter(4)  /* GLint w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IEXT:
+			D(funcname = "glVertexAttribI4iEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4iEXT))
 			nfglVertexAttribI4iEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint x */
@@ -16541,36 +21789,50 @@
 				getStackedParameter(4)  /* GLint w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IV:
+			D(funcname = "glVertexAttribI4iv");
+			if (GL_ISAVAILABLE(glVertexAttribI4iv))
 			nfglVertexAttribI4iv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IVEXT:
+			D(funcname = "glVertexAttribI4ivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4ivEXT))
 			nfglVertexAttribI4ivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SV:
+			D(funcname = "glVertexAttribI4sv");
+			if (GL_ISAVAILABLE(glVertexAttribI4sv))
 			nfglVertexAttribI4sv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SVEXT:
+			D(funcname = "glVertexAttribI4svEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4svEXT))
 			nfglVertexAttribI4svEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBV:
+			D(funcname = "glVertexAttribI4ubv");
+			if (GL_ISAVAILABLE(glVertexAttribI4ubv))
 			nfglVertexAttribI4ubv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBVEXT:
+			D(funcname = "glVertexAttribI4ubvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4ubvEXT))
 			nfglVertexAttribI4ubvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UI:
+			D(funcname = "glVertexAttribI4ui");
+			if (GL_ISAVAILABLE(glVertexAttribI4ui))
 			nfglVertexAttribI4ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
@@ -16579,6 +21841,8 @@
 				getStackedParameter(4)  /* GLuint w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIEXT:
+			D(funcname = "glVertexAttribI4uiEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4uiEXT))
 			nfglVertexAttribI4uiEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLuint x */
@@ -16587,26 +21851,36 @@
 				getStackedParameter(4)  /* GLuint w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIV:
+			D(funcname = "glVertexAttribI4uiv");
+			if (GL_ISAVAILABLE(glVertexAttribI4uiv))
 			nfglVertexAttribI4uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIVEXT:
+			D(funcname = "glVertexAttribI4uivEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4uivEXT))
 			nfglVertexAttribI4uivEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USV:
+			D(funcname = "glVertexAttribI4usv");
+			if (GL_ISAVAILABLE(glVertexAttribI4usv))
 			nfglVertexAttribI4usv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USVEXT:
+			D(funcname = "glVertexAttribI4usvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribI4usvEXT))
 			nfglVertexAttribI4usvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIFORMAT:
+			D(funcname = "glVertexAttribIFormat");
+			if (GL_ISAVAILABLE(glVertexAttribIFormat))
 			nfglVertexAttribIFormat(
 				getStackedParameter(0),  /* GLuint attribindex */
 				getStackedParameter(1),  /* GLint size */
@@ -16614,6 +21888,8 @@
 				getStackedParameter(3)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIFORMATNV:
+			D(funcname = "glVertexAttribIFormatNV");
+			if (GL_ISAVAILABLE(glVertexAttribIFormatNV))
 			nfglVertexAttribIFormatNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16621,6 +21897,8 @@
 				getStackedParameter(3)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIPOINTER:
+			D(funcname = "glVertexAttribIPointer");
+			if (GL_ISAVAILABLE(glVertexAttribIPointer))
 			nfglVertexAttribIPointer(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16629,6 +21907,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIPOINTEREXT:
+			D(funcname = "glVertexAttribIPointerEXT");
+			if (GL_ISAVAILABLE(glVertexAttribIPointerEXT))
 			nfglVertexAttribIPointerEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16637,100 +21917,138 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1D:
+			D(funcname = "glVertexAttribL1d");
+			if (GL_ISAVAILABLE(glVertexAttribL1d))
 			nfglVertexAttribL1d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DEXT:
+			D(funcname = "glVertexAttribL1dEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL1dEXT))
 			nfglVertexAttribL1dEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DV:
+			D(funcname = "glVertexAttribL1dv");
+			if (GL_ISAVAILABLE(glVertexAttribL1dv))
 			nfglVertexAttribL1dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DVEXT:
+			D(funcname = "glVertexAttribL1dvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL1dvEXT))
 			nfglVertexAttribL1dvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1I64NV:
+			D(funcname = "glVertexAttribL1i64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL1i64NV))
 			nfglVertexAttribL1i64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1)  /* GLint64EXT x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1I64VNV:
+			D(funcname = "glVertexAttribL1i64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL1i64vNV))
 			nfglVertexAttribL1i64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint64EXT *)  /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64ARB:
+			D(funcname = "glVertexAttribL1ui64ARB");
+			if (GL_ISAVAILABLE(glVertexAttribL1ui64ARB))
 			nfglVertexAttribL1ui64ARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1)  /* GLuint64EXT x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64NV:
+			D(funcname = "glVertexAttribL1ui64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL1ui64NV))
 			nfglVertexAttribL1ui64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1)  /* GLuint64EXT x */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VARB:
+			D(funcname = "glVertexAttribL1ui64vARB");
+			if (GL_ISAVAILABLE(glVertexAttribL1ui64vARB))
 			nfglVertexAttribL1ui64vARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint64EXT *)  /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VNV:
+			D(funcname = "glVertexAttribL1ui64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL1ui64vNV))
 			nfglVertexAttribL1ui64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint64EXT *)  /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2D:
+			D(funcname = "glVertexAttribL2d");
+			if (GL_ISAVAILABLE(glVertexAttribL2d))
 			nfglVertexAttribL2d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DEXT:
+			D(funcname = "glVertexAttribL2dEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL2dEXT))
 			nfglVertexAttribL2dEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DV:
+			D(funcname = "glVertexAttribL2dv");
+			if (GL_ISAVAILABLE(glVertexAttribL2dv))
 			nfglVertexAttribL2dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DVEXT:
+			D(funcname = "glVertexAttribL2dvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL2dvEXT))
 			nfglVertexAttribL2dvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2I64NV:
+			D(funcname = "glVertexAttribL2i64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL2i64NV))
 			nfglVertexAttribL2i64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLint64EXT x */
 				getStackedParameter64(3)  /* GLint64EXT y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2I64VNV:
+			D(funcname = "glVertexAttribL2i64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL2i64vNV))
 			nfglVertexAttribL2i64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint64EXT *)  /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2UI64NV:
+			D(funcname = "glVertexAttribL2ui64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL2ui64NV))
 			nfglVertexAttribL2ui64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLuint64EXT x */
 				getStackedParameter64(3)  /* GLuint64EXT y */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2UI64VNV:
+			D(funcname = "glVertexAttribL2ui64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL2ui64vNV))
 			nfglVertexAttribL2ui64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint64EXT *)  /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3D:
+			D(funcname = "glVertexAttribL3d");
+			if (GL_ISAVAILABLE(glVertexAttribL3d))
 			nfglVertexAttribL3d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16738,6 +22056,8 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DEXT:
+			D(funcname = "glVertexAttribL3dEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL3dEXT))
 			nfglVertexAttribL3dEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16745,16 +22065,22 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DV:
+			D(funcname = "glVertexAttribL3dv");
+			if (GL_ISAVAILABLE(glVertexAttribL3dv))
 			nfglVertexAttribL3dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DVEXT:
+			D(funcname = "glVertexAttribL3dvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL3dvEXT))
 			nfglVertexAttribL3dvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3I64NV:
+			D(funcname = "glVertexAttribL3i64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL3i64NV))
 			nfglVertexAttribL3i64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLint64EXT x */
@@ -16762,11 +22088,15 @@
 				getStackedParameter64(5)  /* GLint64EXT z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3I64VNV:
+			D(funcname = "glVertexAttribL3i64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL3i64vNV))
 			nfglVertexAttribL3i64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint64EXT *)  /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3UI64NV:
+			D(funcname = "glVertexAttribL3ui64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL3ui64NV))
 			nfglVertexAttribL3ui64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLuint64EXT x */
@@ -16774,11 +22104,15 @@
 				getStackedParameter64(5)  /* GLuint64EXT z */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3UI64VNV:
+			D(funcname = "glVertexAttribL3ui64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL3ui64vNV))
 			nfglVertexAttribL3ui64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint64EXT *)  /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4D:
+			D(funcname = "glVertexAttribL4d");
+			if (GL_ISAVAILABLE(glVertexAttribL4d))
 			nfglVertexAttribL4d(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16787,6 +22121,8 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DEXT:
+			D(funcname = "glVertexAttribL4dEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL4dEXT))
 			nfglVertexAttribL4dEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedDouble(1),  /* GLdouble x */
@@ -16795,16 +22131,22 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DV:
+			D(funcname = "glVertexAttribL4dv");
+			if (GL_ISAVAILABLE(glVertexAttribL4dv))
 			nfglVertexAttribL4dv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DVEXT:
+			D(funcname = "glVertexAttribL4dvEXT");
+			if (GL_ISAVAILABLE(glVertexAttribL4dvEXT))
 			nfglVertexAttribL4dvEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4I64NV:
+			D(funcname = "glVertexAttribL4i64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL4i64NV))
 			nfglVertexAttribL4i64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLint64EXT x */
@@ -16813,11 +22155,15 @@
 				getStackedParameter64(7)  /* GLint64EXT w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4I64VNV:
+			D(funcname = "glVertexAttribL4i64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL4i64vNV))
 			nfglVertexAttribL4i64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLint64EXT *)  /* const GLint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4UI64NV:
+			D(funcname = "glVertexAttribL4ui64NV");
+			if (GL_ISAVAILABLE(glVertexAttribL4ui64NV))
 			nfglVertexAttribL4ui64NV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter64(1),  /* GLuint64EXT x */
@@ -16826,11 +22172,15 @@
 				getStackedParameter64(7)  /* GLuint64EXT w */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4UI64VNV:
+			D(funcname = "glVertexAttribL4ui64vNV");
+			if (GL_ISAVAILABLE(glVertexAttribL4ui64vNV))
 			nfglVertexAttribL4ui64vNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLuint64EXT *)  /* const GLuint64EXT *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLFORMAT:
+			D(funcname = "glVertexAttribLFormat");
+			if (GL_ISAVAILABLE(glVertexAttribLFormat))
 			nfglVertexAttribLFormat(
 				getStackedParameter(0),  /* GLuint attribindex */
 				getStackedParameter(1),  /* GLint size */
@@ -16838,6 +22188,8 @@
 				getStackedParameter(3)  /* GLuint relativeoffset */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLFORMATNV:
+			D(funcname = "glVertexAttribLFormatNV");
+			if (GL_ISAVAILABLE(glVertexAttribLFormatNV))
 			nfglVertexAttribLFormatNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16845,6 +22197,8 @@
 				getStackedParameter(3)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLPOINTER:
+			D(funcname = "glVertexAttribLPointer");
+			if (GL_ISAVAILABLE(glVertexAttribLPointer))
 			nfglVertexAttribLPointer(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16853,6 +22207,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLPOINTEREXT:
+			D(funcname = "glVertexAttribLPointerEXT");
+			if (GL_ISAVAILABLE(glVertexAttribLPointerEXT))
 			nfglVertexAttribLPointerEXT(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16861,6 +22217,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP1UI:
+			D(funcname = "glVertexAttribP1ui");
+			if (GL_ISAVAILABLE(glVertexAttribP1ui))
 			nfglVertexAttribP1ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16868,6 +22226,8 @@
 				getStackedParameter(3)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP1UIV:
+			D(funcname = "glVertexAttribP1uiv");
+			if (GL_ISAVAILABLE(glVertexAttribP1uiv))
 			nfglVertexAttribP1uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16875,6 +22235,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP2UI:
+			D(funcname = "glVertexAttribP2ui");
+			if (GL_ISAVAILABLE(glVertexAttribP2ui))
 			nfglVertexAttribP2ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16882,6 +22244,8 @@
 				getStackedParameter(3)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP2UIV:
+			D(funcname = "glVertexAttribP2uiv");
+			if (GL_ISAVAILABLE(glVertexAttribP2uiv))
 			nfglVertexAttribP2uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16889,6 +22253,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP3UI:
+			D(funcname = "glVertexAttribP3ui");
+			if (GL_ISAVAILABLE(glVertexAttribP3ui))
 			nfglVertexAttribP3ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16896,6 +22262,8 @@
 				getStackedParameter(3)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP3UIV:
+			D(funcname = "glVertexAttribP3uiv");
+			if (GL_ISAVAILABLE(glVertexAttribP3uiv))
 			nfglVertexAttribP3uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16903,6 +22271,8 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP4UI:
+			D(funcname = "glVertexAttribP4ui");
+			if (GL_ISAVAILABLE(glVertexAttribP4ui))
 			nfglVertexAttribP4ui(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16910,6 +22280,8 @@
 				getStackedParameter(3)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP4UIV:
+			D(funcname = "glVertexAttribP4uiv");
+			if (GL_ISAVAILABLE(glVertexAttribP4uiv))
 			nfglVertexAttribP4uiv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum type */
@@ -16917,12 +22289,16 @@
 				getStackedPointer(3, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPARAMETERIAMD:
+			D(funcname = "glVertexAttribParameteriAMD");
+			if (GL_ISAVAILABLE(glVertexAttribParameteriAMD))
 			nfglVertexAttribParameteriAMD(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLint param */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTER:
+			D(funcname = "glVertexAttribPointer");
+			if (GL_ISAVAILABLE(glVertexAttribPointer))
 			nfglVertexAttribPointer(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16932,6 +22308,8 @@
 				getStackedPointer(5, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERARB:
+			D(funcname = "glVertexAttribPointerARB");
+			if (GL_ISAVAILABLE(glVertexAttribPointerARB))
 			nfglVertexAttribPointerARB(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint size */
@@ -16941,6 +22319,8 @@
 				getStackedPointer(5, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERNV:
+			D(funcname = "glVertexAttribPointerNV");
+			if (GL_ISAVAILABLE(glVertexAttribPointerNV))
 			nfglVertexAttribPointerNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLint fsize */
@@ -16949,167 +22329,227 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1DVNV:
+			D(funcname = "glVertexAttribs1dvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs1dvNV))
 			nfglVertexAttribs1dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1FVNV:
+			D(funcname = "glVertexAttribs1fvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs1fvNV))
 			nfglVertexAttribs1fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1HVNV:
+			D(funcname = "glVertexAttribs1hvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs1hvNV))
 			nfglVertexAttribs1hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1SVNV:
+			D(funcname = "glVertexAttribs1svNV");
+			if (GL_ISAVAILABLE(glVertexAttribs1svNV))
 			nfglVertexAttribs1svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2DVNV:
+			D(funcname = "glVertexAttribs2dvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs2dvNV))
 			nfglVertexAttribs2dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2FVNV:
+			D(funcname = "glVertexAttribs2fvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs2fvNV))
 			nfglVertexAttribs2fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2HVNV:
+			D(funcname = "glVertexAttribs2hvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs2hvNV))
 			nfglVertexAttribs2hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2SVNV:
+			D(funcname = "glVertexAttribs2svNV");
+			if (GL_ISAVAILABLE(glVertexAttribs2svNV))
 			nfglVertexAttribs2svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3DVNV:
+			D(funcname = "glVertexAttribs3dvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs3dvNV))
 			nfglVertexAttribs3dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3FVNV:
+			D(funcname = "glVertexAttribs3fvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs3fvNV))
 			nfglVertexAttribs3fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3HVNV:
+			D(funcname = "glVertexAttribs3hvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs3hvNV))
 			nfglVertexAttribs3hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3SVNV:
+			D(funcname = "glVertexAttribs3svNV");
+			if (GL_ISAVAILABLE(glVertexAttribs3svNV))
 			nfglVertexAttribs3svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4DVNV:
+			D(funcname = "glVertexAttribs4dvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs4dvNV))
 			nfglVertexAttribs4dvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4FVNV:
+			D(funcname = "glVertexAttribs4fvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs4fvNV))
 			nfglVertexAttribs4fvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4HVNV:
+			D(funcname = "glVertexAttribs4hvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs4hvNV))
 			nfglVertexAttribs4hvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLhalfNV *)  /* const GLhalfNV *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4SVNV:
+			D(funcname = "glVertexAttribs4svNV");
+			if (GL_ISAVAILABLE(glVertexAttribs4svNV))
 			nfglVertexAttribs4svNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4UBVNV:
+			D(funcname = "glVertexAttribs4ubvNV");
+			if (GL_ISAVAILABLE(glVertexAttribs4ubvNV))
 			nfglVertexAttribs4ubvNV(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLubyte *)  /* const GLubyte *v */);
 			break;
 		case NFOSMESA_GLVERTEXBINDINGDIVISOR:
+			D(funcname = "glVertexBindingDivisor");
+			if (GL_ISAVAILABLE(glVertexBindingDivisor))
 			nfglVertexBindingDivisor(
 				getStackedParameter(0),  /* GLuint bindingindex */
 				getStackedParameter(1)  /* GLuint divisor */);
 			break;
 		case NFOSMESA_GLVERTEXBLENDARB:
+			D(funcname = "glVertexBlendARB");
+			if (GL_ISAVAILABLE(glVertexBlendARB))
 			nfglVertexBlendARB(
 				getStackedParameter(0)  /* GLint count */);
 			break;
 		case NFOSMESA_GLVERTEXBLENDENVFATI:
+			D(funcname = "glVertexBlendEnvfATI");
+			if (GL_ISAVAILABLE(glVertexBlendEnvfATI))
 			nfglVertexBlendEnvfATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedFloat(1)  /* GLfloat param */);
 			break;
 		case NFOSMESA_GLVERTEXBLENDENVIATI:
+			D(funcname = "glVertexBlendEnviATI");
+			if (GL_ISAVAILABLE(glVertexBlendEnviATI))
 			nfglVertexBlendEnviATI(
 				getStackedParameter(0),  /* GLenum pname */
 				getStackedParameter(1)  /* GLint param */);
 			break;
 		case NFOSMESA_GLVERTEXFORMATNV:
+			D(funcname = "glVertexFormatNV");
+			if (GL_ISAVAILABLE(glVertexFormatNV))
 			nfglVertexFormatNV(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedParameter(2)  /* GLsizei stride */);
 			break;
 		case NFOSMESA_GLVERTEXP2UI:
+			D(funcname = "glVertexP2ui");
+			if (GL_ISAVAILABLE(glVertexP2ui))
 			nfglVertexP2ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXP2UIV:
+			D(funcname = "glVertexP2uiv");
+			if (GL_ISAVAILABLE(glVertexP2uiv))
 			nfglVertexP2uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXP3UI:
+			D(funcname = "glVertexP3ui");
+			if (GL_ISAVAILABLE(glVertexP3ui))
 			nfglVertexP3ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXP3UIV:
+			D(funcname = "glVertexP3uiv");
+			if (GL_ISAVAILABLE(glVertexP3uiv))
 			nfglVertexP3uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXP4UI:
+			D(funcname = "glVertexP4ui");
+			if (GL_ISAVAILABLE(glVertexP4ui))
 			nfglVertexP4ui(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedParameter(1)  /* GLuint value */);
 			break;
 		case NFOSMESA_GLVERTEXP4UIV:
+			D(funcname = "glVertexP4uiv");
+			if (GL_ISAVAILABLE(glVertexP4uiv))
 			nfglVertexP4uiv(
 				getStackedParameter(0),  /* GLenum type */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *value */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTSIZEFAPPLE:
+			D(funcname = "glVertexPointSizefAPPLE");
+			if (GL_ISAVAILABLE(glVertexPointSizefAPPLE))
 			nfglVertexPointSizefAPPLE(
 				getStackedFloat(0)  /* GLfloat size */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTER:
+			D(funcname = "glVertexPointer");
+			if (GL_ISAVAILABLE(glVertexPointer))
 			nfglVertexPointer(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -17117,6 +22557,8 @@
 				getStackedPointer(3, const GLvoid *)  /* const GLvoid *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTEREXT:
+			D(funcname = "glVertexPointerEXT");
+			if (GL_ISAVAILABLE(glVertexPointerEXT))
 			nfglVertexPointerEXT(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -17125,6 +22567,8 @@
 				getStackedPointer(4, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERLISTIBM:
+			D(funcname = "glVertexPointerListIBM");
+			if (GL_ISAVAILABLE(glVertexPointerListIBM))
 			nfglVertexPointerListIBM(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -17133,96 +22577,132 @@
 				getStackedParameter(4)  /* GLint ptrstride */);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERVINTEL:
+			D(funcname = "glVertexPointervINTEL");
+			if (GL_ISAVAILABLE(glVertexPointervINTEL))
 			nfglVertexPointervINTEL(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
 				getStackedPointer(2, const void * *)  /* const void * *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1DATI:
+			D(funcname = "glVertexStream1dATI");
+			if (GL_ISAVAILABLE(glVertexStream1dATI))
 			nfglVertexStream1dATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedDouble(1)  /* GLdouble x */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1DVATI:
+			D(funcname = "glVertexStream1dvATI");
+			if (GL_ISAVAILABLE(glVertexStream1dvATI))
 			nfglVertexStream1dvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1FATI:
+			D(funcname = "glVertexStream1fATI");
+			if (GL_ISAVAILABLE(glVertexStream1fATI))
 			nfglVertexStream1fATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedFloat(1)  /* GLfloat x */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1FVATI:
+			D(funcname = "glVertexStream1fvATI");
+			if (GL_ISAVAILABLE(glVertexStream1fvATI))
 			nfglVertexStream1fvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1IATI:
+			D(funcname = "glVertexStream1iATI");
+			if (GL_ISAVAILABLE(glVertexStream1iATI))
 			nfglVertexStream1iATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1)  /* GLint x */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1IVATI:
+			D(funcname = "glVertexStream1ivATI");
+			if (GL_ISAVAILABLE(glVertexStream1ivATI))
 			nfglVertexStream1ivATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLint *)  /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1SATI:
+			D(funcname = "glVertexStream1sATI");
+			if (GL_ISAVAILABLE(glVertexStream1sATI))
 			nfglVertexStream1sATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1)  /* GLshort32 x */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1SVATI:
+			D(funcname = "glVertexStream1svATI");
+			if (GL_ISAVAILABLE(glVertexStream1svATI))
 			nfglVertexStream1svATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2DATI:
+			D(funcname = "glVertexStream2dATI");
+			if (GL_ISAVAILABLE(glVertexStream2dATI))
 			nfglVertexStream2dATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedDouble(1),  /* GLdouble x */
 				getStackedDouble(3)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2DVATI:
+			D(funcname = "glVertexStream2dvATI");
+			if (GL_ISAVAILABLE(glVertexStream2dvATI))
 			nfglVertexStream2dvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2FATI:
+			D(funcname = "glVertexStream2fATI");
+			if (GL_ISAVAILABLE(glVertexStream2fATI))
 			nfglVertexStream2fATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedFloat(1),  /* GLfloat x */
 				getStackedFloat(2)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2FVATI:
+			D(funcname = "glVertexStream2fvATI");
+			if (GL_ISAVAILABLE(glVertexStream2fvATI))
 			nfglVertexStream2fvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2IATI:
+			D(funcname = "glVertexStream2iATI");
+			if (GL_ISAVAILABLE(glVertexStream2iATI))
 			nfglVertexStream2iATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLint x */
 				getStackedParameter(2)  /* GLint y */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2IVATI:
+			D(funcname = "glVertexStream2ivATI");
+			if (GL_ISAVAILABLE(glVertexStream2ivATI))
 			nfglVertexStream2ivATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLint *)  /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2SATI:
+			D(funcname = "glVertexStream2sATI");
+			if (GL_ISAVAILABLE(glVertexStream2sATI))
 			nfglVertexStream2sATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLshort32 x */
 				getStackedParameter(2)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2SVATI:
+			D(funcname = "glVertexStream2svATI");
+			if (GL_ISAVAILABLE(glVertexStream2svATI))
 			nfglVertexStream2svATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3DATI:
+			D(funcname = "glVertexStream3dATI");
+			if (GL_ISAVAILABLE(glVertexStream3dATI))
 			nfglVertexStream3dATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedDouble(1),  /* GLdouble x */
@@ -17230,11 +22710,15 @@
 				getStackedDouble(5)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3DVATI:
+			D(funcname = "glVertexStream3dvATI");
+			if (GL_ISAVAILABLE(glVertexStream3dvATI))
 			nfglVertexStream3dvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3FATI:
+			D(funcname = "glVertexStream3fATI");
+			if (GL_ISAVAILABLE(glVertexStream3fATI))
 			nfglVertexStream3fATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedFloat(1),  /* GLfloat x */
@@ -17242,11 +22726,15 @@
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3FVATI:
+			D(funcname = "glVertexStream3fvATI");
+			if (GL_ISAVAILABLE(glVertexStream3fvATI))
 			nfglVertexStream3fvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3IATI:
+			D(funcname = "glVertexStream3iATI");
+			if (GL_ISAVAILABLE(glVertexStream3iATI))
 			nfglVertexStream3iATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLint x */
@@ -17254,11 +22742,15 @@
 				getStackedParameter(3)  /* GLint z */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3IVATI:
+			D(funcname = "glVertexStream3ivATI");
+			if (GL_ISAVAILABLE(glVertexStream3ivATI))
 			nfglVertexStream3ivATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLint *)  /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3SATI:
+			D(funcname = "glVertexStream3sATI");
+			if (GL_ISAVAILABLE(glVertexStream3sATI))
 			nfglVertexStream3sATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -17266,11 +22758,15 @@
 				getStackedParameter(3)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3SVATI:
+			D(funcname = "glVertexStream3svATI");
+			if (GL_ISAVAILABLE(glVertexStream3svATI))
 			nfglVertexStream3svATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4DATI:
+			D(funcname = "glVertexStream4dATI");
+			if (GL_ISAVAILABLE(glVertexStream4dATI))
 			nfglVertexStream4dATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedDouble(1),  /* GLdouble x */
@@ -17279,11 +22775,15 @@
 				getStackedDouble(7)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4DVATI:
+			D(funcname = "glVertexStream4dvATI");
+			if (GL_ISAVAILABLE(glVertexStream4dvATI))
 			nfglVertexStream4dvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4FATI:
+			D(funcname = "glVertexStream4fATI");
+			if (GL_ISAVAILABLE(glVertexStream4fATI))
 			nfglVertexStream4fATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedFloat(1),  /* GLfloat x */
@@ -17292,11 +22792,15 @@
 				getStackedFloat(4)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4FVATI:
+			D(funcname = "glVertexStream4fvATI");
+			if (GL_ISAVAILABLE(glVertexStream4fvATI))
 			nfglVertexStream4fvATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4IATI:
+			D(funcname = "glVertexStream4iATI");
+			if (GL_ISAVAILABLE(glVertexStream4iATI))
 			nfglVertexStream4iATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLint x */
@@ -17305,11 +22809,15 @@
 				getStackedParameter(4)  /* GLint w */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4IVATI:
+			D(funcname = "glVertexStream4ivATI");
+			if (GL_ISAVAILABLE(glVertexStream4ivATI))
 			nfglVertexStream4ivATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLint *)  /* const GLint *coords */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4SATI:
+			D(funcname = "glVertexStream4sATI");
+			if (GL_ISAVAILABLE(glVertexStream4sATI))
 			nfglVertexStream4sATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedParameter(1),  /* GLshort32 x */
@@ -17318,11 +22826,15 @@
 				getStackedParameter(4)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4SVATI:
+			D(funcname = "glVertexStream4svATI");
+			if (GL_ISAVAILABLE(glVertexStream4svATI))
 			nfglVertexStream4svATI(
 				getStackedParameter(0),  /* GLenum stream */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *coords */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTPOINTEREXT:
+			D(funcname = "glVertexWeightPointerEXT");
+			if (GL_ISAVAILABLE(glVertexWeightPointerEXT))
 			nfglVertexWeightPointerEXT(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -17330,28 +22842,40 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFEXT:
+			D(funcname = "glVertexWeightfEXT");
+			if (GL_ISAVAILABLE(glVertexWeightfEXT))
 			nfglVertexWeightfEXT(
 				getStackedFloat(0)  /* GLfloat weight */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFVEXT:
+			D(funcname = "glVertexWeightfvEXT");
+			if (GL_ISAVAILABLE(glVertexWeightfvEXT))
 			nfglVertexWeightfvEXT(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *weight */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHNV:
+			D(funcname = "glVertexWeighthNV");
+			if (GL_ISAVAILABLE(glVertexWeighthNV))
 			nfglVertexWeighthNV(
 				getStackedParameter(0)  /* GLhalfNV32 weight */);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHVNV:
+			D(funcname = "glVertexWeighthvNV");
+			if (GL_ISAVAILABLE(glVertexWeighthvNV))
 			nfglVertexWeighthvNV(
 				getStackedPointer(0, const GLhalfNV *)  /* const GLhalfNV *weight */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURENV:
+			D(funcname = "glVideoCaptureNV");
+			if (GL_ISAVAILABLE(glVideoCaptureNV))
 			ret = nfglVideoCaptureNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedPointer(1, GLuint *),  /* GLuint *sequence_num */
 				getStackedPointer(2, GLuint64EXT *)  /* GLuint64EXT *capture_time */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERDVNV:
+			D(funcname = "glVideoCaptureStreamParameterdvNV");
+			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterdvNV))
 			nfglVideoCaptureStreamParameterdvNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -17359,6 +22883,8 @@
 				getStackedPointer(3, const GLdouble *)  /* const GLdouble *params */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERFVNV:
+			D(funcname = "glVideoCaptureStreamParameterfvNV");
+			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterfvNV))
 			nfglVideoCaptureStreamParameterfvNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -17366,6 +22892,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *params */);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERIVNV:
+			D(funcname = "glVideoCaptureStreamParameterivNV");
+			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterivNV))
 			nfglVideoCaptureStreamParameterivNV(
 				getStackedParameter(0),  /* GLuint video_capture_slot */
 				getStackedParameter(1),  /* GLuint stream */
@@ -17373,6 +22901,8 @@
 				getStackedPointer(3, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLVIEWPORT:
+			D(funcname = "glViewport");
+			if (GL_ISAVAILABLE(glViewport))
 			nfglViewport(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -17380,12 +22910,16 @@
 				getStackedParameter(3)  /* GLsizei height */);
 			break;
 		case NFOSMESA_GLVIEWPORTARRAYV:
+			D(funcname = "glViewportArrayv");
+			if (GL_ISAVAILABLE(glViewportArrayv))
 			nfglViewportArrayv(
 				getStackedParameter(0),  /* GLuint first */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLVIEWPORTINDEXEDF:
+			D(funcname = "glViewportIndexedf");
+			if (GL_ISAVAILABLE(glViewportIndexedf))
 			nfglViewportIndexedf(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedFloat(1),  /* GLfloat x */
@@ -17394,17 +22928,23 @@
 				getStackedFloat(4)  /* GLfloat h */);
 			break;
 		case NFOSMESA_GLVIEWPORTINDEXEDFV:
+			D(funcname = "glViewportIndexedfv");
+			if (GL_ISAVAILABLE(glViewportIndexedfv))
 			nfglViewportIndexedfv(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWAITSYNC:
+			D(funcname = "glWaitSync");
+			if (GL_ISAVAILABLE(glWaitSync))
 			nfglWaitSync(
 				(GLsync)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLbitfield flags */
 				getStackedParameter64(2)  /* GLuint64 timeout */);
 			break;
 		case NFOSMESA_GLWEIGHTPATHSNV:
+			D(funcname = "glWeightPathsNV");
+			if (GL_ISAVAILABLE(glWeightPathsNV))
 			nfglWeightPathsNV(
 				getStackedParameter(0),  /* GLuint resultPath */
 				getStackedParameter(1),  /* GLsizei numPaths */
@@ -17412,6 +22952,8 @@
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTPOINTERARB:
+			D(funcname = "glWeightPointerARB");
+			if (GL_ISAVAILABLE(glWeightPointerARB))
 			nfglWeightPointerARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedParameter(1),  /* GLenum type */
@@ -17419,274 +22961,388 @@
 				getStackedPointer(3, const void *)  /* const void *pointer */);
 			break;
 		case NFOSMESA_GLWEIGHTBVARB:
+			D(funcname = "glWeightbvARB");
+			if (GL_ISAVAILABLE(glWeightbvARB))
 			nfglWeightbvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLbyte *)  /* const GLbyte *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTDVARB:
+			D(funcname = "glWeightdvARB");
+			if (GL_ISAVAILABLE(glWeightdvARB))
 			nfglWeightdvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLdouble *)  /* const GLdouble *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTFVARB:
+			D(funcname = "glWeightfvARB");
+			if (GL_ISAVAILABLE(glWeightfvARB))
 			nfglWeightfvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTIVARB:
+			D(funcname = "glWeightivARB");
+			if (GL_ISAVAILABLE(glWeightivARB))
 			nfglWeightivARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLint *)  /* const GLint *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTSVARB:
+			D(funcname = "glWeightsvARB");
+			if (GL_ISAVAILABLE(glWeightsvARB))
 			nfglWeightsvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLshort *)  /* const GLshort *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUBVARB:
+			D(funcname = "glWeightubvARB");
+			if (GL_ISAVAILABLE(glWeightubvARB))
 			nfglWeightubvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLubyte *)  /* const GLubyte *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUIVARB:
+			D(funcname = "glWeightuivARB");
+			if (GL_ISAVAILABLE(glWeightuivARB))
 			nfglWeightuivARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *weights */);
 			break;
 		case NFOSMESA_GLWEIGHTUSVARB:
+			D(funcname = "glWeightusvARB");
+			if (GL_ISAVAILABLE(glWeightusvARB))
 			nfglWeightusvARB(
 				getStackedParameter(0),  /* GLint size */
 				getStackedPointer(1, const GLushort *)  /* const GLushort *weights */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2D:
+			D(funcname = "glWindowPos2d");
+			if (GL_ISAVAILABLE(glWindowPos2d))
 			nfglWindowPos2d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DARB:
+			D(funcname = "glWindowPos2dARB");
+			if (GL_ISAVAILABLE(glWindowPos2dARB))
 			nfglWindowPos2dARB(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DMESA:
+			D(funcname = "glWindowPos2dMESA");
+			if (GL_ISAVAILABLE(glWindowPos2dMESA))
 			nfglWindowPos2dMESA(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2)  /* GLdouble y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DV:
+			D(funcname = "glWindowPos2dv");
+			if (GL_ISAVAILABLE(glWindowPos2dv))
 			nfglWindowPos2dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVARB:
+			D(funcname = "glWindowPos2dvARB");
+			if (GL_ISAVAILABLE(glWindowPos2dvARB))
 			nfglWindowPos2dvARB(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVMESA:
+			D(funcname = "glWindowPos2dvMESA");
+			if (GL_ISAVAILABLE(glWindowPos2dvMESA))
 			nfglWindowPos2dvMESA(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2F:
+			D(funcname = "glWindowPos2f");
+			if (GL_ISAVAILABLE(glWindowPos2f))
 			nfglWindowPos2f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FARB:
+			D(funcname = "glWindowPos2fARB");
+			if (GL_ISAVAILABLE(glWindowPos2fARB))
 			nfglWindowPos2fARB(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FMESA:
+			D(funcname = "glWindowPos2fMESA");
+			if (GL_ISAVAILABLE(glWindowPos2fMESA))
 			nfglWindowPos2fMESA(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1)  /* GLfloat y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FV:
+			D(funcname = "glWindowPos2fv");
+			if (GL_ISAVAILABLE(glWindowPos2fv))
 			nfglWindowPos2fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVARB:
+			D(funcname = "glWindowPos2fvARB");
+			if (GL_ISAVAILABLE(glWindowPos2fvARB))
 			nfglWindowPos2fvARB(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVMESA:
+			D(funcname = "glWindowPos2fvMESA");
+			if (GL_ISAVAILABLE(glWindowPos2fvMESA))
 			nfglWindowPos2fvMESA(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2I:
+			D(funcname = "glWindowPos2i");
+			if (GL_ISAVAILABLE(glWindowPos2i))
 			nfglWindowPos2i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1)  /* GLint y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IARB:
+			D(funcname = "glWindowPos2iARB");
+			if (GL_ISAVAILABLE(glWindowPos2iARB))
 			nfglWindowPos2iARB(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1)  /* GLint y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IMESA:
+			D(funcname = "glWindowPos2iMESA");
+			if (GL_ISAVAILABLE(glWindowPos2iMESA))
 			nfglWindowPos2iMESA(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1)  /* GLint y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IV:
+			D(funcname = "glWindowPos2iv");
+			if (GL_ISAVAILABLE(glWindowPos2iv))
 			nfglWindowPos2iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVARB:
+			D(funcname = "glWindowPos2ivARB");
+			if (GL_ISAVAILABLE(glWindowPos2ivARB))
 			nfglWindowPos2ivARB(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVMESA:
+			D(funcname = "glWindowPos2ivMESA");
+			if (GL_ISAVAILABLE(glWindowPos2ivMESA))
 			nfglWindowPos2ivMESA(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2S:
+			D(funcname = "glWindowPos2s");
+			if (GL_ISAVAILABLE(glWindowPos2s))
 			nfglWindowPos2s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SARB:
+			D(funcname = "glWindowPos2sARB");
+			if (GL_ISAVAILABLE(glWindowPos2sARB))
 			nfglWindowPos2sARB(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SMESA:
+			D(funcname = "glWindowPos2sMESA");
+			if (GL_ISAVAILABLE(glWindowPos2sMESA))
 			nfglWindowPos2sMESA(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1)  /* GLshort32 y */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SV:
+			D(funcname = "glWindowPos2sv");
+			if (GL_ISAVAILABLE(glWindowPos2sv))
 			nfglWindowPos2sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVARB:
+			D(funcname = "glWindowPos2svARB");
+			if (GL_ISAVAILABLE(glWindowPos2svARB))
 			nfglWindowPos2svARB(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVMESA:
+			D(funcname = "glWindowPos2svMESA");
+			if (GL_ISAVAILABLE(glWindowPos2svMESA))
 			nfglWindowPos2svMESA(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3D:
+			D(funcname = "glWindowPos3d");
+			if (GL_ISAVAILABLE(glWindowPos3d))
 			nfglWindowPos3d(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DARB:
+			D(funcname = "glWindowPos3dARB");
+			if (GL_ISAVAILABLE(glWindowPos3dARB))
 			nfglWindowPos3dARB(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DMESA:
+			D(funcname = "glWindowPos3dMESA");
+			if (GL_ISAVAILABLE(glWindowPos3dMESA))
 			nfglWindowPos3dMESA(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
 				getStackedDouble(4)  /* GLdouble z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DV:
+			D(funcname = "glWindowPos3dv");
+			if (GL_ISAVAILABLE(glWindowPos3dv))
 			nfglWindowPos3dv(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVARB:
+			D(funcname = "glWindowPos3dvARB");
+			if (GL_ISAVAILABLE(glWindowPos3dvARB))
 			nfglWindowPos3dvARB(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVMESA:
+			D(funcname = "glWindowPos3dvMESA");
+			if (GL_ISAVAILABLE(glWindowPos3dvMESA))
 			nfglWindowPos3dvMESA(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3F:
+			D(funcname = "glWindowPos3f");
+			if (GL_ISAVAILABLE(glWindowPos3f))
 			nfglWindowPos3f(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FARB:
+			D(funcname = "glWindowPos3fARB");
+			if (GL_ISAVAILABLE(glWindowPos3fARB))
 			nfglWindowPos3fARB(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FMESA:
+			D(funcname = "glWindowPos3fMESA");
+			if (GL_ISAVAILABLE(glWindowPos3fMESA))
 			nfglWindowPos3fMESA(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
 				getStackedFloat(2)  /* GLfloat z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FV:
+			D(funcname = "glWindowPos3fv");
+			if (GL_ISAVAILABLE(glWindowPos3fv))
 			nfglWindowPos3fv(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVARB:
+			D(funcname = "glWindowPos3fvARB");
+			if (GL_ISAVAILABLE(glWindowPos3fvARB))
 			nfglWindowPos3fvARB(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVMESA:
+			D(funcname = "glWindowPos3fvMESA");
+			if (GL_ISAVAILABLE(glWindowPos3fvMESA))
 			nfglWindowPos3fvMESA(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3I:
+			D(funcname = "glWindowPos3i");
+			if (GL_ISAVAILABLE(glWindowPos3i))
 			nfglWindowPos3i(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
 				getStackedParameter(2)  /* GLint z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IARB:
+			D(funcname = "glWindowPos3iARB");
+			if (GL_ISAVAILABLE(glWindowPos3iARB))
 			nfglWindowPos3iARB(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
 				getStackedParameter(2)  /* GLint z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IMESA:
+			D(funcname = "glWindowPos3iMESA");
+			if (GL_ISAVAILABLE(glWindowPos3iMESA))
 			nfglWindowPos3iMESA(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
 				getStackedParameter(2)  /* GLint z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IV:
+			D(funcname = "glWindowPos3iv");
+			if (GL_ISAVAILABLE(glWindowPos3iv))
 			nfglWindowPos3iv(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVARB:
+			D(funcname = "glWindowPos3ivARB");
+			if (GL_ISAVAILABLE(glWindowPos3ivARB))
 			nfglWindowPos3ivARB(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVMESA:
+			D(funcname = "glWindowPos3ivMESA");
+			if (GL_ISAVAILABLE(glWindowPos3ivMESA))
 			nfglWindowPos3ivMESA(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3S:
+			D(funcname = "glWindowPos3s");
+			if (GL_ISAVAILABLE(glWindowPos3s))
 			nfglWindowPos3s(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
 				getStackedParameter(2)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SARB:
+			D(funcname = "glWindowPos3sARB");
+			if (GL_ISAVAILABLE(glWindowPos3sARB))
 			nfglWindowPos3sARB(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
 				getStackedParameter(2)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SMESA:
+			D(funcname = "glWindowPos3sMESA");
+			if (GL_ISAVAILABLE(glWindowPos3sMESA))
 			nfglWindowPos3sMESA(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
 				getStackedParameter(2)  /* GLshort32 z */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SV:
+			D(funcname = "glWindowPos3sv");
+			if (GL_ISAVAILABLE(glWindowPos3sv))
 			nfglWindowPos3sv(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVARB:
+			D(funcname = "glWindowPos3svARB");
+			if (GL_ISAVAILABLE(glWindowPos3svARB))
 			nfglWindowPos3svARB(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVMESA:
+			D(funcname = "glWindowPos3svMESA");
+			if (GL_ISAVAILABLE(glWindowPos3svMESA))
 			nfglWindowPos3svMESA(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4DMESA:
+			D(funcname = "glWindowPos4dMESA");
+			if (GL_ISAVAILABLE(glWindowPos4dMESA))
 			nfglWindowPos4dMESA(
 				getStackedDouble(0),  /* GLdouble x */
 				getStackedDouble(2),  /* GLdouble y */
@@ -17694,10 +23350,14 @@
 				getStackedDouble(6)  /* GLdouble w */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4DVMESA:
+			D(funcname = "glWindowPos4dvMESA");
+			if (GL_ISAVAILABLE(glWindowPos4dvMESA))
 			nfglWindowPos4dvMESA(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4FMESA:
+			D(funcname = "glWindowPos4fMESA");
+			if (GL_ISAVAILABLE(glWindowPos4fMESA))
 			nfglWindowPos4fMESA(
 				getStackedFloat(0),  /* GLfloat x */
 				getStackedFloat(1),  /* GLfloat y */
@@ -17705,10 +23365,14 @@
 				getStackedFloat(3)  /* GLfloat w */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4FVMESA:
+			D(funcname = "glWindowPos4fvMESA");
+			if (GL_ISAVAILABLE(glWindowPos4fvMESA))
 			nfglWindowPos4fvMESA(
 				getStackedPointer(0, const GLfloat *)  /* const GLfloat *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4IMESA:
+			D(funcname = "glWindowPos4iMESA");
+			if (GL_ISAVAILABLE(glWindowPos4iMESA))
 			nfglWindowPos4iMESA(
 				getStackedParameter(0),  /* GLint x */
 				getStackedParameter(1),  /* GLint y */
@@ -17716,10 +23380,14 @@
 				getStackedParameter(3)  /* GLint w */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4IVMESA:
+			D(funcname = "glWindowPos4ivMESA");
+			if (GL_ISAVAILABLE(glWindowPos4ivMESA))
 			nfglWindowPos4ivMESA(
 				getStackedPointer(0, const GLint *)  /* const GLint *v */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4SMESA:
+			D(funcname = "glWindowPos4sMESA");
+			if (GL_ISAVAILABLE(glWindowPos4sMESA))
 			nfglWindowPos4sMESA(
 				getStackedParameter(0),  /* GLshort32 x */
 				getStackedParameter(1),  /* GLshort32 y */
@@ -17727,10 +23395,14 @@
 				getStackedParameter(3)  /* GLshort32 w */);
 			break;
 		case NFOSMESA_GLWINDOWPOS4SVMESA:
+			D(funcname = "glWindowPos4svMESA");
+			if (GL_ISAVAILABLE(glWindowPos4svMESA))
 			nfglWindowPos4svMESA(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
 		case NFOSMESA_GLWRITEMASKEXT:
+			D(funcname = "glWriteMaskEXT");
+			if (GL_ISAVAILABLE(glWriteMaskEXT))
 			nfglWriteMaskEXT(
 				getStackedParameter(0),  /* GLuint res */
 				getStackedParameter(1),  /* GLuint in */
@@ -17740,6 +23412,7 @@
 				getStackedParameter(5)  /* GLenum outW */);
 			break;
 		case NFOSMESA_GLULOOKAT:
+			D(funcname = "gluLookAt");
 			nfgluLookAt(
 				getStackedDouble(0),  /* GLdouble eyeX */
 				getStackedDouble(2),  /* GLdouble eyeY */

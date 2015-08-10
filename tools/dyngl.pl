@@ -256,7 +256,7 @@ my %printf_formats = (
 	'GLint' => '%d',
 	'GLsizei' => '%d',
 	'GLuint' => '%u',
-	'GLenum' => '0x%x',
+	'GLenum' => '%s', # will be translated using gl_enum_name
 	'GLbitfield' => '0x%x',
 	'GLfloat' => '%f',
 	'const GLfloat' => '%f',  # used in glClearNamedFramebufferfi
@@ -713,6 +713,9 @@ sub gen_params()
 				if ($type eq 'GLsync' || $type eq 'GLhandleARB')
 				{
 					$debug_args .= '(unsigned int)(uintptr_t)' . $name;
+				} elsif ($type eq 'GLenum')
+				{
+					$debug_args .= "gl_enum_name($name)";
 				} else
 				{
 					$debug_args .= $name;
@@ -2724,7 +2727,7 @@ my %macros = (
 	'glDepthFunc' => 0,
 	'glDepthMask' => 0,
 	'glDepthRange' => 0,
-	'glDisable' => 0,
+	'glDisable' => 1,
 	'glDisableClientState' => 1,
 	'glDrawArrays' => 1,
 	'glDrawBuffer' => 0,
@@ -2733,7 +2736,7 @@ my %macros = (
 	'glEdgeFlag' => 0,
 	'glEdgeFlagPointer' => 1,
 	'glEdgeFlagv' => 1,
-	'glEnable' => 0,
+	'glEnable' => 1,
 	'glEnableClientState' => 1,
 	'glEnd' => 0,
 	'glEndList' => 0,
@@ -2804,7 +2807,7 @@ my %macros = (
 	'glIndexubv' => 1,
 	'glInitNames' => 0,
 	'glInterleavedArrays' => 1,
-	'glIsEnabled' => 0,
+	'glIsEnabled' => 1,
 	'glIsList' => 0,
 	'glIsTexture' => 0,
 	'glLightModelf' => 0,
@@ -4321,7 +4324,7 @@ sub gen_paramcount() {
 	print "static struct {\n";
 	print "\tconst char *name;\n";
 	print "\tunsigned int funcno;\n";
-	print "} const functionnames[] = {\n";
+	print "} const gl_functionnames[] = {\n";
 	$first = 1;
 	foreach my $key (sort { sort_by_name } keys %functions) {
 		my $ent = $functions{$key};
@@ -4386,6 +4389,8 @@ sub gen_dispatch() {
 			}
 		}
 		my $argcount = $#$params + 1;
+		print "\t\t\tD(funcname = \"${function_name}\");\n";
+		print "\t\t\tif (GL_ISAVAILABLE(${function_name}))\n" if ($gl eq 'gl');
 		print "\t\t\t${ret}nf${function_name}(";
 		
 		if ($argcount > 0) {
@@ -4598,6 +4603,7 @@ EOF
 		$complete_name .= "f" if (defined($floatfuncs{$complete_name}));
 		$export = $gl . $function_name;
 		$export = $floatfuncs{$export} if (defined($floatfuncs{$export}));
+		$export = "information" if ($function_name eq "tinyglinformation");
 
 		if ($prototype eq "void")
 		{
@@ -4823,6 +4829,10 @@ my $ldg_trailer = '
 #undef gluLookAt
 #define gluLookAt gluLookAtf
 
+/* fix bad name */
+#undef information
+#define tinyglinformation gl.information
+
 ';
 
 my $tinygl_trailer = '
@@ -4831,6 +4841,10 @@ my $tinygl_trailer = '
  */
 #undef glFinish
 #define glFinish()
+
+/* fix bad name */
+#undef information
+#define tinyglinformation gl.information
 
 /*
  * Functions from OpenGL that are not implemented in TinyGL
@@ -4899,6 +4913,11 @@ sub gen_ldgheader() {
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /*
  * load & initialize NFOSmesa
  */
@@ -4913,6 +4932,11 @@ int ldg_init_osmesa(LDG *lib);
  * unload NFOSmesa
  */
 void ldg_unload_osmesa(struct gl_public *pub, _WORD *gl);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 EOF
@@ -4932,7 +4956,15 @@ EOF
 		close(INC)
 	}
 
+	foreach $key (keys %floatfuncs) {
+		print "#undef ${key}\n";
+	}
+
 	print << "EOF";
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct _gl_osmesa {
 EOF
@@ -5049,6 +5081,10 @@ sub gen_tinyldgheader() {
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * load & initialize TinyGL
  */
@@ -5063,6 +5099,10 @@ int ldg_init_tiny_gl(LDG *lib);
  * unload TinyGL
  */
 void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 EOF
@@ -5082,6 +5122,10 @@ EOF
 		close(INC)
 	}
 
+	foreach $key (keys %floatfuncs) {
+		print "#undef ${key}\n";
+	}
+
 	print << "EOF";
 
 /*
@@ -5097,7 +5141,7 @@ GLAPI GLsizei GLAPIENTRY max_width(void);
 GLAPI GLsizei GLAPIENTRY max_height(void);
 GLAPI void GLAPIENTRY swapbuffer(void *buf);
 GLAPI void GLAPIENTRY exception_error(void CALLBACK (*exception)(GLenum param));
-GLAPI void GLAPIENTRY information(void);
+GLAPI void GLAPIENTRY tinyglinformation(void);
 
 GLAPI void GLAPIENTRY glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
 GLAPI void GLAPIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
@@ -5253,6 +5297,9 @@ sub ldg_export($)
 	{
 		# the function exported as "glOrtho" actually is glOrthof
 		chop($lookup);
+	} elsif ($lookup eq "tinyglinformation")
+	{
+		$lookup = "information";
 	}
 	print "\tglp->${glx}${function_name} = ($return_type APIENTRY (*)($prototype)) ldg_find(\"${lookup}\", lib);\n";
 	print "\tGL_CHECK(glp->${glx}${function_name});\n";
@@ -5417,7 +5464,7 @@ int main(void)
 		fprintf(stderr, "osmesa.ldg not found\\n");
 		return 1;
 	}
-	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 8, 16, NULL);
+	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 0, 0, NULL);
 	if (ctx == NULL)
 	{
 		fprintf(stderr, "can't create context\\n");
@@ -5668,6 +5715,10 @@ EOF
 		close(INC)
 	}
 
+	foreach $key (keys %floatfuncs) {
+		print "#undef ${key}\n";
+	}
+
 	print << "EOF";
 
 /*
@@ -5683,7 +5734,7 @@ GLAPI GLsizei GLAPIENTRY max_width(void);
 GLAPI GLsizei GLAPIENTRY max_height(void);
 GLAPI void GLAPIENTRY swapbuffer(void *buf);
 GLAPI void GLAPIENTRY exception_error(void CALLBACK (*exception)(GLenum param));
-GLAPI void GLAPIENTRY information(void);
+GLAPI void GLAPIENTRY tinyglinformation(void);
 
 GLAPI void GLAPIENTRY glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
 GLAPI void GLAPIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
@@ -5835,6 +5886,10 @@ EOF
 		}
 		print "\n";
 		close(INC)
+	}
+
+	foreach $key (keys %floatfuncs) {
+		print "#undef ${key}\n";
 	}
 
 	print << "EOF";
@@ -6314,7 +6369,7 @@ int main(void)
 		fprintf(stderr, "osmesa.slb not found\\n");
 		return 1;
 	}
-	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 8, 16, NULL);
+	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 0, 0, NULL);
 	if (ctx == NULL)
 	{
 		fprintf(stderr, "can't create context\\n");

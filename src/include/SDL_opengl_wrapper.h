@@ -27,6 +27,7 @@
 #include <GL/gl.h>	/* Header File For The OpenGL Library */
 #include <GL/glu.h>	/* Header File For The GLU Library */
 #endif
+#include "glenums.h"
 
 /*	On darwin/Mac OS X systems SDL_opengl.h includes OpenGL/gl.h instead of GL/gl.h, 
    	which does not define GLAPI and GLAPIENTRY used by GL/osmesa.h

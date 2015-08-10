@@ -1065,7 +1065,7 @@ struct osmesa_context { int dummy; };
 #endif
 typedef struct osmesa_context *OSMesaContext;
 
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContext( GLenum format, OSMesaContext sharelist );
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist);
@@ -1082,7 +1082,7 @@ GLAPI void GLAPIENTRY OSMesaPostprocess(OSMesaContext osmesa, const char *filter
 
 
 #elif OSMESA_VERSION < OSMESA_VERSION_NUMBER(6, 3, 0)
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 #endif
 
 /*

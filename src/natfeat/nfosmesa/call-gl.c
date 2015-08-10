@@ -5,13 +5,13 @@
 
 void OSMesaDriver::nfglAccum(GLenum op, GLfloat value)
 {
-	D(bug("nfosmesa: glAccum(0x%x, %f)", op, value));
+	D(bug("nfosmesa: glAccum(%s, %f)", gl_enum_name(op), value));
 	fn.glAccum(op, value);
 }
 
 void OSMesaDriver::nfglAccumxOES(GLenum op, GLfixed value)
 {
-	D(bug("nfosmesa: glAccumxOES(0x%x, 0x%x)", op, value));
+	D(bug("nfosmesa: glAccumxOES(%s, 0x%x)", gl_enum_name(op), value));
 	fn.glAccumxOES(op, value);
 }
 
@@ -29,19 +29,19 @@ void OSMesaDriver::nfglActiveShaderProgram(GLuint pipeline, GLuint program)
 
 void OSMesaDriver::nfglActiveStencilFaceEXT(GLenum face)
 {
-	D(bug("nfosmesa: glActiveStencilFaceEXT(0x%x)", face));
+	D(bug("nfosmesa: glActiveStencilFaceEXT(%s)", gl_enum_name(face)));
 	fn.glActiveStencilFaceEXT(face);
 }
 
 void OSMesaDriver::nfglActiveTexture(GLenum texture)
 {
-	D(bug("nfosmesa: glActiveTexture(0x%x)", texture));
+	D(bug("nfosmesa: glActiveTexture(%s)", gl_enum_name(texture)));
 	fn.glActiveTexture(texture);
 }
 
 void OSMesaDriver::nfglActiveTextureARB(GLenum texture)
 {
-	D(bug("nfosmesa: glActiveTextureARB(0x%x)", texture));
+	D(bug("nfosmesa: glActiveTextureARB(%s)", gl_enum_name(texture)));
 	fn.glActiveTextureARB(texture);
 }
 
@@ -63,37 +63,37 @@ void OSMesaDriver::nfglAddSwapHintRectWIN(GLint x, GLint y, GLsizei width, GLsiz
 
 void OSMesaDriver::nfglAlphaFragmentOp1ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod)
 {
-	D(bug("nfosmesa: glAlphaFragmentOp1ATI(0x%x, %u, %u, %u, %u, %u)", op, dst, dstMod, arg1, arg1Rep, arg1Mod));
+	D(bug("nfosmesa: glAlphaFragmentOp1ATI(%s, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMod, arg1, arg1Rep, arg1Mod));
 	fn.glAlphaFragmentOp1ATI(op, dst, dstMod, arg1, arg1Rep, arg1Mod);
 }
 
 void OSMesaDriver::nfglAlphaFragmentOp2ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod, GLuint arg2, GLuint arg2Rep, GLuint arg2Mod)
 {
-	D(bug("nfosmesa: glAlphaFragmentOp2ATI(0x%x, %u, %u, %u, %u, %u, %u, %u, %u)", op, dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod));
+	D(bug("nfosmesa: glAlphaFragmentOp2ATI(%s, %u, %u, %u, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod));
 	fn.glAlphaFragmentOp2ATI(op, dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod);
 }
 
 void OSMesaDriver::nfglAlphaFragmentOp3ATI(GLenum op, GLuint dst, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod, GLuint arg2, GLuint arg2Rep, GLuint arg2Mod, GLuint arg3, GLuint arg3Rep, GLuint arg3Mod)
 {
-	D(bug("nfosmesa: glAlphaFragmentOp3ATI(0x%x, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", op, dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod));
+	D(bug("nfosmesa: glAlphaFragmentOp3ATI(%s, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod));
 	fn.glAlphaFragmentOp3ATI(op, dst, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod);
 }
 
 void OSMesaDriver::nfglAlphaFunc(GLenum func, GLclampf ref)
 {
-	D(bug("nfosmesa: glAlphaFunc(0x%x, %f)", func, ref));
+	D(bug("nfosmesa: glAlphaFunc(%s, %f)", gl_enum_name(func), ref));
 	fn.glAlphaFunc(func, ref);
 }
 
 void OSMesaDriver::nfglAlphaFuncxOES(GLenum func, GLfixed ref)
 {
-	D(bug("nfosmesa: glAlphaFuncxOES(0x%x, 0x%x)", func, ref));
+	D(bug("nfosmesa: glAlphaFuncxOES(%s, 0x%x)", gl_enum_name(func), ref));
 	fn.glAlphaFuncxOES(func, ref);
 }
 
 void OSMesaDriver::nfglApplyTextureEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glApplyTextureEXT(0x%x)", mode));
+	D(bug("nfosmesa: glApplyTextureEXT(%s)", gl_enum_name(mode)));
 	fn.glApplyTextureEXT(mode);
 }
 
@@ -141,7 +141,7 @@ FN_GLARRAYELEMENTEXT(i);
 
 void OSMesaDriver::nfglArrayObjectATI(GLenum array, GLint size, GLenum type, GLsizei stride, GLuint buffer, GLuint offset)
 {
-	D(bug("nfosmesa: glArrayObjectATI(0x%x, %d, 0x%x, %d, %u, %u)", array, size, type, stride, buffer, offset));
+	D(bug("nfosmesa: glArrayObjectATI(%s, %d, %s, %d, %u, %u)", gl_enum_name(array), size, gl_enum_name(type), stride, buffer, offset));
 FN_GLARRAYOBJECTATI(array, size, type, stride, buffer, offset);
 }
 
@@ -165,19 +165,19 @@ void OSMesaDriver::nfglAttachShader(GLuint program, GLuint shader)
 
 void OSMesaDriver::nfglBegin(GLenum mode)
 {
-	D(bug("nfosmesa: glBegin(0x%x)", mode));
+	D(bug("nfosmesa: glBegin(%s)", gl_enum_name(mode)));
 	fn.glBegin(mode);
 }
 
 void OSMesaDriver::nfglBeginConditionalRender(GLuint id, GLenum mode)
 {
-	D(bug("nfosmesa: glBeginConditionalRender(%u, 0x%x)", id, mode));
+	D(bug("nfosmesa: glBeginConditionalRender(%u, %s)", id, gl_enum_name(mode)));
 	fn.glBeginConditionalRender(id, mode);
 }
 
 void OSMesaDriver::nfglBeginConditionalRenderNV(GLuint id, GLenum mode)
 {
-	D(bug("nfosmesa: glBeginConditionalRenderNV(%u, 0x%x)", id, mode));
+	D(bug("nfosmesa: glBeginConditionalRenderNV(%u, %s)", id, gl_enum_name(mode)));
 	fn.glBeginConditionalRenderNV(id, mode);
 }
 
@@ -213,37 +213,37 @@ void OSMesaDriver::nfglBeginPerfQueryINTEL(GLuint queryHandle)
 
 void OSMesaDriver::nfglBeginQuery(GLenum target, GLuint id)
 {
-	D(bug("nfosmesa: glBeginQuery(0x%x, %u)", target, id));
+	D(bug("nfosmesa: glBeginQuery(%s, %u)", gl_enum_name(target), id));
 	fn.glBeginQuery(target, id);
 }
 
 void OSMesaDriver::nfglBeginQueryARB(GLenum target, GLuint id)
 {
-	D(bug("nfosmesa: glBeginQueryARB(0x%x, %u)", target, id));
+	D(bug("nfosmesa: glBeginQueryARB(%s, %u)", gl_enum_name(target), id));
 	fn.glBeginQueryARB(target, id);
 }
 
 void OSMesaDriver::nfglBeginQueryIndexed(GLenum target, GLuint index, GLuint id)
 {
-	D(bug("nfosmesa: glBeginQueryIndexed(0x%x, %u, %u)", target, index, id));
+	D(bug("nfosmesa: glBeginQueryIndexed(%s, %u, %u)", gl_enum_name(target), index, id));
 	fn.glBeginQueryIndexed(target, index, id);
 }
 
 void OSMesaDriver::nfglBeginTransformFeedback(GLenum primitiveMode)
 {
-	D(bug("nfosmesa: glBeginTransformFeedback(0x%x)", primitiveMode));
+	D(bug("nfosmesa: glBeginTransformFeedback(%s)", gl_enum_name(primitiveMode)));
 	fn.glBeginTransformFeedback(primitiveMode);
 }
 
 void OSMesaDriver::nfglBeginTransformFeedbackEXT(GLenum primitiveMode)
 {
-	D(bug("nfosmesa: glBeginTransformFeedbackEXT(0x%x)", primitiveMode));
+	D(bug("nfosmesa: glBeginTransformFeedbackEXT(%s)", gl_enum_name(primitiveMode)));
 	fn.glBeginTransformFeedbackEXT(primitiveMode);
 }
 
 void OSMesaDriver::nfglBeginTransformFeedbackNV(GLenum primitiveMode)
 {
-	D(bug("nfosmesa: glBeginTransformFeedbackNV(0x%x)", primitiveMode));
+	D(bug("nfosmesa: glBeginTransformFeedbackNV(%s)", gl_enum_name(primitiveMode)));
 	fn.glBeginTransformFeedbackNV(primitiveMode);
 }
 
@@ -281,61 +281,61 @@ FN_GLBINDATTRIBLOCATIONARB(programObj, index, name);
 
 void OSMesaDriver::nfglBindBuffer(GLenum target, GLuint buffer)
 {
-	D(bug("nfosmesa: glBindBuffer(0x%x, %u)", target, buffer));
+	D(bug("nfosmesa: glBindBuffer(%s, %u)", gl_enum_name(target), buffer));
 FN_GLBINDBUFFER(target, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferARB(GLenum target, GLuint buffer)
 {
-	D(bug("nfosmesa: glBindBufferARB(0x%x, %u)", target, buffer));
+	D(bug("nfosmesa: glBindBufferARB(%s, %u)", gl_enum_name(target), buffer));
 FN_GLBINDBUFFERARB(target, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferBase(GLenum target, GLuint index, GLuint buffer)
 {
-	D(bug("nfosmesa: glBindBufferBase(0x%x, %u, %u)", target, index, buffer));
+	D(bug("nfosmesa: glBindBufferBase(%s, %u, %u)", gl_enum_name(target), index, buffer));
 FN_GLBINDBUFFERBASE(target, index, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferBaseEXT(GLenum target, GLuint index, GLuint buffer)
 {
-	D(bug("nfosmesa: glBindBufferBaseEXT(0x%x, %u, %u)", target, index, buffer));
+	D(bug("nfosmesa: glBindBufferBaseEXT(%s, %u, %u)", gl_enum_name(target), index, buffer));
 FN_GLBINDBUFFERBASEEXT(target, index, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferBaseNV(GLenum target, GLuint index, GLuint buffer)
 {
-	D(bug("nfosmesa: glBindBufferBaseNV(0x%x, %u, %u)", target, index, buffer));
+	D(bug("nfosmesa: glBindBufferBaseNV(%s, %u, %u)", gl_enum_name(target), index, buffer));
 FN_GLBINDBUFFERBASENV(target, index, buffer);
 }
 
 void OSMesaDriver::nfglBindBufferOffsetEXT(GLenum target, GLuint index, GLuint buffer, GLintptr offset)
 {
-	D(bug("nfosmesa: glBindBufferOffsetEXT(0x%x, %u, %u, %" PRI_IPTR ")", target, index, buffer, offset));
+	D(bug("nfosmesa: glBindBufferOffsetEXT(%s, %u, %u, %" PRI_IPTR ")", gl_enum_name(target), index, buffer, offset));
 	fn.glBindBufferOffsetEXT(target, index, buffer, offset);
 }
 
 void OSMesaDriver::nfglBindBufferOffsetNV(GLenum target, GLuint index, GLuint buffer, GLintptr offset)
 {
-	D(bug("nfosmesa: glBindBufferOffsetNV(0x%x, %u, %u, %" PRI_IPTR ")", target, index, buffer, offset));
+	D(bug("nfosmesa: glBindBufferOffsetNV(%s, %u, %u, %" PRI_IPTR ")", gl_enum_name(target), index, buffer, offset));
 	fn.glBindBufferOffsetNV(target, index, buffer, offset);
 }
 
 void OSMesaDriver::nfglBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRange(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRange(%s, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), index, buffer, offset, size));
 FN_GLBINDBUFFERRANGE(target, index, buffer, offset, size);
 }
 
 void OSMesaDriver::nfglBindBufferRangeEXT(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRangeEXT(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRangeEXT(%s, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), index, buffer, offset, size));
 FN_GLBINDBUFFERRANGEEXT(target, index, buffer, offset, size);
 }
 
 void OSMesaDriver::nfglBindBufferRangeNV(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glBindBufferRangeNV(0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, index, buffer, offset, size));
+	D(bug("nfosmesa: glBindBufferRangeNV(%s, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), index, buffer, offset, size));
 FN_GLBINDBUFFERRANGENV(target, index, buffer, offset, size);
 }
 
@@ -345,7 +345,7 @@ void OSMesaDriver::nfglBindBuffersBase(GLenum target, GLuint first, GLsizei coun
 void OSMesaDriver::nfglBindBuffersBase(GLenum target, GLuint first, GLsizei count, const GLuint *buffers)
 #endif
 {
-	D(bug("nfosmesa: glBindBuffersBase(0x%x, %u, %d, " PRI_PTR ")", target, first, count, AtariOffset(buffers)));
+	D(bug("nfosmesa: glBindBuffersBase(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), first, count, AtariOffset(buffers)));
 FN_GLBINDBUFFERSBASE(target, first, count, buffers);
 }
 
@@ -355,7 +355,7 @@ void OSMesaDriver::nfglBindBuffersRange(GLenum target, GLuint first, GLsizei cou
 void OSMesaDriver::nfglBindBuffersRange(GLenum target, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizeiptr *sizes)
 #endif
 {
-	D(bug("nfosmesa: glBindBuffersRange(0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", target, first, count, AtariOffset(buffers), AtariOffset(offsets), AtariOffset(sizes)));
+	D(bug("nfosmesa: glBindBuffersRange(%s, %u, %d, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), first, count, AtariOffset(buffers), AtariOffset(offsets), AtariOffset(sizes)));
 FN_GLBINDBUFFERSRANGE(target, first, count, buffers, offsets, sizes);
 }
 
@@ -397,25 +397,25 @@ void OSMesaDriver::nfglBindFragmentShaderATI(GLuint id)
 
 void OSMesaDriver::nfglBindFramebuffer(GLenum target, GLuint framebuffer)
 {
-	D(bug("nfosmesa: glBindFramebuffer(0x%x, %u)", target, framebuffer));
+	D(bug("nfosmesa: glBindFramebuffer(%s, %u)", gl_enum_name(target), framebuffer));
 	fn.glBindFramebuffer(target, framebuffer);
 }
 
 void OSMesaDriver::nfglBindFramebufferEXT(GLenum target, GLuint framebuffer)
 {
-	D(bug("nfosmesa: glBindFramebufferEXT(0x%x, %u)", target, framebuffer));
+	D(bug("nfosmesa: glBindFramebufferEXT(%s, %u)", gl_enum_name(target), framebuffer));
 	fn.glBindFramebufferEXT(target, framebuffer);
 }
 
 void OSMesaDriver::nfglBindImageTexture(GLuint unit, GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum access, GLenum format)
 {
-	D(bug("nfosmesa: glBindImageTexture(%u, %u, %d, %d, %d, 0x%x, 0x%x)", unit, texture, level, layered, layer, access, format));
+	D(bug("nfosmesa: glBindImageTexture(%u, %u, %d, %d, %d, %s, %s)", unit, texture, level, layered, layer, gl_enum_name(access), gl_enum_name(format)));
 	fn.glBindImageTexture(unit, texture, level, layered, layer, access, format);
 }
 
 void OSMesaDriver::nfglBindImageTextureEXT(GLuint index, GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum access, GLint format)
 {
-	D(bug("nfosmesa: glBindImageTextureEXT(%u, %u, %d, %d, %d, 0x%x, %d)", index, texture, level, layered, layer, access, format));
+	D(bug("nfosmesa: glBindImageTextureEXT(%u, %u, %d, %d, %d, %s, %d)", index, texture, level, layered, layer, gl_enum_name(access), format));
 	fn.glBindImageTextureEXT(index, texture, level, layered, layer, access, format);
 }
 
@@ -431,40 +431,40 @@ FN_GLBINDIMAGETEXTURES(first, count, textures);
 
 GLuint OSMesaDriver::nfglBindLightParameterEXT(GLenum light, GLenum value)
 {
-	D(bug("nfosmesa: glBindLightParameterEXT(0x%x, 0x%x)", light, value));
+	D(bug("nfosmesa: glBindLightParameterEXT(%s, %s)", gl_enum_name(light), gl_enum_name(value)));
 	GLuint __ret = fn.glBindLightParameterEXT(light, value);
 	return __ret;
 }
 
 GLuint OSMesaDriver::nfglBindMaterialParameterEXT(GLenum face, GLenum value)
 {
-	D(bug("nfosmesa: glBindMaterialParameterEXT(0x%x, 0x%x)", face, value));
+	D(bug("nfosmesa: glBindMaterialParameterEXT(%s, %s)", gl_enum_name(face), gl_enum_name(value)));
 	GLuint __ret = fn.glBindMaterialParameterEXT(face, value);
 	return __ret;
 }
 
 void OSMesaDriver::nfglBindMultiTextureEXT(GLenum texunit, GLenum target, GLuint texture)
 {
-	D(bug("nfosmesa: glBindMultiTextureEXT(0x%x, 0x%x, %u)", texunit, target, texture));
+	D(bug("nfosmesa: glBindMultiTextureEXT(%s, %s, %u)", gl_enum_name(texunit), gl_enum_name(target), texture));
 	fn.glBindMultiTextureEXT(texunit, target, texture);
 }
 
 GLuint OSMesaDriver::nfglBindParameterEXT(GLenum value)
 {
-	D(bug("nfosmesa: glBindParameterEXT(0x%x)", value));
+	D(bug("nfosmesa: glBindParameterEXT(%s)", gl_enum_name(value)));
 	GLuint __ret = fn.glBindParameterEXT(value);
 	return __ret;
 }
 
 void OSMesaDriver::nfglBindProgramARB(GLenum target, GLuint program)
 {
-	D(bug("nfosmesa: glBindProgramARB(0x%x, %u)", target, program));
+	D(bug("nfosmesa: glBindProgramARB(%s, %u)", gl_enum_name(target), program));
 	fn.glBindProgramARB(target, program);
 }
 
 void OSMesaDriver::nfglBindProgramNV(GLenum target, GLuint id)
 {
-	D(bug("nfosmesa: glBindProgramNV(0x%x, %u)", target, id));
+	D(bug("nfosmesa: glBindProgramNV(%s, %u)", gl_enum_name(target), id));
 	fn.glBindProgramNV(target, id);
 }
 
@@ -476,13 +476,13 @@ void OSMesaDriver::nfglBindProgramPipeline(GLuint pipeline)
 
 void OSMesaDriver::nfglBindRenderbuffer(GLenum target, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glBindRenderbuffer(0x%x, %u)", target, renderbuffer));
+	D(bug("nfosmesa: glBindRenderbuffer(%s, %u)", gl_enum_name(target), renderbuffer));
 	fn.glBindRenderbuffer(target, renderbuffer);
 }
 
 void OSMesaDriver::nfglBindRenderbufferEXT(GLenum target, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glBindRenderbufferEXT(0x%x, %u)", target, renderbuffer));
+	D(bug("nfosmesa: glBindRenderbufferEXT(%s, %u)", gl_enum_name(target), renderbuffer));
 	fn.glBindRenderbufferEXT(target, renderbuffer);
 }
 
@@ -504,20 +504,20 @@ FN_GLBINDSAMPLERS(first, count, samplers);
 
 GLuint OSMesaDriver::nfglBindTexGenParameterEXT(GLenum unit, GLenum coord, GLenum value)
 {
-	D(bug("nfosmesa: glBindTexGenParameterEXT(0x%x, 0x%x, 0x%x)", unit, coord, value));
+	D(bug("nfosmesa: glBindTexGenParameterEXT(%s, %s, %s)", gl_enum_name(unit), gl_enum_name(coord), gl_enum_name(value)));
 	GLuint __ret = fn.glBindTexGenParameterEXT(unit, coord, value);
 	return __ret;
 }
 
 void OSMesaDriver::nfglBindTexture(GLenum target, GLuint texture)
 {
-	D(bug("nfosmesa: glBindTexture(0x%x, %u)", target, texture));
+	D(bug("nfosmesa: glBindTexture(%s, %u)", gl_enum_name(target), texture));
 	fn.glBindTexture(target, texture);
 }
 
 void OSMesaDriver::nfglBindTextureEXT(GLenum target, GLuint texture)
 {
-	D(bug("nfosmesa: glBindTextureEXT(0x%x, %u)", target, texture));
+	D(bug("nfosmesa: glBindTextureEXT(%s, %u)", gl_enum_name(target), texture));
 	fn.glBindTextureEXT(target, texture);
 }
 
@@ -529,7 +529,7 @@ void OSMesaDriver::nfglBindTextureUnit(GLuint unit, GLuint texture)
 
 GLuint OSMesaDriver::nfglBindTextureUnitParameterEXT(GLenum unit, GLenum value)
 {
-	D(bug("nfosmesa: glBindTextureUnitParameterEXT(0x%x, 0x%x)", unit, value));
+	D(bug("nfosmesa: glBindTextureUnitParameterEXT(%s, %s)", gl_enum_name(unit), gl_enum_name(value)));
 	GLuint __ret = fn.glBindTextureUnitParameterEXT(unit, value);
 	return __ret;
 }
@@ -546,13 +546,13 @@ FN_GLBINDTEXTURES(first, count, textures);
 
 void OSMesaDriver::nfglBindTransformFeedback(GLenum target, GLuint id)
 {
-	D(bug("nfosmesa: glBindTransformFeedback(0x%x, %u)", target, id));
+	D(bug("nfosmesa: glBindTransformFeedback(%s, %u)", gl_enum_name(target), id));
 	fn.glBindTransformFeedback(target, id);
 }
 
 void OSMesaDriver::nfglBindTransformFeedbackNV(GLenum target, GLuint id)
 {
-	D(bug("nfosmesa: glBindTransformFeedbackNV(0x%x, %u)", target, id));
+	D(bug("nfosmesa: glBindTransformFeedbackNV(%s, %u)", gl_enum_name(target), id));
 	fn.glBindTransformFeedbackNV(target, id);
 }
 
@@ -592,13 +592,13 @@ void OSMesaDriver::nfglBindVertexShaderEXT(GLuint id)
 
 void OSMesaDriver::nfglBindVideoCaptureStreamBufferNV(GLuint video_capture_slot, GLuint stream, GLenum frame_region, GLintptrARB offset)
 {
-	D(bug("nfosmesa: glBindVideoCaptureStreamBufferNV(%u, %u, 0x%x, %" PRI_IPTR ")", video_capture_slot, stream, frame_region, offset));
+	D(bug("nfosmesa: glBindVideoCaptureStreamBufferNV(%u, %u, %s, %" PRI_IPTR ")", video_capture_slot, stream, gl_enum_name(frame_region), offset));
 	fn.glBindVideoCaptureStreamBufferNV(video_capture_slot, stream, frame_region, offset);
 }
 
 void OSMesaDriver::nfglBindVideoCaptureStreamTextureNV(GLuint video_capture_slot, GLuint stream, GLenum frame_region, GLenum target, GLuint texture)
 {
-	D(bug("nfosmesa: glBindVideoCaptureStreamTextureNV(%u, %u, 0x%x, 0x%x, %u)", video_capture_slot, stream, frame_region, target, texture));
+	D(bug("nfosmesa: glBindVideoCaptureStreamTextureNV(%u, %u, %s, %s, %u)", video_capture_slot, stream, gl_enum_name(frame_region), gl_enum_name(target), texture));
 	fn.glBindVideoCaptureStreamTextureNV(video_capture_slot, stream, frame_region, target, texture);
 }
 
@@ -688,7 +688,7 @@ void OSMesaDriver::nfglBinormalPointerEXT(GLenum type, GLsizei stride, memptr po
 void OSMesaDriver::nfglBinormalPointerEXT(GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glBinormalPointerEXT(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glBinormalPointerEXT(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLBINORMALPOINTEREXT(type, stride, pointer);
 }
 
@@ -744,157 +744,157 @@ void OSMesaDriver::nfglBlendColorxOES(GLfixed red, GLfixed green, GLfixed blue, 
 
 void OSMesaDriver::nfglBlendEquation(GLenum mode)
 {
-	D(bug("nfosmesa: glBlendEquation(0x%x)", mode));
+	D(bug("nfosmesa: glBlendEquation(%s)", gl_enum_name(mode)));
 	fn.glBlendEquation(mode);
 }
 
 void OSMesaDriver::nfglBlendEquationEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glBlendEquationEXT(0x%x)", mode));
+	D(bug("nfosmesa: glBlendEquationEXT(%s)", gl_enum_name(mode)));
 	fn.glBlendEquationEXT(mode);
 }
 
 void OSMesaDriver::nfglBlendEquationIndexedAMD(GLuint buf, GLenum mode)
 {
-	D(bug("nfosmesa: glBlendEquationIndexedAMD(%u, 0x%x)", buf, mode));
+	D(bug("nfosmesa: glBlendEquationIndexedAMD(%u, %s)", buf, gl_enum_name(mode)));
 	fn.glBlendEquationIndexedAMD(buf, mode);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparate(0x%x, 0x%x)", modeRGB, modeAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparate(%s, %s)", gl_enum_name(modeRGB), gl_enum_name(modeAlpha)));
 	fn.glBlendEquationSeparate(modeRGB, modeAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparateATI(GLenum equationRGB, GLenum equationAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparateATI(0x%x, 0x%x)", equationRGB, equationAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparateATI(%s, %s)", gl_enum_name(equationRGB), gl_enum_name(equationAlpha)));
 	fn.glBlendEquationSeparateATI(equationRGB, equationAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparateEXT(GLenum modeRGB, GLenum modeAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparateEXT(0x%x, 0x%x)", modeRGB, modeAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparateEXT(%s, %s)", gl_enum_name(modeRGB), gl_enum_name(modeAlpha)));
 	fn.glBlendEquationSeparateEXT(modeRGB, modeAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparateIndexedAMD(GLuint buf, GLenum modeRGB, GLenum modeAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparateIndexedAMD(%u, 0x%x, 0x%x)", buf, modeRGB, modeAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparateIndexedAMD(%u, %s, %s)", buf, gl_enum_name(modeRGB), gl_enum_name(modeAlpha)));
 	fn.glBlendEquationSeparateIndexedAMD(buf, modeRGB, modeAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparatei(GLuint buf, GLenum modeRGB, GLenum modeAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparatei(%u, 0x%x, 0x%x)", buf, modeRGB, modeAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparatei(%u, %s, %s)", buf, gl_enum_name(modeRGB), gl_enum_name(modeAlpha)));
 	fn.glBlendEquationSeparatei(buf, modeRGB, modeAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationSeparateiARB(GLuint buf, GLenum modeRGB, GLenum modeAlpha)
 {
-	D(bug("nfosmesa: glBlendEquationSeparateiARB(%u, 0x%x, 0x%x)", buf, modeRGB, modeAlpha));
+	D(bug("nfosmesa: glBlendEquationSeparateiARB(%u, %s, %s)", buf, gl_enum_name(modeRGB), gl_enum_name(modeAlpha)));
 	fn.glBlendEquationSeparateiARB(buf, modeRGB, modeAlpha);
 }
 
 void OSMesaDriver::nfglBlendEquationi(GLuint buf, GLenum mode)
 {
-	D(bug("nfosmesa: glBlendEquationi(%u, 0x%x)", buf, mode));
+	D(bug("nfosmesa: glBlendEquationi(%u, %s)", buf, gl_enum_name(mode)));
 	fn.glBlendEquationi(buf, mode);
 }
 
 void OSMesaDriver::nfglBlendEquationiARB(GLuint buf, GLenum mode)
 {
-	D(bug("nfosmesa: glBlendEquationiARB(%u, 0x%x)", buf, mode));
+	D(bug("nfosmesa: glBlendEquationiARB(%u, %s)", buf, gl_enum_name(mode)));
 	fn.glBlendEquationiARB(buf, mode);
 }
 
 void OSMesaDriver::nfglBlendFunc(GLenum sfactor, GLenum dfactor)
 {
-	D(bug("nfosmesa: glBlendFunc(0x%x, 0x%x)", sfactor, dfactor));
+	D(bug("nfosmesa: glBlendFunc(%s, %s)", gl_enum_name(sfactor), gl_enum_name(dfactor)));
 	fn.glBlendFunc(sfactor, dfactor);
 }
 
 void OSMesaDriver::nfglBlendFuncIndexedAMD(GLuint buf, GLenum src, GLenum dst)
 {
-	D(bug("nfosmesa: glBlendFuncIndexedAMD(%u, 0x%x, 0x%x)", buf, src, dst));
+	D(bug("nfosmesa: glBlendFuncIndexedAMD(%u, %s, %s)", buf, gl_enum_name(src), gl_enum_name(dst)));
 	fn.glBlendFuncIndexedAMD(buf, src, dst);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparate(0x%x, 0x%x, 0x%x, 0x%x)", sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparate(%s, %s, %s, %s)", gl_enum_name(sfactorRGB), gl_enum_name(dfactorRGB), gl_enum_name(sfactorAlpha), gl_enum_name(dfactorAlpha)));
 	fn.glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparateEXT(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparateEXT(0x%x, 0x%x, 0x%x, 0x%x)", sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparateEXT(%s, %s, %s, %s)", gl_enum_name(sfactorRGB), gl_enum_name(dfactorRGB), gl_enum_name(sfactorAlpha), gl_enum_name(dfactorAlpha)));
 	fn.glBlendFuncSeparateEXT(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparateINGR(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparateINGR(0x%x, 0x%x, 0x%x, 0x%x)", sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparateINGR(%s, %s, %s, %s)", gl_enum_name(sfactorRGB), gl_enum_name(dfactorRGB), gl_enum_name(sfactorAlpha), gl_enum_name(dfactorAlpha)));
 	fn.glBlendFuncSeparateINGR(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparateIndexedAMD(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparateIndexedAMD(%u, 0x%x, 0x%x, 0x%x, 0x%x)", buf, srcRGB, dstRGB, srcAlpha, dstAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparateIndexedAMD(%u, %s, %s, %s, %s)", buf, gl_enum_name(srcRGB), gl_enum_name(dstRGB), gl_enum_name(srcAlpha), gl_enum_name(dstAlpha)));
 	fn.glBlendFuncSeparateIndexedAMD(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparatei(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparatei(%u, 0x%x, 0x%x, 0x%x, 0x%x)", buf, srcRGB, dstRGB, srcAlpha, dstAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparatei(%u, %s, %s, %s, %s)", buf, gl_enum_name(srcRGB), gl_enum_name(dstRGB), gl_enum_name(srcAlpha), gl_enum_name(dstAlpha)));
 	fn.glBlendFuncSeparatei(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void OSMesaDriver::nfglBlendFuncSeparateiARB(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
 {
-	D(bug("nfosmesa: glBlendFuncSeparateiARB(%u, 0x%x, 0x%x, 0x%x, 0x%x)", buf, srcRGB, dstRGB, srcAlpha, dstAlpha));
+	D(bug("nfosmesa: glBlendFuncSeparateiARB(%u, %s, %s, %s, %s)", buf, gl_enum_name(srcRGB), gl_enum_name(dstRGB), gl_enum_name(srcAlpha), gl_enum_name(dstAlpha)));
 	fn.glBlendFuncSeparateiARB(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 void OSMesaDriver::nfglBlendFunci(GLuint buf, GLenum src, GLenum dst)
 {
-	D(bug("nfosmesa: glBlendFunci(%u, 0x%x, 0x%x)", buf, src, dst));
+	D(bug("nfosmesa: glBlendFunci(%u, %s, %s)", buf, gl_enum_name(src), gl_enum_name(dst)));
 	fn.glBlendFunci(buf, src, dst);
 }
 
 void OSMesaDriver::nfglBlendFunciARB(GLuint buf, GLenum src, GLenum dst)
 {
-	D(bug("nfosmesa: glBlendFunciARB(%u, 0x%x, 0x%x)", buf, src, dst));
+	D(bug("nfosmesa: glBlendFunciARB(%u, %s, %s)", buf, gl_enum_name(src), gl_enum_name(dst)));
 	fn.glBlendFunciARB(buf, src, dst);
 }
 
 void OSMesaDriver::nfglBlendParameteriNV(GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glBlendParameteriNV(0x%x, %d)", pname, value));
+	D(bug("nfosmesa: glBlendParameteriNV(%s, %d)", gl_enum_name(pname), value));
 	fn.glBlendParameteriNV(pname, value);
 }
 
 void OSMesaDriver::nfglBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
 {
-	D(bug("nfosmesa: glBlitFramebuffer(%d, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x)", srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter));
+	D(bug("nfosmesa: glBlitFramebuffer(%d, %d, %d, %d, %d, %d, %d, %d, 0x%x, %s)", srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, gl_enum_name(filter)));
 	fn.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void OSMesaDriver::nfglBlitFramebufferEXT(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
 {
-	D(bug("nfosmesa: glBlitFramebufferEXT(%d, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x)", srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter));
+	D(bug("nfosmesa: glBlitFramebufferEXT(%d, %d, %d, %d, %d, %d, %d, %d, 0x%x, %s)", srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, gl_enum_name(filter)));
 	fn.glBlitFramebufferEXT(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void OSMesaDriver::nfglBlitNamedFramebuffer(GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
 {
-	D(bug("nfosmesa: glBlitNamedFramebuffer(%u, %u, %d, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x)", readFramebuffer, drawFramebuffer, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter));
+	D(bug("nfosmesa: glBlitNamedFramebuffer(%u, %u, %d, %d, %d, %d, %d, %d, %d, %d, 0x%x, %s)", readFramebuffer, drawFramebuffer, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, gl_enum_name(filter)));
 	fn.glBlitNamedFramebuffer(readFramebuffer, drawFramebuffer, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 }
 
 void OSMesaDriver::nfglBufferAddressRangeNV(GLenum pname, GLuint index, GLuint64EXT address, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glBufferAddressRangeNV(0x%x, %u, %" PRIu64 ", %" PRI_IPTR ")", pname, index, address, length));
+	D(bug("nfosmesa: glBufferAddressRangeNV(%s, %u, %" PRIu64 ", %" PRI_IPTR ")", gl_enum_name(pname), index, address, length));
 	fn.glBufferAddressRangeNV(pname, index, address, length);
 }
 
@@ -904,7 +904,7 @@ void OSMesaDriver::nfglBufferData(GLenum target, GLsizeiptr size, memptr data, G
 void OSMesaDriver::nfglBufferData(GLenum target, GLsizeiptr size, const void *data, GLenum usage)
 #endif
 {
-	D(bug("nfosmesa: glBufferData(0x%x, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", target, size, AtariOffset(data), usage));
+	D(bug("nfosmesa: glBufferData(%s, %" PRI_IPTR ", " PRI_PTR ", %s)", gl_enum_name(target), size, AtariOffset(data), gl_enum_name(usage)));
 FN_GLBUFFERDATA(target, size, data, usage);
 }
 
@@ -914,19 +914,19 @@ void OSMesaDriver::nfglBufferDataARB(GLenum target, GLsizeiptrARB size, memptr d
 void OSMesaDriver::nfglBufferDataARB(GLenum target, GLsizeiptrARB size, const void *data, GLenum usage)
 #endif
 {
-	D(bug("nfosmesa: glBufferDataARB(0x%x, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", target, size, AtariOffset(data), usage));
+	D(bug("nfosmesa: glBufferDataARB(%s, %" PRI_IPTR ", " PRI_PTR ", %s)", gl_enum_name(target), size, AtariOffset(data), gl_enum_name(usage)));
 FN_GLBUFFERDATAARB(target, size, data, usage);
 }
 
 void OSMesaDriver::nfglBufferPageCommitmentARB(GLenum target, GLintptr offset, GLsizeiptr size, GLboolean32 commit)
 {
-	D(bug("nfosmesa: glBufferPageCommitmentARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %d)", target, offset, size, commit));
+	D(bug("nfosmesa: glBufferPageCommitmentARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", %d)", gl_enum_name(target), offset, size, commit));
 	fn.glBufferPageCommitmentARB(target, offset, size, commit);
 }
 
 void OSMesaDriver::nfglBufferParameteriAPPLE(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glBufferParameteriAPPLE(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glBufferParameteriAPPLE(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glBufferParameteriAPPLE(target, pname, param);
 }
 
@@ -936,7 +936,7 @@ void OSMesaDriver::nfglBufferStorage(GLenum target, GLsizeiptr size, memptr data
 void OSMesaDriver::nfglBufferStorage(GLenum target, GLsizeiptr size, const void *data, GLbitfield flags)
 #endif
 {
-	D(bug("nfosmesa: glBufferStorage(0x%x, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", target, size, AtariOffset(data), flags));
+	D(bug("nfosmesa: glBufferStorage(%s, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", gl_enum_name(target), size, AtariOffset(data), flags));
 FN_GLBUFFERSTORAGE(target, size, data, flags);
 }
 
@@ -946,7 +946,7 @@ void OSMesaDriver::nfglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr 
 void OSMesaDriver::nfglBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glBufferSubData(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", target, offset, size, AtariOffset(data)));
+	D(bug("nfosmesa: glBufferSubData(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLBUFFERSUBDATA(target, offset, size, data);
 }
 
@@ -956,7 +956,7 @@ void OSMesaDriver::nfglBufferSubDataARB(GLenum target, GLintptrARB offset, GLsiz
 void OSMesaDriver::nfglBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glBufferSubDataARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", target, offset, size, AtariOffset(data)));
+	D(bug("nfosmesa: glBufferSubDataARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLBUFFERSUBDATAARB(target, offset, size, data);
 }
 
@@ -978,47 +978,47 @@ void OSMesaDriver::nfglCallLists(GLsizei n, GLenum type, memptr lists)
 void OSMesaDriver::nfglCallLists(GLsizei n, GLenum type, const GLvoid *lists)
 #endif
 {
-	D(bug("nfosmesa: glCallLists(%d, 0x%x, " PRI_PTR ")", n, type, AtariOffset(lists)));
+	D(bug("nfosmesa: glCallLists(%d, %s, " PRI_PTR ")", n, gl_enum_name(type), AtariOffset(lists)));
 FN_GLCALLLISTS(n, type, lists);
 }
 
 GLenum OSMesaDriver::nfglCheckFramebufferStatus(GLenum target)
 {
-	D(bug("nfosmesa: glCheckFramebufferStatus(0x%x)", target));
+	D(bug("nfosmesa: glCheckFramebufferStatus(%s)", gl_enum_name(target)));
 	GLenum __ret = fn.glCheckFramebufferStatus(target);
 	return __ret;
 }
 
 GLenum OSMesaDriver::nfglCheckFramebufferStatusEXT(GLenum target)
 {
-	D(bug("nfosmesa: glCheckFramebufferStatusEXT(0x%x)", target));
+	D(bug("nfosmesa: glCheckFramebufferStatusEXT(%s)", gl_enum_name(target)));
 	GLenum __ret = fn.glCheckFramebufferStatusEXT(target);
 	return __ret;
 }
 
 GLenum OSMesaDriver::nfglCheckNamedFramebufferStatus(GLuint framebuffer, GLenum target)
 {
-	D(bug("nfosmesa: glCheckNamedFramebufferStatus(%u, 0x%x)", framebuffer, target));
+	D(bug("nfosmesa: glCheckNamedFramebufferStatus(%u, %s)", framebuffer, gl_enum_name(target)));
 	GLenum __ret = fn.glCheckNamedFramebufferStatus(framebuffer, target);
 	return __ret;
 }
 
 GLenum OSMesaDriver::nfglCheckNamedFramebufferStatusEXT(GLuint framebuffer, GLenum target)
 {
-	D(bug("nfosmesa: glCheckNamedFramebufferStatusEXT(%u, 0x%x)", framebuffer, target));
+	D(bug("nfosmesa: glCheckNamedFramebufferStatusEXT(%u, %s)", framebuffer, gl_enum_name(target)));
 	GLenum __ret = fn.glCheckNamedFramebufferStatusEXT(framebuffer, target);
 	return __ret;
 }
 
 void OSMesaDriver::nfglClampColor(GLenum target, GLenum clamp)
 {
-	D(bug("nfosmesa: glClampColor(0x%x, 0x%x)", target, clamp));
+	D(bug("nfosmesa: glClampColor(%s, %s)", gl_enum_name(target), gl_enum_name(clamp)));
 	fn.glClampColor(target, clamp);
 }
 
 void OSMesaDriver::nfglClampColorARB(GLenum target, GLenum clamp)
 {
-	D(bug("nfosmesa: glClampColorARB(0x%x, 0x%x)", target, clamp));
+	D(bug("nfosmesa: glClampColorARB(%s, %s)", gl_enum_name(target), gl_enum_name(clamp)));
 	fn.glClampColorARB(target, clamp);
 }
 
@@ -1046,7 +1046,7 @@ void OSMesaDriver::nfglClearBufferData(GLenum target, GLenum internalformat, GLe
 void OSMesaDriver::nfglClearBufferData(GLenum target, GLenum internalformat, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearBufferData(0x%x, 0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearBufferData(%s, %s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARBUFFERDATA(target, internalformat, format, type, data);
 }
 
@@ -1056,13 +1056,13 @@ void OSMesaDriver::nfglClearBufferSubData(GLenum target, GLenum internalformat, 
 void OSMesaDriver::nfglClearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearBufferSubData(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, offset, size, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearBufferSubData(%s, %s, %" PRI_IPTR ", %" PRI_IPTR ", %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), offset, size, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARBUFFERSUBDATA(target, internalformat, offset, size, format, type, data);
 }
 
 void OSMesaDriver::nfglClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil)
 {
-	D(bug("nfosmesa: glClearBufferfi(0x%x, %d, %f, %d)", buffer, drawbuffer, depth, stencil));
+	D(bug("nfosmesa: glClearBufferfi(%s, %d, %f, %d)", gl_enum_name(buffer), drawbuffer, depth, stencil));
 	fn.glClearBufferfi(buffer, drawbuffer, depth, stencil);
 }
 
@@ -1072,7 +1072,7 @@ void OSMesaDriver::nfglClearBufferfv(GLenum buffer, GLint drawbuffer, memptr val
 void OSMesaDriver::nfglClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glClearBufferfv(0x%x, %d, " PRI_PTR ")", buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearBufferfv(%s, %d, " PRI_PTR ")", gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARBUFFERFV(buffer, drawbuffer, value);
 }
 
@@ -1082,7 +1082,7 @@ void OSMesaDriver::nfglClearBufferiv(GLenum buffer, GLint drawbuffer, memptr val
 void OSMesaDriver::nfglClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glClearBufferiv(0x%x, %d, " PRI_PTR ")", buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearBufferiv(%s, %d, " PRI_PTR ")", gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARBUFFERIV(buffer, drawbuffer, value);
 }
 
@@ -1092,7 +1092,7 @@ void OSMesaDriver::nfglClearBufferuiv(GLenum buffer, GLint drawbuffer, memptr va
 void OSMesaDriver::nfglClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glClearBufferuiv(0x%x, %d, " PRI_PTR ")", buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearBufferuiv(%s, %d, " PRI_PTR ")", gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARBUFFERUIV(buffer, drawbuffer, value);
 }
 
@@ -1122,7 +1122,7 @@ void OSMesaDriver::nfglClearColorxOES(GLfixed red, GLfixed green, GLfixed blue, 
 
 void OSMesaDriver::nfglClearDebugLogMESA(GLhandleARB obj, GLenum logType, GLenum shaderType)
 {
-	D(bug("nfosmesa: glClearDebugLogMESA(%u, 0x%x, 0x%x)", (unsigned int)(uintptr_t)obj, logType, shaderType));
+	D(bug("nfosmesa: glClearDebugLogMESA(%u, %s, %s)", (unsigned int)(uintptr_t)obj, gl_enum_name(logType), gl_enum_name(shaderType)));
 	fn.glClearDebugLogMESA(obj, logType, shaderType);
 }
 
@@ -1168,7 +1168,7 @@ void OSMesaDriver::nfglClearNamedBufferData(GLuint buffer, GLenum internalformat
 void OSMesaDriver::nfglClearNamedBufferData(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedBufferData(%u, 0x%x, 0x%x, 0x%x, " PRI_PTR ")", buffer, internalformat, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearNamedBufferData(%u, %s, %s, %s, " PRI_PTR ")", buffer, gl_enum_name(internalformat), gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARNAMEDBUFFERDATA(buffer, internalformat, format, type, data);
 }
 
@@ -1178,7 +1178,7 @@ void OSMesaDriver::nfglClearNamedBufferDataEXT(GLuint buffer, GLenum internalfor
 void OSMesaDriver::nfglClearNamedBufferDataEXT(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedBufferDataEXT(%u, 0x%x, 0x%x, 0x%x, " PRI_PTR ")", buffer, internalformat, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearNamedBufferDataEXT(%u, %s, %s, %s, " PRI_PTR ")", buffer, gl_enum_name(internalformat), gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARNAMEDBUFFERDATAEXT(buffer, internalformat, format, type, data);
 }
 
@@ -1188,7 +1188,7 @@ void OSMesaDriver::nfglClearNamedBufferSubData(GLuint buffer, GLenum internalfor
 void OSMesaDriver::nfglClearNamedBufferSubData(GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedBufferSubData(%u, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x, 0x%x, " PRI_PTR ")", buffer, internalformat, offset, size, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearNamedBufferSubData(%u, %s, %" PRI_IPTR ", %" PRI_IPTR ", %s, %s, " PRI_PTR ")", buffer, gl_enum_name(internalformat), offset, size, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARNAMEDBUFFERSUBDATA(buffer, internalformat, offset, size, format, type, data);
 }
 
@@ -1198,13 +1198,13 @@ void OSMesaDriver::nfglClearNamedBufferSubDataEXT(GLuint buffer, GLenum internal
 void OSMesaDriver::nfglClearNamedBufferSubDataEXT(GLuint buffer, GLenum internalformat, GLsizeiptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedBufferSubDataEXT(%u, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x, 0x%x, " PRI_PTR ")", buffer, internalformat, offset, size, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearNamedBufferSubDataEXT(%u, %s, %" PRI_IPTR ", %" PRI_IPTR ", %s, %s, " PRI_PTR ")", buffer, gl_enum_name(internalformat), offset, size, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data);
 }
 
 void OSMesaDriver::nfglClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil)
 {
-	D(bug("nfosmesa: glClearNamedFramebufferfi(%u, 0x%x, %f, %d)", framebuffer, buffer, depth, stencil));
+	D(bug("nfosmesa: glClearNamedFramebufferfi(%u, %s, %f, %d)", framebuffer, gl_enum_name(buffer), depth, stencil));
 	fn.glClearNamedFramebufferfi(framebuffer, buffer, depth, stencil);
 }
 
@@ -1214,7 +1214,7 @@ void OSMesaDriver::nfglClearNamedFramebufferfv(GLuint framebuffer, GLenum buffer
 void OSMesaDriver::nfglClearNamedFramebufferfv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedFramebufferfv(%u, 0x%x, %d, " PRI_PTR ")", framebuffer, buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearNamedFramebufferfv(%u, %s, %d, " PRI_PTR ")", framebuffer, gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARNAMEDFRAMEBUFFERFV(framebuffer, buffer, drawbuffer, value);
 }
 
@@ -1224,7 +1224,7 @@ void OSMesaDriver::nfglClearNamedFramebufferiv(GLuint framebuffer, GLenum buffer
 void OSMesaDriver::nfglClearNamedFramebufferiv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedFramebufferiv(%u, 0x%x, %d, " PRI_PTR ")", framebuffer, buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearNamedFramebufferiv(%u, %s, %d, " PRI_PTR ")", framebuffer, gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARNAMEDFRAMEBUFFERIV(framebuffer, buffer, drawbuffer, value);
 }
 
@@ -1234,7 +1234,7 @@ void OSMesaDriver::nfglClearNamedFramebufferuiv(GLuint framebuffer, GLenum buffe
 void OSMesaDriver::nfglClearNamedFramebufferuiv(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glClearNamedFramebufferuiv(%u, 0x%x, %d, " PRI_PTR ")", framebuffer, buffer, drawbuffer, AtariOffset(value)));
+	D(bug("nfosmesa: glClearNamedFramebufferuiv(%u, %s, %d, " PRI_PTR ")", framebuffer, gl_enum_name(buffer), drawbuffer, AtariOffset(value)));
 FN_GLCLEARNAMEDFRAMEBUFFERUIV(framebuffer, buffer, drawbuffer, value);
 }
 
@@ -1250,7 +1250,7 @@ void OSMesaDriver::nfglClearTexImage(GLuint texture, GLint level, GLenum format,
 void OSMesaDriver::nfglClearTexImage(GLuint texture, GLint level, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearTexImage(%u, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, level, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearTexImage(%u, %d, %s, %s, " PRI_PTR ")", texture, level, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARTEXIMAGE(texture, level, format, type, data);
 }
 
@@ -1260,25 +1260,25 @@ void OSMesaDriver::nfglClearTexSubImage(GLuint texture, GLint level, GLint xoffs
 void OSMesaDriver::nfglClearTexSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glClearTexSubImage(%u, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glClearTexSubImage(%u, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCLEARTEXSUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, data);
 }
 
 void OSMesaDriver::nfglClientActiveTexture(GLenum texture)
 {
-	D(bug("nfosmesa: glClientActiveTexture(0x%x)", texture));
+	D(bug("nfosmesa: glClientActiveTexture(%s)", gl_enum_name(texture)));
 	fn.glClientActiveTexture(texture);
 }
 
 void OSMesaDriver::nfglClientActiveTextureARB(GLenum texture)
 {
-	D(bug("nfosmesa: glClientActiveTextureARB(0x%x)", texture));
+	D(bug("nfosmesa: glClientActiveTextureARB(%s)", gl_enum_name(texture)));
 	fn.glClientActiveTextureARB(texture);
 }
 
 void OSMesaDriver::nfglClientActiveVertexStreamATI(GLenum stream)
 {
-	D(bug("nfosmesa: glClientActiveVertexStreamATI(0x%x)", stream));
+	D(bug("nfosmesa: glClientActiveVertexStreamATI(%s)", gl_enum_name(stream)));
 	fn.glClientActiveVertexStreamATI(stream);
 }
 
@@ -1297,7 +1297,7 @@ GLenum OSMesaDriver::nfglClientWaitSync(GLsync sync, GLbitfield flags, GLuint64 
 
 void OSMesaDriver::nfglClipControl(GLenum origin, GLenum depth)
 {
-	D(bug("nfosmesa: glClipControl(0x%x, 0x%x)", origin, depth));
+	D(bug("nfosmesa: glClipControl(%s, %s)", gl_enum_name(origin), gl_enum_name(depth)));
 	fn.glClipControl(origin, depth);
 }
 
@@ -1307,7 +1307,7 @@ void OSMesaDriver::nfglClipPlane(GLenum plane, memptr equation)
 void OSMesaDriver::nfglClipPlane(GLenum plane, const GLdouble *equation)
 #endif
 {
-	D(bug("nfosmesa: glClipPlane(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glClipPlane(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLCLIPPLANE(plane, equation);
 }
 
@@ -1317,7 +1317,7 @@ void OSMesaDriver::nfglClipPlanefOES(GLenum plane, memptr equation)
 void OSMesaDriver::nfglClipPlanefOES(GLenum plane, const GLfloat *equation)
 #endif
 {
-	D(bug("nfosmesa: glClipPlanefOES(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glClipPlanefOES(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLCLIPPLANEFOES(plane, equation);
 }
 
@@ -1327,7 +1327,7 @@ void OSMesaDriver::nfglClipPlanexOES(GLenum plane, memptr equation)
 void OSMesaDriver::nfglClipPlanexOES(GLenum plane, const GLfixed *equation)
 #endif
 {
-	D(bug("nfosmesa: glClipPlanexOES(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glClipPlanexOES(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLCLIPPLANEXOES(plane, equation);
 }
 
@@ -1717,25 +1717,25 @@ FN_GLCOLOR4XVOES(components);
 
 void OSMesaDriver::nfglColorFormatNV(GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glColorFormatNV(%d, 0x%x, %d)", size, type, stride));
+	D(bug("nfosmesa: glColorFormatNV(%d, %s, %d)", size, gl_enum_name(type), stride));
 	fn.glColorFormatNV(size, type, stride);
 }
 
 void OSMesaDriver::nfglColorFragmentOp1ATI(GLenum op, GLuint dst, GLuint dstMask, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod)
 {
-	D(bug("nfosmesa: glColorFragmentOp1ATI(0x%x, %u, %u, %u, %u, %u, %u)", op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod));
+	D(bug("nfosmesa: glColorFragmentOp1ATI(%s, %u, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod));
 	fn.glColorFragmentOp1ATI(op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod);
 }
 
 void OSMesaDriver::nfglColorFragmentOp2ATI(GLenum op, GLuint dst, GLuint dstMask, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod, GLuint arg2, GLuint arg2Rep, GLuint arg2Mod)
 {
-	D(bug("nfosmesa: glColorFragmentOp2ATI(0x%x, %u, %u, %u, %u, %u, %u, %u, %u, %u)", op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod));
+	D(bug("nfosmesa: glColorFragmentOp2ATI(%s, %u, %u, %u, %u, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod));
 	fn.glColorFragmentOp2ATI(op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod);
 }
 
 void OSMesaDriver::nfglColorFragmentOp3ATI(GLenum op, GLuint dst, GLuint dstMask, GLuint dstMod, GLuint arg1, GLuint arg1Rep, GLuint arg1Mod, GLuint arg2, GLuint arg2Rep, GLuint arg2Mod, GLuint arg3, GLuint arg3Rep, GLuint arg3Mod)
 {
-	D(bug("nfosmesa: glColorFragmentOp3ATI(0x%x, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod));
+	D(bug("nfosmesa: glColorFragmentOp3ATI(%s, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", gl_enum_name(op), dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod));
 	fn.glColorFragmentOp3ATI(op, dst, dstMask, dstMod, arg1, arg1Rep, arg1Mod, arg2, arg2Rep, arg2Mod, arg3, arg3Rep, arg3Mod);
 }
 
@@ -1759,13 +1759,13 @@ void OSMesaDriver::nfglColorMaski(GLuint index, GLboolean32 r, GLboolean32 g, GL
 
 void OSMesaDriver::nfglColorMaterial(GLenum face, GLenum mode)
 {
-	D(bug("nfosmesa: glColorMaterial(0x%x, 0x%x)", face, mode));
+	D(bug("nfosmesa: glColorMaterial(%s, %s)", gl_enum_name(face), gl_enum_name(mode)));
 	fn.glColorMaterial(face, mode);
 }
 
 void OSMesaDriver::nfglColorP3ui(GLenum type, GLuint color)
 {
-	D(bug("nfosmesa: glColorP3ui(0x%x, %u)", type, color));
+	D(bug("nfosmesa: glColorP3ui(%s, %u)", gl_enum_name(type), color));
 	fn.glColorP3ui(type, color);
 }
 
@@ -1775,13 +1775,13 @@ void OSMesaDriver::nfglColorP3uiv(GLenum type, memptr color)
 void OSMesaDriver::nfglColorP3uiv(GLenum type, const GLuint *color)
 #endif
 {
-	D(bug("nfosmesa: glColorP3uiv(0x%x, " PRI_PTR ")", type, AtariOffset(color)));
+	D(bug("nfosmesa: glColorP3uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(color)));
 FN_GLCOLORP3UIV(type, color);
 }
 
 void OSMesaDriver::nfglColorP4ui(GLenum type, GLuint color)
 {
-	D(bug("nfosmesa: glColorP4ui(0x%x, %u)", type, color));
+	D(bug("nfosmesa: glColorP4ui(%s, %u)", gl_enum_name(type), color));
 	fn.glColorP4ui(type, color);
 }
 
@@ -1791,7 +1791,7 @@ void OSMesaDriver::nfglColorP4uiv(GLenum type, memptr color)
 void OSMesaDriver::nfglColorP4uiv(GLenum type, const GLuint *color)
 #endif
 {
-	D(bug("nfosmesa: glColorP4uiv(0x%x, " PRI_PTR ")", type, AtariOffset(color)));
+	D(bug("nfosmesa: glColorP4uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(color)));
 FN_GLCOLORP4UIV(type, color);
 }
 
@@ -1801,7 +1801,7 @@ void OSMesaDriver::nfglColorPointer(GLint size, GLenum type, GLsizei stride, mem
 void OSMesaDriver::nfglColorPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glColorPointer(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glColorPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLCOLORPOINTER(size, type, stride, pointer);
 }
 
@@ -1811,7 +1811,7 @@ void OSMesaDriver::nfglColorPointerEXT(GLint size, GLenum type, GLsizei stride, 
 void OSMesaDriver::nfglColorPointerEXT(GLint size, GLenum type, GLsizei stride, GLsizei count, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glColorPointerEXT(%d, 0x%x, %d, %d, " PRI_PTR ")", size, type, stride, count, AtariOffset(pointer)));
+	D(bug("nfosmesa: glColorPointerEXT(%d, %s, %d, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, count, AtariOffset(pointer)));
 FN_GLCOLORPOINTEREXT(size, type, stride, count, pointer);
 }
 
@@ -1821,7 +1821,7 @@ void OSMesaDriver::nfglColorPointerListIBM(GLint size, GLenum type, GLint stride
 void OSMesaDriver::nfglColorPointerListIBM(GLint size, GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glColorPointerListIBM(%d, 0x%x, %d, " PRI_PTR ", %d)", size, type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glColorPointerListIBM(%d, %s, %d, " PRI_PTR ", %d)", size, gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride);
 }
 
@@ -1831,7 +1831,7 @@ void OSMesaDriver::nfglColorPointervINTEL(GLint size, GLenum type, memptr pointe
 void OSMesaDriver::nfglColorPointervINTEL(GLint size, GLenum type, const void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glColorPointervINTEL(%d, 0x%x, " PRI_PTR ")", size, type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glColorPointervINTEL(%d, %s, " PRI_PTR ")", size, gl_enum_name(type), AtariOffset(pointer)));
 FN_GLCOLORPOINTERVINTEL(size, type, pointer);
 }
 
@@ -1841,7 +1841,7 @@ void OSMesaDriver::nfglColorSubTable(GLenum target, GLsizei start, GLsizei count
 void OSMesaDriver::nfglColorSubTable(GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glColorSubTable(0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, start, count, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glColorSubTable(%s, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), start, count, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCOLORSUBTABLE(target, start, count, format, type, data);
 }
 
@@ -1851,7 +1851,7 @@ void OSMesaDriver::nfglColorSubTableEXT(GLenum target, GLsizei start, GLsizei co
 void OSMesaDriver::nfglColorSubTableEXT(GLenum target, GLsizei start, GLsizei count, GLenum format, GLenum type, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glColorSubTableEXT(0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, start, count, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glColorSubTableEXT(%s, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), start, count, gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLCOLORSUBTABLEEXT(target, start, count, format, type, data);
 }
 
@@ -1861,7 +1861,7 @@ void OSMesaDriver::nfglColorTable(GLenum target, GLenum internalformat, GLsizei 
 void OSMesaDriver::nfglColorTable(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *table)
 #endif
 {
-	D(bug("nfosmesa: glColorTable(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, format, type, AtariOffset(table)));
+	D(bug("nfosmesa: glColorTable(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, gl_enum_name(format), gl_enum_name(type), AtariOffset(table)));
 FN_GLCOLORTABLE(target, internalformat, width, format, type, table);
 }
 
@@ -1871,7 +1871,7 @@ void OSMesaDriver::nfglColorTableEXT(GLenum target, GLenum internalFormat, GLsiz
 void OSMesaDriver::nfglColorTableEXT(GLenum target, GLenum internalFormat, GLsizei width, GLenum format, GLenum type, const void *table)
 #endif
 {
-	D(bug("nfosmesa: glColorTableEXT(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalFormat, width, format, type, AtariOffset(table)));
+	D(bug("nfosmesa: glColorTableEXT(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalFormat), width, gl_enum_name(format), gl_enum_name(type), AtariOffset(table)));
 FN_GLCOLORTABLEEXT(target, internalFormat, width, format, type, table);
 }
 
@@ -1881,7 +1881,7 @@ void OSMesaDriver::nfglColorTableParameterfv(GLenum target, GLenum pname, memptr
 void OSMesaDriver::nfglColorTableParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glColorTableParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glColorTableParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCOLORTABLEPARAMETERFV(target, pname, params);
 }
 
@@ -1891,7 +1891,7 @@ void OSMesaDriver::nfglColorTableParameterfvSGI(GLenum target, GLenum pname, mem
 void OSMesaDriver::nfglColorTableParameterfvSGI(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glColorTableParameterfvSGI(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glColorTableParameterfvSGI(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCOLORTABLEPARAMETERFVSGI(target, pname, params);
 }
 
@@ -1901,7 +1901,7 @@ void OSMesaDriver::nfglColorTableParameteriv(GLenum target, GLenum pname, memptr
 void OSMesaDriver::nfglColorTableParameteriv(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glColorTableParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glColorTableParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCOLORTABLEPARAMETERIV(target, pname, params);
 }
 
@@ -1911,7 +1911,7 @@ void OSMesaDriver::nfglColorTableParameterivSGI(GLenum target, GLenum pname, mem
 void OSMesaDriver::nfglColorTableParameterivSGI(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glColorTableParameterivSGI(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glColorTableParameterivSGI(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCOLORTABLEPARAMETERIVSGI(target, pname, params);
 }
 
@@ -1921,25 +1921,25 @@ void OSMesaDriver::nfglColorTableSGI(GLenum target, GLenum internalformat, GLsiz
 void OSMesaDriver::nfglColorTableSGI(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *table)
 #endif
 {
-	D(bug("nfosmesa: glColorTableSGI(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, format, type, AtariOffset(table)));
+	D(bug("nfosmesa: glColorTableSGI(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, gl_enum_name(format), gl_enum_name(type), AtariOffset(table)));
 FN_GLCOLORTABLESGI(target, internalformat, width, format, type, table);
 }
 
 void OSMesaDriver::nfglCombinerInputNV(GLenum stage, GLenum portion, GLenum variable, GLenum input, GLenum mapping, GLenum componentUsage)
 {
-	D(bug("nfosmesa: glCombinerInputNV(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x)", stage, portion, variable, input, mapping, componentUsage));
+	D(bug("nfosmesa: glCombinerInputNV(%s, %s, %s, %s, %s, %s)", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(variable), gl_enum_name(input), gl_enum_name(mapping), gl_enum_name(componentUsage)));
 	fn.glCombinerInputNV(stage, portion, variable, input, mapping, componentUsage);
 }
 
 void OSMesaDriver::nfglCombinerOutputNV(GLenum stage, GLenum portion, GLenum abOutput, GLenum cdOutput, GLenum sumOutput, GLenum scale, GLenum bias, GLboolean32 abDotProduct, GLboolean32 cdDotProduct, GLboolean32 muxSum)
 {
-	D(bug("nfosmesa: glCombinerOutputNV(0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d, %d, %d)", stage, portion, abOutput, cdOutput, sumOutput, scale, bias, abDotProduct, cdDotProduct, muxSum));
+	D(bug("nfosmesa: glCombinerOutputNV(%s, %s, %s, %s, %s, %s, %s, %d, %d, %d)", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(abOutput), gl_enum_name(cdOutput), gl_enum_name(sumOutput), gl_enum_name(scale), gl_enum_name(bias), abDotProduct, cdDotProduct, muxSum));
 	fn.glCombinerOutputNV(stage, portion, abOutput, cdOutput, sumOutput, scale, bias, abDotProduct, cdDotProduct, muxSum);
 }
 
 void OSMesaDriver::nfglCombinerParameterfNV(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glCombinerParameterfNV(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glCombinerParameterfNV(%s, %f)", gl_enum_name(pname), param));
 	fn.glCombinerParameterfNV(pname, param);
 }
 
@@ -1949,7 +1949,7 @@ void OSMesaDriver::nfglCombinerParameterfvNV(GLenum pname, memptr params)
 void OSMesaDriver::nfglCombinerParameterfvNV(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glCombinerParameterfvNV(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glCombinerParameterfvNV(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -1962,7 +1962,7 @@ void OSMesaDriver::nfglCombinerParameterfvNV(GLenum pname, const GLfloat *params
 
 void OSMesaDriver::nfglCombinerParameteriNV(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glCombinerParameteriNV(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glCombinerParameteriNV(%s, %d)", gl_enum_name(pname), param));
 	fn.glCombinerParameteriNV(pname, param);
 }
 
@@ -1972,7 +1972,7 @@ void OSMesaDriver::nfglCombinerParameterivNV(GLenum pname, memptr params)
 void OSMesaDriver::nfglCombinerParameterivNV(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glCombinerParameterivNV(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glCombinerParameterivNV(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLint __params_tmp[__params_size];
@@ -1989,7 +1989,7 @@ void OSMesaDriver::nfglCombinerStageParameterfvNV(GLenum stage, GLenum pname, me
 void OSMesaDriver::nfglCombinerStageParameterfvNV(GLenum stage, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glCombinerStageParameterfvNV(0x%x, 0x%x, " PRI_PTR ")", stage, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glCombinerStageParameterfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -2040,7 +2040,7 @@ void OSMesaDriver::nfglCompressedMultiTexImage1DEXT(GLenum texunit, GLenum targe
 void OSMesaDriver::nfglCompressedMultiTexImage1DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexImage1DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, " PRI_PTR ")", texunit, target, level, internalformat, width, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexImage1DEXT(%s, %s, %d, %s, %d, %d, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, imageSize, bits);
 }
 
@@ -2050,7 +2050,7 @@ void OSMesaDriver::nfglCompressedMultiTexImage2DEXT(GLenum texunit, GLenum targe
 void OSMesaDriver::nfglCompressedMultiTexImage2DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexImage2DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, %d, " PRI_PTR ")", texunit, target, level, internalformat, width, height, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexImage2DEXT(%s, %s, %d, %s, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, imageSize, bits);
 }
 
@@ -2060,7 +2060,7 @@ void OSMesaDriver::nfglCompressedMultiTexImage3DEXT(GLenum texunit, GLenum targe
 void OSMesaDriver::nfglCompressedMultiTexImage3DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexImage3DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, %d, %d, " PRI_PTR ")", texunit, target, level, internalformat, width, height, depth, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexImage3DEXT(%s, %s, %d, %s, %d, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, imageSize, bits);
 }
 
@@ -2070,7 +2070,7 @@ void OSMesaDriver::nfglCompressedMultiTexSubImage1DEXT(GLenum texunit, GLenum ta
 void OSMesaDriver::nfglCompressedMultiTexSubImage1DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexSubImage1DEXT(0x%x, 0x%x, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texunit, target, level, xoffset, width, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexSubImage1DEXT(%s, %s, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, width, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, imageSize, bits);
 }
 
@@ -2080,7 +2080,7 @@ void OSMesaDriver::nfglCompressedMultiTexSubImage2DEXT(GLenum texunit, GLenum ta
 void OSMesaDriver::nfglCompressedMultiTexSubImage2DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexSubImage2DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texunit, target, level, xoffset, yoffset, width, height, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexSubImage2DEXT(%s, %s, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, imageSize, bits);
 }
 
@@ -2090,7 +2090,7 @@ void OSMesaDriver::nfglCompressedMultiTexSubImage3DEXT(GLenum texunit, GLenum ta
 void OSMesaDriver::nfglCompressedMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedMultiTexSubImage3DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedMultiTexSubImage3DEXT(%s, %s, %d, %d, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits);
 }
 
@@ -2100,7 +2100,7 @@ void OSMesaDriver::nfglCompressedTexImage1D(GLenum target, GLint level, GLenum i
 void OSMesaDriver::nfglCompressedTexImage1D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage1D(0x%x, %d, 0x%x, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage1D(%s, %d, %s, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE1D(target, level, internalformat, width, border, imageSize, data);
 }
 
@@ -2110,7 +2110,7 @@ void OSMesaDriver::nfglCompressedTexImage1DARB(GLenum target, GLint level, GLenu
 void OSMesaDriver::nfglCompressedTexImage1DARB(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage1DARB(0x%x, %d, 0x%x, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage1DARB(%s, %d, %s, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE1DARB(target, level, internalformat, width, border, imageSize, data);
 }
 
@@ -2120,7 +2120,7 @@ void OSMesaDriver::nfglCompressedTexImage2D(GLenum target, GLint level, GLenum i
 void OSMesaDriver::nfglCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage2D(0x%x, %d, 0x%x, %d, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, height, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage2D(%s, %d, %s, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE2D(target, level, internalformat, width, height, border, imageSize, data);
 }
 
@@ -2130,7 +2130,7 @@ void OSMesaDriver::nfglCompressedTexImage2DARB(GLenum target, GLint level, GLenu
 void OSMesaDriver::nfglCompressedTexImage2DARB(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage2DARB(0x%x, %d, 0x%x, %d, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, height, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage2DARB(%s, %d, %s, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE2DARB(target, level, internalformat, width, height, border, imageSize, data);
 }
 
@@ -2140,7 +2140,7 @@ void OSMesaDriver::nfglCompressedTexImage3D(GLenum target, GLint level, GLenum i
 void OSMesaDriver::nfglCompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage3D(0x%x, %d, 0x%x, %d, %d, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, height, depth, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage3D(%s, %d, %s, %d, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE3D(target, level, internalformat, width, height, depth, border, imageSize, data);
 }
 
@@ -2150,7 +2150,7 @@ void OSMesaDriver::nfglCompressedTexImage3DARB(GLenum target, GLint level, GLenu
 void OSMesaDriver::nfglCompressedTexImage3DARB(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexImage3DARB(0x%x, %d, 0x%x, %d, %d, %d, %d, %d, " PRI_PTR ")", target, level, internalformat, width, height, depth, border, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexImage3DARB(%s, %d, %s, %d, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXIMAGE3DARB(target, level, internalformat, width, height, depth, border, imageSize, data);
 }
 
@@ -2160,7 +2160,7 @@ void OSMesaDriver::nfglCompressedTexSubImage1D(GLenum target, GLint level, GLint
 void OSMesaDriver::nfglCompressedTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage1D(0x%x, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, width, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage1D(%s, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, width, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE1D(target, level, xoffset, width, format, imageSize, data);
 }
 
@@ -2170,7 +2170,7 @@ void OSMesaDriver::nfglCompressedTexSubImage1DARB(GLenum target, GLint level, GL
 void OSMesaDriver::nfglCompressedTexSubImage1DARB(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage1DARB(0x%x, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, width, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage1DARB(%s, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, width, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE1DARB(target, level, xoffset, width, format, imageSize, data);
 }
 
@@ -2180,7 +2180,7 @@ void OSMesaDriver::nfglCompressedTexSubImage2D(GLenum target, GLint level, GLint
 void OSMesaDriver::nfglCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage2D(0x%x, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, yoffset, width, height, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage2D(%s, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
 }
 
@@ -2190,7 +2190,7 @@ void OSMesaDriver::nfglCompressedTexSubImage2DARB(GLenum target, GLint level, GL
 void OSMesaDriver::nfglCompressedTexSubImage2DARB(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage2DARB(0x%x, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, yoffset, width, height, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage2DARB(%s, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE2DARB(target, level, xoffset, yoffset, width, height, format, imageSize, data);
 }
 
@@ -2200,7 +2200,7 @@ void OSMesaDriver::nfglCompressedTexSubImage3D(GLenum target, GLint level, GLint
 void OSMesaDriver::nfglCompressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage3D(0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage3D(%s, %d, %d, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
 }
 
@@ -2210,7 +2210,7 @@ void OSMesaDriver::nfglCompressedTexSubImage3DARB(GLenum target, GLint level, GL
 void OSMesaDriver::nfglCompressedTexSubImage3DARB(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTexSubImage3DARB(0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTexSubImage3DARB(%s, %d, %d, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXSUBIMAGE3DARB(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
 }
 
@@ -2220,7 +2220,7 @@ void OSMesaDriver::nfglCompressedTextureImage1DEXT(GLuint texture, GLenum target
 void OSMesaDriver::nfglCompressedTextureImage1DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureImage1DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, " PRI_PTR ")", texture, target, level, internalformat, width, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureImage1DEXT(%u, %s, %d, %s, %d, %d, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTUREIMAGE1DEXT(texture, target, level, internalformat, width, border, imageSize, bits);
 }
 
@@ -2230,7 +2230,7 @@ void OSMesaDriver::nfglCompressedTextureImage2DEXT(GLuint texture, GLenum target
 void OSMesaDriver::nfglCompressedTextureImage2DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureImage2DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d, " PRI_PTR ")", texture, target, level, internalformat, width, height, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureImage2DEXT(%u, %s, %d, %s, %d, %d, %d, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTUREIMAGE2DEXT(texture, target, level, internalformat, width, height, border, imageSize, bits);
 }
 
@@ -2240,7 +2240,7 @@ void OSMesaDriver::nfglCompressedTextureImage3DEXT(GLuint texture, GLenum target
 void OSMesaDriver::nfglCompressedTextureImage3DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureImage3DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d, %d, " PRI_PTR ")", texture, target, level, internalformat, width, height, depth, border, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureImage3DEXT(%u, %s, %d, %s, %d, %d, %d, %d, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTUREIMAGE3DEXT(texture, target, level, internalformat, width, height, depth, border, imageSize, bits);
 }
 
@@ -2250,7 +2250,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage1D(GLuint texture, GLint level, 
 void OSMesaDriver::nfglCompressedTextureSubImage1D(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage1D(%u, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, level, xoffset, width, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTextureSubImage1D(%u, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, level, xoffset, width, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE1D(texture, level, xoffset, width, format, imageSize, data);
 }
 
@@ -2260,7 +2260,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage1DEXT(GLuint texture, GLenum tar
 void OSMesaDriver::nfglCompressedTextureSubImage1DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage1DEXT(%u, 0x%x, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, target, level, xoffset, width, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureSubImage1DEXT(%u, %s, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, width, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT(texture, target, level, xoffset, width, format, imageSize, bits);
 }
 
@@ -2270,7 +2270,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage2D(GLuint texture, GLint level, 
 void OSMesaDriver::nfglCompressedTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage2D(%u, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, width, height, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTextureSubImage2D(%u, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, width, height, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE2D(texture, level, xoffset, yoffset, width, height, format, imageSize, data);
 }
 
@@ -2280,7 +2280,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage2DEXT(GLuint texture, GLenum tar
 void OSMesaDriver::nfglCompressedTextureSubImage2DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage2DEXT(%u, 0x%x, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, target, level, xoffset, yoffset, width, height, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureSubImage2DEXT(%u, %s, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT(texture, target, level, xoffset, yoffset, width, height, format, imageSize, bits);
 }
 
@@ -2290,7 +2290,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage3D(GLuint texture, GLint level, 
 void OSMesaDriver::nfglCompressedTextureSubImage3D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage3D(%u, %d, %d, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, AtariOffset(data)));
+	D(bug("nfosmesa: glCompressedTextureSubImage3D(%u, %d, %d, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), imageSize, AtariOffset(data)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
 }
 
@@ -2300,7 +2300,7 @@ void OSMesaDriver::nfglCompressedTextureSubImage3DEXT(GLuint texture, GLenum tar
 void OSMesaDriver::nfglCompressedTextureSubImage3DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *bits)
 #endif
 {
-	D(bug("nfosmesa: glCompressedTextureSubImage3DEXT(%u, 0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, %d, " PRI_PTR ")", texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, AtariOffset(bits)));
+	D(bug("nfosmesa: glCompressedTextureSubImage3DEXT(%u, %s, %d, %d, %d, %d, %d, %d, %d, %s, %d, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), imageSize, AtariOffset(bits)));
 FN_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits);
 }
 
@@ -2310,7 +2310,7 @@ void OSMesaDriver::nfglConvolutionFilter1D(GLenum target, GLenum internalformat,
 void OSMesaDriver::nfglConvolutionFilter1D(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *image)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionFilter1D(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glConvolutionFilter1D(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLCONVOLUTIONFILTER1D(target, internalformat, width, format, type, image);
 }
 
@@ -2320,7 +2320,7 @@ void OSMesaDriver::nfglConvolutionFilter1DEXT(GLenum target, GLenum internalform
 void OSMesaDriver::nfglConvolutionFilter1DEXT(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, const void *image)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionFilter1DEXT(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glConvolutionFilter1DEXT(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLCONVOLUTIONFILTER1DEXT(target, internalformat, width, format, type, image);
 }
 
@@ -2330,7 +2330,7 @@ void OSMesaDriver::nfglConvolutionFilter2D(GLenum target, GLenum internalformat,
 void OSMesaDriver::nfglConvolutionFilter2D(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *image)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionFilter2D(0x%x, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, height, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glConvolutionFilter2D(%s, %s, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLCONVOLUTIONFILTER2D(target, internalformat, width, height, format, type, image);
 }
 
@@ -2340,19 +2340,19 @@ void OSMesaDriver::nfglConvolutionFilter2DEXT(GLenum target, GLenum internalform
 void OSMesaDriver::nfglConvolutionFilter2DEXT(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *image)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionFilter2DEXT(0x%x, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, internalformat, width, height, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glConvolutionFilter2DEXT(%s, %s, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLCONVOLUTIONFILTER2DEXT(target, internalformat, width, height, format, type, image);
 }
 
 void OSMesaDriver::nfglConvolutionParameterf(GLenum target, GLenum pname, GLfloat params)
 {
-	D(bug("nfosmesa: glConvolutionParameterf(0x%x, 0x%x, %f)", target, pname, params));
+	D(bug("nfosmesa: glConvolutionParameterf(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), params));
 	fn.glConvolutionParameterf(target, pname, params);
 }
 
 void OSMesaDriver::nfglConvolutionParameterfEXT(GLenum target, GLenum pname, GLfloat params)
 {
-	D(bug("nfosmesa: glConvolutionParameterfEXT(0x%x, 0x%x, %f)", target, pname, params));
+	D(bug("nfosmesa: glConvolutionParameterfEXT(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), params));
 	fn.glConvolutionParameterfEXT(target, pname, params);
 }
 
@@ -2362,7 +2362,7 @@ void OSMesaDriver::nfglConvolutionParameterfv(GLenum target, GLenum pname, mempt
 void OSMesaDriver::nfglConvolutionParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glConvolutionParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCONVOLUTIONPARAMETERFV(target, pname, params);
 }
 
@@ -2372,19 +2372,19 @@ void OSMesaDriver::nfglConvolutionParameterfvEXT(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglConvolutionParameterfvEXT(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glConvolutionParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCONVOLUTIONPARAMETERFVEXT(target, pname, params);
 }
 
 void OSMesaDriver::nfglConvolutionParameteri(GLenum target, GLenum pname, GLint params)
 {
-	D(bug("nfosmesa: glConvolutionParameteri(0x%x, 0x%x, %d)", target, pname, params));
+	D(bug("nfosmesa: glConvolutionParameteri(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), params));
 	fn.glConvolutionParameteri(target, pname, params);
 }
 
 void OSMesaDriver::nfglConvolutionParameteriEXT(GLenum target, GLenum pname, GLint params)
 {
-	D(bug("nfosmesa: glConvolutionParameteriEXT(0x%x, 0x%x, %d)", target, pname, params));
+	D(bug("nfosmesa: glConvolutionParameteriEXT(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), params));
 	fn.glConvolutionParameteriEXT(target, pname, params);
 }
 
@@ -2394,7 +2394,7 @@ void OSMesaDriver::nfglConvolutionParameteriv(GLenum target, GLenum pname, mempt
 void OSMesaDriver::nfglConvolutionParameteriv(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glConvolutionParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCONVOLUTIONPARAMETERIV(target, pname, params);
 }
 
@@ -2404,13 +2404,13 @@ void OSMesaDriver::nfglConvolutionParameterivEXT(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglConvolutionParameterivEXT(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glConvolutionParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCONVOLUTIONPARAMETERIVEXT(target, pname, params);
 }
 
 void OSMesaDriver::nfglConvolutionParameterxOES(GLenum target, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glConvolutionParameterxOES(0x%x, 0x%x, 0x%x)", target, pname, param));
+	D(bug("nfosmesa: glConvolutionParameterxOES(%s, %s, 0x%x)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glConvolutionParameterxOES(target, pname, param);
 }
 
@@ -2420,103 +2420,103 @@ void OSMesaDriver::nfglConvolutionParameterxvOES(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglConvolutionParameterxvOES(GLenum target, GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glConvolutionParameterxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glConvolutionParameterxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLCONVOLUTIONPARAMETERXVOES(target, pname, params);
 }
 
 void OSMesaDriver::nfglCopyBufferSubData(GLenum readTarget, GLenum writeTarget, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glCopyBufferSubData(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %" PRI_IPTR ")", readTarget, writeTarget, readOffset, writeOffset, size));
+	D(bug("nfosmesa: glCopyBufferSubData(%s, %s, %" PRI_IPTR ", %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(readTarget), gl_enum_name(writeTarget), readOffset, writeOffset, size));
 	fn.glCopyBufferSubData(readTarget, writeTarget, readOffset, writeOffset, size);
 }
 
 void OSMesaDriver::nfglCopyColorSubTable(GLenum target, GLsizei start, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyColorSubTable(0x%x, %d, %d, %d, %d)", target, start, x, y, width));
+	D(bug("nfosmesa: glCopyColorSubTable(%s, %d, %d, %d, %d)", gl_enum_name(target), start, x, y, width));
 	fn.glCopyColorSubTable(target, start, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyColorSubTableEXT(GLenum target, GLsizei start, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyColorSubTableEXT(0x%x, %d, %d, %d, %d)", target, start, x, y, width));
+	D(bug("nfosmesa: glCopyColorSubTableEXT(%s, %d, %d, %d, %d)", gl_enum_name(target), start, x, y, width));
 	fn.glCopyColorSubTableEXT(target, start, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyColorTable(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyColorTable(0x%x, 0x%x, %d, %d, %d)", target, internalformat, x, y, width));
+	D(bug("nfosmesa: glCopyColorTable(%s, %s, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width));
 	fn.glCopyColorTable(target, internalformat, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyColorTableSGI(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyColorTableSGI(0x%x, 0x%x, %d, %d, %d)", target, internalformat, x, y, width));
+	D(bug("nfosmesa: glCopyColorTableSGI(%s, %s, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width));
 	fn.glCopyColorTableSGI(target, internalformat, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyConvolutionFilter1D(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyConvolutionFilter1D(0x%x, 0x%x, %d, %d, %d)", target, internalformat, x, y, width));
+	D(bug("nfosmesa: glCopyConvolutionFilter1D(%s, %s, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width));
 	fn.glCopyConvolutionFilter1D(target, internalformat, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyConvolutionFilter1DEXT(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyConvolutionFilter1DEXT(0x%x, 0x%x, %d, %d, %d)", target, internalformat, x, y, width));
+	D(bug("nfosmesa: glCopyConvolutionFilter1DEXT(%s, %s, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width));
 	fn.glCopyConvolutionFilter1DEXT(target, internalformat, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyConvolutionFilter2D(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyConvolutionFilter2D(0x%x, 0x%x, %d, %d, %d, %d)", target, internalformat, x, y, width, height));
+	D(bug("nfosmesa: glCopyConvolutionFilter2D(%s, %s, %d, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width, height));
 	fn.glCopyConvolutionFilter2D(target, internalformat, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyConvolutionFilter2DEXT(GLenum target, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyConvolutionFilter2DEXT(0x%x, 0x%x, %d, %d, %d, %d)", target, internalformat, x, y, width, height));
+	D(bug("nfosmesa: glCopyConvolutionFilter2DEXT(%s, %s, %d, %d, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), x, y, width, height));
 	fn.glCopyConvolutionFilter2DEXT(target, internalformat, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyImageSubData(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth)
 {
-	D(bug("nfosmesa: glCopyImageSubData(%u, 0x%x, %d, %d, %d, %d, %u, 0x%x, %d, %d, %d, %d, %d, %d, %d)", srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth));
+	D(bug("nfosmesa: glCopyImageSubData(%u, %s, %d, %d, %d, %d, %u, %s, %d, %d, %d, %d, %d, %d, %d)", srcName, gl_enum_name(srcTarget), srcLevel, srcX, srcY, srcZ, dstName, gl_enum_name(dstTarget), dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth));
 	fn.glCopyImageSubData(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth);
 }
 
 void OSMesaDriver::nfglCopyImageSubDataNV(GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei width, GLsizei height, GLsizei depth)
 {
-	D(bug("nfosmesa: glCopyImageSubDataNV(%u, 0x%x, %d, %d, %d, %d, %u, 0x%x, %d, %d, %d, %d, %d, %d, %d)", srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, width, height, depth));
+	D(bug("nfosmesa: glCopyImageSubDataNV(%u, %s, %d, %d, %d, %d, %u, %s, %d, %d, %d, %d, %d, %d, %d)", srcName, gl_enum_name(srcTarget), srcLevel, srcX, srcY, srcZ, dstName, gl_enum_name(dstTarget), dstLevel, dstX, dstY, dstZ, width, height, depth));
 	fn.glCopyImageSubDataNV(srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, width, height, depth);
 }
 
 void OSMesaDriver::nfglCopyMultiTexImage1DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border)
 {
-	D(bug("nfosmesa: glCopyMultiTexImage1DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, %d)", texunit, target, level, internalformat, x, y, width, border));
+	D(bug("nfosmesa: glCopyMultiTexImage1DEXT(%s, %s, %d, %s, %d, %d, %d, %d)", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, border));
 	fn.glCopyMultiTexImage1DEXT(texunit, target, level, internalformat, x, y, width, border);
 }
 
 void OSMesaDriver::nfglCopyMultiTexImage2DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 {
-	D(bug("nfosmesa: glCopyMultiTexImage2DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, %d, %d)", texunit, target, level, internalformat, x, y, width, height, border));
+	D(bug("nfosmesa: glCopyMultiTexImage2DEXT(%s, %s, %d, %s, %d, %d, %d, %d, %d)", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, height, border));
 	fn.glCopyMultiTexImage2DEXT(texunit, target, level, internalformat, x, y, width, height, border);
 }
 
 void OSMesaDriver::nfglCopyMultiTexSubImage1DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyMultiTexSubImage1DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d)", texunit, target, level, xoffset, x, y, width));
+	D(bug("nfosmesa: glCopyMultiTexSubImage1DEXT(%s, %s, %d, %d, %d, %d, %d)", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, x, y, width));
 	fn.glCopyMultiTexSubImage1DEXT(texunit, target, level, xoffset, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyMultiTexSubImage2DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyMultiTexSubImage2DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, %d, %d)", texunit, target, level, xoffset, yoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyMultiTexSubImage2DEXT(%s, %s, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, x, y, width, height));
 	fn.glCopyMultiTexSubImage2DEXT(texunit, target, level, xoffset, yoffset, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyMultiTexSubImage3DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", texunit, target, level, xoffset, yoffset, zoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyMultiTexSubImage3DEXT(%s, %s, %d, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, zoffset, x, y, width, height));
 	fn.glCopyMultiTexSubImage3DEXT(texunit, target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
@@ -2534,79 +2534,79 @@ void OSMesaDriver::nfglCopyPathNV(GLuint resultPath, GLuint srcPath)
 
 void OSMesaDriver::nfglCopyPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type)
 {
-	D(bug("nfosmesa: glCopyPixels(%d, %d, %d, %d, 0x%x)", x, y, width, height, type));
+	D(bug("nfosmesa: glCopyPixels(%d, %d, %d, %d, %s)", x, y, width, height, gl_enum_name(type)));
 	fn.glCopyPixels(x, y, width, height, type);
 }
 
 void OSMesaDriver::nfglCopyTexImage1D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border)
 {
-	D(bug("nfosmesa: glCopyTexImage1D(0x%x, %d, 0x%x, %d, %d, %d, %d)", target, level, internalformat, x, y, width, border));
+	D(bug("nfosmesa: glCopyTexImage1D(%s, %d, %s, %d, %d, %d, %d)", gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, border));
 	fn.glCopyTexImage1D(target, level, internalformat, x, y, width, border);
 }
 
 void OSMesaDriver::nfglCopyTexImage1DEXT(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border)
 {
-	D(bug("nfosmesa: glCopyTexImage1DEXT(0x%x, %d, 0x%x, %d, %d, %d, %d)", target, level, internalformat, x, y, width, border));
+	D(bug("nfosmesa: glCopyTexImage1DEXT(%s, %d, %s, %d, %d, %d, %d)", gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, border));
 	fn.glCopyTexImage1DEXT(target, level, internalformat, x, y, width, border);
 }
 
 void OSMesaDriver::nfglCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 {
-	D(bug("nfosmesa: glCopyTexImage2D(0x%x, %d, 0x%x, %d, %d, %d, %d, %d)", target, level, internalformat, x, y, width, height, border));
+	D(bug("nfosmesa: glCopyTexImage2D(%s, %d, %s, %d, %d, %d, %d, %d)", gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, height, border));
 	fn.glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
 }
 
 void OSMesaDriver::nfglCopyTexImage2DEXT(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 {
-	D(bug("nfosmesa: glCopyTexImage2DEXT(0x%x, %d, 0x%x, %d, %d, %d, %d, %d)", target, level, internalformat, x, y, width, height, border));
+	D(bug("nfosmesa: glCopyTexImage2DEXT(%s, %d, %s, %d, %d, %d, %d, %d)", gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, height, border));
 	fn.glCopyTexImage2DEXT(target, level, internalformat, x, y, width, height, border);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyTexSubImage1D(0x%x, %d, %d, %d, %d, %d)", target, level, xoffset, x, y, width));
+	D(bug("nfosmesa: glCopyTexSubImage1D(%s, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, x, y, width));
 	fn.glCopyTexSubImage1D(target, level, xoffset, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage1DEXT(GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyTexSubImage1DEXT(0x%x, %d, %d, %d, %d, %d)", target, level, xoffset, x, y, width));
+	D(bug("nfosmesa: glCopyTexSubImage1DEXT(%s, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, x, y, width));
 	fn.glCopyTexSubImage1DEXT(target, level, xoffset, x, y, width);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTexSubImage2D(0x%x, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTexSubImage2D(%s, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, yoffset, x, y, width, height));
 	fn.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage2DEXT(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTexSubImage2DEXT(0x%x, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTexSubImage2DEXT(%s, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, yoffset, x, y, width, height));
 	fn.glCopyTexSubImage2DEXT(target, level, xoffset, yoffset, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTexSubImage3D(0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, zoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTexSubImage3D(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, yoffset, zoffset, x, y, width, height));
 	fn.glCopyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyTexSubImage3DEXT(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTexSubImage3DEXT(0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, zoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTexSubImage3DEXT(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, yoffset, zoffset, x, y, width, height));
 	fn.glCopyTexSubImage3DEXT(target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
 void OSMesaDriver::nfglCopyTextureImage1DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border)
 {
-	D(bug("nfosmesa: glCopyTextureImage1DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d)", texture, target, level, internalformat, x, y, width, border));
+	D(bug("nfosmesa: glCopyTextureImage1DEXT(%u, %s, %d, %s, %d, %d, %d, %d)", texture, gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, border));
 	fn.glCopyTextureImage1DEXT(texture, target, level, internalformat, x, y, width, border);
 }
 
 void OSMesaDriver::nfglCopyTextureImage2DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
 {
-	D(bug("nfosmesa: glCopyTextureImage2DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d, %d)", texture, target, level, internalformat, x, y, width, height, border));
+	D(bug("nfosmesa: glCopyTextureImage2DEXT(%u, %s, %d, %s, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), level, gl_enum_name(internalformat), x, y, width, height, border));
 	fn.glCopyTextureImage2DEXT(texture, target, level, internalformat, x, y, width, height, border);
 }
 
@@ -2618,7 +2618,7 @@ void OSMesaDriver::nfglCopyTextureSubImage1D(GLuint texture, GLint level, GLint 
 
 void OSMesaDriver::nfglCopyTextureSubImage1DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width)
 {
-	D(bug("nfosmesa: glCopyTextureSubImage1DEXT(%u, 0x%x, %d, %d, %d, %d, %d)", texture, target, level, xoffset, x, y, width));
+	D(bug("nfosmesa: glCopyTextureSubImage1DEXT(%u, %s, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), level, xoffset, x, y, width));
 	fn.glCopyTextureSubImage1DEXT(texture, target, level, xoffset, x, y, width);
 }
 
@@ -2630,7 +2630,7 @@ void OSMesaDriver::nfglCopyTextureSubImage2D(GLuint texture, GLint level, GLint 
 
 void OSMesaDriver::nfglCopyTextureSubImage2DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTextureSubImage2DEXT(%u, 0x%x, %d, %d, %d, %d, %d, %d, %d)", texture, target, level, xoffset, yoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTextureSubImage2DEXT(%u, %s, %d, %d, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), level, xoffset, yoffset, x, y, width, height));
 	fn.glCopyTextureSubImage2DEXT(texture, target, level, xoffset, yoffset, x, y, width, height);
 }
 
@@ -2642,7 +2642,7 @@ void OSMesaDriver::nfglCopyTextureSubImage3D(GLuint texture, GLint level, GLint 
 
 void OSMesaDriver::nfglCopyTextureSubImage3DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glCopyTextureSubImage3DEXT(%u, 0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", texture, target, level, xoffset, yoffset, zoffset, x, y, width, height));
+	D(bug("nfosmesa: glCopyTextureSubImage3DEXT(%u, %s, %d, %d, %d, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), level, xoffset, yoffset, zoffset, x, y, width, height));
 	fn.glCopyTextureSubImage3DEXT(texture, target, level, xoffset, yoffset, zoffset, x, y, width, height);
 }
 
@@ -2652,13 +2652,13 @@ void OSMesaDriver::nfglCoverFillPathInstancedNV(GLsizei numPaths, GLenum pathNam
 void OSMesaDriver::nfglCoverFillPathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum coverMode, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glCoverFillPathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, 0x%x, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, coverMode, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glCoverFillPathInstancedNV(%d, %s, " PRI_PTR ", %u, %s, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, gl_enum_name(coverMode), gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLCOVERFILLPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues);
 }
 
 void OSMesaDriver::nfglCoverFillPathNV(GLuint path, GLenum coverMode)
 {
-	D(bug("nfosmesa: glCoverFillPathNV(%u, 0x%x)", path, coverMode));
+	D(bug("nfosmesa: glCoverFillPathNV(%u, %s)", path, gl_enum_name(coverMode)));
 	fn.glCoverFillPathNV(path, coverMode);
 }
 
@@ -2668,19 +2668,19 @@ void OSMesaDriver::nfglCoverStrokePathInstancedNV(GLsizei numPaths, GLenum pathN
 void OSMesaDriver::nfglCoverStrokePathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum coverMode, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glCoverStrokePathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, 0x%x, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, coverMode, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glCoverStrokePathInstancedNV(%d, %s, " PRI_PTR ", %u, %s, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, gl_enum_name(coverMode), gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLCOVERSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, coverMode, transformType, transformValues);
 }
 
 void OSMesaDriver::nfglCoverStrokePathNV(GLuint path, GLenum coverMode)
 {
-	D(bug("nfosmesa: glCoverStrokePathNV(%u, 0x%x)", path, coverMode));
+	D(bug("nfosmesa: glCoverStrokePathNV(%u, %s)", path, gl_enum_name(coverMode)));
 	fn.glCoverStrokePathNV(path, coverMode);
 }
 
 void OSMesaDriver::nfglCoverageModulationNV(GLenum components)
 {
-	D(bug("nfosmesa: glCoverageModulationNV(0x%x)", components));
+	D(bug("nfosmesa: glCoverageModulationNV(%s)", gl_enum_name(components)));
 	fn.glCoverageModulationNV(components);
 }
 
@@ -2771,7 +2771,7 @@ void OSMesaDriver::nfglCreateQueries(GLenum target, GLsizei n, memptr ids)
 void OSMesaDriver::nfglCreateQueries(GLenum target, GLsizei n, GLuint *ids)
 #endif
 {
-	D(bug("nfosmesa: glCreateQueries(0x%x, %d, " PRI_PTR ")", target, n, AtariOffset(ids)));
+	D(bug("nfosmesa: glCreateQueries(%s, %d, " PRI_PTR ")", gl_enum_name(target), n, AtariOffset(ids)));
 FN_GLCREATEQUERIES(target, n, ids);
 }
 
@@ -2797,14 +2797,14 @@ FN_GLCREATESAMPLERS(n, samplers);
 
 GLuint OSMesaDriver::nfglCreateShader(GLenum type)
 {
-	D(bug("nfosmesa: glCreateShader(0x%x)", type));
+	D(bug("nfosmesa: glCreateShader(%s)", gl_enum_name(type)));
 	GLuint __ret = fn.glCreateShader(type);
 	return __ret;
 }
 
 GLhandleARB OSMesaDriver::nfglCreateShaderObjectARB(GLenum shaderType)
 {
-	D(bug("nfosmesa: glCreateShaderObjectARB(0x%x)", shaderType));
+	D(bug("nfosmesa: glCreateShaderObjectARB(%s)", gl_enum_name(shaderType)));
 	GLhandleARB __ret = fn.glCreateShaderObjectARB(shaderType);
 	return __ret;
 }
@@ -2815,7 +2815,7 @@ GLuint OSMesaDriver::nfglCreateShaderProgramEXT(GLenum type, memptr string)
 GLuint OSMesaDriver::nfglCreateShaderProgramEXT(GLenum type, const GLchar *string)
 #endif
 {
-	D(bug("nfosmesa: glCreateShaderProgramEXT(0x%x, " PRI_PTR ")", type, AtariOffset(string)));
+	D(bug("nfosmesa: glCreateShaderProgramEXT(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(string)));
 FN_GLCREATESHADERPROGRAMEXT(type, string);
 }
 
@@ -2825,7 +2825,7 @@ GLuint OSMesaDriver::nfglCreateShaderProgramv(GLenum type, GLsizei count, memptr
 GLuint OSMesaDriver::nfglCreateShaderProgramv(GLenum type, GLsizei count, const GLchar *const *strings)
 #endif
 {
-	D(bug("nfosmesa: glCreateShaderProgramv(0x%x, %d, " PRI_PTR ")", type, count, AtariOffset(strings)));
+	D(bug("nfosmesa: glCreateShaderProgramv(%s, %d, " PRI_PTR ")", gl_enum_name(type), count, AtariOffset(strings)));
 FN_GLCREATESHADERPROGRAMV(type, count, strings);
 }
 
@@ -2858,7 +2858,7 @@ void OSMesaDriver::nfglCreateTextures(GLenum target, GLsizei n, memptr textures)
 void OSMesaDriver::nfglCreateTextures(GLenum target, GLsizei n, GLuint *textures)
 #endif
 {
-	D(bug("nfosmesa: glCreateTextures(0x%x, %d, " PRI_PTR ")", target, n, AtariOffset(textures)));
+	D(bug("nfosmesa: glCreateTextures(%s, %d, " PRI_PTR ")", gl_enum_name(target), n, AtariOffset(textures)));
 FN_GLCREATETEXTURES(target, n, textures);
 }
 
@@ -2884,7 +2884,7 @@ FN_GLCREATEVERTEXARRAYS(n, arrays);
 
 void OSMesaDriver::nfglCullFace(GLenum mode)
 {
-	D(bug("nfosmesa: glCullFace(0x%x)", mode));
+	D(bug("nfosmesa: glCullFace(%s)", gl_enum_name(mode)));
 	fn.glCullFace(mode);
 }
 
@@ -2894,7 +2894,7 @@ void OSMesaDriver::nfglCullParameterdvEXT(GLenum pname, memptr params)
 void OSMesaDriver::nfglCullParameterdvEXT(GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glCullParameterdvEXT(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glCullParameterdvEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_DOUBLE_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLdouble __params_tmp[__params_size];
@@ -2911,7 +2911,7 @@ void OSMesaDriver::nfglCullParameterfvEXT(GLenum pname, memptr params)
 void OSMesaDriver::nfglCullParameterfvEXT(GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glCullParameterfvEXT(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glCullParameterfvEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -2970,7 +2970,7 @@ void OSMesaDriver::nfglDebugMessageControl(GLenum source, GLenum type, GLenum se
 void OSMesaDriver::nfglDebugMessageControl(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean32 enabled)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageControl(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ", %d)", source, type, severity, count, AtariOffset(ids), enabled));
+	D(bug("nfosmesa: glDebugMessageControl(%s, %s, %s, %d, " PRI_PTR ", %d)", gl_enum_name(source), gl_enum_name(type), gl_enum_name(severity), count, AtariOffset(ids), enabled));
 FN_GLDEBUGMESSAGECONTROL(source, type, severity, count, ids, enabled);
 }
 
@@ -2980,7 +2980,7 @@ void OSMesaDriver::nfglDebugMessageControlARB(GLenum source, GLenum type, GLenum
 void OSMesaDriver::nfglDebugMessageControlARB(GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean32 enabled)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageControlARB(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ", %d)", source, type, severity, count, AtariOffset(ids), enabled));
+	D(bug("nfosmesa: glDebugMessageControlARB(%s, %s, %s, %d, " PRI_PTR ", %d)", gl_enum_name(source), gl_enum_name(type), gl_enum_name(severity), count, AtariOffset(ids), enabled));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __ids_size = MAX(count, 0);
 	GLuint __ids_tmp[__ids_size];
@@ -2997,7 +2997,7 @@ void OSMesaDriver::nfglDebugMessageEnableAMD(GLenum category, GLenum severity, G
 void OSMesaDriver::nfglDebugMessageEnableAMD(GLenum category, GLenum severity, GLsizei count, const GLuint *ids, GLboolean32 enabled)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageEnableAMD(0x%x, 0x%x, %d, " PRI_PTR ", %d)", category, severity, count, AtariOffset(ids), enabled));
+	D(bug("nfosmesa: glDebugMessageEnableAMD(%s, %s, %d, " PRI_PTR ", %d)", gl_enum_name(category), gl_enum_name(severity), count, AtariOffset(ids), enabled));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __ids_size = MAX(count, 0);
 	GLuint __ids_tmp[__ids_size];
@@ -3014,7 +3014,7 @@ void OSMesaDriver::nfglDebugMessageInsert(GLenum source, GLenum type, GLuint id,
 void OSMesaDriver::nfglDebugMessageInsert(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageInsert(0x%x, 0x%x, %u, 0x%x, %d, " PRI_PTR ")", source, type, id, severity, length, AtariOffset(buf)));
+	D(bug("nfosmesa: glDebugMessageInsert(%s, %s, %u, %s, %d, " PRI_PTR ")", gl_enum_name(source), gl_enum_name(type), id, gl_enum_name(severity), length, AtariOffset(buf)));
 FN_GLDEBUGMESSAGEINSERT(source, type, id, severity, length, buf);
 }
 
@@ -3024,7 +3024,7 @@ void OSMesaDriver::nfglDebugMessageInsertAMD(GLenum category, GLenum severity, G
 void OSMesaDriver::nfglDebugMessageInsertAMD(GLenum category, GLenum severity, GLuint id, GLsizei length, const GLchar *buf)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageInsertAMD(0x%x, 0x%x, %u, %d, " PRI_PTR ")", category, severity, id, length, AtariOffset(buf)));
+	D(bug("nfosmesa: glDebugMessageInsertAMD(%s, %s, %u, %d, " PRI_PTR ")", gl_enum_name(category), gl_enum_name(severity), id, length, AtariOffset(buf)));
 #if NFOSMESA_NEED_BYTE_CONV
 	GLint const __buf_size = length >= 0 ? length : safe_strlen(buf) + 1;
 	GLchar __buf_tmp[__buf_size];
@@ -3041,7 +3041,7 @@ void OSMesaDriver::nfglDebugMessageInsertARB(GLenum source, GLenum type, GLuint 
 void OSMesaDriver::nfglDebugMessageInsertARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageInsertARB(0x%x, 0x%x, %u, 0x%x, %d, " PRI_PTR ")", source, type, id, severity, length, AtariOffset(buf)));
+	D(bug("nfosmesa: glDebugMessageInsertARB(%s, %s, %u, %s, %d, " PRI_PTR ")", gl_enum_name(source), gl_enum_name(type), id, gl_enum_name(severity), length, AtariOffset(buf)));
 #if NFOSMESA_NEED_BYTE_CONV
 	GLint const __buf_size = length >= 0 ? length : safe_strlen(buf) + 1;
 	GLchar __buf_tmp[__buf_size];
@@ -3064,7 +3064,7 @@ void OSMesaDriver::nfglDeformationMap3dSGIX(GLenum target, GLdouble u1, GLdouble
 void OSMesaDriver::nfglDeformationMap3dSGIX(GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, GLdouble w1, GLdouble w2, GLint wstride, GLint worder, const GLdouble *points)
 #endif
 {
-	D(bug("nfosmesa: glDeformationMap3dSGIX(0x%x, %f, %f, %d, %d, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, AtariOffset(points)));
+	D(bug("nfosmesa: glDeformationMap3dSGIX(%s, %f, %f, %d, %d, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, AtariOffset(points)));
 FN_GLDEFORMATIONMAP3DSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points);
 }
 
@@ -3074,7 +3074,7 @@ void OSMesaDriver::nfglDeformationMap3fSGIX(GLenum target, GLfloat u1, GLfloat u
 void OSMesaDriver::nfglDeformationMap3fSGIX(GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, GLfloat w1, GLfloat w2, GLint wstride, GLint worder, const GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glDeformationMap3fSGIX(0x%x, %f, %f, %d, %d, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, AtariOffset(points)));
+	D(bug("nfosmesa: glDeformationMap3fSGIX(%s, %f, %f, %d, %d, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, AtariOffset(points)));
 FN_GLDEFORMATIONMAP3FSGIX(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, w1, w2, wstride, worder, points);
 }
 
@@ -3196,7 +3196,7 @@ void OSMesaDriver::nfglDeleteNamesAMD(GLenum identifier, GLuint num, memptr name
 void OSMesaDriver::nfglDeleteNamesAMD(GLenum identifier, GLuint num, const GLuint *names)
 #endif
 {
-	D(bug("nfosmesa: glDeleteNamesAMD(0x%x, %u, " PRI_PTR ")", identifier, num, AtariOffset(names)));
+	D(bug("nfosmesa: glDeleteNamesAMD(%s, %u, " PRI_PTR ")", gl_enum_name(identifier), num, AtariOffset(names)));
 FN_GLDELETENAMESAMD(identifier, num, names);
 }
 
@@ -3432,7 +3432,7 @@ void OSMesaDriver::nfglDepthBoundsdNV(GLdouble zmin, GLdouble zmax)
 
 void OSMesaDriver::nfglDepthFunc(GLenum func)
 {
-	D(bug("nfosmesa: glDepthFunc(0x%x)", func));
+	D(bug("nfosmesa: glDepthFunc(%s)", gl_enum_name(func)));
 	fn.glDepthFunc(func);
 }
 
@@ -3506,7 +3506,7 @@ void OSMesaDriver::nfglDetailTexFuncSGIS(GLenum target, GLsizei n, memptr points
 void OSMesaDriver::nfglDetailTexFuncSGIS(GLenum target, GLsizei n, const GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glDetailTexFuncSGIS(0x%x, %d, " PRI_PTR ")", target, n, AtariOffset(points)));
+	D(bug("nfosmesa: glDetailTexFuncSGIS(%s, %d, " PRI_PTR ")", gl_enum_name(target), n, AtariOffset(points)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __points_size = MAX(n * 2, 0);
 	GLfloat __points_tmp[__points_size];
@@ -3519,31 +3519,31 @@ void OSMesaDriver::nfglDetailTexFuncSGIS(GLenum target, GLsizei n, const GLfloat
 
 void OSMesaDriver::nfglDisable(GLenum cap)
 {
-	D(bug("nfosmesa: glDisable(0x%x)", cap));
-	fn.glDisable(cap);
+	D(bug("nfosmesa: glDisable(%s)", gl_enum_name(cap)));
+FN_GLDISABLE(cap);
 }
 
 void OSMesaDriver::nfglDisableClientState(GLenum array)
 {
-	D(bug("nfosmesa: glDisableClientState(0x%x)", array));
+	D(bug("nfosmesa: glDisableClientState(%s)", gl_enum_name(array)));
 FN_GLDISABLECLIENTSTATE(array);
 }
 
 void OSMesaDriver::nfglDisableClientStateIndexedEXT(GLenum array, GLuint index)
 {
-	D(bug("nfosmesa: glDisableClientStateIndexedEXT(0x%x, %u)", array, index));
+	D(bug("nfosmesa: glDisableClientStateIndexedEXT(%s, %u)", gl_enum_name(array), index));
 	fn.glDisableClientStateIndexedEXT(array, index);
 }
 
 void OSMesaDriver::nfglDisableClientStateiEXT(GLenum array, GLuint index)
 {
-	D(bug("nfosmesa: glDisableClientStateiEXT(0x%x, %u)", array, index));
+	D(bug("nfosmesa: glDisableClientStateiEXT(%s, %u)", gl_enum_name(array), index));
 	fn.glDisableClientStateiEXT(array, index);
 }
 
 void OSMesaDriver::nfglDisableIndexedEXT(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glDisableIndexedEXT(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glDisableIndexedEXT(%s, %u)", gl_enum_name(target), index));
 	fn.glDisableIndexedEXT(target, index);
 }
 
@@ -3573,13 +3573,13 @@ void OSMesaDriver::nfglDisableVertexArrayAttribEXT(GLuint vaobj, GLuint index)
 
 void OSMesaDriver::nfglDisableVertexArrayEXT(GLuint vaobj, GLenum array)
 {
-	D(bug("nfosmesa: glDisableVertexArrayEXT(%u, 0x%x)", vaobj, array));
+	D(bug("nfosmesa: glDisableVertexArrayEXT(%u, %s)", vaobj, gl_enum_name(array)));
 	fn.glDisableVertexArrayEXT(vaobj, array);
 }
 
 void OSMesaDriver::nfglDisableVertexAttribAPPLE(GLuint index, GLenum pname)
 {
-	D(bug("nfosmesa: glDisableVertexAttribAPPLE(%u, 0x%x)", index, pname));
+	D(bug("nfosmesa: glDisableVertexAttribAPPLE(%u, %s)", index, gl_enum_name(pname)));
 	fn.glDisableVertexAttribAPPLE(index, pname);
 }
 
@@ -3597,7 +3597,7 @@ void OSMesaDriver::nfglDisableVertexAttribArrayARB(GLuint index)
 
 void OSMesaDriver::nfglDisablei(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glDisablei(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glDisablei(%s, %u)", gl_enum_name(target), index));
 	fn.glDisablei(target, index);
 }
 
@@ -3621,13 +3621,13 @@ FN_GLDISPATCHCOMPUTEINDIRECT(indirect);
 
 void OSMesaDriver::nfglDrawArrays(GLenum mode, GLint first, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawArrays(0x%x, %d, %d)", mode, first, count));
+	D(bug("nfosmesa: glDrawArrays(%s, %d, %d)", gl_enum_name(mode), first, count));
 FN_GLDRAWARRAYS(mode, first, count);
 }
 
 void OSMesaDriver::nfglDrawArraysEXT(GLenum mode, GLint first, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawArraysEXT(0x%x, %d, %d)", mode, first, count));
+	D(bug("nfosmesa: glDrawArraysEXT(%s, %d, %d)", gl_enum_name(mode), first, count));
 FN_GLDRAWARRAYSEXT(mode, first, count);
 }
 
@@ -3637,37 +3637,37 @@ void OSMesaDriver::nfglDrawArraysIndirect(GLenum mode, memptr indirect)
 void OSMesaDriver::nfglDrawArraysIndirect(GLenum mode, const void *indirect)
 #endif
 {
-	D(bug("nfosmesa: glDrawArraysIndirect(0x%x, " PRI_PTR ")", mode, AtariOffset(indirect)));
+	D(bug("nfosmesa: glDrawArraysIndirect(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(indirect)));
 FN_GLDRAWARRAYSINDIRECT(mode, indirect);
 }
 
 void OSMesaDriver::nfglDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei instancecount)
 {
-	D(bug("nfosmesa: glDrawArraysInstanced(0x%x, %d, %d, %d)", mode, first, count, instancecount));
+	D(bug("nfosmesa: glDrawArraysInstanced(%s, %d, %d, %d)", gl_enum_name(mode), first, count, instancecount));
 FN_GLDRAWARRAYSINSTANCED(mode, first, count, instancecount);
 }
 
 void OSMesaDriver::nfglDrawArraysInstancedARB(GLenum mode, GLint first, GLsizei count, GLsizei primcount)
 {
-	D(bug("nfosmesa: glDrawArraysInstancedARB(0x%x, %d, %d, %d)", mode, first, count, primcount));
+	D(bug("nfosmesa: glDrawArraysInstancedARB(%s, %d, %d, %d)", gl_enum_name(mode), first, count, primcount));
 FN_GLDRAWARRAYSINSTANCEDARB(mode, first, count, primcount);
 }
 
 void OSMesaDriver::nfglDrawArraysInstancedBaseInstance(GLenum mode, GLint first, GLsizei count, GLsizei instancecount, GLuint baseinstance)
 {
-	D(bug("nfosmesa: glDrawArraysInstancedBaseInstance(0x%x, %d, %d, %d, %u)", mode, first, count, instancecount, baseinstance));
+	D(bug("nfosmesa: glDrawArraysInstancedBaseInstance(%s, %d, %d, %d, %u)", gl_enum_name(mode), first, count, instancecount, baseinstance));
 	fn.glDrawArraysInstancedBaseInstance(mode, first, count, instancecount, baseinstance);
 }
 
 void OSMesaDriver::nfglDrawArraysInstancedEXT(GLenum mode, GLint start, GLsizei count, GLsizei primcount)
 {
-	D(bug("nfosmesa: glDrawArraysInstancedEXT(0x%x, %d, %d, %d)", mode, start, count, primcount));
+	D(bug("nfosmesa: glDrawArraysInstancedEXT(%s, %d, %d, %d)", gl_enum_name(mode), start, count, primcount));
 FN_GLDRAWARRAYSINSTANCEDEXT(mode, start, count, primcount);
 }
 
 void OSMesaDriver::nfglDrawBuffer(GLenum mode)
 {
-	D(bug("nfosmesa: glDrawBuffer(0x%x)", mode));
+	D(bug("nfosmesa: glDrawBuffer(%s)", gl_enum_name(mode)));
 	fn.glDrawBuffer(mode);
 }
 
@@ -3707,7 +3707,7 @@ void OSMesaDriver::nfglDrawCommandsAddressNV(GLenum primitiveMode, memptr indire
 void OSMesaDriver::nfglDrawCommandsAddressNV(GLenum primitiveMode, const GLuint64 *indirects, const GLsizei *sizes, GLuint count)
 #endif
 {
-	D(bug("nfosmesa: glDrawCommandsAddressNV(0x%x, " PRI_PTR ", " PRI_PTR ", %u)", primitiveMode, AtariOffset(indirects), AtariOffset(sizes), count));
+	D(bug("nfosmesa: glDrawCommandsAddressNV(%s, " PRI_PTR ", " PRI_PTR ", %u)", gl_enum_name(primitiveMode), AtariOffset(indirects), AtariOffset(sizes), count));
 FN_GLDRAWCOMMANDSADDRESSNV(primitiveMode, indirects, sizes, count);
 }
 
@@ -3717,7 +3717,7 @@ void OSMesaDriver::nfglDrawCommandsNV(GLenum primitiveMode, GLuint buffer, mempt
 void OSMesaDriver::nfglDrawCommandsNV(GLenum primitiveMode, GLuint buffer, const GLintptr *indirects, const GLsizei *sizes, GLuint count)
 #endif
 {
-	D(bug("nfosmesa: glDrawCommandsNV(0x%x, %u, " PRI_PTR ", " PRI_PTR ", %u)", primitiveMode, buffer, AtariOffset(indirects), AtariOffset(sizes), count));
+	D(bug("nfosmesa: glDrawCommandsNV(%s, %u, " PRI_PTR ", " PRI_PTR ", %u)", gl_enum_name(primitiveMode), buffer, AtariOffset(indirects), AtariOffset(sizes), count));
 FN_GLDRAWCOMMANDSNV(primitiveMode, buffer, indirects, sizes, count);
 }
 
@@ -3743,13 +3743,13 @@ FN_GLDRAWCOMMANDSSTATESNV(buffer, indirects, sizes, states, fbos, count);
 
 void OSMesaDriver::nfglDrawElementArrayAPPLE(GLenum mode, GLint first, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawElementArrayAPPLE(0x%x, %d, %d)", mode, first, count));
+	D(bug("nfosmesa: glDrawElementArrayAPPLE(%s, %d, %d)", gl_enum_name(mode), first, count));
 FN_GLDRAWELEMENTARRAYAPPLE(mode, first, count);
 }
 
 void OSMesaDriver::nfglDrawElementArrayATI(GLenum mode, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawElementArrayATI(0x%x, %d)", mode, count));
+	D(bug("nfosmesa: glDrawElementArrayATI(%s, %d)", gl_enum_name(mode), count));
 FN_GLDRAWELEMENTARRAYATI(mode, count);
 }
 
@@ -3759,7 +3759,7 @@ void OSMesaDriver::nfglDrawElements(GLenum mode, GLsizei count, GLenum type, mem
 void OSMesaDriver::nfglDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices)
 #endif
 {
-	D(bug("nfosmesa: glDrawElements(0x%x, %d, 0x%x, " PRI_PTR ")", mode, count, type, AtariOffset(indices)));
+	D(bug("nfosmesa: glDrawElements(%s, %d, %s, " PRI_PTR ")", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices)));
 FN_GLDRAWELEMENTS(mode, count, type, indices);
 }
 
@@ -3769,7 +3769,7 @@ void OSMesaDriver::nfglDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum
 void OSMesaDriver::nfglDrawElementsBaseVertex(GLenum mode, GLsizei count, GLenum type, const void *indices, GLint basevertex)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsBaseVertex(0x%x, %d, 0x%x, " PRI_PTR ", %d)", mode, count, type, AtariOffset(indices), basevertex));
+	D(bug("nfosmesa: glDrawElementsBaseVertex(%s, %d, %s, " PRI_PTR ", %d)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), basevertex));
 FN_GLDRAWELEMENTSBASEVERTEX(mode, count, type, indices, basevertex);
 }
 
@@ -3779,7 +3779,7 @@ void OSMesaDriver::nfglDrawElementsIndirect(GLenum mode, GLenum type, memptr ind
 void OSMesaDriver::nfglDrawElementsIndirect(GLenum mode, GLenum type, const void *indirect)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsIndirect(0x%x, 0x%x, " PRI_PTR ")", mode, type, AtariOffset(indirect)));
+	D(bug("nfosmesa: glDrawElementsIndirect(%s, %s, " PRI_PTR ")", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect)));
 FN_GLDRAWELEMENTSINDIRECT(mode, type, indirect);
 }
 
@@ -3789,7 +3789,7 @@ void OSMesaDriver::nfglDrawElementsInstanced(GLenum mode, GLsizei count, GLenum 
 void OSMesaDriver::nfglDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstanced(0x%x, %d, 0x%x, " PRI_PTR ", %d)", mode, count, type, AtariOffset(indices), instancecount));
+	D(bug("nfosmesa: glDrawElementsInstanced(%s, %d, %s, " PRI_PTR ", %d)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), instancecount));
 FN_GLDRAWELEMENTSINSTANCED(mode, count, type, indices, instancecount);
 }
 
@@ -3799,7 +3799,7 @@ void OSMesaDriver::nfglDrawElementsInstancedARB(GLenum mode, GLsizei count, GLen
 void OSMesaDriver::nfglDrawElementsInstancedARB(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstancedARB(0x%x, %d, 0x%x, " PRI_PTR ", %d)", mode, count, type, AtariOffset(indices), primcount));
+	D(bug("nfosmesa: glDrawElementsInstancedARB(%s, %d, %s, " PRI_PTR ", %d)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), primcount));
 FN_GLDRAWELEMENTSINSTANCEDARB(mode, count, type, indices, primcount);
 }
 
@@ -3809,7 +3809,7 @@ void OSMesaDriver::nfglDrawElementsInstancedBaseInstance(GLenum mode, GLsizei co
 void OSMesaDriver::nfglDrawElementsInstancedBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLuint baseinstance)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstancedBaseInstance(0x%x, %d, 0x%x, " PRI_PTR ", %d, %u)", mode, count, type, AtariOffset(indices), instancecount, baseinstance));
+	D(bug("nfosmesa: glDrawElementsInstancedBaseInstance(%s, %d, %s, " PRI_PTR ", %d, %u)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), instancecount, baseinstance));
 FN_GLDRAWELEMENTSINSTANCEDBASEINSTANCE(mode, count, type, indices, instancecount, baseinstance);
 }
 
@@ -3819,7 +3819,7 @@ void OSMesaDriver::nfglDrawElementsInstancedBaseVertex(GLenum mode, GLsizei coun
 void OSMesaDriver::nfglDrawElementsInstancedBaseVertex(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLint basevertex)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstancedBaseVertex(0x%x, %d, 0x%x, " PRI_PTR ", %d, %d)", mode, count, type, AtariOffset(indices), instancecount, basevertex));
+	D(bug("nfosmesa: glDrawElementsInstancedBaseVertex(%s, %d, %s, " PRI_PTR ", %d, %d)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), instancecount, basevertex));
 FN_GLDRAWELEMENTSINSTANCEDBASEVERTEX(mode, count, type, indices, instancecount, basevertex);
 }
 
@@ -3829,7 +3829,7 @@ void OSMesaDriver::nfglDrawElementsInstancedBaseVertexBaseInstance(GLenum mode, 
 void OSMesaDriver::nfglDrawElementsInstancedBaseVertexBaseInstance(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei instancecount, GLint basevertex, GLuint baseinstance)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstancedBaseVertexBaseInstance(0x%x, %d, 0x%x, " PRI_PTR ", %d, %d, %u)", mode, count, type, AtariOffset(indices), instancecount, basevertex, baseinstance));
+	D(bug("nfosmesa: glDrawElementsInstancedBaseVertexBaseInstance(%s, %d, %s, " PRI_PTR ", %d, %d, %u)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), instancecount, basevertex, baseinstance));
 FN_GLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCE(mode, count, type, indices, instancecount, basevertex, baseinstance);
 }
 
@@ -3839,13 +3839,13 @@ void OSMesaDriver::nfglDrawElementsInstancedEXT(GLenum mode, GLsizei count, GLen
 void OSMesaDriver::nfglDrawElementsInstancedEXT(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glDrawElementsInstancedEXT(0x%x, %d, 0x%x, " PRI_PTR ", %d)", mode, count, type, AtariOffset(indices), primcount));
+	D(bug("nfosmesa: glDrawElementsInstancedEXT(%s, %d, %s, " PRI_PTR ", %d)", gl_enum_name(mode), count, gl_enum_name(type), AtariOffset(indices), primcount));
 FN_GLDRAWELEMENTSINSTANCEDEXT(mode, count, type, indices, primcount);
 }
 
 void OSMesaDriver::nfglDrawMeshArraysSUN(GLenum mode, GLint first, GLsizei count, GLsizei width)
 {
-	D(bug("nfosmesa: glDrawMeshArraysSUN(0x%x, %d, %d, %d)", mode, first, count, width));
+	D(bug("nfosmesa: glDrawMeshArraysSUN(%s, %d, %d, %d)", gl_enum_name(mode), first, count, width));
 	fn.glDrawMeshArraysSUN(mode, first, count, width);
 }
 
@@ -3855,19 +3855,19 @@ void OSMesaDriver::nfglDrawPixels(GLsizei width, GLsizei height, GLenum format, 
 void OSMesaDriver::nfglDrawPixels(GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glDrawPixels(%d, %d, 0x%x, 0x%x, " PRI_PTR ")", width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glDrawPixels(%d, %d, %s, %s, " PRI_PTR ")", width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLDRAWPIXELS(width, height, format, type, pixels);
 }
 
 void OSMesaDriver::nfglDrawRangeElementArrayAPPLE(GLenum mode, GLuint start, GLuint end, GLint first, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawRangeElementArrayAPPLE(0x%x, %u, %u, %d, %d)", mode, start, end, first, count));
+	D(bug("nfosmesa: glDrawRangeElementArrayAPPLE(%s, %u, %u, %d, %d)", gl_enum_name(mode), start, end, first, count));
 FN_GLDRAWRANGEELEMENTARRAYAPPLE(mode, start, end, first, count);
 }
 
 void OSMesaDriver::nfglDrawRangeElementArrayATI(GLenum mode, GLuint start, GLuint end, GLsizei count)
 {
-	D(bug("nfosmesa: glDrawRangeElementArrayATI(0x%x, %u, %u, %d)", mode, start, end, count));
+	D(bug("nfosmesa: glDrawRangeElementArrayATI(%s, %u, %u, %d)", gl_enum_name(mode), start, end, count));
 FN_GLDRAWRANGEELEMENTARRAYATI(mode, start, end, count);
 }
 
@@ -3877,7 +3877,7 @@ void OSMesaDriver::nfglDrawRangeElements(GLenum mode, GLuint start, GLuint end, 
 void OSMesaDriver::nfglDrawRangeElements(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices)
 #endif
 {
-	D(bug("nfosmesa: glDrawRangeElements(0x%x, %u, %u, %d, 0x%x, " PRI_PTR ")", mode, start, end, count, type, AtariOffset(indices)));
+	D(bug("nfosmesa: glDrawRangeElements(%s, %u, %u, %d, %s, " PRI_PTR ")", gl_enum_name(mode), start, end, count, gl_enum_name(type), AtariOffset(indices)));
 FN_GLDRAWRANGEELEMENTS(mode, start, end, count, type, indices);
 }
 
@@ -3887,7 +3887,7 @@ void OSMesaDriver::nfglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GL
 void OSMesaDriver::nfglDrawRangeElementsBaseVertex(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex)
 #endif
 {
-	D(bug("nfosmesa: glDrawRangeElementsBaseVertex(0x%x, %u, %u, %d, 0x%x, " PRI_PTR ", %d)", mode, start, end, count, type, AtariOffset(indices), basevertex));
+	D(bug("nfosmesa: glDrawRangeElementsBaseVertex(%s, %u, %u, %d, %s, " PRI_PTR ", %d)", gl_enum_name(mode), start, end, count, gl_enum_name(type), AtariOffset(indices), basevertex));
 FN_GLDRAWRANGEELEMENTSBASEVERTEX(mode, start, end, count, type, indices, basevertex);
 }
 
@@ -3897,7 +3897,7 @@ void OSMesaDriver::nfglDrawRangeElementsEXT(GLenum mode, GLuint start, GLuint en
 void OSMesaDriver::nfglDrawRangeElementsEXT(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices)
 #endif
 {
-	D(bug("nfosmesa: glDrawRangeElementsEXT(0x%x, %u, %u, %d, 0x%x, " PRI_PTR ")", mode, start, end, count, type, AtariOffset(indices)));
+	D(bug("nfosmesa: glDrawRangeElementsEXT(%s, %u, %u, %d, %s, " PRI_PTR ")", gl_enum_name(mode), start, end, count, gl_enum_name(type), AtariOffset(indices)));
 FN_GLDRAWRANGEELEMENTSEXT(mode, start, end, count, type, indices);
 }
 
@@ -3909,31 +3909,31 @@ void OSMesaDriver::nfglDrawTextureNV(GLuint texture, GLuint sampler, GLfloat x0,
 
 void OSMesaDriver::nfglDrawTransformFeedback(GLenum mode, GLuint id)
 {
-	D(bug("nfosmesa: glDrawTransformFeedback(0x%x, %u)", mode, id));
+	D(bug("nfosmesa: glDrawTransformFeedback(%s, %u)", gl_enum_name(mode), id));
 	fn.glDrawTransformFeedback(mode, id);
 }
 
 void OSMesaDriver::nfglDrawTransformFeedbackInstanced(GLenum mode, GLuint id, GLsizei instancecount)
 {
-	D(bug("nfosmesa: glDrawTransformFeedbackInstanced(0x%x, %u, %d)", mode, id, instancecount));
+	D(bug("nfosmesa: glDrawTransformFeedbackInstanced(%s, %u, %d)", gl_enum_name(mode), id, instancecount));
 	fn.glDrawTransformFeedbackInstanced(mode, id, instancecount);
 }
 
 void OSMesaDriver::nfglDrawTransformFeedbackNV(GLenum mode, GLuint id)
 {
-	D(bug("nfosmesa: glDrawTransformFeedbackNV(0x%x, %u)", mode, id));
+	D(bug("nfosmesa: glDrawTransformFeedbackNV(%s, %u)", gl_enum_name(mode), id));
 	fn.glDrawTransformFeedbackNV(mode, id);
 }
 
 void OSMesaDriver::nfglDrawTransformFeedbackStream(GLenum mode, GLuint id, GLuint stream)
 {
-	D(bug("nfosmesa: glDrawTransformFeedbackStream(0x%x, %u, %u)", mode, id, stream));
+	D(bug("nfosmesa: glDrawTransformFeedbackStream(%s, %u, %u)", gl_enum_name(mode), id, stream));
 	fn.glDrawTransformFeedbackStream(mode, id, stream);
 }
 
 void OSMesaDriver::nfglDrawTransformFeedbackStreamInstanced(GLenum mode, GLuint id, GLuint stream, GLsizei instancecount)
 {
-	D(bug("nfosmesa: glDrawTransformFeedbackStreamInstanced(0x%x, %u, %u, %d)", mode, id, stream, instancecount));
+	D(bug("nfosmesa: glDrawTransformFeedbackStreamInstanced(%s, %u, %u, %d)", gl_enum_name(mode), id, stream, instancecount));
 	fn.glDrawTransformFeedbackStreamInstanced(mode, id, stream, instancecount);
 }
 
@@ -3995,7 +3995,7 @@ void OSMesaDriver::nfglElementPointerAPPLE(GLenum type, memptr pointer)
 void OSMesaDriver::nfglElementPointerAPPLE(GLenum type, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glElementPointerAPPLE(0x%x, " PRI_PTR ")", type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glElementPointerAPPLE(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(pointer)));
 FN_GLELEMENTPOINTERAPPLE(type, pointer);
 }
 
@@ -4005,37 +4005,37 @@ void OSMesaDriver::nfglElementPointerATI(GLenum type, memptr pointer)
 void OSMesaDriver::nfglElementPointerATI(GLenum type, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glElementPointerATI(0x%x, " PRI_PTR ")", type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glElementPointerATI(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(pointer)));
 FN_GLELEMENTPOINTERATI(type, pointer);
 }
 
 void OSMesaDriver::nfglEnable(GLenum cap)
 {
-	D(bug("nfosmesa: glEnable(0x%x)", cap));
-	fn.glEnable(cap);
+	D(bug("nfosmesa: glEnable(%s)", gl_enum_name(cap)));
+FN_GLENABLE(cap);
 }
 
 void OSMesaDriver::nfglEnableClientState(GLenum array)
 {
-	D(bug("nfosmesa: glEnableClientState(0x%x)", array));
+	D(bug("nfosmesa: glEnableClientState(%s)", gl_enum_name(array)));
 FN_GLENABLECLIENTSTATE(array);
 }
 
 void OSMesaDriver::nfglEnableClientStateIndexedEXT(GLenum array, GLuint index)
 {
-	D(bug("nfosmesa: glEnableClientStateIndexedEXT(0x%x, %u)", array, index));
+	D(bug("nfosmesa: glEnableClientStateIndexedEXT(%s, %u)", gl_enum_name(array), index));
 	fn.glEnableClientStateIndexedEXT(array, index);
 }
 
 void OSMesaDriver::nfglEnableClientStateiEXT(GLenum array, GLuint index)
 {
-	D(bug("nfosmesa: glEnableClientStateiEXT(0x%x, %u)", array, index));
+	D(bug("nfosmesa: glEnableClientStateiEXT(%s, %u)", gl_enum_name(array), index));
 	fn.glEnableClientStateiEXT(array, index);
 }
 
 void OSMesaDriver::nfglEnableIndexedEXT(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glEnableIndexedEXT(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glEnableIndexedEXT(%s, %u)", gl_enum_name(target), index));
 	fn.glEnableIndexedEXT(target, index);
 }
 
@@ -4065,13 +4065,13 @@ void OSMesaDriver::nfglEnableVertexArrayAttribEXT(GLuint vaobj, GLuint index)
 
 void OSMesaDriver::nfglEnableVertexArrayEXT(GLuint vaobj, GLenum array)
 {
-	D(bug("nfosmesa: glEnableVertexArrayEXT(%u, 0x%x)", vaobj, array));
+	D(bug("nfosmesa: glEnableVertexArrayEXT(%u, %s)", vaobj, gl_enum_name(array)));
 	fn.glEnableVertexArrayEXT(vaobj, array);
 }
 
 void OSMesaDriver::nfglEnableVertexAttribAPPLE(GLuint index, GLenum pname)
 {
-	D(bug("nfosmesa: glEnableVertexAttribAPPLE(%u, 0x%x)", index, pname));
+	D(bug("nfosmesa: glEnableVertexAttribAPPLE(%u, %s)", index, gl_enum_name(pname)));
 	fn.glEnableVertexAttribAPPLE(index, pname);
 }
 
@@ -4089,7 +4089,7 @@ void OSMesaDriver::nfglEnableVertexAttribArrayARB(GLuint index)
 
 void OSMesaDriver::nfglEnablei(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glEnablei(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glEnablei(%s, %u)", gl_enum_name(target), index));
 	fn.glEnablei(target, index);
 }
 
@@ -4149,19 +4149,19 @@ void OSMesaDriver::nfglEndPerfQueryINTEL(GLuint queryHandle)
 
 void OSMesaDriver::nfglEndQuery(GLenum target)
 {
-	D(bug("nfosmesa: glEndQuery(0x%x)", target));
+	D(bug("nfosmesa: glEndQuery(%s)", gl_enum_name(target)));
 	fn.glEndQuery(target);
 }
 
 void OSMesaDriver::nfglEndQueryARB(GLenum target)
 {
-	D(bug("nfosmesa: glEndQueryARB(0x%x)", target));
+	D(bug("nfosmesa: glEndQueryARB(%s)", gl_enum_name(target)));
 	fn.glEndQueryARB(target);
 }
 
 void OSMesaDriver::nfglEndQueryIndexed(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glEndQueryIndexed(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glEndQueryIndexed(%s, %u)", gl_enum_name(target), index));
 	fn.glEndQueryIndexed(target, index);
 }
 
@@ -4299,19 +4299,19 @@ FN_GLEVALCOORD2XVOES(coords);
 
 void OSMesaDriver::nfglEvalMapsNV(GLenum target, GLenum mode)
 {
-	D(bug("nfosmesa: glEvalMapsNV(0x%x, 0x%x)", target, mode));
+	D(bug("nfosmesa: glEvalMapsNV(%s, %s)", gl_enum_name(target), gl_enum_name(mode)));
 	fn.glEvalMapsNV(target, mode);
 }
 
 void OSMesaDriver::nfglEvalMesh1(GLenum mode, GLint i1, GLint i2)
 {
-	D(bug("nfosmesa: glEvalMesh1(0x%x, %d, %d)", mode, i1, i2));
+	D(bug("nfosmesa: glEvalMesh1(%s, %d, %d)", gl_enum_name(mode), i1, i2));
 	fn.glEvalMesh1(mode, i1, i2);
 }
 
 void OSMesaDriver::nfglEvalMesh2(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2)
 {
-	D(bug("nfosmesa: glEvalMesh2(0x%x, %d, %d, %d, %d)", mode, i1, i2, j1, j2));
+	D(bug("nfosmesa: glEvalMesh2(%s, %d, %d, %d, %d)", gl_enum_name(mode), i1, i2, j1, j2));
 	fn.glEvalMesh2(mode, i1, i2, j1, j2);
 }
 
@@ -4333,7 +4333,7 @@ void OSMesaDriver::nfglExecuteProgramNV(GLenum target, GLuint id, memptr params)
 void OSMesaDriver::nfglExecuteProgramNV(GLenum target, GLuint id, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glExecuteProgramNV(0x%x, %u, " PRI_PTR ")", target, id, AtariOffset(params)));
+	D(bug("nfosmesa: glExecuteProgramNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), id, AtariOffset(params)));
 FN_GLEXECUTEPROGRAMNV(target, id, params);
 }
 
@@ -4349,7 +4349,7 @@ void OSMesaDriver::nfglFeedbackBuffer(GLsizei size, GLenum type, memptr buffer)
 void OSMesaDriver::nfglFeedbackBuffer(GLsizei size, GLenum type, GLfloat *buffer)
 #endif
 {
-	D(bug("nfosmesa: glFeedbackBuffer(%d, 0x%x, " PRI_PTR ")", size, type, AtariOffset(buffer)));
+	D(bug("nfosmesa: glFeedbackBuffer(%d, %s, " PRI_PTR ")", size, gl_enum_name(type), AtariOffset(buffer)));
 FN_GLFEEDBACKBUFFER(size, type, buffer);
 }
 
@@ -4359,20 +4359,20 @@ void OSMesaDriver::nfglFeedbackBufferxOES(GLsizei n, GLenum type, memptr buffer)
 void OSMesaDriver::nfglFeedbackBufferxOES(GLsizei n, GLenum type, const GLfixed *buffer)
 #endif
 {
-	D(bug("nfosmesa: glFeedbackBufferxOES(%d, 0x%x, " PRI_PTR ")", n, type, AtariOffset(buffer)));
+	D(bug("nfosmesa: glFeedbackBufferxOES(%d, %s, " PRI_PTR ")", n, gl_enum_name(type), AtariOffset(buffer)));
 FN_GLFEEDBACKBUFFERXOES(n, type, buffer);
 }
 
 GLsync OSMesaDriver::nfglFenceSync(GLenum condition, GLbitfield flags)
 {
-	D(bug("nfosmesa: glFenceSync(0x%x, 0x%x)", condition, flags));
+	D(bug("nfosmesa: glFenceSync(%s, 0x%x)", gl_enum_name(condition), flags));
 	GLsync __ret = fn.glFenceSync(condition, flags);
 	return __ret;
 }
 
 void OSMesaDriver::nfglFinalCombinerInputNV(GLenum variable, GLenum input, GLenum mapping, GLenum componentUsage)
 {
-	D(bug("nfosmesa: glFinalCombinerInputNV(0x%x, 0x%x, 0x%x, 0x%x)", variable, input, mapping, componentUsage));
+	D(bug("nfosmesa: glFinalCombinerInputNV(%s, %s, %s, %s)", gl_enum_name(variable), gl_enum_name(input), gl_enum_name(mapping), gl_enum_name(componentUsage)));
 	fn.glFinalCombinerInputNV(variable, input, mapping, componentUsage);
 }
 
@@ -4406,7 +4406,7 @@ void OSMesaDriver::nfglFinishFenceNV(GLuint fence)
 
 void OSMesaDriver::nfglFinishObjectAPPLE(GLenum object, GLuint name)
 {
-	D(bug("nfosmesa: glFinishObjectAPPLE(0x%x, %u)", object, name));
+	D(bug("nfosmesa: glFinishObjectAPPLE(%s, %u)", gl_enum_name(object), name));
 	fn.glFinishObjectAPPLE(object, name);
 }
 
@@ -4430,13 +4430,13 @@ FN_GLFLUSH();
 
 void OSMesaDriver::nfglFlushMappedBufferRange(GLenum target, GLintptr offset, GLsizeiptr length)
 {
-	D(bug("nfosmesa: glFlushMappedBufferRange(0x%x, %" PRI_IPTR ", %" PRI_IPTR ")", target, offset, length));
+	D(bug("nfosmesa: glFlushMappedBufferRange(%s, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), offset, length));
 	fn.glFlushMappedBufferRange(target, offset, length);
 }
 
 void OSMesaDriver::nfglFlushMappedBufferRangeAPPLE(GLenum target, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glFlushMappedBufferRangeAPPLE(0x%x, %" PRI_IPTR ", %" PRI_IPTR ")", target, offset, size));
+	D(bug("nfosmesa: glFlushMappedBufferRangeAPPLE(%s, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), offset, size));
 	fn.glFlushMappedBufferRangeAPPLE(target, offset, size);
 }
 
@@ -4454,7 +4454,7 @@ void OSMesaDriver::nfglFlushMappedNamedBufferRangeEXT(GLuint buffer, GLintptr of
 
 void OSMesaDriver::nfglFlushPixelDataRangeNV(GLenum target)
 {
-	D(bug("nfosmesa: glFlushPixelDataRangeNV(0x%x)", target));
+	D(bug("nfosmesa: glFlushPixelDataRangeNV(%s)", gl_enum_name(target)));
 	fn.glFlushPixelDataRangeNV(target);
 }
 
@@ -4472,7 +4472,7 @@ void OSMesaDriver::nfglFlushRenderAPPLE(void)
 
 void OSMesaDriver::nfglFlushStaticDataIBM(GLenum target)
 {
-	D(bug("nfosmesa: glFlushStaticDataIBM(0x%x)", target));
+	D(bug("nfosmesa: glFlushStaticDataIBM(%s)", gl_enum_name(target)));
 	fn.glFlushStaticDataIBM(target);
 }
 
@@ -4494,7 +4494,7 @@ void OSMesaDriver::nfglFlushVertexArrayRangeNV(void)
 
 void OSMesaDriver::nfglFogCoordFormatNV(GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glFogCoordFormatNV(0x%x, %d)", type, stride));
+	D(bug("nfosmesa: glFogCoordFormatNV(%s, %d)", gl_enum_name(type), stride));
 	fn.glFogCoordFormatNV(type, stride);
 }
 
@@ -4504,7 +4504,7 @@ void OSMesaDriver::nfglFogCoordPointer(GLenum type, GLsizei stride, memptr point
 void OSMesaDriver::nfglFogCoordPointer(GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glFogCoordPointer(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glFogCoordPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLFOGCOORDPOINTER(type, stride, pointer);
 }
 
@@ -4514,7 +4514,7 @@ void OSMesaDriver::nfglFogCoordPointerEXT(GLenum type, GLsizei stride, memptr po
 void OSMesaDriver::nfglFogCoordPointerEXT(GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glFogCoordPointerEXT(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glFogCoordPointerEXT(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLFOGCOORDPOINTEREXT(type, stride, pointer);
 }
 
@@ -4524,7 +4524,7 @@ void OSMesaDriver::nfglFogCoordPointerListIBM(GLenum type, GLint stride, memptr 
 void OSMesaDriver::nfglFogCoordPointerListIBM(GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glFogCoordPointerListIBM(0x%x, %d, " PRI_PTR ", %d)", type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glFogCoordPointerListIBM(%s, %d, " PRI_PTR ", %d)", gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLFOGCOORDPOINTERLISTIBM(type, stride, pointer, ptrstride);
 }
 
@@ -4620,7 +4620,7 @@ FN_GLFOGFUNCSGIS(n, points);
 
 void OSMesaDriver::nfglFogf(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glFogf(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glFogf(%s, %f)", gl_enum_name(pname), param));
 	fn.glFogf(pname, param);
 }
 
@@ -4630,13 +4630,13 @@ void OSMesaDriver::nfglFogfv(GLenum pname, memptr params)
 void OSMesaDriver::nfglFogfv(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glFogfv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFogfv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLFOGFV(pname, params);
 }
 
 void OSMesaDriver::nfglFogi(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glFogi(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glFogi(%s, %d)", gl_enum_name(pname), param));
 	fn.glFogi(pname, param);
 }
 
@@ -4646,13 +4646,13 @@ void OSMesaDriver::nfglFogiv(GLenum pname, memptr params)
 void OSMesaDriver::nfglFogiv(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glFogiv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFogiv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLFOGIV(pname, params);
 }
 
 void OSMesaDriver::nfglFogxOES(GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glFogxOES(0x%x, 0x%x)", pname, param));
+	D(bug("nfosmesa: glFogxOES(%s, 0x%x)", gl_enum_name(pname), param));
 	fn.glFogxOES(pname, param);
 }
 
@@ -4662,13 +4662,13 @@ void OSMesaDriver::nfglFogxvOES(GLenum pname, memptr param)
 void OSMesaDriver::nfglFogxvOES(GLenum pname, const GLfixed *param)
 #endif
 {
-	D(bug("nfosmesa: glFogxvOES(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glFogxvOES(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLFOGXVOES(pname, param);
 }
 
 void OSMesaDriver::nfglFragmentColorMaterialSGIX(GLenum face, GLenum mode)
 {
-	D(bug("nfosmesa: glFragmentColorMaterialSGIX(0x%x, 0x%x)", face, mode));
+	D(bug("nfosmesa: glFragmentColorMaterialSGIX(%s, %s)", gl_enum_name(face), gl_enum_name(mode)));
 	fn.glFragmentColorMaterialSGIX(face, mode);
 }
 
@@ -4680,7 +4680,7 @@ void OSMesaDriver::nfglFragmentCoverageColorNV(GLuint color)
 
 void OSMesaDriver::nfglFragmentLightModelfSGIX(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glFragmentLightModelfSGIX(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glFragmentLightModelfSGIX(%s, %f)", gl_enum_name(pname), param));
 	fn.glFragmentLightModelfSGIX(pname, param);
 }
 
@@ -4690,13 +4690,13 @@ void OSMesaDriver::nfglFragmentLightModelfvSGIX(GLenum pname, memptr params)
 void OSMesaDriver::nfglFragmentLightModelfvSGIX(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentLightModelfvSGIX(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentLightModelfvSGIX(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTLIGHTMODELFVSGIX(pname, params);
 }
 
 void OSMesaDriver::nfglFragmentLightModeliSGIX(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glFragmentLightModeliSGIX(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glFragmentLightModeliSGIX(%s, %d)", gl_enum_name(pname), param));
 	fn.glFragmentLightModeliSGIX(pname, param);
 }
 
@@ -4706,13 +4706,13 @@ void OSMesaDriver::nfglFragmentLightModelivSGIX(GLenum pname, memptr params)
 void OSMesaDriver::nfglFragmentLightModelivSGIX(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentLightModelivSGIX(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentLightModelivSGIX(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTLIGHTMODELIVSGIX(pname, params);
 }
 
 void OSMesaDriver::nfglFragmentLightfSGIX(GLenum light, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glFragmentLightfSGIX(0x%x, 0x%x, %f)", light, pname, param));
+	D(bug("nfosmesa: glFragmentLightfSGIX(%s, %s, %f)", gl_enum_name(light), gl_enum_name(pname), param));
 	fn.glFragmentLightfSGIX(light, pname, param);
 }
 
@@ -4722,13 +4722,13 @@ void OSMesaDriver::nfglFragmentLightfvSGIX(GLenum light, GLenum pname, memptr pa
 void OSMesaDriver::nfglFragmentLightfvSGIX(GLenum light, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentLightfvSGIX(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentLightfvSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTLIGHTFVSGIX(light, pname, params);
 }
 
 void OSMesaDriver::nfglFragmentLightiSGIX(GLenum light, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glFragmentLightiSGIX(0x%x, 0x%x, %d)", light, pname, param));
+	D(bug("nfosmesa: glFragmentLightiSGIX(%s, %s, %d)", gl_enum_name(light), gl_enum_name(pname), param));
 	fn.glFragmentLightiSGIX(light, pname, param);
 }
 
@@ -4738,13 +4738,13 @@ void OSMesaDriver::nfglFragmentLightivSGIX(GLenum light, GLenum pname, memptr pa
 void OSMesaDriver::nfglFragmentLightivSGIX(GLenum light, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentLightivSGIX(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentLightivSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTLIGHTIVSGIX(light, pname, params);
 }
 
 void OSMesaDriver::nfglFragmentMaterialfSGIX(GLenum face, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glFragmentMaterialfSGIX(0x%x, 0x%x, %f)", face, pname, param));
+	D(bug("nfosmesa: glFragmentMaterialfSGIX(%s, %s, %f)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glFragmentMaterialfSGIX(face, pname, param);
 }
 
@@ -4754,13 +4754,13 @@ void OSMesaDriver::nfglFragmentMaterialfvSGIX(GLenum face, GLenum pname, memptr 
 void OSMesaDriver::nfglFragmentMaterialfvSGIX(GLenum face, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentMaterialfvSGIX(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentMaterialfvSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTMATERIALFVSGIX(face, pname, params);
 }
 
 void OSMesaDriver::nfglFragmentMaterialiSGIX(GLenum face, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glFragmentMaterialiSGIX(0x%x, 0x%x, %d)", face, pname, param));
+	D(bug("nfosmesa: glFragmentMaterialiSGIX(%s, %s, %d)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glFragmentMaterialiSGIX(face, pname, param);
 }
 
@@ -4770,7 +4770,7 @@ void OSMesaDriver::nfglFragmentMaterialivSGIX(GLenum face, GLenum pname, memptr 
 void OSMesaDriver::nfglFragmentMaterialivSGIX(GLenum face, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glFragmentMaterialivSGIX(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glFragmentMaterialivSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLFRAGMENTMATERIALIVSGIX(face, pname, params);
 }
 
@@ -4788,7 +4788,7 @@ void OSMesaDriver::nfglFrameZoomSGIX(GLint factor)
 
 void OSMesaDriver::nfglFramebufferDrawBufferEXT(GLuint framebuffer, GLenum mode)
 {
-	D(bug("nfosmesa: glFramebufferDrawBufferEXT(%u, 0x%x)", framebuffer, mode));
+	D(bug("nfosmesa: glFramebufferDrawBufferEXT(%u, %s)", framebuffer, gl_enum_name(mode)));
 	fn.glFramebufferDrawBufferEXT(framebuffer, mode);
 }
 
@@ -4804,25 +4804,25 @@ FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs);
 
 void OSMesaDriver::nfglFramebufferParameteri(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glFramebufferParameteri(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glFramebufferParameteri(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glFramebufferParameteri(target, pname, param);
 }
 
 void OSMesaDriver::nfglFramebufferReadBufferEXT(GLuint framebuffer, GLenum mode)
 {
-	D(bug("nfosmesa: glFramebufferReadBufferEXT(%u, 0x%x)", framebuffer, mode));
+	D(bug("nfosmesa: glFramebufferReadBufferEXT(%u, %s)", framebuffer, gl_enum_name(mode)));
 	fn.glFramebufferReadBufferEXT(framebuffer, mode);
 }
 
 void OSMesaDriver::nfglFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glFramebufferRenderbuffer(0x%x, 0x%x, 0x%x, %u)", target, attachment, renderbuffertarget, renderbuffer));
+	D(bug("nfosmesa: glFramebufferRenderbuffer(%s, %s, %s, %u)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(renderbuffertarget), renderbuffer));
 	fn.glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
 }
 
 void OSMesaDriver::nfglFramebufferRenderbufferEXT(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glFramebufferRenderbufferEXT(0x%x, 0x%x, 0x%x, %u)", target, attachment, renderbuffertarget, renderbuffer));
+	D(bug("nfosmesa: glFramebufferRenderbufferEXT(%s, %s, %s, %u)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(renderbuffertarget), renderbuffer));
 	fn.glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, renderbuffer);
 }
 
@@ -4832,97 +4832,97 @@ void OSMesaDriver::nfglFramebufferSampleLocationsfvNV(GLenum target, GLuint star
 void OSMesaDriver::nfglFramebufferSampleLocationsfvNV(GLenum target, GLuint start, GLsizei count, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glFramebufferSampleLocationsfvNV(0x%x, %u, %d, " PRI_PTR ")", target, start, count, AtariOffset(v)));
+	D(bug("nfosmesa: glFramebufferSampleLocationsfvNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), start, count, AtariOffset(v)));
 FN_GLFRAMEBUFFERSAMPLELOCATIONSFVNV(target, start, count, v);
 }
 
 void OSMesaDriver::nfglFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTexture(0x%x, 0x%x, %u, %d)", target, attachment, texture, level));
+	D(bug("nfosmesa: glFramebufferTexture(%s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level));
 	fn.glFramebufferTexture(target, attachment, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTexture1D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTexture1D(0x%x, 0x%x, 0x%x, %u, %d)", target, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glFramebufferTexture1D(%s, %s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glFramebufferTexture1D(target, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTexture1DEXT(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTexture1DEXT(0x%x, 0x%x, 0x%x, %u, %d)", target, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glFramebufferTexture1DEXT(%s, %s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glFramebufferTexture1DEXT(target, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTexture2D(0x%x, 0x%x, 0x%x, %u, %d)", target, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glFramebufferTexture2D(%s, %s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glFramebufferTexture2D(target, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTexture2DEXT(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTexture2DEXT(0x%x, 0x%x, 0x%x, %u, %d)", target, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glFramebufferTexture2DEXT(%s, %s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glFramebufferTexture2DEXT(target, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTexture3D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
 {
-	D(bug("nfosmesa: glFramebufferTexture3D(0x%x, 0x%x, 0x%x, %u, %d, %d)", target, attachment, textarget, texture, level, zoffset));
+	D(bug("nfosmesa: glFramebufferTexture3D(%s, %s, %s, %u, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level, zoffset));
 	fn.glFramebufferTexture3D(target, attachment, textarget, texture, level, zoffset);
 }
 
 void OSMesaDriver::nfglFramebufferTexture3DEXT(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
 {
-	D(bug("nfosmesa: glFramebufferTexture3DEXT(0x%x, 0x%x, 0x%x, %u, %d, %d)", target, attachment, textarget, texture, level, zoffset));
+	D(bug("nfosmesa: glFramebufferTexture3DEXT(%s, %s, %s, %u, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(textarget), texture, level, zoffset));
 	fn.glFramebufferTexture3DEXT(target, attachment, textarget, texture, level, zoffset);
 }
 
 void OSMesaDriver::nfglFramebufferTextureARB(GLenum target, GLenum attachment, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTextureARB(0x%x, 0x%x, %u, %d)", target, attachment, texture, level));
+	D(bug("nfosmesa: glFramebufferTextureARB(%s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level));
 	fn.glFramebufferTextureARB(target, attachment, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTextureEXT(GLenum target, GLenum attachment, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glFramebufferTextureEXT(0x%x, 0x%x, %u, %d)", target, attachment, texture, level));
+	D(bug("nfosmesa: glFramebufferTextureEXT(%s, %s, %u, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level));
 	fn.glFramebufferTextureEXT(target, attachment, texture, level);
 }
 
 void OSMesaDriver::nfglFramebufferTextureFaceARB(GLenum target, GLenum attachment, GLuint texture, GLint level, GLenum face)
 {
-	D(bug("nfosmesa: glFramebufferTextureFaceARB(0x%x, 0x%x, %u, %d, 0x%x)", target, attachment, texture, level, face));
+	D(bug("nfosmesa: glFramebufferTextureFaceARB(%s, %s, %u, %d, %s)", gl_enum_name(target), gl_enum_name(attachment), texture, level, gl_enum_name(face)));
 	fn.glFramebufferTextureFaceARB(target, attachment, texture, level, face);
 }
 
 void OSMesaDriver::nfglFramebufferTextureFaceEXT(GLenum target, GLenum attachment, GLuint texture, GLint level, GLenum face)
 {
-	D(bug("nfosmesa: glFramebufferTextureFaceEXT(0x%x, 0x%x, %u, %d, 0x%x)", target, attachment, texture, level, face));
+	D(bug("nfosmesa: glFramebufferTextureFaceEXT(%s, %s, %u, %d, %s)", gl_enum_name(target), gl_enum_name(attachment), texture, level, gl_enum_name(face)));
 	fn.glFramebufferTextureFaceEXT(target, attachment, texture, level, face);
 }
 
 void OSMesaDriver::nfglFramebufferTextureLayer(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
-	D(bug("nfosmesa: glFramebufferTextureLayer(0x%x, 0x%x, %u, %d, %d)", target, attachment, texture, level, layer));
+	D(bug("nfosmesa: glFramebufferTextureLayer(%s, %s, %u, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level, layer));
 	fn.glFramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 
 void OSMesaDriver::nfglFramebufferTextureLayerARB(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
-	D(bug("nfosmesa: glFramebufferTextureLayerARB(0x%x, 0x%x, %u, %d, %d)", target, attachment, texture, level, layer));
+	D(bug("nfosmesa: glFramebufferTextureLayerARB(%s, %s, %u, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level, layer));
 	fn.glFramebufferTextureLayerARB(target, attachment, texture, level, layer);
 }
 
 void OSMesaDriver::nfglFramebufferTextureLayerEXT(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
-	D(bug("nfosmesa: glFramebufferTextureLayerEXT(0x%x, 0x%x, %u, %d, %d)", target, attachment, texture, level, layer));
+	D(bug("nfosmesa: glFramebufferTextureLayerEXT(%s, %s, %u, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level, layer));
 	fn.glFramebufferTextureLayerEXT(target, attachment, texture, level, layer);
 }
 
 void OSMesaDriver::nfglFramebufferTextureMultiviewOVR(GLenum target, GLenum attachment, GLuint texture, GLint level, GLint baseViewIndex, GLsizei numViews)
 {
-	D(bug("nfosmesa: glFramebufferTextureMultiviewOVR(0x%x, 0x%x, %u, %d, %d, %d)", target, attachment, texture, level, baseViewIndex, numViews));
+	D(bug("nfosmesa: glFramebufferTextureMultiviewOVR(%s, %s, %u, %d, %d, %d)", gl_enum_name(target), gl_enum_name(attachment), texture, level, baseViewIndex, numViews));
 	fn.glFramebufferTextureMultiviewOVR(target, attachment, texture, level, baseViewIndex, numViews);
 }
 
@@ -4934,7 +4934,7 @@ FN_GLFREEOBJECTBUFFERATI(buffer);
 
 void OSMesaDriver::nfglFrontFace(GLenum mode)
 {
-	D(bug("nfosmesa: glFrontFace(0x%x)", mode));
+	D(bug("nfosmesa: glFrontFace(%s)", gl_enum_name(mode)));
 	fn.glFrontFace(mode);
 }
 
@@ -5057,7 +5057,7 @@ void OSMesaDriver::nfglGenNamesAMD(GLenum identifier, GLuint num, memptr names)
 void OSMesaDriver::nfglGenNamesAMD(GLenum identifier, GLuint num, GLuint *names)
 #endif
 {
-	D(bug("nfosmesa: glGenNamesAMD(0x%x, %u, " PRI_PTR ")", identifier, num, AtariOffset(names)));
+	D(bug("nfosmesa: glGenNamesAMD(%s, %u, " PRI_PTR ")", gl_enum_name(identifier), num, AtariOffset(names)));
 FN_GLGENNAMESAMD(identifier, num, names);
 }
 
@@ -5170,7 +5170,7 @@ FN_GLGENSAMPLERS(count, samplers);
 
 GLuint OSMesaDriver::nfglGenSymbolsEXT(GLenum datatype, GLenum storagetype, GLenum range, GLuint components)
 {
-	D(bug("nfosmesa: glGenSymbolsEXT(0x%x, 0x%x, 0x%x, %u)", datatype, storagetype, range, components));
+	D(bug("nfosmesa: glGenSymbolsEXT(%s, %s, %s, %u)", gl_enum_name(datatype), gl_enum_name(storagetype), gl_enum_name(range), components));
 	GLuint __ret = fn.glGenSymbolsEXT(datatype, storagetype, range, components);
 	return __ret;
 }
@@ -5244,19 +5244,19 @@ GLuint OSMesaDriver::nfglGenVertexShadersEXT(GLuint range)
 
 void OSMesaDriver::nfglGenerateMipmap(GLenum target)
 {
-	D(bug("nfosmesa: glGenerateMipmap(0x%x)", target));
+	D(bug("nfosmesa: glGenerateMipmap(%s)", gl_enum_name(target)));
 	fn.glGenerateMipmap(target);
 }
 
 void OSMesaDriver::nfglGenerateMipmapEXT(GLenum target)
 {
-	D(bug("nfosmesa: glGenerateMipmapEXT(0x%x)", target));
+	D(bug("nfosmesa: glGenerateMipmapEXT(%s)", gl_enum_name(target)));
 	fn.glGenerateMipmapEXT(target);
 }
 
 void OSMesaDriver::nfglGenerateMultiTexMipmapEXT(GLenum texunit, GLenum target)
 {
-	D(bug("nfosmesa: glGenerateMultiTexMipmapEXT(0x%x, 0x%x)", texunit, target));
+	D(bug("nfosmesa: glGenerateMultiTexMipmapEXT(%s, %s)", gl_enum_name(texunit), gl_enum_name(target)));
 	fn.glGenerateMultiTexMipmapEXT(texunit, target);
 }
 
@@ -5268,7 +5268,7 @@ void OSMesaDriver::nfglGenerateTextureMipmap(GLuint texture)
 
 void OSMesaDriver::nfglGenerateTextureMipmapEXT(GLuint texture, GLenum target)
 {
-	D(bug("nfosmesa: glGenerateTextureMipmapEXT(%u, 0x%x)", texture, target));
+	D(bug("nfosmesa: glGenerateTextureMipmapEXT(%u, %s)", texture, gl_enum_name(target)));
 	fn.glGenerateTextureMipmapEXT(texture, target);
 }
 
@@ -5278,7 +5278,7 @@ void OSMesaDriver::nfglGetActiveAtomicCounterBufferiv(GLuint program, GLuint buf
 void OSMesaDriver::nfglGetActiveAtomicCounterBufferiv(GLuint program, GLuint bufferIndex, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveAtomicCounterBufferiv(%u, %u, 0x%x, " PRI_PTR ")", program, bufferIndex, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetActiveAtomicCounterBufferiv(%u, %u, %s, " PRI_PTR ")", program, bufferIndex, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETACTIVEATOMICCOUNTERBUFFERIV(program, bufferIndex, pname, params);
 }
 
@@ -5308,7 +5308,7 @@ void OSMesaDriver::nfglGetActiveSubroutineName(GLuint program, GLenum shadertype
 void OSMesaDriver::nfglGetActiveSubroutineName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei *length, GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveSubroutineName(%u, 0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, shadertype, index, bufsize, AtariOffset(length), AtariOffset(name)));
+	D(bug("nfosmesa: glGetActiveSubroutineName(%u, %s, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, gl_enum_name(shadertype), index, bufsize, AtariOffset(length), AtariOffset(name)));
 FN_GLGETACTIVESUBROUTINENAME(program, shadertype, index, bufsize, length, name);
 }
 
@@ -5318,7 +5318,7 @@ void OSMesaDriver::nfglGetActiveSubroutineUniformName(GLuint program, GLenum sha
 void OSMesaDriver::nfglGetActiveSubroutineUniformName(GLuint program, GLenum shadertype, GLuint index, GLsizei bufsize, GLsizei *length, GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveSubroutineUniformName(%u, 0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, shadertype, index, bufsize, AtariOffset(length), AtariOffset(name)));
+	D(bug("nfosmesa: glGetActiveSubroutineUniformName(%u, %s, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, gl_enum_name(shadertype), index, bufsize, AtariOffset(length), AtariOffset(name)));
 FN_GLGETACTIVESUBROUTINEUNIFORMNAME(program, shadertype, index, bufsize, length, name);
 }
 
@@ -5328,7 +5328,7 @@ void OSMesaDriver::nfglGetActiveSubroutineUniformiv(GLuint program, GLenum shade
 void OSMesaDriver::nfglGetActiveSubroutineUniformiv(GLuint program, GLenum shadertype, GLuint index, GLenum pname, GLint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveSubroutineUniformiv(%u, 0x%x, %u, 0x%x, " PRI_PTR ")", program, shadertype, index, pname, AtariOffset(values)));
+	D(bug("nfosmesa: glGetActiveSubroutineUniformiv(%u, %s, %u, %s, " PRI_PTR ")", program, gl_enum_name(shadertype), index, gl_enum_name(pname), AtariOffset(values)));
 FN_GLGETACTIVESUBROUTINEUNIFORMIV(program, shadertype, index, pname, values);
 }
 
@@ -5394,7 +5394,7 @@ void OSMesaDriver::nfglGetActiveUniformBlockiv(GLuint program, GLuint uniformBlo
 void OSMesaDriver::nfglGetActiveUniformBlockiv(GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveUniformBlockiv(%u, %u, 0x%x, " PRI_PTR ")", program, uniformBlockIndex, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetActiveUniformBlockiv(%u, %u, %s, " PRI_PTR ")", program, uniformBlockIndex, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETACTIVEUNIFORMBLOCKIV(program, uniformBlockIndex, pname, params);
 }
 
@@ -5414,7 +5414,7 @@ void OSMesaDriver::nfglGetActiveUniformsiv(GLuint program, GLsizei uniformCount,
 void OSMesaDriver::nfglGetActiveUniformsiv(GLuint program, GLsizei uniformCount, const GLuint *uniformIndices, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetActiveUniformsiv(%u, %d, " PRI_PTR ", 0x%x, " PRI_PTR ")", program, uniformCount, AtariOffset(uniformIndices), pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetActiveUniformsiv(%u, %d, " PRI_PTR ", %s, " PRI_PTR ")", program, uniformCount, AtariOffset(uniformIndices), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETACTIVEUNIFORMSIV(program, uniformCount, uniformIndices, pname, params);
 }
 
@@ -5434,7 +5434,7 @@ void OSMesaDriver::nfglGetArrayObjectfvATI(GLenum array, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetArrayObjectfvATI(GLenum array, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetArrayObjectfvATI(0x%x, 0x%x, " PRI_PTR ")", array, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetArrayObjectfvATI(%s, %s, " PRI_PTR ")", gl_enum_name(array), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETARRAYOBJECTFVATI(array, pname, params);
 }
 
@@ -5444,7 +5444,7 @@ void OSMesaDriver::nfglGetArrayObjectivATI(GLenum array, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetArrayObjectivATI(GLenum array, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetArrayObjectivATI(0x%x, 0x%x, " PRI_PTR ")", array, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetArrayObjectivATI(%s, %s, " PRI_PTR ")", gl_enum_name(array), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETARRAYOBJECTIVATI(array, pname, params);
 }
 
@@ -5504,7 +5504,7 @@ void OSMesaDriver::nfglGetBooleanIndexedvEXT(GLenum target, GLuint index, memptr
 void OSMesaDriver::nfglGetBooleanIndexedvEXT(GLenum target, GLuint index, GLboolean *data)
 #endif
 {
-	D(bug("nfosmesa: glGetBooleanIndexedvEXT(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetBooleanIndexedvEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETBOOLEANINDEXEDVEXT(target, index, data);
 }
 
@@ -5514,7 +5514,7 @@ void OSMesaDriver::nfglGetBooleani_v(GLenum target, GLuint index, memptr data)
 void OSMesaDriver::nfglGetBooleani_v(GLenum target, GLuint index, GLboolean *data)
 #endif
 {
-	D(bug("nfosmesa: glGetBooleani_v(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetBooleani_v(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETBOOLEANI_V(target, index, data);
 }
 
@@ -5524,7 +5524,7 @@ void OSMesaDriver::nfglGetBooleanv(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetBooleanv(GLenum pname, GLboolean *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBooleanv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBooleanv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBOOLEANV(pname, params);
 }
 
@@ -5534,7 +5534,7 @@ void OSMesaDriver::nfglGetBufferParameteri64v(GLenum target, GLenum pname, mempt
 void OSMesaDriver::nfglGetBufferParameteri64v(GLenum target, GLenum pname, GLint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferParameteri64v(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferParameteri64v(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPARAMETERI64V(target, pname, params);
 }
 
@@ -5544,7 +5544,7 @@ void OSMesaDriver::nfglGetBufferParameteriv(GLenum target, GLenum pname, memptr 
 void OSMesaDriver::nfglGetBufferParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPARAMETERIV(target, pname, params);
 }
 
@@ -5554,7 +5554,7 @@ void OSMesaDriver::nfglGetBufferParameterivARB(GLenum target, GLenum pname, memp
 void OSMesaDriver::nfglGetBufferParameterivARB(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferParameterivARB(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferParameterivARB(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPARAMETERIVARB(target, pname, params);
 }
 
@@ -5564,7 +5564,7 @@ void OSMesaDriver::nfglGetBufferParameterui64vNV(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglGetBufferParameterui64vNV(GLenum target, GLenum pname, GLuint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferParameterui64vNV(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferParameterui64vNV(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPARAMETERUI64VNV(target, pname, params);
 }
 
@@ -5574,7 +5574,7 @@ void OSMesaDriver::nfglGetBufferPointerv(GLenum target, GLenum pname, memptr par
 void OSMesaDriver::nfglGetBufferPointerv(GLenum target, GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferPointerv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferPointerv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPOINTERV(target, pname, params);
 }
 
@@ -5584,7 +5584,7 @@ void OSMesaDriver::nfglGetBufferPointervARB(GLenum target, GLenum pname, memptr 
 void OSMesaDriver::nfglGetBufferPointervARB(GLenum target, GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferPointervARB(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetBufferPointervARB(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETBUFFERPOINTERVARB(target, pname, params);
 }
 
@@ -5595,7 +5595,7 @@ void OSMesaDriver::nfglGetBufferSubData(GLenum target, GLintptr offset, GLsizeip
 void OSMesaDriver::nfglGetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void *data)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferSubData(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", target, offset, size, AtariOffset(data)));
+	D(bug("nfosmesa: glGetBufferSubData(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLGETBUFFERSUBDATA(target, offset, size, data);
 }
 #endif
@@ -5607,7 +5607,7 @@ void OSMesaDriver::nfglGetBufferSubDataARB(GLenum target, GLintptrARB offset, GL
 void OSMesaDriver::nfglGetBufferSubDataARB(GLenum target, GLintptrARB offset, GLsizeiptrARB size, void *data)
 #endif
 {
-	D(bug("nfosmesa: glGetBufferSubDataARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", target, offset, size, AtariOffset(data)));
+	D(bug("nfosmesa: glGetBufferSubDataARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLGETBUFFERSUBDATAARB(target, offset, size, data);
 }
 #endif
@@ -5618,7 +5618,7 @@ void OSMesaDriver::nfglGetClipPlane(GLenum plane, memptr equation)
 void OSMesaDriver::nfglGetClipPlane(GLenum plane, GLdouble *equation)
 #endif
 {
-	D(bug("nfosmesa: glGetClipPlane(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glGetClipPlane(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLGETCLIPPLANE(plane, equation);
 }
 
@@ -5628,7 +5628,7 @@ void OSMesaDriver::nfglGetClipPlanefOES(GLenum plane, memptr equation)
 void OSMesaDriver::nfglGetClipPlanefOES(GLenum plane, GLfloat *equation)
 #endif
 {
-	D(bug("nfosmesa: glGetClipPlanefOES(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glGetClipPlanefOES(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLGETCLIPPLANEFOES(plane, equation);
 }
 
@@ -5638,7 +5638,7 @@ void OSMesaDriver::nfglGetClipPlanexOES(GLenum plane, memptr equation)
 void OSMesaDriver::nfglGetClipPlanexOES(GLenum plane, GLfixed *equation)
 #endif
 {
-	D(bug("nfosmesa: glGetClipPlanexOES(0x%x, " PRI_PTR ")", plane, AtariOffset(equation)));
+	D(bug("nfosmesa: glGetClipPlanexOES(%s, " PRI_PTR ")", gl_enum_name(plane), AtariOffset(equation)));
 FN_GLGETCLIPPLANEXOES(plane, equation);
 }
 
@@ -5648,7 +5648,7 @@ void OSMesaDriver::nfglGetColorTable(GLenum target, GLenum format, GLenum type, 
 void OSMesaDriver::nfglGetColorTable(GLenum target, GLenum format, GLenum type, void *table)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTable(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, format, type, AtariOffset(table)));
+	D(bug("nfosmesa: glGetColorTable(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(table)));
 FN_GLGETCOLORTABLE(target, format, type, table);
 }
 
@@ -5658,7 +5658,7 @@ void OSMesaDriver::nfglGetColorTableEXT(GLenum target, GLenum format, GLenum typ
 void OSMesaDriver::nfglGetColorTableEXT(GLenum target, GLenum format, GLenum type, void *data)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, format, type, AtariOffset(data)));
+	D(bug("nfosmesa: glGetColorTableEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(data)));
 FN_GLGETCOLORTABLEEXT(target, format, type, data);
 }
 
@@ -5668,7 +5668,7 @@ void OSMesaDriver::nfglGetColorTableParameterfv(GLenum target, GLenum pname, mem
 void OSMesaDriver::nfglGetColorTableParameterfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERFV(target, pname, params);
 }
 
@@ -5678,7 +5678,7 @@ void OSMesaDriver::nfglGetColorTableParameterfvEXT(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglGetColorTableParameterfvEXT(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERFVEXT(target, pname, params);
 }
 
@@ -5688,7 +5688,7 @@ void OSMesaDriver::nfglGetColorTableParameterfvSGI(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglGetColorTableParameterfvSGI(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameterfvSGI(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameterfvSGI(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERFVSGI(target, pname, params);
 }
 
@@ -5698,7 +5698,7 @@ void OSMesaDriver::nfglGetColorTableParameteriv(GLenum target, GLenum pname, mem
 void OSMesaDriver::nfglGetColorTableParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERIV(target, pname, params);
 }
 
@@ -5708,7 +5708,7 @@ void OSMesaDriver::nfglGetColorTableParameterivEXT(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglGetColorTableParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERIVEXT(target, pname, params);
 }
 
@@ -5718,7 +5718,7 @@ void OSMesaDriver::nfglGetColorTableParameterivSGI(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglGetColorTableParameterivSGI(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableParameterivSGI(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetColorTableParameterivSGI(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCOLORTABLEPARAMETERIVSGI(target, pname, params);
 }
 
@@ -5728,7 +5728,7 @@ void OSMesaDriver::nfglGetColorTableSGI(GLenum target, GLenum format, GLenum typ
 void OSMesaDriver::nfglGetColorTableSGI(GLenum target, GLenum format, GLenum type, void *table)
 #endif
 {
-	D(bug("nfosmesa: glGetColorTableSGI(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, format, type, AtariOffset(table)));
+	D(bug("nfosmesa: glGetColorTableSGI(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(table)));
 FN_GLGETCOLORTABLESGI(target, format, type, table);
 }
 
@@ -5738,7 +5738,7 @@ void OSMesaDriver::nfglGetCombinerInputParameterfvNV(GLenum stage, GLenum portio
 void OSMesaDriver::nfglGetCombinerInputParameterfvNV(GLenum stage, GLenum portion, GLenum variable, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetCombinerInputParameterfvNV(0x%x, 0x%x, 0x%x, 0x%x, " PRI_PTR ")", stage, portion, variable, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetCombinerInputParameterfvNV(%s, %s, %s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(variable), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -5755,7 +5755,7 @@ void OSMesaDriver::nfglGetCombinerInputParameterivNV(GLenum stage, GLenum portio
 void OSMesaDriver::nfglGetCombinerInputParameterivNV(GLenum stage, GLenum portion, GLenum variable, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetCombinerInputParameterivNV(0x%x, 0x%x, 0x%x, 0x%x, " PRI_PTR ")", stage, portion, variable, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetCombinerInputParameterivNV(%s, %s, %s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(variable), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLint __params_tmp[__params_size];
@@ -5772,7 +5772,7 @@ void OSMesaDriver::nfglGetCombinerOutputParameterfvNV(GLenum stage, GLenum porti
 void OSMesaDriver::nfglGetCombinerOutputParameterfvNV(GLenum stage, GLenum portion, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetCombinerOutputParameterfvNV(0x%x, 0x%x, 0x%x, " PRI_PTR ")", stage, portion, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetCombinerOutputParameterfvNV(%s, %s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -5789,7 +5789,7 @@ void OSMesaDriver::nfglGetCombinerOutputParameterivNV(GLenum stage, GLenum porti
 void OSMesaDriver::nfglGetCombinerOutputParameterivNV(GLenum stage, GLenum portion, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetCombinerOutputParameterivNV(0x%x, 0x%x, 0x%x, " PRI_PTR ")", stage, portion, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetCombinerOutputParameterivNV(%s, %s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(portion), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLint __params_tmp[__params_size];
@@ -5806,7 +5806,7 @@ void OSMesaDriver::nfglGetCombinerStageParameterfvNV(GLenum stage, GLenum pname,
 void OSMesaDriver::nfglGetCombinerStageParameterfvNV(GLenum stage, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetCombinerStageParameterfvNV(0x%x, 0x%x, " PRI_PTR ")", stage, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetCombinerStageParameterfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(stage), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -5819,7 +5819,7 @@ void OSMesaDriver::nfglGetCombinerStageParameterfvNV(GLenum stage, GLenum pname,
 
 GLuint OSMesaDriver::nfglGetCommandHeaderNV(GLenum tokenID, GLuint size)
 {
-	D(bug("nfosmesa: glGetCommandHeaderNV(0x%x, %u)", tokenID, size));
+	D(bug("nfosmesa: glGetCommandHeaderNV(%s, %u)", gl_enum_name(tokenID), size));
 	GLuint __ret = fn.glGetCommandHeaderNV(tokenID, size);
 	return __ret;
 }
@@ -5830,7 +5830,7 @@ void OSMesaDriver::nfglGetCompressedMultiTexImageEXT(GLenum texunit, GLenum targ
 void OSMesaDriver::nfglGetCompressedMultiTexImageEXT(GLenum texunit, GLenum target, GLint lod, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetCompressedMultiTexImageEXT(0x%x, 0x%x, %d, " PRI_PTR ")", texunit, target, lod, AtariOffset(img)));
+	D(bug("nfosmesa: glGetCompressedMultiTexImageEXT(%s, %s, %d, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), lod, AtariOffset(img)));
 FN_GLGETCOMPRESSEDMULTITEXIMAGEEXT(texunit, target, lod, img);
 }
 
@@ -5840,7 +5840,7 @@ void OSMesaDriver::nfglGetCompressedTexImage(GLenum target, GLint level, memptr 
 void OSMesaDriver::nfglGetCompressedTexImage(GLenum target, GLint level, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetCompressedTexImage(0x%x, %d, " PRI_PTR ")", target, level, AtariOffset(img)));
+	D(bug("nfosmesa: glGetCompressedTexImage(%s, %d, " PRI_PTR ")", gl_enum_name(target), level, AtariOffset(img)));
 FN_GLGETCOMPRESSEDTEXIMAGE(target, level, img);
 }
 
@@ -5850,7 +5850,7 @@ void OSMesaDriver::nfglGetCompressedTexImageARB(GLenum target, GLint level, memp
 void OSMesaDriver::nfglGetCompressedTexImageARB(GLenum target, GLint level, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetCompressedTexImageARB(0x%x, %d, " PRI_PTR ")", target, level, AtariOffset(img)));
+	D(bug("nfosmesa: glGetCompressedTexImageARB(%s, %d, " PRI_PTR ")", gl_enum_name(target), level, AtariOffset(img)));
 FN_GLGETCOMPRESSEDTEXIMAGEARB(target, level, img);
 }
 
@@ -5870,7 +5870,7 @@ void OSMesaDriver::nfglGetCompressedTextureImageEXT(GLuint texture, GLenum targe
 void OSMesaDriver::nfglGetCompressedTextureImageEXT(GLuint texture, GLenum target, GLint lod, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetCompressedTextureImageEXT(%u, 0x%x, %d, " PRI_PTR ")", texture, target, lod, AtariOffset(img)));
+	D(bug("nfosmesa: glGetCompressedTextureImageEXT(%u, %s, %d, " PRI_PTR ")", texture, gl_enum_name(target), lod, AtariOffset(img)));
 FN_GLGETCOMPRESSEDTEXTUREIMAGEEXT(texture, target, lod, img);
 }
 
@@ -5890,7 +5890,7 @@ void OSMesaDriver::nfglGetConvolutionFilter(GLenum target, GLenum format, GLenum
 void OSMesaDriver::nfglGetConvolutionFilter(GLenum target, GLenum format, GLenum type, void *image)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionFilter(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glGetConvolutionFilter(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLGETCONVOLUTIONFILTER(target, format, type, image);
 }
 
@@ -5900,7 +5900,7 @@ void OSMesaDriver::nfglGetConvolutionFilterEXT(GLenum target, GLenum format, GLe
 void OSMesaDriver::nfglGetConvolutionFilterEXT(GLenum target, GLenum format, GLenum type, void *image)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionFilterEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, format, type, AtariOffset(image)));
+	D(bug("nfosmesa: glGetConvolutionFilterEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(image)));
 FN_GLGETCONVOLUTIONFILTEREXT(target, format, type, image);
 }
 
@@ -5910,7 +5910,7 @@ void OSMesaDriver::nfglGetConvolutionParameterfv(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglGetConvolutionParameterfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetConvolutionParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCONVOLUTIONPARAMETERFV(target, pname, params);
 }
 
@@ -5920,7 +5920,7 @@ void OSMesaDriver::nfglGetConvolutionParameterfvEXT(GLenum target, GLenum pname,
 void OSMesaDriver::nfglGetConvolutionParameterfvEXT(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetConvolutionParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCONVOLUTIONPARAMETERFVEXT(target, pname, params);
 }
 
@@ -5930,7 +5930,7 @@ void OSMesaDriver::nfglGetConvolutionParameteriv(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglGetConvolutionParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetConvolutionParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCONVOLUTIONPARAMETERIV(target, pname, params);
 }
 
@@ -5940,7 +5940,7 @@ void OSMesaDriver::nfglGetConvolutionParameterivEXT(GLenum target, GLenum pname,
 void OSMesaDriver::nfglGetConvolutionParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetConvolutionParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCONVOLUTIONPARAMETERIVEXT(target, pname, params);
 }
 
@@ -5950,7 +5950,7 @@ void OSMesaDriver::nfglGetConvolutionParameterxvOES(GLenum target, GLenum pname,
 void OSMesaDriver::nfglGetConvolutionParameterxvOES(GLenum target, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetConvolutionParameterxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetConvolutionParameterxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETCONVOLUTIONPARAMETERXVOES(target, pname, params);
 }
 
@@ -5966,7 +5966,7 @@ FN_GLGETCOVERAGEMODULATIONTABLENV(bufsize, v);
 
 GLsizei OSMesaDriver::nfglGetDebugLogLengthMESA(GLhandleARB obj, GLenum logType, GLenum shaderType)
 {
-	D(bug("nfosmesa: glGetDebugLogLengthMESA(%u, 0x%x, 0x%x)", (unsigned int)(uintptr_t)obj, logType, shaderType));
+	D(bug("nfosmesa: glGetDebugLogLengthMESA(%u, %s, %s)", (unsigned int)(uintptr_t)obj, gl_enum_name(logType), gl_enum_name(shaderType)));
 	GLsizei __ret = fn.glGetDebugLogLengthMESA(obj, logType, shaderType);
 	return __ret;
 }
@@ -5977,7 +5977,7 @@ void OSMesaDriver::nfglGetDebugLogMESA(GLhandleARB obj, GLenum logType, GLenum s
 void OSMesaDriver::nfglGetDebugLogMESA(GLhandleARB obj, GLenum logType, GLenum shaderType, GLsizei maxLength, GLsizei *length, GLcharARB *debugLog)
 #endif
 {
-	D(bug("nfosmesa: glGetDebugLogMESA(%u, 0x%x, 0x%x, %d, " PRI_PTR ", " PRI_PTR ")", (unsigned int)(uintptr_t)obj, logType, shaderType, maxLength, AtariOffset(length), AtariOffset(debugLog)));
+	D(bug("nfosmesa: glGetDebugLogMESA(%u, %s, %s, %d, " PRI_PTR ", " PRI_PTR ")", (unsigned int)(uintptr_t)obj, gl_enum_name(logType), gl_enum_name(shaderType), maxLength, AtariOffset(length), AtariOffset(debugLog)));
 FN_GLGETDEBUGLOGMESA(obj, logType, shaderType, maxLength, length, debugLog);
 }
 
@@ -6060,7 +6060,7 @@ void OSMesaDriver::nfglGetDetailTexFuncSGIS(GLenum target, memptr points)
 void OSMesaDriver::nfglGetDetailTexFuncSGIS(GLenum target, GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glGetDetailTexFuncSGIS(0x%x, " PRI_PTR ")", target, AtariOffset(points)));
+	D(bug("nfosmesa: glGetDetailTexFuncSGIS(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(points)));
 FN_GLGETDETAILTEXFUNCSGIS(target, points);
 }
 
@@ -6070,7 +6070,7 @@ void OSMesaDriver::nfglGetDoubleIndexedvEXT(GLenum target, GLuint index, memptr 
 void OSMesaDriver::nfglGetDoubleIndexedvEXT(GLenum target, GLuint index, GLdouble *data)
 #endif
 {
-	D(bug("nfosmesa: glGetDoubleIndexedvEXT(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetDoubleIndexedvEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETDOUBLEINDEXEDVEXT(target, index, data);
 }
 
@@ -6080,7 +6080,7 @@ void OSMesaDriver::nfglGetDoublei_v(GLenum target, GLuint index, memptr data)
 void OSMesaDriver::nfglGetDoublei_v(GLenum target, GLuint index, GLdouble *data)
 #endif
 {
-	D(bug("nfosmesa: glGetDoublei_v(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetDoublei_v(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETDOUBLEI_V(target, index, data);
 }
 
@@ -6090,7 +6090,7 @@ void OSMesaDriver::nfglGetDoublei_vEXT(GLenum pname, GLuint index, memptr params
 void OSMesaDriver::nfglGetDoublei_vEXT(GLenum pname, GLuint index, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetDoublei_vEXT(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetDoublei_vEXT(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(params)));
 FN_GLGETDOUBLEI_VEXT(pname, index, params);
 }
 
@@ -6100,7 +6100,7 @@ void OSMesaDriver::nfglGetDoublev(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetDoublev(GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetDoublev(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetDoublev(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETDOUBLEV(pname, params);
 }
 
@@ -6116,7 +6116,7 @@ void OSMesaDriver::nfglGetFenceivNV(GLuint fence, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetFenceivNV(GLuint fence, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFenceivNV(%u, 0x%x, " PRI_PTR ")", fence, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFenceivNV(%u, %s, " PRI_PTR ")", fence, gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLint __params_tmp[__params_size];
@@ -6133,7 +6133,7 @@ void OSMesaDriver::nfglGetFinalCombinerInputParameterfvNV(GLenum variable, GLenu
 void OSMesaDriver::nfglGetFinalCombinerInputParameterfvNV(GLenum variable, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFinalCombinerInputParameterfvNV(0x%x, 0x%x, " PRI_PTR ")", variable, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFinalCombinerInputParameterfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(variable), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLfloat __params_tmp[__params_size];
@@ -6150,7 +6150,7 @@ void OSMesaDriver::nfglGetFinalCombinerInputParameterivNV(GLenum variable, GLenu
 void OSMesaDriver::nfglGetFinalCombinerInputParameterivNV(GLenum variable, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFinalCombinerInputParameterivNV(0x%x, 0x%x, " PRI_PTR ")", variable, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFinalCombinerInputParameterivNV(%s, %s, " PRI_PTR ")", gl_enum_name(variable), gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = nfglGetNumParams(pname);
 	GLint __params_tmp[__params_size];
@@ -6177,7 +6177,7 @@ void OSMesaDriver::nfglGetFixedvOES(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetFixedvOES(GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFixedvOES(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFixedvOES(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFIXEDVOES(pname, params);
 }
 
@@ -6187,7 +6187,7 @@ void OSMesaDriver::nfglGetFloatIndexedvEXT(GLenum target, GLuint index, memptr d
 void OSMesaDriver::nfglGetFloatIndexedvEXT(GLenum target, GLuint index, GLfloat *data)
 #endif
 {
-	D(bug("nfosmesa: glGetFloatIndexedvEXT(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetFloatIndexedvEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETFLOATINDEXEDVEXT(target, index, data);
 }
 
@@ -6197,7 +6197,7 @@ void OSMesaDriver::nfglGetFloati_v(GLenum target, GLuint index, memptr data)
 void OSMesaDriver::nfglGetFloati_v(GLenum target, GLuint index, GLfloat *data)
 #endif
 {
-	D(bug("nfosmesa: glGetFloati_v(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetFloati_v(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETFLOATI_V(target, index, data);
 }
 
@@ -6207,7 +6207,7 @@ void OSMesaDriver::nfglGetFloati_vEXT(GLenum pname, GLuint index, memptr params)
 void OSMesaDriver::nfglGetFloati_vEXT(GLenum pname, GLuint index, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFloati_vEXT(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFloati_vEXT(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(params)));
 FN_GLGETFLOATI_VEXT(pname, index, params);
 }
 
@@ -6217,7 +6217,7 @@ void OSMesaDriver::nfglGetFloatv(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetFloatv(GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFloatv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFloatv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFLOATV(pname, params);
 }
 
@@ -6267,7 +6267,7 @@ void OSMesaDriver::nfglGetFragmentLightfvSGIX(GLenum light, GLenum pname, memptr
 void OSMesaDriver::nfglGetFragmentLightfvSGIX(GLenum light, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFragmentLightfvSGIX(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFragmentLightfvSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAGMENTLIGHTFVSGIX(light, pname, params);
 }
 
@@ -6277,7 +6277,7 @@ void OSMesaDriver::nfglGetFragmentLightivSGIX(GLenum light, GLenum pname, memptr
 void OSMesaDriver::nfglGetFragmentLightivSGIX(GLenum light, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFragmentLightivSGIX(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFragmentLightivSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAGMENTLIGHTIVSGIX(light, pname, params);
 }
 
@@ -6287,7 +6287,7 @@ void OSMesaDriver::nfglGetFragmentMaterialfvSGIX(GLenum face, GLenum pname, memp
 void OSMesaDriver::nfglGetFragmentMaterialfvSGIX(GLenum face, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFragmentMaterialfvSGIX(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFragmentMaterialfvSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAGMENTMATERIALFVSGIX(face, pname, params);
 }
 
@@ -6297,7 +6297,7 @@ void OSMesaDriver::nfglGetFragmentMaterialivSGIX(GLenum face, GLenum pname, memp
 void OSMesaDriver::nfglGetFragmentMaterialivSGIX(GLenum face, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFragmentMaterialivSGIX(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFragmentMaterialivSGIX(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAGMENTMATERIALIVSGIX(face, pname, params);
 }
 
@@ -6307,7 +6307,7 @@ void OSMesaDriver::nfglGetFramebufferAttachmentParameteriv(GLenum target, GLenum
 void OSMesaDriver::nfglGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFramebufferAttachmentParameteriv(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, attachment, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFramebufferAttachmentParameteriv(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAMEBUFFERATTACHMENTPARAMETERIV(target, attachment, pname, params);
 }
 
@@ -6317,7 +6317,7 @@ void OSMesaDriver::nfglGetFramebufferAttachmentParameterivEXT(GLenum target, GLe
 void OSMesaDriver::nfglGetFramebufferAttachmentParameterivEXT(GLenum target, GLenum attachment, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFramebufferAttachmentParameterivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", target, attachment, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFramebufferAttachmentParameterivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(attachment), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT(target, attachment, pname, params);
 }
 
@@ -6327,7 +6327,7 @@ void OSMesaDriver::nfglGetFramebufferParameteriv(GLenum target, GLenum pname, me
 void OSMesaDriver::nfglGetFramebufferParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFramebufferParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFramebufferParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAMEBUFFERPARAMETERIV(target, pname, params);
 }
 
@@ -6337,7 +6337,7 @@ void OSMesaDriver::nfglGetFramebufferParameterivEXT(GLuint framebuffer, GLenum p
 void OSMesaDriver::nfglGetFramebufferParameterivEXT(GLuint framebuffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetFramebufferParameterivEXT(%u, 0x%x, " PRI_PTR ")", framebuffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetFramebufferParameterivEXT(%u, %s, " PRI_PTR ")", framebuffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETFRAMEBUFFERPARAMETERIVEXT(framebuffer, pname, params);
 }
 
@@ -6357,7 +6357,7 @@ GLenum OSMesaDriver::nfglGetGraphicsResetStatusARB(void)
 
 GLhandleARB OSMesaDriver::nfglGetHandleARB(GLenum pname)
 {
-	D(bug("nfosmesa: glGetHandleARB(0x%x)", pname));
+	D(bug("nfosmesa: glGetHandleARB(%s)", gl_enum_name(pname)));
 	GLhandleARB __ret = fn.glGetHandleARB(pname);
 	return __ret;
 }
@@ -6368,7 +6368,7 @@ void OSMesaDriver::nfglGetHistogram(GLenum target, GLboolean32 reset, GLenum for
 void OSMesaDriver::nfglGetHistogram(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogram(0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, reset, format, type, AtariOffset(values)));
+	D(bug("nfosmesa: glGetHistogram(%s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), AtariOffset(values)));
 FN_GLGETHISTOGRAM(target, reset, format, type, values);
 }
 
@@ -6378,7 +6378,7 @@ void OSMesaDriver::nfglGetHistogramEXT(GLenum target, GLboolean32 reset, GLenum 
 void OSMesaDriver::nfglGetHistogramEXT(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramEXT(0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, reset, format, type, AtariOffset(values)));
+	D(bug("nfosmesa: glGetHistogramEXT(%s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), AtariOffset(values)));
 FN_GLGETHISTOGRAMEXT(target, reset, format, type, values);
 }
 
@@ -6388,7 +6388,7 @@ void OSMesaDriver::nfglGetHistogramParameterfv(GLenum target, GLenum pname, memp
 void OSMesaDriver::nfglGetHistogramParameterfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetHistogramParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETHISTOGRAMPARAMETERFV(target, pname, params);
 }
 
@@ -6398,7 +6398,7 @@ void OSMesaDriver::nfglGetHistogramParameterfvEXT(GLenum target, GLenum pname, m
 void OSMesaDriver::nfglGetHistogramParameterfvEXT(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetHistogramParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETHISTOGRAMPARAMETERFVEXT(target, pname, params);
 }
 
@@ -6408,7 +6408,7 @@ void OSMesaDriver::nfglGetHistogramParameteriv(GLenum target, GLenum pname, memp
 void OSMesaDriver::nfglGetHistogramParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetHistogramParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETHISTOGRAMPARAMETERIV(target, pname, params);
 }
 
@@ -6418,7 +6418,7 @@ void OSMesaDriver::nfglGetHistogramParameterivEXT(GLenum target, GLenum pname, m
 void OSMesaDriver::nfglGetHistogramParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetHistogramParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETHISTOGRAMPARAMETERIVEXT(target, pname, params);
 }
 
@@ -6428,19 +6428,19 @@ void OSMesaDriver::nfglGetHistogramParameterxvOES(GLenum target, GLenum pname, m
 void OSMesaDriver::nfglGetHistogramParameterxvOES(GLenum target, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetHistogramParameterxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetHistogramParameterxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETHISTOGRAMPARAMETERXVOES(target, pname, params);
 }
 
 GLuint64 OSMesaDriver::nfglGetImageHandleARB(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
 {
-	D(bug("nfosmesa: glGetImageHandleARB(%u, %d, %d, %d, 0x%x)", texture, level, layered, layer, format));
+	D(bug("nfosmesa: glGetImageHandleARB(%u, %d, %d, %d, %s)", texture, level, layered, layer, gl_enum_name(format)));
 FN_GLGETIMAGEHANDLEARB(texture, level, layered, layer, format);
 }
 
 GLuint64 OSMesaDriver::nfglGetImageHandleNV(GLuint texture, GLint level, GLboolean32 layered, GLint layer, GLenum format)
 {
-	D(bug("nfosmesa: glGetImageHandleNV(%u, %d, %d, %d, 0x%x)", texture, level, layered, layer, format));
+	D(bug("nfosmesa: glGetImageHandleNV(%u, %d, %d, %d, %s)", texture, level, layered, layer, gl_enum_name(format)));
 FN_GLGETIMAGEHANDLENV(texture, level, layered, layer, format);
 }
 
@@ -6450,7 +6450,7 @@ void OSMesaDriver::nfglGetImageTransformParameterfvHP(GLenum target, GLenum pnam
 void OSMesaDriver::nfglGetImageTransformParameterfvHP(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetImageTransformParameterfvHP(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetImageTransformParameterfvHP(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETIMAGETRANSFORMPARAMETERFVHP(target, pname, params);
 }
 
@@ -6460,7 +6460,7 @@ void OSMesaDriver::nfglGetImageTransformParameterivHP(GLenum target, GLenum pnam
 void OSMesaDriver::nfglGetImageTransformParameterivHP(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetImageTransformParameterivHP(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetImageTransformParameterivHP(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETIMAGETRANSFORMPARAMETERIVHP(target, pname, params);
 }
 
@@ -6497,7 +6497,7 @@ void OSMesaDriver::nfglGetInteger64i_v(GLenum target, GLuint index, memptr data)
 void OSMesaDriver::nfglGetInteger64i_v(GLenum target, GLuint index, GLint64 *data)
 #endif
 {
-	D(bug("nfosmesa: glGetInteger64i_v(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetInteger64i_v(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETINTEGER64I_V(target, index, data);
 }
 
@@ -6507,7 +6507,7 @@ void OSMesaDriver::nfglGetInteger64v(GLenum pname, memptr data)
 void OSMesaDriver::nfglGetInteger64v(GLenum pname, GLint64 *data)
 #endif
 {
-	D(bug("nfosmesa: glGetInteger64v(0x%x, " PRI_PTR ")", pname, AtariOffset(data)));
+	D(bug("nfosmesa: glGetInteger64v(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(data)));
 FN_GLGETINTEGER64V(pname, data);
 }
 
@@ -6517,7 +6517,7 @@ void OSMesaDriver::nfglGetIntegerIndexedvEXT(GLenum target, GLuint index, memptr
 void OSMesaDriver::nfglGetIntegerIndexedvEXT(GLenum target, GLuint index, GLint *data)
 #endif
 {
-	D(bug("nfosmesa: glGetIntegerIndexedvEXT(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetIntegerIndexedvEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETINTEGERINDEXEDVEXT(target, index, data);
 }
 
@@ -6527,7 +6527,7 @@ void OSMesaDriver::nfglGetIntegeri_v(GLenum target, GLuint index, memptr data)
 void OSMesaDriver::nfglGetIntegeri_v(GLenum target, GLuint index, GLint *data)
 #endif
 {
-	D(bug("nfosmesa: glGetIntegeri_v(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetIntegeri_v(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETINTEGERI_V(target, index, data);
 }
 
@@ -6537,7 +6537,7 @@ void OSMesaDriver::nfglGetIntegerui64i_vNV(GLenum value, GLuint index, memptr re
 void OSMesaDriver::nfglGetIntegerui64i_vNV(GLenum value, GLuint index, GLuint64EXT *result)
 #endif
 {
-	D(bug("nfosmesa: glGetIntegerui64i_vNV(0x%x, %u, " PRI_PTR ")", value, index, AtariOffset(result)));
+	D(bug("nfosmesa: glGetIntegerui64i_vNV(%s, %u, " PRI_PTR ")", gl_enum_name(value), index, AtariOffset(result)));
 FN_GLGETINTEGERUI64I_VNV(value, index, result);
 }
 
@@ -6547,7 +6547,7 @@ void OSMesaDriver::nfglGetIntegerui64vNV(GLenum value, memptr result)
 void OSMesaDriver::nfglGetIntegerui64vNV(GLenum value, GLuint64EXT *result)
 #endif
 {
-	D(bug("nfosmesa: glGetIntegerui64vNV(0x%x, " PRI_PTR ")", value, AtariOffset(result)));
+	D(bug("nfosmesa: glGetIntegerui64vNV(%s, " PRI_PTR ")", gl_enum_name(value), AtariOffset(result)));
 FN_GLGETINTEGERUI64VNV(value, result);
 }
 
@@ -6557,7 +6557,7 @@ void OSMesaDriver::nfglGetIntegerv(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetIntegerv(GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetIntegerv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetIntegerv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETINTEGERV(pname, params);
 }
 
@@ -6567,7 +6567,7 @@ void OSMesaDriver::nfglGetInternalformatSampleivNV(GLenum target, GLenum interna
 void OSMesaDriver::nfglGetInternalformatSampleivNV(GLenum target, GLenum internalformat, GLsizei samples, GLenum pname, GLsizei bufSize, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetInternalformatSampleivNV(0x%x, 0x%x, %d, 0x%x, %d, " PRI_PTR ")", target, internalformat, samples, pname, bufSize, AtariOffset(params)));
+	D(bug("nfosmesa: glGetInternalformatSampleivNV(%s, %s, %d, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), samples, gl_enum_name(pname), bufSize, AtariOffset(params)));
 FN_GLGETINTERNALFORMATSAMPLEIVNV(target, internalformat, samples, pname, bufSize, params);
 }
 
@@ -6577,7 +6577,7 @@ void OSMesaDriver::nfglGetInternalformati64v(GLenum target, GLenum internalforma
 void OSMesaDriver::nfglGetInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetInternalformati64v(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, internalformat, pname, bufSize, AtariOffset(params)));
+	D(bug("nfosmesa: glGetInternalformati64v(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), gl_enum_name(pname), bufSize, AtariOffset(params)));
 FN_GLGETINTERNALFORMATI64V(target, internalformat, pname, bufSize, params);
 }
 
@@ -6587,7 +6587,7 @@ void OSMesaDriver::nfglGetInternalformativ(GLenum target, GLenum internalformat,
 void OSMesaDriver::nfglGetInternalformativ(GLenum target, GLenum internalformat, GLenum pname, GLsizei bufSize, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetInternalformativ(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, internalformat, pname, bufSize, AtariOffset(params)));
+	D(bug("nfosmesa: glGetInternalformativ(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), gl_enum_name(pname), bufSize, AtariOffset(params)));
 FN_GLGETINTERNALFORMATIV(target, internalformat, pname, bufSize, params);
 }
 
@@ -6597,7 +6597,7 @@ void OSMesaDriver::nfglGetInvariantBooleanvEXT(GLuint id, GLenum value, memptr d
 void OSMesaDriver::nfglGetInvariantBooleanvEXT(GLuint id, GLenum value, GLboolean *data)
 #endif
 {
-	D(bug("nfosmesa: glGetInvariantBooleanvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetInvariantBooleanvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETINVARIANTBOOLEANVEXT(id, value, data);
 }
 
@@ -6607,7 +6607,7 @@ void OSMesaDriver::nfglGetInvariantFloatvEXT(GLuint id, GLenum value, memptr dat
 void OSMesaDriver::nfglGetInvariantFloatvEXT(GLuint id, GLenum value, GLfloat *data)
 #endif
 {
-	D(bug("nfosmesa: glGetInvariantFloatvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetInvariantFloatvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETINVARIANTFLOATVEXT(id, value, data);
 }
 
@@ -6617,7 +6617,7 @@ void OSMesaDriver::nfglGetInvariantIntegervEXT(GLuint id, GLenum value, memptr d
 void OSMesaDriver::nfglGetInvariantIntegervEXT(GLuint id, GLenum value, GLint *data)
 #endif
 {
-	D(bug("nfosmesa: glGetInvariantIntegervEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetInvariantIntegervEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETINVARIANTINTEGERVEXT(id, value, data);
 }
 
@@ -6627,7 +6627,7 @@ void OSMesaDriver::nfglGetLightfv(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetLightfv(GLenum light, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetLightfv(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetLightfv(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETLIGHTFV(light, pname, params);
 }
 
@@ -6637,7 +6637,7 @@ void OSMesaDriver::nfglGetLightiv(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetLightiv(GLenum light, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetLightiv(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetLightiv(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETLIGHTIV(light, pname, params);
 }
 
@@ -6647,7 +6647,7 @@ void OSMesaDriver::nfglGetLightxOES(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetLightxOES(GLenum light, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetLightxOES(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetLightxOES(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETLIGHTXOES(light, pname, params);
 }
 
@@ -6657,7 +6657,7 @@ void OSMesaDriver::nfglGetListParameterfvSGIX(GLuint list, GLenum pname, memptr 
 void OSMesaDriver::nfglGetListParameterfvSGIX(GLuint list, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetListParameterfvSGIX(%u, 0x%x, " PRI_PTR ")", list, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetListParameterfvSGIX(%u, %s, " PRI_PTR ")", list, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETLISTPARAMETERFVSGIX(list, pname, params);
 }
 
@@ -6667,7 +6667,7 @@ void OSMesaDriver::nfglGetListParameterivSGIX(GLuint list, GLenum pname, memptr 
 void OSMesaDriver::nfglGetListParameterivSGIX(GLuint list, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetListParameterivSGIX(%u, 0x%x, " PRI_PTR ")", list, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetListParameterivSGIX(%u, %s, " PRI_PTR ")", list, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETLISTPARAMETERIVSGIX(list, pname, params);
 }
 
@@ -6677,7 +6677,7 @@ void OSMesaDriver::nfglGetLocalConstantBooleanvEXT(GLuint id, GLenum value, memp
 void OSMesaDriver::nfglGetLocalConstantBooleanvEXT(GLuint id, GLenum value, GLboolean *data)
 #endif
 {
-	D(bug("nfosmesa: glGetLocalConstantBooleanvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetLocalConstantBooleanvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETLOCALCONSTANTBOOLEANVEXT(id, value, data);
 }
 
@@ -6687,7 +6687,7 @@ void OSMesaDriver::nfglGetLocalConstantFloatvEXT(GLuint id, GLenum value, memptr
 void OSMesaDriver::nfglGetLocalConstantFloatvEXT(GLuint id, GLenum value, GLfloat *data)
 #endif
 {
-	D(bug("nfosmesa: glGetLocalConstantFloatvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetLocalConstantFloatvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETLOCALCONSTANTFLOATVEXT(id, value, data);
 }
 
@@ -6697,7 +6697,7 @@ void OSMesaDriver::nfglGetLocalConstantIntegervEXT(GLuint id, GLenum value, memp
 void OSMesaDriver::nfglGetLocalConstantIntegervEXT(GLuint id, GLenum value, GLint *data)
 #endif
 {
-	D(bug("nfosmesa: glGetLocalConstantIntegervEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetLocalConstantIntegervEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETLOCALCONSTANTINTEGERVEXT(id, value, data);
 }
 
@@ -6707,7 +6707,7 @@ void OSMesaDriver::nfglGetMapAttribParameterfvNV(GLenum target, GLuint index, GL
 void OSMesaDriver::nfglGetMapAttribParameterfvNV(GLenum target, GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMapAttribParameterfvNV(0x%x, %u, 0x%x, " PRI_PTR ")", target, index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMapAttribParameterfvNV(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMAPATTRIBPARAMETERFVNV(target, index, pname, params);
 }
 
@@ -6717,7 +6717,7 @@ void OSMesaDriver::nfglGetMapAttribParameterivNV(GLenum target, GLuint index, GL
 void OSMesaDriver::nfglGetMapAttribParameterivNV(GLenum target, GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMapAttribParameterivNV(0x%x, %u, 0x%x, " PRI_PTR ")", target, index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMapAttribParameterivNV(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMAPATTRIBPARAMETERIVNV(target, index, pname, params);
 }
 
@@ -6727,7 +6727,7 @@ void OSMesaDriver::nfglGetMapControlPointsNV(GLenum target, GLuint index, GLenum
 void OSMesaDriver::nfglGetMapControlPointsNV(GLenum target, GLuint index, GLenum type, GLsizei ustride, GLsizei vstride, GLboolean32 packed, void *points)
 #endif
 {
-	D(bug("nfosmesa: glGetMapControlPointsNV(0x%x, %u, 0x%x, %d, %d, %d, " PRI_PTR ")", target, index, type, ustride, vstride, packed, AtariOffset(points)));
+	D(bug("nfosmesa: glGetMapControlPointsNV(%s, %u, %s, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(type), ustride, vstride, packed, AtariOffset(points)));
 FN_GLGETMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, packed, points);
 }
 
@@ -6737,7 +6737,7 @@ void OSMesaDriver::nfglGetMapParameterfvNV(GLenum target, GLenum pname, memptr p
 void OSMesaDriver::nfglGetMapParameterfvNV(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMapParameterfvNV(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMapParameterfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMAPPARAMETERFVNV(target, pname, params);
 }
 
@@ -6747,7 +6747,7 @@ void OSMesaDriver::nfglGetMapParameterivNV(GLenum target, GLenum pname, memptr p
 void OSMesaDriver::nfglGetMapParameterivNV(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMapParameterivNV(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMapParameterivNV(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMAPPARAMETERIVNV(target, pname, params);
 }
 
@@ -6757,7 +6757,7 @@ void OSMesaDriver::nfglGetMapdv(GLenum target, GLenum query, memptr v)
 void OSMesaDriver::nfglGetMapdv(GLenum target, GLenum query, GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glGetMapdv(0x%x, 0x%x, " PRI_PTR ")", target, query, AtariOffset(v)));
+	D(bug("nfosmesa: glGetMapdv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), AtariOffset(v)));
 FN_GLGETMAPDV(target, query, v);
 }
 
@@ -6767,7 +6767,7 @@ void OSMesaDriver::nfglGetMapfv(GLenum target, GLenum query, memptr v)
 void OSMesaDriver::nfglGetMapfv(GLenum target, GLenum query, GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glGetMapfv(0x%x, 0x%x, " PRI_PTR ")", target, query, AtariOffset(v)));
+	D(bug("nfosmesa: glGetMapfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), AtariOffset(v)));
 FN_GLGETMAPFV(target, query, v);
 }
 
@@ -6777,7 +6777,7 @@ void OSMesaDriver::nfglGetMapiv(GLenum target, GLenum query, memptr v)
 void OSMesaDriver::nfglGetMapiv(GLenum target, GLenum query, GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glGetMapiv(0x%x, 0x%x, " PRI_PTR ")", target, query, AtariOffset(v)));
+	D(bug("nfosmesa: glGetMapiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), AtariOffset(v)));
 FN_GLGETMAPIV(target, query, v);
 }
 
@@ -6787,7 +6787,7 @@ void OSMesaDriver::nfglGetMapxvOES(GLenum target, GLenum query, memptr v)
 void OSMesaDriver::nfglGetMapxvOES(GLenum target, GLenum query, GLfixed *v)
 #endif
 {
-	D(bug("nfosmesa: glGetMapxvOES(0x%x, 0x%x, " PRI_PTR ")", target, query, AtariOffset(v)));
+	D(bug("nfosmesa: glGetMapxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), AtariOffset(v)));
 FN_GLGETMAPXVOES(target, query, v);
 }
 
@@ -6797,7 +6797,7 @@ void OSMesaDriver::nfglGetMaterialfv(GLenum face, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetMaterialfv(GLenum face, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMaterialfv(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMaterialfv(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMATERIALFV(face, pname, params);
 }
 
@@ -6807,13 +6807,13 @@ void OSMesaDriver::nfglGetMaterialiv(GLenum face, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetMaterialiv(GLenum face, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMaterialiv(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMaterialiv(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMATERIALIV(face, pname, params);
 }
 
 void OSMesaDriver::nfglGetMaterialxOES(GLenum face, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glGetMaterialxOES(0x%x, 0x%x, 0x%x)", face, pname, param));
+	D(bug("nfosmesa: glGetMaterialxOES(%s, %s, 0x%x)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glGetMaterialxOES(face, pname, param);
 }
 
@@ -6823,7 +6823,7 @@ void OSMesaDriver::nfglGetMinmax(GLenum target, GLboolean32 reset, GLenum format
 void OSMesaDriver::nfglGetMinmax(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmax(0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, reset, format, type, AtariOffset(values)));
+	D(bug("nfosmesa: glGetMinmax(%s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), AtariOffset(values)));
 FN_GLGETMINMAX(target, reset, format, type, values);
 }
 
@@ -6833,7 +6833,7 @@ void OSMesaDriver::nfglGetMinmaxEXT(GLenum target, GLboolean32 reset, GLenum for
 void OSMesaDriver::nfglGetMinmaxEXT(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmaxEXT(0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, reset, format, type, AtariOffset(values)));
+	D(bug("nfosmesa: glGetMinmaxEXT(%s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), AtariOffset(values)));
 FN_GLGETMINMAXEXT(target, reset, format, type, values);
 }
 
@@ -6843,7 +6843,7 @@ void OSMesaDriver::nfglGetMinmaxParameterfv(GLenum target, GLenum pname, memptr 
 void OSMesaDriver::nfglGetMinmaxParameterfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmaxParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMinmaxParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMINMAXPARAMETERFV(target, pname, params);
 }
 
@@ -6853,7 +6853,7 @@ void OSMesaDriver::nfglGetMinmaxParameterfvEXT(GLenum target, GLenum pname, memp
 void OSMesaDriver::nfglGetMinmaxParameterfvEXT(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmaxParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMinmaxParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMINMAXPARAMETERFVEXT(target, pname, params);
 }
 
@@ -6863,7 +6863,7 @@ void OSMesaDriver::nfglGetMinmaxParameteriv(GLenum target, GLenum pname, memptr 
 void OSMesaDriver::nfglGetMinmaxParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmaxParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMinmaxParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMINMAXPARAMETERIV(target, pname, params);
 }
 
@@ -6873,7 +6873,7 @@ void OSMesaDriver::nfglGetMinmaxParameterivEXT(GLenum target, GLenum pname, memp
 void OSMesaDriver::nfglGetMinmaxParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMinmaxParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMinmaxParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMINMAXPARAMETERIVEXT(target, pname, params);
 }
 
@@ -6883,7 +6883,7 @@ void OSMesaDriver::nfglGetMultiTexEnvfvEXT(GLenum texunit, GLenum target, GLenum
 void OSMesaDriver::nfglGetMultiTexEnvfvEXT(GLenum texunit, GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexEnvfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexEnvfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXENVFVEXT(texunit, target, pname, params);
 }
 
@@ -6893,7 +6893,7 @@ void OSMesaDriver::nfglGetMultiTexEnvivEXT(GLenum texunit, GLenum target, GLenum
 void OSMesaDriver::nfglGetMultiTexEnvivEXT(GLenum texunit, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexEnvivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexEnvivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXENVIVEXT(texunit, target, pname, params);
 }
 
@@ -6903,7 +6903,7 @@ void OSMesaDriver::nfglGetMultiTexGendvEXT(GLenum texunit, GLenum coord, GLenum 
 void OSMesaDriver::nfglGetMultiTexGendvEXT(GLenum texunit, GLenum coord, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexGendvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexGendvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXGENDVEXT(texunit, coord, pname, params);
 }
 
@@ -6913,7 +6913,7 @@ void OSMesaDriver::nfglGetMultiTexGenfvEXT(GLenum texunit, GLenum coord, GLenum 
 void OSMesaDriver::nfglGetMultiTexGenfvEXT(GLenum texunit, GLenum coord, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexGenfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexGenfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXGENFVEXT(texunit, coord, pname, params);
 }
 
@@ -6923,7 +6923,7 @@ void OSMesaDriver::nfglGetMultiTexGenivEXT(GLenum texunit, GLenum coord, GLenum 
 void OSMesaDriver::nfglGetMultiTexGenivEXT(GLenum texunit, GLenum coord, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexGenivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexGenivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXGENIVEXT(texunit, coord, pname, params);
 }
 
@@ -6933,7 +6933,7 @@ void OSMesaDriver::nfglGetMultiTexImageEXT(GLenum texunit, GLenum target, GLint 
 void OSMesaDriver::nfglGetMultiTexImageEXT(GLenum texunit, GLenum target, GLint level, GLenum format, GLenum type, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexImageEXT(0x%x, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetMultiTexImageEXT(%s, %s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLGETMULTITEXIMAGEEXT(texunit, target, level, format, type, pixels);
 }
 
@@ -6943,7 +6943,7 @@ void OSMesaDriver::nfglGetMultiTexLevelParameterfvEXT(GLenum texunit, GLenum tar
 void OSMesaDriver::nfglGetMultiTexLevelParameterfvEXT(GLenum texunit, GLenum target, GLint level, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexLevelParameterfvEXT(0x%x, 0x%x, %d, 0x%x, " PRI_PTR ")", texunit, target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexLevelParameterfvEXT(%s, %s, %d, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXLEVELPARAMETERFVEXT(texunit, target, level, pname, params);
 }
 
@@ -6953,7 +6953,7 @@ void OSMesaDriver::nfglGetMultiTexLevelParameterivEXT(GLenum texunit, GLenum tar
 void OSMesaDriver::nfglGetMultiTexLevelParameterivEXT(GLenum texunit, GLenum target, GLint level, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexLevelParameterivEXT(0x%x, 0x%x, %d, 0x%x, " PRI_PTR ")", texunit, target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexLevelParameterivEXT(%s, %s, %d, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXLEVELPARAMETERIVEXT(texunit, target, level, pname, params);
 }
 
@@ -6963,7 +6963,7 @@ void OSMesaDriver::nfglGetMultiTexParameterIivEXT(GLenum texunit, GLenum target,
 void OSMesaDriver::nfglGetMultiTexParameterIivEXT(GLenum texunit, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexParameterIivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexParameterIivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXPARAMETERIIVEXT(texunit, target, pname, params);
 }
 
@@ -6973,7 +6973,7 @@ void OSMesaDriver::nfglGetMultiTexParameterIuivEXT(GLenum texunit, GLenum target
 void OSMesaDriver::nfglGetMultiTexParameterIuivEXT(GLenum texunit, GLenum target, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexParameterIuivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexParameterIuivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params);
 }
 
@@ -6983,7 +6983,7 @@ void OSMesaDriver::nfglGetMultiTexParameterfvEXT(GLenum texunit, GLenum target, 
 void OSMesaDriver::nfglGetMultiTexParameterfvEXT(GLenum texunit, GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexParameterfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexParameterfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXPARAMETERFVEXT(texunit, target, pname, params);
 }
 
@@ -6993,7 +6993,7 @@ void OSMesaDriver::nfglGetMultiTexParameterivEXT(GLenum texunit, GLenum target, 
 void OSMesaDriver::nfglGetMultiTexParameterivEXT(GLenum texunit, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetMultiTexParameterivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetMultiTexParameterivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETMULTITEXPARAMETERIVEXT(texunit, target, pname, params);
 }
 
@@ -7003,7 +7003,7 @@ void OSMesaDriver::nfglGetMultisamplefv(GLenum pname, GLuint index, memptr val)
 void OSMesaDriver::nfglGetMultisamplefv(GLenum pname, GLuint index, GLfloat *val)
 #endif
 {
-	D(bug("nfosmesa: glGetMultisamplefv(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(val)));
+	D(bug("nfosmesa: glGetMultisamplefv(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(val)));
 FN_GLGETMULTISAMPLEFV(pname, index, val);
 }
 
@@ -7013,7 +7013,7 @@ void OSMesaDriver::nfglGetMultisamplefvNV(GLenum pname, GLuint index, memptr val
 void OSMesaDriver::nfglGetMultisamplefvNV(GLenum pname, GLuint index, GLfloat *val)
 #endif
 {
-	D(bug("nfosmesa: glGetMultisamplefvNV(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(val)));
+	D(bug("nfosmesa: glGetMultisamplefvNV(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(val)));
 FN_GLGETMULTISAMPLEFVNV(pname, index, val);
 }
 
@@ -7023,7 +7023,7 @@ void OSMesaDriver::nfglGetNamedBufferParameteri64v(GLuint buffer, GLenum pname, 
 void OSMesaDriver::nfglGetNamedBufferParameteri64v(GLuint buffer, GLenum pname, GLint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferParameteri64v(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferParameteri64v(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPARAMETERI64V(buffer, pname, params);
 }
 
@@ -7033,7 +7033,7 @@ void OSMesaDriver::nfglGetNamedBufferParameteriv(GLuint buffer, GLenum pname, me
 void OSMesaDriver::nfglGetNamedBufferParameteriv(GLuint buffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferParameteriv(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferParameteriv(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPARAMETERIV(buffer, pname, params);
 }
 
@@ -7043,7 +7043,7 @@ void OSMesaDriver::nfglGetNamedBufferParameterivEXT(GLuint buffer, GLenum pname,
 void OSMesaDriver::nfglGetNamedBufferParameterivEXT(GLuint buffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferParameterivEXT(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferParameterivEXT(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPARAMETERIVEXT(buffer, pname, params);
 }
 
@@ -7053,7 +7053,7 @@ void OSMesaDriver::nfglGetNamedBufferParameterui64vNV(GLuint buffer, GLenum pnam
 void OSMesaDriver::nfglGetNamedBufferParameterui64vNV(GLuint buffer, GLenum pname, GLuint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferParameterui64vNV(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferParameterui64vNV(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPARAMETERUI64VNV(buffer, pname, params);
 }
 
@@ -7063,7 +7063,7 @@ void OSMesaDriver::nfglGetNamedBufferPointerv(GLuint buffer, GLenum pname, mempt
 void OSMesaDriver::nfglGetNamedBufferPointerv(GLuint buffer, GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferPointerv(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferPointerv(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPOINTERV(buffer, pname, params);
 }
 
@@ -7073,7 +7073,7 @@ void OSMesaDriver::nfglGetNamedBufferPointervEXT(GLuint buffer, GLenum pname, me
 void OSMesaDriver::nfglGetNamedBufferPointervEXT(GLuint buffer, GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedBufferPointervEXT(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedBufferPointervEXT(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDBUFFERPOINTERVEXT(buffer, pname, params);
 }
 
@@ -7107,7 +7107,7 @@ void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameteriv(GLuint framebuff
 void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameteriv(GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedFramebufferAttachmentParameteriv(%u, 0x%x, 0x%x, " PRI_PTR ")", framebuffer, attachment, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedFramebufferAttachmentParameteriv(%u, %s, %s, " PRI_PTR ")", framebuffer, gl_enum_name(attachment), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIV(framebuffer, attachment, pname, params);
 }
 
@@ -7117,7 +7117,7 @@ void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameterivEXT(GLuint frameb
 void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameterivEXT(GLuint framebuffer, GLenum attachment, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedFramebufferAttachmentParameterivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", framebuffer, attachment, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedFramebufferAttachmentParameterivEXT(%u, %s, %s, " PRI_PTR ")", framebuffer, gl_enum_name(attachment), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT(framebuffer, attachment, pname, params);
 }
 
@@ -7127,7 +7127,7 @@ void OSMesaDriver::nfglGetNamedFramebufferParameteriv(GLuint framebuffer, GLenum
 void OSMesaDriver::nfglGetNamedFramebufferParameteriv(GLuint framebuffer, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedFramebufferParameteriv(%u, 0x%x, " PRI_PTR ")", framebuffer, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetNamedFramebufferParameteriv(%u, %s, " PRI_PTR ")", framebuffer, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETNAMEDFRAMEBUFFERPARAMETERIV(framebuffer, pname, param);
 }
 
@@ -7137,7 +7137,7 @@ void OSMesaDriver::nfglGetNamedFramebufferParameterivEXT(GLuint framebuffer, GLe
 void OSMesaDriver::nfglGetNamedFramebufferParameterivEXT(GLuint framebuffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedFramebufferParameterivEXT(%u, 0x%x, " PRI_PTR ")", framebuffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedFramebufferParameterivEXT(%u, %s, " PRI_PTR ")", framebuffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT(framebuffer, pname, params);
 }
 
@@ -7147,7 +7147,7 @@ void OSMesaDriver::nfglGetNamedProgramLocalParameterIivEXT(GLuint program, GLenu
 void OSMesaDriver::nfglGetNamedProgramLocalParameterIivEXT(GLuint program, GLenum target, GLuint index, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramLocalParameterIivEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedProgramLocalParameterIivEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT(program, target, index, params);
 }
 
@@ -7157,7 +7157,7 @@ void OSMesaDriver::nfglGetNamedProgramLocalParameterIuivEXT(GLuint program, GLen
 void OSMesaDriver::nfglGetNamedProgramLocalParameterIuivEXT(GLuint program, GLenum target, GLuint index, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramLocalParameterIuivEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedProgramLocalParameterIuivEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT(program, target, index, params);
 }
 
@@ -7167,7 +7167,7 @@ void OSMesaDriver::nfglGetNamedProgramLocalParameterdvEXT(GLuint program, GLenum
 void OSMesaDriver::nfglGetNamedProgramLocalParameterdvEXT(GLuint program, GLenum target, GLuint index, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramLocalParameterdvEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedProgramLocalParameterdvEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT(program, target, index, params);
 }
 
@@ -7177,7 +7177,7 @@ void OSMesaDriver::nfglGetNamedProgramLocalParameterfvEXT(GLuint program, GLenum
 void OSMesaDriver::nfglGetNamedProgramLocalParameterfvEXT(GLuint program, GLenum target, GLuint index, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramLocalParameterfvEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedProgramLocalParameterfvEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT(program, target, index, params);
 }
 
@@ -7187,7 +7187,7 @@ void OSMesaDriver::nfglGetNamedProgramStringEXT(GLuint program, GLenum target, G
 void OSMesaDriver::nfglGetNamedProgramStringEXT(GLuint program, GLenum target, GLenum pname, void *string)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramStringEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", program, target, pname, AtariOffset(string)));
+	D(bug("nfosmesa: glGetNamedProgramStringEXT(%u, %s, %s, " PRI_PTR ")", program, gl_enum_name(target), gl_enum_name(pname), AtariOffset(string)));
 FN_GLGETNAMEDPROGRAMSTRINGEXT(program, target, pname, string);
 }
 
@@ -7197,7 +7197,7 @@ void OSMesaDriver::nfglGetNamedProgramivEXT(GLuint program, GLenum target, GLenu
 void OSMesaDriver::nfglGetNamedProgramivEXT(GLuint program, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedProgramivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", program, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedProgramivEXT(%u, %s, %s, " PRI_PTR ")", program, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDPROGRAMIVEXT(program, target, pname, params);
 }
 
@@ -7207,7 +7207,7 @@ void OSMesaDriver::nfglGetNamedRenderbufferParameteriv(GLuint renderbuffer, GLen
 void OSMesaDriver::nfglGetNamedRenderbufferParameteriv(GLuint renderbuffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedRenderbufferParameteriv(%u, 0x%x, " PRI_PTR ")", renderbuffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedRenderbufferParameteriv(%u, %s, " PRI_PTR ")", renderbuffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDRENDERBUFFERPARAMETERIV(renderbuffer, pname, params);
 }
 
@@ -7217,7 +7217,7 @@ void OSMesaDriver::nfglGetNamedRenderbufferParameterivEXT(GLuint renderbuffer, G
 void OSMesaDriver::nfglGetNamedRenderbufferParameterivEXT(GLuint renderbuffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedRenderbufferParameterivEXT(%u, 0x%x, " PRI_PTR ")", renderbuffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedRenderbufferParameterivEXT(%u, %s, " PRI_PTR ")", renderbuffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT(renderbuffer, pname, params);
 }
 
@@ -7237,7 +7237,7 @@ void OSMesaDriver::nfglGetNamedStringivARB(GLint namelen, memptr name, GLenum pn
 void OSMesaDriver::nfglGetNamedStringivARB(GLint namelen, const GLchar *name, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetNamedStringivARB(%d, " PRI_PTR ", 0x%x, " PRI_PTR ")", namelen, AtariOffset(name), pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetNamedStringivARB(%d, " PRI_PTR ", %s, " PRI_PTR ")", namelen, AtariOffset(name), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDSTRINGIVARB(namelen, name, pname, params);
 }
 
@@ -7257,7 +7257,7 @@ void OSMesaDriver::nfglGetObjectBufferfvATI(GLuint buffer, GLenum pname, memptr 
 void OSMesaDriver::nfglGetObjectBufferfvATI(GLuint buffer, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectBufferfvATI(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetObjectBufferfvATI(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETOBJECTBUFFERFVATI(buffer, pname, params);
 }
 
@@ -7267,7 +7267,7 @@ void OSMesaDriver::nfglGetObjectBufferivATI(GLuint buffer, GLenum pname, memptr 
 void OSMesaDriver::nfglGetObjectBufferivATI(GLuint buffer, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectBufferivATI(%u, 0x%x, " PRI_PTR ")", buffer, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetObjectBufferivATI(%u, %s, " PRI_PTR ")", buffer, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETOBJECTBUFFERIVATI(buffer, pname, params);
 }
 
@@ -7277,7 +7277,7 @@ void OSMesaDriver::nfglGetObjectLabel(GLenum identifier, GLuint name, GLsizei bu
 void OSMesaDriver::nfglGetObjectLabel(GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectLabel(0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ")", identifier, name, bufSize, AtariOffset(length), AtariOffset(label)));
+	D(bug("nfosmesa: glGetObjectLabel(%s, %u, %d, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(identifier), name, bufSize, AtariOffset(length), AtariOffset(label)));
 FN_GLGETOBJECTLABEL(identifier, name, bufSize, length, label);
 }
 
@@ -7287,7 +7287,7 @@ void OSMesaDriver::nfglGetObjectLabelEXT(GLenum type, GLuint object, GLsizei buf
 void OSMesaDriver::nfglGetObjectLabelEXT(GLenum type, GLuint object, GLsizei bufSize, GLsizei *length, GLchar *label)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectLabelEXT(0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ")", type, object, bufSize, AtariOffset(length), AtariOffset(label)));
+	D(bug("nfosmesa: glGetObjectLabelEXT(%s, %u, %d, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(type), object, bufSize, AtariOffset(length), AtariOffset(label)));
 FN_GLGETOBJECTLABELEXT(type, object, bufSize, length, label);
 }
 
@@ -7297,7 +7297,7 @@ void OSMesaDriver::nfglGetObjectParameterfvARB(GLhandleARB obj, GLenum pname, me
 void OSMesaDriver::nfglGetObjectParameterfvARB(GLhandleARB obj, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectParameterfvARB(%u, 0x%x, " PRI_PTR ")", (unsigned int)(uintptr_t)obj, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetObjectParameterfvARB(%u, %s, " PRI_PTR ")", (unsigned int)(uintptr_t)obj, gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __params_size = 1;
 	GLfloat __params_tmp[__params_size] = { 0 };
@@ -7314,7 +7314,7 @@ void OSMesaDriver::nfglGetObjectParameterivAPPLE(GLenum objectType, GLuint name,
 void OSMesaDriver::nfglGetObjectParameterivAPPLE(GLenum objectType, GLuint name, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectParameterivAPPLE(0x%x, %u, 0x%x, " PRI_PTR ")", objectType, name, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetObjectParameterivAPPLE(%s, %u, %s, " PRI_PTR ")", gl_enum_name(objectType), name, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETOBJECTPARAMETERIVAPPLE(objectType, name, pname, params);
 }
 
@@ -7324,7 +7324,7 @@ void OSMesaDriver::nfglGetObjectParameterivARB(GLhandleARB obj, GLenum pname, me
 void OSMesaDriver::nfglGetObjectParameterivARB(GLhandleARB obj, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetObjectParameterivARB(%u, 0x%x, " PRI_PTR ")", (unsigned int)(uintptr_t)obj, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetObjectParameterivARB(%u, %s, " PRI_PTR ")", (unsigned int)(uintptr_t)obj, gl_enum_name(pname), AtariOffset(params)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __params_size = 1;
 	GLint __params_tmp[__params_size] = { 0 };
@@ -7351,7 +7351,7 @@ void OSMesaDriver::nfglGetOcclusionQueryivNV(GLuint id, GLenum pname, memptr par
 void OSMesaDriver::nfglGetOcclusionQueryivNV(GLuint id, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetOcclusionQueryivNV(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetOcclusionQueryivNV(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETOCCLUSIONQUERYIVNV(id, pname, params);
 }
 
@@ -7361,7 +7361,7 @@ void OSMesaDriver::nfglGetOcclusionQueryuivNV(GLuint id, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetOcclusionQueryuivNV(GLuint id, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetOcclusionQueryuivNV(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetOcclusionQueryuivNV(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETOCCLUSIONQUERYUIVNV(id, pname, params);
 }
 
@@ -7371,7 +7371,7 @@ void OSMesaDriver::nfglGetPathColorGenfvNV(GLenum color, GLenum pname, memptr va
 void OSMesaDriver::nfglGetPathColorGenfvNV(GLenum color, GLenum pname, GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathColorGenfvNV(0x%x, 0x%x, " PRI_PTR ")", color, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathColorGenfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(color), gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHCOLORGENFVNV(color, pname, value);
 }
 
@@ -7381,7 +7381,7 @@ void OSMesaDriver::nfglGetPathColorGenivNV(GLenum color, GLenum pname, memptr va
 void OSMesaDriver::nfglGetPathColorGenivNV(GLenum color, GLenum pname, GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathColorGenivNV(0x%x, 0x%x, " PRI_PTR ")", color, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathColorGenivNV(%s, %s, " PRI_PTR ")", gl_enum_name(color), gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHCOLORGENIVNV(color, pname, value);
 }
 
@@ -7438,7 +7438,7 @@ void OSMesaDriver::nfglGetPathMetricsNV(GLbitfield metricQueryMask, GLsizei numP
 void OSMesaDriver::nfglGetPathMetricsNV(GLbitfield metricQueryMask, GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLsizei stride, GLfloat *metrics)
 #endif
 {
-	D(bug("nfosmesa: glGetPathMetricsNV(0x%x, %d, 0x%x, " PRI_PTR ", %u, %d, " PRI_PTR ")", metricQueryMask, numPaths, pathNameType, AtariOffset(paths), pathBase, stride, AtariOffset(metrics)));
+	D(bug("nfosmesa: glGetPathMetricsNV(0x%x, %d, %s, " PRI_PTR ", %u, %d, " PRI_PTR ")", metricQueryMask, numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, stride, AtariOffset(metrics)));
 FN_GLGETPATHMETRICSNV(metricQueryMask, numPaths, pathNameType, paths, pathBase, stride, metrics);
 }
 
@@ -7448,7 +7448,7 @@ void OSMesaDriver::nfglGetPathParameterfvNV(GLuint path, GLenum pname, memptr va
 void OSMesaDriver::nfglGetPathParameterfvNV(GLuint path, GLenum pname, GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathParameterfvNV(%u, 0x%x, " PRI_PTR ")", path, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathParameterfvNV(%u, %s, " PRI_PTR ")", path, gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHPARAMETERFVNV(path, pname, value);
 }
 
@@ -7458,7 +7458,7 @@ void OSMesaDriver::nfglGetPathParameterivNV(GLuint path, GLenum pname, memptr va
 void OSMesaDriver::nfglGetPathParameterivNV(GLuint path, GLenum pname, GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathParameterivNV(%u, 0x%x, " PRI_PTR ")", path, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathParameterivNV(%u, %s, " PRI_PTR ")", path, gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHPARAMETERIVNV(path, pname, value);
 }
 
@@ -7468,7 +7468,7 @@ void OSMesaDriver::nfglGetPathSpacingNV(GLenum pathListMode, GLsizei numPaths, G
 void OSMesaDriver::nfglGetPathSpacingNV(GLenum pathListMode, GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLfloat advanceScale, GLfloat kerningScale, GLenum transformType, GLfloat *returnedSpacing)
 #endif
 {
-	D(bug("nfosmesa: glGetPathSpacingNV(0x%x, %d, 0x%x, " PRI_PTR ", %u, %f, %f, 0x%x, " PRI_PTR ")", pathListMode, numPaths, pathNameType, AtariOffset(paths), pathBase, advanceScale, kerningScale, transformType, AtariOffset(returnedSpacing)));
+	D(bug("nfosmesa: glGetPathSpacingNV(%s, %d, %s, " PRI_PTR ", %u, %f, %f, %s, " PRI_PTR ")", gl_enum_name(pathListMode), numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, advanceScale, kerningScale, gl_enum_name(transformType), AtariOffset(returnedSpacing)));
 FN_GLGETPATHSPACINGNV(pathListMode, numPaths, pathNameType, paths, pathBase, advanceScale, kerningScale, transformType, returnedSpacing);
 }
 
@@ -7478,7 +7478,7 @@ void OSMesaDriver::nfglGetPathTexGenfvNV(GLenum texCoordSet, GLenum pname, mempt
 void OSMesaDriver::nfglGetPathTexGenfvNV(GLenum texCoordSet, GLenum pname, GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathTexGenfvNV(0x%x, 0x%x, " PRI_PTR ")", texCoordSet, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathTexGenfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(texCoordSet), gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHTEXGENFVNV(texCoordSet, pname, value);
 }
 
@@ -7488,7 +7488,7 @@ void OSMesaDriver::nfglGetPathTexGenivNV(GLenum texCoordSet, GLenum pname, mempt
 void OSMesaDriver::nfglGetPathTexGenivNV(GLenum texCoordSet, GLenum pname, GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glGetPathTexGenivNV(0x%x, 0x%x, " PRI_PTR ")", texCoordSet, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glGetPathTexGenivNV(%s, %s, " PRI_PTR ")", gl_enum_name(texCoordSet), gl_enum_name(pname), AtariOffset(value)));
 FN_GLGETPATHTEXGENIVNV(texCoordSet, pname, value);
 }
 
@@ -7508,7 +7508,7 @@ void OSMesaDriver::nfglGetPerfMonitorCounterDataAMD(GLuint monitor, GLenum pname
 void OSMesaDriver::nfglGetPerfMonitorCounterDataAMD(GLuint monitor, GLenum pname, GLsizei dataSize, GLuint *data, GLint *bytesWritten)
 #endif
 {
-	D(bug("nfosmesa: glGetPerfMonitorCounterDataAMD(%u, 0x%x, %d, " PRI_PTR ", " PRI_PTR ")", monitor, pname, dataSize, AtariOffset(data), AtariOffset(bytesWritten)));
+	D(bug("nfosmesa: glGetPerfMonitorCounterDataAMD(%u, %s, %d, " PRI_PTR ", " PRI_PTR ")", monitor, gl_enum_name(pname), dataSize, AtariOffset(data), AtariOffset(bytesWritten)));
 FN_GLGETPERFMONITORCOUNTERDATAAMD(monitor, pname, dataSize, data, bytesWritten);
 }
 
@@ -7518,7 +7518,7 @@ void OSMesaDriver::nfglGetPerfMonitorCounterInfoAMD(GLuint group, GLuint counter
 void OSMesaDriver::nfglGetPerfMonitorCounterInfoAMD(GLuint group, GLuint counter, GLenum pname, void *data)
 #endif
 {
-	D(bug("nfosmesa: glGetPerfMonitorCounterInfoAMD(%u, %u, 0x%x, " PRI_PTR ")", group, counter, pname, AtariOffset(data)));
+	D(bug("nfosmesa: glGetPerfMonitorCounterInfoAMD(%u, %u, %s, " PRI_PTR ")", group, counter, gl_enum_name(pname), AtariOffset(data)));
 FN_GLGETPERFMONITORCOUNTERINFOAMD(group, counter, pname, data);
 }
 
@@ -7598,7 +7598,7 @@ void OSMesaDriver::nfglGetPixelMapfv(GLenum map, memptr values)
 void OSMesaDriver::nfglGetPixelMapfv(GLenum map, GLfloat *values)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelMapfv(0x%x, " PRI_PTR ")", map, AtariOffset(values)));
+	D(bug("nfosmesa: glGetPixelMapfv(%s, " PRI_PTR ")", gl_enum_name(map), AtariOffset(values)));
 FN_GLGETPIXELMAPFV(map, values);
 }
 
@@ -7608,7 +7608,7 @@ void OSMesaDriver::nfglGetPixelMapuiv(GLenum map, memptr values)
 void OSMesaDriver::nfglGetPixelMapuiv(GLenum map, GLuint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelMapuiv(0x%x, " PRI_PTR ")", map, AtariOffset(values)));
+	D(bug("nfosmesa: glGetPixelMapuiv(%s, " PRI_PTR ")", gl_enum_name(map), AtariOffset(values)));
 FN_GLGETPIXELMAPUIV(map, values);
 }
 
@@ -7618,7 +7618,7 @@ void OSMesaDriver::nfglGetPixelMapusv(GLenum map, memptr values)
 void OSMesaDriver::nfglGetPixelMapusv(GLenum map, GLushort *values)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelMapusv(0x%x, " PRI_PTR ")", map, AtariOffset(values)));
+	D(bug("nfosmesa: glGetPixelMapusv(%s, " PRI_PTR ")", gl_enum_name(map), AtariOffset(values)));
 FN_GLGETPIXELMAPUSV(map, values);
 }
 
@@ -7628,7 +7628,7 @@ void OSMesaDriver::nfglGetPixelMapxv(GLenum map, GLint size, memptr values)
 void OSMesaDriver::nfglGetPixelMapxv(GLenum map, GLint size, GLfixed *values)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelMapxv(0x%x, %d, " PRI_PTR ")", map, size, AtariOffset(values)));
+	D(bug("nfosmesa: glGetPixelMapxv(%s, %d, " PRI_PTR ")", gl_enum_name(map), size, AtariOffset(values)));
 FN_GLGETPIXELMAPXV(map, size, values);
 }
 
@@ -7638,7 +7638,7 @@ void OSMesaDriver::nfglGetPixelTexGenParameterfvSGIS(GLenum pname, memptr params
 void OSMesaDriver::nfglGetPixelTexGenParameterfvSGIS(GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelTexGenParameterfvSGIS(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPixelTexGenParameterfvSGIS(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPIXELTEXGENPARAMETERFVSGIS(pname, params);
 }
 
@@ -7648,7 +7648,7 @@ void OSMesaDriver::nfglGetPixelTexGenParameterivSGIS(GLenum pname, memptr params
 void OSMesaDriver::nfglGetPixelTexGenParameterivSGIS(GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelTexGenParameterivSGIS(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPixelTexGenParameterivSGIS(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPIXELTEXGENPARAMETERIVSGIS(pname, params);
 }
 
@@ -7658,7 +7658,7 @@ void OSMesaDriver::nfglGetPixelTransformParameterfvEXT(GLenum target, GLenum pna
 void OSMesaDriver::nfglGetPixelTransformParameterfvEXT(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelTransformParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPixelTransformParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPIXELTRANSFORMPARAMETERFVEXT(target, pname, params);
 }
 
@@ -7668,7 +7668,7 @@ void OSMesaDriver::nfglGetPixelTransformParameterivEXT(GLenum target, GLenum pna
 void OSMesaDriver::nfglGetPixelTransformParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPixelTransformParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPixelTransformParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPIXELTRANSFORMPARAMETERIVEXT(target, pname, params);
 }
 
@@ -7678,7 +7678,7 @@ void OSMesaDriver::nfglGetPointerIndexedvEXT(GLenum target, GLuint index, memptr
 void OSMesaDriver::nfglGetPointerIndexedvEXT(GLenum target, GLuint index, void * *data)
 #endif
 {
-	D(bug("nfosmesa: glGetPointerIndexedvEXT(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(data)));
+	D(bug("nfosmesa: glGetPointerIndexedvEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
 FN_GLGETPOINTERINDEXEDVEXT(target, index, data);
 }
 
@@ -7688,7 +7688,7 @@ void OSMesaDriver::nfglGetPointeri_vEXT(GLenum pname, GLuint index, memptr param
 void OSMesaDriver::nfglGetPointeri_vEXT(GLenum pname, GLuint index, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPointeri_vEXT(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPointeri_vEXT(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(params)));
 FN_GLGETPOINTERI_VEXT(pname, index, params);
 }
 
@@ -7698,7 +7698,7 @@ void OSMesaDriver::nfglGetPointerv(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetPointerv(GLenum pname, GLvoid* *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPointerv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPointerv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPOINTERV(pname, params);
 }
 
@@ -7708,7 +7708,7 @@ void OSMesaDriver::nfglGetPointervEXT(GLenum pname, memptr params)
 void OSMesaDriver::nfglGetPointervEXT(GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetPointervEXT(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetPointervEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPOINTERVEXT(pname, params);
 }
 
@@ -7738,7 +7738,7 @@ void OSMesaDriver::nfglGetProgramEnvParameterIivNV(GLenum target, GLuint index, 
 void OSMesaDriver::nfglGetProgramEnvParameterIivNV(GLenum target, GLuint index, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramEnvParameterIivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramEnvParameterIivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMENVPARAMETERIIVNV(target, index, params);
 }
 
@@ -7748,7 +7748,7 @@ void OSMesaDriver::nfglGetProgramEnvParameterIuivNV(GLenum target, GLuint index,
 void OSMesaDriver::nfglGetProgramEnvParameterIuivNV(GLenum target, GLuint index, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramEnvParameterIuivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramEnvParameterIuivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMENVPARAMETERIUIVNV(target, index, params);
 }
 
@@ -7758,7 +7758,7 @@ void OSMesaDriver::nfglGetProgramEnvParameterdvARB(GLenum target, GLuint index, 
 void OSMesaDriver::nfglGetProgramEnvParameterdvARB(GLenum target, GLuint index, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramEnvParameterdvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramEnvParameterdvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMENVPARAMETERDVARB(target, index, params);
 }
 
@@ -7768,7 +7768,7 @@ void OSMesaDriver::nfglGetProgramEnvParameterfvARB(GLenum target, GLuint index, 
 void OSMesaDriver::nfglGetProgramEnvParameterfvARB(GLenum target, GLuint index, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramEnvParameterfvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramEnvParameterfvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMENVPARAMETERFVARB(target, index, params);
 }
 
@@ -7788,7 +7788,7 @@ void OSMesaDriver::nfglGetProgramInterfaceiv(GLuint program, GLenum programInter
 void OSMesaDriver::nfglGetProgramInterfaceiv(GLuint program, GLenum programInterface, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramInterfaceiv(%u, 0x%x, 0x%x, " PRI_PTR ")", program, programInterface, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramInterfaceiv(%u, %s, %s, " PRI_PTR ")", program, gl_enum_name(programInterface), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMINTERFACEIV(program, programInterface, pname, params);
 }
 
@@ -7798,7 +7798,7 @@ void OSMesaDriver::nfglGetProgramLocalParameterIivNV(GLenum target, GLuint index
 void OSMesaDriver::nfglGetProgramLocalParameterIivNV(GLenum target, GLuint index, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramLocalParameterIivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramLocalParameterIivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMLOCALPARAMETERIIVNV(target, index, params);
 }
 
@@ -7808,7 +7808,7 @@ void OSMesaDriver::nfglGetProgramLocalParameterIuivNV(GLenum target, GLuint inde
 void OSMesaDriver::nfglGetProgramLocalParameterIuivNV(GLenum target, GLuint index, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramLocalParameterIuivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramLocalParameterIuivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMLOCALPARAMETERIUIVNV(target, index, params);
 }
 
@@ -7818,7 +7818,7 @@ void OSMesaDriver::nfglGetProgramLocalParameterdvARB(GLenum target, GLuint index
 void OSMesaDriver::nfglGetProgramLocalParameterdvARB(GLenum target, GLuint index, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramLocalParameterdvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramLocalParameterdvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMLOCALPARAMETERDVARB(target, index, params);
 }
 
@@ -7828,7 +7828,7 @@ void OSMesaDriver::nfglGetProgramLocalParameterfvARB(GLenum target, GLuint index
 void OSMesaDriver::nfglGetProgramLocalParameterfvARB(GLenum target, GLuint index, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramLocalParameterfvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramLocalParameterfvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLGETPROGRAMLOCALPARAMETERFVARB(target, index, params);
 }
 
@@ -7858,7 +7858,7 @@ void OSMesaDriver::nfglGetProgramParameterdvNV(GLenum target, GLuint index, GLen
 void OSMesaDriver::nfglGetProgramParameterdvNV(GLenum target, GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramParameterdvNV(0x%x, %u, 0x%x, " PRI_PTR ")", target, index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramParameterdvNV(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMPARAMETERDVNV(target, index, pname, params);
 }
 
@@ -7868,7 +7868,7 @@ void OSMesaDriver::nfglGetProgramParameterfvNV(GLenum target, GLuint index, GLen
 void OSMesaDriver::nfglGetProgramParameterfvNV(GLenum target, GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramParameterfvNV(0x%x, %u, 0x%x, " PRI_PTR ")", target, index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramParameterfvNV(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMPARAMETERFVNV(target, index, pname, params);
 }
 
@@ -7888,7 +7888,7 @@ void OSMesaDriver::nfglGetProgramPipelineiv(GLuint pipeline, GLenum pname, mempt
 void OSMesaDriver::nfglGetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramPipelineiv(%u, 0x%x, " PRI_PTR ")", pipeline, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramPipelineiv(%u, %s, " PRI_PTR ")", pipeline, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMPIPELINEIV(pipeline, pname, params);
 }
 
@@ -7898,7 +7898,7 @@ void OSMesaDriver::nfglGetProgramRegisterfvMESA(GLenum target, GLsizei len, memp
 void OSMesaDriver::nfglGetProgramRegisterfvMESA(GLenum target, GLsizei len, const GLubyte *name, GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramRegisterfvMESA(0x%x, %d, " PRI_PTR ", " PRI_PTR ")", target, len, AtariOffset(name), AtariOffset(v)));
+	D(bug("nfosmesa: glGetProgramRegisterfvMESA(%s, %d, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), len, AtariOffset(name), AtariOffset(v)));
 FN_GLGETPROGRAMREGISTERFVMESA(target, len, name, v);
 }
 
@@ -7908,7 +7908,7 @@ GLuint OSMesaDriver::nfglGetProgramResourceIndex(GLuint program, GLenum programI
 GLuint OSMesaDriver::nfglGetProgramResourceIndex(GLuint program, GLenum programInterface, const GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourceIndex(%u, 0x%x, " PRI_PTR ")", program, programInterface, AtariOffset(name)));
+	D(bug("nfosmesa: glGetProgramResourceIndex(%u, %s, " PRI_PTR ")", program, gl_enum_name(programInterface), AtariOffset(name)));
 FN_GLGETPROGRAMRESOURCEINDEX(program, programInterface, name);
 }
 
@@ -7918,7 +7918,7 @@ GLint OSMesaDriver::nfglGetProgramResourceLocation(GLuint program, GLenum progra
 GLint OSMesaDriver::nfglGetProgramResourceLocation(GLuint program, GLenum programInterface, const GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourceLocation(%u, 0x%x, " PRI_PTR ")", program, programInterface, AtariOffset(name)));
+	D(bug("nfosmesa: glGetProgramResourceLocation(%u, %s, " PRI_PTR ")", program, gl_enum_name(programInterface), AtariOffset(name)));
 FN_GLGETPROGRAMRESOURCELOCATION(program, programInterface, name);
 }
 
@@ -7928,7 +7928,7 @@ GLint OSMesaDriver::nfglGetProgramResourceLocationIndex(GLuint program, GLenum p
 GLint OSMesaDriver::nfglGetProgramResourceLocationIndex(GLuint program, GLenum programInterface, const GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourceLocationIndex(%u, 0x%x, " PRI_PTR ")", program, programInterface, AtariOffset(name)));
+	D(bug("nfosmesa: glGetProgramResourceLocationIndex(%u, %s, " PRI_PTR ")", program, gl_enum_name(programInterface), AtariOffset(name)));
 FN_GLGETPROGRAMRESOURCELOCATIONINDEX(program, programInterface, name);
 }
 
@@ -7938,7 +7938,7 @@ void OSMesaDriver::nfglGetProgramResourceName(GLuint program, GLenum programInte
 void OSMesaDriver::nfglGetProgramResourceName(GLuint program, GLenum programInterface, GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourceName(%u, 0x%x, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, programInterface, index, bufSize, AtariOffset(length), AtariOffset(name)));
+	D(bug("nfosmesa: glGetProgramResourceName(%u, %s, %u, %d, " PRI_PTR ", " PRI_PTR ")", program, gl_enum_name(programInterface), index, bufSize, AtariOffset(length), AtariOffset(name)));
 FN_GLGETPROGRAMRESOURCENAME(program, programInterface, index, bufSize, length, name);
 }
 
@@ -7948,7 +7948,7 @@ void OSMesaDriver::nfglGetProgramResourcefvNV(GLuint program, GLenum programInte
 void OSMesaDriver::nfglGetProgramResourcefvNV(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourcefvNV(%u, 0x%x, %u, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", program, programInterface, index, propCount, AtariOffset(props), bufSize, AtariOffset(length), AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramResourcefvNV(%u, %s, %u, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", program, gl_enum_name(programInterface), index, propCount, AtariOffset(props), bufSize, AtariOffset(length), AtariOffset(params)));
 FN_GLGETPROGRAMRESOURCEFVNV(program, programInterface, index, propCount, props, bufSize, length, params);
 }
 
@@ -7958,7 +7958,7 @@ void OSMesaDriver::nfglGetProgramResourceiv(GLuint program, GLenum programInterf
 void OSMesaDriver::nfglGetProgramResourceiv(GLuint program, GLenum programInterface, GLuint index, GLsizei propCount, const GLenum *props, GLsizei bufSize, GLsizei *length, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramResourceiv(%u, 0x%x, %u, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", program, programInterface, index, propCount, AtariOffset(props), bufSize, AtariOffset(length), AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramResourceiv(%u, %s, %u, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", program, gl_enum_name(programInterface), index, propCount, AtariOffset(props), bufSize, AtariOffset(length), AtariOffset(params)));
 FN_GLGETPROGRAMRESOURCEIV(program, programInterface, index, propCount, props, bufSize, length, params);
 }
 
@@ -7968,7 +7968,7 @@ void OSMesaDriver::nfglGetProgramStageiv(GLuint program, GLenum shadertype, GLen
 void OSMesaDriver::nfglGetProgramStageiv(GLuint program, GLenum shadertype, GLenum pname, GLint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramStageiv(%u, 0x%x, 0x%x, " PRI_PTR ")", program, shadertype, pname, AtariOffset(values)));
+	D(bug("nfosmesa: glGetProgramStageiv(%u, %s, %s, " PRI_PTR ")", program, gl_enum_name(shadertype), gl_enum_name(pname), AtariOffset(values)));
 FN_GLGETPROGRAMSTAGEIV(program, shadertype, pname, values);
 }
 
@@ -7978,7 +7978,7 @@ void OSMesaDriver::nfglGetProgramStringARB(GLenum target, GLenum pname, memptr s
 void OSMesaDriver::nfglGetProgramStringARB(GLenum target, GLenum pname, void *string)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramStringARB(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(string)));
+	D(bug("nfosmesa: glGetProgramStringARB(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(string)));
 FN_GLGETPROGRAMSTRINGARB(target, pname, string);
 }
 
@@ -7988,7 +7988,7 @@ void OSMesaDriver::nfglGetProgramStringNV(GLuint id, GLenum pname, memptr progra
 void OSMesaDriver::nfglGetProgramStringNV(GLuint id, GLenum pname, GLubyte *program)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramStringNV(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(program)));
+	D(bug("nfosmesa: glGetProgramStringNV(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(program)));
 FN_GLGETPROGRAMSTRINGNV(id, pname, program);
 }
 
@@ -7998,7 +7998,7 @@ void OSMesaDriver::nfglGetProgramSubroutineParameteruivNV(GLenum target, GLuint 
 void OSMesaDriver::nfglGetProgramSubroutineParameteruivNV(GLenum target, GLuint index, GLuint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramSubroutineParameteruivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(param)));
+	D(bug("nfosmesa: glGetProgramSubroutineParameteruivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(param)));
 FN_GLGETPROGRAMSUBROUTINEPARAMETERUIVNV(target, index, param);
 }
 
@@ -8008,7 +8008,7 @@ void OSMesaDriver::nfglGetProgramiv(GLuint program, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetProgramiv(GLuint program, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramiv(%u, 0x%x, " PRI_PTR ")", program, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramiv(%u, %s, " PRI_PTR ")", program, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMIV(program, pname, params);
 }
 
@@ -8018,7 +8018,7 @@ void OSMesaDriver::nfglGetProgramivARB(GLenum target, GLenum pname, memptr param
 void OSMesaDriver::nfglGetProgramivARB(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramivARB(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramivARB(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMIVARB(target, pname, params);
 }
 
@@ -8028,31 +8028,31 @@ void OSMesaDriver::nfglGetProgramivNV(GLuint id, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetProgramivNV(GLuint id, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetProgramivNV(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetProgramivNV(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPROGRAMIVNV(id, pname, params);
 }
 
 void OSMesaDriver::nfglGetQueryBufferObjecti64v(GLuint id, GLuint buffer, GLenum pname, GLintptr offset)
 {
-	D(bug("nfosmesa: glGetQueryBufferObjecti64v(%u, %u, 0x%x, %" PRI_IPTR ")", id, buffer, pname, offset));
+	D(bug("nfosmesa: glGetQueryBufferObjecti64v(%u, %u, %s, %" PRI_IPTR ")", id, buffer, gl_enum_name(pname), offset));
 	fn.glGetQueryBufferObjecti64v(id, buffer, pname, offset);
 }
 
 void OSMesaDriver::nfglGetQueryBufferObjectiv(GLuint id, GLuint buffer, GLenum pname, GLintptr offset)
 {
-	D(bug("nfosmesa: glGetQueryBufferObjectiv(%u, %u, 0x%x, %" PRI_IPTR ")", id, buffer, pname, offset));
+	D(bug("nfosmesa: glGetQueryBufferObjectiv(%u, %u, %s, %" PRI_IPTR ")", id, buffer, gl_enum_name(pname), offset));
 	fn.glGetQueryBufferObjectiv(id, buffer, pname, offset);
 }
 
 void OSMesaDriver::nfglGetQueryBufferObjectui64v(GLuint id, GLuint buffer, GLenum pname, GLintptr offset)
 {
-	D(bug("nfosmesa: glGetQueryBufferObjectui64v(%u, %u, 0x%x, %" PRI_IPTR ")", id, buffer, pname, offset));
+	D(bug("nfosmesa: glGetQueryBufferObjectui64v(%u, %u, %s, %" PRI_IPTR ")", id, buffer, gl_enum_name(pname), offset));
 	fn.glGetQueryBufferObjectui64v(id, buffer, pname, offset);
 }
 
 void OSMesaDriver::nfglGetQueryBufferObjectuiv(GLuint id, GLuint buffer, GLenum pname, GLintptr offset)
 {
-	D(bug("nfosmesa: glGetQueryBufferObjectuiv(%u, %u, 0x%x, %" PRI_IPTR ")", id, buffer, pname, offset));
+	D(bug("nfosmesa: glGetQueryBufferObjectuiv(%u, %u, %s, %" PRI_IPTR ")", id, buffer, gl_enum_name(pname), offset));
 	fn.glGetQueryBufferObjectuiv(id, buffer, pname, offset);
 }
 
@@ -8062,7 +8062,7 @@ void OSMesaDriver::nfglGetQueryIndexediv(GLenum target, GLuint index, GLenum pna
 void OSMesaDriver::nfglGetQueryIndexediv(GLenum target, GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryIndexediv(0x%x, %u, 0x%x, " PRI_PTR ")", target, index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryIndexediv(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYINDEXEDIV(target, index, pname, params);
 }
 
@@ -8072,7 +8072,7 @@ void OSMesaDriver::nfglGetQueryObjecti64v(GLuint id, GLenum pname, memptr params
 void OSMesaDriver::nfglGetQueryObjecti64v(GLuint id, GLenum pname, GLint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjecti64v(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjecti64v(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTI64V(id, pname, params);
 }
 
@@ -8082,7 +8082,7 @@ void OSMesaDriver::nfglGetQueryObjecti64vEXT(GLuint id, GLenum pname, memptr par
 void OSMesaDriver::nfglGetQueryObjecti64vEXT(GLuint id, GLenum pname, GLint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjecti64vEXT(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjecti64vEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTI64VEXT(id, pname, params);
 }
 
@@ -8092,7 +8092,7 @@ void OSMesaDriver::nfglGetQueryObjectiv(GLuint id, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetQueryObjectiv(GLuint id, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectiv(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectiv(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTIV(id, pname, params);
 }
 
@@ -8102,7 +8102,7 @@ void OSMesaDriver::nfglGetQueryObjectivARB(GLuint id, GLenum pname, memptr param
 void OSMesaDriver::nfglGetQueryObjectivARB(GLuint id, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectivARB(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectivARB(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTIVARB(id, pname, params);
 }
 
@@ -8112,7 +8112,7 @@ void OSMesaDriver::nfglGetQueryObjectui64v(GLuint id, GLenum pname, memptr param
 void OSMesaDriver::nfglGetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectui64v(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectui64v(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTUI64V(id, pname, params);
 }
 
@@ -8122,7 +8122,7 @@ void OSMesaDriver::nfglGetQueryObjectui64vEXT(GLuint id, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectui64vEXT(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectui64vEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTUI64VEXT(id, pname, params);
 }
 
@@ -8132,7 +8132,7 @@ void OSMesaDriver::nfglGetQueryObjectuiv(GLuint id, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetQueryObjectuiv(GLuint id, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectuiv(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectuiv(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTUIV(id, pname, params);
 }
 
@@ -8142,7 +8142,7 @@ void OSMesaDriver::nfglGetQueryObjectuivARB(GLuint id, GLenum pname, memptr para
 void OSMesaDriver::nfglGetQueryObjectuivARB(GLuint id, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryObjectuivARB(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryObjectuivARB(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYOBJECTUIVARB(id, pname, params);
 }
 
@@ -8152,7 +8152,7 @@ void OSMesaDriver::nfglGetQueryiv(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetQueryiv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryiv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYIV(target, pname, params);
 }
 
@@ -8162,7 +8162,7 @@ void OSMesaDriver::nfglGetQueryivARB(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetQueryivARB(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetQueryivARB(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetQueryivARB(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETQUERYIVARB(target, pname, params);
 }
 
@@ -8172,7 +8172,7 @@ void OSMesaDriver::nfglGetRenderbufferParameteriv(GLenum target, GLenum pname, m
 void OSMesaDriver::nfglGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetRenderbufferParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetRenderbufferParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETRENDERBUFFERPARAMETERIV(target, pname, params);
 }
 
@@ -8182,7 +8182,7 @@ void OSMesaDriver::nfglGetRenderbufferParameterivEXT(GLenum target, GLenum pname
 void OSMesaDriver::nfglGetRenderbufferParameterivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetRenderbufferParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetRenderbufferParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETRENDERBUFFERPARAMETERIVEXT(target, pname, params);
 }
 
@@ -8192,7 +8192,7 @@ void OSMesaDriver::nfglGetSamplerParameterIiv(GLuint sampler, GLenum pname, memp
 void OSMesaDriver::nfglGetSamplerParameterIiv(GLuint sampler, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetSamplerParameterIiv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetSamplerParameterIiv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSAMPLERPARAMETERIIV(sampler, pname, params);
 }
 
@@ -8202,7 +8202,7 @@ void OSMesaDriver::nfglGetSamplerParameterIuiv(GLuint sampler, GLenum pname, mem
 void OSMesaDriver::nfglGetSamplerParameterIuiv(GLuint sampler, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetSamplerParameterIuiv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetSamplerParameterIuiv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSAMPLERPARAMETERIUIV(sampler, pname, params);
 }
 
@@ -8212,7 +8212,7 @@ void OSMesaDriver::nfglGetSamplerParameterfv(GLuint sampler, GLenum pname, mempt
 void OSMesaDriver::nfglGetSamplerParameterfv(GLuint sampler, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetSamplerParameterfv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetSamplerParameterfv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSAMPLERPARAMETERFV(sampler, pname, params);
 }
 
@@ -8222,7 +8222,7 @@ void OSMesaDriver::nfglGetSamplerParameteriv(GLuint sampler, GLenum pname, mempt
 void OSMesaDriver::nfglGetSamplerParameteriv(GLuint sampler, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetSamplerParameteriv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetSamplerParameteriv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSAMPLERPARAMETERIV(sampler, pname, params);
 }
 
@@ -8232,7 +8232,7 @@ void OSMesaDriver::nfglGetSeparableFilter(GLenum target, GLenum format, GLenum t
 void OSMesaDriver::nfglGetSeparableFilter(GLenum target, GLenum format, GLenum type, void *row, void *column, void *span)
 #endif
 {
-	D(bug("nfosmesa: glGetSeparableFilter(0x%x, 0x%x, 0x%x, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", target, format, type, AtariOffset(row), AtariOffset(column), AtariOffset(span)));
+	D(bug("nfosmesa: glGetSeparableFilter(%s, %s, %s, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(row), AtariOffset(column), AtariOffset(span)));
 FN_GLGETSEPARABLEFILTER(target, format, type, row, column, span);
 }
 
@@ -8242,7 +8242,7 @@ void OSMesaDriver::nfglGetSeparableFilterEXT(GLenum target, GLenum format, GLenu
 void OSMesaDriver::nfglGetSeparableFilterEXT(GLenum target, GLenum format, GLenum type, void *row, void *column, void *span)
 #endif
 {
-	D(bug("nfosmesa: glGetSeparableFilterEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", target, format, type, AtariOffset(row), AtariOffset(column), AtariOffset(span)));
+	D(bug("nfosmesa: glGetSeparableFilterEXT(%s, %s, %s, " PRI_PTR ", " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), AtariOffset(row), AtariOffset(column), AtariOffset(span)));
 FN_GLGETSEPARABLEFILTEREXT(target, format, type, row, column, span);
 }
 
@@ -8262,7 +8262,7 @@ void OSMesaDriver::nfglGetShaderPrecisionFormat(GLenum shadertype, GLenum precis
 void OSMesaDriver::nfglGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint *range, GLint *precision)
 #endif
 {
-	D(bug("nfosmesa: glGetShaderPrecisionFormat(0x%x, 0x%x, " PRI_PTR ", " PRI_PTR ")", shadertype, precisiontype, AtariOffset(range), AtariOffset(precision)));
+	D(bug("nfosmesa: glGetShaderPrecisionFormat(%s, %s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(shadertype), gl_enum_name(precisiontype), AtariOffset(range), AtariOffset(precision)));
 FN_GLGETSHADERPRECISIONFORMAT(shadertype, precisiontype, range, precision);
 }
 
@@ -8302,7 +8302,7 @@ void OSMesaDriver::nfglGetShaderiv(GLuint shader, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetShaderiv(GLuint shader, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetShaderiv(%u, 0x%x, " PRI_PTR ")", shader, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetShaderiv(%u, %s, " PRI_PTR ")", shader, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSHADERIV(shader, pname, params);
 }
 
@@ -8312,13 +8312,13 @@ void OSMesaDriver::nfglGetSharpenTexFuncSGIS(GLenum target, memptr points)
 void OSMesaDriver::nfglGetSharpenTexFuncSGIS(GLenum target, GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glGetSharpenTexFuncSGIS(0x%x, " PRI_PTR ")", target, AtariOffset(points)));
+	D(bug("nfosmesa: glGetSharpenTexFuncSGIS(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(points)));
 FN_GLGETSHARPENTEXFUNCSGIS(target, points);
 }
 
 GLushort OSMesaDriver::nfglGetStageIndexNV(GLenum shadertype)
 {
-	D(bug("nfosmesa: glGetStageIndexNV(0x%x)", shadertype));
+	D(bug("nfosmesa: glGetStageIndexNV(%s)", gl_enum_name(shadertype)));
 	GLushort __ret = fn.glGetStageIndexNV(shadertype);
 	return __ret;
 }
@@ -8326,7 +8326,7 @@ GLushort OSMesaDriver::nfglGetStageIndexNV(GLenum shadertype)
 #if 0
 const GLubyte * OSMesaDriver::nfglGetString(GLenum name)
 {
-	D(bug("nfosmesa: glGetString(0x%x)", name));
+	D(bug("nfosmesa: glGetString(%s)", gl_enum_name(name)));
 FN_GLGETSTRING(name);
 }
 #endif
@@ -8334,7 +8334,7 @@ FN_GLGETSTRING(name);
 #if 0
 const GLubyte * OSMesaDriver::nfglGetStringi(GLenum name, GLuint index)
 {
-	D(bug("nfosmesa: glGetStringi(0x%x, %u)", name, index));
+	D(bug("nfosmesa: glGetStringi(%s, %u)", gl_enum_name(name), index));
 	const GLubyte * __ret = fn.glGetStringi(name, index);
 	return __ret;
 }
@@ -8346,7 +8346,7 @@ GLuint OSMesaDriver::nfglGetSubroutineIndex(GLuint program, GLenum shadertype, m
 GLuint OSMesaDriver::nfglGetSubroutineIndex(GLuint program, GLenum shadertype, const GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetSubroutineIndex(%u, 0x%x, " PRI_PTR ")", program, shadertype, AtariOffset(name)));
+	D(bug("nfosmesa: glGetSubroutineIndex(%u, %s, " PRI_PTR ")", program, gl_enum_name(shadertype), AtariOffset(name)));
 FN_GLGETSUBROUTINEINDEX(program, shadertype, name);
 }
 
@@ -8356,7 +8356,7 @@ GLint OSMesaDriver::nfglGetSubroutineUniformLocation(GLuint program, GLenum shad
 GLint OSMesaDriver::nfglGetSubroutineUniformLocation(GLuint program, GLenum shadertype, const GLchar *name)
 #endif
 {
-	D(bug("nfosmesa: glGetSubroutineUniformLocation(%u, 0x%x, " PRI_PTR ")", program, shadertype, AtariOffset(name)));
+	D(bug("nfosmesa: glGetSubroutineUniformLocation(%u, %s, " PRI_PTR ")", program, gl_enum_name(shadertype), AtariOffset(name)));
 FN_GLGETSUBROUTINEUNIFORMLOCATION(program, shadertype, name);
 }
 
@@ -8366,7 +8366,7 @@ void OSMesaDriver::nfglGetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, mem
 void OSMesaDriver::nfglGetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetSynciv(" PRI_PTR ", 0x%x, %d, " PRI_PTR ", " PRI_PTR ")", (unsigned int)(uintptr_t)sync, pname, bufSize, AtariOffset(length), AtariOffset(values)));
+	D(bug("nfosmesa: glGetSynciv(" PRI_PTR ", %s, %d, " PRI_PTR ", " PRI_PTR ")", (unsigned int)(uintptr_t)sync, gl_enum_name(pname), bufSize, AtariOffset(length), AtariOffset(values)));
 FN_GLGETSYNCIV(sync, pname, bufSize, length, values);
 }
 
@@ -8376,7 +8376,7 @@ void OSMesaDriver::nfglGetTexBumpParameterfvATI(GLenum pname, memptr param)
 void OSMesaDriver::nfglGetTexBumpParameterfvATI(GLenum pname, GLfloat *param)
 #endif
 {
-	D(bug("nfosmesa: glGetTexBumpParameterfvATI(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetTexBumpParameterfvATI(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETTEXBUMPPARAMETERFVATI(pname, param);
 }
 
@@ -8386,7 +8386,7 @@ void OSMesaDriver::nfglGetTexBumpParameterivATI(GLenum pname, memptr param)
 void OSMesaDriver::nfglGetTexBumpParameterivATI(GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetTexBumpParameterivATI(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetTexBumpParameterivATI(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETTEXBUMPPARAMETERIVATI(pname, param);
 }
 
@@ -8396,7 +8396,7 @@ void OSMesaDriver::nfglGetTexEnvfv(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexEnvfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexEnvfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexEnvfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXENVFV(target, pname, params);
 }
 
@@ -8406,7 +8406,7 @@ void OSMesaDriver::nfglGetTexEnviv(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexEnviv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexEnviv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexEnviv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXENVIV(target, pname, params);
 }
 
@@ -8416,7 +8416,7 @@ void OSMesaDriver::nfglGetTexEnvxvOES(GLenum target, GLenum pname, memptr params
 void OSMesaDriver::nfglGetTexEnvxvOES(GLenum target, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexEnvxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexEnvxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXENVXVOES(target, pname, params);
 }
 
@@ -8426,7 +8426,7 @@ void OSMesaDriver::nfglGetTexFilterFuncSGIS(GLenum target, GLenum filter, memptr
 void OSMesaDriver::nfglGetTexFilterFuncSGIS(GLenum target, GLenum filter, GLfloat *weights)
 #endif
 {
-	D(bug("nfosmesa: glGetTexFilterFuncSGIS(0x%x, 0x%x, " PRI_PTR ")", target, filter, AtariOffset(weights)));
+	D(bug("nfosmesa: glGetTexFilterFuncSGIS(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(filter), AtariOffset(weights)));
 FN_GLGETTEXFILTERFUNCSGIS(target, filter, weights);
 }
 
@@ -8436,7 +8436,7 @@ void OSMesaDriver::nfglGetTexGendv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexGendv(GLenum coord, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexGendv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexGendv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXGENDV(coord, pname, params);
 }
 
@@ -8446,7 +8446,7 @@ void OSMesaDriver::nfglGetTexGenfv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexGenfv(GLenum coord, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexGenfv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexGenfv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXGENFV(coord, pname, params);
 }
 
@@ -8456,7 +8456,7 @@ void OSMesaDriver::nfglGetTexGeniv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexGeniv(GLenum coord, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexGeniv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexGeniv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXGENIV(coord, pname, params);
 }
 
@@ -8466,7 +8466,7 @@ void OSMesaDriver::nfglGetTexGenxvOES(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglGetTexGenxvOES(GLenum coord, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexGenxvOES(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexGenxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXGENXVOES(coord, pname, params);
 }
 
@@ -8476,7 +8476,7 @@ void OSMesaDriver::nfglGetTexImage(GLenum target, GLint level, GLenum format, GL
 void OSMesaDriver::nfglGetTexImage(GLenum target, GLint level, GLenum format, GLenum type, GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetTexImage(0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetTexImage(%s, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLGETTEXIMAGE(target, level, format, type, pixels);
 }
 
@@ -8486,7 +8486,7 @@ void OSMesaDriver::nfglGetTexLevelParameterfv(GLenum target, GLint level, GLenum
 void OSMesaDriver::nfglGetTexLevelParameterfv(GLenum target, GLint level, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexLevelParameterfv(0x%x, %d, 0x%x, " PRI_PTR ")", target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexLevelParameterfv(%s, %d, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXLEVELPARAMETERFV(target, level, pname, params);
 }
 
@@ -8496,7 +8496,7 @@ void OSMesaDriver::nfglGetTexLevelParameteriv(GLenum target, GLint level, GLenum
 void OSMesaDriver::nfglGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexLevelParameteriv(0x%x, %d, 0x%x, " PRI_PTR ")", target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexLevelParameteriv(%s, %d, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXLEVELPARAMETERIV(target, level, pname, params);
 }
 
@@ -8506,7 +8506,7 @@ void OSMesaDriver::nfglGetTexLevelParameterxvOES(GLenum target, GLint level, GLe
 void OSMesaDriver::nfglGetTexLevelParameterxvOES(GLenum target, GLint level, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexLevelParameterxvOES(0x%x, %d, 0x%x, " PRI_PTR ")", target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexLevelParameterxvOES(%s, %d, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXLEVELPARAMETERXVOES(target, level, pname, params);
 }
 
@@ -8516,7 +8516,7 @@ void OSMesaDriver::nfglGetTexParameterIiv(GLenum target, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetTexParameterIiv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterIiv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterIiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERIIV(target, pname, params);
 }
 
@@ -8526,7 +8526,7 @@ void OSMesaDriver::nfglGetTexParameterIivEXT(GLenum target, GLenum pname, memptr
 void OSMesaDriver::nfglGetTexParameterIivEXT(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterIivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterIivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERIIVEXT(target, pname, params);
 }
 
@@ -8536,7 +8536,7 @@ void OSMesaDriver::nfglGetTexParameterIuiv(GLenum target, GLenum pname, memptr p
 void OSMesaDriver::nfglGetTexParameterIuiv(GLenum target, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterIuiv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterIuiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERIUIV(target, pname, params);
 }
 
@@ -8546,7 +8546,7 @@ void OSMesaDriver::nfglGetTexParameterIuivEXT(GLenum target, GLenum pname, mempt
 void OSMesaDriver::nfglGetTexParameterIuivEXT(GLenum target, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterIuivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterIuivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERIUIVEXT(target, pname, params);
 }
 
@@ -8557,7 +8557,7 @@ void OSMesaDriver::nfglGetTexParameterPointervAPPLE(GLenum target, GLenum pname,
 void OSMesaDriver::nfglGetTexParameterPointervAPPLE(GLenum target, GLenum pname, void * *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterPointervAPPLE(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterPointervAPPLE(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERPOINTERVAPPLE(target, pname, params);
 }
 #endif
@@ -8568,7 +8568,7 @@ void OSMesaDriver::nfglGetTexParameterfv(GLenum target, GLenum pname, memptr par
 void OSMesaDriver::nfglGetTexParameterfv(GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERFV(target, pname, params);
 }
 
@@ -8578,7 +8578,7 @@ void OSMesaDriver::nfglGetTexParameteriv(GLenum target, GLenum pname, memptr par
 void OSMesaDriver::nfglGetTexParameteriv(GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERIV(target, pname, params);
 }
 
@@ -8588,7 +8588,7 @@ void OSMesaDriver::nfglGetTexParameterxvOES(GLenum target, GLenum pname, memptr 
 void OSMesaDriver::nfglGetTexParameterxvOES(GLenum target, GLenum pname, GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTexParameterxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTexParameterxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERXVOES(target, pname, params);
 }
 
@@ -8610,7 +8610,7 @@ void OSMesaDriver::nfglGetTextureImage(GLuint texture, GLint level, GLenum forma
 void OSMesaDriver::nfglGetTextureImage(GLuint texture, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureImage(%u, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", texture, level, format, type, bufSize, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetTextureImage(%u, %d, %s, %s, %d, " PRI_PTR ")", texture, level, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(pixels)));
 FN_GLGETTEXTUREIMAGE(texture, level, format, type, bufSize, pixels);
 }
 
@@ -8620,7 +8620,7 @@ void OSMesaDriver::nfglGetTextureImageEXT(GLuint texture, GLenum target, GLint l
 void OSMesaDriver::nfglGetTextureImageEXT(GLuint texture, GLenum target, GLint level, GLenum format, GLenum type, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureImageEXT(%u, 0x%x, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetTextureImageEXT(%u, %s, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLGETTEXTUREIMAGEEXT(texture, target, level, format, type, pixels);
 }
 
@@ -8630,7 +8630,7 @@ void OSMesaDriver::nfglGetTextureLevelParameterfv(GLuint texture, GLint level, G
 void OSMesaDriver::nfglGetTextureLevelParameterfv(GLuint texture, GLint level, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureLevelParameterfv(%u, %d, 0x%x, " PRI_PTR ")", texture, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureLevelParameterfv(%u, %d, %s, " PRI_PTR ")", texture, level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTURELEVELPARAMETERFV(texture, level, pname, params);
 }
 
@@ -8640,7 +8640,7 @@ void OSMesaDriver::nfglGetTextureLevelParameterfvEXT(GLuint texture, GLenum targ
 void OSMesaDriver::nfglGetTextureLevelParameterfvEXT(GLuint texture, GLenum target, GLint level, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureLevelParameterfvEXT(%u, 0x%x, %d, 0x%x, " PRI_PTR ")", texture, target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureLevelParameterfvEXT(%u, %s, %d, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTURELEVELPARAMETERFVEXT(texture, target, level, pname, params);
 }
 
@@ -8650,7 +8650,7 @@ void OSMesaDriver::nfglGetTextureLevelParameteriv(GLuint texture, GLint level, G
 void OSMesaDriver::nfglGetTextureLevelParameteriv(GLuint texture, GLint level, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureLevelParameteriv(%u, %d, 0x%x, " PRI_PTR ")", texture, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureLevelParameteriv(%u, %d, %s, " PRI_PTR ")", texture, level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTURELEVELPARAMETERIV(texture, level, pname, params);
 }
 
@@ -8660,7 +8660,7 @@ void OSMesaDriver::nfglGetTextureLevelParameterivEXT(GLuint texture, GLenum targ
 void OSMesaDriver::nfglGetTextureLevelParameterivEXT(GLuint texture, GLenum target, GLint level, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureLevelParameterivEXT(%u, 0x%x, %d, 0x%x, " PRI_PTR ")", texture, target, level, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureLevelParameterivEXT(%u, %s, %d, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTURELEVELPARAMETERIVEXT(texture, target, level, pname, params);
 }
 
@@ -8670,7 +8670,7 @@ void OSMesaDriver::nfglGetTextureParameterIiv(GLuint texture, GLenum pname, memp
 void OSMesaDriver::nfglGetTextureParameterIiv(GLuint texture, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterIiv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterIiv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIIV(texture, pname, params);
 }
 
@@ -8680,7 +8680,7 @@ void OSMesaDriver::nfglGetTextureParameterIivEXT(GLuint texture, GLenum target, 
 void OSMesaDriver::nfglGetTextureParameterIivEXT(GLuint texture, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterIivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterIivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIIVEXT(texture, target, pname, params);
 }
 
@@ -8690,7 +8690,7 @@ void OSMesaDriver::nfglGetTextureParameterIuiv(GLuint texture, GLenum pname, mem
 void OSMesaDriver::nfglGetTextureParameterIuiv(GLuint texture, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterIuiv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterIuiv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIUIV(texture, pname, params);
 }
 
@@ -8700,7 +8700,7 @@ void OSMesaDriver::nfglGetTextureParameterIuivEXT(GLuint texture, GLenum target,
 void OSMesaDriver::nfglGetTextureParameterIuivEXT(GLuint texture, GLenum target, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterIuivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterIuivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIUIVEXT(texture, target, pname, params);
 }
 
@@ -8710,7 +8710,7 @@ void OSMesaDriver::nfglGetTextureParameterfv(GLuint texture, GLenum pname, mempt
 void OSMesaDriver::nfglGetTextureParameterfv(GLuint texture, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterfv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterfv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERFV(texture, pname, params);
 }
 
@@ -8720,7 +8720,7 @@ void OSMesaDriver::nfglGetTextureParameterfvEXT(GLuint texture, GLenum target, G
 void OSMesaDriver::nfglGetTextureParameterfvEXT(GLuint texture, GLenum target, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterfvEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterfvEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERFVEXT(texture, target, pname, params);
 }
 
@@ -8730,7 +8730,7 @@ void OSMesaDriver::nfglGetTextureParameteriv(GLuint texture, GLenum pname, mempt
 void OSMesaDriver::nfglGetTextureParameteriv(GLuint texture, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameteriv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameteriv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIV(texture, pname, params);
 }
 
@@ -8740,7 +8740,7 @@ void OSMesaDriver::nfglGetTextureParameterivEXT(GLuint texture, GLenum target, G
 void OSMesaDriver::nfglGetTextureParameterivEXT(GLuint texture, GLenum target, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureParameterivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTextureParameterivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXTUREPARAMETERIVEXT(texture, target, pname, params);
 }
 
@@ -8762,7 +8762,7 @@ void OSMesaDriver::nfglGetTextureSubImage(GLuint texture, GLint level, GLint xof
 void OSMesaDriver::nfglGetTextureSubImage(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetTextureSubImage(%u, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetTextureSubImage(%u, %d, %d, %d, %d, %d, %d, %d, %s, %s, %d, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(pixels)));
 FN_GLGETTEXTURESUBIMAGE(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, bufSize, pixels);
 }
 
@@ -8772,7 +8772,7 @@ void OSMesaDriver::nfglGetTrackMatrixivNV(GLenum target, GLuint address, GLenum 
 void OSMesaDriver::nfglGetTrackMatrixivNV(GLenum target, GLuint address, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetTrackMatrixivNV(0x%x, %u, 0x%x, " PRI_PTR ")", target, address, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetTrackMatrixivNV(%s, %u, %s, " PRI_PTR ")", gl_enum_name(target), address, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTRACKMATRIXIVNV(target, address, pname, params);
 }
 
@@ -8812,7 +8812,7 @@ void OSMesaDriver::nfglGetTransformFeedbacki64_v(GLuint xfb, GLenum pname, GLuin
 void OSMesaDriver::nfglGetTransformFeedbacki64_v(GLuint xfb, GLenum pname, GLuint index, GLint64 *param)
 #endif
 {
-	D(bug("nfosmesa: glGetTransformFeedbacki64_v(%u, 0x%x, %u, " PRI_PTR ")", xfb, pname, index, AtariOffset(param)));
+	D(bug("nfosmesa: glGetTransformFeedbacki64_v(%u, %s, %u, " PRI_PTR ")", xfb, gl_enum_name(pname), index, AtariOffset(param)));
 FN_GLGETTRANSFORMFEEDBACKI64_V(xfb, pname, index, param);
 }
 
@@ -8822,7 +8822,7 @@ void OSMesaDriver::nfglGetTransformFeedbacki_v(GLuint xfb, GLenum pname, GLuint 
 void OSMesaDriver::nfglGetTransformFeedbacki_v(GLuint xfb, GLenum pname, GLuint index, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetTransformFeedbacki_v(%u, 0x%x, %u, " PRI_PTR ")", xfb, pname, index, AtariOffset(param)));
+	D(bug("nfosmesa: glGetTransformFeedbacki_v(%u, %s, %u, " PRI_PTR ")", xfb, gl_enum_name(pname), index, AtariOffset(param)));
 FN_GLGETTRANSFORMFEEDBACKI_V(xfb, pname, index, param);
 }
 
@@ -8832,7 +8832,7 @@ void OSMesaDriver::nfglGetTransformFeedbackiv(GLuint xfb, GLenum pname, memptr p
 void OSMesaDriver::nfglGetTransformFeedbackiv(GLuint xfb, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetTransformFeedbackiv(%u, 0x%x, " PRI_PTR ")", xfb, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetTransformFeedbackiv(%u, %s, " PRI_PTR ")", xfb, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETTRANSFORMFEEDBACKIV(xfb, pname, param);
 }
 
@@ -8904,7 +8904,7 @@ void OSMesaDriver::nfglGetUniformSubroutineuiv(GLenum shadertype, GLint location
 void OSMesaDriver::nfglGetUniformSubroutineuiv(GLenum shadertype, GLint location, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetUniformSubroutineuiv(0x%x, %d, " PRI_PTR ")", shadertype, location, AtariOffset(params)));
+	D(bug("nfosmesa: glGetUniformSubroutineuiv(%s, %d, " PRI_PTR ")", gl_enum_name(shadertype), location, AtariOffset(params)));
 FN_GLGETUNIFORMSUBROUTINEUIV(shadertype, location, params);
 }
 
@@ -9018,7 +9018,7 @@ void OSMesaDriver::nfglGetVariantArrayObjectfvATI(GLuint id, GLenum pname, mempt
 void OSMesaDriver::nfglGetVariantArrayObjectfvATI(GLuint id, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantArrayObjectfvATI(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVariantArrayObjectfvATI(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVARIANTARRAYOBJECTFVATI(id, pname, params);
 }
 
@@ -9028,7 +9028,7 @@ void OSMesaDriver::nfglGetVariantArrayObjectivATI(GLuint id, GLenum pname, mempt
 void OSMesaDriver::nfglGetVariantArrayObjectivATI(GLuint id, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantArrayObjectivATI(%u, 0x%x, " PRI_PTR ")", id, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVariantArrayObjectivATI(%u, %s, " PRI_PTR ")", id, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVARIANTARRAYOBJECTIVATI(id, pname, params);
 }
 
@@ -9038,7 +9038,7 @@ void OSMesaDriver::nfglGetVariantBooleanvEXT(GLuint id, GLenum value, memptr dat
 void OSMesaDriver::nfglGetVariantBooleanvEXT(GLuint id, GLenum value, GLboolean *data)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantBooleanvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetVariantBooleanvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETVARIANTBOOLEANVEXT(id, value, data);
 }
 
@@ -9048,7 +9048,7 @@ void OSMesaDriver::nfglGetVariantFloatvEXT(GLuint id, GLenum value, memptr data)
 void OSMesaDriver::nfglGetVariantFloatvEXT(GLuint id, GLenum value, GLfloat *data)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantFloatvEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetVariantFloatvEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETVARIANTFLOATVEXT(id, value, data);
 }
 
@@ -9058,7 +9058,7 @@ void OSMesaDriver::nfglGetVariantIntegervEXT(GLuint id, GLenum value, memptr dat
 void OSMesaDriver::nfglGetVariantIntegervEXT(GLuint id, GLenum value, GLint *data)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantIntegervEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetVariantIntegervEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETVARIANTINTEGERVEXT(id, value, data);
 }
 
@@ -9068,7 +9068,7 @@ void OSMesaDriver::nfglGetVariantPointervEXT(GLuint id, GLenum value, memptr dat
 void OSMesaDriver::nfglGetVariantPointervEXT(GLuint id, GLenum value, void * *data)
 #endif
 {
-	D(bug("nfosmesa: glGetVariantPointervEXT(%u, 0x%x, " PRI_PTR ")", id, value, AtariOffset(data)));
+	D(bug("nfosmesa: glGetVariantPointervEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(value), AtariOffset(data)));
 FN_GLGETVARIANTPOINTERVEXT(id, value, data);
 }
 
@@ -9088,7 +9088,7 @@ void OSMesaDriver::nfglGetVertexArrayIndexed64iv(GLuint vaobj, GLuint index, GLe
 void OSMesaDriver::nfglGetVertexArrayIndexed64iv(GLuint vaobj, GLuint index, GLenum pname, GLint64 *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayIndexed64iv(%u, %u, 0x%x, " PRI_PTR ")", vaobj, index, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayIndexed64iv(%u, %u, %s, " PRI_PTR ")", vaobj, index, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYINDEXED64IV(vaobj, index, pname, param);
 }
 
@@ -9098,7 +9098,7 @@ void OSMesaDriver::nfglGetVertexArrayIndexediv(GLuint vaobj, GLuint index, GLenu
 void OSMesaDriver::nfglGetVertexArrayIndexediv(GLuint vaobj, GLuint index, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayIndexediv(%u, %u, 0x%x, " PRI_PTR ")", vaobj, index, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayIndexediv(%u, %u, %s, " PRI_PTR ")", vaobj, index, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYINDEXEDIV(vaobj, index, pname, param);
 }
 
@@ -9108,7 +9108,7 @@ void OSMesaDriver::nfglGetVertexArrayIntegeri_vEXT(GLuint vaobj, GLuint index, G
 void OSMesaDriver::nfglGetVertexArrayIntegeri_vEXT(GLuint vaobj, GLuint index, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayIntegeri_vEXT(%u, %u, 0x%x, " PRI_PTR ")", vaobj, index, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayIntegeri_vEXT(%u, %u, %s, " PRI_PTR ")", vaobj, index, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYINTEGERI_VEXT(vaobj, index, pname, param);
 }
 
@@ -9118,7 +9118,7 @@ void OSMesaDriver::nfglGetVertexArrayIntegervEXT(GLuint vaobj, GLenum pname, mem
 void OSMesaDriver::nfglGetVertexArrayIntegervEXT(GLuint vaobj, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayIntegervEXT(%u, 0x%x, " PRI_PTR ")", vaobj, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayIntegervEXT(%u, %s, " PRI_PTR ")", vaobj, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYINTEGERVEXT(vaobj, pname, param);
 }
 
@@ -9128,7 +9128,7 @@ void OSMesaDriver::nfglGetVertexArrayPointeri_vEXT(GLuint vaobj, GLuint index, G
 void OSMesaDriver::nfglGetVertexArrayPointeri_vEXT(GLuint vaobj, GLuint index, GLenum pname, void * *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayPointeri_vEXT(%u, %u, 0x%x, " PRI_PTR ")", vaobj, index, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayPointeri_vEXT(%u, %u, %s, " PRI_PTR ")", vaobj, index, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYPOINTERI_VEXT(vaobj, index, pname, param);
 }
 
@@ -9138,7 +9138,7 @@ void OSMesaDriver::nfglGetVertexArrayPointervEXT(GLuint vaobj, GLenum pname, mem
 void OSMesaDriver::nfglGetVertexArrayPointervEXT(GLuint vaobj, GLenum pname, void * *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayPointervEXT(%u, 0x%x, " PRI_PTR ")", vaobj, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayPointervEXT(%u, %s, " PRI_PTR ")", vaobj, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYPOINTERVEXT(vaobj, pname, param);
 }
 
@@ -9148,7 +9148,7 @@ void OSMesaDriver::nfglGetVertexArrayiv(GLuint vaobj, GLenum pname, memptr param
 void OSMesaDriver::nfglGetVertexArrayiv(GLuint vaobj, GLenum pname, GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexArrayiv(%u, 0x%x, " PRI_PTR ")", vaobj, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glGetVertexArrayiv(%u, %s, " PRI_PTR ")", vaobj, gl_enum_name(pname), AtariOffset(param)));
 FN_GLGETVERTEXARRAYIV(vaobj, pname, param);
 }
 
@@ -9158,7 +9158,7 @@ void OSMesaDriver::nfglGetVertexAttribArrayObjectfvATI(GLuint index, GLenum pnam
 void OSMesaDriver::nfglGetVertexAttribArrayObjectfvATI(GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribArrayObjectfvATI(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribArrayObjectfvATI(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBARRAYOBJECTFVATI(index, pname, params);
 }
 
@@ -9168,7 +9168,7 @@ void OSMesaDriver::nfglGetVertexAttribArrayObjectivATI(GLuint index, GLenum pnam
 void OSMesaDriver::nfglGetVertexAttribArrayObjectivATI(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribArrayObjectivATI(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribArrayObjectivATI(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBARRAYOBJECTIVATI(index, pname, params);
 }
 
@@ -9178,7 +9178,7 @@ void OSMesaDriver::nfglGetVertexAttribIiv(GLuint index, GLenum pname, memptr par
 void OSMesaDriver::nfglGetVertexAttribIiv(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribIiv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribIiv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIIV(index, pname, params);
 }
 
@@ -9188,7 +9188,7 @@ void OSMesaDriver::nfglGetVertexAttribIivEXT(GLuint index, GLenum pname, memptr 
 void OSMesaDriver::nfglGetVertexAttribIivEXT(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribIivEXT(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribIivEXT(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIIVEXT(index, pname, params);
 }
 
@@ -9198,7 +9198,7 @@ void OSMesaDriver::nfglGetVertexAttribIuiv(GLuint index, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetVertexAttribIuiv(GLuint index, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribIuiv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribIuiv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIUIV(index, pname, params);
 }
 
@@ -9208,7 +9208,7 @@ void OSMesaDriver::nfglGetVertexAttribIuivEXT(GLuint index, GLenum pname, memptr
 void OSMesaDriver::nfglGetVertexAttribIuivEXT(GLuint index, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribIuivEXT(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribIuivEXT(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIUIVEXT(index, pname, params);
 }
 
@@ -9218,7 +9218,7 @@ void OSMesaDriver::nfglGetVertexAttribLdv(GLuint index, GLenum pname, memptr par
 void OSMesaDriver::nfglGetVertexAttribLdv(GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribLdv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribLdv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBLDV(index, pname, params);
 }
 
@@ -9228,7 +9228,7 @@ void OSMesaDriver::nfglGetVertexAttribLdvEXT(GLuint index, GLenum pname, memptr 
 void OSMesaDriver::nfglGetVertexAttribLdvEXT(GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribLdvEXT(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribLdvEXT(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBLDVEXT(index, pname, params);
 }
 
@@ -9238,7 +9238,7 @@ void OSMesaDriver::nfglGetVertexAttribLi64vNV(GLuint index, GLenum pname, memptr
 void OSMesaDriver::nfglGetVertexAttribLi64vNV(GLuint index, GLenum pname, GLint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribLi64vNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribLi64vNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBLI64VNV(index, pname, params);
 }
 
@@ -9248,7 +9248,7 @@ void OSMesaDriver::nfglGetVertexAttribLui64vARB(GLuint index, GLenum pname, memp
 void OSMesaDriver::nfglGetVertexAttribLui64vARB(GLuint index, GLenum pname, GLuint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribLui64vARB(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribLui64vARB(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBLUI64VARB(index, pname, params);
 }
 
@@ -9258,7 +9258,7 @@ void OSMesaDriver::nfglGetVertexAttribLui64vNV(GLuint index, GLenum pname, mempt
 void OSMesaDriver::nfglGetVertexAttribLui64vNV(GLuint index, GLenum pname, GLuint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribLui64vNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribLui64vNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBLUI64VNV(index, pname, params);
 }
 
@@ -9268,7 +9268,7 @@ void OSMesaDriver::nfglGetVertexAttribPointerv(GLuint index, GLenum pname, mempt
 void OSMesaDriver::nfglGetVertexAttribPointerv(GLuint index, GLenum pname, void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribPointerv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(pointer)));
+	D(bug("nfosmesa: glGetVertexAttribPointerv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(pointer)));
 FN_GLGETVERTEXATTRIBPOINTERV(index, pname, pointer);
 }
 
@@ -9278,7 +9278,7 @@ void OSMesaDriver::nfglGetVertexAttribPointervARB(GLuint index, GLenum pname, me
 void OSMesaDriver::nfglGetVertexAttribPointervARB(GLuint index, GLenum pname, void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribPointervARB(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(pointer)));
+	D(bug("nfosmesa: glGetVertexAttribPointervARB(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(pointer)));
 FN_GLGETVERTEXATTRIBPOINTERVARB(index, pname, pointer);
 }
 
@@ -9288,7 +9288,7 @@ void OSMesaDriver::nfglGetVertexAttribPointervNV(GLuint index, GLenum pname, mem
 void OSMesaDriver::nfglGetVertexAttribPointervNV(GLuint index, GLenum pname, void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribPointervNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(pointer)));
+	D(bug("nfosmesa: glGetVertexAttribPointervNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(pointer)));
 FN_GLGETVERTEXATTRIBPOINTERVNV(index, pname, pointer);
 }
 
@@ -9298,7 +9298,7 @@ void OSMesaDriver::nfglGetVertexAttribdv(GLuint index, GLenum pname, memptr para
 void OSMesaDriver::nfglGetVertexAttribdv(GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribdv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribdv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBDV(index, pname, params);
 }
 
@@ -9308,7 +9308,7 @@ void OSMesaDriver::nfglGetVertexAttribdvARB(GLuint index, GLenum pname, memptr p
 void OSMesaDriver::nfglGetVertexAttribdvARB(GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribdvARB(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribdvARB(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBDVARB(index, pname, params);
 }
 
@@ -9318,7 +9318,7 @@ void OSMesaDriver::nfglGetVertexAttribdvNV(GLuint index, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetVertexAttribdvNV(GLuint index, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribdvNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribdvNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBDVNV(index, pname, params);
 }
 
@@ -9328,7 +9328,7 @@ void OSMesaDriver::nfglGetVertexAttribfv(GLuint index, GLenum pname, memptr para
 void OSMesaDriver::nfglGetVertexAttribfv(GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribfv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribfv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBFV(index, pname, params);
 }
 
@@ -9338,7 +9338,7 @@ void OSMesaDriver::nfglGetVertexAttribfvARB(GLuint index, GLenum pname, memptr p
 void OSMesaDriver::nfglGetVertexAttribfvARB(GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribfvARB(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribfvARB(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBFVARB(index, pname, params);
 }
 
@@ -9348,7 +9348,7 @@ void OSMesaDriver::nfglGetVertexAttribfvNV(GLuint index, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetVertexAttribfvNV(GLuint index, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribfvNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribfvNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBFVNV(index, pname, params);
 }
 
@@ -9358,7 +9358,7 @@ void OSMesaDriver::nfglGetVertexAttribiv(GLuint index, GLenum pname, memptr para
 void OSMesaDriver::nfglGetVertexAttribiv(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribiv(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribiv(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIV(index, pname, params);
 }
 
@@ -9368,7 +9368,7 @@ void OSMesaDriver::nfglGetVertexAttribivARB(GLuint index, GLenum pname, memptr p
 void OSMesaDriver::nfglGetVertexAttribivARB(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribivARB(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribivARB(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIVARB(index, pname, params);
 }
 
@@ -9378,7 +9378,7 @@ void OSMesaDriver::nfglGetVertexAttribivNV(GLuint index, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetVertexAttribivNV(GLuint index, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVertexAttribivNV(%u, 0x%x, " PRI_PTR ")", index, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVertexAttribivNV(%u, %s, " PRI_PTR ")", index, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVERTEXATTRIBIVNV(index, pname, params);
 }
 
@@ -9388,7 +9388,7 @@ void OSMesaDriver::nfglGetVideoCaptureStreamdvNV(GLuint video_capture_slot, GLui
 void OSMesaDriver::nfglGetVideoCaptureStreamdvNV(GLuint video_capture_slot, GLuint stream, GLenum pname, GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoCaptureStreamdvNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoCaptureStreamdvNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOCAPTURESTREAMDVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -9398,7 +9398,7 @@ void OSMesaDriver::nfglGetVideoCaptureStreamfvNV(GLuint video_capture_slot, GLui
 void OSMesaDriver::nfglGetVideoCaptureStreamfvNV(GLuint video_capture_slot, GLuint stream, GLenum pname, GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoCaptureStreamfvNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoCaptureStreamfvNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOCAPTURESTREAMFVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -9408,7 +9408,7 @@ void OSMesaDriver::nfglGetVideoCaptureStreamivNV(GLuint video_capture_slot, GLui
 void OSMesaDriver::nfglGetVideoCaptureStreamivNV(GLuint video_capture_slot, GLuint stream, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoCaptureStreamivNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoCaptureStreamivNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOCAPTURESTREAMIVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -9418,7 +9418,7 @@ void OSMesaDriver::nfglGetVideoCaptureivNV(GLuint video_capture_slot, GLenum pna
 void OSMesaDriver::nfglGetVideoCaptureivNV(GLuint video_capture_slot, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoCaptureivNV(%u, 0x%x, " PRI_PTR ")", video_capture_slot, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoCaptureivNV(%u, %s, " PRI_PTR ")", video_capture_slot, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOCAPTUREIVNV(video_capture_slot, pname, params);
 }
 
@@ -9428,7 +9428,7 @@ void OSMesaDriver::nfglGetVideoi64vNV(GLuint video_slot, GLenum pname, memptr pa
 void OSMesaDriver::nfglGetVideoi64vNV(GLuint video_slot, GLenum pname, GLint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoi64vNV(%u, 0x%x, " PRI_PTR ")", video_slot, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoi64vNV(%u, %s, " PRI_PTR ")", video_slot, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOI64VNV(video_slot, pname, params);
 }
 
@@ -9438,7 +9438,7 @@ void OSMesaDriver::nfglGetVideoivNV(GLuint video_slot, GLenum pname, memptr para
 void OSMesaDriver::nfglGetVideoivNV(GLuint video_slot, GLenum pname, GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoivNV(%u, 0x%x, " PRI_PTR ")", video_slot, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoivNV(%u, %s, " PRI_PTR ")", video_slot, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOIVNV(video_slot, pname, params);
 }
 
@@ -9448,7 +9448,7 @@ void OSMesaDriver::nfglGetVideoui64vNV(GLuint video_slot, GLenum pname, memptr p
 void OSMesaDriver::nfglGetVideoui64vNV(GLuint video_slot, GLenum pname, GLuint64EXT *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideoui64vNV(%u, 0x%x, " PRI_PTR ")", video_slot, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideoui64vNV(%u, %s, " PRI_PTR ")", video_slot, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOUI64VNV(video_slot, pname, params);
 }
 
@@ -9458,7 +9458,7 @@ void OSMesaDriver::nfglGetVideouivNV(GLuint video_slot, GLenum pname, memptr par
 void OSMesaDriver::nfglGetVideouivNV(GLuint video_slot, GLenum pname, GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glGetVideouivNV(%u, 0x%x, " PRI_PTR ")", video_slot, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glGetVideouivNV(%u, %s, " PRI_PTR ")", video_slot, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETVIDEOUIVNV(video_slot, pname, params);
 }
 
@@ -9468,7 +9468,7 @@ void OSMesaDriver::nfglGetnColorTable(GLenum target, GLenum format, GLenum type,
 void OSMesaDriver::nfglGetnColorTable(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table)
 #endif
 {
-	D(bug("nfosmesa: glGetnColorTable(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, format, type, bufSize, AtariOffset(table)));
+	D(bug("nfosmesa: glGetnColorTable(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(table)));
 FN_GLGETNCOLORTABLE(target, format, type, bufSize, table);
 }
 
@@ -9478,7 +9478,7 @@ void OSMesaDriver::nfglGetnColorTableARB(GLenum target, GLenum format, GLenum ty
 void OSMesaDriver::nfglGetnColorTableARB(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *table)
 #endif
 {
-	D(bug("nfosmesa: glGetnColorTableARB(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, format, type, bufSize, AtariOffset(table)));
+	D(bug("nfosmesa: glGetnColorTableARB(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(table)));
 FN_GLGETNCOLORTABLEARB(target, format, type, bufSize, table);
 }
 
@@ -9488,7 +9488,7 @@ void OSMesaDriver::nfglGetnCompressedTexImage(GLenum target, GLint lod, GLsizei 
 void OSMesaDriver::nfglGetnCompressedTexImage(GLenum target, GLint lod, GLsizei bufSize, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetnCompressedTexImage(0x%x, %d, %d, " PRI_PTR ")", target, lod, bufSize, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetnCompressedTexImage(%s, %d, %d, " PRI_PTR ")", gl_enum_name(target), lod, bufSize, AtariOffset(pixels)));
 FN_GLGETNCOMPRESSEDTEXIMAGE(target, lod, bufSize, pixels);
 }
 
@@ -9498,7 +9498,7 @@ void OSMesaDriver::nfglGetnCompressedTexImageARB(GLenum target, GLint lod, GLsiz
 void OSMesaDriver::nfglGetnCompressedTexImageARB(GLenum target, GLint lod, GLsizei bufSize, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetnCompressedTexImageARB(0x%x, %d, %d, " PRI_PTR ")", target, lod, bufSize, AtariOffset(img)));
+	D(bug("nfosmesa: glGetnCompressedTexImageARB(%s, %d, %d, " PRI_PTR ")", gl_enum_name(target), lod, bufSize, AtariOffset(img)));
 FN_GLGETNCOMPRESSEDTEXIMAGEARB(target, lod, bufSize, img);
 }
 
@@ -9508,7 +9508,7 @@ void OSMesaDriver::nfglGetnConvolutionFilter(GLenum target, GLenum format, GLenu
 void OSMesaDriver::nfglGetnConvolutionFilter(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image)
 #endif
 {
-	D(bug("nfosmesa: glGetnConvolutionFilter(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, format, type, bufSize, AtariOffset(image)));
+	D(bug("nfosmesa: glGetnConvolutionFilter(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(image)));
 FN_GLGETNCONVOLUTIONFILTER(target, format, type, bufSize, image);
 }
 
@@ -9518,7 +9518,7 @@ void OSMesaDriver::nfglGetnConvolutionFilterARB(GLenum target, GLenum format, GL
 void OSMesaDriver::nfglGetnConvolutionFilterARB(GLenum target, GLenum format, GLenum type, GLsizei bufSize, void *image)
 #endif
 {
-	D(bug("nfosmesa: glGetnConvolutionFilterARB(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ")", target, format, type, bufSize, AtariOffset(image)));
+	D(bug("nfosmesa: glGetnConvolutionFilterARB(%s, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(image)));
 FN_GLGETNCONVOLUTIONFILTERARB(target, format, type, bufSize, image);
 }
 
@@ -9528,7 +9528,7 @@ void OSMesaDriver::nfglGetnHistogram(GLenum target, GLboolean32 reset, GLenum fo
 void OSMesaDriver::nfglGetnHistogram(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnHistogram(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, reset, format, type, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnHistogram(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(values)));
 FN_GLGETNHISTOGRAM(target, reset, format, type, bufSize, values);
 }
 
@@ -9538,7 +9538,7 @@ void OSMesaDriver::nfglGetnHistogramARB(GLenum target, GLboolean32 reset, GLenum
 void OSMesaDriver::nfglGetnHistogramARB(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnHistogramARB(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, reset, format, type, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnHistogramARB(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(values)));
 FN_GLGETNHISTOGRAMARB(target, reset, format, type, bufSize, values);
 }
 
@@ -9548,7 +9548,7 @@ void OSMesaDriver::nfglGetnMapdv(GLenum target, GLenum query, GLsizei bufSize, m
 void OSMesaDriver::nfglGetnMapdv(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapdv(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapdv(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPDV(target, query, bufSize, v);
 }
 
@@ -9558,7 +9558,7 @@ void OSMesaDriver::nfglGetnMapdvARB(GLenum target, GLenum query, GLsizei bufSize
 void OSMesaDriver::nfglGetnMapdvARB(GLenum target, GLenum query, GLsizei bufSize, GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapdvARB(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapdvARB(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPDVARB(target, query, bufSize, v);
 }
 
@@ -9568,7 +9568,7 @@ void OSMesaDriver::nfglGetnMapfv(GLenum target, GLenum query, GLsizei bufSize, m
 void OSMesaDriver::nfglGetnMapfv(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapfv(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapfv(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPFV(target, query, bufSize, v);
 }
 
@@ -9578,7 +9578,7 @@ void OSMesaDriver::nfglGetnMapfvARB(GLenum target, GLenum query, GLsizei bufSize
 void OSMesaDriver::nfglGetnMapfvARB(GLenum target, GLenum query, GLsizei bufSize, GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapfvARB(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapfvARB(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPFVARB(target, query, bufSize, v);
 }
 
@@ -9588,7 +9588,7 @@ void OSMesaDriver::nfglGetnMapiv(GLenum target, GLenum query, GLsizei bufSize, m
 void OSMesaDriver::nfglGetnMapiv(GLenum target, GLenum query, GLsizei bufSize, GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapiv(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapiv(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPIV(target, query, bufSize, v);
 }
 
@@ -9598,7 +9598,7 @@ void OSMesaDriver::nfglGetnMapivARB(GLenum target, GLenum query, GLsizei bufSize
 void OSMesaDriver::nfglGetnMapivARB(GLenum target, GLenum query, GLsizei bufSize, GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glGetnMapivARB(0x%x, 0x%x, %d, " PRI_PTR ")", target, query, bufSize, AtariOffset(v)));
+	D(bug("nfosmesa: glGetnMapivARB(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(query), bufSize, AtariOffset(v)));
 FN_GLGETNMAPIVARB(target, query, bufSize, v);
 }
 
@@ -9608,7 +9608,7 @@ void OSMesaDriver::nfglGetnMinmax(GLenum target, GLboolean32 reset, GLenum forma
 void OSMesaDriver::nfglGetnMinmax(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnMinmax(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, reset, format, type, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnMinmax(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(values)));
 FN_GLGETNMINMAX(target, reset, format, type, bufSize, values);
 }
 
@@ -9618,7 +9618,7 @@ void OSMesaDriver::nfglGetnMinmaxARB(GLenum target, GLboolean32 reset, GLenum fo
 void OSMesaDriver::nfglGetnMinmaxARB(GLenum target, GLboolean32 reset, GLenum format, GLenum type, GLsizei bufSize, void *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnMinmaxARB(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, reset, format, type, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnMinmaxARB(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), reset, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(values)));
 FN_GLGETNMINMAXARB(target, reset, format, type, bufSize, values);
 }
 
@@ -9628,7 +9628,7 @@ void OSMesaDriver::nfglGetnPixelMapfv(GLenum map, GLsizei bufSize, memptr values
 void OSMesaDriver::nfglGetnPixelMapfv(GLenum map, GLsizei bufSize, GLfloat *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapfv(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapfv(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPFV(map, bufSize, values);
 }
 
@@ -9638,7 +9638,7 @@ void OSMesaDriver::nfglGetnPixelMapfvARB(GLenum map, GLsizei bufSize, memptr val
 void OSMesaDriver::nfglGetnPixelMapfvARB(GLenum map, GLsizei bufSize, GLfloat *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapfvARB(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapfvARB(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPFVARB(map, bufSize, values);
 }
 
@@ -9648,7 +9648,7 @@ void OSMesaDriver::nfglGetnPixelMapuiv(GLenum map, GLsizei bufSize, memptr value
 void OSMesaDriver::nfglGetnPixelMapuiv(GLenum map, GLsizei bufSize, GLuint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapuiv(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapuiv(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPUIV(map, bufSize, values);
 }
 
@@ -9658,7 +9658,7 @@ void OSMesaDriver::nfglGetnPixelMapuivARB(GLenum map, GLsizei bufSize, memptr va
 void OSMesaDriver::nfglGetnPixelMapuivARB(GLenum map, GLsizei bufSize, GLuint *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapuivARB(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapuivARB(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPUIVARB(map, bufSize, values);
 }
 
@@ -9668,7 +9668,7 @@ void OSMesaDriver::nfglGetnPixelMapusv(GLenum map, GLsizei bufSize, memptr value
 void OSMesaDriver::nfglGetnPixelMapusv(GLenum map, GLsizei bufSize, GLushort *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapusv(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapusv(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPUSV(map, bufSize, values);
 }
 
@@ -9678,7 +9678,7 @@ void OSMesaDriver::nfglGetnPixelMapusvARB(GLenum map, GLsizei bufSize, memptr va
 void OSMesaDriver::nfglGetnPixelMapusvARB(GLenum map, GLsizei bufSize, GLushort *values)
 #endif
 {
-	D(bug("nfosmesa: glGetnPixelMapusvARB(0x%x, %d, " PRI_PTR ")", map, bufSize, AtariOffset(values)));
+	D(bug("nfosmesa: glGetnPixelMapusvARB(%s, %d, " PRI_PTR ")", gl_enum_name(map), bufSize, AtariOffset(values)));
 FN_GLGETNPIXELMAPUSVARB(map, bufSize, values);
 }
 
@@ -9708,7 +9708,7 @@ void OSMesaDriver::nfglGetnSeparableFilter(GLenum target, GLenum format, GLenum 
 void OSMesaDriver::nfglGetnSeparableFilter(GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span)
 #endif
 {
-	D(bug("nfosmesa: glGetnSeparableFilter(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", target, format, type, rowBufSize, AtariOffset(row), columnBufSize, AtariOffset(column), AtariOffset(span)));
+	D(bug("nfosmesa: glGetnSeparableFilter(%s, %s, %s, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), rowBufSize, AtariOffset(row), columnBufSize, AtariOffset(column), AtariOffset(span)));
 FN_GLGETNSEPARABLEFILTER(target, format, type, rowBufSize, row, columnBufSize, column, span);
 }
 
@@ -9718,7 +9718,7 @@ void OSMesaDriver::nfglGetnSeparableFilterARB(GLenum target, GLenum format, GLen
 void OSMesaDriver::nfglGetnSeparableFilterARB(GLenum target, GLenum format, GLenum type, GLsizei rowBufSize, void *row, GLsizei columnBufSize, void *column, void *span)
 #endif
 {
-	D(bug("nfosmesa: glGetnSeparableFilterARB(0x%x, 0x%x, 0x%x, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", target, format, type, rowBufSize, AtariOffset(row), columnBufSize, AtariOffset(column), AtariOffset(span)));
+	D(bug("nfosmesa: glGetnSeparableFilterARB(%s, %s, %s, %d, " PRI_PTR ", %d, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), gl_enum_name(type), rowBufSize, AtariOffset(row), columnBufSize, AtariOffset(column), AtariOffset(span)));
 FN_GLGETNSEPARABLEFILTERARB(target, format, type, rowBufSize, row, columnBufSize, column, span);
 }
 
@@ -9728,7 +9728,7 @@ void OSMesaDriver::nfglGetnTexImage(GLenum target, GLint level, GLenum format, G
 void OSMesaDriver::nfglGetnTexImage(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glGetnTexImage(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, level, format, type, bufSize, AtariOffset(pixels)));
+	D(bug("nfosmesa: glGetnTexImage(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(pixels)));
 FN_GLGETNTEXIMAGE(target, level, format, type, bufSize, pixels);
 }
 
@@ -9738,7 +9738,7 @@ void OSMesaDriver::nfglGetnTexImageARB(GLenum target, GLint level, GLenum format
 void OSMesaDriver::nfglGetnTexImageARB(GLenum target, GLint level, GLenum format, GLenum type, GLsizei bufSize, void *img)
 #endif
 {
-	D(bug("nfosmesa: glGetnTexImageARB(0x%x, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", target, level, format, type, bufSize, AtariOffset(img)));
+	D(bug("nfosmesa: glGetnTexImageARB(%s, %d, %s, %s, %d, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(img)));
 FN_GLGETNTEXIMAGEARB(target, level, format, type, bufSize, img);
 }
 
@@ -9872,25 +9872,25 @@ void OSMesaDriver::nfglGlobalAlphaFactorusSUN(GLushort32 factor)
 
 void OSMesaDriver::nfglHint(GLenum target, GLenum mode)
 {
-	D(bug("nfosmesa: glHint(0x%x, 0x%x)", target, mode));
+	D(bug("nfosmesa: glHint(%s, %s)", gl_enum_name(target), gl_enum_name(mode)));
 	fn.glHint(target, mode);
 }
 
 void OSMesaDriver::nfglHintPGI(GLenum target, GLint mode)
 {
-	D(bug("nfosmesa: glHintPGI(0x%x, %d)", target, mode));
+	D(bug("nfosmesa: glHintPGI(%s, %d)", gl_enum_name(target), mode));
 	fn.glHintPGI(target, mode);
 }
 
 void OSMesaDriver::nfglHistogram(GLenum target, GLsizei width, GLenum internalformat, GLboolean32 sink)
 {
-	D(bug("nfosmesa: glHistogram(0x%x, %d, 0x%x, %d)", target, width, internalformat, sink));
+	D(bug("nfosmesa: glHistogram(%s, %d, %s, %d)", gl_enum_name(target), width, gl_enum_name(internalformat), sink));
 	fn.glHistogram(target, width, internalformat, sink);
 }
 
 void OSMesaDriver::nfglHistogramEXT(GLenum target, GLsizei width, GLenum internalformat, GLboolean32 sink)
 {
-	D(bug("nfosmesa: glHistogramEXT(0x%x, %d, 0x%x, %d)", target, width, internalformat, sink));
+	D(bug("nfosmesa: glHistogramEXT(%s, %d, %s, %d)", gl_enum_name(target), width, gl_enum_name(internalformat), sink));
 	fn.glHistogramEXT(target, width, internalformat, sink);
 }
 
@@ -9900,13 +9900,13 @@ void OSMesaDriver::nfglIglooInterfaceSGIX(GLenum pname, memptr params)
 void OSMesaDriver::nfglIglooInterfaceSGIX(GLenum pname, const void *params)
 #endif
 {
-	D(bug("nfosmesa: glIglooInterfaceSGIX(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glIglooInterfaceSGIX(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLIGLOOINTERFACESGIX(pname, params);
 }
 
 void OSMesaDriver::nfglImageTransformParameterfHP(GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glImageTransformParameterfHP(0x%x, 0x%x, %f)", target, pname, param));
+	D(bug("nfosmesa: glImageTransformParameterfHP(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glImageTransformParameterfHP(target, pname, param);
 }
 
@@ -9916,13 +9916,13 @@ void OSMesaDriver::nfglImageTransformParameterfvHP(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglImageTransformParameterfvHP(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glImageTransformParameterfvHP(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glImageTransformParameterfvHP(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLIMAGETRANSFORMPARAMETERFVHP(target, pname, params);
 }
 
 void OSMesaDriver::nfglImageTransformParameteriHP(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glImageTransformParameteriHP(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glImageTransformParameteriHP(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glImageTransformParameteriHP(target, pname, param);
 }
 
@@ -9932,14 +9932,14 @@ void OSMesaDriver::nfglImageTransformParameterivHP(GLenum target, GLenum pname, 
 void OSMesaDriver::nfglImageTransformParameterivHP(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glImageTransformParameterivHP(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glImageTransformParameterivHP(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLIMAGETRANSFORMPARAMETERIVHP(target, pname, params);
 }
 
 #if 0
 GLsync OSMesaDriver::nfglImportSyncEXT(GLenum external_sync_type, GLintptr external_sync, GLbitfield flags)
 {
-	D(bug("nfosmesa: glImportSyncEXT(0x%x, %" PRI_IPTR ", 0x%x)", external_sync_type, external_sync, flags));
+	D(bug("nfosmesa: glImportSyncEXT(%s, %" PRI_IPTR ", 0x%x)", gl_enum_name(external_sync_type), external_sync, flags));
 	GLsync __ret = fn.glImportSyncEXT(external_sync_type, external_sync, flags);
 	return __ret;
 }
@@ -9947,13 +9947,13 @@ GLsync OSMesaDriver::nfglImportSyncEXT(GLenum external_sync_type, GLintptr exter
 
 void OSMesaDriver::nfglIndexFormatNV(GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glIndexFormatNV(0x%x, %d)", type, stride));
+	D(bug("nfosmesa: glIndexFormatNV(%s, %d)", gl_enum_name(type), stride));
 	fn.glIndexFormatNV(type, stride);
 }
 
 void OSMesaDriver::nfglIndexFuncEXT(GLenum func, GLclampf ref)
 {
-	D(bug("nfosmesa: glIndexFuncEXT(0x%x, %f)", func, ref));
+	D(bug("nfosmesa: glIndexFuncEXT(%s, %f)", gl_enum_name(func), ref));
 	fn.glIndexFuncEXT(func, ref);
 }
 
@@ -9965,7 +9965,7 @@ void OSMesaDriver::nfglIndexMask(GLuint mask)
 
 void OSMesaDriver::nfglIndexMaterialEXT(GLenum face, GLenum mode)
 {
-	D(bug("nfosmesa: glIndexMaterialEXT(0x%x, 0x%x)", face, mode));
+	D(bug("nfosmesa: glIndexMaterialEXT(%s, %s)", gl_enum_name(face), gl_enum_name(mode)));
 	fn.glIndexMaterialEXT(face, mode);
 }
 
@@ -9975,7 +9975,7 @@ void OSMesaDriver::nfglIndexPointer(GLenum type, GLsizei stride, memptr pointer)
 void OSMesaDriver::nfglIndexPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glIndexPointer(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glIndexPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLINDEXPOINTER(type, stride, pointer);
 }
 
@@ -9985,7 +9985,7 @@ void OSMesaDriver::nfglIndexPointerEXT(GLenum type, GLsizei stride, GLsizei coun
 void OSMesaDriver::nfglIndexPointerEXT(GLenum type, GLsizei stride, GLsizei count, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glIndexPointerEXT(0x%x, %d, %d, " PRI_PTR ")", type, stride, count, AtariOffset(pointer)));
+	D(bug("nfosmesa: glIndexPointerEXT(%s, %d, %d, " PRI_PTR ")", gl_enum_name(type), stride, count, AtariOffset(pointer)));
 FN_GLINDEXPOINTEREXT(type, stride, count, pointer);
 }
 
@@ -9995,7 +9995,7 @@ void OSMesaDriver::nfglIndexPointerListIBM(GLenum type, GLint stride, memptr poi
 void OSMesaDriver::nfglIndexPointerListIBM(GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glIndexPointerListIBM(0x%x, %d, " PRI_PTR ", %d)", type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glIndexPointerListIBM(%s, %d, " PRI_PTR ", %d)", gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLINDEXPOINTERLISTIBM(type, stride, pointer, ptrstride);
 }
 
@@ -10142,7 +10142,7 @@ void OSMesaDriver::nfglInterleavedArrays(GLenum format, GLsizei stride, memptr p
 void OSMesaDriver::nfglInterleavedArrays(GLenum format, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glInterleavedArrays(0x%x, %d, " PRI_PTR ")", format, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glInterleavedArrays(%s, %d, " PRI_PTR ")", gl_enum_name(format), stride, AtariOffset(pointer)));
 FN_GLINTERLEAVEDARRAYS(format, stride, pointer);
 }
 
@@ -10170,7 +10170,7 @@ void OSMesaDriver::nfglInvalidateFramebuffer(GLenum target, GLsizei numAttachmen
 void OSMesaDriver::nfglInvalidateFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments)
 #endif
 {
-	D(bug("nfosmesa: glInvalidateFramebuffer(0x%x, %d, " PRI_PTR ")", target, numAttachments, AtariOffset(attachments)));
+	D(bug("nfosmesa: glInvalidateFramebuffer(%s, %d, " PRI_PTR ")", gl_enum_name(target), numAttachments, AtariOffset(attachments)));
 FN_GLINVALIDATEFRAMEBUFFER(target, numAttachments, attachments);
 }
 
@@ -10200,7 +10200,7 @@ void OSMesaDriver::nfglInvalidateSubFramebuffer(GLenum target, GLsizei numAttach
 void OSMesaDriver::nfglInvalidateSubFramebuffer(GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height)
 #endif
 {
-	D(bug("nfosmesa: glInvalidateSubFramebuffer(0x%x, %d, " PRI_PTR ", %d, %d, %d, %d)", target, numAttachments, AtariOffset(attachments), x, y, width, height));
+	D(bug("nfosmesa: glInvalidateSubFramebuffer(%s, %d, " PRI_PTR ", %d, %d, %d, %d)", gl_enum_name(target), numAttachments, AtariOffset(attachments), x, y, width, height));
 FN_GLINVALIDATESUBFRAMEBUFFER(target, numAttachments, attachments, x, y, width, height);
 }
 
@@ -10239,7 +10239,7 @@ GLboolean OSMesaDriver::nfglIsBufferARB(GLuint buffer)
 
 GLboolean OSMesaDriver::nfglIsBufferResidentNV(GLenum target)
 {
-	D(bug("nfosmesa: glIsBufferResidentNV(0x%x)", target));
+	D(bug("nfosmesa: glIsBufferResidentNV(%s)", gl_enum_name(target)));
 	GLboolean __ret = fn.glIsBufferResidentNV(target);
 	return __ret;
 }
@@ -10253,21 +10253,20 @@ GLboolean OSMesaDriver::nfglIsCommandListNV(GLuint list)
 
 GLboolean OSMesaDriver::nfglIsEnabled(GLenum cap)
 {
-	D(bug("nfosmesa: glIsEnabled(0x%x)", cap));
-	GLboolean __ret = fn.glIsEnabled(cap);
-	return __ret;
+	D(bug("nfosmesa: glIsEnabled(%s)", gl_enum_name(cap)));
+FN_GLISENABLED(cap);
 }
 
 GLboolean OSMesaDriver::nfglIsEnabledIndexedEXT(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glIsEnabledIndexedEXT(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glIsEnabledIndexedEXT(%s, %u)", gl_enum_name(target), index));
 	GLboolean __ret = fn.glIsEnabledIndexedEXT(target, index);
 	return __ret;
 }
 
 GLboolean OSMesaDriver::nfglIsEnabledi(GLenum target, GLuint index)
 {
-	D(bug("nfosmesa: glIsEnabledi(0x%x, %u)", target, index));
+	D(bug("nfosmesa: glIsEnabledi(%s, %u)", gl_enum_name(target), index));
 	GLboolean __ret = fn.glIsEnabledi(target, index);
 	return __ret;
 }
@@ -10323,7 +10322,7 @@ GLboolean OSMesaDriver::nfglIsList(GLuint list)
 
 GLboolean OSMesaDriver::nfglIsNameAMD(GLenum identifier, GLuint name)
 {
-	D(bug("nfosmesa: glIsNameAMD(0x%x, %u)", identifier, name));
+	D(bug("nfosmesa: glIsNameAMD(%s, %u)", gl_enum_name(identifier), name));
 	GLboolean __ret = fn.glIsNameAMD(identifier, name);
 	return __ret;
 }
@@ -10508,7 +10507,7 @@ GLboolean OSMesaDriver::nfglIsTransformFeedbackNV(GLuint id)
 
 GLboolean OSMesaDriver::nfglIsVariantEnabledEXT(GLuint id, GLenum cap)
 {
-	D(bug("nfosmesa: glIsVariantEnabledEXT(%u, 0x%x)", id, cap));
+	D(bug("nfosmesa: glIsVariantEnabledEXT(%u, %s)", id, gl_enum_name(cap)));
 	GLboolean __ret = fn.glIsVariantEnabledEXT(id, cap);
 	return __ret;
 }
@@ -10529,7 +10528,7 @@ GLboolean OSMesaDriver::nfglIsVertexArrayAPPLE(GLuint array)
 
 GLboolean OSMesaDriver::nfglIsVertexAttribEnabledAPPLE(GLuint index, GLenum pname)
 {
-	D(bug("nfosmesa: glIsVertexAttribEnabledAPPLE(%u, 0x%x)", index, pname));
+	D(bug("nfosmesa: glIsVertexAttribEnabledAPPLE(%u, %s)", index, gl_enum_name(pname)));
 	GLboolean __ret = fn.glIsVertexAttribEnabledAPPLE(index, pname);
 	return __ret;
 }
@@ -10540,19 +10539,19 @@ void OSMesaDriver::nfglLabelObjectEXT(GLenum type, GLuint object, GLsizei length
 void OSMesaDriver::nfglLabelObjectEXT(GLenum type, GLuint object, GLsizei length, const GLchar *label)
 #endif
 {
-	D(bug("nfosmesa: glLabelObjectEXT(0x%x, %u, %d, " PRI_PTR ")", type, object, length, AtariOffset(label)));
+	D(bug("nfosmesa: glLabelObjectEXT(%s, %u, %d, " PRI_PTR ")", gl_enum_name(type), object, length, AtariOffset(label)));
 FN_GLLABELOBJECTEXT(type, object, length, label);
 }
 
 void OSMesaDriver::nfglLightEnviSGIX(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glLightEnviSGIX(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glLightEnviSGIX(%s, %d)", gl_enum_name(pname), param));
 	fn.glLightEnviSGIX(pname, param);
 }
 
 void OSMesaDriver::nfglLightModelf(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glLightModelf(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glLightModelf(%s, %f)", gl_enum_name(pname), param));
 	fn.glLightModelf(pname, param);
 }
 
@@ -10562,13 +10561,13 @@ void OSMesaDriver::nfglLightModelfv(GLenum pname, memptr params)
 void OSMesaDriver::nfglLightModelfv(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glLightModelfv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glLightModelfv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLLIGHTMODELFV(pname, params);
 }
 
 void OSMesaDriver::nfglLightModeli(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glLightModeli(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glLightModeli(%s, %d)", gl_enum_name(pname), param));
 	fn.glLightModeli(pname, param);
 }
 
@@ -10578,13 +10577,13 @@ void OSMesaDriver::nfglLightModeliv(GLenum pname, memptr params)
 void OSMesaDriver::nfglLightModeliv(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glLightModeliv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glLightModeliv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLLIGHTMODELIV(pname, params);
 }
 
 void OSMesaDriver::nfglLightModelxOES(GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glLightModelxOES(0x%x, 0x%x)", pname, param));
+	D(bug("nfosmesa: glLightModelxOES(%s, 0x%x)", gl_enum_name(pname), param));
 	fn.glLightModelxOES(pname, param);
 }
 
@@ -10594,13 +10593,13 @@ void OSMesaDriver::nfglLightModelxvOES(GLenum pname, memptr param)
 void OSMesaDriver::nfglLightModelxvOES(GLenum pname, const GLfixed *param)
 #endif
 {
-	D(bug("nfosmesa: glLightModelxvOES(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glLightModelxvOES(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLLIGHTMODELXVOES(pname, param);
 }
 
 void OSMesaDriver::nfglLightf(GLenum light, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glLightf(0x%x, 0x%x, %f)", light, pname, param));
+	D(bug("nfosmesa: glLightf(%s, %s, %f)", gl_enum_name(light), gl_enum_name(pname), param));
 	fn.glLightf(light, pname, param);
 }
 
@@ -10610,13 +10609,13 @@ void OSMesaDriver::nfglLightfv(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglLightfv(GLenum light, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glLightfv(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glLightfv(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLLIGHTFV(light, pname, params);
 }
 
 void OSMesaDriver::nfglLighti(GLenum light, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glLighti(0x%x, 0x%x, %d)", light, pname, param));
+	D(bug("nfosmesa: glLighti(%s, %s, %d)", gl_enum_name(light), gl_enum_name(pname), param));
 	fn.glLighti(light, pname, param);
 }
 
@@ -10626,13 +10625,13 @@ void OSMesaDriver::nfglLightiv(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglLightiv(GLenum light, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glLightiv(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glLightiv(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLLIGHTIV(light, pname, params);
 }
 
 void OSMesaDriver::nfglLightxOES(GLenum light, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glLightxOES(0x%x, 0x%x, 0x%x)", light, pname, param));
+	D(bug("nfosmesa: glLightxOES(%s, %s, 0x%x)", gl_enum_name(light), gl_enum_name(pname), param));
 	fn.glLightxOES(light, pname, param);
 }
 
@@ -10642,7 +10641,7 @@ void OSMesaDriver::nfglLightxvOES(GLenum light, GLenum pname, memptr params)
 void OSMesaDriver::nfglLightxvOES(GLenum light, GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glLightxvOES(0x%x, 0x%x, " PRI_PTR ")", light, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glLightxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(light), gl_enum_name(pname), AtariOffset(params)));
 FN_GLLIGHTXVOES(light, pname, params);
 }
 
@@ -10694,7 +10693,7 @@ FN_GLLISTDRAWCOMMANDSSTATESCLIENTNV(list, segment, indirects, sizes, states, fbo
 
 void OSMesaDriver::nfglListParameterfSGIX(GLuint list, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glListParameterfSGIX(%u, 0x%x, %f)", list, pname, param));
+	D(bug("nfosmesa: glListParameterfSGIX(%u, %s, %f)", list, gl_enum_name(pname), param));
 	fn.glListParameterfSGIX(list, pname, param);
 }
 
@@ -10704,13 +10703,13 @@ void OSMesaDriver::nfglListParameterfvSGIX(GLuint list, GLenum pname, memptr par
 void OSMesaDriver::nfglListParameterfvSGIX(GLuint list, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glListParameterfvSGIX(%u, 0x%x, " PRI_PTR ")", list, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glListParameterfvSGIX(%u, %s, " PRI_PTR ")", list, gl_enum_name(pname), AtariOffset(params)));
 FN_GLLISTPARAMETERFVSGIX(list, pname, params);
 }
 
 void OSMesaDriver::nfglListParameteriSGIX(GLuint list, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glListParameteriSGIX(%u, 0x%x, %d)", list, pname, param));
+	D(bug("nfosmesa: glListParameteriSGIX(%u, %s, %d)", list, gl_enum_name(pname), param));
 	fn.glListParameteriSGIX(list, pname, param);
 }
 
@@ -10720,7 +10719,7 @@ void OSMesaDriver::nfglListParameterivSGIX(GLuint list, GLenum pname, memptr par
 void OSMesaDriver::nfglListParameterivSGIX(GLuint list, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glListParameterivSGIX(%u, 0x%x, " PRI_PTR ")", list, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glListParameterivSGIX(%u, %s, " PRI_PTR ")", list, gl_enum_name(pname), AtariOffset(params)));
 FN_GLLISTPARAMETERIVSGIX(list, pname, params);
 }
 
@@ -10778,7 +10777,7 @@ void OSMesaDriver::nfglLoadProgramNV(GLenum target, GLuint id, GLsizei len, memp
 void OSMesaDriver::nfglLoadProgramNV(GLenum target, GLuint id, GLsizei len, const GLubyte *program)
 #endif
 {
-	D(bug("nfosmesa: glLoadProgramNV(0x%x, %u, %d, " PRI_PTR ")", target, id, len, AtariOffset(program)));
+	D(bug("nfosmesa: glLoadProgramNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), id, len, AtariOffset(program)));
 FN_GLLOADPROGRAMNV(target, id, len, program);
 }
 
@@ -10854,19 +10853,19 @@ FN_GLLOCKARRAYSEXT(first, count);
 
 void OSMesaDriver::nfglLogicOp(GLenum opcode)
 {
-	D(bug("nfosmesa: glLogicOp(0x%x)", opcode));
+	D(bug("nfosmesa: glLogicOp(%s)", gl_enum_name(opcode)));
 	fn.glLogicOp(opcode);
 }
 
 void OSMesaDriver::nfglMakeBufferNonResidentNV(GLenum target)
 {
-	D(bug("nfosmesa: glMakeBufferNonResidentNV(0x%x)", target));
+	D(bug("nfosmesa: glMakeBufferNonResidentNV(%s)", gl_enum_name(target)));
 	fn.glMakeBufferNonResidentNV(target);
 }
 
 void OSMesaDriver::nfglMakeBufferResidentNV(GLenum target, GLenum access)
 {
-	D(bug("nfosmesa: glMakeBufferResidentNV(0x%x, 0x%x)", target, access));
+	D(bug("nfosmesa: glMakeBufferResidentNV(%s, %s)", gl_enum_name(target), gl_enum_name(access)));
 	fn.glMakeBufferResidentNV(target, access);
 }
 
@@ -10884,13 +10883,13 @@ void OSMesaDriver::nfglMakeImageHandleNonResidentNV(GLuint64 handle)
 
 void OSMesaDriver::nfglMakeImageHandleResidentARB(GLuint64 handle, GLenum access)
 {
-	D(bug("nfosmesa: glMakeImageHandleResidentARB(%" PRIu64 ", 0x%x)", handle, access));
+	D(bug("nfosmesa: glMakeImageHandleResidentARB(%" PRIu64 ", %s)", handle, gl_enum_name(access)));
 	fn.glMakeImageHandleResidentARB(handle, access);
 }
 
 void OSMesaDriver::nfglMakeImageHandleResidentNV(GLuint64 handle, GLenum access)
 {
-	D(bug("nfosmesa: glMakeImageHandleResidentNV(%" PRIu64 ", 0x%x)", handle, access));
+	D(bug("nfosmesa: glMakeImageHandleResidentNV(%" PRIu64 ", %s)", handle, gl_enum_name(access)));
 	fn.glMakeImageHandleResidentNV(handle, access);
 }
 
@@ -10902,7 +10901,7 @@ void OSMesaDriver::nfglMakeNamedBufferNonResidentNV(GLuint buffer)
 
 void OSMesaDriver::nfglMakeNamedBufferResidentNV(GLuint buffer, GLenum access)
 {
-	D(bug("nfosmesa: glMakeNamedBufferResidentNV(%u, 0x%x)", buffer, access));
+	D(bug("nfosmesa: glMakeNamedBufferResidentNV(%u, %s)", buffer, gl_enum_name(access)));
 	fn.glMakeNamedBufferResidentNV(buffer, access);
 }
 
@@ -10936,7 +10935,7 @@ void OSMesaDriver::nfglMap1d(GLenum target, GLdouble u1, GLdouble u2, GLint stri
 void OSMesaDriver::nfglMap1d(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, const GLdouble *points)
 #endif
 {
-	D(bug("nfosmesa: glMap1d(0x%x, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, stride, order, AtariOffset(points)));
+	D(bug("nfosmesa: glMap1d(%s, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, stride, order, AtariOffset(points)));
 FN_GLMAP1D(target, u1, u2, stride, order, points);
 }
 
@@ -10946,13 +10945,13 @@ void OSMesaDriver::nfglMap1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride
 void OSMesaDriver::nfglMap1f(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, const GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glMap1f(0x%x, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, stride, order, AtariOffset(points)));
+	D(bug("nfosmesa: glMap1f(%s, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, stride, order, AtariOffset(points)));
 FN_GLMAP1F(target, u1, u2, stride, order, points);
 }
 
 void OSMesaDriver::nfglMap1xOES(GLenum target, GLfixed u1, GLfixed u2, GLint stride, GLint order, GLfixed points)
 {
-	D(bug("nfosmesa: glMap1xOES(0x%x, 0x%x, 0x%x, %d, %d, 0x%x)", target, u1, u2, stride, order, points));
+	D(bug("nfosmesa: glMap1xOES(%s, 0x%x, 0x%x, %d, %d, 0x%x)", gl_enum_name(target), u1, u2, stride, order, points));
 	fn.glMap1xOES(target, u1, u2, stride, order, points);
 }
 
@@ -10962,7 +10961,7 @@ void OSMesaDriver::nfglMap2d(GLenum target, GLdouble u1, GLdouble u2, GLint ustr
 void OSMesaDriver::nfglMap2d(GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, const GLdouble *points)
 #endif
 {
-	D(bug("nfosmesa: glMap2d(0x%x, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, AtariOffset(points)));
+	D(bug("nfosmesa: glMap2d(%s, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, ustride, uorder, v1, v2, vstride, vorder, AtariOffset(points)));
 FN_GLMAP2D(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
@@ -10972,20 +10971,20 @@ void OSMesaDriver::nfglMap2f(GLenum target, GLfloat u1, GLfloat u2, GLint ustrid
 void OSMesaDriver::nfglMap2f(GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, const GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glMap2f(0x%x, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, AtariOffset(points)));
+	D(bug("nfosmesa: glMap2f(%s, %f, %f, %d, %d, %f, %f, %d, %d, " PRI_PTR ")", gl_enum_name(target), u1, u2, ustride, uorder, v1, v2, vstride, vorder, AtariOffset(points)));
 FN_GLMAP2F(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
 void OSMesaDriver::nfglMap2xOES(GLenum target, GLfixed u1, GLfixed u2, GLint ustride, GLint uorder, GLfixed v1, GLfixed v2, GLint vstride, GLint vorder, GLfixed points)
 {
-	D(bug("nfosmesa: glMap2xOES(0x%x, 0x%x, 0x%x, %d, %d, 0x%x, 0x%x, %d, %d, 0x%x)", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points));
+	D(bug("nfosmesa: glMap2xOES(%s, 0x%x, 0x%x, %d, %d, 0x%x, 0x%x, %d, %d, 0x%x)", gl_enum_name(target), u1, u2, ustride, uorder, v1, v2, vstride, vorder, points));
 	fn.glMap2xOES(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
 #if 0
 void * OSMesaDriver::nfglMapBuffer(GLenum target, GLenum access)
 {
-	D(bug("nfosmesa: glMapBuffer(0x%x, 0x%x)", target, access));
+	D(bug("nfosmesa: glMapBuffer(%s, %s)", gl_enum_name(target), gl_enum_name(access)));
 FN_GLMAPBUFFER(target, access);
 }
 #endif
@@ -10993,7 +10992,7 @@ FN_GLMAPBUFFER(target, access);
 #if 0
 void * OSMesaDriver::nfglMapBufferARB(GLenum target, GLenum access)
 {
-	D(bug("nfosmesa: glMapBufferARB(0x%x, 0x%x)", target, access));
+	D(bug("nfosmesa: glMapBufferARB(%s, %s)", gl_enum_name(target), gl_enum_name(access)));
 FN_GLMAPBUFFERARB(target, access);
 }
 #endif
@@ -11001,7 +11000,7 @@ FN_GLMAPBUFFERARB(target, access);
 #if 0
 void * OSMesaDriver::nfglMapBufferRange(GLenum target, GLintptr offset, GLsizeiptr length, GLbitfield access)
 {
-	D(bug("nfosmesa: glMapBufferRange(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", target, offset, length, access));
+	D(bug("nfosmesa: glMapBufferRange(%s, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", gl_enum_name(target), offset, length, access));
 FN_GLMAPBUFFERRANGE(target, offset, length, access);
 }
 #endif
@@ -11012,7 +11011,7 @@ void OSMesaDriver::nfglMapControlPointsNV(GLenum target, GLuint index, GLenum ty
 void OSMesaDriver::nfglMapControlPointsNV(GLenum target, GLuint index, GLenum type, GLsizei ustride, GLsizei vstride, GLint uorder, GLint vorder, GLboolean32 packed, const void *points)
 #endif
 {
-	D(bug("nfosmesa: glMapControlPointsNV(0x%x, %u, 0x%x, %d, %d, %d, %d, %d, " PRI_PTR ")", target, index, type, ustride, vstride, uorder, vorder, packed, AtariOffset(points)));
+	D(bug("nfosmesa: glMapControlPointsNV(%s, %u, %s, %d, %d, %d, %d, %d, " PRI_PTR ")", gl_enum_name(target), index, gl_enum_name(type), ustride, vstride, uorder, vorder, packed, AtariOffset(points)));
 FN_GLMAPCONTROLPOINTSNV(target, index, type, ustride, vstride, uorder, vorder, packed, points);
 }
 
@@ -11055,7 +11054,7 @@ void OSMesaDriver::nfglMapGrid2xOES(GLint n, GLfixed u1, GLfixed u2, GLfixed v1,
 #if 0
 void * OSMesaDriver::nfglMapNamedBuffer(GLuint buffer, GLenum access)
 {
-	D(bug("nfosmesa: glMapNamedBuffer(%u, 0x%x)", buffer, access));
+	D(bug("nfosmesa: glMapNamedBuffer(%u, %s)", buffer, gl_enum_name(access)));
 FN_GLMAPNAMEDBUFFER(buffer, access);
 }
 #endif
@@ -11063,7 +11062,7 @@ FN_GLMAPNAMEDBUFFER(buffer, access);
 #if 0
 void * OSMesaDriver::nfglMapNamedBufferEXT(GLuint buffer, GLenum access)
 {
-	D(bug("nfosmesa: glMapNamedBufferEXT(%u, 0x%x)", buffer, access));
+	D(bug("nfosmesa: glMapNamedBufferEXT(%u, %s)", buffer, gl_enum_name(access)));
 	void * __ret = fn.glMapNamedBufferEXT(buffer, access);
 	return __ret;
 }
@@ -11101,7 +11100,7 @@ void OSMesaDriver::nfglMapParameterfvNV(GLenum target, GLenum pname, memptr para
 void OSMesaDriver::nfglMapParameterfvNV(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glMapParameterfvNV(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMapParameterfvNV(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMAPPARAMETERFVNV(target, pname, params);
 }
 
@@ -11111,7 +11110,7 @@ void OSMesaDriver::nfglMapParameterivNV(GLenum target, GLenum pname, memptr para
 void OSMesaDriver::nfglMapParameterivNV(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMapParameterivNV(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMapParameterivNV(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMAPPARAMETERIVNV(target, pname, params);
 }
 
@@ -11170,7 +11169,7 @@ FN_GLMAPVERTEXATTRIB2FAPPLE(index, size, u1, u2, ustride, uorder, v1, v2, vstrid
 
 void OSMesaDriver::nfglMaterialf(GLenum face, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glMaterialf(0x%x, 0x%x, %f)", face, pname, param));
+	D(bug("nfosmesa: glMaterialf(%s, %s, %f)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glMaterialf(face, pname, param);
 }
 
@@ -11180,13 +11179,13 @@ void OSMesaDriver::nfglMaterialfv(GLenum face, GLenum pname, memptr params)
 void OSMesaDriver::nfglMaterialfv(GLenum face, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glMaterialfv(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMaterialfv(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMATERIALFV(face, pname, params);
 }
 
 void OSMesaDriver::nfglMateriali(GLenum face, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glMateriali(0x%x, 0x%x, %d)", face, pname, param));
+	D(bug("nfosmesa: glMateriali(%s, %s, %d)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glMateriali(face, pname, param);
 }
 
@@ -11196,13 +11195,13 @@ void OSMesaDriver::nfglMaterialiv(GLenum face, GLenum pname, memptr params)
 void OSMesaDriver::nfglMaterialiv(GLenum face, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMaterialiv(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMaterialiv(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMATERIALIV(face, pname, params);
 }
 
 void OSMesaDriver::nfglMaterialxOES(GLenum face, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glMaterialxOES(0x%x, 0x%x, 0x%x)", face, pname, param));
+	D(bug("nfosmesa: glMaterialxOES(%s, %s, 0x%x)", gl_enum_name(face), gl_enum_name(pname), param));
 	fn.glMaterialxOES(face, pname, param);
 }
 
@@ -11212,13 +11211,13 @@ void OSMesaDriver::nfglMaterialxvOES(GLenum face, GLenum pname, memptr param)
 void OSMesaDriver::nfglMaterialxvOES(GLenum face, GLenum pname, const GLfixed *param)
 #endif
 {
-	D(bug("nfosmesa: glMaterialxvOES(0x%x, 0x%x, " PRI_PTR ")", face, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glMaterialxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(face), gl_enum_name(pname), AtariOffset(param)));
 FN_GLMATERIALXVOES(face, pname, param);
 }
 
 void OSMesaDriver::nfglMatrixFrustumEXT(GLenum mode, GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
 {
-	D(bug("nfosmesa: glMatrixFrustumEXT(0x%x, %f, %f, %f, %f, %f, %f)", mode, left, right, bottom, top, zNear, zFar));
+	D(bug("nfosmesa: glMatrixFrustumEXT(%s, %f, %f, %f, %f, %f, %f)", gl_enum_name(mode), left, right, bottom, top, zNear, zFar));
 	fn.glMatrixFrustumEXT(mode, left, right, bottom, top, zNear, zFar);
 }
 
@@ -11228,7 +11227,7 @@ void OSMesaDriver::nfglMatrixIndexPointerARB(GLint size, GLenum type, GLsizei st
 void OSMesaDriver::nfglMatrixIndexPointerARB(GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glMatrixIndexPointerARB(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glMatrixIndexPointerARB(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLMATRIXINDEXPOINTERARB(size, type, stride, pointer);
 }
 
@@ -11268,7 +11267,7 @@ void OSMesaDriver::nfglMatrixLoad3x2fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixLoad3x2fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoad3x2fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoad3x2fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXLOAD3X2FNV(matrixMode, m);
 }
 
@@ -11278,13 +11277,13 @@ void OSMesaDriver::nfglMatrixLoad3x3fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixLoad3x3fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoad3x3fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoad3x3fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXLOAD3X3FNV(matrixMode, m);
 }
 
 void OSMesaDriver::nfglMatrixLoadIdentityEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glMatrixLoadIdentityEXT(0x%x)", mode));
+	D(bug("nfosmesa: glMatrixLoadIdentityEXT(%s)", gl_enum_name(mode)));
 	fn.glMatrixLoadIdentityEXT(mode);
 }
 
@@ -11294,7 +11293,7 @@ void OSMesaDriver::nfglMatrixLoadTranspose3x3fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixLoadTranspose3x3fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoadTranspose3x3fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoadTranspose3x3fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXLOADTRANSPOSE3X3FNV(matrixMode, m);
 }
 
@@ -11304,7 +11303,7 @@ void OSMesaDriver::nfglMatrixLoadTransposedEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixLoadTransposedEXT(GLenum mode, const GLdouble *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoadTransposedEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoadTransposedEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXLOADTRANSPOSEDEXT(mode, m);
 }
 
@@ -11314,7 +11313,7 @@ void OSMesaDriver::nfglMatrixLoadTransposefEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixLoadTransposefEXT(GLenum mode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoadTransposefEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoadTransposefEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXLOADTRANSPOSEFEXT(mode, m);
 }
 
@@ -11324,7 +11323,7 @@ void OSMesaDriver::nfglMatrixLoaddEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixLoaddEXT(GLenum mode, const GLdouble *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoaddEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoaddEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXLOADDEXT(mode, m);
 }
 
@@ -11334,13 +11333,13 @@ void OSMesaDriver::nfglMatrixLoadfEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixLoadfEXT(GLenum mode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixLoadfEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixLoadfEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXLOADFEXT(mode, m);
 }
 
 void OSMesaDriver::nfglMatrixMode(GLenum mode)
 {
-	D(bug("nfosmesa: glMatrixMode(0x%x)", mode));
+	D(bug("nfosmesa: glMatrixMode(%s)", gl_enum_name(mode)));
 	fn.glMatrixMode(mode);
 }
 
@@ -11350,7 +11349,7 @@ void OSMesaDriver::nfglMatrixMult3x2fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixMult3x2fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMult3x2fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMult3x2fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXMULT3X2FNV(matrixMode, m);
 }
 
@@ -11360,7 +11359,7 @@ void OSMesaDriver::nfglMatrixMult3x3fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixMult3x3fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMult3x3fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMult3x3fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXMULT3X3FNV(matrixMode, m);
 }
 
@@ -11370,7 +11369,7 @@ void OSMesaDriver::nfglMatrixMultTranspose3x3fNV(GLenum matrixMode, memptr m)
 void OSMesaDriver::nfglMatrixMultTranspose3x3fNV(GLenum matrixMode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMultTranspose3x3fNV(0x%x, " PRI_PTR ")", matrixMode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMultTranspose3x3fNV(%s, " PRI_PTR ")", gl_enum_name(matrixMode), AtariOffset(m)));
 FN_GLMATRIXMULTTRANSPOSE3X3FNV(matrixMode, m);
 }
 
@@ -11380,7 +11379,7 @@ void OSMesaDriver::nfglMatrixMultTransposedEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixMultTransposedEXT(GLenum mode, const GLdouble *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMultTransposedEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMultTransposedEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXMULTTRANSPOSEDEXT(mode, m);
 }
 
@@ -11390,7 +11389,7 @@ void OSMesaDriver::nfglMatrixMultTransposefEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixMultTransposefEXT(GLenum mode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMultTransposefEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMultTransposefEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXMULTTRANSPOSEFEXT(mode, m);
 }
 
@@ -11400,7 +11399,7 @@ void OSMesaDriver::nfglMatrixMultdEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixMultdEXT(GLenum mode, const GLdouble *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMultdEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMultdEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXMULTDEXT(mode, m);
 }
 
@@ -11410,61 +11409,61 @@ void OSMesaDriver::nfglMatrixMultfEXT(GLenum mode, memptr m)
 void OSMesaDriver::nfglMatrixMultfEXT(GLenum mode, const GLfloat *m)
 #endif
 {
-	D(bug("nfosmesa: glMatrixMultfEXT(0x%x, " PRI_PTR ")", mode, AtariOffset(m)));
+	D(bug("nfosmesa: glMatrixMultfEXT(%s, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(m)));
 FN_GLMATRIXMULTFEXT(mode, m);
 }
 
 void OSMesaDriver::nfglMatrixOrthoEXT(GLenum mode, GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
 {
-	D(bug("nfosmesa: glMatrixOrthoEXT(0x%x, %f, %f, %f, %f, %f, %f)", mode, left, right, bottom, top, zNear, zFar));
+	D(bug("nfosmesa: glMatrixOrthoEXT(%s, %f, %f, %f, %f, %f, %f)", gl_enum_name(mode), left, right, bottom, top, zNear, zFar));
 	fn.glMatrixOrthoEXT(mode, left, right, bottom, top, zNear, zFar);
 }
 
 void OSMesaDriver::nfglMatrixPopEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glMatrixPopEXT(0x%x)", mode));
+	D(bug("nfosmesa: glMatrixPopEXT(%s)", gl_enum_name(mode)));
 	fn.glMatrixPopEXT(mode);
 }
 
 void OSMesaDriver::nfglMatrixPushEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glMatrixPushEXT(0x%x)", mode));
+	D(bug("nfosmesa: glMatrixPushEXT(%s)", gl_enum_name(mode)));
 	fn.glMatrixPushEXT(mode);
 }
 
 void OSMesaDriver::nfglMatrixRotatedEXT(GLenum mode, GLdouble angle, GLdouble x, GLdouble y, GLdouble z)
 {
-	D(bug("nfosmesa: glMatrixRotatedEXT(0x%x, %f, %f, %f, %f)", mode, angle, x, y, z));
+	D(bug("nfosmesa: glMatrixRotatedEXT(%s, %f, %f, %f, %f)", gl_enum_name(mode), angle, x, y, z));
 	fn.glMatrixRotatedEXT(mode, angle, x, y, z);
 }
 
 void OSMesaDriver::nfglMatrixRotatefEXT(GLenum mode, GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
 {
-	D(bug("nfosmesa: glMatrixRotatefEXT(0x%x, %f, %f, %f, %f)", mode, angle, x, y, z));
+	D(bug("nfosmesa: glMatrixRotatefEXT(%s, %f, %f, %f, %f)", gl_enum_name(mode), angle, x, y, z));
 	fn.glMatrixRotatefEXT(mode, angle, x, y, z);
 }
 
 void OSMesaDriver::nfglMatrixScaledEXT(GLenum mode, GLdouble x, GLdouble y, GLdouble z)
 {
-	D(bug("nfosmesa: glMatrixScaledEXT(0x%x, %f, %f, %f)", mode, x, y, z));
+	D(bug("nfosmesa: glMatrixScaledEXT(%s, %f, %f, %f)", gl_enum_name(mode), x, y, z));
 	fn.glMatrixScaledEXT(mode, x, y, z);
 }
 
 void OSMesaDriver::nfglMatrixScalefEXT(GLenum mode, GLfloat x, GLfloat y, GLfloat z)
 {
-	D(bug("nfosmesa: glMatrixScalefEXT(0x%x, %f, %f, %f)", mode, x, y, z));
+	D(bug("nfosmesa: glMatrixScalefEXT(%s, %f, %f, %f)", gl_enum_name(mode), x, y, z));
 	fn.glMatrixScalefEXT(mode, x, y, z);
 }
 
 void OSMesaDriver::nfglMatrixTranslatedEXT(GLenum mode, GLdouble x, GLdouble y, GLdouble z)
 {
-	D(bug("nfosmesa: glMatrixTranslatedEXT(0x%x, %f, %f, %f)", mode, x, y, z));
+	D(bug("nfosmesa: glMatrixTranslatedEXT(%s, %f, %f, %f)", gl_enum_name(mode), x, y, z));
 	fn.glMatrixTranslatedEXT(mode, x, y, z);
 }
 
 void OSMesaDriver::nfglMatrixTranslatefEXT(GLenum mode, GLfloat x, GLfloat y, GLfloat z)
 {
-	D(bug("nfosmesa: glMatrixTranslatefEXT(0x%x, %f, %f, %f)", mode, x, y, z));
+	D(bug("nfosmesa: glMatrixTranslatefEXT(%s, %f, %f, %f)", gl_enum_name(mode), x, y, z));
 	fn.glMatrixTranslatefEXT(mode, x, y, z);
 }
 
@@ -11500,13 +11499,13 @@ void OSMesaDriver::nfglMinSampleShadingARB(GLfloat value)
 
 void OSMesaDriver::nfglMinmax(GLenum target, GLenum internalformat, GLboolean32 sink)
 {
-	D(bug("nfosmesa: glMinmax(0x%x, 0x%x, %d)", target, internalformat, sink));
+	D(bug("nfosmesa: glMinmax(%s, %s, %d)", gl_enum_name(target), gl_enum_name(internalformat), sink));
 	fn.glMinmax(target, internalformat, sink);
 }
 
 void OSMesaDriver::nfglMinmaxEXT(GLenum target, GLenum internalformat, GLboolean32 sink)
 {
-	D(bug("nfosmesa: glMinmaxEXT(0x%x, 0x%x, %d)", target, internalformat, sink));
+	D(bug("nfosmesa: glMinmaxEXT(%s, %s, %d)", gl_enum_name(target), gl_enum_name(internalformat), sink));
 	fn.glMinmaxEXT(target, internalformat, sink);
 }
 
@@ -11610,7 +11609,7 @@ void OSMesaDriver::nfglMultiDrawArrays(GLenum mode, memptr first, memptr count, 
 void OSMesaDriver::nfglMultiDrawArrays(GLenum mode, const GLint *first, const GLsizei *count, GLsizei drawcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArrays(0x%x, " PRI_PTR ", " PRI_PTR ", %d)", mode, AtariOffset(first), AtariOffset(count), drawcount));
+	D(bug("nfosmesa: glMultiDrawArrays(%s, " PRI_PTR ", " PRI_PTR ", %d)", gl_enum_name(mode), AtariOffset(first), AtariOffset(count), drawcount));
 FN_GLMULTIDRAWARRAYS(mode, first, count, drawcount);
 }
 
@@ -11620,7 +11619,7 @@ void OSMesaDriver::nfglMultiDrawArraysEXT(GLenum mode, memptr first, memptr coun
 void OSMesaDriver::nfglMultiDrawArraysEXT(GLenum mode, const GLint *first, const GLsizei *count, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysEXT(0x%x, " PRI_PTR ", " PRI_PTR ", %d)", mode, AtariOffset(first), AtariOffset(count), primcount));
+	D(bug("nfosmesa: glMultiDrawArraysEXT(%s, " PRI_PTR ", " PRI_PTR ", %d)", gl_enum_name(mode), AtariOffset(first), AtariOffset(count), primcount));
 FN_GLMULTIDRAWARRAYSEXT(mode, first, count, primcount);
 }
 
@@ -11630,7 +11629,7 @@ void OSMesaDriver::nfglMultiDrawArraysIndirect(GLenum mode, memptr indirect, GLs
 void OSMesaDriver::nfglMultiDrawArraysIndirect(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirect(0x%x, " PRI_PTR ", %d, %d)", mode, AtariOffset(indirect), drawcount, stride));
+	D(bug("nfosmesa: glMultiDrawArraysIndirect(%s, " PRI_PTR ", %d, %d)", gl_enum_name(mode), AtariOffset(indirect), drawcount, stride));
 FN_GLMULTIDRAWARRAYSINDIRECT(mode, indirect, drawcount, stride);
 }
 
@@ -11640,7 +11639,7 @@ void OSMesaDriver::nfglMultiDrawArraysIndirectAMD(GLenum mode, memptr indirect, 
 void OSMesaDriver::nfglMultiDrawArraysIndirectAMD(GLenum mode, const void *indirect, GLsizei primcount, GLsizei stride)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectAMD(0x%x, " PRI_PTR ", %d, %d)", mode, AtariOffset(indirect), primcount, stride));
+	D(bug("nfosmesa: glMultiDrawArraysIndirectAMD(%s, " PRI_PTR ", %d, %d)", gl_enum_name(mode), AtariOffset(indirect), primcount, stride));
 FN_GLMULTIDRAWARRAYSINDIRECTAMD(mode, indirect, primcount, stride);
 }
 
@@ -11650,7 +11649,7 @@ void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessCountNV(GLenum mode, mempt
 void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessCountNV(GLenum mode, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectBindlessCountNV(0x%x, " PRI_PTR ", %d, %d, %d, %d)", mode, AtariOffset(indirect), drawCount, maxDrawCount, stride, vertexBufferCount));
+	D(bug("nfosmesa: glMultiDrawArraysIndirectBindlessCountNV(%s, " PRI_PTR ", %d, %d, %d, %d)", gl_enum_name(mode), AtariOffset(indirect), drawCount, maxDrawCount, stride, vertexBufferCount));
 FN_GLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNV(mode, indirect, drawCount, maxDrawCount, stride, vertexBufferCount);
 }
 
@@ -11660,13 +11659,13 @@ void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessNV(GLenum mode, memptr ind
 void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessNV(GLenum mode, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectBindlessNV(0x%x, " PRI_PTR ", %d, %d, %d)", mode, AtariOffset(indirect), drawCount, stride, vertexBufferCount));
+	D(bug("nfosmesa: glMultiDrawArraysIndirectBindlessNV(%s, " PRI_PTR ", %d, %d, %d)", gl_enum_name(mode), AtariOffset(indirect), drawCount, stride, vertexBufferCount));
 FN_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV(mode, indirect, drawCount, stride, vertexBufferCount);
 }
 
 void OSMesaDriver::nfglMultiDrawArraysIndirectCountARB(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", mode, indirect, drawcount, maxdrawcount, stride));
+	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), indirect, drawcount, maxdrawcount, stride));
 	fn.glMultiDrawArraysIndirectCountARB(mode, indirect, drawcount, maxdrawcount, stride);
 }
 
@@ -11676,7 +11675,7 @@ void OSMesaDriver::nfglMultiDrawElementArrayAPPLE(GLenum mode, memptr first, mem
 void OSMesaDriver::nfglMultiDrawElementArrayAPPLE(GLenum mode, const GLint *first, const GLsizei *count, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementArrayAPPLE(0x%x, " PRI_PTR ", " PRI_PTR ", %d)", mode, AtariOffset(first), AtariOffset(count), primcount));
+	D(bug("nfosmesa: glMultiDrawElementArrayAPPLE(%s, " PRI_PTR ", " PRI_PTR ", %d)", gl_enum_name(mode), AtariOffset(first), AtariOffset(count), primcount));
 FN_GLMULTIDRAWELEMENTARRAYAPPLE(mode, first, count, primcount);
 }
 
@@ -11686,7 +11685,7 @@ void OSMesaDriver::nfglMultiDrawElements(GLenum mode, memptr count, GLenum type,
 void OSMesaDriver::nfglMultiDrawElements(GLenum mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei drawcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElements(0x%x, " PRI_PTR ", 0x%x, " PRI_PTR ", %d)", mode, AtariOffset(count), type, AtariOffset(indices), drawcount));
+	D(bug("nfosmesa: glMultiDrawElements(%s, " PRI_PTR ", %s, " PRI_PTR ", %d)", gl_enum_name(mode), AtariOffset(count), gl_enum_name(type), AtariOffset(indices), drawcount));
 FN_GLMULTIDRAWELEMENTS(mode, count, type, indices, drawcount);
 }
 
@@ -11696,7 +11695,7 @@ void OSMesaDriver::nfglMultiDrawElementsBaseVertex(GLenum mode, memptr count, GL
 void OSMesaDriver::nfglMultiDrawElementsBaseVertex(GLenum mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei drawcount, const GLint *basevertex)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsBaseVertex(0x%x, " PRI_PTR ", 0x%x, " PRI_PTR ", %d, " PRI_PTR ")", mode, AtariOffset(count), type, AtariOffset(indices), drawcount, AtariOffset(basevertex)));
+	D(bug("nfosmesa: glMultiDrawElementsBaseVertex(%s, " PRI_PTR ", %s, " PRI_PTR ", %d, " PRI_PTR ")", gl_enum_name(mode), AtariOffset(count), gl_enum_name(type), AtariOffset(indices), drawcount, AtariOffset(basevertex)));
 FN_GLMULTIDRAWELEMENTSBASEVERTEX(mode, count, type, indices, drawcount, basevertex);
 }
 
@@ -11706,7 +11705,7 @@ void OSMesaDriver::nfglMultiDrawElementsEXT(GLenum mode, memptr count, GLenum ty
 void OSMesaDriver::nfglMultiDrawElementsEXT(GLenum mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsEXT(0x%x, " PRI_PTR ", 0x%x, " PRI_PTR ", %d)", mode, AtariOffset(count), type, AtariOffset(indices), primcount));
+	D(bug("nfosmesa: glMultiDrawElementsEXT(%s, " PRI_PTR ", %s, " PRI_PTR ", %d)", gl_enum_name(mode), AtariOffset(count), gl_enum_name(type), AtariOffset(indices), primcount));
 FN_GLMULTIDRAWELEMENTSEXT(mode, count, type, indices, primcount);
 }
 
@@ -11716,7 +11715,7 @@ void OSMesaDriver::nfglMultiDrawElementsIndirect(GLenum mode, GLenum type, mempt
 void OSMesaDriver::nfglMultiDrawElementsIndirect(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirect(0x%x, 0x%x, " PRI_PTR ", %d, %d)", mode, type, AtariOffset(indirect), drawcount, stride));
+	D(bug("nfosmesa: glMultiDrawElementsIndirect(%s, %s, " PRI_PTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), drawcount, stride));
 FN_GLMULTIDRAWELEMENTSINDIRECT(mode, type, indirect, drawcount, stride);
 }
 
@@ -11726,7 +11725,7 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectAMD(GLenum mode, GLenum type, me
 void OSMesaDriver::nfglMultiDrawElementsIndirectAMD(GLenum mode, GLenum type, const void *indirect, GLsizei primcount, GLsizei stride)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectAMD(0x%x, 0x%x, " PRI_PTR ", %d, %d)", mode, type, AtariOffset(indirect), primcount, stride));
+	D(bug("nfosmesa: glMultiDrawElementsIndirectAMD(%s, %s, " PRI_PTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), primcount, stride));
 FN_GLMULTIDRAWELEMENTSINDIRECTAMD(mode, type, indirect, primcount, stride);
 }
 
@@ -11736,7 +11735,7 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessCountNV(GLenum mode, GLe
 void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessCountNV(GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei maxDrawCount, GLsizei stride, GLint vertexBufferCount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectBindlessCountNV(0x%x, 0x%x, " PRI_PTR ", %d, %d, %d, %d)", mode, type, AtariOffset(indirect), drawCount, maxDrawCount, stride, vertexBufferCount));
+	D(bug("nfosmesa: glMultiDrawElementsIndirectBindlessCountNV(%s, %s, " PRI_PTR ", %d, %d, %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), drawCount, maxDrawCount, stride, vertexBufferCount));
 FN_GLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNV(mode, type, indirect, drawCount, maxDrawCount, stride, vertexBufferCount);
 }
 
@@ -11746,13 +11745,13 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessNV(GLenum mode, GLenum t
 void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessNV(GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectBindlessNV(0x%x, 0x%x, " PRI_PTR ", %d, %d, %d)", mode, type, AtariOffset(indirect), drawCount, stride, vertexBufferCount));
+	D(bug("nfosmesa: glMultiDrawElementsIndirectBindlessNV(%s, %s, " PRI_PTR ", %d, %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), drawCount, stride, vertexBufferCount));
 FN_GLMULTIDRAWELEMENTSINDIRECTBINDLESSNV(mode, type, indirect, drawCount, stride, vertexBufferCount);
 }
 
 void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(0x%x, 0x%x, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", mode, type, indirect, drawcount, maxdrawcount, stride));
+	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(%s, %s, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), indirect, drawcount, maxdrawcount, stride));
 	fn.glMultiDrawElementsIndirectCountARB(mode, type, indirect, drawcount, maxdrawcount, stride);
 }
 
@@ -11762,7 +11761,7 @@ void OSMesaDriver::nfglMultiDrawRangeElementArrayAPPLE(GLenum mode, GLuint start
 void OSMesaDriver::nfglMultiDrawRangeElementArrayAPPLE(GLenum mode, GLuint start, GLuint end, const GLint *first, const GLsizei *count, GLsizei primcount)
 #endif
 {
-	D(bug("nfosmesa: glMultiDrawRangeElementArrayAPPLE(0x%x, %u, %u, " PRI_PTR ", " PRI_PTR ", %d)", mode, start, end, AtariOffset(first), AtariOffset(count), primcount));
+	D(bug("nfosmesa: glMultiDrawRangeElementArrayAPPLE(%s, %u, %u, " PRI_PTR ", " PRI_PTR ", %d)", gl_enum_name(mode), start, end, AtariOffset(first), AtariOffset(count), primcount));
 FN_GLMULTIDRAWRANGEELEMENTARRAYAPPLE(mode, start, end, first, count, primcount);
 }
 
@@ -11782,19 +11781,19 @@ void OSMesaDriver::nfglMultiModeDrawElementsIBM(memptr mode, memptr count, GLenu
 void OSMesaDriver::nfglMultiModeDrawElementsIBM(const GLenum *mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei primcount, GLint modestride)
 #endif
 {
-	D(bug("nfosmesa: glMultiModeDrawElementsIBM(" PRI_PTR ", " PRI_PTR ", 0x%x, " PRI_PTR ", %d, %d)", AtariOffset(mode), AtariOffset(count), type, AtariOffset(indices), primcount, modestride));
+	D(bug("nfosmesa: glMultiModeDrawElementsIBM(" PRI_PTR ", " PRI_PTR ", %s, " PRI_PTR ", %d, %d)", AtariOffset(mode), AtariOffset(count), gl_enum_name(type), AtariOffset(indices), primcount, modestride));
 FN_GLMULTIMODEDRAWELEMENTSIBM(mode, count, type, indices, primcount, modestride);
 }
 
 void OSMesaDriver::nfglMultiTexBufferEXT(GLenum texunit, GLenum target, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glMultiTexBufferEXT(0x%x, 0x%x, 0x%x, %u)", texunit, target, internalformat, buffer));
+	D(bug("nfosmesa: glMultiTexBufferEXT(%s, %s, %s, %u)", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(internalformat), buffer));
 	fn.glMultiTexBufferEXT(texunit, target, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1bOES(GLenum texture, GLbyte32 s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1bOES(0x%x, %d)", texture, s));
+	D(bug("nfosmesa: glMultiTexCoord1bOES(%s, %d)", gl_enum_name(texture), s));
 	fn.glMultiTexCoord1bOES(texture, s);
 }
 
@@ -11804,19 +11803,19 @@ void OSMesaDriver::nfglMultiTexCoord1bvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord1bvOES(GLenum texture, const GLbyte *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1bvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord1bvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD1BVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1d(GLenum target, GLdouble s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1d(0x%x, %f)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1d(%s, %f)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1d(target, s);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1dARB(GLenum target, GLdouble s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1dARB(0x%x, %f)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1dARB(%s, %f)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1dARB(target, s);
 }
 
@@ -11826,7 +11825,7 @@ void OSMesaDriver::nfglMultiTexCoord1dv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1dv(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1dv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1dv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD1DV(target, v);
 }
 
@@ -11836,7 +11835,7 @@ void OSMesaDriver::nfglMultiTexCoord1dvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1dvARB(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1dvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1dvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_DOUBLE_CONV
 	GLint const __v_size = 1;
 	GLdouble __v_tmp[__v_size];
@@ -11849,13 +11848,13 @@ void OSMesaDriver::nfglMultiTexCoord1dvARB(GLenum target, const GLdouble *v)
 
 void OSMesaDriver::nfglMultiTexCoord1f(GLenum target, GLfloat s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1f(0x%x, %f)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1f(%s, %f)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1f(target, s);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1fARB(GLenum target, GLfloat s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1fARB(0x%x, %f)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1fARB(%s, %f)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1fARB(target, s);
 }
 
@@ -11865,7 +11864,7 @@ void OSMesaDriver::nfglMultiTexCoord1fv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1fv(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1fv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1fv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD1FV(target, v);
 }
 
@@ -11875,7 +11874,7 @@ void OSMesaDriver::nfglMultiTexCoord1fvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1fvARB(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1fvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1fvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __v_size = 1;
 	GLfloat __v_tmp[__v_size];
@@ -11888,7 +11887,7 @@ void OSMesaDriver::nfglMultiTexCoord1fvARB(GLenum target, const GLfloat *v)
 
 void OSMesaDriver::nfglMultiTexCoord1hNV(GLenum target, GLhalfNV32 s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1hNV(0x%x, %u)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1hNV(%s, %u)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1hNV(target, s);
 }
 
@@ -11898,19 +11897,19 @@ void OSMesaDriver::nfglMultiTexCoord1hvNV(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1hvNV(GLenum target, const GLhalfNV *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1hvNV(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1hvNV(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD1HVNV(target, v);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1i(GLenum target, GLint s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1i(0x%x, %d)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1i(%s, %d)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1i(target, s);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1iARB(GLenum target, GLint s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1iARB(0x%x, %d)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1iARB(%s, %d)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1iARB(target, s);
 }
 
@@ -11920,7 +11919,7 @@ void OSMesaDriver::nfglMultiTexCoord1iv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1iv(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1iv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1iv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD1IV(target, v);
 }
 
@@ -11930,7 +11929,7 @@ void OSMesaDriver::nfglMultiTexCoord1ivARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1ivARB(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1ivARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1ivARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = 1;
 	GLint __v_tmp[__v_size];
@@ -11943,13 +11942,13 @@ void OSMesaDriver::nfglMultiTexCoord1ivARB(GLenum target, const GLint *v)
 
 void OSMesaDriver::nfglMultiTexCoord1s(GLenum target, GLshort32 s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1s(0x%x, %d)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1s(%s, %d)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1s(target, s);
 }
 
 void OSMesaDriver::nfglMultiTexCoord1sARB(GLenum target, GLshort32 s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1sARB(0x%x, %d)", target, s));
+	D(bug("nfosmesa: glMultiTexCoord1sARB(%s, %d)", gl_enum_name(target), s));
 	fn.glMultiTexCoord1sARB(target, s);
 }
 
@@ -11959,7 +11958,7 @@ void OSMesaDriver::nfglMultiTexCoord1sv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1sv(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1sv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1sv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD1SV(target, v);
 }
 
@@ -11969,7 +11968,7 @@ void OSMesaDriver::nfglMultiTexCoord1svARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord1svARB(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1svARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord1svARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = 1;
 	GLshort __v_tmp[__v_size];
@@ -11982,7 +11981,7 @@ void OSMesaDriver::nfglMultiTexCoord1svARB(GLenum target, const GLshort *v)
 
 void OSMesaDriver::nfglMultiTexCoord1xOES(GLenum texture, GLfixed s)
 {
-	D(bug("nfosmesa: glMultiTexCoord1xOES(0x%x, 0x%x)", texture, s));
+	D(bug("nfosmesa: glMultiTexCoord1xOES(%s, 0x%x)", gl_enum_name(texture), s));
 	fn.glMultiTexCoord1xOES(texture, s);
 }
 
@@ -11992,13 +11991,13 @@ void OSMesaDriver::nfglMultiTexCoord1xvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord1xvOES(GLenum texture, const GLfixed *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord1xvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord1xvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD1XVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2bOES(GLenum texture, GLbyte32 s, GLbyte32 t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2bOES(0x%x, %d, %d)", texture, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2bOES(%s, %d, %d)", gl_enum_name(texture), s, t));
 	fn.glMultiTexCoord2bOES(texture, s, t);
 }
 
@@ -12008,19 +12007,19 @@ void OSMesaDriver::nfglMultiTexCoord2bvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord2bvOES(GLenum texture, const GLbyte *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2bvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord2bvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD2BVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2d(GLenum target, GLdouble s, GLdouble t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2d(0x%x, %f, %f)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2d(%s, %f, %f)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2d(target, s, t);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2dARB(GLenum target, GLdouble s, GLdouble t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2dARB(0x%x, %f, %f)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2dARB(%s, %f, %f)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2dARB(target, s, t);
 }
 
@@ -12030,7 +12029,7 @@ void OSMesaDriver::nfglMultiTexCoord2dv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2dv(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2dv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2dv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD2DV(target, v);
 }
 
@@ -12040,7 +12039,7 @@ void OSMesaDriver::nfglMultiTexCoord2dvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2dvARB(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2dvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2dvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_DOUBLE_CONV
 	GLint const __v_size = MAX(2, 0);
 	GLdouble __v_tmp[__v_size];
@@ -12053,13 +12052,13 @@ void OSMesaDriver::nfglMultiTexCoord2dvARB(GLenum target, const GLdouble *v)
 
 void OSMesaDriver::nfglMultiTexCoord2f(GLenum target, GLfloat s, GLfloat t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2f(0x%x, %f, %f)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2f(%s, %f, %f)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2f(target, s, t);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2fARB(GLenum target, GLfloat s, GLfloat t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2fARB(0x%x, %f, %f)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2fARB(%s, %f, %f)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2fARB(target, s, t);
 }
 
@@ -12069,7 +12068,7 @@ void OSMesaDriver::nfglMultiTexCoord2fv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2fv(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2fv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2fv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD2FV(target, v);
 }
 
@@ -12079,7 +12078,7 @@ void OSMesaDriver::nfglMultiTexCoord2fvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2fvARB(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2fvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2fvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __v_size = MAX(2, 0);
 	GLfloat __v_tmp[__v_size];
@@ -12092,7 +12091,7 @@ void OSMesaDriver::nfglMultiTexCoord2fvARB(GLenum target, const GLfloat *v)
 
 void OSMesaDriver::nfglMultiTexCoord2hNV(GLenum target, GLhalfNV32 s, GLhalfNV32 t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2hNV(0x%x, %u, %u)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2hNV(%s, %u, %u)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2hNV(target, s, t);
 }
 
@@ -12102,19 +12101,19 @@ void OSMesaDriver::nfglMultiTexCoord2hvNV(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2hvNV(GLenum target, const GLhalfNV *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2hvNV(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2hvNV(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD2HVNV(target, v);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2i(GLenum target, GLint s, GLint t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2i(0x%x, %d, %d)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2i(%s, %d, %d)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2i(target, s, t);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2iARB(GLenum target, GLint s, GLint t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2iARB(0x%x, %d, %d)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2iARB(%s, %d, %d)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2iARB(target, s, t);
 }
 
@@ -12124,7 +12123,7 @@ void OSMesaDriver::nfglMultiTexCoord2iv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2iv(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2iv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2iv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD2IV(target, v);
 }
 
@@ -12134,7 +12133,7 @@ void OSMesaDriver::nfglMultiTexCoord2ivARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2ivARB(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2ivARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2ivARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(2, 0);
 	GLint __v_tmp[__v_size];
@@ -12147,13 +12146,13 @@ void OSMesaDriver::nfglMultiTexCoord2ivARB(GLenum target, const GLint *v)
 
 void OSMesaDriver::nfglMultiTexCoord2s(GLenum target, GLshort32 s, GLshort32 t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2s(0x%x, %d, %d)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2s(%s, %d, %d)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2s(target, s, t);
 }
 
 void OSMesaDriver::nfglMultiTexCoord2sARB(GLenum target, GLshort32 s, GLshort32 t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2sARB(0x%x, %d, %d)", target, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2sARB(%s, %d, %d)", gl_enum_name(target), s, t));
 	fn.glMultiTexCoord2sARB(target, s, t);
 }
 
@@ -12163,7 +12162,7 @@ void OSMesaDriver::nfglMultiTexCoord2sv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2sv(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2sv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2sv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD2SV(target, v);
 }
 
@@ -12173,7 +12172,7 @@ void OSMesaDriver::nfglMultiTexCoord2svARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord2svARB(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2svARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord2svARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(2, 0);
 	GLshort __v_tmp[__v_size];
@@ -12186,7 +12185,7 @@ void OSMesaDriver::nfglMultiTexCoord2svARB(GLenum target, const GLshort *v)
 
 void OSMesaDriver::nfglMultiTexCoord2xOES(GLenum texture, GLfixed s, GLfixed t)
 {
-	D(bug("nfosmesa: glMultiTexCoord2xOES(0x%x, 0x%x, 0x%x)", texture, s, t));
+	D(bug("nfosmesa: glMultiTexCoord2xOES(%s, 0x%x, 0x%x)", gl_enum_name(texture), s, t));
 	fn.glMultiTexCoord2xOES(texture, s, t);
 }
 
@@ -12196,13 +12195,13 @@ void OSMesaDriver::nfglMultiTexCoord2xvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord2xvOES(GLenum texture, const GLfixed *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord2xvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord2xvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD2XVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3bOES(GLenum texture, GLbyte32 s, GLbyte32 t, GLbyte32 r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3bOES(0x%x, %d, %d, %d)", texture, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3bOES(%s, %d, %d, %d)", gl_enum_name(texture), s, t, r));
 	fn.glMultiTexCoord3bOES(texture, s, t, r);
 }
 
@@ -12212,19 +12211,19 @@ void OSMesaDriver::nfglMultiTexCoord3bvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord3bvOES(GLenum texture, const GLbyte *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3bvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord3bvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD3BVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3d(GLenum target, GLdouble s, GLdouble t, GLdouble r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3d(0x%x, %f, %f, %f)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3d(%s, %f, %f, %f)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3d(target, s, t, r);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3dARB(GLenum target, GLdouble s, GLdouble t, GLdouble r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3dARB(0x%x, %f, %f, %f)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3dARB(%s, %f, %f, %f)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3dARB(target, s, t, r);
 }
 
@@ -12234,7 +12233,7 @@ void OSMesaDriver::nfglMultiTexCoord3dv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3dv(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3dv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3dv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD3DV(target, v);
 }
 
@@ -12244,7 +12243,7 @@ void OSMesaDriver::nfglMultiTexCoord3dvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3dvARB(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3dvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3dvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_DOUBLE_CONV
 	GLint const __v_size = MAX(3, 0);
 	GLdouble __v_tmp[__v_size];
@@ -12257,13 +12256,13 @@ void OSMesaDriver::nfglMultiTexCoord3dvARB(GLenum target, const GLdouble *v)
 
 void OSMesaDriver::nfglMultiTexCoord3f(GLenum target, GLfloat s, GLfloat t, GLfloat r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3f(0x%x, %f, %f, %f)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3f(%s, %f, %f, %f)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3f(target, s, t, r);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3fARB(GLenum target, GLfloat s, GLfloat t, GLfloat r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3fARB(0x%x, %f, %f, %f)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3fARB(%s, %f, %f, %f)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3fARB(target, s, t, r);
 }
 
@@ -12273,7 +12272,7 @@ void OSMesaDriver::nfglMultiTexCoord3fv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3fv(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3fv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3fv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD3FV(target, v);
 }
 
@@ -12283,7 +12282,7 @@ void OSMesaDriver::nfglMultiTexCoord3fvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3fvARB(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3fvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3fvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __v_size = MAX(3, 0);
 	GLfloat __v_tmp[__v_size];
@@ -12296,7 +12295,7 @@ void OSMesaDriver::nfglMultiTexCoord3fvARB(GLenum target, const GLfloat *v)
 
 void OSMesaDriver::nfglMultiTexCoord3hNV(GLenum target, GLhalfNV32 s, GLhalfNV32 t, GLhalfNV32 r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3hNV(0x%x, %u, %u, %u)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3hNV(%s, %u, %u, %u)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3hNV(target, s, t, r);
 }
 
@@ -12306,19 +12305,19 @@ void OSMesaDriver::nfglMultiTexCoord3hvNV(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3hvNV(GLenum target, const GLhalfNV *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3hvNV(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3hvNV(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD3HVNV(target, v);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3i(GLenum target, GLint s, GLint t, GLint r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3i(0x%x, %d, %d, %d)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3i(%s, %d, %d, %d)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3i(target, s, t, r);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3iARB(GLenum target, GLint s, GLint t, GLint r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3iARB(0x%x, %d, %d, %d)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3iARB(%s, %d, %d, %d)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3iARB(target, s, t, r);
 }
 
@@ -12328,7 +12327,7 @@ void OSMesaDriver::nfglMultiTexCoord3iv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3iv(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3iv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3iv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD3IV(target, v);
 }
 
@@ -12338,7 +12337,7 @@ void OSMesaDriver::nfglMultiTexCoord3ivARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3ivARB(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3ivARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3ivARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(3, 0);
 	GLint __v_tmp[__v_size];
@@ -12351,13 +12350,13 @@ void OSMesaDriver::nfglMultiTexCoord3ivARB(GLenum target, const GLint *v)
 
 void OSMesaDriver::nfglMultiTexCoord3s(GLenum target, GLshort32 s, GLshort32 t, GLshort32 r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3s(0x%x, %d, %d, %d)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3s(%s, %d, %d, %d)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3s(target, s, t, r);
 }
 
 void OSMesaDriver::nfglMultiTexCoord3sARB(GLenum target, GLshort32 s, GLshort32 t, GLshort32 r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3sARB(0x%x, %d, %d, %d)", target, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3sARB(%s, %d, %d, %d)", gl_enum_name(target), s, t, r));
 	fn.glMultiTexCoord3sARB(target, s, t, r);
 }
 
@@ -12367,7 +12366,7 @@ void OSMesaDriver::nfglMultiTexCoord3sv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3sv(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3sv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3sv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD3SV(target, v);
 }
 
@@ -12377,7 +12376,7 @@ void OSMesaDriver::nfglMultiTexCoord3svARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord3svARB(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3svARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord3svARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(3, 0);
 	GLshort __v_tmp[__v_size];
@@ -12390,7 +12389,7 @@ void OSMesaDriver::nfglMultiTexCoord3svARB(GLenum target, const GLshort *v)
 
 void OSMesaDriver::nfglMultiTexCoord3xOES(GLenum texture, GLfixed s, GLfixed t, GLfixed r)
 {
-	D(bug("nfosmesa: glMultiTexCoord3xOES(0x%x, 0x%x, 0x%x, 0x%x)", texture, s, t, r));
+	D(bug("nfosmesa: glMultiTexCoord3xOES(%s, 0x%x, 0x%x, 0x%x)", gl_enum_name(texture), s, t, r));
 	fn.glMultiTexCoord3xOES(texture, s, t, r);
 }
 
@@ -12400,13 +12399,13 @@ void OSMesaDriver::nfglMultiTexCoord3xvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord3xvOES(GLenum texture, const GLfixed *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord3xvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord3xvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD3XVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4bOES(GLenum texture, GLbyte32 s, GLbyte32 t, GLbyte32 r, GLbyte32 q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4bOES(0x%x, %d, %d, %d, %d)", texture, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4bOES(%s, %d, %d, %d, %d)", gl_enum_name(texture), s, t, r, q));
 	fn.glMultiTexCoord4bOES(texture, s, t, r, q);
 }
 
@@ -12416,19 +12415,19 @@ void OSMesaDriver::nfglMultiTexCoord4bvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord4bvOES(GLenum texture, const GLbyte *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4bvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord4bvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD4BVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4d(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4d(0x%x, %f, %f, %f, %f)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4d(%s, %f, %f, %f, %f)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4d(target, s, t, r, q);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4dARB(GLenum target, GLdouble s, GLdouble t, GLdouble r, GLdouble q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4dARB(0x%x, %f, %f, %f, %f)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4dARB(%s, %f, %f, %f, %f)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4dARB(target, s, t, r, q);
 }
 
@@ -12438,7 +12437,7 @@ void OSMesaDriver::nfglMultiTexCoord4dv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4dv(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4dv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4dv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD4DV(target, v);
 }
 
@@ -12448,7 +12447,7 @@ void OSMesaDriver::nfglMultiTexCoord4dvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4dvARB(GLenum target, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4dvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4dvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_DOUBLE_CONV
 	GLint const __v_size = MAX(4, 0);
 	GLdouble __v_tmp[__v_size];
@@ -12461,13 +12460,13 @@ void OSMesaDriver::nfglMultiTexCoord4dvARB(GLenum target, const GLdouble *v)
 
 void OSMesaDriver::nfglMultiTexCoord4f(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4f(0x%x, %f, %f, %f, %f)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4f(%s, %f, %f, %f, %f)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4f(target, s, t, r, q);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4fARB(GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4fARB(0x%x, %f, %f, %f, %f)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4fARB(%s, %f, %f, %f, %f)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4fARB(target, s, t, r, q);
 }
 
@@ -12477,7 +12476,7 @@ void OSMesaDriver::nfglMultiTexCoord4fv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4fv(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4fv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4fv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD4FV(target, v);
 }
 
@@ -12487,7 +12486,7 @@ void OSMesaDriver::nfglMultiTexCoord4fvARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4fvARB(GLenum target, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4fvARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4fvARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_FLOAT_CONV
 	GLint const __v_size = MAX(4, 0);
 	GLfloat __v_tmp[__v_size];
@@ -12500,7 +12499,7 @@ void OSMesaDriver::nfglMultiTexCoord4fvARB(GLenum target, const GLfloat *v)
 
 void OSMesaDriver::nfglMultiTexCoord4hNV(GLenum target, GLhalfNV32 s, GLhalfNV32 t, GLhalfNV32 r, GLhalfNV32 q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4hNV(0x%x, %u, %u, %u, %u)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4hNV(%s, %u, %u, %u, %u)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4hNV(target, s, t, r, q);
 }
 
@@ -12510,19 +12509,19 @@ void OSMesaDriver::nfglMultiTexCoord4hvNV(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4hvNV(GLenum target, const GLhalfNV *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4hvNV(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4hvNV(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD4HVNV(target, v);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4i(GLenum target, GLint s, GLint t, GLint r, GLint q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4i(0x%x, %d, %d, %d, %d)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4i(%s, %d, %d, %d, %d)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4i(target, s, t, r, q);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4iARB(GLenum target, GLint s, GLint t, GLint r, GLint q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4iARB(0x%x, %d, %d, %d, %d)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4iARB(%s, %d, %d, %d, %d)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4iARB(target, s, t, r, q);
 }
 
@@ -12532,7 +12531,7 @@ void OSMesaDriver::nfglMultiTexCoord4iv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4iv(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4iv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4iv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD4IV(target, v);
 }
 
@@ -12542,7 +12541,7 @@ void OSMesaDriver::nfglMultiTexCoord4ivARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4ivARB(GLenum target, const GLint *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4ivARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4ivARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(4, 0);
 	GLint __v_tmp[__v_size];
@@ -12555,13 +12554,13 @@ void OSMesaDriver::nfglMultiTexCoord4ivARB(GLenum target, const GLint *v)
 
 void OSMesaDriver::nfglMultiTexCoord4s(GLenum target, GLshort32 s, GLshort32 t, GLshort32 r, GLshort32 q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4s(0x%x, %d, %d, %d, %d)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4s(%s, %d, %d, %d, %d)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4s(target, s, t, r, q);
 }
 
 void OSMesaDriver::nfglMultiTexCoord4sARB(GLenum target, GLshort32 s, GLshort32 t, GLshort32 r, GLshort32 q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4sARB(0x%x, %d, %d, %d, %d)", target, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4sARB(%s, %d, %d, %d, %d)", gl_enum_name(target), s, t, r, q));
 	fn.glMultiTexCoord4sARB(target, s, t, r, q);
 }
 
@@ -12571,7 +12570,7 @@ void OSMesaDriver::nfglMultiTexCoord4sv(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4sv(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4sv(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4sv(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 FN_GLMULTITEXCOORD4SV(target, v);
 }
 
@@ -12581,7 +12580,7 @@ void OSMesaDriver::nfglMultiTexCoord4svARB(GLenum target, memptr v)
 void OSMesaDriver::nfglMultiTexCoord4svARB(GLenum target, const GLshort *v)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4svARB(0x%x, " PRI_PTR ")", target, AtariOffset(v)));
+	D(bug("nfosmesa: glMultiTexCoord4svARB(%s, " PRI_PTR ")", gl_enum_name(target), AtariOffset(v)));
 #if NFOSMESA_NEED_INT_CONV
 	GLint const __v_size = MAX(4, 0);
 	GLshort __v_tmp[__v_size];
@@ -12594,7 +12593,7 @@ void OSMesaDriver::nfglMultiTexCoord4svARB(GLenum target, const GLshort *v)
 
 void OSMesaDriver::nfglMultiTexCoord4xOES(GLenum texture, GLfixed s, GLfixed t, GLfixed r, GLfixed q)
 {
-	D(bug("nfosmesa: glMultiTexCoord4xOES(0x%x, 0x%x, 0x%x, 0x%x, 0x%x)", texture, s, t, r, q));
+	D(bug("nfosmesa: glMultiTexCoord4xOES(%s, 0x%x, 0x%x, 0x%x, 0x%x)", gl_enum_name(texture), s, t, r, q));
 	fn.glMultiTexCoord4xOES(texture, s, t, r, q);
 }
 
@@ -12604,13 +12603,13 @@ void OSMesaDriver::nfglMultiTexCoord4xvOES(GLenum texture, memptr coords)
 void OSMesaDriver::nfglMultiTexCoord4xvOES(GLenum texture, const GLfixed *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoord4xvOES(0x%x, " PRI_PTR ")", texture, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoord4xvOES(%s, " PRI_PTR ")", gl_enum_name(texture), AtariOffset(coords)));
 FN_GLMULTITEXCOORD4XVOES(texture, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoordP1ui(GLenum texture, GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glMultiTexCoordP1ui(0x%x, 0x%x, %u)", texture, type, coords));
+	D(bug("nfosmesa: glMultiTexCoordP1ui(%s, %s, %u)", gl_enum_name(texture), gl_enum_name(type), coords));
 	fn.glMultiTexCoordP1ui(texture, type, coords);
 }
 
@@ -12620,13 +12619,13 @@ void OSMesaDriver::nfglMultiTexCoordP1uiv(GLenum texture, GLenum type, memptr co
 void OSMesaDriver::nfglMultiTexCoordP1uiv(GLenum texture, GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoordP1uiv(0x%x, 0x%x, " PRI_PTR ")", texture, type, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoordP1uiv(%s, %s, " PRI_PTR ")", gl_enum_name(texture), gl_enum_name(type), AtariOffset(coords)));
 FN_GLMULTITEXCOORDP1UIV(texture, type, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoordP2ui(GLenum texture, GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glMultiTexCoordP2ui(0x%x, 0x%x, %u)", texture, type, coords));
+	D(bug("nfosmesa: glMultiTexCoordP2ui(%s, %s, %u)", gl_enum_name(texture), gl_enum_name(type), coords));
 	fn.glMultiTexCoordP2ui(texture, type, coords);
 }
 
@@ -12636,13 +12635,13 @@ void OSMesaDriver::nfglMultiTexCoordP2uiv(GLenum texture, GLenum type, memptr co
 void OSMesaDriver::nfglMultiTexCoordP2uiv(GLenum texture, GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoordP2uiv(0x%x, 0x%x, " PRI_PTR ")", texture, type, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoordP2uiv(%s, %s, " PRI_PTR ")", gl_enum_name(texture), gl_enum_name(type), AtariOffset(coords)));
 FN_GLMULTITEXCOORDP2UIV(texture, type, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoordP3ui(GLenum texture, GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glMultiTexCoordP3ui(0x%x, 0x%x, %u)", texture, type, coords));
+	D(bug("nfosmesa: glMultiTexCoordP3ui(%s, %s, %u)", gl_enum_name(texture), gl_enum_name(type), coords));
 	fn.glMultiTexCoordP3ui(texture, type, coords);
 }
 
@@ -12652,13 +12651,13 @@ void OSMesaDriver::nfglMultiTexCoordP3uiv(GLenum texture, GLenum type, memptr co
 void OSMesaDriver::nfglMultiTexCoordP3uiv(GLenum texture, GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoordP3uiv(0x%x, 0x%x, " PRI_PTR ")", texture, type, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoordP3uiv(%s, %s, " PRI_PTR ")", gl_enum_name(texture), gl_enum_name(type), AtariOffset(coords)));
 FN_GLMULTITEXCOORDP3UIV(texture, type, coords);
 }
 
 void OSMesaDriver::nfglMultiTexCoordP4ui(GLenum texture, GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glMultiTexCoordP4ui(0x%x, 0x%x, %u)", texture, type, coords));
+	D(bug("nfosmesa: glMultiTexCoordP4ui(%s, %s, %u)", gl_enum_name(texture), gl_enum_name(type), coords));
 	fn.glMultiTexCoordP4ui(texture, type, coords);
 }
 
@@ -12668,7 +12667,7 @@ void OSMesaDriver::nfglMultiTexCoordP4uiv(GLenum texture, GLenum type, memptr co
 void OSMesaDriver::nfglMultiTexCoordP4uiv(GLenum texture, GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoordP4uiv(0x%x, 0x%x, " PRI_PTR ")", texture, type, AtariOffset(coords)));
+	D(bug("nfosmesa: glMultiTexCoordP4uiv(%s, %s, " PRI_PTR ")", gl_enum_name(texture), gl_enum_name(type), AtariOffset(coords)));
 FN_GLMULTITEXCOORDP4UIV(texture, type, coords);
 }
 
@@ -12678,13 +12677,13 @@ void OSMesaDriver::nfglMultiTexCoordPointerEXT(GLenum texunit, GLint size, GLenu
 void OSMesaDriver::nfglMultiTexCoordPointerEXT(GLenum texunit, GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexCoordPointerEXT(0x%x, %d, 0x%x, %d, " PRI_PTR ")", texunit, size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glMultiTexCoordPointerEXT(%s, %d, %s, %d, " PRI_PTR ")", gl_enum_name(texunit), size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLMULTITEXCOORDPOINTEREXT(texunit, size, type, stride, pointer);
 }
 
 void OSMesaDriver::nfglMultiTexEnvfEXT(GLenum texunit, GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glMultiTexEnvfEXT(0x%x, 0x%x, 0x%x, %f)", texunit, target, pname, param));
+	D(bug("nfosmesa: glMultiTexEnvfEXT(%s, %s, %s, %f)", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glMultiTexEnvfEXT(texunit, target, pname, param);
 }
 
@@ -12694,13 +12693,13 @@ void OSMesaDriver::nfglMultiTexEnvfvEXT(GLenum texunit, GLenum target, GLenum pn
 void OSMesaDriver::nfglMultiTexEnvfvEXT(GLenum texunit, GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexEnvfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexEnvfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXENVFVEXT(texunit, target, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexEnviEXT(GLenum texunit, GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glMultiTexEnviEXT(0x%x, 0x%x, 0x%x, %d)", texunit, target, pname, param));
+	D(bug("nfosmesa: glMultiTexEnviEXT(%s, %s, %s, %d)", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glMultiTexEnviEXT(texunit, target, pname, param);
 }
 
@@ -12710,13 +12709,13 @@ void OSMesaDriver::nfglMultiTexEnvivEXT(GLenum texunit, GLenum target, GLenum pn
 void OSMesaDriver::nfglMultiTexEnvivEXT(GLenum texunit, GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexEnvivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexEnvivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXENVIVEXT(texunit, target, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexGendEXT(GLenum texunit, GLenum coord, GLenum pname, GLdouble param)
 {
-	D(bug("nfosmesa: glMultiTexGendEXT(0x%x, 0x%x, 0x%x, %f)", texunit, coord, pname, param));
+	D(bug("nfosmesa: glMultiTexGendEXT(%s, %s, %s, %f)", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glMultiTexGendEXT(texunit, coord, pname, param);
 }
 
@@ -12726,13 +12725,13 @@ void OSMesaDriver::nfglMultiTexGendvEXT(GLenum texunit, GLenum coord, GLenum pna
 void OSMesaDriver::nfglMultiTexGendvEXT(GLenum texunit, GLenum coord, GLenum pname, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexGendvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexGendvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXGENDVEXT(texunit, coord, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexGenfEXT(GLenum texunit, GLenum coord, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glMultiTexGenfEXT(0x%x, 0x%x, 0x%x, %f)", texunit, coord, pname, param));
+	D(bug("nfosmesa: glMultiTexGenfEXT(%s, %s, %s, %f)", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glMultiTexGenfEXT(texunit, coord, pname, param);
 }
 
@@ -12742,13 +12741,13 @@ void OSMesaDriver::nfglMultiTexGenfvEXT(GLenum texunit, GLenum coord, GLenum pna
 void OSMesaDriver::nfglMultiTexGenfvEXT(GLenum texunit, GLenum coord, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexGenfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexGenfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXGENFVEXT(texunit, coord, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexGeniEXT(GLenum texunit, GLenum coord, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glMultiTexGeniEXT(0x%x, 0x%x, 0x%x, %d)", texunit, coord, pname, param));
+	D(bug("nfosmesa: glMultiTexGeniEXT(%s, %s, %s, %d)", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glMultiTexGeniEXT(texunit, coord, pname, param);
 }
 
@@ -12758,7 +12757,7 @@ void OSMesaDriver::nfglMultiTexGenivEXT(GLenum texunit, GLenum coord, GLenum pna
 void OSMesaDriver::nfglMultiTexGenivEXT(GLenum texunit, GLenum coord, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexGenivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexGenivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXGENIVEXT(texunit, coord, pname, params);
 }
 
@@ -12768,7 +12767,7 @@ void OSMesaDriver::nfglMultiTexImage1DEXT(GLenum texunit, GLenum target, GLint l
 void OSMesaDriver::nfglMultiTexImage1DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexImage1DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, internalformat, width, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexImage1DEXT(%s, %s, %d, %s, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXIMAGE1DEXT(texunit, target, level, internalformat, width, border, format, type, pixels);
 }
 
@@ -12778,7 +12777,7 @@ void OSMesaDriver::nfglMultiTexImage2DEXT(GLenum texunit, GLenum target, GLint l
 void OSMesaDriver::nfglMultiTexImage2DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexImage2DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, internalformat, width, height, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexImage2DEXT(%s, %s, %d, %s, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXIMAGE2DEXT(texunit, target, level, internalformat, width, height, border, format, type, pixels);
 }
 
@@ -12788,7 +12787,7 @@ void OSMesaDriver::nfglMultiTexImage3DEXT(GLenum texunit, GLenum target, GLint l
 void OSMesaDriver::nfglMultiTexImage3DEXT(GLenum texunit, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexImage3DEXT(0x%x, 0x%x, %d, 0x%x, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, internalformat, width, height, depth, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexImage3DEXT(%s, %s, %d, %s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXIMAGE3DEXT(texunit, target, level, internalformat, width, height, depth, border, format, type, pixels);
 }
 
@@ -12798,7 +12797,7 @@ void OSMesaDriver::nfglMultiTexParameterIivEXT(GLenum texunit, GLenum target, GL
 void OSMesaDriver::nfglMultiTexParameterIivEXT(GLenum texunit, GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexParameterIivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexParameterIivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXPARAMETERIIVEXT(texunit, target, pname, params);
 }
 
@@ -12808,13 +12807,13 @@ void OSMesaDriver::nfglMultiTexParameterIuivEXT(GLenum texunit, GLenum target, G
 void OSMesaDriver::nfglMultiTexParameterIuivEXT(GLenum texunit, GLenum target, GLenum pname, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexParameterIuivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexParameterIuivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXPARAMETERIUIVEXT(texunit, target, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexParameterfEXT(GLenum texunit, GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glMultiTexParameterfEXT(0x%x, 0x%x, 0x%x, %f)", texunit, target, pname, param));
+	D(bug("nfosmesa: glMultiTexParameterfEXT(%s, %s, %s, %f)", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glMultiTexParameterfEXT(texunit, target, pname, param);
 }
 
@@ -12824,13 +12823,13 @@ void OSMesaDriver::nfglMultiTexParameterfvEXT(GLenum texunit, GLenum target, GLe
 void OSMesaDriver::nfglMultiTexParameterfvEXT(GLenum texunit, GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexParameterfvEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexParameterfvEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXPARAMETERFVEXT(texunit, target, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexParameteriEXT(GLenum texunit, GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glMultiTexParameteriEXT(0x%x, 0x%x, 0x%x, %d)", texunit, target, pname, param));
+	D(bug("nfosmesa: glMultiTexParameteriEXT(%s, %s, %s, %d)", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glMultiTexParameteriEXT(texunit, target, pname, param);
 }
 
@@ -12840,13 +12839,13 @@ void OSMesaDriver::nfglMultiTexParameterivEXT(GLenum texunit, GLenum target, GLe
 void OSMesaDriver::nfglMultiTexParameterivEXT(GLenum texunit, GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexParameterivEXT(0x%x, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glMultiTexParameterivEXT(%s, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLMULTITEXPARAMETERIVEXT(texunit, target, pname, params);
 }
 
 void OSMesaDriver::nfglMultiTexRenderbufferEXT(GLenum texunit, GLenum target, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glMultiTexRenderbufferEXT(0x%x, 0x%x, %u)", texunit, target, renderbuffer));
+	D(bug("nfosmesa: glMultiTexRenderbufferEXT(%s, %s, %u)", gl_enum_name(texunit), gl_enum_name(target), renderbuffer));
 	fn.glMultiTexRenderbufferEXT(texunit, target, renderbuffer);
 }
 
@@ -12856,7 +12855,7 @@ void OSMesaDriver::nfglMultiTexSubImage1DEXT(GLenum texunit, GLenum target, GLin
 void OSMesaDriver::nfglMultiTexSubImage1DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexSubImage1DEXT(0x%x, 0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, xoffset, width, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexSubImage1DEXT(%s, %s, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, width, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXSUBIMAGE1DEXT(texunit, target, level, xoffset, width, format, type, pixels);
 }
 
@@ -12866,7 +12865,7 @@ void OSMesaDriver::nfglMultiTexSubImage2DEXT(GLenum texunit, GLenum target, GLin
 void OSMesaDriver::nfglMultiTexSubImage2DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexSubImage2DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, xoffset, yoffset, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexSubImage2DEXT(%s, %s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXSUBIMAGE2DEXT(texunit, target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
@@ -12876,7 +12875,7 @@ void OSMesaDriver::nfglMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLin
 void OSMesaDriver::nfglMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glMultiTexSubImage3DEXT(0x%x, 0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glMultiTexSubImage3DEXT(%s, %s, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(texunit), gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
@@ -12886,7 +12885,7 @@ void OSMesaDriver::nfglNamedBufferData(GLuint buffer, GLsizeiptr size, memptr da
 void OSMesaDriver::nfglNamedBufferData(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage)
 #endif
 {
-	D(bug("nfosmesa: glNamedBufferData(%u, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", buffer, size, AtariOffset(data), usage));
+	D(bug("nfosmesa: glNamedBufferData(%u, %" PRI_IPTR ", " PRI_PTR ", %s)", buffer, size, AtariOffset(data), gl_enum_name(usage)));
 FN_GLNAMEDBUFFERDATA(buffer, size, data, usage);
 }
 
@@ -12896,7 +12895,7 @@ void OSMesaDriver::nfglNamedBufferDataEXT(GLuint buffer, GLsizeiptr size, memptr
 void OSMesaDriver::nfglNamedBufferDataEXT(GLuint buffer, GLsizeiptr size, const void *data, GLenum usage)
 #endif
 {
-	D(bug("nfosmesa: glNamedBufferDataEXT(%u, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", buffer, size, AtariOffset(data), usage));
+	D(bug("nfosmesa: glNamedBufferDataEXT(%u, %" PRI_IPTR ", " PRI_PTR ", %s)", buffer, size, AtariOffset(data), gl_enum_name(usage)));
 FN_GLNAMEDBUFFERDATAEXT(buffer, size, data, usage);
 }
 
@@ -12960,7 +12959,7 @@ void OSMesaDriver::nfglNamedCopyBufferSubDataEXT(GLuint readBuffer, GLuint write
 
 void OSMesaDriver::nfglNamedFramebufferDrawBuffer(GLuint framebuffer, GLenum buf)
 {
-	D(bug("nfosmesa: glNamedFramebufferDrawBuffer(%u, 0x%x)", framebuffer, buf));
+	D(bug("nfosmesa: glNamedFramebufferDrawBuffer(%u, %s)", framebuffer, gl_enum_name(buf)));
 	fn.glNamedFramebufferDrawBuffer(framebuffer, buf);
 }
 
@@ -12976,31 +12975,31 @@ FN_GLNAMEDFRAMEBUFFERDRAWBUFFERS(framebuffer, n, bufs);
 
 void OSMesaDriver::nfglNamedFramebufferParameteri(GLuint framebuffer, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glNamedFramebufferParameteri(%u, 0x%x, %d)", framebuffer, pname, param));
+	D(bug("nfosmesa: glNamedFramebufferParameteri(%u, %s, %d)", framebuffer, gl_enum_name(pname), param));
 	fn.glNamedFramebufferParameteri(framebuffer, pname, param);
 }
 
 void OSMesaDriver::nfglNamedFramebufferParameteriEXT(GLuint framebuffer, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glNamedFramebufferParameteriEXT(%u, 0x%x, %d)", framebuffer, pname, param));
+	D(bug("nfosmesa: glNamedFramebufferParameteriEXT(%u, %s, %d)", framebuffer, gl_enum_name(pname), param));
 	fn.glNamedFramebufferParameteriEXT(framebuffer, pname, param);
 }
 
 void OSMesaDriver::nfglNamedFramebufferReadBuffer(GLuint framebuffer, GLenum src)
 {
-	D(bug("nfosmesa: glNamedFramebufferReadBuffer(%u, 0x%x)", framebuffer, src));
+	D(bug("nfosmesa: glNamedFramebufferReadBuffer(%u, %s)", framebuffer, gl_enum_name(src)));
 	fn.glNamedFramebufferReadBuffer(framebuffer, src);
 }
 
 void OSMesaDriver::nfglNamedFramebufferRenderbuffer(GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glNamedFramebufferRenderbuffer(%u, 0x%x, 0x%x, %u)", framebuffer, attachment, renderbuffertarget, renderbuffer));
+	D(bug("nfosmesa: glNamedFramebufferRenderbuffer(%u, %s, %s, %u)", framebuffer, gl_enum_name(attachment), gl_enum_name(renderbuffertarget), renderbuffer));
 	fn.glNamedFramebufferRenderbuffer(framebuffer, attachment, renderbuffertarget, renderbuffer);
 }
 
 void OSMesaDriver::nfglNamedFramebufferRenderbufferEXT(GLuint framebuffer, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glNamedFramebufferRenderbufferEXT(%u, 0x%x, 0x%x, %u)", framebuffer, attachment, renderbuffertarget, renderbuffer));
+	D(bug("nfosmesa: glNamedFramebufferRenderbufferEXT(%u, %s, %s, %u)", framebuffer, gl_enum_name(attachment), gl_enum_name(renderbuffertarget), renderbuffer));
 	fn.glNamedFramebufferRenderbufferEXT(framebuffer, attachment, renderbuffertarget, renderbuffer);
 }
 
@@ -13016,55 +13015,55 @@ FN_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV(framebuffer, start, count, v);
 
 void OSMesaDriver::nfglNamedFramebufferTexture(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glNamedFramebufferTexture(%u, 0x%x, %u, %d)", framebuffer, attachment, texture, level));
+	D(bug("nfosmesa: glNamedFramebufferTexture(%u, %s, %u, %d)", framebuffer, gl_enum_name(attachment), texture, level));
 	fn.glNamedFramebufferTexture(framebuffer, attachment, texture, level);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTexture1DEXT(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glNamedFramebufferTexture1DEXT(%u, 0x%x, 0x%x, %u, %d)", framebuffer, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glNamedFramebufferTexture1DEXT(%u, %s, %s, %u, %d)", framebuffer, gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glNamedFramebufferTexture1DEXT(framebuffer, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTexture2DEXT(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glNamedFramebufferTexture2DEXT(%u, 0x%x, 0x%x, %u, %d)", framebuffer, attachment, textarget, texture, level));
+	D(bug("nfosmesa: glNamedFramebufferTexture2DEXT(%u, %s, %s, %u, %d)", framebuffer, gl_enum_name(attachment), gl_enum_name(textarget), texture, level));
 	fn.glNamedFramebufferTexture2DEXT(framebuffer, attachment, textarget, texture, level);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTexture3DEXT(GLuint framebuffer, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint zoffset)
 {
-	D(bug("nfosmesa: glNamedFramebufferTexture3DEXT(%u, 0x%x, 0x%x, %u, %d, %d)", framebuffer, attachment, textarget, texture, level, zoffset));
+	D(bug("nfosmesa: glNamedFramebufferTexture3DEXT(%u, %s, %s, %u, %d, %d)", framebuffer, gl_enum_name(attachment), gl_enum_name(textarget), texture, level, zoffset));
 	fn.glNamedFramebufferTexture3DEXT(framebuffer, attachment, textarget, texture, level, zoffset);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTextureEXT(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level)
 {
-	D(bug("nfosmesa: glNamedFramebufferTextureEXT(%u, 0x%x, %u, %d)", framebuffer, attachment, texture, level));
+	D(bug("nfosmesa: glNamedFramebufferTextureEXT(%u, %s, %u, %d)", framebuffer, gl_enum_name(attachment), texture, level));
 	fn.glNamedFramebufferTextureEXT(framebuffer, attachment, texture, level);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTextureFaceEXT(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLenum face)
 {
-	D(bug("nfosmesa: glNamedFramebufferTextureFaceEXT(%u, 0x%x, %u, %d, 0x%x)", framebuffer, attachment, texture, level, face));
+	D(bug("nfosmesa: glNamedFramebufferTextureFaceEXT(%u, %s, %u, %d, %s)", framebuffer, gl_enum_name(attachment), texture, level, gl_enum_name(face)));
 	fn.glNamedFramebufferTextureFaceEXT(framebuffer, attachment, texture, level, face);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTextureLayer(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
-	D(bug("nfosmesa: glNamedFramebufferTextureLayer(%u, 0x%x, %u, %d, %d)", framebuffer, attachment, texture, level, layer));
+	D(bug("nfosmesa: glNamedFramebufferTextureLayer(%u, %s, %u, %d, %d)", framebuffer, gl_enum_name(attachment), texture, level, layer));
 	fn.glNamedFramebufferTextureLayer(framebuffer, attachment, texture, level, layer);
 }
 
 void OSMesaDriver::nfglNamedFramebufferTextureLayerEXT(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level, GLint layer)
 {
-	D(bug("nfosmesa: glNamedFramebufferTextureLayerEXT(%u, 0x%x, %u, %d, %d)", framebuffer, attachment, texture, level, layer));
+	D(bug("nfosmesa: glNamedFramebufferTextureLayerEXT(%u, %s, %u, %d, %d)", framebuffer, gl_enum_name(attachment), texture, level, layer));
 	fn.glNamedFramebufferTextureLayerEXT(framebuffer, attachment, texture, level, layer);
 }
 
 void OSMesaDriver::nfglNamedProgramLocalParameter4dEXT(GLuint program, GLenum target, GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameter4dEXT(%u, 0x%x, %u, %f, %f, %f, %f)", program, target, index, x, y, z, w));
+	D(bug("nfosmesa: glNamedProgramLocalParameter4dEXT(%u, %s, %u, %f, %f, %f, %f)", program, gl_enum_name(target), index, x, y, z, w));
 	fn.glNamedProgramLocalParameter4dEXT(program, target, index, x, y, z, w);
 }
 
@@ -13074,13 +13073,13 @@ void OSMesaDriver::nfglNamedProgramLocalParameter4dvEXT(GLuint program, GLenum t
 void OSMesaDriver::nfglNamedProgramLocalParameter4dvEXT(GLuint program, GLenum target, GLuint index, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameter4dvEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParameter4dvEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETER4DVEXT(program, target, index, params);
 }
 
 void OSMesaDriver::nfglNamedProgramLocalParameter4fEXT(GLuint program, GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameter4fEXT(%u, 0x%x, %u, %f, %f, %f, %f)", program, target, index, x, y, z, w));
+	D(bug("nfosmesa: glNamedProgramLocalParameter4fEXT(%u, %s, %u, %f, %f, %f, %f)", program, gl_enum_name(target), index, x, y, z, w));
 	fn.glNamedProgramLocalParameter4fEXT(program, target, index, x, y, z, w);
 }
 
@@ -13090,13 +13089,13 @@ void OSMesaDriver::nfglNamedProgramLocalParameter4fvEXT(GLuint program, GLenum t
 void OSMesaDriver::nfglNamedProgramLocalParameter4fvEXT(GLuint program, GLenum target, GLuint index, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameter4fvEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParameter4fvEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETER4FVEXT(program, target, index, params);
 }
 
 void OSMesaDriver::nfglNamedProgramLocalParameterI4iEXT(GLuint program, GLenum target, GLuint index, GLint x, GLint y, GLint z, GLint w)
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameterI4iEXT(%u, 0x%x, %u, %d, %d, %d, %d)", program, target, index, x, y, z, w));
+	D(bug("nfosmesa: glNamedProgramLocalParameterI4iEXT(%u, %s, %u, %d, %d, %d, %d)", program, gl_enum_name(target), index, x, y, z, w));
 	fn.glNamedProgramLocalParameterI4iEXT(program, target, index, x, y, z, w);
 }
 
@@ -13106,13 +13105,13 @@ void OSMesaDriver::nfglNamedProgramLocalParameterI4ivEXT(GLuint program, GLenum 
 void OSMesaDriver::nfglNamedProgramLocalParameterI4ivEXT(GLuint program, GLenum target, GLuint index, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameterI4ivEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParameterI4ivEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETERI4IVEXT(program, target, index, params);
 }
 
 void OSMesaDriver::nfglNamedProgramLocalParameterI4uiEXT(GLuint program, GLenum target, GLuint index, GLuint x, GLuint y, GLuint z, GLuint w)
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameterI4uiEXT(%u, 0x%x, %u, %u, %u, %u, %u)", program, target, index, x, y, z, w));
+	D(bug("nfosmesa: glNamedProgramLocalParameterI4uiEXT(%u, %s, %u, %u, %u, %u, %u)", program, gl_enum_name(target), index, x, y, z, w));
 	fn.glNamedProgramLocalParameterI4uiEXT(program, target, index, x, y, z, w);
 }
 
@@ -13122,7 +13121,7 @@ void OSMesaDriver::nfglNamedProgramLocalParameterI4uivEXT(GLuint program, GLenum
 void OSMesaDriver::nfglNamedProgramLocalParameterI4uivEXT(GLuint program, GLenum target, GLuint index, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameterI4uivEXT(%u, 0x%x, %u, " PRI_PTR ")", program, target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParameterI4uivEXT(%u, %s, %u, " PRI_PTR ")", program, gl_enum_name(target), index, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETERI4UIVEXT(program, target, index, params);
 }
 
@@ -13132,7 +13131,7 @@ void OSMesaDriver::nfglNamedProgramLocalParameters4fvEXT(GLuint program, GLenum 
 void OSMesaDriver::nfglNamedProgramLocalParameters4fvEXT(GLuint program, GLenum target, GLuint index, GLsizei count, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParameters4fvEXT(%u, 0x%x, %u, %d, " PRI_PTR ")", program, target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParameters4fvEXT(%u, %s, %u, %d, " PRI_PTR ")", program, gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT(program, target, index, count, params);
 }
 
@@ -13142,7 +13141,7 @@ void OSMesaDriver::nfglNamedProgramLocalParametersI4ivEXT(GLuint program, GLenum
 void OSMesaDriver::nfglNamedProgramLocalParametersI4ivEXT(GLuint program, GLenum target, GLuint index, GLsizei count, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParametersI4ivEXT(%u, 0x%x, %u, %d, " PRI_PTR ")", program, target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParametersI4ivEXT(%u, %s, %u, %d, " PRI_PTR ")", program, gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT(program, target, index, count, params);
 }
 
@@ -13152,7 +13151,7 @@ void OSMesaDriver::nfglNamedProgramLocalParametersI4uivEXT(GLuint program, GLenu
 void OSMesaDriver::nfglNamedProgramLocalParametersI4uivEXT(GLuint program, GLenum target, GLuint index, GLsizei count, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramLocalParametersI4uivEXT(%u, 0x%x, %u, %d, " PRI_PTR ")", program, target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glNamedProgramLocalParametersI4uivEXT(%u, %s, %u, %d, " PRI_PTR ")", program, gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT(program, target, index, count, params);
 }
 
@@ -13162,37 +13161,37 @@ void OSMesaDriver::nfglNamedProgramStringEXT(GLuint program, GLenum target, GLen
 void OSMesaDriver::nfglNamedProgramStringEXT(GLuint program, GLenum target, GLenum format, GLsizei len, const void *string)
 #endif
 {
-	D(bug("nfosmesa: glNamedProgramStringEXT(%u, 0x%x, 0x%x, %d, " PRI_PTR ")", program, target, format, len, AtariOffset(string)));
+	D(bug("nfosmesa: glNamedProgramStringEXT(%u, %s, %s, %d, " PRI_PTR ")", program, gl_enum_name(target), gl_enum_name(format), len, AtariOffset(string)));
 FN_GLNAMEDPROGRAMSTRINGEXT(program, target, format, len, string);
 }
 
 void OSMesaDriver::nfglNamedRenderbufferStorage(GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glNamedRenderbufferStorage(%u, 0x%x, %d, %d)", renderbuffer, internalformat, width, height));
+	D(bug("nfosmesa: glNamedRenderbufferStorage(%u, %s, %d, %d)", renderbuffer, gl_enum_name(internalformat), width, height));
 	fn.glNamedRenderbufferStorage(renderbuffer, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglNamedRenderbufferStorageEXT(GLuint renderbuffer, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glNamedRenderbufferStorageEXT(%u, 0x%x, %d, %d)", renderbuffer, internalformat, width, height));
+	D(bug("nfosmesa: glNamedRenderbufferStorageEXT(%u, %s, %d, %d)", renderbuffer, gl_enum_name(internalformat), width, height));
 	fn.glNamedRenderbufferStorageEXT(renderbuffer, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglNamedRenderbufferStorageMultisample(GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glNamedRenderbufferStorageMultisample(%u, %d, 0x%x, %d, %d)", renderbuffer, samples, internalformat, width, height));
+	D(bug("nfosmesa: glNamedRenderbufferStorageMultisample(%u, %d, %s, %d, %d)", renderbuffer, samples, gl_enum_name(internalformat), width, height));
 	fn.glNamedRenderbufferStorageMultisample(renderbuffer, samples, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglNamedRenderbufferStorageMultisampleCoverageEXT(GLuint renderbuffer, GLsizei coverageSamples, GLsizei colorSamples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glNamedRenderbufferStorageMultisampleCoverageEXT(%u, %d, %d, 0x%x, %d, %d)", renderbuffer, coverageSamples, colorSamples, internalformat, width, height));
+	D(bug("nfosmesa: glNamedRenderbufferStorageMultisampleCoverageEXT(%u, %d, %d, %s, %d, %d)", renderbuffer, coverageSamples, colorSamples, gl_enum_name(internalformat), width, height));
 	fn.glNamedRenderbufferStorageMultisampleCoverageEXT(renderbuffer, coverageSamples, colorSamples, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglNamedRenderbufferStorageMultisampleEXT(GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glNamedRenderbufferStorageMultisampleEXT(%u, %d, 0x%x, %d, %d)", renderbuffer, samples, internalformat, width, height));
+	D(bug("nfosmesa: glNamedRenderbufferStorageMultisampleEXT(%u, %d, %s, %d, %d)", renderbuffer, samples, gl_enum_name(internalformat), width, height));
 	fn.glNamedRenderbufferStorageMultisampleEXT(renderbuffer, samples, internalformat, width, height);
 }
 
@@ -13202,13 +13201,13 @@ void OSMesaDriver::nfglNamedStringARB(GLenum type, GLint namelen, memptr name, G
 void OSMesaDriver::nfglNamedStringARB(GLenum type, GLint namelen, const GLchar *name, GLint stringlen, const GLchar *string)
 #endif
 {
-	D(bug("nfosmesa: glNamedStringARB(0x%x, %d, " PRI_PTR ", %d, " PRI_PTR ")", type, namelen, AtariOffset(name), stringlen, AtariOffset(string)));
+	D(bug("nfosmesa: glNamedStringARB(%s, %d, " PRI_PTR ", %d, " PRI_PTR ")", gl_enum_name(type), namelen, AtariOffset(name), stringlen, AtariOffset(string)));
 FN_GLNAMEDSTRINGARB(type, namelen, name, stringlen, string);
 }
 
 void OSMesaDriver::nfglNewList(GLuint list, GLenum mode)
 {
-	D(bug("nfosmesa: glNewList(%u, 0x%x)", list, mode));
+	D(bug("nfosmesa: glNewList(%u, %s)", list, gl_enum_name(mode)));
 	fn.glNewList(list, mode);
 }
 
@@ -13218,7 +13217,7 @@ GLuint OSMesaDriver::nfglNewObjectBufferATI(GLsizei size, memptr pointer, GLenum
 GLuint OSMesaDriver::nfglNewObjectBufferATI(GLsizei size, const void *pointer, GLenum usage)
 #endif
 {
-	D(bug("nfosmesa: glNewObjectBufferATI(%d, " PRI_PTR ", 0x%x)", size, AtariOffset(pointer), usage));
+	D(bug("nfosmesa: glNewObjectBufferATI(%d, " PRI_PTR ", %s)", size, AtariOffset(pointer), gl_enum_name(usage)));
 FN_GLNEWOBJECTBUFFERATI(size, pointer, usage);
 }
 
@@ -13362,13 +13361,13 @@ FN_GLNORMAL3XVOES(coords);
 
 void OSMesaDriver::nfglNormalFormatNV(GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glNormalFormatNV(0x%x, %d)", type, stride));
+	D(bug("nfosmesa: glNormalFormatNV(%s, %d)", gl_enum_name(type), stride));
 	fn.glNormalFormatNV(type, stride);
 }
 
 void OSMesaDriver::nfglNormalP3ui(GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glNormalP3ui(0x%x, %u)", type, coords));
+	D(bug("nfosmesa: glNormalP3ui(%s, %u)", gl_enum_name(type), coords));
 	fn.glNormalP3ui(type, coords);
 }
 
@@ -13378,7 +13377,7 @@ void OSMesaDriver::nfglNormalP3uiv(GLenum type, memptr coords)
 void OSMesaDriver::nfglNormalP3uiv(GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalP3uiv(0x%x, " PRI_PTR ")", type, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalP3uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(coords)));
 FN_GLNORMALP3UIV(type, coords);
 }
 
@@ -13388,7 +13387,7 @@ void OSMesaDriver::nfglNormalPointer(GLenum type, GLsizei stride, memptr pointer
 void OSMesaDriver::nfglNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glNormalPointer(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glNormalPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLNORMALPOINTER(type, stride, pointer);
 }
 
@@ -13398,7 +13397,7 @@ void OSMesaDriver::nfglNormalPointerEXT(GLenum type, GLsizei stride, GLsizei cou
 void OSMesaDriver::nfglNormalPointerEXT(GLenum type, GLsizei stride, GLsizei count, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glNormalPointerEXT(0x%x, %d, %d, " PRI_PTR ")", type, stride, count, AtariOffset(pointer)));
+	D(bug("nfosmesa: glNormalPointerEXT(%s, %d, %d, " PRI_PTR ")", gl_enum_name(type), stride, count, AtariOffset(pointer)));
 FN_GLNORMALPOINTEREXT(type, stride, count, pointer);
 }
 
@@ -13408,7 +13407,7 @@ void OSMesaDriver::nfglNormalPointerListIBM(GLenum type, GLint stride, memptr po
 void OSMesaDriver::nfglNormalPointerListIBM(GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glNormalPointerListIBM(0x%x, %d, " PRI_PTR ", %d)", type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glNormalPointerListIBM(%s, %d, " PRI_PTR ", %d)", gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLNORMALPOINTERLISTIBM(type, stride, pointer, ptrstride);
 }
 
@@ -13418,13 +13417,13 @@ void OSMesaDriver::nfglNormalPointervINTEL(GLenum type, memptr pointer)
 void OSMesaDriver::nfglNormalPointervINTEL(GLenum type, const void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glNormalPointervINTEL(0x%x, " PRI_PTR ")", type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glNormalPointervINTEL(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(pointer)));
 FN_GLNORMALPOINTERVINTEL(type, pointer);
 }
 
 void OSMesaDriver::nfglNormalStream3bATI(GLenum stream, GLbyte32 nx, GLbyte32 ny, GLbyte32 nz)
 {
-	D(bug("nfosmesa: glNormalStream3bATI(0x%x, %d, %d, %d)", stream, nx, ny, nz));
+	D(bug("nfosmesa: glNormalStream3bATI(%s, %d, %d, %d)", gl_enum_name(stream), nx, ny, nz));
 	fn.glNormalStream3bATI(stream, nx, ny, nz);
 }
 
@@ -13434,13 +13433,13 @@ void OSMesaDriver::nfglNormalStream3bvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglNormalStream3bvATI(GLenum stream, const GLbyte *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalStream3bvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalStream3bvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLNORMALSTREAM3BVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglNormalStream3dATI(GLenum stream, GLdouble nx, GLdouble ny, GLdouble nz)
 {
-	D(bug("nfosmesa: glNormalStream3dATI(0x%x, %f, %f, %f)", stream, nx, ny, nz));
+	D(bug("nfosmesa: glNormalStream3dATI(%s, %f, %f, %f)", gl_enum_name(stream), nx, ny, nz));
 	fn.glNormalStream3dATI(stream, nx, ny, nz);
 }
 
@@ -13450,13 +13449,13 @@ void OSMesaDriver::nfglNormalStream3dvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglNormalStream3dvATI(GLenum stream, const GLdouble *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalStream3dvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalStream3dvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLNORMALSTREAM3DVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglNormalStream3fATI(GLenum stream, GLfloat nx, GLfloat ny, GLfloat nz)
 {
-	D(bug("nfosmesa: glNormalStream3fATI(0x%x, %f, %f, %f)", stream, nx, ny, nz));
+	D(bug("nfosmesa: glNormalStream3fATI(%s, %f, %f, %f)", gl_enum_name(stream), nx, ny, nz));
 	fn.glNormalStream3fATI(stream, nx, ny, nz);
 }
 
@@ -13466,13 +13465,13 @@ void OSMesaDriver::nfglNormalStream3fvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglNormalStream3fvATI(GLenum stream, const GLfloat *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalStream3fvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalStream3fvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLNORMALSTREAM3FVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglNormalStream3iATI(GLenum stream, GLint nx, GLint ny, GLint nz)
 {
-	D(bug("nfosmesa: glNormalStream3iATI(0x%x, %d, %d, %d)", stream, nx, ny, nz));
+	D(bug("nfosmesa: glNormalStream3iATI(%s, %d, %d, %d)", gl_enum_name(stream), nx, ny, nz));
 	fn.glNormalStream3iATI(stream, nx, ny, nz);
 }
 
@@ -13482,13 +13481,13 @@ void OSMesaDriver::nfglNormalStream3ivATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglNormalStream3ivATI(GLenum stream, const GLint *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalStream3ivATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalStream3ivATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLNORMALSTREAM3IVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglNormalStream3sATI(GLenum stream, GLshort32 nx, GLshort32 ny, GLshort32 nz)
 {
-	D(bug("nfosmesa: glNormalStream3sATI(0x%x, %d, %d, %d)", stream, nx, ny, nz));
+	D(bug("nfosmesa: glNormalStream3sATI(%s, %d, %d, %d)", gl_enum_name(stream), nx, ny, nz));
 	fn.glNormalStream3sATI(stream, nx, ny, nz);
 }
 
@@ -13498,7 +13497,7 @@ void OSMesaDriver::nfglNormalStream3svATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglNormalStream3svATI(GLenum stream, const GLshort *coords)
 #endif
 {
-	D(bug("nfosmesa: glNormalStream3svATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glNormalStream3svATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLNORMALSTREAM3SVATI(stream, coords);
 }
 
@@ -13508,7 +13507,7 @@ void OSMesaDriver::nfglObjectLabel(GLenum identifier, GLuint name, GLsizei lengt
 void OSMesaDriver::nfglObjectLabel(GLenum identifier, GLuint name, GLsizei length, const GLchar *label)
 #endif
 {
-	D(bug("nfosmesa: glObjectLabel(0x%x, %u, %d, " PRI_PTR ")", identifier, name, length, AtariOffset(label)));
+	D(bug("nfosmesa: glObjectLabel(%s, %u, %d, " PRI_PTR ")", gl_enum_name(identifier), name, length, AtariOffset(label)));
 FN_GLOBJECTLABEL(identifier, name, length, label);
 }
 
@@ -13524,14 +13523,14 @@ FN_GLOBJECTPTRLABEL(ptr, length, label);
 
 GLenum OSMesaDriver::nfglObjectPurgeableAPPLE(GLenum objectType, GLuint name, GLenum option)
 {
-	D(bug("nfosmesa: glObjectPurgeableAPPLE(0x%x, %u, 0x%x)", objectType, name, option));
+	D(bug("nfosmesa: glObjectPurgeableAPPLE(%s, %u, %s)", gl_enum_name(objectType), name, gl_enum_name(option)));
 	GLenum __ret = fn.glObjectPurgeableAPPLE(objectType, name, option);
 	return __ret;
 }
 
 GLenum OSMesaDriver::nfglObjectUnpurgeableAPPLE(GLenum objectType, GLuint name, GLenum option)
 {
-	D(bug("nfosmesa: glObjectUnpurgeableAPPLE(0x%x, %u, 0x%x)", objectType, name, option));
+	D(bug("nfosmesa: glObjectUnpurgeableAPPLE(%s, %u, %s)", gl_enum_name(objectType), name, gl_enum_name(option)));
 	GLenum __ret = fn.glObjectUnpurgeableAPPLE(objectType, name, option);
 	return __ret;
 }
@@ -13556,19 +13555,19 @@ void OSMesaDriver::nfglOrthoxOES(GLfixed l, GLfixed r, GLfixed b, GLfixed t, GLf
 
 void OSMesaDriver::nfglPNTrianglesfATI(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPNTrianglesfATI(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPNTrianglesfATI(%s, %f)", gl_enum_name(pname), param));
 	fn.glPNTrianglesfATI(pname, param);
 }
 
 void OSMesaDriver::nfglPNTrianglesiATI(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPNTrianglesiATI(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPNTrianglesiATI(%s, %d)", gl_enum_name(pname), param));
 	fn.glPNTrianglesiATI(pname, param);
 }
 
 void OSMesaDriver::nfglPassTexCoordATI(GLuint dst, GLuint coord, GLenum swizzle)
 {
-	D(bug("nfosmesa: glPassTexCoordATI(%u, %u, 0x%x)", dst, coord, swizzle));
+	D(bug("nfosmesa: glPassTexCoordATI(%u, %u, %s)", dst, coord, gl_enum_name(swizzle)));
 	fn.glPassTexCoordATI(dst, coord, swizzle);
 }
 
@@ -13590,13 +13589,13 @@ void OSMesaDriver::nfglPatchParameterfv(GLenum pname, memptr values)
 void OSMesaDriver::nfglPatchParameterfv(GLenum pname, const GLfloat *values)
 #endif
 {
-	D(bug("nfosmesa: glPatchParameterfv(0x%x, " PRI_PTR ")", pname, AtariOffset(values)));
+	D(bug("nfosmesa: glPatchParameterfv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(values)));
 FN_GLPATCHPARAMETERFV(pname, values);
 }
 
 void OSMesaDriver::nfglPatchParameteri(GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glPatchParameteri(0x%x, %d)", pname, value));
+	D(bug("nfosmesa: glPatchParameteri(%s, %d)", gl_enum_name(pname), value));
 	fn.glPatchParameteri(pname, value);
 }
 
@@ -13606,7 +13605,7 @@ void OSMesaDriver::nfglPathColorGenNV(GLenum color, GLenum genMode, GLenum color
 void OSMesaDriver::nfglPathColorGenNV(GLenum color, GLenum genMode, GLenum colorFormat, const GLfloat *coeffs)
 #endif
 {
-	D(bug("nfosmesa: glPathColorGenNV(0x%x, 0x%x, 0x%x, " PRI_PTR ")", color, genMode, colorFormat, AtariOffset(coeffs)));
+	D(bug("nfosmesa: glPathColorGenNV(%s, %s, %s, " PRI_PTR ")", gl_enum_name(color), gl_enum_name(genMode), gl_enum_name(colorFormat), AtariOffset(coeffs)));
 FN_GLPATHCOLORGENNV(color, genMode, colorFormat, coeffs);
 }
 
@@ -13616,7 +13615,7 @@ void OSMesaDriver::nfglPathCommandsNV(GLuint path, GLsizei numCommands, memptr c
 void OSMesaDriver::nfglPathCommandsNV(GLuint path, GLsizei numCommands, const GLubyte *commands, GLsizei numCoords, GLenum coordType, const void *coords)
 #endif
 {
-	D(bug("nfosmesa: glPathCommandsNV(%u, %d, " PRI_PTR ", %d, 0x%x, " PRI_PTR ")", path, numCommands, AtariOffset(commands), numCoords, coordType, AtariOffset(coords)));
+	D(bug("nfosmesa: glPathCommandsNV(%u, %d, " PRI_PTR ", %d, %s, " PRI_PTR ")", path, numCommands, AtariOffset(commands), numCoords, gl_enum_name(coordType), AtariOffset(coords)));
 FN_GLPATHCOMMANDSNV(path, numCommands, commands, numCoords, coordType, coords);
 }
 
@@ -13626,13 +13625,13 @@ void OSMesaDriver::nfglPathCoordsNV(GLuint path, GLsizei numCoords, GLenum coord
 void OSMesaDriver::nfglPathCoordsNV(GLuint path, GLsizei numCoords, GLenum coordType, const void *coords)
 #endif
 {
-	D(bug("nfosmesa: glPathCoordsNV(%u, %d, 0x%x, " PRI_PTR ")", path, numCoords, coordType, AtariOffset(coords)));
+	D(bug("nfosmesa: glPathCoordsNV(%u, %d, %s, " PRI_PTR ")", path, numCoords, gl_enum_name(coordType), AtariOffset(coords)));
 FN_GLPATHCOORDSNV(path, numCoords, coordType, coords);
 }
 
 void OSMesaDriver::nfglPathCoverDepthFuncNV(GLenum func)
 {
-	D(bug("nfosmesa: glPathCoverDepthFuncNV(0x%x)", func));
+	D(bug("nfosmesa: glPathCoverDepthFuncNV(%s)", gl_enum_name(func)));
 	fn.glPathCoverDepthFuncNV(func);
 }
 
@@ -13648,7 +13647,7 @@ FN_GLPATHDASHARRAYNV(path, dashCount, dashArray);
 
 void OSMesaDriver::nfglPathFogGenNV(GLenum genMode)
 {
-	D(bug("nfosmesa: glPathFogGenNV(0x%x)", genMode));
+	D(bug("nfosmesa: glPathFogGenNV(%s)", gl_enum_name(genMode)));
 	fn.glPathFogGenNV(genMode);
 }
 
@@ -13658,7 +13657,7 @@ GLenum OSMesaDriver::nfglPathGlyphIndexArrayNV(GLuint firstPathName, GLenum font
 GLenum OSMesaDriver::nfglPathGlyphIndexArrayNV(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale)
 #endif
 {
-	D(bug("nfosmesa: glPathGlyphIndexArrayNV(%u, 0x%x, " PRI_PTR ", 0x%x, %u, %d, %u, %f)", firstPathName, fontTarget, AtariOffset(fontName), fontStyle, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale));
+	D(bug("nfosmesa: glPathGlyphIndexArrayNV(%u, %s, " PRI_PTR ", 0x%x, %u, %d, %u, %f)", firstPathName, gl_enum_name(fontTarget), AtariOffset(fontName), fontStyle, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale));
 FN_GLPATHGLYPHINDEXARRAYNV(firstPathName, fontTarget, fontName, fontStyle, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale);
 }
 
@@ -13668,7 +13667,7 @@ GLenum OSMesaDriver::nfglPathGlyphIndexRangeNV(GLenum fontTarget, memptr fontNam
 GLenum OSMesaDriver::nfglPathGlyphIndexRangeNV(GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint pathParameterTemplate, GLfloat emScale, GLuint *baseAndCount)
 #endif
 {
-	D(bug("nfosmesa: glPathGlyphIndexRangeNV(0x%x, " PRI_PTR ", 0x%x, %u, %f, " PRI_PTR ")", fontTarget, AtariOffset(fontName), fontStyle, pathParameterTemplate, emScale, AtariOffset(baseAndCount)));
+	D(bug("nfosmesa: glPathGlyphIndexRangeNV(%s, " PRI_PTR ", 0x%x, %u, %f, " PRI_PTR ")", gl_enum_name(fontTarget), AtariOffset(fontName), fontStyle, pathParameterTemplate, emScale, AtariOffset(baseAndCount)));
 FN_GLPATHGLYPHINDEXRANGENV(fontTarget, fontName, fontStyle, pathParameterTemplate, emScale, baseAndCount);
 }
 
@@ -13678,7 +13677,7 @@ void OSMesaDriver::nfglPathGlyphRangeNV(GLuint firstPathName, GLenum fontTarget,
 void OSMesaDriver::nfglPathGlyphRangeNV(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLuint firstGlyph, GLsizei numGlyphs, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale)
 #endif
 {
-	D(bug("nfosmesa: glPathGlyphRangeNV(%u, 0x%x, " PRI_PTR ", 0x%x, %u, %d, 0x%x, %u, %f)", firstPathName, fontTarget, AtariOffset(fontName), fontStyle, firstGlyph, numGlyphs, handleMissingGlyphs, pathParameterTemplate, emScale));
+	D(bug("nfosmesa: glPathGlyphRangeNV(%u, %s, " PRI_PTR ", 0x%x, %u, %d, %s, %u, %f)", firstPathName, gl_enum_name(fontTarget), AtariOffset(fontName), fontStyle, firstGlyph, numGlyphs, gl_enum_name(handleMissingGlyphs), pathParameterTemplate, emScale));
 FN_GLPATHGLYPHRANGENV(firstPathName, fontTarget, fontName, fontStyle, firstGlyph, numGlyphs, handleMissingGlyphs, pathParameterTemplate, emScale);
 }
 
@@ -13688,7 +13687,7 @@ void OSMesaDriver::nfglPathGlyphsNV(GLuint firstPathName, GLenum fontTarget, mem
 void OSMesaDriver::nfglPathGlyphsNV(GLuint firstPathName, GLenum fontTarget, const void *fontName, GLbitfield fontStyle, GLsizei numGlyphs, GLenum type, const void *charcodes, GLenum handleMissingGlyphs, GLuint pathParameterTemplate, GLfloat emScale)
 #endif
 {
-	D(bug("nfosmesa: glPathGlyphsNV(%u, 0x%x, " PRI_PTR ", 0x%x, %d, 0x%x, " PRI_PTR ", 0x%x, %u, %f)", firstPathName, fontTarget, AtariOffset(fontName), fontStyle, numGlyphs, type, AtariOffset(charcodes), handleMissingGlyphs, pathParameterTemplate, emScale));
+	D(bug("nfosmesa: glPathGlyphsNV(%u, %s, " PRI_PTR ", 0x%x, %d, %s, " PRI_PTR ", %s, %u, %f)", firstPathName, gl_enum_name(fontTarget), AtariOffset(fontName), fontStyle, numGlyphs, gl_enum_name(type), AtariOffset(charcodes), gl_enum_name(handleMissingGlyphs), pathParameterTemplate, emScale));
 FN_GLPATHGLYPHSNV(firstPathName, fontTarget, fontName, fontStyle, numGlyphs, type, charcodes, handleMissingGlyphs, pathParameterTemplate, emScale);
 }
 
@@ -13698,13 +13697,13 @@ GLenum OSMesaDriver::nfglPathMemoryGlyphIndexArrayNV(GLuint firstPathName, GLenu
 GLenum OSMesaDriver::nfglPathMemoryGlyphIndexArrayNV(GLuint firstPathName, GLenum fontTarget, GLsizeiptr fontSize, const void *fontData, GLsizei faceIndex, GLuint firstGlyphIndex, GLsizei numGlyphs, GLuint pathParameterTemplate, GLfloat emScale)
 #endif
 {
-	D(bug("nfosmesa: glPathMemoryGlyphIndexArrayNV(%u, 0x%x, %" PRI_IPTR ", " PRI_PTR ", %d, %u, %d, %u, %f)", firstPathName, fontTarget, fontSize, AtariOffset(fontData), faceIndex, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale));
+	D(bug("nfosmesa: glPathMemoryGlyphIndexArrayNV(%u, %s, %" PRI_IPTR ", " PRI_PTR ", %d, %u, %d, %u, %f)", firstPathName, gl_enum_name(fontTarget), fontSize, AtariOffset(fontData), faceIndex, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale));
 FN_GLPATHMEMORYGLYPHINDEXARRAYNV(firstPathName, fontTarget, fontSize, fontData, faceIndex, firstGlyphIndex, numGlyphs, pathParameterTemplate, emScale);
 }
 
 void OSMesaDriver::nfglPathParameterfNV(GLuint path, GLenum pname, GLfloat value)
 {
-	D(bug("nfosmesa: glPathParameterfNV(%u, 0x%x, %f)", path, pname, value));
+	D(bug("nfosmesa: glPathParameterfNV(%u, %s, %f)", path, gl_enum_name(pname), value));
 	fn.glPathParameterfNV(path, pname, value);
 }
 
@@ -13714,13 +13713,13 @@ void OSMesaDriver::nfglPathParameterfvNV(GLuint path, GLenum pname, memptr value
 void OSMesaDriver::nfglPathParameterfvNV(GLuint path, GLenum pname, const GLfloat *value)
 #endif
 {
-	D(bug("nfosmesa: glPathParameterfvNV(%u, 0x%x, " PRI_PTR ")", path, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glPathParameterfvNV(%u, %s, " PRI_PTR ")", path, gl_enum_name(pname), AtariOffset(value)));
 FN_GLPATHPARAMETERFVNV(path, pname, value);
 }
 
 void OSMesaDriver::nfglPathParameteriNV(GLuint path, GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glPathParameteriNV(%u, 0x%x, %d)", path, pname, value));
+	D(bug("nfosmesa: glPathParameteriNV(%u, %s, %d)", path, gl_enum_name(pname), value));
 	fn.glPathParameteriNV(path, pname, value);
 }
 
@@ -13730,7 +13729,7 @@ void OSMesaDriver::nfglPathParameterivNV(GLuint path, GLenum pname, memptr value
 void OSMesaDriver::nfglPathParameterivNV(GLuint path, GLenum pname, const GLint *value)
 #endif
 {
-	D(bug("nfosmesa: glPathParameterivNV(%u, 0x%x, " PRI_PTR ")", path, pname, AtariOffset(value)));
+	D(bug("nfosmesa: glPathParameterivNV(%u, %s, " PRI_PTR ")", path, gl_enum_name(pname), AtariOffset(value)));
 FN_GLPATHPARAMETERIVNV(path, pname, value);
 }
 
@@ -13742,7 +13741,7 @@ void OSMesaDriver::nfglPathStencilDepthOffsetNV(GLfloat factor, GLfloat units)
 
 void OSMesaDriver::nfglPathStencilFuncNV(GLenum func, GLint ref, GLuint mask)
 {
-	D(bug("nfosmesa: glPathStencilFuncNV(0x%x, %d, %u)", func, ref, mask));
+	D(bug("nfosmesa: glPathStencilFuncNV(%s, %d, %u)", gl_enum_name(func), ref, mask));
 	fn.glPathStencilFuncNV(func, ref, mask);
 }
 
@@ -13752,7 +13751,7 @@ void OSMesaDriver::nfglPathStringNV(GLuint path, GLenum format, GLsizei length, 
 void OSMesaDriver::nfglPathStringNV(GLuint path, GLenum format, GLsizei length, const void *pathString)
 #endif
 {
-	D(bug("nfosmesa: glPathStringNV(%u, 0x%x, %d, " PRI_PTR ")", path, format, length, AtariOffset(pathString)));
+	D(bug("nfosmesa: glPathStringNV(%u, %s, %d, " PRI_PTR ")", path, gl_enum_name(format), length, AtariOffset(pathString)));
 FN_GLPATHSTRINGNV(path, format, length, pathString);
 }
 
@@ -13762,7 +13761,7 @@ void OSMesaDriver::nfglPathSubCommandsNV(GLuint path, GLsizei commandStart, GLsi
 void OSMesaDriver::nfglPathSubCommandsNV(GLuint path, GLsizei commandStart, GLsizei commandsToDelete, GLsizei numCommands, const GLubyte *commands, GLsizei numCoords, GLenum coordType, const void *coords)
 #endif
 {
-	D(bug("nfosmesa: glPathSubCommandsNV(%u, %d, %d, %d, " PRI_PTR ", %d, 0x%x, " PRI_PTR ")", path, commandStart, commandsToDelete, numCommands, AtariOffset(commands), numCoords, coordType, AtariOffset(coords)));
+	D(bug("nfosmesa: glPathSubCommandsNV(%u, %d, %d, %d, " PRI_PTR ", %d, %s, " PRI_PTR ")", path, commandStart, commandsToDelete, numCommands, AtariOffset(commands), numCoords, gl_enum_name(coordType), AtariOffset(coords)));
 FN_GLPATHSUBCOMMANDSNV(path, commandStart, commandsToDelete, numCommands, commands, numCoords, coordType, coords);
 }
 
@@ -13772,7 +13771,7 @@ void OSMesaDriver::nfglPathSubCoordsNV(GLuint path, GLsizei coordStart, GLsizei 
 void OSMesaDriver::nfglPathSubCoordsNV(GLuint path, GLsizei coordStart, GLsizei numCoords, GLenum coordType, const void *coords)
 #endif
 {
-	D(bug("nfosmesa: glPathSubCoordsNV(%u, %d, %d, 0x%x, " PRI_PTR ")", path, coordStart, numCoords, coordType, AtariOffset(coords)));
+	D(bug("nfosmesa: glPathSubCoordsNV(%u, %d, %d, %s, " PRI_PTR ")", path, coordStart, numCoords, gl_enum_name(coordType), AtariOffset(coords)));
 FN_GLPATHSUBCOORDSNV(path, coordStart, numCoords, coordType, coords);
 }
 
@@ -13782,7 +13781,7 @@ void OSMesaDriver::nfglPathTexGenNV(GLenum texCoordSet, GLenum genMode, GLint co
 void OSMesaDriver::nfglPathTexGenNV(GLenum texCoordSet, GLenum genMode, GLint components, const GLfloat *coeffs)
 #endif
 {
-	D(bug("nfosmesa: glPathTexGenNV(0x%x, 0x%x, %d, " PRI_PTR ")", texCoordSet, genMode, components, AtariOffset(coeffs)));
+	D(bug("nfosmesa: glPathTexGenNV(%s, %s, %d, " PRI_PTR ")", gl_enum_name(texCoordSet), gl_enum_name(genMode), components, AtariOffset(coeffs)));
 FN_GLPATHTEXGENNV(texCoordSet, genMode, components, coeffs);
 }
 
@@ -13804,7 +13803,7 @@ void OSMesaDriver::nfglPixelDataRangeNV(GLenum target, GLsizei length, memptr po
 void OSMesaDriver::nfglPixelDataRangeNV(GLenum target, GLsizei length, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glPixelDataRangeNV(0x%x, %d, " PRI_PTR ")", target, length, AtariOffset(pointer)));
+	D(bug("nfosmesa: glPixelDataRangeNV(%s, %d, " PRI_PTR ")", gl_enum_name(target), length, AtariOffset(pointer)));
 FN_GLPIXELDATARANGENV(target, length, pointer);
 }
 
@@ -13814,7 +13813,7 @@ void OSMesaDriver::nfglPixelMapfv(GLenum map, GLsizei mapsize, memptr values)
 void OSMesaDriver::nfglPixelMapfv(GLenum map, GLsizei mapsize, const GLfloat *values)
 #endif
 {
-	D(bug("nfosmesa: glPixelMapfv(0x%x, %d, " PRI_PTR ")", map, mapsize, AtariOffset(values)));
+	D(bug("nfosmesa: glPixelMapfv(%s, %d, " PRI_PTR ")", gl_enum_name(map), mapsize, AtariOffset(values)));
 FN_GLPIXELMAPFV(map, mapsize, values);
 }
 
@@ -13824,7 +13823,7 @@ void OSMesaDriver::nfglPixelMapuiv(GLenum map, GLsizei mapsize, memptr values)
 void OSMesaDriver::nfglPixelMapuiv(GLenum map, GLsizei mapsize, const GLuint *values)
 #endif
 {
-	D(bug("nfosmesa: glPixelMapuiv(0x%x, %d, " PRI_PTR ")", map, mapsize, AtariOffset(values)));
+	D(bug("nfosmesa: glPixelMapuiv(%s, %d, " PRI_PTR ")", gl_enum_name(map), mapsize, AtariOffset(values)));
 FN_GLPIXELMAPUIV(map, mapsize, values);
 }
 
@@ -13834,7 +13833,7 @@ void OSMesaDriver::nfglPixelMapusv(GLenum map, GLsizei mapsize, memptr values)
 void OSMesaDriver::nfglPixelMapusv(GLenum map, GLsizei mapsize, const GLushort *values)
 #endif
 {
-	D(bug("nfosmesa: glPixelMapusv(0x%x, %d, " PRI_PTR ")", map, mapsize, AtariOffset(values)));
+	D(bug("nfosmesa: glPixelMapusv(%s, %d, " PRI_PTR ")", gl_enum_name(map), mapsize, AtariOffset(values)));
 FN_GLPIXELMAPUSV(map, mapsize, values);
 }
 
@@ -13844,31 +13843,31 @@ void OSMesaDriver::nfglPixelMapx(GLenum map, GLint size, memptr values)
 void OSMesaDriver::nfglPixelMapx(GLenum map, GLint size, const GLfixed *values)
 #endif
 {
-	D(bug("nfosmesa: glPixelMapx(0x%x, %d, " PRI_PTR ")", map, size, AtariOffset(values)));
+	D(bug("nfosmesa: glPixelMapx(%s, %d, " PRI_PTR ")", gl_enum_name(map), size, AtariOffset(values)));
 FN_GLPIXELMAPX(map, size, values);
 }
 
 void OSMesaDriver::nfglPixelStoref(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPixelStoref(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPixelStoref(%s, %f)", gl_enum_name(pname), param));
 	fn.glPixelStoref(pname, param);
 }
 
 void OSMesaDriver::nfglPixelStorei(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPixelStorei(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPixelStorei(%s, %d)", gl_enum_name(pname), param));
 	fn.glPixelStorei(pname, param);
 }
 
 void OSMesaDriver::nfglPixelStorex(GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glPixelStorex(0x%x, 0x%x)", pname, param));
+	D(bug("nfosmesa: glPixelStorex(%s, 0x%x)", gl_enum_name(pname), param));
 	fn.glPixelStorex(pname, param);
 }
 
 void OSMesaDriver::nfglPixelTexGenParameterfSGIS(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPixelTexGenParameterfSGIS(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPixelTexGenParameterfSGIS(%s, %f)", gl_enum_name(pname), param));
 	fn.glPixelTexGenParameterfSGIS(pname, param);
 }
 
@@ -13878,13 +13877,13 @@ void OSMesaDriver::nfglPixelTexGenParameterfvSGIS(GLenum pname, memptr params)
 void OSMesaDriver::nfglPixelTexGenParameterfvSGIS(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPixelTexGenParameterfvSGIS(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPixelTexGenParameterfvSGIS(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPIXELTEXGENPARAMETERFVSGIS(pname, params);
 }
 
 void OSMesaDriver::nfglPixelTexGenParameteriSGIS(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPixelTexGenParameteriSGIS(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPixelTexGenParameteriSGIS(%s, %d)", gl_enum_name(pname), param));
 	fn.glPixelTexGenParameteriSGIS(pname, param);
 }
 
@@ -13894,37 +13893,37 @@ void OSMesaDriver::nfglPixelTexGenParameterivSGIS(GLenum pname, memptr params)
 void OSMesaDriver::nfglPixelTexGenParameterivSGIS(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glPixelTexGenParameterivSGIS(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPixelTexGenParameterivSGIS(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPIXELTEXGENPARAMETERIVSGIS(pname, params);
 }
 
 void OSMesaDriver::nfglPixelTexGenSGIX(GLenum mode)
 {
-	D(bug("nfosmesa: glPixelTexGenSGIX(0x%x)", mode));
+	D(bug("nfosmesa: glPixelTexGenSGIX(%s)", gl_enum_name(mode)));
 	fn.glPixelTexGenSGIX(mode);
 }
 
 void OSMesaDriver::nfglPixelTransferf(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPixelTransferf(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPixelTransferf(%s, %f)", gl_enum_name(pname), param));
 	fn.glPixelTransferf(pname, param);
 }
 
 void OSMesaDriver::nfglPixelTransferi(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPixelTransferi(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPixelTransferi(%s, %d)", gl_enum_name(pname), param));
 	fn.glPixelTransferi(pname, param);
 }
 
 void OSMesaDriver::nfglPixelTransferxOES(GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glPixelTransferxOES(0x%x, 0x%x)", pname, param));
+	D(bug("nfosmesa: glPixelTransferxOES(%s, 0x%x)", gl_enum_name(pname), param));
 	fn.glPixelTransferxOES(pname, param);
 }
 
 void OSMesaDriver::nfglPixelTransformParameterfEXT(GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPixelTransformParameterfEXT(0x%x, 0x%x, %f)", target, pname, param));
+	D(bug("nfosmesa: glPixelTransformParameterfEXT(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glPixelTransformParameterfEXT(target, pname, param);
 }
 
@@ -13934,13 +13933,13 @@ void OSMesaDriver::nfglPixelTransformParameterfvEXT(GLenum target, GLenum pname,
 void OSMesaDriver::nfglPixelTransformParameterfvEXT(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPixelTransformParameterfvEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPixelTransformParameterfvEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLPIXELTRANSFORMPARAMETERFVEXT(target, pname, params);
 }
 
 void OSMesaDriver::nfglPixelTransformParameteriEXT(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPixelTransformParameteriEXT(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glPixelTransformParameteriEXT(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glPixelTransformParameteriEXT(target, pname, param);
 }
 
@@ -13950,7 +13949,7 @@ void OSMesaDriver::nfglPixelTransformParameterivEXT(GLenum target, GLenum pname,
 void OSMesaDriver::nfglPixelTransformParameterivEXT(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glPixelTransformParameterivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPixelTransformParameterivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLPIXELTRANSFORMPARAMETERIVEXT(target, pname, params);
 }
 
@@ -13978,25 +13977,25 @@ FN_GLPOINTALONGPATHNV(path, startSegment, numSegments, distance, x, y, tangentX,
 
 void OSMesaDriver::nfglPointParameterf(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPointParameterf(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPointParameterf(%s, %f)", gl_enum_name(pname), param));
 	fn.glPointParameterf(pname, param);
 }
 
 void OSMesaDriver::nfglPointParameterfARB(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPointParameterfARB(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPointParameterfARB(%s, %f)", gl_enum_name(pname), param));
 	fn.glPointParameterfARB(pname, param);
 }
 
 void OSMesaDriver::nfglPointParameterfEXT(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPointParameterfEXT(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPointParameterfEXT(%s, %f)", gl_enum_name(pname), param));
 	fn.glPointParameterfEXT(pname, param);
 }
 
 void OSMesaDriver::nfglPointParameterfSGIS(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glPointParameterfSGIS(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glPointParameterfSGIS(%s, %f)", gl_enum_name(pname), param));
 	fn.glPointParameterfSGIS(pname, param);
 }
 
@@ -14006,7 +14005,7 @@ void OSMesaDriver::nfglPointParameterfv(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterfv(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterfv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterfv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERFV(pname, params);
 }
 
@@ -14016,7 +14015,7 @@ void OSMesaDriver::nfglPointParameterfvARB(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterfvARB(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterfvARB(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterfvARB(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERFVARB(pname, params);
 }
 
@@ -14026,7 +14025,7 @@ void OSMesaDriver::nfglPointParameterfvEXT(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterfvEXT(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterfvEXT(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterfvEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERFVEXT(pname, params);
 }
 
@@ -14036,19 +14035,19 @@ void OSMesaDriver::nfglPointParameterfvSGIS(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterfvSGIS(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterfvSGIS(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterfvSGIS(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERFVSGIS(pname, params);
 }
 
 void OSMesaDriver::nfglPointParameteri(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPointParameteri(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPointParameteri(%s, %d)", gl_enum_name(pname), param));
 	fn.glPointParameteri(pname, param);
 }
 
 void OSMesaDriver::nfglPointParameteriNV(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glPointParameteriNV(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glPointParameteriNV(%s, %d)", gl_enum_name(pname), param));
 	fn.glPointParameteriNV(pname, param);
 }
 
@@ -14058,7 +14057,7 @@ void OSMesaDriver::nfglPointParameteriv(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameteriv(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameteriv(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameteriv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERIV(pname, params);
 }
 
@@ -14068,7 +14067,7 @@ void OSMesaDriver::nfglPointParameterivNV(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterivNV(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterivNV(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterivNV(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERIVNV(pname, params);
 }
 
@@ -14078,7 +14077,7 @@ void OSMesaDriver::nfglPointParameterxvOES(GLenum pname, memptr params)
 void OSMesaDriver::nfglPointParameterxvOES(GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glPointParameterxvOES(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glPointParameterxvOES(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLPOINTPARAMETERXVOES(pname, params);
 }
 
@@ -14094,7 +14093,7 @@ void OSMesaDriver::nfglPointSizePointerAPPLE(GLenum type, GLsizei stride, memptr
 void OSMesaDriver::nfglPointSizePointerAPPLE(GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glPointSizePointerAPPLE(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glPointSizePointerAPPLE(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLPOINTSIZEPOINTERAPPLE(type, stride, pointer);
 }
 
@@ -14126,7 +14125,7 @@ FN_GLPOLLINSTRUMENTSSGIX(marker_p);
 
 void OSMesaDriver::nfglPolygonMode(GLenum face, GLenum mode)
 {
-	D(bug("nfosmesa: glPolygonMode(0x%x, 0x%x)", face, mode));
+	D(bug("nfosmesa: glPolygonMode(%s, %s)", gl_enum_name(face), gl_enum_name(mode)));
 	fn.glPolygonMode(face, mode);
 }
 
@@ -14202,13 +14201,13 @@ void OSMesaDriver::nfglPopName(void)
 
 void OSMesaDriver::nfglPresentFrameDualFillNV(GLuint video_slot, GLuint64EXT minPresentTime, GLuint beginPresentTimeId, GLuint presentDurationId, GLenum type, GLenum target0, GLuint fill0, GLenum target1, GLuint fill1, GLenum target2, GLuint fill2, GLenum target3, GLuint fill3)
 {
-	D(bug("nfosmesa: glPresentFrameDualFillNV(%u, %" PRIu64 ", %u, %u, 0x%x, 0x%x, %u, 0x%x, %u, 0x%x, %u, 0x%x, %u)", video_slot, minPresentTime, beginPresentTimeId, presentDurationId, type, target0, fill0, target1, fill1, target2, fill2, target3, fill3));
+	D(bug("nfosmesa: glPresentFrameDualFillNV(%u, %" PRIu64 ", %u, %u, %s, %s, %u, %s, %u, %s, %u, %s, %u)", video_slot, minPresentTime, beginPresentTimeId, presentDurationId, gl_enum_name(type), gl_enum_name(target0), fill0, gl_enum_name(target1), fill1, gl_enum_name(target2), fill2, gl_enum_name(target3), fill3));
 	fn.glPresentFrameDualFillNV(video_slot, minPresentTime, beginPresentTimeId, presentDurationId, type, target0, fill0, target1, fill1, target2, fill2, target3, fill3);
 }
 
 void OSMesaDriver::nfglPresentFrameKeyedNV(GLuint video_slot, GLuint64EXT minPresentTime, GLuint beginPresentTimeId, GLuint presentDurationId, GLenum type, GLenum target0, GLuint fill0, GLuint key0, GLenum target1, GLuint fill1, GLuint key1)
 {
-	D(bug("nfosmesa: glPresentFrameKeyedNV(%u, %" PRIu64 ", %u, %u, 0x%x, 0x%x, %u, %u, 0x%x, %u, %u)", video_slot, minPresentTime, beginPresentTimeId, presentDurationId, type, target0, fill0, key0, target1, fill1, key1));
+	D(bug("nfosmesa: glPresentFrameKeyedNV(%u, %" PRIu64 ", %u, %u, %s, %s, %u, %u, %s, %u, %u)", video_slot, minPresentTime, beginPresentTimeId, presentDurationId, gl_enum_name(type), gl_enum_name(target0), fill0, key0, gl_enum_name(target1), fill1, key1));
 	fn.glPresentFrameKeyedNV(video_slot, minPresentTime, beginPresentTimeId, presentDurationId, type, target0, fill0, key0, target1, fill1, key1);
 }
 
@@ -14266,7 +14265,7 @@ void OSMesaDriver::nfglProgramBinary(GLuint program, GLenum binaryFormat, memptr
 void OSMesaDriver::nfglProgramBinary(GLuint program, GLenum binaryFormat, const void *binary, GLsizei length)
 #endif
 {
-	D(bug("nfosmesa: glProgramBinary(%u, 0x%x, " PRI_PTR ", %d)", program, binaryFormat, AtariOffset(binary), length));
+	D(bug("nfosmesa: glProgramBinary(%u, %s, " PRI_PTR ", %d)", program, gl_enum_name(binaryFormat), AtariOffset(binary), length));
 FN_GLPROGRAMBINARY(program, binaryFormat, binary, length);
 }
 
@@ -14276,7 +14275,7 @@ void OSMesaDriver::nfglProgramBufferParametersIivNV(GLenum target, GLuint bindin
 void OSMesaDriver::nfglProgramBufferParametersIivNV(GLenum target, GLuint bindingIndex, GLuint wordIndex, GLsizei count, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramBufferParametersIivNV(0x%x, %u, %u, %d, " PRI_PTR ")", target, bindingIndex, wordIndex, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramBufferParametersIivNV(%s, %u, %u, %d, " PRI_PTR ")", gl_enum_name(target), bindingIndex, wordIndex, count, AtariOffset(params)));
 FN_GLPROGRAMBUFFERPARAMETERSIIVNV(target, bindingIndex, wordIndex, count, params);
 }
 
@@ -14286,7 +14285,7 @@ void OSMesaDriver::nfglProgramBufferParametersIuivNV(GLenum target, GLuint bindi
 void OSMesaDriver::nfglProgramBufferParametersIuivNV(GLenum target, GLuint bindingIndex, GLuint wordIndex, GLsizei count, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramBufferParametersIuivNV(0x%x, %u, %u, %d, " PRI_PTR ")", target, bindingIndex, wordIndex, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramBufferParametersIuivNV(%s, %u, %u, %d, " PRI_PTR ")", gl_enum_name(target), bindingIndex, wordIndex, count, AtariOffset(params)));
 FN_GLPROGRAMBUFFERPARAMETERSIUIVNV(target, bindingIndex, wordIndex, count, params);
 }
 
@@ -14296,7 +14295,7 @@ void OSMesaDriver::nfglProgramBufferParametersfvNV(GLenum target, GLuint binding
 void OSMesaDriver::nfglProgramBufferParametersfvNV(GLenum target, GLuint bindingIndex, GLuint wordIndex, GLsizei count, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramBufferParametersfvNV(0x%x, %u, %u, %d, " PRI_PTR ")", target, bindingIndex, wordIndex, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramBufferParametersfvNV(%s, %u, %u, %d, " PRI_PTR ")", gl_enum_name(target), bindingIndex, wordIndex, count, AtariOffset(params)));
 FN_GLPROGRAMBUFFERPARAMETERSFVNV(target, bindingIndex, wordIndex, count, params);
 }
 
@@ -14307,14 +14306,14 @@ void OSMesaDriver::nfglProgramCallbackMESA(GLenum target, GLprogramcallbackMESA 
 void OSMesaDriver::nfglProgramCallbackMESA(GLenum target, GLprogramcallbackMESA callback, GLvoid *data)
 #endif
 {
-	D(bug("nfosmesa: glProgramCallbackMESA(0x%x, %p, " PRI_PTR ")", target, callback, AtariOffset(data)));
+	D(bug("nfosmesa: glProgramCallbackMESA(%s, %p, " PRI_PTR ")", gl_enum_name(target), callback, AtariOffset(data)));
 FN_GLPROGRAMCALLBACKMESA(target, callback, data);
 }
 #endif
 
 void OSMesaDriver::nfglProgramEnvParameter4dARB(GLenum target, GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	D(bug("nfosmesa: glProgramEnvParameter4dARB(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramEnvParameter4dARB(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramEnvParameter4dARB(target, index, x, y, z, w);
 }
 
@@ -14324,13 +14323,13 @@ void OSMesaDriver::nfglProgramEnvParameter4dvARB(GLenum target, GLuint index, me
 void OSMesaDriver::nfglProgramEnvParameter4dvARB(GLenum target, GLuint index, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParameter4dvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParameter4dvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETER4DVARB(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramEnvParameter4fARB(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	D(bug("nfosmesa: glProgramEnvParameter4fARB(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramEnvParameter4fARB(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramEnvParameter4fARB(target, index, x, y, z, w);
 }
 
@@ -14340,13 +14339,13 @@ void OSMesaDriver::nfglProgramEnvParameter4fvARB(GLenum target, GLuint index, me
 void OSMesaDriver::nfglProgramEnvParameter4fvARB(GLenum target, GLuint index, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParameter4fvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParameter4fvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETER4FVARB(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramEnvParameterI4iNV(GLenum target, GLuint index, GLint x, GLint y, GLint z, GLint w)
 {
-	D(bug("nfosmesa: glProgramEnvParameterI4iNV(0x%x, %u, %d, %d, %d, %d)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramEnvParameterI4iNV(%s, %u, %d, %d, %d, %d)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramEnvParameterI4iNV(target, index, x, y, z, w);
 }
 
@@ -14356,13 +14355,13 @@ void OSMesaDriver::nfglProgramEnvParameterI4ivNV(GLenum target, GLuint index, me
 void OSMesaDriver::nfglProgramEnvParameterI4ivNV(GLenum target, GLuint index, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParameterI4ivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParameterI4ivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETERI4IVNV(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramEnvParameterI4uiNV(GLenum target, GLuint index, GLuint x, GLuint y, GLuint z, GLuint w)
 {
-	D(bug("nfosmesa: glProgramEnvParameterI4uiNV(0x%x, %u, %u, %u, %u, %u)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramEnvParameterI4uiNV(%s, %u, %u, %u, %u, %u)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramEnvParameterI4uiNV(target, index, x, y, z, w);
 }
 
@@ -14372,7 +14371,7 @@ void OSMesaDriver::nfglProgramEnvParameterI4uivNV(GLenum target, GLuint index, m
 void OSMesaDriver::nfglProgramEnvParameterI4uivNV(GLenum target, GLuint index, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParameterI4uivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParameterI4uivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETERI4UIVNV(target, index, params);
 }
 
@@ -14382,7 +14381,7 @@ void OSMesaDriver::nfglProgramEnvParameters4fvEXT(GLenum target, GLuint index, G
 void OSMesaDriver::nfglProgramEnvParameters4fvEXT(GLenum target, GLuint index, GLsizei count, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParameters4fvEXT(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParameters4fvEXT(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETERS4FVEXT(target, index, count, params);
 }
 
@@ -14392,7 +14391,7 @@ void OSMesaDriver::nfglProgramEnvParametersI4ivNV(GLenum target, GLuint index, G
 void OSMesaDriver::nfglProgramEnvParametersI4ivNV(GLenum target, GLuint index, GLsizei count, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParametersI4ivNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParametersI4ivNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETERSI4IVNV(target, index, count, params);
 }
 
@@ -14402,13 +14401,13 @@ void OSMesaDriver::nfglProgramEnvParametersI4uivNV(GLenum target, GLuint index, 
 void OSMesaDriver::nfglProgramEnvParametersI4uivNV(GLenum target, GLuint index, GLsizei count, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramEnvParametersI4uivNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramEnvParametersI4uivNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMENVPARAMETERSI4UIVNV(target, index, count, params);
 }
 
 void OSMesaDriver::nfglProgramLocalParameter4dARB(GLenum target, GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	D(bug("nfosmesa: glProgramLocalParameter4dARB(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramLocalParameter4dARB(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramLocalParameter4dARB(target, index, x, y, z, w);
 }
 
@@ -14418,13 +14417,13 @@ void OSMesaDriver::nfglProgramLocalParameter4dvARB(GLenum target, GLuint index, 
 void OSMesaDriver::nfglProgramLocalParameter4dvARB(GLenum target, GLuint index, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParameter4dvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParameter4dvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETER4DVARB(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramLocalParameter4fARB(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	D(bug("nfosmesa: glProgramLocalParameter4fARB(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramLocalParameter4fARB(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramLocalParameter4fARB(target, index, x, y, z, w);
 }
 
@@ -14434,13 +14433,13 @@ void OSMesaDriver::nfglProgramLocalParameter4fvARB(GLenum target, GLuint index, 
 void OSMesaDriver::nfglProgramLocalParameter4fvARB(GLenum target, GLuint index, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParameter4fvARB(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParameter4fvARB(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETER4FVARB(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramLocalParameterI4iNV(GLenum target, GLuint index, GLint x, GLint y, GLint z, GLint w)
 {
-	D(bug("nfosmesa: glProgramLocalParameterI4iNV(0x%x, %u, %d, %d, %d, %d)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramLocalParameterI4iNV(%s, %u, %d, %d, %d, %d)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramLocalParameterI4iNV(target, index, x, y, z, w);
 }
 
@@ -14450,13 +14449,13 @@ void OSMesaDriver::nfglProgramLocalParameterI4ivNV(GLenum target, GLuint index, 
 void OSMesaDriver::nfglProgramLocalParameterI4ivNV(GLenum target, GLuint index, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParameterI4ivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParameterI4ivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETERI4IVNV(target, index, params);
 }
 
 void OSMesaDriver::nfglProgramLocalParameterI4uiNV(GLenum target, GLuint index, GLuint x, GLuint y, GLuint z, GLuint w)
 {
-	D(bug("nfosmesa: glProgramLocalParameterI4uiNV(0x%x, %u, %u, %u, %u, %u)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramLocalParameterI4uiNV(%s, %u, %u, %u, %u, %u)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramLocalParameterI4uiNV(target, index, x, y, z, w);
 }
 
@@ -14466,7 +14465,7 @@ void OSMesaDriver::nfglProgramLocalParameterI4uivNV(GLenum target, GLuint index,
 void OSMesaDriver::nfglProgramLocalParameterI4uivNV(GLenum target, GLuint index, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParameterI4uivNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParameterI4uivNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETERI4UIVNV(target, index, params);
 }
 
@@ -14476,7 +14475,7 @@ void OSMesaDriver::nfglProgramLocalParameters4fvEXT(GLenum target, GLuint index,
 void OSMesaDriver::nfglProgramLocalParameters4fvEXT(GLenum target, GLuint index, GLsizei count, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParameters4fvEXT(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParameters4fvEXT(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETERS4FVEXT(target, index, count, params);
 }
 
@@ -14486,7 +14485,7 @@ void OSMesaDriver::nfglProgramLocalParametersI4ivNV(GLenum target, GLuint index,
 void OSMesaDriver::nfglProgramLocalParametersI4ivNV(GLenum target, GLuint index, GLsizei count, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParametersI4ivNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParametersI4ivNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETERSI4IVNV(target, index, count, params);
 }
 
@@ -14496,7 +14495,7 @@ void OSMesaDriver::nfglProgramLocalParametersI4uivNV(GLenum target, GLuint index
 void OSMesaDriver::nfglProgramLocalParametersI4uivNV(GLenum target, GLuint index, GLsizei count, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramLocalParametersI4uivNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramLocalParametersI4uivNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(params)));
 FN_GLPROGRAMLOCALPARAMETERSI4UIVNV(target, index, count, params);
 }
 
@@ -14542,7 +14541,7 @@ FN_GLPROGRAMNAMEDPARAMETER4FVNV(id, len, name, v);
 
 void OSMesaDriver::nfglProgramParameter4dNV(GLenum target, GLuint index, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	D(bug("nfosmesa: glProgramParameter4dNV(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramParameter4dNV(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramParameter4dNV(target, index, x, y, z, w);
 }
 
@@ -14552,13 +14551,13 @@ void OSMesaDriver::nfglProgramParameter4dvNV(GLenum target, GLuint index, memptr
 void OSMesaDriver::nfglProgramParameter4dvNV(GLenum target, GLuint index, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glProgramParameter4dvNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(v)));
+	D(bug("nfosmesa: glProgramParameter4dvNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(v)));
 FN_GLPROGRAMPARAMETER4DVNV(target, index, v);
 }
 
 void OSMesaDriver::nfglProgramParameter4fNV(GLenum target, GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	D(bug("nfosmesa: glProgramParameter4fNV(0x%x, %u, %f, %f, %f, %f)", target, index, x, y, z, w));
+	D(bug("nfosmesa: glProgramParameter4fNV(%s, %u, %f, %f, %f, %f)", gl_enum_name(target), index, x, y, z, w));
 	fn.glProgramParameter4fNV(target, index, x, y, z, w);
 }
 
@@ -14568,25 +14567,25 @@ void OSMesaDriver::nfglProgramParameter4fvNV(GLenum target, GLuint index, memptr
 void OSMesaDriver::nfglProgramParameter4fvNV(GLenum target, GLuint index, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glProgramParameter4fvNV(0x%x, %u, " PRI_PTR ")", target, index, AtariOffset(v)));
+	D(bug("nfosmesa: glProgramParameter4fvNV(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(v)));
 FN_GLPROGRAMPARAMETER4FVNV(target, index, v);
 }
 
 void OSMesaDriver::nfglProgramParameteri(GLuint program, GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glProgramParameteri(%u, 0x%x, %d)", program, pname, value));
+	D(bug("nfosmesa: glProgramParameteri(%u, %s, %d)", program, gl_enum_name(pname), value));
 	fn.glProgramParameteri(program, pname, value);
 }
 
 void OSMesaDriver::nfglProgramParameteriARB(GLuint program, GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glProgramParameteriARB(%u, 0x%x, %d)", program, pname, value));
+	D(bug("nfosmesa: glProgramParameteriARB(%u, %s, %d)", program, gl_enum_name(pname), value));
 	fn.glProgramParameteriARB(program, pname, value);
 }
 
 void OSMesaDriver::nfglProgramParameteriEXT(GLuint program, GLenum pname, GLint value)
 {
-	D(bug("nfosmesa: glProgramParameteriEXT(%u, 0x%x, %d)", program, pname, value));
+	D(bug("nfosmesa: glProgramParameteriEXT(%u, %s, %d)", program, gl_enum_name(pname), value));
 	fn.glProgramParameteriEXT(program, pname, value);
 }
 
@@ -14596,7 +14595,7 @@ void OSMesaDriver::nfglProgramParameters4dvNV(GLenum target, GLuint index, GLsiz
 void OSMesaDriver::nfglProgramParameters4dvNV(GLenum target, GLuint index, GLsizei count, const GLdouble *v)
 #endif
 {
-	D(bug("nfosmesa: glProgramParameters4dvNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(v)));
+	D(bug("nfosmesa: glProgramParameters4dvNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(v)));
 FN_GLPROGRAMPARAMETERS4DVNV(target, index, count, v);
 }
 
@@ -14606,7 +14605,7 @@ void OSMesaDriver::nfglProgramParameters4fvNV(GLenum target, GLuint index, GLsiz
 void OSMesaDriver::nfglProgramParameters4fvNV(GLenum target, GLuint index, GLsizei count, const GLfloat *v)
 #endif
 {
-	D(bug("nfosmesa: glProgramParameters4fvNV(0x%x, %u, %d, " PRI_PTR ")", target, index, count, AtariOffset(v)));
+	D(bug("nfosmesa: glProgramParameters4fvNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), index, count, AtariOffset(v)));
 FN_GLPROGRAMPARAMETERS4FVNV(target, index, count, v);
 }
 
@@ -14616,7 +14615,7 @@ void OSMesaDriver::nfglProgramPathFragmentInputGenNV(GLuint program, GLint locat
 void OSMesaDriver::nfglProgramPathFragmentInputGenNV(GLuint program, GLint location, GLenum genMode, GLint components, const GLfloat *coeffs)
 #endif
 {
-	D(bug("nfosmesa: glProgramPathFragmentInputGenNV(%u, %d, 0x%x, %d, " PRI_PTR ")", program, location, genMode, components, AtariOffset(coeffs)));
+	D(bug("nfosmesa: glProgramPathFragmentInputGenNV(%u, %d, %s, %d, " PRI_PTR ")", program, location, gl_enum_name(genMode), components, AtariOffset(coeffs)));
 FN_GLPROGRAMPATHFRAGMENTINPUTGENNV(program, location, genMode, components, coeffs);
 }
 
@@ -14626,7 +14625,7 @@ void OSMesaDriver::nfglProgramStringARB(GLenum target, GLenum format, GLsizei le
 void OSMesaDriver::nfglProgramStringARB(GLenum target, GLenum format, GLsizei len, const void *string)
 #endif
 {
-	D(bug("nfosmesa: glProgramStringARB(0x%x, 0x%x, %d, " PRI_PTR ")", target, format, len, AtariOffset(string)));
+	D(bug("nfosmesa: glProgramStringARB(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(format), len, AtariOffset(string)));
 FN_GLPROGRAMSTRINGARB(target, format, len, string);
 }
 
@@ -14636,7 +14635,7 @@ void OSMesaDriver::nfglProgramSubroutineParametersuivNV(GLenum target, GLsizei c
 void OSMesaDriver::nfglProgramSubroutineParametersuivNV(GLenum target, GLsizei count, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glProgramSubroutineParametersuivNV(0x%x, %d, " PRI_PTR ")", target, count, AtariOffset(params)));
+	D(bug("nfosmesa: glProgramSubroutineParametersuivNV(%s, %d, " PRI_PTR ")", gl_enum_name(target), count, AtariOffset(params)));
 FN_GLPROGRAMSUBROUTINEPARAMETERSUIVNV(target, count, params);
 }
 
@@ -15690,19 +15689,19 @@ FN_GLPROGRAMUNIFORMUI64VNV(program, location, count, value);
 
 void OSMesaDriver::nfglProgramVertexLimitNV(GLenum target, GLint limit)
 {
-	D(bug("nfosmesa: glProgramVertexLimitNV(0x%x, %d)", target, limit));
+	D(bug("nfosmesa: glProgramVertexLimitNV(%s, %d)", gl_enum_name(target), limit));
 	fn.glProgramVertexLimitNV(target, limit);
 }
 
 void OSMesaDriver::nfglProvokingVertex(GLenum mode)
 {
-	D(bug("nfosmesa: glProvokingVertex(0x%x)", mode));
+	D(bug("nfosmesa: glProvokingVertex(%s)", gl_enum_name(mode)));
 	fn.glProvokingVertex(mode);
 }
 
 void OSMesaDriver::nfglProvokingVertexEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glProvokingVertexEXT(0x%x)", mode));
+	D(bug("nfosmesa: glProvokingVertexEXT(%s)", gl_enum_name(mode)));
 	fn.glProvokingVertexEXT(mode);
 }
 
@@ -15730,7 +15729,7 @@ void OSMesaDriver::nfglPushDebugGroup(GLenum source, GLuint id, GLsizei length, 
 void OSMesaDriver::nfglPushDebugGroup(GLenum source, GLuint id, GLsizei length, const GLchar *message)
 #endif
 {
-	D(bug("nfosmesa: glPushDebugGroup(0x%x, %u, %d, " PRI_PTR ")", source, id, length, AtariOffset(message)));
+	D(bug("nfosmesa: glPushDebugGroup(%s, %u, %d, " PRI_PTR ")", gl_enum_name(source), id, length, AtariOffset(message)));
 FN_GLPUSHDEBUGGROUP(source, id, length, message);
 }
 
@@ -15765,7 +15764,7 @@ void OSMesaDriver::nfglPushName(GLuint name)
 
 void OSMesaDriver::nfglQueryCounter(GLuint id, GLenum target)
 {
-	D(bug("nfosmesa: glQueryCounter(%u, 0x%x)", id, target));
+	D(bug("nfosmesa: glQueryCounter(%u, %s)", id, gl_enum_name(target)));
 	fn.glQueryCounter(id, target);
 }
 
@@ -15781,7 +15780,7 @@ FN_GLQUERYMATRIXXOES(mantissa, exponent);
 
 void OSMesaDriver::nfglQueryObjectParameteruiAMD(GLenum target, GLuint id, GLenum pname, GLuint param)
 {
-	D(bug("nfosmesa: glQueryObjectParameteruiAMD(0x%x, %u, 0x%x, %u)", target, id, pname, param));
+	D(bug("nfosmesa: glQueryObjectParameteruiAMD(%s, %u, %s, %u)", gl_enum_name(target), id, gl_enum_name(pname), param));
 	fn.glQueryObjectParameteruiAMD(target, id, pname, param);
 }
 
@@ -16033,7 +16032,7 @@ void OSMesaDriver::nfglRasterSamplesEXT(GLuint samples, GLboolean32 fixedsamplel
 
 void OSMesaDriver::nfglReadBuffer(GLenum mode)
 {
-	D(bug("nfosmesa: glReadBuffer(0x%x)", mode));
+	D(bug("nfosmesa: glReadBuffer(%s)", gl_enum_name(mode)));
 	fn.glReadBuffer(mode);
 }
 
@@ -16049,7 +16048,7 @@ void OSMesaDriver::nfglReadPixels(GLint x, GLint y, GLsizei width, GLsizei heigh
 void OSMesaDriver::nfglReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glReadPixels(%d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", x, y, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glReadPixels(%d, %d, %d, %d, %s, %s, " PRI_PTR ")", x, y, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLREADPIXELS(x, y, width, height, format, type, pixels);
 }
 
@@ -16059,7 +16058,7 @@ void OSMesaDriver::nfglReadnPixels(GLint x, GLint y, GLsizei width, GLsizei heig
 void OSMesaDriver::nfglReadnPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data)
 #endif
 {
-	D(bug("nfosmesa: glReadnPixels(%d, %d, %d, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", x, y, width, height, format, type, bufSize, AtariOffset(data)));
+	D(bug("nfosmesa: glReadnPixels(%d, %d, %d, %d, %s, %s, %d, " PRI_PTR ")", x, y, width, height, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(data)));
 FN_GLREADNPIXELS(x, y, width, height, format, type, bufSize, data);
 }
 
@@ -16069,7 +16068,7 @@ void OSMesaDriver::nfglReadnPixelsARB(GLint x, GLint y, GLsizei width, GLsizei h
 void OSMesaDriver::nfglReadnPixelsARB(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLsizei bufSize, void *data)
 #endif
 {
-	D(bug("nfosmesa: glReadnPixelsARB(%d, %d, %d, %d, 0x%x, 0x%x, %d, " PRI_PTR ")", x, y, width, height, format, type, bufSize, AtariOffset(data)));
+	D(bug("nfosmesa: glReadnPixelsARB(%d, %d, %d, %d, %s, %s, %d, " PRI_PTR ")", x, y, width, height, gl_enum_name(format), gl_enum_name(type), bufSize, AtariOffset(data)));
 FN_GLREADNPIXELSARB(x, y, width, height, format, type, bufSize, data);
 }
 
@@ -16171,37 +16170,37 @@ void OSMesaDriver::nfglReleaseShaderCompiler(void)
 
 GLint OSMesaDriver::nfglRenderMode(GLenum mode)
 {
-	D(bug("nfosmesa: glRenderMode(0x%x)", mode));
+	D(bug("nfosmesa: glRenderMode(%s)", gl_enum_name(mode)));
 FN_GLRENDERMODE(mode);
 }
 
 void OSMesaDriver::nfglRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glRenderbufferStorage(0x%x, 0x%x, %d, %d)", target, internalformat, width, height));
+	D(bug("nfosmesa: glRenderbufferStorage(%s, %s, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), width, height));
 	fn.glRenderbufferStorage(target, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglRenderbufferStorageEXT(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glRenderbufferStorageEXT(0x%x, 0x%x, %d, %d)", target, internalformat, width, height));
+	D(bug("nfosmesa: glRenderbufferStorageEXT(%s, %s, %d, %d)", gl_enum_name(target), gl_enum_name(internalformat), width, height));
 	fn.glRenderbufferStorageEXT(target, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglRenderbufferStorageMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glRenderbufferStorageMultisample(0x%x, %d, 0x%x, %d, %d)", target, samples, internalformat, width, height));
+	D(bug("nfosmesa: glRenderbufferStorageMultisample(%s, %d, %s, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height));
 	fn.glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglRenderbufferStorageMultisampleCoverageNV(GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glRenderbufferStorageMultisampleCoverageNV(0x%x, %d, %d, 0x%x, %d, %d)", target, coverageSamples, colorSamples, internalformat, width, height));
+	D(bug("nfosmesa: glRenderbufferStorageMultisampleCoverageNV(%s, %d, %d, %s, %d, %d)", gl_enum_name(target), coverageSamples, colorSamples, gl_enum_name(internalformat), width, height));
 	fn.glRenderbufferStorageMultisampleCoverageNV(target, coverageSamples, colorSamples, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglRenderbufferStorageMultisampleEXT(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glRenderbufferStorageMultisampleEXT(0x%x, %d, 0x%x, %d, %d)", target, samples, internalformat, width, height));
+	D(bug("nfosmesa: glRenderbufferStorageMultisampleEXT(%s, %d, %s, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height));
 	fn.glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
 }
 
@@ -16211,7 +16210,7 @@ void OSMesaDriver::nfglReplacementCodePointerSUN(GLenum type, GLsizei stride, me
 void OSMesaDriver::nfglReplacementCodePointerSUN(GLenum type, GLsizei stride, const void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glReplacementCodePointerSUN(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glReplacementCodePointerSUN(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLREPLACEMENTCODEPOINTERSUN(type, stride, pointer);
 }
 
@@ -16403,25 +16402,25 @@ FN_GLREQUESTRESIDENTPROGRAMSNV(n, programs);
 
 void OSMesaDriver::nfglResetHistogram(GLenum target)
 {
-	D(bug("nfosmesa: glResetHistogram(0x%x)", target));
+	D(bug("nfosmesa: glResetHistogram(%s)", gl_enum_name(target)));
 	fn.glResetHistogram(target);
 }
 
 void OSMesaDriver::nfglResetHistogramEXT(GLenum target)
 {
-	D(bug("nfosmesa: glResetHistogramEXT(0x%x)", target));
+	D(bug("nfosmesa: glResetHistogramEXT(%s)", gl_enum_name(target)));
 	fn.glResetHistogramEXT(target);
 }
 
 void OSMesaDriver::nfglResetMinmax(GLenum target)
 {
-	D(bug("nfosmesa: glResetMinmax(0x%x)", target));
+	D(bug("nfosmesa: glResetMinmax(%s)", gl_enum_name(target)));
 	fn.glResetMinmax(target);
 }
 
 void OSMesaDriver::nfglResetMinmaxEXT(GLenum target)
 {
-	D(bug("nfosmesa: glResetMinmaxEXT(0x%x)", target));
+	D(bug("nfosmesa: glResetMinmaxEXT(%s)", gl_enum_name(target)));
 	fn.glResetMinmaxEXT(target);
 }
 
@@ -16487,7 +16486,7 @@ void OSMesaDriver::nfglSampleCoverageOES(GLfixed value, GLboolean32 invert)
 
 void OSMesaDriver::nfglSampleMapATI(GLuint dst, GLuint interp, GLenum swizzle)
 {
-	D(bug("nfosmesa: glSampleMapATI(%u, %u, 0x%x)", dst, interp, swizzle));
+	D(bug("nfosmesa: glSampleMapATI(%u, %u, %s)", dst, interp, gl_enum_name(swizzle)));
 	fn.glSampleMapATI(dst, interp, swizzle);
 }
 
@@ -16517,25 +16516,25 @@ void OSMesaDriver::nfglSampleMaski(GLuint maskNumber, GLbitfield mask)
 
 void OSMesaDriver::nfglSamplePass(GLenum mode)
 {
-	D(bug("nfosmesa: glSamplePass(0x%x)", mode));
+	D(bug("nfosmesa: glSamplePass(%s)", gl_enum_name(mode)));
 	fn.glSamplePass(mode);
 }
 
 void OSMesaDriver::nfglSamplePassARB(GLenum mode)
 {
-	D(bug("nfosmesa: glSamplePassARB(0x%x)", mode));
+	D(bug("nfosmesa: glSamplePassARB(%s)", gl_enum_name(mode)));
 	fn.glSamplePassARB(mode);
 }
 
 void OSMesaDriver::nfglSamplePatternEXT(GLenum pattern)
 {
-	D(bug("nfosmesa: glSamplePatternEXT(0x%x)", pattern));
+	D(bug("nfosmesa: glSamplePatternEXT(%s)", gl_enum_name(pattern)));
 	fn.glSamplePatternEXT(pattern);
 }
 
 void OSMesaDriver::nfglSamplePatternSGIS(GLenum pattern)
 {
-	D(bug("nfosmesa: glSamplePatternSGIS(0x%x)", pattern));
+	D(bug("nfosmesa: glSamplePatternSGIS(%s)", gl_enum_name(pattern)));
 	fn.glSamplePatternSGIS(pattern);
 }
 
@@ -16545,7 +16544,7 @@ void OSMesaDriver::nfglSamplerParameterIiv(GLuint sampler, GLenum pname, memptr 
 void OSMesaDriver::nfglSamplerParameterIiv(GLuint sampler, GLenum pname, const GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glSamplerParameterIiv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glSamplerParameterIiv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(param)));
 FN_GLSAMPLERPARAMETERIIV(sampler, pname, param);
 }
 
@@ -16555,13 +16554,13 @@ void OSMesaDriver::nfglSamplerParameterIuiv(GLuint sampler, GLenum pname, memptr
 void OSMesaDriver::nfglSamplerParameterIuiv(GLuint sampler, GLenum pname, const GLuint *param)
 #endif
 {
-	D(bug("nfosmesa: glSamplerParameterIuiv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glSamplerParameterIuiv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(param)));
 FN_GLSAMPLERPARAMETERIUIV(sampler, pname, param);
 }
 
 void OSMesaDriver::nfglSamplerParameterf(GLuint sampler, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glSamplerParameterf(%u, 0x%x, %f)", sampler, pname, param));
+	D(bug("nfosmesa: glSamplerParameterf(%u, %s, %f)", sampler, gl_enum_name(pname), param));
 	fn.glSamplerParameterf(sampler, pname, param);
 }
 
@@ -16571,13 +16570,13 @@ void OSMesaDriver::nfglSamplerParameterfv(GLuint sampler, GLenum pname, memptr p
 void OSMesaDriver::nfglSamplerParameterfv(GLuint sampler, GLenum pname, const GLfloat *param)
 #endif
 {
-	D(bug("nfosmesa: glSamplerParameterfv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glSamplerParameterfv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(param)));
 FN_GLSAMPLERPARAMETERFV(sampler, pname, param);
 }
 
 void OSMesaDriver::nfglSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glSamplerParameteri(%u, 0x%x, %d)", sampler, pname, param));
+	D(bug("nfosmesa: glSamplerParameteri(%u, %s, %d)", sampler, gl_enum_name(pname), param));
 	fn.glSamplerParameteri(sampler, pname, param);
 }
 
@@ -16587,7 +16586,7 @@ void OSMesaDriver::nfglSamplerParameteriv(GLuint sampler, GLenum pname, memptr p
 void OSMesaDriver::nfglSamplerParameteriv(GLuint sampler, GLenum pname, const GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glSamplerParameteriv(%u, 0x%x, " PRI_PTR ")", sampler, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glSamplerParameteriv(%u, %s, " PRI_PTR ")", sampler, gl_enum_name(pname), AtariOffset(param)));
 FN_GLSAMPLERPARAMETERIV(sampler, pname, param);
 }
 
@@ -16915,13 +16914,13 @@ FN_GLSECONDARYCOLOR3USVEXT(v);
 
 void OSMesaDriver::nfglSecondaryColorFormatNV(GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glSecondaryColorFormatNV(%d, 0x%x, %d)", size, type, stride));
+	D(bug("nfosmesa: glSecondaryColorFormatNV(%d, %s, %d)", size, gl_enum_name(type), stride));
 	fn.glSecondaryColorFormatNV(size, type, stride);
 }
 
 void OSMesaDriver::nfglSecondaryColorP3ui(GLenum type, GLuint color)
 {
-	D(bug("nfosmesa: glSecondaryColorP3ui(0x%x, %u)", type, color));
+	D(bug("nfosmesa: glSecondaryColorP3ui(%s, %u)", gl_enum_name(type), color));
 	fn.glSecondaryColorP3ui(type, color);
 }
 
@@ -16931,7 +16930,7 @@ void OSMesaDriver::nfglSecondaryColorP3uiv(GLenum type, memptr color)
 void OSMesaDriver::nfglSecondaryColorP3uiv(GLenum type, const GLuint *color)
 #endif
 {
-	D(bug("nfosmesa: glSecondaryColorP3uiv(0x%x, " PRI_PTR ")", type, AtariOffset(color)));
+	D(bug("nfosmesa: glSecondaryColorP3uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(color)));
 FN_GLSECONDARYCOLORP3UIV(type, color);
 }
 
@@ -16941,7 +16940,7 @@ void OSMesaDriver::nfglSecondaryColorPointer(GLint size, GLenum type, GLsizei st
 void OSMesaDriver::nfglSecondaryColorPointer(GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glSecondaryColorPointer(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glSecondaryColorPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLSECONDARYCOLORPOINTER(size, type, stride, pointer);
 }
 
@@ -16951,7 +16950,7 @@ void OSMesaDriver::nfglSecondaryColorPointerEXT(GLint size, GLenum type, GLsizei
 void OSMesaDriver::nfglSecondaryColorPointerEXT(GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glSecondaryColorPointerEXT(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glSecondaryColorPointerEXT(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLSECONDARYCOLORPOINTEREXT(size, type, stride, pointer);
 }
 
@@ -16961,7 +16960,7 @@ void OSMesaDriver::nfglSecondaryColorPointerListIBM(GLint size, GLenum type, GLi
 void OSMesaDriver::nfglSecondaryColorPointerListIBM(GLint size, GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glSecondaryColorPointerListIBM(%d, 0x%x, %d, " PRI_PTR ", %d)", size, type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glSecondaryColorPointerListIBM(%d, %s, %d, " PRI_PTR ", %d)", size, gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLSECONDARYCOLORPOINTERLISTIBM(size, type, stride, pointer, ptrstride);
 }
 
@@ -16991,7 +16990,7 @@ void OSMesaDriver::nfglSeparableFilter2D(GLenum target, GLenum internalformat, G
 void OSMesaDriver::nfglSeparableFilter2D(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *row, const void *column)
 #endif
 {
-	D(bug("nfosmesa: glSeparableFilter2D(0x%x, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ", " PRI_PTR ")", target, internalformat, width, height, format, type, AtariOffset(row), AtariOffset(column)));
+	D(bug("nfosmesa: glSeparableFilter2D(%s, %s, %d, %d, %s, %s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(row), AtariOffset(column)));
 FN_GLSEPARABLEFILTER2D(target, internalformat, width, height, format, type, row, column);
 }
 
@@ -17001,7 +17000,7 @@ void OSMesaDriver::nfglSeparableFilter2DEXT(GLenum target, GLenum internalformat
 void OSMesaDriver::nfglSeparableFilter2DEXT(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *row, const void *column)
 #endif
 {
-	D(bug("nfosmesa: glSeparableFilter2DEXT(0x%x, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ", " PRI_PTR ")", target, internalformat, width, height, format, type, AtariOffset(row), AtariOffset(column)));
+	D(bug("nfosmesa: glSeparableFilter2DEXT(%s, %s, %d, %d, %s, %s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), gl_enum_name(internalformat), width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(row), AtariOffset(column)));
 FN_GLSEPARABLEFILTER2DEXT(target, internalformat, width, height, format, type, row, column);
 }
 
@@ -17013,7 +17012,7 @@ void OSMesaDriver::nfglSetFenceAPPLE(GLuint fence)
 
 void OSMesaDriver::nfglSetFenceNV(GLuint fence, GLenum condition)
 {
-	D(bug("nfosmesa: glSetFenceNV(%u, 0x%x)", fence, condition));
+	D(bug("nfosmesa: glSetFenceNV(%u, %s)", fence, gl_enum_name(condition)));
 	fn.glSetFenceNV(fence, condition);
 }
 
@@ -17033,7 +17032,7 @@ void OSMesaDriver::nfglSetInvariantEXT(GLuint id, GLenum type, memptr addr)
 void OSMesaDriver::nfglSetInvariantEXT(GLuint id, GLenum type, const void *addr)
 #endif
 {
-	D(bug("nfosmesa: glSetInvariantEXT(%u, 0x%x, " PRI_PTR ")", id, type, AtariOffset(addr)));
+	D(bug("nfosmesa: glSetInvariantEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(type), AtariOffset(addr)));
 FN_GLSETINVARIANTEXT(id, type, addr);
 }
 
@@ -17043,7 +17042,7 @@ void OSMesaDriver::nfglSetLocalConstantEXT(GLuint id, GLenum type, memptr addr)
 void OSMesaDriver::nfglSetLocalConstantEXT(GLuint id, GLenum type, const void *addr)
 #endif
 {
-	D(bug("nfosmesa: glSetLocalConstantEXT(%u, 0x%x, " PRI_PTR ")", id, type, AtariOffset(addr)));
+	D(bug("nfosmesa: glSetLocalConstantEXT(%u, %s, " PRI_PTR ")", id, gl_enum_name(type), AtariOffset(addr)));
 FN_GLSETLOCALCONSTANTEXT(id, type, addr);
 }
 
@@ -17053,13 +17052,13 @@ void OSMesaDriver::nfglSetMultisamplefvAMD(GLenum pname, GLuint index, memptr va
 void OSMesaDriver::nfglSetMultisamplefvAMD(GLenum pname, GLuint index, const GLfloat *val)
 #endif
 {
-	D(bug("nfosmesa: glSetMultisamplefvAMD(0x%x, %u, " PRI_PTR ")", pname, index, AtariOffset(val)));
+	D(bug("nfosmesa: glSetMultisamplefvAMD(%s, %u, " PRI_PTR ")", gl_enum_name(pname), index, AtariOffset(val)));
 FN_GLSETMULTISAMPLEFVAMD(pname, index, val);
 }
 
 void OSMesaDriver::nfglShadeModel(GLenum mode)
 {
-	D(bug("nfosmesa: glShadeModel(0x%x)", mode));
+	D(bug("nfosmesa: glShadeModel(%s)", gl_enum_name(mode)));
 	fn.glShadeModel(mode);
 }
 
@@ -17069,25 +17068,25 @@ void OSMesaDriver::nfglShaderBinary(GLsizei count, memptr shaders, GLenum binary
 void OSMesaDriver::nfglShaderBinary(GLsizei count, const GLuint *shaders, GLenum binaryformat, const void *binary, GLsizei length)
 #endif
 {
-	D(bug("nfosmesa: glShaderBinary(%d, " PRI_PTR ", 0x%x, " PRI_PTR ", %d)", count, AtariOffset(shaders), binaryformat, AtariOffset(binary), length));
+	D(bug("nfosmesa: glShaderBinary(%d, " PRI_PTR ", %s, " PRI_PTR ", %d)", count, AtariOffset(shaders), gl_enum_name(binaryformat), AtariOffset(binary), length));
 FN_GLSHADERBINARY(count, shaders, binaryformat, binary, length);
 }
 
 void OSMesaDriver::nfglShaderOp1EXT(GLenum op, GLuint res, GLuint arg1)
 {
-	D(bug("nfosmesa: glShaderOp1EXT(0x%x, %u, %u)", op, res, arg1));
+	D(bug("nfosmesa: glShaderOp1EXT(%s, %u, %u)", gl_enum_name(op), res, arg1));
 	fn.glShaderOp1EXT(op, res, arg1);
 }
 
 void OSMesaDriver::nfglShaderOp2EXT(GLenum op, GLuint res, GLuint arg1, GLuint arg2)
 {
-	D(bug("nfosmesa: glShaderOp2EXT(0x%x, %u, %u, %u)", op, res, arg1, arg2));
+	D(bug("nfosmesa: glShaderOp2EXT(%s, %u, %u, %u)", gl_enum_name(op), res, arg1, arg2));
 	fn.glShaderOp2EXT(op, res, arg1, arg2);
 }
 
 void OSMesaDriver::nfglShaderOp3EXT(GLenum op, GLuint res, GLuint arg1, GLuint arg2, GLuint arg3)
 {
-	D(bug("nfosmesa: glShaderOp3EXT(0x%x, %u, %u, %u, %u)", op, res, arg1, arg2, arg3));
+	D(bug("nfosmesa: glShaderOp3EXT(%s, %u, %u, %u, %u)", gl_enum_name(op), res, arg1, arg2, arg3));
 	fn.glShaderOp3EXT(op, res, arg1, arg2, arg3);
 }
 
@@ -17123,13 +17122,13 @@ void OSMesaDriver::nfglSharpenTexFuncSGIS(GLenum target, GLsizei n, memptr point
 void OSMesaDriver::nfglSharpenTexFuncSGIS(GLenum target, GLsizei n, const GLfloat *points)
 #endif
 {
-	D(bug("nfosmesa: glSharpenTexFuncSGIS(0x%x, %d, " PRI_PTR ")", target, n, AtariOffset(points)));
+	D(bug("nfosmesa: glSharpenTexFuncSGIS(%s, %d, " PRI_PTR ")", gl_enum_name(target), n, AtariOffset(points)));
 FN_GLSHARPENTEXFUNCSGIS(target, n, points);
 }
 
 void OSMesaDriver::nfglSpriteParameterfSGIX(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glSpriteParameterfSGIX(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glSpriteParameterfSGIX(%s, %f)", gl_enum_name(pname), param));
 	fn.glSpriteParameterfSGIX(pname, param);
 }
 
@@ -17139,13 +17138,13 @@ void OSMesaDriver::nfglSpriteParameterfvSGIX(GLenum pname, memptr params)
 void OSMesaDriver::nfglSpriteParameterfvSGIX(GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glSpriteParameterfvSGIX(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glSpriteParameterfvSGIX(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLSPRITEPARAMETERFVSGIX(pname, params);
 }
 
 void OSMesaDriver::nfglSpriteParameteriSGIX(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glSpriteParameteriSGIX(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glSpriteParameteriSGIX(%s, %d)", gl_enum_name(pname), param));
 	fn.glSpriteParameteriSGIX(pname, param);
 }
 
@@ -17155,7 +17154,7 @@ void OSMesaDriver::nfglSpriteParameterivSGIX(GLenum pname, memptr params)
 void OSMesaDriver::nfglSpriteParameterivSGIX(GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glSpriteParameterivSGIX(0x%x, " PRI_PTR ")", pname, AtariOffset(params)));
+	D(bug("nfosmesa: glSpriteParameterivSGIX(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLSPRITEPARAMETERIVSGIX(pname, params);
 }
 
@@ -17167,7 +17166,7 @@ void OSMesaDriver::nfglStartInstrumentsSGIX(void)
 
 void OSMesaDriver::nfglStateCaptureNV(GLuint state, GLenum mode)
 {
-	D(bug("nfosmesa: glStateCaptureNV(%u, 0x%x)", state, mode));
+	D(bug("nfosmesa: glStateCaptureNV(%u, %s)", state, gl_enum_name(mode)));
 	fn.glStateCaptureNV(state, mode);
 }
 
@@ -17183,31 +17182,31 @@ void OSMesaDriver::nfglStencilFillPathInstancedNV(GLsizei numPaths, GLenum pathN
 void OSMesaDriver::nfglStencilFillPathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum fillMode, GLuint mask, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glStencilFillPathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, 0x%x, %u, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, fillMode, mask, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glStencilFillPathInstancedNV(%d, %s, " PRI_PTR ", %u, %s, %u, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, gl_enum_name(fillMode), mask, gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLSTENCILFILLPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, fillMode, mask, transformType, transformValues);
 }
 
 void OSMesaDriver::nfglStencilFillPathNV(GLuint path, GLenum fillMode, GLuint mask)
 {
-	D(bug("nfosmesa: glStencilFillPathNV(%u, 0x%x, %u)", path, fillMode, mask));
+	D(bug("nfosmesa: glStencilFillPathNV(%u, %s, %u)", path, gl_enum_name(fillMode), mask));
 	fn.glStencilFillPathNV(path, fillMode, mask);
 }
 
 void OSMesaDriver::nfglStencilFunc(GLenum func, GLint ref, GLuint mask)
 {
-	D(bug("nfosmesa: glStencilFunc(0x%x, %d, %u)", func, ref, mask));
+	D(bug("nfosmesa: glStencilFunc(%s, %d, %u)", gl_enum_name(func), ref, mask));
 	fn.glStencilFunc(func, ref, mask);
 }
 
 void OSMesaDriver::nfglStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 {
-	D(bug("nfosmesa: glStencilFuncSeparate(0x%x, 0x%x, %d, %u)", face, func, ref, mask));
+	D(bug("nfosmesa: glStencilFuncSeparate(%s, %s, %d, %u)", gl_enum_name(face), gl_enum_name(func), ref, mask));
 	fn.glStencilFuncSeparate(face, func, ref, mask);
 }
 
 void OSMesaDriver::nfglStencilFuncSeparateATI(GLenum frontfunc, GLenum backfunc, GLint ref, GLuint mask)
 {
-	D(bug("nfosmesa: glStencilFuncSeparateATI(0x%x, 0x%x, %d, %u)", frontfunc, backfunc, ref, mask));
+	D(bug("nfosmesa: glStencilFuncSeparateATI(%s, %s, %d, %u)", gl_enum_name(frontfunc), gl_enum_name(backfunc), ref, mask));
 	fn.glStencilFuncSeparateATI(frontfunc, backfunc, ref, mask);
 }
 
@@ -17219,31 +17218,31 @@ void OSMesaDriver::nfglStencilMask(GLuint mask)
 
 void OSMesaDriver::nfglStencilMaskSeparate(GLenum face, GLuint mask)
 {
-	D(bug("nfosmesa: glStencilMaskSeparate(0x%x, %u)", face, mask));
+	D(bug("nfosmesa: glStencilMaskSeparate(%s, %u)", gl_enum_name(face), mask));
 	fn.glStencilMaskSeparate(face, mask);
 }
 
 void OSMesaDriver::nfglStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 {
-	D(bug("nfosmesa: glStencilOp(0x%x, 0x%x, 0x%x)", fail, zfail, zpass));
+	D(bug("nfosmesa: glStencilOp(%s, %s, %s)", gl_enum_name(fail), gl_enum_name(zfail), gl_enum_name(zpass)));
 	fn.glStencilOp(fail, zfail, zpass);
 }
 
 void OSMesaDriver::nfglStencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass)
 {
-	D(bug("nfosmesa: glStencilOpSeparate(0x%x, 0x%x, 0x%x, 0x%x)", face, sfail, dpfail, dppass));
+	D(bug("nfosmesa: glStencilOpSeparate(%s, %s, %s, %s)", gl_enum_name(face), gl_enum_name(sfail), gl_enum_name(dpfail), gl_enum_name(dppass)));
 	fn.glStencilOpSeparate(face, sfail, dpfail, dppass);
 }
 
 void OSMesaDriver::nfglStencilOpSeparateATI(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass)
 {
-	D(bug("nfosmesa: glStencilOpSeparateATI(0x%x, 0x%x, 0x%x, 0x%x)", face, sfail, dpfail, dppass));
+	D(bug("nfosmesa: glStencilOpSeparateATI(%s, %s, %s, %s)", gl_enum_name(face), gl_enum_name(sfail), gl_enum_name(dpfail), gl_enum_name(dppass)));
 	fn.glStencilOpSeparateATI(face, sfail, dpfail, dppass);
 }
 
 void OSMesaDriver::nfglStencilOpValueAMD(GLenum face, GLuint value)
 {
-	D(bug("nfosmesa: glStencilOpValueAMD(0x%x, %u)", face, value));
+	D(bug("nfosmesa: glStencilOpValueAMD(%s, %u)", gl_enum_name(face), value));
 	fn.glStencilOpValueAMD(face, value);
 }
 
@@ -17253,7 +17252,7 @@ void OSMesaDriver::nfglStencilStrokePathInstancedNV(GLsizei numPaths, GLenum pat
 void OSMesaDriver::nfglStencilStrokePathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLint reference, GLuint mask, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glStencilStrokePathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, %d, %u, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, reference, mask, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glStencilStrokePathInstancedNV(%d, %s, " PRI_PTR ", %u, %d, %u, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, reference, mask, gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLSTENCILSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, reference, mask, transformType, transformValues);
 }
 
@@ -17269,13 +17268,13 @@ void OSMesaDriver::nfglStencilThenCoverFillPathInstancedNV(GLsizei numPaths, GLe
 void OSMesaDriver::nfglStencilThenCoverFillPathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLenum fillMode, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glStencilThenCoverFillPathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, 0x%x, %u, 0x%x, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, fillMode, mask, coverMode, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glStencilThenCoverFillPathInstancedNV(%d, %s, " PRI_PTR ", %u, %s, %u, %s, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, gl_enum_name(fillMode), mask, gl_enum_name(coverMode), gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLSTENCILTHENCOVERFILLPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, fillMode, mask, coverMode, transformType, transformValues);
 }
 
 void OSMesaDriver::nfglStencilThenCoverFillPathNV(GLuint path, GLenum fillMode, GLuint mask, GLenum coverMode)
 {
-	D(bug("nfosmesa: glStencilThenCoverFillPathNV(%u, 0x%x, %u, 0x%x)", path, fillMode, mask, coverMode));
+	D(bug("nfosmesa: glStencilThenCoverFillPathNV(%u, %s, %u, %s)", path, gl_enum_name(fillMode), mask, gl_enum_name(coverMode)));
 	fn.glStencilThenCoverFillPathNV(path, fillMode, mask, coverMode);
 }
 
@@ -17285,13 +17284,13 @@ void OSMesaDriver::nfglStencilThenCoverStrokePathInstancedNV(GLsizei numPaths, G
 void OSMesaDriver::nfglStencilThenCoverStrokePathInstancedNV(GLsizei numPaths, GLenum pathNameType, const void *paths, GLuint pathBase, GLint reference, GLuint mask, GLenum coverMode, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glStencilThenCoverStrokePathInstancedNV(%d, 0x%x, " PRI_PTR ", %u, %d, %u, 0x%x, 0x%x, " PRI_PTR ")", numPaths, pathNameType, AtariOffset(paths), pathBase, reference, mask, coverMode, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glStencilThenCoverStrokePathInstancedNV(%d, %s, " PRI_PTR ", %u, %d, %u, %s, %s, " PRI_PTR ")", numPaths, gl_enum_name(pathNameType), AtariOffset(paths), pathBase, reference, mask, gl_enum_name(coverMode), gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLSTENCILTHENCOVERSTROKEPATHINSTANCEDNV(numPaths, pathNameType, paths, pathBase, reference, mask, coverMode, transformType, transformValues);
 }
 
 void OSMesaDriver::nfglStencilThenCoverStrokePathNV(GLuint path, GLint reference, GLuint mask, GLenum coverMode)
 {
-	D(bug("nfosmesa: glStencilThenCoverStrokePathNV(%u, %d, %u, 0x%x)", path, reference, mask, coverMode));
+	D(bug("nfosmesa: glStencilThenCoverStrokePathNV(%u, %d, %u, %s)", path, reference, mask, gl_enum_name(coverMode)));
 	fn.glStencilThenCoverStrokePathNV(path, reference, mask, coverMode);
 }
 
@@ -17325,7 +17324,7 @@ void OSMesaDriver::nfglSwapAPPLE(void)
 
 void OSMesaDriver::nfglSwizzleEXT(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW)
 {
-	D(bug("nfosmesa: glSwizzleEXT(%u, %u, 0x%x, 0x%x, 0x%x, 0x%x)", res, in, outX, outY, outZ, outW));
+	D(bug("nfosmesa: glSwizzleEXT(%u, %u, %s, %s, %s, %s)", res, in, gl_enum_name(outX), gl_enum_name(outY), gl_enum_name(outZ), gl_enum_name(outW)));
 	fn.glSwizzleEXT(res, in, outX, outY, outZ, outW);
 }
 
@@ -17427,7 +17426,7 @@ void OSMesaDriver::nfglTangentPointerEXT(GLenum type, GLsizei stride, memptr poi
 void OSMesaDriver::nfglTangentPointerEXT(GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glTangentPointerEXT(0x%x, %d, " PRI_PTR ")", type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glTangentPointerEXT(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLTANGENTPOINTEREXT(type, stride, pointer);
 }
 
@@ -17445,7 +17444,7 @@ void OSMesaDriver::nfglTessellationFactorAMD(GLfloat factor)
 
 void OSMesaDriver::nfglTessellationModeAMD(GLenum mode)
 {
-	D(bug("nfosmesa: glTessellationModeAMD(0x%x)", mode));
+	D(bug("nfosmesa: glTessellationModeAMD(%s)", gl_enum_name(mode)));
 	fn.glTessellationModeAMD(mode);
 }
 
@@ -17465,32 +17464,32 @@ GLboolean OSMesaDriver::nfglTestFenceNV(GLuint fence)
 
 GLboolean OSMesaDriver::nfglTestObjectAPPLE(GLenum object, GLuint name)
 {
-	D(bug("nfosmesa: glTestObjectAPPLE(0x%x, %u)", object, name));
+	D(bug("nfosmesa: glTestObjectAPPLE(%s, %u)", gl_enum_name(object), name));
 	GLboolean __ret = fn.glTestObjectAPPLE(object, name);
 	return __ret;
 }
 
 void OSMesaDriver::nfglTexBuffer(GLenum target, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glTexBuffer(0x%x, 0x%x, %u)", target, internalformat, buffer));
+	D(bug("nfosmesa: glTexBuffer(%s, %s, %u)", gl_enum_name(target), gl_enum_name(internalformat), buffer));
 	fn.glTexBuffer(target, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglTexBufferARB(GLenum target, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glTexBufferARB(0x%x, 0x%x, %u)", target, internalformat, buffer));
+	D(bug("nfosmesa: glTexBufferARB(%s, %s, %u)", gl_enum_name(target), gl_enum_name(internalformat), buffer));
 	fn.glTexBufferARB(target, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglTexBufferEXT(GLenum target, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glTexBufferEXT(0x%x, 0x%x, %u)", target, internalformat, buffer));
+	D(bug("nfosmesa: glTexBufferEXT(%s, %s, %u)", gl_enum_name(target), gl_enum_name(internalformat), buffer));
 	fn.glTexBufferEXT(target, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglTexBufferRange(GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glTexBufferRange(0x%x, 0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ")", target, internalformat, buffer, offset, size));
+	D(bug("nfosmesa: glTexBufferRange(%s, %s, %u, %" PRI_IPTR ", %" PRI_IPTR ")", gl_enum_name(target), gl_enum_name(internalformat), buffer, offset, size));
 	fn.glTexBufferRange(target, internalformat, buffer, offset, size);
 }
 
@@ -17500,7 +17499,7 @@ void OSMesaDriver::nfglTexBumpParameterfvATI(GLenum pname, memptr param)
 void OSMesaDriver::nfglTexBumpParameterfvATI(GLenum pname, const GLfloat *param)
 #endif
 {
-	D(bug("nfosmesa: glTexBumpParameterfvATI(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glTexBumpParameterfvATI(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLTEXBUMPPARAMETERFVATI(pname, param);
 }
 
@@ -17510,7 +17509,7 @@ void OSMesaDriver::nfglTexBumpParameterivATI(GLenum pname, memptr param)
 void OSMesaDriver::nfglTexBumpParameterivATI(GLenum pname, const GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glTexBumpParameterivATI(0x%x, " PRI_PTR ")", pname, AtariOffset(param)));
+	D(bug("nfosmesa: glTexBumpParameterivATI(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(param)));
 FN_GLTEXBUMPPARAMETERIVATI(pname, param);
 }
 
@@ -18076,13 +18075,13 @@ FN_GLTEXCOORD4XVOES(coords);
 
 void OSMesaDriver::nfglTexCoordFormatNV(GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glTexCoordFormatNV(%d, 0x%x, %d)", size, type, stride));
+	D(bug("nfosmesa: glTexCoordFormatNV(%d, %s, %d)", size, gl_enum_name(type), stride));
 	fn.glTexCoordFormatNV(size, type, stride);
 }
 
 void OSMesaDriver::nfglTexCoordP1ui(GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glTexCoordP1ui(0x%x, %u)", type, coords));
+	D(bug("nfosmesa: glTexCoordP1ui(%s, %u)", gl_enum_name(type), coords));
 	fn.glTexCoordP1ui(type, coords);
 }
 
@@ -18092,13 +18091,13 @@ void OSMesaDriver::nfglTexCoordP1uiv(GLenum type, memptr coords)
 void OSMesaDriver::nfglTexCoordP1uiv(GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordP1uiv(0x%x, " PRI_PTR ")", type, AtariOffset(coords)));
+	D(bug("nfosmesa: glTexCoordP1uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(coords)));
 FN_GLTEXCOORDP1UIV(type, coords);
 }
 
 void OSMesaDriver::nfglTexCoordP2ui(GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glTexCoordP2ui(0x%x, %u)", type, coords));
+	D(bug("nfosmesa: glTexCoordP2ui(%s, %u)", gl_enum_name(type), coords));
 	fn.glTexCoordP2ui(type, coords);
 }
 
@@ -18108,13 +18107,13 @@ void OSMesaDriver::nfglTexCoordP2uiv(GLenum type, memptr coords)
 void OSMesaDriver::nfglTexCoordP2uiv(GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordP2uiv(0x%x, " PRI_PTR ")", type, AtariOffset(coords)));
+	D(bug("nfosmesa: glTexCoordP2uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(coords)));
 FN_GLTEXCOORDP2UIV(type, coords);
 }
 
 void OSMesaDriver::nfglTexCoordP3ui(GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glTexCoordP3ui(0x%x, %u)", type, coords));
+	D(bug("nfosmesa: glTexCoordP3ui(%s, %u)", gl_enum_name(type), coords));
 	fn.glTexCoordP3ui(type, coords);
 }
 
@@ -18124,13 +18123,13 @@ void OSMesaDriver::nfglTexCoordP3uiv(GLenum type, memptr coords)
 void OSMesaDriver::nfglTexCoordP3uiv(GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordP3uiv(0x%x, " PRI_PTR ")", type, AtariOffset(coords)));
+	D(bug("nfosmesa: glTexCoordP3uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(coords)));
 FN_GLTEXCOORDP3UIV(type, coords);
 }
 
 void OSMesaDriver::nfglTexCoordP4ui(GLenum type, GLuint coords)
 {
-	D(bug("nfosmesa: glTexCoordP4ui(0x%x, %u)", type, coords));
+	D(bug("nfosmesa: glTexCoordP4ui(%s, %u)", gl_enum_name(type), coords));
 	fn.glTexCoordP4ui(type, coords);
 }
 
@@ -18140,7 +18139,7 @@ void OSMesaDriver::nfglTexCoordP4uiv(GLenum type, memptr coords)
 void OSMesaDriver::nfglTexCoordP4uiv(GLenum type, const GLuint *coords)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordP4uiv(0x%x, " PRI_PTR ")", type, AtariOffset(coords)));
+	D(bug("nfosmesa: glTexCoordP4uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(coords)));
 FN_GLTEXCOORDP4UIV(type, coords);
 }
 
@@ -18150,7 +18149,7 @@ void OSMesaDriver::nfglTexCoordPointer(GLint size, GLenum type, GLsizei stride, 
 void OSMesaDriver::nfglTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordPointer(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glTexCoordPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLTEXCOORDPOINTER(size, type, stride, pointer);
 }
 
@@ -18160,7 +18159,7 @@ void OSMesaDriver::nfglTexCoordPointerEXT(GLint size, GLenum type, GLsizei strid
 void OSMesaDriver::nfglTexCoordPointerEXT(GLint size, GLenum type, GLsizei stride, GLsizei count, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordPointerEXT(%d, 0x%x, %d, %d, " PRI_PTR ")", size, type, stride, count, AtariOffset(pointer)));
+	D(bug("nfosmesa: glTexCoordPointerEXT(%d, %s, %d, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, count, AtariOffset(pointer)));
 FN_GLTEXCOORDPOINTEREXT(size, type, stride, count, pointer);
 }
 
@@ -18170,7 +18169,7 @@ void OSMesaDriver::nfglTexCoordPointerListIBM(GLint size, GLenum type, GLint str
 void OSMesaDriver::nfglTexCoordPointerListIBM(GLint size, GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordPointerListIBM(%d, 0x%x, %d, " PRI_PTR ", %d)", size, type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glTexCoordPointerListIBM(%d, %s, %d, " PRI_PTR ", %d)", size, gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLTEXCOORDPOINTERLISTIBM(size, type, stride, pointer, ptrstride);
 }
 
@@ -18180,13 +18179,13 @@ void OSMesaDriver::nfglTexCoordPointervINTEL(GLint size, GLenum type, memptr poi
 void OSMesaDriver::nfglTexCoordPointervINTEL(GLint size, GLenum type, const void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glTexCoordPointervINTEL(%d, 0x%x, " PRI_PTR ")", size, type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glTexCoordPointervINTEL(%d, %s, " PRI_PTR ")", size, gl_enum_name(type), AtariOffset(pointer)));
 FN_GLTEXCOORDPOINTERVINTEL(size, type, pointer);
 }
 
 void OSMesaDriver::nfglTexEnvf(GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glTexEnvf(0x%x, 0x%x, %f)", target, pname, param));
+	D(bug("nfosmesa: glTexEnvf(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexEnvf(target, pname, param);
 }
 
@@ -18196,13 +18195,13 @@ void OSMesaDriver::nfglTexEnvfv(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexEnvfv(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glTexEnvfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexEnvfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXENVFV(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexEnvi(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glTexEnvi(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glTexEnvi(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexEnvi(target, pname, param);
 }
 
@@ -18212,13 +18211,13 @@ void OSMesaDriver::nfglTexEnviv(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexEnviv(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexEnviv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexEnviv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXENVIV(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexEnvxOES(GLenum target, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glTexEnvxOES(0x%x, 0x%x, 0x%x)", target, pname, param));
+	D(bug("nfosmesa: glTexEnvxOES(%s, %s, 0x%x)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexEnvxOES(target, pname, param);
 }
 
@@ -18228,7 +18227,7 @@ void OSMesaDriver::nfglTexEnvxvOES(GLenum target, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexEnvxvOES(GLenum target, GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glTexEnvxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexEnvxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXENVXVOES(target, pname, params);
 }
 
@@ -18238,13 +18237,13 @@ void OSMesaDriver::nfglTexFilterFuncSGIS(GLenum target, GLenum filter, GLsizei n
 void OSMesaDriver::nfglTexFilterFuncSGIS(GLenum target, GLenum filter, GLsizei n, const GLfloat *weights)
 #endif
 {
-	D(bug("nfosmesa: glTexFilterFuncSGIS(0x%x, 0x%x, %d, " PRI_PTR ")", target, filter, n, AtariOffset(weights)));
+	D(bug("nfosmesa: glTexFilterFuncSGIS(%s, %s, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(filter), n, AtariOffset(weights)));
 FN_GLTEXFILTERFUNCSGIS(target, filter, n, weights);
 }
 
 void OSMesaDriver::nfglTexGend(GLenum coord, GLenum pname, GLdouble param)
 {
-	D(bug("nfosmesa: glTexGend(0x%x, 0x%x, %f)", coord, pname, param));
+	D(bug("nfosmesa: glTexGend(%s, %s, %f)", gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glTexGend(coord, pname, param);
 }
 
@@ -18254,13 +18253,13 @@ void OSMesaDriver::nfglTexGendv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexGendv(GLenum coord, GLenum pname, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glTexGendv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexGendv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXGENDV(coord, pname, params);
 }
 
 void OSMesaDriver::nfglTexGenf(GLenum coord, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glTexGenf(0x%x, 0x%x, %f)", coord, pname, param));
+	D(bug("nfosmesa: glTexGenf(%s, %s, %f)", gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glTexGenf(coord, pname, param);
 }
 
@@ -18270,13 +18269,13 @@ void OSMesaDriver::nfglTexGenfv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexGenfv(GLenum coord, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glTexGenfv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexGenfv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXGENFV(coord, pname, params);
 }
 
 void OSMesaDriver::nfglTexGeni(GLenum coord, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glTexGeni(0x%x, 0x%x, %d)", coord, pname, param));
+	D(bug("nfosmesa: glTexGeni(%s, %s, %d)", gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glTexGeni(coord, pname, param);
 }
 
@@ -18286,13 +18285,13 @@ void OSMesaDriver::nfglTexGeniv(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexGeniv(GLenum coord, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexGeniv(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexGeniv(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXGENIV(coord, pname, params);
 }
 
 void OSMesaDriver::nfglTexGenxOES(GLenum coord, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glTexGenxOES(0x%x, 0x%x, 0x%x)", coord, pname, param));
+	D(bug("nfosmesa: glTexGenxOES(%s, %s, 0x%x)", gl_enum_name(coord), gl_enum_name(pname), param));
 	fn.glTexGenxOES(coord, pname, param);
 }
 
@@ -18302,7 +18301,7 @@ void OSMesaDriver::nfglTexGenxvOES(GLenum coord, GLenum pname, memptr params)
 void OSMesaDriver::nfglTexGenxvOES(GLenum coord, GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glTexGenxvOES(0x%x, 0x%x, " PRI_PTR ")", coord, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexGenxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(coord), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXGENXVOES(coord, pname, params);
 }
 
@@ -18312,7 +18311,7 @@ void OSMesaDriver::nfglTexImage1D(GLenum target, GLint level, GLint internalform
 void OSMesaDriver::nfglTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexImage1D(0x%x, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, internalformat, width, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexImage1D(%s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalformat, width, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels);
 }
 
@@ -18322,19 +18321,19 @@ void OSMesaDriver::nfglTexImage2D(GLenum target, GLint level, GLint internalform
 void OSMesaDriver::nfglTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexImage2D(0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, internalformat, width, height, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexImage2D(%s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalformat, width, height, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTexImage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTexImage2DMultisample(0x%x, %d, 0x%x, %d, %d, %d)", target, samples, internalformat, width, height, fixedsamplelocations));
+	D(bug("nfosmesa: glTexImage2DMultisample(%s, %d, %s, %d, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, fixedsamplelocations));
 	fn.glTexImage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTexImage2DMultisampleCoverageNV(GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLint internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTexImage2DMultisampleCoverageNV(0x%x, %d, %d, %d, %d, %d, %d)", target, coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations));
+	D(bug("nfosmesa: glTexImage2DMultisampleCoverageNV(%s, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations));
 	fn.glTexImage2DMultisampleCoverageNV(target, coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations);
 }
 
@@ -18344,7 +18343,7 @@ void OSMesaDriver::nfglTexImage3D(GLenum target, GLint level, GLint internalform
 void OSMesaDriver::nfglTexImage3D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexImage3D(0x%x, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, internalformat, width, height, depth, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexImage3D(%s, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalformat, width, height, depth, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXIMAGE3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
 }
 
@@ -18354,19 +18353,19 @@ void OSMesaDriver::nfglTexImage3DEXT(GLenum target, GLint level, GLenum internal
 void OSMesaDriver::nfglTexImage3DEXT(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexImage3DEXT(0x%x, %d, 0x%x, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, internalformat, width, height, depth, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexImage3DEXT(%s, %d, %s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXIMAGE3DEXT(target, level, internalformat, width, height, depth, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTexImage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTexImage3DMultisample(0x%x, %d, 0x%x, %d, %d, %d, %d)", target, samples, internalformat, width, height, depth, fixedsamplelocations));
+	D(bug("nfosmesa: glTexImage3DMultisample(%s, %d, %s, %d, %d, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, depth, fixedsamplelocations));
 	fn.glTexImage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTexImage3DMultisampleCoverageNV(GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTexImage3DMultisampleCoverageNV(0x%x, %d, %d, %d, %d, %d, %d, %d)", target, coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations));
+	D(bug("nfosmesa: glTexImage3DMultisampleCoverageNV(%s, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations));
 	fn.glTexImage3DMultisampleCoverageNV(target, coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations);
 }
 
@@ -18376,13 +18375,13 @@ void OSMesaDriver::nfglTexImage4DSGIS(GLenum target, GLint level, GLenum interna
 void OSMesaDriver::nfglTexImage4DSGIS(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexImage4DSGIS(0x%x, %d, 0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, internalformat, width, height, depth, size4d, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexImage4DSGIS(%s, %d, %s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, size4d, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXIMAGE4DSGIS(target, level, internalformat, width, height, depth, size4d, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTexPageCommitmentARB(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 commit)
 {
-	D(bug("nfosmesa: glTexPageCommitmentARB(0x%x, %d, %d, %d, %d, %d, %d, %d, %d)", target, level, xoffset, yoffset, zoffset, width, height, depth, commit));
+	D(bug("nfosmesa: glTexPageCommitmentARB(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, commit));
 	fn.glTexPageCommitmentARB(target, level, xoffset, yoffset, zoffset, width, height, depth, commit);
 }
 
@@ -18392,7 +18391,7 @@ void OSMesaDriver::nfglTexParameterIiv(GLenum target, GLenum pname, memptr param
 void OSMesaDriver::nfglTexParameterIiv(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterIiv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterIiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERIIV(target, pname, params);
 }
 
@@ -18402,7 +18401,7 @@ void OSMesaDriver::nfglTexParameterIivEXT(GLenum target, GLenum pname, memptr pa
 void OSMesaDriver::nfglTexParameterIivEXT(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterIivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterIivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERIIVEXT(target, pname, params);
 }
 
@@ -18412,7 +18411,7 @@ void OSMesaDriver::nfglTexParameterIuiv(GLenum target, GLenum pname, memptr para
 void OSMesaDriver::nfglTexParameterIuiv(GLenum target, GLenum pname, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterIuiv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterIuiv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERIUIV(target, pname, params);
 }
 
@@ -18422,13 +18421,13 @@ void OSMesaDriver::nfglTexParameterIuivEXT(GLenum target, GLenum pname, memptr p
 void OSMesaDriver::nfglTexParameterIuivEXT(GLenum target, GLenum pname, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterIuivEXT(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterIuivEXT(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERIUIVEXT(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glTexParameterf(0x%x, 0x%x, %f)", target, pname, param));
+	D(bug("nfosmesa: glTexParameterf(%s, %s, %f)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexParameterf(target, pname, param);
 }
 
@@ -18438,13 +18437,13 @@ void OSMesaDriver::nfglTexParameterfv(GLenum target, GLenum pname, memptr params
 void OSMesaDriver::nfglTexParameterfv(GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterfv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterfv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERFV(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexParameteri(GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glTexParameteri(0x%x, 0x%x, %d)", target, pname, param));
+	D(bug("nfosmesa: glTexParameteri(%s, %s, %d)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexParameteri(target, pname, param);
 }
 
@@ -18454,13 +18453,13 @@ void OSMesaDriver::nfglTexParameteriv(GLenum target, GLenum pname, memptr params
 void OSMesaDriver::nfglTexParameteriv(GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameteriv(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameteriv(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERIV(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexParameterxOES(GLenum target, GLenum pname, GLfixed param)
 {
-	D(bug("nfosmesa: glTexParameterxOES(0x%x, 0x%x, 0x%x)", target, pname, param));
+	D(bug("nfosmesa: glTexParameterxOES(%s, %s, 0x%x)", gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTexParameterxOES(target, pname, param);
 }
 
@@ -18470,61 +18469,61 @@ void OSMesaDriver::nfglTexParameterxvOES(GLenum target, GLenum pname, memptr par
 void OSMesaDriver::nfglTexParameterxvOES(GLenum target, GLenum pname, const GLfixed *params)
 #endif
 {
-	D(bug("nfosmesa: glTexParameterxvOES(0x%x, 0x%x, " PRI_PTR ")", target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTexParameterxvOES(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXPARAMETERXVOES(target, pname, params);
 }
 
 void OSMesaDriver::nfglTexRenderbufferNV(GLenum target, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glTexRenderbufferNV(0x%x, %u)", target, renderbuffer));
+	D(bug("nfosmesa: glTexRenderbufferNV(%s, %u)", gl_enum_name(target), renderbuffer));
 	fn.glTexRenderbufferNV(target, renderbuffer);
 }
 
 void OSMesaDriver::nfglTexScissorFuncINTEL(GLenum target, GLenum lfunc, GLenum hfunc)
 {
-	D(bug("nfosmesa: glTexScissorFuncINTEL(0x%x, 0x%x, 0x%x)", target, lfunc, hfunc));
+	D(bug("nfosmesa: glTexScissorFuncINTEL(%s, %s, %s)", gl_enum_name(target), gl_enum_name(lfunc), gl_enum_name(hfunc)));
 	fn.glTexScissorFuncINTEL(target, lfunc, hfunc);
 }
 
 void OSMesaDriver::nfglTexScissorINTEL(GLenum target, GLclampf tlow, GLclampf thigh)
 {
-	D(bug("nfosmesa: glTexScissorINTEL(0x%x, %f, %f)", target, tlow, thigh));
+	D(bug("nfosmesa: glTexScissorINTEL(%s, %f, %f)", gl_enum_name(target), tlow, thigh));
 	fn.glTexScissorINTEL(target, tlow, thigh);
 }
 
 void OSMesaDriver::nfglTexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width)
 {
-	D(bug("nfosmesa: glTexStorage1D(0x%x, %d, 0x%x, %d)", target, levels, internalformat, width));
+	D(bug("nfosmesa: glTexStorage1D(%s, %d, %s, %d)", gl_enum_name(target), levels, gl_enum_name(internalformat), width));
 	fn.glTexStorage1D(target, levels, internalformat, width);
 }
 
 void OSMesaDriver::nfglTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glTexStorage2D(0x%x, %d, 0x%x, %d, %d)", target, levels, internalformat, width, height));
+	D(bug("nfosmesa: glTexStorage2D(%s, %d, %s, %d, %d)", gl_enum_name(target), levels, gl_enum_name(internalformat), width, height));
 	fn.glTexStorage2D(target, levels, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglTexStorage2DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTexStorage2DMultisample(0x%x, %d, 0x%x, %d, %d, %d)", target, samples, internalformat, width, height, fixedsamplelocations));
+	D(bug("nfosmesa: glTexStorage2DMultisample(%s, %d, %s, %d, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, fixedsamplelocations));
 	fn.glTexStorage2DMultisample(target, samples, internalformat, width, height, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTexStorage3D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth)
 {
-	D(bug("nfosmesa: glTexStorage3D(0x%x, %d, 0x%x, %d, %d, %d)", target, levels, internalformat, width, height, depth));
+	D(bug("nfosmesa: glTexStorage3D(%s, %d, %s, %d, %d, %d)", gl_enum_name(target), levels, gl_enum_name(internalformat), width, height, depth));
 	fn.glTexStorage3D(target, levels, internalformat, width, height, depth);
 }
 
 void OSMesaDriver::nfglTexStorage3DMultisample(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTexStorage3DMultisample(0x%x, %d, 0x%x, %d, %d, %d, %d)", target, samples, internalformat, width, height, depth, fixedsamplelocations));
+	D(bug("nfosmesa: glTexStorage3DMultisample(%s, %d, %s, %d, %d, %d, %d)", gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, depth, fixedsamplelocations));
 	fn.glTexStorage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTexStorageSparseAMD(GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags)
 {
-	D(bug("nfosmesa: glTexStorageSparseAMD(0x%x, 0x%x, %d, %d, %d, %d, 0x%x)", target, internalFormat, width, height, depth, layers, flags));
+	D(bug("nfosmesa: glTexStorageSparseAMD(%s, %s, %d, %d, %d, %d, 0x%x)", gl_enum_name(target), gl_enum_name(internalFormat), width, height, depth, layers, flags));
 	fn.glTexStorageSparseAMD(target, internalFormat, width, height, depth, layers, flags);
 }
 
@@ -18534,7 +18533,7 @@ void OSMesaDriver::nfglTexSubImage1D(GLenum target, GLint level, GLint xoffset, 
 void OSMesaDriver::nfglTexSubImage1D(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage1D(0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, width, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage1D(%s, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, width, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE1D(target, level, xoffset, width, format, type, pixels);
 }
 
@@ -18544,7 +18543,7 @@ void OSMesaDriver::nfglTexSubImage1DEXT(GLenum target, GLint level, GLint xoffse
 void OSMesaDriver::nfglTexSubImage1DEXT(GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage1DEXT(0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, width, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage1DEXT(%s, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, width, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE1DEXT(target, level, xoffset, width, format, type, pixels);
 }
 
@@ -18554,7 +18553,7 @@ void OSMesaDriver::nfglTexSubImage2D(GLenum target, GLint level, GLint xoffset, 
 void OSMesaDriver::nfglTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage2D(0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, yoffset, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage2D(%s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
@@ -18564,7 +18563,7 @@ void OSMesaDriver::nfglTexSubImage2DEXT(GLenum target, GLint level, GLint xoffse
 void OSMesaDriver::nfglTexSubImage2DEXT(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage2DEXT(0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, yoffset, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage2DEXT(%s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE2DEXT(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
@@ -18574,7 +18573,7 @@ void OSMesaDriver::nfglTexSubImage3D(GLenum target, GLint level, GLint xoffset, 
 void OSMesaDriver::nfglTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage3D(0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage3D(%s, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
@@ -18584,7 +18583,7 @@ void OSMesaDriver::nfglTexSubImage3DEXT(GLenum target, GLint level, GLint xoffse
 void OSMesaDriver::nfglTexSubImage3DEXT(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage3DEXT(0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage3DEXT(%s, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE3DEXT(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
@@ -18594,7 +18593,7 @@ void OSMesaDriver::nfglTexSubImage4DSGIS(GLenum target, GLint level, GLint xoffs
 void OSMesaDriver::nfglTexSubImage4DSGIS(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLint woffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei size4d, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTexSubImage4DSGIS(0x%x, %d, %d, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", target, level, xoffset, yoffset, zoffset, woffset, width, height, depth, size4d, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTexSubImage4DSGIS(%s, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, woffset, width, height, depth, size4d, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE4DSGIS(target, level, xoffset, yoffset, zoffset, woffset, width, height, depth, size4d, format, type, pixels);
 }
 
@@ -18612,25 +18611,25 @@ void OSMesaDriver::nfglTextureBarrierNV(void)
 
 void OSMesaDriver::nfglTextureBuffer(GLuint texture, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glTextureBuffer(%u, 0x%x, %u)", texture, internalformat, buffer));
+	D(bug("nfosmesa: glTextureBuffer(%u, %s, %u)", texture, gl_enum_name(internalformat), buffer));
 	fn.glTextureBuffer(texture, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglTextureBufferEXT(GLuint texture, GLenum target, GLenum internalformat, GLuint buffer)
 {
-	D(bug("nfosmesa: glTextureBufferEXT(%u, 0x%x, 0x%x, %u)", texture, target, internalformat, buffer));
+	D(bug("nfosmesa: glTextureBufferEXT(%u, %s, %s, %u)", texture, gl_enum_name(target), gl_enum_name(internalformat), buffer));
 	fn.glTextureBufferEXT(texture, target, internalformat, buffer);
 }
 
 void OSMesaDriver::nfglTextureBufferRange(GLuint texture, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glTextureBufferRange(%u, 0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ")", texture, internalformat, buffer, offset, size));
+	D(bug("nfosmesa: glTextureBufferRange(%u, %s, %u, %" PRI_IPTR ", %" PRI_IPTR ")", texture, gl_enum_name(internalformat), buffer, offset, size));
 	fn.glTextureBufferRange(texture, internalformat, buffer, offset, size);
 }
 
 void OSMesaDriver::nfglTextureBufferRangeEXT(GLuint texture, GLenum target, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-	D(bug("nfosmesa: glTextureBufferRangeEXT(%u, 0x%x, 0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ")", texture, target, internalformat, buffer, offset, size));
+	D(bug("nfosmesa: glTextureBufferRangeEXT(%u, %s, %s, %u, %" PRI_IPTR ", %" PRI_IPTR ")", texture, gl_enum_name(target), gl_enum_name(internalformat), buffer, offset, size));
 	fn.glTextureBufferRangeEXT(texture, target, internalformat, buffer, offset, size);
 }
 
@@ -18642,7 +18641,7 @@ void OSMesaDriver::nfglTextureColorMaskSGIS(GLboolean32 red, GLboolean32 green, 
 
 void OSMesaDriver::nfglTextureFogSGIX(GLenum pname)
 {
-	D(bug("nfosmesa: glTextureFogSGIX(0x%x)", pname));
+	D(bug("nfosmesa: glTextureFogSGIX(%s)", gl_enum_name(pname)));
 	fn.glTextureFogSGIX(pname);
 }
 
@@ -18652,7 +18651,7 @@ void OSMesaDriver::nfglTextureImage1DEXT(GLuint texture, GLenum target, GLint le
 void OSMesaDriver::nfglTextureImage1DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureImage1DEXT(%u, 0x%x, %d, 0x%x, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, internalformat, width, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureImage1DEXT(%u, %s, %d, %s, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTUREIMAGE1DEXT(texture, target, level, internalformat, width, border, format, type, pixels);
 }
 
@@ -18662,19 +18661,19 @@ void OSMesaDriver::nfglTextureImage2DEXT(GLuint texture, GLenum target, GLint le
 void OSMesaDriver::nfglTextureImage2DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureImage2DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, internalformat, width, height, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureImage2DEXT(%u, %s, %d, %s, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, height, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTUREIMAGE2DEXT(texture, target, level, internalformat, width, height, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTextureImage2DMultisampleCoverageNV(GLuint texture, GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLint internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTextureImage2DMultisampleCoverageNV(%u, 0x%x, %d, %d, %d, %d, %d, %d)", texture, target, coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations));
+	D(bug("nfosmesa: glTextureImage2DMultisampleCoverageNV(%u, %s, %d, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations));
 	fn.glTextureImage2DMultisampleCoverageNV(texture, target, coverageSamples, colorSamples, internalFormat, width, height, fixedSampleLocations);
 }
 
 void OSMesaDriver::nfglTextureImage2DMultisampleNV(GLuint texture, GLenum target, GLsizei samples, GLint internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTextureImage2DMultisampleNV(%u, 0x%x, %d, %d, %d, %d, %d)", texture, target, samples, internalFormat, width, height, fixedSampleLocations));
+	D(bug("nfosmesa: glTextureImage2DMultisampleNV(%u, %s, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), samples, internalFormat, width, height, fixedSampleLocations));
 	fn.glTextureImage2DMultisampleNV(texture, target, samples, internalFormat, width, height, fixedSampleLocations);
 }
 
@@ -18684,37 +18683,37 @@ void OSMesaDriver::nfglTextureImage3DEXT(GLuint texture, GLenum target, GLint le
 void OSMesaDriver::nfglTextureImage3DEXT(GLuint texture, GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureImage3DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, internalformat, width, height, depth, border, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureImage3DEXT(%u, %s, %d, %s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, gl_enum_name(internalformat), width, height, depth, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTUREIMAGE3DEXT(texture, target, level, internalformat, width, height, depth, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTextureImage3DMultisampleCoverageNV(GLuint texture, GLenum target, GLsizei coverageSamples, GLsizei colorSamples, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTextureImage3DMultisampleCoverageNV(%u, 0x%x, %d, %d, %d, %d, %d, %d, %d)", texture, target, coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations));
+	D(bug("nfosmesa: glTextureImage3DMultisampleCoverageNV(%u, %s, %d, %d, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations));
 	fn.glTextureImage3DMultisampleCoverageNV(texture, target, coverageSamples, colorSamples, internalFormat, width, height, depth, fixedSampleLocations);
 }
 
 void OSMesaDriver::nfglTextureImage3DMultisampleNV(GLuint texture, GLenum target, GLsizei samples, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations)
 {
-	D(bug("nfosmesa: glTextureImage3DMultisampleNV(%u, 0x%x, %d, %d, %d, %d, %d, %d)", texture, target, samples, internalFormat, width, height, depth, fixedSampleLocations));
+	D(bug("nfosmesa: glTextureImage3DMultisampleNV(%u, %s, %d, %d, %d, %d, %d, %d)", texture, gl_enum_name(target), samples, internalFormat, width, height, depth, fixedSampleLocations));
 	fn.glTextureImage3DMultisampleNV(texture, target, samples, internalFormat, width, height, depth, fixedSampleLocations);
 }
 
 void OSMesaDriver::nfglTextureLightEXT(GLenum pname)
 {
-	D(bug("nfosmesa: glTextureLightEXT(0x%x)", pname));
+	D(bug("nfosmesa: glTextureLightEXT(%s)", gl_enum_name(pname)));
 	fn.glTextureLightEXT(pname);
 }
 
 void OSMesaDriver::nfglTextureMaterialEXT(GLenum face, GLenum mode)
 {
-	D(bug("nfosmesa: glTextureMaterialEXT(0x%x, 0x%x)", face, mode));
+	D(bug("nfosmesa: glTextureMaterialEXT(%s, %s)", gl_enum_name(face), gl_enum_name(mode)));
 	fn.glTextureMaterialEXT(face, mode);
 }
 
 void OSMesaDriver::nfglTextureNormalEXT(GLenum mode)
 {
-	D(bug("nfosmesa: glTextureNormalEXT(0x%x)", mode));
+	D(bug("nfosmesa: glTextureNormalEXT(%s)", gl_enum_name(mode)));
 	fn.glTextureNormalEXT(mode);
 }
 
@@ -18730,7 +18729,7 @@ void OSMesaDriver::nfglTextureParameterIiv(GLuint texture, GLenum pname, memptr 
 void OSMesaDriver::nfglTextureParameterIiv(GLuint texture, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterIiv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterIiv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERIIV(texture, pname, params);
 }
 
@@ -18740,7 +18739,7 @@ void OSMesaDriver::nfglTextureParameterIivEXT(GLuint texture, GLenum target, GLe
 void OSMesaDriver::nfglTextureParameterIivEXT(GLuint texture, GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterIivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterIivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERIIVEXT(texture, target, pname, params);
 }
 
@@ -18750,7 +18749,7 @@ void OSMesaDriver::nfglTextureParameterIuiv(GLuint texture, GLenum pname, memptr
 void OSMesaDriver::nfglTextureParameterIuiv(GLuint texture, GLenum pname, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterIuiv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterIuiv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERIUIV(texture, pname, params);
 }
 
@@ -18760,19 +18759,19 @@ void OSMesaDriver::nfglTextureParameterIuivEXT(GLuint texture, GLenum target, GL
 void OSMesaDriver::nfglTextureParameterIuivEXT(GLuint texture, GLenum target, GLenum pname, const GLuint *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterIuivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterIuivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERIUIVEXT(texture, target, pname, params);
 }
 
 void OSMesaDriver::nfglTextureParameterf(GLuint texture, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glTextureParameterf(%u, 0x%x, %f)", texture, pname, param));
+	D(bug("nfosmesa: glTextureParameterf(%u, %s, %f)", texture, gl_enum_name(pname), param));
 	fn.glTextureParameterf(texture, pname, param);
 }
 
 void OSMesaDriver::nfglTextureParameterfEXT(GLuint texture, GLenum target, GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glTextureParameterfEXT(%u, 0x%x, 0x%x, %f)", texture, target, pname, param));
+	D(bug("nfosmesa: glTextureParameterfEXT(%u, %s, %s, %f)", texture, gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTextureParameterfEXT(texture, target, pname, param);
 }
 
@@ -18782,7 +18781,7 @@ void OSMesaDriver::nfglTextureParameterfv(GLuint texture, GLenum pname, memptr p
 void OSMesaDriver::nfglTextureParameterfv(GLuint texture, GLenum pname, const GLfloat *param)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterfv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glTextureParameterfv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(param)));
 FN_GLTEXTUREPARAMETERFV(texture, pname, param);
 }
 
@@ -18792,19 +18791,19 @@ void OSMesaDriver::nfglTextureParameterfvEXT(GLuint texture, GLenum target, GLen
 void OSMesaDriver::nfglTextureParameterfvEXT(GLuint texture, GLenum target, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterfvEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterfvEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERFVEXT(texture, target, pname, params);
 }
 
 void OSMesaDriver::nfglTextureParameteri(GLuint texture, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glTextureParameteri(%u, 0x%x, %d)", texture, pname, param));
+	D(bug("nfosmesa: glTextureParameteri(%u, %s, %d)", texture, gl_enum_name(pname), param));
 	fn.glTextureParameteri(texture, pname, param);
 }
 
 void OSMesaDriver::nfglTextureParameteriEXT(GLuint texture, GLenum target, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glTextureParameteriEXT(%u, 0x%x, 0x%x, %d)", texture, target, pname, param));
+	D(bug("nfosmesa: glTextureParameteriEXT(%u, %s, %s, %d)", texture, gl_enum_name(target), gl_enum_name(pname), param));
 	fn.glTextureParameteriEXT(texture, target, pname, param);
 }
 
@@ -18814,7 +18813,7 @@ void OSMesaDriver::nfglTextureParameteriv(GLuint texture, GLenum pname, memptr p
 void OSMesaDriver::nfglTextureParameteriv(GLuint texture, GLenum pname, const GLint *param)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameteriv(%u, 0x%x, " PRI_PTR ")", texture, pname, AtariOffset(param)));
+	D(bug("nfosmesa: glTextureParameteriv(%u, %s, " PRI_PTR ")", texture, gl_enum_name(pname), AtariOffset(param)));
 FN_GLTEXTUREPARAMETERIV(texture, pname, param);
 }
 
@@ -18824,7 +18823,7 @@ void OSMesaDriver::nfglTextureParameterivEXT(GLuint texture, GLenum target, GLen
 void OSMesaDriver::nfglTextureParameterivEXT(GLuint texture, GLenum target, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glTextureParameterivEXT(%u, 0x%x, 0x%x, " PRI_PTR ")", texture, target, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glTextureParameterivEXT(%u, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLTEXTUREPARAMETERIVEXT(texture, target, pname, params);
 }
 
@@ -18835,80 +18834,80 @@ void OSMesaDriver::nfglTextureRangeAPPLE(GLenum target, GLsizei length, memptr p
 void OSMesaDriver::nfglTextureRangeAPPLE(GLenum target, GLsizei length, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glTextureRangeAPPLE(0x%x, %d, " PRI_PTR ")", target, length, AtariOffset(pointer)));
+	D(bug("nfosmesa: glTextureRangeAPPLE(%s, %d, " PRI_PTR ")", gl_enum_name(target), length, AtariOffset(pointer)));
 FN_GLTEXTURERANGEAPPLE(target, length, pointer);
 }
 #endif
 
 void OSMesaDriver::nfglTextureRenderbufferEXT(GLuint texture, GLenum target, GLuint renderbuffer)
 {
-	D(bug("nfosmesa: glTextureRenderbufferEXT(%u, 0x%x, %u)", texture, target, renderbuffer));
+	D(bug("nfosmesa: glTextureRenderbufferEXT(%u, %s, %u)", texture, gl_enum_name(target), renderbuffer));
 	fn.glTextureRenderbufferEXT(texture, target, renderbuffer);
 }
 
 void OSMesaDriver::nfglTextureStorage1D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width)
 {
-	D(bug("nfosmesa: glTextureStorage1D(%u, %d, 0x%x, %d)", texture, levels, internalformat, width));
+	D(bug("nfosmesa: glTextureStorage1D(%u, %d, %s, %d)", texture, levels, gl_enum_name(internalformat), width));
 	fn.glTextureStorage1D(texture, levels, internalformat, width);
 }
 
 void OSMesaDriver::nfglTextureStorage1DEXT(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width)
 {
-	D(bug("nfosmesa: glTextureStorage1DEXT(%u, 0x%x, %d, 0x%x, %d)", texture, target, levels, internalformat, width));
+	D(bug("nfosmesa: glTextureStorage1DEXT(%u, %s, %d, %s, %d)", texture, gl_enum_name(target), levels, gl_enum_name(internalformat), width));
 	fn.glTextureStorage1DEXT(texture, target, levels, internalformat, width);
 }
 
 void OSMesaDriver::nfglTextureStorage2D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glTextureStorage2D(%u, %d, 0x%x, %d, %d)", texture, levels, internalformat, width, height));
+	D(bug("nfosmesa: glTextureStorage2D(%u, %d, %s, %d, %d)", texture, levels, gl_enum_name(internalformat), width, height));
 	fn.glTextureStorage2D(texture, levels, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglTextureStorage2DEXT(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
 {
-	D(bug("nfosmesa: glTextureStorage2DEXT(%u, 0x%x, %d, 0x%x, %d, %d)", texture, target, levels, internalformat, width, height));
+	D(bug("nfosmesa: glTextureStorage2DEXT(%u, %s, %d, %s, %d, %d)", texture, gl_enum_name(target), levels, gl_enum_name(internalformat), width, height));
 	fn.glTextureStorage2DEXT(texture, target, levels, internalformat, width, height);
 }
 
 void OSMesaDriver::nfglTextureStorage2DMultisample(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTextureStorage2DMultisample(%u, %d, 0x%x, %d, %d, %d)", texture, samples, internalformat, width, height, fixedsamplelocations));
+	D(bug("nfosmesa: glTextureStorage2DMultisample(%u, %d, %s, %d, %d, %d)", texture, samples, gl_enum_name(internalformat), width, height, fixedsamplelocations));
 	fn.glTextureStorage2DMultisample(texture, samples, internalformat, width, height, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTextureStorage2DMultisampleEXT(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTextureStorage2DMultisampleEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d)", texture, target, samples, internalformat, width, height, fixedsamplelocations));
+	D(bug("nfosmesa: glTextureStorage2DMultisampleEXT(%u, %s, %d, %s, %d, %d, %d)", texture, gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, fixedsamplelocations));
 	fn.glTextureStorage2DMultisampleEXT(texture, target, samples, internalformat, width, height, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTextureStorage3D(GLuint texture, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth)
 {
-	D(bug("nfosmesa: glTextureStorage3D(%u, %d, 0x%x, %d, %d, %d)", texture, levels, internalformat, width, height, depth));
+	D(bug("nfosmesa: glTextureStorage3D(%u, %d, %s, %d, %d, %d)", texture, levels, gl_enum_name(internalformat), width, height, depth));
 	fn.glTextureStorage3D(texture, levels, internalformat, width, height, depth);
 }
 
 void OSMesaDriver::nfglTextureStorage3DEXT(GLuint texture, GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth)
 {
-	D(bug("nfosmesa: glTextureStorage3DEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d)", texture, target, levels, internalformat, width, height, depth));
+	D(bug("nfosmesa: glTextureStorage3DEXT(%u, %s, %d, %s, %d, %d, %d)", texture, gl_enum_name(target), levels, gl_enum_name(internalformat), width, height, depth));
 	fn.glTextureStorage3DEXT(texture, target, levels, internalformat, width, height, depth);
 }
 
 void OSMesaDriver::nfglTextureStorage3DMultisample(GLuint texture, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTextureStorage3DMultisample(%u, %d, 0x%x, %d, %d, %d, %d)", texture, samples, internalformat, width, height, depth, fixedsamplelocations));
+	D(bug("nfosmesa: glTextureStorage3DMultisample(%u, %d, %s, %d, %d, %d, %d)", texture, samples, gl_enum_name(internalformat), width, height, depth, fixedsamplelocations));
 	fn.glTextureStorage3DMultisample(texture, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTextureStorage3DMultisampleEXT(GLuint texture, GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedsamplelocations)
 {
-	D(bug("nfosmesa: glTextureStorage3DMultisampleEXT(%u, 0x%x, %d, 0x%x, %d, %d, %d, %d)", texture, target, samples, internalformat, width, height, depth, fixedsamplelocations));
+	D(bug("nfosmesa: glTextureStorage3DMultisampleEXT(%u, %s, %d, %s, %d, %d, %d, %d)", texture, gl_enum_name(target), samples, gl_enum_name(internalformat), width, height, depth, fixedsamplelocations));
 	fn.glTextureStorage3DMultisampleEXT(texture, target, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
 void OSMesaDriver::nfglTextureStorageSparseAMD(GLuint texture, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags)
 {
-	D(bug("nfosmesa: glTextureStorageSparseAMD(%u, 0x%x, 0x%x, %d, %d, %d, %d, 0x%x)", texture, target, internalFormat, width, height, depth, layers, flags));
+	D(bug("nfosmesa: glTextureStorageSparseAMD(%u, %s, %s, %d, %d, %d, %d, 0x%x)", texture, gl_enum_name(target), gl_enum_name(internalFormat), width, height, depth, layers, flags));
 	fn.glTextureStorageSparseAMD(texture, target, internalFormat, width, height, depth, layers, flags);
 }
 
@@ -18918,7 +18917,7 @@ void OSMesaDriver::nfglTextureSubImage1D(GLuint texture, GLint level, GLint xoff
 void OSMesaDriver::nfglTextureSubImage1D(GLuint texture, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage1D(%u, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, level, xoffset, width, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage1D(%u, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, level, xoffset, width, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE1D(texture, level, xoffset, width, format, type, pixels);
 }
 
@@ -18928,7 +18927,7 @@ void OSMesaDriver::nfglTextureSubImage1DEXT(GLuint texture, GLenum target, GLint
 void OSMesaDriver::nfglTextureSubImage1DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage1DEXT(%u, 0x%x, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, xoffset, width, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage1DEXT(%u, %s, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, width, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE1DEXT(texture, target, level, xoffset, width, format, type, pixels);
 }
 
@@ -18938,7 +18937,7 @@ void OSMesaDriver::nfglTextureSubImage2D(GLuint texture, GLint level, GLint xoff
 void OSMesaDriver::nfglTextureSubImage2D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage2D(%u, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, level, xoffset, yoffset, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage2D(%u, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, level, xoffset, yoffset, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
@@ -18948,7 +18947,7 @@ void OSMesaDriver::nfglTextureSubImage2DEXT(GLuint texture, GLenum target, GLint
 void OSMesaDriver::nfglTextureSubImage2DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage2DEXT(%u, 0x%x, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, xoffset, yoffset, width, height, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage2DEXT(%u, %s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, yoffset, width, height, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE2DEXT(texture, target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
@@ -18958,7 +18957,7 @@ void OSMesaDriver::nfglTextureSubImage3D(GLuint texture, GLint level, GLint xoff
 void OSMesaDriver::nfglTextureSubImage3D(GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage3D(%u, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage3D(%u, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
@@ -18968,13 +18967,13 @@ void OSMesaDriver::nfglTextureSubImage3DEXT(GLuint texture, GLenum target, GLint
 void OSMesaDriver::nfglTextureSubImage3DEXT(GLuint texture, GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 #endif
 {
-	D(bug("nfosmesa: glTextureSubImage3DEXT(%u, 0x%x, %d, %d, %d, %d, %d, %d, %d, 0x%x, 0x%x, " PRI_PTR ")", texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, AtariOffset(pixels)));
+	D(bug("nfosmesa: glTextureSubImage3DEXT(%u, %s, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", texture, gl_enum_name(target), level, xoffset, yoffset, zoffset, width, height, depth, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTextureView(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat, GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers)
 {
-	D(bug("nfosmesa: glTextureView(%u, 0x%x, %u, 0x%x, %u, %u, %u, %u)", texture, target, origtexture, internalformat, minlevel, numlevels, minlayer, numlayers));
+	D(bug("nfosmesa: glTextureView(%u, %s, %u, %s, %u, %u, %u, %u)", texture, gl_enum_name(target), origtexture, gl_enum_name(internalformat), minlevel, numlevels, minlayer, numlayers));
 	fn.glTextureView(texture, target, origtexture, internalformat, minlevel, numlevels, minlayer, numlayers);
 }
 
@@ -19036,7 +19035,7 @@ FN_GLTRACETEXTUREMESA(name, comment);
 
 void OSMesaDriver::nfglTrackMatrixNV(GLenum target, GLuint address, GLenum matrix, GLenum transform)
 {
-	D(bug("nfosmesa: glTrackMatrixNV(0x%x, %u, 0x%x, 0x%x)", target, address, matrix, transform));
+	D(bug("nfosmesa: glTrackMatrixNV(%s, %u, %s, %s)", gl_enum_name(target), address, gl_enum_name(matrix), gl_enum_name(transform)));
 	fn.glTrackMatrixNV(target, address, matrix, transform);
 }
 
@@ -19046,7 +19045,7 @@ void OSMesaDriver::nfglTransformFeedbackAttribsNV(GLsizei count, memptr attribs,
 void OSMesaDriver::nfglTransformFeedbackAttribsNV(GLsizei count, const GLint *attribs, GLenum bufferMode)
 #endif
 {
-	D(bug("nfosmesa: glTransformFeedbackAttribsNV(%d, " PRI_PTR ", 0x%x)", count, AtariOffset(attribs), bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackAttribsNV(%d, " PRI_PTR ", %s)", count, AtariOffset(attribs), gl_enum_name(bufferMode)));
 FN_GLTRANSFORMFEEDBACKATTRIBSNV(count, attribs, bufferMode);
 }
 
@@ -19068,7 +19067,7 @@ void OSMesaDriver::nfglTransformFeedbackStreamAttribsNV(GLsizei count, memptr at
 void OSMesaDriver::nfglTransformFeedbackStreamAttribsNV(GLsizei count, const GLint *attribs, GLsizei nbuffers, const GLint *bufstreams, GLenum bufferMode)
 #endif
 {
-	D(bug("nfosmesa: glTransformFeedbackStreamAttribsNV(%d, " PRI_PTR ", %d, " PRI_PTR ", 0x%x)", count, AtariOffset(attribs), nbuffers, AtariOffset(bufstreams), bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackStreamAttribsNV(%d, " PRI_PTR ", %d, " PRI_PTR ", %s)", count, AtariOffset(attribs), nbuffers, AtariOffset(bufstreams), gl_enum_name(bufferMode)));
 FN_GLTRANSFORMFEEDBACKSTREAMATTRIBSNV(count, attribs, nbuffers, bufstreams, bufferMode);
 }
 
@@ -19078,7 +19077,7 @@ void OSMesaDriver::nfglTransformFeedbackVaryings(GLuint program, GLsizei count, 
 void OSMesaDriver::nfglTransformFeedbackVaryings(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode)
 #endif
 {
-	D(bug("nfosmesa: glTransformFeedbackVaryings(%u, %d, " PRI_PTR ", 0x%x)", program, count, AtariOffset(varyings), bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackVaryings(%u, %d, " PRI_PTR ", %s)", program, count, AtariOffset(varyings), gl_enum_name(bufferMode)));
 FN_GLTRANSFORMFEEDBACKVARYINGS(program, count, varyings, bufferMode);
 }
 
@@ -19088,7 +19087,7 @@ void OSMesaDriver::nfglTransformFeedbackVaryingsEXT(GLuint program, GLsizei coun
 void OSMesaDriver::nfglTransformFeedbackVaryingsEXT(GLuint program, GLsizei count, const GLchar *const *varyings, GLenum bufferMode)
 #endif
 {
-	D(bug("nfosmesa: glTransformFeedbackVaryingsEXT(%u, %d, " PRI_PTR ", 0x%x)", program, count, AtariOffset(varyings), bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackVaryingsEXT(%u, %d, " PRI_PTR ", %s)", program, count, AtariOffset(varyings), gl_enum_name(bufferMode)));
 FN_GLTRANSFORMFEEDBACKVARYINGSEXT(program, count, varyings, bufferMode);
 }
 
@@ -19098,7 +19097,7 @@ void OSMesaDriver::nfglTransformFeedbackVaryingsNV(GLuint program, GLsizei count
 void OSMesaDriver::nfglTransformFeedbackVaryingsNV(GLuint program, GLsizei count, const GLint *locations, GLenum bufferMode)
 #endif
 {
-	D(bug("nfosmesa: glTransformFeedbackVaryingsNV(%u, %d, " PRI_PTR ", 0x%x)", program, count, AtariOffset(locations), bufferMode));
+	D(bug("nfosmesa: glTransformFeedbackVaryingsNV(%u, %d, " PRI_PTR ", %s)", program, count, AtariOffset(locations), gl_enum_name(bufferMode)));
 FN_GLTRANSFORMFEEDBACKVARYINGSNV(program, count, locations, bufferMode);
 }
 
@@ -19108,7 +19107,7 @@ void OSMesaDriver::nfglTransformPathNV(GLuint resultPath, GLuint srcPath, GLenum
 void OSMesaDriver::nfglTransformPathNV(GLuint resultPath, GLuint srcPath, GLenum transformType, const GLfloat *transformValues)
 #endif
 {
-	D(bug("nfosmesa: glTransformPathNV(%u, %u, 0x%x, " PRI_PTR ")", resultPath, srcPath, transformType, AtariOffset(transformValues)));
+	D(bug("nfosmesa: glTransformPathNV(%u, %u, %s, " PRI_PTR ")", resultPath, srcPath, gl_enum_name(transformType), AtariOffset(transformValues)));
 FN_GLTRANSFORMPATHNV(resultPath, srcPath, transformType, transformValues);
 }
 
@@ -20043,7 +20042,7 @@ void OSMesaDriver::nfglUniformSubroutinesuiv(GLenum shadertype, GLsizei count, m
 void OSMesaDriver::nfglUniformSubroutinesuiv(GLenum shadertype, GLsizei count, const GLuint *indices)
 #endif
 {
-	D(bug("nfosmesa: glUniformSubroutinesuiv(0x%x, %d, " PRI_PTR ")", shadertype, count, AtariOffset(indices)));
+	D(bug("nfosmesa: glUniformSubroutinesuiv(%s, %d, " PRI_PTR ")", gl_enum_name(shadertype), count, AtariOffset(indices)));
 FN_GLUNIFORMSUBROUTINESUIV(shadertype, count, indices);
 }
 
@@ -20071,14 +20070,14 @@ void OSMesaDriver::nfglUnlockArraysEXT(void)
 
 GLboolean OSMesaDriver::nfglUnmapBuffer(GLenum target)
 {
-	D(bug("nfosmesa: glUnmapBuffer(0x%x)", target));
+	D(bug("nfosmesa: glUnmapBuffer(%s)", gl_enum_name(target)));
 	GLboolean __ret = fn.glUnmapBuffer(target);
 	return __ret;
 }
 
 GLboolean OSMesaDriver::nfglUnmapBufferARB(GLenum target)
 {
-	D(bug("nfosmesa: glUnmapBufferARB(0x%x)", target));
+	D(bug("nfosmesa: glUnmapBufferARB(%s)", gl_enum_name(target)));
 	GLboolean __ret = fn.glUnmapBufferARB(target);
 	return __ret;
 }
@@ -20115,7 +20114,7 @@ void OSMesaDriver::nfglUpdateObjectBufferATI(GLuint buffer, GLuint offset, GLsiz
 void OSMesaDriver::nfglUpdateObjectBufferATI(GLuint buffer, GLuint offset, GLsizei size, const void *pointer, GLenum preserve)
 #endif
 {
-	D(bug("nfosmesa: glUpdateObjectBufferATI(%u, %u, %d, " PRI_PTR ", 0x%x)", buffer, offset, size, AtariOffset(pointer), preserve));
+	D(bug("nfosmesa: glUpdateObjectBufferATI(%u, %u, %d, " PRI_PTR ", %s)", buffer, offset, size, AtariOffset(pointer), gl_enum_name(preserve)));
 FN_GLUPDATEOBJECTBUFFERATI(buffer, offset, size, pointer, preserve);
 }
 
@@ -20139,7 +20138,7 @@ void OSMesaDriver::nfglUseProgramStages(GLuint pipeline, GLbitfield stages, GLui
 
 void OSMesaDriver::nfglUseShaderProgramEXT(GLenum type, GLuint program)
 {
-	D(bug("nfosmesa: glUseShaderProgramEXT(0x%x, %u)", type, program));
+	D(bug("nfosmesa: glUseShaderProgramEXT(%s, %u)", gl_enum_name(type), program));
 	fn.glUseShaderProgramEXT(type, program);
 }
 
@@ -20158,7 +20157,7 @@ void OSMesaDriver::nfglVDPAUGetSurfaceivNV(GLvdpauSurfaceNV surface, GLenum pnam
 void OSMesaDriver::nfglVDPAUGetSurfaceivNV(GLvdpauSurfaceNV surface, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values)
 #endif
 {
-	D(bug("nfosmesa: glVDPAUGetSurfaceivNV(" PRI_IPTR ", 0x%x, %d, " PRI_PTR ", " PRI_PTR ")", surface, pname, bufSize, AtariOffset(length), AtariOffset(values)));
+	D(bug("nfosmesa: glVDPAUGetSurfaceivNV(" PRI_IPTR ", %s, %d, " PRI_PTR ", " PRI_PTR ")", surface, gl_enum_name(pname), bufSize, AtariOffset(length), AtariOffset(values)));
 FN_GLVDPAUGETSURFACEIVNV(surface, pname, bufSize, length, values);
 }
 #endif
@@ -20202,7 +20201,7 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterOutputSurfaceNV(memptr vdpSurfac
 GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterOutputSurfaceNV(const void *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames)
 #endif
 {
-	D(bug("nfosmesa: glVDPAURegisterOutputSurfaceNV(" PRI_PTR ", 0x%x, %d, " PRI_PTR ")", AtariOffset(vdpSurface), target, numTextureNames, AtariOffset(textureNames)));
+	D(bug("nfosmesa: glVDPAURegisterOutputSurfaceNV(" PRI_PTR ", %s, %d, " PRI_PTR ")", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames)));
 FN_GLVDPAUREGISTEROUTPUTSURFACENV(vdpSurface, target, numTextureNames, textureNames);
 }
 #endif
@@ -20214,7 +20213,7 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceNV(memptr vdpSurface
 GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceNV(const void *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames)
 #endif
 {
-	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceNV(" PRI_PTR ", 0x%x, %d, " PRI_PTR ")", AtariOffset(vdpSurface), target, numTextureNames, AtariOffset(textureNames)));
+	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceNV(" PRI_PTR ", %s, %d, " PRI_PTR ")", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames)));
 FN_GLVDPAUREGISTERVIDEOSURFACENV(vdpSurface, target, numTextureNames, textureNames);
 }
 #endif
@@ -20222,7 +20221,7 @@ FN_GLVDPAUREGISTERVIDEOSURFACENV(vdpSurface, target, numTextureNames, textureNam
 #if 0
 void OSMesaDriver::nfglVDPAUSurfaceAccessNV(GLvdpauSurfaceNV surface, GLenum access)
 {
-	D(bug("nfosmesa: glVDPAUSurfaceAccessNV(" PRI_IPTR ", 0x%x)", surface, access));
+	D(bug("nfosmesa: glVDPAUSurfaceAccessNV(" PRI_IPTR ", %s)", surface, gl_enum_name(access)));
 FN_GLVDPAUSURFACEACCESSNV(surface, access);
 }
 #endif
@@ -20267,7 +20266,7 @@ void OSMesaDriver::nfglValidateProgramPipeline(GLuint pipeline)
 
 void OSMesaDriver::nfglVariantArrayObjectATI(GLuint id, GLenum type, GLsizei stride, GLuint buffer, GLuint offset)
 {
-	D(bug("nfosmesa: glVariantArrayObjectATI(%u, 0x%x, %d, %u, %u)", id, type, stride, buffer, offset));
+	D(bug("nfosmesa: glVariantArrayObjectATI(%u, %s, %d, %u, %u)", id, gl_enum_name(type), stride, buffer, offset));
 	fn.glVariantArrayObjectATI(id, type, stride, buffer, offset);
 }
 
@@ -20277,7 +20276,7 @@ void OSMesaDriver::nfglVariantPointerEXT(GLuint id, GLenum type, GLuint stride, 
 void OSMesaDriver::nfglVariantPointerEXT(GLuint id, GLenum type, GLuint stride, const void *addr)
 #endif
 {
-	D(bug("nfosmesa: glVariantPointerEXT(%u, 0x%x, %u, " PRI_PTR ")", id, type, stride, AtariOffset(addr)));
+	D(bug("nfosmesa: glVariantPointerEXT(%u, %s, %u, " PRI_PTR ")", id, gl_enum_name(type), stride, AtariOffset(addr)));
 FN_GLVARIANTPOINTEREXT(id, type, stride, addr);
 }
 
@@ -20705,19 +20704,19 @@ void OSMesaDriver::nfglVertexArrayAttribBinding(GLuint vaobj, GLuint attribindex
 
 void OSMesaDriver::nfglVertexArrayAttribFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean32 normalized, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayAttribFormat(%u, %u, %d, 0x%x, %d, %u)", vaobj, attribindex, size, type, normalized, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayAttribFormat(%u, %u, %d, %s, %d, %u)", vaobj, attribindex, size, gl_enum_name(type), normalized, relativeoffset));
 	fn.glVertexArrayAttribFormat(vaobj, attribindex, size, type, normalized, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexArrayAttribIFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayAttribIFormat(%u, %u, %d, 0x%x, %u)", vaobj, attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayAttribIFormat(%u, %u, %d, %s, %u)", vaobj, attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexArrayAttribIFormat(vaobj, attribindex, size, type, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexArrayAttribLFormat(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayAttribLFormat(%u, %u, %d, 0x%x, %u)", vaobj, attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayAttribLFormat(%u, %u, %d, %s, %u)", vaobj, attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexArrayAttribLFormat(vaobj, attribindex, size, type, relativeoffset);
 }
 
@@ -20735,7 +20734,7 @@ void OSMesaDriver::nfglVertexArrayBindingDivisor(GLuint vaobj, GLuint bindingind
 
 void OSMesaDriver::nfglVertexArrayColorOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayColorOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayColorOffsetEXT(%u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayColorOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
@@ -20753,31 +20752,31 @@ void OSMesaDriver::nfglVertexArrayElementBuffer(GLuint vaobj, GLuint buffer)
 
 void OSMesaDriver::nfglVertexArrayFogCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayFogCoordOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayFogCoordOffsetEXT(%u, %u, %s, %d, %" PRI_IPTR ")", vaobj, buffer, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayFogCoordOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayIndexOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayIndexOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayIndexOffsetEXT(%u, %u, %s, %d, %" PRI_IPTR ")", vaobj, buffer, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayIndexOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayMultiTexCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLenum texunit, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayMultiTexCoordOffsetEXT(%u, %u, 0x%x, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, texunit, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayMultiTexCoordOffsetEXT(%u, %u, %s, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, gl_enum_name(texunit), size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayMultiTexCoordOffsetEXT(vaobj, buffer, texunit, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayNormalOffsetEXT(GLuint vaobj, GLuint buffer, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayNormalOffsetEXT(%u, %u, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayNormalOffsetEXT(%u, %u, %s, %d, %" PRI_IPTR ")", vaobj, buffer, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayNormalOffsetEXT(vaobj, buffer, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayParameteriAPPLE(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glVertexArrayParameteriAPPLE(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glVertexArrayParameteriAPPLE(%s, %d)", gl_enum_name(pname), param));
 	fn.glVertexArrayParameteriAPPLE(pname, param);
 }
 
@@ -20803,13 +20802,13 @@ FN_GLVERTEXARRAYRANGENV(length, pointer);
 
 void OSMesaDriver::nfglVertexArraySecondaryColorOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArraySecondaryColorOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArraySecondaryColorOffsetEXT(%u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArraySecondaryColorOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayTexCoordOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayTexCoordOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayTexCoordOffsetEXT(%u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayTexCoordOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
@@ -20827,37 +20826,37 @@ void OSMesaDriver::nfglVertexArrayVertexAttribDivisorEXT(GLuint vaobj, GLuint in
 
 void OSMesaDriver::nfglVertexArrayVertexAttribFormatEXT(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLboolean32 normalized, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribFormatEXT(%u, %u, %d, 0x%x, %d, %u)", vaobj, attribindex, size, type, normalized, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribFormatEXT(%u, %u, %d, %s, %d, %u)", vaobj, attribindex, size, gl_enum_name(type), normalized, relativeoffset));
 	fn.glVertexArrayVertexAttribFormatEXT(vaobj, attribindex, size, type, normalized, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribIFormatEXT(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribIFormatEXT(%u, %u, %d, 0x%x, %u)", vaobj, attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribIFormatEXT(%u, %u, %d, %s, %u)", vaobj, attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexArrayVertexAttribIFormatEXT(vaobj, attribindex, size, type, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribIOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribIOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribIOffsetEXT(%u, %u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayVertexAttribIOffsetEXT(vaobj, buffer, index, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribLFormatEXT(GLuint vaobj, GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribLFormatEXT(%u, %u, %d, 0x%x, %u)", vaobj, attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribLFormatEXT(%u, %u, %d, %s, %u)", vaobj, attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexArrayVertexAttribLFormatEXT(vaobj, attribindex, size, type, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribLOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribLOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribLOffsetEXT(%u, %u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayVertexAttribLOffsetEXT(vaobj, buffer, index, size, type, stride, offset);
 }
 
 void OSMesaDriver::nfglVertexArrayVertexAttribOffsetEXT(GLuint vaobj, GLuint buffer, GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexAttribOffsetEXT(%u, %u, %u, %d, 0x%x, %d, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, type, normalized, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexAttribOffsetEXT(%u, %u, %u, %d, %s, %d, %d, %" PRI_IPTR ")", vaobj, buffer, index, size, gl_enum_name(type), normalized, stride, offset));
 	fn.glVertexArrayVertexAttribOffsetEXT(vaobj, buffer, index, size, type, normalized, stride, offset);
 }
 
@@ -20885,7 +20884,7 @@ FN_GLVERTEXARRAYVERTEXBUFFERS(vaobj, first, count, buffers, offsets, strides);
 
 void OSMesaDriver::nfglVertexArrayVertexOffsetEXT(GLuint vaobj, GLuint buffer, GLint size, GLenum type, GLsizei stride, GLintptr offset)
 {
-	D(bug("nfosmesa: glVertexArrayVertexOffsetEXT(%u, %u, %d, 0x%x, %d, %" PRI_IPTR ")", vaobj, buffer, size, type, stride, offset));
+	D(bug("nfosmesa: glVertexArrayVertexOffsetEXT(%u, %u, %d, %s, %d, %" PRI_IPTR ")", vaobj, buffer, size, gl_enum_name(type), stride, offset));
 	fn.glVertexArrayVertexOffsetEXT(vaobj, buffer, size, type, stride, offset);
 }
 
@@ -21779,7 +21778,7 @@ FN_GLVERTEXATTRIB4USVARB(index, v);
 
 void OSMesaDriver::nfglVertexAttribArrayObjectATI(GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, GLuint buffer, GLuint offset)
 {
-	D(bug("nfosmesa: glVertexAttribArrayObjectATI(%u, %d, 0x%x, %d, %d, %u, %u)", index, size, type, normalized, stride, buffer, offset));
+	D(bug("nfosmesa: glVertexAttribArrayObjectATI(%u, %d, %s, %d, %d, %u, %u)", index, size, gl_enum_name(type), normalized, stride, buffer, offset));
 FN_GLVERTEXATTRIBARRAYOBJECTATI(index, size, type, normalized, stride, buffer, offset);
 }
 
@@ -21803,13 +21802,13 @@ void OSMesaDriver::nfglVertexAttribDivisorARB(GLuint index, GLuint divisor)
 
 void OSMesaDriver::nfglVertexAttribFormat(GLuint attribindex, GLint size, GLenum type, GLboolean32 normalized, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexAttribFormat(%u, %d, 0x%x, %d, %u)", attribindex, size, type, normalized, relativeoffset));
+	D(bug("nfosmesa: glVertexAttribFormat(%u, %d, %s, %d, %u)", attribindex, size, gl_enum_name(type), normalized, relativeoffset));
 	fn.glVertexAttribFormat(attribindex, size, type, normalized, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexAttribFormatNV(GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride)
 {
-	D(bug("nfosmesa: glVertexAttribFormatNV(%u, %d, 0x%x, %d, %d)", index, size, type, normalized, stride));
+	D(bug("nfosmesa: glVertexAttribFormatNV(%u, %d, %s, %d, %d)", index, size, gl_enum_name(type), normalized, stride));
 	fn.glVertexAttribFormatNV(index, size, type, normalized, stride);
 }
 
@@ -22151,13 +22150,13 @@ FN_GLVERTEXATTRIBI4USVEXT(index, v);
 
 void OSMesaDriver::nfglVertexAttribIFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexAttribIFormat(%u, %d, 0x%x, %u)", attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexAttribIFormat(%u, %d, %s, %u)", attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexAttribIFormat(attribindex, size, type, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexAttribIFormatNV(GLuint index, GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glVertexAttribIFormatNV(%u, %d, 0x%x, %d)", index, size, type, stride));
+	D(bug("nfosmesa: glVertexAttribIFormatNV(%u, %d, %s, %d)", index, size, gl_enum_name(type), stride));
 	fn.glVertexAttribIFormatNV(index, size, type, stride);
 }
 
@@ -22167,7 +22166,7 @@ void OSMesaDriver::nfglVertexAttribIPointer(GLuint index, GLint size, GLenum typ
 void OSMesaDriver::nfglVertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribIPointer(%u, %d, 0x%x, %d, " PRI_PTR ")", index, size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribIPointer(%u, %d, %s, %d, " PRI_PTR ")", index, size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBIPOINTER(index, size, type, stride, pointer);
 }
 
@@ -22177,7 +22176,7 @@ void OSMesaDriver::nfglVertexAttribIPointerEXT(GLuint index, GLint size, GLenum 
 void OSMesaDriver::nfglVertexAttribIPointerEXT(GLuint index, GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribIPointerEXT(%u, %d, 0x%x, %d, " PRI_PTR ")", index, size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribIPointerEXT(%u, %d, %s, %d, " PRI_PTR ")", index, size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBIPOINTEREXT(index, size, type, stride, pointer);
 }
 
@@ -22455,13 +22454,13 @@ FN_GLVERTEXATTRIBL4UI64VNV(index, v);
 
 void OSMesaDriver::nfglVertexAttribLFormat(GLuint attribindex, GLint size, GLenum type, GLuint relativeoffset)
 {
-	D(bug("nfosmesa: glVertexAttribLFormat(%u, %d, 0x%x, %u)", attribindex, size, type, relativeoffset));
+	D(bug("nfosmesa: glVertexAttribLFormat(%u, %d, %s, %u)", attribindex, size, gl_enum_name(type), relativeoffset));
 	fn.glVertexAttribLFormat(attribindex, size, type, relativeoffset);
 }
 
 void OSMesaDriver::nfglVertexAttribLFormatNV(GLuint index, GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glVertexAttribLFormatNV(%u, %d, 0x%x, %d)", index, size, type, stride));
+	D(bug("nfosmesa: glVertexAttribLFormatNV(%u, %d, %s, %d)", index, size, gl_enum_name(type), stride));
 	fn.glVertexAttribLFormatNV(index, size, type, stride);
 }
 
@@ -22471,7 +22470,7 @@ void OSMesaDriver::nfglVertexAttribLPointer(GLuint index, GLint size, GLenum typ
 void OSMesaDriver::nfglVertexAttribLPointer(GLuint index, GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribLPointer(%u, %d, 0x%x, %d, " PRI_PTR ")", index, size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribLPointer(%u, %d, %s, %d, " PRI_PTR ")", index, size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBLPOINTER(index, size, type, stride, pointer);
 }
 
@@ -22481,13 +22480,13 @@ void OSMesaDriver::nfglVertexAttribLPointerEXT(GLuint index, GLint size, GLenum 
 void OSMesaDriver::nfglVertexAttribLPointerEXT(GLuint index, GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribLPointerEXT(%u, %d, 0x%x, %d, " PRI_PTR ")", index, size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribLPointerEXT(%u, %d, %s, %d, " PRI_PTR ")", index, size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBLPOINTEREXT(index, size, type, stride, pointer);
 }
 
 void OSMesaDriver::nfglVertexAttribP1ui(GLuint index, GLenum type, GLboolean32 normalized, GLuint value)
 {
-	D(bug("nfosmesa: glVertexAttribP1ui(%u, 0x%x, %d, %u)", index, type, normalized, value));
+	D(bug("nfosmesa: glVertexAttribP1ui(%u, %s, %d, %u)", index, gl_enum_name(type), normalized, value));
 	fn.glVertexAttribP1ui(index, type, normalized, value);
 }
 
@@ -22497,13 +22496,13 @@ void OSMesaDriver::nfglVertexAttribP1uiv(GLuint index, GLenum type, GLboolean32 
 void OSMesaDriver::nfglVertexAttribP1uiv(GLuint index, GLenum type, GLboolean32 normalized, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribP1uiv(%u, 0x%x, %d, " PRI_PTR ")", index, type, normalized, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexAttribP1uiv(%u, %s, %d, " PRI_PTR ")", index, gl_enum_name(type), normalized, AtariOffset(value)));
 FN_GLVERTEXATTRIBP1UIV(index, type, normalized, value);
 }
 
 void OSMesaDriver::nfglVertexAttribP2ui(GLuint index, GLenum type, GLboolean32 normalized, GLuint value)
 {
-	D(bug("nfosmesa: glVertexAttribP2ui(%u, 0x%x, %d, %u)", index, type, normalized, value));
+	D(bug("nfosmesa: glVertexAttribP2ui(%u, %s, %d, %u)", index, gl_enum_name(type), normalized, value));
 	fn.glVertexAttribP2ui(index, type, normalized, value);
 }
 
@@ -22513,13 +22512,13 @@ void OSMesaDriver::nfglVertexAttribP2uiv(GLuint index, GLenum type, GLboolean32 
 void OSMesaDriver::nfglVertexAttribP2uiv(GLuint index, GLenum type, GLboolean32 normalized, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribP2uiv(%u, 0x%x, %d, " PRI_PTR ")", index, type, normalized, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexAttribP2uiv(%u, %s, %d, " PRI_PTR ")", index, gl_enum_name(type), normalized, AtariOffset(value)));
 FN_GLVERTEXATTRIBP2UIV(index, type, normalized, value);
 }
 
 void OSMesaDriver::nfglVertexAttribP3ui(GLuint index, GLenum type, GLboolean32 normalized, GLuint value)
 {
-	D(bug("nfosmesa: glVertexAttribP3ui(%u, 0x%x, %d, %u)", index, type, normalized, value));
+	D(bug("nfosmesa: glVertexAttribP3ui(%u, %s, %d, %u)", index, gl_enum_name(type), normalized, value));
 	fn.glVertexAttribP3ui(index, type, normalized, value);
 }
 
@@ -22529,13 +22528,13 @@ void OSMesaDriver::nfglVertexAttribP3uiv(GLuint index, GLenum type, GLboolean32 
 void OSMesaDriver::nfglVertexAttribP3uiv(GLuint index, GLenum type, GLboolean32 normalized, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribP3uiv(%u, 0x%x, %d, " PRI_PTR ")", index, type, normalized, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexAttribP3uiv(%u, %s, %d, " PRI_PTR ")", index, gl_enum_name(type), normalized, AtariOffset(value)));
 FN_GLVERTEXATTRIBP3UIV(index, type, normalized, value);
 }
 
 void OSMesaDriver::nfglVertexAttribP4ui(GLuint index, GLenum type, GLboolean32 normalized, GLuint value)
 {
-	D(bug("nfosmesa: glVertexAttribP4ui(%u, 0x%x, %d, %u)", index, type, normalized, value));
+	D(bug("nfosmesa: glVertexAttribP4ui(%u, %s, %d, %u)", index, gl_enum_name(type), normalized, value));
 	fn.glVertexAttribP4ui(index, type, normalized, value);
 }
 
@@ -22545,13 +22544,13 @@ void OSMesaDriver::nfglVertexAttribP4uiv(GLuint index, GLenum type, GLboolean32 
 void OSMesaDriver::nfglVertexAttribP4uiv(GLuint index, GLenum type, GLboolean32 normalized, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribP4uiv(%u, 0x%x, %d, " PRI_PTR ")", index, type, normalized, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexAttribP4uiv(%u, %s, %d, " PRI_PTR ")", index, gl_enum_name(type), normalized, AtariOffset(value)));
 FN_GLVERTEXATTRIBP4UIV(index, type, normalized, value);
 }
 
 void OSMesaDriver::nfglVertexAttribParameteriAMD(GLuint index, GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glVertexAttribParameteriAMD(%u, 0x%x, %d)", index, pname, param));
+	D(bug("nfosmesa: glVertexAttribParameteriAMD(%u, %s, %d)", index, gl_enum_name(pname), param));
 	fn.glVertexAttribParameteriAMD(index, pname, param);
 }
 
@@ -22561,7 +22560,7 @@ void OSMesaDriver::nfglVertexAttribPointer(GLuint index, GLint size, GLenum type
 void OSMesaDriver::nfglVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribPointer(%u, %d, 0x%x, %d, %d, " PRI_PTR ")", index, size, type, normalized, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribPointer(%u, %d, %s, %d, %d, " PRI_PTR ")", index, size, gl_enum_name(type), normalized, stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBPOINTER(index, size, type, normalized, stride, pointer);
 }
 
@@ -22571,7 +22570,7 @@ void OSMesaDriver::nfglVertexAttribPointerARB(GLuint index, GLint size, GLenum t
 void OSMesaDriver::nfglVertexAttribPointerARB(GLuint index, GLint size, GLenum type, GLboolean32 normalized, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribPointerARB(%u, %d, 0x%x, %d, %d, " PRI_PTR ")", index, size, type, normalized, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribPointerARB(%u, %d, %s, %d, %d, " PRI_PTR ")", index, size, gl_enum_name(type), normalized, stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBPOINTERARB(index, size, type, normalized, stride, pointer);
 }
 
@@ -22581,7 +22580,7 @@ void OSMesaDriver::nfglVertexAttribPointerNV(GLuint index, GLint fsize, GLenum t
 void OSMesaDriver::nfglVertexAttribPointerNV(GLuint index, GLint fsize, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexAttribPointerNV(%u, %d, 0x%x, %d, " PRI_PTR ")", index, fsize, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexAttribPointerNV(%u, %d, %s, %d, " PRI_PTR ")", index, fsize, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXATTRIBPOINTERNV(index, fsize, type, stride, pointer);
 }
 
@@ -22769,25 +22768,25 @@ void OSMesaDriver::nfglVertexBlendARB(GLint count)
 
 void OSMesaDriver::nfglVertexBlendEnvfATI(GLenum pname, GLfloat param)
 {
-	D(bug("nfosmesa: glVertexBlendEnvfATI(0x%x, %f)", pname, param));
+	D(bug("nfosmesa: glVertexBlendEnvfATI(%s, %f)", gl_enum_name(pname), param));
 	fn.glVertexBlendEnvfATI(pname, param);
 }
 
 void OSMesaDriver::nfglVertexBlendEnviATI(GLenum pname, GLint param)
 {
-	D(bug("nfosmesa: glVertexBlendEnviATI(0x%x, %d)", pname, param));
+	D(bug("nfosmesa: glVertexBlendEnviATI(%s, %d)", gl_enum_name(pname), param));
 	fn.glVertexBlendEnviATI(pname, param);
 }
 
 void OSMesaDriver::nfglVertexFormatNV(GLint size, GLenum type, GLsizei stride)
 {
-	D(bug("nfosmesa: glVertexFormatNV(%d, 0x%x, %d)", size, type, stride));
+	D(bug("nfosmesa: glVertexFormatNV(%d, %s, %d)", size, gl_enum_name(type), stride));
 	fn.glVertexFormatNV(size, type, stride);
 }
 
 void OSMesaDriver::nfglVertexP2ui(GLenum type, GLuint value)
 {
-	D(bug("nfosmesa: glVertexP2ui(0x%x, %u)", type, value));
+	D(bug("nfosmesa: glVertexP2ui(%s, %u)", gl_enum_name(type), value));
 	fn.glVertexP2ui(type, value);
 }
 
@@ -22797,13 +22796,13 @@ void OSMesaDriver::nfglVertexP2uiv(GLenum type, memptr value)
 void OSMesaDriver::nfglVertexP2uiv(GLenum type, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexP2uiv(0x%x, " PRI_PTR ")", type, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexP2uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(value)));
 FN_GLVERTEXP2UIV(type, value);
 }
 
 void OSMesaDriver::nfglVertexP3ui(GLenum type, GLuint value)
 {
-	D(bug("nfosmesa: glVertexP3ui(0x%x, %u)", type, value));
+	D(bug("nfosmesa: glVertexP3ui(%s, %u)", gl_enum_name(type), value));
 	fn.glVertexP3ui(type, value);
 }
 
@@ -22813,13 +22812,13 @@ void OSMesaDriver::nfglVertexP3uiv(GLenum type, memptr value)
 void OSMesaDriver::nfglVertexP3uiv(GLenum type, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexP3uiv(0x%x, " PRI_PTR ")", type, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexP3uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(value)));
 FN_GLVERTEXP3UIV(type, value);
 }
 
 void OSMesaDriver::nfglVertexP4ui(GLenum type, GLuint value)
 {
-	D(bug("nfosmesa: glVertexP4ui(0x%x, %u)", type, value));
+	D(bug("nfosmesa: glVertexP4ui(%s, %u)", gl_enum_name(type), value));
 	fn.glVertexP4ui(type, value);
 }
 
@@ -22829,7 +22828,7 @@ void OSMesaDriver::nfglVertexP4uiv(GLenum type, memptr value)
 void OSMesaDriver::nfglVertexP4uiv(GLenum type, const GLuint *value)
 #endif
 {
-	D(bug("nfosmesa: glVertexP4uiv(0x%x, " PRI_PTR ")", type, AtariOffset(value)));
+	D(bug("nfosmesa: glVertexP4uiv(%s, " PRI_PTR ")", gl_enum_name(type), AtariOffset(value)));
 FN_GLVERTEXP4UIV(type, value);
 }
 
@@ -22845,7 +22844,7 @@ void OSMesaDriver::nfglVertexPointer(GLint size, GLenum type, GLsizei stride, me
 void OSMesaDriver::nfglVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexPointer(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXPOINTER(size, type, stride, pointer);
 }
 
@@ -22855,7 +22854,7 @@ void OSMesaDriver::nfglVertexPointerEXT(GLint size, GLenum type, GLsizei stride,
 void OSMesaDriver::nfglVertexPointerEXT(GLint size, GLenum type, GLsizei stride, GLsizei count, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexPointerEXT(%d, 0x%x, %d, %d, " PRI_PTR ")", size, type, stride, count, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexPointerEXT(%d, %s, %d, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, count, AtariOffset(pointer)));
 FN_GLVERTEXPOINTEREXT(size, type, stride, count, pointer);
 }
 
@@ -22865,7 +22864,7 @@ void OSMesaDriver::nfglVertexPointerListIBM(GLint size, GLenum type, GLint strid
 void OSMesaDriver::nfglVertexPointerListIBM(GLint size, GLenum type, GLint stride, const void * *pointer, GLint ptrstride)
 #endif
 {
-	D(bug("nfosmesa: glVertexPointerListIBM(%d, 0x%x, %d, " PRI_PTR ", %d)", size, type, stride, AtariOffset(pointer), ptrstride));
+	D(bug("nfosmesa: glVertexPointerListIBM(%d, %s, %d, " PRI_PTR ", %d)", size, gl_enum_name(type), stride, AtariOffset(pointer), ptrstride));
 FN_GLVERTEXPOINTERLISTIBM(size, type, stride, pointer, ptrstride);
 }
 
@@ -22875,13 +22874,13 @@ void OSMesaDriver::nfglVertexPointervINTEL(GLint size, GLenum type, memptr point
 void OSMesaDriver::nfglVertexPointervINTEL(GLint size, GLenum type, const void * *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexPointervINTEL(%d, 0x%x, " PRI_PTR ")", size, type, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexPointervINTEL(%d, %s, " PRI_PTR ")", size, gl_enum_name(type), AtariOffset(pointer)));
 FN_GLVERTEXPOINTERVINTEL(size, type, pointer);
 }
 
 void OSMesaDriver::nfglVertexStream1dATI(GLenum stream, GLdouble x)
 {
-	D(bug("nfosmesa: glVertexStream1dATI(0x%x, %f)", stream, x));
+	D(bug("nfosmesa: glVertexStream1dATI(%s, %f)", gl_enum_name(stream), x));
 	fn.glVertexStream1dATI(stream, x);
 }
 
@@ -22891,13 +22890,13 @@ void OSMesaDriver::nfglVertexStream1dvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream1dvATI(GLenum stream, const GLdouble *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream1dvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream1dvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM1DVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream1fATI(GLenum stream, GLfloat x)
 {
-	D(bug("nfosmesa: glVertexStream1fATI(0x%x, %f)", stream, x));
+	D(bug("nfosmesa: glVertexStream1fATI(%s, %f)", gl_enum_name(stream), x));
 	fn.glVertexStream1fATI(stream, x);
 }
 
@@ -22907,13 +22906,13 @@ void OSMesaDriver::nfglVertexStream1fvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream1fvATI(GLenum stream, const GLfloat *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream1fvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream1fvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM1FVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream1iATI(GLenum stream, GLint x)
 {
-	D(bug("nfosmesa: glVertexStream1iATI(0x%x, %d)", stream, x));
+	D(bug("nfosmesa: glVertexStream1iATI(%s, %d)", gl_enum_name(stream), x));
 	fn.glVertexStream1iATI(stream, x);
 }
 
@@ -22923,13 +22922,13 @@ void OSMesaDriver::nfglVertexStream1ivATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream1ivATI(GLenum stream, const GLint *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream1ivATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream1ivATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM1IVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream1sATI(GLenum stream, GLshort32 x)
 {
-	D(bug("nfosmesa: glVertexStream1sATI(0x%x, %d)", stream, x));
+	D(bug("nfosmesa: glVertexStream1sATI(%s, %d)", gl_enum_name(stream), x));
 	fn.glVertexStream1sATI(stream, x);
 }
 
@@ -22939,13 +22938,13 @@ void OSMesaDriver::nfglVertexStream1svATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream1svATI(GLenum stream, const GLshort *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream1svATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream1svATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM1SVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream2dATI(GLenum stream, GLdouble x, GLdouble y)
 {
-	D(bug("nfosmesa: glVertexStream2dATI(0x%x, %f, %f)", stream, x, y));
+	D(bug("nfosmesa: glVertexStream2dATI(%s, %f, %f)", gl_enum_name(stream), x, y));
 	fn.glVertexStream2dATI(stream, x, y);
 }
 
@@ -22955,13 +22954,13 @@ void OSMesaDriver::nfglVertexStream2dvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream2dvATI(GLenum stream, const GLdouble *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream2dvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream2dvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM2DVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream2fATI(GLenum stream, GLfloat x, GLfloat y)
 {
-	D(bug("nfosmesa: glVertexStream2fATI(0x%x, %f, %f)", stream, x, y));
+	D(bug("nfosmesa: glVertexStream2fATI(%s, %f, %f)", gl_enum_name(stream), x, y));
 	fn.glVertexStream2fATI(stream, x, y);
 }
 
@@ -22971,13 +22970,13 @@ void OSMesaDriver::nfglVertexStream2fvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream2fvATI(GLenum stream, const GLfloat *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream2fvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream2fvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM2FVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream2iATI(GLenum stream, GLint x, GLint y)
 {
-	D(bug("nfosmesa: glVertexStream2iATI(0x%x, %d, %d)", stream, x, y));
+	D(bug("nfosmesa: glVertexStream2iATI(%s, %d, %d)", gl_enum_name(stream), x, y));
 	fn.glVertexStream2iATI(stream, x, y);
 }
 
@@ -22987,13 +22986,13 @@ void OSMesaDriver::nfglVertexStream2ivATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream2ivATI(GLenum stream, const GLint *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream2ivATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream2ivATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM2IVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream2sATI(GLenum stream, GLshort32 x, GLshort32 y)
 {
-	D(bug("nfosmesa: glVertexStream2sATI(0x%x, %d, %d)", stream, x, y));
+	D(bug("nfosmesa: glVertexStream2sATI(%s, %d, %d)", gl_enum_name(stream), x, y));
 	fn.glVertexStream2sATI(stream, x, y);
 }
 
@@ -23003,13 +23002,13 @@ void OSMesaDriver::nfglVertexStream2svATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream2svATI(GLenum stream, const GLshort *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream2svATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream2svATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM2SVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream3dATI(GLenum stream, GLdouble x, GLdouble y, GLdouble z)
 {
-	D(bug("nfosmesa: glVertexStream3dATI(0x%x, %f, %f, %f)", stream, x, y, z));
+	D(bug("nfosmesa: glVertexStream3dATI(%s, %f, %f, %f)", gl_enum_name(stream), x, y, z));
 	fn.glVertexStream3dATI(stream, x, y, z);
 }
 
@@ -23019,13 +23018,13 @@ void OSMesaDriver::nfglVertexStream3dvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream3dvATI(GLenum stream, const GLdouble *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream3dvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream3dvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM3DVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream3fATI(GLenum stream, GLfloat x, GLfloat y, GLfloat z)
 {
-	D(bug("nfosmesa: glVertexStream3fATI(0x%x, %f, %f, %f)", stream, x, y, z));
+	D(bug("nfosmesa: glVertexStream3fATI(%s, %f, %f, %f)", gl_enum_name(stream), x, y, z));
 	fn.glVertexStream3fATI(stream, x, y, z);
 }
 
@@ -23035,13 +23034,13 @@ void OSMesaDriver::nfglVertexStream3fvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream3fvATI(GLenum stream, const GLfloat *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream3fvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream3fvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM3FVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream3iATI(GLenum stream, GLint x, GLint y, GLint z)
 {
-	D(bug("nfosmesa: glVertexStream3iATI(0x%x, %d, %d, %d)", stream, x, y, z));
+	D(bug("nfosmesa: glVertexStream3iATI(%s, %d, %d, %d)", gl_enum_name(stream), x, y, z));
 	fn.glVertexStream3iATI(stream, x, y, z);
 }
 
@@ -23051,13 +23050,13 @@ void OSMesaDriver::nfglVertexStream3ivATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream3ivATI(GLenum stream, const GLint *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream3ivATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream3ivATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM3IVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream3sATI(GLenum stream, GLshort32 x, GLshort32 y, GLshort32 z)
 {
-	D(bug("nfosmesa: glVertexStream3sATI(0x%x, %d, %d, %d)", stream, x, y, z));
+	D(bug("nfosmesa: glVertexStream3sATI(%s, %d, %d, %d)", gl_enum_name(stream), x, y, z));
 	fn.glVertexStream3sATI(stream, x, y, z);
 }
 
@@ -23067,13 +23066,13 @@ void OSMesaDriver::nfglVertexStream3svATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream3svATI(GLenum stream, const GLshort *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream3svATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream3svATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM3SVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream4dATI(GLenum stream, GLdouble x, GLdouble y, GLdouble z, GLdouble w)
 {
-	D(bug("nfosmesa: glVertexStream4dATI(0x%x, %f, %f, %f, %f)", stream, x, y, z, w));
+	D(bug("nfosmesa: glVertexStream4dATI(%s, %f, %f, %f, %f)", gl_enum_name(stream), x, y, z, w));
 	fn.glVertexStream4dATI(stream, x, y, z, w);
 }
 
@@ -23083,13 +23082,13 @@ void OSMesaDriver::nfglVertexStream4dvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream4dvATI(GLenum stream, const GLdouble *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream4dvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream4dvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM4DVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream4fATI(GLenum stream, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
-	D(bug("nfosmesa: glVertexStream4fATI(0x%x, %f, %f, %f, %f)", stream, x, y, z, w));
+	D(bug("nfosmesa: glVertexStream4fATI(%s, %f, %f, %f, %f)", gl_enum_name(stream), x, y, z, w));
 	fn.glVertexStream4fATI(stream, x, y, z, w);
 }
 
@@ -23099,13 +23098,13 @@ void OSMesaDriver::nfglVertexStream4fvATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream4fvATI(GLenum stream, const GLfloat *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream4fvATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream4fvATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM4FVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream4iATI(GLenum stream, GLint x, GLint y, GLint z, GLint w)
 {
-	D(bug("nfosmesa: glVertexStream4iATI(0x%x, %d, %d, %d, %d)", stream, x, y, z, w));
+	D(bug("nfosmesa: glVertexStream4iATI(%s, %d, %d, %d, %d)", gl_enum_name(stream), x, y, z, w));
 	fn.glVertexStream4iATI(stream, x, y, z, w);
 }
 
@@ -23115,13 +23114,13 @@ void OSMesaDriver::nfglVertexStream4ivATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream4ivATI(GLenum stream, const GLint *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream4ivATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream4ivATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM4IVATI(stream, coords);
 }
 
 void OSMesaDriver::nfglVertexStream4sATI(GLenum stream, GLshort32 x, GLshort32 y, GLshort32 z, GLshort32 w)
 {
-	D(bug("nfosmesa: glVertexStream4sATI(0x%x, %d, %d, %d, %d)", stream, x, y, z, w));
+	D(bug("nfosmesa: glVertexStream4sATI(%s, %d, %d, %d, %d)", gl_enum_name(stream), x, y, z, w));
 	fn.glVertexStream4sATI(stream, x, y, z, w);
 }
 
@@ -23131,7 +23130,7 @@ void OSMesaDriver::nfglVertexStream4svATI(GLenum stream, memptr coords)
 void OSMesaDriver::nfglVertexStream4svATI(GLenum stream, const GLshort *coords)
 #endif
 {
-	D(bug("nfosmesa: glVertexStream4svATI(0x%x, " PRI_PTR ")", stream, AtariOffset(coords)));
+	D(bug("nfosmesa: glVertexStream4svATI(%s, " PRI_PTR ")", gl_enum_name(stream), AtariOffset(coords)));
 FN_GLVERTEXSTREAM4SVATI(stream, coords);
 }
 
@@ -23141,7 +23140,7 @@ void OSMesaDriver::nfglVertexWeightPointerEXT(GLint size, GLenum type, GLsizei s
 void OSMesaDriver::nfglVertexWeightPointerEXT(GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glVertexWeightPointerEXT(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glVertexWeightPointerEXT(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLVERTEXWEIGHTPOINTEREXT(size, type, stride, pointer);
 }
 
@@ -23193,7 +23192,7 @@ void OSMesaDriver::nfglVideoCaptureStreamParameterdvNV(GLuint video_capture_slot
 void OSMesaDriver::nfglVideoCaptureStreamParameterdvNV(GLuint video_capture_slot, GLuint stream, GLenum pname, const GLdouble *params)
 #endif
 {
-	D(bug("nfosmesa: glVideoCaptureStreamParameterdvNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glVideoCaptureStreamParameterdvNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLVIDEOCAPTURESTREAMPARAMETERDVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -23203,7 +23202,7 @@ void OSMesaDriver::nfglVideoCaptureStreamParameterfvNV(GLuint video_capture_slot
 void OSMesaDriver::nfglVideoCaptureStreamParameterfvNV(GLuint video_capture_slot, GLuint stream, GLenum pname, const GLfloat *params)
 #endif
 {
-	D(bug("nfosmesa: glVideoCaptureStreamParameterfvNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glVideoCaptureStreamParameterfvNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLVIDEOCAPTURESTREAMPARAMETERFVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -23213,7 +23212,7 @@ void OSMesaDriver::nfglVideoCaptureStreamParameterivNV(GLuint video_capture_slot
 void OSMesaDriver::nfglVideoCaptureStreamParameterivNV(GLuint video_capture_slot, GLuint stream, GLenum pname, const GLint *params)
 #endif
 {
-	D(bug("nfosmesa: glVideoCaptureStreamParameterivNV(%u, %u, 0x%x, " PRI_PTR ")", video_capture_slot, stream, pname, AtariOffset(params)));
+	D(bug("nfosmesa: glVideoCaptureStreamParameterivNV(%u, %u, %s, " PRI_PTR ")", video_capture_slot, stream, gl_enum_name(pname), AtariOffset(params)));
 FN_GLVIDEOCAPTURESTREAMPARAMETERIVNV(video_capture_slot, stream, pname, params);
 }
 
@@ -23271,7 +23270,7 @@ void OSMesaDriver::nfglWeightPointerARB(GLint size, GLenum type, GLsizei stride,
 void OSMesaDriver::nfglWeightPointerARB(GLint size, GLenum type, GLsizei stride, const void *pointer)
 #endif
 {
-	D(bug("nfosmesa: glWeightPointerARB(%d, 0x%x, %d, " PRI_PTR ")", size, type, stride, AtariOffset(pointer)));
+	D(bug("nfosmesa: glWeightPointerARB(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
 FN_GLWEIGHTPOINTERARB(size, type, stride, pointer);
 }
 
@@ -23805,7 +23804,7 @@ FN_GLWINDOWPOS4SVMESA(v);
 
 void OSMesaDriver::nfglWriteMaskEXT(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW)
 {
-	D(bug("nfosmesa: glWriteMaskEXT(%u, %u, 0x%x, 0x%x, 0x%x, 0x%x)", res, in, outX, outY, outZ, outW));
+	D(bug("nfosmesa: glWriteMaskEXT(%u, %u, %s, %s, %s, %s)", res, in, gl_enum_name(outX), gl_enum_name(outY), gl_enum_name(outZ), gl_enum_name(outW)));
 	fn.glWriteMaskEXT(res, in, outX, outY, outZ, outW);
 }
 

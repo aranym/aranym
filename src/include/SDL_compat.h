@@ -77,6 +77,8 @@ extern DECLSPEC int SDLCALL SDL_putenv(const char *variable);
 	 (sym) == SDLK_LGUI || \
 	 (sym) == SDLK_MODE)
 
+#define SDL_GetVideoDriverName() SDL_GetCurrentVideoDriver()
+
 #else
 
 #define SDL_CreateNamedThread(fn, name, data) SDL_CreateThread(fn, data)
@@ -117,10 +119,114 @@ typedef SDL_audiostatus SDL_AudioStatus;
 
 #define SDLK_IS_MODIFIER(sym) ((sym) >= SDLK_NUMLOCK && (sym) <= SDLK_COMPOSE)
 
+static inline const char *SDL_GetVideoDriverName(void)
+{
+	static char namebuf[80];
+	return SDL_VideoDriverName(namebuf, (int)sizeof(namebuf));
+}
+
+typedef void *SDL_GLContext;
+
+#if defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI)
+
+extern SDL_GLContext SDL_GL_GetCurrentContext(void);
+
+#endif
+
+#if defined(SDL_VIDEO_DRIVER_QUARTZ)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+/* returns a NSOpenGLContext and must be implemented in Objc */
+extern SDL_GLContext SDL_GL_GetCurrentContext(void);
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
+#if defined(SDL_VIDEO_DRIVER_X11)
+
+extern SDL_GLContext SDL_GL_GetCurrentContext(void);
+
+#endif
+
 #endif
 
 #if !defined(SDL_VIDEO_DRIVER_WINDOWS) && (defined(SDL_VIDEO_DRIVER_WINRT) || defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI))
 #  define SDL_VIDEO_DRIVER_WINDOWS 1
 #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern void SDL_GL_SetCurrentContext(SDL_GLContext ctx);
+#ifdef __cplusplus
+}
+#endif
+		
+/*
+ * possible driver names:
+ *
+ * SDL1:
+ * riscos
+ * svgalib
+ * bwindow
+ * qtopia
+ * vgl
+ * wscons
+ * x11
+ * xbios
+ * directfb
+ * aalib
+ * caca
+ * dcvideo
+ * dga
+ * Quartz
+ * DSp (MacOS dspvideo)
+ * toolbox (MacOS romvideo)
+ * windib
+ * directx
+ * epoc
+ * fbcon
+ * gapi (WinCE GAPI)
+ * gem
+ * ggi
+ * ps2gs
+ * ipod
+ * nds
+ * dummy
+ * nanox
+ * os2fslib
+ * picogui
+ * photon
+ * ps3
+ *
+ * SDL2:
+ * PSP
+ * RPI (RaspBery Pi, GLES)
+ * uikit
+ * wayland
+ * windows
+ * winrt (GLES)
+ * x11
+ * directfb
+ * cocoa
+ * Android (GLES)
+ * haiku
+ * mir
+ * dummy
+ * wiz
+ */
+
+static inline int SDL_IsVideoDriver(const char *name)
+{
+	const char *driver = SDL_GetVideoDriverName();
+	if (!driver)
+		return 0;
+	return strcmp(driver, name) == 0;
+}
+
 
 #endif /* _SDL_COMPAT_H */

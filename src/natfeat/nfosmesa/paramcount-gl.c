@@ -2927,7 +2927,7 @@ static unsigned char const paramcount[NFOSMESA_LAST] = {
 static struct {
 	const char *name;
 	unsigned int funcno;
-} const functionnames[] = {
+} const gl_functionnames[] = {
 	{ "OSMesaColorClamp", NFOSMESA_OSMESACOLORCLAMP },
 	{ "OSMesaCreateContext", NFOSMESA_OSMESACREATECONTEXT },
 	{ "OSMesaCreateContextExt", NFOSMESA_OSMESACREATECONTEXTEXT },

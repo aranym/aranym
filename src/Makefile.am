@@ -83,6 +83,7 @@ aranym_SOURCES = \
 	disasm-glue.cpp \
 	disasm-builtin.cpp \
 	emul_op.cpp \
+	glenums.c \
 	natfeats.cpp \
 	fakeio.cpp \
 	hardware.cpp \
@@ -425,7 +426,9 @@ aranym_SOURCES += natfeat/usbhost.cpp natfeat/usbhost.h
 endif
 
 if NFOSMESA_SUPPORT
-aranym_SOURCES += natfeat/nfosmesa.cpp natfeat/nfosmesa.h
+aranym_SOURCES += \
+	natfeat/nfosmesa.cpp natfeat/nfosmesa.h \
+	natfeat/osmesa_context.cpp natfeat/osmesa_context.h
 endif
 
 if NFJPEG_SUPPORT
@@ -522,6 +525,7 @@ EXTRA_DIST += \
 	natfeat/atari_example_gfa.lst \
 	natfeat/nfosmesa/call-gl.c \
 	natfeat/nfosmesa/dispatch-gl.c \
+	natfeat/nfosmesa/paramcount-gl.c \
 	$(BEOS_RESOURCES) \
 	Unix/solaris/which_sparc \
 	Unix/cygwin/aranym.ico \

@@ -165,12 +165,10 @@ typedef struct {
 	nfmemptr atari_pointer;
 } fbo_buffer;
 
+class OffscreenContext;
+
 typedef struct {
-	OSMesaContext ctx;
-	void *src_buffer;	/* Host buffer, if channel reduction needed */
-	memptr dst_buffer;	/* Atari buffer */
-	GLenum type;
-	GLsizei width, height;
+	OffscreenContext *ctx;
 	GLenum render_mode;
 	GLenum error_code;
 	void *feedback_buffer_host;
@@ -179,6 +177,7 @@ typedef struct {
 	GLuint *select_buffer_host;
 	nfmemptr select_buffer_atari;
 	GLuint select_buffer_size;
+	GLboolean error_check_enabled;
 	struct {
 		fbo_buffer array;
 		fbo_buffer atomic_counter;
@@ -195,12 +194,9 @@ typedef struct {
 		fbo_buffer transform_feedback;
 		fbo_buffer uniform;
 	} buffer_bindings;
-	
+
 	gl_buffer_t *buffers;
 	
-	/* conversion needed from srcformat to dstformat ? */
-	SDL_bool conversion;
-	GLenum srcformat, dstformat;
 	GLuint share_ctx;
 
 	/* Vertex arrays */
@@ -220,6 +216,21 @@ typedef struct {
 	vertexarray_t	replacement_code;
 } context_t;
 
+typedef void (APIENTRY *NFGL_PROC)(void);
+typedef NFGL_PROC (APIENTRY *NFGL_GETPROCADDRESS)(const char *funcname);
+
+
+/*--- Types ---*/
+
+typedef struct {
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) type (APIENTRY *gl ## name) proto ;
+#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret)
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) type (APIENTRY *OSMesa ## name) proto ;
+#include "../../atari/nfosmesa/glfuncs.h"
+} osmesa_funcs;
+
+#define GL_ISAVAILABLE(f) (OSMesaDriver::fn.f)
+
 /*--- Class ---*/
 
 class OSMesaDriver : public NF_Base
@@ -232,19 +243,24 @@ protected:
 	void *libosmesa_handle, *libgl_handle;
 	static OSMesaDriver *thisdriver;
 	
-	int OpenLibrary(void);
-	int CloseLibrary(void);
-	void InitPointersGL(void *handle);
-	void InitPointersOSMesa(void *handle);
+	bool lib_opened;
+	bool open_succeeded;
+	/* if true, we are using the software Mesa library;
+	   if false, we are using OpenGL via Render buffers */
+	bool using_mesa;
+	static NFGL_GETPROCADDRESS get_procaddress;
+	OffscreenContext *TryCreateContext(void);
+	SDL_GLContext SDL_glctx;
+	
+	bool OpenLibrary(void);
+	void CloseLibrary(void);
+	void CloseMesaLibrary(void);
+	void CloseGLLibrary(void);
+	static void InitPointersOSMesa(void *handle);
 	bool SelectContext(Uint32 ctx);
-	void ConvertContext(Uint32 ctx);	/* 8 bits per channel */
-	void ConvertContext16(Uint32 ctx);	/* 16 bits per channel */
-	void ConvertContext32(Uint32 ctx);	/* 32 bits per channel */
+	void ConvertContext(Uint32 ctx);
 
-	static void *APIENTRY glNop(void);
-#define GL_ISNOP(f) ((void *(APIENTRY*)(void))(f) == glNop)
-
-	void glSetError(GLenum e) { contexts[cur_context].error_code = e; }
+	void glSetError(GLenum e);
 
 	/* Some special functions, which need a bit more work */
 	Uint32 LenglGetString(Uint32 ctx, GLenum name);
@@ -260,9 +276,12 @@ protected:
 #else
 	void PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, GLubyte *buffer);
 #endif
+	static GLsizei nfglPixelmapSize(GLenum pname);
+	static int nfglGetNumParams(GLenum pname);
+	static GLint __glGetMap_Evalk(GLenum target);
 
 	/* utility functions */
-	inline GLfloat Atari2HostFloat(Uint32 value)
+	static inline GLfloat Atari2HostFloat(Uint32 value)
 	{
 		union {
 			GLfloat f;
@@ -273,7 +292,7 @@ protected:
 		return u.f;
 	}
 
-	inline Uint32 Host2AtariFloat(GLfloat value)
+	static inline Uint32 Host2AtariFloat(GLfloat value)
 	{
 		union {
 			GLfloat f;
@@ -283,7 +302,7 @@ protected:
 		return u.i;
 	}
 
-	inline GLdouble Atari2HostDouble(Uint32 high, Uint32 low)
+	static inline GLdouble Atari2HostDouble(Uint32 high, Uint32 low)
 	{
 		union {
 			GLdouble d;
@@ -303,7 +322,7 @@ protected:
 	}
 
 #if NFOSMESA_POINTER_AS_MEMARG
-	inline void Host2AtariFloatArray(GLsizei size, const GLfloat *src, memptr dest)
+	static inline void Host2AtariFloatArray(GLsizei size, const GLfloat *src, memptr dest)
 	{
 		if (!dest) return;
 		for (GLsizei i = 0; i < size; i++) {
@@ -312,7 +331,7 @@ protected:
 		}
 	}
 
-	inline GLfloat *Atari2HostFloatArray(GLsizei size, memptr src, GLfloat *dest)
+	static inline GLfloat *Atari2HostFloatArray(GLsizei size, memptr src, GLfloat *dest)
 	{
 		if (!src) return NULL;
 		for (GLsizei i = 0; i < size; i++) {
@@ -322,7 +341,7 @@ protected:
 		return dest;
 	}
 
-	inline void Host2AtariDoubleArray(GLsizei size, const GLdouble *src, memptr dst)
+	static inline void Host2AtariDoubleArray(GLsizei size, const GLdouble *src, memptr dst)
 	{
 		union {
 			GLdouble d;
@@ -337,7 +356,7 @@ protected:
 		}
 	}
 
-	inline GLdouble *Atari2HostDoubleArray(GLsizei size, memptr src, GLdouble *dst)
+	static inline GLdouble *Atari2HostDoubleArray(GLsizei size, memptr src, GLdouble *dst)
 	{
 		GLsizei i;
 		union {
@@ -354,7 +373,7 @@ protected:
 		return dst;
 	}
 
-	inline GLushort *Atari2HostShortArray(GLsizei size, memptr src, GLushort *dest)
+	static inline GLushort *Atari2HostShortArray(GLsizei size, memptr src, GLushort *dest)
 	{
 		GLsizei i;
 
@@ -366,12 +385,12 @@ protected:
 		return dest;
 	}
 
-	inline GLshort *Atari2HostShortArray(GLsizei size, memptr src, GLshort *dest)
+	static inline GLshort *Atari2HostShortArray(GLsizei size, memptr src, GLshort *dest)
 	{
 		return (GLshort *)Atari2HostShortArray(size, src, (GLushort *)dest);
 	}
 	
-	inline void Host2AtariShortArray(GLsizei size, const Uint16 *src, memptr dest)
+	static inline void Host2AtariShortArray(GLsizei size, const Uint16 *src, memptr dest)
 	{
 		GLsizei i;
 
@@ -382,12 +401,12 @@ protected:
 		}
 	}
 
-	inline void Host2AtariShortArray(GLsizei size, const Sint16 *src, memptr dest)
+	static inline void Host2AtariShortArray(GLsizei size, const Sint16 *src, memptr dest)
 	{
 		Host2AtariShortArray(size, (const Uint16 *)src, dest);
 	}
 	
-	inline GLuint *Atari2HostIntArray(GLsizei size, memptr src, GLuint *dest)
+	static inline GLuint *Atari2HostIntArray(GLsizei size, memptr src, GLuint *dest)
 	{
 		GLsizei i;
 		
@@ -399,13 +418,13 @@ protected:
 		return dest;
 	}
 
-	inline GLint *Atari2HostIntArray(GLsizei size, memptr src, GLint *dest)
+	static inline GLint *Atari2HostIntArray(GLsizei size, memptr src, GLint *dest)
 	{
 		return (GLint *)Atari2HostIntArray(size, src, (GLuint *)dest);
 	}
 	
 	/* has to be handled separate because hosts GLintptr is different than Ataris */ \
-	inline GLintptr *Atari2HostIntptrArray(GLsizei size, memptr src, GLintptr *dest)
+	static inline GLintptr *Atari2HostIntptrArray(GLsizei size, memptr src, GLintptr *dest)
 	{
 		GLsizei i;
 		
@@ -417,7 +436,7 @@ protected:
 		return dest;
 	}
 
-	inline void Host2AtariIntArray(GLsizei size, const GLuint *src, memptr dest)
+	static inline void Host2AtariIntArray(GLsizei size, const GLuint *src, memptr dest)
 	{
 		GLsizei i;
 		
@@ -428,12 +447,32 @@ protected:
 		}
 	}
 
-	inline void Host2AtariIntArray(GLsizei size, const GLint *src, memptr dest)
+	static inline void Host2AtariIntArray(GLsizei size, const GLint *src, memptr dest)
 	{
 		Host2AtariIntArray(size, (const GLuint *)src, dest);
 	}
 	
-	inline GLuint64 *Atari2HostInt64Array(GLsizei size, memptr src, GLuint64 *dest)
+#ifdef __APPLE__
+	static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, memptr dest)
+	{
+		int i;
+		
+		if (!dest) return;
+		for (i = 0; i < size; i++)
+		{
+			Uint32 h = (Uint32)(uintptr_t)src[i];
+			WriteInt32(dest, h);
+			dest += 4;
+		}
+	}
+#else
+	static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, memptr dest)
+	{
+		Host2AtariIntArray(size, src, dest);
+	}
+#endif
+
+	static inline GLuint64 *Atari2HostInt64Array(GLsizei size, memptr src, GLuint64 *dest)
 	{
 		GLsizei i;
 		
@@ -445,12 +484,12 @@ protected:
 		return dest;
 	}
 
-	inline GLint64 *Atari2HostInt64Array(GLsizei size, memptr src, GLint64 *dest)
+	static inline GLint64 *Atari2HostInt64Array(GLsizei size, memptr src, GLint64 *dest)
 	{
 		return (GLint64 *)Atari2HostInt64Array(size, src, (GLuint64 *)dest);
 	}
 	
-	inline void Host2AtariInt64Array(GLsizei size, const Uint64 *src, memptr dest)
+	static inline void Host2AtariInt64Array(GLsizei size, const Uint64 *src, memptr dest)
 	{
 		GLsizei i;
 		
@@ -461,12 +500,12 @@ protected:
 		}
 	}
 
-	inline void Host2AtariInt64Array(GLsizei size, const Sint64 *src, memptr dest)
+	static inline void Host2AtariInt64Array(GLsizei size, const Sint64 *src, memptr dest)
 	{
 		Host2AtariInt64Array(size, (const Uint64 *)src, dest);
 	}
 	
-	inline void **Atari2HostPtrArray(GLsizei size, memptr src, void **dest)
+	static inline void **Atari2HostPtrArray(GLsizei size, memptr src, void **dest)
 	{
 		if (!src) return NULL;
 		for (GLsizei i = 0; i < size; i++)
@@ -478,7 +517,7 @@ protected:
 		return dest;
 	}
 	
-	inline memptr *Atari2HostMemPtrArray(GLsizei size, memptr src, memptr *dest)
+	static inline memptr *Atari2HostMemPtrArray(GLsizei size, memptr src, memptr *dest)
 	{
 		if (!src) return NULL;
 		for (GLsizei i = 0; i < size; i++)
@@ -490,7 +529,7 @@ protected:
 		return dest;
 	}
 	
-	inline memptr *Atari2HostPtrArray(GLsizei size, memptr src, memptr *dest)
+	static inline memptr *Atari2HostPtrArray(GLsizei size, memptr src, memptr *dest)
 	{
 		if (!src) return NULL;
 		for (GLsizei i = 0; i < size; i++)
@@ -502,7 +541,7 @@ protected:
 		return dest;
 	}
 	
-	inline GLubyte *Atari2HostByteArray(GLsizei size, memptr src, GLubyte *dest)
+	static inline GLubyte *Atari2HostByteArray(GLsizei size, memptr src, GLubyte *dest)
 	{
 		GLsizei i;
 		
@@ -514,17 +553,17 @@ protected:
 		return dest;
 	}
 
-	inline GLbyte *Atari2HostByteArray(GLsizei size, memptr src, GLbyte *dest)
+	static inline GLbyte *Atari2HostByteArray(GLsizei size, memptr src, GLbyte *dest)
 	{
 		return (GLbyte *)Atari2HostByteArray(size, src, (GLubyte *)dest);
 	}
 
-	inline char *Atari2HostByteArray(GLsizei size, memptr src, char *dest)
+	static inline char *Atari2HostByteArray(GLsizei size, memptr src, char *dest)
 	{
 		return (char *)Atari2HostByteArray(size, src, (GLubyte *)dest);
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, memptr dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, memptr dest)
 	{
 		GLsizei i;
 
@@ -535,17 +574,17 @@ protected:
 		}
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLbyte *src, memptr dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLbyte *src, memptr dest)
 	{
 		Host2AtariByteArray(size, (const GLubyte *)src, dest);
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLchar *src, memptr dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLchar *src, memptr dest)
 	{
 		Host2AtariByteArray(size, (const GLubyte *)src, dest);
 	}
 
-	inline size_t safe_strlen(memptr src)
+	static inline size_t safe_strlen(memptr src)
 	{
 		size_t i;
 		char c;
@@ -564,7 +603,7 @@ protected:
 
 #else
 
-	inline void Host2AtariFloatArray(GLsizei size, const GLfloat *src, GLfloat *dest)
+	static inline void Host2AtariFloatArray(GLsizei size, const GLfloat *src, GLfloat *dest)
 	{
 		Uint32 *p = (Uint32 *)dest;
 		if (!dest) return;
@@ -573,7 +612,7 @@ protected:
 		}
 	}
 
-	inline GLfloat *Atari2HostFloatArray(GLsizei size, const GLfloat *src, GLfloat *dest)
+	static inline GLfloat *Atari2HostFloatArray(GLsizei size, const GLfloat *src, GLfloat *dest)
 	{
 		const Uint32 *p = (const Uint32 *)src;
 		if (!src) return NULL;
@@ -583,12 +622,12 @@ protected:
 		return dest;
 	}
 
-	inline GLfloat *Atari2HostFloatArray(GLsizei size, const void *src, GLfloat *dest)
+	static inline GLfloat *Atari2HostFloatArray(GLsizei size, const void *src, GLfloat *dest)
 	{
 		return Atari2HostFloatArray(size, (const GLfloat *)src, dest);
 	}
 	
-	inline void Host2AtariDoubleArray(GLsizei size, const GLdouble *src, GLdouble *dst)
+	static inline void Host2AtariDoubleArray(GLsizei size, const GLdouble *src, GLdouble *dst)
 	{
 		union {
 			GLdouble d;
@@ -604,7 +643,7 @@ protected:
 		}
 	}
 
-	inline GLdouble *Atari2HostDoubleArray(GLsizei size, const GLdouble *src, GLdouble *dest)
+	static inline GLdouble *Atari2HostDoubleArray(GLsizei size, const GLdouble *src, GLdouble *dest)
 	{
 		GLsizei i;
 		
@@ -616,12 +655,12 @@ protected:
 		return dest;
 	}
 
-	inline GLdouble *Atari2HostDoubleArray(GLsizei size, const void *src, GLdouble *dest)
+	static inline GLdouble *Atari2HostDoubleArray(GLsizei size, const void *src, GLdouble *dest)
 	{
 		return Atari2HostDoubleArray(size, (const GLdouble *)src, dest);
 	}
 	
-	inline GLushort *Atari2HostShortArray(GLsizei size, const Uint16 *src, GLushort *dest)
+	static inline GLushort *Atari2HostShortArray(GLsizei size, const Uint16 *src, GLushort *dest)
 	{
 		GLsizei i;
 		
@@ -632,17 +671,17 @@ protected:
 		return dest;
 	}
 
-	inline GLshort *Atari2HostShortArray(GLsizei size, const Sint16 *src, GLshort *dest)
+	static inline GLshort *Atari2HostShortArray(GLsizei size, const Sint16 *src, GLshort *dest)
 	{
 		return (GLshort *)Atari2HostShortArray(size, (const Uint16 *)src, (GLushort *)dest);
 	}
 	
-	inline GLushort *Atari2HostShortArray(GLsizei size, const void *src, GLushort *dest)
+	static inline GLushort *Atari2HostShortArray(GLsizei size, const void *src, GLushort *dest)
 	{
 		return Atari2HostShortArray(size, (const Uint16 *)src, dest);
 	}
 	
-	inline void Host2AtariShortArray(GLsizei size, const Uint16 *src, GLushort *dest)
+	static inline void Host2AtariShortArray(GLsizei size, const Uint16 *src, GLushort *dest)
 	{
 		GLsizei i;
 
@@ -652,12 +691,12 @@ protected:
 		}
 	}
 
-	inline void Host2AtariShortArray(GLsizei size, const Sint16 *src, GLshort *dest)
+	static inline void Host2AtariShortArray(GLsizei size, const Sint16 *src, GLshort *dest)
 	{
 		Host2AtariShortArray(size, (const Uint16 *)src, (GLushort *)dest);
 	}
 	
-	inline GLuint *Atari2HostIntArray(GLsizei size, const Uint32 *src, GLuint *dest)
+	static inline GLuint *Atari2HostIntArray(GLsizei size, const Uint32 *src, GLuint *dest)
 	{
 		GLsizei i;
 		
@@ -668,18 +707,18 @@ protected:
 		return dest;
 	}
 
-	inline GLint *Atari2HostIntArray(GLsizei size, const Sint32 *src, GLint *dest)
+	static inline GLint *Atari2HostIntArray(GLsizei size, const Sint32 *src, GLint *dest)
 	{
 		return (GLint *)Atari2HostIntArray(size, (const Uint32 *)src, (GLuint *)dest);
 	}
 	
-	inline GLuint *Atari2HostIntArray(GLsizei size, const void *src, GLuint *dest)
+	static inline GLuint *Atari2HostIntArray(GLsizei size, const void *src, GLuint *dest)
 	{
 		return Atari2HostIntArray(size, (const Uint32 *)src, dest);
 	}
 	
 	/* has to be handled separate because hosts GLintptr is different than Ataris */ \
-	inline GLintptr *Atari2HostIntptrArray(GLsizei size, const GLintptr *src, GLintptr *dest)
+	static inline GLintptr *Atari2HostIntptrArray(GLsizei size, const GLintptr *src, GLintptr *dest)
 	{
 		GLsizei i;
 		
@@ -691,7 +730,7 @@ protected:
 		return dest;
 	}
 
-	inline void Host2AtariIntArray(GLsizei size, const Uint32 *src, GLuint *dest)
+	static inline void Host2AtariIntArray(GLsizei size, const Uint32 *src, GLuint *dest)
 	{
 		GLsizei i;
 		
@@ -701,12 +740,32 @@ protected:
 		}
 	}
 
-	inline void Host2AtariIntArray(GLsizei size, const Sint32 *src, GLint *dest)
+	static inline void Host2AtariIntArray(GLsizei size, const Sint32 *src, GLint *dest)
 	{
 		Host2AtariIntArray(size, (const Uint32 *)src, (GLuint *)dest);
 	}
 	
-    inline GLuint64 *Atari2HostInt64Array(GLsizei size, const Uint64 *src, GLuint64 *dest)
+#ifdef __APPLE__
+	static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, GLhandleARB *dest)
+	{
+		int i;
+			
+		if (!dest) return;
+		GLuint *p = (GLuint *)dest;
+		for (i = 0; i < size; i++)
+		{
+			Uint32 h = (Uint32)(uintptr_t)src[i];
+			p[i] = SDL_SwapBE32(h);
+		}
+	}
+#else
+	static inline void Host2AtariHandleARB(int size, const GLhandleARB *src, GLhandleARB *dest)
+	{
+		Host2AtariIntArray(size, src, dest);
+	}
+#endif
+
+    static inline GLuint64 *Atari2HostInt64Array(GLsizei size, const Uint64 *src, GLuint64 *dest)
 	{
 		GLsizei i;
 		
@@ -717,12 +776,12 @@ protected:
 		return dest;
 	}
 
-	inline GLint64 *Atari2HostInt64Array(GLsizei size, const Sint64 *src, GLint64 *dest)
+	static inline GLint64 *Atari2HostInt64Array(GLsizei size, const Sint64 *src, GLint64 *dest)
 	{
 		return (GLint64 *)Atari2HostInt64Array(size, (const Uint64 *)src, (GLuint64 *)dest);
 	}
 	
-	inline void Host2AtariInt64Array(GLsizei size, const Uint64 *src, GLuint64 *dest)
+	static inline void Host2AtariInt64Array(GLsizei size, const Uint64 *src, GLuint64 *dest)
 	{
 		GLsizei i;
 		
@@ -732,12 +791,12 @@ protected:
 		}
 	}
 
-	inline void Host2AtariInt64Array(GLsizei size, const Sint64 *src, GLint64 *dest)
+	static inline void Host2AtariInt64Array(GLsizei size, const Sint64 *src, GLint64 *dest)
 	{
 		Host2AtariInt64Array(size, (const Uint64 *)src, (GLuint64 *)dest);
 	}
 	
-	inline void **Atari2HostPtrArray(GLsizei size, const void **src, void **dest)
+	static inline void **Atari2HostPtrArray(GLsizei size, const void **src, void **dest)
 	{
 		if (!src) return NULL;
 		const memptr *tmp = (const memptr *)src;
@@ -749,32 +808,32 @@ protected:
 		return dest;
 	}
 	
-	inline nfmemptr *Atari2HostPtrArray(GLsizei size, const void **src, char **dest)
+	static inline nfmemptr *Atari2HostPtrArray(GLsizei size, const void **src, char **dest)
 	{
 		return (nfmemptr *)Atari2HostPtrArray(size, src, (void **)dest);
 	}
 	
-	inline void **Atari2HostPtrArray(GLsizei size, const char *const *src, void **dest)
+	static inline void **Atari2HostPtrArray(GLsizei size, const char *const *src, void **dest)
 	{
 		return Atari2HostPtrArray(size, (const void **)src, dest);
 	}
 	
-	inline void **Atari2HostPtrArray(GLsizei size, const void *const *src, void **dest)
+	static inline void **Atari2HostPtrArray(GLsizei size, const void *const *src, void **dest)
 	{
 		return Atari2HostPtrArray(size, (const void **)src, dest);
 	}
 	
-	inline void **Atari2HostPtrArray(GLsizei size, char **src, void **dest)
+	static inline void **Atari2HostPtrArray(GLsizei size, char **src, void **dest)
 	{
 		return Atari2HostPtrArray(size, (const void **)src, dest);
 	}
 	
-	inline void **Atari2HostMemPtrArray(GLsizei size, const void *const *src, nfmemptr *dest)
+	static inline void **Atari2HostMemPtrArray(GLsizei size, const void *const *src, nfmemptr *dest)
 	{
 		return Atari2HostPtrArray(size, (const void **)src, (void **)dest);
 	}
 	
-	inline GLubyte *Atari2HostByteArray(GLsizei size, const GLubyte *src, GLubyte *dest)
+	static inline GLubyte *Atari2HostByteArray(GLsizei size, const GLubyte *src, GLubyte *dest)
 	{
 		GLsizei i;
 
@@ -785,22 +844,22 @@ protected:
 		return dest;
 	}
 
-	inline GLbyte *Atari2HostByteArray(GLsizei size, const GLbyte *src, GLbyte *dest)
+	static inline GLbyte *Atari2HostByteArray(GLsizei size, const GLbyte *src, GLbyte *dest)
 	{
 		return (GLbyte *)Atari2HostByteArray(size, (const GLubyte *)src, (GLubyte *)dest);
 	}
 
-	inline GLchar *Atari2HostByteArray(GLsizei size, const GLchar *src, GLchar *dest)
+	static inline GLchar *Atari2HostByteArray(GLsizei size, const GLchar *src, GLchar *dest)
 	{
 		return (GLchar *)Atari2HostByteArray(size, (const GLubyte *)src, (GLubyte *)dest);
 	}
 
-	inline GLubyte *Atari2HostByteArray(GLsizei size, const void *src, GLubyte *dest)
+	static inline GLubyte *Atari2HostByteArray(GLsizei size, const void *src, GLubyte *dest)
 	{
 		return Atari2HostByteArray(size, (const GLubyte *)src, dest);
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, GLubyte *dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, GLubyte *dest)
 	{
 		GLsizei i;
 
@@ -810,33 +869,33 @@ protected:
 		}
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLbyte *src, GLbyte *dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLbyte *src, GLbyte *dest)
 	{
 		Host2AtariByteArray(size, (const GLubyte *)src, (GLubyte *)dest);
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLchar *src, GLchar *dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLchar *src, GLchar *dest)
 	{
 		Host2AtariByteArray(size, (const GLubyte *)src, (GLubyte *)dest);
 	}
 
-	inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, void *dest)
+	static inline void Host2AtariByteArray(GLsizei size, const GLubyte *src, void *dest)
 	{
 		Host2AtariByteArray(size, src, (GLubyte *)dest);
 	}
 
-	inline size_t safe_strlen(const char *src)
+	static inline size_t safe_strlen(const char *src)
 	{
 		if (!src) return 0;
 		return strlen(src);
 	}
 
-	inline size_t safe_strlen(const unsigned char *src)
+	static inline size_t safe_strlen(const unsigned char *src)
 	{
 		return safe_strlen((const char *)src);
 	}
 
-	inline size_t safe_strlen(const void *src)
+	static inline size_t safe_strlen(const void *src)
 	{
 		return safe_strlen((const char *)src);
 	}
@@ -976,6 +1035,11 @@ public:
 	bool isSuperOnly() { return false; }
 	int32 dispatch(uint32 fncode);
 
+	static osmesa_funcs fn;
+	static void InitPointersGL(void *handle);
+
+	static GLenum PrintErrors(const char *funcname);
+	
 	OSMesaDriver();
 	virtual ~OSMesaDriver();
 	void reset();

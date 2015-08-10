@@ -57,6 +57,7 @@ HostSurfaceOpenGL::~HostSurfaceOpenGL(void)
 	destroyTextureObject();
 }
 
+
 /*--- Private functions ---*/
 
 void HostSurfaceOpenGL::createTexture(void)
@@ -88,31 +89,21 @@ void HostSurfaceOpenGL::calcGlDimensions(int *width, int *height)
 		h = (h | 15)+1;
 	}
 
-	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
+	const GLubyte *extensions = gl.GetString(GL_EXTENSIONS);
 
-	if (strstr(extensions, "GL_ARB_texture_non_power_of_two")) {
+	if (gl_HasExtension("GL_ARB_texture_non_power_of_two", extensions)) {
 		textureTarget = GL_TEXTURE_2D;
 		can_palette = true;
-	}
-#if defined(GL_ARB_texture_rectangle)
-	else if (strstr(extensions, "GL_ARB_texture_rectangle")) {
+	} else if (gl_HasExtension("GL_ARB_texture_rectangle", extensions)) {
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 		can_palette = false;
-	}
-#endif
-#if defined(GL_EXT_texture_rectangle)
-	else if (strstr(extensions, "GL_EXT_texture_rectangle")) {
-		textureTarget = GL_TEXTURE_RECTANGLE_EXT;
+	} else if (gl_HasExtension("GL_EXT_texture_rectangle", extensions)) {
+		textureTarget = GL_TEXTURE_RECTANGLE;
 		can_palette = false;
-	}
-#endif
-#if defined(GL_NV_texture_rectangle)
-	else if (strstr(extensions, "GL_NV_texture_rectangle")) {
+	} else if (gl_HasExtension("GL_NV_texture_rectangle", extensions)) {
 		textureTarget = GL_TEXTURE_RECTANGLE_NV;
 		can_palette = false;
-	}
-#endif
-	else {
+	} else {
 		/* Calc smallest power of two size needed */
 		int w1=64, h1=64;
 		while (w>w1) {
@@ -178,9 +169,7 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 			/* FVDI driver is hardcoded to ARGB, so try to use a
 			   compatible texture format if available */
 
-#ifdef GL_EXT_bgra
-			const char *extensions = (const char *) gl.GetString(GL_EXTENSIONS);
-			bool has_ext_bgra = (strstr(extensions, "GL_EXT_bgra") != NULL);
+			bool has_ext_bgra = gl_HasExtension("GL_EXT_bgra", gl.GetString(GL_EXTENSIONS));
 
 			if (has_ext_bgra) {
 				textureFormat = GL_BGRA_EXT;
@@ -195,7 +184,6 @@ SDL_Surface *HostSurfaceOpenGL::createSdlSurface(int width, int height,
 					glPixelFormat.Amask = 255<<24;
 				}
 			}
-#endif
 			break;
 	}
 
@@ -229,7 +217,6 @@ void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
 
 	/* Reupload palette if needed */
 
-#if defined(GL_EXT_paletted_texture)
 	if ((getBpp()==8) && use_palette) {
 		Uint8 mapP[256*3];
 		Uint8 *pMap = mapP;
@@ -246,7 +233,6 @@ void HostSurfaceOpenGL::setPalette(SDL_Color *palette, int first, int count)
 			GL_RGB, GL_UNSIGNED_BYTE, mapP);
 		return;
 	}
-#endif
 
 	/* Reupload texture if needed */
 
@@ -269,7 +255,6 @@ void HostSurfaceOpenGL::updateTexture(void)
 		case 8:
 			{
 				SDL_Color *palette = surface->format->palette->colors;
-#ifdef GL_EXT_paletted_texture
 				if (use_palette) {
 					Uint8 mapP[256*3];
 					Uint8 *pMap = mapP;
@@ -283,7 +268,6 @@ void HostSurfaceOpenGL::updateTexture(void)
 					gl.ColorTableEXT(textureTarget, GL_RGB, 256, 
 						GL_RGB, GL_UNSIGNED_BYTE, mapP);
 				} else
-#endif
 				{
 					memset(mapR, 0, sizeof(mapR));
 					memset(mapG, 0, sizeof(mapG));
@@ -312,11 +296,9 @@ void HostSurfaceOpenGL::updateTexture(void)
 			break;
 		case 32:
 			/* FIXME: care about endianness ? */
-#ifdef GL_EXT_bgra
 			if (textureFormat == GL_BGRA_EXT) {
 				pixelType = GL_UNSIGNED_INT_8_8_8_8_REV;
 			}
-#endif
 			break;
 	}
 
@@ -371,15 +353,11 @@ void HostSurfaceOpenGL::createTextureObject(void)
 {
 	gl.GenTextures(1, &textureObject);
 
-#if defined(GL_EXT_paletted_texture)
-	char *extensions = (char *) gl.GetString(GL_EXTENSIONS);
-
-	if (strstr(extensions, "GL_EXT_paletted_texture") && (getBpp() == 8)
+	if (gl_HasExtension("GL_EXT_paletted_texture", gl.GetString(GL_EXTENSIONS)) && (getBpp() == 8)
 	    && can_palette)
 	{
 		use_palette = true;
 	}
-#endif
 
 	first_upload = true;
 	updateTexture();

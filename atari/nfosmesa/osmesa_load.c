@@ -5847,7 +5847,7 @@ int main(void)
 		fprintf(stderr, "osmesa.ldg not found\n");
 		return 1;
 	}
-	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 8, 16, NULL);
+	ctx = gl.OSMesaCreateContextExt(OSMESA_RGB, 16, 0, 0, NULL);
 	if (ctx == NULL)
 	{
 		fprintf(stderr, "can't create context\n");

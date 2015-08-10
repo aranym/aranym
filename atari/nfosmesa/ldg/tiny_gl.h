@@ -23,6 +23,10 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * load & initialize TinyGL
  */
@@ -37,6 +41,10 @@ int ldg_init_tiny_gl(LDG *lib);
  * unload TinyGL
  */
 void ldg_unload_tiny_gl(struct gl_public *pub, _WORD *gl);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -1107,7 +1115,7 @@ struct osmesa_context { int dummy; };
 #endif
 typedef struct osmesa_context *OSMesaContext;
 
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContext( GLenum format, OSMesaContext sharelist );
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist);
@@ -1124,7 +1132,7 @@ GLAPI void GLAPIENTRY OSMesaPostprocess(OSMesaContext osmesa, const char *filter
 
 
 #elif OSMESA_VERSION < OSMESA_VERSION_NUMBER(6, 3, 0)
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 #endif
 
 /*
@@ -1166,6 +1174,10 @@ struct gl_public {
 }
 #endif
 
+#undef glFrustum
+#undef glOrtho
+#undef gluLookAt
+#undef glClearDepth
 
 /*
  * old LDG functions
@@ -1180,7 +1192,7 @@ GLAPI GLsizei GLAPIENTRY max_width(void);
 GLAPI GLsizei GLAPIENTRY max_height(void);
 GLAPI void GLAPIENTRY swapbuffer(void *buf);
 GLAPI void GLAPIENTRY exception_error(void CALLBACK (*exception)(GLenum param));
-GLAPI void GLAPIENTRY information(void);
+GLAPI void GLAPIENTRY tinyglinformation(void);
 
 GLAPI void GLAPIENTRY glOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
 GLAPI void GLAPIENTRY glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
@@ -1465,6 +1477,10 @@ extern struct _gl_tiny gl;
 #undef gluLookAt
 #define gluLookAt gluLookAtf
 
+/* fix bad name */
+#undef information
+#define tinyglinformation gl.information
+
 
 
 /*
@@ -1472,6 +1488,10 @@ extern struct _gl_tiny gl;
  */
 #undef glFinish
 #define glFinish()
+
+/* fix bad name */
+#undef information
+#define tinyglinformation gl.information
 
 /*
  * Functions from OpenGL that are not implemented in TinyGL

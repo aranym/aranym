@@ -56,10 +56,22 @@ to select a different OSMesa version. This is no longer recommended,
 and might not be supported in future versions.
 
 
-BUGS
+NEWS
 ====
 
-- The cygwin version of ARAnyM currently does not support this feature.
+- Both the cygwin and the MacOSX version of ARAnyM support this feature
+  now, provided that the hosts native OpenGL library supports render buffers.
+  For this to work, you should set the entry 'LibOSMesa' in the 'NFOSMESA'
+  section of the config file to an empty string (do not remove it completely,
+  that would just use the default value again). If Mesa is not found this way,
+  offscreen render buffers will be used instead. Do not use this feature
+  with an OpenGL screen window though (set [OPENGL] Enabled = No). Although
+  it should work, due to the permanent context switches performance will suffer
+  a lot.
+
+
+BUGS
+====
 
 - the exception_error() function of tiny_gl.ldg is exported, but it will
   only be called for certain operations (compatible to the native tiny_gl).

@@ -21,6 +21,11 @@
 # endif
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 /*
  * load & initialize NFOSmesa
  */
@@ -35,6 +40,11 @@ int ldg_init_osmesa(LDG *lib);
  * unload NFOSmesa
  */
 void ldg_unload_osmesa(struct gl_public *pub, _WORD *gl);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -1105,7 +1115,7 @@ struct osmesa_context { int dummy; };
 #endif
 typedef struct osmesa_context *OSMesaContext;
 
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContext( GLenum format, OSMesaContext sharelist );
 GLAPI OSMesaContext GLAPIENTRY OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist);
@@ -1122,7 +1132,7 @@ GLAPI void GLAPIENTRY OSMesaPostprocess(OSMesaContext osmesa, const char *filter
 
 
 #elif OSMESA_VERSION < OSMESA_VERSION_NUMBER(6, 3, 0)
-typedef void (*OSMESAproc)(void);
+typedef void (APIENTRY *OSMESAproc)(void);
 #endif
 
 /*
@@ -1164,6 +1174,14 @@ struct gl_public {
 }
 #endif
 
+#undef glFrustum
+#undef glOrtho
+#undef gluLookAt
+#undef glClearDepth
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct _gl_osmesa {
 	/*    0 */ const GLubyte * APIENTRY (*GetString)(GLenum name);
@@ -9822,6 +9840,10 @@ extern struct _gl_osmesa gl;
 #define glOrtho glOrthof
 #undef gluLookAt
 #define gluLookAt gluLookAtf
+
+/* fix bad name */
+#undef information
+#define tinyglinformation gl.information
 
 
 
