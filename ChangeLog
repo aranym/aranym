@@ -1,3 +1,7 @@
+2015/08/22 - Andreas
+- fpu_mpfr.cpp: properly track sign bit of NaN
+
+
 2015/08/10 - Thorsten
 nfosmesa: try to use renderbuffers when Mesa library is not available.
 This should finally make that feature available on MacOSX/Cygwin/MingW

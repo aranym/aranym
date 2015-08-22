@@ -166,6 +166,7 @@ typedef uae_f32			fpu_single;
 struct fpu_register {
   mpfr_t f;
   uae_u64 nan_bits;
+  int nan_sign;
   operator long double ();
   fpu_register &operator=(long double);
 };
