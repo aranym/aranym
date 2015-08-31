@@ -1,3 +1,7 @@
+2015/08/31 - Thorsten
+mathlib.h: remove useless assignment in make_nan()
+
+
 2015/08/22 - Andreas
 - fpu_mpfr.cpp: properly track sign bit of NaN
 

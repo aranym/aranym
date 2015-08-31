@@ -399,8 +399,7 @@ PRIVATE inline bool FFPU fp_do_isnan(fpu_register const & r)
 	lx |= hx & 0x7fffffff;
 	se |= (uae_u32)(lx | (-lx)) >> 31;
 	se = 0xfffe - se;
-	// TODO: check whether rshift count is 16 or 31
-	return (int)(((uae_u32)(se)) >> 16);
+	return (int)(((uae_u32)(se)) >> 31);
 #endif
 #else
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
@@ -542,15 +541,12 @@ PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 
 PRIVATE inline void FFPU make_nan(fpu_register & r)
 {
-	// FIXME: is that correct ?
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
-	sxp.value = r;
 	sxp.ieee.exponent	= FP_EXTENDED_EXP_MAX;
 	sxp.ieee.mantissa0	= 0xffffffff;
 #else
 	fp_declare_init_shape(sxp, double);
-	sxp.value = r;
 	sxp.ieee.exponent	= FP_DOUBLE_EXP_MAX;
 	sxp.ieee.mantissa0	= 0xfffff;
 #endif
@@ -1130,9 +1126,9 @@ PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended __
 #define DEFINE_ROUND_FUNC(rounding_mode_str, rounding_mode)						\
 PRIVATE inline fpu_extended fp_do_round_to_ ## rounding_mode_str(fpu_extended x)	\
 {																				\
-	volatile unsigned int cw;													\
+	volatile unsigned short cw;													\
 	__asm__ __volatile__("fnstcw %0" : "=m" (cw));										\
-	volatile unsigned int cw_temp = (cw & 0xf3ff) | (rounding_mode);			\
+	volatile unsigned short cw_temp = (cw & 0xf3ff) | (rounding_mode);			\
 	__asm__ __volatile__("fldcw %0" : : "m" (cw_temp));									\
 	fpu_extended value;															\
 	__asm__ __volatile__("frndint" : "=t" (value) : "0" (x));							\
