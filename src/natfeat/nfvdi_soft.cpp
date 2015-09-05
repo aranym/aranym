@@ -1012,16 +1012,6 @@ bool SoftVdiDriver::clipLine(int x1, int y1, int x2, int y2, int cliprect[])
 }
 
 
-bool SoftVdiDriver::clipped(int x, int y, int cliprect[])
-{
-	if (x < cliprect[0] || x > cliprect[2])
-		return true;
-	if (y < cliprect[1] || y > cliprect[3])
-		return true;
-	return false;
-}
-
-
 // Don't forget rotation of pattern!
 int SoftVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
                                uint32 fgColor, uint32 bgColor, int logOp,
@@ -1900,35 +1890,208 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 /* Originally from pygame, http://pygame.seul.org			 */
 
 #define lineloop(putfg, putbg) \
-	for (;; ppos++) { \
-		 \
-		if (!clipped(x, y, cliprect)) \
+	switch (vec) \
+	{ \
+	case 0: \
+		/* drawing from bottom left to top right */ \
+		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
-			{ \
-				putfg; \
-			} else { \
-				putbg; \
+			for (;;) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					putfg; \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					++x, pixel += pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					--y, pixel -= pixy; \
+					x1 += dx; \
+				} \
+			} \
+		} else { \
+			for (;; ppos++) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
+					{ \
+						putfg; \
+					} else { \
+						putbg; \
+					} \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					++x, pixel += pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					--y, pixel -= pixy; \
+					x1 += dx; \
+				} \
 			} \
 		} \
-		if (--diff == 0) \
-			break; \
-		if (x1 >= 0) \
+		break; \
+	case 1: \
+		/* drawing from bottom right to top left */ \
+		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			if (vec & 1) \
-				--x, pixel -= pixx; \
-			else \
-				++x, pixel += pixx; \
-			x1 += dy; \
+			for (;;) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					putfg; \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					--x, pixel -= pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					--y, pixel -= pixy; \
+					x1 += dx; \
+				} \
+			} \
+		} else { \
+			for (;; ppos++) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
+					{ \
+						putfg; \
+					} else { \
+						putbg; \
+					} \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					--x, pixel -= pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					--y, pixel -= pixy; \
+					x1 += dx; \
+				} \
+			} \
 		} \
-		if (x1 < 0) \
+		break; \
+	case 2: \
+		/* drawing from top left to bottom right */ \
+		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			if (vec & 2) \
-				++y, pixel += pixy; \
-			else \
-				--y, pixel -= pixy; \
-			x1 += dx; \
+			for (;;) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					putfg; \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					++x, pixel += pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					++y, pixel += pixy; \
+					x1 += dx; \
+				} \
+			} \
+		} else { \
+			for (;; ppos++) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
+					{ \
+						putfg; \
+					} else { \
+						putbg; \
+					} \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					++x, pixel += pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					++y, pixel += pixy; \
+					x1 += dx; \
+				} \
+			} \
 		} \
+		break; \
+	case 3: \
+		/* drawing from top right to bottom left */ \
+		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
+		{ \
+			for (;;) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					putfg; \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					--x, pixel -= pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					++y, pixel += pixy; \
+					x1 += dx; \
+				} \
+			} \
+		} else { \
+			for (;; ppos++) { \
+				 \
+				if (!clipped(x, y, cliprect)) \
+				{ \
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
+					{ \
+						putfg; \
+					} else { \
+						putbg; \
+					} \
+				} \
+				if (--diff == 0) \
+					break; \
+				if (x1 >= 0) \
+				{ \
+					--x, pixel -= pixx; \
+					x1 += dy; \
+				} \
+				if (x1 < 0) \
+				{ \
+					++y, pixel += pixy; \
+					x1 += dx; \
+				} \
+			} \
+		} \
+		break; \
 	}
 
 void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
@@ -2010,11 +2173,12 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 		diff = dx;
 	diff++;
 	ppos = 0;
-
+	surface->setDirtyLine(x1, y1, x2, y2);
+	
 	/* More variable setup */
 	pixx = sdl_surf->format->BytesPerPixel;
 	pixy = sdl_surf->pitch;
-	pixel = ((uint8*)sdl_surf->pixels) + pixx * (uint32)x1 + pixy * (uint32)y1;
+	pixel = ((uint8*)sdl_surf->pixels) + pixx * x1 + pixy * y1;
 
 	//	D2(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
 
@@ -2089,7 +2253,6 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 			}
 			break;
 	}
-	surface->setDirtyLine(x1, y1, x2, y2);
 }
 
 void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
@@ -2102,9 +2265,9 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 
 	/* Calculate width */
 	if (x1 < cliprect[0]) x1 = cliprect[0];
-	if (y < cliprect[1]) y = cliprect[1];
+	if (y < cliprect[1]) return;
 	if (x2 > cliprect[2]) x2 = cliprect[2];
-	if (y > cliprect[3]) y = cliprect[3];
+	if (y > cliprect[3]) return;
 	w=x2-x1+1;
 
 	/* Sanity check on width */
@@ -2267,9 +2430,9 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	uint8 ppos;
 
 	/* Calculate height */
-	if (x < cliprect[0]) x = cliprect[0];
+	if (x < cliprect[0]) return;
 	if (y1 < cliprect[1]) y1 = cliprect[1];
-	if (x > cliprect[2]) x = cliprect[2];
+	if (x > cliprect[2]) return;
 	if (y2 > cliprect[3]) y2 = cliprect[3];
 	h=y2-y1+1;
 

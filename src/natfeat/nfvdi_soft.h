@@ -109,7 +109,14 @@ class SoftVdiDriver : public VdiDriver
 			uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
 		void gfxVLineColor( int16 x, int16 y1, int16 y2,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
-		bool clipped(int x, int y, int cliprect[]);
+		inline bool clipped(int x, int y, int cliprect[])
+		{
+			if (x < cliprect[0] || x > cliprect[2])
+				return true;
+			if (y < cliprect[1] || y > cliprect[3])
+				return true;
+			return false;
+		}
 		/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
 		int sdl_buggy_blitsurface;
 };

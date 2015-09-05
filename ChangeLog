@@ -1,3 +1,8 @@
+2015/09/05 - Thorsten
+nfvdi_soft.{cpp|h}: Fixes and some optimizations for drawing
+diagonal lines
+
+
 2015/08/31 - Thorsten
 mathlib.h: remove useless assignment in make_nan()
 
