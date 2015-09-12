@@ -137,17 +137,18 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 	/* First convert according to freq rates in a temp buffer */
 	int dstConvertedLen = 0;
 
-	neededBufSize = (int) (*dst_len / cvt.len_ratio);
+	int tmpLen = (int) (*dst_len / cvt.len_ratio);
+	neededBufSize = tmpLen * cvt.len_mult;
 	if (neededBufSize>tmpBufLen) {
 		neededBufSize = tmpBufLen;
 	}
 
 	switch(cvt.src_format & 0xff) {
 		case 8:
-			dstConvertedLen = rescaleFreq8(source, src_len, tmpBuf, neededBufSize);
+			dstConvertedLen = rescaleFreq8(source, src_len, tmpBuf, tmpLen);
 			break;
 		case 16:
-			dstConvertedLen = rescaleFreq16((Uint16 *) source, src_len, (Uint16 *) tmpBuf, neededBufSize);
+			dstConvertedLen = rescaleFreq16((Uint16 *) source, src_len, (Uint16 *) tmpBuf, tmpLen);
 			break;
 	}
 

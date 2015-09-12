@@ -58,9 +58,10 @@ extern "C" {
 			if (par->len > ZMAGXSND_BUFSIZE) {
 				par->len = ZMAGXSND_BUFSIZE;
 			}
-
+			uint32 bufSize = par->len * cvt.len_mult;
+			
 			/* Current buffer too small ? */
-			if (cvt_buf_len<par->len) {
+			if (cvt_buf_len<bufSize) {
 				if (cvt.buf) {
 					free(cvt.buf);
 					cvt.buf=NULL;
@@ -69,14 +70,14 @@ extern "C" {
 
 			/* Allocate needed buffer */
 			if (cvt.buf==NULL) {
-				cvt.buf=(uint8 *)malloc(par->len);
-				cvt_buf_len = par->len;
+				cvt.buf=(uint8 *)malloc(bufSize);
+				cvt_buf_len = bufSize;
 			}
 
 			memcpy(cvt.buf, buffer, par->len);
 			cvt.len = par->len;
 			SDL_ConvertAudio(&cvt);
-			SDL_MixAudio(stream, cvt.buf, len, par->volume);
+			SDL_MixAudio(stream, cvt.buf, cvt.len_cvt, par->volume);
 		} else {
 			par->len = len;
 			if (par->len > ZMAGXSND_BUFSIZE) {
