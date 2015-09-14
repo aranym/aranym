@@ -119,6 +119,8 @@ AC_ARG_ENABLE(nfclipbrd,       [AC_HELP_STRING([--enable-nfclipbrd], [enable Nat
 
 AC_ARG_ENABLE(nfvdi,           [AC_HELP_STRING([--enable-nfvdi], [enable NatFeat VDI (default=yes)])], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
 
+AC_ARG_ENABLE(scsi,            [AC_HELP_STRING([--enable-nfscsi], [enable NatFeat SCSI (default=yes)])], [WANT_NFSCSI=$enableval], [WANT_NFSCSI=yes])
+
 AC_ARG_ENABLE(ata-cdrom,       [AC_HELP_STRING([--enable-ata-cdrom], [enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -1984,6 +1986,29 @@ else
 fi
 AM_CONDITIONAL([USBHOST_SUPPORT], test "$WANT_USBHOST" = yes)
 
+dnl Natfeat SCSI driver
+
+AH_TEMPLATE([NFSCSI_SUPPORT], [Define if you want to use host SCSI driver])
+if [[ "x$WANT_NFSCSI" = "xyes" ]]; then
+	case "$host_os" in
+		linux*)
+			AC_CHECK_HEADERS(scsi/sg.h)
+			if test "$ac_cv_header_scsi_sg_h" != yes; then
+				WANT_NFSCSI=no
+			fi
+			;;
+		*)
+			WANT_NFSCSI=no
+			;;
+	esac
+	if test "$WANT_NFSCSI" = "no"; then
+		AC_MSG_WARN([*** NatFeats SCSI not supported by this OS ***])
+	else
+		AC_DEFINE([NFSCSI_SUPPORT], 1)
+		PROVIDES_NF="$PROVIDES_NF scsi"
+	fi
+fi
+
 dnl Natfeat OSMesa driver
 
 AH_TEMPLATE([NFOSMESA_SUPPORT], [Define if you want to use host OSMesa driver])
@@ -2235,6 +2260,7 @@ echo "NatFeat OSMesa driver .................. : $WANT_NFOSMESA"
 echo "NatFeat JPEG decoder ................... : $WANT_NFJPEG"
 echo "NatFeat Clipboard ...................... : $WANT_NFCLIPBRD"
 echo "NatFeat VDI driver ..................... : $WANT_NFVDI"
+echo "NatFeat SCSI driver .................... : $WANT_NFSCSI"
 echo "Exception per second limiter ........... : $WANT_EPSLIMITER"
 echo "Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86"
 echo "Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT"

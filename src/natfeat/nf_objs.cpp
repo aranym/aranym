@@ -62,6 +62,9 @@
 #ifdef NFCLIPBRD_SUPPORT
 # include "nfclipbrd.h"
 #endif
+#ifdef NFSCSI_SUPPORT
+# include "nf_scsidrv.h"
+#endif
 
 #ifdef USBHOST_SUPPORT
 # include "usbhost.h"
@@ -155,6 +158,10 @@ void NFCreate(void)
 
 #ifdef USBHOST_SUPPORT
 	NFAdd(new USBHost);
+#endif
+
+#ifdef NFSCSI_SUPPORT
+	NFAdd(new SCSIDriver);
 #endif
 	/* add your NatFeat object declaration here */
 }

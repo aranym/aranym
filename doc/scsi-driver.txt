@@ -1,0 +1,56 @@
+ARAnyM provides a host component implementation of the SCSI Driver for ARAnyM
+(Linux only).
+The SCSI Driver standard is an open software interface for the Atari and was
+initiated by Steffen Engel. Please refer to src/natfeat/nf_scsidrv.c and
+http://hddriver.seimet.de/en/downloads.html for further information.
+
+The SCSI Driver for ARAnyM implements a SCSI Driver on top of the Linux SG 3
+driver interface. With the SCSI Driver software running within ARAnyM can
+access all devices supported by the Linux SG driver. The ARAnyM user needs the
+proper Linux permissions to access these devices. Depending on the Linux
+distribution one may have to belong to the groups 'disk' and 'cdrom', for
+instance.
+
+The SCSI Driver for ARAnyM implements the SCSI Driver interface version 1.01.
+It consists of two software components:
+
+1. Native SCSI Driver host implementation, which for Linux is provided by
+   ARAnyM. It maps SCSI Driver calls to Linux SG driver calls. In order to run
+   the SCSI Driver stub for TOS on other platforms than Linux, this is the
+   code that has to be ported.
+2. SCSI Driver stub for TOS, HAT_SCSI.PRG. This component runs on TOS and
+   uses ARAnyM's NatFeats interface to call the host driver. The stub is
+   independent of the host platform ARAnyM is running on. HAT_SCSI can be
+   downloaded from http://hddriver.seimet.de/en/downloads.html.
+
+The NatFeats-based interface between the TOS stub and the host driver
+implementation consists of 6 calls (NatFeats sub-ids):
+
+1. SCSI_INTERFACE_VERSION
+
+Returns the driver interface version number. (Note that this is not the same
+as the SCSI Driver version.) Only if the host implementation and the TOS stub
+interface version match, the stub can be installed. The format of the version
+string is MAJOR.MINOR, coded as a 16 bit value. 0x0105, for instance, means
+version 1.05.
+
+2. SCSI_INTERFACE_FEATURES
+
+Returns the host's bus features, which depend on the host system, and the bus
+name. For Linux the bus name is "Linux Generic SCSI".
+
+3. SCSI_INQUIRE_BUS, SCSI_OPEN, SCSI_CHECK_DEV
+
+The host implementations of the corresponding SCSI Driver calls.
+
+4. SCSI_INOUT
+
+The host implementation of the SCSI Driver's In() and Out() calls. Except for
+the data flow direction flag both calls are identical, so that they can be
+mapped to the same interface call.
+
+All SCSI Driver calls not listed above are implemented by the TOS stub.
+Please refer to the source code (ARAnyM part and TOS stub) for details.
+
+
+  Uwe.Seimet

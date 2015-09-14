@@ -1,3 +1,8 @@
+2015/09/14 - Thorsten
+Implement NF_SCSIDRV Native Feature
+(generic linux sg interface, contributed by Uwe Seimet)
+
+
 2015/09/12 - Thorsten
 Fixed buffersize calculation for buffers passed to SDL_ConvertAudio()
 
