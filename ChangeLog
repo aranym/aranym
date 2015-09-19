@@ -1,4 +1,9 @@
 2015/09/19 - Thorsten
+autogen.sh: automake must run after autoheader in freshly cloned 
+directories
+
+
+2015/09/19 - Thorsten
 nf_scsidrv.cpp: handle the case of NULL pointer for sense_buffer
 
 

@@ -55,14 +55,14 @@ aclocalinclude="$ACLOCAL_FLAGS"; \
 (echo $_echo_n " + Running aclocal: $_echo_c"; \
     aclocal $aclocalinclude; \
  echo "done.") && \
-(echo $_echo_n " + Running automake: $_echo_c"; \
-    automake --add-missing --copy; \
+(echo $_echo_n " + Running autoconf: $_echo_c"; \
+    autoconf; \
  echo "done.") && \
 (echo $_echo_n " + Running autoheader: $_echo_c"; \
     autoheader; \
  echo "done.") && \
-(echo $_echo_n " + Running autoconf: $_echo_c"; \
-    autoconf; \
+(echo $_echo_n " + Running automake: $_echo_c"; \
+    automake --add-missing --copy; \
  echo "done.") 
 
 rm -rf autom4te.cache
