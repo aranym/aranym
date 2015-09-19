@@ -84,7 +84,8 @@ class RTC : public BASE_IO {
 private:
 	uint8 index;
 	char nvram_filename[512];
-
+	struct tm frozen_time;
+	
 public:
 	RTC(memptr, uint32);
 	virtual ~RTC();
@@ -103,6 +104,8 @@ private:
 	void setData(uint8);
 	void setChecksum();
 	void patch();
+	void freezeTime(void);
+	struct tm getFrozenTime(void);
 };
 
 #endif // _RTC_H

@@ -1,3 +1,8 @@
+2015/09/17 - Thorsten
+rtc.cpp: freeze reported time while Bit 7 in Register 11 is SET,
+and handle BIN/BCD and 12hr/24hr bits
+
+
 2015/09/14 - Thorsten
 Implement NF_SCSIDRV Native Feature
 (generic linux sg interface, contributed by Uwe Seimet)

@@ -176,28 +176,80 @@ void RTC::setAddr(uint8 value)
 	}
 }
 
+void RTC::freezeTime(void)
+{
+	time_t tim = time(NULL);
+	frozen_time = *(bx_options.gmtime ? gmtime(&tim) : localtime(&tim));
+}
+
+struct tm RTC::getFrozenTime(void)
+{
+	if (!(nvram[11] & 0x80))
+		freezeTime();
+	return frozen_time;
+}
+
 uint8 RTC::getData()
 {
-	uint8 value = 0;
-	if (index == 0 || index == 2 || index == 4 || (index >=7 && index <=9) ) {
-		time_t tim = time(NULL);
-		struct tm *curtim = bx_options.gmtime ? gmtime(&tim) : localtime(&tim);
-		switch(index) {
-			case 0:	value = curtim->tm_sec; break;
-			case 2: value = curtim->tm_min; break;
-			case 4: value = curtim->tm_hour; break;
-			case 7: value = curtim->tm_mday; break;
-			case 8: value = curtim->tm_mon+1; break;
-			case 9: value = curtim->tm_year - 68; break;
+	uint8 value;
+
+#define BIN_TO_BCD() \
+	if (!(nvram[11] & 0x04)) \
+		value = ((value / 10) << 4) | (value % 10)
+	
+	switch(index) {
+	case 0:
+		value = getFrozenTime().tm_sec;
+		BIN_TO_BCD();
+		break;
+	case 2:
+		value = getFrozenTime().tm_min;
+		BIN_TO_BCD();
+		break;
+	case 4:
+		value = getFrozenTime().tm_hour;
+		if (!(nvram[11] & 0x02))
+		{
+			uint8 pmflag = (value == 0 || value >= 13) ? 0x80 : 0;
+			value = value % 12;
+			if (value == 0)
+				value = 12;
+			BIN_TO_BCD();
+			value |= pmflag;
+		} else
+		{
+			BIN_TO_BCD();
 		}
-	}
-	else if (index == 10) {
-		static bool rtc_uip = true;
-		value = rtc_uip ? 0x80 : 0;
-		rtc_uip = !rtc_uip;
-	}
-	else {
+		break;
+	case 6:
+		value = getFrozenTime().tm_wday + 1;
+		BIN_TO_BCD();
+		break;
+	case 7:
+		value = getFrozenTime().tm_mday;
+		BIN_TO_BCD();
+		break;
+	case 8:
+		value = getFrozenTime().tm_mon+1;
+		BIN_TO_BCD();
+		break;
+	case 9:
+		value = getFrozenTime().tm_year - 68;
+		BIN_TO_BCD();
+		break;
+	case 1: /* alarm seconds */
+	case 3:	/* alarm minutes */
+	case 5: /* alarm hour */
 		value = nvram[index];
+		BIN_TO_BCD();
+		break;
+	case 10:
+		nvram[index] ^= 0x80; // toggle UIP bit
+		value = nvram[index];
+		break;
+	default:
+		value = nvram[index];
+		break;
 	}
 	D(bug("Reading NVRAM data at %d = %d ($%02x) at %06x", index, value, value, showPC()));
 	return value;
@@ -206,6 +258,13 @@ uint8 RTC::getData()
 void RTC::setData(uint8 value)
 {
 	D(bug("Writing NVRAM data at %d = %d ($%02x) at %06x", index, value, value, showPC()));
+	switch (index)
+	{
+	case 11:
+		if (value & 0x80)
+			freezeTime();
+		break;
+	}
 	nvram[index] = value;
 }
 
