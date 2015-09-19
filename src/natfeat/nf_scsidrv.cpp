@@ -118,7 +118,8 @@ int32 SCSIDriver::Open(Uint32 id)
 
 int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout)
 {
-	memset(sense_buffer, 0, 18);
+	if (sense_buffer)
+		memset(sense_buffer, 0, 18);
 
 #if DEBUG
 	{
@@ -138,13 +139,16 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 	// No explicit LUN support, the SG driver maps LUNs to device files
 	if(cmd[1] & 0xe0)
 	{
-		// Sense Key and ASC
-		sense_buffer[2] = 0x05;
-		sense_buffer[12] = 0x25;
-
-		D(bug("             Sense Key=$%02X, ASC=$%02X, ASCQ=$00",
-				  sense_buffer[2], sense_buffer[12]));
-
+		if (sense_buffer)
+		{
+			// Sense Key and ASC
+			sense_buffer[2] = 0x05;
+			sense_buffer[12] = 0x25;
+	
+			D(bug("             Sense Key=$%02X, ASC=$%02X, ASCQ=$00",
+					  sense_buffer[2], sense_buffer[12]));
+		}
+			
 		return 2;
 	}
 
@@ -172,7 +176,7 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 	io_hdr.dxfer_len = transfer_len;
 
 	io_hdr.sbp = sense_buffer;
-	io_hdr.mx_sb_len = 18;
+	io_hdr.mx_sb_len = sense_buffer ? 18 : 0;
 
 	io_hdr.cmdp = cmd;
 	io_hdr.cmd_len = cmd_len;
@@ -183,7 +187,7 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 
 	::close(fd);
 
-	if(status > 0)
+	if (status > 0 && sense_buffer)
 	{
 		D(bug("             Sense Key=$%02X, ASC=$%02X, ASCQ=$%02X",
 				  sense_buffer[2], sense_buffer[12], sense_buffer[13]));

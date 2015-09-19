@@ -1,3 +1,7 @@
+2015/09/19 - Thorsten
+nf_scsidrv.cpp: handle the case of NULL pointer for sense_buffer
+
+
 2015/09/17 - Thorsten
 rtc.cpp: freeze reported time while Bit 7 in Register 11 is SET,
 and handle BIN/BCD and 12hr/24hr bits
