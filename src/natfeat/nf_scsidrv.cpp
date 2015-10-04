@@ -28,7 +28,7 @@
 
 #include "sysdeps.h"
 
-#if NFSCSI_SUPPORT
+#ifdef NFSCSI_SUPPORT
 
 #include "cpu_emulation.h"
 #include "nf_scsidrv.h"
@@ -44,8 +44,8 @@
 #include <scsi/sg.h>
 #include "toserror.h"
 
-// The driver interface version, 1.00
-#define INTERFACE_VERSION 0x0100
+// The driver interface version, 1.01
+#define INTERFACE_VERSION 0x0101
 // Maximum is 20 characters
 #define BUS_NAME "Linux Generic SCSI"
 // The SG driver supports cAllCmds
@@ -59,6 +59,7 @@ enum SCSIDRV_OPERATIONS {
 	SCSI_INTERFACE_FEATURES,
 	SCSI_INQUIRE_BUS,
 	SCSI_OPEN,
+	SCSI_CLOSE,
 	SCSI_INOUT,
 	SCSI_CHECK_DEV
 };
@@ -109,17 +110,54 @@ int32 SCSIDriver::inquire_bus(Uint32 id)
 	return -1;
 }
 
-int32 SCSIDriver::Open(Uint32 id)
+int32 SCSIDriver::Open(Uint32 handle, Uint32 id)
 {
-	D(bug("scsidrv_open: id=%d", id));
+	D(bug("scsidrv_open: handle=%d, id=%d", handle, id));
 	
-	return check_device_file(id);
+	if (handle >= SCSI_MAX_HANDLES || fds[handle] != 0 || check_device_file(id))
+	{
+		return -1;
+	}
+	
+	char device_file[16];
+	sprintf(device_file, "/dev/sg%d", id);
+	
+	int fd = ::open(device_file, O_RDWR | O_NONBLOCK);
+	if (fd < 0)
+	{
+		D(bug("              Cannot open device file %s", device_file));
+		return fd;
+	}
+	
+	fds[handle] = fd;
+	
+	return 0;
 }
 
-int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout)
+int32 SCSIDriver::Close(Uint32 handle)
 {
+	D(bug("scsidrv_close: handle=%d", handle));
+	
+	if (handle >= SCSI_MAX_HANDLES || fds[handle] == 0)
+	{
+ 		return TOS_EIHNDL;
+	}
+	
+	::close(fds[handle]);
+	
+	fds[handle] = 0;
+
+	return 0;
+}
+
+int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout)
+{
+	UNUSED(id);
 	if (sense_buffer)
 		memset(sense_buffer, 0, 18);
+
+	if (handle >= SCSI_MAX_HANDLES || fds[handle] == 0)
+ 		return TOS_EIHNDL;
 
 #if DEBUG
 	{
@@ -127,17 +165,18 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 		char str[80];
 		
 		*str = '\0';
-		for(i = 0; i < cmd_len && i < 10; i++)
-		{
-			sprintf(str + strlen(str), i ? ":$%02X" : "$%02X", cmd[i]);
-		}
-		D(bug("scsidrv_inout: dir=%d, id=%d, cmd_len=%d, transfer_len=%d, timeout=%d, cmd=%s",
-			dir, id, cmd_len, transfer_len, timeout, str));
+		if (cmd)
+			for(i = 0; i < cmd_len && i < 10; i++)
+			{
+				sprintf(str + strlen(str), i ? ":$%02X" : "$%02X", cmd[i]);
+			}
+		D(bug("scsidrv_inout: handle=%d, dir=%d, id=%d, cmd_len=%d, transfer_len=%d, timeout=%d, cmd=%s",
+			handle, dir, id, cmd_len, transfer_len, timeout, str));
 	}
 #endif
 
 	// No explicit LUN support, the SG driver maps LUNs to device files
-	if(cmd[1] & 0xe0)
+	if (cmd && (cmd[1] & 0xe0))
 	{
 		if (sense_buffer)
 		{
@@ -152,16 +191,6 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 		return 2;
 	}
 
-	char device_file[16];
-	sprintf(device_file, "/dev/sg%d", id);
-
-	int fd = ::open(device_file, O_RDWR | O_NONBLOCK | O_EXCL);
-	if(fd < 0) {
-		D(bug("              Cannot open device file %s", device_file));
-
-		return -1;
-	}
-	
 	struct sg_io_hdr io_hdr;
 	memset(&io_hdr, 0, sizeof(struct sg_io_hdr));
 
@@ -183,9 +212,7 @@ int32 SCSIDriver::inout(Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_le
 
 	io_hdr.timeout = timeout;
 
-	int status = ioctl(fd, SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
-
-	::close(fd);
+	int status = ioctl(fds[handle], SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
 
 	if (status > 0 && sense_buffer)
 	{
@@ -205,6 +232,8 @@ int32 SCSIDriver::check_dev(Uint32 id)
 
 SCSIDriver::SCSIDriver()
 {
+	for (Uint32 handle = 0; handle < SCSI_MAX_HANDLES; handle++)
+		fds[handle] = 0;
 	reset();
 }
 
@@ -215,6 +244,8 @@ SCSIDriver::~SCSIDriver()
 
 void SCSIDriver::reset()
 {
+	for (Uint32 handle = 0; handle < SCSI_MAX_HANDLES; handle++)
+		Close(handle);
 }
 
 int32 SCSIDriver::dispatch(uint32 fncode)
@@ -241,21 +272,27 @@ int32 SCSIDriver::dispatch(uint32 fncode)
 				break;
 				
 			case SCSI_OPEN:
-				ret = Open(getParameter(0));
+				ret = Open(getParameter(0), getParameter(1));
+				break;
+			
+			case SCSI_CLOSE:
+				ret = Close(getParameter(0));
 				break;
 			
 			case SCSI_INOUT:
 				{
-					Uint32 dir = getParameter(0);
-					Uint32 id = getParameter(1);
-					memptr cmd = getParameter(2);
-					Uint32 cmd_len = getParameter(3);
-					memptr buffer = getParameter(4);
-					Uint32 transfer_len = getParameter(5);
-					memptr sense_buffer = getParameter(6);
-					Uint32 timeout = getParameter(7);
+					Uint32 handle = getParameter(0);
+					Uint32 dir = getParameter(1);
+					Uint32 id = getParameter(2);
+					memptr cmd = getParameter(3);
+					Uint32 cmd_len = getParameter(4);
+					memptr buffer = getParameter(5);
+					Uint32 transfer_len = getParameter(6);
+					memptr sense_buffer = getParameter(7);
+					Uint32 timeout = getParameter(8);
 	
 					ret = inout(
+						handle,
 						dir,
 						id,
 						(unsigned char *)(cmd ? Atari2HostAddr(cmd) : 0),
@@ -282,6 +319,9 @@ int32 SCSIDriver::dispatch(uint32 fncode)
 		}
 	}
 	RESTORE_EXCEPTION;
+
+	D(bug(" -> %d", ret));
+	
 	return ret;
 }
 

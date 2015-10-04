@@ -1,3 +1,8 @@
+2015/10/04 - Thorsten
+nf_scsidrv.cpp: some interface changes as suggested by Uwe Seimet
+(needs updated stub program)
+
+
 2015/09/19 - Thorsten
 autogen.sh: automake must run after autoheader in freshly cloned 
 directories
