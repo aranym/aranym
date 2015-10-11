@@ -9,14 +9,20 @@
 class SCSIDriver : public NF_Base
 {
 private:
-	int fds[SCSI_MAX_HANDLES];
+	struct {
+		int fd;
+		int id_lo;
+		int error;
+	} handle_meta_data[SCSI_MAX_HANDLES];
 
 	int32 check_device_file(Uint32 id);
+	void set_error(Uint32 rwflag, Uint32 errnum);
 	int32 interface_features(memptr busName, memptr features, memptr transferLen);
 	int32 inquire_bus(Uint32 id);
 	int32 Open(Uint32 handle, Uint32 id);
 	int32 Close(Uint32 handle);
-	int32 inout(Uint32 handle, Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout);
+	int32 inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout);
+	int32 Error(Uint32 handle, Uint32 rwflag, Uint32 errnum);
 	int32 check_dev(Uint32 id);
 	
 public:

@@ -44,8 +44,8 @@
 #include <scsi/sg.h>
 #include "toserror.h"
 
-// The driver interface version, 1.01
-#define INTERFACE_VERSION 0x0101
+// The driver interface version, 1.02
+#define INTERFACE_VERSION 0x0102
 // Maximum is 20 characters
 #define BUS_NAME "Linux Generic SCSI"
 // The SG driver supports cAllCmds
@@ -61,8 +61,21 @@ enum SCSIDRV_OPERATIONS {
 	SCSI_OPEN,
 	SCSI_CLOSE,
 	SCSI_INOUT,
+	SCSI_ERROR,
 	SCSI_CHECK_DEV
 };
+
+void SCSIDriver::set_error(Uint32 handle, Uint32 errnum)
+{
+	for(Uint32 i = 0; i < SCSI_MAX_HANDLES; i++)
+	{
+		if(handle != i && handle_meta_data[i].fd != 0 &&
+		   handle_meta_data[i].id_lo == handle_meta_data[handle].id_lo)
+		{
+			handle_meta_data[i].error = errnum;
+		}
+	}
+}
 
 int32 SCSIDriver::check_device_file(Uint32 id)
 {
@@ -114,7 +127,7 @@ int32 SCSIDriver::Open(Uint32 handle, Uint32 id)
 {
 	D(bug("scsidrv_open: handle=%d, id=%d", handle, id));
 	
-	if (handle >= SCSI_MAX_HANDLES || fds[handle] != 0 || check_device_file(id))
+	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd != 0 || check_device_file(id))
 	{
 		return -1;
 	}
@@ -129,8 +142,10 @@ int32 SCSIDriver::Open(Uint32 handle, Uint32 id)
 		return fd;
 	}
 	
-	fds[handle] = fd;
-	
+	handle_meta_data[handle].fd = fd;
+	handle_meta_data[handle].id_lo = id;
+	handle_meta_data[handle].error = 0;
+
 	return 0;
 }
 
@@ -138,25 +153,24 @@ int32 SCSIDriver::Close(Uint32 handle)
 {
 	D(bug("scsidrv_close: handle=%d", handle));
 	
-	if (handle >= SCSI_MAX_HANDLES || fds[handle] == 0)
+	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd == 0)
 	{
  		return TOS_EIHNDL;
 	}
 	
-	::close(fds[handle]);
+	::close(handle_meta_data[handle].fd);
 	
-	fds[handle] = 0;
+	handle_meta_data[handle].fd = 0;
 
 	return 0;
 }
 
-int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, Uint32 id, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout)
+int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cmd_len, unsigned char *buffer, Uint32 transfer_len, unsigned char *sense_buffer, Uint32 timeout)
 {
-	UNUSED(id);
 	if (sense_buffer)
 		memset(sense_buffer, 0, 18);
 
-	if (handle >= SCSI_MAX_HANDLES || fds[handle] == 0)
+	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd == 0)
  		return TOS_EIHNDL;
 
 #if DEBUG
@@ -170,8 +184,8 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, Uint32 id, unsigned char *cmd
 			{
 				sprintf(str + strlen(str), i ? ":$%02X" : "$%02X", cmd[i]);
 			}
-		D(bug("scsidrv_inout: handle=%d, dir=%d, id=%d, cmd_len=%d, transfer_len=%d, timeout=%d, cmd=%s",
-			handle, dir, id, cmd_len, transfer_len, timeout, str));
+		D(bug("scsidrv_inout: handle=%d, dir=%d, cmd_len=%d, transfer_len=%d, timeout=%d, cmd=%s",
+			handle, dir, cmd_len, transfer_len, timeout, str));
 	}
 #endif
 
@@ -212,15 +226,56 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, Uint32 id, unsigned char *cmd
 
 	io_hdr.timeout = timeout;
 
-	int status = ioctl(fds[handle], SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
+	int status = ioctl(handle_meta_data[handle].fd, SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
 
 	if (status > 0 && sense_buffer)
 	{
 		D(bug("             Sense Key=$%02X, ASC=$%02X, ASCQ=$%02X",
 				  sense_buffer[2], sense_buffer[12], sense_buffer[13]));
+		if(status == 2)
+		{
+			// Automatic media change and reset handling for
+			// SCSI Driver version 1.0.2
+			if((sense_buffer[2] & 0x0f) && !sense_buffer[13])
+			{
+				if(sense_buffer[12] == 0x28)
+				{
+					// cErrMediach
+					set_error(handle, 1);
+				}
+				else if(sense_buffer[12] == 0x29)
+				{
+					// cErrReset
+				    set_error(handle, 2);
+				}
+			}
+		}
 	}
 
 	return status;
+}
+
+int32 SCSIDriver::Error(Uint32 handle, Uint32 rwflag, Uint32 errnum)
+{
+	D(bug("scsidrv_error: handle=%d, rwflag=%d, errno=%d",
+	  handle, rwflag, errnum));
+
+	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd == 0)
+	    return TOS_EIHNDL;
+
+	if (rwflag != 0)
+	{
+		set_error(handle, errnum);
+
+		return errnum;
+	}
+	else
+	{
+		int status = handle_meta_data[handle].error;
+		handle_meta_data[handle].error = 0;
+
+		return status;
+	}
 }
 
 int32 SCSIDriver::check_dev(Uint32 id)
@@ -233,7 +288,11 @@ int32 SCSIDriver::check_dev(Uint32 id)
 SCSIDriver::SCSIDriver()
 {
 	for (Uint32 handle = 0; handle < SCSI_MAX_HANDLES; handle++)
-		fds[handle] = 0;
+	{
+		handle_meta_data[handle].fd = 0;
+		handle_meta_data[handle].id_lo = 0;
+		handle_meta_data[handle].error = 0;
+	}
 	reset();
 }
 
@@ -283,18 +342,16 @@ int32 SCSIDriver::dispatch(uint32 fncode)
 				{
 					Uint32 handle = getParameter(0);
 					Uint32 dir = getParameter(1);
-					Uint32 id = getParameter(2);
-					memptr cmd = getParameter(3);
-					Uint32 cmd_len = getParameter(4);
-					memptr buffer = getParameter(5);
-					Uint32 transfer_len = getParameter(6);
-					memptr sense_buffer = getParameter(7);
-					Uint32 timeout = getParameter(8);
+					memptr cmd = getParameter(2);
+					Uint32 cmd_len = getParameter(3);
+					memptr buffer = getParameter(4);
+					Uint32 transfer_len = getParameter(5);
+					memptr sense_buffer = getParameter(6);
+					Uint32 timeout = getParameter(7);
 	
 					ret = inout(
 						handle,
 						dir,
-						id,
 						(unsigned char *)(cmd ? Atari2HostAddr(cmd) : 0),
 						cmd_len,
 						(unsigned char *)(buffer ? Atari2HostAddr(buffer) : 0),
@@ -308,6 +365,10 @@ int32 SCSIDriver::dispatch(uint32 fncode)
 				ret = check_dev(getParameter(0));
 				break;
 			
+			case SCSI_ERROR:
+				ret = Error(getParameter(0), getParameter(1), getParameter(2));
+				break;
+
 			default:
 				D(bug("SCSI: Invalid SCSI Driver operation %d requested", fncode));
 				ret = -1;
