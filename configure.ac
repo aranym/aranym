@@ -226,6 +226,16 @@ case "$host_os" in
   mingw*)	OS_TYPE=mingw;;
   *)		OS_TYPE=unknown;;
 esac
+AH_TEMPLATE([HAVE_LIBUDEV], [Define if you have <libudev.h> and libraries])
+if test "$OS_TYPE" = "linux"; then
+   AC_CHECK_HEADERS([libudev.h])
+   if test "$ac_cv_header_libudev_h" = yes; then
+      AC_CHECK_LIB(udev, udev_monitor_new_from_netlink, [LIBS="$LIBS -ludev"])
+      if test $ac_cv_lib_udev_udev_monitor_new_from_netlink = yes; then
+        AC_DEFINE([HAVE_LIBUDEV])
+      fi
+   fi
+fi
 AM_CONDITIONAL([OS_TYPE_linux], test "$OS_TYPE" = "linux")
 AM_CONDITIONAL([OS_TYPE_openbsd], test "$OS_TYPE" = "openbsd")
 AM_CONDITIONAL([OS_TYPE_netbsd], test "$OS_TYPE" = "netbsd")

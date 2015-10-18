@@ -15,8 +15,17 @@ private:
 		int error;
 	} handle_meta_data[SCSI_MAX_HANDLES];
 
+#ifdef HAVE_LIBUDEV
+	struct udev *udev;
+	struct udev_monitor *mon;
+	int udev_mon_fd;
+	fd_set udevFds;
+	struct timeval tv;
+	
+	void check_mchg_udev(void);
+#endif
 	int32 check_device_file(Uint32 id);
-	void set_error(Uint32 rwflag, Uint32 errnum);
+	void set_error(Uint32 rwflag, Uint32 errbit);
 	int32 interface_features(memptr busName, memptr features, memptr transferLen);
 	int32 inquire_bus(Uint32 id);
 	int32 Open(Uint32 handle, Uint32 id);

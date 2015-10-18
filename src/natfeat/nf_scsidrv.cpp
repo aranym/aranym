@@ -40,6 +40,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <fcntl.h>
+#ifdef HAVE_LIBUDEV
+#include <libudev.h>
+#endif
 #include <sys/ioctl.h>
 #include <scsi/sg.h>
 #include "toserror.h"
@@ -65,17 +68,53 @@ enum SCSIDRV_OPERATIONS {
 	SCSI_CHECK_DEV
 };
 
-void SCSIDriver::set_error(Uint32 handle, Uint32 errnum)
+void SCSIDriver::set_error(Uint32 handle, Uint32 errbit)
 {
 	for(Uint32 i = 0; i < SCSI_MAX_HANDLES; i++)
 	{
 		if(handle != i && handle_meta_data[i].fd != 0 &&
 		   handle_meta_data[i].id_lo == handle_meta_data[handle].id_lo)
 		{
-			handle_meta_data[i].error = errnum;
+			handle_meta_data[i].error |= errbit;
 		}
 	}
 }
+
+#ifdef HAVE_LIBUDEV
+// udev-based check for media change
+void SCSIDriver::check_mchg_udev()
+{
+	if (udev_mon_fd <= 0)
+		return;
+	FD_ZERO(&udevFds);
+	FD_SET(udev_mon_fd, &udevFds);
+
+	int ret = select(udev_mon_fd + 1, &udevFds, 0, 0, &tv);
+	if(ret > 0 && FD_ISSET(udev_mon_fd, &udevFds))
+	{
+		struct udev_device *dev = udev_monitor_receive_device(mon);
+		const char *dev_type = udev_device_get_devtype(dev);
+		const char *action = udev_device_get_action(dev);
+		if(!strcmp("disk",  dev_type) && !strcmp("change", action))
+		{
+		       D(bug(": %s was changed", udev_device_get_devnode(dev)));
+
+			// TODO Determine sg device name from block device name
+			// and only report media change for the actually affected device
+	    
+			// cErrMediach for all open handles
+			Uint32 i;
+			for(i = 0; i < SCSI_MAX_HANDLES; i++)
+			{
+				if(handle_meta_data[i].fd)
+				{
+					handle_meta_data[i].error |= 1;
+				}
+			}
+		}
+	}
+}
+#endif
 
 int32 SCSIDriver::check_device_file(Uint32 id)
 {
@@ -132,6 +171,23 @@ int32 SCSIDriver::Open(Uint32 handle, Uint32 id)
 		return -1;
 	}
 	
+#ifdef HAVE_LIBUDEV
+	if (!udev)
+	{
+		udev = udev_new();
+		if (!udev)
+			return -1;
+
+		mon = udev_monitor_new_from_netlink(udev, "udev");
+		udev_monitor_filter_add_match_subsystem_devtype(mon, "block", NULL);
+		udev_monitor_enable_receiving(mon);
+		udev_mon_fd = udev_monitor_get_fd(mon);
+
+		tv.tv_sec = 0;
+		tv.tv_usec = 0;
+	}
+#endif
+
 	char device_file[16];
 	sprintf(device_file, "/dev/sg%d", id);
 	
@@ -263,16 +319,20 @@ int32 SCSIDriver::Error(Uint32 handle, Uint32 rwflag, Uint32 errnum)
 	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd == 0)
 	    return TOS_EIHNDL;
 
+	int errbit = 1 << errnum;
 	if (rwflag != 0)
 	{
-		set_error(handle, errnum);
+		set_error(handle, errbit);
 
-		return errnum;
+		return 0;
 	}
 	else
 	{
-		int status = handle_meta_data[handle].error;
-		handle_meta_data[handle].error = 0;
+#ifdef HAVE_LIBUDEV
+		check_mchg_udev();
+#endif
+		int status = handle_meta_data[handle].error & errbit;
+		handle_meta_data[handle].error &= ~errbit;
 
 		return status;
 	}
@@ -293,6 +353,10 @@ SCSIDriver::SCSIDriver()
 		handle_meta_data[handle].id_lo = 0;
 		handle_meta_data[handle].error = 0;
 	}
+#ifdef HAVE_LIBUDEV
+	udev_mon_fd = -1;
+	udev = 0;
+#endif
 	reset();
 }
 

@@ -1,3 +1,8 @@
+2015/10/18 - Thorsten
+nf_scsidrv.cpp: experimental udev-based media change detection
+(needs stub program >= V0.82)
+
+
 2015/10/11 - Thorsten
 nf_scsidrv.cpp: some interface changes as suggested by Uwe Seimet
 (needs stub program >= V0.81)
