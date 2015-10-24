@@ -1,3 +1,7 @@
+2015/10/24 - Andreas
+- src/Makefile.am: remove target file before copying over it
+
+
 2015/10/18 - Thorsten
 nf_scsidrv.cpp: experimental udev-based media change detection
 (needs stub program >= V0.82)

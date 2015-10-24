@@ -27,10 +27,10 @@ BEOS_RESOURCES = $(srcdir)/Unix/beos/aranym.rdef
 BUNDLE_RESOURCES = \
 	$(srcdir)/Unix/darwin/busybee.icns \
 	$(top_srcdir)/data/logo.png
-	
+
 BUNDLE_LOCALIZATON_FOLDERS = \
 	$(srcdir)/Unix/darwin/*.lproj
-	
+
 BUNDLE_CONTENTS = \
 	$(srcdir)/Unix/darwin/Info.plist \
 	$(srcdir)/Unix/darwin/PkgInfo 	
@@ -486,7 +486,8 @@ if OS_TYPE_beos
 		-short "$(APP) $(PACKAGE_VERSION)" \
 		-long "$(APP) $(PACKAGE_VERSION)"
 endif
-	cp $@ ..
+	rm -f ../$@
+	cp $@ ../$@
 
 # previously, the executables where built in the top level
 # directory, and some external build scripts (e.g. rpm) excpect
@@ -494,7 +495,8 @@ endif
 aratapif$(EXEEXT): $(aratapif_OBJECTS) $(aratapif_DEPENDENCIES) $(EXTRA_aratapif_DEPENDENCIES) 
 	@rm -f $@
 	$(AM_V_CCLD)$(LINK) $(aratapif_OBJECTS) $(aratapif_LDADD) $(LIBS)
-	cp $@ ..
+	rm -f ../$@
+	cp $@ ../$@
 
 
 $(APP_BUNDLE): $(APP)
