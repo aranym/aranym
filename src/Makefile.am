@@ -559,7 +559,7 @@ EXTRA_DIST += \
 
 # For tests
 m68kdisasm: disasm-main.cpp disasm-glue.cpp disasm-builtin.cpp
-	$(AM_V_CXXLD)$(CXX) $(LDFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/disasm-main.cpp $(DISASM_LIBS)
+	$(AM_V_CXXLD)$(CXX) $(LDFLAGS) $(AM_CPPFLAGS) $(CXXFLAGS) $(DEFAULT_INCLUDES) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(SDL_CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/disasm-main.cpp $(DISASM_LIBS)
 
 cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfeat/nfcdrom_sdl.cpp $(srcdir)/natfeat/nfcdrom_linux.cpp $(srcdir)/natfeat/nfcdrom_win32.cpp
 	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)

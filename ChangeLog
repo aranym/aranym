@@ -1,3 +1,7 @@
+2015/11/24 - Thorsten
+Fix compilation of standalone disassembler
+
+
 2015/10/24 - Andreas
 - src/Makefile.am: remove target file before copying over it
 

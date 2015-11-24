@@ -19,8 +19,11 @@
 struct regstruct regs;
 struct flag_struct regflags;
 #ifdef EXCEPTIONS_VIA_LONGJMP
-sigjmp_buf excep_env;
+JMP_BUF excep_env;
 #endif
+JMP_BUF sigsegv_env;
+int in_handler;
+void breakpt(void) { }
 
 // RAM and ROM pointers
 memptr RAMBase = 0;	// RAM base (Atari address space) gb-- init is important
