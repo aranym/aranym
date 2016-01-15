@@ -1,3 +1,7 @@
+2016/01/15 - Thorsten
+Mark texts in sdlgui.sdl as translatable
+
+
 2015/11/24 - Thorsten
 Fix compilation of standalone disassembler
 
