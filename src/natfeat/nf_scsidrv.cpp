@@ -1,7 +1,7 @@
 /*
  * nf_scsidrv.c
  * 
- * Copyright (C) 2015 by Uwe Seimet
+ * Copyright (C) 2016 by Uwe Seimet
  *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
@@ -80,41 +80,49 @@ void SCSIDriver::set_error(Uint32 handle, Uint32 errbit)
 	}
 }
 
-#ifdef HAVE_LIBUDEV
 // udev-based check for media change
-void SCSIDriver::check_mchg_udev()
+bool SCSIDriver::check_mchg_udev()
 {
+	bool changed = false;
+
+#ifdef HAVE_LIBUDEV
 	if (udev_mon_fd <= 0)
-		return;
+		return false;
+
+	fd_set udevFds;
+
 	FD_ZERO(&udevFds);
 	FD_SET(udev_mon_fd, &udevFds);
 
 	int ret = select(udev_mon_fd + 1, &udevFds, 0, 0, &tv);
-	if(ret > 0 && FD_ISSET(udev_mon_fd, &udevFds))
+	if (ret > 0 && FD_ISSET(udev_mon_fd, &udevFds))
 	{
 		struct udev_device *dev = udev_monitor_receive_device(mon);
-		const char *dev_type = udev_device_get_devtype(dev);
-		const char *action = udev_device_get_action(dev);
-		if(!strcmp("disk",  dev_type) && !strcmp("change", action))
+		while (dev)
 		{
-		       D(bug(": %s was changed", udev_device_get_devnode(dev)));
-
-			// TODO Determine sg device name from block device name
-			// and only report media change for the actually affected device
-	    
-			// cErrMediach for all open handles
-			Uint32 i;
-			for(i = 0; i < SCSI_MAX_HANDLES; i++)
+			if (!changed)
 			{
-				if(handle_meta_data[i].fd)
+				const char *dev_type = udev_device_get_devtype(dev);
+				const char *action = udev_device_get_action(dev);
+				if (!strcmp("disk", dev_type) && !strcmp("change", action))
 				{
-					handle_meta_data[i].error |= 1;
+					D(bug(": %s has been changed", udev_device_get_devnode(dev)));
+		
+					// TODO Determine sg device name from block device name
+					// and only report media change for the actually affected device
+		
+					changed = true;
 				}
 			}
+		
+			// Process all pending events
+			dev = udev_monitor_receive_device(mon);
 		}
 	}
-}
 #endif
+
+	return changed;
+}
 
 int32 SCSIDriver::check_device_file(Uint32 id)
 {
@@ -261,28 +269,53 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cm
 		return 2;
 	}
 
-	struct sg_io_hdr io_hdr;
-	memset(&io_hdr, 0, sizeof(struct sg_io_hdr));
-
-	io_hdr.interface_id = 'S';
-
-	io_hdr.dxfer_direction = dir ? SG_DXFER_TO_DEV : SG_DXFER_FROM_DEV;
-	if(!transfer_len) {
-		io_hdr.dxfer_direction = SG_DXFER_NONE;
-	}
+	int status;
+	if(check_mchg_udev())
+	{
+		// cErrMediach for all open handles
+		Uint32 i;
+		for(i = 0; i < SCSI_MAX_HANDLES; i++)
+		{
+			if(handle_meta_data[i].fd)
+			{
+				handle_meta_data[i].error |= 1;
+			}
+		}
 	
-	io_hdr.dxferp = buffer;
-	io_hdr.dxfer_len = transfer_len;
-
-	io_hdr.sbp = sense_buffer;
-	io_hdr.mx_sb_len = sense_buffer ? 18 : 0;
-
-	io_hdr.cmdp = cmd;
-	io_hdr.cmd_len = cmd_len;
-
-	io_hdr.timeout = timeout;
-
-	int status = ioctl(handle_meta_data[handle].fd, SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
+		if(sense_buffer)
+		{
+			// Sense Key and ASC
+			sense_buffer[2] = 0x06;
+			sense_buffer[12] = 0x28;
+		}
+	
+		status = 2;
+	}
+	else
+	{
+		struct sg_io_hdr io_hdr;
+		memset(&io_hdr, 0, sizeof(struct sg_io_hdr));
+	
+		io_hdr.interface_id = 'S';
+	
+		io_hdr.dxfer_direction = dir ? SG_DXFER_TO_DEV : SG_DXFER_FROM_DEV;
+		if(!transfer_len) {
+			io_hdr.dxfer_direction = SG_DXFER_NONE;
+		}
+	
+		io_hdr.dxferp = buffer;
+		io_hdr.dxfer_len = transfer_len;
+	
+		io_hdr.sbp = sense_buffer;
+		io_hdr.mx_sb_len = sense_buffer ? 18 : 0;
+	
+		io_hdr.cmdp = cmd;
+		io_hdr.cmd_len = cmd_len;
+	
+		io_hdr.timeout = timeout;
+	
+		status = ioctl(handle_meta_data[handle].fd, SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
+	}
 
 	if (status > 0 && sense_buffer)
 	{
@@ -317,7 +350,7 @@ int32 SCSIDriver::Error(Uint32 handle, Uint32 rwflag, Uint32 errnum)
 	  handle, rwflag, errnum));
 
 	if (handle >= SCSI_MAX_HANDLES || handle_meta_data[handle].fd == 0)
-	    return TOS_EIHNDL;
+		return TOS_EIHNDL;
 
 	int errbit = 1 << errnum;
 	if (rwflag != 0)
@@ -328,9 +361,6 @@ int32 SCSIDriver::Error(Uint32 handle, Uint32 rwflag, Uint32 errnum)
 	}
 	else
 	{
-#ifdef HAVE_LIBUDEV
-		check_mchg_udev();
-#endif
 		int status = handle_meta_data[handle].error & errbit;
 		handle_meta_data[handle].error &= ~errbit;
 

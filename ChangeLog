@@ -1,3 +1,8 @@
+2016/03/02 - Thorsten
+nf_scsidrv.cpp: some fixes to media change detection
+(suggested by Uwe Seimet)
+
+
 2016/01/15 - Thorsten
 Mark texts in sdlgui.sdl as translatable
 

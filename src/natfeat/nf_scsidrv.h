@@ -19,11 +19,10 @@ private:
 	struct udev *udev;
 	struct udev_monitor *mon;
 	int udev_mon_fd;
-	fd_set udevFds;
 	struct timeval tv;
-	
-	void check_mchg_udev(void);
 #endif
+	
+	bool check_mchg_udev(void);
 	int32 check_device_file(Uint32 id);
 	void set_error(Uint32 rwflag, Uint32 errbit);
 	int32 interface_features(memptr busName, memptr features, memptr transferLen);
