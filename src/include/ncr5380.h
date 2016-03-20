@@ -33,6 +33,7 @@ class NCR5380 {
 		uae_u8	hd_count;
 
 		uae_u8	hd_initiator;
+		uae_u8	hd_mode;
 
 	public:
 		NCR5380(void);

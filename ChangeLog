@@ -1,3 +1,7 @@
+2016/03/21 - Andreas
+- ncr5380.cpp: emulate MODE register (from Finn Thain <fthain@telegraphics.com.au>)
+
+
 2016/03/02 - Thorsten
 nf_scsidrv.cpp: some fixes to media change detection
 (suggested by Uwe Seimet)

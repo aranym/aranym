@@ -120,7 +120,7 @@ NCR5380::~NCR5380(void)
 
 void NCR5380::reset(void)
 {
-	hd_count = hd_status = hd_initiator = 0;
+	hd_count = hd_status = hd_initiator = hd_mode = 0;
 
 	D(bug("ncr5380: reset"));
 }
@@ -140,6 +140,7 @@ uae_u8 NCR5380::ReadData(uae_u16 control)
 			data = hd_initiator = ICR_ARBITRATION_PROGRESS;
 			break;
 		case MODE_REG:
+			data = hd_mode;
 			break;
 		case TARGET_COMMAND_REG:
 			break;
@@ -172,6 +173,7 @@ void NCR5380::WriteData(uae_u16 control, uae_u8 data)
 			hd_initiator = data;
 			break;
 		case MODE_REG:
+			hd_mode = data;
 			break;
 		case TARGET_COMMAND_REG:
 			break;
