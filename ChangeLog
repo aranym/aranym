@@ -1,4 +1,8 @@
 2016/12/12 - Thorsten
+Fix typo in phys_put_quad()
+
+
+2016/12/12 - Thorsten
 rtc.h: add define for Mexico, found in TOS sources
 
 

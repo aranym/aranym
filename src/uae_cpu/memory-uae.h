@@ -280,7 +280,7 @@ static inline void phys_put_quad(uaecptr addr, uae_u64 l)
         return;
     } 
 #endif
-    check_ram_boundary(addr, 4, true);
+    check_ram_boundary(addr, 8, true);
     uae_u64 * const m = (uae_u64 *)phys_get_real_address(addr);
 #ifdef ARAM_PAGE_CHECK
     write_page = addr;
