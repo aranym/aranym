@@ -91,6 +91,38 @@ void EmutosBootOs::emutos_patch(bool cold) throw (AranymException)
 			ROMBaseHost[ptr + 14] = 0x4e; // nop
 			ROMBaseHost[ptr + 15] = 0x71;
 			found++;
+		} else if (
+		    ROMBaseHost[ptr +  0] == 0x08 &&
+			ROMBaseHost[ptr +  1] == 0x00 &&
+			ROMBaseHost[ptr +  2] == 0x00 &&
+			ROMBaseHost[ptr +  3] == 0x01 &&
+			ROMBaseHost[ptr +  4] == 0x67 &&
+			ROMBaseHost[ptr +  5] == 0x06 &&
+			ROMBaseHost[ptr +  6] == 0x42 &&
+			ROMBaseHost[ptr +  7] == 0x79 &&
+			ROMBaseHost[ptr +  8] == 0x00 &&
+			ROMBaseHost[ptr +  9] == 0x00 &&
+			ROMBaseHost[ptr + 10] == 0x04 &&
+			ROMBaseHost[ptr + 11] == 0x46)
+		{
+			D(bug("blkdev_hdv_boot found at %08x", ptr));
+			ROMBaseHost[ptr +  0] = 0x48; // movem.l d1-d2/a0-a2,-(a7)
+			ROMBaseHost[ptr +  1] = 0xe7;
+			ROMBaseHost[ptr +  2] = 0x60;
+			ROMBaseHost[ptr +  3] = 0xe0;
+			ROMBaseHost[ptr +  4] = 0xa0; // Linea_init
+			ROMBaseHost[ptr +  5] = 0x00;
+			ROMBaseHost[ptr +  6] = M68K_EMUL_INIT >> 8;
+			ROMBaseHost[ptr +  7] = M68K_EMUL_INIT & 0xff;
+			ROMBaseHost[ptr +  8] = 0x4c; // movem.l (a7)+,d1-d2/a0-a2
+			ROMBaseHost[ptr +  9] = 0xdf;
+			ROMBaseHost[ptr + 10] = 0x07;
+			ROMBaseHost[ptr + 11] = 0x06;
+			ROMBaseHost[ptr + 12] = 0x70; // moveq #0,d0
+			ROMBaseHost[ptr + 13] = 0x00;
+			ROMBaseHost[ptr + 14] = 0x4e; // nop
+			ROMBaseHost[ptr + 15] = 0x71;
+			found++;
 		}
 	}
 	if (found == 0)
