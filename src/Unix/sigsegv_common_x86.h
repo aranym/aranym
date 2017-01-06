@@ -1,5 +1,13 @@
 #include "disasm-glue.h"
 
+/* for debug output only */
+#ifdef CPU_i386
+#define REG_RIP_NAME "eip"
+#endif
+#ifdef CPU_x86_64
+#define REG_RIP_NAME "rip"
+#endif
+
 enum transfer_type_t {
 	TYPE_UNKNOWN,
 	TYPE_LOAD,

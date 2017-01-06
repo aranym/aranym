@@ -90,11 +90,7 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/)
 # endif
 #endif
 
-#ifdef OS_irix
-void segmentationfault()
-#else
-void segmentationfault(int)
-#endif
+void real_segmentationfault(void)
 {
 	grabMouse(SDL_FALSE);
 	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
@@ -105,6 +101,15 @@ void segmentationfault(int)
 	panicbug("If the Full History was enabled you would see the last 20 instructions here.");
 #endif
 	exit(EXIT_FAILURE);
+}
+
+#ifdef OS_irix
+void segmentationfault()
+#else
+void segmentationfault(int)
+#endif
+{
+	real_segmentationfault();
 }
 
 #if FIXED_ADDRESSING

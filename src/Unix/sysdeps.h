@@ -194,6 +194,7 @@
 
 extern void install_sigsegv(void);
 extern void uninstall_sigsegv(void);
+void real_segmentationfault(void);
 
 #if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
 void cygwin_mingw_abort(void);

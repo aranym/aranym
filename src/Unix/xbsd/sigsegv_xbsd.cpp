@@ -121,7 +121,38 @@ enum {
 
 static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
 {
-	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, (memptr)(uintptr)((char *)sip->si_addr /* CONTEXT_REGS[REG_CR2] */ - fixed_memory_offset));
+	char *fault_addr = (char *)sip->si_addr;
+	memptr addr = (memptr)(uintptr)(faultaddr - fixed_memory_offset);
+#if DEBUG
+	if (addr >= 0xff000000)
+		addr &= 0x00ffffff;
+	if (addr < 0x00f00000 || addr > 0x00ffffff) // YYY
+		bug("\nsegfault: pc=%08x, " REG_RIP_NAME " =%p, addr=%p (0x%08x)", m68k_getpc(), (void *)CONTEXT_AEIP, fault_addr, addr);
+	if (fault_addr < (char *)(fixed_memory_offset - 0x1000000UL)
+#ifdef CPU_x86_64
+		|| fault_addr >= ((char *)fixed_memory_offset + 0x100000000UL)
+#endif
+		)
+	{
+#ifdef DISASM_USE_OPCODES
+		if (CONTEXT_AEIP != 0)
+		{
+			char buf[128];
+			
+			x86_disasm((const uint8 *)CONTEXT_AEIP, buf);
+			panicbug("%s", buf);
+		}
+#endif
+		// raise(SIGBUS);
+	}
+#endif
+	if (fault_addr == 0 || CONTEXT_AEIP == 0)
+	{
+		real_segmentationfault();
+		/* not reached (hopefully) */
+		return;
+	}
+	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, addr);
 }
 
 void install_sigsegv() {

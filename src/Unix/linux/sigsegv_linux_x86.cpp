@@ -45,9 +45,6 @@
 #define REG_RSI REG_ESI
 #define REG_RDI REG_EDI
 #define REG_RSP REG_ESP
-#define REG_RIP_NAME "eip"
-#else
-#define REG_RIP_NAME "rip"
 #endif
 #if defined(CPU_i386) || defined(CPU_x86_64)
 #define CONTEXT_NAME	ucp
@@ -77,7 +74,7 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
 	if (addr < 0x00f00000 || addr > 0x00ffffff) // YYY
-		bug("\nsegfault: pc=%08x, " REG_RIP_NAME " =%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], sip->si_addr, addr);
+		bug("\nsegfault: pc=%08x, " REG_RIP_NAME " =%p, addr=%p (0x%08x)", m68k_getpc(), (void *)CONTEXT_AEIP, sip->si_addr, addr);
 	if (faultaddr < (uintptr)(fixed_memory_offset - 0x1000000UL)
 #ifdef CPU_x86_64
 		|| faultaddr >= ((uintptr)fixed_memory_offset + 0x100000000UL)
@@ -85,14 +82,23 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 		)
 	{
 #ifdef DISASM_USE_OPCODES
-		char buf[128];
-		
-		x86_disasm((const uint8 *)CONTEXT_REGS[REG_RIP], buf);
-		panicbug("%s", buf);
+		if (CONTEXT_AEIP != 0)
+		{
+			char buf[128];
+			
+			x86_disasm((const uint8 *)CONTEXT_AEIP, buf);
+			panicbug("%s", buf);
+		}
 #endif
 		// raise(SIGBUS);
 	}
 #endif
+	if (faultaddr == 0 || CONTEXT_AEIP == 0)
+	{
+		real_segmentationfault();
+		/* not reached (hopefully) */
+		return;
+	}
 	handle_access_fault(CONTEXT_NAME, addr);
 }
 

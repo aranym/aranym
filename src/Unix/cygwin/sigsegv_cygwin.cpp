@@ -74,8 +74,37 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
   {
   	CONTEXT_ATYPE CONTEXT_NAME = ExceptionInfo->ContextRecord;
   	char *fault_addr = (char *)ExceptionInfo->ExceptionRecord->ExceptionInformation[1];
-	D(bug("\nsegfault: pc=%08x, eip=%08lx, addr=%p (0x%08x)", m68k_getpc(), CONTEXT_REGS[REG_RIP], fault_addr, (memptr)(uintptr)(fault_addr - fixed_memory_offset)));
-    handle_access_fault(CONTEXT_NAME, (memptr)(uintptr)(fault_addr - fixed_memory_offset));
+	memptr addr = (memptr)(uintptr)(faultaddr - fixed_memory_offset);
+#if DEBUG
+	if (addr >= 0xff000000)
+		addr &= 0x00ffffff;
+	if (addr < 0x00f00000 || addr > 0x00ffffff) // YYY
+		bug("\nsegfault: pc=%08x, " REG_RIP_NAME " =%p, addr=%p (0x%08x)", m68k_getpc(), (void *)CONTEXT_AEIP, fault_addr, addr);
+	if (fault_addr < (char *)(fixed_memory_offset - 0x1000000UL)
+#ifdef CPU_x86_64
+		|| fault_addr >= ((char *)fixed_memory_offset + 0x100000000UL)
+#endif
+		)
+	{
+#ifdef DISASM_USE_OPCODES
+		if (CONTEXT_AEIP != 0)
+		{
+			char buf[128];
+			
+			x86_disasm((const uint8 *)CONTEXT_AEIP, buf);
+			panicbug("%s", buf);
+		}
+#endif
+		// raise(SIGBUS);
+	}
+#endif
+	if (fault_addr == 0 || CONTEXT_AEIP == 0)
+	{
+		real_segmentationfault();
+		/* not reached (hopefully) */
+		return;
+	}
+    handle_access_fault(CONTEXT_NAME, addr);
     return EXCEPTION_CONTINUE_EXECUTION;
   }
   return EXCEPTION_CONTINUE_SEARCH;
