@@ -207,7 +207,7 @@ static bool install_signal_handler(bool quiet)
 		return false;
 	}
 
-	D(bug("Protected ROM          (%p - %p)", ROMBaseHost, ROMBaseHost + ROMSize));
+	D(bug("Protected ROM          at %p - %p (0x%08x - 0x%08x)", ROMBaseHost, ROMBaseHost + ROMSize, ROMBase, ROMBase + ROMSize));
 #if USE_VALGRIND
 	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost, ROMSize);
 #endif
@@ -218,7 +218,9 @@ static bool install_signal_handler(bool quiet)
 			panicbug("Couldn't protect RAMEnd");
 		return false;
 	}
-	D(bug("Protected RAMEnd       (%p - %p)", ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd));
+	D(bug("Protected RAMEnd       at %p - %p (0x%08x - 0x%08x)",
+		ROMBaseHost + ROMSize + HWSize + FastRAMSize, ROMBaseHost + ROMSize + HWSize + FastRAMSize + RAMEnd,
+		ROMBase + ROMSize + HWSize + FastRAMSize, ROMBase + ROMSize + HWSize + FastRAMSize + RAMEnd));
 #if USE_VALGRIND
 	VALGRIND_MAKE_MEM_DEFINED(ROMBaseHost + ROMSize + HWSize + FastRAMSize, RAMEnd);
 #endif
@@ -231,7 +233,7 @@ static bool install_signal_handler(bool quiet)
 		return false;
 	}
 
-	D(bug("Protected HW space     (%p - %p)", HWBaseHost, HWBaseHost + HWSize));
+	D(bug("Protected HW space     at %p - %p (0x%08x - 0x%08x)", HWBaseHost, HWBaseHost + HWSize, HWBase, HWBase + HWSize));
 
 	if (vm_protect(RAMBaseHost + ~0xffffffUL, 0x1000000, VM_PAGE_NOACCESS)) {
 		if (!quiet)
@@ -239,7 +241,9 @@ static bool install_signal_handler(bool quiet)
 		return false;
 	}
 
-	D(bug("Protected mirror space (%p - %p)", RAMBaseHost + ~0xffffffUL, RAMBaseHost + ~0xffffffUL + RAMSize + ROMSize + HWSize));
+	D(bug("Protected mirror space at %p - %p (0x%08x - 0x%08x)",
+		RAMBaseHost + ~0xffffffUL, RAMBaseHost + ~0xffffffUL + RAMSize + ROMSize + HWSize,
+		RAMBase + ~0xffffffU, RAMBase + ~0xffffffU + RAMSize + ROMSize + HWSize));
 #if USE_VALGRIND
 	VALGRIND_MAKE_MEM_DEFINED(HWBaseHost, HWSize);
 	VALGRIND_MAKE_MEM_DEFINED(RAMBaseHost + ~0xffffffUL, 0x1000000);
