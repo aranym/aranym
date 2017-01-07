@@ -728,6 +728,7 @@ struct Config_Tag jit_conf[]={
 	{ "JITLazyFlush", Int_Tag, &bx_options.jit.jitlazyflush, 0, 0},
 	{ "JITBlackList", String_Tag, &bx_options.jit.jitblacklist, sizeof(bx_options.jit.jitblacklist), 0},
 	{ "JITInline", Bool_Tag, &bx_options.jit.jitinline, 0, 0},
+	{ "JITDebug", Bool_Tag, &bx_options.jit.jitdebug, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 

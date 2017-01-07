@@ -81,7 +81,7 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 #endif
 		)
 	{
-#ifdef DISASM_USE_OPCODES
+#ifdef HAVE_DISASM_X86
 		if (CONTEXT_AEIP != 0)
 		{
 			char buf[128];

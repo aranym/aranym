@@ -22,15 +22,15 @@
 #endif
 
 #if defined(DISASM_USE_BUILTIN) || defined(DISASM_USE_OPCODES)
-#  define HAVE_DISASM
+#  define HAVE_DISASM_M68K
 #else
-#  undef HAVE_DISASM
+#  undef HAVE_DISASM_M68K
 #endif
 #if (defined(DISASM_USE_BUILTIN) + defined(DISASM_USE_OPCODES)) > 1
   #error only one disassembler may be defined
 #endif
 
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 
 enum m68k_cpu {
 	CPU_AUTO,
@@ -145,10 +145,34 @@ memptr gdb_pc(void);
 
 #ifdef DISASM_USE_BUILTIN
 
-int disasm_builtin(m68k_disasm_info *info);
+int m68k_disasm_builtin(m68k_disasm_info *info);
 
 #endif
 
-#endif /* HAVE_DISASM */
+#endif /* HAVE_DISASM_M68K */
+
+#if defined(DISASM_USE_OPCODES) && (defined(CPU_i386) || defined(CPU_x86_64))
+
+#define HAVE_DISASM_X86 1
+
+const uint8 *x86_disasm(const uint8 *ainstr, char *buf);
+
+#endif
+
+#if defined(DISASM_USE_OPCODES) && (defined(CPU_powerpc))
+
+#define HAVE_DISASM_PPC 1
+
+const uint8 *ppc_disasm(const uint8 *ainstr, char *buf);
+
+#endif
+
+#if defined(DISASM_USE_OPCODES) && (defined(CPU_arm))
+
+#define HAVE_DISASM_ARM 1
+
+const uint8 *arm_disasm(const uint8 *ainstr, char *buf);
+
+#endif
 
 #endif /* __DISASM_GLUE_H__ */

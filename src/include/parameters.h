@@ -1,3 +1,4 @@
+
 /*
  * parameters.h - parameter init/load/save code - header file
  *
@@ -134,6 +135,7 @@ typedef struct {
   bool jit;
   bool jitfpu;
   bool jitinline;
+  bool jitdebug;
   uint32 jitcachesize;
   uint32 jitlazyflush;
   char jitblacklist[512];

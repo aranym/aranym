@@ -1,4 +1,8 @@
 2017/01/06 - Thorsten
+add disassembler support to JIT (with JIT_DEBUG)
+
+
+2017/01/06 - Thorsten
 Detect accesses to HOST NULL ptrs at least in custom segfault handlers,
 and terminate Aranym because that indicates a bug in Aranym rather
 than the emulated program.

@@ -286,7 +286,7 @@ static sigsegv_return_t sigsegv_handler(sigsegv_address_t fault_address,
 #endif
 		)
 	{
-#ifdef DISASM_USE_OPCODES
+#ifdef HAVE_DISASM_X86
 		if (CONTEXT_AEIP != 0)
 		{
 			char buf[128];

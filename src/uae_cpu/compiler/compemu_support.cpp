@@ -2414,7 +2414,7 @@ void compiler_init(void)
 
 #ifdef JIT_DEBUG
 	// JIT debug mode ?
-	JITDebug = bx_options.startup.debugger;
+	JITDebug = bx_options.jit.jitdebug;
 #endif
 	D(bug("<JIT compiler> : enable runtime disassemblers : %s", JITDebug ? "yes" : "no"));
 	
@@ -3892,19 +3892,63 @@ int failure;
 #if defined(CPU_arm)
 #define TARGET_NATIVE	TARGET_ARM
 #endif
+#if defined(JIT_DEBUG)
+#include "disasm-glue.h"
+#endif
 
-void disasm_block(int /* target */, uint8 * /* start */, size_t /* length */)
+static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 {
 	if (!JITDebug)
 		return;
+	UNUSED(start);
+	UNUSED(length);
+	switch (disasm_target)
+	{
+	case TARGET_M68K:
+#if defined(JIT_DEBUG) && defined(HAVE_DISASM_M68K)
+		{
+			char buf[256];
+			memptr end;
+			
+			disasm_info.memory_vma = ((memptr)((uintptr_t)(start) - MEMBaseDiff));
+			end = disasm_info.memory_vma + length;
+			while (length > 0)
+			{
+				int isize = m68k_disasm_to_buf(&disasm_info, buf);
+				bug("%s", buf);
+				if (isize < 0)
+					break;
+				if ((uintptr)isize > length)
+					break;
+				length -= isize;
+			}
+		}
+#endif
+		break;
+	case TARGET_X86:
+	case TARGET_X86_64:
+#if defined(JIT_DEBUG) && defined(HAVE_DISASM_X86)
+		{
+			const uint8 *end = start + length;
+			char buf[256];
+			
+			while (start < end)
+			{
+				start = x86_disasm(start, buf);
+				bug("%s", buf);
+			}
+		}
+#endif
+		break;
+	}
 }
 
-static inline void disasm_native_block(uint8 *start, size_t length)
+static inline void disasm_native_block(const uint8 *start, size_t length)
 {
 	disasm_block(TARGET_NATIVE, start, length);
 }
 
-static inline void disasm_m68k_block(uint8 *start, size_t length)
+static inline void disasm_m68k_block(const uint8 *start, size_t length)
 {
 	disasm_block(TARGET_M68K, start, length);
 }
@@ -3925,16 +3969,16 @@ void compiler_dumpstate(void)
 		return;
 	
 	bug("### Host addresses");
-	bug("MEM_BASE    : %x", MEMBaseDiff);
+	bug("MEM_BASE    : %lx", (unsigned long)MEMBaseDiff);
 	bug("PC_P        : %p", &regs.pc_p);
 	bug("SPCFLAGS    : %p", &regs.spcflags);
 	bug("D0-D7       : %p-%p", &regs.regs[0], &regs.regs[7]);
 	bug("A0-A7       : %p-%p", &regs.regs[8], &regs.regs[15]);
-	bug("");
+	bug(" ");
 	
 	bug("### M68k processor state");
 	m68k_dumpstate(stderr, 0);
-	bug("");
+	bug(" ");
 	
 	bug("### Block in Atari address space");
 	bug("M68K block   : %p",
@@ -3944,7 +3988,7 @@ void compiler_dumpstate(void)
 			  (void *)last_compiled_block_addr,
 			  get_blockinfo_addr(last_regs_pc_p)->direct_handler_size);
 	}
-	bug("");
+	bug(" ");
 }
 #endif
 
@@ -3956,7 +4000,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 	clock_t start_time = clock();
 #endif
 #ifdef JIT_DEBUG
-	bool disasm_block = false;
+	bool disasm_block = true;
 #endif
 	
 	/* OK, here we need to 'compile' a block */
@@ -4377,10 +4421,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
 		D(bug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
 		uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
-		disasm_m68k_block((uae_u8 *)pc_hist[0].location, block_size);
+		disasm_m68k_block((const uae_u8 *)pc_hist[0].location, block_size);
 		D(bug("Compiled block @ 0x%08x\n", pc_hist[0].location));
-		disasm_native_block((uae_u8 *)current_block_start_target, bi->direct_handler_size);
-		getchar();
+		disasm_native_block((const uae_u8 *)current_block_start_target, bi->direct_handler_size);
+		UNUSED(block_addr);
 	}
 #endif
 	

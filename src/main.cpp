@@ -384,7 +384,7 @@ bool InitAll(void)
 	CPUType = 4;
 	FPUType = 1;
 
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 	D(bug("Initializing disassembler..."));
 	m68k_disasm_init(&disasm_info, CPU_68040);
 #endif
@@ -498,7 +498,7 @@ void ExitAll(void)
 	SDLGui_UnInit();
 #endif
 
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 	m68k_disasm_exit(&disasm_info);
 #endif
 

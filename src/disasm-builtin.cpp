@@ -4110,7 +4110,7 @@ static void (*const grphdlrs[])(m68k_disasm_info *, int) = {
 
 /*** ---------------------------------------------------------------------- ***/
 
-int disasm_builtin(m68k_disasm_info *info)
+int m68k_disasm_builtin(m68k_disasm_info *info)
 {
     register int opcode;
     register void (*hdlr)(m68k_disasm_info *info, int opcode);
@@ -4141,4 +4141,3 @@ int disasm_builtin(m68k_disasm_info *info)
 extern int i_dont_care_that_ISOC_doesnt_like_empty_sourcefiles;
 
 #endif /* DISASM_USE_BUILTIN */
-

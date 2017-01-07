@@ -6,7 +6,7 @@
 #include "cpu_emulation.h"
 #include "disasm-glue.h"
 
-#ifdef HAVE_DISASM /* rest of file */
+#ifdef HAVE_DISASM_M68K /* rest of file */
 
 /*
  * kept here rather than in debug.cpp
@@ -249,7 +249,7 @@ int m68k_disasm_insn(m68k_disasm_info *info)
 				}
 #endif
 #ifdef DISASM_USE_BUILTIN
-				len = disasm_builtin(info);
+				len = m68k_disasm_builtin(info);
 #endif
 				info->opcode[sizeof(info->opcode) - 1] = '\0';
 				info->operands[sizeof(info->operands) - 1] = '\0';
@@ -410,4 +410,4 @@ void gdb_regs(void)
 	fprintf(f, "\n");
 }
 
-#endif /* HAVE_DISASM */
+#endif /* HAVE_DISASM_M68K */

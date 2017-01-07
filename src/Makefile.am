@@ -82,6 +82,7 @@ aranym_SOURCES = \
 	dsp.cpp \
 	disasm-glue.cpp \
 	disasm-builtin.cpp \
+	disasm-x86.cpp \
 	emul_op.cpp \
 	glenums.c \
 	natfeats.cpp \
