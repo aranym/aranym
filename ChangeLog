@@ -1,3 +1,7 @@
+2017/01/08 - Thorsten
+Fix some file permissions; move verify.h to include directory
+
+
 2017/01/06 - Thorsten
 add disassembler support to JIT (with JIT_DEBUG)
 
