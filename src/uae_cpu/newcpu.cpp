@@ -1107,9 +1107,9 @@ uae_u32 linea68000(volatile uae_u16 opcode)
 	SAVE_EXCEPTION;
 	save_regs(r);
 
-	int sz = 8 + sizeof(void *);
+	const int sz = 8 + sizeof(void *);
 	volatile uae_u32 sp = 0;
-	uae_u32 backup[4];
+	uae_u32 backup[(sz + 3) / 4];
 
 	if (sigsetjmp(jmp, 1) == 0)
 	{
@@ -1445,7 +1445,7 @@ setjmpagain:
 
 void m68k_disasm (FILE *f, uaecptr addr, uaecptr *nextpc, int cnt)
 {
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 	char buf[256];
 	int size;
 
@@ -1469,7 +1469,7 @@ void m68k_disasm (FILE *f, uaecptr addr, uaecptr *nextpc, int cnt)
 #ifdef DEBUGGER
 void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 {
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 	char buf[256];
 
 	disasm_info.memory_vma = addr;
@@ -1494,7 +1494,7 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 
 #ifdef FULL_HISTORY
 void showDisasm(uaecptr addr) {
-#ifdef HAVE_DISASM
+#ifdef HAVE_DISASM_M68K
 	char buf[256];
 
 	disasm_info.memory_vma = addr;

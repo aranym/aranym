@@ -2587,7 +2587,7 @@ static void generate_func (void)
     for (i = 0; i < 1; i++) {
 	cpu_level = 4 - i;
 	postfix = i;
-	fprintf (stblfile, "struct cputbl CPUFUNC(op_smalltbl_%d)[] = {\n", postfix);
+	fprintf (stblfile, "const struct cputbl CPUFUNC(op_smalltbl_%d)[] = {\n", postfix);
 
 	/* sam: this is for people with low memory (eg. me :)) */
 	printf ("\n"

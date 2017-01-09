@@ -1,3 +1,7 @@
+2017/01/09 - Thorsten
+JIT: sync with current WinUAE sources
+
+
 2017/01/08 - Thorsten
 Fix some file permissions; move verify.h to include directory
 

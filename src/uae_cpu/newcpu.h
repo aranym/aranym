@@ -302,7 +302,8 @@ extern uaecptr last_fault_for_exception_3;
 #define CPU_OP_NAME(a) op ## a
 
 /* 68040+ 68881 */
-extern struct cputbl op_smalltbl_0_ff[];
+extern const struct cputbl op_smalltbl_0_ff[];
+extern const struct cputbl op_smalltbl_0_nf[];
 
 #ifdef FLIGHT_RECORDER
 extern void m68k_record_step(uaecptr, int);

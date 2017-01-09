@@ -2,7 +2,7 @@
  * compiler/compemu.h - Public interface and definitions
  *
  * Copyright (c) 2001-2004 Milan Jurik of ARAnyM dev team (see AUTHORS)
- * 
+ *
  * Inspired by Christian Bauer's Basilisk II
  *
  * This file is part of the ARAnyM project which builds a new and powerful
@@ -32,7 +32,18 @@
 #ifndef COMPEMU_H
 #define COMPEMU_H
 
+#include "sysconfig.h"
 #include "newcpu.h"
+
+#ifdef UAE
+#ifdef CPU_64_BIT
+typedef uae_u64 uintptr;
+#else
+typedef uae_u32 uintptr;
+#endif
+/* FIXME: cpummu.cpp also checks for USE_JIT, possibly others */
+#define USE_JIT
+#endif
 
 #ifdef USE_JIT
 
@@ -55,11 +66,14 @@ extern uae_u32 start_pc;
 struct blockinfo_t;
 
 struct cpu_history {
-	uae_u16 * location;
+	uae_u16* location;
+#ifdef UAE
+	uae_u8  specmem;
+#endif
 };
 
 union cacheline {
-	cpuop_func * handler;
+	cpuop_func* handler;
 	blockinfo_t * bi;
 };
 
@@ -116,28 +130,20 @@ union cacheline {
 			  for jump targets */
 
 #define INDIVIDUAL_INST 0
-#if 1
-// gb-- my format from readcpu.cpp is not the same
-#define FLAG_X    0x0010
-#define FLAG_N    0x0008
-#define FLAG_Z    0x0004
-#define FLAG_V    0x0002
-#define FLAG_C    0x0001
-#else
 #define FLAG_C    0x0010
 #define FLAG_V    0x0008
 #define FLAG_Z    0x0004
 #define FLAG_N    0x0002
 #define FLAG_X    0x0001
-#endif
 #define FLAG_CZNV (FLAG_C | FLAG_Z | FLAG_N | FLAG_V)
+#define FLAG_ALL  (FLAG_C | FLAG_Z | FLAG_N | FLAG_V | FLAG_X)
 #define FLAG_ZNV  (FLAG_Z | FLAG_N | FLAG_V)
 
 #define KILLTHERAT 1  /* Set to 1 to avoid some partial_rat_stalls */
 
 #if defined(CPU_arm)
 #define USE_DATA_BUFFER
-# define N_REGS 13  /* really 16, but 13 to 15 are SP, LR, PC */
+#define N_REGS 13  /* really 16, but 13 to 15 are SP, LR, PC */
 #else
 #if defined(CPU_x86_64)
 #define N_REGS 16 /* really only 15, but they are numbered 0-3,5-15 */
@@ -149,9 +155,11 @@ union cacheline {
 
 /* Functions exposed to newcpu, or to what was moved from newcpu.c to
  * compemu_support.c */
+#ifdef WINUAE_ARANYM
 extern void compiler_init(void);
 extern void compiler_exit(void);
 extern bool compiler_use_jit(void);
+#endif
 extern void init_comp(void);
 extern void flush(int save_regs);
 extern void small_flush(int save_regs);
@@ -162,7 +170,13 @@ extern void build_comp(void);
 extern void set_cache_state(int enabled);
 extern int get_cache_state(void);
 extern uae_u32 get_jitted_size(void);
+#ifdef JIT
+#ifdef WINUAE_ARANYM
 extern void (*flush_icache)(int n);
+#else
+extern void flush_icache(int n);
+#endif
+#endif
 extern void alloc_cache(void);
 extern int check_for_cache_miss(void);
 
@@ -170,9 +184,12 @@ extern int check_for_cache_miss(void);
 extern void comp_fpp_opp (uae_u32 opcode, uae_u16 extra);
 extern void comp_fbcc_opp (uae_u32 opcode);
 extern void comp_fscc_opp (uae_u32 opcode, uae_u16 extra);
+void comp_fdbcc_opp (uae_u32 opcode, uae_u16 extra);
+void comp_ftrapcc_opp (uae_u32 opcode, uaecptr oldpc);
+void comp_fsave_opp (uae_u32 opcode);
+void comp_frestore_opp (uae_u32 opcode);
 
 extern uae_u32 needed_flags;
-extern cacheline cache_tags[];
 extern uae_u8* comp_pc_p;
 extern void* pushall_call_handler;
 
@@ -203,7 +220,7 @@ typedef struct {
   double val;
   uae_u8 status;
   uae_s8 realreg; /* gb-- realreg can hold -1 */
-  uae_u8 realind;  
+  uae_u8 realind;
   uae_u8 needflush;
 } freg_status;
 
@@ -273,15 +290,14 @@ typedef struct {
 } bigstate;
 
 typedef struct {
-  /* Integer part */
-  uae_s8 virt[VREGS];
-  uae_s8 nat[N_REGS];
+	/* Integer part */
+	uae_s8 virt[VREGS];
+	uae_s8 nat[N_REGS];
 } smallstate;
 
-extern bigstate live;
 extern int touchcnt;
 
-#define IMM uae_s32
+#define IMM  uae_s32
 #define RR1  uae_u32
 #define RR2  uae_u32
 #define RR4  uae_u32
@@ -306,22 +322,22 @@ extern int touchcnt;
 #define FRW  uae_u32
 
 #define MIDFUNC(nargs,func,args) void func args
-#define MENDFUNC(nargs,func,args) 
+#define MENDFUNC(nargs,func,args)
 #define COMPCALL(func) func
 
 #define LOWFUNC(flags,mem,nargs,func,args) static inline void func args
-#define LENDFUNC(flags,mem,nargs,func,args) 
+#define LENDFUNC(flags,mem,nargs,func,args)
 
 /* What we expose to the outside */
 #define DECLARE_MIDFUNC(func) extern void func
 
 #if defined(CPU_arm)
 
-#  include "compemu_midfunc_arm.h"
+#include "compemu_midfunc_arm.h"
 
-#  if defined(USE_JIT2)
-#    include "compemu_midfunc_arm2.h"
-#  endif
+#if defined(USE_JIT2)
+#include "compemu_midfunc_arm2.h"
+#endif
 #endif
 
 #if defined(CPU_i386) || defined(CPU_x86_64)
@@ -381,14 +397,17 @@ typedef struct blockinfo_t {
     cpuop_func* handler_to_use;
     /* The direct handler does not check for the correct address */
 
-    cpuop_func* handler; 
+    cpuop_func* handler;
     cpuop_func* direct_handler;
 
     cpuop_func* direct_pen;
     cpuop_func* direct_pcc;
 
+#ifdef UAE
+    uae_u8* nexthandler;
+#endif
     uae_u8* pc_p;
-    
+
     uae_u32 c1;
     uae_u32 c2;
 #if USE_CHECKSUM_INFO
@@ -399,22 +418,22 @@ typedef struct blockinfo_t {
 #endif
 
     struct blockinfo_t* next_same_cl;
-    struct blockinfo_t** prev_same_cl_p;  
+    struct blockinfo_t** prev_same_cl_p;
     struct blockinfo_t* next;
-    struct blockinfo_t** prev_p; 
+    struct blockinfo_t** prev_p;
 
-    uae_u8 optlevel;  
-    uae_u8 needed_flags;  
-    uae_u8 status;  
+    uae_u8 optlevel;
+    uae_u8 needed_flags;
+    uae_u8 status;
     uae_u8 havestate;
-    
+
     dependency  dep[2];  /* Holds things we depend on */
     dependency* deplist; /* List of things that depend on this */
     smallstate  env;
-	
+
 #ifdef JIT_DEBUG
-	/* (gb) size of the compiled block (direct handler) */
-	uae_u32 direct_handler_size;
+    /* (gb) size of the compiled block (direct handler) */
+    uae_u32 direct_handler_size;
 #endif
 } blockinfo;
 
@@ -436,5 +455,89 @@ static inline void flush_icache(int) { }
 static inline void build_comp() { }
 
 #endif /* !USE_JIT */
+
+#ifdef UAE
+
+typedef struct {
+    uae_u8 type;
+    uae_u8 reg;
+    uae_u32 next;
+} regacc;
+
+#define JIT_EXCEPTION_HANDLER
+// #define JIT_ALWAYS_DISTRUST
+
+/* ARAnyM uses fpu_register name, used in scratch_t */
+/* FIXME: check that no ARAnyM code assumes different floating point type */
+typedef fptype fpu_register;
+
+extern void compile_block(cpu_history* pc_hist, int blocklen, int totcyles);
+
+#define MAXCYCLES (1000 * CYCLE_UNIT)
+#define scaled_cycles(x) (currprefs.m68k_speed<0?(((x)/SCALE)?(((x)/SCALE<MAXCYCLES?((x)/SCALE):MAXCYCLES)):1):(x))
+
+/* Flags for Bernie during development/debugging. Should go away eventually */
+#define DISTRUST_CONSISTENT_MEM 0
+
+typedef struct {
+    uae_u8 use_flags;
+    uae_u8 set_flags;
+    uae_u8 is_jump;
+    uae_u8 is_addx;
+    uae_u8 is_const_jump;
+} op_properties;
+
+extern op_properties prop[65536];
+
+STATIC_INLINE int end_block(uae_u16 opcode)
+{
+    return prop[opcode].is_jump ||
+	(prop[opcode].is_const_jump && !currprefs.comp_constjump);
+}
+
+#ifdef _WIN32
+LONG WINAPI EvalException(LPEXCEPTION_POINTERS info);
+#if defined(_MSC_VER) && !defined(NO_WIN32_EXCEPTION_HANDLER)
+#ifdef _WIN64
+/* Structured exception handling is table based for Windows x86-64, so
+ * Windows will not be able to find the exception handler. */
+#else
+#define USE_STRUCTURED_EXCEPTION_HANDLING
+#endif
+#endif
+#endif
+
+void jit_abort(const char *format,...);
+#if SIZEOF_TCHAR != 1
+void jit_abort(const TCHAR *format, ...);
+#endif
+
+#else
+
+#ifdef WINUAE_ARANYM
+#define jit_log(format, ...) D(bug(format, ##__VA_ARGS__))
+#define jit_log2(format, ...) D2(bug(format, ##__VA_ARGS__))
+void jit_abort(const char *format,...) __attribute__((format(printf, 1, 2))) __attribute__((__noreturn__));
+#else
+#define jit_abort(...) abort()
+#define jit_log panicbug
+#define jit_log2(...)
+#endif
+
+#endif /* UAE */
+
+#ifdef CPU_64_BIT
+static inline uae_u32 check_uae_p32(uintptr address, const char *file, int line)
+{
+	if (address > (uintptr_t) 0xffffffff) {
+		jit_abort("JIT: 64-bit pointer (0x%llx) at %s:%d (fatal)",
+			(unsigned long long)address, file, line);
+	}
+	return (uae_u32) address;
+}
+#define uae_p32(x) (check_uae_p32((uintptr)(x), __FILE__, __LINE__))
+#else
+#define uae_p32(x) ((uae_u32)(x))
+#endif
 
 #endif /* COMPEMU_H */

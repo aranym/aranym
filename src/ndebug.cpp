@@ -232,26 +232,29 @@ void ndebug::dbprintf(const char *s, ...)
 void ndebug::pdbprintf(const char *s, ...)
 {
 	va_list a;
+	va_start(a, s);
+	ndebug::pdbvprintf(s, a);
+	va_end(a);
+}
+
+void ndebug::pdbvprintf(const char *s, va_list a)
+{
 #ifdef DEBUGGER
 	{
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
-		va_start(a, s);
 		vasprintf(&dbbuffer[dbend++], s, a);
-		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;
 		reset_actualrow();
 	}
 #endif
-	va_start(a, s);
 	vfprintf(stderr, s, a);
 	fprintf(stderr, "\n");
 #ifdef __ANDROID__
 		__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
 #endif
-	va_end(a);
 	fflush(stderr);
 }
 

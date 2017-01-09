@@ -162,6 +162,7 @@ public:
   static void dbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
 
   static void pdbprintf(const char *, ...) __attribute__((format(__printf__, 1, 2)));
+  static void pdbvprintf(const char *, va_list args) __attribute__((format(__printf__, 1, 0)));
 	
 #ifdef DEBUGGER
   static bool do_skip;

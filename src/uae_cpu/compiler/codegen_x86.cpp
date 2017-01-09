@@ -96,8 +96,16 @@
 
 #define STACK_ALIGN		16
 #define STACK_OFFSET	sizeof(void *)
+#ifdef _WIN64
+/* In the Microsoft x64 calling convention, it's the caller's responsibility
+ * to allocate 32 bytes of "shadow space" on the stack right before calling
+ * the function (regardless of the actual number of parameters used). */
+#define STACK_SHADOW_SPACE 32
+#else
+#define STACK_SHADOW_SPACE 0
+#endif
 
-uae_s8 always_used[]={4,-1};
+uae_s8 always_used[] = { ESP_INDEX, -1 };
 #if defined(CPU_x86_64)
 uae_s8 can_byte[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
 uae_s8 can_word[]={0,1,2,3,5,6,7,8,9,10,11,12,13,14,15,-1};
@@ -124,9 +132,17 @@ uae_u8 call_saved[]={0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0};
      by pushing, even though they are "saved" across function calls
 */
 #if defined(CPU_x86_64)
+#ifdef _WIN64
+/* https://msdn.microsoft.com/en-us/library/6t169e9c.aspx:
+ * "The registers RBX, RBP, RDI, RSI, RSP, R12, R13, R14, and R15 are
+ * considered nonvolatile and must be saved and restored by a function that
+ * uses them". Also saving r11 for now (see comment below). */
+static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1,0,0,0,1,1,1,1,1};
+#else
 /* callee-saved registers as defined by Linux AMD64 ABI: rbx, rbp, rsp, r12 - r15 */
 /* preserve r11 because it's generally used to hold pointers to functions */
 static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,0,0,0,0,0,1,1,1,1,1};
+#endif
 #else
 /* callee-saved registers as defined by System V IA-32 ABI: edi, esi, ebx, ebp */
 static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
@@ -153,8 +169,8 @@ static const uae_u8 need_to_preserve[]={0,0,0,1,0,1,1,1};
 #define CLOBBER_SHRL clobber_flags()
 #define CLOBBER_SHRA clobber_flags()
 #define CLOBBER_TEST clobber_flags()
-#define CLOBBER_CL16 
-#define CLOBBER_CL8  
+#define CLOBBER_CL16
+#define CLOBBER_CL8
 #define CLOBBER_SE32
 #define CLOBBER_SE16
 #define CLOBBER_SE8
@@ -568,7 +584,7 @@ LOWFUNC(READ,NONE,3,raw_cmov_l_rr,(RW4 d, R4 s, IMM cc))
 	if (have_cmov)
 		CMOVLrr(cc, s, d);
 	else { /* replacement using branch and mov */
-		int8 *target_p = (int8 *)x86_get_target() + 1;
+		uae_s8 *target_p = (uae_s8 *)x86_get_target() + 1;
 		JCCSii(cc^1, 0);
 		MOVLrr(s, d);
 		*target_p = (uintptr)x86_get_target() - ((uintptr)target_p + 1);
@@ -739,7 +755,7 @@ LOWFUNC(NONE,READ,5,raw_cmov_l_rm_indexed,(W4 d, IMM base, R4 index, IMM factor,
 	if (have_cmov)
 		ADDR32 CMOVLmr(cond, base, X86_NOREG, index, factor, d);
 	else { /* replacement using branch and mov */
-		int8 *target_p = (int8 *)x86_get_target() + 1;
+		uae_s8 *target_p = (uae_s8 *)x86_get_target() + 1;
 		JCCSii(cond^1, 0);
 		ADDR32 MOVLmr(base, X86_NOREG, index, factor, d);
 		*target_p = (uintptr)x86_get_target() - ((uintptr)target_p + 1);
@@ -752,7 +768,7 @@ LOWFUNC(NONE,READ,3,raw_cmov_l_rm,(W4 d, IMM mem, IMM cond))
 	if (have_cmov)
 		CMOVLmr(cond, mem, X86_NOREG, X86_NOREG, 1, d);
 	else { /* replacement using branch and mov */
-		int8 *target_p = (int8 *)x86_get_target() + 1;
+		uae_s8 *target_p = (uae_s8 *)x86_get_target() + 1;
 		JCCSii(cond^1, 0);
 		ADDR32 MOVLmr(mem, X86_NOREG, X86_NOREG, 1, d);
 		*target_p = (uintptr)x86_get_target() - ((uintptr)target_p + 1);
@@ -3479,12 +3495,22 @@ static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 
 static inline void raw_dec_sp(int off)
 {
-    if (off) raw_sub_l_ri(ESP_INDEX,off);
+    if (off) {
+#ifdef CPU_x86_64
+		emit_byte(0x48); /* REX prefix */
+#endif
+    	raw_sub_l_ri(ESP_INDEX,off);
+    }
 }
 
 static inline void raw_inc_sp(int off)
 {
-    if (off) raw_add_l_ri(ESP_INDEX,off);
+    if (off) {
+#ifdef CPU_x86_64
+		emit_byte(0x48); /* REX prefix */
+#endif
+    	raw_add_l_ri(ESP_INDEX,off);
+    }
 }
 
 static inline void raw_push_regs_to_preserve(void) {
