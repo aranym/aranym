@@ -4671,8 +4671,13 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						init_comp();
 					}
 					was_comp=1;
+					
+					bool isnop = do_get_mem_word(pc_hist[i].location) == 0x4e71 ||
+						((i + 1) < blocklen && do_get_mem_word(pc_hist[i+1].location) == 0x4e71);
+					
+					if (isnop)
+						compemu_raw_mov_l_mi((uintptr)&regs.fault_pc, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
 
-					compemu_raw_mov_l_mi((uintptr)&regs.fault_pc, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
 					comptbl[opcode](opcode);
 					freescratch();
 					if (!(liveflags[i+1] & FLAG_CZNV)) {
@@ -4685,6 +4690,15 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					flush(1);
 					was_comp=0;
 #endif
+					/*
+					 * workaround for buserror handling: on a "nop", write registers back
+					 */
+					if (isnop)
+					{
+						flush(1);
+						nop();
+						was_comp=0;
+					}
 				}
 
 				if (failure) {
@@ -4933,7 +4947,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 		if (JITDebug && disasm_block) {
 			uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
-			D(bug("M68K block @ 0x%08x (%d insns)\n", block_addr, blocklen));
+			D(bug("M68K block @ 0x%08x (%d insns)", block_addr, blocklen));
 			uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
 			disasm_m68k_block((const uae_u8 *)pc_hist[0].location, block_size);
 			D(bug("Compiled block @ 0x%08x\n", pc_hist[0].location));
@@ -4941,7 +4955,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			UNUSED(block_addr);
 		}
 #endif
-
+		
 		log_dump();
 		align_target(align_jumps);
 
@@ -5097,6 +5111,13 @@ setjmpagain:
 		}
 	}
 	CATCH(prb) {
+		D(bug("m68k_compile_execute: exception %d pc=%08x (%08x+%p-%p) fault_pc=%08x addr=%08x -> %08x sp=%08x",
+			int(prb),
+			m68k_getpc(),
+			regs.pc, regs.pc_p, regs.pc_oldp,
+			regs.fault_pc,
+			regs.mmu_fault_addr, get_long (regs.vbr + 4*prb),
+			regs.regs[15]));
 		flush_icache(0);
 		Exception(prb, 0);
 		goto setjmpagain;
