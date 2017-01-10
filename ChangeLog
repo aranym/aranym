@@ -1,4 +1,8 @@
 2017/01/10 - Thorsten
+JIT: fix regression in definition of status flags
+
+
+2017/01/10 - Thorsten
 JIT: more sync with current WinUAE sources
 
 
