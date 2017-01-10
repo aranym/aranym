@@ -1,4 +1,8 @@
 2017/01/10 - Thorsten
+JIT: more sync with current WinUAE sources
+
+
+2017/01/10 - Thorsten
 JIT: workaround for cases where a buserror was catched by the
 68k code and jumps back into the middle of a compiled block
 

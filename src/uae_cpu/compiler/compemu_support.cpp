@@ -4947,15 +4947,15 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 		if (JITDebug && disasm_block) {
 			uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
-			D(bug("M68K block @ 0x%08x (%d insns)", block_addr, blocklen));
+			jit_log("M68K block @ 0x%08x (%d insns)", block_addr, blocklen);
 			uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
 			disasm_m68k_block((const uae_u8 *)pc_hist[0].location, block_size);
-			D(bug("Compiled block @ 0x%08x\n", pc_hist[0].location));
+			jit_log("Compiled block @ %p", pc_hist[0].location);
 			disasm_native_block((const uae_u8 *)current_block_start_target, bi->direct_handler_size);
 			UNUSED(block_addr);
 		}
 #endif
-		
+
 		log_dump();
 		align_target(align_jumps);
 
@@ -5111,13 +5111,13 @@ setjmpagain:
 		}
 	}
 	CATCH(prb) {
-		D(bug("m68k_compile_execute: exception %d pc=%08x (%08x+%p-%p) fault_pc=%08x addr=%08x -> %08x sp=%08x",
+		jit_log("m68k_compile_execute: exception %d pc=%08x (%08x+%p-%p) fault_pc=%08x addr=%08x -> %08x sp=%08x",
 			int(prb),
 			m68k_getpc(),
 			regs.pc, regs.pc_p, regs.pc_oldp,
 			regs.fault_pc,
 			regs.mmu_fault_addr, get_long (regs.vbr + 4*prb),
-			regs.regs[15]));
+			regs.regs[15]);
 		flush_icache(0);
 		Exception(prb, 0);
 		goto setjmpagain;
