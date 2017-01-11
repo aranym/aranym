@@ -4591,7 +4591,8 @@ static void generate_one_opcode(int rp, int noflags) {
 	int aborted = 0;
 	int have_srcreg = 0;
 	int have_dstreg = 0;
-
+	const char *name;
+	
 	if (table68k[opcode].mnemo == i_ILLG || table68k[opcode].clev > cpu_level)
 		return;
 
@@ -4764,30 +4765,20 @@ static void generate_one_opcode(int rp, int noflags) {
 
 		comprintf("}\n");
 
+		name = lookuptab[i].name;
 		if (aborted) {
-			fprintf(stblfile, "{ NULL, 0x%08x, %ld }, /* %s */\n", flags,
-					opcode, lookuptab[i].name);
+			fprintf(stblfile, "{ NULL, 0x%08x, %ld }, /* %s */\n", opcode, flags, name);
 			com_discard();
 		} else {
-			if (noflags) {
-				fprintf(stblfile,
-						"{ op_%lx_%d_comp_nf, 0x%08x, %ld }, /* %s */\n",
-						opcode, postfix, flags, opcode, lookuptab[i].name);
-				fprintf(headerfile, "extern compop_func op_%lx_%d_comp_nf;\n",
-						opcode, postfix);
-				printf(
-						"void REGPARAM2 op_%lx_%d_comp_nf(uae_u32 opcode) /* %s */\n{\n",
-						opcode, postfix, lookuptab[i].name);
-			} else {
-				fprintf(stblfile,
-						"{ op_%lx_%d_comp_ff, 0x%08x, %ld }, /* %s */\n",
-						opcode, postfix, flags, opcode, lookuptab[i].name);
-				fprintf(headerfile, "extern compop_func op_%lx_%d_comp_ff;\n",
-						opcode, postfix);
-				printf(
-						"void REGPARAM2 op_%lx_%d_comp_ff(uae_u32 opcode) /* %s */\n{\n",
-						opcode, postfix, lookuptab[i].name);
-			}
+			const char *tbl = noflags ? "nf" : "ff";
+			fprintf(stblfile,
+					"{ op_%lx_%d_comp_%s, %ld, 0x%08x }, /* %s */\n",
+					opcode, postfix, tbl, opcode, flags, name);
+			fprintf(headerfile, "extern compop_func op_%lx_%d_comp_%s;\n",
+					opcode, postfix, tbl);
+			printf(
+					"void REGPARAM2 op_%lx_%d_comp_%s(uae_u32 opcode) /* %s */\n{\n",
+					opcode, postfix, tbl, name);
 			com_flush();
 		}
 	}
@@ -4797,6 +4788,7 @@ static void generate_one_opcode(int rp, int noflags) {
 
 static void generate_func(int noflags) {
 	int i, j, rp;
+	const char *tbl = noflags ? "nf" : "ff";
 
 	using_prefetch = 0;
 	using_exception_3 = 0;
@@ -4805,12 +4797,8 @@ static void generate_func(int noflags) {
 		cpu_level = 4 - i;
 		postfix = i;
 
-		if (noflags)
-			fprintf(stblfile, "struct comptbl op_smalltbl_%d_comp_nf[] = {\n",
-					postfix);
-		else
-			fprintf(stblfile, "struct comptbl op_smalltbl_%d_comp_ff[] = {\n",
-					postfix);
+		fprintf(stblfile, "const struct comptbl op_smalltbl_%d_comp_%s[] = {\n",
+				postfix, tbl);
 
 		/* sam: this is for people with low memory (eg. me :)) */
 		printf("\n"
@@ -4838,7 +4826,7 @@ static void generate_func(int noflags) {
 			printf("#endif\n\n");
 		}
 
-		fprintf(stblfile, "{ 0, 0,65536 }};\n");
+		fprintf(stblfile, "{ 0, 65536, 0 }};\n");
 	}
 
 }

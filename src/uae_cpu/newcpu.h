@@ -84,8 +84,8 @@ typedef void compop_func (uae_u32) REGPARAM;
 
 struct comptbl {
     compop_func *handler;
-	uae_u32		specific;
 	uae_u32		opcode;
+	uae_u32		specific;
 #define COMP_OPCODE_ISJUMP      0x0001
 #define COMP_OPCODE_LONG_OPCODE 0x0002
 #define COMP_OPCODE_CMOV        0x0004

@@ -1,4 +1,8 @@
 2017/01/11 - Thorsten
+JIT: sync gencomp*.c with current WinUAE sources
+
+
+2017/01/11 - Thorsten
 JIT: sync compemu_midfunc_x86.[cpp|h] with current WinUAE sources
 
 
