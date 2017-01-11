@@ -44,4 +44,9 @@ enum {
 	NATIVE_CC_LE = 14
 };
 
+/* FIXME: include/flags_x86.h in UAE had the following values:
+	NATIVE_CC_VC = 11,
+	NATIVE_CC_VS = 10,
+*/
+
 #endif /* NATIVE_FLAGS_X86_H */

@@ -27,7 +27,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  *  Note:
- *  	File is included by compemu.h
+ *      File is included by compemu.h
  *
  */
 
@@ -87,12 +87,14 @@ DECLARE_MIDFUNC(push_l_i(IMM i));
 DECLARE_MIDFUNC(push_l(RR4 s));
 DECLARE_MIDFUNC(clear_16(RW4 r));
 DECLARE_MIDFUNC(clear_8(RW4 r));
+DECLARE_MIDFUNC(sign_extend_32_rr(W4 d, RR2 s));
 DECLARE_MIDFUNC(sign_extend_16_rr(W4 d, RR2 s));
 DECLARE_MIDFUNC(sign_extend_8_rr(W4 d, RR1 s));
 DECLARE_MIDFUNC(zero_extend_16_rr(W4 d, RR2 s));
 DECLARE_MIDFUNC(zero_extend_8_rr(W4 d, RR1 s));
 DECLARE_MIDFUNC(imul_64_32(RW4 d, RW4 s));
 DECLARE_MIDFUNC(mul_64_32(RW4 d, RW4 s));
+DECLARE_MIDFUNC(simulate_bsf(W4 tmp, RW4 s));
 DECLARE_MIDFUNC(imul_32_32(RW4 d, RR4 s));
 DECLARE_MIDFUNC(mul_32_32(RW4 d, RR4 s));
 DECLARE_MIDFUNC(mov_b_rr(W1 d, RR1 s));
@@ -200,11 +202,14 @@ DECLARE_MIDFUNC(fmov_loge_2(FW r));
 DECLARE_MIDFUNC(fmov_1(FW r));
 DECLARE_MIDFUNC(fmov_0(FW r));
 DECLARE_MIDFUNC(fmov_rm(FW r, MEMR m));
+DECLARE_MIDFUNC(fmov_mr(MEMW m, FR r));
 DECLARE_MIDFUNC(fmovi_rm(FW r, MEMR m));
 DECLARE_MIDFUNC(fmovi_mr(MEMW m, FR r));
+DECLARE_MIDFUNC(fmovi_mrb(MEMW m, FR r, double *bounds));
 DECLARE_MIDFUNC(fmovs_rm(FW r, MEMR m));
 DECLARE_MIDFUNC(fmovs_mr(MEMW m, FR r));
-DECLARE_MIDFUNC(fmov_mr(MEMW m, FR r));
+DECLARE_MIDFUNC(fcuts_r(FRW r));
+DECLARE_MIDFUNC(fcut_r(FRW r));
 DECLARE_MIDFUNC(fmov_ext_mr(MEMW m, FR r));
 DECLARE_MIDFUNC(fmov_ext_rm(FW r, MEMR m));
 DECLARE_MIDFUNC(fmov_rr(FW d, FR s));
@@ -214,11 +219,28 @@ DECLARE_MIDFUNC(dont_care_fflags(void));
 DECLARE_MIDFUNC(fsqrt_rr(FW d, FR s));
 DECLARE_MIDFUNC(fabs_rr(FW d, FR s));
 DECLARE_MIDFUNC(frndint_rr(FW d, FR s));
+DECLARE_MIDFUNC(fgetexp_rr(FW d, FR s));
+DECLARE_MIDFUNC(fgetman_rr(FW d, FR s));
 DECLARE_MIDFUNC(fsin_rr(FW d, FR s));
 DECLARE_MIDFUNC(fcos_rr(FW d, FR s));
+DECLARE_MIDFUNC(ftan_rr(FW d, FR s));
+DECLARE_MIDFUNC(fsincos_rr(FW d, FW c, FR s));
+DECLARE_MIDFUNC(fscale_rr(FRW d, FR s));
 DECLARE_MIDFUNC(ftwotox_rr(FW d, FR s));
 DECLARE_MIDFUNC(fetox_rr(FW d, FR s));
+DECLARE_MIDFUNC(fetoxM1_rr(FW d, FR s));
+DECLARE_MIDFUNC(ftentox_rr(FW d, FR s));
 DECLARE_MIDFUNC(flog2_rr(FW d, FR s));
+DECLARE_MIDFUNC(flogN_rr(FW d, FR s));
+DECLARE_MIDFUNC(flogNP1_rr(FW d, FR s));
+DECLARE_MIDFUNC(flog10_rr(FW d, FR s));
+DECLARE_MIDFUNC(fasin_rr(FW d, FR s));
+DECLARE_MIDFUNC(facos_rr(FW d, FR s));
+DECLARE_MIDFUNC(fatan_rr(FW d, FR s));
+DECLARE_MIDFUNC(fatanh_rr(FW d, FR s));
+DECLARE_MIDFUNC(fsinh_rr(FW d, FR s));
+DECLARE_MIDFUNC(fcosh_rr(FW d, FR s));
+DECLARE_MIDFUNC(ftanh_rr(FW d, FR s));
 DECLARE_MIDFUNC(fneg_rr(FW d, FR s));
 DECLARE_MIDFUNC(fadd_rr(FRW d, FR s));
 DECLARE_MIDFUNC(fsub_rr(FRW d, FR s));
