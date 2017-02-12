@@ -3929,7 +3929,7 @@ struct _gl_osmesa {
 	/* 2748 */ GLenum APIENTRY (*CheckNamedFramebufferStatus)(GLuint framebuffer, GLenum target);
 	/* 2749 */ void APIENTRY (*ClearNamedBufferData)(GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data);
 	/* 2750 */ void APIENTRY (*ClearNamedBufferSubData)(GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data);
-	/* 2751 */ void APIENTRY (*ClearNamedFramebufferfi)(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil);
+	/* 2751 */ void APIENTRY (*ClearNamedFramebufferfi)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 	/* 2752 */ void APIENTRY (*ClearNamedFramebufferfv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat *value);
 	/* 2753 */ void APIENTRY (*ClearNamedFramebufferiv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLint *value);
 	/* 2754 */ void APIENTRY (*ClearNamedFramebufferuiv)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLuint *value);

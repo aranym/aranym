@@ -235,13 +235,13 @@ gldiff:
 	$(PERL) $(DYNGL_PL) -macros $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/glfuncs.h - || true
 	$(PERL) $(DYNGL_PL) -calls $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/call-gl.c - || true
 	$(PERL) $(DYNGL_PL) -dispatch $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/src/natfeat/nfosmesa/dispatch-gl.c - || true
-	$(PERL) $(DYNGL_PL) -ldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h - || true
-	$(PERL) $(DYNGL_PL) -ldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/osmesa_load.c - || true
+	$(PERL) $(DYNGL_PL) $(GLENUMS) -ldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/osmesa.h - || true
+	$(PERL) $(DYNGL_PL) $(GLENUMS) -ldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/osmesa_load.c - || true
 	$(PERL) $(DYNGL_PL) -tinyldgheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/ldg/tiny_gl.h - || true
 	$(PERL) $(DYNGL_PL) -tinyldgsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_load.c - || true
 	$(PERL) $(DYNGL_PL) -tinyldglink $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/link-tinygl.h - || true
 	$(PERL) $(DYNGL_PL) -tinyslbheader $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/slb/tiny_gl.h - || true
-	$(PERL) $(DYNGL_PL) -tinyslbsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c - || true
+	$(PERL) $(DYNGL_PL) $(GLENUMS) -tinyslbsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c - || true
 
 EXTRA_DIST = \
 	BUGS FAQ README-cygwin.in \

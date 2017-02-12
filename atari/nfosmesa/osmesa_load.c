@@ -5435,7 +5435,7 @@ int ldg_init_osmesa(LDG *lib)
 	GL_CHECK(glp->ClearNamedBufferData);
 	glp->ClearNamedBufferSubData = (void APIENTRY (*)(GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)) ldg_find("glClearNamedBufferSubData", lib);
 	GL_CHECK(glp->ClearNamedBufferSubData);
-	glp->ClearNamedFramebufferfi = (void APIENTRY (*)(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil)) ldg_find("glClearNamedFramebufferfi", lib);
+	glp->ClearNamedFramebufferfi = (void APIENTRY (*)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil)) ldg_find("glClearNamedFramebufferfi", lib);
 	GL_CHECK(glp->ClearNamedFramebufferfi);
 	glp->ClearNamedFramebufferfv = (void APIENTRY (*)(GLuint framebuffer, GLenum buffer, GLint drawbuffer, const GLfloat *value)) ldg_find("glClearNamedFramebufferfv", lib);
 	GL_CHECK(glp->ClearNamedFramebufferfv);

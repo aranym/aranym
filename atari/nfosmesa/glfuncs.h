@@ -1136,8 +1136,8 @@ GL_PROCM(void, gl, ClearNamedBufferSubDataEXT, glClearNamedBufferSubDataEXT, CLE
 #endif
 #ifndef NO_GLCLEARNAMEDFRAMEBUFFERFI
 #if !defined(TINYGL_ONLY)
-GL_PROC(void, gl, ClearNamedFramebufferfi, glClearNamedFramebufferfi, CLEARNAMEDFRAMEBUFFERFI, (AND GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil), (framebuffer, buffer, depth, stencil), &framebuffer, GL_void_return)
-GL_PROCM(void, gl, ClearNamedFramebufferfi, glClearNamedFramebufferfi, CLEARNAMEDFRAMEBUFFERFI, (AND GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil), (framebuffer, buffer, depth, stencil), &framebuffer, GL_void_return)
+GL_PROC(void, gl, ClearNamedFramebufferfi, glClearNamedFramebufferfi, CLEARNAMEDFRAMEBUFFERFI, (AND GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil), (framebuffer, buffer, drawbuffer, depth, stencil), &framebuffer, GL_void_return)
+GL_PROCM(void, gl, ClearNamedFramebufferfi, glClearNamedFramebufferfi, CLEARNAMEDFRAMEBUFFERFI, (AND GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil), (framebuffer, buffer, drawbuffer, depth, stencil), &framebuffer, GL_void_return)
 #endif
 #endif
 #ifndef NO_GLCLEARNAMEDFRAMEBUFFERFV

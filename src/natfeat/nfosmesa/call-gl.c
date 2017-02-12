@@ -1202,10 +1202,10 @@ void OSMesaDriver::nfglClearNamedBufferSubDataEXT(GLuint buffer, GLenum internal
 FN_GLCLEARNAMEDBUFFERSUBDATAEXT(buffer, internalformat, offset, size, format, type, data);
 }
 
-void OSMesaDriver::nfglClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil)
+void OSMesaDriver::nfglClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil)
 {
-	D(bug("nfosmesa: glClearNamedFramebufferfi(%u, %s, %f, %d)", framebuffer, gl_enum_name(buffer), depth, stencil));
-	fn.glClearNamedFramebufferfi(framebuffer, buffer, depth, stencil);
+	D(bug("nfosmesa: glClearNamedFramebufferfi(%u, %s, %d, %f, %d)", framebuffer, gl_enum_name(buffer), drawbuffer, depth, stencil));
+	fn.glClearNamedFramebufferfi(framebuffer, buffer, drawbuffer, depth, stencil);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG

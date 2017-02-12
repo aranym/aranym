@@ -1382,8 +1382,9 @@
 			nfglClearNamedFramebufferfi(
 				getStackedParameter(0),  /* GLuint framebuffer */
 				getStackedParameter(1),  /* GLenum buffer */
-				getStackedFloat(2),  /* GLfloat depth */
-				getStackedParameter(3)  /* GLint stencil */);
+				getStackedParameter(2),  /* GLint drawbuffer */
+				getStackedFloat(3),  /* GLfloat depth */
+				getStackedParameter(4)  /* GLint stencil */);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFV:
 			D(funcname = "glClearNamedFramebufferfv");

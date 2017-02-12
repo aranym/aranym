@@ -22158,10 +22158,11 @@ static void APIENTRY exec_glClearNamedBufferSubData(GLuint buffer, GLenum intern
 	(*exec)(gl_slb, 2751 /* NFOSMESA_GLCLEARNAMEDBUFFERSUBDATA */, SLB_NARGS(2), gl_pub, &buffer);
 }
 
-static void APIENTRY exec_glClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLfloat depth, GLint stencil)
+static void APIENTRY exec_glClearNamedFramebufferfi(GLuint framebuffer, GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)buffer;
+	(void)drawbuffer;
 	(void)depth;
 	(void)stencil;
 	(*exec)(gl_slb, 2752 /* NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFI */, SLB_NARGS(2), gl_pub, &framebuffer);
