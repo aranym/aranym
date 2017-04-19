@@ -27,6 +27,7 @@
 #include "xhdi.h"
 #include "atari_rootsec.h"
 #include "tools.h"
+#include <errno.h>
 #if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)) && defined(__SSE2__)
 #include <emmintrin.h>
 /* #define USE_SSE_BYTESWAP 1 */
@@ -273,7 +274,11 @@ int32 XHDIDriver::XHReadWrite(uint16 major, uint16 minor,
 	}
 
 	off_t offset = (off_t)recno * XHDI_BLOCK_SIZE;
-	fseeko(f, offset, SEEK_SET);
+	if (fseeko(f, offset, SEEK_SET) != 0)
+		return errnoHost2Mint(errno, TOS_EINVAL);
+	if (count == 0)
+		return writing ? TOS_EACCDN : TOS_E_OK;
+	
 	memptr bytes = count * XHDI_BLOCK_SIZE;
 	if (writing)
 	{
@@ -457,7 +462,17 @@ int32 XHDIDriver::dispatch(uint32 fncode)
 						getParameter(3)  /* ULONG *blocksize */
 						);
 				break;
-				
+		
+		case  2: /* XHReserve */
+		case  3: /* XHLock */
+		case  4: /* XHStop */
+		case  5: /* XHEject */
+		case  9: /* XHNewCookie */
+		case 15: /* XHMediumChanged */
+		case 16: /* XHMiNTInfo */
+		case 17: /* XHDOSLimits */
+		case 18: /* XHLastAccess */
+		case 19: /* XHReaccess */
 		default: ret = TOS_EINVFN;
 				D(bug("Unimplemented ARAnyM XHDI function #%d", fncode));
 				break;
