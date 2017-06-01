@@ -289,10 +289,12 @@ static struct filelist
 } *head;
 
 
+#ifdef _WIN32
 static char *xstrdup(const char *s)
 {
 	return strcpy(malloc(strlen(s) + 1), s);
 }
+#endif
 
 
 static int saw_file(const wchar_t *name)
@@ -938,7 +940,7 @@ static int process_file(const wchar_t *filename, const char *internal_fn, const 
 #ifdef __MINGW32__
 			printf("\t%s => %s (0x%I64x)\n", internal_fn, print_fn, ImageBase);
 #else
-			printf("\t%s => %s (0x%llx)\n", internal_fn, print_fn, ImageBase);
+			printf("\t%s => %s (0x%llx)\n", internal_fn, print_fn, (unsigned long long) ImageBase);
 #endif
 		}
 	}
