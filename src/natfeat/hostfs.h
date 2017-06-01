@@ -125,13 +125,6 @@ class HostFs : public NF_Base
 	void reset();
 
 	/**
-	 * Installs the drive.
-	 **/
-	void install( const char driveSign, const char* rootPath, bool halfSensitive );
-
-	uint32 getDrvBits();
-
-	/**
 	 * MetaDos DOS driver dispatch functions.
 	 **/
 	const char *name() { return "HOSTFS"; }
@@ -158,7 +151,6 @@ class HostFs : public NF_Base
 	 **/
 	void transformFileName( char* dest, const char* source );
 	bool getHostFileName( char* result, ExtDrive* drv, const char* pathName, const char* name );
-	void convertPathA2F( ExtDrive *drv, char* fpathName, char* pathName, const char* basePath = NULL );
 
 	void fetchXFSC( XfsCookie *fc, memptr filep );
 	void flushXFSC( XfsCookie *fc, memptr filep );
