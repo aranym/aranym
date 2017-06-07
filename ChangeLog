@@ -1,4 +1,8 @@
 2017/06/07 - Thorsten
+blitter.cpp: reformat the op table to make it more readable
+
+
+2017/06/07 - Thorsten
 blitter.cpp: handle word read/writes of blitter src/dst address
 
 
