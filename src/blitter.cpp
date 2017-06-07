@@ -408,6 +408,7 @@ static void (*do_hop_op_P[4][16])( BLITTER& ) =
 uint8 BLITTER::handleRead(memptr addr) {
 	addr -= getHWoffset();
 
+	D(bug("Blitter read byte from register %x at %06x", addr+getHWoffset(), showPC()));
 	switch(addr) {
 		case 0x3a: return hop;
 		case 0x3b: return op;
@@ -423,6 +424,7 @@ uint8 BLITTER::handleRead(memptr addr) {
 uae_u16 BLITTER::handleReadW(uaecptr addr) {
 	addr -= getHWoffset();
 
+	D(bug("Blitter read word from register %x at %06x", addr+getHWoffset(), showPC()));
 	if (addr < 0x20) {
 		return halftone_ram[addr / 2];
 	}
@@ -430,11 +432,15 @@ uae_u16 BLITTER::handleReadW(uaecptr addr) {
 	switch(addr) {
 		case 0x20: return source_x_inc;
 		case 0x22: return source_y_inc;
+		case 0x24: return (source_addr >> 16) & 0xffff;
+		case 0x26: return (source_addr) & 0xffff;
 		case 0x28: return end_mask_1;
 		case 0x2a: return end_mask_2;
 		case 0x2c: return end_mask_3;
 		case 0x2e: return dest_x_inc;
 		case 0x30: return dest_y_inc;
+		case 0x32: return (dest_addr >> 16) & 0xffff;
+		case 0x34: return (dest_addr) & 0xffff;
 		case 0x36: return x_count;
 		case 0x38: return y_count;
 		case 0x3a: // fallthrough
@@ -449,6 +455,7 @@ uae_u16 BLITTER::handleReadW(uaecptr addr) {
 uae_u32 BLITTER::handleReadL(uaecptr addr) {
 	addr -= getHWoffset();
 
+	D(bug("Blitter read long from register %x at %06x", addr+getHWoffset(), showPC()));
 	if (addr < 0x20) {
 		return BASE_IO::handleReadL(addr+getHWoffset());
 	}
@@ -466,13 +473,14 @@ uae_u32 BLITTER::handleReadL(uaecptr addr) {
 void BLITTER::handleWrite(memptr addr, uint8 value) {
 	addr -= getHWoffset();
 
+	D(bug("Blitter write byte $%02x to register %x at %06x", value, addr+getHWoffset(), showPC()));
 	switch(addr) {
 		case 0x3a: STORE_B_ff8a3a(value); break;
 		case 0x3b: STORE_B_ff8a3b(value); break;
 		case 0x3c: STORE_B_ff8a3c(value); break;
 		case 0x3d: STORE_B_ff8a3d(value); break;
 		default:
-			panicbug("Blitter tried to write byte %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+			panicbug("Blitter tried to write byte $%02x to register %x at %06x", value, addr+getHWoffset(), showPC());
 	}
 
 	if (blit) {
@@ -484,6 +492,7 @@ void BLITTER::handleWrite(memptr addr, uint8 value) {
 void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
 	addr -= getHWoffset();
 
+	D(bug("Blitter write word $%04x to register %x at %06x", value, addr+getHWoffset(), showPC()));
 	if (addr < 0x20) {
 		halftone_ram[addr / 2] = value;
 		return;
@@ -492,17 +501,21 @@ void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
 	switch(addr) {
 		case 0x20: source_x_inc = value; break;
 		case 0x22: source_y_inc = value; break;
+		case 0x24: source_addr = (source_addr & 0x0000ffff) | (value << 16); source_addr_backup = source_addr; break;
+		case 0x26: source_addr = (source_addr & 0xffff0000) | (value & 0xfffe); source_addr_backup = source_addr; break;
 		case 0x28: end_mask_1 = value; break;
 		case 0x2a: end_mask_2 = value; break;
 		case 0x2c: end_mask_3 = value; break;
 		case 0x2e: dest_x_inc = value; break;
 		case 0x30: dest_y_inc = value; break;
+		case 0x32: dest_addr = (dest_addr & 0x0000ffff) | (value << 16); dest_addr_backup = dest_addr; break;
+		case 0x34: dest_addr = (dest_addr & 0xffff0000) | (value & 0xfffe); dest_addr_backup = dest_addr; break;
 		case 0x36: x_count = value; break;
 		case 0x38: y_count = value; break;
 		case 0x3a: STORE_B_ff8a3a(value >> 8); STORE_B_ff8a3b(value); break;
 		case 0x3c: STORE_B_ff8a3c(value >> 8); STORE_B_ff8a3d(value); break;
 		default:
-			panicbug("Blitter tried to write word %d to register %x at %06x", value, addr+getHWoffset(), showPC());
+			panicbug("Blitter tried to write word $%04x to register %x at %06x", value, addr+getHWoffset(), showPC());
 	}
 
 	if (blit) {
@@ -513,6 +526,7 @@ void BLITTER::handleWriteW(uaecptr addr, uint16 value) {
 
 void BLITTER::handleWriteL(uaecptr addr, uint32 value) {
 	addr -= getHWoffset();
+	D(bug("Blitter write long $%08x to register %x at %06x", value, addr+getHWoffset(), showPC()));
 	switch(addr) {
 		case 0x24:
 			D(bug("Blitter sets source to $%08lx at $%08lx", value, showPC()));

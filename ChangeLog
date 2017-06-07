@@ -1,4 +1,8 @@
 2017/06/07 - Thorsten
+blitter.cpp: handle word read/writes of blitter src/dst address
+
+
+2017/06/07 - Thorsten
 blitter.cpp: do not read the source at all for operations that
 don't need it, and don't check the source address in these cases;
 the bios does not initalize it
