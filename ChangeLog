@@ -1,3 +1,9 @@
+2017/06/07 - Thorsten
+blitter.cpp: do not read the source at all for operations that
+don't need it, and don't check the source address in these cases;
+the bios does not initalize it
+
+
 2017/06/01 - Thorsten
 Remove some unused declarations
 contributed by Miro Kropacek
