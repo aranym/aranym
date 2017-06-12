@@ -1,3 +1,8 @@
+2017/06/12 - Thorsten
+replace verify.h with slightly different version that was released
+under LGPL v2
+
+
 2017/06/07 - Thorsten
 blitter.cpp: reformat the op table to make it more readable
 
