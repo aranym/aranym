@@ -1,4 +1,12 @@
 2017/06/20 - Thorsten
+ata.cpp: fix some cases where two or more
+errors where issued when using unsupported addresses;
+also suppress some irritating messages caused by
+drivers that might try to auto-detect twisted cables,
+like EmuTOS since version 0.9.8
+
+
+2017/06/20 - Thorsten
 Set the window manager icon after initializing the video mode
 also for SDL 1.x, otherwise it might be loaded in the wrong
 format and cause badmatch errors.

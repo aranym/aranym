@@ -124,23 +124,23 @@ bx_hard_drive_c::~bx_hard_drive_c(void)
 fcha2io(Bit32u address)
 {
   switch (address) {
-	  case 0xf00000:
+	  case 0xf00000:         /* data */
 		  return 0x00;
-	  case 0xf00005:
+	  case 0xf00005:         /* error register */
 		  return 0x01;
-	  case 0xf00009:
+	  case 0xf00009:         /* sector count */
 		  return 0x02;
-	  case 0xf0000d:
+	  case 0xf0000d:         /* sector number */
 		  return 0x03;
-	  case 0xf00011:
+	  case 0xf00011:         /* cylinder low */
 		  return 0x04;
-	  case 0xf00015:
+	  case 0xf00015:         /* cylinder high */
 		  return 0x05;
-	  case 0xf00019:
+	  case 0xf00019:         /* drive & head */
 		  return 0x06;
-	  case 0xf0001d:
+	  case 0xf0001d:         /* status/command */
 		  return 0x07;
-	  case 0xf00039:
+	  case 0xf00039:         /* alternate status/data output */
 		  return 0x16;
 	  default:
 		  return 0xffffffff;
@@ -338,31 +338,32 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
   }
  
   if (channel == BX_MAX_ATA_CHANNEL) {
-    D(panicbug("Unable to find ATA channel, ioport=0x%04x", address));
+    D(panicbug("Unable to find ATA channel, ioport=0x%08x", address));
+    return 0;
     }
 
   if (io_len>1 && port!=0x00) {
-    D(panicbug("non-byte IO read to %04x", (unsigned) address));
+    D(panicbug("non-byte IO read to 0x%08x", (unsigned) address));
     }
 
   switch (port) {
     case 0x00: // hard disk data (16bit) (f00000)
       if (BX_SELECTED_CONTROLLER(channel).status.drq == 0) {
-	    panicbug("IO read(f00000h) with drq == 0: last command was %02xh",
+	    panicbug("IO read(0x%08x) with drq == 0: last command was %02xh", address,
 		     (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
 	    return 0;
       }
-      D(bug("IO read(f00000h): current command is %02xh",
+      D(bug("IO read(0x%08x): current command is %02xh", address,
             (unsigned) BX_SELECTED_CONTROLLER(channel).current_command));
       switch (BX_SELECTED_CONTROLLER(channel).current_command) {
         case 0x20: // READ SECTORS, with retries
         case 0x21: // READ SECTORS, without retries
           if (io_len == 1) {
-            panicbug("byte IO read from %04x",
+            panicbug("byte IO read from 0x%08x",
                      (unsigned) address);
             }
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
-            panicbug("IO read(f00000): buffer_index >= 512");
+            panicbug("IO read(0x%08x): buffer_index >= 512", address);
 
 #ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
@@ -371,7 +372,7 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
             quantumsMax =
               (512 - BX_SELECTED_CONTROLLER(channel).buffer_index) / io_len;
 if ( quantumsMax == 0)
-  D(panicbug("IO read(f00000): not enough space for read"));
+  D(panicbug("IO read(0x%08x): not enough space for read", address));
             BX_HD_THIS devices->bulkIOQuantumsTransferred =
                 BX_HD_THIS devices->bulkIOQuantumsRequested;
             if (quantumsMax < BX_HD_THIS devices->bulkIOQuantumsTransferred)
@@ -493,7 +494,7 @@ if ( quantumsMax == 0)
 	  }
           else
           {
-            panicbug("IO read(f00000h): current command is %02xh",
+            panicbug("IO read(0x%08x): current command is 0x%02x", address,
               (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
             command_aborted(channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	  }
@@ -662,7 +663,7 @@ if ( quantumsMax == 0)
 	case 0xF9: bug("read cmd 0xF9 (SET MAX ADDRESS) not supported"); command_aborted(channel, 0xF9); break;
 
         default:
-          panicbug("IO read(f00000h): current command is %02xh",
+          panicbug("IO read(0x%08x): current command is 0x%02x", address,
             (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
           command_aborted(channel, BX_SELECTED_CONTROLLER(channel).current_command);
         }
@@ -749,8 +750,24 @@ if ( quantumsMax == 0)
       break;
 
     default:
-      panicbug("hard drive: io read to address %x unsupported",
-        (unsigned) address);
+      switch (address)
+      {
+      case 0xf00008:
+      case 0xf0000c:
+      case 0xf00018:
+      case 0xf00038:
+         /*
+          * silently ignore off-by-1 addresses for secnum/seccount/head/status;
+          * they might be used to detect twisted interface cables
+          * (since EmuTOS 0.9.8)
+          */
+         break;
+      default:
+         panicbug("hard drive: io read from address 0x%08x unsupported",
+           (unsigned) address);
+         break;
+      }
+      return 0;
     }
 
   panicbug("hard drive: shouldnt get here! PC=%08x", showPC());
@@ -804,7 +821,8 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
   }
 
   if (channel == BX_MAX_ATA_CHANNEL) {
-    panicbug("Unable to find ATA channel, ioport=0x%04x", address);
+    D(panicbug("Unable to find ATA channel, ioport=0x%04x", address));
+    return;
     }
 
   if (io_len>1 && port!=0x00) {
@@ -821,7 +839,7 @@ bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
       switch (BX_SELECTED_CONTROLLER(channel).current_command) {
         case 0x30: // WRITE SECTORS
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
-            panicbug("IO write(f00000): buffer_index >= 512");
+            panicbug("IO write(0x%08x): buffer_index >= 512", address);
 
 #ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
@@ -919,7 +937,7 @@ if ( quantumsMax == 0)
 
 	    case 0xa0: // PACKET
 		  if (BX_SELECTED_CONTROLLER(channel).buffer_index >= PACKET_SIZE)
-			panicbug("IO write(f00000): buffer_index >= PACKET_SIZE");
+			panicbug("IO write(0x%08x): buffer_index >= PACKET_SIZE", address);
 		  BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index] = value;
 		  BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+1] = (value >> 8);
 		  BX_SELECTED_CONTROLLER(channel).buffer_index += 2;
@@ -1495,7 +1513,7 @@ if ( quantumsMax == 0)
 		  break;
 
         default:
-          panicbug("IO write(f00000h): current command is %02xh",
+          panicbug("IO write(0x%08x): current command is %02xh", address,
             (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
         }
       break;
@@ -1530,7 +1548,7 @@ if ( quantumsMax == 0)
       // b3..0 HD3..HD0
       {
       if ( (value & 0xa0) != 0xa0 ) { // 1x1xxxxx
-        D(bug("IO write f00019 (%02x): not 1x1xxxxxb", (unsigned) value));
+        D(bug("IO write 0x%08x (%02x): not 1x1xxxxxb", address, (unsigned) value));
       }
 #if DEBUG
       Bit32u drvsel = 
@@ -2104,8 +2122,23 @@ if ( quantumsMax == 0)
 	  break;
 
     default:
-      panicbug("hard drive: io write to address %x = %02x",
-        (unsigned) address, (unsigned) value);
+      switch (address)
+      {
+      case 0xf00008:
+      case 0xf0000c:
+      case 0xf00018:
+      case 0xf00038:
+         /*
+          * silently ignore off-by-1 addresses for secnum/seccount/head/status;
+          * they might be used to detect twisted interface cables
+          * (since EmuTOS 0.9.8)
+          */
+         break;
+      default:
+         panicbug("hard drive: io write to address 0x%08x = %02x",
+            (unsigned) address, (unsigned) value);
+         break;
+      }
     }
 }
 
