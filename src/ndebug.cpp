@@ -45,7 +45,7 @@
 # include <android/log.h>
 #endif
 
-#ifndef HAVE_GNU_SOURCE
+#ifndef HAVE_VASPRINTF
 
 /* NDEBUG needs vasprintf, implementation in GNU binutils (libiberty) */
 extern "C" int vasprintf(char **, const char *, va_list);

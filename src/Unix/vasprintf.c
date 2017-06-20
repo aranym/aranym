@@ -36,10 +36,7 @@ int global_total_width;
 #ifndef HAVE_VASPRINTF
 
 static int
-int_vasprintf (result, format, args)
-     char **result;
-     const char *format;
-     va_list *args;
+int_vasprintf (char **result, const char *format, va_list *args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -119,14 +116,7 @@ int_vasprintf (result, format, args)
 }
 
 int
-vasprintf (result, format, args)
-     char **result;
-     const char *format;
-#if defined (_BSD_VA_LIST_) && defined (__FreeBSD__)
-     _BSD_VA_LIST_ args;
-#else
-     va_list args;
-#endif
+vasprintf (char **result, const char *format, va_list args)
 {
   return int_vasprintf (result, format, &args);
 }

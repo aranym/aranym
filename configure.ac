@@ -829,8 +829,8 @@ AC_CACHE_CHECK([for vasprintf],
   AC_LANG_RESTORE
   ]
 )
-AC_TRANSLATE_DEFINE(HAVE_GNU_SOURCE, $ac_cv_have_vasprintf,
-  [Define if your system support GNU SOURCEs (vasprintf function)])
+AC_TRANSLATE_DEFINE(HAVE_VASPRINTF, $ac_cv_have_vasprintf,
+  [Define if your system supports vasprintf function with GNU SOURCEs])
 if [[ "x$ac_cv_have_vasprintf" = "xyes" ]]; then
   DEFINES="$DEFINES -D_GNU_SOURCE"
 fi
