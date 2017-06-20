@@ -95,24 +95,24 @@ bool TunTapEthernetHandler::open() {
 		_exit(result);
 	}
 
-	D(bug("TunTap(%d): waiting for "TAP_INIT" at pid %d", ethX, pid));
+	D(bug("TunTap(%d): waiting for " TAP_INIT " at pid %d", ethX, pid));
 	int status;
 	waitpid(pid, &status, 0);
 	bool failed = true;
 	if (WIFEXITED(status)) {
 		int err = WEXITSTATUS(status);
 		if (err == 255) {
-			panicbug("TunTap(%d): ERROR: "TAP_INIT" not found. Ethernet disabled!", ethX);
+			panicbug("TunTap(%d): ERROR: " TAP_INIT " not found. Ethernet disabled!", ethX);
 		}
 		else if (err != 0) {
-			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, err);
+			panicbug("TunTap(%d): ERROR: " TAP_INIT " failed (code %d). Ethernet disabled!", ethX, err);
 		}
 		else {
 			failed = false;
-			D(bug("TunTap(%d): "TAP_INIT" initialized OK", ethX));
+			D(bug("TunTap(%d): " TAP_INIT " initialized OK", ethX));
 		}
 	} else {
-		panicbug("TunTap(%d): ERROR: "TAP_INIT" could not be started. Ethernet disabled!", ethX);
+		panicbug("TunTap(%d): ERROR: " TAP_INIT " could not be started. Ethernet disabled!", ethX);
 	}
 
 	// Close /dev/net/tun device if exec failed

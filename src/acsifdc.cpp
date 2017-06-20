@@ -425,11 +425,13 @@ void ACSIFDC::fdc_exec_command()
 					break;
 				case 0x30:
 					fdc_track+=dir;
+					/* fall through */
 				case 0x20:
 					head+=dir;
 					break;
 				case 0x50:
 					fdc_track++;
+					/* fall through */
 				case 0x40:
 					if (head<tracks)
 						head++;
@@ -437,6 +439,7 @@ void ACSIFDC::fdc_exec_command()
 					break;
 				case 0x70:
 					fdc_track--;
+					/* fall through */
 				case 0x60:
 					if (head > 0)
 						head--;

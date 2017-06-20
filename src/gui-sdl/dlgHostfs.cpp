@@ -139,7 +139,7 @@ int DlgHostfs::processDialog(void)
 		case HOSTFSDLG_OKAY:
 			pressed_ok = true;
 			confirm();
-			// passthrough
+			/* fall through */
 		case HOSTFSDLG_CANCEL:
 			retval = Dialog::GUI_CLOSE;
 			break;

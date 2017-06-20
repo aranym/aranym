@@ -1106,6 +1106,7 @@ genflags (flagtypes type, wordsizes size, const char *value, const char *src, co
     {
      case flag_logical_noclobber:
 	failure;
+	/* fall through */
 
      case flag_and:
      case flag_or:
@@ -3382,7 +3383,7 @@ generate_one_opcode (int rp, int noflags)
 		comprintf ("\tuae_u32 dstreg = (opcode >> %d) & %d;\n",
 			pos ^ 8, dmsk);
 	    else
-		comprintf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
+			comprintf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
 		
 		comprintf ("#else\n");
 #endif
@@ -3391,7 +3392,7 @@ generate_one_opcode (int rp, int noflags)
 		comprintf ("\tuae_u32 dstreg = (opcode >> %d) & %d;\n",
 			   pos, dmsk);
 	    else
-		comprintf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
+			comprintf ("\tuae_u32 dstreg = opcode & %d;\n", dmsk);
 
 #ifndef UAE
 		comprintf ("#endif\n");

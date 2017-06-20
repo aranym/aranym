@@ -2058,7 +2058,7 @@ static void dsp_illegal(void)
 
 static void dsp_jcc(void)
 {
-	Uint32 newpc, cc_code;
+	Uint32 newpc = dsp_core->pc, cc_code;
 
 	cc_code = 0;
 	switch((cur_inst >> 16) & BITMASK(8)) {
@@ -2198,7 +2198,7 @@ static void dsp_jmp(void)
 
 static void dsp_jscc(void)
 {
-	Uint32 newpc, cc_code;
+	Uint32 newpc = dsp_core->pc, cc_code;
 
 	cc_code = 0;
 	switch((cur_inst >> 16) & BITMASK(8)) {

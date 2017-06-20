@@ -89,6 +89,7 @@ int DlgNetwork::processDialog(void)
 	switch(return_obj) {
 		case APPLY:
 			confirm();
+			/* fall through */
 		case CANCEL:
 			retval = Dialog::GUI_CLOSE;
 			break;

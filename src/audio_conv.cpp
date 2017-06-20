@@ -69,7 +69,7 @@ int AudioConv::rescaleFreq8(Uint8 *source, int *src_len, Uint8 *dest, int dst_le
 		switch(srcChan) {
 			case 2:
 				dest[dstBytesWritten++] = source[srcBytesRead++];
-				/* break; */
+				/* fall through */
 			case 1:
 				dest[dstBytesWritten++] = source[srcBytesRead];
 				break;
@@ -96,7 +96,7 @@ int AudioConv::rescaleFreq16(Uint16 *source, int *src_len, Uint16 *dest, int dst
 		switch(srcChan) {
 			case 2:
 				dest[dstWordsWritten++] = source[srcWordsRead++];
-				/* break; */
+				/* fall through */
 			case 1:
 				dest[dstWordsWritten++] = source[srcWordsRead];
 				break;

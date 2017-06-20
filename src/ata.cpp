@@ -394,6 +394,7 @@ if ( quantumsMax == 0)
             case 4:
               value32 |= (BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:3)] << 24);
               value32 |= (BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:2)] << 16);
+              /* fall through */
             case 2:
               value32 |= (BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:1)] << 8);
               value32 |=  BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset:0)];
@@ -459,7 +460,7 @@ if ( quantumsMax == 0)
           break;
 
         case 0xec:    // IDENTIFY DEVICE
-	case 0xa1:
+	case 0xa1:    // IDENTIFY PACKET DEVICE
           if (bx_options.newHardDriveSupport) {
             unsigned index;
 
@@ -491,10 +492,14 @@ if ( quantumsMax == 0)
  	    GOTO_RETURN_VALUE ;
 	  }
           else
+          {
             panicbug("IO read(f00000h): current command is %02xh",
               (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
+            command_aborted(channel, BX_SELECTED_CONTROLLER(channel).current_command);
+	  }
+	  break;
 
-	    case 0xa0: {
+	    case 0xa0: { // PACKET COMMAND
 		  unsigned index = BX_SELECTED_CONTROLLER(channel).buffer_index;
 		  unsigned increment = 0;
 
@@ -659,6 +664,7 @@ if ( quantumsMax == 0)
         default:
           panicbug("IO read(f00000h): current command is %02xh",
             (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
+          command_aborted(channel, BX_SELECTED_CONTROLLER(channel).current_command);
         }
       break;
 
@@ -847,6 +853,7 @@ if ( quantumsMax == 0)
 	        value = ((value >> 16) & 0x0000ffff) | ((value & 0x0000ffff) << 16); /* FALCON (word swap for long access to data register) */
                 BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:3)] = (Bit8u)(value >> 24);
                 BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:2)] = (Bit8u)(value >> 16);
+                /* fall through */
               case 2:
                 BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset++:1)] = (Bit8u)(value >> 8);
                 BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index+(bs?offset:0)]   = (Bit8u) value;

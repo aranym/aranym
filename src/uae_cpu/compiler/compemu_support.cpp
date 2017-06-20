@@ -517,10 +517,8 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 #if defined(HAVE_DISASM_M68K)
 		{
 			char buf[256];
-			memptr end;
 			
 			disasm_info.memory_vma = ((memptr)((uintptr_t)(start) - MEMBaseDiff));
-			end = disasm_info.memory_vma + length;
 			while (length > 0)
 			{
 				int isize = m68k_disasm_to_buf(&disasm_info, buf);

@@ -1313,6 +1313,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			FAIL(1);    
 			return;
 			dont_care_fflags();
+			break;
 		case 0x02:		/* FSINH */
 			FAIL(1);  
 			return;
