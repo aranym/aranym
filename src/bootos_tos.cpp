@@ -31,19 +31,19 @@
 
 /*	TOS ROM class */
 
-TosBootOs::TosBootOs(void) throw (AranymException)
+TosBootOs::TosBootOs(void) ARANYM_THROWS(AranymException)
 {
 	tos_patch(true);
 }
 
-void TosBootOs::reset(bool cold) throw (AranymException)
+void TosBootOs::reset(bool cold) ARANYM_THROWS(AranymException)
 {
 	tos_patch(cold);
 }
 
 /*--- Private functions ---*/
 
-void TosBootOs::tos_patch(bool cold) throw (AranymException)
+void TosBootOs::tos_patch(bool cold) ARANYM_THROWS(AranymException)
 {
 	if (strlen(bx_options.tos_path) == 0) {
 		throw AranymException("Path to TOS ROM image file undefined");

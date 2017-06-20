@@ -1,4 +1,11 @@
 2017/06/20 - Thorsten
+Fix handling of throw() with newer compilers
+
+C++11 deprecates dynamic exception specifications, and
+newer compiler versions generate lots of warnings about them
+
+
+2017/06/20 - Thorsten
 Add missing NEWS entry from last release
 
 

@@ -301,6 +301,16 @@ typedef int64 intptr;
 typedef uae_u32 uaecptr;
 typedef char flagtype;
 
+#ifdef __cplusplus
+# if __cplusplus >= 201103L
+#  define ARANYM_NO_THROWS noexcept(true)
+#  define ARANYM_THROWS(a, ...) noexcept(false)
+# else
+#  define ARANYM_NO_THROWS throw()
+#  define ARANYM_THROWS(a, ...) throw(a ## __VA_ARGS__)
+# endif
+#endif
+
 /* Bochs data types */
 #define Bit8u uint8
 #define Bit16u uint16

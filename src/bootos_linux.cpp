@@ -206,7 +206,7 @@ static union {
 
 /*	Linux/m68k loader class */
 
-LinuxBootOs::LinuxBootOs(void) throw (AranymException)
+LinuxBootOs::LinuxBootOs(void) ARANYM_THROWS(AranymException)
 {
 	/* RESET + Linux/m68k boot */
 	ROMBaseHost[0x0000] = 0x4e;		/* reset */
@@ -262,7 +262,7 @@ LinuxBootOs::~LinuxBootOs(void)
 	cleanup();
 }
 
-void LinuxBootOs::reset(bool cold) throw (AranymException)
+void LinuxBootOs::reset(bool cold) ARANYM_THROWS(AranymException)
 {
 	init(cold);
 }

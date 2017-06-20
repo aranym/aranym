@@ -43,7 +43,7 @@ void BootOs::reset(bool cold)
 	init(cold);
 }
 
-void BootOs::load(const char *filename) throw (AranymException)
+void BootOs::load(const char *filename) ARANYM_THROWS(AranymException)
 {
 	D(bug("Reading OS ROM image '%s'", filename));
 	FILE *f = fopen(filename, "rb");

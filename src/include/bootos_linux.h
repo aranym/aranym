@@ -69,10 +69,10 @@ class LinuxBootOs : public BootOs
 		int add_bi_string(unsigned short tag, const char *s);
 
 	public:
-		LinuxBootOs(void) throw (AranymException);
+		LinuxBootOs(void) ARANYM_THROWS(AranymException);
 		virtual ~LinuxBootOs(void);
 
-		virtual void reset(bool cold) throw (AranymException);
+		virtual void reset(bool cold) ARANYM_THROWS(AranymException);
 		virtual const char *type() { return "LILO"; };
 };
 

@@ -29,14 +29,14 @@
 
 /*	EmuTOS ROM class */
 
-EmutosBootOs::EmutosBootOs(void) throw (AranymException)
+EmutosBootOs::EmutosBootOs(void) ARANYM_THROWS(AranymException)
 {
 	emutos_patch(true);
 }
 
 /*--- Private functions ---*/
 
-void EmutosBootOs::emutos_patch(bool cold) throw (AranymException)
+void EmutosBootOs::emutos_patch(bool cold) ARANYM_THROWS(AranymException)
 {
 	if (strlen(bx_options.emutos_path) == 0)
 		throw AranymException("Path to EmuTOS ROM image file undefined");

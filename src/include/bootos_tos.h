@@ -29,12 +29,12 @@
 class TosBootOs : public BootOs
 {
 	public:
-		TosBootOs(void) throw (AranymException);
-		void reset(bool cold) throw (AranymException);
+		TosBootOs(void) ARANYM_THROWS(AranymException);
+		void reset(bool cold) ARANYM_THROWS(AranymException);
 		virtual const char *type() { return "TOS"; };
 	
 	private:
-		void tos_patch(bool cold) throw (AranymException);
+		void tos_patch(bool cold) ARANYM_THROWS(AranymException);
 };
 
 #endif /* BOOTOSTOS_H */

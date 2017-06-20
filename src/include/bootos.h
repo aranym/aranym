@@ -27,7 +27,7 @@ class BootOs
 {
 	protected:
 		virtual void init(bool cold);
-		virtual void load(const char *filename) throw (AranymException);
+		virtual void load(const char *filename) ARANYM_THROWS(AranymException);
 
 	public:
 		virtual ~BootOs() {};
