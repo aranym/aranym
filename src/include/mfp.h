@@ -92,7 +92,7 @@ private:
 	MFP_TimerB B;
 	MFP_TimerC C;
 	MFP_TimerD D;
-	USART usart;
+	// USART usart;
 	int timerCounter;
 	int vr;
 
