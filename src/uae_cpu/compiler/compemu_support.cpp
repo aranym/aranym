@@ -254,8 +254,6 @@ extern int quit_program;
 // gb-- Extra data for Basilisk II/JIT
 #ifdef JIT_DEBUG
 static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
-#else
-const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 #endif
 #if USE_INLINING
 #ifdef UAE
@@ -327,10 +325,12 @@ static inline bool is_const_jump(uae_u32 opcode)
 	return (prop[opcode].cflow == fl_const_jump);
 }
 
+#if 0
 static inline bool may_trap(uae_u32 opcode)
 {
 	return (prop[opcode].cflow & fl_trap);
 }
+#endif
 
 #endif
 
@@ -507,6 +507,7 @@ static inline blockinfo* get_blockinfo_addr(void* addr)
 #endif
 #include "disasm-glue.h"
 
+#ifdef JIT_DEBUG
 static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 {
 	UNUSED(start);
@@ -560,6 +561,7 @@ static inline void disasm_m68k_block(const uint8 *start, size_t length)
 	disasm_block(TARGET_M68K, start, length);
 }
 #endif
+#endif
 
 
 /*******************************************************************
@@ -588,11 +590,13 @@ static inline void remove_from_list(blockinfo* bi)
 		bi->next->prev_p=bi->prev_p;
 }
 
+#if 0
 static inline void remove_from_lists(blockinfo* bi)
 {
 	remove_from_list(bi);
 	remove_from_cl_list(bi);
 }
+#endif
 
 static inline void add_to_cl_list(blockinfo* bi)
 {
@@ -731,6 +735,7 @@ static inline void block_need_recompile(blockinfo * bi)
 	bi->status = BI_NEED_RECOMP;
 }
 
+#if USE_MATCH
 static inline void mark_callers_recompile(blockinfo * bi)
 {
   dependency *x = bi->deplist;
@@ -763,6 +768,7 @@ static inline void mark_callers_recompile(blockinfo * bi)
 	x = next;
   }
 }
+#endif
 
 static inline blockinfo* get_blockinfo_addr_new(void* addr, int /* setstate */)
 {
@@ -884,7 +890,7 @@ public:
 		return data;
 	}
 
-	void release(T * const chunk) {
+	void release(T * const ) {
 		// Deallocated on invalidation
 	}
 };
@@ -961,46 +967,46 @@ static inline void emit_byte(uae_u8 x)
 	*target++=x;
 }
 
-static inline void emit_word(uae_u16 x)
-{
-	*((uae_u16*)target)=x;
-	target+=2;
-}
-
-static inline void emit_long(uae_u32 x)
-{
-	*((uae_u32*)target)=x;
-	target+=4;
-}
-
 static inline void skip_n_bytes(int n) {
 	target += n;
 }
 
 static inline void skip_byte()
 {
-	target++;
+	skip_n_bytes(1);
 }
 
 static inline void skip_word()
 {
-	target += 2;
+	skip_n_bytes(2);
 }
 
 static inline void skip_long()
 {
-	target += 4;
+	skip_n_bytes(4);
 }
 
 static inline void skip_quad()
 {
-	target += 8;
+	skip_n_bytes(8);
 }
 
-static __inline__ void emit_quad(uae_u64 x)
+static inline void emit_word(uae_u16 x)
+{
+	*((uae_u16*)target)=x;
+	skip_word();
+}
+
+static inline void emit_long(uae_u32 x)
+{
+	*((uae_u32*)target)=x;
+	skip_long();
+}
+
+static inline void emit_quad(uae_u64 x)
 {
 	*((uae_u64*) target) = x;
-	target += 8;
+	skip_quad();
 }
 
 static inline void emit_block(const uae_u8 *block, uae_u32 blocklen)
@@ -1192,6 +1198,7 @@ struct regusage {
 	uae_u16 wmask;
 };
 
+#if 0
 static inline void ru_set(uae_u16 *mask, int reg)
 {
 #if USE_OPTIMIZED_CALLS
@@ -1234,7 +1241,6 @@ static inline bool ru_write_p(const regusage *ru, int reg)
 	return ru_get(&ru->wmask, reg);
 }
 
-#if 0
 static void ru_fill_ea(regusage *ru, int reg, amodes mode,
 					   wordsizes size, int write_mode)
 {
@@ -1438,6 +1444,7 @@ static uae_s8 nstate[N_REGS];
 #define L_NEEDED -2
 #define L_UNNEEDED -3
 
+#if USE_MATCH
 static inline void big_to_small_state(bigstate * /* b */, smallstate * s)
 {
   int i;
@@ -1470,6 +1477,7 @@ static inline int callers_need_recompile(bigstate * /* b */, smallstate * s)
 				 * callers */
   return 0;
 }
+#endif
 
 static inline void log_startblock(void)
 {
@@ -1506,10 +1514,12 @@ static inline void do_load_reg(int n, int r)
 		compemu_raw_mov_l_rm(n, (uintptr) live.state[r].mem);
 }
 
+#if 0
 static inline void check_load_reg(int n, int r)
 {
 	compemu_raw_mov_l_rm(n, (uintptr) live.state[r].mem);
 }
+#endif
 
 static inline void log_vwrite(int r)
 {
@@ -2639,10 +2649,8 @@ static scratch_t scratch;
  * Support functions exposed to newcpu                              *
  ********************************************************************/
 
-static inline const char *str_on_off(bool b)
-{
-	return b ? "on" : "off";
-}
+#define str_on_off(b) b ? "on" : "off"
+
 
 #ifdef UAE
 static
@@ -3497,9 +3505,6 @@ uae_u32 get_jitted_size(void)
 	return 0;
 }
 
-const int CODE_ALLOC_MAX_ATTEMPTS = 10;
-const int CODE_ALLOC_BOUNDARIES   = 128 * 1024; // 128 KB
-
 static uint8 *do_alloc_code(uint32 size, int depth)
 {
 #if defined(__linux__) && 0
@@ -3514,6 +3519,9 @@ static uint8 *do_alloc_code(uint32 size, int depth)
 	  allocated around 0xa0000000, thus causing some troubles when
 	  translating addresses from m68k to x86.
 	*/
+	const int CODE_ALLOC_MAX_ATTEMPTS = 10;
+	const int CODE_ALLOC_BOUNDARIES   = 128 * 1024; // 128 KB
+
 	static uint8 * code_base = NULL;
 	if (code_base == NULL) {
 		uintptr page_size = getpagesize();

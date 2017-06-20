@@ -286,7 +286,7 @@ int32 HostFs::dispatch(uint32 fncode)
     	case GET_DRIVE_BITS:
 			ret = 0;
 			for(int i=0; i<(int)(sizeof(bx_options.aranymfs.drive)/sizeof(bx_options.aranymfs.drive[0])); i++)
-				if (bx_options.aranymfs.drive[i].rootPath != NULL && bx_options.aranymfs.drive[i].rootPath[0])
+				if (bx_options.aranymfs.drive[i].rootPath[0])
 					ret |= (1 << i);
 			D(bug("HOSTFS: drvBits %08x", (uint32)ret));
     		break;

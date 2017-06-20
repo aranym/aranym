@@ -969,6 +969,7 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 #define CLIP_ACCEPT(a,b) (!(a|b))
 
 
+#if 0
 static inline int clipEncode (int x, int y, int left, int top, int right, int bottom)
 {
 	int code = 0;
@@ -984,6 +985,7 @@ static inline int clipEncode (int x, int y, int left, int top, int right, int bo
 	}
 	return code;
 }
+#endif
 
 
 bool SoftVdiDriver::clipLine(int x1, int y1, int x2, int y2, int cliprect[])

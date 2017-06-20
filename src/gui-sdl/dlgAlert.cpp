@@ -90,8 +90,8 @@ int FormatTextToBox(char *text, int max_width)
   Show the "alert" dialog:
 */
 
-DlgAlert::DlgAlert(SGOBJ *dlg, const char *text, alert_type type)
-	: Dialog(dlg), orig_t(NULL), ok_but_idx(-1)
+DlgAlert::DlgAlert(SGOBJ *dlg, const char *_text, alert_type _type)
+	: Dialog(dlg), text(_text), type(_type), orig_t(NULL), ok_but_idx(-1)
 {
 	char *t = (char *)malloc(strlen(text)+1);
 	orig_t = t;

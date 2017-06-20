@@ -286,6 +286,9 @@ void LinuxBootOs::init(bool cold)
 {
 	kernel=ramdisk=NULL;
 	kernel_length=ramdisk_length=0;
+	bi_size = 0;
+	bi.ramdisk.addr = 0;
+	bi.ramdisk.size = 0;
 
 	UNUSED(cold);
 #ifdef ENABLE_LILO
