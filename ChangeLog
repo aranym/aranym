@@ -1,4 +1,10 @@
 2017/06/20 - Thorsten
+Set the window manager icon after initializing the video mode
+also for SDL 1.x, otherwise it might be loaded in the wrong
+format and cause badmatch errors.
+
+
+2017/06/20 - Thorsten
 Use HAVE_VASPRINTF instead of HAVE_GNU_SOURCE
 
 

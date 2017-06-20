@@ -58,6 +58,12 @@ void HostScreen::SetWMIcon(void)
 	getDataFilename("wm_icon.bmp", path, sizeof(path));
 	SDL_Surface *icon = SDL_LoadBMP(path);
 	if (icon != NULL) {
+		SDL_Surface *display_icon = SDL_DisplayFormat(icon);
+		if (display_icon)
+		{
+			SDL_FreeSurface(icon);
+			icon = display_icon;
+		}
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetWindowIcon(window, icon);
 #else
@@ -379,8 +385,6 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	screen = SDL_GetWindowSurface(window);
 	// texture = SDL_CreateTextureFromSurface(renderer, screen);
 	
-	SetWMIcon();
-
 #else
 
 #ifdef __ANDROID__
@@ -407,8 +411,6 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 			SDL_putenv(var);
 		}
 	}
-
-	SetWMIcon();
 
 #ifdef USE_FIXED_CONSOLE_FBVIDEOMODE
 // Raspberry doesn't allow switching video mode. Keep current mode
@@ -455,6 +457,8 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		QuitEmulator();
 		return;
 	}
+
+	SetWMIcon();
 
 	SDL_SetClipRect(screen, NULL);
 
