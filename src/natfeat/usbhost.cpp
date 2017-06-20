@@ -671,7 +671,7 @@ int32 USBHost::aranym_submit_rh_msg(uint32 pipe, memptr buffer, int32 transfer_l
 			stat = USB_ST_STALLED;
 	}
 
-	len = min1_t(int32, len, leni);
+	len = min1_t(uint32, len, leni);
 
 	if(buffer != 0)
 		Host2Atari_memcpy(buffer, data_buf, len);

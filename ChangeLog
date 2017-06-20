@@ -1,4 +1,8 @@
 2017/06/20 - Thorsten
+Fix a wrong signed comparison in usbhost.cpp
+
+
+2017/06/20 - Thorsten
 Fix handling of throw() with newer compilers
 
 C++11 deprecates dynamic exception specifications, and
