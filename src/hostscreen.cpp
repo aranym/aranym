@@ -58,6 +58,7 @@ void HostScreen::SetWMIcon(void)
 	getDataFilename("wm_icon.bmp", path, sizeof(path));
 	SDL_Surface *icon = SDL_LoadBMP(path);
 	if (icon != NULL) {
+		SDL_SetColorKey(icon, SDL_SRCCOLORKEY|SDL_RLEACCEL, 0);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		SDL_Surface *display_icon = SDL_ConvertSurfaceFormat(icon, SDL_GetWindowPixelFormat(window), 0);
 		if (display_icon)
@@ -658,6 +659,13 @@ void HostScreen::checkSwitchToVidel(void)
 	}
 
 	if ((videl_hsurf->getWidth()>64) && (videl_hsurf->getHeight()>64)) {
+#if 0 /* set to 1 for debugging to make logo visible, if machine is too fast */
+		if (numScreen == SCREEN_LOGO && !bx_options.opengl.enabled)
+		{
+			SDL_Flip(screen);
+			usleep(1000000);
+		}
+#endif
 		numScreen = SCREEN_VIDEL;
 	}
 }

@@ -61,7 +61,7 @@ install-data-local:
 	$(INSTALL_DATA) $(top_srcdir)/atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/atari/tools/pc101us.kbd.bz2
 	$(INSTALL_DATA) $(top_srcdir)/atari/sound/README $(DESTDIR)$(datadir)/atari/sound/README
 	$(INSTALL_DATA) $(top_srcdir)/data/wm_icon.bmp $(DESTDIR)$(datadir)/wm_icon.bmp
-	$(INSTALL_DATA) $(top_srcdir)/data/logo.png $(DESTDIR)$(datadir)/logo.png
+	$(INSTALL_DATA) $(top_srcdir)/data/logo.bmp $(DESTDIR)$(datadir)/logo.bmp
 
 uninstall-local:
 	rm -f $(DESTDIR)$(docdir)/changelog
@@ -87,6 +87,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(datadir)/atari/tools/pc101us.kbd.bz2
 	rm -f $(DESTDIR)$(datadir)/atari/sound/README
 	rm -f $(DESTDIR)$(datadir)/wm_icon.bmp
+	rm -f $(DESTDIR)$(datadir)/logo.bmp
 	rm -f $(DESTDIR)$(datadir)/logo.png
 	rmdir $(DESTDIR)$(datadir)/atari/hostfs
 	rmdir $(DESTDIR)$(datadir)/atari/nfcdrom

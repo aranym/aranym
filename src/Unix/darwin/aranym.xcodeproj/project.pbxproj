@@ -196,7 +196,7 @@
 		F8E9A4CB0D312733001E4457 /* Repository */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = Repository; path = ../../../CVS/Repository; sourceTree = SOURCE_ROOT; };
 		F8E9A4CC0D312733001E4457 /* Root */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = Root; path = ../../../CVS/Root; sourceTree = SOURCE_ROOT; };
 		F8E9A4CD0D312733001E4457 /* Template */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = Template; path = ../../../CVS/Template; sourceTree = SOURCE_ROOT; };
-		F8E9A4CF0D312733001E4457 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../../../data/logo.png; sourceTree = SOURCE_ROOT; };
+		F8E9A4CF0D312733001E4457 /* logo.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = logo.bmp; path = ../../../data/logo.bmp; sourceTree = SOURCE_ROOT; };
 		F8E9A4D00D312733001E4457 /* wm_icon.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = wm_icon.bmp; path = ../../../data/wm_icon.bmp; sourceTree = SOURCE_ROOT; };
 		F8E9A4D10D312733001E4457 /* depend_i386 */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = depend_i386; path = ../../../depend_i386; sourceTree = SOURCE_ROOT; };
 		F8E9A4D20D312733001E4457 /* depend_powerpc */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = depend_powerpc; path = ../../../depend_powerpc; sourceTree = SOURCE_ROOT; };
@@ -919,7 +919,7 @@
 		F8E9A4CE0D312733001E4457 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				F8E9A4CF0D312733001E4457 /* logo.png */,
+				F8E9A4CF0D312733001E4457 /* logo.bmp */,
 				F8E9A4D00D312733001E4457 /* wm_icon.bmp */,
 			);
 			name = data;

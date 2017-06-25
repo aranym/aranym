@@ -21,9 +21,6 @@
 #include "sysdeps.h"
 
 #include "SDL_compat.h"
-#ifdef HAVE_SDL_IMAGE
-#include <SDL_image.h>
-#endif
 
 #include "dirty_rects.h"
 #include "host_surface.h"
@@ -68,11 +65,8 @@ void Logo::load(const char *filename)
 		return;
 	}
 
-#ifdef HAVE_SDL_IMAGE
-	logo_surf = IMG_Load_RW(rwops, 0);
-#else
 	logo_surf = SDL_LoadBMP_RW(rwops, 0);
-#endif
+	printf("load logo %s: %p\n", filename, logo_surf);
 	SDL_FreeRW(rwops);
 
 	if (!logo_surf) {

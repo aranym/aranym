@@ -26,7 +26,7 @@ BEOS_RESOURCES = $(srcdir)/Unix/beos/aranym.rdef
 
 BUNDLE_RESOURCES = \
 	$(srcdir)/Unix/darwin/busybee.icns \
-	$(top_srcdir)/data/logo.png
+	$(top_srcdir)/data/logo.bmp
 
 BUNDLE_LOCALIZATON_FOLDERS = \
 	$(srcdir)/Unix/darwin/*.lproj
@@ -101,6 +101,7 @@ aranym_SOURCES = \
 	input.cpp \
 	joypads.cpp \
 	logo.cpp \
+	sdl_bmp.cpp \
 	md5.cpp \
 	mfp.cpp \
 	midi.cpp \

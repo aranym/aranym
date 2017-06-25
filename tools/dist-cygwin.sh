@@ -117,7 +117,7 @@ function mkdist() {
 	for f in config; do
 		cp -a doc/$f "$distdir/doc/$f.txt" || exit 1
 	done
-	for f in logo.png wm_icon.bmp; do
+	for f in logo.bmp wm_icon.bmp; do
 		cp -a data/$f "$distdir/aranym/$f" || exit 1
 	done
 	

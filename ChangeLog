@@ -1,4 +1,9 @@
 2017/06/25 - Thorsten
+Convert logo.png to bmp, and use builtin function from SDL
+to load it, avoiding an unneccesary dependency on SDL_image
+
+
+2017/06/25 - Thorsten
 SDL_DisplayFormat() is no longer available in SDL2
 
 
