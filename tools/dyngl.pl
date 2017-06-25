@@ -543,6 +543,18 @@ my %copy_funcs = (
 	'GLhandleARB' => { 'ifdef' => 'NFOSMESA_NEED_INT_CONV || defined(__APPLE__)', 'copyin' => 'Atari2HostHandleARB', 'copyout' => 'Host2AtariHandleARB', },
 );
 
+sub sort_by_name
+{
+	my $ret = $a cmp $b;
+	return $ret;
+}
+
+sub sort_by_value
+{
+	my $ret = $functions{$a}->{funcno} <=> $functions{$b}->{funcno};
+	return $ret;
+}
+
 sub add_paramlens($)
 {
 	my ($lens) = @_;
@@ -619,7 +631,7 @@ sub add_paramlens($)
 		if ($allfound)
 		{
 			$ent->{autogen} = 1;
-			$ent->{ifdefs} = join(' || ', keys %ifdefs);
+			$ent->{ifdefs} = join(' || ', sort { sort_by_name } keys %ifdefs);
 		} else
 		{
 			&warn("$me: $function_name cannot be generated automatically");
@@ -3998,18 +4010,6 @@ my %oldmesa = (
 );
 
 
-sub sort_by_name
-{
-	my $ret = $a cmp $b;
-	return $ret;
-}
-
-sub sort_by_value
-{
-	my $ret = $functions{$a}->{funcno} <=> $functions{$b}->{funcno};
-	return $ret;
-}
-
 #
 # generate functions
 #
@@ -4956,7 +4956,7 @@ EOF
 		close(INC)
 	}
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 
@@ -5122,7 +5122,7 @@ EOF
 		close(INC)
 	}
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 
@@ -5367,7 +5367,7 @@ int ldg_init_osmesa(LDG *lib)
 	
 EOF
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 	foreach $key (sort { sort_by_value } keys %functions) {
@@ -5534,7 +5534,7 @@ int ldg_init_tiny_gl(LDG *lib)
 	
 EOF
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 	foreach $key (sort { sort_tinygl_by_value } keys %tinygl) {
@@ -5715,7 +5715,7 @@ EOF
 		close(INC)
 	}
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 
@@ -5888,7 +5888,7 @@ EOF
 		close(INC)
 	}
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 
@@ -6100,7 +6100,7 @@ static struct gl_public *gl_pub;
 
 EOF
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 	print "\n";
@@ -6252,7 +6252,7 @@ static struct gl_public *gl_pub;
 
 EOF
 
-	foreach $key (keys %floatfuncs) {
+	foreach $key (sort { sort_by_name } keys %floatfuncs) {
 		print "#undef ${key}\n";
 	}
 	print "\n";

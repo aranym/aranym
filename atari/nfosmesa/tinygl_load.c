@@ -22,10 +22,10 @@ int ldg_init_tiny_gl(LDG *lib)
 	int result = TRUE;
 	struct _gl_tiny *glp = &gl;
 	
+#undef glClearDepth
 #undef glFrustum
 #undef glOrtho
 #undef gluLookAt
-#undef glClearDepth
 	glp->information = (void APIENTRY (*)(void)) ldg_find("information", lib);
 	GL_CHECK(glp->information);
 	glp->Begin = (void APIENTRY (*)(GLenum mode)) ldg_find("glBegin", lib);

@@ -39,10 +39,10 @@ static struct gl_public *gl_pub;
 #define SLB_NARGS(_nargs) SLB_NWORDS(_nargs * 2)
 
 
+#undef glClearDepth
 #undef glFrustum
 #undef glOrtho
 #undef gluLookAt
-#undef glClearDepth
 
 static const GLubyte * APIENTRY exec_glGetString(GLenum name)
 {

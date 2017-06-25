@@ -1170,10 +1170,10 @@ struct gl_public {
 }
 #endif
 
+#undef glClearDepth
 #undef glFrustum
 #undef glOrtho
 #undef gluLookAt
-#undef glClearDepth
 
 /*
  * old LDG functions

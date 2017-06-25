@@ -40,10 +40,10 @@ static struct gl_public *gl_pub;
 
 
 
+#undef glClearDepth
 #undef glFrustum
 #undef glOrtho
 #undef gluLookAt
-#undef glClearDepth
 
 static void APIENTRY exec_information(void)
 {

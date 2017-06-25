@@ -41,10 +41,10 @@ int ldg_init_osmesa(LDG *lib)
 	int result = TRUE;
 	struct _gl_osmesa *glp = &gl;
 	
+#undef glClearDepth
 #undef glFrustum
 #undef glOrtho
 #undef gluLookAt
-#undef glClearDepth
 	glp->GetString = (const GLubyte * APIENTRY (*)(GLenum name)) ldg_find("glGetString", lib);
 	GL_CHECK(glp->GetString);
 	glp->OSMesaCreateContext = (OSMesaContext APIENTRY (*)(GLenum format, OSMesaContext sharelist)) ldg_find("OSMesaCreateContext", lib);

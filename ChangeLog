@@ -1,4 +1,8 @@
 2017/06/25 - Thorsten
+Sort some keys in dyngl.pl to avoid randomness in generated output
+
+
+2017/06/25 - Thorsten
 Convert logo.png to bmp, and use builtin function from SDL
 to load it, avoiding an unneccesary dependency on SDL_image
 
