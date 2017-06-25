@@ -49,6 +49,17 @@
 #endif
 #ifdef HAVE_EXT2FS_EXT2_FS_H
 # include <ext2fs/ext2_fs.h>
+#else
+#define EXT2_IOC_GETFLAGS		_IOR('f', 1, long)
+#define EXT2_IOC_SETFLAGS		_IOW('f', 2, long)
+#define EXT2_IOC_GETVERSION		_IOR('v', 1, long)
+#define EXT2_IOC_SETVERSION		_IOW('v', 2, long)
+#define EXT2_IOC_GETVERSION_NEW		_IOR('f', 3, long)
+#define EXT2_IOC_SETVERSION_NEW		_IOW('f', 4, long)
+#define EXT2_IOC_GROUP_EXTEND		_IOW('f', 7, unsigned long)
+#define EXT2_IOC_GROUP_ADD		_IOW('f', 8,struct ext2_new_group_input)
+#define EXT4_IOC_GROUP_ADD		_IOW('f', 8,struct ext4_new_group_input)
+#define EXT4_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 #endif
 
 # include <cerrno>
