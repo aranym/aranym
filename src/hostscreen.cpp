@@ -58,15 +58,21 @@ void HostScreen::SetWMIcon(void)
 	getDataFilename("wm_icon.bmp", path, sizeof(path));
 	SDL_Surface *icon = SDL_LoadBMP(path);
 	if (icon != NULL) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_Surface *display_icon = SDL_ConvertSurfaceFormat(icon, SDL_GetWindowPixelFormat(window), 0);
+		if (display_icon)
+		{
+			SDL_FreeSurface(icon);
+			icon = display_icon;
+		}
+		SDL_SetWindowIcon(window, icon);
+#else
 		SDL_Surface *display_icon = SDL_DisplayFormat(icon);
 		if (display_icon)
 		{
 			SDL_FreeSurface(icon);
 			icon = display_icon;
 		}
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	SDL_SetWindowIcon(window, icon);
-#else
 		uint8 mask[] = {0x00, 0x3f, 0xfc, 0x00,
 						0x00, 0xff, 0xfe, 0x00,
 						0x01, 0xff, 0xff, 0x80,

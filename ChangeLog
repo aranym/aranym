@@ -1,4 +1,8 @@
 2017/06/25 - Thorsten
+SDL_DisplayFormat() is no longer available in SDL2
+
+
+2017/06/25 - Thorsten
 Define the EXT2 ioctl constants if <ext2fs/ext2_fs.h> is not available
 to avoid an unnecessary dependency on e2fsprogs package
 
