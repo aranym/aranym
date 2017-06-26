@@ -557,14 +557,6 @@
 		CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
-		CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
-		CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
-		CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
-		CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
-		CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
-		CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
-		CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
-		CBD862F31B2D8FA4003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
 		CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
@@ -2454,8 +2446,6 @@
 				CBEA27B61AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */,
-				CBD862F31B2D8FA4003357BC /* nfosmesa.cpp in Sources */,
-				CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87051B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2579,8 +2569,6 @@
 				CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */,
-				CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */,
-				CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87041B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2703,8 +2691,6 @@
 				CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */,
-				CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */,
-				CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87031B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2837,8 +2823,6 @@
 				CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */,
-				CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */,
-				CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2945,7 +2929,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-nfosmesa";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
@@ -3096,7 +3080,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-nfosmesa --enable-full-debug --enable-fullhistory";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-full-debug --enable-fullhistory";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
@@ -3109,7 +3093,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_UNROLL_LOOPS = YES;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
@@ -3120,7 +3104,7 @@
 					/usr/X11R6/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "ppc i386 x86_64";
