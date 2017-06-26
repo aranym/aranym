@@ -143,9 +143,9 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 
 	//	 store this path, convert it to a C string and copy into buffer
 	[currentPath getFileSystemRepresentation: gAranymFilesDirectory maxLength: MAXPATHLEN];
-	char *real = realpath(gAranymFilesDirectory, NULL);
-	strncpy(gAranymFilesDirectory, real, MAXPATHLEN);
-	free(real);
+	char realPath[MAXPATHLEN];	 // Temporary storage for the resolved path
+	realpath(gAranymFilesDirectory, realPath);
+	strncpy(gAranymFilesDirectory, realPath, MAXPATHLEN);
 }
 
 
