@@ -141,7 +141,7 @@ static struct option const long_options[] =
 };
 
 #define TOS_FILENAME		"ROM"
-#define EMUTOS_FILENAME		"etos512k.img"
+#define EMUTOS_FILENAME		"emutos-aranym.img"
 #define FREEMINT_FILENAME	"mintara.prg"
 
 #ifndef DEFAULT_SERIAL
