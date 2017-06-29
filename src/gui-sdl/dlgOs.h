@@ -23,9 +23,29 @@
 
 #include "dialog.h"
 
+class DlgFileSelect;
+class DlgAlert;
+
 class DlgOs: public Dialog
 {
 	private:
+		enum {
+			STATE_MAIN,
+			STATE_FSEL_TOS,
+			STATE_FSEL_EMUTOS,
+			STATE_CONFIRM,
+		} state;
+
+		char tmpname[MAX_FILENAME_LENGTH];
+		bx_tos_options_t tos_options;
+		DlgAlert *dlgAlert;
+		DlgFileSelect *dlgFileSelect;
+
+		int processDialogMain(void);
+
+		void processResultTos(void);
+		void processResultEmutos(void);
+
 		void confirm(void);
  
 	public:
@@ -33,6 +53,8 @@ class DlgOs: public Dialog
 		~DlgOs();
 
 		int processDialog(void);
+
+		void processResult(void);
 };
 
 Dialog *DlgOsOpen(void);

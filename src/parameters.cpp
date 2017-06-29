@@ -645,8 +645,8 @@ struct Config_Tag global_conf[]={
 	{ "FastRAM", Int_Tag, &bx_options.fastram, 0, 0},
 	{ "FixedMemoryOffset", HexLong_Tag, &bx_options.fixed_memory_offset, 0, 0}, // FIXME: implement Ptr_Tag
 	{ "Floppy", Path_Tag, bx_options.floppy.path, sizeof(bx_options.floppy.path), 0},
-	{ "TOS", Path_Tag, bx_options.tos_path, sizeof(bx_options.tos_path), 0},
-	{ "EmuTOS", Path_Tag, bx_options.emutos_path, sizeof(bx_options.emutos_path), 0},
+	{ "TOS", Path_Tag, bx_options.tos.tos_path, sizeof(bx_options.tos.tos_path), 0},
+	{ "EmuTOS", Path_Tag, bx_options.tos.emutos_path, sizeof(bx_options.tos.emutos_path), 0},
 	{ "Bootstrap", Path_Tag, bx_options.bootstrap_path, sizeof(bx_options.bootstrap_path), 0},
 	{ "BootstrapArgs", String_Tag, bx_options.bootstrap_args, sizeof(bx_options.bootstrap_args), 0},
 	{ "BootDrive", Char_Tag, &bx_options.bootdrive, 0, 0},
@@ -658,8 +658,8 @@ struct Config_Tag global_conf[]={
 
 static void preset_global()
 {
-  strcpy(bx_options.tos_path, TOS_FILENAME);
-  strcpy(bx_options.emutos_path, EMUTOS_FILENAME);
+  strcpy(bx_options.tos.tos_path, TOS_FILENAME);
+  strcpy(bx_options.tos.emutos_path, EMUTOS_FILENAME);
   strcpy(bx_options.bootstrap_path, FREEMINT_FILENAME);
   bx_options.gmtime = false;	// use localtime by default
   strcpy(bx_options.floppy.path, "");

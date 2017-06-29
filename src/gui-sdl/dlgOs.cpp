@@ -23,17 +23,35 @@
 
 #include "sysdeps.h"
 #include "sdlgui.h"
+#include "file.h"
 #include "dlgOs.h"
+#include "dlgFileSelect.h"
+#include "dlgAlert.h"
+
+#define DEBUG 0
+#include "debug.h"
+
+static char tos_path[512];
+static char emutos_path[512];
 
 #define SDLGUI_INCLUDE_OSDLG
 #include "sdlgui.sdl"
 
 DlgOs::DlgOs(SGOBJ *dlg)
-	: Dialog(dlg)
+	: Dialog(dlg),
+	  state(STATE_MAIN),
+	  dlgAlert(NULL),
+	  dlgFileSelect(NULL)
 {
-	osdlg[TOSCONSOLE].state = bx_options.tos.redirect_CON ? SG_SELECTED : 0;
-	osdlg[MCH_ARANYM].state = bx_options.tos.cookie_mch == 0x50000 ? SG_SELECTED : 0;
-	osdlg[MCH_FALCON].state = bx_options.tos.cookie_mch == 0x30000 ? SG_SELECTED : 0;
+	/* Set up dialog to actual values: */
+	tos_options = bx_options.tos;
+	osdlg[TOSCONSOLE].state = tos_options.redirect_CON ? SG_SELECTED : 0;
+	osdlg[MCH_ARANYM].state = tos_options.cookie_mch == 0x50000 ? SG_SELECTED : 0;
+	osdlg[MCH_FALCON].state = tos_options.cookie_mch == 0x30000 ? SG_SELECTED : 0;
+	File_ShrinkName(tos_path, tos_options.tos_path, osdlg[MCH_TOS_PATH].w);
+	osdlg[MCH_TOS_PATH].txt = tos_path;
+	File_ShrinkName(emutos_path, tos_options.emutos_path, osdlg[MCH_EMUTOS_PATH].w);
+	osdlg[MCH_EMUTOS_PATH].txt = emutos_path;
 }
 
 DlgOs::~DlgOs()
@@ -44,10 +62,66 @@ int DlgOs::processDialog(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
-	switch(return_obj) {
+	switch (state)
+	{
+		case STATE_MAIN:
+			retval = processDialogMain();
+			break;
+		case STATE_CONFIRM:
+			state = STATE_MAIN;
+			if (dlgAlert)
+			{
+				if (dlgAlert->pressedOk())
+				{
+					confirm();
+					retval = Dialog::GUI_CLOSE;
+				}
+				delete dlgAlert;
+				dlgAlert = NULL;
+			}
+			break;
+		case STATE_FSEL_TOS:
+		case STATE_FSEL_EMUTOS:
+			break;
+	}
+
+	return retval;
+}
+
+int DlgOs::processDialogMain(void)
+{
+	int retval = Dialog::GUI_CONTINUE;
+
+	D(bug("Os: process dialogmain, return_obj=%d", return_obj));
+
+	switch (return_obj)
+	{
+		case MCH_TOS_BROWSE:
+			strcpy(tmpname, tos_options.tos_path);
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
+			state = STATE_FSEL_TOS;
+			break;
+
+		case MCH_EMUTOS_BROWSE:
+			strcpy(tmpname, tos_options.emutos_path);
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
+			state = STATE_FSEL_EMUTOS;
+			break;
+
 		case APPLY:
-			confirm();
-			/* fall through */
+			if (!File_Exists(tos_options.tos_path) &&
+				!File_Exists(tos_options.emutos_path))
+			{
+				dlgAlert = (DlgAlert *) DlgAlertOpen("No operating system found.\nARAnyM will not be able to boot!\nContinue?", ALERT_OKCANCEL);
+				SDLGui_Open(dlgAlert);
+				state = STATE_CONFIRM;
+			}
+			if (!dlgAlert)
+			{
+				confirm();
+				retval = Dialog::GUI_CLOSE;
+			}
+			break;
 		case CANCEL:
 			retval = Dialog::GUI_CLOSE;
 			break;
@@ -56,10 +130,54 @@ int DlgOs::processDialog(void)
 	return retval;
 }
 
+void DlgOs::processResultTos(void)
+{
+	if (dlgFileSelect && dlgFileSelect->pressedOk())
+	{
+		strcpy(tos_options.tos_path, tmpname);
+		File_ShrinkName(tos_path, tmpname, osdlg[MCH_TOS_PATH].w);
+	}
+}
+
+void DlgOs::processResultEmutos(void)
+{
+	if (dlgFileSelect && dlgFileSelect->pressedOk())
+	{
+		strcpy(tos_options.emutos_path, tmpname);
+		File_ShrinkName(emutos_path, tmpname, osdlg[MCH_EMUTOS_PATH].w);
+	}
+}
+
+void DlgOs::processResult(void)
+{
+	D(bug("Os: process result, state=%d", state));
+
+	switch (state)
+	{
+		case STATE_FSEL_TOS:
+			processResultTos();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_FSEL_EMUTOS:
+			processResultEmutos();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_CONFIRM:
+			break;
+		default:
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+	}
+}
+
 void DlgOs::confirm(void)
 {
-	bx_options.tos.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
-	bx_options.tos.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
+	tos_options.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
+	tos_options.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
+	bx_options.tos = tos_options;
 }
 
 Dialog *DlgOsOpen(void)

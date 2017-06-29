@@ -38,17 +38,17 @@ EmutosBootOs::EmutosBootOs(void) ARANYM_THROWS(AranymException)
 
 void EmutosBootOs::emutos_patch(bool cold) ARANYM_THROWS(AranymException)
 {
-	if (strlen(bx_options.emutos_path) == 0)
+	if (strlen(bx_options.tos.emutos_path) == 0)
 		throw AranymException("Path to EmuTOS ROM image file undefined");
 
-	load(bx_options.emutos_path);
+	load(bx_options.tos.emutos_path);
 
 	init(cold);
 
 	infoprint("EmuTOS %02x%02x/%02x/%02x loading from '%s'... [OK]",
 		ROMBaseHost[0x1a], ROMBaseHost[0x1b],
 		ROMBaseHost[0x18], ROMBaseHost[0x19],
-		bx_options.emutos_path
+		bx_options.tos.emutos_path
 	);
 	
 	int found = 0;

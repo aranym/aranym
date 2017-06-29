@@ -45,11 +45,11 @@ void TosBootOs::reset(bool cold) ARANYM_THROWS(AranymException)
 
 void TosBootOs::tos_patch(bool cold) ARANYM_THROWS(AranymException)
 {
-	if (strlen(bx_options.tos_path) == 0) {
+	if (strlen(bx_options.tos.tos_path) == 0) {
 		throw AranymException("Path to TOS ROM image file undefined");
 	}
 
-	load(bx_options.tos_path);
+	load(bx_options.tos.tos_path);
 
 	init(cold);
 

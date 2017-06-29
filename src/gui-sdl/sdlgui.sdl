@@ -231,8 +231,8 @@ static SGOBJ fsdlg[] = {
 	{ SGTEXT, 0, 0, 2, 18, 71, 1, dlgfilenames[12], 0 },
 	{ SGTEXT, 0, 0, 2, 19, 71, 1, dlgfilenames[13], 0 },
 	{ SGTEXT, 0, 0, 2, 20, 71, 1, dlgfilenames[14], 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20, 23, 8, 1, N_("_OK"), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 48, 23, 8, 1, N_("_Cancel"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 20, 23, 8, 1, N_("OK"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 48, 23, 8, 1, N_("Cancel"), 0 },
 	{ -1, 0, 0, 0, 0, 0, 0, NULL, 0 }
 };
 #endif
@@ -410,25 +410,35 @@ static SGOBJ networkdlg[] = {
 enum OSDLG {
 	box_main = 0,
 	box_wheel = 1,
-	TOSCONSOLE = 2,
-	text_mch = 3,
-	MCH_ARANYM = 4,
-	MCH_FALCON = 5,
-	text_wheel = 6,
-	APPLY = 7,
-	CANCEL = 8
+	MCH_TOS_PATH = 2,
+	MCH_TOS_BROWSE = 3,
+	MCH_EMUTOS_BROWSE = 4,
+	MCH_EMUTOS_PATH = 5,
+	TOSCONSOLE = 7,
+	text_mch = 8,
+	MCH_ARANYM = 9,
+	MCH_FALCON = 10,
+	APPLY = 11,
+	CANCEL = 12,
+	text_wheel = 14
 };
 
 static SGOBJ osdlg[] = {
-	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 52, 10, NULL, 0 },
-	{ SGBOX, 0, 0, 2, 2, 48, 5, NULL, 0 },
-	{ SGCHECKBOX, SG_SELECTABLE|SG_BUTTON_RIGHT, SG_SELECTED, 3, 3, 45, 1, N_("BIOS CON: output redirected to Host stdout"), 0 },
-	{ SGTEXT, 0, 0, 3, 5, 18, 1, N_("_MCH Cookie value:"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 22, 5, 9, 1, N_("ARAnyM"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 33, 5, 9, 1, N_("Falcon"), 0 },
-	{ SGTEXT, 0, 0, 3, 1, 13, 1, N_(" TOS patches "), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 8, 8, 8, 1, N_("Apply"), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 30, 8, 8, 1, N_("Cancel"), 0 },
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 77, 17, NULL, 0 },
+	{ SGBOX, 0, 0, 1, 2, 74, 5, NULL, 0 },
+	{ SGTEXT, 0, 0, 10, 3, 64, 1, tos_path, 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 5, 1, N_("TOS:"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 5, 7, 1, N_("EmuTOS:"), 0 },
+	{ SGTEXT, 0, 0, 10, 5, 64, 1, emutos_path, 0 },
+	{ SGBOX, 0, 0, 1, 9, 74, 5, NULL, 0 },
+	{ SGCHECKBOX, SG_SELECTABLE|SG_BUTTON_RIGHT, SG_SELECTED, 2, 10, 45, 1, N_("BIOS CON: output redirected to Host stdout"), 0 },
+	{ SGTEXT, 0, 0, 2, 12, 18, 1, N_("_MCH Cookie value:"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 21, 12, 9, 1, N_("ARAnyM"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 32, 12, 9, 1, N_("Falcon"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 55, 15, 8, 1, N_("Apply"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 15, 8, 1, N_("Cancel"), 0 },
+	{ SGTEXT, 0, 0, 3, 1, 12, 1, N_(" TOS images "), 0 },
+	{ SGTEXT, 0, 0, 3, 8, 13, 1, N_(" TOS patches "), 0 },
 	{ -1, 0, 0, 0, 0, 0, 0, NULL, 0 }
 };
 #endif

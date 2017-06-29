@@ -111,6 +111,8 @@ typedef struct {
   bool redirect_CON;
   long cookie_mch;
   long cookie_akp;
+  char			tos_path[512];
+  char			emutos_path[512];
 } bx_tos_options_t;
 
 // Video output options
@@ -298,8 +300,6 @@ typedef struct {
   bx_nfvdi_options_t	nfvdi;
   bx_audio_options_t	audio;
   bx_joysticks_options_t	joysticks;
-  char			tos_path[512];
-  char			emutos_path[512];
   char			bootstrap_path[512];
   char			bootstrap_args[512];
   char			bootdrive;
