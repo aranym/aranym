@@ -319,7 +319,6 @@ extern uintptr fixed_memory_offset;	// Virtual address of atari memory
 #endif
 
 extern char *program_name;
-extern bool startupGUI;
 extern bool boot_emutos;
 extern bool boot_lilo;
 extern bool halt_on_reboot;

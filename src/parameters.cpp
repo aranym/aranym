@@ -35,6 +35,7 @@
 #include "natfeat/nf_base.h"
 #include "rtc.h"
 #include "vm_alloc.h"
+#include "main.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -149,10 +150,6 @@ static struct option const long_options[] =
 #endif
 
 char *program_name;		// set by main()
-
-#ifdef SDL_GUI
-bool startupGUI = false;
-#endif
 
 bool boot_emutos = false;
 bool boot_lilo = false;

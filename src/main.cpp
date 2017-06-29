@@ -97,6 +97,8 @@ static int total_interrupts = 0;
 
 #ifdef SDL_GUI
 bool isGuiAvailable;
+bool startupGUI = false;
+char *startupAlert = NULL;
 #endif
 
 uint32 InterruptFlags = 0;

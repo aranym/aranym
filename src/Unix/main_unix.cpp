@@ -43,6 +43,10 @@
 #if defined _WIN32 || defined(OS_cygwin)
 #include "win32_supp.h"
 #endif
+#ifdef SDL_GUI
+#include "sdlgui.h"
+#include "dlgAlert.h"
+#endif
 
 #define USE_VALGRIND 0
 #if USE_VALGRIND
@@ -436,7 +440,16 @@ void guialert(const char *fmt, ...)
 	vfprintf(stderr, fmt, args);
 	fputs("\n", stderr);
 	va_end(args);
+#ifdef SDL_GUI
+	char *buf = NULL;
+	va_start(args, fmt);
+	vasprintf(&buf, fmt, args);
+	va_end(args);
+	startupGUI = true;
+	startupAlert = buf;
+#else
 	// FIXME: assuming some unix; use external tool to display alert
+#endif
 }
 #endif
 

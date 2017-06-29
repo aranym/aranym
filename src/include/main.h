@@ -43,6 +43,12 @@ struct M68kRegisters {
 	memptr pc;
 };
 
+#ifdef SDL_GUI
+extern bool isGuiAvailable;
+extern bool startupGUI;
+extern char *startupAlert;
+#endif
+
 // General functions
 extern bool InitAll(void);
 extern void ExitAll(void);

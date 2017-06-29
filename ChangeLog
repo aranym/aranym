@@ -1,4 +1,8 @@
 2017/06/28 - Thorsten
+Display an alert in the sdl-gui when no TOS image could be found.
+
+
+2017/06/28 - Thorsten
 gitignore .directory files created by some filemanagers
 
 

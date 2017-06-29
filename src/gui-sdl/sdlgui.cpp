@@ -29,6 +29,7 @@
 #include "host_surface.h"
 #include "hostscreen.h"
 #include "host.h"
+#include "main.h"
 
 #include <cstdlib>
 #include <stack>
@@ -36,6 +37,7 @@
 #include "font.h"
 #include "dialog.h"
 #include "dlgMain.h"
+#include "dlgAlert.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -1325,6 +1327,13 @@ void SDLGui_Open(Dialog *new_dlg)
 	if (new_dlg==NULL) {
 		/* Open main as default */
 		new_dlg = DlgMainOpen();
+		if (startupAlert)
+		{
+			dlgStack.push(new_dlg);
+			new_dlg = DlgAlertOpen(startupAlert, ALERT_OK);
+			free(startupAlert);
+			startupAlert = NULL;
+		}
 	}
 
 	dlgStack.push(new_dlg);
