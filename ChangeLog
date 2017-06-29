@@ -1,4 +1,8 @@
 2017/06/28 - Thorsten
+gitignore .directory files created by some filemanagers
+
+
+2017/06/28 - Thorsten
 Make the TOS- and EmuTOS-path selectable in the GUI.
 
 
