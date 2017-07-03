@@ -19,6 +19,7 @@
 */
 
 #include "audio_conv.h"
+#include "host_audio.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -31,7 +32,7 @@ AudioConv::AudioConv(void)
 
 AudioConv::~AudioConv()
 {
-	if (!tmpBuf) {
+	if (tmpBuf) {
 		free(tmpBuf);
 		tmpBuf=NULL;
 	}
@@ -44,9 +45,15 @@ AudioConv::~AudioConv()
 void AudioConv::setConversion(Uint16 src_fmt, Uint8 src_chan, int src_rate, int src_offset, int src_skip,
 	Uint16 dst_fmt, Uint8 dst_chan, int dst_rate)
 {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_BuildAudioCVT(&cvt,
+		src_fmt, src_chan, src_rate,
+		dst_fmt, dst_chan, dst_rate);
+#else
 	SDL_BuildAudioCVT(&cvt,
 		src_fmt, src_chan, dst_rate,
 		dst_fmt, dst_chan, dst_rate);
+#endif
 
 	srcRate = src_rate;
 	srcOffset = src_offset;
@@ -54,9 +61,9 @@ void AudioConv::setConversion(Uint16 src_fmt, Uint8 src_chan, int src_rate, int 
 	srcChan = src_chan;
 	dstRate = dst_rate;
 
-	D(bug("audio_conv: 0x%04x, %d chans, %d Hz to 0x%04x, %d chans, %d Hz",
-		src_fmt, src_chan, src_rate,
-		dst_fmt, dst_chan, dst_rate));
+	D(bug("audio_conv: %s, %d chans, %d Hz to %s, %d chans, %d Hz",
+		HostAudio::FormatName(src_fmt), src_chan, src_rate,
+		HostAudio::FormatName(dst_fmt), dst_chan, dst_rate));
 	D(bug("audio_conv: offset %d bytes, skip %d bytes in source", src_offset, src_skip));
 }
 
@@ -122,6 +129,22 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 
 	D(bug("audioconv: from %p, %d -> %p, %d", source, *src_len, dest, *dst_len));
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/* Calc needed buffer size */
+	int neededBufSize = *src_len * cvt.len_mult;
+
+	if (tmpBufLen<neededBufSize) {
+		tmpBuf = (Uint8 *) realloc(tmpBuf, neededBufSize);
+		tmpBufLen = neededBufSize;
+		D(bug("audioconv: realloc tmpbuf, len: %d", neededBufSize));
+	}
+
+	/* Then convert to final format */
+	memcpy(tmpBuf, source, *src_len);
+	cvt.buf = tmpBuf;
+	cvt.len = *src_len;
+	SDL_ConvertAudio(&cvt);
+#else
 	/* Calc needed buffer size */
 	int neededBufSize = *dst_len;
 	if (srcRate > dstRate) {
@@ -156,6 +179,7 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 	cvt.buf = tmpBuf;
 	cvt.len = dstConvertedLen;
 	SDL_ConvertAudio(&cvt);
+#endif
 
 	SDL_MixAudio(dest, cvt.buf, cvt.len_cvt, volume);
 

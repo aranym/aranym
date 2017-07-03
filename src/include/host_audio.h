@@ -62,6 +62,7 @@ class HostAudio {
 		bool Enabled(void) { return enabled; }
 		void Enable() { enabled = true; }
 		void Disable() { enabled = false; }
+		static const char *FormatName(Uint16 format);
 };
 
 #endif /* HOSTAUDIO_H */

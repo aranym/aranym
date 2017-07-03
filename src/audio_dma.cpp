@@ -493,8 +493,8 @@ void AUDIODMA::updateMode(void)
 		freq = getCROSSBAR()->getIntFreq() / (256 * (prediv+1));
 	}
 
-	D(bug("audiodma: mode: format 0x%04x, %d channels, offset %d, skip %d, %d freq",
-		format, channels, offset, skip, freq));
+	D(bug("audiodma: mode: format %s, %d channels, offset %d, skip %d, %d freq",
+		HostAudio::FormatName(format), channels, offset, skip, freq));
 
 	audioConv->setConversion(format, channels, freq, offset, skip,
 		host->audio.obtained.format, host->audio.obtained.channels,
