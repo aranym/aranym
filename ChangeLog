@@ -1,3 +1,7 @@
+2017/07/03 - Thorsten
+Remove forgotten debug output
+
+
 2017/06/28 - Thorsten
 Display an alert in the sdl-gui when no TOS image could be found.
 

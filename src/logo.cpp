@@ -66,7 +66,6 @@ void Logo::load(const char *filename)
 	}
 
 	logo_surf = SDL_LoadBMP_RW(rwops, 0);
-	printf("load logo %s: %p\n", filename, logo_surf);
 	SDL_FreeRW(rwops);
 
 	if (!logo_surf) {

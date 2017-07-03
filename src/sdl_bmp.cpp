@@ -396,7 +396,7 @@ SDL_Surface *SDL_LoadBMP_RW(SDL_RWops * src, int freesrc)
 			break;
 
 		default:
-			if (SDL_RWread(src, bits, 1, surface->pitch) != surface->pitch)
+			if ((int)SDL_RWread(src, bits, 1, surface->pitch) != (int)surface->pitch)
 			{
 				SDL_Error(SDL_EFREAD);
 				was_error = SDL_TRUE;
