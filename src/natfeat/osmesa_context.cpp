@@ -37,6 +37,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifdef NFOSMESA_SUPPORT
 /*--- Defines ---*/
 
 #define VDI_ARGB			0x8
@@ -2611,4 +2612,5 @@ GLboolean QuartzOpenglContext::ClearCurrent()
 	return GL_TRUE;
 }
 
+#endif
 #endif

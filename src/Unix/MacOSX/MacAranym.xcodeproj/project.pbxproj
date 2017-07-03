@@ -557,6 +557,14 @@
 		CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
 		CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBCE37AE1B05B76100A19E4D /* maptab.cpp */; };
+		CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */; };
+		CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
+		CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
+		CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
+		CBD862F31B2D8FA4003357BC /* nfosmesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D9C0A652B51009733EB /* nfosmesa.cpp */; };
 		CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
 		CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */; };
@@ -2446,6 +2454,8 @@
 				CBEA27B61AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C31AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B21B05B76100A19E4D /* maptab.cpp in Sources */,
+				CBD862F31B2D8FA4003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4981B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87051B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2569,6 +2579,8 @@
 				CBEA27B41AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C11AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B11B05B76100A19E4D /* maptab.cpp in Sources */,
+				CBD862F11B2D8FA1003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4971B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87041B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2691,6 +2703,8 @@
 				CBEA27B31AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C01AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37B01B05B76100A19E4D /* maptab.cpp in Sources */,
+				CBD862F01B2D8FA0003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4961B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87031B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2823,6 +2837,8 @@
 				CBEA27B51AF6527500B12FC5 /* dlgHostfs.cpp in Sources */,
 				CBEA27C21AF65A6900B12FC5 /* cpufunctbl.cpp in Sources */,
 				CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */,
+				CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */,
+				CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
 				CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

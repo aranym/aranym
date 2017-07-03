@@ -55,6 +55,7 @@
 #include "debug.h"
 #include "verify.h"
 
+#ifdef NFOSMESA_SUPPORT
 /*--- Assumptions ---*/
 
 /* these native types must match the Atari types */
@@ -20789,3 +20790,5 @@ is read from the buffer rather than from client memory.
 /* -------------------------------------------------------------------------- */
 
 #include "nfosmesa/call-gl.c"
+
+#endif
