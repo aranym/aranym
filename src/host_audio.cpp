@@ -49,7 +49,7 @@ extern "C" {
 			}
 		}
 	}
-};
+}
 
 /*--- Constructor/destructor of HostAudio class ---*/
 
@@ -62,12 +62,16 @@ HostAudio::HostAudio()
 		userdatas[i]=NULL;
 	}
 
+	memset(&desired, 0, sizeof(desired));
 	desired.freq = bx_options.audio.freq;
 	desired.format = (bx_options.audio.bits == 8) ? AUDIO_S8 : AUDIO_S16SYS;
 	desired.channels = bx_options.audio.chans;
 	desired.samples = bx_options.audio.samples;
 	desired.callback = UpdateAudio;
 	desired.userdata = NULL;
+	D(bug("HostAudio: desired: %d Hz, %s format, %d channels, %d samples",
+		desired.freq, HostAudio::FormatName(desired.format),
+		desired.channels, desired.samples));
 
 	if (SDL_OpenAudio(&desired, &obtained)<0)
 	{

@@ -31,7 +31,7 @@
 
 /*--- Defines ---*/
 
-#define	CLK_25M		25175000
+#define	CLK_25M		25175040
 #define CLK_32M		32000000
 #define CLK_44K		22579200
 
@@ -113,7 +113,8 @@
 
 #if DEBUG
 extern "C" {
-	static char *freq_names[4], *out_names[4];
+	static const char *const freq_names[4] = { "25.175 MHz", "External", "32 MHz", "Undefined" };
+	static const char *const out_names[4] = { "DMA output", "DSP output", "Ext. input", "ADC input" };
 };
 #endif
 
@@ -123,22 +124,6 @@ CROSSBAR::CROSSBAR(memptr addr, uint32 size) : BASE_IO(addr, size)
 {
 	D(bug("crossbar: interface created at 0x%06x", getHWoffset()));
 
-#if DEBUG
-	for (int i=0;i<4; i++) {
-		freq_names[i]=(char *)malloc(16*sizeof(char));
-		out_names[i]=(char *)malloc(16*sizeof(char));
-	}
-	strcpy(freq_names[0],"25.175 MHz");
-	strcpy(freq_names[1],"External");
-	strcpy(freq_names[2],"32 MHz");
-	strcpy(freq_names[3],"Undefined");
-
-	strcpy(out_names[0],"DMA output");
-	strcpy(out_names[1],"DSP output");
-	strcpy(out_names[2],"Ext. input");
-	strcpy(out_names[3],"ADC input");
-#endif
-
 	reset();
 }
 
@@ -146,12 +131,6 @@ CROSSBAR::~CROSSBAR()
 {
 	D(bug("crossbar: interface destroyed at 0x%06x", getHWoffset()));
 	reset();
-#if DEBUG
-	for (int i=0;i<4; i++) {
-		free(freq_names[i]);
-		free(out_names[i]);
-	}
-#endif
 }
 
 /*--- Public functions ---*/

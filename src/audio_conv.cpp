@@ -24,6 +24,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+#define USE_SDL_RATECONVERSION 0
+
 AudioConv::AudioConv(void)
 	: tmpBuf(NULL), srcRate(0), srcChan(0), srcOffset(0), srcSkip(0),
 	dstRate(0), tmpBufLen(0), volume(SDL_MIX_MAXVOLUME)
@@ -45,7 +47,7 @@ AudioConv::~AudioConv()
 void AudioConv::setConversion(Uint16 src_fmt, Uint8 src_chan, int src_rate, int src_offset, int src_skip,
 	Uint16 dst_fmt, Uint8 dst_chan, int dst_rate)
 {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0) && USE_SDL_RATECONVERSION
 	SDL_BuildAudioCVT(&cvt,
 		src_fmt, src_chan, src_rate,
 		dst_fmt, dst_chan, dst_rate);
@@ -129,7 +131,7 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 
 	D(bug("audioconv: from %p, %d -> %p, %d", source, *src_len, dest, *dst_len));
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
+#if SDL_VERSION_ATLEAST(2, 0, 0) && USE_SDL_RATECONVERSION
 	/* Calc needed buffer size */
 	int neededBufSize = *src_len * cvt.len_mult;
 
