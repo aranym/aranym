@@ -291,8 +291,6 @@ static void try_segfault(int)
 #endif
 {
 	try_gotsig = 1;
-	printf("got segfault\n");
-	fflush(stdout);
 	siglongjmp(seg_jmpbuf, 1);
 }
 
@@ -327,6 +325,8 @@ static bool try_acquire(uintptr addr, size_t ttram_size)
 	try_gotsig = 0;
 	if (sigsetjmp(seg_jmpbuf, 1) != 0)
 	{
+		printf("got segfault\n");
+		fflush(stdout);
 		try_release(addr, try_size);
 		return false;
 	}
@@ -358,7 +358,7 @@ void vm_probe_fixed(void)
 {	
 	// This might need tweaking
 	// 0x01000000 gives SIGSEGV without being catched by handler on linux
-	uintptr const probestart = 0x02000000;
+	uintptr const probestart = 0x04000000;
 	uintptr const probeend   = 0xfff00000;
 	size_t  const step       = 0x00100000;
 	size_t  const mapsize    = (probeend - probestart) / step;

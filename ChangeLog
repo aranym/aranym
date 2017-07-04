@@ -1,4 +1,9 @@
 2017/07/03 - Thorsten
+Increase low starting address for memory probing, using a too low
+value sometimes yields an uncatchable SIGSEGV
+
+
+2017/07/03 - Thorsten
 Do not install SIGINT handler when only probing for available memory ranges
 
 
