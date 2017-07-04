@@ -195,20 +195,22 @@ void uninstall_sigsegv() {
 
 static bool install_signal_handler(bool quiet)
 {
-#ifdef HAVE_SIGACTION
+	if (!quiet)
 	{
-		struct sigaction sa;
-		memset(&sa, 0, sizeof(sa));
-		sigemptyset(&sa.sa_mask);
-		sa.sa_handler = (void (*)(int))setactvdebug;
-		sa.sa_flags = 0;
-		sigaction(SIGINT, &sa, NULL);
-	}
+#ifdef HAVE_SIGACTION
+		{
+			struct sigaction sa;
+			memset(&sa, 0, sizeof(sa));
+			sigemptyset(&sa.sa_mask);
+			sa.sa_handler = (void (*)(int))setactvdebug;
+			sa.sa_flags = 0;
+			sigaction(SIGINT, &sa, NULL);
+		}
 #else
-	signal(SIGINT, (void (*)(int))setactvdebug);
+		signal(SIGINT, (void (*)(int))setactvdebug);
 #endif
-
-	UNUSED(quiet);
+	}
+	
 #ifdef EXTENDED_SIGSEGV
 	if (vm_protect(ROMBaseHost, ROMSize, VM_PAGE_READ)) {
 		if (!quiet)

@@ -1,4 +1,8 @@
 2017/07/03 - Thorsten
+Do not install SIGINT handler when only probing for available memory ranges
+
+
+2017/07/03 - Thorsten
 Fix audio output for SDL2
 
 
