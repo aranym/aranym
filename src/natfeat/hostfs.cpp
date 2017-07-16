@@ -1427,7 +1427,7 @@ int32 HostFs::xfs_dev_read(ExtFile *fp, memptr buffer, uint32 count)
 		toRead -= readCount;
 	}
 
-	D(bug("HOSTFS: /dev_read readCount (%d)", count - toRead));
+	D(bug("HOSTFS: /dev_read readCount (%d)", (int)(count - toRead)));
 	if ( readCount < 0 )
 		return errnoHost2Mint(errno,TOS_EINTRN);
 
@@ -1456,7 +1456,7 @@ int32 HostFs::xfs_dev_write(ExtFile *fp, memptr buffer, uint32 count)
 		toWrite -= writeCount;
 	}
 
-	D(bug("HOSTFS: /dev_write writeCount (%d)", count - toWrite));
+	D(bug("HOSTFS: /dev_write writeCount (%d)", (int)(count - toWrite)));
 	if ( writeCount < 0 )
 		return errnoHost2Mint(errno,TOS_EINTRN);
 
