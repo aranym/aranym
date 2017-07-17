@@ -461,9 +461,10 @@ bool InitAll(void)
 			}
 		} while(needToReboot);
 	}
+	startupGUI = false;
 #endif /* SDL_GUI */
 	
-	if (bootOs == NULL)
+	if (bootOs == NULL || RAMBaseHost == NULL)
 		return false;
 
 	host->video->bootDone();

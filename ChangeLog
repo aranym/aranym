@@ -1,4 +1,9 @@
 2017/07/17 - Thorsten
+For now, make sure memory configuration isn't changed when
+loading a config file from the GUI; it does not work yet.
+
+
+2017/07/17 - Thorsten
 Prefer jpeglib over SDL_image; this is the only format needed,
 making SDL_image obsolete
 

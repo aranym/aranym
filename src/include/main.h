@@ -65,4 +65,11 @@ extern void setactvdebug(int);
 // Platform-specific functions
 extern void QuitEmulator(int exitcode = EXIT_FAILURE);				// Quit emulator
 
+#if FIXED_ADDRESSING
+bool allocate_all_memory(uintptr fmemory, bool quiet);
+#else
+bool allocate_all_memory(bool quiet);
+#endif
+void release_all_memory(void);
+
 #endif

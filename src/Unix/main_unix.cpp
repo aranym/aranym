@@ -117,9 +117,9 @@ void segmentationfault(int)
 }
 
 #if FIXED_ADDRESSING
-static bool allocate_all_memory(uintptr fmemory, bool quiet)
+bool allocate_all_memory(uintptr fmemory, bool quiet)
 #else
-static bool allocate_all_memory(bool quiet)
+bool allocate_all_memory(bool quiet)
 #endif
 {
 #if DIRECT_ADDRESSING || FIXED_ADDRESSING
@@ -181,6 +181,44 @@ static bool allocate_all_memory(bool quiet)
 #endif /* DIRECT_ADDRESSING || FIXED_ADDRESSING */
 	
 	return true;
+}
+
+void release_all_memory(void)
+{
+#if DIRECT_ADDRESSING || FIXED_ADDRESSING
+	if (RAMBaseHost != VM_MAP_FAILED && RAMBaseHost != NULL) {
+#ifdef RAMENDNEEDED
+		vm_release(RAMBaseHost + RAMSize + ROMSize + HWSize + FastRAMSize, RAMEnd);
+#endif
+		vm_release(RAMBaseHost, RAMSize);
+#if FIXED_ADDRESSING && defined(EXTENDED_SIGSEGV)
+		void *mirror = (void *)(RAMBaseHost + ~0xffffffL);
+		vm_release(mirror, RAMSize + ROMSize + HWSize);
+#ifdef HW_SIGSEGV
+		vm_release((void *)FakeIOBaseHost, 0x00100000);
+#endif
+#endif
+	}
+	RAMBaseHost = NULL;
+#ifdef HW_SIGSEGV
+	FakeIOBaseHost = NULL;
+#endif
+	if (ROMBaseHost != VM_MAP_FAILED && ROMBaseHost != NULL) {
+		vm_release(ROMBaseHost, ROMSize);
+	}
+	ROMBaseHost = NULL;
+	if (HWBaseHost != VM_MAP_FAILED && HWBaseHost != NULL) {
+		vm_release(HWBaseHost, HWSize);
+	}
+	HWBaseHost = NULL;
+	if (FastRAMBaseHost != VM_MAP_FAILED && FastRAMBaseHost != NULL) {
+		vm_release(FastRAMBaseHost, FastRAMSize);
+	}
+	FastRAMBaseHost = NULL;
+#else
+	free(RAMBaseHost);
+	RAMBaseHost = NULL;
+#endif
 }
 
 #ifndef EXTENDED_SIGSEGV
@@ -320,7 +358,9 @@ static bool try_acquire(uintptr addr, size_t ttram_size)
 	bool const quiet = true;
 	
 	FastRAMSize = ttram_size;
+#ifdef HW_SIGSEGV
 	FakeIOBaseHost = (uint8 *)VM_MAP_FAILED;
+#endif
 	RAMBaseHost = (uint8 *)VM_MAP_FAILED;
 	try_gotsig = 0;
 	if (sigsetjmp(seg_jmpbuf, 1) != 0)
@@ -551,29 +591,7 @@ void QuitEmulator(int exitcode)
 	ExitAll();
 
 	// Free ROM/RAM areas
-#if DIRECT_ADDRESSING || FIXED_ADDRESSING
-	if (RAMBaseHost != VM_MAP_FAILED) {
-#ifdef RAMENDNEEDED
-		vm_release(RAMBaseHost + RAMSize + ROMSize + HWSize + FastRAMSize, RAMEnd);
-#endif
-		vm_release(RAMBaseHost, RAMSize);
-		RAMBaseHost = NULL;
-	}
-	if (ROMBaseHost != VM_MAP_FAILED) {
-		vm_release(ROMBaseHost, ROMSize);
-		ROMBaseHost = NULL;
-	}
-	if (HWBaseHost != VM_MAP_FAILED) {
-		vm_release(HWBaseHost, HWSize);
-		HWBaseHost = NULL;
-	}
-	if (FastRAMBaseHost !=VM_MAP_FAILED) {
-		vm_release(FastRAMBaseHost, FastRAMSize);
-		FastRAMBaseHost = NULL;
-	}
-#else
-	free(RAMBaseHost);
-#endif
+	release_all_memory();
 
 	// Exit VM wrappers
 	vm_exit();

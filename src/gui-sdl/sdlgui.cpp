@@ -1294,9 +1294,10 @@ int SDLGui_DoEvent(const SDL_Event &event)
 
 			if (retval != Dialog::GUI_CONTINUE) {
 				Dialog *prev_dlg = NULL;
+				Dialog *curr_dlg = dlgStack.top();
 				dlgStack.pop();
 				if (!dlgStack.empty()) {
-					prev_dlg = dlgStack.top();		
+					prev_dlg = dlgStack.top();
 
 					/* Process result of called dialog */
 					prev_dlg->processResult();
@@ -1306,10 +1307,11 @@ int SDLGui_DoEvent(const SDL_Event &event)
 				}
 
 				/* Close current dialog */
-				delete gui_dlg;
+				delete curr_dlg;
 
 				/* Set dialog to previous one */
-				gui_dlg = prev_dlg;
+				if (gui_dlg == curr_dlg)
+					gui_dlg = prev_dlg;
 				if (gui_dlg) {
 					gui_dlg->init();
 					++num_dialogs; /* Need to process result in the caller dialog */

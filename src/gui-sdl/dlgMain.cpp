@@ -40,6 +40,7 @@
 #include "dlgUsb.h"
 #include "dlgHostfs.h"
 #include "bootos.h" // bootOs ptr
+#include "main.h"
 
 #ifdef OS_darwin
 	extern void refreshMenuKeys();
@@ -76,6 +77,11 @@ static const char *HELP_TEXT =
 "          ------------------\n"
 "Changes must be confirmed with APPLY first. Note that all changes are applied immediately to a running ARAnyM.\n"
 "Some changes require system reboot in order to take effect. It's actually safest to always reboot after any change.";
+
+static const char *MEMORY_TEXT = 
+"Changing memory configuration here is not supported yet.\n"
+"You have to restart ARAnyM.";
+
 
 static void setState(int index, int bits, bool set)
 {
@@ -204,7 +210,29 @@ void DlgMain::processResult(void)
 			if (dlgFileSelect) {
 				/* Load setting if pressed OK in fileselector */
 				if (dlgFileSelect->pressedOk()) {
-					loadSettings(path);
+					uint32 old_FastRAMSize = FastRAMSize;
+#if FIXED_ADDRESSING
+					unsigned long old_fixed_memory_offset = fixed_memory_offset;
+#endif
+					bool ret = loadSettings(path);
+					if (ret && (FastRAMSize != old_FastRAMSize
+#if FIXED_ADDRESSING
+						|| fixed_memory_offset != old_fixed_memory_offset
+#endif
+						))
+					{
+						/*
+						 * changing memory configuration here,
+						 * by releasing and re-allocating it,
+						 * does not work because it is too late.
+						 * Give a hint at least.
+						 */
+						FastRAMSize = old_FastRAMSize;
+#if FIXED_ADDRESSING
+						fixed_memory_offset = old_fixed_memory_offset;
+#endif
+						SDLGui_Open(DlgAlertOpen(MEMORY_TEXT, ALERT_OK));
+					}
 				}
 			}
 			break;
