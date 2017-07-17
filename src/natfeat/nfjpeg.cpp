@@ -31,16 +31,239 @@
 
 #include "SDL_compat.h"
 #include <SDL_rwops.h>
+#if defined(HAVE_JPEGLIB)
+#include <jpeglib.h>
+#elif defined(HAVE_SDL_IMAGE)
 #include <SDL_image.h>
+#else
+ #error "no jpeg library found"
+#endif
+#include "toserror.h"
 
 #define DEBUG 0
 #include "debug.h"
 
 /*--- Defines ---*/
 
-#define EINVFN	-32
-
 /*--- Types ---*/
+
+/*--- jpeglib functions ---*/
+
+#if defined(HAVE_JPEGLIB)
+
+#define INPUT_BUFFER_SIZE 4096
+typedef struct {
+	struct jpeg_source_mgr pub;
+
+	SDL_RWops *ctx;
+	Uint8 buffer[INPUT_BUFFER_SIZE];
+} my_source_mgr;
+
+/*
+ * Initialize source --- called by jpeg_read_header
+ * before any data is actually read.
+ */
+static void init_source(j_decompress_ptr cinfo)
+{
+	/* We don't actually need to do anything */
+	(void) cinfo;
+}
+
+/*
+ * Fill the input buffer --- called whenever buffer is emptied.
+ */
+static jboolean fill_input_buffer(j_decompress_ptr cinfo)
+{
+	my_source_mgr *src = (my_source_mgr *) cinfo->src;
+	int nbytes;
+
+	nbytes = SDL_RWread(src->ctx, src->buffer, 1, INPUT_BUFFER_SIZE);
+	if (nbytes <= 0)
+	{
+		/* Insert a fake EOI marker */
+		src->buffer[0] = 0xFF;
+		src->buffer[1] = JPEG_EOI;
+		nbytes = 2;
+	}
+	src->pub.next_input_byte = src->buffer;
+	src->pub.bytes_in_buffer = nbytes;
+
+	return TRUE;
+}
+
+/*
+ * Skip data --- used to skip over a potentially large amount of
+ * uninteresting data (such as an APPn marker).
+ *
+ * Writers of suspendable-input applications must note that skip_input_data
+ * is not granted the right to give a suspension return. If the skip extends
+ * beyond the data currently in the buffer, the buffer can be marked empty so
+ * that the next read will cause a fill_input_buffer call that can suspend.
+ * Arranging for additional bytes to be discarded before reloading the input
+ * buffer is the application writer's problem.
+ */
+static void skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+{
+	my_source_mgr *src = (my_source_mgr *) cinfo->src;
+
+	/* Just a dumb implementation for now.	Could use fseek() except
+	 * it doesn't work on pipes. Not clear that being smart is worth
+	 * any trouble anyway --- large skips are infrequent.
+	 */
+	if (num_bytes > 0)
+	{
+		while (num_bytes > (long) src->pub.bytes_in_buffer)
+		{
+			num_bytes -= (long) src->pub.bytes_in_buffer;
+			(void) src->pub.fill_input_buffer(cinfo);
+			/* note we assume that fill_input_buffer will never
+			 * return FALSE, so suspension need not be handled.
+			 */
+		}
+		src->pub.next_input_byte += (size_t) num_bytes;
+		src->pub.bytes_in_buffer -= (size_t) num_bytes;
+	}
+}
+
+/*
+ * Terminate source --- called by jpeg_finish_decompress
+ * after all data has been read.
+ */
+static void term_source(j_decompress_ptr cinfo)
+{
+	/* We don't actually need to do anything */
+	(void) cinfo;
+}
+
+void JpegDriver::my_error_exit(j_common_ptr cinfo)
+{
+	struct my_error_mgr *err = (struct my_error_mgr *)cinfo->err;
+	longjmp(err->escape, 1);
+}
+
+static void output_no_message(j_common_ptr cinfo)
+{
+	(void) cinfo;
+}
+
+static void jpeg_rw_src(j_decompress_ptr cinfo, SDL_RWops *ctx)
+{
+	my_source_mgr *src;
+
+	if (cinfo->src == NULL) /* first time for this JPEG object? */
+	{
+		cinfo->src = (struct jpeg_source_mgr *)
+			(*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT, sizeof(my_source_mgr));
+	}
+
+	src = (my_source_mgr *) cinfo->src;
+	src->pub.init_source = init_source;
+	src->pub.fill_input_buffer = fill_input_buffer;
+	src->pub.skip_input_data = skip_input_data;
+	src->pub.resync_to_restart = jpeg_resync_to_restart; /* use default method */
+	src->pub.term_source = term_source;
+	src->ctx = ctx;
+	src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
+	src->pub.next_input_byte = NULL; /* until buffer loaded */
+}
+
+SDL_Surface *JpegDriver::load_jpeg(SDL_RWops *src)
+{
+	Sint64 start;
+	JSAMPROW rowptr[1];
+	SDL_Surface *volatile surface = NULL;
+	j_decompress_ptr cinfo;
+	
+	memset(&jpeg, 0, sizeof(jpeg));
+	cinfo = &jpeg;
+	cinfo->err = jpeg_std_error(&jerr.errmgr);
+	cinfo->err->error_exit = my_error_exit;
+	cinfo->err->output_message = output_no_message;
+	
+	if (src == NULL)
+	{
+		/* The error message has been set in SDL_RWFromFile */
+		return NULL;
+	}
+	start = SDL_RWtell(src);
+
+	if (setjmp(jerr.escape))
+	{
+		/* If we get here, libjpeg found an error */
+		jpeg_destroy_decompress(&jpeg);
+		if (surface != NULL)
+		{
+			SDL_FreeSurface(surface);
+		}
+		SDL_RWseek(src, start, RW_SEEK_SET);
+		return NULL;
+	}
+
+	jpeg_create_decompress(cinfo);
+	jpeg_rw_src(cinfo, src);
+	jpeg_read_header(cinfo, TRUE);
+
+	if (cinfo->num_components == 4)
+	{
+		/* Set 32-bit Raw output */
+		cinfo->out_color_space = JCS_CMYK;
+		cinfo->quantize_colors = FALSE;
+		jpeg_calc_output_dimensions(cinfo);
+
+		/* Allocate an output surface to hold the image */
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+				cinfo->output_width, cinfo->output_height, 32,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000
+#else
+				0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF
+#endif
+				);
+	} else
+	{
+		/* Set 24-bit RGB output */
+		cinfo->out_color_space = JCS_RGB;
+		cinfo->quantize_colors = FALSE;
+#ifdef FAST_JPEG
+		cinfo->scale_num   = 1;
+		cinfo->scale_denom = 1;
+		cinfo->dct_method = JDCT_FASTEST;
+		cinfo->do_fancy_upsampling = FALSE;
+#endif
+		jpeg_calc_output_dimensions(cinfo);
+
+		/* Allocate an output surface to hold the image */
+		surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+				cinfo->output_width, cinfo->output_height, 24,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+				0x0000FF, 0x00FF00, 0xFF0000,
+#else
+				0xFF0000, 0x00FF00, 0x0000FF,
+#endif
+				0);
+	}
+
+	if (surface == NULL)
+	{
+		jpeg_destroy_decompress(cinfo);
+		SDL_RWseek(src, start, RW_SEEK_SET);
+		return NULL;
+	}
+
+	/* Decompress the image */
+	jpeg_start_decompress(cinfo);
+	while (cinfo->output_scanline < cinfo->output_height)
+	{
+		rowptr[0] = (JSAMPROW)(Uint8 *)surface->pixels + cinfo->output_scanline * surface->pitch;
+		jpeg_read_scanlines(cinfo, rowptr, (JDIMENSION) 1);
+	}
+	jpeg_finish_decompress(cinfo);
+	jpeg_destroy_decompress(cinfo);
+
+	return surface;
+}
+
+#endif
 
 /*--- Constructor/destructor functions ---*/
 
@@ -54,12 +277,14 @@ JpegDriver::~JpegDriver()
 {
 	int i;
 
-	for (i=1;i<=MAX_NFJPEG_IMAGES;i++) {
-		if (images[i].src) {
+	for (i = 1; i <= MAX_NFJPEG_IMAGES; i++)
+	{
+		if (images[i].src)
+		{
 			SDL_FreeSurface(images[i].src);
-			images[i].src=NULL;
+			images[i].src = NULL;
 		}
-		images[i].used=SDL_FALSE;
+		images[i].used = false;
 	}
 	D(bug("nfjpeg: destroyed"));
 }
@@ -71,11 +296,12 @@ int32 JpegDriver::dispatch(uint32 fncode)
 	int32 ret;
 
 	D(bug("nfjpeg: dispatch(%u)", fncode));
-	ret = EINVFN;
+	ret = TOS_EINVFN;
 
-	switch(fncode) {
+	switch(fncode)
+	{
 		case GET_VERSION:
-    		ret = ARANFJPEG_NFAPI_VERSION;
+			ret = ARANFJPEG_NFAPI_VERSION;
 			break;
 		case NFJPEG_OPENDRIVER:
 			ret = open_driver(getParameter(0));
@@ -103,28 +329,31 @@ int32 JpegDriver::dispatch(uint32 fncode)
 int32 JpegDriver::open_driver(memptr jpeg_ptr)
 {
 	struct _JPGD_STRUCT *tmp;
-	int i,j;
+	int i, j;
 
 	D(bug("nfjpeg: open_driver(0x%08x)",jpeg_ptr));
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
 	/* Find a free handle */
-	j=0;
-	for (i=1;i<=MAX_NFJPEG_IMAGES;i++) {
-		if (!images[i].used) {
-			j=i;
+	j = 0;
+	for (i = 1; i <= MAX_NFJPEG_IMAGES; i++)
+	{
+		if (!images[i].used)
+		{
+			j = i;
 			break;
 		}
 	}
 
-	if (j==0) {
-		return EINVFN;
+	if (j == 0)
+	{
+		return TOS_ENHNDL;
 	}
 
 	tmp->handle = j;
-	images[j].used = SDL_TRUE;
-	return 0;
+	images[j].used = true;
+	return TOS_E_OK;
 }
 
 int32 JpegDriver::close_driver(memptr jpeg_ptr)
@@ -135,12 +364,13 @@ int32 JpegDriver::close_driver(memptr jpeg_ptr)
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
-	if (images[tmp->handle].src) {
+	if (images[tmp->handle].src)
+	{
 		SDL_FreeSurface(images[tmp->handle].src);
 		images[tmp->handle].src=NULL;
 	}
-	images[tmp->handle].used=SDL_FALSE;
-	return 0;
+	images[tmp->handle].used = false;
+	return TOS_E_OK;
 }
 
 int32 JpegDriver::get_image_info(memptr jpeg_ptr)
@@ -151,13 +381,15 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
-	if (images[tmp->handle].src == NULL) {
+	if (images[tmp->handle].src == NULL)
+	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
-			return EINVFN;
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		{
+			return TOS_ENSMEM;
 		}
 	}
-	return 0;
+	return TOS_E_OK;
 }
 
 int32 JpegDriver::get_image_size(memptr jpeg_ptr)
@@ -170,17 +402,20 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
-	if (images[tmp->handle].src == NULL) {
+	if (images[tmp->handle].src == NULL)
+	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
-			return EINVFN;
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		{
+			return TOS_ENSMEM;
 		}
 	}
 
 	/* Recalculate OutSize and MFDBWordSize */
 	surface = images[tmp->handle].src;
 	image_size = surface->w;
-	if ((image_size & 15)!=0) {
+	if ((image_size & 15) != 0)
+	{
 		image_size = (image_size | 15)+1;
 	}
 	image_size *= SDL_SwapBE16(tmp->OutPixelSize);
@@ -191,7 +426,7 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 
 	D(bug("nfjpeg: get_image_size() = %dx%dx%d -> %d",
 		surface->w, surface->h, SDL_SwapBE16(tmp->OutPixelSize), image_size));
-	return 0;
+	return TOS_E_OK;
 }
 
 int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
@@ -206,10 +441,12 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 
 	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
-	if (images[tmp->handle].src == NULL) {
+	if (images[tmp->handle].src == NULL)
+	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize))) {
-			return EINVFN;
+		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		{
+			return TOS_ENSMEM;
 		}
 	}
 
@@ -220,7 +457,8 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 	width = SDL_SwapBE16(tmp->MFDBPixelWidth);
 	line_length = SDL_SwapBE16(tmp->MFDBWordSize)*2;
 	height = surface->h - row*16;
-	if (height > 16) {	/* not last row ? */
+	if (height > 16)	/* not last row ? */
+	{
 		height = 16;
 	}
 	format = surface->format;
@@ -232,14 +470,17 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 		SDL_SwapBE16(tmp->MFDBPixelWidth)
 	));
 
-	switch(SDL_SwapBE16(tmp->OutPixelSize)) {
+	switch(SDL_SwapBE16(tmp->OutPixelSize))
+	{
 		case 1:	/* Luminance */
-			for (y=0; y<height; y++) {
+			for (y = 0; y < height; y++)
+			{
 				unsigned char *dst_line;
 
 				src_line = src;
 				dst_line = dest;
-				for (x=0;x<width;x++) {
+				for (x = 0; x < width; x++)
+				{
 					read_rgb(format, src_line, &r, &g, &b);
 					*dst_line++ = (r*30+g*59+b*11)/100;
 					src_line+=format->BytesPerPixel;
@@ -250,14 +491,17 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			}
 			break;
 		case 2:	/* R5G6B5 (big endian) */
-			for (y=0; y<height; y++) {
+			for (y = 0; y < height; y++)
+			{
 				uint16 *dst_line;
-
+				uint16 pixel;
+				
 				src_line = src;
 				dst_line = (uint16 *)dest;
-				for (x=0;x<width;x++) {
+				for (x = 0; x < width; x++) {
 					read_rgb(format, src_line, &r, &g, &b);
-					*dst_line++ = SDL_SwapBE16(((r>>3)<<11)|((g>>2)<<5)|(b>>3));
+					pixel = ((r>>3)<<11) | ((g>>2)<<5) | (b>>3);
+					*dst_line++ = SDL_SwapBE16(pixel);
 					src_line+=format->BytesPerPixel;
 				}
 
@@ -266,12 +510,14 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			}
 			break;
 		case 3:	/* R8G8B8 (big endian) */
-			for (y=0; y<height; y++) {
+			for (y = 0; y < height; y++)
+			{
 				unsigned char *dst_line;
 
 				src_line = src;
 				dst_line = dest;
-				for (x=0;x<width;x++) {
+				for (x = 0; x < width; x++)
+				{
 					read_rgb(format, src_line, &r, &g, &b);
 					*dst_line++ = r;
 					*dst_line++ = g;
@@ -284,14 +530,18 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			}
 			break;
 		case 4:	/* FIXME A8R8G8B8 or R8G8B8A8 or something else ? */
-			for (y=0; y<height; y++) {
+			for (y = 0; y < height; y++)
+			{
 				uint32 *dst_line;
-
+				uint32 pixel;
+				
 				src_line = src;
 				dst_line = (uint32 *)dest;
-				for (x=0;x<width;x++) {
+				for (x = 0; x < width; x++)
+				{
 					read_rgb(format, src_line, &r, &g, &b);
-					*dst_line++ = SDL_SwapBE32((r<<16)|(g<<8)|b);
+					pixel = (r<<16) | (g<<8) | b;
+					*dst_line++ = SDL_SwapBE32(pixel);
 					src_line+=format->BytesPerPixel;
 				}
 
@@ -301,10 +551,10 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			break;
 	}
 
-	return 0;
+	return TOS_E_OK;
 }
 
-SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size)
+bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size)
 {
 	SDL_RWops *src;
 	SDL_Surface *surface;
@@ -314,15 +564,21 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 
 	/* Load image from memory */
 	src = SDL_RWFromMem(buffer, size);
-	if (src==NULL) {
+	if (src == NULL)
+	{
 		D(bug("nfjpeg: load_image() failed in SDL_RWFromMem()"));
-		return SDL_FALSE;
+		return false;
 	}
+#if defined(HAVE_JPEGLIB)
+	surface = load_jpeg(src);
+#elif defined(HAVE_SDL_IMAGE)
 	surface = IMG_Load_RW(src, 0);
+#endif
 	SDL_FreeRW(src);
-	if (surface==NULL) {
-		panicbug("nfjpeg: load_image() failed in IMG_Load_RW(): %s", IMG_GetError());
-		return SDL_FALSE;
+	if (surface == NULL)
+	{
+		panicbug("nfjpeg: load_image() failed");
+		return false;
 	}
 
 	D(bug("nfjpeg: %dx%dx%d,%d image", surface->w, surface->h, surface->format->BitsPerPixel,surface->format->BytesPerPixel));
@@ -337,13 +593,15 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 	jpgd_ptr->InComponents = SDL_SwapBE16(3); /* RGB */
 
 	width = surface->w;
-	if ((width & 15)!=0) {
+	if ((width & 15) != 0)
+	{
 		width = (width | 15)+1;
 	}
 	jpgd_ptr->XLoopCounter = SDL_SwapBE16(width>>4);
 
 	height = surface->h;
-	if ((height & 15)!=0) {
+	if ((height & 15) != 0)
+	{
 		height = (height | 15)+1;
 	}
 	jpgd_ptr->YLoopCounter = SDL_SwapBE16(height>>4);
@@ -365,7 +623,7 @@ SDL_bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, ui
 
 	jpgd_ptr->MFDBReserved1 = jpgd_ptr->MFDBReserved2 = jpgd_ptr->MFDBReserved3 = 0;
 
-	return SDL_TRUE;
+	return true;
 }
 
 void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, int *b)
@@ -373,7 +631,8 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 	uint32 color;
 
 	color = 0;
-	switch(format->BytesPerPixel) {
+	switch(format->BytesPerPixel)
+	{
 		case 1:
 			{
 				unsigned char *tmp;
@@ -422,7 +681,7 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 	*b >>= format->Bshift;
 	*b <<= format->Bloss;
 }
-#endif
+#endif /* NFJPEG_SUPPORT */
 
 /*
 vim:ts=4:sw=4:

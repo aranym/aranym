@@ -1785,6 +1785,20 @@ else
 fi
 AM_CONDITIONAL([ENABLE_SDL2], test "$enable_sdl2" = yes)
 
+dnl Check for jpeg library
+have_jpeglib_h=no
+have_jpeglib_lib=no
+AC_CHECK_HEADERS(jpeglib.h, have_jpeglib_h=yes)
+if test "$have_jpeglib_h" = yes; then
+	AC_CHECK_LIB(jpeg, jpeg_CreateDecompress, have_jpeglib_lib=yes)
+fi
+if test "$have_jpeglib_h" = yes -a "$have_jpeglib_lib" = yes; then
+	AC_DEFINE(HAVE_JPEGLIB, 1, [Define if you have jpeglib])
+	JPEG_LIBS="-ljpeg"
+fi
+AC_SUBST([JPEG_LIBS])
+
+if test "$have_jpeglib_lib" = no; then
 dnl Check for SDL_Image
 if test "$enable_sdl2" = yes; then
 	ARANYM_CHECK_FRAMEWORK(SDL2_image, [])
@@ -1839,6 +1853,7 @@ else
 fi
 if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 	AC_DEFINE(HAVE_SDL_IMAGE, 1, [Define if you have SDL_image])
+fi
 fi
 
 dnl Add OpenGL ?
@@ -2049,12 +2064,17 @@ fi
 
 dnl Natfeat JPEG decoder
 
+AH_TEMPLATE([NFJPEG_SUPPORT], [Define if you want to use host JPEG decoder])
 if [[ "x$WANT_NFJPEG" = "xyes" ]]; then
-	if test "x$have_sdlimage_h" = "xyes" -a "x$have_sdlimage_lib" = "xyes"; then
-		AC_DEFINE([NFJPEG_SUPPORT], 1, [Define if you want to use host JPEG decoder])
+	if test "$have_jpeglib_lib" = "yes"; then
+		AC_DEFINE([NFJPEG_SUPPORT])
+		PROVIDES_NF="$PROVIDES_NF jpeg"
+	elif test "$have_sdlimage_h" = "yes" -a "$have_sdlimage_lib" = "yes"; then
+		AC_DEFINE([NFJPEG_SUPPORT])
 		PROVIDES_NF="$PROVIDES_NF jpeg"
 	else
 		WANT_NFJPEG="no"
+                AC_MSG_WARN([no jpeg library found, JPEG NF disabled])
 	fi
 fi
 AM_CONDITIONAL([NFJPEG_SUPPORT], test "$WANT_NFJPEG" = yes)
