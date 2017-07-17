@@ -1,4 +1,8 @@
 2017/07/17 - Thorsten
+Use boolean, not jboolean for older jpeg libraries.
+
+
+2017/07/17 - Thorsten
 For now, make sure memory configuration isn't changed when
 loading a config file from the GUI; it does not work yet.
 
