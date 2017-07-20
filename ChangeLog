@@ -1,3 +1,8 @@
+2017/07/20 - Thorsten
+Fix building on OpenBSD
+Reported by George Koehler
+
+
 2017/07/17 - Thorsten
 Use boolean, not jboolean for older jpeg libraries.
 

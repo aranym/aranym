@@ -51,24 +51,6 @@
 
 #endif
 
-#ifdef OS_openbsd
-#define OS_INCLUDES_DEFINED
-
-#include <unistd.h>
-#include <sys/param.h>
-#include <sys/mount.h>
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <time.h>
-#include <utime.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <dirent.h>
-
-#endif
-
 #ifdef OS_solaris
 #define OS_INCLUDES_DEFINED
 

@@ -214,7 +214,10 @@ case "$host_os" in
 		LIBS="$LIBS -lgnustl_static -llog"
 	;;
   linux*)	OS_TYPE=linux;;
-  openbsd*)	OS_TYPE=openbsd;;
+  openbsd*)	OS_TYPE=openbsd
+		CFLAGS="$CFLAGS -I/usr/local/include"
+		LIBS="$LIBS -L/usr/local/lib"
+		;;
   netbsd*)	OS_TYPE=netbsd;;
   freebsd*|kfreebsd*-gnu)	OS_TYPE=freebsd;;
   solaris*)	OS_TYPE=solaris;;
@@ -374,7 +377,7 @@ gl_STAT_TIME
 AC_CXX_BOOL
 
 dnl Checks for libraries
-AC_CHECK_LIB(m, sin)
+AC_CHECK_LIB(m, sin, [LIBS="$LIBS -lm"])
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
@@ -2108,10 +2111,9 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		LIBS="$LIBS -lbe"
 		;;
 	*)
-		AC_CHECK_LIB(X11, XOpenDisplay)
+		AC_CHECK_LIB(X11, XOpenDisplay,[SDL_LIBS="$SDL_LIBS -lX11"],,[-L/usr/X11R6/lib])
 		if [[ "x$ac_cv_lib_X11_XOpenDisplay" = "xyes" ]]; then
 			AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
-			LIBS="$LIBS -lX11"
 		else
 		     	AC_MSG_ERROR([Sorry, NatFeat Clipboard not implemented on your platform yet])
 			WANT_NFCLIPBRD="no"

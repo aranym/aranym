@@ -84,6 +84,9 @@ extern "C" {
 #include <sys/cdio.h>
 #include <sys/disklabel.h>
 #include <netinet/in.h>
+#ifdef OS_openbsd
+#include <sys/dkio.h>
+#endif
 
 // XXX
 #define BX_CD_FRAMESIZE 2048
