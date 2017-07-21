@@ -899,6 +899,19 @@ int16 HostFs::flagsHost2Mint(int flags)
 	return res;
 }
 
+
+static int strapply_tolower(int c)
+{
+	return tolower(c);
+}
+
+
+static int strapply_toupper(int c)
+{
+	return toupper(c);
+}
+
+
 /***
  * Long filename to 8+3 transformation.
  * The extensions, if exists in the original filename, are only shortened
@@ -1022,7 +1035,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 		dest[ nameLen ] = '.';
 
 	// upper case conversion
-	strapply( dest, toupper );
+	strapply( dest, strapply_toupper );
 
 	DFNAME(bug("HOSTFS: /transformFileName(\"%s\") -> \"%s\"", source, dest));
 }
@@ -1102,7 +1115,7 @@ bool HostFs::getHostFileName( char* result, ExtDrive* drv, const char* pathName,
 			}
 			if ( isUpper ) {
 				// lower case conversion
-				strapply( result, tolower );
+				strapply( result, strapply_tolower );
 			}
 		}
 		if ( dh != NULL )

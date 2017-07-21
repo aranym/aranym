@@ -42,16 +42,6 @@
 //
 extern "C" {
 
-#if (defined(HAVE_WCHAR_T) && defined(OS_darwin))  // Stupid hack
-	static inline char* strapply( char* str, __wchar_t (*functor)(__wchar_t) )
-	{
-		char* pos = str;
-		while ( (*pos = (char)functor( (__wchar_t)*pos )) != 0 )
-			pos++;
-
-		return str;
-	}
-#else
 	static inline char* strapply( char* str, int (*functor)(int) )
 	{
 		char* pos = str;
@@ -60,7 +50,6 @@ extern "C" {
 
 		return str;
 	}
-#endif
 
 	static inline char* strd2upath( char* dest, char* src )
 	{

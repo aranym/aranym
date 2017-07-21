@@ -486,23 +486,6 @@ case "$host_os" in
     ;;
 esac
 
-dnl Stupid hack around problem with extfs straply vs. Mac OS X
-AC_CACHE_CHECK([for __wchar_t],
-  ac_cv_wchar_t, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
-    #include <errno.h>
-    #include <stdlib.h>
-    #include <stdio.h>
-  ], ac_cv_wchar_t=yes, ac_cv_wchar_t=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_wchar_t="guessing no"
-  )
-  AC_LANG_RESTORE
-])
-AC_TRANSLATE_DEFINE(HAVE_WCHAR_T, $ac_cv_wchar_t, [Define if wchar_t is present])
-
 dnl Check that the host supports TUN/TAP devices
 AC_CACHE_CHECK([whether TUN/TAP is supported],
   ac_cv_tun_tap_support, [
