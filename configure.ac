@@ -1152,11 +1152,17 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       esac
       ;;
     openbsd*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
-        :
-      else
-        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
-      fi
+      case "$CPU_TYPE" in
+        i386)
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+	  ;;
+	x86_64)
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+          ;;
+        *)
+          AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+          ;;
+      esac
       ;;
     darwin*)
       if [[ "x$CPU_TYPE" = "powerpc" ]]; then

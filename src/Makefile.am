@@ -381,6 +381,9 @@ if OS_TYPE_openbsd
 if CPU_TYPE_x86
 aranym_SOURCES += Unix/xbsd/sigsegv_xbsd.cpp
 endif
+if CPU_TYPE_x86_64
+aranym_SOURCES += Unix/xbsd/sigsegv_xbsd.cpp
+endif
 endif
 if OS_TYPE_netbsd
 if CPU_TYPE_x86
