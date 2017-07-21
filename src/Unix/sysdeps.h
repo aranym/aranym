@@ -51,22 +51,6 @@
 
 #endif
 
-#ifdef OS_solaris
-#define OS_INCLUDES_DEFINED
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/statvfs.h>
-#include <fcntl.h>
-#include <termios.h>
-#include <utime.h>
-#include <alloca.h>
-#include <dirent.h>
-
-#endif
-
 #if defined(OS_beos) || defined(OS_cygwin) || defined(OS_mingw)
 #include <stdlib.h>
 #include <string.h>

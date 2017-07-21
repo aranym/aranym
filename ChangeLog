@@ -1,4 +1,9 @@
 2017/07/22 - Thorsten
+sysdeps.h: Remove the OS_solaris part and simply include the headers found by
+configure script.
+
+
+2017/07/22 - Thorsten
 Fix some sources to include config.h before any
 system header files (needed for defines like
 _POSIX_SOURCE and _FILE_OFFSET_BITS)
