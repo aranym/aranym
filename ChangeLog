@@ -1,4 +1,9 @@
 2017/07/21 - Thorsten
+Protect including jpeglib.h by #ifdef __cplusplus;
+some old jpeg-6b headers don't do it on their own
+
+
+2017/07/21 - Thorsten
 Remove autoconf test for wchar_t; it wasn't working
 and not needed
 

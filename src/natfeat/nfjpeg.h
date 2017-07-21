@@ -31,7 +31,13 @@
 #include "../../atari/nfjpeg/jpgdh.h"
 #undef ARANYM_NFJPEG
 #ifdef HAVE_JPEGLIB
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <jpeglib.h>
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 /*--- Defines ---*/

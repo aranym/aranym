@@ -32,7 +32,6 @@
 #include "SDL_compat.h"
 #include <SDL_rwops.h>
 #if defined(HAVE_JPEGLIB)
-#include <jpeglib.h>
 #elif defined(HAVE_SDL_IMAGE)
 #include <SDL_image.h>
 #else
