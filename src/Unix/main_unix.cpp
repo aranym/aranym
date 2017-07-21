@@ -122,6 +122,7 @@ bool allocate_all_memory(uintptr fmemory, bool quiet)
 bool allocate_all_memory(bool quiet)
 #endif
 {
+	UNUSED(quiet);
 #if DIRECT_ADDRESSING || FIXED_ADDRESSING
 #if FIXED_ADDRESSING
 	if (vm_acquire_fixed((void *)fmemory, RAMSize + ROMSize + HWSize + FastRAMSize + RAMEnd) == false) {

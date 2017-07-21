@@ -1,3 +1,9 @@
+2017/07/22 - Thorsten
+Fix some sources to include config.h before any
+system header files (needed for defines like
+_POSIX_SOURCE and _FILE_OFFSET_BITS)
+
+
 2017/07/21 - Thorsten
 Protect including jpeglib.h by #ifdef __cplusplus;
 some old jpeg-6b headers don't do it on their own
