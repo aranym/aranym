@@ -57,6 +57,9 @@
    because the emulated target is 32-bit and this helps to allocate
    memory so that branches could be resolved more easily (32-bit
    displacement to code in .text), on AMD64 for example.  */
+#if !defined(MAP_32BIT) && defined(MAP_LOW32)
+	#define MAP_32BIT MAP_LOW32
+#endif
 #ifndef MAP_32BIT
 	#define MAP_32BIT 0
 #endif

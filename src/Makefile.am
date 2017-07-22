@@ -420,6 +420,9 @@ if OS_TYPE_solaris
 if CPU_TYPE_x86
 aranym_SOURCES += Unix/solaris/sigsegv_solaris_x86.cpp
 endif
+if CPU_TYPE_x86_64
+aranym_SOURCES += Unix/solaris/sigsegv_solaris_x86.cpp
+endif
 endif
 endif
 

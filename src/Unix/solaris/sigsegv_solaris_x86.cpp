@@ -38,6 +38,16 @@ typedef void (*sighandler_t)(int);
 #endif
 
 #ifdef CPU_i386
+#undef REG_RIP
+#undef REG_RAX
+#undef REG_RBX
+#undef REG_RCX
+#undef REG_RDX
+#undef REG_RBP
+#undef REG_RSI
+#undef REG_RDI
+#undef REG_RSP
+#undef REG_EFL
 #define REG_RIP EIP
 #define REG_RAX EAX
 #define REG_RBX EBX
@@ -72,9 +82,10 @@ typedef void (*sighandler_t)(int);
 
 #include "sigsegv_common_x86.h"
 
-static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
+static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 {
-	char *fault_addr = (char *)CONTEXT_ACR2;
+	CONTEXT_ATYPE CONTEXT_NAME = (CONTEXT_ATYPE) _ucp;
+	char *fault_addr = (char *)sip->si_addr;
 	memptr addr = (memptr)(uintptr)(fault_addr - fixed_memory_offset);
 	if (fault_addr == 0 || CONTEXT_AEIP == 0)
 	{
@@ -82,7 +93,7 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *CONTEXT_NAME)
 		/* not reached (hopefully) */
 		return;
 	}
-	handle_access_fault((CONTEXT_ATYPE) CONTEXT_NAME, addr);
+	handle_access_fault(CONTEXT_NAME, addr);
 }
 
 void install_sigsegv() {

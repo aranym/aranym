@@ -1193,11 +1193,15 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       fi
       ;;
     solaris*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
-	:
-      else
-        AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
-      fi
+      case "$CPU_TYPE" in
+        i386)
+	  ;;
+	x86_64)
+	  ;;
+        *)
+          AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+          ;;
+      esac
       ;;
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])

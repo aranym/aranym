@@ -1,4 +1,8 @@
 2017/07/22 - Thorsten
+Enable JIT on Solaris x86_64 hosts
+
+
+2017/07/22 - Thorsten
 sysdeps.h: Remove the OS_solaris part and simply include the headers found by
 configure script.
 
