@@ -209,7 +209,7 @@ void ndebug::dbprintf(const char *s, ...)
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
 		va_start(a, s);
-		vasprintf(&dbbuffer[dbend++], s, a);
+		(void) vasprintf(&dbbuffer[dbend++], s, a);
 		va_end(a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
@@ -243,7 +243,7 @@ void ndebug::pdbvprintf(const char *s, va_list a)
 	{
 		if (dbbuffer[dbend] != NULL)
 			free(dbbuffer[dbend]);
-		vasprintf(&dbbuffer[dbend++], s, a);
+		(void) vasprintf(&dbbuffer[dbend++], s, a);
 		if (dbend == dbsize) dbend = 0;
 		if (dbstart == dbend) dbstart++;
 		if (dbstart == dbsize) dbstart = 0;

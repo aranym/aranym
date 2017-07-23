@@ -165,7 +165,7 @@ void guialert(const char *fmt, ...)
 	fputs("\n", stderr);
 	va_end(args);
 	va_start(args, fmt);
-	vasprintf(&buf, fmt, args);
+	(void) vasprintf(&buf, fmt, args);
 	va_end(args);
 	MessageBoxA(NULL, buf, "ARAnyM: error", MB_ICONSTOP);
 	free(buf);

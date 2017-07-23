@@ -486,7 +486,7 @@ void guialert(const char *fmt, ...)
 #ifdef SDL_GUI
 	char *buf = NULL;
 	va_start(args, fmt);
-	vasprintf(&buf, fmt, args);
+	(void) vasprintf(&buf, fmt, args);
 	va_end(args);
 	startupGUI = true;
 	startupAlert = buf;

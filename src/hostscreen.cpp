@@ -1212,11 +1212,14 @@ void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 			d = *source++;
 			break;
 		default:
+			{
+				uint16 *source16 = (uint16 *) source;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-			d = (*(uint16 *) source)<<16;
+				d = (*source16)<<16;
 #else
-			d = *(uint16 *) source;
+				d = *source16;
 #endif
+			}
 			break;
 	}
 

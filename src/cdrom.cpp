@@ -709,7 +709,9 @@ cdrom_interface::eject_cdrom()
 #if (defined(OS_openbsd) || defined(OS_freebsd) || defined(OS_netbsd))
     (void) ioctl (fd, CDIOCALLOW);
     if (ioctl (fd, CDIOCEJECT) < 0)
+    {
 	  D(bug( "eject_cdrom: eject returns error." ));
+    }
 #endif
 
 #ifdef _WIN32
