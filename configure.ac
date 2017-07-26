@@ -1856,7 +1856,7 @@ dnl Add OpenGL ?
 if test "x$WANT_OPENGL" = "xyes"; then
 	have_opengl="no"
 	if test "x$PKG_CONFIG" != "x"; then
-		PKG_CHECK_MODULES([GL], [gl])
+		PKG_CHECK_MODULES([GL], [gl], have_opengl="yes", have_opengl="no")
 	fi
 	if test "x$GL_LIBS" = "x"; then	
 		case "$host" in

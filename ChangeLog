@@ -1,4 +1,9 @@
 2017/07/26 - Thorsten
+Do not fail if pkg-config does not find "gl" package; not all
+systems provide one
+
+
+2017/07/26 - Thorsten
 Fix some file permissions
 
 
