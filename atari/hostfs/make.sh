@@ -1,3 +1,5 @@
+#!/bin/sh
+
 if [ x"$FREEMINT_SRC_HOME" = x ]; then 
 	FREEMINT_SRC_HOME=/home/joy/mint/freemint
 fi
