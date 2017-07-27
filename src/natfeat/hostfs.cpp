@@ -50,7 +50,7 @@
 #ifdef HAVE_EXT2FS_EXT2_FS_H
 # include <ext2fs/ext2_fs.h>
 #else
-#if defined(_IOR) && defined(_IOW)
+#if defined(__linux__)
 #define EXT2_IOC_GETFLAGS		_IOR('f', 1, long)
 #define EXT2_IOC_SETFLAGS		_IOW('f', 2, long)
 #define EXT2_IOC_GETVERSION		_IOR('v', 1, long)

@@ -23,6 +23,23 @@ minor=`sed -n -e 's/#define[ \t]*VER_MINOR[ \t]*\([0-9]*\)/\1/p' $versfile`
 micro=`sed -n -e 's/#define[ \t]*VER_MICRO[ \t]*\([0-9]*\)/\1/p' $versfile`
 
 version=$major.$minor.$micro
+#
+# recent version of cygwin have the mingw libraries installed
+# in a sys-rooted cross-compiler environment
+#
+if test -d /usr/i686-w64-mingw32/sys-root/mingw; then
+	MINGW_ROOT=/usr/i686-w64-mingw32/sys-root/mingw
+	CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sdl-prefix=$MINGW_ROOT --with-sdl2-prefix=$MINGW_ROOT"
+fi
+if test `uname -m` = x86_64; then
+	CONFIGURE_ARGS="$CONFIGURE_ARGS --host=i686-pc-cygwin"
+	# that currently does not work:
+	# we build a 32-bit binary, but the installation process
+	# below would copy cygwin dlls from the 64-bit environment
+	echo "building 32-bit distribution in 64-bit environment currently not supported" >&2
+	echo "install cygwin using setup-x86.exe and try again" >&2
+	exit 1
+fi
 
 date=`sed -n -e 's/#define[ \t]*VERSION_DATE[ \t]*"\([^"]*\)"/\1/p' $datefile`
 
@@ -140,6 +157,27 @@ function mkdist() {
 		case $lower in
 		*/system32/* | */syswow64/* )
 			continue ;;
+		notfound:SDL.dll)
+			dll=$MINGW_ROOT/bin/SDL.dll
+			;;
+		notfound:SDL_image.dll)
+			dll=$MINGW_ROOT/bin/SDL_image.dll
+			;;
+		notfound:SDL2.dll)
+			dll=$MINGW_ROOT/bin/SDL2.dll
+			;;
+		notfound:SDL2_image.dll)
+			dll=$MINGW_ROOT/bin/SDL2_image.dll
+			;;
+		notfound:libgcc_s_sjlj-1.dll)
+			dll=$MINGW_ROOT/bin/libgcc_s_sjlj-1.dll
+			;;
+		notfound:libwinpthread-1.dll)
+			dll=$MINGW_ROOT/bin/libwinpthread-1.dll
+			;;
+		notfound:iconv.dll)
+			dll=$MINGW_ROOT/bin/iconv.dll
+			;;
 		*)
 			;;
 		esac

@@ -44,7 +44,7 @@ InstallDir $PROGRAMFILES\${NAME}
 InstallDirRegKey "${REG_ROOT}" "${REG_APP_PATH}" "InstallLocation"
 
 ; Request application privileges for Windows Vista
-RequestExecutionLevel user
+RequestExecutionLevel admin
 
 ;--------------------------------
 ;Header Files

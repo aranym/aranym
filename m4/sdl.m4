@@ -52,16 +52,19 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
 case $host in
   *-*-cygwin*)
   # switches that must be removed for the mixed cygwin/MinGW32 platform
+  # also replaces -L... -lSDL by the absolute pathname of the library,
+  # because the -L points to mingw libraries instead of cygwin libraries
   nosdlswitch='s/-Dmain=SDL_main//;
-s=-I/usr.*/SDL='-I${includedir}/SDL'=;
-s=-I/mingw.*/SDL='-I${includedir}/SDL'=;
+s=-I/usr/include.*/SDL='-I${includedir}/SDL'=;
+s=-I/mingw/include.*/SDL='-I${includedir}/SDL'=;
 s/-DWIN32//;
 s/-Uunix//;
 s/-mno-cygwin//;
 s/-lmingw32//;
 s/-lSDLmain//;
 s/-mwindows//;
-s/-mms-bitfields//
+s/-mms-bitfields//;
+s=-L\([[^ ]]*\).*-l\(SDL[[^ ]]*\)=\1/lib\2.dll.a=;
 '
 	SDL_CFLAGS=`echo $SDL_CFLAGS | sed -e "$nosdlswitch"`
 	SDL_LIBS=`echo $SDL_LIBS | sed -e "$nosdlswitch"`
@@ -70,8 +73,8 @@ s/-mms-bitfields//
   *-*-mingw*)
   # switches that must be removed because we dont link SDLmain
   nosdlswitch='s/-Dmain=SDL_main//;
-s=-I/usr.*/SDL='-I${includedir}/SDL'=;
-s=-I/mingw.*/SDL='-I${includedir}/SDL'=;
+s=-I/usr/include.*/SDL='-I${includedir}/SDL'=;
+s=-I/mingw/include.*/SDL='-I${includedir}/SDL'=;
 s/-DWIN32//;
 s/-Uunix//;
 s/-lmingw32//;

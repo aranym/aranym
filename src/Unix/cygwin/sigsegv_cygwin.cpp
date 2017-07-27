@@ -74,7 +74,7 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
   {
   	CONTEXT_ATYPE CONTEXT_NAME = ExceptionInfo->ContextRecord;
   	char *fault_addr = (char *)ExceptionInfo->ExceptionRecord->ExceptionInformation[1];
-	memptr addr = (memptr)(uintptr)(faultaddr - fixed_memory_offset);
+	memptr addr = (memptr)(uintptr)(fault_addr - fixed_memory_offset);
 #if DEBUG
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
@@ -102,7 +102,7 @@ main_exception_filter (EXCEPTION_POINTERS *ExceptionInfo)
 	{
 		real_segmentationfault();
 		/* not reached (hopefully) */
-		return;
+		return EXCEPTION_CONTINUE_SEARCH;
 	}
     handle_access_fault(CONTEXT_NAME, addr);
     return EXCEPTION_CONTINUE_EXECUTION;

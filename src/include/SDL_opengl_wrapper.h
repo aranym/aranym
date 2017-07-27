@@ -13,6 +13,7 @@
 #  endif
 #  undef __CYGWIN__
 #  define __cygwin_undefined_here
+#  define __STRALIGN_H_ 1
 #endif
 
 #include <SDL_opengl.h>

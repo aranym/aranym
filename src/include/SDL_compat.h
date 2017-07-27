@@ -55,6 +55,21 @@ extern DECLSPEC int SDLCALL SDL_putenv(const char *variable);
 #endif
 #endif
 
+/*
+ * work around inconsistencies between w32api headers
+ * and cygwin headers: both may declare ssize_t/intptr_t
+ * but protect it by different defines
+ */
+#ifdef _INTPTR_T_DECLARED
+#define _INTPTR_T_DEFINED
+#endif
+#ifdef _UINTPTR_T_DECLARED
+#define _UINTPTR_T_DEFINED
+#endif
+#ifdef _SSIZE_T_DECLARED
+#define _SSIZE_T_DEFINED
+#endif
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
 #define SDL_CreateNamedThread(fn, name, data) SDL_CreateThread(fn, name, data)

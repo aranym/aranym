@@ -1825,27 +1825,40 @@ else
 		# the mixed environment on cygwin usually
 		# causes link tests against SDL fail here,
 		# just assume it is present
-		*-*-cygwin* | *-*-mingw*)
+		*-*-cygwin*)
 			have_sdlimage_lib=yes
 			have_sdlimage_h=yes
+			if test "$enable_sdl2" = yes; then
+				SDL_LIBS="$SDL_LIBS `echo $SDL_LIBS | sed -e 's/SDL2.dll/SDL2_image.dll/'`"
+			else
+				SDL_LIBS="$SDL_LIBS `echo $SDL_LIBS | sed -e 's/SDL.dll/SDL_image.dll/'`"
+			fi
+			;;
+		*-*-mingw*)
+			have_sdlimage_lib=yes
+			have_sdlimage_h=yes
+			if test "$enable_sdl2" = yes; then
+				SDL_LIBS="$SDL_LIBS -lSDL2_image"
+			else
+				SDL_LIBS="$SDL_LIBS -lSDL_image"
+			fi
 			;;
 		*)
 			AC_CHECK_HEADER(SDL_image.h, have_sdlimage_h=yes, havesdlimage_h=no)
 			AC_CHECK_LIB(SDL_image, IMG_isJPG, have_sdlimage_lib=yes, have_sdlimage_lib=no)
+			if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
+				if test "$enable_sdl2" = yes; then
+					SDL_LIBS="$SDL_LIBS -lSDL2_image"
+				else
+					SDL_LIBS="$SDL_LIBS -lSDL_image"
+				fi
+			fi
 			;;
 	esac
 
 	CFLAGS="$tmp_cflags"
 	CPPFLAGS="$tmp_cppflags"
 	LDFLAGS="$tmp_ldflags"
-
-	if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
-		if test "$enable_sdl2" = yes; then
-			SDL_LIBS="-lSDL2_image $SDL_LIBS"
-		else
-			SDL_LIBS="-lSDL_image $SDL_LIBS"
-		fi
-	fi
 fi
 if test "$have_sdlimage_h" = yes -a "$have_sdlimage_lib" = yes; then
 	AC_DEFINE(HAVE_SDL_IMAGE, 1, [Define if you have SDL_image])
