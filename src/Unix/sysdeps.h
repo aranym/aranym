@@ -673,6 +673,14 @@ typedef jmp_buf sigjmp_buf;
 # endif
 #endif
 
+#if defined __cplusplus
+#define EXTERN_INLINE extern inline
+#elif defined __GNUC_STDC_INLINE__
+#define EXTERN_INLINE extern __inline __attribute__((__gnu_inline__))
+#else
+#define EXTERN_INLINE extern __inline
+#endif
+
 #if __GNUC__ < 3
 # define __builtin_expect(foo,bar) (foo)
 #endif

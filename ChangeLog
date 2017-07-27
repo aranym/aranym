@@ -1,4 +1,9 @@
 2017/07/27 - Thorsten
+Fix a extern inline declaration to avoid link errors
+(only affected MinGW)
+
+
+2017/07/27 - Thorsten
 Avoid a warning
 
 

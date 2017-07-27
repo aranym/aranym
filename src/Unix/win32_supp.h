@@ -116,7 +116,7 @@ extern "C" {
 
 int win32_stat(const char *file_name, struct stat *buf);
 #ifndef __WIN32_SUPP_IMPLEMENTATION
-ALWAYS_INLINE int stat(const char *file_name, struct stat *buf)
+EXTERN_INLINE int stat(const char *file_name, struct stat *buf)
 {
 	return win32_stat(file_name, buf);
 }
