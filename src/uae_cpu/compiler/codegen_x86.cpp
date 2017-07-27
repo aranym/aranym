@@ -235,6 +235,8 @@ static inline void x86_64_rex(bool /* w */, uae_u32 * /* r */, uae_u32 * /* x */
 	if (rex_byte != 0x40) {
 		emit_byte(rex_byte);
 	}
+#else
+	UNUSED(b);
 #endif
 }
 

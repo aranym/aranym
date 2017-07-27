@@ -1,3 +1,7 @@
+2017/07/27 - Thorsten
+Avoid a warning
+
+
 2017/07/26 - Thorsten
 Do not fail if pkg-config does not find "gl" package; not all
 systems provide one
