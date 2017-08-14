@@ -35,6 +35,7 @@ for ARCH in $ARCHS ; do
   cd "$DERIVED_FILES_DIR"
   make -f "Makefile_$ARCH" version_date.h || exit 1
   cd src/uae_cpu
+  test -d compiler || mkdir compiler
   make cpuemu.cpp $JIT_TARGET || exit 1
   mv cpuemu.cpp "$DERIVED_FILES_DIR/cpuemu_$ARCH.cpp"
   mv cpudefs.cpp cputbl.h cpustbl*.cpp $JIT_ADDITIONAL_FILES "$DERIVED_FILES_DIR"
