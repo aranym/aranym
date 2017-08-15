@@ -1,4 +1,9 @@
 2017/08/15 - Thorsten
+Move the commands that fix the runtime library path from the xcode project file
+into a separate script
+
+
+2017/08/15 - Thorsten
 Make sure target libraries like -lmpfr are not used for the build tools
 
 

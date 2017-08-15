@@ -545,10 +545,6 @@
 		B4C7EE961768552800B63B96 /* MachUser.c in Sources */ = {isa = PBXBuildFile; fileRef = B4C7EE941768552800B63B96 /* MachUser.c */; };
 		B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */; };
 		B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D1107320486CEB800E47090 /* MacAranym.app */; };
-		CB2C9D421B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
-		CB2C9D431B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
-		CB2C9D441B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
-		CB2C9D451B14E27200EC7BFA /* Makefile.am in Resources */ = {isa = PBXBuildFile; fileRef = CB2C9D411B14E27200EC7BFA /* Makefile.am */; };
 		CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
 		CBBC87031B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
 		CBBC87041B5F97DE00C0DABF /* glenums.c in Sources */ = {isa = PBXBuildFile; fileRef = CBBC87011B5F97DE00C0DABF /* glenums.c */; };
@@ -1087,6 +1083,7 @@
 		17AC409B13F1D403003B4FAD /* cpuemu_ppc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu_ppc.cpp; path = ../cpuemu_ppc.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		17AC409C13F1D403003B4FAD /* cpuemu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cpuemu.cpp; path = ../cpuemu.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		17AC409D13F1D403003B4FAD /* cpustbl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cpustbl.cpp; path = ../cpustbl.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		17AC413213F1C81F003B4FAD /* set_rpath.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = set_rpath.sh; path = scripts/set_rpath.sh; sourceTree = "<group>"; };
 		17B276EE0A9F52CF00DD6223 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../../ChangeLog; sourceTree = SOURCE_ROOT; };
 		17B2B51A0C41781B00595D44 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
 		17B2B78C0C41785800595D44 /* libGL.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGL.1.dylib; path = MesaGL/lib/libGL.1.dylib; sourceTree = "<group>"; };
@@ -1685,6 +1682,7 @@
 				17AC403113F1C81F003B4FAD /* gen_cpu.sh */,
 				173598FF13F1F7AE00F84DB3 /* gen_diskimage.sh */,
 				B472BB88176907CB00611354 /* gen_machfiles.sh */,
+				17AC413213F1C81F003B4FAD /* set_rpath.sh */,
 				17AC403213F1C81F003B4FAD /* set_version.sh */,
 				17AC409013F1D216003B4FAD /* Unix */,
 			);
@@ -2006,7 +2004,6 @@
 				1778A4D71555A8A70005B336 /* logo.bmp in Resources */,
 				1778A4D81555A8A70005B336 /* aranym.icns in Resources */,
 				1778A4D91555A8A70005B336 /* aranym.nib in Resources */,
-				CB2C9D451B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2017,7 +2014,6 @@
 				B449DA030D2A9234005F0CC6 /* logo.bmp in Resources */,
 				1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF80C7BA7100039CA66 /* aranym.nib in Resources */,
-				CB2C9D441B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2028,7 +2024,6 @@
 				B449DA010D2A9222005F0CC6 /* logo.bmp in Resources */,
 				1736B1070C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF90C7BA7100039CA66 /* aranym.nib in Resources */,
-				CB2C9D431B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2039,7 +2034,6 @@
 				B449DA020D2A922C005F0CC6 /* logo.bmp in Resources */,
 				1736B1110C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF70C7BA7100039CA66 /* aranym.nib in Resources */,
-				CB2C9D421B14E27200EC7BFA /* Makefile.am in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2058,7 +2052,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Fix up dynamic libraries\n\ncd \"$TARGET_BUILD_DIR/$EXECUTABLE_FOLDER_PATH\"\nls -al\n\n# Fixup libmpfr\ninstall_name_tool -change /opt/local/lib/libgmp.dylib @executable_path/libgmp.dylib libmpfr.dylib || exit 1\n\n# Fixup executable\ninstall_name_tool -change /opt/local/lib/libgmp.dylib @executable_path/libgmp.dylib \"$EXECUTABLE_NAME\" || exit 1\ninstall_name_tool -change /opt/local/lib/libmpfr.dylib @executable_path/libmpfr.dylib \"$EXECUTABLE_NAME\" || exit 1\n\nexit 0";
+			shellScript = ". \"$PROJECT_DIR/scripts/set_rpath.sh\"\nexit $?";
 			showEnvVarsInLog = 0;
 		};
 		1778A4611555A8A70005B336 /* Script: Run configure */ = {
