@@ -14,7 +14,7 @@
 	<key>CFBundleIconFile</key>
 	<string>aranym.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.aranym.MacAranym</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>

@@ -1974,7 +1974,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0830;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -2932,6 +2932,7 @@
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = MacAranym;
 			};
 			name = Release;
@@ -3012,6 +3013,7 @@
 					"-lmpfr",
 					"-lgmp",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU MPFR";
 			};
 			name = Debug;
@@ -3034,6 +3036,7 @@
 					"-lmpfr",
 					"-lgmp",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU MPFR";
 			};
 			name = Release;
@@ -3060,6 +3063,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU";
 			};
 			name = Debug;
@@ -3072,6 +3076,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = "-lz";
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU";
 			};
 			name = Release;
@@ -3083,6 +3088,7 @@
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = MacAranym;
 			};
 			name = Debug;
@@ -3103,6 +3109,7 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CPU_TYPE_x86_64 = CPU_x86_64;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
+				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
@@ -3139,6 +3146,7 @@
 					"-pagezero_size",
 					0x2000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym JIT";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -3156,6 +3164,7 @@
 					"-pagezero_size",
 					0x2000,
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym JIT";
 				VALID_ARCHS = "i386 x86_64";
 			};
