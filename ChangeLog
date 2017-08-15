@@ -1,4 +1,8 @@
 2017/08/15 - Thorsten
+Make sure target libraries like -lmpfr are not used for the build tools
+
+
+2017/08/15 - Thorsten
 Some small changes to MacOSX project files done by newer versions of Xcode
 
 
