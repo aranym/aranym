@@ -22,5 +22,10 @@ if test -f libmpfr.dylib; then
 		install_name_tool -change /opt/local/lib/libmpfr${i}.dylib @executable_path/libmpfr.dylib "$EXECUTABLE_NAME" || exit 1
 	done
 fi
+if test -f libjpeg.dylib; then
+	for i in "" .7 .8 .9; do
+		install_name_tool -change /opt/local/lib/libjpeg${i}.dylib @executable_path/libjpeg.dylib "$EXECUTABLE_NAME" || exit 1
+	done
+fi
 
 exit 0

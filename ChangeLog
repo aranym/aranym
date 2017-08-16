@@ -1,4 +1,8 @@
 2017/08/15 - Thorsten
+Update Xcode project files & scripts to make use of jpeglib like the others
+
+
+2017/08/15 - Thorsten
 Move the commands that fix the runtime library path from the xcode project file
 into a separate script
 

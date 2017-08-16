@@ -72,9 +72,6 @@ fi
 export LDFLAGS="-F$PROJECT_DIR"
 export DYLD_FRAMEWORK_PATH=$PROJECT_DIR
 
-# Make sure MPFR is found
-export LDFLAGS="$LDFLAGS -L/opt/local/lib"
-
 if [ ! -d "$DERIVED_FILES_DIR" ]; then
   echo "Creating $DERIVED_FILES_DIR"
   mkdir -p "$DERIVED_FILES_DIR"

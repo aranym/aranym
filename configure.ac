@@ -249,6 +249,17 @@ fi
 DEFINES="$DEFINES -DOS_$OS_TYPE"
 AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 
+if test "$OS_TYPE" = "darwin"; then
+	# Make sure MPFR (and other 3rd party libs installed by MacPorts) are found
+	# Note that the order of these flags may be different
+	# in the Xcode project, which is important atleast for the
+	# SDL framework because we want to use the headers from
+	# the official build rather than the ones from MacPorts,
+	# which are only suitable for a single target architecture
+	LDFLAGS="$LDFLAGS -L/opt/local/lib"
+	CPPFLAGS="$CPPFLAGS -I/opt/local/include"
+fi
+
 dnl Target CPU type.
 ARCHFLAGS=
 HAVE_I386=no
@@ -1916,17 +1927,18 @@ AM_CONDITIONAL([ENABLE_OPENGL], test "$WANT_OPENGL" = yes)
 
 dnl Check for zlib
 if [[ "x$WANT_LILO" = "xyes" ]]; then
+	have_zlib=no
 	# Search using pkg-config
 	if test "x$PKG_CONFIG" != "x"; then
 		PKG_CHECK_MODULES([ZLIB], [zlib], [have_zlib=yes], [have_zlib=no])
 	fi
 
 	# Fallback to autoconf (helps in Ubuntu 10.04 LTS)
-	if [[ "x$have_zlib" = "xno" ]]; then
+	if test "$have_zlib" = "no"; then
 		AC_CHECK_LIB(z, gzopen, [have_zlib=yes], [have_zlib=no])
 	fi
 
-	if [[ "x$have_zlib" = "xyes" ]]; then
+	if test "$have_zlib" = "yes"; then
 		AC_DEFINE([HAVE_LIBZ], 1, [Define if zlib enabled])
 	fi
 else

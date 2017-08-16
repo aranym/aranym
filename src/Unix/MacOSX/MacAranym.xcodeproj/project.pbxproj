@@ -30,8 +30,10 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		170539151555D457006A6DDE /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		170539161555D457006A6DDE /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
+		170539171555D457006A6DDE /* libjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
 		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
+		1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
@@ -679,6 +681,7 @@
 				17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */,
 				1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */,
 				1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */,
+				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -699,6 +702,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */,
+				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -710,6 +714,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */,
+				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -721,6 +726,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */,
+				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -800,6 +806,7 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		170539131555D457006A6DDE /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = /opt/local/lib/libgmp.dylib; sourceTree = "<absolute>"; };
 		170539141555D457006A6DDE /* libmpfr.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpfr.dylib; path = /opt/local/lib/libmpfr.dylib; sourceTree = "<absolute>"; };
+		170539181555D457006A6DDE /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = /opt/local/lib/libjpeg.dylib; sourceTree = "<absolute>"; };
 		170C2B850BB872920026484E /* dyngl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl.c; path = ../../dyngl.c; sourceTree = SOURCE_ROOT; };
 		1717E85A151680B900D416FA /* dlgUsb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgUsb.cpp; sourceTree = "<group>"; };
 		171A3F0E154F2765005F6C9D /* fpu_mpfr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpu_mpfr.cpp; sourceTree = "<group>"; };
@@ -1756,6 +1763,7 @@
 			children = (
 				170539131555D457006A6DDE /* libgmp.dylib */,
 				170539141555D457006A6DDE /* libmpfr.dylib */,
+				170539181555D457006A6DDE /* libjpeg.dylib */,
 			);
 			name = MPFR;
 			sourceTree = "<group>";
@@ -1894,14 +1902,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17BCD7E50B20F64F00432CE1 /* Build configuration list for PBXNativeTarget "MacAranym MMU" */;
 			buildPhases = (
-				17BCD7890B20F64F00432CE1 /* Script: Run configure */,
-				17BCD78A0B20F64F00432CE1 /* Script: Build CPU source files */,
+				1778A4611555A8A70005B336 /* Script: Run configure */,
+				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
 				17BCD78B0B20F64F00432CE1 /* Sources */,
 				17BCD7DB0B20F64F00432CE1 /* Frameworks */,
 				17BCD7E00B20F64F00432CE1 /* Resources */,
 				17BCD7E30B20F64F00432CE1 /* Copy Frameworks into .app bundle */,
 				17473D3E15AA103E00CAEA47 /* Copy Executables */,
-				17AF061110401EDD007839B5 /* Script: Set correct ARAnyM version */,
+				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
+				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -1919,14 +1928,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MacAranym" */;
 			buildPhases = (
-				17AAB3240B20AF440016FB8D /* Script: Run configure */,
-				17AAB32E0B20AFF50016FB8D /* Script: Build CPU source files */,
+				1778A4611555A8A70005B336 /* Script: Run configure */,
+				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				002F39FD09D0883400EBEB88 /* Copy Frameworks into .app bundle */,
 				17473D3515AA0A7500CAEA47 /* Copy Executables */,
-				17AF05D91040117E007839B5 /* Script: Set correct ARAnyM version */,
+				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
+				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -1944,15 +1954,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B439AC970C5B2FD00046EFC9 /* Build configuration list for PBXNativeTarget "MacAranym JIT" */;
 			buildPhases = (
-				B439AC300C5B2FD00046EFC9 /* Script: Run configure */,
-				B439AC310C5B2FD00046EFC9 /* Script: Build CPU source files */,
+				1778A4611555A8A70005B336 /* Script: Run configure */,
+				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
 				B472BB871768FBBA00611354 /* Build Mach Support files */,
 				B439AC320C5B2FD00046EFC9 /* Sources */,
 				B439AC8D0C5B2FD00046EFC9 /* Frameworks */,
 				B439AC920C5B2FD00046EFC9 /* Resources */,
 				B439AC950C5B2FD00046EFC9 /* Copy Frameworks into .app bundle */,
 				17473D4015AA106700CAEA47 /* Copy Executables */,
-				17AF0613104020E8007839B5 /* Script: Set correct ARAnyM version */,
+				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
+				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
 			);
 			buildRules = (
 			);
@@ -2064,6 +2075,7 @@
 			);
 			name = "Script: Run configure";
 			outputPaths = (
+				"$(DERIVED_FILES_DIR)/Makefile",
 				"$(DERIVED_FILES_DIR)/config.h",
 				"$(DERIVED_FILES_DIR)/configure_options",
 				"$(DERIVED_FILES_DIR)/config_i386.h",
@@ -2089,6 +2101,9 @@
 			);
 			name = "Script: Build CPU source files";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/cpustbl.cpp",
+				"$(DERIVED_FILE_DIR)/cpuemu.cpp",
+				"$(DERIVED_FILE_DIR)/cpufunctbl.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2126,181 +2141,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = ". \"$PROJECT_DIR/scripts/gen_diskimage.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17AAB3240B20AF440016FB8D /* Script: Run configure */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Run configure";
-			outputPaths = (
-				"$(DERIVED_FILES_DIR)/config.h",
-				"$(DERIVED_FILES_DIR)/configure_options",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-				"$(DERIVED_FILES_DIR)/config_x86_64.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/configure.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17AAB32E0B20AFF50016FB8D /* Script: Build CPU source files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			comments = "Build source files for CPU emulation.";
-			files = (
-			);
-			inputPaths = (
-				"$(SOURCE_DIR)/uae_cpu/build68k.c",
-				"$(SOURCE_DIR)/uae_cpu/table68k",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-			);
-			name = "Script: Build CPU source files";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/cpustbl.cpp",
-				"$(DERIVED_FILE_DIR)/cpuemu.cpp",
-				"$(DERIVED_FILE_DIR)/cpufunctbl.cpp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/gen_cpu.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17AF05D91040117E007839B5 /* Script: Set correct ARAnyM version */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Script: Set correct ARAnyM version";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/aranym_version",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/set_version.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17AF061110401EDD007839B5 /* Script: Set correct ARAnyM version */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Script: Set correct ARAnyM version";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/aranym_version",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/set_version.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17AF0613104020E8007839B5 /* Script: Set correct ARAnyM version */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Script: Set correct ARAnyM version";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/aranym_version",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/set_version.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17BCD7890B20F64F00432CE1 /* Script: Run configure */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Run configure";
-			outputPaths = (
-				"$(DERIVED_FILES_DIR)/config.h",
-				"$(DERIVED_FILES_DIR)/configure_options",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-				"$(DERIVED_FILES_DIR)/config_x86_64.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/configure.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		17BCD78A0B20F64F00432CE1 /* Script: Build CPU source files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			comments = "Build source files for CPU emulation.";
-			files = (
-			);
-			inputPaths = (
-				"$(SOURCE_DIR)/uae_cpu/build68k.c",
-				"$(SOURCE_DIR)/uae_cpu/table68k",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-			);
-			name = "Script: Build CPU source files";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/gen_cpu.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		B439AC300C5B2FD00046EFC9 /* Script: Run configure */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Run configure";
-			outputPaths = (
-				"$(DERIVED_FILES_DIR)/Makefile",
-				"$(DERIVED_FILES_DIR)/config.h",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-				"$(TARGET_TEMP_DIR)/configure_options",
-				"$(DERIVED_FILES_DIR)/config_x86_64.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/configure.sh\"\nexit $?";
-			showEnvVarsInLog = 0;
-		};
-		B439AC310C5B2FD00046EFC9 /* Script: Build CPU source files */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			comments = "Build source files for CPU emulation.";
-			files = (
-			);
-			inputPaths = (
-				"$(SOURCE_DIR)/uae_cpu/build68k.c",
-				"$(SOURCE_DIR)/uae_cpu/table68k",
-				"$(DERIVED_FILES_DIR)/config_i386.h",
-				"$(DERIVED_FILES_DIR)/config_ppc.h",
-			);
-			name = "Script: Build CPU source files";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/gen_cpu.sh\"\nexit $?";
 			showEnvVarsInLog = 0;
 		};
 		B472BB871768FBBA00611354 /* Build Mach Support files */ = {
@@ -2962,12 +2802,18 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
+					/opt/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "ppc i386 x86_64";
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				OTHER_LDFLAGS = (
+					"-L/opt/local/lib",
+					"-ljpeg",
+				);
 			};
 			name = Release;
 		};
@@ -2997,13 +2843,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/opt/local/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-lz",
-					"-L/opt/local/lib",
 					"-lmpfr",
 					"-lgmp",
 				);
@@ -3020,13 +2864,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/opt/local/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-lz",
-					"-L/opt/local/lib",
 					"-lmpfr",
 					"-lgmp",
 				);
@@ -3056,7 +2898,10 @@
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --enable-fullmmu --enable-lilo";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU";
 			};
@@ -3069,7 +2914,10 @@
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --enable-fullmmu --enable-lilo";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				OTHER_LDFLAGS = "-lz";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "MacAranym MMU";
 			};
@@ -3119,12 +2967,18 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
+					/opt/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 				VALID_ARCHS = "ppc i386 x86_64";
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				OTHER_LDFLAGS = (
+					"-L/opt/local/lib",
+					"-ljpeg",
+				);
 			};
 			name = Debug;
 		};
@@ -3137,6 +2991,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"$(inherited)",
 					"-pagezero_size",
 					0x2000,
 				);
@@ -3155,6 +3010,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"$(inherited)",
 					"-pagezero_size",
 					0x2000,
 				);
