@@ -1,4 +1,8 @@
 2017/08/16 - Thorsten
+Hide the unused Window tabbing entries from macOS Sierra menues
+
+
+2017/08/16 - Thorsten
 Avoid a warning/compile error in generated aranym_version.c
 
 

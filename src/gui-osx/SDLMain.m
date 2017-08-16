@@ -149,6 +149,17 @@ char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 }
 
 
+-(void) applicationWillFinishLaunching:(NSNotification *)notification
+{
+#if defined(MAC_OS_X_VERSION_10_12) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_12)
+	if (NSAppKitVersionNumber > 1500)
+	{
+		[NSWindow setAllowsAutomaticWindowTabbing: NO];
+	}
+#endif
+}
+
+
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
