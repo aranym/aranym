@@ -1,3 +1,7 @@
+2017/08/16 - Thorsten
+Avoid a warning/compile error in generated aranym_version.c
+
+
 2017/08/15 - Thorsten
 Update Xcode project files & scripts to make use of jpeglib like the others
 

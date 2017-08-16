@@ -5,6 +5,7 @@ if [ ! -f "$DERIVED_FILE_DIR/aranym_version" ]; then
   cd "$DERIVED_FILE_DIR"  || exit 1
 
   cat > aranym_version.c <<EOF
+#include <stdio.h>
 #include "version.h"
 
 int main() {
