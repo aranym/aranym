@@ -551,12 +551,6 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 #undef NO_INLINE_MEMORY_ACCESS
 #undef MD_HAVE_MEM_1_FUNCS
 
-#ifdef X86_ASSEMBLY
-#define ASM_SYM_FOR_FUNC(a) __asm__(a)
-#else
-#define ASM_SYM_FOR_FUNC(a)
-#endif
-
 #ifndef REGPARAM
 # define REGPARAM
 #endif
