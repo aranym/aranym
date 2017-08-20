@@ -14,7 +14,7 @@ if [ \! -f aranym/configure ] ; then
 fi
 
 if [ \! -f aranym/Makefile ] ; then
-  $LOCAL_PATH/../setEnvironment-armeabi-v7a.sh sh -c "cd aranym && ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --disable-opengl --disable-nfclipbrd --disable-cxx-exceptions --disable-ethernet --disable-jit-compiler --disable-ata-cdrom --disable-parport --prefix=/mnt/sdcard/Android/data/org.aranym.sdl/files"
+  $LOCAL_PATH/../setEnvironment-armeabi-v7a.sh sh -c "cd aranym && ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --disable-opengl --disable-nfclipbrd --disable-cxx-exceptions --disable-ethernet --disable-jit-compiler --disable-ata-cdrom --disable-parport --disable-sdl2 --prefix=/mnt/sdcard/Android/data/org.aranym.sdl/files"
 fi
 
 make -C aranym && mv -f aranym/aranym libapplication-armeabi-v7a.so

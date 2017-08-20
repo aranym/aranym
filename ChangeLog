@@ -1,4 +1,8 @@
 2017/08/20 - Thorsten
+Remove explicit -march=armv6 from CFLAGS as it breaks building for android
+
+
+2017/08/20 - Thorsten
 Some fixes for cross-compilation environments
 
 
