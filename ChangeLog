@@ -1,4 +1,9 @@
 2017/08/20 - Thorsten
+Protect nfcdrom_linux from being compiled if NFCDORM_LINUX_SUPPORT
+is not defined (as is the case for android)
+
+
+2017/08/20 - Thorsten
 Remove bogus ASM_SYM_FOR_FUNC define
 
 
