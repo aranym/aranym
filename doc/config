@@ -7,11 +7,11 @@ FastRAM = 0
 # Atari floppy device (GEMDOS A:) is mapped to host floppy block device
 Floppy = /dev/fd0
 
-# location of TOS 4.04 ROM image (full path)
-TOS = /usr/local/share/aranym/ROM
+# location of TOS 4.04 ROM image (can be full path, relative to config file or relative to HOME directory)
+TOS = ROM
 
-# location of EmuTOS (full path)
-EmuTOS = 
+# location of EmuTOS (can be full path, relative to config file or relative to HOME directory)
+EmuTOS = emutos-aranym.img
 
 # location of FreeMiNT kernel (full path)
 Bootstrap =
@@ -30,25 +30,25 @@ GMTime = No
 # Format: function = key code : modifiers combination
 [HOTKEYS]
 # open up the SETUP GUI
-Setup = 19:0
+Setup = Pause
 
 # quit ARAnyM immediately
-Quit = 19:0x1
+Quit = LS+Pause
 
 # reboot ARAnyM (like pressing the Reset button on a real machine)
-Reboot = 19:0x40
+Reboot = LC+Pause
 
 # free mouse and keyboard focus - mouse can leave the ARAnyM window
-Ungrab = 27:0x140
+Ungrab = LS+LC+LA+Escape
 
 # call the internal debugger (if compiled in)
-Debug = 19:0x100
+Debug = LA+Pause
 
 # make a copy of the screen to file in BMP format in current directory
-Screenshot = 316:0
+Screenshot = PrintScreen
 
 # switch ARAnyM to fullscreen (or back to a window mode)
-Fullscreen = 302:0
+Fullscreen = ScrollLock
 
 
 [STARTUP]
@@ -72,7 +72,7 @@ AltGr = Yes
 
 [JIT]
 # enable JIT compiler
-JIT = No
+JIT = Yes
 
 # enable JIT compiler for FPU (if JIT compiler is enabled)
 JITFPU = Yes
@@ -119,7 +119,7 @@ Present = Yes
 IsCDROM = No
 ByteSwap = No
 ReadOnly = No
-Path = /home/user/.aranym/diskImageC
+Path = ~/.aranym/diskImageC
 Cylinders = 2100
 Heads = 16
 SectorsPerTrack = 63
