@@ -1,4 +1,8 @@
 2017/08/20 - Thorsten
+Fix compilation for --disable-opengl
+
+
+2017/08/20 - Thorsten
 Add some comments to android build instructions
 
 

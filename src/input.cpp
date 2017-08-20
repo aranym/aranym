@@ -201,6 +201,7 @@ static int SDLCALL event_filter(const SDL_Event *event)
 #if defined(NFCLIPBRD_SUPPORT)
 	if (filter_aclip(event) == 0) return 0;
 #endif
+	UNUSED(event);
 	return 1;
 }
 

@@ -1,6 +1,8 @@
 #ifndef SDL_OPENGL_WRAPPER_H
 #define SDL_OPENGL_WRAPPER_H
 
+#if defined(ENABLE_OPENGL)
+
 /* on Cygwin we need the WIN32 version of the api */
 #ifdef __CYGWIN__
 #  include <wchar.h>
@@ -53,5 +55,7 @@
 #  define __CYGWIN__ 1
 #  undef __cygwin_undefined_here
 #endif
+
+#endif /* ENABLE_OPENGL */
 
 #endif /* SDL_OPENGL_WRAPPER_H */

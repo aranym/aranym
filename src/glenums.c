@@ -24,6 +24,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef ENABLE_OPENGL
+
 struct glenum {
 	GLenum val;
 	const char *name;
@@ -4692,3 +4694,5 @@ GLboolean gl_HasExtension(const char *extName, const GLubyte *_extString)
 	}
 	return GL_FALSE;
 }
+
+#endif /* ENABLE_OPENGL */
