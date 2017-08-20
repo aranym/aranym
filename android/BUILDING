@@ -16,10 +16,21 @@ Download Android SDK & NDK to your "aranym"-User Home
 SDK: https://developer.android.com/sdk/index.html
 NDK: https://developer.android.com/tools/sdk/ndk/index.html
 
-$ cd 
+$ cd ~/android-sdk-linux/
 $ tar xvzf android-sdk_r23.0.2-linux.tgz
 $ chmod +x android-ndk-r10c-linux-x86_64.bin
 $ ./android-ndk-r10c-linux-x86_64.bin 
+$ rm -f ndk
+$ ln -s android-ndk-r10c ndk
+
+Note:
+	In version 25.3 and above of the SDK, the ant tools
+	which are needed by the sdl port have been removed.
+	You need to install an older version in that case.
+	The latest which seems to work is 25.2.5, which is available
+	eg. at https://androidsdkoffline.blogspot.de/p/android-sdk-tools.html
+	For the same reason, do *not* use the SDK that comes with
+	Android Studio (usually installed in ~/Android/Sdk).
 
 Now run "android" from GUI to install 
 
@@ -45,9 +56,11 @@ export PATH=$ANDROID_HOME/tools:~/android-ndk-r10c:$HOME/android-sdk-linux:$PATH
 
 Logout and login again
 
-$ git clone https://github.com/pelya/commandergenius sdl-android
+$ git clone https://github.com/pelya/commandergenius ~/sdl-android
+$ cd ~/sdl-android
+$ git submodule update --init --recursive
 
-$ cd sdl-android/project/jni/application
+$ cd ~/sdl-android/project/jni/application
 $ rm src
 $ cp -r ~/aranym-code/android aranym
 $ ln -s aranym src
@@ -57,14 +70,17 @@ $ cd ~/sdl-android
 $ ./changeAppSettings.sh
 $ ./build.sh
 
+If build fails with something like "com.sun.tools.javac.Main is not on the classpath",
+you may have to set JAVA_HOME to the jdk directory instead of the jre directory,
+ie. remove the last /jre from the path.
+
 You will find the build .apk in directory: 
 
 	~/sdl-android/project/bin/MainActivity-release-unsigned.apk
 
-To sign the application afterwards, execute the following comannds:
+To sign the application afterwards, execute the following commands:
 
 $ keytool -genkey -v -keystore my-release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000
 $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore my-release-key.keystore my_application.apk alias_name
 $ jarsigner -verify -verbose -certs my_application.apk
 $ zipalign -v 4 your_project_name-unaligned.apk your_project_name.apk
-

@@ -49,3 +49,4 @@ src/Unix/MacOSX/build
 *.mode1v3
 *.pbxuser
 .directory
+.idea
