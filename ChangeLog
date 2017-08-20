@@ -1,4 +1,8 @@
 2017/08/20 - Thorsten
+Some fixes for cross-compilation environments
+
+
+2017/08/20 - Thorsten
 Protect nfcdrom_linux from being compiled if NFCDORM_LINUX_SUPPORT
 is not defined (as is the case for android)
 

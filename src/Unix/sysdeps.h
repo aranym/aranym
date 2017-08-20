@@ -327,7 +327,7 @@ static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) {uint8 *b = (uint8 *)a
 
 #else /* WORDS_BIGENDIAN */
 
-#if defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)
+#if (defined(X86_ASSEMBLY) || defined(X86_64_ASSEMBLY)) && (defined(__i386__) || defined(__x86_64__))
 
 /* Intel x86 */
 #define HAVE_OPTIMIZED_BYTESWAP_32
@@ -408,7 +408,7 @@ static inline void do_put_mem_long(uae_u32 *a, uae_u32 v) { __put_mem_long(a, do
 static inline void do_put_mem_word(uae_u16 *a, uae_u32 v) { __put_mem_word(a, do_byteswap_16(v)); }
 #define do_put_mem_byte(a, v) __put_mem_byte(a, v)
 
-#elif defined(ARMV6_ASSEMBLY) 
+#elif defined(ARMV6_ASSEMBLY) && defined(__arm__)
 
 // #pragma message "ARM/v6 optimized sysdeps"
 static inline uae_u32 do_get_mem_long(uae_u32 *a) {uint32 retval; __asm__ (
@@ -442,7 +442,7 @@ static inline uae_u32 do_byteswap_16(uae_u32 v) {__asm__ (
 #define do_get_mem_word_unswapped(a) ((uae_u32)*((uae_u16 *)(a)))
 
 /* ARM v1 to v5 support or cross ARM support */
-#elif defined(ARM_ASSEMBLY)
+#elif defined(ARM_ASSEMBLY) && defined(__arm__)
 
 // #pragma message "ARM/generic optimized sysdeps"
 
