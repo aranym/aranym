@@ -56,7 +56,7 @@ void HostScreen::SetWMIcon(void)
 #ifndef OS_darwin
 	char path[1024];
 	getDataFilename("wm_icon.bmp", path, sizeof(path));
-	SDL_Surface *icon = SDL_LoadBMP(path);
+	SDL_Surface *icon = mySDL_LoadBMP_RW(SDL_RWFromFile(path, "rb"), 1);
 	if (icon != NULL) {
 		SDL_SetColorKey(icon, SDL_SRCCOLORKEY|SDL_RLEACCEL, 0);
 #if SDL_VERSION_ATLEAST(2, 0, 0)

@@ -1,4 +1,8 @@
 2017/08/21 - Thorsten
+Rename copied SDL function to avoid linking errors
+
+
+2017/08/21 - Thorsten
 Workaround a wrong patch for some distributions of SDL
 that had the effect of continously changing the window size.
 

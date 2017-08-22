@@ -243,5 +243,6 @@ static inline int SDL_IsVideoDriver(const char *name)
 	return strcmp(driver, name) == 0;
 }
 
+SDL_Surface *mySDL_LoadBMP_RW(SDL_RWops * src, int freesrc);
 
 #endif /* _SDL_COMPAT_H */

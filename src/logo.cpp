@@ -59,16 +59,9 @@ void Logo::load(const char *filename)
 		surface = NULL;
 	}
 
-	SDL_RWops *rwops = SDL_RWFromFile(filename, "rb");
-	if (!rwops) {
-		panicbug("Can not load logo from file %s", filename); 
-		return;
-	}
-
-	logo_surf = SDL_LoadBMP_RW(rwops, 0);
-	SDL_FreeRW(rwops);
-
+	logo_surf = mySDL_LoadBMP_RW(SDL_RWFromFile(filename, "rb"), 1);
 	if (!logo_surf) {
+		panicbug("Can not load logo from file %s", filename); 
 		return;
 	}
 
