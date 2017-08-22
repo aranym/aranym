@@ -175,6 +175,8 @@ HostScreen::HostScreen(void)
 	screen(NULL),
 	new_width(0),
 	new_height(0),
+	PendingConfigureNotifyWidth(-1),
+	PendingConfigureNotifyHeight(-1),
 	snapCounter(0)
 {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -484,6 +486,20 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 
 void HostScreen::resizeWindow(int new_width, int new_height)
 {
+	if (PendingConfigureNotifyWidth >= 0 &&
+		PendingConfigureNotifyHeight >= 0)
+	{
+		if (PendingConfigureNotifyWidth == new_width &&
+			PendingConfigureNotifyHeight == new_height)
+		{
+			/*
+			 * Event is from setVideoMode, so ignore.
+			 */
+			PendingConfigureNotifyWidth = -1;
+			PendingConfigureNotifyHeight = -1;
+		}
+		return;
+	}
 	this->new_width = new_width;
 	this->new_height = new_height;
 }

@@ -86,6 +86,8 @@ class HostScreen: public DirtyRects
 	SDL_Texture *texture;
 #endif
 	int new_width, new_height;
+	int PendingConfigureNotifyWidth, PendingConfigureNotifyHeight;
+
 	uint16 snapCounter; // ALT+PrintScreen to make a snap?
 
 	virtual void setVideoMode(int width, int height, int bpp);

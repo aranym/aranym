@@ -35,6 +35,7 @@
 #include "parameters.h"
 #include "version.h"
 #include "main.h"	/* QuitEmulator */
+#include "input.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -226,6 +227,8 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 
 	SetWMIcon();
 
+	PendingConfigureNotifyWidth = width;
+	PendingConfigureNotifyHeight = height;
 	/* Now setup video mode */
 	for (i=0;i<4;i++) {
 		screen = SDL_SetVideoMode(width, height, gl_bpp[i], screenFlags);

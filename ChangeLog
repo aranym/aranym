@@ -1,4 +1,22 @@
 2017/08/21 - Thorsten
+Workaround a wrong patch for some distributions of SDL
+that had the effect of continously changing the window size.
+
+The original problem was reported here:
+References: http://bugzilla.libsdl.org/show_bug.cgi?id=1430
+References: http://bugs.debian.org/665779
+References: http://bugs.gentoo.org/411539
+References: http://bugzilla.novell.com/855639
+
+On SuSE at least, the shipped SDL has a patch applied that not
+only reverted that patch, but completely removed the behaviour.
+This had the effect that (when using the OpenGL VDI driver),
+the resize event from the first window creation was read by application
+even if the window has been resized to a different size in the
+meantime.
+
+
+2017/08/21 - Thorsten
 Improve mouse for android a bit
 
 
