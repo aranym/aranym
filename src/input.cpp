@@ -1059,6 +1059,13 @@ static void process_mouse_event(const SDL_Event &event)
 		// So, define top left corner as exit point.
 		mouse_exit = (eve.x == 0) && (eve.y == 0);
 #endif
+#ifdef __ANDROID__
+		if (getARADATA()->isAtariMouseDriver()) {
+			xrel = event.motion.x - getARADATA()->getAtariMouseX();
+			yrel = event.motion.y - getARADATA()->getAtariMouseY();
+		}
+#endif
+		
 		if ((xrel <= 0 && eve.x <= 0) ||
 			(yrel <= 0 && eve.y <= 0) ||
 			(xrel >= 0 && eve.x >= video->getWidth() - 1) ||
