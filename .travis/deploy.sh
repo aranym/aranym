@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # This script deploys the built binaries to bintray:
-# https://bintray.com/th-otto/aranym-files
+# https://bintray.com/aranym/aranym-files
 
 # Bintray needs an api key for access as password.
 # This must have been set as environment variable BINTRAY_API_KEY
@@ -19,8 +19,8 @@ OUT="${PWD}/.travis/out"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 BINTRAY_HOST=https://api.bintray.com
-BINTRAY_REPO=th-otto/aranym-files
-BINTRAY_USER=th-otto
+BINTRAY_REPO=aranym/aranym-files
+BINTRAY_USER=aranym
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]
 then
 	BINTRAY_DIR=pullrequests

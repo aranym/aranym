@@ -10,6 +10,10 @@ branches:
 compiler:
   - gcc
 
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
 addons:
   apt:
     packages:
