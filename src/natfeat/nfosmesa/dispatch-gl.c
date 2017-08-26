@@ -183,8 +183,8 @@
 			D(funcname = "glAttachObjectARB");
 			if (GL_ISAVAILABLE(glAttachObjectARB))
 			nfglAttachObjectARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
-				(GLhandleARB)getStackedParameter(1)  /* GLhandleARB obj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB containerObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(1)  /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLATTACHSHADER:
 			D(funcname = "glAttachShader");
@@ -305,7 +305,7 @@
 			D(funcname = "glBindAttribLocationARB");
 			if (GL_ISAVAILABLE(glBindAttribLocationARB))
 			nfglBindAttribLocationARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedPointer(2, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
@@ -1292,7 +1292,7 @@
 			D(funcname = "glClearDebugLogMESA");
 			if (GL_ISAVAILABLE(glClearDebugLogMESA))
 			nfglClearDebugLogMESA(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
 				getStackedParameter(2)  /* GLenum shaderType */);
 			break;
@@ -1473,7 +1473,7 @@
 			D(funcname = "glClientWaitSync");
 			if (GL_ISAVAILABLE(glClientWaitSync))
 			ret = nfglClientWaitSync(
-				(GLsync)getStackedParameter(0),  /* GLsync sync */
+				(GLsync)(uintptr_t)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLbitfield flags */
 				getStackedParameter64(2)  /* GLuint64 timeout */);
 			break;
@@ -2199,7 +2199,7 @@
 			D(funcname = "glCompileShaderARB");
 			if (GL_ISAVAILABLE(glCompileShaderARB))
 			nfglCompileShaderARB(
-				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB shaderObj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0)  /* GLhandleARB shaderObj */);
 			break;
 		case NFOSMESA_GLCOMPILESHADERINCLUDEARB:
 			D(funcname = "glCompileShaderIncludeARB");
@@ -3611,7 +3611,7 @@
 			D(funcname = "glDeleteObjectARB");
 			if (GL_ISAVAILABLE(glDeleteObjectARB))
 			nfglDeleteObjectARB(
-				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB obj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0)  /* GLhandleARB obj */);
 			break;
 		case NFOSMESA_GLDELETEOBJECTBUFFERATI:
 			D(funcname = "glDeleteObjectBufferATI");
@@ -3725,7 +3725,7 @@
 			D(funcname = "glDeleteSync");
 			if (GL_ISAVAILABLE(glDeleteSync))
 			nfglDeleteSync(
-				(GLsync)getStackedParameter(0)  /* GLsync sync */);
+				(GLsync)(uintptr_t)getStackedParameter(0)  /* GLsync sync */);
 			break;
 		case NFOSMESA_GLDELETETEXTURES:
 			D(funcname = "glDeleteTextures");
@@ -3856,8 +3856,8 @@
 			D(funcname = "glDetachObjectARB");
 			if (GL_ISAVAILABLE(glDetachObjectARB))
 			nfglDetachObjectARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
-				(GLhandleARB)getStackedParameter(1)  /* GLhandleARB attachedObj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB containerObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(1)  /* GLhandleARB attachedObj */);
 			break;
 		case NFOSMESA_GLDETACHSHADER:
 			D(funcname = "glDetachShader");
@@ -5634,7 +5634,7 @@
 			D(funcname = "glGetActiveAttribARB");
 			if (GL_ISAVAILABLE(glGetActiveAttribARB))
 			nfglGetActiveAttribARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2),  /* GLsizei maxLength */
 				getStackedPointer(3, GLsizei *),  /* GLsizei *length */
@@ -5690,7 +5690,7 @@
 			D(funcname = "glGetActiveUniformARB");
 			if (GL_ISAVAILABLE(glGetActiveUniformARB))
 			nfglGetActiveUniformARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLuint index */
 				getStackedParameter(2),  /* GLsizei maxLength */
 				getStackedPointer(3, GLsizei *),  /* GLsizei *length */
@@ -5776,7 +5776,7 @@
 			D(funcname = "glGetAttachedObjectsARB");
 			if (GL_ISAVAILABLE(glGetAttachedObjectsARB))
 			nfglGetAttachedObjectsARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB containerObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB containerObj */
 				getStackedParameter(1),  /* GLsizei maxCount */
 				getStackedPointer(2, GLsizei *),  /* GLsizei *count */
 				getStackedPointer(3, GLhandleARB *)  /* GLhandleARB *obj */);
@@ -5801,7 +5801,7 @@
 			D(funcname = "glGetAttribLocationARB");
 			if (GL_ISAVAILABLE(glGetAttribLocationARB))
 			ret = nfglGetAttribLocationARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedPointer(1, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETBOOLEANINDEXEDVEXT:
@@ -6173,7 +6173,7 @@
 			D(funcname = "glGetDebugLogLengthMESA");
 			if (GL_ISAVAILABLE(glGetDebugLogLengthMESA))
 			ret = nfglGetDebugLogLengthMESA(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
 				getStackedParameter(2)  /* GLenum shaderType */);
 			break;
@@ -6181,7 +6181,7 @@
 			D(funcname = "glGetDebugLogMESA");
 			if (GL_ISAVAILABLE(glGetDebugLogMESA))
 			nfglGetDebugLogMESA(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum logType */
 				getStackedParameter(2),  /* GLenum shaderType */
 				getStackedParameter(3),  /* GLsizei maxLength */
@@ -6546,7 +6546,7 @@
 			D(funcname = "glGetInfoLogARB");
 			if (GL_ISAVAILABLE(glGetInfoLogARB))
 			nfglGetInfoLogARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLsizei maxLength */
 				getStackedPointer(2, GLsizei *),  /* GLsizei *length */
 				getStackedPointer(3, GLcharARB *)  /* GLcharARB *infoLog */);
@@ -7250,7 +7250,7 @@
 			D(funcname = "glGetObjectParameterfvARB");
 			if (GL_ISAVAILABLE(glGetObjectParameterfvARB))
 			nfglGetObjectParameterfvARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
@@ -7267,7 +7267,7 @@
 			D(funcname = "glGetObjectParameterivARB");
 			if (GL_ISAVAILABLE(glGetObjectParameterivARB))
 			nfglGetObjectParameterivARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
@@ -8103,7 +8103,7 @@
 			D(funcname = "glGetShaderSourceARB");
 			if (GL_ISAVAILABLE(glGetShaderSourceARB))
 			nfglGetShaderSourceARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB obj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB obj */
 				getStackedParameter(1),  /* GLsizei maxLength */
 				getStackedPointer(2, GLsizei *),  /* GLsizei *length */
 				getStackedPointer(3, GLcharARB *)  /* GLcharARB *source */);
@@ -8166,7 +8166,7 @@
 			D(funcname = "glGetSynciv");
 			if (GL_ISAVAILABLE(glGetSynciv))
 			nfglGetSynciv(
-				(GLsync)getStackedParameter(0),  /* GLsync sync */
+				(GLsync)(uintptr_t)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2),  /* GLsizei bufSize */
 				getStackedPointer(3, GLsizei *),  /* GLsizei *length */
@@ -8625,7 +8625,7 @@
 			D(funcname = "glGetUniformLocationARB");
 			if (GL_ISAVAILABLE(glGetUniformLocationARB))
 			ret = nfglGetUniformLocationARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedPointer(1, const GLcharARB *)  /* const GLcharARB *name */);
 			break;
 		case NFOSMESA_GLGETUNIFORMOFFSETEXT:
@@ -8663,7 +8663,7 @@
 			D(funcname = "glGetUniformfvARB");
 			if (GL_ISAVAILABLE(glGetUniformfvARB))
 			nfglGetUniformfvARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
@@ -8687,7 +8687,7 @@
 			D(funcname = "glGetUniformivARB");
 			if (GL_ISAVAILABLE(glGetUniformivARB))
 			nfglGetUniformivARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB programObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
@@ -10010,7 +10010,7 @@
 			D(funcname = "glIsSync");
 			if (GL_ISAVAILABLE(glIsSync))
 			ret = nfglIsSync(
-				(GLsync)getStackedParameter(0)  /* GLsync sync */);
+				(GLsync)(uintptr_t)getStackedParameter(0)  /* GLsync sync */);
 			break;
 		case NFOSMESA_GLISTEXTURE:
 			D(funcname = "glIsTexture");
@@ -10209,7 +10209,7 @@
 			D(funcname = "glLinkProgramARB");
 			if (GL_ISAVAILABLE(glLinkProgramARB))
 			nfglLinkProgramARB(
-				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLLISTBASE:
 			D(funcname = "glListBase");
@@ -16728,7 +16728,7 @@
 			D(funcname = "glShaderSourceARB");
 			if (GL_ISAVAILABLE(glShaderSourceARB))
 			nfglShaderSourceARB(
-				(GLhandleARB)getStackedParameter(0),  /* GLhandleARB shaderObj */
+				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB shaderObj */
 				getStackedParameter(1),  /* GLsizei count */
 				getStackedPointer(2, const GLcharARB * *),  /* const GLcharARB * *string */
 				getStackedPointer(3, const GLint *)  /* const GLint *length */);
@@ -19924,7 +19924,7 @@
 			D(funcname = "glUseProgramObjectARB");
 			if (GL_ISAVAILABLE(glUseProgramObjectARB))
 			nfglUseProgramObjectARB(
-				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLUSEPROGRAMSTAGES:
 			D(funcname = "glUseProgramStages");
@@ -20044,7 +20044,7 @@
 			D(funcname = "glValidateProgramARB");
 			if (GL_ISAVAILABLE(glValidateProgramARB))
 			nfglValidateProgramARB(
-				(GLhandleARB)getStackedParameter(0)  /* GLhandleARB programObj */);
+				(GLhandleARB)(uintptr_t)getStackedParameter(0)  /* GLhandleARB programObj */);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMPIPELINE:
 			D(funcname = "glValidateProgramPipeline");
@@ -22939,7 +22939,7 @@
 			D(funcname = "glWaitSync");
 			if (GL_ISAVAILABLE(glWaitSync))
 			nfglWaitSync(
-				(GLsync)getStackedParameter(0),  /* GLsync sync */
+				(GLsync)(uintptr_t)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLbitfield flags */
 				getStackedParameter64(2)  /* GLuint64 timeout */);
 			break;

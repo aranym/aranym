@@ -4422,12 +4422,12 @@ sub gen_dispatch() {
 				} elsif ($type eq 'GLhandleARB')
 				{
 					# legacy MacOSX headers declare GLhandleARB as void *
-					print "${indent}(GLhandleARB)getStackedParameter($paramnum)$comma $comment";
+					print "${indent}(GLhandleARB)(uintptr_t)getStackedParameter($paramnum)$comma $comment";
 					++$paramnum;
 				} elsif ($type eq 'GLsync')
 				{
 					# GLsync declared as pointer type on host; need a cast here
-					print "${indent}(GLsync)getStackedParameter($paramnum)$comma $comment";
+					print "${indent}(GLsync)(uintptr_t)getStackedParameter($paramnum)$comma $comment";
 					++$paramnum;
 				} else
 				{

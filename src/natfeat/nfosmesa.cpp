@@ -12101,8 +12101,9 @@ data store.
 	GLsizei countbuf[size]; \
 	nfmemptr indbuf[size]; \
 	void *indptr[size]; \
-	pixelBuffer pbuf[size]; \
+	pixelBuffer **pbuf; \
 	Atari2HostIntArray(size, count, countbuf); \
+	pbuf = new pixelBuffer *[size]; \
 	Atari2HostPtrArray(size, AtariAddr(indices, const void **), indbuf); \
 	for (GLsizei i = 0; i < size; i++) { \
 		convertClientArrays(countbuf[i]); \
@@ -12110,14 +12111,19 @@ data store.
 		case GL_UNSIGNED_BYTE: \
 		case GL_UNSIGNED_SHORT: \
 		case GL_UNSIGNED_INT: \
-			indptr[i] = pbuf[i].convertArray(countbuf[i], type, indbuf[i]); \
+			pbuf[i] = new pixelBuffer(); \
+			indptr[i] = pbuf[i]->convertArray(countbuf[i], type, indbuf[i]); \
 			break; \
 		default: \
 			glSetError(GL_INVALID_ENUM); \
 			return; \
 		} \
 	} \
-	fn.glMultiDrawElementsEXT(mode, countbuf, type, indptr, drawcount)
+	fn.glMultiDrawElementsEXT(mode, countbuf, type, indptr, drawcount); \
+	for (GLsizei i = 0; i < size; i++) { \
+		delete pbuf[i]; \
+	} \
+	delete [] pbuf
 
 /* -------------------------------------------------------------------------- */
 
@@ -12226,8 +12232,9 @@ data store.
 	GLsizei countbuf[size]; \
 	nfmemptr indbuf[size]; \
 	void *indptr[size]; \
-	pixelBuffer pbuf[size]; \
+	pixelBuffer **pbuf; \
 	Atari2HostIntArray(size, count, countbuf); \
+	pbuf = new pixelBuffer *[size]; \
 	Atari2HostPtrArray(size, AtariAddr(indices, const void **), indbuf); \
 	for (GLsizei i = 0; i < size; i++) { \
 		convertClientArrays(countbuf[i]); \
@@ -12235,7 +12242,8 @@ data store.
 		case GL_UNSIGNED_BYTE: \
 		case GL_UNSIGNED_SHORT: \
 		case GL_UNSIGNED_INT: \
-			indptr[i] = pbuf[i].convertArray(countbuf[i], type, indbuf[i]); \
+			pbuf[i] = new pixelBuffer(); \
+			indptr[i] = pbuf[i]->convertArray(countbuf[i], type, indbuf[i]); \
 			break; \
 		default: \
 			glSetError(GL_INVALID_ENUM); \
@@ -12248,7 +12256,11 @@ data store.
 	for (GLsizei i = 0; i < modecount; i++) \
 		Atari2HostIntArray(1, AtariAddr(modeptr + i * modestride, const GLenum *), &modes[i]); \
 	if (modestride != 0) modestride = sizeof(GLenum); \
-	fn.glMultiModeDrawElementsIBM(modes, countbuf, type, indptr, primcount, modestride)
+	fn.glMultiModeDrawElementsIBM(modes, countbuf, type, indptr, primcount, modestride); \
+	for (GLsizei i = 0; i < size; i++) { \
+		delete pbuf[i]; \
+	} \
+	delete [] pbuf
 
 /* -------------------------------------------------------------------------- */
 
@@ -16221,8 +16233,9 @@ data store.
 	GLsizei countbuf[size]; \
 	nfmemptr indbuf[size]; \
 	void *indptr[size]; \
-	pixelBuffer pbuf[size]; \
+	pixelBuffer **pbuf; \
 	Atari2HostIntArray(size, count, countbuf); \
+	pbuf = new pixelBuffer *[size]; \
 	Atari2HostPtrArray(size, AtariAddr(indices, const void **), indbuf); \
 	for (GLsizei i = 0; i < size; i++) { \
 		convertClientArrays(countbuf[i]); \
@@ -16230,14 +16243,19 @@ data store.
 		case GL_UNSIGNED_BYTE: \
 		case GL_UNSIGNED_SHORT: \
 		case GL_UNSIGNED_INT: \
-			indptr[i] = pbuf[i].convertArray(countbuf[i], type, indbuf[i]); \
+			pbuf[i] = new pixelBuffer(); \
+			indptr[i] = pbuf[i]->convertArray(countbuf[i], type, indbuf[i]); \
 			break; \
 		default: \
 			glSetError(GL_INVALID_ENUM); \
 			return; \
 		} \
 	} \
-	fn.glMultiDrawElements(mode, countbuf, type, indptr, drawcount)
+	fn.glMultiDrawElements(mode, countbuf, type, indptr, drawcount); \
+	for (GLsizei i = 0; i < size; i++) { \
+		delete pbuf[i]; \
+	} \
+	delete [] pbuf
 
 #if NFOSMESA_NEED_FLOAT_CONV
 #define FN_GLPOINTPARAMETERFV(pname, params) \

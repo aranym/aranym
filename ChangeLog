@@ -1,4 +1,9 @@
 2017/08/26 - Thorsten
+osmesa: avoid variable length array of constructors
+(not supported by older versions of clang)
+
+
+2017/08/26 - Thorsten
 Check return values of vasprintf
 
 
