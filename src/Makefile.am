@@ -1,4 +1,4 @@
-SUBDIRS = uae_cpu .
+SUBDIRS = uae_cpu
 
 AM_CPPFLAGS = $(DEFINES) \
 	-I$(srcdir)/include \

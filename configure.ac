@@ -2256,6 +2256,8 @@ AC_SUBST(CFLAGS_FOR_BUILD)
 AC_SUBST(CXXFLAGS_FOR_BUILD)
 AC_SUBST(LDFLAGS_FOR_BUILD)
 
+if test "$am__include" = "include"; then am__include=-include; fi
+
 AC_CONFIG_FILES([
 Makefile
 src/Makefile

@@ -1,3 +1,12 @@
+2017/08/26 - Thorsten
+Fixes for "make distcheck"
+
+For some strange reason, make distcheck did a "make distclean" in
+the src/uae_cpu directory, removing the compiler/.deps directory,
+then a "make distclean" in the src directory, where it tries to
+include the deps files from the compiler directory, which fails.
+
+
 2017/08/21 - Thorsten
 Rename copied SDL function to avoid linking errors
 
