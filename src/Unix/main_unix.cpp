@@ -486,10 +486,13 @@ void guialert(const char *fmt, ...)
 #ifdef SDL_GUI
 	char *buf = NULL;
 	va_start(args, fmt);
-	(void) vasprintf(&buf, fmt, args);
+	int ret = vasprintf(&buf, fmt, args);
 	va_end(args);
-	startupGUI = true;
-	startupAlert = buf;
+	if (ret >= 0)
+	{
+		startupGUI = true;
+		startupAlert = buf;
+	}
 #else
 	// FIXME: assuming some unix; use external tool to display alert
 #endif

@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include "sysdeps.h"
 
 #include "memory-uae.h"
@@ -206,15 +205,25 @@ void ndebug::dbprintf(const char *s, ...)
 	va_list a;
 #ifdef DEBUGGER
 	{
+		int ret;
+		char *buf;
+		
 		if (dbbuffer[dbend] != NULL)
+		{
 			free(dbbuffer[dbend]);
+			dbbuffer[dbend] = NULL;
+		}
 		va_start(a, s);
-		(void) vasprintf(&dbbuffer[dbend++], s, a);
+		ret = vasprintf(&buf, s, a);
 		va_end(a);
-		if (dbend == dbsize) dbend = 0;
-		if (dbstart == dbend) dbstart++;
-		if (dbstart == dbsize) dbstart = 0;
-		reset_actualrow();
+		if (ret >= 0)
+		{
+			dbbuffer[dbend++] = buf;
+			if (dbend == dbsize) dbend = 0;
+			if (dbstart == dbend) dbstart++;
+			if (dbstart == dbsize) dbstart = 0;
+			reset_actualrow();
+		}
 	}
 #endif
 	{
@@ -241,19 +250,29 @@ void ndebug::pdbvprintf(const char *s, va_list a)
 {
 #ifdef DEBUGGER
 	{
+		int ret;
+		char *buf;
+		
 		if (dbbuffer[dbend] != NULL)
+		{
 			free(dbbuffer[dbend]);
-		(void) vasprintf(&dbbuffer[dbend++], s, a);
-		if (dbend == dbsize) dbend = 0;
-		if (dbstart == dbend) dbstart++;
-		if (dbstart == dbsize) dbstart = 0;
-		reset_actualrow();
+			dbbuffer[dbend] = NULL;
+		}
+		ret = vasprintf(&buf, s, a);
+		if (ret >= 0)
+		{
+			dbbuffer[dbend++] = buf;
+			if (dbend == dbsize) dbend = 0;
+			if (dbstart == dbend) dbstart++;
+			if (dbstart == dbsize) dbstart = 0;
+			reset_actualrow();
+		}
 	}
 #endif
 	vfprintf(stderr, s, a);
 	fprintf(stderr, "\n");
 #ifdef __ANDROID__
-		__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
+	__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
 #endif
 	fflush(stderr);
 }
@@ -1239,10 +1258,11 @@ void ndebug::nexit() {
 	issavettyvalid = false;
 }
 
-void ndebug::dumpmem(FILE *f, VOLATILE uaecptr addr, uaecptr * nxmem, unsigned int lns)
+void ndebug::dumpmem(FILE *f, VOLATILE uaecptr addr, uaecptr * nxmem, unsigned int _lns)
 {
 	SAVE_EXCEPTION;
 	VOLATILE uaecptr a;
+	VOLATILE unsigned int lns = _lns;
 	broken_in = 0;
 	for (; lns-- && !broken_in;) {
 		VOLATILE int i;

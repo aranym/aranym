@@ -1,4 +1,8 @@
 2017/08/26 - Thorsten
+Check return values of vasprintf
+
+
+2017/08/26 - Thorsten
 Fixes for "make distcheck"
 
 For some strange reason, make distcheck did a "make distclean" in

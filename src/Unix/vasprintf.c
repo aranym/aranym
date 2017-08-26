@@ -137,7 +137,8 @@ checkit
 {
   va_list args;
   char *result;
-
+  int ret;
+  
 #ifdef __STDC__
   va_start (args, format);
 #else
@@ -145,8 +146,8 @@ checkit
   va_start (args);
   format = va_arg (args, char *);
 #endif
-  vasprintf (&result, format, args);
-  if (strlen (result) < global_total_width)
+  ret = vasprintf (&result, format, args);
+  if (ret >= 0 && strlen (result) < global_total_width)
     printf ("PASS: ");
   else
     printf ("FAIL: ");

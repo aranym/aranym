@@ -159,16 +159,20 @@ void guialert(const char *fmt, ...)
 {
 	va_list args;
 	char *buf = NULL;
+	int ret;
 	
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
 	fputs("\n", stderr);
 	va_end(args);
 	va_start(args, fmt);
-	(void) vasprintf(&buf, fmt, args);
+	ret = vasprintf(&buf, fmt, args);
 	va_end(args);
-	MessageBoxA(NULL, buf, "ARAnyM: error", MB_ICONSTOP);
-	free(buf);
+	if (ret >= 0)
+	{
+		MessageBoxA(NULL, buf, "ARAnyM: error", MB_ICONSTOP);
+		free(buf);
+	}
 }
 
 

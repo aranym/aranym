@@ -188,16 +188,20 @@ void guialert(const char *fmt, ...)
 {
 	va_list args;
 	char *buf = NULL;
+	int ret;
 	
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);
 	fputs("\n", stderr);
 	va_end(args);
 	va_start(args, fmt);
-	(void) vasprintf(&buf, fmt, args);
+	ret = vasprintf(&buf, fmt, args);
 	va_end(args);
-	NSRunAlertPanel (@"Error:", @"%s", @"Ok", nil, nil, buf);
-	free(buf);
+	if (ret >= 0)
+	{
+		NSRunAlertPanel (@"Error:", @"%s", @"Ok", nil, nil, buf);
+		free(buf);
+	}
 }
 
 
