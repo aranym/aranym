@@ -89,6 +89,23 @@ if [ -f autogen.sh ]; then
   ./autogen.sh || exit 1
 fi
 
+#
+# set up links to external dependencies (mpfr, gmp, jpeg)
+# from either MacPorts or Homebrew
+#
+if test ! -d "$SOURCE_ROOT/external"; then
+   mkdir "$SOURCE_ROOT/external"
+   if test -f /opt/local/include/gmp.h; then
+      ln -s /opt/local/include "$SOURCE_ROOT/external/include"
+      ln -s /opt/local/lib "$SOURCE_ROOT/external/lib"
+   elif test -f /usr/local/include/gmp.h; then
+      ln -s /usr/local/include "$SOURCE_ROOT/external/include"
+      ln -s /usr/local/lib "$SOURCE_ROOT/external/lib"
+   else
+      echo "warning: gmp.h not found; install it using MacPorts" >&2
+   fi
+fi
+
 # Configure system for all build architectures
 cd "$DERIVED_FILES_DIR"
 echo "" > "config_tmp.h"

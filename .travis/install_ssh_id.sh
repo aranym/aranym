@@ -32,6 +32,5 @@
 
 if [ -n "${SSH_ID}" ]
 then
-   echo $SSH_ID | base64 -d | tar -C ~ -Jx
-   ls -l ~/.ssh
+   echo $SSH_ID | base64 --decode | tar -C ~ -Jx
 fi

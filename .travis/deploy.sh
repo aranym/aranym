@@ -19,8 +19,10 @@ OUT="${PWD}/.travis/out"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 BINTRAY_HOST=https://api.bintray.com
-BINTRAY_REPO=aranym/aranym-files
-BINTRAY_USER=aranym
+BINTRAY_USER="${BINTRAY_USER:-aranym}"
+BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
+BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO:-aranym-files}"
+
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]
 then
 	BINTRAY_DIR=pullrequests
@@ -38,21 +40,23 @@ echo "See result at ${BINTRAY_HOST}/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
 
 # See https://bintray.com/docs/api for a description of the REST API
 
+CURL="curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H Accept:application/json -w \n"
+
 cd "$OUT"
 
 #create version:
 echo "creating version ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
+$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
 echo ""
 
 #upload file:
 echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
-curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${ARCHIVE}?publish=1?override=1?explode=0"
+$CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${ARCHIVE}?publish=1&override=1&explode=0"
 echo ""
 
 # publish the version
 echo "publish ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
+$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
 echo ""
 
 
@@ -64,24 +68,27 @@ if $isrelease; then
 
 #create version:
 	echo "creating version ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-	curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
+	$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
 	echo ""
 	
 #upload file(s):
-	for ext in gz bz2 xz lz; do
-		SRCARCHIVE="${PROJECT}-${VERSION}.tar.${ext}"
-		if test -f "${SRCARCHIVE}"; then
-			echo "upload ${BINTRAY_DIR}/${VERSION}/${SRCARCHIVE}"
-			curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --upload "${SRCARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${VERSION}/${PROJECT}-${VERSION}.orig.tar.${ext}?publish=1?override=0?explode=0"
-			echo ""
-		fi
-		echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
-		curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${VERSION}/${ARCHIVE}?publish=1?override=0?explode=0"
-	done
+	# we only need to upload the src archive once
+	if test "$TRAVIS_OS_NAME" = linux; then
+		for ext in gz bz2 xz lz; do
+			SRCARCHIVE="${PROJECT_LOWER}-${VERSION}.tar.${ext}"
+			if test -f "${SRCARCHIVE}"; then
+				echo "upload ${BINTRAY_DIR}/${VERSION}/${SRCARCHIVE}"
+				$CURL --upload "${SRCARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${VERSION}/${PROJECT_LOWER}-${VERSION}.orig.tar.${ext}?publish=1&override=0&explode=0"
+				echo ""
+			fi
+		done
+	fi
+	echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
+	$CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${VERSION}/${ARCHIVE}?publish=1?override=0?explode=0"
 	
 # publish the version
 	echo "publish ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-	curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
+	$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
 	echo ""
 
 fi

@@ -1,11 +1,16 @@
-language: c
-os: linux
-dist: trusty
-sudo: required
+matrix:
+  include:
+    - os: linux
+      language: c
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode8.3
+      language: objective-c
 
 branches:
   only:
-  - master
+    - master
 
 compiler:
   - gcc
@@ -14,23 +19,10 @@ env:
   global:
     - MAKEFLAGS="-j 2"
 
-addons:
-  apt:
-    packages:
-    - curl
-    - libosmesa6-dev
-    - libgl1-mesa-dev
-    - libglu1-mesa-dev
-    - libsdl1.2-dev
-    - libsdl-image1.2-dev
-    - libsdl2-dev
-    - libsdl2-image-dev
-    - libusb-dev
-    - libusb-1.0-0-dev
-
 before_install:
   - .travis/install_ssh_id.sh
   - unset SSH_ID
+  - .travis/install_prerequisities.sh
 
 before_script:
   - . ./.travis/setup_env.sh
