@@ -171,9 +171,9 @@ protected:
 	GLboolean has_GL_EXT_texture_object;
 	GLboolean has_GL_XX_texture_rectangle;
 	GLboolean has_GL_ARB_texture_non_power_of_two;
-	bool CreateContext(GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits);
+	virtual bool CreateContext(GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OffscreenContext *sharelist);
 	void DestroyContext(void);
-	GLboolean MakeCurrent(bool create_buffer);
+	GLboolean MakeBufferCurrent(bool create_buffer);
 	GLboolean ClearCurrent();
 	virtual void setYup(GLboolean enable);
 	virtual bool UpsideDown(void) { return !getYup(); }

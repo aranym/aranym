@@ -1190,7 +1190,7 @@ void OpenglContext::DestroyContext()
 
 /*-----------------------------------------------------------------------*/
 
-bool OpenglContext::CreateContext(GLenum format, GLint _depthBits, GLint _stencilBits, GLint _accumBits)
+bool OpenglContext::CreateContext(GLenum format, GLint _depthBits, GLint _stencilBits, GLint _accumBits, OffscreenContext * /* sharelist */)
 {
 	const GLubyte *extensions;
 	
@@ -1554,7 +1554,7 @@ GLboolean OpenglContext::createBuffers()
 	
 /*-----------------------------------------------------------------------*/
 
-GLboolean OpenglContext::MakeCurrent(bool create_buffer)
+GLboolean OpenglContext::MakeBufferCurrent(bool create_buffer)
 {
 	if (create_buffer)
 	{
@@ -1931,7 +1931,7 @@ bool X11OpenglContext::CreateContext(GLenum format, GLint _depthBits, GLint _ste
 		return false;
 	if (!pglXMakeContextCurrent(dpy, pbuffer, pbuffer, ctx))
 		return false;
-	if (!OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits))
+	if (!OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits, share_ctx))
 		return false;
 	return true;
 }
@@ -1962,7 +1962,7 @@ bool X11OpenglContext::TestContext()
 	/*
 	 * we need a context to get usable values from glGetString()
 	 */
-	if (!CreateContext(GL_RGB, 0, 0, 0, 0))
+	if (!CreateContext(GL_RGB, 0, 0, 0, NULL))
 	{
 		D(bug("can not create context"));
 		dispose();
@@ -2027,7 +2027,7 @@ GLboolean X11OpenglContext::MakeCurrent(memptr _buffer, GLenum _type, GLsizei _w
 	height = _height;
 	if (!pglXMakeContextCurrent(dpy, pbuffer, pbuffer, ctx))
 		return GL_FALSE;
-	return OpenglContext::MakeCurrent(true);
+	return OpenglContext::MakeBufferCurrent(true);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -2036,7 +2036,7 @@ GLboolean X11OpenglContext::MakeCurrent()
 {
 	if (!pglXMakeContextCurrent(dpy, pbuffer, pbuffer, ctx))
 		return GL_FALSE;
-	return OpenglContext::MakeCurrent(false);
+	return OpenglContext::MakeBufferCurrent(false);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -2294,7 +2294,7 @@ bool Win32OpenglContext::CreateContext(GLenum format, GLint _depthBits, GLint _s
 	ctx = CreateTmpContext(iPixelFormat, _colorBits, _depthBits, _stencilBits, _accumBits);
 	if (ctx)
 	{
-		if (OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits))
+		if (OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits, share_ctx))
 			ok = true;
 		if (opengl_share)
 			if (!pwglShareLists || !pwglShareLists(opengl_share->ctx, ctx))
@@ -2313,7 +2313,7 @@ bool Win32OpenglContext::TestContext()
 	/*
 	 * we need a context to get usable values from glGetString()
 	 */
-	if (!CreateContext(GL_RGB, 0, 0, 0, 0))
+	if (!CreateContext(GL_RGB, 0, 0, 0, NULL))
 	{
 		D(bug("can not create context"));
 		dispose();
@@ -2365,7 +2365,7 @@ GLboolean Win32OpenglContext::MakeCurrent(memptr _buffer, GLenum _type, GLsizei 
 	width = _width;
 	height = _height;
 	if (pwglMakeCurrent(tmphdc, ctx))
-		ok = OpenglContext::MakeCurrent(true);
+		ok = OpenglContext::MakeBufferCurrent(true);
 	return ok;
 }
 
@@ -2376,7 +2376,7 @@ GLboolean Win32OpenglContext::MakeCurrent()
 	GLboolean ok = GL_FALSE;
 	
 	if (pwglMakeCurrent(tmphdc, ctx))
-		ok = OpenglContext::MakeCurrent(false);
+		ok = OpenglContext::MakeBufferCurrent(false);
 	return ok;
 }
 
@@ -2528,7 +2528,7 @@ bool QuartzOpenglContext::CreateContext(GLenum format, GLint _depthBits, GLint _
 		D(bug("CGLSetCurrentContext failed: %s", CGLErrorString(error)));
 		return false;
 	}
-	if (!OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits))
+	if (!OpenglContext::CreateContext(format, _depthBits, _stencilBits, _accumBits, share_ctx))
 		return false;
 	return true;
 }
@@ -2540,7 +2540,7 @@ bool QuartzOpenglContext::TestContext()
 	/*
 	 * we need a context to get usable values from glGetString()
 	 */
-	if (!CreateContext(GL_RGB, 0, 0, 0, 0))
+	if (!CreateContext(GL_RGB, 0, 0, 0, NULL))
 	{
 		D(bug("can not create context"));
 		dispose();
@@ -2586,7 +2586,7 @@ GLboolean QuartzOpenglContext::MakeCurrent(memptr _buffer, GLenum _type, GLsizei
 		D(bug("CGLSetCurrentContext failed: %s", CGLErrorString(error)));
 		return GL_FALSE;
 	}
-	return OpenglContext::MakeCurrent(true);
+	return OpenglContext::MakeBufferCurrent(true);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -2599,7 +2599,7 @@ GLboolean QuartzOpenglContext::MakeCurrent()
 		D(bug("CGLSetCurrentContext failed: %s", CGLErrorString(error)));
 		return GL_FALSE;
 	}
-	return OpenglContext::MakeCurrent(false);
+	return OpenglContext::MakeBufferCurrent(false);
 }
 
 /*-----------------------------------------------------------------------*/

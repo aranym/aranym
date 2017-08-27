@@ -1,4 +1,8 @@
 2017/08/26 - Thorsten
+osmesa: avoid hiding overloaded virtual functions
+
+
+2017/08/26 - Thorsten
 osmesa: avoid variable length array of constructors
 (not supported by older versions of clang)
 
