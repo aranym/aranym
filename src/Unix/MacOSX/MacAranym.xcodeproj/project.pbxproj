@@ -30,7 +30,6 @@
 		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		170539151555D457006A6DDE /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		170539161555D457006A6DDE /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
-		170539171555D457006A6DDE /* libjpeg.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
 		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
 		1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
@@ -399,6 +398,13 @@
 		17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
+		3424B2BE1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
+		3424B2BF1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
+		3424B2C01F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
+		347084D81F52D105001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		347084DB1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B426E0F119D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
 		B426E0F219D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
@@ -681,7 +687,7 @@
 				17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */,
 				1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */,
 				1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */,
-				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
+				3424B2C01F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -714,7 +720,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */,
-				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
+				3424B2BE1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -726,7 +732,7 @@
 			dstSubfolderSpec = 6;
 			files = (
 				17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */,
-				1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */,
+				3424B2BF1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1126,6 +1132,7 @@
 		17FFD47E106953D40084B493 /* clipbrd_x11.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = clipbrd_x11.cpp; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdl_bmp.cpp; path = ../../sdl_bmp.cpp; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-builtin.cpp"; path = "../../disasm-builtin.cpp"; sourceTree = "<group>"; };
 		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm-glue.cpp"; sourceTree = "<group>"; };
@@ -1369,6 +1376,7 @@
 				17798DB20A652B51009733EB /* romdiff.cpp */,
 				17798DB30A652B51009733EB /* rtc.cpp */,
 				1732BC81124540FF00272489 /* scc.cpp */,
+				3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */,
 				1732BC861245412B00272489 /* serial.cpp */,
 				1732BC871245412B00272489 /* serial_port.cpp */,
 				17798DB50A652B51009733EB /* tools.cpp */,
@@ -2216,6 +2224,7 @@
 				1778A48C1555A8A70005B336 /* mmu.cpp in Sources */,
 				1778A48D1555A8A70005B336 /* ndebug.cpp in Sources */,
 				1778A48E1555A8A70005B336 /* ncr5380.cpp in Sources */,
+				347084DB1F52D107001D466A /* sdl_bmp.cpp in Sources */,
 				1778A48F1555A8A70005B336 /* parallel.cpp in Sources */,
 				1778A4901555A8A70005B336 /* parallel_file.cpp in Sources */,
 				1778A4911555A8A70005B336 /* parameters.cpp in Sources */,
@@ -2341,6 +2350,7 @@
 				17BCD8130B20F6BF00432CE1 /* mmu.cpp in Sources */,
 				17BCD8140B20F6BF00432CE1 /* ndebug.cpp in Sources */,
 				17BCD8150B20F6BF00432CE1 /* ncr5380.cpp in Sources */,
+				347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */,
 				17BCD8160B20F6BF00432CE1 /* parallel.cpp in Sources */,
 				17BCD8170B20F6BF00432CE1 /* parallel_file.cpp in Sources */,
 				17BCD8180B20F6BF00432CE1 /* parameters.cpp in Sources */,
@@ -2484,6 +2494,7 @@
 				17798F400A653026009733EB /* nf_basicset.cpp in Sources */,
 				17798F410A653032009733EB /* debugprintf.cpp in Sources */,
 				17798F420A653038009733EB /* nfvdi.cpp in Sources */,
+				347084D81F52D105001D466A /* sdl_bmp.cpp in Sources */,
 				17798F430A65303B009733EB /* nfvdi_soft.cpp in Sources */,
 				17798F450A653062009733EB /* nfcdrom.cpp in Sources */,
 				17798F470A653093009733EB /* hostfs.cpp in Sources */,
@@ -2640,6 +2651,7 @@
 				B439AC880C5B2FD00046EFC9 /* sigsegv_darwin_x86.cpp in Sources */,
 				B439AC8B0C5B2FD00046EFC9 /* dlgNetwork.cpp in Sources */,
 				B4A9E9C50C5B33AC00C156C3 /* ethernet_darwin.cpp in Sources */,
+				347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */,
 				1736B1150C70ED5900C56FAF /* SDLMain.m in Sources */,
 				F83B57600C8B143300BA68D4 /* SDLHotkeysRefresh.M in Sources */,
 				F83B576F0C8B1F0100BA68D4 /* videl_zoom.cpp in Sources */,
@@ -2805,15 +2817,15 @@
 					/opt/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
-				VALID_ARCHS = "ppc i386 x86_64";
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
 					"-L/opt/local/lib",
 					"-ljpeg",
 				);
+				SOURCE_DIR = "$(PROJECT_DIR)/../..";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Release;
 		};
@@ -2841,9 +2853,7 @@
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_MPFR";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=mpfr --enable-fullmmu --enable-lilo";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2862,9 +2872,7 @@
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_MPFR";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=mpfr --enable-fullmmu --enable-lilo";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2970,15 +2978,15 @@
 					/opt/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
-				VALID_ARCHS = "ppc i386 x86_64";
 				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
 					"-L/opt/local/lib",
 					"-ljpeg",
 				);
+				SOURCE_DIR = "$(PROJECT_DIR)/../..";
+				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Debug;
 		};
