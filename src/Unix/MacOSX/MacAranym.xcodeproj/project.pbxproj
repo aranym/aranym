@@ -810,9 +810,9 @@
 /* Begin PBXFileReference section */
 		002F39F909D0881F00EBEB88 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		170539131555D457006A6DDE /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = /opt/local/lib/libgmp.dylib; sourceTree = "<absolute>"; };
-		170539141555D457006A6DDE /* libmpfr.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpfr.dylib; path = /opt/local/lib/libmpfr.dylib; sourceTree = "<absolute>"; };
-		170539181555D457006A6DDE /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = /opt/local/lib/libjpeg.dylib; sourceTree = "<absolute>"; };
+		170539131555D457006A6DDE /* libgmp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgmp.dylib; path = external/lib/libgmp.dylib; sourceTree = SOURCE_ROOT; };
+		170539141555D457006A6DDE /* libmpfr.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libmpfr.dylib; path = external/lib/libmpfr.dylib; sourceTree = SOURCE_ROOT; };
+		170539181555D457006A6DDE /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = external/lib/libjpeg.dylib; sourceTree = SOURCE_ROOT; };
 		170C2B850BB872920026484E /* dyngl.c */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.c; name = dyngl.c; path = ../../dyngl.c; sourceTree = SOURCE_ROOT; };
 		1717E85A151680B900D416FA /* dlgUsb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgUsb.cpp; sourceTree = "<group>"; };
 		171A3F0E154F2765005F6C9D /* fpu_mpfr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpu_mpfr.cpp; sourceTree = "<group>"; };
@@ -2814,13 +2814,13 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
-					/opt/local/include,
+					external/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				LIBRARY_SEARCH_PATHS = external/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
-					"-L/opt/local/lib",
+					"-Lexternal/lib",
 					"-ljpeg",
 				);
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
@@ -2975,13 +2975,13 @@
 					/Library/Frameworks/SDL.framework/Headers,
 					/Library/Frameworks/SDL_image.framework/Headers,
 					/usr/X11R6/include,
-					/opt/local/include,
+					external/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				LIBRARY_SEARCH_PATHS = external/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
-					"-L/opt/local/lib",
+					"-Lexternal/lib",
 					"-ljpeg",
 				);
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
