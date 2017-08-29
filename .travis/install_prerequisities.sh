@@ -12,8 +12,6 @@ linux)
 		libglu1-mesa-dev \
 		libsdl1.2-dev \
 		libsdl-image1.2-dev \
-		libsdl2-dev \
-		libsdl2-image-dev \
 		libusb-dev \
 		libusb-1.0-0-dev \
 		
