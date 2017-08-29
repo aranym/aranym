@@ -1,3 +1,7 @@
+2017/08/30 - Thorsten
+Make GrabMouse = Yes work again
+
+
 2017/08/29 - Thorsten
 macOS: make sure mpfr, gmp and jpeg can be found during configure
 when run from xcode in a clean build environment

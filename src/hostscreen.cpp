@@ -742,10 +742,14 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 	SDL_bool current = hiddenMouse;
 	if (hide) {
 		SDL_SetCursor(empty_cursor);
+		if (SDL_IsVideoDriver("x11"))
+			SDL_ShowCursor(SDL_DISABLE);
 		hiddenMouse = SDL_TRUE;
 	}
 	else if (!hide) {
 		SDL_SetCursor(aranym_cursor);
+		if (SDL_IsVideoDriver("x11"))
+			SDL_ShowCursor(SDL_ENABLE);
 		hiddenMouse = SDL_FALSE;
 	}
 	return current;
@@ -759,7 +763,8 @@ SDL_bool HostScreen::grabMouse(SDL_bool grab)
 		grabbedMouse = SDL_TRUE;
 		canGrabMouseAgain = true;
 		hideMouse(SDL_TRUE);
-//		IgnoreMouseMotionEvent(true);
+		if (bx_options.startup.grabMouseAllowed)
+			IgnoreMouseMotionEvent(true);
 	}
 	else if (!grab && current) {
 		SDL_SetWindowGrab(window, SDL_FALSE);

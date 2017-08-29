@@ -212,14 +212,15 @@ void InputInit()
 	SDL_SetCursor(aranym_cursor);
 	if (bx_options.startup.grabMouseAllowed) {
 		// warp mouse to center of Atari 320x200 screen and grab it
-		if (! bx_options.video.fullscreen)
-			host->video->WarpMouse(320/2, 200/2);
 		grabMouse(SDL_TRUE);
 		// hide mouse unconditionally
 		hideMouse(SDL_TRUE);
+		if (! bx_options.video.fullscreen)
+		{
+			host->video->WarpMouse(0, 0);
+		}
 	}
 
-/* SDL2CHECKME: SDL_HAS3BUTTONMOUSE seems to be no longer needed */
 #if defined (OS_darwin) && !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Make sure ALT+click is not interpreted as SDL_MIDDLE_BUTTON
 	SDL_putenv((char*)"SDL_HAS3BUTTONMOUSE=1");
@@ -776,7 +777,7 @@ static void process_keyboard_event(const SDL_Event &event)
 #if defined(_WIN32) || defined(__CYGWIN__)
 	/* SDL on windows does not report KMOD_CTRL on right ctrl key */
 	if (keysym.sym == SDLK_RCTRL)
-		state |= KMOD_CTRL;
+		state = pressed ? (state | KMOD_CTRL) : (state & ~KMOD_CTRL);
 #endif
 
 	// process special hotkeys
@@ -1040,16 +1041,15 @@ static void process_mouse_event(const SDL_Event &event)
 		}
 	}
 	else if (event.type == SDL_MOUSEMOTION) {
-		SDL_MouseMotionEvent eve = event.motion;
 		if (!video->IgnoreMouseMotionEvent()) {
-			xrel = eve.xrel;
-			yrel = eve.yrel;
+			xrel = event.motion.xrel;
+			yrel = event.motion.yrel;
 		}
 		else video->IgnoreMouseMotionEvent(false);
 
 #ifdef NFVDI_SUPPORT
 		if (fvdi != NULL) {
-			if (fvdi->dispatch(0x80008000 | (eve.x << 16) | (eve.y)) == 0)
+			if (fvdi->dispatch(0x80008000 | (event.motion.x << 16) | (event.motion.y)) == 0)
 				fvdi_events = true;
 		}
 
@@ -1057,7 +1057,7 @@ static void process_mouse_event(const SDL_Event &event)
 		// if the events are reported directly, since it only
 		// works with hidden mouse pointer.
 		// So, define top left corner as exit point.
-		mouse_exit = (eve.x == 0) && (eve.y == 0);
+		mouse_exit = (event.motion.x == 0) && (event.motion.y == 0);
 #endif
 #ifdef __ANDROID__
 		if (getARADATA()->isAtariMouseDriver()) {
@@ -1066,10 +1066,11 @@ static void process_mouse_event(const SDL_Event &event)
 		}
 #endif
 		
-		if ((xrel <= 0 && eve.x <= 0) ||
-			(yrel <= 0 && eve.y <= 0) ||
-			(xrel >= 0 && eve.x >= video->getWidth() - 1) ||
-			(yrel >= 0 && eve.y >= video->getHeight() - 1))
+		if (!bx_options.startup.grabMouseAllowed && (
+			(xrel <= 0 && event.motion.x <= 0) ||
+			(yrel <= 0 && event.motion.y <= 0) ||
+			(xrel >= 0 && event.motion.x >= video->getWidth() - 1) ||
+			(yrel >= 0 && event.motion.y >= video->getHeight() - 1)))
 			mouseOut = true;
 	}
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -1100,7 +1101,7 @@ static void process_mouse_event(const SDL_Event &event)
 			reported = true;
 		}
 #endif
-		if (!bx_options.video.fullscreen && mouse_exit)
+		if (!bx_options.video.fullscreen && mouse_exit && !bx_options.startup.grabMouseAllowed)
 			mouseOut = true;
 		return;
 	}
@@ -1117,7 +1118,7 @@ static void process_mouse_event(const SDL_Event &event)
 		getIKBD()->SendMouseMotion(xrel, yrel, but, false);
 	}
 
-	if (! bx_options.video.fullscreen && getARADATA()->isAtariMouseDriver()) {
+	if (! bx_options.video.fullscreen && !bx_options.startup.grabMouseAllowed && getARADATA()->isAtariMouseDriver()) {
 		// check whether user doesn't try to go out of window (top or left)
 		if ((xrel < 0 && getARADATA()->getAtariMouseX() == 0) ||
 			(yrel < 0 && getARADATA()->getAtariMouseY() == 0))
@@ -1227,7 +1228,7 @@ static void process_active_event(const SDL_Event &event)
 				else {
 					D(bug("Host mouse is returning!"));
 					// if grabbing the mouse is allowed
-					if (video->CanGrabMouseAgain() && video->HasInputFocus()) {
+					if (video->CanGrabMouseAgain() && (video->HasInputFocus() || bx_options.startup.grabMouseAllowed)) {
 						D(bug("canGrabMouseAgain allows autograb"));
 						// then grab it
 						video->grabTheMouse();
