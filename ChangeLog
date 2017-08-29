@@ -1,3 +1,8 @@
+2017/08/29 - Thorsten
+macOS: make sure mpfr, gmp and jpeg can be found during configure
+when run from xcode in a clean build environment
+
+
 2017/08/26 - Thorsten
 Add new source to MacOSX project
 

@@ -258,6 +258,11 @@ if test "$OS_TYPE" = "darwin"; then
 	# which are only suitable for a single target architecture
 	LDFLAGS="$LDFLAGS -L/opt/local/lib"
 	CPPFLAGS="$CPPFLAGS -I/opt/local/include"
+	# SOURCE_ROOT is set when running from Xcode project
+	if test "$XCODE_VERSION_ACTUAL" != "" -a "$SOURCE_ROOT" != ""; then
+		LDFLAGS="$LDFLAGS -L$SOURCE_ROOT/external/lib"
+		CPPFLAGS="$CPPFLAGS -I$SOURCE_ROOT/external/include"
+	fi
 fi
 
 dnl Target CPU type.
