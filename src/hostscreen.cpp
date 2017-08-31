@@ -742,14 +742,26 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 	SDL_bool current = hiddenMouse;
 	if (hide) {
 		SDL_SetCursor(empty_cursor);
+#if defined(SDL_VIDEO_DRIVER_X11)
 		if (SDL_IsVideoDriver("x11"))
 			SDL_ShowCursor(SDL_DISABLE);
+#endif
+#if defined(SDL_VIDEO_DRIVER_QUARTZ)
+		if (SDL_IsVideoDriver("Quartz"))
+			SDL_ShowCursor(SDL_DISABLE);
+#endif
 		hiddenMouse = SDL_TRUE;
 	}
 	else if (!hide) {
 		SDL_SetCursor(aranym_cursor);
+#if defined(SDL_VIDEO_DRIVER_X11)
 		if (SDL_IsVideoDriver("x11"))
 			SDL_ShowCursor(SDL_ENABLE);
+#endif
+#if defined(SDL_VIDEO_DRIVER_QUARTZ)
+		if (SDL_IsVideoDriver("Quartz"))
+			SDL_ShowCursor(SDL_ENABLE);
+#endif
 		hiddenMouse = SDL_FALSE;
 	}
 	return current;
