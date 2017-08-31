@@ -11,9 +11,10 @@
 extern "C" {
 #endif
 	
-	int receive_fd(void);
-	void send_fd(int fd);
-	
+int fd_receive(int sockfd, pid_t from);
+void fd_send(int fd);
+int fd_setup_server(void);
+
 #ifdef  __cplusplus
 }
 #endif

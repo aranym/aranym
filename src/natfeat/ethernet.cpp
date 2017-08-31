@@ -2,7 +2,7 @@
  * ethernet.cpp - Ethernet Card Emulation
  *
  * Copyright (c) 2002-2005 Standa Opichal, Petr Stehlik of ARAnyM team
- * 
+ *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
@@ -26,6 +26,7 @@
 #include "main.h"
 #include "ethernet.h"
 #include "tools.h"
+#include "toserror.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -97,7 +98,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 				memptr buf_ptr = getParameter(1);	// destination buffer
 				uint32 buf_size = getParameter(2);	// buffer size
-				D(bug("Ethernet: getMAC(%d, %p, %d", ethX, buf_ptr, buf_size));
+				D(bug("Ethernet: getMAC(%d, %x, %d)", ethX, buf_ptr, (int)buf_size));
 
 				// default MAC Address is just made up
 				uint8 mac_addr[6] = {'\0','A','E','T','H', uint8('0'+ethX) };
@@ -162,7 +163,8 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_START:
-			startThread( getParameter(0) /* ethX */);
+			if (startThread( getParameter(0) /* ethX */) == false)
+				ret = TOS_EUNDEV;
 			break;
 		case XIF_STOP:
 			stopThread( getParameter(0) /* ethX */);
@@ -193,6 +195,10 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			D(bug("XIF_GET_NETMASK"));
 			ret = get_params(NETMASK);
 			break;
+		default:
+			D(bug("XIF: unsupported function %d", fncode));
+			ret = TOS_ENOSYS;
+			break;
 	}
 	return ret;
 }
@@ -205,7 +211,7 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	uint32 name_maxlen = getParameter(2);
 	const char *text = NULL;
 
-	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %p of size %d",
+	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %x of size %d",
 			which, ethX, name_ptr, name_maxlen));
 
 	if (! ValidAddr(name_ptr, true, name_maxlen))
@@ -244,7 +250,7 @@ void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 		panicbug("Ethernet: handler for %d not found", ethX);
 		return;
 	}
-	D(bug("Ethernet: ReadPacket dest %08lx, len %lx", buffer, len));
+	D(bug("Ethernet: ReadPacket dest %08x, len %x", buffer, len));
 	Host2Atari_memcpy(buffer, handler->packet, MIN(len, MAX_PACKET_SIZE));
 	if (len > MAX_PACKET_SIZE) {
 		panicbug("ETHERNETDriver::readPacket() - length %d > %d", len, MAX_PACKET_SIZE);
@@ -265,7 +271,7 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 	}
 	uint8 packetToWrite[MAX_PACKET_SIZE+2];
 
-	D(bug("Ethernet: SendPacket src %08lx, len %lx", buffer, len));
+	D(bug("Ethernet: SendPacket src %08x, len %x", buffer, len));
 
 	len = MIN(len, MAX_PACKET_SIZE);
 	Atari2Host_memcpy( packetToWrite, buffer, len );
@@ -419,7 +425,7 @@ int ETHERNETDriver::receiveFunc(void *arg)
 		handler->packet_length = handler->recv(handler->packet, MAX_PACKET_SIZE);
 
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
-		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", handler->packet_length));
+		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", (int)handler->packet_length));
 
 		pending_interrupts |= (1 << handler->ethX);
 		TRIGGER_INTERRUPT;
@@ -433,7 +439,3 @@ int ETHERNETDriver::receiveFunc(void *arg)
 
 	return 0;
 }
-
-/*
-vim:ts=4:sw=4:
-*/

@@ -947,7 +947,6 @@
 		17798D340A652B50009733EB /* tools.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = tools.h; sourceTree = "<group>"; };
 		17798D350A652B50009733EB /* toserror.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = toserror.h; sourceTree = "<group>"; };
 		17798D360A652B50009733EB /* version.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
-		CBD0F4931B5CFDC10081A555 /* verify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = verify.h; sourceTree = "<group>"; };
 		17798D370A652B50009733EB /* videl.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = videl.h; sourceTree = "<group>"; };
 		17798D380A652B50009733EB /* yamaha.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = yamaha.h; sourceTree = "<group>"; };
 		17798D390A652B50009733EB /* input.cpp */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.cpp; name = input.cpp; path = ../../input.cpp; sourceTree = SOURCE_ROOT; };
@@ -1185,6 +1184,7 @@
 		CBD0F45C1B5CF72F0081A555 /* disasm-glue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "disasm-glue.h"; sourceTree = "<group>"; };
 		CBD0F45D1B5CF7450081A555 /* SDL_compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_compat.h; sourceTree = "<group>"; };
 		CBD0F45E1B5CF7530081A555 /* SDL_opengl_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl_wrapper.h; sourceTree = "<group>"; };
+		CBD0F4931B5CFDC10081A555 /* verify.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = verify.h; sourceTree = "<group>"; };
 		CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osmesa_context.cpp; sourceTree = "<group>"; };
 		CBD0F4991B5CFDE50081A555 /* osmesa_context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osmesa_context.h; sourceTree = "<group>"; };
 		CBEA27B21AF6527500B12FC5 /* dlgHostfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dlgHostfs.cpp; sourceTree = "<group>"; };
@@ -2833,6 +2833,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};
@@ -2842,6 +2844,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
+				LD_RUNPATH_SEARCH_PATHS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
 			};

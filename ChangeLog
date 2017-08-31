@@ -1,3 +1,11 @@
+2017/08/31 - Thorsten
+Fix invocation of bpf_helper on macOS.
+
+There where several situations where that helper tool would be executed
+in an endless loop, or the accept() call in the main app hangs
+because the tool already died and never sent a message.
+
+
 2017/08/30 - Thorsten
 Remove libsdl2-dev and libsdl2-image-dev from list of packages to be installed
 for travis builds, as it current leads to errors
