@@ -747,7 +747,7 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 			SDL_ShowCursor(SDL_DISABLE);
 #endif
 #if defined(SDL_VIDEO_DRIVER_QUARTZ)
-		if (SDL_IsVideoDriver("Quartz"))
+		if (bx_options.startup.grabMouseAllowed && SDL_IsVideoDriver("Quartz"))
 			SDL_ShowCursor(SDL_DISABLE);
 #endif
 		hiddenMouse = SDL_TRUE;
@@ -759,7 +759,7 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 			SDL_ShowCursor(SDL_ENABLE);
 #endif
 #if defined(SDL_VIDEO_DRIVER_QUARTZ)
-		if (SDL_IsVideoDriver("Quartz"))
+		if (bx_options.startup.grabMouseAllowed && SDL_IsVideoDriver("Quartz"))
 			SDL_ShowCursor(SDL_ENABLE);
 #endif
 		hiddenMouse = SDL_FALSE;

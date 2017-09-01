@@ -3,6 +3,10 @@ Make GrabMouse = Yes work again on macOS
 
 
 2017/08/31 - Thorsten
+Make GrabMouse = Yes work again on macOS
+
+
+2017/08/31 - Thorsten
 Fix invocation of bpf_helper on macOS.
 
 There where several situations where that helper tool would be executed
