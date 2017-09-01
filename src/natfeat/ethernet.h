@@ -47,16 +47,17 @@ public:
 			intAck = NULL;
 		}
 
-		virtual bool open() { return false; }
-		virtual bool close() { return false; }
-		virtual int recv(uint8 *, int) { return 0; }
-		virtual int send(const uint8 *, int) { return 0; }
+		virtual bool open() = 0;
+		virtual void close() = 0;
+		virtual int recv(uint8 *, int) = 0;
+		virtual int send(const uint8 *, int) = 0;
 		virtual ~Handler() { }
 	};
 
 private:
 	Handler *handlers[MAX_ETH];
 	Handler *getHandler(int ethX);
+	static int pending_interrupts;
 
 	int32 readPacketLength(int ethX);
 	void readPacket(int ethX, memptr buffer, uint32 len);

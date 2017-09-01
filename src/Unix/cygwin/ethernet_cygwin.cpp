@@ -104,6 +104,10 @@ WinTapEthernetHandler::WinTapEthernetHandler(int eth_idx)
 	device_total_out = 0;
 }
 
+WinTapEthernetHandler::~WinTapEthernetHandler()
+{
+	close();
+}
 
 bool is_tap_win32_dev(const char *guid)
 {
@@ -354,7 +358,8 @@ bool WinTapEthernetHandler::open()
 		panicbug("WinTap: ERROR: Could not open (%s) Windows tap device: %s", device_path, winerror(GetLastError()));
 		return false;
 	}
-
+	device = strdup(device_path);
+	
 	read_overlapped.Offset = 0; 
 	read_overlapped.OffsetHigh = 0; 
 	read_overlapped.hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -366,10 +371,15 @@ bool WinTapEthernetHandler::open()
 	return true;
 }
 
-bool WinTapEthernetHandler::close()
+void WinTapEthernetHandler::close()
 {
-	CloseHandle(device_handle);
-	return true;
+	if (device_handle != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(device_handle);
+		device_handle = INVALID_HANDLE_VALUE;
+	}
+	free(device);
+	device = NULL;
 }
 
 int WinTapEthernetHandler::recv(uint8 *buf, int len)

@@ -68,7 +68,7 @@
  * Configuration zone ends
  **************************/
 
-static int pending_interrupts = 0;
+int ETHERNETDriver::pending_interrupts;
 
 int32 ETHERNETDriver::dispatch(uint32 fncode)
 {
@@ -288,6 +288,8 @@ void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
  */
 bool ETHERNETDriver::init(void)
 {
+	pending_interrupts = 0;
+
 	for(int i=0; i<MAX_ETH; i++) {
 		Handler *handler = new ETHERNET_HANDLER_CLASSNAME(i);
 		if ( handler->open() ) {

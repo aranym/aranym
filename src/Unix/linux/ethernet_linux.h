@@ -19,10 +19,11 @@ class TunTapEthernetHandler : public ETHERNETDriver::Handler {
 	int tapOpen(char *dev);
 
 public:
-	TunTapEthernetHandler(int eth_idx) : Handler(eth_idx), fd(-1) {}
+	TunTapEthernetHandler(int eth_idx);
+	virtual ~TunTapEthernetHandler();
 
 	virtual bool open();
-	virtual bool close();
+	virtual void close();
 	virtual int recv(uint8 *buf, int len);
 	virtual int send(const uint8 *buf, int len);
 };

@@ -1,3 +1,7 @@
+2017/09/01 - Thorsten
+Fix file descriptor leaks in ethernet handlers
+
+
 2017/08/31 - Thorsten
 Make GrabMouse = Yes work again on macOS
 

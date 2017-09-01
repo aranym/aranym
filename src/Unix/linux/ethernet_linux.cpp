@@ -49,6 +49,16 @@
  * Configuration zone ends
  **************************/
 
+TunTapEthernetHandler::TunTapEthernetHandler(int eth_idx)
+	: Handler(eth_idx),
+	fd(-1)
+{
+}
+
+TunTapEthernetHandler::~TunTapEthernetHandler()
+{
+	close();
+}
 
 bool TunTapEthernetHandler::open() {
 	// int nonblock = 1;
@@ -75,7 +85,7 @@ bool TunTapEthernetHandler::open() {
 	int pid = fork();
 	if (pid < 0) {
 		panicbug("TunTap(%d): ERROR: fork() failed. Ethernet disabled!", ethX);
-		::close(fd);
+		close();
 		return false;
 	}
 
@@ -117,7 +127,7 @@ bool TunTapEthernetHandler::open() {
 
 	// Close /dev/net/tun device if exec failed
 	if (failed) {
-		::close(fd);
+		close();
 		return false;
 	}
 
@@ -127,12 +137,15 @@ bool TunTapEthernetHandler::open() {
 	return true;
 }
 
-bool TunTapEthernetHandler::close() {
-	// Close /dev/net/tun device
-	::close(fd);
+void TunTapEthernetHandler::close() {
 	D(bug("TunTap(%d): close", ethX));
 
-	return true;
+	// Close /dev/net/tun device
+	if (fd > 0)
+	{
+		::close(fd);
+		fd = -1;
+	}
 }
 
 int TunTapEthernetHandler::recv(uint8 *buf, int len) {
@@ -224,7 +237,7 @@ int TunTapEthernetHandler::tapOpen(char *dev)
     return fd;
 
   failed:
-    ::close(fd);
+    close();
     return -1;
 }
 

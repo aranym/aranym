@@ -140,6 +140,17 @@ static int executeScriptAsRoot(char *application, char *args[]) {
     return execStatus;
 }
 
+TunTapEthernetHandler::TunTapEthernetHandler(int eth_idx)
+	: Handler(eth_idx),
+	fd(-1)
+{
+}
+
+TunTapEthernetHandler::~TunTapEthernetHandler()
+{
+	close();
+}
+
 bool TunTapEthernetHandler::open() {
 	// int nonblock = 1;
 	char *devName = bx_options.ethernet[ethX].tunnel;
@@ -173,7 +184,7 @@ bool TunTapEthernetHandler::open() {
 	}
 	int auth = openAuthorizationContext();
 	if (auth) {
-		::close(fd);
+		close();
 		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
 		return false;	
 	}
@@ -203,7 +214,7 @@ bool TunTapEthernetHandler::open() {
 	
 	// Close /dev/net/tun device if exec failed
 	if (failed) {
-		::close(fd);
+		close();
 		if (ethX == MAX_ETH - 1) closeAuthoizationContext();
 		return false;
 	}
@@ -215,12 +226,14 @@ bool TunTapEthernetHandler::open() {
 	return true;
 }
 
-bool TunTapEthernetHandler::close() {
-	// Close /dev/net/tun device
-	::close(fd);
+void TunTapEthernetHandler::close() {
 	D(bug("TunTap(%d): close", ethX));
-
-	return true;
+	// Close /dev/net/tun device
+	if (fd > 0)
+	{
+		::close(fd);
+		fd = -1;
+	}
 }
 
 int TunTapEthernetHandler::recv(uint8 *buf, int len) {

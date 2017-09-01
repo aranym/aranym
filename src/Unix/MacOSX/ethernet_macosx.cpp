@@ -441,7 +441,7 @@ bool BPFEthernetHandler::open()
 	return true;
 }
 
-bool BPFEthernetHandler::close()
+void BPFEthernetHandler::close()
 {
 	if (debug)
 	{
@@ -460,8 +460,6 @@ bool BPFEthernetHandler::close()
 	bpf_buf = NULL;
 
 	debug = false;
-
-	return true;
 }
 
 int BPFEthernetHandler::recv(uint8 *buf, int len)
