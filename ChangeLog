@@ -1,3 +1,7 @@
+2017/09/02 - Thorsten
+Consistently ignore unconfigured ethernet interfaces
+
+
 2017/09/01 - Thorsten
 Fix file descriptor leaks in ethernet handlers
 

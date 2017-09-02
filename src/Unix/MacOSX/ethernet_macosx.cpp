@@ -311,15 +311,15 @@ bool BPFEthernetHandler::open()
 	}
 	bpf_buf = (struct bpf_hdr*) malloc(buf_len);
 
-	// activate promiscious mode
+	// activate promiscuous mode
 	if (debug)
 	{
-		D(bug("BPF(%d): enabling promiscious mode", ethX));
+		D(bug("BPF(%d): enabling promiscuous mode", ethX));
 	}
 	int promiscuous = 1;
 	if(ioctl(fd, BIOCPROMISC, &promiscuous) == -1)
 	{
-		panicbug("BPF(%d): Unable to set promiscious mode: %s", ethX, strerror(errno));
+		panicbug("BPF(%d): Unable to set promiscuous mode: %s", ethX, strerror(errno));
 #if 0
 		close();
 		return false;

@@ -62,7 +62,15 @@ TunTapEthernetHandler::~TunTapEthernetHandler()
 
 bool TunTapEthernetHandler::open() {
 	// int nonblock = 1;
+	char *type = bx_options.ethernet[ethX].type;
 	char *devName = bx_options.ethernet[ethX].tunnel;
+
+	close();
+
+	if (strcmp(type, "none") == 0 || strlen(type) == 0)
+	{
+		return false;
+	}
 
 	// get the tunnel nif name if provided
 	if (strlen(devName) == 0) {

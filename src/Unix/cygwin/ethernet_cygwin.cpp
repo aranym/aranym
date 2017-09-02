@@ -84,7 +84,7 @@ static char *winerror(int err) {
 	if (!FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 	        NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, sizeof(buf), NULL)) {
 		strncpy(buf, "(unable to format errormessage)", sizeof(buf));
-	};
+	}
 
 	if((newline = strchr(buf, '\r')))
 		*newline = '\0';
@@ -328,9 +328,17 @@ int get_device_guid(
 
 bool WinTapEthernetHandler::open()
 {
+	char *type = bx_options.ethernet[ethX].type;
 	char device_path[256];
 	char device_guid[0x100];
-	char name_buffer[0x100] = {0, };
+	char name_buffer[0x100];
+
+	close();
+
+	if (strcmp(type, "none") == 0 || strlen(type) == 0)
+	{
+		return false;
+	}
 
 	if ( strlen(bx_options.ethernet[ethX].tunnel) == 0) {
 		D(bug("WinTap(%d): tunnel name undefined", ethX));
@@ -342,7 +350,7 @@ bool WinTapEthernetHandler::open()
  	if ( get_device_guid(device_guid, sizeof(device_guid), name_buffer, sizeof(name_buffer)) < 0 ) {
 		panicbug("WinTap: ERROR: Could not find Windows tap device: %s", winerror(GetLastError()));
 		return false;
-	};
+	}
 
 	/*
 	 * Open Windows TAP-Win32 adapter
@@ -433,4 +441,3 @@ int WinTapEthernetHandler::send(const uint8 *buf, int len)
 	D(bug("WinTap: Writing packet done"));
 	return lenout;
 }
-
