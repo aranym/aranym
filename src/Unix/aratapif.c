@@ -64,8 +64,9 @@ static int set_ip_using(const char *name, unsigned long c, const char *ip, const
     struct sockaddr_in sin;
     char host[128];
 
+    memset(&ifr, 0, sizeof(ifr));
     safe_strncpy(ifr.ifr_name, name, IFNAMSIZ);
-    memset(&sin, 0, sizeof(struct sockaddr));
+    memset(&sin, 0, sizeof(sin));
     sin.sin_family = AF_INET;
 	safe_strncpy(host, ip, (sizeof host));
     if (! inet_aton(host, &sin.sin_addr)) {
@@ -97,6 +98,7 @@ int set_mtu(const char *name, int mtu_size)
 {
     struct ifreq ifr;
 
+    memset(&ifr, 0, sizeof(ifr));
     safe_strncpy(ifr.ifr_name, name, IFNAMSIZ);
 	ifr.ifr_mtu = mtu_size;
 	if (ioctl(skfd, SIOCSIFMTU, &ifr) < 0) {
@@ -111,6 +113,7 @@ static int set_flag(const char *name, short flag)
 {
     struct ifreq ifr;
 
+    memset(&ifr, 0, sizeof(ifr));
     safe_strncpy(ifr.ifr_name, name, IFNAMSIZ);
     if (ioctl (skfd, SIOCGIFFLAGS, &ifr) < 0) {
 		perror("SIOCGIFFLAGS");
