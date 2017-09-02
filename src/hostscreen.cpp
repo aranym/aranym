@@ -743,7 +743,7 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 	if (hide) {
 		SDL_SetCursor(empty_cursor);
 #if defined(SDL_VIDEO_DRIVER_X11)
-		if (SDL_IsVideoDriver("x11"))
+		if (bx_options.startup.grabMouseAllowed && SDL_IsVideoDriver("x11"))
 			SDL_ShowCursor(SDL_DISABLE);
 #endif
 #if defined(SDL_VIDEO_DRIVER_QUARTZ)
@@ -755,7 +755,7 @@ SDL_bool HostScreen::hideMouse(SDL_bool hide)
 	else if (!hide) {
 		SDL_SetCursor(aranym_cursor);
 #if defined(SDL_VIDEO_DRIVER_X11)
-		if (SDL_IsVideoDriver("x11"))
+		if (bx_options.startup.grabMouseAllowed && SDL_IsVideoDriver("x11"))
 			SDL_ShowCursor(SDL_ENABLE);
 #endif
 #if defined(SDL_VIDEO_DRIVER_QUARTZ)
