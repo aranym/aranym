@@ -1,4 +1,8 @@
 2017/09/03 - Thorsten
+Fix typo in last commit
+
+
+2017/09/03 - Thorsten
 Preserve options in the type of the ethernet interface
 
 The "bridge" mode for MacOSX has some options for the filter

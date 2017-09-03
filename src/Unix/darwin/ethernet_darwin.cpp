@@ -256,7 +256,7 @@ int TunTapEthernetHandler::send(const uint8 *buf, int len) {
  */
 int TunTapEthernetHandler::tapOpenOld(char *dev)
 {
-    char tapname[bx_options.ethernet[0].tunnel) + 5];
+    char tapname[sizeof(bx_options.ethernet[0].tunnel) + 5];
     int i, fd;
 
     if( *dev ) {
