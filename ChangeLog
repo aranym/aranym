@@ -1,3 +1,8 @@
+2017/09/03 - Thorsten
+Make example arabridge script a bit more robust
+when parsing ifconfig output
+
+
 2017/09/02 - Thorsten
 Another fix for mouse grabbing. sigh.
 

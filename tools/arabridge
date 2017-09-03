@@ -5,7 +5,7 @@
 #
 # description: TUN/TAP driver using transparent bridge networking setup
 #
-# dependencies: tun module, tunctl (kernel-utils),
+# dependencies: tun module, tunctl (uml-utilities),
 #               bridge module, brctl (bridge-utils)
 #
 # processname: arabridge 
@@ -22,6 +22,18 @@ TAPS=tap0
 BRIDGE=br0
 NIF=eth0
 
+for tool in ifconfig route tunctl brctl modprobe; do
+	eval $tool=
+	for dir in /sbin /usr/sbin /bin /usr/bin; do
+		if test -x "$dir/$tool"; then
+			eval $tool="$dir/$tool"
+			break
+		fi
+	done
+	eval test \"\$$tool\" = \"\" && { echo "$tool not found" >&2; exit 1; }
+done
+
+
 LOCK=/var/lock/subsys/arabridge
 
 # make sure grep in ifconfig output works
@@ -29,8 +41,8 @@ LC_ALL=C
 export LC_ALL
 
 # defaultroute's nif
-DR_NIF=$(/sbin/route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $8}')
-DEFGW=$(/sbin/route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $2}')
+DR_NIF=$($route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $8}')
+DEFGW=$($route -n 2>/dev/null | awk '/^0\.0\.0\.0/ {print $2}')
 
 # do we have the default route NIF?
 DEF_ROUTE=0
@@ -51,16 +63,16 @@ failure()
 
 status()
 {
-	echo "status $1"
+	echo "arabridge is $1"
 }
 
 start_tap()
 {
     TAP="$1"
-    /sbin/ifconfig $TAP 1>/dev/null 2>/dev/null
+    $ifconfig $TAP 1>/dev/null 2>/dev/null
     if [ $? -ne 0 ]; then
         echo "Creating device $TAP..."
-        TAP=$(tunctl -t $TAP -u $USER)
+        $tunctl -t $TAP -u $USER
     fi
 }
 
@@ -71,33 +83,33 @@ case "$1" in
 	# save the NIF name
 	echo $NIF >$LOCK
 
-	IP=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($2, 6)}')
-	BCAST=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($3, 7)}')
-	NETMASK=$(/sbin/ifconfig $NIF | awk '/inet addr:/ {print substr($4, 6)}')
+	IP=$($ifconfig $NIF | sed -n 's/^.*\(inet \|inet addr:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
+	BCAST=$($ifconfig $NIF | sed -n 's/^.*\(broadcast \|Bcast:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
+	NETMASK=$($ifconfig $NIF | sed -n 's/^.*\(netmask \|Mask:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
 	echo "NIF=$NIF IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
 
-	/sbin/modprobe tun
-	/sbin/modprobe bridge
+	$modprobe tun
+	$modprobe bridge
 
-	echo "Changing owner of /dev/net/tun..."
-	[ -c /dev/net/tun ] && chown $USER /dev/net/tun
+	# echo "Changing owner of /dev/net/tun..."
+	# [ -c /dev/net/tun ] && chown $USER /dev/net/tun
 
 	echo "Setting up bridge $BRIDGE..."
-	brctl addbr $BRIDGE
-	brctl stp $BRIDGE off
-	brctl setfd $BRIDGE 1
-	brctl sethello $BRIDGE 1
+	$brctl addbr $BRIDGE
+	$brctl stp $BRIDGE off
+	$brctl setfd $BRIDGE 1
+	$brctl sethello $BRIDGE 1
 
 	# add NIF to the bridge
-	ifconfig $NIF 0.0.0.0
-	brctl addif $BRIDGE $NIF 2>&1 | grep -qi "invalid"
-        if [ $? -eq 0 ]; then
+	$ifconfig $NIF 0.0.0.0
+	$brctl addif $BRIDGE $NIF
+        if [ $? -ne 0 ]; then
         	echo -n "... ERROR: wrong NIF type";
 		failure; echo
 
-		brctl delbr $BRIDGE
+		$brctl delbr $BRIDGE
 		rm -f $LOCK
-		ifconfig $NIF $IP
+		$ifconfig $NIF $IP
 		exit 1 
         fi
 	echo
@@ -105,12 +117,12 @@ case "$1" in
 	# add all the tap devices
 	for tap in $TAPS; do
 		start_tap $tap
-		brctl addif $BRIDGE $tap
-		/sbin/ifconfig $tap 0.0.0.0 promisc up
+		$brctl addif $BRIDGE $tap
+		$ifconfig $tap 0.0.0.0 promisc up
 	done
 
 	# setup the bridge parameters
-	/sbin/ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST
+	$ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST
 
 	# ifconfig needs to be called twice here after some delay
 	# I don't really know what is going on :(
@@ -118,16 +130,16 @@ case "$1" in
 	# are cleared 8-| 
 	sleep 1
 
-	/sbin/ifconfig $NIF 0.0.0.0 promisc up
+	$ifconfig $NIF 0.0.0.0 promisc up
 
 	# bring the bridge up
-	/sbin/ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST up
+	$ifconfig $BRIDGE $IP netmask $NETMASK broadcast $BCAST up
 	if [ $DEF_ROUTE -eq 0 ]; then
-	   /sbin/route add default dev $BRIDGE
 	   echo "adding normal route"
+	   $route add default dev $BRIDGE
 	else
-	   /sbin/route add default dev $BRIDGE gw $DEFGW
 	   echo "adding gateway route"
+	   $route add default dev $BRIDGE gw $DEFGW
 	fi
 
 	echo
@@ -146,9 +158,9 @@ case "$1" in
         fi
 	echo
 
-	IP=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($2, 6)}')
-	BCAST=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($3, 7)}')
-	NETMASK=$(/sbin/ifconfig $BRIDGE 2>/dev/null| awk '/inet addr:/ {print substr($4, 6)}')
+	IP=$($ifconfig $BRIDGE 2>/dev/null| sed -n 's/^.*\(inet \|inet addr:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
+	BCAST=$($ifconfig $BRIDGE 2>/dev/null| sed -n 's/^.*\(broadcast \|Bcast:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
+	NETMASK=$($ifconfig $BRIDGE 2>/dev/null| sed -n 's/^.*\(netmask \|Mask:\)[^0-9]*\([0-9][.0-9]*\).*$/\2/p')
 
 	# if not slept long enough then the IP, NETMASK and BCAST setting
 	# are not fetched properly 8-| 
@@ -157,24 +169,24 @@ case "$1" in
 	echo "NIF=$NIF IP=$IP, BCAST=$BCAST, NETMASK=$NETMASK, DEFGW=$DEFGW"
 
 	# bring the previous network nif back
-	/sbin/ifconfig $NIF $IP netmask $NETMASK broadcast $BCAST up
+	$ifconfig $NIF $IP netmask $NETMASK broadcast $BCAST up
 	if [ $DEF_ROUTE -eq 0 ]; then
-	   /sbin/route add default dev $NIF
+	   $route add default dev $NIF
 	else
-	   /sbin/route add default dev $NIF gw $DEFGW
+	   $route add default dev $NIF gw $DEFGW
 	fi
 
 
 	# get the bridge down
-	/sbin/ifconfig $BRIDGE down
+	$ifconfig $BRIDGE down
 
 	for tap in $TAPS; do
-		brctl delif $BRIDGE $tap
-		/sbin/ifconfig $tap down
+		$brctl delif $BRIDGE $tap
+		$ifconfig $tap down
 		echo
-		tunctl -d $tap
+		$tunctl -d $tap
 	done
-	brctl delbr $BRIDGE
+	$brctl delbr $BRIDGE
 	rm -f $LOCK
 	echo
 	;;
@@ -183,7 +195,16 @@ case "$1" in
         $0 start
         ;;
   status)
-        status arabridge
+	if $brctl show $BRIDGE 2>/dev/null; then
+		NIF=$(cat $LOCK 2>/dev/null)
+		if [ -z "$NIF" ]; then
+		        status up
+		else
+		        status "up on $NIF"
+		fi
+	else
+	        status down
+	fi
         ;;
   *)
 	echo "Usage: arabridge {start|stop|restart|status}"
@@ -191,4 +212,3 @@ case "$1" in
 esac
 
 exit 0
-
