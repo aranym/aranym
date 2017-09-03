@@ -273,6 +273,7 @@ bool BPFEthernetHandler::open()
 	 ******************************************************/
 	// associate with specified interface
 	struct ifreq ifr;
+	memset(&ifr, 0, sizeof(ifr));
 	safe_strncpy(ifr.ifr_name, dev_name, IFNAMSIZ);
 	if (debug)
 	{

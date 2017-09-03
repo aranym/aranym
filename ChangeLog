@@ -1,4 +1,8 @@
 2017/09/03 - Thorsten
+Prevent "Invalid argument" when attaching the bpf interface
+
+
+2017/09/03 - Thorsten
 Fix typo in last commit
 
 
