@@ -26,56 +26,55 @@
 #include "tools.h" // safe_strncpy
 #include "dlgNetwork.h"
 
-static char eth0_tunnel[16];
-static char eth0_host_ip[16];
-static char eth0_atari_ip[16];
-static char eth0_netmask[16];
-static char eth0_mac_addr[18];
-static char eth1_tunnel[16];
-static char eth1_host_ip[16];
-static char eth1_atari_ip[16];
-static char eth1_netmask[16];
-static char eth1_mac_addr[18];
+#define BRIDGE_FILTER_NONE  0
+#define BRIDGE_FILTER_MCAST 1
+#define BRIDGE_FILTER_IP    2
+#define BRIDGE_FILTER_MAC   3
+
+static struct {
+	bx_ethernet_options_t config;
+	bool bridge;
+	bool debug;
+	int filter_type;
+} eth[2];
 
 #define SDLGUI_INCLUDE_NETWORKDLG
 #include "sdlgui.sdl"
 
+
+void DlgNetwork::init_options(int ethX, int type)
+{
+	eth[ethX].config = bx_options.ethernet[ethX];
+	eth[ethX].debug = strstr(eth[ethX].config.type, "debug") != NULL;
+	eth[ethX].bridge = strstr(eth[ethX].config.type, "bridge") != NULL;
+
+	dlg[type + 0].state = 0; /* ETH0_TYP_NONE */
+	dlg[type + 1].state = 0; /* ETH0_TYP_PTP */
+	dlg[type + 2].state = 0; /* ETH0_TYP_BRIDGE */
+
+	if (strlen(eth[ethX].config.type) == 0 || strcmp(eth[ethX].config.type, "none") == 0)
+		dlg[type + 0].state = SG_SELECTED;
+	else if (eth[ethX].bridge)
+		dlg[type + 2].state = SG_SELECTED;
+	else
+		dlg[type + 1].state = SG_SELECTED;
+
+	if (strstr(eth[ethX].config.type, "nofilter") != NULL)
+		eth[ethX].filter_type = BRIDGE_FILTER_NONE;
+	else if (strstr(eth[ethX].config.type, "mcast") != NULL)
+		eth[ethX].filter_type = BRIDGE_FILTER_MCAST;
+	else if (strstr(eth[ethX].config.type, "ip") != NULL)
+		eth[ethX].filter_type = BRIDGE_FILTER_IP;
+	else
+		eth[ethX].filter_type = BRIDGE_FILTER_MAC;
+}
+
 DlgNetwork::DlgNetwork(SGOBJ *dlg)
 	: Dialog(dlg)
 {
-	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
-	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
-
 	// init
-	dlg[ETH0_TYP_NONE].state = 0;
-	dlg[ETH0_TYP_PTP].state = 0;
-	dlg[ETH0_TYP_BRIDGE].state = 0;
-	if (strlen(eth0->type) == 0)
-		dlg[ETH0_TYP_NONE].state = SG_SELECTED;
-	else if (strcasecmp(eth0->type, "bridge") == 0)
-		dlg[ETH0_TYP_BRIDGE].state = SG_SELECTED;
-	else
-		dlg[ETH0_TYP_PTP].state = SG_SELECTED;
-	safe_strncpy(eth0_tunnel, eth0->tunnel, sizeof(eth0_tunnel));
-	safe_strncpy(eth0_host_ip, eth0->ip_host, sizeof(eth0_host_ip));
-	safe_strncpy(eth0_atari_ip, eth0->ip_atari, sizeof(eth0_atari_ip));
-	safe_strncpy(eth0_netmask, eth0->netmask, sizeof(eth0_netmask));
-	safe_strncpy(eth0_mac_addr, eth0->mac_addr, sizeof(eth0_mac_addr));
-
-	dlg[ETH1_TYP_NONE].state = 0;
-	dlg[ETH1_TYP_PTP].state = 0;
-	dlg[ETH1_TYP_BRIDGE].state = 0;
-	if (strlen(eth1->type) == 0)
-		dlg[ETH1_TYP_NONE].state = SG_SELECTED;
-	else if (strcasecmp(eth1->type, "bridge") == 0)
-		dlg[ETH1_TYP_BRIDGE].state = SG_SELECTED;
-	else
-		dlg[ETH1_TYP_PTP].state = SG_SELECTED;
-	safe_strncpy(eth1_tunnel, eth1->tunnel, sizeof(eth1_tunnel));
-	safe_strncpy(eth1_host_ip, eth1->ip_host, sizeof(eth1_host_ip));
-	safe_strncpy(eth1_atari_ip, eth1->ip_atari, sizeof(eth1_atari_ip));
-	safe_strncpy(eth1_netmask, eth1->netmask, sizeof(eth1_netmask));
-	safe_strncpy(eth1_mac_addr, eth1->mac_addr, sizeof(eth1_mac_addr));
+	init_options(0, ETH0_TYP_NONE);
+	init_options(1, ETH1_TYP_NONE);
 }
 
 DlgNetwork::~DlgNetwork()
@@ -98,36 +97,42 @@ int DlgNetwork::processDialog(void)
 	return retval;
 }
 
+void DlgNetwork::save_options(int ethX, int type)
+{
+	eth[ethX].bridge = (dlg[type + 2].state & SG_SELECTED);
+	if (dlg[type + 0].state & SG_SELECTED) {
+		eth[ethX].config.type[0] = '\0';
+	}
+	else {
+		safe_strncpy(eth[ethX].config.type, eth[ethX].bridge ? "bridge" : "ptp", sizeof(eth[ethX].config.type));
+		if (eth[ethX].debug)
+			safe_strncat(eth[ethX].config.type, " debug", sizeof(eth[ethX].config.type));
+		if (eth[ethX].bridge)
+		{
+			switch (eth[ethX].filter_type)
+			{
+			case BRIDGE_FILTER_NONE:
+				safe_strncat(eth[ethX].config.type, " nofilter", sizeof(eth[ethX].config.type));
+				break;
+			case BRIDGE_FILTER_MCAST:
+				safe_strncat(eth[ethX].config.type, " mcast", sizeof(eth[ethX].config.type));
+				break;
+			case BRIDGE_FILTER_IP:
+				safe_strncat(eth[ethX].config.type, " ip", sizeof(eth[ethX].config.type));
+				break;
+			default:
+			case BRIDGE_FILTER_MAC:
+				break;
+			}
+		}
+	}
+	bx_options.ethernet[ethX] = eth[ethX].config;
+}
+
 void DlgNetwork::confirm(void)
 {
-	bx_ethernet_options_t *eth0 = &bx_options.ethernet[0];
-	bx_ethernet_options_t *eth1 = &bx_options.ethernet[1];
-
-	if (dlg[ETH0_TYP_NONE].state & SG_SELECTED) {
-		*eth0->type = '\0';
-	}
-	else {
-		bool eth0_bridge = (dlg[ETH0_TYP_BRIDGE].state & SG_SELECTED);
-		safe_strncpy(eth0->type, eth0_bridge ? "bridge" : "p-t-p", sizeof(eth0->type));
-	}
-	safe_strncpy(eth0->tunnel, eth0_tunnel, sizeof(eth0->tunnel));
-	safe_strncpy(eth0->ip_host, eth0_host_ip, sizeof(eth0->ip_host));
-	safe_strncpy(eth0->ip_atari, eth0_atari_ip, sizeof(eth0->ip_atari));
-	safe_strncpy(eth0->netmask, eth0_netmask, sizeof(eth0->netmask));
-	safe_strncpy(eth0->mac_addr, eth0_mac_addr, sizeof(eth0->mac_addr));
-
-	if (dlg[ETH1_TYP_NONE].state & SG_SELECTED) {
-		*eth1->type = '\0';
-	}
-	else {
-		bool eth1_bridge = (dlg[ETH1_TYP_BRIDGE].state & SG_SELECTED);
-		safe_strncpy(eth1->type, eth1_bridge ? "bridge" : "p-t-p", sizeof(eth1->type));
-	}
-	safe_strncpy(eth1->tunnel, eth1_tunnel, sizeof(eth1->tunnel));
-	safe_strncpy(eth1->ip_host, eth1_host_ip, sizeof(eth1->ip_host));
-	safe_strncpy(eth1->ip_atari, eth1_atari_ip, sizeof(eth1->ip_atari));
-	safe_strncpy(eth1->netmask, eth1_netmask, sizeof(eth1->netmask));
-	safe_strncpy(eth1->mac_addr, eth1_mac_addr, sizeof(eth1->mac_addr));
+	save_options(0, ETH0_TYP_NONE);
+	save_options(1, ETH1_TYP_NONE);
 }
 
 Dialog *DlgNetworkOpen(void)

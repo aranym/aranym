@@ -27,7 +27,9 @@ class DlgNetwork: public Dialog
 {
 	private:
 		void confirm(void);
- 
+        void init_options(int ethX, int type);
+        void save_options(int ethX, int type);
+        
 	public:
 		DlgNetwork(SGOBJ *dlg);
 		~DlgNetwork();

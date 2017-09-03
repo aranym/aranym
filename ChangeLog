@@ -1,4 +1,13 @@
 2017/09/03 - Thorsten
+Preserve options in the type of the ethernet interface
+
+The "bridge" mode for MacOSX has some options for the filter
+to be applied (nofilter, ip, or mcast). Preserve those when
+using the GUI dialog.
+(currently a workaround only, those options should be
+configurable there, too)
+
+2017/09/03 - Thorsten
 Make example arabridge script a bit more robust
 when parsing ifconfig output
 

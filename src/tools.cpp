@@ -43,3 +43,13 @@ char *safe_strncpy(char *dest, const char *src, size_t size)
 	}
 	return dest;
 }
+
+char *safe_strncat(char *dest, const char *src, size_t size)
+{
+	if (dest == NULL) return NULL;
+	if (size > 0) {
+		if (src && (strlen(src) + strlen(dest)) < size)
+			strcpy(dest + strlen(dest), src);
+	}
+	return dest;
+}

@@ -87,7 +87,7 @@ bool TunTapEthernetHandler::open() {
 	}
 
 	// if 'bridge' mode then we are done
-	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 )
+	if ( strstr(bx_options.ethernet[ethX].type, "bridge") != NULL )
 		return true;
 
 	int pid = fork();
@@ -183,7 +183,7 @@ int TunTapEthernetHandler::send(const uint8 *buf, int len) {
  */
 int TunTapEthernetHandler::tapOpenOld(char *dev)
 {
-    char tapname[14];
+    char tapname[sizeof(bx_options.ethernet[0].tunnel) + 5];
     int i, fd;
 
     if( *dev ) {

@@ -218,7 +218,7 @@ bool BPFEthernetHandler::open()
 	if ((sockfd = fd_setup_server()) < 0)
 	{
 		fprintf(stderr, "receiver: failed to create socket.\n");
-		return fd;
+		return false;
 	}
 
 	/******************************************************

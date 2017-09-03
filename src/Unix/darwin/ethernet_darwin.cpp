@@ -164,7 +164,7 @@ bool TunTapEthernetHandler::open() {
 	}
 
 	// if 'bridge' mode then we are done
-	if ( strcmp(bx_options.ethernet[ethX].type, "bridge") == 0 ) {
+	if ( strstr(bx_options.ethernet[ethX].type, "bridge") != NULL ) {
 		panicbug("TunTap(%d): Bridge mode currently not supported '%s'", ethX, devName);
 		if (ethX == MAX_ETH - 1) closeAuthorizationContext();
 		return false;	
@@ -256,7 +256,7 @@ int TunTapEthernetHandler::send(const uint8 *buf, int len) {
  */
 int TunTapEthernetHandler::tapOpenOld(char *dev)
 {
-    char tapname[14];
+    char tapname[bx_options.ethernet[0].tunnel) + 5];
     int i, fd;
 
     if( *dev ) {
