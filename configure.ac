@@ -36,6 +36,10 @@ AH_TOP([
 #ifndef __ARANYM_CONFIG_H__
 #define __ARANYM_CONFIG_H__
 
+#ifdef __linux__
+#include "linux/libcwrap.h"
+#endif
+
 ])
 
 dnl Options.

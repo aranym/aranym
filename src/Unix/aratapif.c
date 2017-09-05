@@ -32,7 +32,9 @@
  *          20010404 - Arnaldo Carvalho de Melo, use setlocale
  */
 
-//#include <features.h>
+#ifdef __linux__
+#include "linux/libcwrap.h"
+#endif
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>

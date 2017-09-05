@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# This scripts lets you check which minimum GLIBC version an executable requires.
+# Simply run './glibc-check.sh path/to/your/binary'
+#
+# You can set `MAX_VER` however low you want, although I (fasterthanlime)
+# feel like `2.13` is a good target (For reference, Ubuntu 12.04 has GLIBC 2.15)
+MAX_VER=2.11
+
+BINARY="$1"
+
+# Version comparison function in bash
+vermake() {
+    local i
+    local IFS=.
+    local ver
+    set -- $1
+    ver=0
+    for i in "$1" "$2" "$3"; do
+    	if [ -z "$i" ]; then i=0; fi
+    	ver=`expr "$ver" "*" 1000 "+" "$i"`
+    done
+    echo $ver
+}
+
+vercomp () {
+    if [ "$1" = "$2" ]
+    then
+        return 0
+    fi
+    local ver1=`vermake $1`
+    local ver2=`vermake $2`
+    if [ $ver1 -gt $ver2 ]; then return 1; fi
+    if [ $ver1 -lt $ver2 ]; then return 2; fi
+    return 0
+}
+
+IFS="
+"
+VERS=`objdump -T "$BINARY" | grep GLIBC_ | sed 's/.*GLIBC_\([.0-9]*\).*/\1/g' | sort -u`
+
+for VER in $VERS; do
+  vercomp $VER $MAX_VER
+  COMP=$?
+  if [ $COMP -eq 1 ]; then
+    echo "Error! ${BINARY} requests GLIBC ${VER}, which is higher than target ${MAX_VER}"
+    echo "Affected symbols:"
+    objdump -T "$BINARY" | grep -F GLIBC_${VER}
+    echo "Looking for symbols in libraries..."
+    for LIBRARY in `ldd "$BINARY" | cut -d ' ' -f 3`; do
+      echo "$LIBRARY"
+      objdump -T "$LIBRARY" | grep -F GLIBC_${VER}
+    done
+    exit 1
+  else
+    echo "Found version ${VER}"
+  fi
+done
