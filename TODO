@@ -3,13 +3,7 @@ Things to do eventually
 
 Fix bugs:
 - "-d" cmdline option doesn't work (doesn't win over config file settings)
-- [HOSTFS] settings into SETUP GUI ASAP
 - [ETHx] update with DNS IP address (requires FreeMiNT update)
-- colon as filename case sensitivity flag in HostFS - see Xavier's msg in ML
-  Solution: come up with URL like paths: "file://path?parameter=value"
-  where parameter is e.g. CaseSensitivity.
-  Thanks to file:// scheme this should even be backward compatible.
-- correct postal address of GPL
 - don't store empty config entries (ETH2,3,4; DISK2,3,4,5,6,7; HOSFSA-Z, ..)
 
 TODO in keyboard support:
@@ -49,8 +43,6 @@ that particular programmer but rather who is author of the idea :-)
          methods.
 
 - patrice: rework dsp thread synchronization. It seems it may hang sometimes.
-
-- patrice: full automake/autoconf support.
 
 - patrice: C++-ize the input layer, get rid of various keytables hacks.
 
