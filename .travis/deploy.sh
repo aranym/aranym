@@ -40,7 +40,7 @@ echo "See result at ${BINTRAY_HOST}/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
 
 # See https://bintray.com/docs/api for a description of the REST API
 
-CURL="curl -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H Accept:application/json -w \n"
+CURL="curl --silent -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H Accept:application/json -w \n"
 
 cd "$OUT"
 
