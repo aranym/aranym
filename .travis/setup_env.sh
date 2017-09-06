@@ -7,17 +7,17 @@ export PROJECT=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 2)
 export SHORT_ID=$(git log -n1 --format="%h")
 export PROJECT_LOWER=${PROJECT,,}
 
-CPU=unknown
+CPU_TYPE=unknown
 if echo "" | gcc -dM  -E - | grep -q __x86_64__; then
-	CPU=x86_64
+	CPU_TYPE=x86_64
 fi
 if echo "" | gcc -dM  -E - | grep -q __i386__; then
-	CPU=i386
+	CPU_TYPE=i386
 fi
 if echo "" | gcc -dM  -E - | grep -q "__arm.*__"; then
-	CPU=arm
+	CPU_TYPE=arm
 fi
-export CPU
+export CPU_TYPE
 
 case "$TRAVIS_OS_NAME" in
 linux)
@@ -36,27 +36,27 @@ linux)
 	case $release_id in
 	openSUSE)
 		VENDOR=${release_id}
-		archive_tag=-suse${suse_version}-${CPU}
+		archive_tag=-suse${suse_version}-${CPU_TYPE}
 		;;
 	Debian | Ubuntu)
 		VENDOR=${release_id}
-		archive_tag=-${release_codename}-${CPU}
+		archive_tag=-${release_codename}-${CPU_TYPE}
 		;;
 	LinuxMint)
 		VENDOR=${release_id}
-		archive_tag=-linuxmint${release_version%%.*}-${CPU}
+		archive_tag=-linuxmint${release_version%%.*}-${CPU_TYPE}
 		;;
 	Mandriva | OpenMandrivaLinux)
 		VENDOR=${release_id}
-		archive_tag=-${release_codename}-${CPU}
+		archive_tag=-${release_codename}-${CPU_TYPE}
 		;;
 	RHEL | CentOS)
 		VENDOR=${release_id}
-		archive_tag=-el${release_version%%.*}-${CPU}
+		archive_tag=-el${release_version%%.*}-${CPU_TYPE}
 		;;
 	Fedora)
 		VENDOR=${release_id}
-		archive_tag=-fedora${release_version}-${CPU}
+		archive_tag=-fedora${release_version}-${CPU_TYPE}
 		;;
 	*)
 		VENDOR="unknown"

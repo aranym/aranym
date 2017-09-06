@@ -506,6 +506,14 @@ aratapif$(EXEEXT): $(aratapif_OBJECTS) $(aratapif_DEPENDENCIES) $(EXTRA_aratapif
 	rm -f ../$@
 	cp $@ ../$@
 
+install-exec-hook:
+if USE_JIT
+	cd "$(DESTDIR)$(bindir)" && mv aranym$(EXEEXT) aranym-jit$(EXEEXT)
+endif
+if FULLMMU
+	cd "$(DESTDIR)$(bindir)" && mv aranym$(EXEEXT) aranym-mmu$(EXEEXT)
+endif
+
 
 $(APP_BUNDLE): $(APP)
 	rm -rf $(APP_BUNDLE)

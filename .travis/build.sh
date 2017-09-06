@@ -4,10 +4,10 @@
 # actual build script
 # most of the steps are ported from the aranym.spec file
 #
-TMP="${PWD}/.travis/tmp"
+BUILDROOT="${PWD}/.travis/tmp"
 OUT="${PWD}/.travis/out"
 
-mkdir -p "${TMP}"
+mkdir -p "${BUILDROOT}"
 mkdir -p "${OUT}"
 
 unset CC CXX
@@ -67,27 +67,18 @@ linux)
 	make depend
 	make || exit 1
 	
-	make DESTDIR="$TMP" install-strip || exit 1
-	sudo chown root "$TMP${bindir}/aratapif"
-	sudo chgrp root "$TMP${bindir}/aratapif"
-	sudo chmod 4755 "$TMP${bindir}/aratapif"
+	make DESTDIR="$BUILDROOT" install-strip || exit 1
+	sudo chown root "$BUILDROOT${bindir}/aratapif"
+	sudo chgrp root "$BUILDROOT${bindir}/aratapif"
+	sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
 	if $build_jit; then
-	install -s -m 755 jit/src/aranym "$TMP${bindir}/aranym-jit"
+	install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
 	fi
-	install -s -m 755 mmu/src/aranym "$TMP${bindir}/aranym-mmu"
-	for s in 32 48; do
-	  install -d "$TMP${icondir}${s}x${s}/apps/"
-	  install -m 644 contrib/icon-$s.png "$TMP${icondir}${s}x${s}/apps/aranym.png"
-	done
-	
-	install -d "$TMP${datadir}/applications"
-	for name in aranym aranym-jit aranym-mmu; do
-		install -m 644 contrib/$name.desktop "$TMP/${datadir}/applications/$name.desktop"
-	done
+	install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
 
 	ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 	(
-	cd "${TMP}"
+	cd "${BUILDROOT}"
 	tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
 	;;

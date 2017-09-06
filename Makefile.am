@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-datadir = @datadir@/aranym
+pkgdatadir = @datadir@/aranym
 
 # Unix makefile for ARAnyM
 # Inspired in BasiliskII's Makefile
@@ -37,7 +37,7 @@ version_date.h: $(top_srcdir)/ChangeLog
 built_sources: $(BUILT_SOURCES)
 
 install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(datadir) $(DESTDIR)$(datadir)/atari $(DESTDIR)$(datadir)/atari/hostfs $(DESTDIR)$(datadir)/atari/nfcdrom $(DESTDIR)$(datadir)/atari/nfjpeg $(DESTDIR)$(datadir)/atari/nfosmesa $(DESTDIR)$(datadir)/atari/network $(DESTDIR)$(datadir)/atari/tools $(DESTDIR)$(datadir)/atari/sound $(DESTDIR)$(docdir)
+	$(mkinstalldirs) $(DESTDIR)$(bindir) $(DESTDIR)$(man1dir) $(DESTDIR)$(pkgdatadir) $(DESTDIR)$(pkgdatadir)/atari $(DESTDIR)$(pkgdatadir)/atari/hostfs $(DESTDIR)$(pkgdatadir)/atari/nfcdrom $(DESTDIR)$(pkgdatadir)/atari/nfjpeg $(DESTDIR)$(pkgdatadir)/atari/nfosmesa $(DESTDIR)$(pkgdatadir)/atari/network $(DESTDIR)$(pkgdatadir)/atari/tools $(DESTDIR)$(pkgdatadir)/atari/sound $(DESTDIR)$(docdir)
 	$(INSTALL_DATA) $(top_srcdir)/ChangeLog $(DESTDIR)$(docdir)/changelog
 	$(INSTALL_DATA) $(top_srcdir)/TODO $(DESTDIR)$(docdir)/TODO
 	$(INSTALL_DATA) $(top_srcdir)/AUTHORS $(DESTDIR)$(docdir)/AUTHORS
@@ -48,20 +48,35 @@ install-data-local:
 	$(INSTALL_DATA) $(top_srcdir)/BUGS $(DESTDIR)$(docdir)/BUGS
 	$(INSTALL_DATA) $(top_srcdir)/INSTALL $(DESTDIR)$(docdir)/INSTALL
 	$(INSTALL_DATA) $(top_srcdir)/doc/config $(DESTDIR)$(docdir)/config
-	$(INSTALL_DATA) $(top_srcdir)/atari/newdesk.inf $(DESTDIR)$(datadir)/atari/newdesk.inf
-	$(INSTALL_DATA) $(top_srcdir)/atari/mmusetup.cnf $(DESTDIR)$(datadir)/atari/mmusetup.cnf
-	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys $(DESTDIR)$(datadir)/atari/hostfs/bdconfig.sys
-	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README $(DESTDIR)$(datadir)/atari/hostfs/README
-	$(INSTALL_DATA) $(top_srcdir)/atari/nfosmesa/README $(DESTDIR)$(datadir)/atari/nfosmesa/README
-	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(datadir)/atari/network/eth0-config.sh
-	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README $(DESTDIR)$(datadir)/atari/network/README
-	$(INSTALL) $(top_srcdir)/tools/arabridge $(DESTDIR)$(datadir)/arabridge
-	$(INSTALL) $(top_srcdir)/tools/floppy.sh $(DESTDIR)$(datadir)/floppy.sh
-	$(INSTALL_DATA) $(top_srcdir)/atari/tools/README $(DESTDIR)$(datadir)/atari/tools/README
-	$(INSTALL_DATA) $(top_srcdir)/atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(datadir)/atari/tools/pc101us.kbd.bz2
-	$(INSTALL_DATA) $(top_srcdir)/atari/sound/README $(DESTDIR)$(datadir)/atari/sound/README
-	$(INSTALL_DATA) $(top_srcdir)/data/wm_icon.bmp $(DESTDIR)$(datadir)/wm_icon.bmp
-	$(INSTALL_DATA) $(top_srcdir)/data/logo.bmp $(DESTDIR)$(datadir)/logo.bmp
+	$(INSTALL_DATA) $(top_srcdir)/atari/newdesk.inf $(DESTDIR)$(pkgdatadir)/atari/newdesk.inf
+	$(INSTALL_DATA) $(top_srcdir)/atari/mmusetup.cnf $(DESTDIR)$(pkgdatadir)/atari/mmusetup.cnf
+	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys $(DESTDIR)$(pkgdatadir)/atari/hostfs/bdconfig.sys
+	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README $(DESTDIR)$(pkgdatadir)/atari/hostfs/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/nfosmesa/README $(DESTDIR)$(pkgdatadir)/atari/nfosmesa/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(pkgdatadir)/atari/network/eth0-config.sh
+	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README $(DESTDIR)$(pkgdatadir)/atari/network/README
+	$(INSTALL) $(top_srcdir)/tools/arabridge $(DESTDIR)$(pkgdatadir)/arabridge
+	$(INSTALL) $(top_srcdir)/tools/floppy.sh $(DESTDIR)$(pkgdatadir)/floppy.sh
+	$(INSTALL_DATA) $(top_srcdir)/atari/tools/README $(DESTDIR)$(pkgdatadir)/atari/tools/README
+	$(INSTALL_DATA) $(top_srcdir)/atari/tools/pc101us.kbd.bz2 $(DESTDIR)$(pkgdatadir)/atari/tools/pc101us.kbd.bz2
+	$(INSTALL_DATA) $(top_srcdir)/atari/sound/README $(DESTDIR)$(pkgdatadir)/atari/sound/README
+	$(INSTALL_DATA) $(top_srcdir)/data/wm_icon.bmp $(DESTDIR)$(pkgdatadir)/wm_icon.bmp
+	$(INSTALL_DATA) $(top_srcdir)/data/logo.bmp $(DESTDIR)$(pkgdatadir)/logo.bmp
+	for s in 32 48; do \
+		$(mkinstalldirs) "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/"; \
+		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym.png"; \
+		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym-jit.png"; \
+		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym-mmu.png"; \
+	done
+	$(mkinstalldirs) "${DESTDIR}${datadir}/pixmaps"
+	rm -f "${DESTDIR}${datadir}/pixmaps/aranym"*.png
+	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym.png"
+	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym-jit.png"
+	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym-mmu.png"
+	$(mkinstalldirs) "${DESTDIR}${datadir}/applications"
+	for name in aranym aranym-jit aranym-mmu; do \
+		$(INSTALL_DATA) "$(top_srcdir)/contrib/$${name}.desktop" "${DESTDIR}${datadir}/applications/$${name}.desktop"; \
+	done
 
 uninstall-local:
 	rm -f $(DESTDIR)$(docdir)/changelog
@@ -74,30 +89,38 @@ uninstall-local:
 	rm -f $(DESTDIR)$(docdir)/BUGS
 	rm -f $(DESTDIR)$(docdir)/INSTALL
 	rm -f $(DESTDIR)$(docdir)/config
-	rm -f $(DESTDIR)$(datadir)/atari/newdesk.inf
-	rm -f $(DESTDIR)$(datadir)/atari/mmusetup.cnf
-	rm -f $(DESTDIR)$(datadir)/atari/hostfs/bdconfig.sys
-	rm -f $(DESTDIR)$(datadir)/atari/hostfs/README
-	rm -f $(DESTDIR)$(datadir)/atari/nfosmesa/README
-	rm -f $(DESTDIR)$(datadir)/atari/network/eth0-config.sh
-	rm -f $(DESTDIR)$(datadir)/atari/network/README
-	rm -f $(DESTDIR)$(datadir)/arabridge
-	rm -f $(DESTDIR)$(datadir)/floppy.sh
-	rm -f $(DESTDIR)$(datadir)/atari/tools/README
-	rm -f $(DESTDIR)$(datadir)/atari/tools/pc101us.kbd.bz2
-	rm -f $(DESTDIR)$(datadir)/atari/sound/README
-	rm -f $(DESTDIR)$(datadir)/wm_icon.bmp
-	rm -f $(DESTDIR)$(datadir)/logo.bmp
-	rm -f $(DESTDIR)$(datadir)/logo.png
-	rmdir $(DESTDIR)$(datadir)/atari/hostfs
-	rmdir $(DESTDIR)$(datadir)/atari/nfcdrom
-	rmdir $(DESTDIR)$(datadir)/atari/nfjpeg
-	rmdir $(DESTDIR)$(datadir)/atari/nfosmesa
-	rmdir $(DESTDIR)$(datadir)/atari/network
-	rmdir $(DESTDIR)$(datadir)/atari/tools
-	rmdir $(DESTDIR)$(datadir)/atari/sound
-	rmdir $(DESTDIR)$(datadir)/atari
-	rmdir $(DESTDIR)$(datadir)
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/newdesk.inf
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/mmusetup.cnf
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/hostfs/bdconfig.sys
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/hostfs/README
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/nfosmesa/README
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/network/eth0-config.sh
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/network/README
+	rm -f $(DESTDIR)$(pkgdatadir)/arabridge
+	rm -f $(DESTDIR)$(pkgdatadir)/floppy.sh
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/tools/README
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/tools/pc101us.kbd.bz2
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/sound/README
+	rm -f $(DESTDIR)$(pkgdatadir)/wm_icon.bmp
+	rm -f $(DESTDIR)$(pkgdatadir)/logo.bmp
+	rm -f $(DESTDIR)$(pkgdatadir)/logo.png
+	rm -f $(DESTDIR)$(pkgdatadir)/logo.png
+	rm -f $(DESTDIR)$(datadir)/icons/hicolor/*/apps/aranym.png
+	rm -f $(DESTDIR)$(datadir)/applications/aranym*.desktop
+	rm -f $(DESTDIR)$(datadir)/pixmaps/aranym*.png
+	-rmdir $(DESTDIR)$(datadir)/icons/hicolor/*/apps
+	-rmdir $(DESTDIR)$(datadir)/icons/hicolor/*
+	-rmdir $(DESTDIR)$(datadir)/icons/hicolor
+	-rmdir $(DESTDIR)$(datadir)/icons
+	-rmdir $(DESTDIR)$(datadir)/pixmaps
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/hostfs
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/nfcdrom
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/nfjpeg
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/nfosmesa
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/network
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/tools
+	rmdir $(DESTDIR)$(pkgdatadir)/atari/sound
+	rmdir $(DESTDIR)$(pkgdatadir)/atari
 	-rmdir $(DESTDIR)$(docdir)
 	-rmdir $(DESTDIR)$(man1dir)
 
