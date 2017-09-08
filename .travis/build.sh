@@ -81,6 +81,13 @@ linux)
 	cd "${BUILDROOT}"
 	tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
+	
+	(
+		export top_srcdir=`pwd`
+		cd appimage
+		BINTRAY_USER=aranym BINTRAY_REPO=aranym-files ./build.sh
+	)
+		
 	;;
 
 osx)
@@ -101,7 +108,7 @@ export isrelease
 if $isrelease; then
 	make dist
 	for ext in gz bz2 xz lz; do
-		ARCHIVE="${PROJECT_LOWER}-${VERSION}.tar.${ext}"
-		test -f "${ARCHIVE}" && mv "${ARCHIVE}" "$OUT"
+		SRCARCHIVE="${PROJECT_LOWER}-${VERSION}.tar.${ext}"
+		test -f "${SRCARCHIVE}" && mv "${SRCARCHIVE}" "$OUT"
 	done
 fi

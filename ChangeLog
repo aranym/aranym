@@ -1,3 +1,7 @@
+2017/09/08 - Thorsten
+Add scripts for AppImage creation
+
+
 2017/09/06 - Thorsten
 Move installation of *.desktop and icons to Makefile
 

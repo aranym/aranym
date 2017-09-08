@@ -14,6 +14,8 @@ linux)
 		libsdl-image1.2-dev \
 		libusb-dev \
 		libusb-1.0-0-dev \
+		libudev-dev \
+		zsync \
 		
 	;;
 

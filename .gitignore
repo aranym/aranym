@@ -51,3 +51,7 @@ src/Unix/MacOSX/external
 *.pbxuser
 .directory
 .idea
+*.AppImage
+*.AppDir
+/out
+appimage/appimagetool

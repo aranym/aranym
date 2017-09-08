@@ -124,7 +124,7 @@ uninstall-local:
 	-rmdir $(DESTDIR)$(docdir)
 	-rmdir $(DESTDIR)$(man1dir)
 
-DISTCLEANFILES = config.cache config.log config.status config.h version_date.h
+DISTCLEANFILES = config.cache config.log config.status config.h version_date.h appimage/appimagetool
 
 # remove the excutables copied from the src/Makefile.
 # previously, the executables where built in the top level
@@ -137,11 +137,28 @@ mrproper: distclean
 	rm -rf $(top_srcdir)/autom4te.cache
 
 bindist: all
+	rm -rf tmpdist
 	$(MAKE) DESTDIR=tmpdist install
 	chmod -R a+r tmpdist
 	cd tmpdist && GZIP=--best tar chozf ../$(PACKAGE_TARNAME).tar.gz *
 	rm -rf tmpdist
 
+appimage::
+	rm -rf tmpdist
+	test "$(srcdir)" = "." || test -d appimage || mkdir appimage
+	unset CDPATH && \
+	mkdir tmpdist && \
+	DESTDIR=`(cd tmpdist; pwd)` && \
+	$(MAKE) DESTDIR="$$DESTDIR" install-strip && \
+	cd appimage && \
+	CPU_TYPE="$(CPU_TYPE)" \
+	VERSION="$(VERSION)" \
+	top_srcdir="$(abs_top_srcdir)" \
+	BUILDROOT="$$DESTDIR" \
+	BINTRAY_USER=aranym BINTRAY_REPO=aranym-files \
+	$(SHELL) "$(abs_top_srcdir)/appimage/build.sh"
+	rm -rf tmpdist
+	
 devdist: mrproper 
 	cd $(srcdir)/../ && GZIP=--best tar chozf $(PACKAGE_TARNAME).tar.gz aranym
 
