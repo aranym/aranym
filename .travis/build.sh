@@ -44,7 +44,7 @@ esac
 
 export isrelease
 
-case $CPU in
+case $CPU_TYPE in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
 	*) build_jit=false ;;
 esac
