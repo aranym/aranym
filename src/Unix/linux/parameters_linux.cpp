@@ -8,6 +8,20 @@
 #include <cstring>
 #include <cstdlib>
 
+/*
+ * avoid an undefined reference when compiling against
+ * older glibc ABI, and using _FORTIFY_SOURCE
+ */
+#if defined(FD_SETSIZE) && defined(__NFDBITS)
+long int __fdelt_chk(long int d)
+{
+	if (d < 0 || d >= FD_SETSIZE)
+		abort();
+	return d / __NFDBITS;
+}
+#endif
+
+
 int get_geometry(const char *dev_path, geo_type geo) {
   int fd;
   int par = -1;

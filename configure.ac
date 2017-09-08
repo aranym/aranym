@@ -40,6 +40,10 @@ AH_TOP([
 #include "linux/libcwrap.h"
 #endif
 
+#ifndef _FORTIFY_SOURCE
+#  define _FORTIFY_SOURCE 2
+#endif
+
 ])
 
 dnl Options.
