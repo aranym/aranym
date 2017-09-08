@@ -213,9 +213,9 @@ generate_type2_appimage()
     tar xf data.tar.gz
     sudo chown -R $USER .gnu*
     mv $HOME/.gnu* $HOME/.gnu_old ; mv .gnu* $HOME/
-    ./appimagetool -n -s --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v "./${APP}.AppDir/" "$APPIMAGE" || exit 1
+    ./appimagetool -n -s --bintray-user $BINTRAY_REPO_OWNER --bintray-repo $BINTRAY_REPO -v "./${APP}.AppDir/" "$APPIMAGE" || exit 1
   else
-    ./appimagetool -n --bintray-user $BINTRAY_USER --bintray-repo $BINTRAY_REPO -v "./${APP}.AppDir/" "$APPIMAGE" || exit 1
+    ./appimagetool -n --bintray-user $BINTRAY_REPO_OWNER --bintray-repo $BINTRAY_REPO -v "./${APP}.AppDir/" "$APPIMAGE" || exit 1
   fi
   # appimagetool seems to start zsyncmake in the background;
   # the sleep is a workaround to wait for it to finish

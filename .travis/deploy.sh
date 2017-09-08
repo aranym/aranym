@@ -53,6 +53,7 @@ echo ""
 echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
 $CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${ARCHIVE}?publish=1&override=1&explode=0"
 for file in `ls *.AppImage* 2>/dev/null`; do
+	echo "upload ${BINTRAY_DIR}/${file}"
 	$CURL --upload "${file}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${file}?publish=1&override=1&explode=0"
 done
 echo ""

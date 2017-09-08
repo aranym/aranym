@@ -4,8 +4,8 @@
 # actual build script
 # most of the steps are ported from the aranym.spec file
 #
-BUILDROOT="${PWD}/.travis/tmp"
-OUT="${PWD}/.travis/out"
+export BUILDROOT="${PWD}/.travis/tmp"
+export OUT="${PWD}/.travis/out"
 
 mkdir -p "${BUILDROOT}"
 mkdir -p "${OUT}"
@@ -28,6 +28,8 @@ s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n
 
 NO_CONFIGURE=1 ./autogen.sh
 
+export VERSION
+
 isrelease=false
 ATAG=${VERSION}${archive_tag}
 tag=`git tag --points-at ${TRAVIS_COMMIT}`
@@ -39,6 +41,8 @@ case $tag in
 		ATAG=${VERSION}${archive_tag}-${SHORT_ID}
 		;;
 esac
+
+export isrelease
 
 case $CPU in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
@@ -103,7 +107,6 @@ osx)
 esac
 
 export ARCHIVE
-export isrelease
 
 if $isrelease; then
 	make dist

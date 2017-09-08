@@ -1,4 +1,8 @@
 2017/09/08 - Thorsten
+Add some missing variable exports to scripts
+
+
+2017/09/08 - Thorsten
 Avoid an undefined reference when compiling against
 older glibc ABI, and using _FORTIFY_SOURCE
 

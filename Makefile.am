@@ -1,6 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 
 pkgdatadir = @datadir@/aranym
+man1dir = $(mandir)/man1
 
 # Unix makefile for ARAnyM
 # Inspired in BasiliskII's Makefile
@@ -105,7 +106,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkgdatadir)/logo.bmp
 	rm -f $(DESTDIR)$(pkgdatadir)/logo.png
 	rm -f $(DESTDIR)$(pkgdatadir)/logo.png
-	rm -f $(DESTDIR)$(datadir)/icons/hicolor/*/apps/aranym.png
+	rm -f $(DESTDIR)$(datadir)/icons/hicolor/*/apps/aranym*.png
 	rm -f $(DESTDIR)$(datadir)/applications/aranym*.desktop
 	rm -f $(DESTDIR)$(datadir)/pixmaps/aranym*.png
 	-rmdir $(DESTDIR)$(datadir)/icons/hicolor/*/apps
@@ -155,7 +156,6 @@ appimage::
 	VERSION="$(VERSION)" \
 	top_srcdir="$(abs_top_srcdir)" \
 	BUILDROOT="$$DESTDIR" \
-	BINTRAY_USER=aranym BINTRAY_REPO=aranym-files \
 	$(SHELL) "$(abs_top_srcdir)/appimage/build.sh"
 	rm -rf tmpdist
 	
@@ -287,4 +287,8 @@ gldiff:
 EXTRA_DIST = \
 	BUGS FAQ README-cygwin.in \
 	aranym.spec autogen.sh \
-	android atari contrib data tools
+	android atari contrib data tools \
+	appimage/build.sh \
+	appimage/desktopintegration \
+	appimage/excludelist \
+	appimage/functions.sh

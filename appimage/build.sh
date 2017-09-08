@@ -4,6 +4,10 @@ top_srcdir=${top_srcdir:-`cd ..; pwd`}
 GLIBC_NEEDED=2.11
 STATIC_FILES=${top_srcdir}/appimage
 
+BINTRAY_USER="${BINTRAY_USER:-aranym}"
+BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
+BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO:-aranym-files}"
+
 case $CPU_TYPE in
 	x86_64) ARCH=x86_64 ;;
 	i[3456]86) ARCH=i686 ;;
