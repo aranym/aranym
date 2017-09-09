@@ -14,7 +14,8 @@ then
 	exit 1
 fi
 
-OUT="${PWD}/.travis/out"
+SRCDIR="${PWD}"
+OUT="${SRCDIR}/.travis/out"
 
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
@@ -39,6 +40,11 @@ echo "Deploying $ARCHIVE to ${BINTRAY_HOST}/${BINTRAY_REPO}"
 echo "See result at ${BINTRAY_HOST}/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
 
 # See https://bintray.com/docs/api for a description of the REST API
+# in their terminology:
+# - :subject is the owner of the account (aranym in our case)
+# - :repo is aranym-files
+# - :package either snapshots, releases or pullrequests
+# - for snapshot builds, the commit id is used as version number
 
 CURL="curl --silent -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H Accept:application/json -w \n"
 
@@ -46,22 +52,27 @@ cd "$OUT"
 
 #create version:
 echo "creating version ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
+$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions" || exit 1
 echo ""
 
-#upload file:
+#upload file(s):
 echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
 $CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${ARCHIVE}?publish=1&override=1&explode=0"
 for file in `ls *.AppImage* 2>/dev/null`; do
 	echo "upload ${BINTRAY_DIR}/${file}"
-	$CURL --upload "${file}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${file}?publish=1&override=1&explode=0"
+	$CURL --upload "${file}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${file}?publish=1&override=1&explode=0" || exit 1
 done
 echo ""
 
 # publish the version
 echo "publish ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
+$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1" || exit 1
 echo ""
+
+# purge old snapshots
+if test "$TRAVIS_OS_NAME" = linux; then
+	perl "$SRCDIR/.travis/purge-snapshots.pl"
+fi
 
 
 if $isrelease; then

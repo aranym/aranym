@@ -16,6 +16,8 @@ linux)
 		libusb-1.0-0-dev \
 		libudev-dev \
 		zsync \
+		libjson-perl \
+		libwww-perl \
 		
 	;;
 
