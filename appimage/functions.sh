@@ -217,9 +217,6 @@ generate_type2_appimage()
   else
     ./appimagetool -n --bintray-user $BINTRAY_REPO_OWNER --bintray-repo $BINTRAY_REPO -v "./${APP}.AppDir/" "$APPIMAGE" || exit 1
   fi
-  # appimagetool seems to start zsyncmake in the background;
-  # the sleep is a workaround to wait for it to finish
-  sleep 1
   set -x
   OUT=${OUT:-../out}
   mkdir -p "${OUT}" || true
