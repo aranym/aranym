@@ -42,6 +42,7 @@ class DlgMain : public Dialog
 		int state;
 		DlgFileSelect *dlgFileSelect;
 		void processResult(void);
+		virtual void handleHotkey(HOTKEY hotkey);
 
 	public:
 		DlgMain(SGOBJ *new_dlg);

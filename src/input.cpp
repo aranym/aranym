@@ -693,7 +693,23 @@ SDL_bool hideMouse(SDL_bool hide)
 	return SDL_FALSE;
 }
 
-#define CHECK_HOTKEY(Hotkey) ((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && masked_mod == bx_options.hotkeys.Hotkey.mod)
+HOTKEY check_hotkey(int state, SDL_Keycode sym)
+{
+#define CHECK_HOTKEY(Hotkey) \
+	if (((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && state == bx_options.hotkeys.Hotkey.mod)) \
+		return HOTKEY_ ## Hotkey
+	CHECK_HOTKEY(setup);
+	CHECK_HOTKEY(quit);
+	CHECK_HOTKEY(warmreboot);
+	CHECK_HOTKEY(coldreboot);
+	CHECK_HOTKEY(debug);
+	CHECK_HOTKEY(ungrab);
+	CHECK_HOTKEY(screenshot);
+	CHECK_HOTKEY(fullscreen);
+#undef CHECK_HOTKEY
+	return HOTKEY_none;
+}
+
 static void process_keyboard_event(const SDL_Event &event)
 {
 	SDL_Keysym keysym = event.key.keysym;
@@ -783,21 +799,26 @@ static void process_keyboard_event(const SDL_Event &event)
 	// process special hotkeys
 	if (pressed) {
 		int masked_mod = state & HOTKEYS_MOD_MASK;
-
-		if (CHECK_HOTKEY(quit)) {
+		HOTKEY hotkey = check_hotkey(masked_mod, sym);
+		
+		switch (hotkey)
+		{
+		case HOTKEY_none:
+			break;
+		case HOTKEY_quit:
 			pendingQuit = true;
 			send2Atari = false;
-		}
-		else if (CHECK_HOTKEY(warmreboot)) {
+			break;
+		case HOTKEY_warmreboot:
 			RestartAll();	// force Warm Reboot
 			send2Atari = false;
-		}
-		else if (CHECK_HOTKEY(coldreboot)) {
+			break;
+		case HOTKEY_coldreboot:
 			RestartAll(true);	// force Cold Reboot
 			send2Atari = false;
-		}
+			break;
+		case HOTKEY_setup:
 #ifdef SDL_GUI
-		else if (CHECK_HOTKEY(setup)) {
 			/* release shifters (if any) */
 			if ( bx_options.hotkeys.setup.mod & KMOD_LSHIFT )
 				getIKBD()->SendKey(0x80 | 0x2a);
@@ -812,31 +833,32 @@ static void process_keyboard_event(const SDL_Event &event)
 			
 			open_GUI();
 			send2Atari = false;
-		}
 #endif
+			break;
+		case HOTKEY_debug:
 #ifdef DEBUGGER
-		else if (CHECK_HOTKEY(debug)) {
 			// activate debugger
 			activate_debugger();
 			send2Atari = false;
-		}
 #endif
-		else if (CHECK_HOTKEY(ungrab)) {
+			break;
+		case HOTKEY_ungrab:
 			if ( bx_options.video.fullscreen )
 				video->toggleFullScreen();
 			video->releaseTheMouse();
 			video->CanGrabMouseAgain(false);	// let it leave our window
 			send2Atari = false;
-		}
-		else if (CHECK_HOTKEY(screenshot)) {
+			break;
+		case HOTKEY_screenshot:
 			video->doScreenshot();
 			send2Atari = false;
-		}
-		else if (CHECK_HOTKEY(fullscreen)) {
+			break;
+		case HOTKEY_fullscreen:
 			video->toggleFullScreen();
 			if (bx_options.video.fullscreen && !video->GrabbedMouse())
 				video->grabTheMouse();
 			send2Atari = false;
+			break;
 		}
 	}
 

@@ -1,4 +1,11 @@
 2017/09/09 - Thorsten
+Handle hotkeys in the main SDL gui dialog.
+
+This might help in situations where the app is accidently run on the
+console, the dialog pops up, and no mouse is available.
+
+
+2017/09/09 - Thorsten
 Automagically purge old snapshots
 
 

@@ -20,6 +20,7 @@
 
 #include "sysdeps.h"
 #include "dialog.h"
+#include "input.h"
 
 Dialog::Dialog(SGOBJ *new_dlg)
 	: dlg(new_dlg), return_obj(-1), last_clicked_obj(-1), touch_exit_obj(-1)
@@ -136,8 +137,12 @@ void Dialog::keyPress(const SDL_Event &event)
 	}
 
 	int obj;
-	int keysym = event.key.keysym.sym;
-	SDL_Keymod mod = SDL_Keymod(event.key.keysym.mod);
+	SDL_Keycode keysym = event.key.keysym.sym;
+	int state;
+	if ((event.key.keysym.mod & HOTKEYS_MOD_MASK) == 0)
+		state  = SDL_GetModState(); // keysym.mod does not deliver single mod key presses for some reason
+	else
+		state = event.key.keysym.mod;	// May be send by SDL_PushEvent
 
 	if (cursor.object != -1) {
 		switch(keysym) {
@@ -182,18 +187,18 @@ void Dialog::keyPress(const SDL_Event &event)
 
 			case SDLK_TAB:
 				SDLGui_MoveCursor(dlg, &cursor,
-					mod & KMOD_SHIFT ? SG_PREVIOUS_EDITFIELD : SG_NEXT_EDITFIELD);
+					(state & KMOD_SHIFT) ? SG_PREVIOUS_EDITFIELD : SG_NEXT_EDITFIELD);
 				break;
 
 			case SDLK_HOME:
-				if (mod & KMOD_CTRL)
+				if (state & KMOD_CTRL)
 					SDLGui_MoveCursor(dlg, &cursor, SG_FIRST_EDITFIELD);
 				else
 					cursor.position = 0;
 				break;
 
 			case SDLK_END:
-				if (mod & KMOD_CTRL)
+				if (state & KMOD_CTRL)
 					SDLGui_MoveCursor(dlg, &cursor, SG_LAST_EDITFIELD);
 				else
 					cursor.position = strlen(dlg[cursor.object].txt);
@@ -213,6 +218,7 @@ void Dialog::keyPress(const SDL_Event &event)
 					case SDLK_KP_7: keysym = SDLK_7; break;
 					case SDLK_KP_8: keysym = SDLK_8; break;
 					case SDLK_KP_9: keysym = SDLK_9; break;
+					default: break;
 				}
 				/* If it is a "good" key then insert it into the text field */
 				if (((unsigned int)keysym >= 0x20) && ((unsigned int)keysym < 0x100)) {
@@ -222,7 +228,7 @@ void Dialog::keyPress(const SDL_Event &event)
 							&dlg[cursor.object].txt[cursor.position],
 							strlen(&dlg[cursor.object].txt[cursor.position])+1);
 						dlgtxt[cursor.position] =
-							(mod & KMOD_SHIFT) ? toupper(keysym) : keysym;
+							(state & KMOD_SHIFT) ? toupper(keysym) : keysym;
 						cursor.position++;
 					}
 				}
@@ -244,6 +250,11 @@ void Dialog::keyPress(const SDL_Event &event)
 			}
 			break;
 		default:
+			{
+				int masked_mod = state & HOTKEYS_MOD_MASK;
+				HOTKEY hotkey = check_hotkey(masked_mod, keysym);
+				handleHotkey(hotkey);
+			}
 			break;
 	}
 

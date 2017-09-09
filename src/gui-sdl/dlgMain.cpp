@@ -249,11 +249,46 @@ void DlgMain::processResult(void)
 	state = STATE_MAIN;
 }
 
+void DlgMain::handleHotkey(HOTKEY hotkey)
+{
+	int obj = -1;
+	switch (hotkey)
+	{
+	case HOTKEY_none:
+	case HOTKEY_debug:
+	case HOTKEY_ungrab:
+		break;
+	case HOTKEY_setup:
+		obj = CLOSE;
+		break;
+	case HOTKEY_quit:
+		obj = SHUTDOWN;
+		break;
+	case HOTKEY_warmreboot:
+		obj = WARMREBOOT;
+		break;
+	case HOTKEY_coldreboot:
+		obj = COLDREBOOT;
+		break;
+	case HOTKEY_fullscreen:
+		obj = FULLSCREEN;
+		break;
+	case HOTKEY_screenshot:
+		obj = SCREENSHOT;
+		break;
+	}
+	if (obj >= 0)
+	{
+		dlg[obj].state ^= SG_SELECTED;
+		SDLGui_DrawObject(dlg, obj);
+		SDLGui_RefreshObj(dlg, obj);
+		if (dlg[obj].flags & (SG_EXIT | SG_TOUCHEXIT)) {
+			return_obj = obj;
+		}
+	}
+}
+
 DlgMain *DlgMainOpen(void)
 {
 	return new DlgMain(maindlg);
 }
-
-/*
-vim:ts=4:sw=4:
-*/

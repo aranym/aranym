@@ -9,12 +9,26 @@
 
 #define HOTKEYS_MOD_MASK	(KMOD_SHIFT | KMOD_CTRL | KMOD_ALT | KMOD_GUI | KMOD_MODE)
 
+typedef enum {
+	HOTKEY_none,
+	HOTKEY_setup,
+	HOTKEY_quit,
+	HOTKEY_warmreboot,
+	HOTKEY_coldreboot,
+	HOTKEY_debug,
+	HOTKEY_ungrab,
+	HOTKEY_fullscreen,
+	HOTKEY_screenshot,
+} HOTKEY;
+
 void InputInit();
 void InputReset();
 void InputExit();
 SDL_bool grabMouse(SDL_bool grab);
 SDL_bool hideMouse(SDL_bool grab);
 void check_event();
+
+HOTKEY check_hotkey(int state, SDL_Keycode sym);
 
 #ifdef SDL_GUI
 void open_GUI(void);
