@@ -46,7 +46,7 @@ void DlgKeypress::keyPress(const SDL_Event &event)
 		if (keysym.sym == SDLK_RCTRL)
 			keysym.mod = (SDL_Keymod)(keysym.mod | KMOD_CTRL);
 #endif
-		if (SDLK_IS_MODIFIER(keysym.sym))
+		if (SDLK_IS_MODIFIER(keysym.sym) && keysym.sym != SDLK_NUMLOCKCLEAR && keysym.sym != SDLK_SCROLLLOCK)
 		{
 			keysym.sym = SDLK_UNKNOWN;
 		}
