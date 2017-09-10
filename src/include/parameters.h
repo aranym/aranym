@@ -307,6 +307,7 @@ typedef struct {
   bool			gmtime;
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
+  char			snapshot_dir[512];
 } bx_options_t;
 
 extern bx_options_t bx_options;
@@ -327,6 +328,7 @@ extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsiz
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 bool setConfigValue(const char *section_name, const char *key, const char *value);
+void listConfigValues(bool type = false);
 
 char *keysymToString(char *buffer, const bx_hotkey *keysym);
 bool stringToKeysym(bx_hotkey *keysym, const char *string);
@@ -340,7 +342,3 @@ extern bool saveSettings(const char *);
 extern const struct Config_Section *getConfigSections(void);
 
 #endif
-
-/*
-vim:ts=4:sw=4:
-*/

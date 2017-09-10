@@ -75,6 +75,8 @@
 
 #include "sysdeps.h"
 #include "cfgopts.h"
+
+#define DEBUG 0
 #include "debug.h"
 
 ConfigOptions::ConfigOptions(const char *cfgfile, const char *home, const char *data)
@@ -185,19 +187,19 @@ long ConfigOptions::fcopy(const char *dest, const char *source)
 
 	s = fopen(source, "rb");
 	if (s == NULL)
-		return - 1L;
+		return -1L;
 
 	d = fopen(dest, "wb");
 	if (d == NULL) {
 		fclose(s);
-		return - 1L;
+		return -1L;
 	}
 
 	buffer = (char *)malloc(BUFFER_SIZE);
 	if (buffer == NULL) {
 		fclose(s);
 		fclose(d);
-		return - 1L;
+		return -1L;
 	}
 
 	incount = fread(buffer, sizeof(char), BUFFER_SIZE, s);
@@ -391,6 +393,138 @@ bool ConfigOptions::set_config_value(struct Config_Tag *ptr, const char *value)
 }
 
 
+char *ConfigOptions::get_config_value(const struct Config_Tag *ptr, bool type)
+{
+	char value[40];
+	char *valuep = NULL;
+	
+	switch ( ptr->type ) {
+	case Bool_Tag:
+		if (type)
+			strcpy(value, "bool");
+		else
+			strcpy(value, *((bool * )(ptr->buf)) ? "true" : "false");
+		break;
+
+	case Byte_Tag:
+		if (type)
+			strcpy(value, "byte");
+		else
+			sprintf(value, "%d", *((char *)(ptr->buf)));
+		break;
+
+	case Word_Tag:
+		if (type)
+			strcpy(value, "word");
+		else
+			sprintf(value, "%d", *((short *)(ptr->buf)));
+		break;
+
+	case Int_Tag:
+		if (type)
+			strcpy(value, "int");
+		else
+			sprintf(value, "%d", *((int *)(ptr->buf)));
+		break;
+
+	case Long_Tag:
+		if (type)
+			strcpy(value, "long");
+		else
+			sprintf(value, "%ld", *((long *)(ptr->buf)));
+		break;
+
+	case OctWord_Tag:
+		if (type)
+			strcpy(value, "octword");
+		else
+			sprintf(value, "%o", *((short *)(ptr->buf)));
+		break;
+
+	case OctLong_Tag:
+		if (type)
+			strcpy(value, "octlong");
+		else
+			sprintf(value, "%lo", *((long *)(ptr->buf)));
+		break;
+
+	case HexWord_Tag:
+		if (type)
+			strcpy(value, "hexword");
+		else
+			sprintf(value, "%x", *((short *)(ptr->buf)));
+		break;
+
+	case HexLong_Tag:
+		if (type)
+			strcpy(value, "hexlong");
+		else
+			sprintf(value, "%lx", *((long *)(ptr->buf)));
+		break;
+
+	case Float_Tag:
+		if (type)
+			strcpy(value, "float");
+		else
+			sprintf(value, "%g", *((float *)(ptr->buf)));
+		break;
+
+	case Double_Tag:
+		if (type)
+			strcpy(value, "double");
+		else
+			sprintf(value, "%g", *((double *)(ptr->buf)));
+		break;
+
+	case Char_Tag:
+		if (type)
+			strcpy(value, "char");
+		else
+			sprintf(value, "%c", *((char *)(ptr->buf)));
+		break;
+
+	case Path_Tag:
+		if (ptr->buf_size > 0) {
+			char tmpbuf[MAX_PATH];
+			if (type)
+			{
+				strcpy(value, "path");
+			} else
+			{
+				compress_path(tmpbuf, (char *)ptr->buf, sizeof(tmpbuf));
+				valuep = strdup(tmpbuf);
+			}
+		}
+		else {
+			panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
+		}
+		break;
+
+	case String_Tag:
+		if (ptr->buf_size > 0) {
+			if (type)
+			{
+				strcpy(value, "string");
+			} else
+			{
+				valuep = strdup((char *)ptr->buf);
+			}
+		}
+		else {
+			panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
+		}
+		break;
+	case Function_Tag:
+	case Error_Tag:
+	default:
+		return NULL;
+	}
+	if (valuep == NULL)
+		valuep = strdup(value);
+	return valuep;
+}
+
+
 /*---------------------------------------------------------------------/
 /	reads from an input configuration (INI) file.
 /---------------------------------------------------------------------*/
@@ -430,7 +564,7 @@ int	ConfigOptions::input_config(struct Config_Tag configs[], const char *header)
 			tok = trim(strtok(line, "=\n\r"));	 /* get first token */
 			if ( tok != NULL ) {
 				next = trim(strtok(NULL, "\n\r")); /* get actual config information */
-				for ( ptr = configs; ptr->buf; ++ptr )	 /* scan for token */ {
+				for ( ptr = configs; ptr->code; ++ptr )	 /* scan for token */ {
 					if ( !strcasecmp( tok , ptr->code ) )  /* got a match? */ {
 						if (!set_config_value(ptr, next))
 						{
@@ -447,6 +581,26 @@ int	ConfigOptions::input_config(struct Config_Tag configs[], const char *header)
 			}
 		} while ( fptr != NULL && line[0] != '[');
 	fclose(file);
+
+	/*
+	 * expand_path() (for converting the relative filenames)
+	 * will not be called when the entry is not found in the config file,
+	 * so go through the list again and do that now.
+	 */
+	for ( ptr = configs; ptr->code; ++ptr)
+	{
+		if (ptr->type == Path_Tag)
+		{
+			char *path = (char *)ptr->buf;
+			if (path[0] != '\0' && path[0] != '/' && path[0] != '\\' && path[1] != ':' )
+			{
+				char tmpbuf[MAX_PATH];
+				safe_strncpy(tmpbuf, path, sizeof(tmpbuf));
+				expand_path(path, tmpbuf, ptr->buf_size);
+			}
+		}
+	}
+	
 	return count;
 }
 

@@ -262,12 +262,78 @@ void HostScreen::doScreenshot(void)
 	do_screenshot = true;
 }
 
-void HostScreen::makeSnapshot(void)
+static int get_screenshot_counter(void)
+{
+	char dummy[5];
+	int i, num;
+	DIR *workingdir;
+	struct dirent *file;
+	int nScreenShots = 0;
+	
+	workingdir = opendir(bx_options.snapshot_dir);
+	if (workingdir == NULL)
+	{
+		HostFilesys::makeDir(bx_options.snapshot_dir);
+		workingdir = opendir(bx_options.snapshot_dir);
+	}
+	if (workingdir != NULL)
+	{
+		file = readdir(workingdir);
+		while (file != NULL)
+		{
+			if (strncmp("snap", file->d_name, 4) == 0 )
+			{
+				/* copy next 4 numbers */
+				for (i = 0; i < 4; i++)
+				{
+					if (file->d_name[4+i] >= '0' && file->d_name[4+i] <= '9')
+						dummy[i] = file->d_name[4+i];
+					else
+						break;
+				}
+
+				dummy[i] = '\0'; /* null terminate */
+				num = atoi(dummy);
+				if (num >= nScreenShots)
+					nScreenShots = num + 1;
+			}
+			/* next file.. */
+			file = readdir(workingdir);
+		}
+
+		closedir(workingdir);
+	}		
+	
+	return nScreenShots;
+}
+
+
+void HostScreen::writeSnapshot(SDL_Surface *surf)
 {
 	char filename[15];
-	sprintf( filename, "snap%03d.bmp", snapCounter++ );
+	char path[PATH_MAX];
 
-	SDL_SaveBMP(screen, filename);
+	if (snapCounter == 0)
+		snapCounter = get_screenshot_counter();
+	sprintf(filename, "snap%03d.bmp", snapCounter++ );
+	safe_strncpy(path, bx_options.snapshot_dir, sizeof(path));
+	addFilename(path, filename, sizeof(path));
+	if (SDL_SaveBMP(surf, path) < 0)
+	{
+#ifdef __CYGWIN__
+		bug("%s: %s", SDL_GetError(), win32_errstring(GetLastError()));
+#else
+		bug("%s: %s", SDL_GetError(), strerror(errno));
+#endif
+	} else
+	{
+		bug("saved screenshot %s", path);
+	}
+}
+
+void HostScreen::makeSnapshot(void)
+{
+	writeSnapshot(screen);
 }
 
 void HostScreen::toggleFullScreen(void)

@@ -31,8 +31,9 @@
 #define DEBUG 0
 #include "debug.h"
 
-static char tos_path[512];
-static char emutos_path[512];
+static char tos_path[sizeof(bx_options.tos.tos_path)];
+static char emutos_path[sizeof(bx_options.tos.emutos_path)];
+static char snapshot_dir_display[sizeof(bx_options.snapshot_dir)];
 
 #define SDLGUI_INCLUDE_OSDLG
 #include "sdlgui.sdl"
@@ -52,6 +53,10 @@ DlgOs::DlgOs(SGOBJ *dlg)
 	osdlg[MCH_TOS_PATH].txt = tos_path;
 	File_ShrinkName(emutos_path, tos_options.emutos_path, osdlg[MCH_EMUTOS_PATH].w);
 	osdlg[MCH_EMUTOS_PATH].txt = emutos_path;
+	
+	strcpy(snapshot_dir, bx_options.snapshot_dir);
+	File_ShrinkName(snapshot_dir_display, snapshot_dir, osdlg[SNAPSHOT_DIR].w);
+	osdlg[SNAPSHOT_DIR].txt = snapshot_dir_display;
 }
 
 DlgOs::~DlgOs()
@@ -82,6 +87,7 @@ int DlgOs::processDialog(void)
 			break;
 		case STATE_FSEL_TOS:
 		case STATE_FSEL_EMUTOS:
+		case STATE_FSEL_SNAPSHOT_DIR:
 			break;
 	}
 
@@ -103,11 +109,17 @@ int DlgOs::processDialogMain(void)
 			break;
 
 		case MCH_EMUTOS_BROWSE:
-			strcpy(tmpname, tos_options.emutos_path);
+ 			strcpy(tmpname, tos_options.emutos_path);
 			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
 			state = STATE_FSEL_EMUTOS;
 			break;
 
+		case SNAPSHOT_DIR:
+ 			strcpy(tmpname, snapshot_dir);
+			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
+			state = STATE_FSEL_SNAPSHOT_DIR;
+			break;
+			
 		case APPLY:
 			if (!File_Exists(tos_options.tos_path) &&
 				!File_Exists(tos_options.emutos_path))
@@ -148,6 +160,19 @@ void DlgOs::processResultEmutos(void)
 	}
 }
 
+void DlgOs::processResultSnapshotDir(void)
+{
+	struct stat st;
+	
+	if (dlgFileSelect && dlgFileSelect->pressedOk() &&
+	    stat(tmpname, &st) == 0 &&
+	    S_ISDIR(st.st_mode))
+	{
+		strcpy(snapshot_dir, tmpname);
+		File_ShrinkName(snapshot_dir_display, tmpname, osdlg[SNAPSHOT_DIR].w);
+	}
+}
+
 void DlgOs::processResult(void)
 {
 	D(bug("Os: process result, state=%d", state));
@@ -161,6 +186,11 @@ void DlgOs::processResult(void)
 			break;
 		case STATE_FSEL_EMUTOS:
 			processResultEmutos();
+			dlgFileSelect = NULL;
+			state = STATE_MAIN;
+			break;
+		case STATE_FSEL_SNAPSHOT_DIR:
+			processResultSnapshotDir();
 			dlgFileSelect = NULL;
 			state = STATE_MAIN;
 			break;
@@ -178,6 +208,7 @@ void DlgOs::confirm(void)
 	tos_options.redirect_CON = (osdlg[TOSCONSOLE].state & SG_SELECTED);
 	tos_options.cookie_mch = (osdlg[MCH_ARANYM].state & SG_SELECTED) ? 0x50000 : 0x30000;
 	bx_options.tos = tos_options;
+	strcpy(bx_options.snapshot_dir, snapshot_dir);
 }
 
 Dialog *DlgOsOpen(void)

@@ -33,11 +33,14 @@ class DlgOs: public Dialog
 			STATE_MAIN,
 			STATE_FSEL_TOS,
 			STATE_FSEL_EMUTOS,
+			STATE_FSEL_SNAPSHOT_DIR,
 			STATE_CONFIRM,
 		} state;
 
 		char tmpname[MAX_FILENAME_LENGTH];
 		bx_tos_options_t tos_options;
+		char snapshot_dir[sizeof(bx_options.snapshot_dir)];
+		
 		DlgAlert *dlgAlert;
 		DlgFileSelect *dlgFileSelect;
 
@@ -45,6 +48,7 @@ class DlgOs: public Dialog
 
 		void processResultTos(void);
 		void processResultEmutos(void);
+		void processResultSnapshotDir(void);
 
 		void confirm(void);
  

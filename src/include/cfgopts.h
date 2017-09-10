@@ -75,13 +75,10 @@ class ConfigOptions
 		int input_config(struct Config_Tag *configs, const char *section);
 		int update_config(struct Config_Tag *configs, const char *section);
 		bool set_config_value(struct Config_Tag *tag, const char *value);
+		char *get_config_value(const struct Config_Tag *ptr, bool type);
 		int process_config(struct Config_Tag *configs, const char *section, bool verbose);
 
 		void compress_path(char *, char *, unsigned short);
 };
 
 #endif
-
-/*
-vim:ts=4:sw=4:
-*/

@@ -182,7 +182,7 @@ static bx_atadevice_options_t *diskd = &bx_options.atadevice[0][1];
 /* IRIX doesn't have a GL library versioning system */
 #define DEFAULT_OPENGL	"libGL.so"
 #elif defined(__MACOSX__)
-/* note: this is the Quertz version, not the X11 version */
+/* note: this is the Quartz version, not the X11 version */
 #define DEFAULT_OPENGL	"/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib"
 #elif defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 /* note: this is the Windows version, not the cygwin version */
@@ -650,26 +650,28 @@ struct Config_Tag global_conf[]={
 	{ "GMTime", Bool_Tag, &bx_options.gmtime, 0, 0},
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
 	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
+	{ "SnapshotDir", Path_Tag, bx_options.snapshot_dir, sizeof(bx_options.snapshot_dir), 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
 static void preset_global()
 {
-  strcpy(bx_options.tos.tos_path, TOS_FILENAME);
-  strcpy(bx_options.tos.emutos_path, EMUTOS_FILENAME);
-  strcpy(bx_options.bootstrap_path, FREEMINT_FILENAME);
-  bx_options.gmtime = false;	// use localtime by default
-  strcpy(bx_options.floppy.path, "");
+	strcpy(bx_options.tos.tos_path, TOS_FILENAME);
+	strcpy(bx_options.tos.emutos_path, EMUTOS_FILENAME);
+	strcpy(bx_options.bootstrap_path, FREEMINT_FILENAME);
+	bx_options.gmtime = false;	// use localtime by default
+	strcpy(bx_options.floppy.path, "");
 #ifdef FixedSizeFastRAM
-  FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
+	FastRAMSize = FixedSizeFastRAM * 1024 * 1024;
 #else
-  FastRAMSize = 0;
+	FastRAMSize = 0;
 #endif
 #if FIXED_ADDRESSING
 	bx_options.fixed_memory_offset = fixed_memory_offset;
 #endif
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
+	strcpy(bx_options.snapshot_dir, "snapshots");
 }
 
 static void postload_global()
@@ -1906,8 +1908,19 @@ static int process_cmdline(int argc, char **argv)
 					char *value;
 					if (key == NULL || (value = strchr(key + 1, ':')) == NULL)
 					{
-						panicbug("wrong '--option' argument: must be section:key:value");
-						exit(EXIT_FAILURE);
+						if (strcmp(section, "help") == 0)
+						{
+							listConfigValues(true);
+							exit(EXIT_SUCCESS);
+						} else if (strcmp(section, "list") == 0)
+						{
+							listConfigValues(false);
+							exit(EXIT_SUCCESS);
+						} else
+						{
+							panicbug("wrong '--option' argument: must be section:key:value");
+							exit(EXIT_FAILURE);
+						}
 					} else
 					{
 						*key++ = '\0';
@@ -2068,7 +2081,7 @@ bool setConfigValue(const char *section_name, const char *key, const char *value
 	char data_folder[1024];
 	Host::getHomeFolder(home_folder, sizeof(home_folder));
 	Host::getDataFolder(data_folder, sizeof(data_folder));
-	ConfigOptions cfgopts(NULL, home_folder, data_folder);
+	ConfigOptions cfgopts(config_file, home_folder, data_folder);
 
 	int len = strlen(section_name);
 	for (const struct Config_Section *section = all_sections; section->name; section++)
@@ -2101,6 +2114,40 @@ bool setConfigValue(const char *section_name, const char *key, const char *value
 }
 
 
+void listConfigValues(bool type)
+{
+	char home_folder[1024];
+	char data_folder[1024];
+	Host::getHomeFolder(home_folder, sizeof(home_folder));
+	Host::getDataFolder(data_folder, sizeof(data_folder));
+	ConfigOptions cfgopts(config_file, home_folder, data_folder);
+	
+	for (const struct Config_Section *section = all_sections; section->name; section++)
+	{
+		const char *name = section->name;
+		if (*name == '[')
+			name++;
+		const char *end = strchr(name, ']');
+		int len = (int)(end ? (end - name) : strlen(name));
+		char *section_name = strdup(name);
+		section_name[len] = '\0';
+		
+		for (struct Config_Tag *conf = section->tags; conf->code; conf++)
+		{
+			if (ide_swap)
+			{
+				if (conf == diskc_configs) conf = diskd_configs;
+				else if (conf == diskd_configs) conf = diskc_configs;
+			}
+			char *value = cfgopts.get_config_value(conf, type);
+			printf("%s:%s:%s\n", section_name, conf->code, value ? value : "");
+			
+		}
+		free(section_name);
+	}
+}
+
+
 bool decode_switches(int argc, char **argv)
 {
 	getConfFilename(ARANYMCONFIG, config_file, sizeof(config_file));
@@ -2128,7 +2175,3 @@ void setConfigFile(const char *filename)
 {
 	safe_strncpy(config_file, filename, sizeof(config_file));
 }
-
-/*
-vim:ts=4:sw=4:
-*/

@@ -93,6 +93,7 @@ class HostScreen: public DirtyRects
 	virtual void setVideoMode(int width, int height, int bpp);
 
 	// Create a BMP file with a snapshot of the screen surface
+	void writeSnapshot(SDL_Surface *surf);
 	virtual void makeSnapshot(void);
 
 	virtual void refreshScreen(void);

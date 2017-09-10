@@ -278,9 +278,6 @@ void HostScreenOpenGL::makeSnapshot(void)
 		return HostScreen::makeSnapshot();
 	}
 
-	char filename[15];
-	sprintf( filename, "snap%03d.bmp", snapCounter++ );
-
 	HostSurface *sshot_hsurf = createSurface(getWidth(), getHeight(), 32);
 	if (!sshot_hsurf) {
 		return;
@@ -297,7 +294,7 @@ void HostScreenOpenGL::makeSnapshot(void)
 			dst += sdl_surf->pitch;
 		}
 
-		SDL_SaveBMP(sdl_surf, filename);
+		writeSnapshot(sdl_surf);
 #else
 		fprintf(stderr, "screenshot: Sorry, BGRA texture format not supported\n");
 #endif

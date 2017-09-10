@@ -420,11 +420,12 @@ enum OSDLG {
 	MCH_FALCON = 10,
 	APPLY = 11,
 	CANCEL = 12,
-	text_wheel = 14
+	text_wheel = 14,
+	SNAPSHOT_DIR = 16 /* max len 70 */
 };
 
 static SGOBJ osdlg[] = {
-	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 77, 17, NULL, 0 },
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 77, 22, NULL, 0 },
 	{ SGBOX, 0, 0, 1, 2, 74, 5, NULL, 0 },
 	{ SGTEXT, 0, 0, 10, 3, 64, 1, tos_path, 0 },
 	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 2, 3, 5, 1, N_("TOS:"), 0 },
@@ -435,10 +436,13 @@ static SGOBJ osdlg[] = {
 	{ SGTEXT, 0, 0, 2, 12, 18, 1, N_("_MCH Cookie value:"), 0 },
 	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 21, 12, 9, 1, N_("ARAnyM"), 0 },
 	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 32, 12, 9, 1, N_("Falcon"), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 55, 15, 8, 1, N_("Apply"), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 15, 8, 1, N_("Cancel"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 55, 20, 8, 1, N_("Apply"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 67, 20, 8, 1, N_("Cancel"), 0 },
 	{ SGTEXT, 0, 0, 3, 1, 12, 1, N_(" TOS images "), 0 },
 	{ SGTEXT, 0, 0, 3, 8, 13, 1, N_(" TOS patches "), 0 },
+	{ SGBOX, 0, 0, 1, 16, 74, 2, NULL, 0 },
+	{ SGTEXT, SG_SELECTABLE|SG_EXIT, 0, 2, 16, 70, 1, snapshot_dir_display, 0 },
+	{ SGTEXT, 0, 0, 2, 15, 22, 1, N_(" Screenshot Directory "), 0 },
 	{ -1, 0, 0, 0, 0, 0, 0, NULL, 0 }
 };
 #endif
@@ -805,7 +809,7 @@ static SGOBJ hostfsdlg[] = {
 	{ SGTEXT, 0, 0, 5, 14, 55, 1, dlgfilenames[10], 0 },
 	{ SGTEXT, 0, 0, 5, 15, 55, 1, dlgfilenames[11], 0 },
 	{ SGTEXT, 0, 0, 5, 16, 55, 1, dlgfilenames[12], 0 },
-	{ SGTEXT, 0, 0, 5, 17, 55, 1, dlgfilenames[13], 0 },
+	{ SGTEXT, 0, 0, 6, 17, 55, 1, dlgfilenames[13], 0 },
 	{ SGTEXT, 0, 0, 5, 18, 55, 1, dlgfilenames[14], 0 },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 4, 12, 1, N_("Case Sens"), 0 },
 	{ SGCHECKBOX, SG_SELECTABLE|SG_EXIT, 0, 61, 5, 12, 1, N_("Case Sens"), 0 },
