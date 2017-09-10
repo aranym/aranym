@@ -1,4 +1,9 @@
 2017/09/10 - Thorsten
+Fix parameters.h to not declare functions with default values,
+as it is also included in objective-c code on macOS
+
+
+2017/09/10 - Thorsten
 Allow NumLock & ScrollLock in the hotkeys dialog
 
 

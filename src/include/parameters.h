@@ -328,7 +328,7 @@ extern char *getConfFilename(const char *file, char *buffer, unsigned int bufsiz
 extern char *getDataFilename(const char *file, char *buffer, unsigned int bufsize);
 char *addFilename(char *buffer, const char *file, unsigned int bufsize);
 bool setConfigValue(const char *section_name, const char *key, const char *value);
-void listConfigValues(bool type = false);
+void listConfigValues(bool type);
 
 char *keysymToString(char *buffer, const bx_hotkey *keysym);
 bool stringToKeysym(bx_hotkey *keysym, const char *string);
