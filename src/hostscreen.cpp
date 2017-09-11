@@ -24,6 +24,7 @@
 #endif
 
 #include "newcpu.h"
+#include <errno.h>
 
 #include "SDL_compat.h"
 #include <vector>

@@ -710,28 +710,37 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 /-------------------------------------------------------------------<<*/
 int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header)
 {
-#ifdef OS_darwin
-	static const char *tempfilename = "/tmp/aratemp.$$$";
-#else
-	static const char *tempfilename = "temp.$$$";
-#endif
+	static const char *const tempfilenames[] = {
+		"/tmp/aratemp.$$$",
+		"aratemp.$$$",
+		NULL
+	};
+	const char *tempfilename;
 	struct Config_Tag *ptr;
 	int	count = 0, lineno = 0;
 	FILE * infile, *outfile;
 	char	*fptr, *tok;
 	int result = 0;
-
+	int i;
+	
 	for ( ptr = configs; ptr->buf; ++ptr )
 		ptr->stat = 0;	/* jeste neulozeno do souboru */
 
-	infile = fopen(config_file, "rt");
+	outfile = NULL;
+	i = 0;
+	while ((tempfilename = tempfilenames[i++]) != NULL)
+	{
+		outfile = fopen(tempfilename, "w");
+		if (outfile != NULL)
+			break;
+	}
+	if ( outfile == NULL ) {
+		panicbug("Error: unable to open %s file.", tempfilenames[0]);
+		return ERROR;		/* return error designation. */
+	}
+	infile = fopen(config_file, "r");
 	if ( infile == NULL ) {
 /* konfiguracni soubor jeste vubec neexistuje */
-		outfile = fopen(tempfilename, "wt");
-		if ( outfile == NULL ) {
-			panicbug("Error: unable to open %s file.", tempfilename);
-			return ERROR;		/* return error designation. */
-		}
 		if ( header != NULL ) {
 			fprintf(outfile, "%s\n", header);
 		}
@@ -749,12 +758,6 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 			return result;
 		}
 		return count;
-	}
-	outfile = fopen(tempfilename, "wt");
-	if ( outfile == NULL ) {
-		panicbug("Error: unable to open %s file.", tempfilename);
-		fclose(infile);
-		return ERROR;		   /* return error designation. */
 	}
 	if ( header != NULL ) {
 /* konfiguracni soubor existuje a je otevren - hledame nasi sekci */

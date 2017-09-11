@@ -226,9 +226,11 @@ bool BPFEthernetHandler::open()
 	 ******************************************************/
 	char exe_path[2048];
 	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFURLGetFileSystemRepresentation(url, true, (UInt8 *)exe_path, sizeof(exe_path));
+	CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+	CFURLGetFileSystemRepresentation(url2, true, (UInt8 *)exe_path, sizeof(exe_path));
+	CFRelease(url2);
 	CFRelease(url);
-	strcat(exe_path, "/Contents/MacOS/"ETH_HELPER);
+	addFilename(exe_path, ETH_HELPER, sizeof(exe_path));
 	if (debug)
 	{
 		D(bug("BPF(%d): starting helper from <%s>", ethX, exe_path));
