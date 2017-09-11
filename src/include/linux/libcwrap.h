@@ -1,5 +1,5 @@
 /* glibc bindings for target ABI version glibc 2.11 */
-#if defined(__linux__) && !defined (__LIBC_CUSTOM_BINDINGS_H__)
+#if defined(__linux__) && !defined (__LIBC_CUSTOM_BINDINGS_H__) && !defined(__ANDROID__)
 
 #if defined (__cplusplus)
 extern "C" {

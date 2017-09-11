@@ -36,7 +36,7 @@ AH_TOP([
 #ifndef __ARANYM_CONFIG_H__
 #define __ARANYM_CONFIG_H__
 
-#ifdef __linux__
+#if defined(__linux__) && !defined(__ANDROID__)
 #include "linux/libcwrap.h"
 #endif
 

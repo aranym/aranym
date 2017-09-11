@@ -305,7 +305,7 @@ sub generateHeader()
 	# But what we want is a clause which accepts any form of C including C++ and probably
 	# also including ObjC. That said, the generated header works fine for C and C++ sources.
 	printf $output "/* glibc bindings for target ABI version glibc %s */\n", $args{'target'};
-	printf $output "#if defined(__linux__) && !defined (__LIBC_CUSTOM_BINDINGS_H__)\n";
+	printf $output "#if defined(__linux__) && !defined (__LIBC_CUSTOM_BINDINGS_H__) && !defined(__ANDROID__)\n";
 	printf $output "\n";
 	printf $output "#if defined (__cplusplus)\n";
 	printf $output "extern \"C\" {\n";
