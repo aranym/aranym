@@ -169,7 +169,7 @@ sub parseLibrary($)
 		chop($line) if (substr($line, -1, 1) eq "\012");
 		chop($line) if (substr($line, -1, 1) eq "\015");
 		next if $line =~ qr(PRIVATE);
-		next unless $line =~ qr(.*GLIBC_([0-9.]+)\)?[ ]*(.+));
+		next unless $line =~ qr{.*GLIBC_([0-9.]+)\)?[ ]*(.+)};
 		$version = $1;
 		$symbolName = $2;
 
