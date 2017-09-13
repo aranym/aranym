@@ -175,6 +175,7 @@ DECLARE_MIDFUNC(start_needflags(void));
 DECLARE_MIDFUNC(end_needflags(void));
 DECLARE_MIDFUNC(make_flags_live(void));
 DECLARE_MIDFUNC(forget_about(W4 r));
+DECLARE_MIDFUNC(nop(void));
 
 DECLARE_MIDFUNC(f_forget_about(FW r));
 

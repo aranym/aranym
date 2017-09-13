@@ -1851,6 +1851,12 @@ MIDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
 }
 MENDFUNC(5,call_r_11,(W4 out1, RR4 r, RR4 in1, IMM osize, IMM isize))
 
+MIDFUNC(0,nop,(void))
+{
+	raw_emit_nop();
+}
+MENDFUNC(0,nop,(void))
+
 /* forget_about() takes a mid-layer register */
 MIDFUNC(1,forget_about,(W4 r))
 {

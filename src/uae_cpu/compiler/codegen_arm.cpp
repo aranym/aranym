@@ -91,6 +91,7 @@ extern void __clear_cache (char*, char*);
 
 #define STACK_ALIGN		4
 #define STACK_OFFSET	sizeof(void *)
+#define STACK_SHADOW_SPACE 0
 
 uae_s8 always_used[]={2,3,-1};
 uae_s8 can_byte[]={0,1,4,5,6,7,8,9,10,11,12,-1};
@@ -176,12 +177,14 @@ static inline int isword(uae_s32 x)
 
 #define jit_unimplemented(fmt, ...) do{ panicbug("**** Unimplemented ****"); panicbug(fmt, ## __VA_ARGS__); abort(); }while (0)
 
+#if 0 /* currently unused */
 static void jit_fail(const char *msg, const char *file, int line, const char *function)
 {
 	panicbug("JIT failure in function %s from file %s at line %d: %s",
 			function, file, line, msg);
 	abort();
 }
+#endif
 
 LOWFUNC(NONE,WRITE,1,raw_push_l_r,(RR4 r))
 {

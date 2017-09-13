@@ -279,7 +279,6 @@ static bool		lazy_flush		= true;	// Flag: lazy translation cache invalidation
 static bool avoid_fpu = true; // Flag: compile FPU instructions ?
 #endif
 static bool		have_cmov		= false;	// target has CMOV instructions ?
-static bool		have_lahf_lm		= true;		// target has LAHF supported in long mode ?
 static bool		have_rat_stall		= true;	// target has partial register stalls ?
 const bool		tune_alignment		= true;	// Tune code alignments for running CPU ?
 const bool		tune_nop_fillers	= true;	// Tune no-op fillers for architecture
@@ -2545,42 +2544,6 @@ static inline int f_writereg(int r)
 	live.fat[answer].touched=touchcnt++;
 	return answer;
 }
-
-static int f_rmw(int r)
-{
-	int n;
-
-	f_make_exclusive(r,0);
-	if (f_isinreg(r)) {
-		n=live.fate[r].realreg;
-	}
-	else
-		n=f_alloc_reg(r,0);
-	live.fate[r].status=DIRTY;
-	live.fat[n].locked++;
-	live.fat[n].touched=touchcnt++;
-	return n;
-}
-
-static void fflags_into_flags_internal(uae_u32 tmp)
-{
-	int r;
-
-	clobber_flags();
-	r=f_readreg(FP_RESULT);
-	if (FFLAG_NREG_CLOBBER_CONDITION) {
-		int tmp2=tmp;
-		tmp=writereg_specific(tmp,4,FFLAG_NREG);
-		raw_fflags_into_flags(r);
-		unlock2(tmp);
-		forget_about(tmp2);
-	}
-	else
-		raw_fflags_into_flags(r);
-	f_unlock(r);
-	live_flags();
-}
-
 
 #if defined(CPU_arm)
 #include "compemu_midfunc_arm.cpp"

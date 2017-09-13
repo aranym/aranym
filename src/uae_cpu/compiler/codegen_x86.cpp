@@ -118,6 +118,7 @@ uae_s8 always_used[] = { ESP_INDEX, -1 };
 uae_s8 can_byte[]={0,1,2,3,-1};
 uae_s8 can_word[]={0,1,2,3,5,6,7,-1};
 #endif
+static bool		have_lahf_lm		= true;		// target has LAHF supported in long mode ?
 
 #if USE_OPTIMIZED_CALLS
 /* Make sure interpretive core does not use cpuopti */
@@ -3250,7 +3251,7 @@ static inline void raw_ret(void)
 	emit_byte(0xc3);
 }
 
-static inline void raw_nop(void)
+static inline void raw_emit_nop(void)
 {
 	emit_byte(0x90);
 }
@@ -3272,11 +3273,11 @@ static inline void raw_emit_nop_filler(int nbytes)
 
   for (i = 0; i < remains; i++) {
 	  emit_block(prefixes, len);
-	  raw_nop();
+	  raw_emit_nop();
   }
   for (; i < nnops; i++) {
 	  emit_block(prefixes, len - 1);
-	  raw_nop();
+	  raw_emit_nop();
   }
 #else
   /* Source: GNU Binutils 2.12.90.0.15 */

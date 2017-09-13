@@ -113,7 +113,7 @@
 #define failure			global_failure=1
 #define FAILURE			global_failure=1
 #define isjump			global_isjump=1
-#define is_const_jump	global_iscjump=1;
+#define is_const_jump	global_iscjump=1
 #define isaddx			global_isaddx=1
 #define uses_cmov		global_cmov=1
 #define mayfail			global_mayfail=1
@@ -136,6 +136,13 @@ static int comp_index=0;
 
 #include "flags_x86.h"
 
+#ifndef __attribute__
+#  ifndef __GNUC__
+#    define __attribute__(x)
+#  endif
+#endif
+
+
 static int cond_codes[]={-1,-1,
 		NATIVE_CC_HI,NATIVE_CC_LS,
 		NATIVE_CC_CC,NATIVE_CC_CS,
@@ -146,25 +153,27 @@ static int cond_codes[]={-1,-1,
 		NATIVE_CC_GT,NATIVE_CC_LE
 		};
 
-static void comprintf(const char* format, ...)
+__attribute__((format(printf, 1, 2)))
+static void comprintf(const char *format, ...)
 {
-    va_list args;
+	va_list args;
 
-    va_start(args,format);
-    comp_index+=vsprintf(lines+comp_index,format,args);
+	va_start(args, format);
+	comp_index += vsprintf(lines + comp_index, format, args);
+	va_end(args);
 }
 
 static void com_discard(void)
 {
-    comp_index=0;
+	comp_index = 0;
 }
 
 static void com_flush(void)
 {
-    int i;
-    for (i=0;i<comp_index;i++)
-	putchar(lines[i]);
-    com_discard();
+	int i;
+	for (i = 0; i < comp_index; i++)
+		putchar(lines[i]);
+	com_discard();
 }
 
 
@@ -186,8 +195,7 @@ static int *opcode_next_clev;
 static int *opcode_last_postfix;
 static unsigned long *counts;
 
-static void
-read_counts (void)
+static void read_counts(void)
 {
     FILE *file;
     unsigned long opcode, count, total;
@@ -256,34 +264,34 @@ static inline void gen_update_next_handler(void)
     return; /* Can anything clever be done here? */
 }
 
-static void gen_writebyte (const char* address, const char* source)
+static void gen_writebyte(const char *address, const char *source)
 {
-    comprintf("\twritebyte(%s,%s,scratchie);\n",address,source);
+	comprintf("\twritebyte(%s, %s, scratchie);\n", address, source);
 }
 
-static void gen_writeword (const char* address, const char* source)
+static void gen_writeword(const char *address, const char *source)
 {
-    comprintf("\twriteword(%s,%s,scratchie);\n",address,source);
+	comprintf("\twriteword(%s, %s, scratchie);\n", address, source);
 }
 
-static void gen_writelong (const char* address, const char* source)
+static void gen_writelong(const char *address, const char *source)
 {
-    comprintf("\twritelong(%s,%s,scratchie);\n",address,source);
+	comprintf("\twritelong(%s, %s, scratchie);\n", address, source);
 }
 
-static void gen_readbyte (const char* address, const char* dest)
+static void gen_readbyte(const char *address, const char* dest)
 {
-    comprintf("\treadbyte(%s,%s,scratchie);\n",address,dest);
+	comprintf("\treadbyte(%s, %s, scratchie);\n", address, dest);
 }
 
-static void gen_readword (const char* address, const char* dest)
+static void gen_readword(const char *address, const char *dest)
 {
-    comprintf("\treadword(%s,%s,scratchie);\n",address,dest);
+	comprintf("\treadword(%s,%s,scratchie);\n", address, dest);
 }
 
-static void gen_readlong (const char* address, const char* dest)
+static void gen_readlong(const char *address, const char *dest)
 {
-    comprintf("\treadlong(%s,%s,scratchie);\n",address,dest);
+	comprintf("\treadlong(%s, %s, scratchie);\n", address, dest);
 }
 
 
@@ -349,321 +357,333 @@ sync_m68k_pc (void)
 /* getv == 1: fetch data; getv != 0: check for odd address. If movem != 0,
  * the calling routine handles Apdi and Aipi modes.
  * gb-- movem == 2 means the same thing but for a MOVE16 instruction */
-static void
-genamode (amodes mode, const char *reg, wordsizes size, const char *name, int getv, int movem)
+static void genamode(amodes mode, const char *reg, wordsizes size, const char *name, int getv, int movem)
 {
-    start_brace ();
-    switch (mode)
-    {
-     case Dreg: /* Do we need to check dodgy here? */
-	assert (!movem);
-	if (getv == 1 || getv==2) {
-	    /* We generate the variable even for getv==2, so we can use
-	       it as a destination for MOVE */
-	    comprintf ("\tint %s=%s;\n",name,reg);
-	}
-	return;
-
-     case Areg:
-	assert (!movem);
-	if (getv == 1 || getv==2) {
-	    /* see above */
-	    comprintf ("\tint %s=dodgy?scratchie++:%s+8;\n",name,reg);
-	    if (getv==1) {
-		comprintf ("\tif (dodgy) \n");
-		comprintf ("\t\tmov_l_rr(%s,%s+8);\n",name, reg);
-	    }
-	}
-	return;
-
-     case Aind:
-	comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-	comprintf ("\tif (dodgy) \n");
-	comprintf ("\t\tmov_l_rr(%sa,%s+8);\n",name, reg);
-	break;
-     case Aipi:
-	comprintf ("\tint %sa=scratchie++;\n",name,reg);
-	comprintf ("\tmov_l_rr(%sa,%s+8);\n",name, reg);
-	break;
-     case Apdi:
-	switch (size)
-	{
-	 case sz_byte:
-	    if (movem) {
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    else {
-		start_brace();
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf("\tlea_l_brr(%s+8,%s+8,(uae_s32)-areg_byteinc[%s]);\n",reg,reg,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    break;
-	 case sz_word:
-	    if (movem) {
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    else {
-		start_brace();
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf("\tlea_l_brr(%s+8,%s+8,-2);\n",reg,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    break;
-	 case sz_long:
-	    if (movem) {
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    else {
-		start_brace();
-		comprintf ("\tint %sa=dodgy?scratchie++:%s+8;\n",name,reg);
-		comprintf("\tlea_l_brr(%s+8,%s+8,-4);\n",reg,reg);
-		comprintf ("\tif (dodgy) \n");
-		comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	    }
-	    break;
-	 default:
-	    assert(0);
-	}
-	break;
-     case Ad16:
-	comprintf("\tint %sa=scratchie++;\n",name);
-	comprintf("\tmov_l_rr(%sa,8+%s);\n",name,reg);
-	comprintf("\tlea_l_brr(%sa,%sa,(uae_s32)(uae_s16)%s);\n",name,name,gen_nextiword());
-	break;
-     case Ad8r:
-	comprintf("\tint %sa=scratchie++;\n",name);
-	comprintf("\tcalc_disp_ea_020(%s+8,%s,%sa,scratchie);\n",
-		  reg,gen_nextiword(),name);
-	break;
-
-     case PC16:
-	comprintf("\tint %sa=scratchie++;\n",name);
-	comprintf("\tuae_u32 address=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset;\n");
-	comprintf ("\tuae_s32 PC16off = (uae_s32)(uae_s16)%s;\n", gen_nextiword ());
-	comprintf("\tmov_l_ri(%sa,address+PC16off);\n",name);
-	break;
-
-     case PC8r:
-	comprintf("\tint pctmp=scratchie++;\n");
-	comprintf("\tint %sa=scratchie++;\n",name);
-	comprintf("\tuae_u32 address=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset;\n");
 	start_brace();
-	comprintf("\tmov_l_ri(pctmp,address);\n");
-
-	comprintf("\tcalc_disp_ea_020(pctmp,%s,%sa,scratchie);\n",
-		  gen_nextiword(),name);
-	break;
-     case absw:
-	comprintf ("\tint %sa = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%sa,(uae_s32)(uae_s16)%s);\n", name, gen_nextiword ());
-	break;
-     case absl:
-	comprintf ("\tint %sa = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%sa,%s); /* absl */\n", name, gen_nextilong ());
-	break;
-     case imm:
-	assert (getv == 1);
-	switch (size)
-	{
-	 case sz_byte:
-	    comprintf ("\tint %s = scratchie++;\n",name);
-	    comprintf ("\tmov_l_ri(%s,(uae_s32)(uae_s8)%s);\n", name, gen_nextibyte ());
-	    break;
-	 case sz_word:
-	    comprintf ("\tint %s = scratchie++;\n",name);
-	    comprintf ("\tmov_l_ri(%s,(uae_s32)(uae_s16)%s);\n", name, gen_nextiword ());
-	    break;
-	 case sz_long:
-	    comprintf ("\tint %s = scratchie++;\n",name);
-	    comprintf ("\tmov_l_ri(%s,%s);\n", name, gen_nextilong ());
-	    break;
-	 default:
-	    assert(0);
-	}
-	return;
-     case imm0:
-	assert (getv == 1);
-	comprintf ("\tint %s = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%s,(uae_s32)(uae_s8)%s);\n", name, gen_nextibyte ());
-	return;
-     case imm1:
-	assert (getv == 1);
-	comprintf ("\tint %s = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%s,(uae_s32)(uae_s16)%s);\n", name, gen_nextiword ());
-	return;
-     case imm2:
-	assert (getv == 1);
-	comprintf ("\tint %s = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%s,%s);\n", name, gen_nextilong ());
-	return;
-     case immi:
-	assert (getv == 1);
-	comprintf ("\tint %s = scratchie++;\n",name);
-	comprintf ("\tmov_l_ri(%s,%s);\n", name, reg);
-	return;
-     default:
-	assert(0);
-    }
-
-    /* We get here for all non-reg non-immediate addressing modes to
-     * actually fetch the value. */
-    if (getv == 1)
-    {
-	char astring[80];
-	sprintf(astring,"%sa",name);
-	switch (size)
-	{
-	 case sz_byte:
-	    insn_n_cycles += 2;
-	    break;
-	 case sz_word:
-	    insn_n_cycles += 2;
-	    break;
-	 case sz_long:
-	    insn_n_cycles += 4;
-	    break;
-	 default:
-	    assert(0);
-	}
-	start_brace ();
-	comprintf("\tint %s=scratchie++;\n",name);
-	switch (size)
-	{
-	 case sz_byte:
-	    gen_readbyte(astring,name);
-	    break;
-	 case sz_word:
-	    gen_readword(astring,name);
-	    break;
-	 case sz_long:
-	    gen_readlong(astring,name);
-	    break;
-	 default:
-	    assert(0);
-	}
-    }
-
-    /* We now might have to fix up the register for pre-dec or post-inc
-     * addressing modes. */
-    if (!movem) {
-// MJ	char x[160];
 	switch (mode)
 	{
-	 case Aipi:
-	    switch (size)
-	    {
-	     case sz_byte:
-		comprintf("\tlea_l_brr(%s+8,%s+8,areg_byteinc[%s]);\n",reg,reg,reg);
+	case Dreg: /* Do we need to check dodgy here? */
+		assert (!movem);
+		if (getv == 1 || getv == 2)
+		{
+			/* We generate the variable even for getv==2, so we can use
+			 it as a destination for MOVE */
+			comprintf("\tint %s = %s;\n", name, reg);
+		}
+		return;
+
+	case Areg:
+		assert (!movem);
+		if (getv == 1 || getv == 2)
+		{
+			/* see above */
+			comprintf("\tint %s = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+			if (getv == 1)
+			{
+				comprintf("\tif (dodgy) \n");
+				comprintf("\t\tmov_l_rr(%s, %s + 8);\n", name, reg);
+			}
+		}
+		return;
+
+	case Aind:
+		comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+		comprintf("\tif (dodgy)\n");
+		comprintf("\t\tmov_l_rr(%sa, %s + 8);\n", name, reg);
 		break;
-	     case sz_word:
-		comprintf("\tlea_l_brr(%s+8,%s+8,2);\n",reg,reg,reg);
+	case Aipi:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tmov_l_rr(%sa, %s + 8);\n", name, reg);
 		break;
-	     case sz_long:
-		comprintf("\tlea_l_brr(%s+8,%s+8,4);\n",reg,reg);
+	case Apdi:
+		switch (size)
+		{
+		case sz_byte:
+			if (movem)
+			{
+				comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+				comprintf("\tif (dodgy)\n");
+				comprintf("\t\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+			} else
+			{
+				start_brace();
+				comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+				comprintf("\tlea_l_brr(%s + 8, %s + 8, (uae_s32)-areg_byteinc[%s]);\n", reg, reg, reg);
+				comprintf("\tif (dodgy)\n");
+				comprintf("\t\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+			}
+			break;
+		case sz_word:
+			if (movem)
+			{
+				comprintf("\tint %sa=dodgy?scratchie++:%s+8;\n", name, reg);
+				comprintf("\tif (dodgy) \n");
+				comprintf("\tmov_l_rr(%sa,8+%s);\n", name, reg);
+			} else
+			{
+				start_brace();
+				comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+				comprintf("\tlea_l_brr(%s + 8, %s + 8, -2);\n", reg, reg);
+				comprintf("\tif (dodgy)\n");
+				comprintf("\t\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+			}
+			break;
+		case sz_long:
+			if (movem)
+			{
+				comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+				comprintf("\tif (dodgy)\n");
+				comprintf("\t\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+			} else
+			{
+				start_brace();
+				comprintf("\tint %sa = dodgy ? scratchie++ : %s + 8;\n", name, reg);
+				comprintf("\tlea_l_brr(%s + 8, %s + 8, -4);\n", reg, reg);
+				comprintf("\tif (dodgy)\n");
+				comprintf("\t\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+			}
+			break;
+		default:
+			assert(0);
+			break;
+		}
 		break;
-	     default:
+	case Ad16:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tmov_l_rr(%sa, 8 + %s);\n", name, reg);
+		comprintf("\tlea_l_brr(%sa, %sa, (uae_s32)(uae_s16)%s);\n", name, name, gen_nextiword());
+		break;
+	case Ad8r:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tcalc_disp_ea_020(%s + 8, %s, %sa, scratchie);\n", reg, gen_nextiword(), name);
+		break;
+
+	case PC16:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tuae_u32 address = start_pc + ((char *)comp_pc_p - (char *)start_pc_p) + m68k_pc_offset;\n");
+		comprintf("\tuae_s32 PC16off = (uae_s32)(uae_s16)%s;\n", gen_nextiword());
+		comprintf("\tmov_l_ri(%sa, address + PC16off);\n", name);
+		break;
+
+	case PC8r:
+		comprintf("\tint pctmp = scratchie++;\n");
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tuae_u32 address = start_pc + ((char *)comp_pc_p - (char *)start_pc_p) + m68k_pc_offset;\n");
+		start_brace();
+		comprintf("\tmov_l_ri(pctmp,address);\n");
+
+		comprintf("\tcalc_disp_ea_020(pctmp, %s, %sa, scratchie);\n", gen_nextiword(), name);
+		break;
+	case absw:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%sa, (uae_s32)(uae_s16)%s);\n", name, gen_nextiword());
+		break;
+	case absl:
+		comprintf("\tint %sa = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%sa, %s); /* absl */\n", name, gen_nextilong());
+		break;
+	case imm:
+		assert (getv == 1);
+		switch (size)
+		{
+		case sz_byte:
+			comprintf("\tint %s = scratchie++;\n", name);
+			comprintf("\tmov_l_ri(%s, (uae_s32)(uae_s8)%s);\n", name, gen_nextibyte());
+			break;
+		case sz_word:
+			comprintf("\tint %s = scratchie++;\n", name);
+			comprintf("\tmov_l_ri(%s, (uae_s32)(uae_s16)%s);\n", name, gen_nextiword());
+			break;
+		case sz_long:
+			comprintf("\tint %s = scratchie++;\n", name);
+			comprintf("\tmov_l_ri(%s, %s);\n", name, gen_nextilong());
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		return;
+	case imm0:
+		assert (getv == 1);
+		comprintf("\tint %s = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%s, (uae_s32)(uae_s8)%s);\n", name, gen_nextibyte());
+		return;
+	case imm1:
+		assert (getv == 1);
+		comprintf("\tint %s = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%s, (uae_s32)(uae_s16)%s);\n", name, gen_nextiword());
+		return;
+	case imm2:
+		assert (getv == 1);
+		comprintf("\tint %s = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%s, %s);\n", name, gen_nextilong());
+		return;
+	case immi:
+		assert (getv == 1);
+		comprintf("\tint %s = scratchie++;\n", name);
+		comprintf("\tmov_l_ri(%s, %s);\n", name, reg);
+		return;
+	default:
 		assert(0);
-	    }
-	    break;
-	 case Apdi:
-	    break;
-	 default:
-	    break;
+		break;
 	}
-    }
+
+	/* We get here for all non-reg non-immediate addressing modes to
+	 * actually fetch the value. */
+	if (getv == 1)
+	{
+		char astring[80];
+		sprintf(astring, "%sa", name);
+		switch (size)
+		{
+		case sz_byte:
+			insn_n_cycles += 2;
+			break;
+		case sz_word:
+			insn_n_cycles += 2;
+			break;
+		case sz_long:
+			insn_n_cycles += 4;
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		start_brace();
+		comprintf("\tint %s = scratchie++;\n", name);
+		switch (size)
+		{
+		case sz_byte:
+			gen_readbyte(astring, name);
+			break;
+		case sz_word:
+			gen_readword(astring, name);
+			break;
+		case sz_long:
+			gen_readlong(astring, name);
+			break;
+		default:
+			assert(0);
+			break;
+		}
+	}
+
+	/* We now might have to fix up the register for pre-dec or post-inc
+	 * addressing modes. */
+	if (!movem)
+	{
+		switch (mode)
+		{
+		case Aipi:
+			switch (size)
+			{
+			case sz_byte:
+				comprintf("\tlea_l_brr(%s + 8,%s + 8, areg_byteinc[%s]);\n", reg, reg, reg);
+				break;
+			case sz_word:
+				comprintf("\tlea_l_brr(%s + 8, %s + 8, 2);\n", reg, reg);
+				break;
+			case sz_long:
+				comprintf("\tlea_l_brr(%s + 8, %s + 8, 4);\n", reg, reg);
+				break;
+			default:
+				assert(0);
+				break;
+			}
+			break;
+		case Apdi:
+			break;
+		default:
+			break;
+		}
+	}
 }
 
-static void
-genastore (const char *from, amodes mode, const char *reg, wordsizes size, const char *to)
+static void genastore(const char *from, amodes mode, const char *reg, wordsizes size, const char *to)
 {
-    switch (mode)
-    {
-     case Dreg:
-	switch (size)
+	switch (mode)
 	{
-	 case sz_byte:
-	    comprintf("\tif(%s!=%s)\n",reg,from);
-	    comprintf ("\t\tmov_b_rr(%s,%s);\n", reg, from);
-	    break;
-	 case sz_word:
-	    comprintf("\tif(%s!=%s)\n",reg,from);
-	    comprintf ("\t\tmov_w_rr(%s,%s);\n", reg, from);
-	    break;
-	 case sz_long:
-	    comprintf("\tif(%s!=%s)\n",reg,from);
-	    comprintf ("\t\tmov_l_rr(%s,%s);\n", reg, from);
-	    break;
-	 default:
-	    assert(0);
-	}
-	break;
-     case Areg:
-	switch (size)
+	case Dreg:
+		switch (size)
+		{
+		case sz_byte:
+			comprintf("\tif(%s != %s)\n", reg, from);
+			comprintf("\t\tmov_b_rr(%s, %s);\n", reg, from);
+			break;
+		case sz_word:
+			comprintf("\tif(%s != %s)\n", reg, from);
+			comprintf("\t\tmov_w_rr(%s, %s);\n", reg, from);
+			break;
+		case sz_long:
+			comprintf("\tif(%s != %s)\n", reg, from);
+			comprintf("\t\tmov_l_rr(%s, %s);\n", reg, from);
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		break;
+	case Areg:
+		switch (size)
+		{
+		case sz_word:
+			comprintf("\tif(%s + 8 != %s)\n", reg, from);
+			comprintf("\t\tmov_w_rr(%s + 8, %s);\n", reg, from);
+			break;
+		case sz_long:
+			comprintf("\tif(%s + 8 != %s)\n", reg, from);
+			comprintf("\t\tmov_l_rr(%s + 8, %s);\n", reg, from);
+			break;
+		default:
+			assert(0);
+			break;
+		}
+		break;
+
+	case Apdi:
+	case absw:
+	case PC16:
+	case PC8r:
+	case Ad16:
+	case Ad8r:
+	case Aipi:
+	case Aind:
+	case absl:
 	{
-	 case sz_word:
-	    comprintf("\tif(%s+8!=%s)\n",reg,from);
-	    comprintf ("\t\tmov_w_rr(%s+8,%s);\n", reg, from);
-	    break;
-	 case sz_long:
-	    comprintf("\tif(%s+8!=%s)\n",reg,from);
-	    comprintf ("\t\tmov_l_rr(%s+8,%s);\n", reg, from);
-	    break;
-	 default:
-	    assert(0);
+		char astring[80];
+		sprintf(astring, "%sa", to);
+
+		switch (size)
+		{
+		case sz_byte:
+			insn_n_cycles += 2;
+			gen_writebyte(astring, from);
+			break;
+		case sz_word:
+			insn_n_cycles += 2;
+			gen_writeword(astring, from);
+			break;
+		case sz_long:
+			insn_n_cycles += 4;
+			gen_writelong(astring, from);
+			break;
+		default:
+			assert(0);
+			break;
+		}
 	}
-	break;
-
-     case Apdi:
-     case absw:
-     case PC16:
-     case PC8r:
-     case Ad16:
-     case Ad8r:
-     case Aipi:
-     case Aind:
-     case absl:
-     {
-	 char astring[80];
-	 sprintf(astring,"%sa",to);
-
-	 switch (size)
-	 {
-	  case sz_byte:
-	     insn_n_cycles += 2;
-	     gen_writebyte(astring,from);
-	     break;
-	  case sz_word:
-	     insn_n_cycles += 2;
-	     gen_writeword(astring,from);
-	     break;
-	  case sz_long:
-	     insn_n_cycles += 4;
-	     gen_writelong(astring,from);
-	     break;
-	  default:
-	     assert(0);
-	 }
-     }
-     break;
-     case imm:
-     case imm0:
-     case imm1:
-     case imm2:
-     case immi:
-	assert(0);
-	break;
-     default:
-	assert(0);
-    }
+		break;
+	case imm:
+	case imm0:
+	case imm1:
+	case imm2:
+	case immi:
+		assert(0);
+		break;
+	default:
+		assert(0);
+		break;
+	}
 }
 
 static void genmov16(uae_u32 opcode, struct instr *curi)
@@ -3522,11 +3542,7 @@ generate_func (int noflags)
 
 }
 
-#ifdef __cplusplus
-int main(int, char **)
-#else
-int main()
-#endif
+int main(void)
 {
     read_table68k ();
     do_merges ();
