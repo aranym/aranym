@@ -259,7 +259,7 @@ static const int x86_reg_map[] = {
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
 #endif
-	D(bug("\nBUS ERROR fault address is %08x", addr));
+	D(bug("BUS ERROR fault address is %08x", addr));
 
 	D(bug("PC %08x", m68k_getpc())); 
 
@@ -1225,7 +1225,7 @@ static const int x86_reg_map[] = {
 		D(bug("WRITE instruction %X", instruction));
 		switch (instruction) {
 			case INSTR_MOV8:
-				D2(bug("MOV value = $%x\n", *((uae_u8 *)preg)));
+				D2(bug("MOV value = $%x", *((uae_u8 *)preg)));
 				HWput_b(addr, *((uae_u8 *)preg));
 				break;
 			case INSTR_MOV32:

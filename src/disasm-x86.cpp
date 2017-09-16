@@ -1,5 +1,5 @@
 /*
- * diasm-x86.cpp - x86/x86_64 disassembler (using opcodes library)
+ * disasm-x86.cpp - x86/x86_64 disassembler (using opcodes library)
  *
  * Copyright (c) 2017 ARAnyM developer team
  * 

@@ -1152,6 +1152,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
 	arm)
           CFLAGS="$CFLAGS -marm"
           CXXFLAGS="$CXXFLAGS -marm"          
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
           ;;
         *)
           AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])

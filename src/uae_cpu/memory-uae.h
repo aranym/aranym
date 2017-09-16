@@ -197,7 +197,7 @@ static inline uae_u64 phys_get_quad(uaecptr addr)
 #endif
 #ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
-    if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr);
+    if ((addr & 0xfff00000) == 0x00f00000) return HWget_l(addr); /* TODO: must be HWget_q */
 #endif
     check_ram_boundary(addr, 8, false);
     uae_u64 * const m = (uae_u64 *)phys_get_real_address(addr);
@@ -276,7 +276,7 @@ static inline void phys_put_quad(uaecptr addr, uae_u64 l)
 #ifndef HW_SIGSEGV
     addr = addr < 0xff000000 ? addr : addr & 0x00ffffff;
     if ((addr & 0xfff00000) == 0x00f00000) {
-        HWput_l(addr, l);
+        HWput_l(addr, l); /* TODO: must be HWput_q */
         return;
     } 
 #endif

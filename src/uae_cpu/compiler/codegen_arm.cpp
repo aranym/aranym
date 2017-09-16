@@ -2202,6 +2202,13 @@ static inline void raw_emit_nop(void)
   NOP();
 }
 
+#ifdef UAE
+static
+#endif
+void compiler_status() {
+	jit_log("compiled code starts at %p, current at %p (size 0x%x)", compiled_code, current_compile_p, (unsigned int)(current_compile_p - compiled_code));
+}
+
 //
 // ARM doesn't have bsf, but clz is a good alternative instruction for it
 //

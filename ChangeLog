@@ -1,3 +1,7 @@
+2017/09/16 - Thorsten
+Use NO_NESTED_SIGSEGV on linux/arm, to cleanly return from signal handler
+
+
 2017/09/13 - Thorsten
 Update glibc wrapper for arm
 
