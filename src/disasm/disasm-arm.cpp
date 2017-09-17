@@ -1,5 +1,5 @@
 /*
- * disasm-x86.cpp - x86/x86_64 disassembler (using opcodes library)
+ * disasm-arm.cpp - arm disassembler (using opcodes library)
  *
  * Copyright (c) 2017 ARAnyM developer team
  * 
@@ -20,7 +20,7 @@
  * along with ARAnyM; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * 2017-01-07 : Initial version - Thorsten Otto
+ * 2017-09-10 : Initial version - Thorsten Otto
  *
  */
 
@@ -28,9 +28,17 @@
 #include "cpu_emulation.h"
 #include "disasm-glue.h"
 
-#ifdef HAVE_DISASM_X86 /* rest of file */
+#ifdef HAVE_DISASM_ARM /* rest of file */
+
+#ifdef DISASM_USE_OPCODES
 
 #include <dis-asm.h>
+
+#else
+
+#include "disasm/disasm-arm.h"
+
+#endif /* DISASM_USE_OPCODES */
 
 struct opcodes_info {
 	char linebuf[128];
@@ -61,48 +69,67 @@ static int opcodes_printf(void *info, const char *format, ...)
 }
 
 
-const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
+const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 {
 	struct opcodes_info info;
 	int len;
 	int i;
 	char *opcode;
-	char *p;
+	char *p, *p2;
 	
 	info.linepos = 0;
 	info.bufsize = sizeof(info.linebuf);
+#ifdef DISASM_USE_OPCODES
 	INIT_DISASSEMBLE_INFO(info.opcodes_info, &info, opcodes_printf);
 	info.opcodes_info.buffer = (bfd_byte *)ainstr;
-	info.opcodes_info.buffer_length = 15; // largest instruction size on x86
+	info.opcodes_info.buffer_length = 16;
 	info.opcodes_info.buffer_vma = (uintptr)ainstr;
-	info.opcodes_info.arch = bfd_arch_i386;
-#ifdef CPU_i386
-	info.opcodes_info.mach = bfd_mach_i386_i386;
-#else
-	info.opcodes_info.mach = bfd_mach_x86_64;
-#endif
+#ifdef CPU_arm
+	info.opcodes_info.arch = bfd_arch_arm;
+	info.opcodes_info.mach = bfd_mach_arm_unknown;
 	disassemble_init_for_target(&info.opcodes_info);
-	len = print_insn_i386(info.opcodes_info.buffer_vma, &info.opcodes_info);
+	len = print_insn_little_arm(info.opcodes_info.buffer_vma, &info.opcodes_info);
+#else
+	info.opcodes_info.arch = bfd_arch_aarch64;
+	info.opcodes_info.mach = bfd_mach_aarch64;
+	disassemble_init_for_target(&info.opcodes_info);
+	len = print_insn_aarch64(info.opcodes_info.buffer_vma, &info.opcodes_info);
+#endif
+#endif
+
+#ifdef DISASM_USE_BUILTIN
+	arm_disassemble_init(&info.opcodes_info, &info, opcodes_printf);
+#ifdef CPU_arm
+	len = arm_print_insn(ainstr, &info.opcodes_info);
+#else
+	len = aarch64_print_insn(ainstr, &info.opcodes_info);
+#endif
+#endif
+
 	info.linebuf[info.linepos] = '\0';
-#ifdef CPU_i386
+
+#ifdef CPU_arm
 	sprintf(buf, "[%08x]", (uintptr)ainstr);
 #else
 	sprintf(buf, "[%016lx]", (uintptr)ainstr);
 #endif
-	for (i = 0; i < 7 && i < len; i++)
+	for (i = 0; i < 12 && (i + 4) <= len; i += 4)
+	{
+		sprintf(buf + strlen(buf), " %08x",
+			((uint32_t)ainstr[i + 0]) |
+			((uint32_t)ainstr[i + 1] << 8) |
+			((uint32_t)ainstr[i + 2] << 16) |
+			((uint32_t)ainstr[i + 3] << 24));
+	}
+	for (; i < 12 && i < len; i++)
 	{
 		sprintf(buf + strlen(buf), " %02x", ainstr[i]);
 	}
-	for (; i < 7; i++)
-		strcat(buf, "   ");
 	opcode = info.linebuf;
-	if (strncmp(opcode, "addr32", 6) == 0)
-	{
-		opcode += 6;
-		while (*opcode == ' ')
-			opcode++;
-	}		
 	p = strchr(opcode, ' ');
+	p2 = strchr(opcode, '\t');
+	if (p == NULL || p2 < p)
+		p = p2;
 	if (p)
 	{
 		*p++ = '\0';
@@ -122,4 +149,4 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 
 extern int i_dont_care_that_ISOC_doesnt_like_empty_sourcefiles;
 
-#endif /* HAVE_DISASM_X86 */
+#endif /* HAVE_DISASM_ARM */

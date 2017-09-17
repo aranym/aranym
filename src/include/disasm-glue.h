@@ -175,4 +175,12 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf);
 
 #endif
 
+#if defined(DISASM_USE_BUILTIN) && (defined(CPU_arm))
+
+#define HAVE_DISASM_ARM 1
+
+const uint8 *arm_disasm(const uint8 *ainstr, char *buf);
+
+#endif
+
 #endif /* __DISASM_GLUE_H__ */

@@ -26,6 +26,8 @@
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"
+#include "disasm-glue.h"
+
 #define DEBUG 0
 #include "debug.h"
 
@@ -80,12 +82,35 @@ enum {
 	ARM_REG_LR = ARM_REG_R14,
 	ARM_REG_R15 = 15,
 	ARM_REG_PC = ARM_REG_R15,
-	ARM_REG_CPSR = 16
+	ARM_REG_CPSR = 16,
+	
+	ARM_REG_NUM
 };
 
-static inline void unknown_instruction(uint32 instr)
+static const char *const reg_names[] = {
+	"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+	"r8", "r9", "sl", "fp", "ip", "sp", "lr", "pc",
+	"cpsr"
+};
+
+static inline void unknown_instruction(const unsigned long *pregs)
 {
+	uint32_t *pc = (uint32_t *)pregs[ARM_REG_PC];
+	const uint32 instr = pc[0];
 	panicbug("Unknown instruction %08x!", instr);
+#ifdef HAVE_DISASM_ARM
+	{
+		char buf[256];
+		const uint8 *ainstr = (const uint8 *)pc;
+		
+		arm_disasm(ainstr, buf);
+		panicbug("%s", buf);
+	}
+#endif
+	for (int i = 0; i < ARM_REG_NUM; i++)
+	{
+		bug("%s : %08lx", reg_names[i], pregs[i]);
+	}
 #ifdef USE_JIT
 	compiler_status();
 # ifdef JIT_DEBUG
@@ -105,7 +130,7 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 	uint32_t *pc = (uint32_t *)pregs[ARM_REG_PC];
 
 	const uint32_t opcode = pc[0];
-	D(bug("IP: %p [%08x] %08x", pc, opcode, faultaddr));
+	D(bug("PC: %p [%08x] %08x", pc, opcode, faultaddr));
 
 	if (in_handler > 0) {
 		panicbug("Segmentation fault in handler :-(, faultaddr=0x%08x", faultaddr);
@@ -135,23 +160,23 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 			switch ((opcode >> 5) & 3) {
 				case 0: // SWP instruction
 					panicbug("FIXME: SWP Instruction");
-					unknown_instruction(opcode);
+					unknown_instruction(pregs);
 					break;
-				case 1: // Unsigned halfwords
+				case 1: // Unsigned halfwords (LDRH/STRH)
 					transfer_size = SIZE_WORD;
 					break;
-				case 3: // Signed halfwords
-					style = SIGNED;
-					transfer_size = SIZE_WORD;
-					break;
-				case 2: // Signed byte
+				case 2: // Signed byte (LDRSB)
 					style = SIGNED;
 					transfer_size = SIZE_BYTE;
 					break;
+				case 3: // Signed halfwords (LDRSH)
+					style = SIGNED;
+					transfer_size = SIZE_WORD;
+					break;
 				}
 			break;
-		case 2:
-		case 3: // Single Data Transfer (LDR, STR)
+		case 2: // Single Data Transfer (LDR, STR immediate)
+		case 3: // Single Data Transfer (LDR, STR register)
 			style = UNSIGNED;
 			// Determine transfer size (B bit)
 			if (((opcode >> 22) & 1) == 1)
@@ -159,16 +184,20 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 			else
 				transfer_size = SIZE_INT;
 			break;
+		case 4: // LDM/STM
+		case 5: // B
+		case 6: // LDC/STC
+		case 7: // CDP
 		default:
 			panicbug("FIXME: support load/store multiple?");
-			unknown_instruction(opcode);
+			unknown_instruction(pregs);
 			break;
 	}
 
 	// Check for invalid transfer size (SWP instruction?)
 	if (transfer_size == SIZE_UNKNOWN) {
 		panicbug("Invalid transfer size");
-		unknown_instruction(opcode);
+		unknown_instruction(pregs);
 	}
 
 	// Determine transfer type (L bit)
@@ -177,20 +206,24 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 	else
 		transfer_type = TYPE_STORE;
 
-	int rd = (opcode >> 12) & 0xf;
+	int rt = (opcode >> 12) & 0xf;
 #if DEBUG
-	static const char * reg_names[] = {
-		"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
-		"r8", "r9", "sl", "fp", "ip", "sp", "lr", "pc"
-	};
 	bug("%s %s register %s",
 		transfer_size == SIZE_BYTE ? "byte" :
 		transfer_size == SIZE_WORD ? "word" :
 		transfer_size == SIZE_INT ? "long" : "unknown",
 		transfer_type == TYPE_LOAD ? "load to" : "store from",
-		reg_names[rd]);
-//	for (int i = 0; i < 16; i++) {
-//		bug("%s : %p", reg_names[i], pregs[i]);
+		reg_names[rt]);
+#ifdef HAVE_DISASM_ARM
+	{
+		char buf[128];
+		
+		arm_disasm((const uint8_t *)pc, buf);
+		bug("%s", buf);
+	}
+#endif
+//	for (int i = 0; i < ARM_REG_NUM; i++) {
+//		bug("%s : %08lx", reg_names[i], pregs[i]);
 //	}
 #endif
 
@@ -203,25 +236,25 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 	if (transfer_type == TYPE_LOAD) {
 		switch(transfer_size) {
 		case SIZE_BYTE:
-			pregs[rd] = style == SIGNED ? (uae_s8)HWget_b(addr) : (uae_u8)HWget_b(addr);
+			pregs[rt] = style == SIGNED ? (uae_s8)HWget_b(addr) : (uae_u8)HWget_b(addr);
 			break;
 		case SIZE_WORD:
-			pregs[rd] = do_byteswap_16(style == SIGNED ? (uae_s16)HWget_w(addr) : (uae_u16)HWget_w(addr));
+			pregs[rt] = do_byteswap_16(style == SIGNED ? (uae_s16)HWget_w(addr) : (uae_u16)HWget_w(addr));
 			break;
 		case SIZE_INT:
-			pregs[rd] = do_byteswap_32(HWget_l(addr));
+			pregs[rt] = do_byteswap_32(HWget_l(addr));
 			break;
 		}
 	} else {
 		switch(transfer_size) {
 		case SIZE_BYTE:
-			HWput_b(addr, pregs[rd]);
+			HWput_b(addr, pregs[rt]);
 			break;
 		case SIZE_WORD:
-			HWput_w(addr, do_byteswap_16(pregs[rd]));
+			HWput_w(addr, do_byteswap_16(pregs[rt]));
 			break;
 		case SIZE_INT:
-			HWput_l(addr, do_byteswap_32(pregs[rd]));
+			HWput_l(addr, do_byteswap_32(pregs[rt]));
 			break;
 		}
 	}
@@ -278,6 +311,30 @@ static void segfault_vec(int /*sig*/, siginfo_t *sip, void *uc) {
 	uintptr faultaddr = (uintptr)sip->si_addr;
 	memptr addr = (memptr)(faultaddr - fixed_memory_offset);
 
+#if DEBUG
+	if (addr >= 0xff000000)
+		addr &= 0x00ffffff;
+	if (addr < 0x00f00000 || addr > 0x00ffffff)
+		bug("segfault: m68k pc=%08x, arm PC=%08lx, addr=%08x (0x%08x)", m68k_getpc(), regs[ARM_REG_PC], faultaddr, addr);
+	if (faultaddr < (uintptr)(fixed_memory_offset - 0x1000000UL)
+#ifdef CPU_aarch64
+		|| faultaddr >= ((uintptr)fixed_memory_offset + 0x100000000UL)
+#endif
+		)
+	{
+#ifdef HAVE_DISASM_ARM
+		if (regs[ARM_REG_PC] != 0)
+		{
+			char buf[128];
+			
+			arm_disasm((const uint8 *)regs[ARM_REG_PC], buf);
+			panicbug("%s", buf);
+		}
+#endif
+		// raise(SIGBUS);
+	}
+#endif
+
 	if (faultaddr == 0 || regs[ARM_REG_PC] == 0)
 	{
 		real_segmentationfault();
@@ -295,7 +352,7 @@ void install_sigsegv() {
 	sigsegv_sa.sa_handler = (sighandler_t) segfault_vec;
 	sigsegv_sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGSEGV, &sigsegv_sa, NULL);
-	D(bug("Installed sigseg handler"));
+	D(bug("Installed sigsegv handler"));
 }
 
 void uninstall_sigsegv()

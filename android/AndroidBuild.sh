@@ -13,8 +13,20 @@ if [ \! -f aranym/configure ] ; then
 	sh -c "cd aranym && ./autogen.sh"
 fi
 
+configure_options="--host=arm-linux-androideabi \
+	--prefix=/storage/sdcard/Android/data/org.aranym.sdl/files \
+	--disable-opengl \
+	--disable-nfclipbrd \
+	--disable-cxx-exceptions \
+	--disable-ethernet \
+	--disable-ata-cdrom \
+	--disable-parport \
+	--disable-sdl2 \
+	--enable-disasm=builtin \
+	"
+
 if [ \! -f aranym/Makefile ] ; then
-  $LOCAL_PATH/../setEnvironment-armeabi-v7a.sh sh -c "cd aranym && ./configure --build=x86_64-unknown-linux-gnu --host=arm-linux-androideabi --disable-opengl --disable-nfclipbrd --disable-cxx-exceptions --disable-ethernet --disable-jit-compiler --disable-ata-cdrom --disable-parport --disable-sdl2 --prefix=/mnt/sdcard/Android/data/org.aranym.sdl/files"
+  $LOCAL_PATH/../setEnvironment-armeabi-v7a.sh sh -c "cd aranym && ./configure $configure_options"
 fi
 
 make -C aranym && cp aranym/src/aranym libapplication-armeabi-v7a.so

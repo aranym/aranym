@@ -547,6 +547,20 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 		}
 #endif
 		break;
+	case TARGET_ARM:
+#if defined(HAVE_DISASM_ARM)
+		{
+			const uint8 *end = start + length;
+			char buf[256];
+			
+			while (start < end)
+			{
+				start = arm_disasm(start, buf);
+				bug("%s", buf);
+			}
+		}
+#endif
+		break;
 	}
 }
 

@@ -192,6 +192,19 @@ static const char *const fpcregs[3] = { "fpiar", "fpsr", "fpcr" };
 #  define NO_LONGDOUBLE_PRINTF
 #endif
 
+#if defined(SIZEOF_LONG_DOUBLE) && defined(SIZEOF_DOUBLE) && (SIZEOF_LONG_DOUBLE == SIZEOF_DOUBLE)
+/*
+ * Android currently has some functions commented out in the math.h header file,
+ * even if autoconf detects them to be present.
+ */
+#undef logl
+#define logl(x) ((long double)log((double)(x)))
+#undef powl
+#define powl(x, y) ((long double)pow((double)(x), (double)(y)))
+#undef ldexpl
+#define ldexpl(x, y) ((long double)ldexp((double)(x), y))
+#endif
+
 /******************************************************************************/
 /*** ---------------------------------------------------------------------- ***/
 /******************************************************************************/

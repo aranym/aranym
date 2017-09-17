@@ -1630,14 +1630,18 @@ if test "$enable_disasm" = auto -o "$enable_disasm" = opcodes; then
       fi
       CPPFLAGS="$CPPFLAGS $OPCODES_CFLAGS"
    fi
-   OPCODES_LIBS="$OPCODES_LIBS -lopcodes -lbfd -liberty -lz -ldl"
-   found=yes
-   AC_CHECK_HEADERS(bfd.h,,found=no)
-   AC_CHECK_HEADERS(dis-asm.h,,found=no)
+   OPCODES_LIBS="$OPCODES_LIBS -lopcodes -lbfd -lz -ldl"
+   found=no
+   AC_CHECK_HEADERS(bfd.h,found=yes,found=no)
+   AC_CHECK_HEADERS(dis-asm.h,found=yes,found=no)
    CPPFLAGS="$CPPFLAGS_save"
-   if test "$found" = yes; then
-     AC_CHECK_LIB([opcodes], print_insn_m68k,, found=no, [$OPCODES_LIBS])
-   fi
+   AC_CHECK_LIB([opcodes], print_insn_m68k, found=yes,
+   	   [unset ac_cv_lib_opcodes_print_insn_m68k
+            OPCODES_LIBS="$OPCODES_LIBS -liberty"
+	    AC_CHECK_LIB([opcodes], print_insn_m68k, found=yes,
+		found=no,
+		[$OPCODES_LIBS])],
+	[$OPCODES_LIBS])
    LIBS="$LIBS_save"
    AC_MSG_CHECKING([for opcodes usability])
    if test "$found" = "yes"; then

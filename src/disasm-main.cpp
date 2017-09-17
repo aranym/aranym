@@ -171,14 +171,17 @@ bool InitMEM() {
 
 uae_u32 HWget_l (uaecptr addr) {
 	BUS_ERROR(addr);
+	return 0;
 }
 
 uae_u16 HWget_w (uaecptr addr) {
 	BUS_ERROR(addr);
+	return 0;
 }
 
 uae_u8 HWget_b (uaecptr addr) {
 	BUS_ERROR(addr);
+	return 0;
 }
 
 void HWput_l (uaecptr addr, uae_u32 value) {
@@ -223,7 +226,7 @@ int main(int argc, char **argv)
 	char *VOLATILE outname = 0;
 	FILE *VOLATILE out;
 	int c;
-	int retval = 0;
+	int VOLATILE retval = 0;
 	uint8 *dst;
 	
 	regs.sr = 0x2700;
