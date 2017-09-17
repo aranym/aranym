@@ -225,7 +225,7 @@ bool BPFEthernetHandler::open()
 	 Fork child process to get an open BPF file descriptor
 	 ******************************************************/
 	char exe_path[2048];
-	CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFURLRef url = CFBundleCopyExecutableURL(CFBundleGetMainBundle());
 	CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
 	CFURLGetFileSystemRepresentation(url2, true, (UInt8 *)exe_path, sizeof(exe_path));
 	CFRelease(url2);

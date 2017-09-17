@@ -1,4 +1,9 @@
 2017/09/16 - Thorsten
+Fix bug introduced in commit b839b37f causing the bpf_helper executable not
+to be found
+
+
+2017/09/16 - Thorsten
 Use NO_NESTED_SIGSEGV on linux/arm, to cleanly return from signal handler
 
 
