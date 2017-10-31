@@ -1,3 +1,7 @@
+2017/10/31 - Thorsten
+Fix start of text segment for JIT on ArchLinux
+
+
 2017/09/17 - Thorsten
 Add disassembler support for arm
 

@@ -1461,6 +1461,12 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then
     DEFINES="$DEFINES -DUSE_JIT_FPU=1"
   fi
+  if test "$HAVE_X86_64" = yes -a "$OS_TYPE" != darwin; then
+     # Force text address; needed at least on ArchLinux
+     # where it is otherwise set to a high memory address
+     # which is not in the range for the JIT addressing scheme
+     LDFLAGS="$LDFLAGS -Wl,-Ttext-segment=0x10000000"
+  fi
 else
   WANT_JIT=no
   WANT_JIT_FPU=no
