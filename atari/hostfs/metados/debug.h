@@ -59,15 +59,13 @@ extern int debug_logging;
 
 
 void		debug_ws	(const char *s);
-int		_ALERT		(char *);
+int		_ALERT		(const char *);
 
 void	_cdecl	Tracelow	(const char *s, ...);
 void	_cdecl	Trace		(const char *s, ...);
 void	_cdecl	Debug		(const char *s, ...);
 void	_cdecl	ALERT		(const char *s, ...);
 void	_cdecl	FORCE		(const char *s, ...);
-
-void		PAUSE		(void);
 
 EXITING	_cdecl	FATAL		(const char *s, ...)	NORETURN;
 EXITING		halt		(void)			NORETURN;

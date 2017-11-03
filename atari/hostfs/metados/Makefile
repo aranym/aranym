@@ -26,6 +26,10 @@ srcdir = .
 top_srcdir = ../../..
 subdir = metados
 
+CPU = 000
+
+default: all
+
 include $(top_srcdir)/CONFIGVARS
 include $(top_srcdir)/RULES
 include $(top_srcdir)/PHONY
@@ -40,7 +44,6 @@ INCLUDES = -I$(top_srcdir) -I.natfeat
 DEFINITIONS =
 LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
 LIBS =  $(LIBKERN) -lgcc
-CPU = 000
 
 # ensure that FreeMiNT CVS proc.h is never loaded
 MDFLAGS = -D_mint_proc_h -D_libkern_kernel_xfs_xdd_h

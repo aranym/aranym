@@ -1,4 +1,9 @@
 2017/11/03 - Thorsten
+Update MetaDOS driver with current Freemint sources,
+and make it compilable again.
+
+
+2017/11/03 - Thorsten
 Simplify debug output
 
 

@@ -33,7 +33,7 @@ extern struct kerinfo *KERNEL;
 
 /* console output via Cconws */
 #include "mint/osbind.h"
-#define c_conws Cconws
+#define c_conws (void) Cconws
 
 #define MSG_PFAILURE(p,s) \
     "\7Sorry, hostfs.dos NOT installed: " s "!\r\n"

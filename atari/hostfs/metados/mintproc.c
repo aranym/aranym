@@ -44,19 +44,19 @@ struct pcred pcred0 =   {
 
 
 struct filedesc filedesc0 = {
-    NULL, /* struct file **ofiles;     *//*  file structures for open files */
-    NULL, /* char        *ofileflags;  *//*  per-process open file flags    */
-    0,    /* short       nfiles;       *//*  number of open files allocated */
+    NULL, /* struct file **ofiles;     */ /*  file structures for open files */
+    NULL, /* char        *ofileflags;  */ /*  per-process open file flags    */
+    0,    /* short       nfiles;       */ /*  number of open files allocated */
     0,    /* short       pad2;         */
 
-    1,    /* long        links;        *//* reference count */
+    1,    /* long        links;        */ /* reference count */
 
 
-    NULL, /* DIR         *searches;    *//* open directory searches  */
+    NULL, /* DIR         *searches;    */ /* open directory searches  */
 
     /* TOS emulation */
 
-    NULL, /* DTABUF  *dta;             *//* current DTA          */
+    NULL, /* DTABUF  *dta;             */ /* current DTA          */
 
 # define NUM_SEARCH 10                   /* max. number of searches  */
     /* DTABUF *srchdta[NUM_SEARCH]; */   /* for Fsfirst/next     */
@@ -79,7 +79,7 @@ struct filedesc filedesc0 = {
         { { NULL, 0, 0, 0 }, 0, 0, "", NULL },
     },
 
-    /* long    srchtim[NUM_SEARCH];    *//* for Fsfirst/next     */
+    /* long    srchtim[NUM_SEARCH];    */ /* for Fsfirst/next     */
     {
         0L, 0L, 0L, 0L, 0L,
         0L, 0L, 0L, 0L, 0L,
@@ -91,12 +91,12 @@ struct filedesc filedesc0 = {
      * to fix all the places
      */
     0,    /* short       pad1;       */
-    0,    /* short       bconmap;    *//* Bconmap mapping */
-    NULL, /* struct file *midiout;   *//* MIDI output */
-    NULL, /* struct file *midiin;    *//* MIDI input */
-    NULL, /* struct file *prn;       *//* printer */
-    NULL, /* struct file *aux;       *//* auxiliary tty */
-    NULL, /* struct file *control;   *//* control tty */
+    0,    /* short       bconmap;    */ /* Bconmap mapping */
+    NULL, /* struct file *midiout;   */ /* MIDI output */
+    NULL, /* struct file *midiin;    */ /* MIDI input */
+    NULL, /* struct file *prn;       */ /* printer */
+    NULL, /* struct file *aux;       */ /* auxiliary tty */
+    NULL, /* struct file *control;   */ /* control tty */
 
     /* struct file *dfiles [NDFILE]; */
     {
@@ -116,19 +116,19 @@ struct filedesc filedesc0 = {
 };
 
 struct cwd cwd0 = {
-	1,      /* links *//* reference count */
-    ~0777,  /* cmask *//* mask for file creation */
+	1,      /* links */ /* reference count */
+    ~0777,  /* cmask */ /* mask for file creation */
 	0,      /* pad   */
 
     { NULL, 0, 0, 0 },  /* fcookie     currdir; */    /* current directory */
     { NULL, 0, 0, 0 },  /* fcookie     rootdir; */   /* root directory */
-	NULL,   /* root_dir *//* XXX chroot emulation */
+	NULL,   /* root_dir */ /* XXX chroot emulation */
 
     /* DOS emulation */
-    'A'-'B',  /* curdrv *//* current drive */
+    'A'-'B',  /* curdrv */ /* current drive */
 	0,        /* pad2 */
 
-    /* fcookie     root[NDRIVES];  *//* root directories */
+    /* fcookie     root[NDRIVES];  */ /* root directories */
     {
         { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 },
         { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 },
@@ -140,7 +140,7 @@ struct cwd cwd0 = {
         { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }
     },
 
-    /* fcookie     curdir[NDRIVES];*//* current directory */
+    /* fcookie     curdir[NDRIVES];*/ /* current directory */
     {
         { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 },
         { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 }, { NULL, 0, 0, 0 },

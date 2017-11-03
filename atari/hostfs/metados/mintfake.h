@@ -40,6 +40,7 @@
 # define tty_write(f, buf, count) (0)
 # define tty_ioctl(f, cmd, arg) (0)
 
+#define get_curproc() curproc
 
 /* rollback the settings from the FreeMiNT CVS's sys/mint/config.h) */
 #ifdef CREATE_PIPES

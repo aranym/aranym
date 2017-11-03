@@ -21,7 +21,7 @@ include $(top_srcdir)/RULES
 include $(top_srcdir)/PHONY
 
 # default definitions
-OBJS = $(COBJS:.c=.o)
+OBJS = $(COBJS:.c=.o) $(SOBJS:%.S=%.o)
 
 objs: $(OBJS)
 

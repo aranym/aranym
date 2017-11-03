@@ -37,6 +37,7 @@
 char DriverName[] = DEVNAME" "VERSION;
 long ldp;
 
+long __CDECL (*nf_call)(long id, ...) = 0L;
 
 void _cdecl ShowBanner( void );
 void* _cdecl InitDevice( long bosDevID, long dosDevID );
@@ -47,7 +48,7 @@ ulong get_cookie (ulong tag);
 
 void _cdecl ShowBanner( void )
 {
-    Cconws (
+	(void) Cconws (
             "\r\n\033p "DEVNAME" "VERSION" \033q "
             "\r\nCopyright (c) ARAnyM Development Team, "__DATE__"\r\n"
             );
@@ -93,7 +94,7 @@ struct kerinfo *KERNEL;
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
 	char mountPoint[] = "A:";
-	mountPoint[0] += (dosDevID = (dosDevID&0x1f)); // mask out bad values of the dosDevID
+	mountPoint[0] += (dosDevID = (dosDevID&0x1f)); /* mask out bad values of the dosDevID */
 
 	/*
 	 * Hack to get the drive table the same for all hostfs.dos
