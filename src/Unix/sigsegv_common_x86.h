@@ -259,9 +259,7 @@ static const int x86_reg_map[] = {
 #ifdef USE_JIT	/* does not compile with default configure */
 	D(compiler_status());
 #endif
-	D(bug("BUS ERROR fault address is %08x", addr));
-
-	D(bug("PC %08x", m68k_getpc())); 
+	D(bug("[%08x] BUS ERROR fault address is %08x", m68k_getpc(), addr));
 
 #ifdef HW_SIGSEGV
 
