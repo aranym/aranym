@@ -4913,6 +4913,14 @@ static void generate_func(int noflags) {
 
 }
 
+#if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
+void cygwin_mingw_abort()
+{
+#undef abort
+	abort();
+}
+#endif
+
 int main(void)
 {
 	read_table68k();

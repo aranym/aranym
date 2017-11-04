@@ -163,7 +163,10 @@ extern void uninstall_sigsegv(void);
 void real_segmentationfault(void);
 
 #if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
-void cygwin_mingw_abort(void);
+#ifdef __cplusplus
+extern "C"
+#endif
+void cygwin_mingw_abort(void) __attribute__((__noreturn__));
 #define abort() cygwin_mingw_abort()
 #endif
 

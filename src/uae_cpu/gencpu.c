@@ -2687,6 +2687,14 @@ static void generate_functbl (void)
 	fprintf(functblfile, "};\n");
 }
 
+#if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
+void cygwin_mingw_abort()
+{
+#undef abort
+	abort();
+}
+#endif
+
 int main ()
 {
     read_table68k ();
