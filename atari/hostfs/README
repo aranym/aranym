@@ -35,5 +35,5 @@ hostfs.dos
 
 Compilation
 -----------
- * use make.sh to compile
- * the binary is placed into the bin subfolder
+ * cd into the metados folder
+ * type make

@@ -38,15 +38,13 @@
  *
  */
 
-# include "k_fds.h"
-# include "mint/filedesc.h"
-# include "mint/stat.h"
-# include "mint/emu_tos.h"
+#include "hostfs.h"
+#include "mint/errno.h"
+#include "mint/fcntl.h"
+#include "mint/credentials.h"
+#include "mint/assert.h"
+#include "mint/string.h"
 
-# include "filesys.h"
-
-# include "mintproc.h"
-# include "mintfake.h"
 
 /* do_open(f, name, rwmode, attr, x)
  *
@@ -83,7 +81,6 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 		return r;
 	}
 
-#ifndef ARAnyM_MetaDOS
 	/*
 	 * If temp1 is a NULL string, then use the name again.
 	 *
@@ -93,7 +90,6 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 	if (*temp1 == '\0') {
 		strncpy(temp1, name, PATH_MAX);
 	}
-#endif
 
 	/*
 	 * second step: try to locate the file itself
@@ -258,7 +254,11 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 	 * we just created the file, or unless the file is on the proc
 	 * file system and hence FA_RDONLY has a different meaning)
 	 */
-	if (!creating && (xattr.attr & FA_RDONLY) && fc.fs != &proc_filesys)
+	if (!creating && (xattr.attr & FA_RDONLY)
+#ifndef ARAnyM_MetaDOS
+		&& fc.fs != &proc_filesys
+#endif
+		)
 	{
 		if ((rwmode & O_RWMODE) == O_RDWR || (rwmode & O_RWMODE) == O_WRONLY)
 		{

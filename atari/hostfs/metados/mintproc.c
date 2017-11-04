@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * This file is a fake PROC *curproc and some other
@@ -11,12 +9,9 @@
  */
 
 
-#include "mintproc.h"
+#include "hostfs.h"
 #include "mint/filedesc.h"
-#include "mint/kerinfo.h"
-
-#include "filesys.h"
-#include "mintfake.h"
+#include "mint/credentials.h"
 
 
 /** proc.c **/
@@ -166,29 +161,10 @@ PROC proc0 =    {
     10 /* debug_level */
 };
 
-PROC *proclist = NULL;          /* list of all active processes */
 PROC *curproc = &proc0;         /* current process      */
 PROC *rootproc = &proc0;        /* pid 0 -- MiNT itself     */
-
-/** procfs.c **/
-FILESYS proc_filesys;
 
 DEVDRV fakedev;
 
 /** time.c **/
 long timezone = 0;
-
-
-/** kerinfo.c **/
-
-/*
- * kernel info that is passed to loaded file systems and device drivers
- */
-struct kerinfo kernelinfo =
-{
-	0, /* MINT_MAJ_VERSION */
-	16, /* MINT_MIN_VERSION */
-	DEFAULT_MODE,
-	2, /* kerinfo version */
-};
-

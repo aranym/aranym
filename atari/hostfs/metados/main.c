@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM BetaDOS driver.
  *
  * 2001/2002 STan
@@ -13,22 +11,12 @@
  *
  **/
 
-#include <mintbind.h>
-#include <mint/basepage.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "mint/mint.h"
-#include "mint/filedesc.h"
-#include "mint/kerinfo.h"
-
-#include "../hostfs_xfs.h"
-#include "../hostfs_dev.h"
-
-#include "mintproc.h"
-#include "mintfake.h"
-
+#include "hostfs.h"
 #include "nf_ops.h"
+#include <osbind.h>
+#include "hostfs/hostfs_dev.h"
+#include "hostfs/hostfs_xfs.h"
+#include "global.h"
 
 
 #define DEVNAME "ARAnyM Host Filesystem"
@@ -37,12 +25,10 @@
 char DriverName[] = DEVNAME" "VERSION;
 long ldp;
 
-long __CDECL (*nf_call)(long id, ...) = 0L;
+long _cdecl (*nf_call)(long id, ...) = 0L;
 
 void _cdecl ShowBanner( void );
 void* _cdecl InitDevice( long bosDevID, long dosDevID );
-long set_cookie (ulong tag, ulong val);
-ulong get_cookie (ulong tag);
 
 /* Diverse Utility-Funktionen */
 
@@ -60,7 +46,7 @@ struct cookie
 	long value;
 };
 
-ulong get_cookie (ulong tag)
+static ulong get_cookie (ulong tag)
 {
 	struct cookie *cookie = *(struct cookie **)0x5a0;
 	if (!cookie) return 0;
@@ -73,33 +59,46 @@ ulong get_cookie (ulong tag)
 	return 0;
 }
 
-long set_cookie (ulong tag, ulong val)
+static long set_cookie (ulong tag, ulong val)
 {
 	struct cookie *cookie = *(struct cookie **)0x5a0;
-	if (!cookie) return 0;
+	long count, size;
 
-	while (cookie->tag) cookie++;
+	if (!cookie) return 0;
+	
+	count = 0;
+	while (cookie->tag)
+	{
+		cookie++;
+		count++;
+	}
+	count += 2;
+	size = cookie->value;
+	if (count >= size)
+		return 0;
 	cookie->tag = tag;
 	cookie->value = val;
+	cookie++;
+	cookie->tag = 0;
+	cookie->value = size;
 	return 1;
 }
-
-
-/*
- * global kerinfo structure
- */
-struct kerinfo *KERNEL;
 
 
 void* _cdecl InitDevice( long bosDevID, long dosDevID )
 {
 	char mountPoint[] = "A:";
 	mountPoint[0] += (dosDevID = (dosDevID&0x1f)); /* mask out bad values of the dosDevID */
+	
+	/* check the NF HOSTFS avialability */
+	if ( ! hostfs_init() ) {
+		return (void*)-1;
+	}
 
 	/*
 	 * Hack to get the drive table the same for all hostfs.dos
 	 * instances loaded by BetaDOS into memory.
-         *
+     *
 	 * Note: This is definitely not MP friendly, but FreeMiNT
 	 *       doesn't support B(M)etaDOS anyway, so: Do not do
 	 *       this when using 'MiNT' or 'MagX' it crashes then.
@@ -119,15 +118,6 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	 * the dosDevID
 	 */
 	DEBUG(("InitDevice: %s [dosDev=%ld, bosDev=%ld] addr: %lx", mountPoint, dosDevID, bosDevID, &hostfs_filesys ));
-
-	/* initialize Native Features */
-	kernelinfo.nf_ops = nf_init();
-	KERNEL = &kernelinfo;
-
-	/* check the NF HOSTFS avialability */
-	if ( ! hostfs_init() ) {
-		return (void*)-1;
-	}
 
 	/* map the BetaDOS drive to some bosDrive | 0x6000 so that the mapping would
 	   not colide with the MiNT one */

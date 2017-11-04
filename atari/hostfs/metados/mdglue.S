@@ -1,10 +1,10 @@
-//
-// $Header$ 
-//
-// 2001 STanda
-//
-// The basic file layout was taken from Julian Reschke's Cookies
-//
+/*
+ * $Header$ 
+ *
+ * 2001 STanda
+ *
+ * The basic file layout was taken from Julian Reschke's Cookies
+ */
 	
 	.globl	_init
 
@@ -21,17 +21,17 @@
 
 
 .macro PRINT value
-//	nf_call( nf_get_id(NF_STDERR), value);
+/*	nf_call( nf_get_id(NF_STDERR), value); */
 #if 0
 	move.l  #s_stderr,-(sp)
-	move.l  #0,-(sp)		// fake return address
+	move.l  #0,-(sp)		/* fake return address */
 	dc.w    0x7300
 	lea	8(sp),sp
 
 	move.l  \value,-(sp)
 	move.l  #s_frm,-(sp)
 	move.l  d0,-(sp)
-	move.l  #0,-(sp)		// fake return address
+	move.l  #0,-(sp)		/* fake return address */
 	dc.w    0x7301
 	lea	16(sp),sp
 #endif
@@ -48,7 +48,7 @@
 	
 .macro SSTCK framereg
 	PRINT	sp
-	move.l	sp,temp			// store the old stack to the new one (do not touch regs)
+	move.l	sp,temp			/* store the old stack to the new one (do not touch regs) */
 	move.l	#stack,sp
 
 	move.l	temp,-(sp)
@@ -64,15 +64,15 @@
 	PRINT	sp
 .endm RSTCK
 
-//
-// Call to the MetaDOS C function implementation macro
-//
+/*
+ * Call to the MetaDOS C function implementation macro
+ */
 .macro MDBSR framereg,label
-	move.w	4(\framereg),-(sp)
-	move.l	(\framereg),-(sp)
-	move.l	a5,-(sp)
-	move.l	a4,-(sp)
-	move.l	a3,-(sp)
+	move.w	4(\framereg),-(sp)	/* opcodeMD */
+	move.l	(\framereg),-(sp)	/* retMD */
+	move.l	a5,-(sp)			/* fpMD */
+	move.l	a4,-(sp)			/* pathNameMD */
+	move.l	a3,-(sp)			/* devMD */
 	bsr	\label
 	lea	18(sp),sp
 .endm MDBSR
@@ -89,24 +89,24 @@ _init:
 
 initfun:
 	movem.l	a0-a6/d1-d7,-(sp)
-	move.l	d1,-(sp)		// BetaDOS's dosDevID + some wird word / MetaDOS pure crap
-	move.w	d0,-(sp)		// bosDevID 16bit
-	move.w	#0,-(sp)		// pad for gcc (long)
+	move.l	d1,-(sp)		/* BetaDOS's dosDevID + some wird word / MetaDOS pure crap */
+	move.w	d0,-(sp)		/* bosDevID 16bit */
+	move.w	#0,-(sp)		/* pad for gcc (long) */
 	bsr	_InitDevice
 	addq	#8,sp
 	movem.l	(sp)+,a0-a6/d1-d7
-// d1: filename conversion
-// Bit 0: 0 = force upper case
-// Bit 1: 0 = fully expand
-// Bit 2: 0 = critical error handler reports EWRPRO
+/* d1: filename conversion */
+/* Bit 0: 0 = force upper case */
+/* Bit 1: 0 = fully expand */
+/* Bit 2: 0 = critical error handler reports EWRPRO */
 	moveq	#5,d1
 	rts
 
 
 
 functionTable:
-	dc.l	0x4d414749		// 'MAGI'
-	dc.l	0x434d4554		// 'CMET'
+	dc.l	0x4d414749		/* 'MAGI' */
+	dc.l	0x434d4554		/* 'CMET' */
 	dc.l	349
 	dc.l	initfun
 	dc.l	-1, -1, -1, -1, -1
@@ -118,88 +118,88 @@ functionTable:
 	dc.l	-1, -1, -1, -1, -1
 	dc.l	-1, -1, -1, -1, -1
 	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1	// 49
+	dc.l	-1, -1, -1, -1, -1	/* 49 */
 	dc.l	-1, -1, -1, -1 
-	dc.l	wrap_dfree		// 54
+	dc.l	wrap_dfree		/* 54 */
 	dc.l	-1
 	dc.l	-1
-	dc.l	wrap_dcreate		// 57
-	dc.l	wrap_ddelete		// 58
-	dc.l	-1 // FIXME? wrap_dsetpath		// 59
-	dc.l	wrap_fcreate		// 60
-	dc.l	wrap_fopen		// 61
-	dc.l	wrap_fclose		// 62
-	dc.l	wrap_fread		// 63
-	dc.l	wrap_fwrite		// 64
-	dc.l	wrap_fdelete		// 65
-	dc.l	wrap_fseek		// 66
-	dc.l	wrap_fattrib		// 67
+	dc.l	wrap_dcreate		/* 57 */
+	dc.l	wrap_ddelete		/* 58 */
+	dc.l	-1 /* FIXME? wrap_dsetpath */		/* 59 */
+	dc.l	wrap_fcreate		/* 60 */
+	dc.l	wrap_fopen		/* 61 */
+	dc.l	wrap_fclose		/* 62 */
+	dc.l	wrap_fread		/* 63 */
+	dc.l	wrap_fwrite		/* 64 */
+	dc.l	wrap_fdelete		/* 65 */
+	dc.l	wrap_fseek		/* 66 */
+	dc.l	wrap_fattrib		/* 67 */
 	dc.l	-1
-	dc.l	-1			// 69
+	dc.l	-1			/* 69 */
 	dc.l	-1
-	dc.l	-1			// 71	// Dgetpath
-	dc.l	-1, -1, -1		// 74
+	dc.l	-1			/* 71 */	/* Dgetpath */
+	dc.l	-1, -1, -1		/* 74 */
 	dc.l	-1, -1, -1
-	dc.l	wrap_fsfirst		// 78
-	dc.l	wrap_fsnext		// 79
-	dc.l	-1, -1, -1, -1, -1	// 84
+	dc.l	wrap_fsfirst		/* 78 */
+	dc.l	wrap_fsnext		/* 79 */
+	dc.l	-1, -1, -1, -1, -1	/* 84 */
 	dc.l	-1
-	dc.l	wrap_frename		// 86
-	dc.l	wrap_fdatime		// 87
-	dc.l	-1, -1			// 89
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 99
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 109
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 119
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 129
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 139
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 149
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 159
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 169
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 179
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 189
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 199
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 209
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 219
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 229
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 239
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 249
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 259
-	dc.l	-1 // FIXME: wrap_fcntl				// 260
-	dc.l	-1, -1, -1, -1		// 264
-	dc.l	-1, -1, -1, -1, -1	// 269
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 279
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	// 289
+	dc.l	wrap_frename		/* 86 */
+	dc.l	wrap_fdatime		/* 87 */
+	dc.l	-1, -1			/* 89 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 99 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 109 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 119 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 129 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 139 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 149 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 159 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 169 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 179 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 189 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 199 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 209 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 219 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 229 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 239 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 249 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 259 */
+	dc.l	-1 /* FIXME: wrap_fcntl */				/* 260 */
+	dc.l	-1, -1, -1, -1		/* 264 */
+	dc.l	-1, -1, -1, -1, -1	/* 269 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 279 */
+	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 289 */
 	dc.l	-1, -1
-	dc.l	wrap_dpathconf		// 292
-	dc.l	-1, -1			// 294
+	dc.l	wrap_dpathconf		/* 292 */
+	dc.l	-1, -1			/* 294 */
 	dc.l	-1
-	dc.l	wrap_dopendir		// 296
-	dc.l	wrap_dreaddir		// 297
-	dc.l	wrap_drewinddir		// 298
-	dc.l	wrap_dclosedir		// 299
-	dc.l	wrap_fxattr		// 300
-	dc.l	-1, -1, -1, -1		// 304
-	dc.l	-1, -1, -1, -1, -1	// 309
-	dc.l	-1, -1, -1, -1, -1	// 314
-	dc.l	-1, -1, -1, -1, -1	// 319
+	dc.l	wrap_dopendir		/* 296 */
+	dc.l	wrap_dreaddir		/* 297 */
+	dc.l	wrap_drewinddir		/* 298 */
+	dc.l	wrap_dclosedir		/* 299 */
+	dc.l	wrap_fxattr		/* 300 */
+	dc.l	-1, -1, -1, -1		/* 304 */
+	dc.l	-1, -1, -1, -1, -1	/* 309 */
+	dc.l	-1, -1, -1, -1, -1	/* 314 */
+	dc.l	-1, -1, -1, -1, -1	/* 319 */
 	dc.l	-1, -1
-	dc.l	wrap_dxreaddir		// 322
+	dc.l	wrap_dxreaddir		/* 322 */
 	dc.l	-1, -1
-	dc.l	-1, -1, -1, -1, -1	// 329
-	dc.l	-1, -1, -1, -1, -1	// 334
+	dc.l	-1, -1, -1, -1, -1	/* 329 */
+	dc.l	-1, -1, -1, -1, -1	/* 334 */
 	dc.l	-1, -1, -1
-	dc.l	wrap_dreadlabel		// 338
-	dc.l	-1			// 339
-	dc.l	-1, -1, -1, -1, -1 	// 344
-	dc.l	-1, -1, -1, -1, -1 	// 349
+	dc.l	wrap_dreadlabel		/* 338 */
+	dc.l	-1			/* 339 */
+	dc.l	-1, -1, -1, -1, -1 	/* 344 */
+	dc.l	-1, -1, -1, -1, -1 	/* 349 */
 	
 	
 wrap_dfree:
 	PRINT	#54
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// drive #
-	move.l	6(a0),-(sp)	// diskinfo *
+	move.w	10(a0),-(sp)	/* drive # */
+	move.l	6(a0),-(sp)	/* diskinfo * */
 	MDBSR	a0,_sys_d_free
 	lea	6(sp),sp
 
@@ -210,7 +210,7 @@ wrap_dcreate:
 	PRINT	#57
 	SSTCK	a0
 
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_create
 	lea	4(sp),sp
 
@@ -221,7 +221,7 @@ wrap_ddelete:
 	PRINT	#58
 	SSTCK	a0
 
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_delete
 	lea	4(sp),sp
 
@@ -232,8 +232,8 @@ wrap_dsetpath:
 	PRINT	#59
 	SSTCK	a0
 
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
-//	MDBSR	a0,_sys_d_dsetpath
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
+/*	MDBSR	a0,_sys_d_dsetpath */
 	lea	4(sp),sp
 
 	RSTCK
@@ -243,8 +243,8 @@ wrap_fcreate:
 	PRINT	#60
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// attr
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.w	10(a0),-(sp)	/* attr */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_create
 	lea	6(sp),sp
 
@@ -255,8 +255,8 @@ wrap_fopen:
 	PRINT	#61
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// mode
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.w	10(a0),-(sp)	/* mode */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_open
 	lea	6(sp),sp
 
@@ -264,7 +264,7 @@ wrap_fopen:
 
 	cmp.l	#0,d0
 	bmi	fopen_error
-	move.l	#0,d0		// reset the fs to 0 (MetaDOS requires this)
+	move.l	#0,d0		/* reset the fs to 0 (MetaDOS requires this) */
 fopen_error:	
 	rts
 
@@ -272,7 +272,7 @@ wrap_fclose:
 	PRINT	#62
 	SSTCK	a0
 
-	move.w	6(a0),-(sp)	// handle
+	move.w	6(a0),-(sp)	/* handle */
 	MDBSR	a0,_sys_f_close
 	lea	2(sp),sp
 
@@ -283,9 +283,9 @@ wrap_fread:
 	PRINT	#63
 	SSTCK	a0
 
-	move.l	12(a0),-(sp)	// buffer
-	move.l	8(a0),-(sp)	// count
-	move.w	6(a0),-(sp)	// handle
+	move.l	12(a0),-(sp)	/* buffer */
+	move.l	8(a0),-(sp)	/* count */
+	move.w	6(a0),-(sp)	/* handle */
 	MDBSR	a0,_sys_f_read
 	lea	10(sp),sp
 
@@ -296,9 +296,9 @@ wrap_fwrite:
 	PRINT	#64
 	SSTCK	a0
 
-	move.l	12(a0),-(sp)	// buffer
-	move.l	8(a0),-(sp)	// count
-	move.w	6(a0),-(sp)	// handle
+	move.l	12(a0),-(sp)	/* buffer */
+	move.l	8(a0),-(sp)	/* count */
+	move.w	6(a0),-(sp)	/* handle */
 	MDBSR	a0,_sys_f_write
 	lea	10(sp),sp
 
@@ -309,7 +309,7 @@ wrap_fdelete:
 	PRINT	#65
 	SSTCK	a0
 
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_delete
 	lea	4(sp),sp
 
@@ -321,9 +321,9 @@ wrap_fseek:
 #if 1
 	SSTCK	a0
 
-	move.w	12(a0),-(sp)	// mode
-	move.w	10(a0),-(sp)	// handle
-	move.l	6(a0),-(sp)	// count
+	move.w	12(a0),-(sp)	/* mode */
+	move.w	10(a0),-(sp)	/* handle */
+	move.l	6(a0),-(sp)	/* count */
 	MDBSR	a0,_sys_f_seek
 	lea	8(sp),sp
 
@@ -342,9 +342,9 @@ wrap_fattrib:
 	PRINT	#67
 	SSTCK	a0
 
-	move.w	12(a0),-(sp)	// attrib
-	move.w	10(a0),-(sp)	// flag
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.w	12(a0),-(sp)	/* attrib */
+	move.w	10(a0),-(sp)	/* flag */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_attrib
 	lea	8(sp),sp
 
@@ -355,8 +355,8 @@ wrap_fsfirst:
 	PRINT	#78
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// flags
-	move.l	a4,-(sp)	// name/mask - 6(a0) or a4 MD
+	move.w	10(a0),-(sp)	/* flags */
+	move.l	a4,-(sp)	/* name/mask - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_sfirst
 	lea	6(sp),sp
 
@@ -375,9 +375,9 @@ wrap_frename:
 	PRINT	#86
 	SSTCK	a0
 
-	move.l	12(a0),-(sp)	// newname
-	move.l	a4,-(sp)	// oldname - 8(a0) or a4 MD (yes 8(a0)!!!)
-	move.w	6(a0),-(sp)	// reserved
+	move.l	12(a0),-(sp)	/* newname */
+	move.l	a4,-(sp)	/* oldname - 8(a0) or a4 MD (yes 8(a0)!!!) */
+	move.w	6(a0),-(sp)	/* reserved */
 	MDBSR	a0,_sys_f_rename
 	lea	10(sp),sp
 
@@ -388,9 +388,9 @@ wrap_fdatime:
 	PRINT	#87
 	SSTCK	a0
 
-	move.w	12(a0),-(sp)	// flag
-	move.w	10(a0),-(sp)	// handle
-	move.l	6(a0),-(sp)	// timeptr	MDBSR	a0,_sys_f_datime
+	move.w	12(a0),-(sp)	/* flag */
+	move.w	10(a0),-(sp)	/* handle */
+	move.l	6(a0),-(sp)	/* timeptr	MDBSR	a0,_sys_f_datime */
 	MDBSR	a0,_sys_f_datime
 	lea	8(sp),sp
 
@@ -401,10 +401,10 @@ wrap_fcntl:
 	PRINT	#260
 	SSTCK	a0
 
-	move.w	12(a0),-(sp)	// cmd
-	move.l	8(a0),-(sp)	// argument
-	move.w	6(a0),-(sp)	// handle
-//	MDBSR	a0,_sys_f_cntl
+	move.w	12(a0),-(sp)	/* cmd */
+	move.l	8(a0),-(sp)	/* argument */
+	move.w	6(a0),-(sp)	/* handle */
+/*	MDBSR	a0,_sys_f_cntl */
 	lea	8(sp),sp
 
 	RSTCK
@@ -414,8 +414,8 @@ wrap_dpathconf:
 	PRINT	#292
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// mode
-	move.l	a4,-(sp)	// name - 6(a0) or a4 MD
+	move.w	10(a0),-(sp)	/* mode */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_pathconf
 	lea	6(sp),sp
 
@@ -426,8 +426,8 @@ wrap_dopendir:
 	PRINT	#296
 	SSTCK	a0
 
-	move.w	10(a0),-(sp)	// flag
-	move.l	a4,-(sp)	// name 6(a0) or a4 MD
+	move.w	10(a0),-(sp)	/* flag */
+	move.l	a4,-(sp)	/* name 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_opendir
 	lea	6(sp),sp
 
@@ -438,9 +438,9 @@ wrap_dreaddir:
 	PRINT	#297
 	SSTCK	a0
 
-	move.l	12(a0),-(sp)	// buffer
-	move.l	8(a0),-(sp)	// dirhandle
-	move.w	6(a0),-(sp)	// len
+	move.l	12(a0),-(sp)	/* buffer */
+	move.l	8(a0),-(sp)	/* dirhandle */
+	move.w	6(a0),-(sp)	/* len */
 	MDBSR	a0,_sys_d_readdir
 	lea	10(sp),sp
 
@@ -451,7 +451,7 @@ wrap_drewinddir:
 	PRINT	#298
 	SSTCK	a0
 
-	move.l	6(a0),-(sp)	// dirhandle
+	move.l	6(a0),-(sp)	/* dirhandle */
 	MDBSR	a0,_sys_d_rewind
 	lea	4(sp),sp
 
@@ -462,7 +462,7 @@ wrap_dclosedir:
 	PRINT	#299
 	SSTCK	a0
 
-	move.l	6(a0),-(sp)	// dirhandle
+	move.l	6(a0),-(sp)	/* dirhandle */
 	MDBSR	a0,_sys_d_closedir
 	lea	4(sp),sp
 
@@ -473,9 +473,9 @@ wrap_fxattr:
 	PRINT	#300
 	SSTCK	a0
 
-	move.l	12(a0),-(sp)	// xattr*
-	move.l	a4,-(sp)	// name 8(a0) or a4 MD
-	move.w	6(a0),-(sp)	// flag
+	move.l	12(a0),-(sp)	/* xattr* */
+	move.l	a4,-(sp)	/* name 8(a0) or a4 MD */
+	move.w	6(a0),-(sp)	/* flag */
 	MDBSR	a0,_sys_f_xattr
 	lea	10(sp),sp
 
@@ -486,11 +486,11 @@ wrap_dxreaddir:
 	PRINT	#322
 	SSTCK	a0
 
-	move.l	20(a0),-(sp)	// xret*
-	move.l	16(a0),-(sp)	// xattr*
-	move.l	12(a0),-(sp)	// buffer
-	move.l	8(a0),-(sp)	// dirhandle
-	move.w	6(a0),-(sp)	// len
+	move.l	20(a0),-(sp)	/* xret* */
+	move.l	16(a0),-(sp)	/* xattr* */
+	move.l	12(a0),-(sp)	/* buffer */
+	move.l	8(a0),-(sp)	/* dirhandle */
+	move.w	6(a0),-(sp)	/* len */
 	MDBSR	a0,_sys_d_xreaddir
 	lea	18(sp),sp
 
@@ -501,9 +501,9 @@ wrap_dreadlabel:
 	PRINT	#338
 	SSTCK	a0
 
-	move.w	14(a0),-(sp)	// len
-	move.l	10(a0),-(sp)	// buffer
-	move.l	a4,-(sp)	// pathname 6(a0) or a4 MD
+	move.w	14(a0),-(sp)	/* len */
+	move.l	10(a0),-(sp)	/* buffer */
+	move.l	a4,-(sp)	/* pathname 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_readlabel
 	lea	10(sp),sp
 
@@ -523,33 +523,33 @@ temp:
 	ds.b	8192
 stack:	
 	
-//
-// $Log$
-// Revision 1.3  2004/04/26 07:14:04  standa
-// Adjusted to the recent FreeMiNT CVS state to compile and also made
-// BetaDOS only. No more MetaDOS compatibility attempts.
-//
-// Dfree() fix - for Calamus to be able to save its documents.
-//
-// Some minor bugfix backports from the current FreeMiNTs CVS version.
-//
-// The mountpoint entries are now shared among several hostfs.dos instances
-// using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
-//
-// Revision 1.2  2003/03/03 20:39:44  standa
-// Parameter passing fixed.
-//
-// Revision 1.1  2002/12/10 20:47:21  standa
-// The HostFS (the host OS filesystem access via NatFeats) implementation.
-//
-// Revision 1.1  2002/05/22 07:53:22  standa
-// The PureC -> gcc conversion (see the CONFIGVARS).
-// MiNT .XFS sources added.
-//
-// Revision 1.4  2001/10/17 18:03:47  standa
-// typo fix
-//
-// Revision 1.3  2001/10/17 17:59:44  standa
-// The fandafs to aranymfs name change and code cleanup.
-//
-//
+/*
+ * $Log$
+ * Revision 1.3  2004/04/26 07:14:04  standa
+ * Adjusted to the recent FreeMiNT CVS state to compile and also made
+ * BetaDOS only. No more MetaDOS compatibility attempts.
+ *
+ * Dfree() fix - for Calamus to be able to save its documents.
+ *
+ * Some minor bugfix backports from the current FreeMiNTs CVS version.
+ *
+ * The mountpoint entries are now shared among several hostfs.dos instances
+ * using a 'BDhf' cookie entry (atari/hostfs/metados/main.c).
+ *
+ * Revision 1.2  2003/03/03 20:39:44  standa
+ * Parameter passing fixed.
+ *
+ * Revision 1.1  2002/12/10 20:47:21  standa
+ * The HostFS (the host OS filesystem access via NatFeats) implementation.
+ *
+ * Revision 1.1  2002/05/22 07:53:22  standa
+ * The PureC -> gcc conversion (see the CONFIGVARS).
+ * MiNT .XFS sources added.
+ *
+ * Revision 1.4  2001/10/17 18:03:47  standa
+ * typo fix
+ *
+ * Revision 1.3  2001/10/17 17:59:44  standa
+ * The fandafs to aranymfs name change and code cleanup.
+ *
+ */

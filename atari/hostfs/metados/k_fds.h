@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -40,9 +38,6 @@
 
 # ifndef _k_fds_h
 # define _k_fds_h
-
-# include "mint/mint.h"
-# include "mint/file.h"
 
 #ifndef ARAnyM_MetaDOS
 

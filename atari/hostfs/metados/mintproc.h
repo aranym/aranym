@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * This file is a fake header created from several
@@ -12,18 +10,9 @@
 #ifndef _mintproc_h_
 #define _mintproc_h_
 
-#include "mint/kernel.h"
-#include "mint/credentials.h"
-#include "mint/ktypes.h"
-
-
 /** from kerinfo.h **/
-# undef DEFAULT_DIRMODE
-# define DEFAULT_DIRMODE        (0777)
-# undef DEFAULT_MODE
-# define DEFAULT_MODE           (0666)
-
-extern struct kerinfo kernelinfo;
+# define DEFAULT_MODE		(0666)
+# define DEFAULT_DIRMODE	(0755)
 
 
 /** from proc.h **/
@@ -49,15 +38,11 @@ struct proc
 };
 
 
-extern PROC *proclist;			/* list of all active processes */
 extern PROC *curproc;			/* current process		*/
 extern PROC *rootproc;			/* pid 0 -- MiNT itself		*/
 
 /** from time.h **/
 extern long timezone;
-
-/** from procfs.h **/
-extern FILESYS proc_filesys;
 
 extern DEVDRV fakedev;
 

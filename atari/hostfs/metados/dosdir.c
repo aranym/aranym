@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -20,22 +18,13 @@
 
 /* DOS directory functions */
 
-# include "dosdir.h"
-# include "libkern/libkern.h"
-
-# include "mint/filedesc.h"
-# include "mint/ioctl.h"
-# include "mint/pathconf.h"
-# include "mint/stat.h"
-# include "mint/emu_tos.h"
-# include "mint/credentials.h"
-
-# include "kerinfo.h"
-# include "filesys.h"
-# include "k_fds.h"
-
-# include "mintproc.h"
-# include "mintfake.h"
+#include "hostfs.h"
+#include "mint/errno.h"
+#include "mint/ctype.h"
+#include "mint/assert.h"
+#include "mint/credentials.h"
+#include "mint/pathconf.h"
+#include "mint/string.h"
 
 
 long _cdecl
@@ -256,60 +245,6 @@ bailout:
 	}
 	else
 	{
-#ifndef ARAnyM_MetaDOS
-		struct proc *p;
-		int i;
-
-		/* don't delete anyone else's root or current directory */
-		for (p = proclist; p; p = p->gl_next)
-		{
-			struct cwd *cwd = p->p_cwd;
-
-			if (p->wait_q == ZOMBIE_Q || p->wait_q == TSR_Q)
-				continue;
-
-			assert (cwd);
-
-			for (i = 0; i < NUM_DRIVES; i++)
-			{
-				if (samefile (&targdir, &cwd->root[i]))
-				{
-					DEBUG(("Ddelete: directory %s is a root directory", path));
-					release_cookie (&targdir);
-					release_cookie (&parentdir);
-					return EACCES;
-				}
-				else if (i == cwd->curdrv && p != cp && samefile (&targdir, &cwd->curdir[i]))
-				{
-					DEBUG(("Ddelete: directory %s is in use", path));
-					release_cookie (&targdir);
-					release_cookie (&parentdir);
-					return EACCES;
-				}
-			}
-		}
-
-		/* Wait with this until everything has been verified */
-		for (p = proclist; p; p = p->gl_next)
-		{
-			struct cwd *cwd = p->p_cwd;
-
-			if (p->wait_q == ZOMBIE_Q || p->wait_q == TSR_Q)
-				continue;
-
-			assert (cwd);
-
-			for (i = 0; i < NUM_DRIVES; i++)
-			{
-				if (samefile (&targdir, &cwd->curdir[i]))
-				{
-					release_cookie (&cwd->curdir[i]);
-					dup_cookie (&cwd->curdir[i], &cwd->root[i]);
-				}
-			}
-		}
-#endif /* ARAnyM_MetaDOS */
-
 		release_cookie (&targdir);
 		r = xfs_rmdir (parentdir.fs, &parentdir, temp1);
 	}

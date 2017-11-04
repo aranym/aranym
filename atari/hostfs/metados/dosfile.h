@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -14,14 +12,6 @@
 
 # ifndef _dosfile_h
 # define _dosfile_h
-
-# include "mint/mint.h"
-# include "mint/file.h"
-
-# include "mintfake.h"
-
-
-extern short select_coll;
 
 long _cdecl sys_f_open (MetaDOSFile const char *name, short mode);
 long _cdecl sys_f_create (MetaDOSFile const char *name, short attrib);

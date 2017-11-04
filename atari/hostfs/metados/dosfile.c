@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -20,26 +18,7 @@
 
 /* DOS file handling routines */
 
-# include "dosfile.h"
-# include "libkern/libkern.h"
-
-# include "mint/filedesc.h"
-# include "mint/ioctl.h"
-# include "mint/iov.h"
-# include "mint/net.h"
-# include "mint/fcntl.h"
-# include "mint/emu_tos.h"
-# include "mint/time.h"
-
-# include "debug.h"
-# include "filesys.h"
-# include "k_fds.h"
-
-# include "mintproc.h"
-# include "mintfake.h"
-
-/* wait condition for selecting processes which got collisions */
-short select_coll;
+#include "hostfs.h"
 
 
 long _cdecl

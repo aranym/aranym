@@ -1,4 +1,9 @@
 2017/11/04 - Thorsten
+Copy necessary files back from FreeMiNT to metados folder,
+to make it possible to build it locally
+
+
+2017/11/04 - Thorsten
 Workaround for generator programs on cygwin sometimes
 getting an unresolved symbol reference to cygwin_mingw_abort()
 

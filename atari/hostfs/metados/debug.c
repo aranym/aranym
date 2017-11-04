@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -21,15 +19,11 @@
  *
  */
 
-# include "mint/mint.h"
-# include "libkern/libkern.h"
-# include "debug.h"
+#include "hostfs.h"
+#include "nf_ops.h"
+#include "mint/string.h"
 
-# include "mintproc.h"
-# include "mintfake.h"
-
-# include <stdarg.h>
-# include <osbind.h>
+#include <osbind.h>
 
 
 static void VDEBUGOUT(const char *, va_list, int);
@@ -79,16 +73,6 @@ static ushort logtime[LBSIZE];	/* low 16 bits of 200 Hz: timestamp of msg */
 
 int debug_logging = 0;
 int logptr = 0;
-
-
-/* NatFeat functions defined */
-static long _NF_getid = 0x73004e75L;
-static long _NF_call  = 0x73014e75L;
-#define nfGetID(n)	(((long _cdecl (*)(const char *))&_NF_getid)n)
-#define nfCall(n)	(((long _cdecl (*)(long, ...))&_NF_call)n)
-
-#define nf_stderr(str) \
-	(nfCall((nfGetID(("NF_STDERR")),str)))
 
 
 #ifndef ARAnyM_MetaDOS
@@ -180,7 +164,7 @@ cont:
 void
 debug_ws (const char *s)
 {
-	nf_stderr(s);
+	nf_debug(s);
 }
 
 #endif /* ARAnyM_MetaDOS */

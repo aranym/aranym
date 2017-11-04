@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -22,17 +20,12 @@
  * various file system interface things
  */
 
-# include "mintproc.h"
-# include "filesys.h"
-# include "libkern/libkern.h"
-
-# include "mint/stat.h"
-# include "mint/filedesc.h"
-# include "mint/emu_tos.h"
-
-# include "k_fds.h"
-
-# include "mintfake.h"
+#include "hostfs.h"
+#include "mint/assert.h"
+#include "mint/string.h"
+#include "mint/errno.h"
+#include "mint/ctype.h"
+#include "mint/credentials.h"
 
 #ifdef ARAnyM_MetaDOS
 #undef changedrv
@@ -80,11 +73,6 @@ getxattr(FILESYS *fs, fcookie *fc, XATTR *xattr)
 		SET_XATTR_TD(xattr,m,stat.mtime.time);
 		SET_XATTR_TD(xattr,a,stat.atime.time);
 		SET_XATTR_TD(xattr,c,stat.ctime.time);
-#if 0
-		*((long *) &(xattr->mtime)) = stat.mtime.time;
-		*((long *) &(xattr->atime)) = stat.atime.time;
-		*((long *) &(xattr->ctime)) = stat.ctime.time;
-#endif
 		xattr->attr	= 0;
 
 		/* fake attr field a little bit */

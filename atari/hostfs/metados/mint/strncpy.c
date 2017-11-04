@@ -1,18 +1,9 @@
 /*
- * $Id$
- * 
- * The ARAnyM MetaDOS driver.
- *
- * 2002 STan
- *
- * Based on:
- * kerinfo.h,v 1.2 2001/06/13 20:21:22 fna Exp
- * 
  * This file belongs to FreeMiNT. It's not in the original MiNT 1.12
  * distribution. See the file CHANGES for a detailed log of changes.
  * 
  * 
- * Copyright 2001 Frank Naumann <fnaumann@freemint.de>
+ * Copyright 2000 Frank Naumann <fnaumann@freemint.de>
  * All rights reserved.
  * 
  * This file is free software; you can redistribute it and/or modify
@@ -30,25 +21,39 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  * 
  * 
- * Author: Frank Naumann <fnaumann@freemint.de>
- * Started: 2001-04-24
+ * begin:	2000-04-17
+ * last change:	2000-04-17
  * 
- * please send suggestions, patches or bug reports to me or
- * the MiNT mailing list
- *  
+ * Author:	Frank Naumann <fnaumann@freemint.de>
+ * 
+ * Please send suggestions, patches or bug reports to me or
+ * the MiNT mailing list.
+ * 
+ * 
+ * changes since last version:
+ * 
+ * known bugs:
+ * 
+ * todo:
+ * 
+ * optimizations:
+ * 
  */
 
-# ifndef _kerinfo_h
-# define _kerinfo_h
-
-# include "mint/mint.h"
-# include "mint/kerinfo.h"
+#include "mint/kcompiler.h"
+#include "mint/string.h"
 
 
-# define DEFAULT_MODE		(0666)
-# define DEFAULT_DIRMODE	(0755)
-
-extern struct kerinfo kernelinfo;
-
-
-# endif /* _kerinfo_h */
+char * _cdecl
+strncpy (char *dst, const char *src, long len)
+{
+	register char *_dst = dst;
+	
+	while (--len >= 0 && (*_dst++ = *src++) != 0)
+		continue;
+	
+	while (--len >= 0)
+		*_dst++ = 0;
+	
+	return dst;
+}

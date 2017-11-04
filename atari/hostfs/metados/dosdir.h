@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -15,11 +13,7 @@
 # ifndef _dosdir_h
 # define _dosdir_h
 
-# include "mint/mint.h"
-# include "mint/file.h"
-
-# include "mintfake.h"
-
+#include "mint/emu_tos.h"
 
 /* table of processes holding locks on drives */
 extern PROC *dlockproc [NUM_DRIVES];

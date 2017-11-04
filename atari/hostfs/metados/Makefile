@@ -17,13 +17,13 @@
 #       if you're running at least version 1.15.10 of FreeMiNT.
 #
 TARGET = hostfs.dos
-GENFILES = $(TARGET) .xfso .natfeat
+GENFILES = $(TARGET)
 
 SHELL = /bin/sh
 SUBDIRS = 
 
 srcdir = .
-top_srcdir = ../../..
+top_srcdir = ../..
 subdir = metados
 
 CPU = 000
@@ -31,51 +31,67 @@ CPU = 000
 default: all
 
 include $(top_srcdir)/CONFIGVARS
-include $(top_srcdir)/RULES
-include $(top_srcdir)/PHONY
 
-all-here: $(TARGET)
+all: $(TARGET)
 
 debug:
 	$(MAKE) DEBUG_INFO="-DDEBUG_INFO"
 
 # default overwrites
-INCLUDES = -I$(top_srcdir) -I.natfeat
+INCLUDES = -I. -I.. -I$(top_srcdir)/natfeat
 DEFINITIONS =
 LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
-LIBS =  $(LIBKERN) -lgcc
+LIBS = -lgcc
 
-# ensure that FreeMiNT CVS proc.h is never loaded
-MDFLAGS = -D_mint_proc_h -D_libkern_kernel_xfs_xdd_h
 # some little code pieces needs to be metados dependent 
-MDFLAGS += -D__KERNEL_XFS__
 MDFLAGS += -DARAnyM_MetaDOS
 MDFLAGS += $(DEBUG_INFO)
 
+CFLAGS += $(INCLUDES)
 CFLAGS += $(MDFLAGS)
+CFLAGS += -g -O2 -fomit-frame-pointer
+CFLAGS += -mshort
+CFLAGS += $(WARN)
+
+LDFLAGS += -s
+
+CSRCS = \
+	hostfs_nfapi.h \
+	dosfile.c dosfile.h \
+	dosdir.c dosdir.h \
+	filesys.c filesys.h \
+	k_fds.c k_fds.h \
+	debug.c debug.h \
+	global.h \
+	kerinfo.h \
+	main.c mintfake.h \
+	mintproc.c mintproc.h \
+	$(top_srcdir)/natfeat/natfeat.c $(top_srcdir)/natfeat/nf_ops.h \
+	hostfs/hostfs_dev.c hostfs/hostfs_dev.h \
+	hostfs/hostfs_xfs.c hostfs/hostfs_xfs.h \
+	mint/strcpy.c \
+	mint/strncpy.c \
+	mint/strlen.c \
+	mint/strupr.c \
+	mint/bzero.c \
+	mint/memcpy.c \
+	mint/ctype.c \
+	mint/ksprintf.c \
+	mint/dostime.c \
+	mint/unixtime.c \
+	mint/unix2xbios.c \
+	$(empty)
+
+SSRCS = \
+	$(top_srcdir)/natfeat/natfeat_asm.S \
+	mdglue.S \
+	$(empty)
 
 # default definitions
-OBJS = $(COBJS:.c=.o) $(SOBJS:%.S=%.o)
+OBJS = $(patsubst %.c, %.o, $(filter %.c, $(CSRCS))) $(patsubst %.S, %.o, $(filter %.S, $(SSRCS)))
 
-.xfso:	$(srcdir)/../hostfs_xfs.c $(srcdir)/../hostfs_dev.c
-	$(MKDIR) -p $@
-	$(CP) -r $(srcdir)/../hostfs_xfs.c $(srcdir)/../hostfs_dev.c $@
-	$(CP) -r $(srcdir)/../hostfs_xfs.h $(srcdir)/../hostfs_dev.h $@
-	$(CP) -r $(srcdir)/../hostfs_nfapi.h $@
-	touch $@/BINFILES
-	touch $@/EXTRAFILES
-	touch $@/MISCFILES
-	echo "COBJS = hostfs_xfs.c hostfs_dev.c" >$@/SRCFILES
-	$(CP) Makefile.xfso $@/Makefile
-	cd $@; $(MAKE) CPU=$(CPU) MDFLAGS="$(MDFLAGS)"
+$(TARGET): $(OBJS)
+	$(LD) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
-.natfeat: $(srcdir)/../../natfeat
-	$(MKDIR) -p $@
-	$(CP) -r $</* $@
-	cd $@; $(MAKE) CPU=$(CPU) parentdir=../..
-
-$(TARGET): .natfeat .xfso $(OBJS) $(LIBKERNTARGET) 
-	$(LD) $(CFLAGS) -o $@ $(OBJS) .natfeat/*.o .xfso/*.o $(LIBS)
-	$(STRIP) $@
-
-include $(top_srcdir)/DEPENDENCIES
+clean::
+	rm -f *.o */*.o $(TARGET)

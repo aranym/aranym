@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM MetaDOS driver.
  *
  * 2002 STan
@@ -15,8 +13,11 @@
 # ifndef _filesys_h
 # define _filesys_h
 
-# include "mint/mint.h"
-# include "mint/file.h"
+typedef struct proc PROC;
+
+#include "mint/fsops.h"
+#include "mint/file.h"
+#include "mint/filedesc.h"
 
 struct ucred;
 
