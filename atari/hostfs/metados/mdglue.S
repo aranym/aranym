@@ -21,6 +21,7 @@
 	.globl	_sys_f_readlink
 	.globl	_sys_f_chown
 	.globl	_sys_f_chown16
+	.globl	_sys_f_chmod
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -420,7 +421,7 @@ functionTable:
 	dc.l	wrap_f_readlink		/* 303 */
 	dc.l	-1					/* 304 */
 	dc.l	wrap_f_chown
-	dc.l	-1
+	dc.l	wrap_f_chmod
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1					/* 309 */
@@ -839,6 +840,18 @@ wrap_f_chown:
 	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_chown
 	lea	8(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_chmod:
+	PRINT	#306
+	SSTCK	a0
+
+	move.w	10(a0),-(sp)	/* mode */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
+	MDBSR	a0,_sys_f_chmod
+	lea	6(sp),sp
 
 	RSTCK
 	rts

@@ -1342,6 +1342,53 @@ sys_f_chown16 (MetaDOSDir const char *name, int uid, int gid, int follow_symlink
 }
 
 /*
+ * GEMDOS extension: Fchmod (file, mode)
+ *
+ * changes a file's access permissions.
+ */
+long _cdecl
+sys_f_chmod (MetaDOSDir const char *name, unsigned int mode)
+{
+	struct proc *p = get_curproc();
+#if 0
+	struct ucred *cred = p->p_cred->ucr;
+#endif
+
+	fcookie fc;
+	long r;
+	XATTR xattr;
+
+
+	TRACE (("Fchmod(%s, %o)", name, mode));
+	r = path2cookie (p, name, follow_links, &fc);
+	if (r)
+	{
+		DEBUG (("Fchmod(%s): error %ld", name, r));
+		return r;
+	}
+
+	r = xfs_getxattr (fc.fs, &fc, &xattr);
+	if (r)
+	{
+		DEBUG (("Fchmod(%s): couldn't get file attributes",name));
+	}
+#if 0
+	else if (cred->euid && cred->euid != xattr.uid)
+	{
+		DEBUG (("Fchmod(%s): not the file's owner",name));
+		r = EACCES;
+	}
+#endif
+	else
+	{
+		r = xfs_chmode (fc.fs, &fc, mode & ~S_IFMT);
+		if (r) DEBUG(("Fchmod: error %ld", r));
+	}
+	release_cookie (&fc);
+	return r;
+}
+
+/*
  * GEMDOS-extension: Dreadlabel(path, buf, buflen)
  *
  * original written by jr
