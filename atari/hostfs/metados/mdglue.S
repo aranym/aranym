@@ -16,12 +16,14 @@
 	.globl	_sys_d_pathconf, _sys_f_xattr, _sys_d_opendir, _sys_d_readdir
 	.globl	_sys_d_closedir, _sys_d_xreaddir, _sys_d_rewinddir
 	.globl	_sys_d_readlabel, _sys_d_delete
+	.globl	_sys_ffstat
 	.globl	_sys_f_link
 	.globl	_sys_f_symlink
 	.globl	_sys_f_readlink
 	.globl	_sys_f_chown
 	.globl	_sys_f_chown16
 	.globl	_sys_f_chmod
+	.globl	_sys_f_stat64
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -446,7 +448,7 @@ functionTable:
 	dc.l	-1
 	dc.l	-1					/* 329 */
 	dc.l	-1
-	dc.l	-1
+	dc.l	wrap_f_stat64		/* 331 */
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1					/* 334 */
@@ -464,7 +466,7 @@ functionTable:
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1
-	dc.l	-1				 	/* 349 */
+	dc.l	wrap_f_fstat64 		/* 349 */
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1
@@ -871,6 +873,19 @@ wrap_dxreaddir:
 	RSTCK
 	rts
 
+wrap_f_stat64:
+	PRINT	#331
+	SSTCK	a0
+
+	move.l	12(a0),-(sp)	/* stat* */
+	move.l	a4,-(sp)	/* name 8(a0) or a4 MD */
+	move.w	6(a0),-(sp)	/* flag */
+	MDBSR	a0,_sys_f_stat64
+	lea	10(sp),sp
+
+	RSTCK
+	rts
+
 wrap_dreadlabel:
 	PRINT	#338
 	SSTCK	a0
@@ -894,6 +909,18 @@ wrap_f_chown16:
 	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_chown16
 	lea	10(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_fstat64:
+	PRINT	#349
+	SSTCK	a0
+
+	move.l	8(a0),-(sp)	/* buffer */
+	move.w	6(a0),-(sp)	/* handle */
+	MDBSR	a0,_sys_ffstat
+	lea	6(sp),sp
 
 	RSTCK
 	rts

@@ -19,6 +19,7 @@
 /* DOS file handling routines */
 
 #include "hostfs.h"
+#include "mint/ioctl.h"
 
 
 long _cdecl
@@ -344,5 +345,81 @@ sys_f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag)
 	}
 
 	return xdd_datime (f, timeptr, wflag);
+}
+
+/*
+ * extensions to GEMDOS:
+ */
+
+static long
+sys__ffstat_1_12 (struct file *f, XATTR *xattr)
+{
+	long ret;
+
+#if 0
+# ifdef OLDSOCKDEVEMU
+	if (f->dev == &sockdev || f->dev == &sockdevemu)
+# else
+	if (f->dev == &sockdev)
+# endif
+		return so_fstat_old (f, xattr);
+#endif
+
+	if (!f->fc.fs)
+	{
+		DEBUG (("sys__ffstat_1_12: no xfs!"));
+		return ENOSYS;
+	}
+
+	ret = xdd_ioctl(f, FSTAT, xattr);
+	if (ret == ENOSYS)
+		ret = xfs_getxattr (f->fc.fs, &f->fc, xattr);
+	if ((ret == E_OK) && (f->fc.fs->fsflags & FS_EXT_3))
+	{
+		xtime_to_local_dos(xattr,m);
+		xtime_to_local_dos(xattr,a);
+		xtime_to_local_dos(xattr,c);
+	}
+
+	return ret;
+}
+
+static long
+sys__ffstat_1_16 (struct file *f, struct stat *st)
+{
+	long ret;
+
+#if 0
+# ifdef OLDSOCKDEVEMU
+	if (f->dev == &sockdev || f->dev == &sockdevemu)
+# else
+	if (f->dev == &sockdev)
+# endif
+		return so_fstat (f, st);
+#endif
+
+	if (!f->fc.fs)
+	{
+		DEBUG (("sys__ffstat_1_16: no xfs"));
+		return ENOSYS;
+	}
+
+	ret = xdd_ioctl(f, FSTAT64, st);
+	if (ret == ENOSYS)
+		ret = xfs_stat64 (f->fc.fs, &f->fc, st);
+	return ret;
+}
+
+long _cdecl
+sys_ffstat (MetaDOSFile short fd, struct stat *st)
+{
+	struct proc *p = get_curproc();
+	FILEPTR	*f;
+	long ret;
+
+	ret = GETFILEPTR (&p, &fd, &f);
+	if (ret) return ret;
+
+	return sys__ffstat_1_16 (f, st);
 }
 

@@ -1,4 +1,8 @@
 2017/11/06 - Thorsten
+Implement Fstat64/Ffstat64 for MetaDOS driver.
+
+
+2017/11/06 - Thorsten
 Implement Fchmod for MetaDOS driver.
 
 

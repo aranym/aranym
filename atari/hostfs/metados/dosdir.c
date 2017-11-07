@@ -1439,3 +1439,34 @@ sys_d_writelabel (MetaDOSDir const char *name, const char *label)
 	release_cookie (&dir);
 	return r;
 }
+
+/*
+ * GEMDOS extension: Fstat(flag, file, stat)
+ *
+ * gets extended attributes in native UNIX format for a file.
+ * flag is 0 if symbolic links are to be followed (like stat),
+ * flag is 1 if not (like lstat).
+ */
+long _cdecl
+sys_f_stat64 (MetaDOSDir int flag, const char *name, STAT *stat)
+{
+	struct proc *p = get_curproc();
+
+	fcookie fc;
+	long r;
+
+	TRACE (("Fstat64(%d, %s)", flag, name));
+
+	r = path2cookie (p, name, flag ? NULL : follow_links, &fc);
+	if (r)
+	{
+		DEBUG (("Fstat64(%s): path2cookie returned %ld", name, r));
+		return r;
+	}
+
+	r = xfs_stat64 (fc.fs, &fc, stat);
+	if (r) DEBUG (("Fstat64(%s): returning %ld", name, r));
+
+	release_cookie (&fc);
+	return r;
+}
