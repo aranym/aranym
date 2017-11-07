@@ -39,33 +39,6 @@
 # ifndef _k_fds_h
 # define _k_fds_h
 
-#ifndef ARAnyM_MetaDOS
-
-long fd_alloc	(struct proc *p, short *fd, short min, const char *func);
-void fd_remove	(struct proc *p, short fd, const char *func);
-
-# define FD_ALLOC(p, fd, min)      fd_alloc  (p, fd, min, __FUNCTION__)
-# define FD_REMOVE(p, fd)          fd_remove (p, fd, __FUNCTION__)
-
-long fp_alloc	(struct proc *p, FILEPTR **resultfp, const char *func);
-void fp_done	(struct proc *p, FILEPTR *fp, short fd, char fdflags, const char *func);
-void fp_free	(FILEPTR *fp, const char *func);
-
-# define FP_ALLOC(p, result)       fp_alloc  (p, result, __FUNCTION__)
-# define FP_DONE(p, fp, fd, flags) fp_done   (p, fp, fd, flags, __FUNCTION__)
-# define FP_FREE(fp)               fp_free   (fp, __FUNCTION__)
-
-long fp_get	(struct proc **p, short *fd, FILEPTR **fp, const char *func);
-long fp_get1	(struct proc *p, short fd, FILEPTR **fp, const char *func);
-
-# define FP_GET(p, fd, fp)         fp_get     (p, fd, fp, __FUNCTION__)
-# define FP_GET1(p, fd, fp)        fp_get1    (p, fd, fp, __FUNCTION__)
-# define GETFILEPTR(p, fd, fp)	   fp_get     (p, fd, fp, __FUNCTION__)
-
-long do_dup	(short fd, short min, int cmd);
-
-#else
-
 # define FD_ALLOC(p, fd, min)        0
 # define FD_REMOVE(p, fd)
 
@@ -76,11 +49,6 @@ long do_dup	(short fd, short min, int cmd);
 # define FP_GET(p, fd, fp)           *(fp) = fpMD
 # define FP_GET1(p, fd, fp)          *(fp) = fpMD
 # define GETFILEPTR(p, fd, fp)       0; (void)p; *(fp) = fpMD
-
-/** from k_prot.h **/
-# define groupmember( cred, gid ) 1
-
-#endif /* ARAnyM_MetaDOS */
 
 long do_open	(FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x);
 long do_close	(struct proc *p, FILEPTR *f);

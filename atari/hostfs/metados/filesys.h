@@ -52,9 +52,6 @@ void close_filesys(void);
 long _s_ync(void);
 long _cdecl sys_s_ync(void);
 long _cdecl sys_fsync(short fh);
-void _changedrv(ushort drv, const char *function);
-#define changedrv(drv) _changedrv(drv, __FUNCTION__);
-long disk_changed(ushort drv);
 long _cdecl relpath2cookie(struct proc *p, fcookie *dir, const char *path, char *lastnm,
 		    fcookie *res, int depth);
 long _cdecl path2cookie(struct proc *p, const char *path, char *lastname, fcookie *res);

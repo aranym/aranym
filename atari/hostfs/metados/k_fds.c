@@ -126,11 +126,13 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 	{
 		/* check first for write permission in the directory */
 		r = xfs_getxattr (dir.fs, &dir, &xattr);
+#if 0
 		if (r == 0)
 		{
 			if (denyaccess (p->p_cred->ucr, &xattr, S_IWOTH))
 				r = EACCES;
 		}
+#endif
 
 		if (r)
 		{
@@ -233,15 +235,14 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 			perm = S_IROTH;
 			break;
 		default:
-			perm = 0;
-			ALERT ("do_open: bad file access mode: %x", rwmode);
+			break;
 	}
 
 	/* access checking;  additionally, the superuser needs at least one
 	 * execute right to execute a file
 	 */
 	if ((exec_check && ((xattr.mode & (S_IXUSR|S_IXGRP|S_IXOTH)) == 0))
-		|| (!creating && denyaccess (p->p_cred->ucr, &xattr, perm)))
+		|| (!creating && 0 /* denyaccess (p->p_cred->ucr, &xattr, perm) */))
 	{
 		DEBUG(("do_open(%s): access to file denied", name));
 		release_cookie (&dir);
@@ -254,11 +255,7 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 	 * we just created the file, or unless the file is on the proc
 	 * file system and hence FA_RDONLY has a different meaning)
 	 */
-	if (!creating && (xattr.attr & FA_RDONLY)
-#ifndef ARAnyM_MetaDOS
-		&& fc.fs != &proc_filesys
-#endif
-		)
+	if (!creating && (xattr.attr & FA_RDONLY))
 	{
 		if ((rwmode & O_RWMODE) == O_RDWR || (rwmode & O_RWMODE) == O_WRONLY)
 		{
@@ -334,53 +331,6 @@ do_open (FILEPTR **f, const char *name, int rwmode, int attr, XATTR *x)
 		return r;
 	}
 
-#ifndef ARAnyM_MetaDOS
-	/* special code for opening a tty */
-	if (is_terminal (*f))
-	{
-		struct tty *tty;
-
-		tty = (struct tty *) ((*f)->devinfo);
-
-		/* in the middle of a hangup */
-		while (tty->hup_ospeed && !creating)
-			sleep (IO_Q, (long) &tty->state);
-
-		tty->use_cnt++;
-
-		/* first open for this device (not counting set_auxhandle)? */
-		if ((!tty->pgrp && tty->use_cnt - tty->aux_cnt <= 1)
-			|| tty->use_cnt <= 1)
-		{
-			short s = tty->state & (TS_BLIND|TS_HOLD|TS_HPCL);
-			short u = tty->use_cnt;
-			short a = tty->aux_cnt;
-			long rsel = tty->rsel;
-			long wsel = tty->wsel;
-			*tty = default_tty;
-
-			if (!creating)
-				tty->state = s;
-
-			if ((tty->use_cnt = u) > 1 || !creating)
-			{
-				tty->aux_cnt = a;
-				tty->rsel = rsel;
-				tty->wsel = wsel;
-			}
-
-			if (!((*f)->flags & O_HEAD))
-				tty_ioctl (*f, TIOCSTART, 0);
-		}
-
-# if 0
-		/* XXX fn: wait until line is online */
-		if (!((*f)->flags & O_NDELAY) && (tty->state & TS_BLIND))
-			(*f->dev->ioctl)((*f), TIOCWONLINE, 0);
-# endif
-	}
-#endif /* ARAnyM_MetaDOS */
-
 	DEBUG(("do_open(%s) -> 0", name));
 	return 0;
 }
@@ -412,74 +362,12 @@ do_close (struct proc *p, FILEPTR *f)
 	 * (this is just in case we were killed by a signal)
 	 */
 
-#ifndef ARAnyM_MetaDOS
-	/* BUG? Feature? If media change is detected while we're doing the select,
-	 * we'll never unselect (since f->dev is set to NULL by changedrv())
-	 */
-	if (f->dev)
-	{
-		(*f->dev->unselect)(f, (long) p, O_RDONLY);
-		(*f->dev->unselect)(f, (long) p, O_WRONLY);
-		(*f->dev->unselect)(f, (long) p, O_RDWR);
-		wake (SELECT_Q, (long) &select_coll);
-	}
-#endif /* ARAnyM_MetaDOS */
-
 	f->links--;
 	if (f->links < 0)
 	{
-		ALERT ("do_close on invalid file struct! (links = %i)", f->links);
+		DEBUG(("do_close on invalid file struct! (links = %i)", f->links));
 		/*		return 0; */
 	}
-
-#ifndef ARAnyM_MetaDOS
-	/* TTY manipulation must be done *before* calling the device close routine,
-	 * since afterwards the TTY structure may no longer exist
-	 */
-	if (is_terminal (f) && f->links <= 0)
-	{
-		struct tty *tty = (struct tty *) f->devinfo;
-		TIMEOUT *t;
-		long ospeed = -1L, z = 0;
-
-		/* for HPCL ignore ttys open as /dev/aux, else they would never hang up */
-		if (tty->use_cnt-tty->aux_cnt <= 1)
-		{
-			if ((tty->state & TS_HPCL) && !tty->hup_ospeed &&
-			    !(f->flags & O_HEAD) &&
-			    (*f->dev->ioctl)(f, TIOCOBAUD, &ospeed) >= 0 &&
-			    NULL != (t = addroottimeout(500L, (to_func *)hangup_b1, 0))) {
-			/* keep device open until hangup complete */
-				f->links = 1;
-				++tty->use_cnt;
-			/* pass f to timeout function */
-				t->arg = (long)f;
-				(*f->dev->ioctl)(f, TIOCCBRK, 0);
-			/* flag: hanging up */
-				tty->hup_ospeed = -1;
-			/* stop output, flush buffers, drop DTR... */
-				tty_ioctl(f, TIOCSTOP, 0);
-				tty_ioctl(f, TIOCFLUSH, 0);
-				if (ospeed > 0) {
-					tty->hup_ospeed = ospeed;
-					(*f->dev->ioctl)(f, TIOCOBAUD, &z);
-				}
-			}
-			else
-			{
-				tty->pgrp = 0;
-				DEBUG(("do_close: assigned tty->pgrp = %i", tty->pgrp));
-			}
-		}
-
-		tty->use_cnt--;
-		if (tty->use_cnt <= 0 && tty->xkey)
-		{
-			kfree (tty->xkey);
-			tty->xkey = 0;
-		}
-	}
-#endif /* ARAnyM_MetaDOS */
 
 	if (f->dev)
 	{

@@ -57,20 +57,17 @@ extern int debug_logging;
 
 
 void		debug_ws	(const char *s);
-int		_ALERT		(const char *);
 
 void	_cdecl	Tracelow	(const char *s, ...);
 void	_cdecl	Trace		(const char *s, ...);
 void	_cdecl	Debug		(const char *s, ...);
 void	_cdecl	ALERT		(const char *s, ...);
-void	_cdecl	FORCE		(const char *s, ...);
 
 EXITING	_cdecl	FATAL		(const char *s, ...)	NORETURN;
 EXITING		halt		(void)			NORETURN;
 EXITING		HALT		(void)			NORETURN;
 
 void		DUMPLOG		(void);
-void		do_func_key	(int);
 
 
 # endif /* _mint_debug_h */

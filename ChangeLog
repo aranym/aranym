@@ -1,3 +1,7 @@
+2017/11/06 - Thorsten
+Remove dead code from MetaDOS driver.
+
+
 2017/11/04 - Thorsten
 Copy necessary files back from FreeMiNT to metados folder,
 to make it possible to build it locally

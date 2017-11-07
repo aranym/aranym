@@ -31,69 +31,18 @@ long _cdecl
 sys_d_free (MetaDOSDir long *buf, int d)
 {
 	struct proc *p = get_curproc();
-	fcookie *dir = 0;
+	fcookie *dir;
 
-#ifdef ARAnyM_MetaDOS
-	d = (int)tolower(pathNameMD[0])-'a';
+	d = tolower(pathNameMD[0]);
+	if (d >= '1' && d <= '6')
+		d = d - '1' + 26;
+	else
+		d = d - 'a';
+	if (d < 0 || d >= NUM_DRIVES)
+		return ENXIO;
 	dir = &p->p_cwd->root[d];
 	TRACE(("Dfree(%d)", d));
-#else
-	FILESYS *fs;
-	fcookie root;
-	long r;
 
-	TRACE(("Dfree(%d)", d));
-	assert (p->p_fd && p->p_cwd);
-
-	/* drive 0 means current drive, otherwise it's d-1 */
-	if (d)
-		d = d - 1;
-	else
-		d = p->p_cwd->curdrv;
-
-	/* If it's not a standard drive or an alias of one, get the pointer to
-	 * the filesystem structure and use the root directory of the
-	 * drive.
-	 */
-	if (d < 0 || d >= NUM_DRIVES)
-	{
-		int i;
-
-		for (i = 0; i < NUM_DRIVES; i++)
-		{
-			if (aliasdrv[i] == d)
-			{
-				d = i;
-				goto aliased;
-			}
-		}
-
-		fs = get_filesys (d);
-		if (!fs)
-			return ENXIO;
-
-		r = xfs_root (fs, d, &root);
-		if (r < E_OK)
-			return r;
-
-		r = xfs_dfree (fs, &root, buf);
-		release_cookie (&root);
-		return r;
-	}
-
-	/* check for a media change -- we don't care much either way, but it
-	 * does keep the results more accurate
-	 */
-	(void)disk_changed(d);
-
-aliased:
-
-	/* use current directory, not root, since it's more likely that
-	 * programs are interested in the latter (this makes U: work much
-	 * better)
-	 */
-	dir = &p->p_cwd->curdir[d];
-#endif /* ARAnyM_MetaDOS */
 	if (!dir->fs)
 	{
 		DEBUG(("Dfree: bad drive"));
@@ -319,11 +268,7 @@ sys_f_sfirst (MetaDOSDTA const char *path, int attrib)
 	}
 
 	fs = dir.fs;
-#ifndef ARAnyM_MetaDOS
-	dta = p->p_fd->dta;
-#else
 	dta = dtaMD;
-#endif
 
 	/* Now, see if we can find a DIR slot for the search. We use the
 	 * following heuristics to try to avoid destroying a slot:
@@ -522,11 +467,7 @@ sys_f_snext (MetaDOSDTA0)
 	struct proc *p = get_curproc();
 
 	char buf[TOS_NAMELEN+1];
-#ifndef ARAnyM_MetaDOS
-	DTABUF *dta = p->p_fd->dta;
-#else
 	DTABUF *dta = dtaMD;
-#endif /* ARAnyM_MetaDOS */
 	FILESYS *fs;
 	fcookie fc;
 	ushort i;
@@ -577,11 +518,7 @@ sys_f_snext (MetaDOSDTA0)
 	}
 
 	dirh = &p->p_fd->srchdir[i];
-#ifndef ARAnyM_MetaDOS
-	p->p_fd->srchtim[i] = searchtime;
-#else
 	p->p_fd->srchtim[i] = searchtime++;
-#endif /* ARAnyM_MetaDOS */
 
 	fs = dirh->fc.fs;
 	if (!fs)
@@ -749,7 +686,7 @@ sys_f_attrib (MetaDOSFile const char *name, int rwflag, int attr)
 }
 
 long _cdecl
-sys_f_delete (MetaDOSFile const char *name)
+sys_f_delete (MetaDOSDir const char *name)
 {
 	struct proc *p = get_curproc();
 	struct ucred *cred = p->p_cred->ucr;
@@ -820,6 +757,7 @@ sys_f_delete (MetaDOSFile const char *name)
 		return EACCES;
 	}
 
+#if 0
 	/* TOS domain processes can only delete files if they have write permission
 	 * for them
 	 */
@@ -835,6 +773,7 @@ sys_f_delete (MetaDOSFile const char *name)
 			return EACCES;
 		}
 	}
+#endif
 
 	release_cookie (&fc);
 	r = xfs_remove (dir.fs, &dir,temp1);
@@ -844,7 +783,7 @@ sys_f_delete (MetaDOSFile const char *name)
 }
 
 long _cdecl
-sys_f_rename (MetaDOSFile int junk, const char *old, const char *new)
+sys_f_rename (MetaDOSDir int junk, const char *old, const char *new)
 {
 	struct proc *p = get_curproc();
 	struct ucred *cred = p->p_cred->ucr;
@@ -990,11 +929,7 @@ sys_d_opendir (MetaDOSDir const char *name, int flag)
 {
 	struct proc *p = get_curproc();
 
-#ifndef ARAnyM_MetaDOS
-	DIR *dirh;
-#else
 	DIR *dirh = dirMD;
-#endif
 	fcookie dir;
 	long r;
 	ushort mode;
@@ -1014,15 +949,6 @@ sys_d_opendir (MetaDOSDir const char *name, int flag)
 		return r;
 	}
 
-#ifndef ARAnyM_MetaDOS
-	dirh = kmalloc (sizeof (*dirh));
-	if (!dirh)
-	{
-		release_cookie (&dir);
-		return ENOMEM;
-	}
-#endif
-
 	dirh->fc = dir;
 	dirh->index = 0;
 	dirh->flags = flag;
@@ -1031,9 +957,6 @@ sys_d_opendir (MetaDOSDir const char *name, int flag)
 	{
 		DEBUG(("d_opendir(%s): opendir returned %ld", name, r));
 		release_cookie (&dir);
-#ifndef ARAnyM_MetaDOS
-		kfree (dirh);
-#endif
 		return r;
 	}
 
@@ -1051,12 +974,7 @@ sys_d_opendir (MetaDOSDir const char *name, int flag)
 long _cdecl
 sys_d_readdir (MetaDOSDir int len, long handle, char *buf)
 {
-#ifndef ARAnyM_MetaDOS
-	struct proc *p = get_curproc();
-	DIR *dirh = (DIR *) handle;
-#else
 	DIR *dirh = dirMD;
-#endif
 	fcookie fc;
 	long r;
 
@@ -1080,12 +998,7 @@ sys_d_readdir (MetaDOSDir int len, long handle, char *buf)
 long _cdecl
 sys_d_xreaddir (MetaDOSDir int len, long handle, char *buf, XATTR *xattr, long *xret)
 {
-#ifndef ARAnyM_MetaDOS
-	struct proc *p = get_curproc();
-	DIR *dirh = (DIR *) handle;
-#else
 	DIR *dirh = dirMD;
-#endif
 	fcookie fc;
 	long r;
 
@@ -1112,12 +1025,7 @@ sys_d_xreaddir (MetaDOSDir int len, long handle, char *buf, XATTR *xattr, long *
 long _cdecl
 sys_d_rewind (MetaDOSDir long handle)
 {
-#ifndef ARAnyM_MetaDOS
-	struct proc *p = get_curproc();
-	DIR *dirh = (DIR *) handle;
-#else
 	DIR *dirh = dirMD;
-#endif
 
 	if (!dirh->fc.fs)
 		return EBADF;
@@ -1135,11 +1043,7 @@ long _cdecl
 sys_d_closedir (MetaDOSDir long handle)
 {
 	struct proc *p = get_curproc();
-#ifndef ARAnyM_MetaDOS
-	DIR *dirh = (DIR *)handle;
-#else
 	DIR *dirh = dirMD;
-#endif
 	DIR **where;
 	long r;
 
@@ -1167,9 +1071,6 @@ sys_d_closedir (MetaDOSDir long handle)
 	if (r)
 		DEBUG(("Dclosedir: error %ld", r));
 
-#ifndef ARAnyM_MetaDOS
-	kfree (dirh);
-#endif
 	return r;
 }
 
@@ -1252,19 +1153,6 @@ sys_d_writelabel (MetaDOSDir const char *name, const char *label)
 
 	fcookie dir;
 	long r;
-
-#ifndef ARAnyM_MetaDOS
-	struct ucred *cred = p->p_cred->ucr;
-
-	/* Draco: in secure mode only superuser can write labels
-	 */
-	if (secure_mode && (cred->euid))
-	{
-		DEBUG (("Dwritelabel(%s): access denied", name));
-		return EACCES;
-	}
-
-#endif /* ARAnyM_MetaDOS */
 
 	r = path2cookie (p, name, NULL, &dir);
 	if (r)

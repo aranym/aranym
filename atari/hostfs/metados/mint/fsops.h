@@ -272,8 +272,6 @@ struct tty
 # else
 # define SHM_DRV		(PROCDRV + 1)
 # endif
-# define KERNDRV		(SHM_DRV + WITH_KERNFS)
-# define UNI_NUM_DRVS		(KERNDRV + 1)
 
 # define UNIDRV			('U' - 'A')
 # define PSEUDODRVS		((1L << UNIDRV))

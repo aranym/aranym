@@ -22,8 +22,6 @@
 
 extern long _cdecl (*nf_call)(long id, ...);
 
-#ifdef ARAnyM_MetaDOS
-
 /* console output via Cconws */
 #include "mint/osbind.h"
 #define c_conws (void) Cconws
@@ -45,8 +43,6 @@ extern long _cdecl (*nf_call)(long id, ...);
 
 #define MSG_PFAILURE(p,s) \
     "\7Sorry, hostfs.dos NOT installed: " s "!\r\n"
-
-#endif /* ARAnyM_MetaDOS */
 
 #endif /* _global_h_ */
 

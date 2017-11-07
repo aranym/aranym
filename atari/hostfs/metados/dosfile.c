@@ -34,7 +34,7 @@ sys_f_open (MetaDOSFile const char *name, short mode)
 # if O_GLOBAL
 	if (mode & O_GLOBAL)
 	{
-	   ALERT("O_GLOBAL is obsolete, please update your driver (%s)",name);
+	   DEBUG(("O_GLOBAL is obsolete, please update your driver (%s)",name));
 	   return EINVAL;
 	}
 # endif
@@ -103,13 +103,13 @@ sys_f_create (MetaDOSFile const char *name, short attrib)
 		char temp1[PATH_MAX];
 		fcookie dir;
 
-#ifndef ARAnyM_MetaDOS
+#if 0
 		/* just in case the caller tries to do something with this handle,
 		 * make it point to u:\dev\null
 		 */
 		ret = do_open (&fp, "u:\\dev\\null", O_RDWR|O_CREAT|O_TRUNC, 0, NULL);
 		if (ret) goto error;
-#endif /* ARAnyM_MetaDOS */
+#endif
 
 		ret = path2cookie (p, name, temp1, &dir);
 		if (ret) goto error;
@@ -222,8 +222,10 @@ sys_f_read (MetaDOSFile short fd, long count, char *buf)
 		return EISDIR;
 	}
 
+#if 0
 	if (is_terminal (f))
 		return tty_read (f, buf, count);
+#endif
 
 	TRACELOW (("Fread: %ld bytes from handle %d to %p", count, fd, buf));
 	return xdd_read (f, buf, count);
@@ -245,8 +247,10 @@ sys_f_write (MetaDOSFile short fd, long count, const char *buf)
 		return EACCES;
 	}
 
+#if 0
 	if (is_terminal (f))
 		return tty_write (f, buf, count);
+#endif
 
 	/* Prevent broken device drivers from wiping the disk.
 	 * We return a zero rather than a negative error code
@@ -295,8 +299,10 @@ sys_f_seek (MetaDOSFile long place, short fd, short how)
 	r = GETFILEPTR (&p, &fd, &f);
 	if (r) return r;
 
+#if 0
 	if (is_terminal (f))
 		return ESPIPE;
+#endif
 
 	r = xdd_lseek (f, place, how);
 	TRACE (("Fseek: returning %ld", r));
@@ -316,9 +322,11 @@ sys_f_datime (MetaDOSFile ushort *timeptr, short fd, short wflag)
 	r = GETFILEPTR (&p, &fd, &f);
 	if (r) return r;
 
+#if 0
 	/* some programs use Fdatime to test for TTY devices */
 	if (is_terminal (f))
 		return EACCES;
+#endif
 
 	if (f->fc.fs && f->fc.fs->fsflags & FS_EXT_3)
 	{

@@ -27,24 +27,11 @@
 #include "mint/ctype.h"
 #include "mint/credentials.h"
 
-#ifdef ARAnyM_MetaDOS
-#undef changedrv
-#define changedrv(dev)
-#define disk_changed(dev) 0
-#endif /* ARAnyM_MetaDOS */
-
-
 #if 1
 #define PATH2COOKIE_DB(x) TRACE(x)
 #else
 #define PATH2COOKIE_DB(x) DEBUG(x)
 #endif
-
-# ifdef DEBUG_INFO
-# define DMA_DEBUG(x)   FORCE x
-# else
-# define DMA_DEBUG(x)
-# endif
 
 
 long
@@ -323,7 +310,6 @@ nodrive:
 
 	if (!dir.fs && !cwd->root_dir)
 	{
-		changedrv (dir.dev);
 		dup_cookie (&dir, &cwd->root[drv]);
 	}
 
@@ -336,24 +322,6 @@ nodrive:
 	/* here's where we come when we've gone across a mount point
 	 */
 restart_mount:
-
-	/* see if there has been a disk change; if so, return ECHMEDIA.
-	 * path2cookie will restart the search automatically; other functions
-	 * that call relpath2cookie directly will have to fail gracefully.
-	 * Note that this check has to be done _before_ testing if the
-	 * remaining path is empty, as disk changes may otherwise get lost
-	 * when accessing a root directory, depending on the active
-	 * filesystem.
-	 */
-	if ((r = disk_changed (dir.dev)) != 0)
-	{
-		release_cookie (&dir);
-		if (r > 0)
-			r = ECHMEDIA;
-
-		PATH2COOKIE_DB (("relpath2cookie(1): returning %ld", r));
-		return r;
-	}
 
 	if (!*path)
 	{
@@ -447,6 +415,7 @@ restart_mount:
 			break;
 		}
 
+#if 0
 		/* we must also have search permission for the directory
 		 */
 		if (denyaccess (p->p_cred->ucr, &xattr, S_IXOTH))
@@ -457,6 +426,7 @@ restart_mount:
 			r = EACCES;
 			break;
 		}
+#endif
 
 		/* skip slashes
 		 */
@@ -571,24 +541,6 @@ restart_mount:
 		 */
 		if (S_ISLNK(xattr.mode) && (*path || dolast > 1))
 		{
-# if WITH_KERNFS
-			/* The symbolic links on the kern filesystem have
-			 * their own ideas about following links.
-			 */
-			if (res->fs == &kern_filesys)
-			{
-				release_cookie (&dir);
-
-				depth++;
-				r = kern_follow_link (res, depth);
-				if (r)
-				{
-					release_cookie (res);
-					break;
-				}
-			}
-			else
-# endif
 			{
 				r = xfs_readlink (res->fs, res, linkstuff, PATH_MAX);
 				release_cookie (res);
@@ -690,41 +642,6 @@ dup_cookie (fcookie *newc, fcookie *oldc)
 
 
 /*
- * denyaccess(XATTR *xattr, unsigned perm): checks to see if the access
- * specified by perm (which must be some combination of S_IROTH, S_IWOTH,
- * and S_IXOTH) should be granted to the current process
- * on a file with the given extended attributes. Returns 0 if access
- * by the current process is OK, 1 if not.
- */
-
-int
-denyaccess(struct ucred *cred, XATTR *xattr, ushort perm)
-{
-#ifndef ARAnyM_MetaDOS
-	ushort mode;
-
-	/* the super-user can do anything! */
-	if (cred->euid == 0)
-		return 0;
-
-	mode = xattr->mode;
-	if (cred->euid == xattr->uid)
-		perm = perm << 6;
-	else if (cred->egid == xattr->gid)
-		perm = perm << 3;
-	else if (groupmember(cred, xattr->gid))
-		perm = perm << 3;
-
-	if ((mode & perm) != perm)
-		/* access denied */
-		return 1;
-#endif
-
-	return 0;
-}
-
-
-/*
  * check to see that a file is a directory, and that write permission
  * is granted; return an error code, or 0 if everything is ok.
  */
@@ -747,11 +664,13 @@ dir_access(struct ucred *cred, fcookie *dir, ushort perm, ushort *mode)
 		return ENOTDIR;
 	}
 
+#if 0
 	if (denyaccess(cred, &xattr, perm))
 	{
 		DEBUG(("no permission for directory"));
 		return EACCES;
 	}
+#endif
 
 	*mode = xattr.mode;
 

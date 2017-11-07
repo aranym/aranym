@@ -44,7 +44,6 @@ LD = $(CC) -nostdlib -Wl,--entry -Wl,_init
 LIBS = -lgcc
 
 # some little code pieces needs to be metados dependent 
-MDFLAGS += -DARAnyM_MetaDOS
 MDFLAGS += $(DEBUG_INFO)
 
 CFLAGS += $(INCLUDES)
@@ -52,6 +51,8 @@ CFLAGS += $(MDFLAGS)
 CFLAGS += -g -O2 -fomit-frame-pointer
 CFLAGS += -mshort
 CFLAGS += $(WARN)
+
+ASFLAGS = $(CFLAGS)
 
 LDFLAGS += -s
 
@@ -83,15 +84,15 @@ CSRCS = \
 	$(empty)
 
 SSRCS = \
-	$(top_srcdir)/natfeat/natfeat_asm.S \
 	mdglue.S \
+	$(top_srcdir)/natfeat/natfeat_asm.S \
 	$(empty)
 
 # default definitions
-OBJS = $(patsubst %.c, %.o, $(filter %.c, $(CSRCS))) $(patsubst %.S, %.o, $(filter %.S, $(SSRCS)))
+OBJS = $(patsubst %.S, %.o, $(filter %.S, $(SSRCS))) $(patsubst %.c, %.o, $(filter %.c, $(CSRCS)))
 
 $(TARGET): $(OBJS)
 	$(LD) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean::
-	rm -f *.o */*.o $(TARGET)
+	rm -f *.o */*.o $(top_srcdir)/natfeat/*.o $(TARGET)
