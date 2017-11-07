@@ -1203,6 +1203,145 @@ sys_f_symlink (MetaDOSDir const char *old, const char *new)
 }
 
 /*
+ * GEMDOS extension: Freadlink(buflen, buf, linkfile)
+ *
+ * read the contents of the symbolic link "linkfile" into the buffer
+ * "buf", which has length "buflen".
+ */
+long _cdecl
+sys_f_readlink (MetaDOSDir int buflen, char *buf, const char *linkfile)
+{
+	struct proc *p = get_curproc();
+
+	fcookie file;
+	long r;
+	XATTR xattr;
+
+	TRACE(("Freadlink(%s)", linkfile));
+
+	r = path2cookie (p, linkfile, (char *)0, &file);
+	if (r)
+	{
+		DEBUG(("Freadlink: unable to find %s", linkfile));
+		return r;
+	}
+
+	r = xfs_getxattr (file.fs, &file, &xattr);
+	if (r)
+	{
+		DEBUG(("Freadlink: unable to get attributes for %s", linkfile));
+	}
+	else if (S_ISLNK(xattr.mode))
+	{
+		r = xfs_readlink (file.fs, &file, buf, buflen);
+	}
+	else
+	{
+		DEBUG(("Freadlink: %s is not a link", linkfile));
+		r = EACCES;
+	}
+
+	release_cookie (&file);
+	return r;
+}
+
+/*
+ * GEMDOS extension: Fchown(name, uid, gid)
+ *
+ * changes the user and group ownerships of a file to "uid" and "gid"
+ * respectively
+ */
+long _cdecl
+sys_f_chown (MetaDOSDir const char *name, int uid, int gid)
+{
+	return sys_f_chown16( MetaDOSDirpass name, uid, gid, 0 );
+}
+
+/*
+ * GEMDOS extension: Fchown16(name, uid, gid, follow_symlinks)
+ *
+ * @param follow_symlinks set to 1 to follow or 0 to not to follow
+ *                        (the other values are reserved)
+ */
+long _cdecl
+sys_f_chown16 (MetaDOSDir const char *name, int uid, int gid, int follow_symlinks)
+{
+	struct proc *p = get_curproc();
+#if 0
+	struct ucred *cred = p->p_cred->ucr;
+#endif
+
+	fcookie fc;
+#if 0
+	XATTR xattr;
+#endif
+	long r;
+
+
+	TRACE(("Fchown16(%s, %d, %d, %s)", name, uid, gid, follow_symlinks != 0 ? "follow_links" : "nofollow"));
+
+	r = path2cookie (p, name, follow_symlinks == 1 ? follow_links : NULL, &fc);
+	if (r)
+	{
+		DEBUG(("Fchown(%s): error %ld", name, r));
+		return r;
+	}
+
+#if 0
+	/* MiNT acts like _POSIX_CHOWN_RESTRICTED: a non-privileged process can
+	 * only change the ownership of a file that is owned by this user, to
+	 * the effective group id of the process or one of its supplementary groups
+	 */
+	if (cred->euid)
+	{
+		if (cred->egid != gid && !groupmember (cred, gid))
+			r = EACCES;
+		else
+			r = xfs_getxattr (fc.fs, &fc, &xattr);
+
+		if (r)
+		{
+			DEBUG(("Fchown(%s): unable to get file attributes",name));
+			release_cookie (&fc);
+			return r;
+		}
+
+		if (xattr.uid != cred->euid || xattr.uid != uid)
+		{
+			DEBUG(("Fchown(%s): not the file's owner",name));
+			release_cookie (&fc);
+			return EACCES;
+		}
+
+		r = xfs_chown (fc.fs, &fc, uid, gid);
+
+		/* POSIX 5.6.5.2: if name refers to a regular file the set-user-ID and
+		 * set-group-ID bits of the file mode shall be cleared upon successful
+		 * return from the call to chown, unless the call is made by a process
+		 * with the appropriate privileges.
+		 * Note that POSIX leaves the behaviour unspecified for all other file
+		 * types. At least for directories with BSD-like setgid semantics,
+		 * these bits should be left unchanged.
+		 */
+		if (!r && !S_ISDIR(xattr.mode)
+		    && (xattr.mode & (S_ISUID | S_ISGID)))
+		{
+			long s;
+
+			s = xfs_chmode (fc.fs, &fc, xattr.mode & ~(S_ISUID | S_ISGID));
+			if (!s)
+				DEBUG(("Fchown: chmode returned %ld (ignored)", s));
+		}
+	}
+	else
+#endif
+		r = xfs_chown (fc.fs, &fc, uid, gid);
+
+	release_cookie (&fc);
+	return r;
+}
+
+/*
  * GEMDOS-extension: Dreadlabel(path, buf, buflen)
  *
  * original written by jr

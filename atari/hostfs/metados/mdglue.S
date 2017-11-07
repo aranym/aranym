@@ -18,6 +18,9 @@
 	.globl	_sys_d_readlabel, _sys_d_delete
 	.globl	_sys_f_link
 	.globl	_sys_f_symlink
+	.globl	_sys_f_readlink
+	.globl	_sys_f_chown
+	.globl	_sys_f_chown16
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -109,7 +112,7 @@ initfun:
 functionTable:
 	dc.l	0x4d414749		/* 'MAGI' */
 	dc.l	0x434d4554		/* 'CMET' */
-	dc.l	349
+	dc.l	389
 	dc.l	initfun
 	dc.l	-1
 	dc.l	-1
@@ -414,9 +417,9 @@ functionTable:
 	dc.l	wrap_fxattr			/* 300 */
 	dc.l	wrap_f_link			/* 301 */
 	dc.l	wrap_f_symlink		/* 302 */
-	dc.l	-1
+	dc.l	wrap_f_readlink		/* 303 */
 	dc.l	-1					/* 304 */
-	dc.l	-1
+	dc.l	wrap_f_chown
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1
@@ -461,6 +464,46 @@ functionTable:
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1				 	/* 349 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1			 		/* 359 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1			 		/* 369 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1			 		/* 379 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	wrap_f_chown16		/* 384 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1			 		/* 389 */
 	
 wrap_dfree:
 	PRINT	#54
@@ -774,6 +817,32 @@ wrap_f_symlink:
 	RSTCK
 	rts
 
+wrap_f_readlink:
+	PRINT	#303
+	SSTCK	a0
+
+	move.l	12(a0),-(sp)	/* newname */
+	move.l	a4,-(sp)	/* oldname - 8(a0) or a4 MD */
+	move.w	6(a0),-(sp)	/* buflen */
+	MDBSR	a0,_sys_f_readlink
+	lea	10(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_chown:
+	PRINT	#305
+	SSTCK	a0
+
+	move.w	12(a0),-(sp)	/* gid */
+	move.w	10(a0),-(sp)	/* uid */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
+	MDBSR	a0,_sys_f_chown
+	lea	8(sp),sp
+
+	RSTCK
+	rts
+
 wrap_dxreaddir:
 	PRINT	#322
 	SSTCK	a0
@@ -797,6 +866,20 @@ wrap_dreadlabel:
 	move.l	10(a0),-(sp)	/* buffer */
 	move.l	a4,-(sp)	/* pathname 6(a0) or a4 MD */
 	MDBSR	a0,_sys_d_readlabel
+	lea	10(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_chown16:
+	PRINT	#384
+	SSTCK	a0
+
+	move.w	14(a0),-(sp)	/* follow_symlinks */
+	move.w	12(a0),-(sp)	/* gid */
+	move.w	10(a0),-(sp)	/* uid */
+	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
+	MDBSR	a0,_sys_f_chown16
 	lea	10(sp),sp
 
 	RSTCK

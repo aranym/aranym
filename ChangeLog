@@ -1,4 +1,12 @@
 2017/11/06 - Thorsten
+Implement Fchown/Fchown16 for MetaDOS driver.
+
+
+2017/11/06 - Thorsten
+Implement Freadlink for MetaDOS driver.
+
+
+2017/11/06 - Thorsten
 Implement Fsymlink for MetaDOS driver.
 
 
