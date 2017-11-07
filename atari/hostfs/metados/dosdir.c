@@ -1114,6 +1114,59 @@ sys_f_xattr (MetaDOSFile int flag, const char *name, XATTR *xattr)
 	return r;
 }
 
+/*
+ * GEMDOS extension: Flink(old, new)
+ *
+ * creates a hard link named "new" to the file "old".
+ */
+long _cdecl
+sys_f_link (MetaDOSDir const char *old, const char *new)
+{
+	struct proc *p = get_curproc();
+	
+	fcookie olddir, newdir;
+	char temp1[PATH_MAX], temp2[PATH_MAX];
+	long r;
+	ushort mode;
+
+	TRACE(("Flink(%s, %s)", old, new));
+
+	r = path2cookie (p, old, temp2, &olddir);
+	if (r)
+	{
+		DEBUG(("Flink(%s,%s): error parsing old name",old,new));
+		return r;
+	}
+
+	r = path2cookie (p, new, temp1, &newdir);
+	if (r)
+	{
+		DEBUG(("Flink(%s,%s): error parsing new name",old,new));
+		release_cookie(&olddir);
+		return r;
+	}
+
+	if (newdir.fs != olddir.fs)
+	{
+		DEBUG(("Flink(%s,%s): different file systems",old,new));
+		release_cookie (&olddir);
+		release_cookie (&newdir);
+		return EXDEV;	/* cross device link */
+	}
+
+	/* check for write permission on the destination directory
+	 */
+	r = dir_access (p->p_cred->ucr, &newdir, S_IWOTH, &mode);
+	if (r)
+		DEBUG(("Flink(%s,%s): access to directory denied",old,new));
+	else
+		r = xfs_hardlink (newdir.fs, &olddir, temp2, &newdir, temp1);
+
+	release_cookie (&olddir);
+	release_cookie (&newdir);
+
+	return r;
+}
 
 /*
  * GEMDOS-extension: Dreadlabel(path, buf, buflen)

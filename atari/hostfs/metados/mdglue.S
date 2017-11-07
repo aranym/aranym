@@ -16,6 +16,7 @@
 	.globl	_sys_d_pathconf, _sys_f_xattr, _sys_d_opendir, _sys_d_readdir
 	.globl	_sys_d_closedir, _sys_d_xreaddir, _sys_d_rewinddir
 	.globl	_sys_d_readlabel, _sys_d_delete
+	.globl	_sys_f_link
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -109,90 +110,356 @@ functionTable:
 	dc.l	0x434d4554		/* 'CMET' */
 	dc.l	349
 	dc.l	initfun
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1
-	dc.l	-1, -1, -1, -1, -1	/* 49 */
-	dc.l	-1, -1, -1, -1 
-	dc.l	wrap_dfree		/* 54 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 9 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 19 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 29 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 39 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 49 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1 
+	dc.l	wrap_dfree			/* 54 */
 	dc.l	-1
 	dc.l	-1
 	dc.l	wrap_dcreate		/* 57 */
 	dc.l	wrap_ddelete		/* 58 */
 	dc.l	-1 /* FIXME? wrap_dsetpath */		/* 59 */
 	dc.l	wrap_fcreate		/* 60 */
-	dc.l	wrap_fopen		/* 61 */
-	dc.l	wrap_fclose		/* 62 */
-	dc.l	wrap_fread		/* 63 */
-	dc.l	wrap_fwrite		/* 64 */
+	dc.l	wrap_fopen			/* 61 */
+	dc.l	wrap_fclose			/* 62 */
+	dc.l	wrap_fread			/* 63 */
+	dc.l	wrap_fwrite			/* 64 */
 	dc.l	wrap_fdelete		/* 65 */
-	dc.l	wrap_fseek		/* 66 */
+	dc.l	wrap_fseek			/* 66 */
 	dc.l	wrap_fattrib		/* 67 */
 	dc.l	-1
-	dc.l	-1			/* 69 */
+	dc.l	-1					/* 69 */
 	dc.l	-1
-	dc.l	-1			/* 71 */	/* Dgetpath */
-	dc.l	-1, -1, -1		/* 74 */
-	dc.l	-1, -1, -1
+	dc.l	-1					/* 71 */	/* Dgetpath */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 74 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
 	dc.l	wrap_fsfirst		/* 78 */
-	dc.l	wrap_fsnext		/* 79 */
-	dc.l	-1, -1, -1, -1, -1	/* 84 */
+	dc.l	wrap_fsnext			/* 79 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 84 */
 	dc.l	-1
 	dc.l	wrap_frename		/* 86 */
 	dc.l	wrap_fdatime		/* 87 */
-	dc.l	-1, -1			/* 89 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 99 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 109 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 119 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 129 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 139 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 149 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 159 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 169 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 179 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 189 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 199 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 209 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 219 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 229 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 239 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 249 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 259 */
+	dc.l	-1
+	dc.l	-1					/* 89 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 99 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 109 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 119 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 129 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 139 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 149 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 159 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 169 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 179 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 189 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 199 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 209 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 219 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 229 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 239 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 249 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 259 */
 	dc.l	-1 /* FIXME: wrap_fcntl */				/* 260 */
-	dc.l	-1, -1, -1, -1		/* 264 */
-	dc.l	-1, -1, -1, -1, -1	/* 269 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 279 */
-	dc.l	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1	/* 289 */
-	dc.l	-1, -1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 264 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 269 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 279 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 289 */
+	dc.l	-1
+	dc.l	-1
 	dc.l	wrap_dpathconf		/* 292 */
-	dc.l	-1, -1			/* 294 */
+	dc.l	-1
+	dc.l	-1					/* 294 */
 	dc.l	-1
 	dc.l	wrap_dopendir		/* 296 */
 	dc.l	wrap_dreaddir		/* 297 */
 	dc.l	wrap_drewinddir		/* 298 */
 	dc.l	wrap_dclosedir		/* 299 */
-	dc.l	wrap_fxattr		/* 300 */
-	dc.l	-1, -1, -1, -1		/* 304 */
-	dc.l	-1, -1, -1, -1, -1	/* 309 */
-	dc.l	-1, -1, -1, -1, -1	/* 314 */
-	dc.l	-1, -1, -1, -1, -1	/* 319 */
-	dc.l	-1, -1
+	dc.l	wrap_fxattr			/* 300 */
+	dc.l	wrap_f_link			/* 301 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 304 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 309 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 314 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 319 */
+	dc.l	-1
+	dc.l	-1
 	dc.l	wrap_dxreaddir		/* 322 */
-	dc.l	-1, -1
-	dc.l	-1, -1, -1, -1, -1	/* 329 */
-	dc.l	-1, -1, -1, -1, -1	/* 334 */
-	dc.l	-1, -1, -1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 329 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1					/* 334 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
 	dc.l	wrap_dreadlabel		/* 338 */
-	dc.l	-1			/* 339 */
-	dc.l	-1, -1, -1, -1, -1 	/* 344 */
-	dc.l	-1, -1, -1, -1, -1 	/* 349 */
-	
+	dc.l	-1					/* 339 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1				 	/* 344 */
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1
+	dc.l	-1				 	/* 349 */
 	
 wrap_dfree:
 	PRINT	#54
@@ -478,6 +745,18 @@ wrap_fxattr:
 	move.w	6(a0),-(sp)	/* flag */
 	MDBSR	a0,_sys_f_xattr
 	lea	10(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_link:
+	PRINT	#301
+	SSTCK	a0
+
+	move.l	10(a0),-(sp)	/* newname */
+	move.l	a4,-(sp)	/* oldname - 6(a0) or a4 MD */
+	MDBSR	a0,_sys_f_link
+	lea	8(sp),sp
 
 	RSTCK
 	rts
