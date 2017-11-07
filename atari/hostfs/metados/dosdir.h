@@ -35,6 +35,7 @@ long _cdecl sys_d_rewind	(MetaDOSDir long handle);
 long _cdecl sys_d_closedir	(MetaDOSDir long handle);
 long _cdecl sys_f_xattr		(MetaDOSFile int flag, const char *name, XATTR *xattr);
 long _cdecl sys_f_link		(MetaDOSDir const char *old, const char *new);
+long _cdecl sys_f_symlink	(MetaDOSDir const char *old, const char *new);
 long _cdecl sys_d_readlabel	(MetaDOSDir const char *path, char *label, int maxlen);
 long _cdecl sys_d_writelabel 	(MetaDOSDir const char *path, const char *label);
 

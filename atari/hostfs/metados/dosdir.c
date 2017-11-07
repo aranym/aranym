@@ -1169,6 +1169,40 @@ sys_f_link (MetaDOSDir const char *old, const char *new)
 }
 
 /*
+ * GEMDOS extension: Fsymlink(old, new)
+ *
+ * create a symbolic link named "new" that contains the path "old"
+ */
+long _cdecl
+sys_f_symlink (MetaDOSDir const char *old, const char *new)
+{
+	struct proc *p = get_curproc();
+	
+	fcookie newdir;
+	long r;
+	char temp1[PATH_MAX];
+	ushort mode;
+
+	TRACE(("Fsymlink(%s, %s)", old, new));
+
+	r = path2cookie(p, new, temp1, &newdir);
+	if (r)
+	{
+		DEBUG(("Fsymlink(%s,%s): error parsing %s", old,new,new));
+		return r;
+	}
+
+	r = dir_access (p->p_cred->ucr, &newdir, S_IWOTH, &mode);
+	if (r)
+		DEBUG(("Fsymlink(%s,%s): access to directory denied",old,new));
+	else
+		r = xfs_symlink (newdir.fs, &newdir, temp1, old);
+
+	release_cookie (&newdir);
+	return r;
+}
+
+/*
  * GEMDOS-extension: Dreadlabel(path, buf, buflen)
  *
  * original written by jr

@@ -17,6 +17,7 @@
 	.globl	_sys_d_closedir, _sys_d_xreaddir, _sys_d_rewinddir
 	.globl	_sys_d_readlabel, _sys_d_delete
 	.globl	_sys_f_link
+	.globl	_sys_f_symlink
 
 	.globl	_DriverName, _ShowBanner, _InitDevice
 
@@ -412,7 +413,7 @@ functionTable:
 	dc.l	wrap_dclosedir		/* 299 */
 	dc.l	wrap_fxattr			/* 300 */
 	dc.l	wrap_f_link			/* 301 */
-	dc.l	-1
+	dc.l	wrap_f_symlink		/* 302 */
 	dc.l	-1
 	dc.l	-1					/* 304 */
 	dc.l	-1
@@ -756,6 +757,18 @@ wrap_f_link:
 	move.l	10(a0),-(sp)	/* newname */
 	move.l	a4,-(sp)	/* oldname - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_link
+	lea	8(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_symlink:
+	PRINT	#302
+	SSTCK	a0
+
+	move.l	10(a0),-(sp)	/* newname */
+	move.l	a4,-(sp)	/* oldname - 6(a0) or a4 MD */
+	MDBSR	a0,_sys_f_symlink
 	lea	8(sp),sp
 
 	RSTCK
