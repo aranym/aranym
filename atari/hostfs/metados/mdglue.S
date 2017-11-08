@@ -17,6 +17,7 @@
 	.globl	_sys_d_closedir, _sys_d_xreaddir, _sys_d_rewinddir
 	.globl	_sys_d_readlabel, _sys_d_delete
 	.globl	_sys_ffstat
+	.globl	_sys_f_fchown
 	.globl	_sys_f_link
 	.globl	_sys_f_symlink
 	.globl	_sys_f_readlink
@@ -374,7 +375,7 @@ functionTable:
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1
-	dc.l	-1
+	dc.l	wrap_f_fchown		/* 257 */
 	dc.l	-1
 	dc.l	-1					/* 259 */
 	dc.l	wrap_fcntl			/* 260 */
@@ -707,6 +708,19 @@ wrap_fdatime:
 	move.l	6(a0),-(sp)	/* timeptr	MDBSR	a0,_sys_f_datime */
 	MDBSR	a0,_sys_f_datime
 	lea	8(sp),sp
+
+	RSTCK
+	rts
+
+wrap_f_fchown:
+	PRINT	#257
+	SSTCK	a0
+
+	move.w	10(a0),-(sp)	/* gid */
+	move.w	8(a0),-(sp)	/* uid */
+	move.w	6(a0),-(sp)	/* handle */
+	MDBSR	a0,_sys_f_fchown
+	lea	6(sp),sp
 
 	RSTCK
 	rts

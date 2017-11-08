@@ -540,3 +540,87 @@ sys_f_cntl (MetaDOSFile short fd, long arg, short cmd)
 }
 
 
+/*
+ * GEMDOS extension: Ffchown(fh, uid, gid) changes the user and group
+ * ownerships of a open file to "uid" and "gid" respectively.
+ */
+
+long _cdecl
+sys_f_fchown (MetaDOSFile short fd, short uid, short gid)
+{
+	struct proc *p = get_curproc();
+	FILEPTR *f;
+	long r;
+
+	TRACE (("Ffchown(%d,%i,%i)", fd, uid, gid));
+
+	r = GETFILEPTR (&p, &fd, &f);
+	if (r) return r;
+
+	if (!(f->fc.fs))
+	{
+		DEBUG (("Ffchown: not a valid filesystem"));
+		return ENOSYS;
+	}
+
+	if ((f->flags & O_RWMODE) == O_RDONLY)
+	{
+		DEBUG (("Ffchown: write on a read-only handle"));
+		return EPERM;
+	}
+
+	/* MiNT acts like _POSIX_CHOWN_RESTRICTED: a non-privileged process
+	 * can only change the ownership of a file that is owned by this
+	 * user, to the effective group id of the process or one of its
+	 * supplementary groups
+	 */
+#if 0
+	if (p->p_cred->ucr->euid)
+	{
+		XATTR xattr;
+
+		if (p->p_cred->ucr->egid != gid && !groupmember (p->p_cred->ucr, gid))
+			r = EACCES;
+		else
+			r = xfs_getxattr (f->fc.fs, &(f->fc), &xattr);
+
+		if (r)
+		{
+			DEBUG (("Ffchown(%i): unable to get file attributes", fd));
+			return r;
+		}
+
+		if (xattr.uid != p->p_cred->ucr->euid || xattr.uid != uid)
+		{
+			DEBUG (("Ffchown(%i): not the file's owner", fd));
+			return EACCES;
+		}
+
+		r = xfs_chown (f->fc.fs, &(f->fc), uid, gid);
+
+		/* POSIX 5.6.5.2: if name refers to a regular file the
+		 * set-user-ID and set-group-ID bits of the file mode shall
+		 * be cleared upon successful return from the call to chown,
+		 * unless the call is made by a process with the appropriate
+		 * privileges. Note that POSIX leaves the behaviour
+		 * unspecified for all other file types. At least for
+		 * directories with BSD-like setgid semantics, these bits
+		 * should be left unchanged.
+		 */
+		if (!r && !S_ISDIR(xattr.mode)
+			&& (xattr.mode & (S_ISUID | S_ISGID)))
+		{
+			long s;
+
+			s = xfs_chmode (f->fc.fs, &(f->fc), xattr.mode & ~(S_ISUID | S_ISGID));
+			if (!s)
+				DEBUG (("Ffchown: chmode returned %ld (ignored)", s));
+		}
+	}
+	else
+#endif
+		r = xfs_chown (f->fc.fs, &(f->fc), uid, gid);
+
+	return r;
+}
+
