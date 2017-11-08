@@ -624,3 +624,49 @@ sys_f_fchown (MetaDOSFile short fd, short uid, short gid)
 	return r;
 }
 
+/*
+ * GEMDOS extension: Fchmod (fh, mode) changes a file's access
+ * permissions on a open file.
+ */
+
+long _cdecl
+sys_f_fchmod (MetaDOSFile short fd, ushort mode)
+{
+	struct proc *p = get_curproc();
+	FILEPTR *f;
+	long r;
+	XATTR xattr;
+
+	TRACE (("Ffchmod(%i, %i)", fd, mode));
+
+	r = GETFILEPTR (&p, &fd, &f);
+	if (r) return r;
+
+	if (!(f->fc.fs))
+	{
+		DEBUG (("Ffchmod: not a valid filesystem"));
+		return ENOSYS;
+	}
+
+	r = xfs_getxattr (f->fc.fs, &(f->fc), &xattr);
+	if (r)
+	{
+		DEBUG (("Ffchmod(%i): couldn't get file attributes", fd));
+	}
+#if 0
+	else if (p->p_cred->ucr->euid && p->p_cred->ucr->euid != xattr.uid)
+	{
+		DEBUG (("Ffchmod(%i): not the file's owner", fd));
+		r = EACCES;
+	}
+#endif
+	else
+	{
+		r = xfs_chmode (f->fc.fs, &(f->fc), mode & ~S_IFMT);
+		if (r)
+			DEBUG (("Ffchmod: error %ld", r));
+	}
+
+	return r;
+}
+

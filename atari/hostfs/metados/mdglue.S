@@ -18,6 +18,7 @@
 	.globl	_sys_d_readlabel, _sys_d_delete
 	.globl	_sys_ffstat
 	.globl	_sys_f_fchown
+	.globl	_sys_f_fchmod
 	.globl	_sys_f_link
 	.globl	_sys_f_symlink
 	.globl	_sys_f_readlink
@@ -376,7 +377,7 @@ functionTable:
 	dc.l	-1
 	dc.l	-1
 	dc.l	wrap_f_fchown		/* 257 */
-	dc.l	-1
+	dc.l	wrap_f_fchmod		/* 258 */
 	dc.l	-1					/* 259 */
 	dc.l	wrap_fcntl			/* 260 */
 	dc.l	-1
@@ -725,6 +726,18 @@ wrap_f_fchown:
 	RSTCK
 	rts
 
+wrap_f_fchmod:
+	PRINT	#258
+	SSTCK	a0
+
+	move.w	8(a0),-(sp)	/* mode */
+	move.w	6(a0),-(sp)	/* handle */
+	MDBSR	a0,_sys_f_fchmod
+	lea	4(sp),sp
+
+	RSTCK
+	rts
+
 wrap_fcntl:
 	PRINT	#260
 	SSTCK	a0
@@ -913,6 +926,18 @@ wrap_dreadlabel:
 	RSTCK
 	rts
 
+wrap_f_fstat64:
+	PRINT	#349
+	SSTCK	a0
+
+	move.l	8(a0),-(sp)	/* buffer */
+	move.w	6(a0),-(sp)	/* handle */
+	MDBSR	a0,_sys_ffstat
+	lea	6(sp),sp
+
+	RSTCK
+	rts
+
 wrap_f_chown16:
 	PRINT	#384
 	SSTCK	a0
@@ -923,18 +948,6 @@ wrap_f_chown16:
 	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
 	MDBSR	a0,_sys_f_chown16
 	lea	10(sp),sp
-
-	RSTCK
-	rts
-
-wrap_f_fstat64:
-	PRINT	#349
-	SSTCK	a0
-
-	move.l	8(a0),-(sp)	/* buffer */
-	move.w	6(a0),-(sp)	/* handle */
-	MDBSR	a0,_sys_ffstat
-	lea	6(sp),sp
 
 	RSTCK
 	rts
