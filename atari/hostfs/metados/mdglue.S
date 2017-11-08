@@ -377,7 +377,7 @@ functionTable:
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1					/* 259 */
-	dc.l	-1 /* FIXME: wrap_fcntl */				/* 260 */
+	dc.l	wrap_fcntl			/* 260 */
 	dc.l	-1
 	dc.l	-1
 	dc.l	-1
@@ -718,7 +718,7 @@ wrap_fcntl:
 	move.w	12(a0),-(sp)	/* cmd */
 	move.l	8(a0),-(sp)	/* argument */
 	move.w	6(a0),-(sp)	/* handle */
-/*	MDBSR	a0,_sys_f_cntl */
+	MDBSR	a0,_sys_f_cntl
 	lea	8(sp),sp
 
 	RSTCK

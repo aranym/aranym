@@ -423,3 +423,120 @@ sys_ffstat (MetaDOSFile short fd, struct stat *st)
 	return sys__ffstat_1_16 (f, st);
 }
 
+/*
+ * f_cntl: a combination "ioctl" and "fcntl". Some functions are
+ * handled here, if they apply to the file descriptors directly
+ * (e.g. F_DUPFD) or if they're easily translated into file system
+ * functions (e.g. FSTAT). Others are passed on to the device driver
+ * via dev->ioctl.
+ */
+
+long _cdecl
+sys_f_cntl (MetaDOSFile short fd, long arg, short cmd)
+{
+	struct proc *p = get_curproc();
+	FILEPTR	*f;
+	long r;
+
+	TRACE (("Fcntl(%i, cmd=0x%x)", fd, cmd));
+
+	if (cmd == F_DUPFD || cmd == F_DUPFD_CLOEXEC) {
+#if 0
+  		return do_dup (fd, arg, cmd == F_DUPFD_CLOEXEC ? 1: 0);
+#else
+		return ENOSYS;
+#endif
+	}
+
+	TRACE(("Fcntl getfileptr"));
+	r = GETFILEPTR (&p, &fd, &f);
+	TRACE(("Fcntl r = %lx", r));
+	if (r) return r;
+
+	switch (cmd)
+	{
+		case F_GETFD:
+			TRACE (("Fcntl F_GETFD"));
+#if 0
+			return p->p_fd->ofileflags[fd];
+#else
+			return 0;
+#endif
+		case F_SETFD:
+			TRACE (("Fcntl F_SETFD"));
+#if 0
+			p->p_fd->ofileflags[fd] = arg;
+#endif
+			return E_OK;
+		case F_GETFL:
+			TRACE (("Fcntl F_GETFL"));
+			return (f->flags & O_USER);
+		case F_SETFL:
+			TRACE (("Fcntl F_SETFL"));
+
+			/* make sure only user bits set */
+			arg &= O_USER;
+
+			/* make sure the file access and sharing modes are not changed */
+			arg &= ~(O_RWMODE | O_SHMODE);
+			arg |= f->flags & (O_RWMODE | O_SHMODE);
+
+			/* set user bits to arg */
+			f->flags &= ~O_USER;
+			f->flags |= arg;
+
+			return E_OK;
+		case FSTAT:
+			TRACE (("Fcntl FSTAT (%i, %lx) on \"%s\" -> %li", fd, arg, xfs_name (&(f->fc)), r));
+			return sys__ffstat_1_12 (f, (XATTR *) arg);
+		case FSTAT64:
+			TRACE (("Fcntl FSTAT64 (%i, %lx) on \"%s\" -> %li", fd, arg, xfs_name(&(f->fc)), r));
+			return sys__ffstat_1_16 (f, (struct stat *) arg);
+		case FUTIME:
+			TRACE (("Fcntl FUTIME"));
+			if (f->fc.fs && (f->fc.fs->fsflags & FS_EXT_3) && arg)
+			{
+				MUTIMBUF *buf = (MUTIMBUF *) arg;
+				ulong t [2];
+
+				t[0] = unixtime (buf->actime, buf->acdate) + timezone;
+				t[1] = unixtime (buf->modtime, buf->moddate) + timezone;
+				return xdd_ioctl (f, FUTIME_UTC, (void *) t);
+			}
+			break;
+	}
+
+	/* fall through to device ioctl */
+
+	TRACE (("Fcntl mode %x: calling ioctl", cmd));
+#if 0
+	if (is_terminal (f))
+	{
+		/* tty in the middle of a hangup? */
+		while (((struct tty *) f->devinfo)->hup_ospeed)
+			sleep (IO_Q, (long) &((struct tty *) f->devinfo)->state);
+
+		if (cmd == FIONREAD
+			|| cmd == FIONWRITE
+			|| cmd == TIOCSTART
+			|| cmd == TIOCSTOP
+			|| cmd == TIOCSBRK
+			|| cmd == TIOCFLUSH)
+		{
+			r = tty_ioctl (f, cmd, (void *) arg);
+		}
+		else
+		{
+			r = (*f->dev->ioctl)(f, cmd, (void *) arg);
+			if (r == ENOSYS)
+				r = tty_ioctl (f, cmd, (void *) arg);
+		}
+	}
+	else
+#endif
+		r = xdd_ioctl (f, cmd, (void *) arg);
+
+	return r;
+}
+
+

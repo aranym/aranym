@@ -2882,6 +2882,12 @@ int32 HostFs::xfs_native_init( int16 devnum, memptr mountpoint, memptr hostroot,
 	drv->fsFlags = ReadInt32(filesys + 4);
 	drv->fsDevDrv = filesys_devdrv;
 
+	/*
+	 * for drivers that are not running under mint,
+	 * report our current timezone (in the filesys.res1 field)
+	 */
+	WriteInt32(filesys + 136, timezone);
+
 	int16 dnum = -1;
 	size_t len = strlen( fmountPoint );
 	if ( len == 2 && fmountPoint[1] == ':' ) {

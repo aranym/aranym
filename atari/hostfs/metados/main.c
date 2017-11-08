@@ -123,7 +123,8 @@ void* _cdecl InitDevice( long bosDevID, long dosDevID )
 	   not colide with the MiNT one */
 	fs_native_init( dosDevID | 0x6000, mountPoint, "/tmp", 1,
 					&hostfs_filesys, &hostfs_fs_devdrv );
-
+	timezone = hostfs_filesys.res1;
+	
 	hostfs_filesys.root( dosDevID | 0x6000, &curproc->p_cwd->root[dosDevID] );
 
 #ifdef DEBUG_INFO
