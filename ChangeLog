@@ -1,4 +1,9 @@
 2017/11/06 - Thorsten
+hostfs: Work around a bug with mints calculation
+of utc times from file timestamps
+
+
+2017/11/06 - Thorsten
 Implement Fstat64/Ffstat64 for MetaDOS driver.
 
 

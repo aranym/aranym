@@ -214,6 +214,21 @@ static long gmtoff(time_t t)
 }
 
 
+static long mint_fake_gmtoff(time_t t)
+{
+	long offset;
+
+	/*
+	 * The mint kernel currently uses a fixed timezone offset
+	 * for calculating UTC timestamps (the one for the current
+	 * local time). So we must correct that here.
+	 */
+	offset = gmtoff(t);
+	offset -= gmtoff(time(NULL));
+	return offset;
+}
+
+
 #if defined HAVE_STRUCT_STAT_ST_ATIM_TV_NSEC
 # ifdef TYPEOF_STRUCT_STAT_ST_ATIM_IS_STRUCT_TIMESPEC
 #  define STAT_TIMESPEC(st, st_xtim) ((st)->st_xtim)
@@ -1691,6 +1706,7 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 	    if (fp->fc.drv->fsFlags & FS_EXT_3)
 	    {
 		  tmb.actime = datetime;
+		  tmb.actime -= mint_fake_gmtoff(tmb.actime);
 		} else
 		{
 		  struct tm ttm;
@@ -1722,6 +1738,7 @@ int32 HostFs::xfs_dev_datime( ExtFile *fp, memptr datetimep, int16 wflag)
 		} else
 		{
 			datetime = statBuf.st_mtime;
+			datetime += mint_fake_gmtoff(statBuf.st_mtime);
 		}
 		WriteInt32( datetimep, datetime );
 	}
@@ -2022,9 +2039,9 @@ void HostFs::convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr
 	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, blocks );
     if (drv->fsFlags & FS_EXT_3)
     {
-	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf->st_mtime );
-	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf->st_atime );
-	/* UWORD ctime	   */  WriteInt32( xattrp + 36, statBuf->st_ctime );
+	/* UWORD mtime	   */  WriteInt32( xattrp + 28, statBuf->st_mtime + mint_fake_gmtoff(statBuf->st_mtime) );
+	/* UWORD atime	   */  WriteInt32( xattrp + 32, statBuf->st_atime + mint_fake_gmtoff(statBuf->st_atime) );
+	/* UWORD ctime	   */  WriteInt32( xattrp + 36, statBuf->st_ctime + mint_fake_gmtoff(statBuf->st_ctime) );
 	} else
 	{
 	/* UWORD mtime	   */  WriteInt16( xattrp + 28, time2dos(statBuf->st_mtime) );
@@ -2537,6 +2554,8 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			{
 				t_set.actime  = ReadInt32( arg );
 				t_set.modtime = ReadInt32( arg + 4 );
+				t_set.actime -= mint_fake_gmtoff(t_set.actime);
+				t_set.modtime -= mint_fake_gmtoff(t_set.modtime);
 			} else
 			{
 				t_set.actime = t_set.modtime = time(NULL);
@@ -2644,6 +2663,8 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				{
 					ts[0].tv_sec = ReadInt32(buff);
 					ts[1].tv_sec = ReadInt32(buff + 4);
+					ts[0].tv_sec -= mint_fake_gmtoff(ts[0].tv_sec);
+					ts[1].tv_sec -= mint_fake_gmtoff(ts[1].tv_sec);
 				} else
 				{
 					ts[0].tv_sec = ts[1].tv_sec = time(NULL);
@@ -2657,6 +2678,8 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				{
 					tv[0].tv_sec = ReadInt32(buff);
 					tv[1].tv_sec = ReadInt32(buff + 4);
+					ts[0].tv_sec -= mint_fake_gmtoff(ts[0].tv_sec);
+					ts[1].tv_sec -= mint_fake_gmtoff(ts[1].tv_sec);
 				} else
 				{
 					tv[0].tv_sec = tv[1].tv_sec = time(NULL);
