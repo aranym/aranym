@@ -1318,6 +1318,16 @@ int m68k_do_specialties(void)
 	if (SPCFLAGS_TEST( SPCFLAG_DOTRACE )) {
 		Exception (9,last_trace_ad);
 	}
+#if 0 /* not for ARAnyM; emulating 040 only */
+	if ((regs.spcflags & SPCFLAG_STOP) && regs.s == 0 && currprefs.cpu_model <= 68010) {
+		// 68000/68010 undocumented special case:
+		// if STOP clears S-bit and T was not set:
+		// cause privilege violation exception, PC pointing to following instruction.
+		// If T was set before STOP: STOP works as documented.
+		m68k_unset_stop();
+		Exception(8, 0);
+	}
+#endif
 	while (SPCFLAGS_TEST( SPCFLAG_STOP )) {
 		if ((regs.sr & 0x700) == 0x700)
 		{

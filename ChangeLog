@@ -1,4 +1,13 @@
 2017/11/06 - Thorsten
+Fix a rare case on 68000 where STOP triggers a privilege exception and stack PC+4 if new SR has bit S=0
+For example 'STOP #$555' will trigger a privilege violation exception on 68000 CPU
+and stacked PC will point after the STOP instruction.
+The behaviour is different on 68000, 68020/030 and 68040/060 (more generic patch by Toni Wilen)
+Although this is not documented anymore in recent Motorola's doc, it seems it was described
+in very early 68000 documentations
+
+
+2017/11/06 - Thorsten
 Implement Ffchmod for MetaDOS driver.
 
 

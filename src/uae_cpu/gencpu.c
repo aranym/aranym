@@ -1329,9 +1329,27 @@ static void gen_opcode (unsigned long int opcode)
 	break;
      case i_STOP:
 	genamode (curi->smode, "srcreg", curi->size, "src", GENA_GETV_FETCH, GENA_MOVEM_DO_INC, XLATE_LOG);
-	printf ("\tregs.sr = src;\n");
+	/*
+	 * STOP undocumented features:
+	 * if SR is not set:
+	 * 68000 (68010?): Update SR, increase PC and then cause privilege violation exception (handled in newcpu)
+	 * 68000 (68010?): Traced STOP also runs 4 cycles faster.
+	 * 68020 68030: STOP works normally
+	 * 68040 68060: Immediate privilege violation exception
+	 */
+	printf ("\tuae_u16 sr = src;\n");
+	if (cpu_level >= 4) {
+		printf("\tif (!(sr & 0x2000)) {\n");
+		printf ("m68k_incpc(%d);\n", m68k_pc_offset);
+		printf("\t\tException(8,0); goto %s;\n", endlabelstr);
+		printf("\t}\n");
+	}
+	printf("\tregs.sr = sr;\n");
 	printf ("\tMakeFromSR();\n");
 	printf ("\tm68k_setstopped(1);\n");
+	sync_m68k_pc ();
+	/* STOP does not prefetch anything */
+	/* did_prefetch = -1; */
 	break;
      case i_RTE:
 	if (cpu_level == 0) {
