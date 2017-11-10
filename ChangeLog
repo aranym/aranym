@@ -1,4 +1,8 @@
 2017/11/06 - Thorsten
+Fix rare possible wrong order in 'MOVEP M->R' depending on the compiler' optimisations (patch by Toni Wilen)
+
+
+2017/11/06 - Thorsten
 Fix a rare case on 68000 where STOP triggers a privilege exception and stack PC+4 if new SR has bit S=0
 For example 'STOP #$555' will trigger a privilege violation exception on 68000 CPU
 and stacked PC will point after the STOP instruction.

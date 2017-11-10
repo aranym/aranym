@@ -1235,10 +1235,13 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tuaecptr memp = m68k_areg(regs, srcreg) + (uae_s32)(uae_s16)%s;\n", gen_nextiword ());
 	genamode (curi->dmode, "dstreg", curi->size, "dst", GENA_GETV_FETCH_ALIGN, GENA_MOVEM_DO_INC, XLATE_LOG);
 	if (curi->size == sz_word) {
-	    printf ("\tuae_u16 val = (get_byte(memp) << 8) + get_byte(memp + 2);\n");
+	    printf ("\tuae_u16 val  = get_byte(memp) << 8;\n");
+	    printf ("\t        val |= get_byte(memp + 2);\n");
 	} else {
-	    printf ("\tuae_u32 val = (get_byte(memp) << 24) + (get_byte(memp + 2) << 16)\n");
-	    printf ("              + (get_byte(memp + 4) << 8) + get_byte(memp + 6);\n");
+	    printf ("\tuae_u32 val  = get_byte(memp) << 24;\n");
+	    printf ("\t        val |= get_byte(memp + 2) << 16;\n");
+	    printf ("\t        val |= get_byte(memp + 4) << 8;\n");
+	    printf ("\t        val |= get_byte(memp + 6);\n");
 	}
 	genastore ("val", curi->dmode, "dstreg", curi->size, "dst", XLATE_LOG);
 	break;
