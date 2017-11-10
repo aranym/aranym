@@ -1,4 +1,9 @@
 2017/11/06 - Thorsten
+Use drive letters '1'..'6' for letters beyond 'Z' to be consistent with
+MiNT's unifs, and also Teradesk/Thing
+
+
+2017/11/06 - Thorsten
 Fix rare possible wrong order in 'MOVEP M->R' depending on the compiler' optimisations (patch by Toni Wilen)
 
 

@@ -29,9 +29,9 @@
 #define DriveFromLetter(d) \
 	(((d) >= 'A' && (d) <= 'Z') ? (d - 'A') : \
 	 ((d) >= 'a' && (d) <= 'z') ? (d - 'a') : \
-	 ((d) >= '0' && (d) <= '5') ? (d - '0' + 26) : \
+	 ((d) >= '1' && (d) <= '6') ? (d - '1' + 26) : \
 	 -1)
-#define DriveToLetter(d) ((d) < 26 ? 'A' + (d) : (d) - 26 + '0')
+#define DriveToLetter(d) ((d) < 26 ? 'A' + (d) : (d) - 26 + '1')
 
 class NF_Base
 {
