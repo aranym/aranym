@@ -1446,7 +1446,7 @@ AM_CONDITIONAL([GENCOMP_ARCH_ARM], test "$GENCOMP_ARCH" = "arm")
 dnl JIT sources if available
 if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   if [[ "x$WANT_MMU" = "xyes" ]]; then
-      AC_MSG_WARN([!!!!! MMU&JIT in progress, dangerous !!!!!])
+      AC_MSG_ERROR([MMU&JIT in combination are not supported])
   fi
   JITSRCS="$JITSRCS uae_cpu/compiler/compemu_support.cpp"
   DEFINES="$DEFINES -DUSE_JIT=1"

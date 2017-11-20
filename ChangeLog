@@ -1,3 +1,8 @@
+2017/11/20 - Thorsten
+Make combination of --enable-jit-compiler --enable-fullmmu an error,
+since it is not supported
+
+
 2017/11/06 - Thorsten
 Use drive letters '1'..'6' for letters beyond 'Z' to be consistent with
 MiNT's unifs, and also Teradesk/Thing
