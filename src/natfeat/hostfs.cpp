@@ -2678,8 +2678,8 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				{
 					tv[0].tv_sec = ReadInt32(buff);
 					tv[1].tv_sec = ReadInt32(buff + 4);
-					ts[0].tv_sec -= mint_fake_gmtoff(ts[0].tv_sec);
-					ts[1].tv_sec -= mint_fake_gmtoff(ts[1].tv_sec);
+					tv[0].tv_sec -= mint_fake_gmtoff(tv[0].tv_sec);
+					tv[1].tv_sec -= mint_fake_gmtoff(tv[1].tv_sec);
 				} else
 				{
 					tv[0].tv_sec = tv[1].tv_sec = time(NULL);
