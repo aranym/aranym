@@ -1,4 +1,11 @@
 2018/01/09 - Thorsten
+Fix NBCD instruction
+
+The V flag was cleared when it shouldn't in some cases. Verified on all
+possible combinations.
+
+
+2018/01/09 - Thorsten
 Keep the V flag on the 68030
 
 
