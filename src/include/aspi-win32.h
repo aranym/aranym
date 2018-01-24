@@ -8,7 +8,7 @@
 #ifndef __ASPI_WIN32_H_
 #define __ASPI_WIN32_H_
 
-#include <windows.h>
+#include "windows_ver.h"
 
 #ifndef PACKED
 // It seems that VC++ has no PACKED keyword but Cygwin does.  We can just

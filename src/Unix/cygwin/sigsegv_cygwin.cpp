@@ -7,9 +7,11 @@
 
 #if defined(OS_cygwin) || defined(OS_mingw)
 
-#define WIN32_LEAN_AND_MEAN /* avoid including junk */
+#undef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1 /* avoid including junk */
 #include <windows.h>
 #include <winerror.h>
+#undef WIN32_LEAN_AND_MEAN /* to avoid redefinition in SDL headers */
 
 #ifdef CPU_i386
 #define CONTEXT_NAME    ContextRecord

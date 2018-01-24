@@ -25,7 +25,6 @@
 #define DEBUG 0
 #include "debug.h"
 
-#include <windows.h>
 #include <winioctl.h>
 
 #ifdef HAVE_SYS_SOCKET_H

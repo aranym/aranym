@@ -34,8 +34,10 @@
 # include <cstdlib>
 # include <cstring>
 #ifdef HAVE_WIN32_VM
-	#define WIN32_LEAN_AND_MEAN /* avoid including junk */
+    #undef WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN 1 /* avoid including junk */
 	#include <windows.h>
+    #undef WIN32_LEAN_AND_MEAN /* to avoid redefinition in SDL headers */
 #endif
 
 #ifdef HAVE_FCNTL_H
