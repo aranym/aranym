@@ -55,3 +55,4 @@ src/Unix/MacOSX/external
 *.AppDir
 /out
 appimage/appimagetool
+*.exe
