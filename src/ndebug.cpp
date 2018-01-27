@@ -252,13 +252,15 @@ void ndebug::pdbvprintf(const char *s, va_list a)
 	{
 		int ret;
 		char *buf;
+		va_list a2;
 		
 		if (dbbuffer[dbend] != NULL)
 		{
 			free(dbbuffer[dbend]);
 			dbbuffer[dbend] = NULL;
 		}
-		ret = vasprintf(&buf, s, a);
+		va_copy(a2, a);
+		ret = vasprintf(&buf, s, a2);
 		if (ret >= 0)
 		{
 			dbbuffer[dbend++] = buf;
@@ -272,7 +274,11 @@ void ndebug::pdbvprintf(const char *s, va_list a)
 	vfprintf(stderr, s, a);
 	fprintf(stderr, "\n");
 #ifdef __ANDROID__
-	__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a);
+	{
+		va_list a2;
+		va_copy(a2, a);
+		__android_log_vprint(ANDROID_LOG_INFO, "Aranym", s, a2);
+	}
 #endif
 	fflush(stderr);
 }
