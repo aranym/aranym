@@ -40,18 +40,6 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
     fi
   else
     sdl2_pc=no
-    if test x$sdl2_exec_prefix != x ; then
-      sdl2_config_args="$sdl2_config_args --exec-prefix=$sdl2_exec_prefix"
-      if test x${SDL2_CONFIG+set} != xset ; then
-        SDL2_CONFIG=$sdl2_exec_prefix/bin/sdl2-config
-      fi
-    fi
-    if test x$sdl2_prefix != x ; then
-      sdl2_config_args="$sdl2_config_args --prefix=$sdl2_prefix"
-      if test x${SDL2_CONFIG+set} != xset ; then
-        SDL2_CONFIG=$sdl2_prefix/bin/sdl2-config
-      fi
-    fi
   fi
 
   if test "x$sdl2_pc" = xyes ; then
@@ -59,18 +47,50 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
     SDL2_CONFIG="$PKG_CONFIG sdl2"
     sdl2_version=`$PKG_CONFIG --modversion sdl2`
   else
+
     as_save_PATH="$PATH"
     if test "x$prefix" != xNONE && test "$cross_compiling" != yes; then
       PATH="$prefix/bin:$prefix/usr/bin:$PATH"
     fi
-    AC_PATH_PROG(SDL2_CONFIG, sdl2-config, no, [$PATH])
+
+    #
+    # provide some defaults on cygwin,
+    # where we use the MinGW version of the SDL library,
+    # to simplify standard configuration.
+    # But only if the user did not override it.
+    #
+    case $host in
+      *-*-cygwin*)
+      MINGW_ROOT=$prefix/i686-w64-mingw32/sys-root/mingw
+      if test -d "$MINGW_ROOT"; then
+         if test "$sdl2_prefix" = "" ; then
+            sdl2_prefix="$MINGW_ROOT"
+            sdl2_exec_prefix="$MINGW_ROOT/bin"
+         fi
+      fi
+      ;;
+    esac
+
+    if test x$sdl2_exec_prefix != x ; then
+      sdl2_config_args="$sdl2_config_args --exec-prefix=$sdl2_exec_prefix"
+      PATH="$sdl2_exec_prefix:$PATH"
+    fi
+    if test x$sdl2_prefix != x ; then
+      sdl2_config_args="$sdl2_config_args --prefix=$sdl2_prefix"
+      PATH="$sdl2_prefix/bin:$PATH"
+    fi
+    if test x${SDL2_CONFIG+set} != xset ; then
+      AC_PATH_PROG(SDL2_CONFIG, sdl2-config, no, [$PATH])
+    else
+      test -f "$SDL2_CONFIG" || SDL2_CONFIG=no
+    fi
     PATH="$as_save_PATH"
     no_sdl2=""
 
     if test "$SDL2_CONFIG" = "no" ; then
       no_sdl2=yes
     else
-      SDL2_CFLAGS=`$SDL2_CONFIG $sdl_config_args --cflags`
+      SDL2_CFLAGS=`$SDL2_CONFIG $sdl2_config_args --cflags`
       SDL2_LIBS=`$SDL2_CONFIG $sdl2_config_args --libs`
       sdl2_version=`$SDL2_CONFIG $sdl2_config_args --version`
       #
@@ -91,15 +111,15 @@ case $host in
   # also replaces -L... -lSDL by the absolute pathname of the library,
   # because the -L points to mingw libraries instead of cygwin libraries
   nosdlswitch='s/-Dmain=SDL_main//;
-s=-I/usr/include.*/SDL=-I${includedir}/SDL=;
-s=-I/mingw/include.*/SDL=-I${includedir}/SDL=;
+s=-I/usr/include.*/SDL='-I${includedir}/SDL'=;
+s=-I/mingw/include.*/SDL='-I${includedir}/SDL'=;
 s/-DWIN32//;
 s/-Uunix//;
 s/-mno-cygwin//;
 s/-lmingw32//;
 s/-lSDL2main//;
 s/-mwindows//;
-s/-mms-bitfields//
+s/-mms-bitfields//;
 s=-L\([[^ ]]*\).*-l\(SDL[[^ ]]*\)=\1/lib\2.dll.a=;
 '
 	SDL2_CFLAGS=`echo $SDL2_CFLAGS | sed -e "$nosdlswitch"`

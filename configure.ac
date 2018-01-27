@@ -254,6 +254,17 @@ AM_CONDITIONAL([WITH_FINK], test "$WITH_FINK" = "yes")
 if test "$OS_TYPE" = "unknown"; then
   OS_TYPE=`echo $host_os | sed -e 's/-/_/g' | sed -e 's/\./_/g'`
 fi
+#
+# provide some defaults on cygwin,
+# where we use the MinGW version of the SDL library,
+# to simplify standard configuration.
+# But only if the user did not override it.
+#
+if test "$OS_TYPE" = "cygwin"; then
+  if test "$prefix" = NONE; then
+    prefix=/usr
+  fi
+fi
 DEFINES="$DEFINES -DOS_$OS_TYPE"
 AC_DEFINE_UNQUOTED([OS_TYPE], "$OS_TYPE", [Define OS type])
 

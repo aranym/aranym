@@ -1,0 +1,69 @@
+ARAnyM compilation under Cygwin
+(c) 2003-2009 Xavier Joubert for the ARAnyM team
+
+Building ARAnyM under Cygwin is now almost identical to unix/linux. There
+are just a few things to keep in mind.
+
+- Compilation is accomplished using the Cygwin linux-like environment
+  (http://www.cygwin.com/). You should use the 32 bit version (setup-x86.exe),
+  even when building on a 64-bit host.
+- Although the resulting executable uses cygwin's posix layer,
+  the MinGW version of the SDL libraries will be used.
+  
+Simply create a directory where everything will be
+contained. Untar ARAnyM sources in this directory. You can also pull
+sources from GIT (see https://aranym.github.io/development.html for
+details on how to do this).
+
+Cygwin packages that should be installed :
+- gcc-core
+- gcc-g++
+- mingw64-i686-SDL and/or mingw64-i686-SDL2
+- make
+- makedepend
+- git, autoconf and automake (if you want to use GIT version, or if
+  you modify configure.ac)
+- cygutils (for the dos2unix tool)
+
+If you want to compile ARAnyM with --enable-nfjpeg (NatFeat jpeg
+decoder), you will also need mingw64-i686-SDL_image, mingw64-i686-SDL2_image,
+or libjpeg8.
+
+Now you can configure the build:
+
+- If you got the source code from Git then type
+  ./autogen.sh && make
+  Any parameter given to autogen.sh will be forwarded to ARAnyM's
+  configure script, so you can run "./autogen.sh --enable-fullmmu"
+  if you want to build with MMU support. 
+
+- If you have a source snapshot or proper ARAnyM source code release then type
+  ./configure && make
+
+./configure --help shows you all the configuration options.
+
+
+You'll get your binary after a few minutes (depending on your system).
+If you get errors about "\r", please run "dos2unix configure" to
+convert line endings from DOS style to unix style.
+
+If you happen to modify some sources, you can simply run "make" in the
+correct directory. Please note that configure options will be ignored
+in this case !
+
+If you want to re-configure, just do a "make clean", then run configure again.
+
+If you modify configure.ac, you have to run autogen.sh again. make or configure
+won't do that for you. Don't forget to give any configure options you need !
+
+If you want a clean rebuild from original sources, simply "make distclean"
+and run configure again.
+
+You may have to copy the MinGW SDL shared library into some directory of
+your PATH before running the executable. This can usually be found as
+/usr/i686-w64-mingw32/sys-root/mingw/bin/SDL.dll
+
+Questions about building ARAnyM should go to the developper mailing
+list. See https://aranym.github.io/development.html for
+informations on how to subscribe to this list.
+

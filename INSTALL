@@ -4,7 +4,7 @@
 For compiling ARAnyM you will need libSDL, version at least 1.2.10.
 You can get it from http://www.libsdl.org/ or from your OS distribution vendor.
 
-If you want to compile source fetched from CVS you also need
+If you want to compile source fetched from Git you also need
 automake, libtool and autoconf (http://www.gnu.org/ or your OS vendor).
 
 Supported platforms:
@@ -32,7 +32,7 @@ x86          NetBSD
 
   2-1) Unix or Linux
   ------------------
-If you got the source code from CVS then type
+If you got the source code from Git then type
 ./autogen.sh && make
 
 If you have a source snapshot or proper ARAnyM source code release then type
@@ -48,14 +48,14 @@ If everything went OK you got an executable file named "aranym".
 Compilation is accomplished using the Cygwin linux-like environment
 (http://www.cygwin.com/).
 
-Details are available in tools/build-cygwin.sh.
+Details are available in tools/build-cygwin.txt.
 
 
   2-3) Apple Mac OS X
   -------------------
 Go to src/Unix/darwin folder first.
 
-If you got the source code from CVS then just type
+If you got the source code from Git then just type
 make
 
 If you want to configure ARAnyM for your personal needs, type 
@@ -86,7 +86,7 @@ documents inside src/Unix/MacOSX.
 
   2-4) FreeBSD (i386)
   -------------------
-If you got the source code from CVS then type
+If you got the source code from Git then type
 MAKE=gmake
 ./autogen.sh && gmake
 
