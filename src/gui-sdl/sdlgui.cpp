@@ -30,6 +30,10 @@
 #include "hostscreen.h"
 #include "host.h"
 #include "main.h"
+#include "maptab.h"
+#ifdef OS_darwin
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #include <cstdlib>
 #include <stack>
@@ -45,7 +49,13 @@
 #define sdlscrn		gui_surf
 
 static SDL_Surface *fontgfx=NULL;
-static int fontwidth, fontheight;   /* Height and width of the actual font */
+/* Height and width of the actual font */
+#define FONTWIDTH 8
+#define FONTHEIGHT 16
+#define FONTCHARS 256
+/* converted surface will be 16x16 grid */
+#define FONTCOLS 16
+#define FONTROWS (FONTCHARS / FONTCOLS)
 
 static std::stack<Dialog *> dlgStack;
 
@@ -98,8 +108,8 @@ static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
   SDL_Surface *bitmap;
   Uint8 *dstbits;
   int x, y;
-	int w = 128;
-	int h = 256;
+	int w = FONTCOLS * FONTWIDTH;
+	int h = FONTROWS * FONTHEIGHT;
 
   /* Allocate the bitmap */
   bitmap = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
@@ -111,16 +121,15 @@ static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
 
   dstbits = (Uint8 *)bitmap->pixels;
   int mask = 0x80;
-  int charheight = h/16;
 
   /* Copy the pixels */
   for (y = 0 ; y < h ; y++)
   {
     for (x = 0 ; x < w ; x++)
     {
-      int ascii = x/8 + (y / charheight) * charheight;
-      int charline = y % charheight;
-      dstbits[x] = (srcbits[ascii + 256*charline] & mask) ? 1 : 0;
+      int ascii = x/FONTWIDTH + (y / FONTHEIGHT) * FONTCOLS;
+      int charline = y % FONTHEIGHT;
+      dstbits[x] = (srcbits[ascii + FONTCHARS*charline] & mask) ? 1 : 0;
       mask >>= 1;
       mask |= (mask << 8);
       mask &= 0x1FF;
@@ -139,7 +148,7 @@ bool SDLGui_Init()
 {
 	// Load the font graphics
 	char font_filename[256];
-	unsigned char font_data[4096];
+	unsigned char font_data[FONTCHARS * FONTHEIGHT * (FONTWIDTH / 8)];
 	getConfFilename("font", font_filename, sizeof(font_filename));
 	FILE *f = fopen(font_filename, "rb");
 	bool font_loaded = false;
@@ -179,10 +188,6 @@ bool SDLGui_Init()
 	/* Set font color 0 as transparent */
 	SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
 
-	/* Get the font width and height: */
-	fontwidth = fontgfx->w/16;
-	fontheight = fontgfx->h/16;
-
 	return true;
 }
 
@@ -215,13 +220,13 @@ int SDLGui_UnInit()
 */
 static void SDLGui_ObjCoord(SGOBJ *dlg, int objnum, SDL_Rect *rect)
 {
-  rect->x = dlg[objnum].x * fontwidth;
-  rect->y = dlg[objnum].y * fontheight;
-  rect->w = dlg[objnum].w * fontwidth;
-  rect->h = dlg[objnum].h * fontheight;
+  rect->x = dlg[objnum].x * FONTWIDTH;
+  rect->y = dlg[objnum].y * FONTHEIGHT;
+  rect->w = dlg[objnum].w * FONTWIDTH;
+  rect->h = dlg[objnum].h * FONTHEIGHT;
 
-  rect->x += (sdlscrn->w - (dlg[0].w * fontwidth)) / 2;
-  rect->y += (sdlscrn->h - (dlg[0].h * fontheight)) / 2;
+  rect->x += (sdlscrn->w - (dlg[0].w * FONTWIDTH)) / 2;
+  rect->y += (sdlscrn->h - (dlg[0].h * FONTHEIGHT)) / 2;
 }
 
 
@@ -340,6 +345,99 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 }
 
 
+static char *host_to_atari(const char *src)
+{
+#ifdef OS_darwin
+	/* MacOSX uses decomposed strings, normalize them first */
+	CFMutableStringRef theString = CFStringCreateMutable(NULL, 0);
+	CFStringAppendCString(theString, src, kCFStringEncodingUTF8);
+	CFStringNormalize(theString, kCFStringNormalizationFormC);
+	UniChar ch;
+	unsigned char c;
+	CFIndex idx;
+	CFIndex len = CFStringGetLength(theString);
+	char *dst, *res;
+	size_t count = strlen(src);
+	
+	res = (char *)malloc(count * 3 + 1);
+	dst = res;
+	idx = 0;
+	while (idx < len )
+	{
+		ch = CFStringGetCharacterAtIndex(theString, idx);
+		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
+		if (c == 0xff && ch != atari_to_utf16[0xff])
+		{
+			// charset_conv_error(ch);
+			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */
+			if (ch < 0x80)
+			{
+				*dst++ = ch;
+			} else if (ch < 0x800)
+			{
+				*dst++ = ((ch >> 6) & 0x3f) | 0xc0;
+				*dst++ = (ch & 0x3f) | 0x80;
+			} else 
+			{
+				*dst++ = ((ch >> 12) & 0x0f) | 0xe0;
+				*dst++ = ((ch >> 6) & 0x3f) | 0x80;
+				*dst++ = (ch & 0x3f) | 0x80;
+			}
+		} else
+		{
+			*dst++ = c;
+		}
+		idx++;
+	}
+	*dst = '\0';
+	CFRelease(theString);
+#else
+	unsigned short ch;
+	unsigned char c;
+	size_t bytes;
+	char *dst, *res;
+	size_t count = strlen(src);
+	
+	res = (char *)malloc(count * 3 + 1);
+	dst = res;
+	
+	while (*src)
+	{
+		c = *src;
+		ch = c;
+		if (ch < 0x80)
+		{
+			bytes = 1;
+		} else if ((ch & 0xe0) == 0xc0)
+		{
+			ch = ((ch & 0x1f) << 6) | (src[1] & 0x3f);
+			bytes = 2;
+		} else
+		{
+			ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
+			bytes = 3;
+		}
+		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
+		if (c == 0xff && ch != atari_to_utf16[0xff])
+		{
+			// charset_conv_error(ch);
+			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */
+			*dst++ = *src++;
+			if (bytes >= 2)
+				*dst++ = *src++;
+			if (bytes >= 3)
+				*dst++ = *src++;
+		} else
+		{
+			*dst++ = c;
+			src += bytes;
+		}
+	}
+	*dst = '\0';
+#endif
+	return res;
+}
+
 /*-----------------------------------------------------------------------*/
 /*
   Draw a text string.
@@ -347,30 +445,33 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 void SDLGui_Text(int x, int y, const char *txt, int col)
 {
   int i;
-  char c;
+  unsigned char c;
   SDL_Rect sr, dr;
-
+  char *conv;
+  
 #if SDL_VERSION_ATLEAST(2, 0, 0)
   SDL_SetPaletteColors(fontgfx->format->palette, &gui_palette[col], 1, 1);
 #else
   SDL_SetColors(fontgfx, &gui_palette[col], 1, 1);
 #endif
 
-  for (i = 0 ; txt[i] != 0 ; i++)
+  conv = host_to_atari(txt);
+  for (i = 0 ; conv[i] != 0 ; i++)
   {
-    c = txt[i];
-    sr.x = fontwidth * (c % 16);
-    sr.y = fontheight * (c / 16);
-    sr.w = fontwidth;
-    sr.h = fontheight;
+    c = conv[i];
+    sr.x = FONTWIDTH * (c % FONTCOLS);
+    sr.y = FONTHEIGHT * (c / FONTCOLS);
+    sr.w = FONTWIDTH;
+    sr.h = FONTHEIGHT;
 
-    dr.x = x + (fontwidth * i);
+    dr.x = x + (FONTWIDTH * i);
     dr.y = y;
-    dr.w = fontwidth;
-    dr.h = fontheight;
+    dr.w = FONTWIDTH;
+    dr.h = FONTHEIGHT;
 
     SDL_BlitSurface(fontgfx, &sr, sdlscrn, &dr);
   }
+  free(conv);
 }
 
 
@@ -450,7 +551,7 @@ void SDLGui_DrawCursor(SGOBJ *dlg, cursor_state *cursor)
       cursorc = greyc;
 
     SDLGui_ObjCoord(dlg, cursor->object, &coord);
-    coord.x += (cursor->position * fontwidth);
+    coord.x += (cursor->position * FONTWIDTH);
     coord.w = 1;
     SDL_FillRect(sdlscrn, &coord, SDLGui_MapColor(cursorc));
 
@@ -675,8 +776,8 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  x = coord.x + ((coord.w - (strlen(bdlg[objnum].txt) * fontwidth)) / 2);
-  y = coord.y + ((coord.h - fontheight) / 2);
+  x = coord.x + ((coord.w - (strlen(bdlg[objnum].txt) * FONTWIDTH)) / 2);
+  y = coord.y + ((coord.h - FONTHEIGHT) / 2);
 
   if (bdlg[objnum].state & SG_SELECTED)
   {
@@ -737,11 +838,11 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 
   str[2]='\0';
 
-  coord.w = fontwidth*2;
-  coord.h = fontheight;
+  coord.w = FONTWIDTH*2;
+  coord.h = FONTHEIGHT;
 
   if (cdlg[objnum].flags & SG_BUTTON_RIGHT)
-    coord.x += ((strlen(cdlg[objnum].txt) + 1) * fontwidth);
+    coord.x += ((strlen(cdlg[objnum].txt) + 1) * FONTWIDTH);
 
   SDL_FillRect(sdlscrn, &coord, grey);
   SDLGui_Text(coord.x, coord.y, str, textc);
@@ -760,7 +861,7 @@ void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
   SDLGui_ObjCoord(cdlg, objnum, &coord);
 
   if (!(cdlg[objnum].flags&SG_BUTTON_RIGHT))
-    coord.x += (fontwidth * 3); // 2 chars for the box plus 1 space
+    coord.x += (FONTWIDTH * 3); // 2 chars for the box plus 1 space
 
   if (cdlg[objnum].state & SG_DISABLED)
     textc = darkgreyc;
@@ -792,7 +893,7 @@ void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
   SDLGui_ObjCoord(pdlg, objnum, &coord);
 
   SDLGui_Text(coord.x, coord.y, pdlg[objnum].txt, textc);
-  SDLGui_Text(coord.x+coord.w-fontwidth, coord.y, downstr, textc);
+  SDLGui_Text(coord.x+coord.w-FONTWIDTH, coord.y, downstr, textc);
 }
 
 
@@ -1132,7 +1233,7 @@ void SDLGui_ClickEditField(SGOBJ *dlg, cursor_state *cursor, int clicked_obj, in
   SDLGui_DrawCursor(dlg, cursor);
 
   SDLGui_ObjFullCoord(dlg, clicked_obj, &coord);
-  i = (x - coord.x + (fontwidth / 2)) / fontwidth;
+  i = (x - coord.x + (FONTWIDTH / 2)) / FONTWIDTH;
   j = strlen(dlg[clicked_obj].txt);
 
   cursor->object = clicked_obj;

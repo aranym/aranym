@@ -1,4 +1,9 @@
 2018/01/27 - Thorsten
+Fix display of non-ASCII characters in the SDL GUI
+(mainly affected the file selector dialog).
+
+
+2018/01/27 - Thorsten
 Reconstruct the font used for the SDL GUI as regular GEM font.
 
 
