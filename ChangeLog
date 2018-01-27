@@ -1,4 +1,8 @@
 2018/01/27 - Thorsten
+Fix compilation problems with newer versions of opcodes library
+
+
+2018/01/27 - Thorsten
 Fix a potential crash when --enable-debug was defined
 (va_list argument was reused)
 

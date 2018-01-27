@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>
+#include <string.h>
 #include <inttypes.h>
 
 #ifndef _
@@ -4995,9 +4996,9 @@ static void find_ifthen_state(uint32_t pc, disassemble_info *info, bfd_boolean l
 
 /* Returns nonzero and sets *MAP_TYPE if the N'th symbol is a
    mapping symbol. */
+#if 0
 static int is_mapping_symbol(disassemble_info *info, int n, enum map_type *map_type)
 {
-#if 0
 	const char *name;
 
 	if (info->disasm->target == NULL || info->disasm->target->symtab_sorted == NULL)
@@ -5008,36 +5009,32 @@ static int is_mapping_symbol(disassemble_info *info, int n, enum map_type *map_t
 		*map_type = name[1] == 'a' ? MAP_ARM : name[1] == 't' ? MAP_THUMB : MAP_DATA;
 		return TRUE;
 	}
-#else
-	UNUSED(info);
-	UNUSED(n);
-	UNUSED(map_type);
-#endif
 
 	return FALSE;
 }
+#endif
 
 
 /* Try to infer the code type (ARM or Thumb) from a mapping symbol.
    Returns nonzero if *MAP_TYPE was set. */
 
+#if 0
 static int get_map_sym_type(disassemble_info *info, int n, enum map_type *map_type)
 {
-#if 0
 	/* If the symbol is in a different section, ignore it. */
 	if (info->section != NULL && info->section != info->symtab[n]->section)
 		return FALSE;
-#endif
 
 	return is_mapping_symbol(info, n, map_type);
 }
+#endif
 
 
+#if 0
 /* Try to infer the code type (ARM or Thumb) from a non-mapping symbol.
    Returns nonzero if *MAP_TYPE was set. */
 static int get_sym_code_type(disassemble_info *info, int n, enum map_type *map_type)
 {
-#if 0
 	elf_symbol_type *es;
 	unsigned int type;
 
@@ -5057,14 +5054,10 @@ static int get_sym_code_type(disassemble_info *info, int n, enum map_type *map_t
 			*map_type = MAP_ARM;
 		return TRUE;
 	}
-#else
-	UNUSED(info);
-	UNUSED(n);
-	UNUSED(map_type);
-#endif
 
 	return FALSE;
 }
+#endif
 
 
 /* Search the mapping symbol state for instruction at pc.  This is only
@@ -5225,7 +5218,9 @@ static int print_insn(uint32_t pc, disassemble_info *info, bfd_boolean little)
 	int little_code;
 	unsigned int size = 4;
 	void (*printer) (uint32_t, disassemble_info *, int32_t);
+#if 0
 	bfd_boolean found = FALSE;
+#endif
 
 	if (info->disassembler_options)
 	{

@@ -32,6 +32,18 @@
 
 #include <dis-asm.h>
 
+/*
+ * newer versions of dis-asm.h don't declare the
+ * functions :(
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern int print_insn_i386               (bfd_vma, disassemble_info *);
+#ifdef __cplusplus
+}
+#endif
+
 struct opcodes_info {
 	char linebuf[128];
 	size_t bufsize;

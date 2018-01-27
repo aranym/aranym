@@ -21,6 +21,18 @@ m68k_disasm_info disasm_info;
 #include <dis-asm.h>
 #include <stdarg.h>
 
+/*
+ * newer versions of dis-asm.h don't declare the
+ * functions :(
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern int print_insn_m68k               (bfd_vma, disassemble_info *);
+#ifdef __cplusplus
+}
+#endif
+
 struct opcodes_info {
 	char linebuf[128];
 	int linepos;

@@ -34,6 +34,19 @@
 
 #include <dis-asm.h>
 
+/*
+ * newer versions of dis-asm.h don't declare the
+ * functions :(
+ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern int print_insn_little_arm          (bfd_vma, disassemble_info *);
+extern int print_insn_aarch64          (bfd_vma, disassemble_info *);
+#ifdef __cplusplus
+}
+#endif
+
 #else
 
 #include "disasm/disasm-arm.h"
