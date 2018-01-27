@@ -1,7 +1,7 @@
 /*
  * font.h - 8x16 font for Atari ST encoding
  * modified for the SDL-GUI (added a radio button and a checkbox)
- * converted using hexdump -v -e '16/1 "0x%02x,"' -e '"\n"'
+ * converted using dd if=aranym.fnt bs=1 skip=602 | hexdump -v -e '16/1 "0x%02x,"' -e '"\n"'
  *
  * Copyright (C) 2007  ARAnyM development team
  * Copyright (C) 2001, 02 The EmuTOS development team
@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-static unsigned char font_bits[] =
+static unsigned char const font_bits[] =
 {
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,

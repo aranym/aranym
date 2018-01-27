@@ -1,4 +1,8 @@
 2018/01/27 - Thorsten
+Reconstruct the font used for the SDL GUI as regular GEM font.
+
+
+2018/01/27 - Thorsten
 Fix compilation problems with newer versions of opcodes library
 
 

@@ -185,7 +185,7 @@ aranym_SOURCES += \
 	gui-sdl/dialog.cpp gui-sdl/dialog.h \
 	gui-sdl/file.cpp gui-sdl/file.h \
 	gui-sdl/dlgMain.cpp gui-sdl/dlgMain.h \
-	gui-sdl/font.h \
+	gui-sdl/font.h gui-sdl/aranym.fnt \
 	gui-sdl/dlgAlert.cpp gui-sdl/dlgAlert.h \
 	gui-sdl/dlgDisk.cpp gui-sdl/dlgDisk.h \
 	gui-sdl/dlgFileSelect.cpp gui-sdl/dlgFileSelect.h \
