@@ -1173,7 +1173,7 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tint cflg, tmp_newv;\n");
 	printf ("\ttmp_newv = newv_hi + newv_lo;\n");
 	printf ("\tif (newv_lo > 9) { newv_lo -= 6; }\n");
-	printf ("\tnewv = newv = newv_hi + newv_lo;\n");
+	printf ("\tnewv = newv_hi + newv_lo;\n");
 	printf ("\tcflg = (newv & 0x1F0) > 0x90;\n");
 	printf ("\tif (cflg) newv -= 0x60;\n");
 	printf ("\tSET_CFLG (cflg);\n");

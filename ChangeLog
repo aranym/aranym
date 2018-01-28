@@ -1,4 +1,8 @@
 2018/01/27 - Thorsten
+Fix duplicate assignment introduced in commit #d32c06a5aa4c3ce7c9b77482ac31e14d5a7eb190
+
+
+2018/01/27 - Thorsten
 Fix display of non-ASCII characters in the SDL GUI
 (mainly affected the file selector dialog).
 
