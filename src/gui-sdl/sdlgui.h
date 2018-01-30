@@ -56,14 +56,6 @@ enum
 #define SG_SHORTCUT_DOWN	'|'
 
 /* Special characters: */
-#define SGCHECKBOX_RADIO_NORMAL   12
-#define SGCHECKBOX_RADIO_NORMAl   13
-#define SGCHECKBOX_RADIO_SELECTED 14
-#define SGCHECKBOX_RADIO_SELECTEd 15
-#define SGCHECKBOX_NORMAL         28
-#define SGCHECKBOX_NORMAl         29
-#define SGCHECKBOX_SELECTED       30
-#define SGCHECKBOX_SELECTEd       31
 #define SGARROWUP                1
 #define SGARROWDOWN              2
 #define SGFOLDER                 5
@@ -131,6 +123,8 @@ int SDLGui_FindDefaultObj(SGOBJ *dlg);
 void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode);
 void SDLGui_DeselectButtons(SGOBJ *dlg);
 void SDLGui_DeselectAndRedraw(SGOBJ *dlg, int obj);
+int SDLGui_TextLen(const char *txt);
+int SDLGui_ByteLen(const char *txt, int pos);
 
 int SDLGui_DoEvent(const SDL_Event &event);
 void SDLGui_Open(Dialog *new_dlg);

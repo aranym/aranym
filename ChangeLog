@@ -1,3 +1,9 @@
+2018/01/30 - Thorsten
+Add a lot of international characters to the builtin font.
+Needed to correctly display filenames in the selector.
+(our own dialog texts are ascii only, but that can now be changed, too)
+
+
 2018/01/27 - Thorsten
 Fix duplicate assignment introduced in commit #d32c06a5aa4c3ce7c9b77482ac31e14d5a7eb190
 

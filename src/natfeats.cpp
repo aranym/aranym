@@ -111,7 +111,7 @@ void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count)
 	CFStringAppendCString(theString, src, kCFStringEncodingUTF8);
 	CFStringNormalize(theString, kCFStringNormalizationFormC);
 	UniChar ch;
-	unsigned char c;
+	unsigned short c;
 	CFIndex idx;
 	CFIndex len = CFStringGetLength(theString);
 	
@@ -119,8 +119,8 @@ void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count)
 	while ( count > 1 && idx < len )
 	{
 		ch = CFStringGetCharacterAtIndex(theString, idx);
-		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-		if (c == 0xff && ch != atari_to_utf16[0xff])
+		c = utf16_to_atari[ch];
+		if (c >= 0x100)
 		{
 			charset_conv_error(ch);
 			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */
@@ -154,7 +154,7 @@ void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count)
 	CFRelease(theString);
 #else
 	unsigned short ch;
-	unsigned char c;
+	unsigned short c;
 	size_t bytes;
 	
 	while ( count > 1 && *src )
@@ -173,8 +173,8 @@ void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count)
 			ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
 			bytes = 3;
 		}
-		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-		if (c == 0xff && ch != atari_to_utf16[0xff])
+		c = utf16_to_atari[ch];
+		if (c >= 0x100)
 		{
 			charset_conv_error(ch);
 			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */

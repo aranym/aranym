@@ -27,7 +27,7 @@ Dialog::Dialog(SGOBJ *new_dlg)
 {
 	/* Init cursor position in dialog */
 	cursor.object = SDLGui_FindEditField(dlg, -1, SG_FIRST_EDITFIELD);
-	cursor.position = (cursor.object != -1 && dlg[cursor.object].txt) ? strlen(dlg[cursor.object].txt) : 0;
+	cursor.position = (cursor.object != -1 && dlg[cursor.object].txt) ? SDLGui_TextLen(dlg[cursor.object].txt) : 0;
 	cursor.blink_counter = SDL_GetTicks();
 	cursor.blink_state = true;
 }
@@ -152,18 +152,20 @@ void Dialog::keyPress(const SDL_Event &event)
 
 			case SDLK_BACKSPACE:
 				if (cursor.position > 0) {
-					memmove((void *)&dlg[cursor.object].txt[cursor.position-1],
-						&dlg[cursor.object].txt[cursor.position],
-						strlen(&dlg[cursor.object].txt[cursor.position])+1);
+					char *txt = (char *)dlg[cursor.object].txt;
+					int prev = SDLGui_ByteLen(txt, cursor.position-1);
+					int curr = SDLGui_ByteLen(txt, cursor.position);
+					memmove(&txt[prev], &txt[curr], strlen(&txt[curr]) + 1);
 					cursor.position--;
 				}
 				break;
 
 			case SDLK_DELETE:
-				if(cursor.position < (int)strlen(dlg[cursor.object].txt)) {
-					memmove((void *)&dlg[cursor.object].txt[cursor.position],
-						&dlg[cursor.object].txt[cursor.position+1],
-						strlen(&dlg[cursor.object].txt[cursor.position+1])+1);
+				if(cursor.position < SDLGui_TextLen(dlg[cursor.object].txt)) {
+					char *txt = (char *)dlg[cursor.object].txt;
+					int curr = SDLGui_ByteLen(txt, cursor.position);
+					int next = SDLGui_ByteLen(txt, cursor.position + 1);
+					memmove(&txt[curr], &txt[next], strlen(&txt[next]) + 1);
 				}
 				break;
 
@@ -173,7 +175,7 @@ void Dialog::keyPress(const SDL_Event &event)
 				break;
 
 			case SDLK_RIGHT:
-				if (cursor.position < (int)strlen(dlg[cursor.object].txt))
+				if (cursor.position < SDLGui_TextLen(dlg[cursor.object].txt))
 					cursor.position++;
 				break;
 
@@ -201,7 +203,7 @@ void Dialog::keyPress(const SDL_Event &event)
 				if (state & KMOD_CTRL)
 					SDLGui_MoveCursor(dlg, &cursor, SG_LAST_EDITFIELD);
 				else
-					cursor.position = strlen(dlg[cursor.object].txt);
+					cursor.position = SDLGui_TextLen(dlg[cursor.object].txt);
 				break;
 
 			default:
@@ -221,14 +223,13 @@ void Dialog::keyPress(const SDL_Event &event)
 					default: break;
 				}
 				/* If it is a "good" key then insert it into the text field */
-				if (((unsigned int)keysym >= 0x20) && ((unsigned int)keysym < 0x100)) {
+				/* FIXME: can't handle non-ascii characters here */
+				if (((unsigned int)keysym >= 0x20) && ((unsigned int)keysym < 0x80)) {
 					char *dlgtxt = (char *)dlg[cursor.object].txt;
-					if (strlen(dlg[cursor.object].txt) < dlg[cursor.object].w) {
-						memmove(&dlgtxt[cursor.position+1],
-							&dlg[cursor.object].txt[cursor.position],
-							strlen(&dlg[cursor.object].txt[cursor.position])+1);
-						dlgtxt[cursor.position] =
-							(state & KMOD_SHIFT) ? toupper(keysym) : keysym;
+					if (SDLGui_TextLen(dlgtxt) < (int)dlg[cursor.object].w) {
+						int curr = SDLGui_ByteLen(dlgtxt, cursor.position);
+						memmove(&dlgtxt[curr + 1], &dlgtxt[curr], strlen(&dlgtxt[curr])+1);
+						dlgtxt[curr] = (state & KMOD_SHIFT) ? toupper(keysym) : keysym;
 						cursor.position++;
 					}
 				}

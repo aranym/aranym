@@ -560,6 +560,7 @@ EXTRA_DIST += \
 	Unix/MacOSX/README_Xcode.rtf \
 	Unix/MacOSX/README_ethernet.rtf \
 	Unix/MacOSX/bpf_helper.c \
+	gui-sdl/genmaptab.c \
 	$(srcdir)/gui-osx/*.lproj \
 	gui-osx/Info.plist \
 	gui-osx/aranym.icns \

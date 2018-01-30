@@ -56,8 +56,8 @@ char *read_aclip(size_t *len)
 		char *dst = clip_buf;		
 		for (int pos = 0; pos < clip_len; pos++) {
 			unsigned short ch = utf16_str[pos];
-			unsigned char c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-			if (c == 0xff && ch != atari_to_utf16[0xff])
+			unsigned short c = utf16_to_atari[ch];
+			if (c >= 0x100)
 			{
 				charset_conv_error(ch);
 				*dst++ = '?';

@@ -176,7 +176,7 @@ char * read_aclip(size_t *dstlen)
 			char *buf = new char[nbytes + 1];
 			dst = buf;
 			unsigned short ch;
-			unsigned char c;
+			unsigned short c;
 			size_t bytes;
 			const unsigned char *src = psrc;
 			
@@ -196,8 +196,8 @@ char * read_aclip(size_t *dstlen)
 					ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
 					bytes = 3;
 				}
-				c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-				if (c == 0xff && ch != atari_to_utf16[0xff])
+				c = utf16_to_atari[ch];
+				if (c >= 0x100)
 				{
 					charset_conv_error(ch);
 					*buf++ = '?';

@@ -52,9 +52,10 @@ static SDL_Surface *fontgfx=NULL;
 /* Height and width of the actual font */
 #define FONTWIDTH 8
 #define FONTHEIGHT 16
-#define FONTCHARS 256
-/* converted surface will be 16x16 grid */
-#define FONTCOLS 16
+/* number of glyphs in our font */
+#define FONTCHARS 2048
+/* layout of the converted surface */
+#define FONTCOLS 64
 #define FONTROWS (FONTCHARS / FONTCOLS)
 
 static std::stack<Dialog *> dlgStack;
@@ -81,6 +82,9 @@ enum {
 	whitec
 };
 
+/* the glyph to display for undefined characters */
+#define REPLACEMENT_GLYPH 0x6ff
+
 // Stores current dialog coordinates
 static SDL_Rect DialogRect = {0, 0, 0, 0};
 
@@ -99,11 +103,23 @@ enum
 };
 #endif
 
+/* Special characters: */
+/*
+ * These are used for radio & checkboxes.
+ * Each graphic is composed of two characters,
+ * which are encoded as 0x100-0x0107 so they
+ * don't conflict with any other character.
+ */
+static char const SGCHECKBOX_RADIO_NORMAL[4] = { '\330', '\200', '\330', '\201' };
+static char const SGCHECKBOX_RADIO_SELECTED[4] = { '\330', '\202', '\330', '\203' };
+static char const SGCHECKBOX_NORMAL[4] = { '\330', '\204', '\330', '\205' };
+static char const SGCHECKBOX_SELECTED[4] = { '\330', '\206', '\330', '\207' };
+
 /*-----------------------------------------------------------------------*/
 /*
   Load an 1 plane XBM into a 8 planes SDL_Surface.
 */
-static SDL_Surface *SDLGui_LoadXBM(Uint8 *srcbits)
+static SDL_Surface *SDLGui_LoadXBM(const Uint8 *srcbits)
 {
   SDL_Surface *bitmap;
   Uint8 *dstbits;
@@ -345,7 +361,7 @@ void SDLGui_RefreshObj(SGOBJ *dlg, int objnum)
 }
 
 
-static char *host_to_atari(const char *src)
+static unsigned short *host_to_atari(const char *src)
 {
 #ifdef OS_darwin
 	/* MacOSX uses decomposed strings, normalize them first */
@@ -353,57 +369,39 @@ static char *host_to_atari(const char *src)
 	CFStringAppendCString(theString, src, kCFStringEncodingUTF8);
 	CFStringNormalize(theString, kCFStringNormalizationFormC);
 	UniChar ch;
-	unsigned char c;
+	unsigned short c;
 	CFIndex idx;
 	CFIndex len = CFStringGetLength(theString);
-	char *dst, *res;
+	unsigned short *dst, *res;
 	size_t count = strlen(src);
 	
-	res = (char *)malloc(count * 3 + 1);
+	res = (unsigned short *)malloc((count + 1) * sizeof(*res));
 	dst = res;
 	idx = 0;
 	while (idx < len )
 	{
 		ch = CFStringGetCharacterAtIndex(theString, idx);
-		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-		if (c == 0xff && ch != atari_to_utf16[0xff])
-		{
-			// charset_conv_error(ch);
-			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */
-			if (ch < 0x80)
-			{
-				*dst++ = ch;
-			} else if (ch < 0x800)
-			{
-				*dst++ = ((ch >> 6) & 0x3f) | 0xc0;
-				*dst++ = (ch & 0x3f) | 0x80;
-			} else 
-			{
-				*dst++ = ((ch >> 12) & 0x0f) | 0xe0;
-				*dst++ = ((ch >> 6) & 0x3f) | 0x80;
-				*dst++ = (ch & 0x3f) | 0x80;
-			}
-		} else
-		{
-			*dst++ = c;
-		}
+		c = utf16_to_atari[ch];
+		if (c >= FONTCHARS)
+			c = REPLACEMENT_GLYPH;
+		*dst++ = c;
 		idx++;
 	}
 	*dst = '\0';
 	CFRelease(theString);
 #else
 	unsigned short ch;
-	unsigned char c;
+	unsigned short c;
 	size_t bytes;
-	char *dst, *res;
+	unsigned short *dst, *res;
 	size_t count = strlen(src);
 	
-	res = (char *)malloc(count * 3 + 1);
+	res = (unsigned short *)malloc((count + 1) * sizeof(*res));
 	dst = res;
 	
 	while (*src)
 	{
-		c = *src;
+		c = (unsigned char) *src;
 		ch = c;
 		if (ch < 0x80)
 		{
@@ -417,21 +415,11 @@ static char *host_to_atari(const char *src)
 			ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
 			bytes = 3;
 		}
-		c = (*utf16_to_atari[ch >> 8])[ch & 0xff];
-		if (c == 0xff && ch != atari_to_utf16[0xff])
-		{
-			// charset_conv_error(ch);
-			/* not convertible. return utf8-sequence to avoid producing duplicate filenames */
-			*dst++ = *src++;
-			if (bytes >= 2)
-				*dst++ = *src++;
-			if (bytes >= 3)
-				*dst++ = *src++;
-		} else
-		{
-			*dst++ = c;
-			src += bytes;
-		}
+		c = utf16_to_atari[ch];
+		if (c >= FONTCHARS)
+			c = REPLACEMENT_GLYPH;
+		*dst++ = c;
+		src += bytes;
 	}
 	*dst = '\0';
 #endif
@@ -445,9 +433,9 @@ static char *host_to_atari(const char *src)
 void SDLGui_Text(int x, int y, const char *txt, int col)
 {
   int i;
-  unsigned char c;
+  unsigned short c;
   SDL_Rect sr, dr;
-  char *conv;
+  unsigned short *conv;
   
 #if SDL_VERSION_ATLEAST(2, 0, 0)
   SDL_SetPaletteColors(fontgfx->format->palette, &gui_palette[col], 1, 1);
@@ -456,7 +444,7 @@ void SDLGui_Text(int x, int y, const char *txt, int col)
 #endif
 
   conv = host_to_atari(txt);
-  for (i = 0 ; conv[i] != 0 ; i++)
+  for (i = 0; conv[i] != 0; i++)
   {
     c = conv[i];
     sr.x = FONTWIDTH * (c % FONTCOLS);
@@ -474,6 +462,54 @@ void SDLGui_Text(int x, int y, const char *txt, int col)
   free(conv);
 }
 
+/*-----------------------------------------------------------------------*/
+/*
+ * return the number of characters that are displayed
+ */
+int SDLGui_TextLen(const char *txt)
+{
+  unsigned short *conv;
+  int i;
+
+  conv = host_to_atari(txt);
+  for (i = 0; conv[i] != 0; i++)
+    ;
+  free(conv);
+  return i;
+}
+
+/*-----------------------------------------------------------------------*/
+/*
+ * return the number of up to a given character index
+ */
+int SDLGui_ByteLen(const char *txt, int pos)
+{
+	size_t bytes;
+	const char *src = txt;
+	unsigned char ch;
+	
+	while (pos > 0 && *src)
+	{
+		ch = *src;
+		if (ch < 0x80)
+		{
+			bytes = 1;
+		} else if ((ch & 0xe0) == 0xc0 && src[1])
+		{
+			bytes = 2;
+		} else if (src[1] && src[2])
+		{
+			bytes = 3;
+		} else
+		{
+			bytes = 1;
+		}
+		src += bytes;
+		pos--;
+	}
+	
+	return (int)(src - txt);
+}
 
 /*-----------------------------------------------------------------------*/
 /*
@@ -776,7 +812,7 @@ void SDLGui_DrawButton(SGOBJ *bdlg, int objnum)
 
   SDLGui_ObjCoord(bdlg, objnum, &coord);
 
-  x = coord.x + ((coord.w - (strlen(bdlg[objnum].txt) * FONTWIDTH)) / 2);
+  x = coord.x + ((coord.w - (SDLGui_TextLen(bdlg[objnum].txt) * FONTWIDTH)) / 2);
   y = coord.y + ((coord.h - FONTHEIGHT) / 2);
 
   if (bdlg[objnum].state & SG_SELECTED)
@@ -803,7 +839,7 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
 {
   Uint32 grey = SDLGui_MapColor(greyc);
   SDL_Rect coord;
-  char str[3];
+  char str[5];
   int textc;
 
   SDLGui_ObjCoord(cdlg, objnum, &coord);
@@ -811,38 +847,45 @@ void SDLGui_DrawCheckBoxState(SGOBJ *cdlg, int objnum)
   if (cdlg[objnum].flags & SG_RADIO)
   {
     if (cdlg[objnum].state & SG_SELECTED) {
-      str[0]=SGCHECKBOX_RADIO_SELECTED;
-      str[1]=SGCHECKBOX_RADIO_SELECTEd;
+      str[0]=SGCHECKBOX_RADIO_SELECTED[0];
+      str[1]=SGCHECKBOX_RADIO_SELECTED[1];
+      str[2]=SGCHECKBOX_RADIO_SELECTED[2];
+      str[3]=SGCHECKBOX_RADIO_SELECTED[3];
     }
     else {
-      str[0]=SGCHECKBOX_RADIO_NORMAL;
-      str[1]=SGCHECKBOX_RADIO_NORMAl;
+      str[0]=SGCHECKBOX_RADIO_NORMAL[0];
+      str[1]=SGCHECKBOX_RADIO_NORMAL[1];
+      str[2]=SGCHECKBOX_RADIO_NORMAL[2];
+      str[3]=SGCHECKBOX_RADIO_NORMAL[3];
     }
   }
   else
   {
     if (cdlg[objnum].state & SG_SELECTED) {
-      str[0]=SGCHECKBOX_SELECTED;
-      str[1]=SGCHECKBOX_SELECTEd;
+      str[0]=SGCHECKBOX_SELECTED[0];
+      str[1]=SGCHECKBOX_SELECTED[1];
+      str[2]=SGCHECKBOX_SELECTED[2];
+      str[3]=SGCHECKBOX_SELECTED[3];
     }
     else {
-      str[0]=SGCHECKBOX_NORMAL;
-      str[1]=SGCHECKBOX_NORMAl;
+      str[0]=SGCHECKBOX_NORMAL[0];
+      str[1]=SGCHECKBOX_NORMAL[1];
+      str[2]=SGCHECKBOX_NORMAL[2];
+      str[3]=SGCHECKBOX_NORMAL[3];
     }
   }
+  str[4]='\0';
 
   if (cdlg[objnum].state & SG_DISABLED)
     textc = darkgreyc;
   else
     textc = blackc;
 
-  str[2]='\0';
-
   coord.w = FONTWIDTH*2;
   coord.h = FONTHEIGHT;
 
   if (cdlg[objnum].flags & SG_BUTTON_RIGHT)
-    coord.x += ((strlen(cdlg[objnum].txt) + 1) * FONTWIDTH);
+    coord.x += ((SDLGui_TextLen(cdlg[objnum].txt) + 1) * FONTWIDTH);
 
   SDL_FillRect(sdlscrn, &coord, grey);
   SDLGui_Text(coord.x, coord.y, str, textc);
@@ -1186,7 +1229,7 @@ void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode)
     SDLGui_DrawCursor(dlg, cursor);
 
     cursor->object = new_object;
-    cursor->position = strlen(dlg[new_object].txt);
+    cursor->position = SDLGui_TextLen(dlg[new_object].txt);
   }
   else
   {
@@ -1201,7 +1244,7 @@ void SDLGui_MoveCursor(SGOBJ *dlg, cursor_state *cursor, int mode)
 
       case SG_NEXT_EDITFIELD:
       case SG_LAST_EDITFIELD:
-        cursor->position = strlen(dlg[new_object].txt);
+        cursor->position = SDLGui_TextLen(dlg[new_object].txt);
         break;
     }
   }
@@ -1234,7 +1277,7 @@ void SDLGui_ClickEditField(SGOBJ *dlg, cursor_state *cursor, int clicked_obj, in
 
   SDLGui_ObjFullCoord(dlg, clicked_obj, &coord);
   i = (x - coord.x + (FONTWIDTH / 2)) / FONTWIDTH;
-  j = strlen(dlg[clicked_obj].txt);
+  j = SDLGui_TextLen(dlg[clicked_obj].txt);
 
   cursor->object = clicked_obj;
   cursor->position = MIN(i, j);
