@@ -1,3 +1,8 @@
+2018/02/01 - Thorsten
+Add some more characters to the font, and reorder it
+to use unicode indices. Also add the sources needed to rebuild it.
+
+
 2018/01/30 - Thorsten
 Add a lot of international characters to the builtin font.
 Needed to correctly display filenames in the selector.

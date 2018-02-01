@@ -159,7 +159,7 @@ void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count)
 	
 	while ( count > 1 && *src )
 	{
-		c = *src;
+		c = (unsigned char) *src;
 		ch = c;
 		if (ch < 0x80)
 		{

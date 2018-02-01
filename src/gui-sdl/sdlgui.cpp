@@ -49,14 +49,9 @@
 #define sdlscrn		gui_surf
 
 static SDL_Surface *fontgfx=NULL;
-/* Height and width of the actual font */
-#define FONTWIDTH 8
-#define FONTHEIGHT 16
-/* number of glyphs in our font */
-#define FONTCHARS 2048
 /* layout of the converted surface */
-#define FONTCOLS 64
-#define FONTROWS (FONTCHARS / FONTCOLS)
+#define FONTCOLS 128
+#define FONTROWS ((FONTCHARS + FONTCOLS - 1) / FONTCOLS)
 
 static std::stack<Dialog *> dlgStack;
 
@@ -107,7 +102,7 @@ enum
 /*
  * These are used for radio & checkboxes.
  * Each graphic is composed of two characters,
- * which are encoded as 0x100-0x0107 so they
+ * which are encoded as 0x600-0x0607 so they
  * don't conflict with any other character.
  */
 static char const SGCHECKBOX_RADIO_NORMAL[4] = { '\330', '\200', '\330', '\201' };
@@ -121,39 +116,40 @@ static char const SGCHECKBOX_SELECTED[4] = { '\330', '\206', '\330', '\207' };
 */
 static SDL_Surface *SDLGui_LoadXBM(const Uint8 *srcbits)
 {
-  SDL_Surface *bitmap;
-  Uint8 *dstbits;
-  int x, y;
-	int w = FONTCOLS * FONTWIDTH;
-	int h = FONTROWS * FONTHEIGHT;
+	SDL_Surface *bitmap;
+	Uint8 *dstbits;
+	int ascii;
 
-  /* Allocate the bitmap */
-  bitmap = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
-  if ( bitmap == NULL )
-  {
-    panicbug("Couldn't allocate bitmap: %s", SDL_GetError());
-    return(NULL);
-  }
+	/* Allocate the bitmap */
+	bitmap = SDL_CreateRGBSurface(SDL_SWSURFACE, FONTCOLS * FONTWIDTH, FONTROWS * FONTHEIGHT, 8, 0, 0, 0, 0);
+	if ( bitmap == NULL )
+	{
+		panicbug("Couldn't allocate bitmap: %s", SDL_GetError());
+		return(NULL);
+	}
 
-  dstbits = (Uint8 *)bitmap->pixels;
-  int mask = 0x80;
+	dstbits = (Uint8 *)bitmap->pixels;
 
-  /* Copy the pixels */
-  for (y = 0 ; y < h ; y++)
-  {
-    for (x = 0 ; x < w ; x++)
-    {
-      int ascii = x/FONTWIDTH + (y / FONTHEIGHT) * FONTCOLS;
-      int charline = y % FONTHEIGHT;
-      dstbits[x] = (srcbits[ascii + FONTCHARS*charline] & mask) ? 1 : 0;
-      mask >>= 1;
-      mask |= (mask << 8);
-      mask &= 0x1FF;
-    }
-    dstbits += bitmap->pitch;
-  }
+	/* Copy the pixels */
+	for (ascii = 0; ascii < FONTCHARS; ascii++)
+	{
+		int y0 = ascii / FONTCOLS;
+		int x0 = ascii % FONTCOLS;
+		int x, y;
+		
+		for (y = 0; y < FONTHEIGHT; y++)
+		{
+			for (x = 0; x < FONTWIDTH; x++)
+			{
+				int off = ascii * FONTWIDTH + x;
+				int bit = off & 7;
+				dstbits[(y0 * FONTHEIGHT + y) * bitmap->pitch + x0 * FONTWIDTH + x] =
+					(srcbits[(off >> 3) + y * FORM_WIDTH] & (0x80 >> bit)) ? 1 : 0;
+			}
+		}
+	}
 
-  return(bitmap);
+	return bitmap;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -164,19 +160,19 @@ bool SDLGui_Init()
 {
 	// Load the font graphics
 	char font_filename[256];
-	unsigned char font_data[FONTCHARS * FONTHEIGHT * (FONTWIDTH / 8)];
+	unsigned char font_data_buffer[FONTHEIGHT * FORM_WIDTH];
 	getConfFilename("font", font_filename, sizeof(font_filename));
 	FILE *f = fopen(font_filename, "rb");
-	bool font_loaded = false;
+	const unsigned char *font_data = NULL;
 	if (f != NULL) {
-		if (fread(font_data, 1, sizeof(font_data), f) == sizeof(font_data)) {
-			font_loaded = true;
+		if (fread(font_data_buffer, 1, sizeof(font_data_buffer), f) == sizeof(font_data_buffer)) {
+			font_data = font_data_buffer;
 		}
 		fclose(f);
 	}
 	// If font can't be loaded use the internal one
-	if (! font_loaded) {
-		memcpy(font_data, font_bits, sizeof(font_data));
+	if (font_data == NULL) {
+		font_data = font_bits;
 	}
 	
 	fontgfx = SDLGui_LoadXBM(font_data);
@@ -203,6 +199,18 @@ bool SDLGui_Init()
 
 	/* Set font color 0 as transparent */
 	SDL_SetColorKey(fontgfx, SDL_SRCCOLORKEY, 0);
+
+#if 0 /* for testing */
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_SetPaletteColors(fontgfx->format->palette, &gui_palette[whitec], 0, 1);
+	SDL_SetPaletteColors(fontgfx->format->palette, &gui_palette[blackc], 1, 1);
+#else
+	SDL_SetColors(fontgfx, &gui_palette[whitec], 0, 1);
+	SDL_SetColors(fontgfx, &gui_palette[blackc], 1, 1);
+#endif
+
+	SDL_SaveBMP(fontgfx, "aranym-font.bmp");
+#endif
 
 	return true;
 }
@@ -369,7 +377,6 @@ static unsigned short *host_to_atari(const char *src)
 	CFStringAppendCString(theString, src, kCFStringEncodingUTF8);
 	CFStringNormalize(theString, kCFStringNormalizationFormC);
 	UniChar ch;
-	unsigned short c;
 	CFIndex idx;
 	CFIndex len = CFStringGetLength(theString);
 	unsigned short *dst, *res;
@@ -381,17 +388,22 @@ static unsigned short *host_to_atari(const char *src)
 	while (idx < len )
 	{
 		ch = CFStringGetCharacterAtIndex(theString, idx);
-		c = utf16_to_atari[ch];
-		if (c >= FONTCHARS)
-			c = REPLACEMENT_GLYPH;
-		*dst++ = c;
+		if (ch >= FONTCHARS || (ch >= 0x80 && ch < 0xa0))
+		{
+			ch = REPLACEMENT_GLYPH;
+		} else if (ch >= FONTCHARS)
+		{
+			ch = utf16_to_atari[ch];
+			if (ch >= FONTCHARS)
+				ch = REPLACEMENT_GLYPH;
+		}
+		*dst++ = ch;
 		idx++;
 	}
 	*dst = '\0';
 	CFRelease(theString);
 #else
 	unsigned short ch;
-	unsigned short c;
 	size_t bytes;
 	unsigned short *dst, *res;
 	size_t count = strlen(src);
@@ -401,8 +413,7 @@ static unsigned short *host_to_atari(const char *src)
 	
 	while (*src)
 	{
-		c = (unsigned char) *src;
-		ch = c;
+		ch = (unsigned char) *src;
 		if (ch < 0x80)
 		{
 			bytes = 1;
@@ -415,10 +426,16 @@ static unsigned short *host_to_atari(const char *src)
 			ch = ((((ch & 0x0f) << 6) | (src[1] & 0x3f)) << 6) | (src[2] & 0x3f);
 			bytes = 3;
 		}
-		c = utf16_to_atari[ch];
-		if (c >= FONTCHARS)
-			c = REPLACEMENT_GLYPH;
-		*dst++ = c;
+		if (ch >= FONTCHARS || (ch >= 0x80 && ch < 0xa0))
+		{
+			ch = REPLACEMENT_GLYPH;
+		} else if (ch >= 0x100)
+		{
+			ch = utf16_to_atari[ch];
+			if (ch >= FONTCHARS)
+				ch = REPLACEMENT_GLYPH;
+		}
+		*dst++ = ch;
 		src += bytes;
 	}
 	*dst = '\0';
@@ -923,7 +940,7 @@ void SDLGui_DrawCheckBox(SGOBJ *cdlg, int objnum)
 void SDLGui_DrawPopupButton(SGOBJ *pdlg, int objnum)
 {
   SDL_Rect coord;
-  const char *downstr = "\x02";
+  static char const downstr[2] = { SGARROWDOWN, 0 };
   int textc;
 
   if (pdlg[objnum].state & SG_DISABLED)

@@ -93,21 +93,6 @@ int main(void)
 	maptab[0x7f] = 0x7f;
 
 	/*
-	 * 0xde in the table above is mapped to the
-	 * original definition (0x2227 = logical and)
-	 * Some prefer to map it to euro sign instead.
-	 * Do so at least in reverse lookup.
-	 */
-	maptab[0x00a4] = 0xde; /* currency sign */
-	maptab[0x20ac] = 0xde; /* euro sign */
-	maptab[0x2038] = 0xde; /* caret */
-
-	maptab[0x2022] = 0xf9; /* bullet */
-	maptab[0x03bc] = 0xe6; /* micro sign */
-	maptab[0x00ad] = '-';  /* soft hyphen */
-	maptab[0x00a0] = ' ';  /* no-break space */
-	
-	/*
 	 * mapping of our special chars
 	 */
 	maptab[0x600] = 0x0600; /* left half of normal radio button */
@@ -122,39 +107,31 @@ int main(void)
 	/*
 	 * mapping of characters missing from atari standard encoding
 	 */
-	maptab[0x20ac] = 0x0608; /* EURO SIGN */
-	maptab[0x00a4] = 0x0608; /* CURRENCY SIGN */
-	maptab[0x00b9] = 0x060a; /* SUPERSCRIPT ONE */
-	maptab[0x2070] = 0x060b; /* SUPERSCRIPT ZERO */
-	maptab[0x00c1] = 0x060c; /* LATIN CAPITAL LETTER A WITH ACUTE */
-	maptab[0x00c2] = 0x060d; /* LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
-	maptab[0x00c8] = 0x060e; /* LATIN CAPITAL LETTER E WITH GRAVE */
-	maptab[0x00ca] = 0x060f; /* LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
-	maptab[0x00cb] = 0x0610; /* LATIN CAPITAL LETTER E WITH DIAERESIS */
-	maptab[0x00cc] = 0x0611; /* LATIN CAPITAL LETTER I WITH GRAVE */
-	maptab[0x00cd] = 0x0612; /* LATIN CAPITAL LETTER I WITH ACUTE */
-	maptab[0x00ce] = 0x0613; /* LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
-	maptab[0x00cf] = 0x0614; /* LATIN CAPITAL LETTER I WITH DIAERESIS */
-	maptab[0x00d0] = 0x0615; /* LATIN CAPITAL LETTER ETH */
-	maptab[0x00d2] = 0x0616; /* LATIN CAPITAL LETTER O WITH GRAVE */
-	maptab[0x00d3] = 0x0617; /* LATIN CAPITAL LETTER O WITH ACUTE */
-	maptab[0x00d4] = 0x0618; /* LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
-	maptab[0x00d7] = 0x0619; /* MULTIPLICATION SIGN */
-	maptab[0x00d9] = 0x061a; /* LATIN CAPITAL LETTER U WITH GRAVE */
-	maptab[0x00da] = 0x061b; /* LATIN CAPITAL LETTER U WITH ACUTE */
-	maptab[0x00db] = 0x061c; /* LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
-	maptab[0x00dd] = 0x061d; /* LATIN CAPITAL LETTER Y WITH ACUTE */
-	maptab[0x00de] = 0x061e; /* LATIN CAPITAL LETTER THORN */
-	maptab[0x00f0] = 0x061f; /* LATIN SMALL LETTER ETH */
-	maptab[0x00fd] = 0x0620; /* LATIN SMALL LETTER Y WITH ACUTE */
-	maptab[0x00fe] = 0x0621; /* LATIN SMALL LETTER THORN */
-	maptab[0x00b8] = 0x0622; /* CEDILLA */
-	maptab[0x00a6] = 0x0623; /* BROKEN BAR */
-	maptab[0x00be] = 0x0624; /* VULGAR FRACTION THREE QUARTERS */
-	maptab[0x2025] = 0x0626; /* TWO DOT LEADER */
-	maptab[0x25a0] = 0x0627; /* BLACK SQUARE */
-	maptab[0x2153] = 0x0628; /* VULGAR FRACTION ONE THIRD */
-	maptab[0x2116] = 0x0629; /* NUMERO SIGN */
+	maptab[0x00c1] = 0x00c1; /* LATIN CAPITAL LETTER A WITH ACUTE */
+	maptab[0x00c2] = 0x00c2; /* LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
+	maptab[0x00c8] = 0x00c8; /* LATIN CAPITAL LETTER E WITH GRAVE */
+	maptab[0x00ca] = 0x00ca; /* LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
+	maptab[0x00cb] = 0x00cb; /* LATIN CAPITAL LETTER E WITH DIAERESIS */
+	maptab[0x00cc] = 0x00cc; /* LATIN CAPITAL LETTER I WITH GRAVE */
+	maptab[0x00cd] = 0x00cd; /* LATIN CAPITAL LETTER I WITH ACUTE */
+	maptab[0x00ce] = 0x00ce; /* LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
+	maptab[0x00cf] = 0x00cf; /* LATIN CAPITAL LETTER I WITH DIAERESIS */
+	maptab[0x00d0] = 0x00d0; /* LATIN CAPITAL LETTER ETH */
+	maptab[0x00d2] = 0x00d2; /* LATIN CAPITAL LETTER O WITH GRAVE */
+	maptab[0x00d3] = 0x00d3; /* LATIN CAPITAL LETTER O WITH ACUTE */
+	maptab[0x00d4] = 0x00d4; /* LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
+	maptab[0x00d7] = 0x00d7; /* MULTIPLICATION SIGN */
+	maptab[0x00d9] = 0x00d9; /* LATIN CAPITAL LETTER U WITH GRAVE */
+	maptab[0x00da] = 0x00da; /* LATIN CAPITAL LETTER U WITH ACUTE */
+	maptab[0x00db] = 0x00db; /* LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
+	maptab[0x00dd] = 0x00dd; /* LATIN CAPITAL LETTER Y WITH ACUTE */
+	maptab[0x00de] = 0x00de; /* LATIN CAPITAL LETTER THORN */
+	maptab[0x00f0] = 0x00f0; /* LATIN SMALL LETTER ETH */
+	maptab[0x00fd] = 0x00fd; /* LATIN SMALL LETTER Y WITH ACUTE */
+	maptab[0x00fe] = 0x00fe; /* LATIN SMALL LETTER THORN */
+	maptab[0x00b8] = 0x00b8; /* CEDILLA */
+	maptab[0x00be] = 0x00be; /* VULGAR FRACTION THREE QUARTERS */
+	maptab[0x00a6] = 0x00a6; /* BROKEN BAR */
 	
 	maptab[0x0100] = 0x0100; /* LATIN CAPITAL LETTER A WITH MACRON */
 	maptab[0x0101] = 0x0101; /* LATIN SMALL LETTER A WITH MACRON */
@@ -206,8 +183,8 @@ int main(void)
 	maptab[0x012f] = 0x012f; /* LATIN SMALL LETTER I WITH OGONEK */
 	maptab[0x0130] = 0x0130; /* LATIN CAPITAL LETTER I WITH DOT ABOVE */
 	maptab[0x0131] = 0x0131; /* LATIN SMALL LETTER DOTLESS I */
-	/* maptab[0x0132] = 0x00c1; */ /* LATIN CAPITAL LIGATURE IJ */
-	/* maptab[0x0133] = 0x00c0; */ /* LATIN SMALL LIGATURE IJ */
+	maptab[0x0132] = 0x00c1; /* LATIN CAPITAL LIGATURE IJ */
+	maptab[0x0133] = 0x00c0; /* LATIN SMALL LIGATURE IJ */
 	maptab[0x0134] = 0x0134; /* LATIN CAPITAL LETTER J WITH CIRCUMFLEX */
 	maptab[0x0135] = 0x0135; /* LATIN SMALL LETTER J WITH CIRCUMFLEX */
 	maptab[0x0136] = 0x0136; /* LATIN CAPITAL LETTER K WITH CEDILLA */
@@ -215,22 +192,39 @@ int main(void)
 	maptab[0x0138] = 0x0138; /* LATIN SMALL LETTER KRA */
 	maptab[0x0139] = 0x0139; /* LATIN CAPITAL LETTER L WITH ACUTE */
 	maptab[0x013a] = 0x013a; /* LATIN SMALL LETTER L WITH ACUTE */
+	maptab[0x013b] = 0x013b; /* LATIN CAPITAL LETTER L WITH CEDILLA */
+	maptab[0x013c] = 0x013c; /* LATIN SMALL LETTER L WITH CEDILLA */
 	maptab[0x013d] = 0x013d; /* LATIN CAPITAL LETTER L WITH CARON */
 	maptab[0x013e] = 0x013e; /* LATIN SMALL LETTER L WITH CARON */
+	maptab[0x013f] = 0x013f; /* LATIN CAPITAL LETTER L WITH MIDDLE DOT */
+	maptab[0x0140] = 0x0140; /* LATIN SMALL LETTER L WITH MIDDLE DOT */
 	maptab[0x0141] = 0x0141; /* LATIN CAPITAL LETTER L WITH STROKE */
 	maptab[0x0142] = 0x0142; /* LATIN SMALL LETTER L WITH STROKE */
 	maptab[0x0143] = 0x0143; /* LATIN CAPITAL LETTER N WITH ACUTE */
 	maptab[0x0144] = 0x0144; /* LATIN SMALL LETTER N WITH ACUTE */
+	maptab[0x0145] = 0x0145; /* LATIN CAPITAL LETTER N WITH CEDILLA */
+	maptab[0x0146] = 0x0146; /* LATIN SMALL LETTER N WITH CEDILLA */
 	maptab[0x0147] = 0x0147; /* LATIN CAPITAL LETTER N WITH CARON */
 	maptab[0x0148] = 0x0148; /* LATIN SMALL LETTER N WITH CARON */
+	maptab[0x0149] = 0x0149; /* LATIN SMALL LETTER N PRECEDED BY APOSTROPHE */
+	maptab[0x014a] = 0x014a; /* LATIN CAPITAL LETTER ENG */
+	maptab[0x014b] = 0x014b; /* LATIN SMALL LETTER ENG */
+	maptab[0x014c] = 0x014c; /* LATIN CAPITAL LETTER O WITH MACRON */
+	maptab[0x014d] = 0x014d; /* LATIN SMALL LETTER O WITH MACRON */
+	maptab[0x014e] = 0x014e; /* LATIN CAPITAL LETTER O WITH BREVE */
+	maptab[0x014f] = 0x014f; /* LATIN SMALL LETTER O WITH BREVE */
 	maptab[0x0150] = 0x0150; /* LATIN CAPITAL LETTER O WITH DOUBLE ACUTE */
 	maptab[0x0151] = 0x0151; /* LATIN SMALL LETTER O WITH DOUBLE ACUTE */
 	maptab[0x0154] = 0x0154; /* LATIN CAPITAL LETTER R WITH ACUTE */
 	maptab[0x0155] = 0x0155; /* LATIN SMALL LETTER R WITH ACUTE */
+	maptab[0x0156] = 0x0156; /* LATIN CAPITAL LETTER R WITH CEDILLA */
+	maptab[0x0157] = 0x0157; /* LATIN SMALL LETTER R WITH CEDILLA */
 	maptab[0x0158] = 0x0158; /* LATIN CAPITAL LETTER R WITH CARON */
 	maptab[0x0159] = 0x0159; /* LATIN SMALL LETTER R WITH CARON */
 	maptab[0x015a] = 0x015a; /* LATIN CAPITAL LETTER S WITH ACUTE */
 	maptab[0x015b] = 0x015b; /* LATIN SMALL LETTER S WITH ACUTE */
+	maptab[0x015c] = 0x015c; /* LATIN CAPITAL LETTER S WITH CIRCUMFLEX */
+	maptab[0x015d] = 0x015d; /* LATIN SMALL LETTER S WITH CIRCUMFLEX */
 	maptab[0x015e] = 0x015e; /* LATIN CAPITAL LETTER S WITH CEDILLA */
 	maptab[0x015f] = 0x015f; /* LATIN SMALL LETTER S WITH CEDILLA */
 	maptab[0x0160] = 0x0160; /* LATIN CAPITAL LETTER S WITH CARON */
@@ -239,10 +233,24 @@ int main(void)
 	maptab[0x0163] = 0x0163; /* LATIN SMALL LETTER T WITH CEDILLA */
 	maptab[0x0164] = 0x0164; /* LATIN CAPITAL LETTER T WITH CARON */
 	maptab[0x0165] = 0x0165; /* LATIN SMALL LETTER T WITH CARON */
+	maptab[0x0166] = 0x0166; /* LATIN CAPITAL LETTER T WITH STROKE */
+	maptab[0x0167] = 0x0167; /* LATIN SMALL LETTER T WITH STROKE */
+	maptab[0x0168] = 0x0168; /* LATIN CAPITAL LETTER U WITH TILDE */
+	maptab[0x0169] = 0x0169; /* LATIN SMALL LETTER U WITH TILDE */
+	maptab[0x016a] = 0x016a; /* LATIN CAPITAL LETTER U WITH MACRON */
+	maptab[0x016b] = 0x016b; /* LATIN SMALL LETTER U WITH MACRON */
+	maptab[0x016c] = 0x016c; /* LATIN CAPITAL LETTER U WITH BREVE */
+	maptab[0x016d] = 0x016d; /* LATIN SMALL LETTER U WITH BREVE */
 	maptab[0x016e] = 0x016e; /* LATIN CAPITAL LETTER U WITH RING ABOVE */
 	maptab[0x016f] = 0x016f; /* LATIN SMALL LETTER U WITH RING ABOVE */
 	maptab[0x0170] = 0x0170; /* LATIN CAPITAL LETTER U WITH DOUBLE ACUTE */
 	maptab[0x0171] = 0x0171; /* LATIN SMALL LETTER U WITH DOUBLE ACUTE */
+	maptab[0x0172] = 0x0172; /* LATIN CAPITAL LETTER U WITH OGONEK */
+	maptab[0x0173] = 0x0173; /* LATIN SMALL LETTER U WITH OGONEK */
+	maptab[0x0174] = 0x0174; /* LATIN CAPITAL LETTER W WITH CIRCUMFLEX */
+	maptab[0x0175] = 0x0175; /* LATIN SMALL LETTER W WITH CIRCUMFLEX */
+	maptab[0x0176] = 0x0176; /* LATIN CAPITAL LETTER Y WITH CIRCUMFLEX */
+	maptab[0x0177] = 0x0177; /* LATIN SMALL LETTER Y WITH CIRCUMFLEX */
 	maptab[0x0178] = 0x0178; /* LATIN CAPITAL LETTER Y WITH DIAERESIS */
 	maptab[0x0179] = 0x0179; /* LATIN CAPITAL LETTER Z WITH ACUTE */
 	maptab[0x017a] = 0x017a; /* LATIN SMALL LETTER Z WITH ACUTE */
@@ -250,6 +258,7 @@ int main(void)
 	maptab[0x017c] = 0x017c; /* LATIN SMALL LETTER Z WITH DOT ABOVE */
 	maptab[0x017d] = 0x017d; /* LATIN CAPITAL LETTER Z WITH CARON */
 	maptab[0x017e] = 0x017e; /* LATIN SMALL LETTER Z WITH CARON */
+	maptab[0x017f] = 0x017f; /* LATIN SMALL LETTER LONG S */
 	maptab[0x02c7] = 0x02c7; /* CARON */
 	maptab[0x02d8] = 0x02d8; /* BREVE */
 	maptab[0x02d9] = 0x02d9; /* DOT ABOVE */
@@ -269,12 +278,12 @@ int main(void)
 	maptab[0x0390] = 0x0390; /* GREEK SMALL LETTER IOTA WITH DIALYTIKA AND TONOS */
 	maptab[0x0391] = 0x0391; /* GREEK CAPITAL LETTER ALPHA */
 	maptab[0x0392] = 0x0392; /* GREEK CAPITAL LETTER BETA */
-	/* maptab[0x0393] = 0x00e2; */ /* GREEK CAPITAL LETTER GAMMA */
+	maptab[0x0393] = 0x00e2; /* GREEK CAPITAL LETTER GAMMA */
 	maptab[0x0394] = 0x0394; /* GREEK CAPITAL LETTER DELTA */
 	maptab[0x0395] = 0x0395; /* GREEK CAPITAL LETTER EPSILON */
 	maptab[0x0396] = 0x0396; /* GREEK CAPITAL LETTER ZETA */
 	maptab[0x0397] = 0x0397; /* GREEK CAPITAL LETTER ETA */
-	/* maptab[0x0398] = 0x00e9; */ /* GREEK CAPITAL LETTER THETA */
+	maptab[0x0398] = 0x00e9; /* GREEK CAPITAL LETTER THETA */
 	maptab[0x0399] = 0x0399; /* GREEK CAPITAL LETTER IOTA */
 	maptab[0x039a] = 0x039a; /* GREEK CAPITAL LETTER KAPPA */
 	maptab[0x039b] = 0x039b; /* GREEK CAPITAL LETTER LAMDA */
@@ -284,13 +293,13 @@ int main(void)
 	maptab[0x039f] = 0x039f; /* GREEK CAPITAL LETTER OMICRON */
 	maptab[0x03a0] = 0x03a0; /* GREEK CAPITAL LETTER PI */
 	maptab[0x03a1] = 0x03a1; /* GREEK CAPITAL LETTER RHO */
-	/* maptab[0x03a3] = 0x00e4; */ /* GREEK CAPITAL LETTER SIGMA */
+	maptab[0x03a3] = 0x00e4; /* GREEK CAPITAL LETTER SIGMA */
 	maptab[0x03a4] = 0x03a4; /* GREEK CAPITAL LETTER TAU */
 	maptab[0x03a5] = 0x03a5; /* GREEK CAPITAL LETTER UPSILON */
-	/* maptab[0x03a6] = 0x00e8; */ /* GREEK CAPITAL LETTER PHI */
+	maptab[0x03a6] = 0x00e8; /* GREEK CAPITAL LETTER PHI */
 	maptab[0x03a7] = 0x03a7; /* GREEK CAPITAL LETTER CHI */
 	maptab[0x03a8] = 0x03a8; /* GREEK CAPITAL LETTER PSI */
-	/* maptab[0x03a9] = 0x00ea; */ /* GREEK CAPITAL LETTER OMEGA */
+	maptab[0x03a9] = 0x00ea; /* GREEK CAPITAL LETTER OMEGA */
 	maptab[0x03aa] = 0x03aa; /* GREEK CAPITAL LETTER IOTA WITH DIALYTIKA */
 	maptab[0x03ab] = 0x03ab; /* GREEK CAPITAL LETTER UPSILON WITH DIALYTIKA */
 	maptab[0x03ac] = 0x03ac; /* GREEK SMALL LETTER ALPHA WITH TONOS */
@@ -298,10 +307,10 @@ int main(void)
 	maptab[0x03ae] = 0x03ae; /* GREEK SMALL LETTER ETA WITH TONOS */
 	maptab[0x03af] = 0x03af; /* GREEK SMALL LETTER IOTA WITH TONOS */
 	maptab[0x03b0] = 0x03b0; /* GREEK SMALL LETTER UPSILON WITH DIALYTIKA AND TONOS */
-	/* maptab[0x03b1] = 0x00e0; */ /* GREEK SMALL LETTER ALPHA */
-	/* maptab[0x03b2] = 0x00e1; */ /* GREEK SMALL LETTER BETA */
+	maptab[0x03b1] = 0x00e0; /* GREEK SMALL LETTER ALPHA */
+	maptab[0x03b2] = 0x00e1; /* GREEK SMALL LETTER BETA */
 	maptab[0x03b3] = 0x03b3; /* GREEK SMALL LETTER GAMMA */
-	/* maptab[0x03b4] = 0x00eb; */ /* GREEK SMALL LETTER DELTA */
+	maptab[0x03b4] = 0x00eb; /* GREEK SMALL LETTER DELTA */
 	maptab[0x03b5] = 0x03b5; /* GREEK SMALL LETTER EPSILON */
 	maptab[0x03b6] = 0x03b6; /* GREEK SMALL LETTER ZETA */
 	maptab[0x03b7] = 0x03b7; /* GREEK SMALL LETTER ETA */
@@ -309,17 +318,17 @@ int main(void)
 	maptab[0x03b9] = 0x03b9; /* GREEK SMALL LETTER IOTA */
 	maptab[0x03ba] = 0x03ba; /* GREEK SMALL LETTER KAPPA */
 	maptab[0x03bb] = 0x03bb; /* GREEK SMALL LETTER LAMDA */
-	/* maptab[0x03bc] = 0x00e6; */ /* GREEK SMALL LETTER MU */
+	maptab[0x03bc] = 0x03bc; /* GREEK SMALL LETTER MU */
 	maptab[0x03bd] = 0x03bd; /* GREEK SMALL LETTER NU */
 	maptab[0x03be] = 0x03be; /* GREEK SMALL LETTER XI */
 	maptab[0x03bf] = 0x03bf; /* GREEK SMALL LETTER OMICRON */
-	/* maptab[0x03c0] = 0x00e3; */ /* GREEK SMALL LETTER PI */
+	maptab[0x03c0] = 0x00e3; /* GREEK SMALL LETTER PI */
 	maptab[0x03c1] = 0x03c1; /* GREEK SMALL LETTER RHO */
 	maptab[0x03c2] = 0x03c2; /* GREEK SMALL LETTER FINAL SIGMA */
-	/* maptab[0x03c3] = 0x00e5; */ /* GREEK SMALL LETTER SIGMA */
-	/* maptab[0x03c4] = 0x00e7; */ /* GREEK SMALL LETTER TAU */
+	maptab[0x03c3] = 0x00e5; /* GREEK SMALL LETTER SIGMA */
+	maptab[0x03c4] = 0x00e7; /* GREEK SMALL LETTER TAU */
 	maptab[0x03c5] = 0x03c5; /* GREEK SMALL LETTER UPSILON */
-	/* maptab[0x03c6] = 0x00ed; */ /* GREEK SMALL LETTER PHI */
+	maptab[0x03c6] = 0x00ed; /* GREEK SMALL LETTER PHI */
 	maptab[0x03c7] = 0x03c7; /* GREEK SMALL LETTER CHI */
 	maptab[0x03c8] = 0x03c8; /* GREEK SMALL LETTER PSI */
 	maptab[0x03c9] = 0x03c9; /* GREEK SMALL LETTER OMEGA */
@@ -411,6 +420,27 @@ int main(void)
 	maptab[0x044d] = 0x044d; /* CYRILLIC SMALL LETTER E */
 	maptab[0x044e] = 0x044e; /* CYRILLIC SMALL LETTER YU */
 	maptab[0x044f] = 0x044f; /* CYRILLIC SMALL LETTER YA */
+
+	maptab[0x2025] = 0x2025; /* TWO DOT LEADER */
+	maptab[0x2070] = 0x2070; /* SUPERSCRIPT ZERO */
+	maptab[0x2116] = 0x2116; /* NUMERO SIGN */
+	maptab[0x2153] = 0x2153; /* VULGAR FRACTION ONE THIRD */
+	maptab[0x25a0] = 0x25a0; /* BLACK SQUARE */
+	
+	/*
+	 * 0xde in the table above is mapped to the
+	 * original definition (0x2227 = logical and)
+	 * Some prefer to map it to euro sign instead.
+	 * Do so at least in reverse lookup.
+	 */
+	maptab[0x00a4] = 0xde; /* currency sign */
+	maptab[0x20ac] = 0xde; /* euro sign */
+	maptab[0x2038] = 0xde; /* caret; some atari programs use this for the missing euro sign */
+
+	maptab[0x2022] = 0xf9; /* bullet */
+	maptab[0x03bc] = 0xe6; /* micro sign */
+	maptab[0x00ad] = '-';  /* soft hyphen */
+	maptab[0x00a0] = ' ';  /* no-break space */
 	
 	printf("/* generated by genmaptab.c -- DO NOT EDIT */\n");
 	printf("\n");
