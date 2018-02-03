@@ -206,6 +206,35 @@ int DlgPartition::processDialogMain(void)
 			selectPartPath(3);
 			break;
 
+		case PART0_CLEAR:
+			part_path[0][0] = '\0';
+			part_size[0][0] = '\0';
+			setSelected(PARTS_PRESENT[0], false);
+			setSelected(PARTS_READONLY[0], false);
+			setSelected(PARTS_BYTESWAP[0], false);
+			break;
+		case PART1_CLEAR:
+			part_path[1][0] = '\0';
+			part_size[1][0] = '\0';
+			setSelected(PARTS_PRESENT[1], false);
+			setSelected(PARTS_READONLY[1], false);
+			setSelected(PARTS_BYTESWAP[1], false);
+			break;
+		case PART2_CLEAR:
+			part_path[2][0] = '\0';
+			part_size[2][0] = '\0';
+			setSelected(PARTS_PRESENT[2], false);
+			setSelected(PARTS_READONLY[2], false);
+			setSelected(PARTS_BYTESWAP[2], false);
+			break;
+		case PART3_CLEAR:
+			part_path[3][0] = '\0';
+			part_size[3][0] = '\0';
+			setSelected(PARTS_PRESENT[3], false);
+			setSelected(PARTS_READONLY[3], false);
+			setSelected(PARTS_BYTESWAP[3], false);
+			break;
+
 		case PART0_GENERATE:
 			init_create_disk_image(0);
 			break;

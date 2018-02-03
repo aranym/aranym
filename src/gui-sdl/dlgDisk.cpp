@@ -326,16 +326,53 @@ int DlgDisk::processDialogMain(void)
 			state = STATE_FSEL_FD0;
 			break;
 
+		case FLP_CLEAR:		/* Choose a new disc A: */
+			gui_options.floppy.path[0] = '\0';
+			floppy_path[0] = '\0';
+			setState(FLP_PATH, SG_DISABLED, true);
+			state = STATE_MAIN;
+			getFDC()->remove_floppy();
+			UpdateFloppyStatus();
+			break;
+
 		case IDE0_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][0].path);
 			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, true));
 			state = STATE_FSEL_IDE0;
 			break;
 
+		case IDE0_CLEAR:
+			gui_options.atadevice[0][0].path[0] = '\0';
+			ide0_path[0] = '\0';
+			strcpy(ide0_cyl, "0");
+			strcpy(ide0_head, "0");
+			strcpy(ide0_spt, "0");
+			strcpy(ide0_size, "0");
+			setSelected(IDE0_PRESENT, false);
+			setSelected(IDE0_CDROM, false);
+			setSelected(IDE0_READONLY, false);
+			setSelected(IDE0_BYTESWAP, false);
+			state = STATE_MAIN;
+			break;
+
 		case IDE1_BROWSE:
 			strcpy(tmpname, gui_options.atadevice[0][1].path);
 			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, true));
 			state = STATE_FSEL_IDE1;
+			break;
+
+		case IDE1_CLEAR:
+			gui_options.atadevice[0][1].path[0] = '\0';
+			ide1_path[0] = '\0';
+			strcpy(ide1_cyl, "0");
+			strcpy(ide1_head, "0");
+			strcpy(ide1_spt, "0");
+			strcpy(ide1_size, "0");
+			setSelected(IDE1_PRESENT, false);
+			setSelected(IDE1_CDROM, false);
+			setSelected(IDE1_READONLY, false);
+			setSelected(IDE1_BYTESWAP, false);
+			state = STATE_MAIN;
 			break;
 
 		case IDE0_GENERATE:

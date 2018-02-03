@@ -48,6 +48,8 @@ class DlgOs: public Dialog
 
 		void processResultTos(void);
 		void processResultEmutos(void);
+		void processResultTosClear(void);
+		void processResultEmutosClear(void);
 		void processResultSnapshotDir(void);
 
 		void confirm(void);

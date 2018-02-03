@@ -159,6 +159,13 @@ int DlgHostfs::processDialog(void)
 		options.drive[return_obj - HOSTFSDLG_FIRSTCASE + ypos].halfSensitive = (dlg[return_obj].state & SG_SELECTED) == 0;
 	}
 
+	if ((return_obj >= HOSTFSDLG_FIRSTCLEAR) && (return_obj < HOSTFSDLG_LASTCLEAR)) {
+		selected = return_obj - HOSTFSDLG_FIRSTCLEAR + ypos;
+		options.drive[selected].rootPath[0] = '\0';
+		dlgfilenames[selected][0] = '\0';
+		refreshentries = true;
+	}
+
 	if (refreshentries) {
 		refreshEntries();
 	}

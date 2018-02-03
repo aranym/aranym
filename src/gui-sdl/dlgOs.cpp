@@ -108,10 +108,22 @@ int DlgOs::processDialogMain(void)
 			state = STATE_FSEL_TOS;
 			break;
 
+		case MCH_TOS_CLEAR:
+			strcpy(tos_options.tos_path, "");
+			strcpy(tos_path, "");
+			state = STATE_MAIN;
+			break;
+
 		case MCH_EMUTOS_BROWSE:
  			strcpy(tmpname, tos_options.emutos_path);
 			SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
 			state = STATE_FSEL_EMUTOS;
+			break;
+
+		case MCH_EMUTOS_CLEAR:
+			strcpy(tos_options.emutos_path, "");
+			strcpy(emutos_path, "");
+			state = STATE_MAIN;
 			break;
 
 		case SNAPSHOT_DIR:
