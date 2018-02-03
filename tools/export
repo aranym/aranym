@@ -47,6 +47,11 @@ if [ $? -ne 0 ]; then
 	echo "ERROR: increase version in README"
 	exit 1
 fi
+grep "[Vv]ersion "$VERSION aranym/README.md >/dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: increase version in README.md"
+	exit 1
+fi
 grep "%define ver" aranym/aranym.spec | grep $VERSION >/dev/null
 if [ $? -ne 0 ]; then
 	echo "ERROR: increase version in aranym.spec"

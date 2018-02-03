@@ -285,7 +285,7 @@ gldiff:
 	$(PERL) $(DYNGL_PL) $(GLENUMS) -tinyslbsource $(top_srcdir)/tools/glfuncs.h | diff $(top_srcdir)/atari/nfosmesa/tinygl_loadslb.c - || true
 
 EXTRA_DIST = \
-	BUGS FAQ README-cygwin.in \
+	BUGS FAQ README.md README-cygwin.in \
 	aranym.spec autogen.sh \
 	android atari contrib data tools \
 	appimage/build.sh \

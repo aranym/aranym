@@ -1,0 +1,132 @@
+[![Build Status](https://travis-ci.org/aranym/aranym.svg?branch=master)](https://travis-ci.org/aranym/aranym)
+
+      ARAnyM (Atari Running on Any Machine)
+      version 1.0.2 released on 2014/10/17
+
+
+ 1) License
+ ----------
+
+    ARAnyM is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    ARAnyM is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with ARAnyM; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+
+ 2) What is this?
+ ----------------
+
+ARAnyM is a multiplatform virtual machine (a software layer, or an emulator)
+for running Atari ST/TT/Falcon operating systems and applications on almost
+any hardware with many host operating systems.
+The reason for writing ARAnyM is to provide Atari power users with
+faster and better machines. The ultimate goal is to create a new platform
+where TOS/GEM applications could continue to live forever.
+
+ Features:
+ ---------
+   o 68040 CPU (including MMU040)
+   o 68040 and 68881/2 FPU
+   o 14 MB ST-RAM and up to 3824 MB (configurable) of FastRAM
+   o VIDEL, Blitter, MFP, SCC, ACIA, IKBD for highest possible compatibility
+   o Sound (compatible with Atari Falcon DMA Sound)
+   o Atari floppy DD/HD for connecting floppy image or real floppy drive
+   o two IDE channels for connecting disk images, harddrives or CD-ROMs
+   o extended keyboard and mouse support (including mouse wheel)
+   o direct access to host file system via BetaDOS and MiNT xfs drivers
+   o networking using ethernet emulation with a driver for MiNT-Net
+   o TOS 4.04, EmuTOS, MagiC or Linux-m68k as the boot operating system
+   o runs with FreeMiNT, MagiC, and any other operating system that runs
+     also on real Atari computer.
+   o Native CD-ROM access (under Linux, other OS: audio CD only), without
+     scsi/ide/whatsoever emulation
+   o USB and PCI NatFeat support for developing Atari drivers on ARAnyM
+
+Important: ARAnyM is not finished. Consider this to be a beta version
+and a work-in-progress. Sorry for incomplete and confusing documentation.
+Any help with programming/documentation/porting is very welcome!
+
+
+ 3) Installing
+ -------------
+
+See INSTALL file and http://wiki.aranym.org/
+
+
+ 4) Configuring and running
+ --------------------------
+
+See http://wiki.aranym.org/
+
+
+ 5) Keyboard shortcuts
+ ---------------------
+
+Keys not found on a PC keyboard:
+--------------------------------
+
+Atari Help key - mapped on the F11
+Atari Undo key - mapped on the F12
+
+Keys not found on Atari keyboard:
+---------------------------------
+
+Page Up key    - mapped as Shift+Arrow Up (usual combination in GEM apps)
+Page Down key  - mapped as Shift+Arrow Down (usual combo in GEM apps)
+
+Special keys (most can be re-defined in the SETUP):
+-------------
+Pause/Break    - invoke SETUP GUI (ARAnyM on-the-fly configuration)
+Shift+Pause    - QUIT ARAnyM
+Ctrl+Pause     - REBOOT ARAnyM
+Alt+Pause      - enter integrated debugger (only if started with "-D")
+
+PrintScreen    - create a screenshot in actual directory
+
+Alt+Ctrl+Shift+Esc - release the keyboard/mouse input focus so you can use
+                 your keyboard and mouse in other host applications.
+                 Can be changed to other key combo in the Settings.
+                 Middle mouse does the same job.
+
+Scroll Lock    - switch between windowed and fullscreen mode
+
+
+ 10) Troubleshooting
+ ------------------
+
+If your Microsoft IntelliMouse doesn't work correctly on Linux framebuffer
+console you may want to set the SDL_MOUSEDEV_IMPS2 environment variable to 1.
+
+Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
+
+
+ 11) More information
+ --------------------
+
+ Read the NEWS file for user visible changes.
+
+ Read ChangeLog for internal changes.
+ Look at TODO if you want to help us.
+
+ Join our mailing list for ARAnyM users - the WEB interface for the list
+ is at https://lists.bobek.cz/mailman/listinfo/cz-bobek-lists-aranym-user
+
+ Visit http://aranym.org/ for latest information and source code.
+
+ Help us improve the Wiki documentation at http://wiki.aranym.org/
+
+ For developers we have a developer mailing list and a CVS server.
+ For details go to http://aranym.org/
+
+
+The "Power Without The Price" is back!
