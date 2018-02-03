@@ -1,3 +1,7 @@
+2018/02/03 - Thorsten
+Remove CRs
+
+
 2018/02/01 - Thorsten
 Add some more characters to the font, and reorder it
 to use unicode indices. Also add the sources needed to rebuild it.
