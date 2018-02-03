@@ -1,3 +1,8 @@
+2018/02/03 - Thorsten
+Copy back the input fields in the hostfs dialog before scrolling,
+in case they have been edited
+
+
 2018/02/03 - Christian
 Add some clear buttons to several setting dialogs.
 In the setting dialogs it was not possible to remove selected

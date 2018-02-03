@@ -31,6 +31,7 @@
 #include "dlgFileSelect.h"
 #include "nf_base.h"
 #include <assert.h>
+#include "verify.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -49,6 +50,10 @@ static char dlgdrives[ENTRY_COUNT][3];
 /* The dialog data: */
 #define SDLGUI_INCLUDE_HOSTFSDLG
 #include "sdlgui.sdl"
+
+verify((HOSTFSDLG_LASTENTRY - HOSTFSDLG_FIRSTENTRY + 1) == ENTRY_COUNT);
+verify((HOSTFSDLG_LASTCASE - HOSTFSDLG_FIRSTCASE + 1) == ENTRY_COUNT);
+verify((HOSTFSDLG_LASTCLEAR - HOSTFSDLG_FIRSTCLEAR + 1) == ENTRY_COUNT);
 
 static const char *HELP_TEXT =
 	"For accessing data on a host filesystem you can map the host fs to a logical drive in TOS or MiNT.\n"
@@ -118,6 +123,7 @@ int DlgHostfs::processDialog(void)
 
 	switch (return_obj) {
 		case HOSTFSDLG_UP:
+			updateEntries();
 			/* Scroll up */
 			if (ypos > 0) {
 				--ypos;
@@ -125,6 +131,7 @@ int DlgHostfs::processDialog(void)
 			}
 			break;
 		case HOSTFSDLG_DOWN:
+			updateEntries();
 			/* Scroll down */
 			if (ypos < (HOSTFS_MAX_DRIVES - ENTRY_COUNT)) {
 				++ypos;
@@ -133,10 +140,12 @@ int DlgHostfs::processDialog(void)
 			break;
 
 		case HELP:
+			updateEntries();
 			SDLGui_Open(DlgAlertOpen(HELP_TEXT, ALERT_OK));
 			break;
 
 		case HOSTFSDLG_OKAY:
+			updateEntries();
 			pressed_ok = true;
 			confirm();
 			/* fall through */
@@ -149,7 +158,7 @@ int DlgHostfs::processDialog(void)
 	}
 
 	/* Has the user clicked on the path? */
-	if ((return_obj >= HOSTFSDLG_FIRSTENTRY) && (return_obj <= HOSTFSDLG_LASTENTRY)) {
+	if ((return_obj >= HOSTFSDLG_FIRSTENTRY) && (return_obj < (HOSTFSDLG_FIRSTENTRY + ENTRY_COUNT))) {
 		selected = return_obj - HOSTFSDLG_FIRSTENTRY + ypos;
 		strcpy(tmpname, options.drive[selected].rootPath);
 		SDLGui_Open(dlgFileSelect = (DlgFileSelect*)DlgFileSelectOpen(tmpname, false));
@@ -159,7 +168,7 @@ int DlgHostfs::processDialog(void)
 		options.drive[return_obj - HOSTFSDLG_FIRSTCASE + ypos].halfSensitive = (dlg[return_obj].state & SG_SELECTED) == 0;
 	}
 
-	if ((return_obj >= HOSTFSDLG_FIRSTCLEAR) && (return_obj < HOSTFSDLG_LASTCLEAR)) {
+	if ((return_obj >= HOSTFSDLG_FIRSTCLEAR) && (return_obj < (HOSTFSDLG_FIRSTCLEAR + ENTRY_COUNT))) {
 		selected = return_obj - HOSTFSDLG_FIRSTCLEAR + ypos;
 		options.drive[selected].rootPath[0] = '\0';
 		dlgfilenames[selected][0] = '\0';
@@ -201,6 +210,18 @@ void DlgHostfs::refreshEntries(void)
 
 		refreshentries = false;
 		redraw = true;
+	}
+}
+
+void DlgHostfs::updateEntries(void)
+{
+	int i;
+	
+	/* Copy entries from dialog to options: */
+	for (i = 0; i < ENTRY_COUNT; i++) {
+		if ((i + ypos) < HOSTFS_MAX_DRIVES) {
+			strcpy(options.drive[i + ypos].rootPath, dlgfilenames[i]);
+		}
 	}
 }
 

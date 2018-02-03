@@ -47,6 +47,7 @@ class DlgHostfs: public Dialog
  		void idle(void);
 		void processResult(void);
 		void refreshEntries(void);
+		void updateEntries(void);
 
 	public:
 		DlgHostfs(SGOBJ *dlg);
