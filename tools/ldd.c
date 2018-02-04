@@ -446,7 +446,7 @@ static int dump_import_directory(wchar_t *search_path, const void *const section
 				ret |= 1;
 			} else
 			{
-				if (strncmp(fn, "API-MS-", 7) != 0)
+				if (strncmp(fn, "API-MS-", 7) != 0 && strncmp(fn, "api-ms-", 7) != 0)
 				{
 					print_fn = tocyg(full_path);
 				} else

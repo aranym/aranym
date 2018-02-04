@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/aranym/aranym.svg?branch=master)](https://travis-ci.org/aranym/aranym)
 
+Latest snapshot: [![Download](https://api.bintray.com/packages/aranym/aranym-files/snapshots/images/download.svg) ](https://bintray.com/aranym/aranym-files/snapshots/_latestVersion#files)
+Latest release: [![Download](https://api.bintray.com/packages/aranym/aranym-files/releases/images/download.svg) ](https://bintray.com/aranym/aranym-files/releases/_latestVersion#files)
+
       ARAnyM (Atari Running on Any Machine)
       version 1.0.2 released on 2014/10/17
 

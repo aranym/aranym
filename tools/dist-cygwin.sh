@@ -22,7 +22,11 @@ major=`sed -n -e 's/#define[ \t]*VER_MAJOR[ \t]*\([0-9]*\)/\1/p' $versfile`
 minor=`sed -n -e 's/#define[ \t]*VER_MINOR[ \t]*\([0-9]*\)/\1/p' $versfile`
 micro=`sed -n -e 's/#define[ \t]*VER_MICRO[ \t]*\([0-9]*\)/\1/p' $versfile`
 
-version=$major.$minor.$micro
+PROJECT_LOWER=aranym
+VERSION=$major.$minor.$micro
+archive_tag=-cygwin-i386
+ATAG=${VERSION}${archive_tag}
+
 #
 # recent version of cygwin have the mingw libraries installed
 # in a sys-rooted cross-compiler environment
@@ -41,10 +45,10 @@ if test `uname -m` = x86_64; then
 	exit 1
 fi
 
-date=`sed -n -e 's/#define[ \t]*VERSION_DATE[ \t]*"\([^"]*\)"/\1/p' $datefile`
+DATE=`sed -n -e 's/#define[ \t]*VERSION_DATE[ \t]*"\([^"]*\)"/\1/p' $datefile`
 
-echo version=$version
-echo date=$date
+echo VERSION=$VERSION
+echo DATE=$DATE
 rm -f $log
 
 trap 'rm -f $log' 1 2 3 15
@@ -59,7 +63,7 @@ function build() {
 	esac
 	
 	echo "configuring aranym-mmu..."
-	./configure $CONFIGURE_ARGS $sdloption --enable-fullmmu >> $log 2>&1 || {
+	./configure $CONFIGURE_ARGS $sdloption --enable-fullmmu --enable-lilo >> $log 2>&1 || {
 		echo "configuring aranym-mmu failed; see $log for details" >&2
 		exit 1
 	}
@@ -90,7 +94,7 @@ function build() {
 	
 	echo "configuring aranym..."
 	./configure $CONFIGURE_ARGS $sdloption >> $log 2>&1 || {
-		echo "configuring aranym-mmu failed; see $log for details" >&2
+		echo "configuring aranym failed; see $log for details" >&2
 		exit 1
 	}
 	echo "building aranym..."
@@ -122,12 +126,12 @@ function mkdist() {
 	sdldef=-DSDL=${sdlname}
 	
 	tmpdir="${TMPDIR:-/tmp}"
-	distdir="$tmpdir/aranym-$version${sdlname}"
+	distdir="$tmpdir/${PROJECT_LOWER}-$VERSION${sdlname}"
 	
 	mkdir -p "$distdir/doc" "$distdir/aranym" || exit 1
 	
 	cp -a COPYING "$distdir/COPYING.txt" || exit 1
-	sed -e "s|@VERSION@|$version|g" -e "s|@DATE@|$date|g" README-cygwin.in > "$distdir/README.txt" || exit 1
+	sed -e "s|@VERSION@|$VERSION|g" -e "s|@DATE@|$DATE|g" README-cygwin.in > "$distdir/README.txt" || exit 1
 	for f in AUTHORS BUGS README ChangeLog FAQ INSTALL NEWS TODO; do
 		cp -a $f "$distdir/doc/$f.txt" || exit 1
 	done
@@ -146,27 +150,33 @@ function mkdist() {
 	  done
 	)
 	
-	dlls=
+	unset dlls
+	declare -a dlls
+	save_IFS=$IFS
+	IFS='
+'
 	for f in aranym.exe aranym-jit.exe aranym-mmu.exe; do
-		cp -a $f "$distdir" || exit 1
-		dlls="$dlls `./ldd.exe --path $f`"
+		cp -a "$f" "$distdir" || exit 1
+		dlls+=(`./ldd.exe --path $f`)
 	done
-	copydlls=
-	for dll in $dlls; do
+	IFS=$save_IFS
+	unset copydlls
+	declare -a copydlls
+	for dll in "${dlls[@]}"; do
 		lower="`echo $dll | tr '[A-Z]' '[a-z]'`"
 		case $lower in
 		*/system32/* | */syswow64/* )
 			continue ;;
-		notfound:SDL.dll)
+		notfound:sdl.dll)
 			dll=$MINGW_ROOT/bin/SDL.dll
 			;;
-		notfound:SDL_image.dll)
+		notfound:sdl_image.dll)
 			dll=$MINGW_ROOT/bin/SDL_image.dll
 			;;
-		notfound:SDL2.dll)
+		notfound:sdl2.dll)
 			dll=$MINGW_ROOT/bin/SDL2.dll
 			;;
-		notfound:SDL2_image.dll)
+		notfound:sdl2_image.dll)
 			dll=$MINGW_ROOT/bin/SDL2_image.dll
 			;;
 		notfound:libgcc_s_sjlj-1.dll)
@@ -181,18 +191,20 @@ function mkdist() {
 		*)
 			;;
 		esac
-		copydlls="$copydlls $dll"
+		copydlls+=("$dll")
 	done
 
-	for f in $copydlls; do
+	for f in "${copydlls[@]}"; do
 		cp -a "$f" "$distdir" || exit 1
 	done
 	
+	ARCHIVE="${PROJECT_LOWER}-${ATAG}${sdlname}.zip"
+	SETUP_EXE="${PROJECT_LOWER}-${ATAG}${sdlname}-setup.exe"
 	( cd "$tmpdir"
-	  zip -r aranym-$version${sdlname}-cygwin.zip aranym-$version${sdlname}
+	  zip -r "$ARCHIVE" ${PROJECT_LOWER}-$VERSION${sdlname}
 	) || exit 1
 	
-	echo "$tmpdir/aranym-$version${sdlname}-cygwin.zip ready for release"
+	echo "$tmpdir/$ARCHIVE ready for release"
 	
 	nsis=`cygpath "$PROGRAMFILES"`/NSIS/makensis.exe
 	if test -x "$nsis"; then
@@ -201,10 +213,10 @@ function mkdist() {
 	    echo "creating Windows installer"
 	    find . -type d | sed -e 's|^./\(.*\)$|${CreateDirectory} "$INSTDIR\\\1"|' -e '/^\.$/d' | tr '/' '\\' > ../aranym.files
 	    find . -type f | sed -e 's|^./\(.*\)$|${File} "\1"|' | tr '/' '\\' >> ../aranym.files
-	    "$nsis" -V2 -NOCD -DVER_MAJOR=$major -DVER_MINOR=$minor -DVER_MICRO=$micro $sdldef `cygpath -m $cwd/tools/aranym.nsi` || exit 1
+	    "$nsis" -V2 -NOCD -DVER_MAJOR=$major -DVER_MINOR=$minor -DVER_MICRO=$micro $sdldef -DOUTFILE=../${SETUP_EXE} `cygpath -m $cwd/tools/aranym.nsi` || exit 1
 	    rm -f ../aranym.files
 	    cd $cwd
-	    echo "$tmpdir/aranym-$version${sdlname}-setup.exe ready for release"
+	    echo "$tmpdir/${SETUP_EXE} ready for release"
 	fi
 	
 }
