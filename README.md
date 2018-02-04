@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/aranym/aranym.svg?branch=master)](https://travis-ci.org/aranym/aranym)
+[![Build status](https://ci.appveyor.com/api/projects/status/buvngw1mdtdo28ri/branch/master?svg=true)](https://ci.appveyor.com/project/th-otto/aranym/branch/master)
 
 Latest snapshot: [![Download](https://api.bintray.com/packages/aranym/aranym-files/snapshots/images/download.svg) ](https://bintray.com/aranym/aranym-files/snapshots/_latestVersion#files)
 Latest release: [![Download](https://api.bintray.com/packages/aranym/aranym-files/releases/images/download.svg) ](https://bintray.com/aranym/aranym-files/releases/_latestVersion#files)

@@ -1,0 +1,11 @@
+image: Visual Studio 2015
+
+install:
+  - set PATH=C:\cygwin\bin;%PATH%
+  - bash -c ".appveyor/install_prerequisities.sh"
+
+build_script:
+  - bash -c ".appveyor/build.sh"
+
+# disable automatic tests
+test: off
