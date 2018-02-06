@@ -170,6 +170,10 @@ function mkdist() {
 	  done
 	)
 	
+	MINGW_DLLS="SDL.dll SDL_image.dll SDL2.dll SDL2_image.dll libgcc_s_sjlj-1.dll libwinpthread-1.dll iconv.dll"
+	rm -f $MINGW_DLLS
+	for dll in $MINGW_DLLS; do cp -a "$MINGW_ROOT/bin/$dll" .; done
+
 	unset dlls
 	declare -a dlls
 	save_IFS=$IFS
@@ -187,27 +191,6 @@ function mkdist() {
 		case $lower in
 		*/system32/* | */syswow64/* )
 			continue ;;
-		notfound:sdl.dll)
-			dll=$MINGW_ROOT/bin/SDL.dll
-			;;
-		notfound:sdl_image.dll)
-			dll=$MINGW_ROOT/bin/SDL_image.dll
-			;;
-		notfound:sdl2.dll)
-			dll=$MINGW_ROOT/bin/SDL2.dll
-			;;
-		notfound:sdl2_image.dll)
-			dll=$MINGW_ROOT/bin/SDL2_image.dll
-			;;
-		notfound:libgcc_s_sjlj-1.dll)
-			dll=$MINGW_ROOT/bin/libgcc_s_sjlj-1.dll
-			;;
-		notfound:libwinpthread-1.dll)
-			dll=$MINGW_ROOT/bin/libwinpthread-1.dll
-			;;
-		notfound:iconv.dll)
-			dll=$MINGW_ROOT/bin/iconv.dll
-			;;
 		*)
 			;;
 		esac
@@ -217,6 +200,7 @@ function mkdist() {
 	for f in "${copydlls[@]}"; do
 		cp -a "$f" "$distdir" || exit 1
 	done
+	rm -f $MINGW_DLLS
 	
 	ARCHIVE="${PROJECT_LOWER}-${ATAG}${sdlname}.zip"
 	SETUP_EXE="${PROJECT_LOWER}-${ATAG}${sdlname}-setup.exe"

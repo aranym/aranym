@@ -1,3 +1,8 @@
+2018/02/06 - Thorsten
+Some MinGW dlls could be missed when creating the archives,
+both for snapshot builds and releases.
+
+
 2018/02/05 - Thorsten
 Use smaller font for "X" in hostfs dialog
 
