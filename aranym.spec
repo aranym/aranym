@@ -223,7 +223,7 @@ Version:		%{ver}
 Release:		%{rel}
 License:		GPLv2
 Summary:		32-bit Atari personal computer (similar to Falcon030 but better) virtual machine
-URL:			http://aranym.org/
+URL:			https://aranym.github.io/
 Group:			%{group}
 Source0:		http://prdownloads.sourceforge.net/aranym/%{name}_%{version}.orig.tar.gz
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -376,6 +376,9 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 
 
 %changelog
+* Tue Feb 06 2018 Thorsten Otto <admin@tho-otto.de>
+URL changed to aranym.github.io. Also updated in NEWS/README files.
+
 * Wed Oct 10 2014 Petr Stehlik <pstehlik@sophics.cz> 1.0.0
 New ARAnyM release.
 Reset the minimal SDL version down to 1.2.12

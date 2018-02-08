@@ -21,12 +21,11 @@ in subfolder named "aranym" by default (unless instructed otherwise using the
 and you can edit it freely with a suitable text editor (Notepad, for example).
 Commented template of the config file is in DOC\config.txt file.
 
-Complete online documentation is in Dokuwiki at http://wiki.aranym.org/
+Complete online documentation is in Dokuwiki at https://github.com/aranym/aranym/wiki
 
 Enjoy!
 
 Petr Stehlik
 @DATE@
 
-http://aranym.org/
-
+https://aranym.github.io/

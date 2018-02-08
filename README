@@ -59,13 +59,13 @@ Any help with programming/documentation/porting is very welcome!
  3) Installing
  -------------
 
-See INSTALL file and http://wiki.aranym.org/
+See INSTALL file and https://github.com/aranym/aranym/wiki
 
 
  4) Configuring and running
  --------------------------
 
-See http://wiki.aranym.org/
+See https://github.com/aranym/aranym/wiki
 
 
  5) Keyboard shortcuts
@@ -120,12 +120,13 @@ Example for bash: export SDL_MOUSEDEV_IMPS2=1; aranym
  Join our mailing list for ARAnyM users - the WEB interface for the list
  is at https://lists.bobek.cz/mailman/listinfo/cz-bobek-lists-aranym-user
 
- Visit http://aranym.org/ for latest information and source code.
+ Visit https://aranym.github.io/ for latest information and 
+ https://github.com/aranym/aranym for source code.
 
- Help us improve the Wiki documentation at http://wiki.aranym.org/
+ Help us improve the Wiki documentation at https://github.com/aranym/aranym/wiki
 
  For developers we have a developer mailing list and a CVS server.
- For details go to http://aranym.org/
+ For details go to https://aranym.github.io/
 
 
 The "Power Without The Price" is back!
