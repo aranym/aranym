@@ -21,10 +21,8 @@ enum
 {
   SGBOX,
   SGTEXT,
-  SGTEXTSMALL,
   SGEDITFIELD,
   SGBUTTON,
-  SGBUTTONSMALL,
   SGRADIOBUT,
   SGCHECKBOX,
   SGPOPUP,
@@ -42,6 +40,7 @@ enum
 #define SG_SELECTABLE   0x0100
 #define SG_BACKGROUND   0x0200
 #define SG_RADIO        0x0400
+#define SG_SMALLTEXT    0x0800
 
 /* Object states: */
 #define SG_SELECTED    0x0001

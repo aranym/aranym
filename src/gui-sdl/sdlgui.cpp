@@ -257,7 +257,7 @@ static void SDLGui_ObjCoord(SGOBJ *dlg, int objnum, SDL_Rect *rect)
 {
   rect->x = dlg[objnum].x * FONTWIDTH;
   rect->y = dlg[objnum].y * FONTHEIGHT;
-  if (dlg[objnum].type == SGTEXTSMALL || dlg[objnum].type == SGBUTTONSMALL)
+  if (dlg[objnum].flags & SG_SMALLTEXT)
   {
     rect->w = dlg[objnum].w * FONTSMALLWIDTH;
     rect->h = dlg[objnum].h * FONTSMALLHEIGHT;
@@ -285,7 +285,6 @@ void SDLGui_ObjFullCoord(SGOBJ *dlg, int objnum, SDL_Rect *coord)
   {
     case SGBOX:
     case SGBUTTON:
-    case SGBUTTONSMALL:
       {
         // Take border into account
         int border_size;
@@ -1091,19 +1090,19 @@ void SDLGui_DrawObject(SGOBJ *dlg, int objnum)
       SDLGui_DrawBox(dlg, objnum);
       break;
     case SGTEXT:
-      SDLGui_DrawText(dlg, objnum);
-      break;
-    case SGTEXTSMALL:
-      SDLGui_DrawTextSmall(dlg, objnum);
+      if (dlg[objnum].flags & SG_SMALLTEXT)
+        SDLGui_DrawTextSmall(dlg, objnum);
+      else
+        SDLGui_DrawText(dlg, objnum);
       break;
     case SGEDITFIELD:
       SDLGui_DrawEditField(dlg, objnum);
       break;
     case SGBUTTON:
-      SDLGui_DrawButton(dlg, objnum);
-      break;
-    case SGBUTTONSMALL:
-      SDLGui_DrawButtonSmall(dlg, objnum);
+      if (dlg[objnum].flags & SG_SMALLTEXT)
+        SDLGui_DrawButtonSmall(dlg, objnum);
+      else
+        SDLGui_DrawButton(dlg, objnum);
       break;
     case SGCHECKBOX:
     case SGRADIOBUT:
@@ -1400,7 +1399,7 @@ void SDLGui_DeselectButtons(SGOBJ *dlg)
 {
 	int i = 0;
 	while (dlg[i].type != -1) {
-		if (dlg[i].type == SGBUTTON || dlg[i].type == SGBUTTONSMALL) {
+		if (dlg[i].type == SGBUTTON) {
 			dlg[i].state &= ~SG_SELECTED;
 		}
 		++i;
