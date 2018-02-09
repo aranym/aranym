@@ -1062,6 +1062,14 @@ typedef void CALLBACK (*GLDEBUGPROCAMD)(GLuint id,GLenum category, GLenum severi
 #define GL_MESA_program_debug 1
 typedef void CALLBACK (*GLprogramcallbackMESA)(GLenum target, GLvoid *data);
 #endif
+#ifndef GL_EXT_external_buffer
+#define GL_EXT_external_buffer 1
+typedef void *GLeglClientBufferEXT;
+#endif
+#ifndef GL_NV_draw_vulkan_image
+#define GL_NV_draw_vulkan_image 1
+typedef void (APIENTRY *GLVULKANPROCNV)(void);
+#endif
 
 
 /*
@@ -3214,12 +3222,12 @@ struct _gl_osmesa {
 	/* 2027 */ void APIENTRY (*MultiDrawArraysIndirect)(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride);
 	/* 2028 */ void APIENTRY (*MultiDrawArraysIndirectAMD)(GLenum mode, const void *indirect, GLsizei primcount, GLsizei stride);
 	/* 2029 */ void APIENTRY (*MultiDrawArraysIndirectBindlessNV)(GLenum mode, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount);
-	/* 2030 */ void APIENTRY (*MultiDrawArraysIndirectCountARB)(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
+	/* 2030 */ void APIENTRY (*MultiDrawArraysIndirectCountARB)(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 	/* 2031 */ void APIENTRY (*MultiDrawElementsBaseVertex)(GLenum mode, const GLsizei *count, GLenum type, const void *const *indices, GLsizei drawcount, const GLint *basevertex);
 	/* 2032 */ void APIENTRY (*MultiDrawElementsIndirect)(GLenum mode, GLenum type, const void *indirect, GLsizei drawcount, GLsizei stride);
 	/* 2033 */ void APIENTRY (*MultiDrawElementsIndirectAMD)(GLenum mode, GLenum type, const void *indirect, GLsizei primcount, GLsizei stride);
 	/* 2034 */ void APIENTRY (*MultiDrawElementsIndirectBindlessNV)(GLenum mode, GLenum type, const void *indirect, GLsizei drawCount, GLsizei stride, GLint vertexBufferCount);
-	/* 2035 */ void APIENTRY (*MultiDrawElementsIndirectCountARB)(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
+	/* 2035 */ void APIENTRY (*MultiDrawElementsIndirectCountARB)(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
 	/* 2036 */ void APIENTRY (*MultiTexBufferEXT)(GLenum texunit, GLenum target, GLenum internalformat, GLuint buffer);
 	/* 2037 */ void APIENTRY (*MultiTexCoord1bOES)(GLenum texture, GLbyte32 s);
 	/* 2038 */ void APIENTRY (*MultiTexCoord1bvOES)(GLenum texture, const GLbyte *coords);
@@ -4099,6 +4107,125 @@ struct _gl_osmesa {
 	/* 2912 */ void APIENTRY (*VertexArrayElementBuffer)(GLuint vaobj, GLuint buffer);
 	/* 2913 */ void APIENTRY (*VertexArrayVertexBuffer)(GLuint vaobj, GLuint bindingindex, GLuint buffer, GLintptr offset, GLsizei stride);
 	/* 2914 */ void APIENTRY (*VertexArrayVertexBuffers)(GLuint vaobj, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizei *strides);
+	/* 2915 */ OSMesaContext APIENTRY (*OSMesaCreateContextAttribs)(const GLint *attribList, OSMesaContext sharelist);
+	/* 2916 */ void APIENTRY (*SpecializeShader)(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue);
+	/* 2917 */ void APIENTRY (*SpecializeShaderARB)(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue);
+	/* 2918 */ void APIENTRY (*MultiDrawArraysIndirectCount)(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
+	/* 2919 */ void APIENTRY (*MultiDrawElementsIndirectCount)(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride);
+	/* 2920 */ void APIENTRY (*PolygonOffsetClamp)(GLfloat factor, GLfloat units, GLfloat clamp);
+	/* 2921 */ void APIENTRY (*PrimitiveBoundingBoxARB)(GLfloat minX, GLfloat minY, GLfloat minZ, GLfloat minW, GLfloat maxX, GLfloat maxY, GLfloat maxZ, GLfloat maxW);
+	/* 2922 */ void APIENTRY (*Uniform1i64ARB)(GLint location, GLint64 x);
+	/* 2923 */ void APIENTRY (*Uniform2i64ARB)(GLint location, GLint64 x, GLint64 y);
+	/* 2924 */ void APIENTRY (*Uniform3i64ARB)(GLint location, GLint64 x, GLint64 y, GLint64 z);
+	/* 2925 */ void APIENTRY (*Uniform4i64ARB)(GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w);
+	/* 2926 */ void APIENTRY (*Uniform1i64vARB)(GLint location, GLsizei count, const GLint64 *value);
+	/* 2927 */ void APIENTRY (*Uniform2i64vARB)(GLint location, GLsizei count, const GLint64 *value);
+	/* 2928 */ void APIENTRY (*Uniform3i64vARB)(GLint location, GLsizei count, const GLint64 *value);
+	/* 2929 */ void APIENTRY (*Uniform4i64vARB)(GLint location, GLsizei count, const GLint64 *value);
+	/* 2930 */ void APIENTRY (*Uniform1ui64ARB)(GLint location, GLuint64 x);
+	/* 2931 */ void APIENTRY (*Uniform2ui64ARB)(GLint location, GLuint64 x, GLuint64 y);
+	/* 2932 */ void APIENTRY (*Uniform3ui64ARB)(GLint location, GLuint64 x, GLuint64 y, GLuint64 z);
+	/* 2933 */ void APIENTRY (*Uniform4ui64ARB)(GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w);
+	/* 2934 */ void APIENTRY (*Uniform1ui64vARB)(GLint location, GLsizei count, const GLuint64 *value);
+	/* 2935 */ void APIENTRY (*Uniform2ui64vARB)(GLint location, GLsizei count, const GLuint64 *value);
+	/* 2936 */ void APIENTRY (*Uniform3ui64vARB)(GLint location, GLsizei count, const GLuint64 *value);
+	/* 2937 */ void APIENTRY (*Uniform4ui64vARB)(GLint location, GLsizei count, const GLuint64 *value);
+	/* 2938 */ void APIENTRY (*GetUniformi64vARB)(GLuint program, GLint location, GLint64 *params);
+	/* 2939 */ void APIENTRY (*GetUniformui64vARB)(GLuint program, GLint location, GLuint64 *params);
+	/* 2940 */ void APIENTRY (*GetnUniformi64vARB)(GLuint program, GLint location, GLsizei bufSize, GLint64 *params);
+	/* 2941 */ void APIENTRY (*GetnUniformui64vARB)(GLuint program, GLint location, GLsizei bufSize, GLuint64 *params);
+	/* 2942 */ void APIENTRY (*ProgramUniform1i64ARB)(GLuint program, GLint location, GLint64 x);
+	/* 2943 */ void APIENTRY (*ProgramUniform2i64ARB)(GLuint program, GLint location, GLint64 x, GLint64 y);
+	/* 2944 */ void APIENTRY (*ProgramUniform3i64ARB)(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z);
+	/* 2945 */ void APIENTRY (*ProgramUniform4i64ARB)(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w);
+	/* 2946 */ void APIENTRY (*ProgramUniform1i64vARB)(GLuint program, GLint location, GLsizei count, const GLint64 *value);
+	/* 2947 */ void APIENTRY (*ProgramUniform2i64vARB)(GLuint program, GLint location, GLsizei count, const GLint64 *value);
+	/* 2948 */ void APIENTRY (*ProgramUniform3i64vARB)(GLuint program, GLint location, GLsizei count, const GLint64 *value);
+	/* 2949 */ void APIENTRY (*ProgramUniform4i64vARB)(GLuint program, GLint location, GLsizei count, const GLint64 *value);
+	/* 2950 */ void APIENTRY (*ProgramUniform1ui64ARB)(GLuint program, GLint location, GLuint64 x);
+	/* 2951 */ void APIENTRY (*ProgramUniform2ui64ARB)(GLuint program, GLint location, GLuint64 x, GLuint64 y);
+	/* 2952 */ void APIENTRY (*ProgramUniform3ui64ARB)(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z);
+	/* 2953 */ void APIENTRY (*ProgramUniform4ui64ARB)(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w);
+	/* 2954 */ void APIENTRY (*ProgramUniform1ui64vARB)(GLuint program, GLint location, GLsizei count, const GLuint64 *value);
+	/* 2955 */ void APIENTRY (*ProgramUniform2ui64vARB)(GLuint program, GLint location, GLsizei count, const GLuint64 *value);
+	/* 2956 */ void APIENTRY (*ProgramUniform3ui64vARB)(GLuint program, GLint location, GLsizei count, const GLuint64 *value);
+	/* 2957 */ void APIENTRY (*ProgramUniform4ui64vARB)(GLuint program, GLint location, GLsizei count, const GLuint64 *value);
+	/* 2958 */ void APIENTRY (*MaxShaderCompilerThreadsARB)(GLuint count);
+	/* 2959 */ void APIENTRY (*FramebufferSampleLocationsfvARB)(GLenum target, GLuint start, GLsizei count, const GLfloat *v);
+	/* 2960 */ void APIENTRY (*NamedFramebufferSampleLocationsfvARB)(GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v);
+	/* 2961 */ void APIENTRY (*EvaluateDepthValuesARB)(void);
+	/* 2962 */ void APIENTRY (*MaxShaderCompilerThreadsKHR)(GLuint count);
+	/* 2963 */ void APIENTRY (*BufferStorageExternalEXT)(GLenum target, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags);
+	/* 2964 */ void APIENTRY (*NamedBufferStorageExternalEXT)(GLuint buffer, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags);
+	/* 2965 */ void APIENTRY (*GetUnsignedBytevEXT)(GLenum pname, GLubyte *data);
+	/* 2966 */ void APIENTRY (*GetUnsignedBytei_vEXT)(GLenum target, GLuint index, GLubyte *data);
+	/* 2967 */ void APIENTRY (*DeleteMemoryObjectsEXT)(GLsizei n, const GLuint *memoryObjects);
+	/* 2968 */ GLboolean APIENTRY (*IsMemoryObjectEXT)(GLuint memoryObject);
+	/* 2969 */ void APIENTRY (*CreateMemoryObjectsEXT)(GLsizei n, GLuint *memoryObjects);
+	/* 2970 */ void APIENTRY (*MemoryObjectParameterivEXT)(GLuint memoryObject, GLenum pname, const GLint *params);
+	/* 2971 */ void APIENTRY (*GetMemoryObjectParameterivEXT)(GLuint memoryObject, GLenum pname, GLint *params);
+	/* 2972 */ void APIENTRY (*TexStorageMem2DEXT)(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset);
+	/* 2973 */ void APIENTRY (*TexStorageMem2DMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset);
+	/* 2974 */ void APIENTRY (*TexStorageMem3DEXT)(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset);
+	/* 2975 */ void APIENTRY (*TexStorageMem3DMultisampleEXT)(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset);
+	/* 2976 */ void APIENTRY (*BufferStorageMemEXT)(GLenum target, GLsizeiptr size, GLuint memory, GLuint64 offset);
+	/* 2977 */ void APIENTRY (*TextureStorageMem2DEXT)(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset);
+	/* 2978 */ void APIENTRY (*TextureStorageMem2DMultisampleEXT)(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset);
+	/* 2979 */ void APIENTRY (*TextureStorageMem3DEXT)(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset);
+	/* 2980 */ void APIENTRY (*TextureStorageMem3DMultisampleEXT)(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset);
+	/* 2981 */ void APIENTRY (*NamedBufferStorageMemEXT)(GLuint buffer, GLsizeiptr size, GLuint memory, GLuint64 offset);
+	/* 2982 */ void APIENTRY (*TexStorageMem1DEXT)(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset);
+	/* 2983 */ void APIENTRY (*TextureStorageMem1DEXT)(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset);
+	/* 2984 */ void APIENTRY (*ImportMemoryFdEXT)(GLuint memory, GLuint64 size, GLenum handleType, GLint fd);
+	/* 2985 */ void APIENTRY (*ImportMemoryWin32HandleEXT)(GLuint memory, GLuint64 size, GLenum handleType, void *handle);
+	/* 2986 */ void APIENTRY (*ImportMemoryWin32NameEXT)(GLuint memory, GLuint64 size, GLenum handleType, const void *name);
+	/* 2987 */ void APIENTRY (*GenSemaphoresEXT)(GLsizei n, GLuint *semaphores);
+	/* 2988 */ void APIENTRY (*DeleteSemaphoresEXT)(GLsizei n, const GLuint *semaphores);
+	/* 2989 */ GLboolean APIENTRY (*IsSemaphoreEXT)(GLuint semaphore);
+	/* 2990 */ void APIENTRY (*SemaphoreParameterui64vEXT)(GLuint semaphore, GLenum pname, const GLuint64 *params);
+	/* 2991 */ void APIENTRY (*GetSemaphoreParameterui64vEXT)(GLuint semaphore, GLenum pname, GLuint64 *params);
+	/* 2992 */ void APIENTRY (*WaitSemaphoreEXT)(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *srcLayouts);
+	/* 2993 */ void APIENTRY (*SignalSemaphoreEXT)(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *dstLayouts);
+	/* 2994 */ void APIENTRY (*ImportSemaphoreFdEXT)(GLuint semaphore, GLenum handleType, GLint fd);
+	/* 2995 */ void APIENTRY (*ImportSemaphoreWin32HandleEXT)(GLuint semaphore, GLenum handleType, void *handle);
+	/* 2996 */ void APIENTRY (*ImportSemaphoreWin32NameEXT)(GLuint semaphore, GLenum handleType, const void *name);
+	/* 2997 */ GLboolean APIENTRY (*AcquireKeyedMutexWin32EXT)(GLuint memory, GLuint64 key, GLuint timeout);
+	/* 2998 */ GLboolean APIENTRY (*ReleaseKeyedMutexWin32EXT)(GLuint memory, GLuint64 key);
+	/* 2999 */ void APIENTRY (*LGPUNamedBufferSubDataNVX)(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data);
+	/* 3000 */ void APIENTRY (*LGPUCopyImageSubDataNVX)(GLuint sourceGpu, GLbitfield destinationGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srxY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei width, GLsizei height, GLsizei depth);
+	/* 3001 */ void APIENTRY (*LGPUInterlockNVX)(void);
+	/* 3002 */ void APIENTRY (*AlphaToCoverageDitherControlNV)(GLenum mode);
+	/* 3003 */ void APIENTRY (*DrawVkImageNV)(GLuint64 vkImage, GLuint sampler, GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1, GLfloat z, GLfloat s0, GLfloat t0, GLfloat s1, GLfloat t1);
+	/* 3004 */ GLVULKANPROCNV APIENTRY (*GetVkProcAddrNV)(const GLchar *name);
+	/* 3005 */ void APIENTRY (*WaitVkSemaphoreNV)(GLuint64 vkSemaphore);
+	/* 3006 */ void APIENTRY (*SignalVkSemaphoreNV)(GLuint64 vkSemaphore);
+	/* 3007 */ void APIENTRY (*SignalVkFenceNV)(GLuint64 vkFence);
+	/* 3008 */ void APIENTRY (*RenderGpuMaskNV)(GLbitfield mask);
+	/* 3009 */ void APIENTRY (*MulticastBufferSubDataNV)(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data);
+	/* 3010 */ void APIENTRY (*MulticastCopyBufferSubDataNV)(GLuint readGpu, GLbitfield writeGpuMask, GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size);
+	/* 3011 */ void APIENTRY (*MulticastCopyImageSubDataNV)(GLuint srcGpu, GLbitfield dstGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth);
+	/* 3012 */ void APIENTRY (*MulticastBlitFramebufferNV)(GLuint srcGpu, GLuint dstGpu, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+	/* 3013 */ void APIENTRY (*MulticastFramebufferSampleLocationsfvNV)(GLuint gpu, GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v);
+	/* 3014 */ void APIENTRY (*MulticastBarrierNV)(void);
+	/* 3015 */ void APIENTRY (*MulticastWaitSyncNV)(GLuint signalGpu, GLbitfield waitGpuMask);
+	/* 3016 */ void APIENTRY (*MulticastGetQueryObjectivNV)(GLuint gpu, GLuint id, GLenum pname, GLint *params);
+	/* 3017 */ void APIENTRY (*MulticastGetQueryObjectuivNV)(GLuint gpu, GLuint id, GLenum pname, GLuint *params);
+	/* 3018 */ void APIENTRY (*MulticastGetQueryObjecti64vNV)(GLuint gpu, GLuint id, GLenum pname, GLint64 *params);
+	/* 3019 */ void APIENTRY (*MulticastGetQueryObjectui64vNV)(GLuint gpu, GLuint id, GLenum pname, GLuint64 *params);
+	/* 3020 */ GLint APIENTRY (*QueryResourceNV)(GLenum queryType, GLint tagId, GLuint bufSize, GLint *buffer);
+	/* 3021 */ void APIENTRY (*GenQueryResourceTagNV)(GLsizei n, GLint *tagIds);
+	/* 3022 */ void APIENTRY (*DeleteQueryResourceTagNV)(GLsizei n, const GLint *tagIds);
+	/* 3023 */ void APIENTRY (*QueryResourceTagNV)(GLint tagId, const GLchar *tagString);
+	/* 3024 */ void APIENTRY (*FramebufferSamplePositionsfvAMD)(GLenum target, GLuint numsamples, GLuint pixelindex, const GLfloat *values);
+	/* 3025 */ void APIENTRY (*NamedFramebufferSamplePositionsfvAMD)(GLuint framebuffer, GLuint numsamples, GLuint pixelindex, const GLfloat *values);
+	/* 3026 */ void APIENTRY (*GetFramebufferParameterfvAMD)(GLenum target, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values);
+	/* 3027 */ void APIENTRY (*GetNamedFramebufferParameterfvAMD)(GLuint framebuffer, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values);
+	/* 3028 */ void APIENTRY (*WindowRectanglesEXT)(GLenum mode, GLsizei count, const GLint *box);
+	/* 3029 */ void APIENTRY (*ApplyFramebufferAttachmentCMAAINTEL)(void);
+	/* 3030 */ void APIENTRY (*ViewportSwizzleNV)(GLuint index, GLenum swizzlex, GLenum swizzley, GLenum swizzlez, GLenum swizzlew);
+	/* 3031 */ void APIENTRY (*ViewportPositionWScaleNV)(GLuint index, GLfloat xcoeff, GLfloat ycoeff);
+	/* 3032 */ void APIENTRY (*ConservativeRasterParameterfNV)(GLenum pname, GLfloat value);
+	/* 3033 */ void APIENTRY (*ConservativeRasterParameteriNV)(GLenum pname, GLint param);
 	unsigned int __numfuncs;
 	OSMESAproc APIENTRY (*__old_OSMesaGetProcAddress)(const char *funcName);
 };
@@ -9825,6 +9952,244 @@ extern struct _gl_osmesa gl;
 #define glVertexArrayVertexBuffer (gl.VertexArrayVertexBuffer)
 #undef glVertexArrayVertexBuffers
 #define glVertexArrayVertexBuffers (gl.VertexArrayVertexBuffers)
+#undef OSMesaCreateContextAttribs
+#define OSMesaCreateContextAttribs (gl.OSMesaCreateContextAttribs)
+#undef glSpecializeShader
+#define glSpecializeShader (gl.SpecializeShader)
+#undef glSpecializeShaderARB
+#define glSpecializeShaderARB (gl.SpecializeShaderARB)
+#undef glMultiDrawArraysIndirectCount
+#define glMultiDrawArraysIndirectCount (gl.MultiDrawArraysIndirectCount)
+#undef glMultiDrawElementsIndirectCount
+#define glMultiDrawElementsIndirectCount (gl.MultiDrawElementsIndirectCount)
+#undef glPolygonOffsetClamp
+#define glPolygonOffsetClamp (gl.PolygonOffsetClamp)
+#undef glPrimitiveBoundingBoxARB
+#define glPrimitiveBoundingBoxARB (gl.PrimitiveBoundingBoxARB)
+#undef glUniform1i64ARB
+#define glUniform1i64ARB (gl.Uniform1i64ARB)
+#undef glUniform2i64ARB
+#define glUniform2i64ARB (gl.Uniform2i64ARB)
+#undef glUniform3i64ARB
+#define glUniform3i64ARB (gl.Uniform3i64ARB)
+#undef glUniform4i64ARB
+#define glUniform4i64ARB (gl.Uniform4i64ARB)
+#undef glUniform1i64vARB
+#define glUniform1i64vARB (gl.Uniform1i64vARB)
+#undef glUniform2i64vARB
+#define glUniform2i64vARB (gl.Uniform2i64vARB)
+#undef glUniform3i64vARB
+#define glUniform3i64vARB (gl.Uniform3i64vARB)
+#undef glUniform4i64vARB
+#define glUniform4i64vARB (gl.Uniform4i64vARB)
+#undef glUniform1ui64ARB
+#define glUniform1ui64ARB (gl.Uniform1ui64ARB)
+#undef glUniform2ui64ARB
+#define glUniform2ui64ARB (gl.Uniform2ui64ARB)
+#undef glUniform3ui64ARB
+#define glUniform3ui64ARB (gl.Uniform3ui64ARB)
+#undef glUniform4ui64ARB
+#define glUniform4ui64ARB (gl.Uniform4ui64ARB)
+#undef glUniform1ui64vARB
+#define glUniform1ui64vARB (gl.Uniform1ui64vARB)
+#undef glUniform2ui64vARB
+#define glUniform2ui64vARB (gl.Uniform2ui64vARB)
+#undef glUniform3ui64vARB
+#define glUniform3ui64vARB (gl.Uniform3ui64vARB)
+#undef glUniform4ui64vARB
+#define glUniform4ui64vARB (gl.Uniform4ui64vARB)
+#undef glGetUniformi64vARB
+#define glGetUniformi64vARB (gl.GetUniformi64vARB)
+#undef glGetUniformui64vARB
+#define glGetUniformui64vARB (gl.GetUniformui64vARB)
+#undef glGetnUniformi64vARB
+#define glGetnUniformi64vARB (gl.GetnUniformi64vARB)
+#undef glGetnUniformui64vARB
+#define glGetnUniformui64vARB (gl.GetnUniformui64vARB)
+#undef glProgramUniform1i64ARB
+#define glProgramUniform1i64ARB (gl.ProgramUniform1i64ARB)
+#undef glProgramUniform2i64ARB
+#define glProgramUniform2i64ARB (gl.ProgramUniform2i64ARB)
+#undef glProgramUniform3i64ARB
+#define glProgramUniform3i64ARB (gl.ProgramUniform3i64ARB)
+#undef glProgramUniform4i64ARB
+#define glProgramUniform4i64ARB (gl.ProgramUniform4i64ARB)
+#undef glProgramUniform1i64vARB
+#define glProgramUniform1i64vARB (gl.ProgramUniform1i64vARB)
+#undef glProgramUniform2i64vARB
+#define glProgramUniform2i64vARB (gl.ProgramUniform2i64vARB)
+#undef glProgramUniform3i64vARB
+#define glProgramUniform3i64vARB (gl.ProgramUniform3i64vARB)
+#undef glProgramUniform4i64vARB
+#define glProgramUniform4i64vARB (gl.ProgramUniform4i64vARB)
+#undef glProgramUniform1ui64ARB
+#define glProgramUniform1ui64ARB (gl.ProgramUniform1ui64ARB)
+#undef glProgramUniform2ui64ARB
+#define glProgramUniform2ui64ARB (gl.ProgramUniform2ui64ARB)
+#undef glProgramUniform3ui64ARB
+#define glProgramUniform3ui64ARB (gl.ProgramUniform3ui64ARB)
+#undef glProgramUniform4ui64ARB
+#define glProgramUniform4ui64ARB (gl.ProgramUniform4ui64ARB)
+#undef glProgramUniform1ui64vARB
+#define glProgramUniform1ui64vARB (gl.ProgramUniform1ui64vARB)
+#undef glProgramUniform2ui64vARB
+#define glProgramUniform2ui64vARB (gl.ProgramUniform2ui64vARB)
+#undef glProgramUniform3ui64vARB
+#define glProgramUniform3ui64vARB (gl.ProgramUniform3ui64vARB)
+#undef glProgramUniform4ui64vARB
+#define glProgramUniform4ui64vARB (gl.ProgramUniform4ui64vARB)
+#undef glMaxShaderCompilerThreadsARB
+#define glMaxShaderCompilerThreadsARB (gl.MaxShaderCompilerThreadsARB)
+#undef glFramebufferSampleLocationsfvARB
+#define glFramebufferSampleLocationsfvARB (gl.FramebufferSampleLocationsfvARB)
+#undef glNamedFramebufferSampleLocationsfvARB
+#define glNamedFramebufferSampleLocationsfvARB (gl.NamedFramebufferSampleLocationsfvARB)
+#undef glEvaluateDepthValuesARB
+#define glEvaluateDepthValuesARB (gl.EvaluateDepthValuesARB)
+#undef glMaxShaderCompilerThreadsKHR
+#define glMaxShaderCompilerThreadsKHR (gl.MaxShaderCompilerThreadsKHR)
+#undef glBufferStorageExternalEXT
+#define glBufferStorageExternalEXT (gl.BufferStorageExternalEXT)
+#undef glNamedBufferStorageExternalEXT
+#define glNamedBufferStorageExternalEXT (gl.NamedBufferStorageExternalEXT)
+#undef glGetUnsignedBytevEXT
+#define glGetUnsignedBytevEXT (gl.GetUnsignedBytevEXT)
+#undef glGetUnsignedBytei_vEXT
+#define glGetUnsignedBytei_vEXT (gl.GetUnsignedBytei_vEXT)
+#undef glDeleteMemoryObjectsEXT
+#define glDeleteMemoryObjectsEXT (gl.DeleteMemoryObjectsEXT)
+#undef glIsMemoryObjectEXT
+#define glIsMemoryObjectEXT (gl.IsMemoryObjectEXT)
+#undef glCreateMemoryObjectsEXT
+#define glCreateMemoryObjectsEXT (gl.CreateMemoryObjectsEXT)
+#undef glMemoryObjectParameterivEXT
+#define glMemoryObjectParameterivEXT (gl.MemoryObjectParameterivEXT)
+#undef glGetMemoryObjectParameterivEXT
+#define glGetMemoryObjectParameterivEXT (gl.GetMemoryObjectParameterivEXT)
+#undef glTexStorageMem2DEXT
+#define glTexStorageMem2DEXT (gl.TexStorageMem2DEXT)
+#undef glTexStorageMem2DMultisampleEXT
+#define glTexStorageMem2DMultisampleEXT (gl.TexStorageMem2DMultisampleEXT)
+#undef glTexStorageMem3DEXT
+#define glTexStorageMem3DEXT (gl.TexStorageMem3DEXT)
+#undef glTexStorageMem3DMultisampleEXT
+#define glTexStorageMem3DMultisampleEXT (gl.TexStorageMem3DMultisampleEXT)
+#undef glBufferStorageMemEXT
+#define glBufferStorageMemEXT (gl.BufferStorageMemEXT)
+#undef glTextureStorageMem2DEXT
+#define glTextureStorageMem2DEXT (gl.TextureStorageMem2DEXT)
+#undef glTextureStorageMem2DMultisampleEXT
+#define glTextureStorageMem2DMultisampleEXT (gl.TextureStorageMem2DMultisampleEXT)
+#undef glTextureStorageMem3DEXT
+#define glTextureStorageMem3DEXT (gl.TextureStorageMem3DEXT)
+#undef glTextureStorageMem3DMultisampleEXT
+#define glTextureStorageMem3DMultisampleEXT (gl.TextureStorageMem3DMultisampleEXT)
+#undef glNamedBufferStorageMemEXT
+#define glNamedBufferStorageMemEXT (gl.NamedBufferStorageMemEXT)
+#undef glTexStorageMem1DEXT
+#define glTexStorageMem1DEXT (gl.TexStorageMem1DEXT)
+#undef glTextureStorageMem1DEXT
+#define glTextureStorageMem1DEXT (gl.TextureStorageMem1DEXT)
+#undef glImportMemoryFdEXT
+#define glImportMemoryFdEXT (gl.ImportMemoryFdEXT)
+#undef glImportMemoryWin32HandleEXT
+#define glImportMemoryWin32HandleEXT (gl.ImportMemoryWin32HandleEXT)
+#undef glImportMemoryWin32NameEXT
+#define glImportMemoryWin32NameEXT (gl.ImportMemoryWin32NameEXT)
+#undef glGenSemaphoresEXT
+#define glGenSemaphoresEXT (gl.GenSemaphoresEXT)
+#undef glDeleteSemaphoresEXT
+#define glDeleteSemaphoresEXT (gl.DeleteSemaphoresEXT)
+#undef glIsSemaphoreEXT
+#define glIsSemaphoreEXT (gl.IsSemaphoreEXT)
+#undef glSemaphoreParameterui64vEXT
+#define glSemaphoreParameterui64vEXT (gl.SemaphoreParameterui64vEXT)
+#undef glGetSemaphoreParameterui64vEXT
+#define glGetSemaphoreParameterui64vEXT (gl.GetSemaphoreParameterui64vEXT)
+#undef glWaitSemaphoreEXT
+#define glWaitSemaphoreEXT (gl.WaitSemaphoreEXT)
+#undef glSignalSemaphoreEXT
+#define glSignalSemaphoreEXT (gl.SignalSemaphoreEXT)
+#undef glImportSemaphoreFdEXT
+#define glImportSemaphoreFdEXT (gl.ImportSemaphoreFdEXT)
+#undef glImportSemaphoreWin32HandleEXT
+#define glImportSemaphoreWin32HandleEXT (gl.ImportSemaphoreWin32HandleEXT)
+#undef glImportSemaphoreWin32NameEXT
+#define glImportSemaphoreWin32NameEXT (gl.ImportSemaphoreWin32NameEXT)
+#undef glAcquireKeyedMutexWin32EXT
+#define glAcquireKeyedMutexWin32EXT (gl.AcquireKeyedMutexWin32EXT)
+#undef glReleaseKeyedMutexWin32EXT
+#define glReleaseKeyedMutexWin32EXT (gl.ReleaseKeyedMutexWin32EXT)
+#undef glLGPUNamedBufferSubDataNVX
+#define glLGPUNamedBufferSubDataNVX (gl.LGPUNamedBufferSubDataNVX)
+#undef glLGPUCopyImageSubDataNVX
+#define glLGPUCopyImageSubDataNVX (gl.LGPUCopyImageSubDataNVX)
+#undef glLGPUInterlockNVX
+#define glLGPUInterlockNVX (gl.LGPUInterlockNVX)
+#undef glAlphaToCoverageDitherControlNV
+#define glAlphaToCoverageDitherControlNV (gl.AlphaToCoverageDitherControlNV)
+#undef glDrawVkImageNV
+#define glDrawVkImageNV (gl.DrawVkImageNV)
+#undef glGetVkProcAddrNV
+#define glGetVkProcAddrNV (gl.GetVkProcAddrNV)
+#undef glWaitVkSemaphoreNV
+#define glWaitVkSemaphoreNV (gl.WaitVkSemaphoreNV)
+#undef glSignalVkSemaphoreNV
+#define glSignalVkSemaphoreNV (gl.SignalVkSemaphoreNV)
+#undef glSignalVkFenceNV
+#define glSignalVkFenceNV (gl.SignalVkFenceNV)
+#undef glRenderGpuMaskNV
+#define glRenderGpuMaskNV (gl.RenderGpuMaskNV)
+#undef glMulticastBufferSubDataNV
+#define glMulticastBufferSubDataNV (gl.MulticastBufferSubDataNV)
+#undef glMulticastCopyBufferSubDataNV
+#define glMulticastCopyBufferSubDataNV (gl.MulticastCopyBufferSubDataNV)
+#undef glMulticastCopyImageSubDataNV
+#define glMulticastCopyImageSubDataNV (gl.MulticastCopyImageSubDataNV)
+#undef glMulticastBlitFramebufferNV
+#define glMulticastBlitFramebufferNV (gl.MulticastBlitFramebufferNV)
+#undef glMulticastFramebufferSampleLocationsfvNV
+#define glMulticastFramebufferSampleLocationsfvNV (gl.MulticastFramebufferSampleLocationsfvNV)
+#undef glMulticastBarrierNV
+#define glMulticastBarrierNV (gl.MulticastBarrierNV)
+#undef glMulticastWaitSyncNV
+#define glMulticastWaitSyncNV (gl.MulticastWaitSyncNV)
+#undef glMulticastGetQueryObjectivNV
+#define glMulticastGetQueryObjectivNV (gl.MulticastGetQueryObjectivNV)
+#undef glMulticastGetQueryObjectuivNV
+#define glMulticastGetQueryObjectuivNV (gl.MulticastGetQueryObjectuivNV)
+#undef glMulticastGetQueryObjecti64vNV
+#define glMulticastGetQueryObjecti64vNV (gl.MulticastGetQueryObjecti64vNV)
+#undef glMulticastGetQueryObjectui64vNV
+#define glMulticastGetQueryObjectui64vNV (gl.MulticastGetQueryObjectui64vNV)
+#undef glQueryResourceNV
+#define glQueryResourceNV (gl.QueryResourceNV)
+#undef glGenQueryResourceTagNV
+#define glGenQueryResourceTagNV (gl.GenQueryResourceTagNV)
+#undef glDeleteQueryResourceTagNV
+#define glDeleteQueryResourceTagNV (gl.DeleteQueryResourceTagNV)
+#undef glQueryResourceTagNV
+#define glQueryResourceTagNV (gl.QueryResourceTagNV)
+#undef glFramebufferSamplePositionsfvAMD
+#define glFramebufferSamplePositionsfvAMD (gl.FramebufferSamplePositionsfvAMD)
+#undef glNamedFramebufferSamplePositionsfvAMD
+#define glNamedFramebufferSamplePositionsfvAMD (gl.NamedFramebufferSamplePositionsfvAMD)
+#undef glGetFramebufferParameterfvAMD
+#define glGetFramebufferParameterfvAMD (gl.GetFramebufferParameterfvAMD)
+#undef glGetNamedFramebufferParameterfvAMD
+#define glGetNamedFramebufferParameterfvAMD (gl.GetNamedFramebufferParameterfvAMD)
+#undef glWindowRectanglesEXT
+#define glWindowRectanglesEXT (gl.WindowRectanglesEXT)
+#undef glApplyFramebufferAttachmentCMAAINTEL
+#define glApplyFramebufferAttachmentCMAAINTEL (gl.ApplyFramebufferAttachmentCMAAINTEL)
+#undef glViewportSwizzleNV
+#define glViewportSwizzleNV (gl.ViewportSwizzleNV)
+#undef glViewportPositionWScaleNV
+#define glViewportPositionWScaleNV (gl.ViewportPositionWScaleNV)
+#undef glConservativeRasterParameterfNV
+#define glConservativeRasterParameterfNV (gl.ConservativeRasterParameterfNV)
+#undef glConservativeRasterParameteriNV
+#define glConservativeRasterParameteriNV (gl.ConservativeRasterParameteriNV)
 #endif
 
 
@@ -9847,6 +10212,6 @@ extern struct _gl_osmesa gl;
 
 
 
-/* Functions generated: 12 OSMesa + 2838 GL + 2 GLU */
+/* Functions generated: 13 OSMesa + 2956 GL + 2 GLU */
 
 #endif /* __NFOSMESA_H__ */

@@ -1058,6 +1058,14 @@ typedef void CALLBACK (*GLDEBUGPROCAMD)(GLuint id,GLenum category, GLenum severi
 #define GL_MESA_program_debug 1
 typedef void CALLBACK (*GLprogramcallbackMESA)(GLenum target, GLvoid *data);
 #endif
+#ifndef GL_EXT_external_buffer
+#define GL_EXT_external_buffer 1
+typedef void *GLeglClientBufferEXT;
+#endif
+#ifndef GL_NV_draw_vulkan_image
+#define GL_NV_draw_vulkan_image 1
+typedef void (APIENTRY *GLVULKANPROCNV)(void);
+#endif
 
 
 /*

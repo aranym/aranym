@@ -15894,7 +15894,7 @@ static void APIENTRY exec_glMultiDrawArraysIndirectBindlessNV(GLenum mode, const
 	(*exec)(gl_slb, 2030 /* NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV */, SLB_NARGS(2), gl_pub, &mode);
 }
 
-static void APIENTRY exec_glMultiDrawArraysIndirectCountARB(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+static void APIENTRY exec_glMultiDrawArraysIndirectCountARB(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)indirect;
@@ -15946,7 +15946,7 @@ static void APIENTRY exec_glMultiDrawElementsIndirectBindlessNV(GLenum mode, GLe
 	(*exec)(gl_slb, 2035 /* NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTBINDLESSNV */, SLB_NARGS(2), gl_pub, &mode);
 }
 
-static void APIENTRY exec_glMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+static void APIENTRY exec_glMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)type;
@@ -23642,6 +23642,1090 @@ static void APIENTRY exec_glVertexArrayVertexBuffers(GLuint vaobj, GLuint first,
 	(*exec)(gl_slb, 2915 /* NFOSMESA_GLVERTEXARRAYVERTEXBUFFERS */, SLB_NARGS(2), gl_pub, &vaobj);
 }
 
+static OSMesaContext APIENTRY exec_OSMesaCreateContextAttribs(const GLint *attribList, OSMesaContext sharelist)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)sharelist;
+	return (OSMesaContext)(*exec)(gl_slb, 2916 /* NFOSMESA_OSMESACREATECONTEXTATTRIBS */, SLB_NARGS(2), gl_pub, &attribList);
+}
+
+static void APIENTRY exec_glSpecializeShader(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pEntryPoint;
+	(void)numSpecializationConstants;
+	(void)pConstantIndex;
+	(void)pConstantValue;
+	(*exec)(gl_slb, 2917 /* NFOSMESA_GLSPECIALIZESHADER */, SLB_NARGS(2), gl_pub, &shader);
+}
+
+static void APIENTRY exec_glSpecializeShaderARB(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pEntryPoint;
+	(void)numSpecializationConstants;
+	(void)pConstantIndex;
+	(void)pConstantValue;
+	(*exec)(gl_slb, 2918 /* NFOSMESA_GLSPECIALIZESHADERARB */, SLB_NARGS(2), gl_pub, &shader);
+}
+
+static void APIENTRY exec_glMultiDrawArraysIndirectCount(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)indirect;
+	(void)drawcount;
+	(void)maxdrawcount;
+	(void)stride;
+	(*exec)(gl_slb, 2919 /* NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNT */, SLB_NARGS(2), gl_pub, &mode);
+}
+
+static void APIENTRY exec_glMultiDrawElementsIndirectCount(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)type;
+	(void)indirect;
+	(void)drawcount;
+	(void)maxdrawcount;
+	(void)stride;
+	(*exec)(gl_slb, 2920 /* NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNT */, SLB_NARGS(2), gl_pub, &mode);
+}
+
+static void APIENTRY exec_glPolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)units;
+	(void)clamp;
+	(*exec)(gl_slb, 2921 /* NFOSMESA_GLPOLYGONOFFSETCLAMP */, SLB_NARGS(2), gl_pub, &factor);
+}
+
+static void APIENTRY exec_glPrimitiveBoundingBoxARB(GLfloat minX, GLfloat minY, GLfloat minZ, GLfloat minW, GLfloat maxX, GLfloat maxY, GLfloat maxZ, GLfloat maxW)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)minY;
+	(void)minZ;
+	(void)minW;
+	(void)maxX;
+	(void)maxY;
+	(void)maxZ;
+	(void)maxW;
+	(*exec)(gl_slb, 2922 /* NFOSMESA_GLPRIMITIVEBOUNDINGBOXARB */, SLB_NARGS(2), gl_pub, &minX);
+}
+
+static void APIENTRY exec_glUniform1i64ARB(GLint location, GLint64 x)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(*exec)(gl_slb, 2923 /* NFOSMESA_GLUNIFORM1I64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform2i64ARB(GLint location, GLint64 x, GLint64 y)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(*exec)(gl_slb, 2924 /* NFOSMESA_GLUNIFORM2I64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform3i64ARB(GLint location, GLint64 x, GLint64 y, GLint64 z)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 2925 /* NFOSMESA_GLUNIFORM3I64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform4i64ARB(GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(void)z;
+	(void)w;
+	(*exec)(gl_slb, 2926 /* NFOSMESA_GLUNIFORM4I64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform1i64vARB(GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2927 /* NFOSMESA_GLUNIFORM1I64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform2i64vARB(GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2928 /* NFOSMESA_GLUNIFORM2I64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform3i64vARB(GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2929 /* NFOSMESA_GLUNIFORM3I64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform4i64vARB(GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2930 /* NFOSMESA_GLUNIFORM4I64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform1ui64ARB(GLint location, GLuint64 x)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(*exec)(gl_slb, 2931 /* NFOSMESA_GLUNIFORM1UI64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform2ui64ARB(GLint location, GLuint64 x, GLuint64 y)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(*exec)(gl_slb, 2932 /* NFOSMESA_GLUNIFORM2UI64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform3ui64ARB(GLint location, GLuint64 x, GLuint64 y, GLuint64 z)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 2933 /* NFOSMESA_GLUNIFORM3UI64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform4ui64ARB(GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)x;
+	(void)y;
+	(void)z;
+	(void)w;
+	(*exec)(gl_slb, 2934 /* NFOSMESA_GLUNIFORM4UI64ARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform1ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2935 /* NFOSMESA_GLUNIFORM1UI64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform2ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2936 /* NFOSMESA_GLUNIFORM2UI64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform3ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2937 /* NFOSMESA_GLUNIFORM3UI64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glUniform4ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2938 /* NFOSMESA_GLUNIFORM4UI64VARB */, SLB_NARGS(2), gl_pub, &location);
+}
+
+static void APIENTRY exec_glGetUniformi64vARB(GLuint program, GLint location, GLint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)params;
+	(*exec)(gl_slb, 2939 /* NFOSMESA_GLGETUNIFORMI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glGetUniformui64vARB(GLuint program, GLint location, GLuint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)params;
+	(*exec)(gl_slb, 2940 /* NFOSMESA_GLGETUNIFORMUI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glGetnUniformi64vARB(GLuint program, GLint location, GLsizei bufSize, GLint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)bufSize;
+	(void)params;
+	(*exec)(gl_slb, 2941 /* NFOSMESA_GLGETNUNIFORMI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glGetnUniformui64vARB(GLuint program, GLint location, GLsizei bufSize, GLuint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)bufSize;
+	(void)params;
+	(*exec)(gl_slb, 2942 /* NFOSMESA_GLGETNUNIFORMUI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform1i64ARB(GLuint program, GLint location, GLint64 x)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(*exec)(gl_slb, 2943 /* NFOSMESA_GLPROGRAMUNIFORM1I64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform2i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(*exec)(gl_slb, 2944 /* NFOSMESA_GLPROGRAMUNIFORM2I64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform3i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 2945 /* NFOSMESA_GLPROGRAMUNIFORM3I64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform4i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(void)z;
+	(void)w;
+	(*exec)(gl_slb, 2946 /* NFOSMESA_GLPROGRAMUNIFORM4I64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform1i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2947 /* NFOSMESA_GLPROGRAMUNIFORM1I64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform2i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2948 /* NFOSMESA_GLPROGRAMUNIFORM2I64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform3i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2949 /* NFOSMESA_GLPROGRAMUNIFORM3I64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform4i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2950 /* NFOSMESA_GLPROGRAMUNIFORM4I64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform1ui64ARB(GLuint program, GLint location, GLuint64 x)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(*exec)(gl_slb, 2951 /* NFOSMESA_GLPROGRAMUNIFORM1UI64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform2ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(*exec)(gl_slb, 2952 /* NFOSMESA_GLPROGRAMUNIFORM2UI64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform3ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(void)z;
+	(*exec)(gl_slb, 2953 /* NFOSMESA_GLPROGRAMUNIFORM3UI64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform4ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)x;
+	(void)y;
+	(void)z;
+	(void)w;
+	(*exec)(gl_slb, 2954 /* NFOSMESA_GLPROGRAMUNIFORM4UI64ARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform1ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2955 /* NFOSMESA_GLPROGRAMUNIFORM1UI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform2ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2956 /* NFOSMESA_GLPROGRAMUNIFORM2UI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform3ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2957 /* NFOSMESA_GLPROGRAMUNIFORM3UI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glProgramUniform4ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)location;
+	(void)count;
+	(void)value;
+	(*exec)(gl_slb, 2958 /* NFOSMESA_GLPROGRAMUNIFORM4UI64VARB */, SLB_NARGS(2), gl_pub, &program);
+}
+
+static void APIENTRY exec_glMaxShaderCompilerThreadsARB(GLuint count)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 2959 /* NFOSMESA_GLMAXSHADERCOMPILERTHREADSARB */, SLB_NARGS(2), gl_pub, &count);
+}
+
+static void APIENTRY exec_glFramebufferSampleLocationsfvARB(GLenum target, GLuint start, GLsizei count, const GLfloat *v)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)start;
+	(void)count;
+	(void)v;
+	(*exec)(gl_slb, 2960 /* NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVARB */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glNamedFramebufferSampleLocationsfvARB(GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)start;
+	(void)count;
+	(void)v;
+	(*exec)(gl_slb, 2961 /* NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARB */, SLB_NARGS(2), gl_pub, &framebuffer);
+}
+
+static void APIENTRY exec_glEvaluateDepthValuesARB(void)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 2962 /* NFOSMESA_GLEVALUATEDEPTHVALUESARB */, SLB_NARGS(2), gl_pub, NULL);
+}
+
+static void APIENTRY exec_glMaxShaderCompilerThreadsKHR(GLuint count)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 2963 /* NFOSMESA_GLMAXSHADERCOMPILERTHREADSKHR */, SLB_NARGS(2), gl_pub, &count);
+}
+
+static void APIENTRY exec_glBufferStorageExternalEXT(GLenum target, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)offset;
+	(void)size;
+	(void)clientBuffer;
+	(void)flags;
+	(*exec)(gl_slb, 2964 /* NFOSMESA_GLBUFFERSTORAGEEXTERNALEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glNamedBufferStorageExternalEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)offset;
+	(void)size;
+	(void)clientBuffer;
+	(void)flags;
+	(*exec)(gl_slb, 2965 /* NFOSMESA_GLNAMEDBUFFERSTORAGEEXTERNALEXT */, SLB_NARGS(2), gl_pub, &buffer);
+}
+
+static void APIENTRY exec_glGetUnsignedBytevEXT(GLenum pname, GLubyte *data)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)data;
+	(*exec)(gl_slb, 2966 /* NFOSMESA_GLGETUNSIGNEDBYTEVEXT */, SLB_NARGS(2), gl_pub, &pname);
+}
+
+static void APIENTRY exec_glGetUnsignedBytei_vEXT(GLenum target, GLuint index, GLubyte *data)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)index;
+	(void)data;
+	(*exec)(gl_slb, 2967 /* NFOSMESA_GLGETUNSIGNEDBYTEI_VEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glDeleteMemoryObjectsEXT(GLsizei n, const GLuint *memoryObjects)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memoryObjects;
+	(*exec)(gl_slb, 2968 /* NFOSMESA_GLDELETEMEMORYOBJECTSEXT */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static GLboolean APIENTRY exec_glIsMemoryObjectEXT(GLuint memoryObject)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLboolean)(*exec)(gl_slb, 2969 /* NFOSMESA_GLISMEMORYOBJECTEXT */, SLB_NARGS(2), gl_pub, &memoryObject);
+}
+
+static void APIENTRY exec_glCreateMemoryObjectsEXT(GLsizei n, GLuint *memoryObjects)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memoryObjects;
+	(*exec)(gl_slb, 2970 /* NFOSMESA_GLCREATEMEMORYOBJECTSEXT */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static void APIENTRY exec_glMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, const GLint *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 2971 /* NFOSMESA_GLMEMORYOBJECTPARAMETERIVEXT */, SLB_NARGS(2), gl_pub, &memoryObject);
+}
+
+static void APIENTRY exec_glGetMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, GLint *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 2972 /* NFOSMESA_GLGETMEMORYOBJECTPARAMETERIVEXT */, SLB_NARGS(2), gl_pub, &memoryObject);
+}
+
+static void APIENTRY exec_glTexStorageMem2DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2973 /* NFOSMESA_GLTEXSTORAGEMEM2DEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTexStorageMem2DMultisampleEXT(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)fixedSampleLocations;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2974 /* NFOSMESA_GLTEXSTORAGEMEM2DMULTISAMPLEEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTexStorageMem3DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)depth;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2975 /* NFOSMESA_GLTEXSTORAGEMEM3DEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTexStorageMem3DMultisampleEXT(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)depth;
+	(void)fixedSampleLocations;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2976 /* NFOSMESA_GLTEXSTORAGEMEM3DMULTISAMPLEEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glBufferStorageMemEXT(GLenum target, GLsizeiptr size, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)size;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2977 /* NFOSMESA_GLBUFFERSTORAGEMEMEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTextureStorageMem2DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2978 /* NFOSMESA_GLTEXTURESTORAGEMEM2DEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glTextureStorageMem2DMultisampleEXT(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)fixedSampleLocations;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2979 /* NFOSMESA_GLTEXTURESTORAGEMEM2DMULTISAMPLEEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glTextureStorageMem3DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)depth;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2980 /* NFOSMESA_GLTEXTURESTORAGEMEM3DEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glTextureStorageMem3DMultisampleEXT(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)internalFormat;
+	(void)width;
+	(void)height;
+	(void)depth;
+	(void)fixedSampleLocations;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2981 /* NFOSMESA_GLTEXTURESTORAGEMEM3DMULTISAMPLEEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glNamedBufferStorageMemEXT(GLuint buffer, GLsizeiptr size, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)size;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2982 /* NFOSMESA_GLNAMEDBUFFERSTORAGEMEMEXT */, SLB_NARGS(2), gl_pub, &buffer);
+}
+
+static void APIENTRY exec_glTexStorageMem1DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2983 /* NFOSMESA_GLTEXSTORAGEMEM1DEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTextureStorageMem1DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)levels;
+	(void)internalFormat;
+	(void)width;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 2984 /* NFOSMESA_GLTEXTURESTORAGEMEM1DEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glImportMemoryFdEXT(GLuint memory, GLuint64 size, GLenum handleType, GLint fd)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)size;
+	(void)handleType;
+	(void)fd;
+	(*exec)(gl_slb, 2985 /* NFOSMESA_GLIMPORTMEMORYFDEXT */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glImportMemoryWin32HandleEXT(GLuint memory, GLuint64 size, GLenum handleType, void *handle)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)size;
+	(void)handleType;
+	(void)handle;
+	(*exec)(gl_slb, 2986 /* NFOSMESA_GLIMPORTMEMORYWIN32HANDLEEXT */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glImportMemoryWin32NameEXT(GLuint memory, GLuint64 size, GLenum handleType, const void *name)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)size;
+	(void)handleType;
+	(void)name;
+	(*exec)(gl_slb, 2987 /* NFOSMESA_GLIMPORTMEMORYWIN32NAMEEXT */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glGenSemaphoresEXT(GLsizei n, GLuint *semaphores)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)semaphores;
+	(*exec)(gl_slb, 2988 /* NFOSMESA_GLGENSEMAPHORESEXT */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static void APIENTRY exec_glDeleteSemaphoresEXT(GLsizei n, const GLuint *semaphores)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)semaphores;
+	(*exec)(gl_slb, 2989 /* NFOSMESA_GLDELETESEMAPHORESEXT */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static GLboolean APIENTRY exec_glIsSemaphoreEXT(GLuint semaphore)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLboolean)(*exec)(gl_slb, 2990 /* NFOSMESA_GLISSEMAPHOREEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, const GLuint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 2991 /* NFOSMESA_GLSEMAPHOREPARAMETERUI64VEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glGetSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, GLuint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 2992 /* NFOSMESA_GLGETSEMAPHOREPARAMETERUI64VEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glWaitSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *srcLayouts)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)numBufferBarriers;
+	(void)buffers;
+	(void)numTextureBarriers;
+	(void)textures;
+	(void)srcLayouts;
+	(*exec)(gl_slb, 2993 /* NFOSMESA_GLWAITSEMAPHOREEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glSignalSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *dstLayouts)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)numBufferBarriers;
+	(void)buffers;
+	(void)numTextureBarriers;
+	(void)textures;
+	(void)dstLayouts;
+	(*exec)(gl_slb, 2994 /* NFOSMESA_GLSIGNALSEMAPHOREEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glImportSemaphoreFdEXT(GLuint semaphore, GLenum handleType, GLint fd)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)handleType;
+	(void)fd;
+	(*exec)(gl_slb, 2995 /* NFOSMESA_GLIMPORTSEMAPHOREFDEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glImportSemaphoreWin32HandleEXT(GLuint semaphore, GLenum handleType, void *handle)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)handleType;
+	(void)handle;
+	(*exec)(gl_slb, 2996 /* NFOSMESA_GLIMPORTSEMAPHOREWIN32HANDLEEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static void APIENTRY exec_glImportSemaphoreWin32NameEXT(GLuint semaphore, GLenum handleType, const void *name)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)handleType;
+	(void)name;
+	(*exec)(gl_slb, 2997 /* NFOSMESA_GLIMPORTSEMAPHOREWIN32NAMEEXT */, SLB_NARGS(2), gl_pub, &semaphore);
+}
+
+static GLboolean APIENTRY exec_glAcquireKeyedMutexWin32EXT(GLuint memory, GLuint64 key, GLuint timeout)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)key;
+	(void)timeout;
+	return (GLboolean)(*exec)(gl_slb, 2998 /* NFOSMESA_GLACQUIREKEYEDMUTEXWIN32EXT */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static GLboolean APIENTRY exec_glReleaseKeyedMutexWin32EXT(GLuint memory, GLuint64 key)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)key;
+	return (GLboolean)(*exec)(gl_slb, 2999 /* NFOSMESA_GLRELEASEKEYEDMUTEXWIN32EXT */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glLGPUNamedBufferSubDataNVX(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)buffer;
+	(void)offset;
+	(void)size;
+	(void)data;
+	(*exec)(gl_slb, 3000 /* NFOSMESA_GLLGPUNAMEDBUFFERSUBDATANVX */, SLB_NARGS(2), gl_pub, &gpuMask);
+}
+
+static void APIENTRY exec_glLGPUCopyImageSubDataNVX(GLuint sourceGpu, GLbitfield destinationGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srxY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei width, GLsizei height, GLsizei depth)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)destinationGpuMask;
+	(void)srcName;
+	(void)srcTarget;
+	(void)srcLevel;
+	(void)srcX;
+	(void)srxY;
+	(void)srcZ;
+	(void)dstName;
+	(void)dstTarget;
+	(void)dstLevel;
+	(void)dstX;
+	(void)dstY;
+	(void)dstZ;
+	(void)width;
+	(void)height;
+	(void)depth;
+	(*exec)(gl_slb, 3001 /* NFOSMESA_GLLGPUCOPYIMAGESUBDATANVX */, SLB_NARGS(2), gl_pub, &sourceGpu);
+}
+
+static void APIENTRY exec_glLGPUInterlockNVX(void)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3002 /* NFOSMESA_GLLGPUINTERLOCKNVX */, SLB_NARGS(2), gl_pub, NULL);
+}
+
+static void APIENTRY exec_glAlphaToCoverageDitherControlNV(GLenum mode)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3003 /* NFOSMESA_GLALPHATOCOVERAGEDITHERCONTROLNV */, SLB_NARGS(2), gl_pub, &mode);
+}
+
+static void APIENTRY exec_glDrawVkImageNV(GLuint64 vkImage, GLuint sampler, GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1, GLfloat z, GLfloat s0, GLfloat t0, GLfloat s1, GLfloat t1)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)sampler;
+	(void)x0;
+	(void)y0;
+	(void)x1;
+	(void)y1;
+	(void)z;
+	(void)s0;
+	(void)t0;
+	(void)s1;
+	(void)t1;
+	(*exec)(gl_slb, 3004 /* NFOSMESA_GLDRAWVKIMAGENV */, SLB_NARGS(2), gl_pub, &vkImage);
+}
+
+static GLVULKANPROCNV APIENTRY exec_glGetVkProcAddrNV(const GLchar *name)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	return (GLVULKANPROCNV)(*exec)(gl_slb, 3005 /* NFOSMESA_GLGETVKPROCADDRNV */, SLB_NARGS(2), gl_pub, &name);
+}
+
+static void APIENTRY exec_glWaitVkSemaphoreNV(GLuint64 vkSemaphore)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3006 /* NFOSMESA_GLWAITVKSEMAPHORENV */, SLB_NARGS(2), gl_pub, &vkSemaphore);
+}
+
+static void APIENTRY exec_glSignalVkSemaphoreNV(GLuint64 vkSemaphore)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3007 /* NFOSMESA_GLSIGNALVKSEMAPHORENV */, SLB_NARGS(2), gl_pub, &vkSemaphore);
+}
+
+static void APIENTRY exec_glSignalVkFenceNV(GLuint64 vkFence)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3008 /* NFOSMESA_GLSIGNALVKFENCENV */, SLB_NARGS(2), gl_pub, &vkFence);
+}
+
+static void APIENTRY exec_glRenderGpuMaskNV(GLbitfield mask)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3009 /* NFOSMESA_GLRENDERGPUMASKNV */, SLB_NARGS(2), gl_pub, &mask);
+}
+
+static void APIENTRY exec_glMulticastBufferSubDataNV(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)buffer;
+	(void)offset;
+	(void)size;
+	(void)data;
+	(*exec)(gl_slb, 3010 /* NFOSMESA_GLMULTICASTBUFFERSUBDATANV */, SLB_NARGS(2), gl_pub, &gpuMask);
+}
+
+static void APIENTRY exec_glMulticastCopyBufferSubDataNV(GLuint readGpu, GLbitfield writeGpuMask, GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)writeGpuMask;
+	(void)readBuffer;
+	(void)writeBuffer;
+	(void)readOffset;
+	(void)writeOffset;
+	(void)size;
+	(*exec)(gl_slb, 3011 /* NFOSMESA_GLMULTICASTCOPYBUFFERSUBDATANV */, SLB_NARGS(2), gl_pub, &readGpu);
+}
+
+static void APIENTRY exec_glMulticastCopyImageSubDataNV(GLuint srcGpu, GLbitfield dstGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)dstGpuMask;
+	(void)srcName;
+	(void)srcTarget;
+	(void)srcLevel;
+	(void)srcX;
+	(void)srcY;
+	(void)srcZ;
+	(void)dstName;
+	(void)dstTarget;
+	(void)dstLevel;
+	(void)dstX;
+	(void)dstY;
+	(void)dstZ;
+	(void)srcWidth;
+	(void)srcHeight;
+	(void)srcDepth;
+	(*exec)(gl_slb, 3012 /* NFOSMESA_GLMULTICASTCOPYIMAGESUBDATANV */, SLB_NARGS(2), gl_pub, &srcGpu);
+}
+
+static void APIENTRY exec_glMulticastBlitFramebufferNV(GLuint srcGpu, GLuint dstGpu, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)dstGpu;
+	(void)srcX0;
+	(void)srcY0;
+	(void)srcX1;
+	(void)srcY1;
+	(void)dstX0;
+	(void)dstY0;
+	(void)dstX1;
+	(void)dstY1;
+	(void)mask;
+	(void)filter;
+	(*exec)(gl_slb, 3013 /* NFOSMESA_GLMULTICASTBLITFRAMEBUFFERNV */, SLB_NARGS(2), gl_pub, &srcGpu);
+}
+
+static void APIENTRY exec_glMulticastFramebufferSampleLocationsfvNV(GLuint gpu, GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)framebuffer;
+	(void)start;
+	(void)count;
+	(void)v;
+	(*exec)(gl_slb, 3014 /* NFOSMESA_GLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNV */, SLB_NARGS(2), gl_pub, &gpu);
+}
+
+static void APIENTRY exec_glMulticastBarrierNV(void)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3015 /* NFOSMESA_GLMULTICASTBARRIERNV */, SLB_NARGS(2), gl_pub, NULL);
+}
+
+static void APIENTRY exec_glMulticastWaitSyncNV(GLuint signalGpu, GLbitfield waitGpuMask)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)waitGpuMask;
+	(*exec)(gl_slb, 3016 /* NFOSMESA_GLMULTICASTWAITSYNCNV */, SLB_NARGS(2), gl_pub, &signalGpu);
+}
+
+static void APIENTRY exec_glMulticastGetQueryObjectivNV(GLuint gpu, GLuint id, GLenum pname, GLint *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)id;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 3017 /* NFOSMESA_GLMULTICASTGETQUERYOBJECTIVNV */, SLB_NARGS(2), gl_pub, &gpu);
+}
+
+static void APIENTRY exec_glMulticastGetQueryObjectuivNV(GLuint gpu, GLuint id, GLenum pname, GLuint *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)id;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 3018 /* NFOSMESA_GLMULTICASTGETQUERYOBJECTUIVNV */, SLB_NARGS(2), gl_pub, &gpu);
+}
+
+static void APIENTRY exec_glMulticastGetQueryObjecti64vNV(GLuint gpu, GLuint id, GLenum pname, GLint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)id;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 3019 /* NFOSMESA_GLMULTICASTGETQUERYOBJECTI64VNV */, SLB_NARGS(2), gl_pub, &gpu);
+}
+
+static void APIENTRY exec_glMulticastGetQueryObjectui64vNV(GLuint gpu, GLuint id, GLenum pname, GLuint64 *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)id;
+	(void)pname;
+	(void)params;
+	(*exec)(gl_slb, 3020 /* NFOSMESA_GLMULTICASTGETQUERYOBJECTUI64VNV */, SLB_NARGS(2), gl_pub, &gpu);
+}
+
+static GLint APIENTRY exec_glQueryResourceNV(GLenum queryType, GLint tagId, GLuint bufSize, GLint *buffer)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)tagId;
+	(void)bufSize;
+	(void)buffer;
+	return (GLint)(*exec)(gl_slb, 3021 /* NFOSMESA_GLQUERYRESOURCENV */, SLB_NARGS(2), gl_pub, &queryType);
+}
+
+static void APIENTRY exec_glGenQueryResourceTagNV(GLsizei n, GLint *tagIds)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)tagIds;
+	(*exec)(gl_slb, 3022 /* NFOSMESA_GLGENQUERYRESOURCETAGNV */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static void APIENTRY exec_glDeleteQueryResourceTagNV(GLsizei n, const GLint *tagIds)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)tagIds;
+	(*exec)(gl_slb, 3023 /* NFOSMESA_GLDELETEQUERYRESOURCETAGNV */, SLB_NARGS(2), gl_pub, &n);
+}
+
+static void APIENTRY exec_glQueryResourceTagNV(GLint tagId, const GLchar *tagString)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)tagString;
+	(*exec)(gl_slb, 3024 /* NFOSMESA_GLQUERYRESOURCETAGNV */, SLB_NARGS(2), gl_pub, &tagId);
+}
+
+static void APIENTRY exec_glFramebufferSamplePositionsfvAMD(GLenum target, GLuint numsamples, GLuint pixelindex, const GLfloat *values)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)numsamples;
+	(void)pixelindex;
+	(void)values;
+	(*exec)(gl_slb, 3025 /* NFOSMESA_GLFRAMEBUFFERSAMPLEPOSITIONSFVAMD */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glNamedFramebufferSamplePositionsfvAMD(GLuint framebuffer, GLuint numsamples, GLuint pixelindex, const GLfloat *values)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)numsamples;
+	(void)pixelindex;
+	(void)values;
+	(*exec)(gl_slb, 3026 /* NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMD */, SLB_NARGS(2), gl_pub, &framebuffer);
+}
+
+static void APIENTRY exec_glGetFramebufferParameterfvAMD(GLenum target, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)numsamples;
+	(void)pixelindex;
+	(void)size;
+	(void)values;
+	(*exec)(gl_slb, 3027 /* NFOSMESA_GLGETFRAMEBUFFERPARAMETERFVAMD */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glGetNamedFramebufferParameterfvAMD(GLuint framebuffer, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)numsamples;
+	(void)pixelindex;
+	(void)size;
+	(void)values;
+	(*exec)(gl_slb, 3028 /* NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERFVAMD */, SLB_NARGS(2), gl_pub, &framebuffer);
+}
+
+static void APIENTRY exec_glWindowRectanglesEXT(GLenum mode, GLsizei count, const GLint *box)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)box;
+	(*exec)(gl_slb, 3029 /* NFOSMESA_GLWINDOWRECTANGLESEXT */, SLB_NARGS(2), gl_pub, &mode);
+}
+
+static void APIENTRY exec_glApplyFramebufferAttachmentCMAAINTEL(void)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3030 /* NFOSMESA_GLAPPLYFRAMEBUFFERATTACHMENTCMAAINTEL */, SLB_NARGS(2), gl_pub, NULL);
+}
+
+static void APIENTRY exec_glViewportSwizzleNV(GLuint index, GLenum swizzlex, GLenum swizzley, GLenum swizzlez, GLenum swizzlew)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)swizzlex;
+	(void)swizzley;
+	(void)swizzlez;
+	(void)swizzlew;
+	(*exec)(gl_slb, 3031 /* NFOSMESA_GLVIEWPORTSWIZZLENV */, SLB_NARGS(2), gl_pub, &index);
+}
+
+static void APIENTRY exec_glViewportPositionWScaleNV(GLuint index, GLfloat xcoeff, GLfloat ycoeff)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)xcoeff;
+	(void)ycoeff;
+	(*exec)(gl_slb, 3032 /* NFOSMESA_GLVIEWPORTPOSITIONWSCALENV */, SLB_NARGS(2), gl_pub, &index);
+}
+
+static void APIENTRY exec_glConservativeRasterParameterfNV(GLenum pname, GLfloat value)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)value;
+	(*exec)(gl_slb, 3033 /* NFOSMESA_GLCONSERVATIVERASTERPARAMETERFNV */, SLB_NARGS(2), gl_pub, &pname);
+}
+
+static void APIENTRY exec_glConservativeRasterParameteriNV(GLenum pname, GLint param)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)param;
+	(*exec)(gl_slb, 3034 /* NFOSMESA_GLCONSERVATIVERASTERPARAMETERINV */, SLB_NARGS(2), gl_pub, &pname);
+}
+
 
 
 static APIENTRY OSMESAproc real_OSMesaGetProcAddress(const char *funcname)
@@ -26516,7 +27600,126 @@ static void slb_init_osmesa(void)
 	glp->VertexArrayElementBuffer = exec_glVertexArrayElementBuffer;
 	glp->VertexArrayVertexBuffer = exec_glVertexArrayVertexBuffer;
 	glp->VertexArrayVertexBuffers = exec_glVertexArrayVertexBuffers;
-	gl.__numfuncs = 2915;
+	glp->OSMesaCreateContextAttribs = exec_OSMesaCreateContextAttribs;
+	glp->SpecializeShader = exec_glSpecializeShader;
+	glp->SpecializeShaderARB = exec_glSpecializeShaderARB;
+	glp->MultiDrawArraysIndirectCount = exec_glMultiDrawArraysIndirectCount;
+	glp->MultiDrawElementsIndirectCount = exec_glMultiDrawElementsIndirectCount;
+	glp->PolygonOffsetClamp = exec_glPolygonOffsetClamp;
+	glp->PrimitiveBoundingBoxARB = exec_glPrimitiveBoundingBoxARB;
+	glp->Uniform1i64ARB = exec_glUniform1i64ARB;
+	glp->Uniform2i64ARB = exec_glUniform2i64ARB;
+	glp->Uniform3i64ARB = exec_glUniform3i64ARB;
+	glp->Uniform4i64ARB = exec_glUniform4i64ARB;
+	glp->Uniform1i64vARB = exec_glUniform1i64vARB;
+	glp->Uniform2i64vARB = exec_glUniform2i64vARB;
+	glp->Uniform3i64vARB = exec_glUniform3i64vARB;
+	glp->Uniform4i64vARB = exec_glUniform4i64vARB;
+	glp->Uniform1ui64ARB = exec_glUniform1ui64ARB;
+	glp->Uniform2ui64ARB = exec_glUniform2ui64ARB;
+	glp->Uniform3ui64ARB = exec_glUniform3ui64ARB;
+	glp->Uniform4ui64ARB = exec_glUniform4ui64ARB;
+	glp->Uniform1ui64vARB = exec_glUniform1ui64vARB;
+	glp->Uniform2ui64vARB = exec_glUniform2ui64vARB;
+	glp->Uniform3ui64vARB = exec_glUniform3ui64vARB;
+	glp->Uniform4ui64vARB = exec_glUniform4ui64vARB;
+	glp->GetUniformi64vARB = exec_glGetUniformi64vARB;
+	glp->GetUniformui64vARB = exec_glGetUniformui64vARB;
+	glp->GetnUniformi64vARB = exec_glGetnUniformi64vARB;
+	glp->GetnUniformui64vARB = exec_glGetnUniformui64vARB;
+	glp->ProgramUniform1i64ARB = exec_glProgramUniform1i64ARB;
+	glp->ProgramUniform2i64ARB = exec_glProgramUniform2i64ARB;
+	glp->ProgramUniform3i64ARB = exec_glProgramUniform3i64ARB;
+	glp->ProgramUniform4i64ARB = exec_glProgramUniform4i64ARB;
+	glp->ProgramUniform1i64vARB = exec_glProgramUniform1i64vARB;
+	glp->ProgramUniform2i64vARB = exec_glProgramUniform2i64vARB;
+	glp->ProgramUniform3i64vARB = exec_glProgramUniform3i64vARB;
+	glp->ProgramUniform4i64vARB = exec_glProgramUniform4i64vARB;
+	glp->ProgramUniform1ui64ARB = exec_glProgramUniform1ui64ARB;
+	glp->ProgramUniform2ui64ARB = exec_glProgramUniform2ui64ARB;
+	glp->ProgramUniform3ui64ARB = exec_glProgramUniform3ui64ARB;
+	glp->ProgramUniform4ui64ARB = exec_glProgramUniform4ui64ARB;
+	glp->ProgramUniform1ui64vARB = exec_glProgramUniform1ui64vARB;
+	glp->ProgramUniform2ui64vARB = exec_glProgramUniform2ui64vARB;
+	glp->ProgramUniform3ui64vARB = exec_glProgramUniform3ui64vARB;
+	glp->ProgramUniform4ui64vARB = exec_glProgramUniform4ui64vARB;
+	glp->MaxShaderCompilerThreadsARB = exec_glMaxShaderCompilerThreadsARB;
+	glp->FramebufferSampleLocationsfvARB = exec_glFramebufferSampleLocationsfvARB;
+	glp->NamedFramebufferSampleLocationsfvARB = exec_glNamedFramebufferSampleLocationsfvARB;
+	glp->EvaluateDepthValuesARB = exec_glEvaluateDepthValuesARB;
+	glp->MaxShaderCompilerThreadsKHR = exec_glMaxShaderCompilerThreadsKHR;
+	glp->BufferStorageExternalEXT = exec_glBufferStorageExternalEXT;
+	glp->NamedBufferStorageExternalEXT = exec_glNamedBufferStorageExternalEXT;
+	glp->GetUnsignedBytevEXT = exec_glGetUnsignedBytevEXT;
+	glp->GetUnsignedBytei_vEXT = exec_glGetUnsignedBytei_vEXT;
+	glp->DeleteMemoryObjectsEXT = exec_glDeleteMemoryObjectsEXT;
+	glp->IsMemoryObjectEXT = exec_glIsMemoryObjectEXT;
+	glp->CreateMemoryObjectsEXT = exec_glCreateMemoryObjectsEXT;
+	glp->MemoryObjectParameterivEXT = exec_glMemoryObjectParameterivEXT;
+	glp->GetMemoryObjectParameterivEXT = exec_glGetMemoryObjectParameterivEXT;
+	glp->TexStorageMem2DEXT = exec_glTexStorageMem2DEXT;
+	glp->TexStorageMem2DMultisampleEXT = exec_glTexStorageMem2DMultisampleEXT;
+	glp->TexStorageMem3DEXT = exec_glTexStorageMem3DEXT;
+	glp->TexStorageMem3DMultisampleEXT = exec_glTexStorageMem3DMultisampleEXT;
+	glp->BufferStorageMemEXT = exec_glBufferStorageMemEXT;
+	glp->TextureStorageMem2DEXT = exec_glTextureStorageMem2DEXT;
+	glp->TextureStorageMem2DMultisampleEXT = exec_glTextureStorageMem2DMultisampleEXT;
+	glp->TextureStorageMem3DEXT = exec_glTextureStorageMem3DEXT;
+	glp->TextureStorageMem3DMultisampleEXT = exec_glTextureStorageMem3DMultisampleEXT;
+	glp->NamedBufferStorageMemEXT = exec_glNamedBufferStorageMemEXT;
+	glp->TexStorageMem1DEXT = exec_glTexStorageMem1DEXT;
+	glp->TextureStorageMem1DEXT = exec_glTextureStorageMem1DEXT;
+	glp->ImportMemoryFdEXT = exec_glImportMemoryFdEXT;
+	glp->ImportMemoryWin32HandleEXT = exec_glImportMemoryWin32HandleEXT;
+	glp->ImportMemoryWin32NameEXT = exec_glImportMemoryWin32NameEXT;
+	glp->GenSemaphoresEXT = exec_glGenSemaphoresEXT;
+	glp->DeleteSemaphoresEXT = exec_glDeleteSemaphoresEXT;
+	glp->IsSemaphoreEXT = exec_glIsSemaphoreEXT;
+	glp->SemaphoreParameterui64vEXT = exec_glSemaphoreParameterui64vEXT;
+	glp->GetSemaphoreParameterui64vEXT = exec_glGetSemaphoreParameterui64vEXT;
+	glp->WaitSemaphoreEXT = exec_glWaitSemaphoreEXT;
+	glp->SignalSemaphoreEXT = exec_glSignalSemaphoreEXT;
+	glp->ImportSemaphoreFdEXT = exec_glImportSemaphoreFdEXT;
+	glp->ImportSemaphoreWin32HandleEXT = exec_glImportSemaphoreWin32HandleEXT;
+	glp->ImportSemaphoreWin32NameEXT = exec_glImportSemaphoreWin32NameEXT;
+	glp->AcquireKeyedMutexWin32EXT = exec_glAcquireKeyedMutexWin32EXT;
+	glp->ReleaseKeyedMutexWin32EXT = exec_glReleaseKeyedMutexWin32EXT;
+	glp->LGPUNamedBufferSubDataNVX = exec_glLGPUNamedBufferSubDataNVX;
+	glp->LGPUCopyImageSubDataNVX = exec_glLGPUCopyImageSubDataNVX;
+	glp->LGPUInterlockNVX = exec_glLGPUInterlockNVX;
+	glp->AlphaToCoverageDitherControlNV = exec_glAlphaToCoverageDitherControlNV;
+	glp->DrawVkImageNV = exec_glDrawVkImageNV;
+	glp->GetVkProcAddrNV = exec_glGetVkProcAddrNV;
+	glp->WaitVkSemaphoreNV = exec_glWaitVkSemaphoreNV;
+	glp->SignalVkSemaphoreNV = exec_glSignalVkSemaphoreNV;
+	glp->SignalVkFenceNV = exec_glSignalVkFenceNV;
+	glp->RenderGpuMaskNV = exec_glRenderGpuMaskNV;
+	glp->MulticastBufferSubDataNV = exec_glMulticastBufferSubDataNV;
+	glp->MulticastCopyBufferSubDataNV = exec_glMulticastCopyBufferSubDataNV;
+	glp->MulticastCopyImageSubDataNV = exec_glMulticastCopyImageSubDataNV;
+	glp->MulticastBlitFramebufferNV = exec_glMulticastBlitFramebufferNV;
+	glp->MulticastFramebufferSampleLocationsfvNV = exec_glMulticastFramebufferSampleLocationsfvNV;
+	glp->MulticastBarrierNV = exec_glMulticastBarrierNV;
+	glp->MulticastWaitSyncNV = exec_glMulticastWaitSyncNV;
+	glp->MulticastGetQueryObjectivNV = exec_glMulticastGetQueryObjectivNV;
+	glp->MulticastGetQueryObjectuivNV = exec_glMulticastGetQueryObjectuivNV;
+	glp->MulticastGetQueryObjecti64vNV = exec_glMulticastGetQueryObjecti64vNV;
+	glp->MulticastGetQueryObjectui64vNV = exec_glMulticastGetQueryObjectui64vNV;
+	glp->QueryResourceNV = exec_glQueryResourceNV;
+	glp->GenQueryResourceTagNV = exec_glGenQueryResourceTagNV;
+	glp->DeleteQueryResourceTagNV = exec_glDeleteQueryResourceTagNV;
+	glp->QueryResourceTagNV = exec_glQueryResourceTagNV;
+	glp->FramebufferSamplePositionsfvAMD = exec_glFramebufferSamplePositionsfvAMD;
+	glp->NamedFramebufferSamplePositionsfvAMD = exec_glNamedFramebufferSamplePositionsfvAMD;
+	glp->GetFramebufferParameterfvAMD = exec_glGetFramebufferParameterfvAMD;
+	glp->GetNamedFramebufferParameterfvAMD = exec_glGetNamedFramebufferParameterfvAMD;
+	glp->WindowRectanglesEXT = exec_glWindowRectanglesEXT;
+	glp->ApplyFramebufferAttachmentCMAAINTEL = exec_glApplyFramebufferAttachmentCMAAINTEL;
+	glp->ViewportSwizzleNV = exec_glViewportSwizzleNV;
+	glp->ViewportPositionWScaleNV = exec_glViewportPositionWScaleNV;
+	glp->ConservativeRasterParameterfNV = exec_glConservativeRasterParameterfNV;
+	glp->ConservativeRasterParameteriNV = exec_glConservativeRasterParameteriNV;
+	gl.__numfuncs = 3034;
 	gl.__old_OSMesaGetProcAddress = gl.OSMesaGetProcAddress;
 	gl.OSMesaGetProcAddress = real_OSMesaGetProcAddress;
 }
@@ -26533,7 +27736,7 @@ struct gl_public *slb_load_osmesa(const char *path)
 	 * compiled-in library name, so there is no way
 	 * to pass an alternative filename here
 	 */
-	ret = Slbopen("osmesa.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
+	ret = Slbopen("osmesa.slb", path, 4 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
 		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;
@@ -26604,6 +27807,8 @@ int main(void)
 	printf("OSMesaColorClamp              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("OSMesaCreateContext");
 	printf("OSMesaCreateContext           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("OSMesaCreateContextAttribs");
+	printf("OSMesaCreateContextAttribs    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("OSMesaCreateContextExt");
 	printf("OSMesaCreateContextExt        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("OSMesaCreateLDG");
@@ -26634,6 +27839,8 @@ int main(void)
 	printf("glAccum                       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glAccumxOES");
 	printf("glAccumxOES                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glAcquireKeyedMutexWin32EXT");
+	printf("glAcquireKeyedMutexWin32EXT   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glActiveProgramEXT");
 	printf("glActiveProgramEXT            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glActiveShaderProgram");
@@ -26658,6 +27865,10 @@ int main(void)
 	printf("glAlphaFunc                   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glAlphaFuncxOES");
 	printf("glAlphaFuncxOES               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glAlphaToCoverageDitherControlNV");
+	printf("glAlphaToCoverageDitherControlNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glApplyFramebufferAttachmentCMAAINTEL");
+	printf("glApplyFramebufferAttachmentCMAAINTEL: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glApplyTextureEXT");
 	printf("glApplyTextureEXT             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glAreProgramsResidentNV");
@@ -26906,6 +28117,10 @@ int main(void)
 	printf("glBufferParameteriAPPLE       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferStorage");
 	printf("glBufferStorage               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glBufferStorageExternalEXT");
+	printf("glBufferStorageExternalEXT    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glBufferStorageMemEXT");
+	printf("glBufferStorageMemEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferSubData");
 	printf("glBufferSubData               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferSubDataARB");
@@ -27232,6 +28447,10 @@ int main(void)
 	printf("glCompressedTextureSubImage3D : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glCompressedTextureSubImage3DEXT");
 	printf("glCompressedTextureSubImage3DEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glConservativeRasterParameterfNV");
+	printf("glConservativeRasterParameterfNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glConservativeRasterParameteriNV");
+	printf("glConservativeRasterParameteriNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glConvolutionFilter1D");
 	printf("glConvolutionFilter1D         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glConvolutionFilter1DEXT");
@@ -27354,6 +28573,8 @@ int main(void)
 	printf("glCreateDebugObjectMESA       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glCreateFramebuffers");
 	printf("glCreateFramebuffers          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glCreateMemoryObjectsEXT");
+	printf("glCreateMemoryObjectsEXT      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glCreatePerfQueryINTEL");
 	printf("glCreatePerfQueryINTEL        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glCreateProgram");
@@ -27438,6 +28659,8 @@ int main(void)
 	printf("glDeleteFramebuffersEXT       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteLists");
 	printf("glDeleteLists                 : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDeleteMemoryObjectsEXT");
+	printf("glDeleteMemoryObjectsEXT      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteNamedStringARB");
 	printf("glDeleteNamedStringARB        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteNamesAMD");
@@ -27466,12 +28689,16 @@ int main(void)
 	printf("glDeleteQueries               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteQueriesARB");
 	printf("glDeleteQueriesARB            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDeleteQueryResourceTagNV");
+	printf("glDeleteQueryResourceTagNV    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteRenderbuffers");
 	printf("glDeleteRenderbuffers         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteRenderbuffersEXT");
 	printf("glDeleteRenderbuffersEXT      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteSamplers");
 	printf("glDeleteSamplers              : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDeleteSemaphoresEXT");
+	printf("glDeleteSemaphoresEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteShader");
 	printf("glDeleteShader                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDeleteStatesNV");
@@ -27632,6 +28859,8 @@ int main(void)
 	printf("glDrawTransformFeedbackStream : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDrawTransformFeedbackStreamInstanced");
 	printf("glDrawTransformFeedbackStreamInstanced: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDrawVkImageNV");
+	printf("glDrawVkImageNV               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glEdgeFlag");
 	printf("glEdgeFlag                    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glEdgeFlagFormatNV");
@@ -27746,6 +28975,8 @@ int main(void)
 	printf("glEvalPoint1                  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glEvalPoint2");
 	printf("glEvalPoint2                  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glEvaluateDepthValuesARB");
+	printf("glEvaluateDepthValuesARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glExecuteProgramNV");
 	printf("glExecuteProgramNV            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glExtractComponentEXT");
@@ -27880,8 +29111,12 @@ int main(void)
 	printf("glFramebufferRenderbuffer     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferRenderbufferEXT");
 	printf("glFramebufferRenderbufferEXT  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glFramebufferSampleLocationsfvARB");
+	printf("glFramebufferSampleLocationsfvARB: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferSampleLocationsfvNV");
 	printf("glFramebufferSampleLocationsfvNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glFramebufferSamplePositionsfvAMD");
+	printf("glFramebufferSamplePositionsfvAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferTexture");
 	printf("glFramebufferTexture          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferTexture1D");
@@ -27960,12 +29195,16 @@ int main(void)
 	printf("glGenQueries                  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenQueriesARB");
 	printf("glGenQueriesARB               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGenQueryResourceTagNV");
+	printf("glGenQueryResourceTagNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenRenderbuffers");
 	printf("glGenRenderbuffers            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenRenderbuffersEXT");
 	printf("glGenRenderbuffersEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenSamplers");
 	printf("glGenSamplers                 : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGenSemaphoresEXT");
+	printf("glGenSemaphoresEXT            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenSymbolsEXT");
 	printf("glGenSymbolsEXT               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGenTextures");
@@ -28178,6 +29417,8 @@ int main(void)
 	printf("glGetFramebufferAttachmentParameteriv: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetFramebufferAttachmentParameterivEXT");
 	printf("glGetFramebufferAttachmentParameterivEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetFramebufferParameterfvAMD");
+	printf("glGetFramebufferParameterfvAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetFramebufferParameteriv");
 	printf("glGetFramebufferParameteriv   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetFramebufferParameterivEXT");
@@ -28280,6 +29521,8 @@ int main(void)
 	printf("glGetMaterialiv               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMaterialxOES");
 	printf("glGetMaterialxOES             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetMemoryObjectParameterivEXT");
+	printf("glGetMemoryObjectParameterivEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMinmax");
 	printf("glGetMinmax                   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMinmaxEXT");
@@ -28340,6 +29583,8 @@ int main(void)
 	printf("glGetNamedFramebufferAttachmentParameteriv: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetNamedFramebufferAttachmentParameterivEXT");
 	printf("glGetNamedFramebufferAttachmentParameterivEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetNamedFramebufferParameterfvAMD");
+	printf("glGetNamedFramebufferParameterfvAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetNamedFramebufferParameteriv");
 	printf("glGetNamedFramebufferParameteriv: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetNamedFramebufferParameterivEXT");
@@ -28562,6 +29807,8 @@ int main(void)
 	printf("glGetSamplerParameterfv       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetSamplerParameteriv");
 	printf("glGetSamplerParameteriv       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetSemaphoreParameterui64vEXT");
+	printf("glGetSemaphoreParameterui64vEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetSeparableFilter");
 	printf("glGetSeparableFilter          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetSeparableFilterEXT");
@@ -28706,18 +29953,26 @@ int main(void)
 	printf("glGetUniformfv                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformfvARB");
 	printf("glGetUniformfvARB             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetUniformi64vARB");
+	printf("glGetUniformi64vARB           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformi64vNV");
 	printf("glGetUniformi64vNV            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformiv");
 	printf("glGetUniformiv                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformivARB");
 	printf("glGetUniformivARB             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetUniformui64vARB");
+	printf("glGetUniformui64vARB          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformui64vNV");
 	printf("glGetUniformui64vNV           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformuiv");
 	printf("glGetUniformuiv               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetUniformuivEXT");
 	printf("glGetUniformuivEXT            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetUnsignedBytei_vEXT");
+	printf("glGetUnsignedBytei_vEXT       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetUnsignedBytevEXT");
+	printf("glGetUnsignedBytevEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetVariantArrayObjectfvATI");
 	printf("glGetVariantArrayObjectfvATI  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetVariantArrayObjectivATI");
@@ -28808,6 +30063,8 @@ int main(void)
 	printf("glGetVideoui64vNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetVideouivNV");
 	printf("glGetVideouivNV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetVkProcAddrNV");
+	printf("glGetVkProcAddrNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnColorTable");
 	printf("glGetnColorTable              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnColorTableARB");
@@ -28872,10 +30129,14 @@ int main(void)
 	printf("glGetnUniformfv               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnUniformfvARB");
 	printf("glGetnUniformfvARB            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetnUniformi64vARB");
+	printf("glGetnUniformi64vARB          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnUniformiv");
 	printf("glGetnUniformiv               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnUniformivARB");
 	printf("glGetnUniformivARB            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetnUniformui64vARB");
+	printf("glGetnUniformui64vARB         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnUniformuiv");
 	printf("glGetnUniformuiv              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetnUniformuivARB");
@@ -28914,6 +30175,18 @@ int main(void)
 	printf("glImageTransformParameteriHP  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glImageTransformParameterivHP");
 	printf("glImageTransformParameterivHP : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportMemoryFdEXT");
+	printf("glImportMemoryFdEXT           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportMemoryWin32HandleEXT");
+	printf("glImportMemoryWin32HandleEXT  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportMemoryWin32NameEXT");
+	printf("glImportMemoryWin32NameEXT    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportSemaphoreFdEXT");
+	printf("glImportSemaphoreFdEXT        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportSemaphoreWin32HandleEXT");
+	printf("glImportSemaphoreWin32HandleEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glImportSemaphoreWin32NameEXT");
+	printf("glImportSemaphoreWin32NameEXT : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glImportSyncEXT");
 	printf("glImportSyncEXT               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIndexFormatNV");
@@ -29012,6 +30285,8 @@ int main(void)
 	printf("glIsImageHandleResidentNV     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsList");
 	printf("glIsList                      : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glIsMemoryObjectEXT");
+	printf("glIsMemoryObjectEXT           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsNameAMD");
 	printf("glIsNameAMD                   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsNamedBufferResidentNV");
@@ -29046,6 +30321,8 @@ int main(void)
 	printf("glIsRenderbufferEXT           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsSampler");
 	printf("glIsSampler                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glIsSemaphoreEXT");
+	printf("glIsSemaphoreEXT              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsShader");
 	printf("glIsShader                    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsStateNV");
@@ -29072,6 +30349,12 @@ int main(void)
 	printf("glIsVertexArrayAPPLE          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glIsVertexAttribEnabledAPPLE");
 	printf("glIsVertexAttribEnabledAPPLE  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glLGPUCopyImageSubDataNVX");
+	printf("glLGPUCopyImageSubDataNVX     : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glLGPUInterlockNVX");
+	printf("glLGPUInterlockNVX            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glLGPUNamedBufferSubDataNVX");
+	printf("glLGPUNamedBufferSubDataNVX   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glLabelObjectEXT");
 	printf("glLabelObjectEXT              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glLightEnviSGIX");
@@ -29302,12 +30585,18 @@ int main(void)
 	printf("glMatrixTranslatedEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMatrixTranslatefEXT");
 	printf("glMatrixTranslatefEXT         : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMaxShaderCompilerThreadsARB");
+	printf("glMaxShaderCompilerThreadsARB : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMaxShaderCompilerThreadsKHR");
+	printf("glMaxShaderCompilerThreadsKHR : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMemoryBarrier");
 	printf("glMemoryBarrier               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMemoryBarrierByRegion");
 	printf("glMemoryBarrierByRegion       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMemoryBarrierEXT");
 	printf("glMemoryBarrierEXT            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMemoryObjectParameterivEXT");
+	printf("glMemoryObjectParameterivEXT  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMinSampleShading");
 	printf("glMinSampleShading            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMinSampleShadingARB");
@@ -29344,6 +30633,8 @@ int main(void)
 	printf("glMultiDrawArraysIndirectBindlessCountNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawArraysIndirectBindlessNV");
 	printf("glMultiDrawArraysIndirectBindlessNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMultiDrawArraysIndirectCount");
+	printf("glMultiDrawArraysIndirectCount: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawArraysIndirectCountARB");
 	printf("glMultiDrawArraysIndirectCountARB: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawElementArrayAPPLE");
@@ -29362,6 +30653,8 @@ int main(void)
 	printf("glMultiDrawElementsIndirectBindlessCountNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawElementsIndirectBindlessNV");
 	printf("glMultiDrawElementsIndirectBindlessNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMultiDrawElementsIndirectCount");
+	printf("glMultiDrawElementsIndirectCount: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawElementsIndirectCountARB");
 	printf("glMultiDrawElementsIndirectCountARB: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawRangeElementArrayAPPLE");
@@ -29612,6 +30905,28 @@ int main(void)
 	printf("glMultiTexSubImage2DEXT       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiTexSubImage3DEXT");
 	printf("glMultiTexSubImage3DEXT       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastBarrierNV");
+	printf("glMulticastBarrierNV          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastBlitFramebufferNV");
+	printf("glMulticastBlitFramebufferNV  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastBufferSubDataNV");
+	printf("glMulticastBufferSubDataNV    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastCopyBufferSubDataNV");
+	printf("glMulticastCopyBufferSubDataNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastCopyImageSubDataNV");
+	printf("glMulticastCopyImageSubDataNV : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastFramebufferSampleLocationsfvNV");
+	printf("glMulticastFramebufferSampleLocationsfvNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastGetQueryObjecti64vNV");
+	printf("glMulticastGetQueryObjecti64vNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastGetQueryObjectivNV");
+	printf("glMulticastGetQueryObjectivNV : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastGetQueryObjectui64vNV");
+	printf("glMulticastGetQueryObjectui64vNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastGetQueryObjectuivNV");
+	printf("glMulticastGetQueryObjectuivNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMulticastWaitSyncNV");
+	printf("glMulticastWaitSyncNV         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferData");
 	printf("glNamedBufferData             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferDataEXT");
@@ -29624,6 +30939,10 @@ int main(void)
 	printf("glNamedBufferStorage          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferStorageEXT");
 	printf("glNamedBufferStorageEXT       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedBufferStorageExternalEXT");
+	printf("glNamedBufferStorageExternalEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedBufferStorageMemEXT");
+	printf("glNamedBufferStorageMemEXT    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferSubData");
 	printf("glNamedBufferSubData          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferSubDataEXT");
@@ -29644,8 +30963,12 @@ int main(void)
 	printf("glNamedFramebufferRenderbuffer: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedFramebufferRenderbufferEXT");
 	printf("glNamedFramebufferRenderbufferEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedFramebufferSampleLocationsfvARB");
+	printf("glNamedFramebufferSampleLocationsfvARB: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedFramebufferSampleLocationsfvNV");
 	printf("glNamedFramebufferSampleLocationsfvNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedFramebufferSamplePositionsfvAMD");
+	printf("glNamedFramebufferSamplePositionsfvAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedFramebufferTexture");
 	printf("glNamedFramebufferTexture     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedFramebufferTexture1DEXT");
@@ -29932,6 +31255,8 @@ int main(void)
 	printf("glPolygonMode                 : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPolygonOffset");
 	printf("glPolygonOffset               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glPolygonOffsetClamp");
+	printf("glPolygonOffsetClamp          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPolygonOffsetClampEXT");
 	printf("glPolygonOffsetClampEXT       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPolygonOffsetEXT");
@@ -29956,6 +31281,8 @@ int main(void)
 	printf("glPresentFrameDualFillNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPresentFrameKeyedNV");
 	printf("glPresentFrameKeyedNV         : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glPrimitiveBoundingBoxARB");
+	printf("glPrimitiveBoundingBoxARB     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPrimitiveRestartIndex");
 	printf("glPrimitiveRestartIndex       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glPrimitiveRestartIndexNV");
@@ -30072,8 +31399,12 @@ int main(void)
 	printf("glProgramUniform1fvEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1i");
 	printf("glProgramUniform1i            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform1i64ARB");
+	printf("glProgramUniform1i64ARB       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1i64NV");
 	printf("glProgramUniform1i64NV        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform1i64vARB");
+	printf("glProgramUniform1i64vARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1i64vNV");
 	printf("glProgramUniform1i64vNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1iEXT");
@@ -30084,8 +31415,12 @@ int main(void)
 	printf("glProgramUniform1ivEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1ui");
 	printf("glProgramUniform1ui           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform1ui64ARB");
+	printf("glProgramUniform1ui64ARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1ui64NV");
 	printf("glProgramUniform1ui64NV       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform1ui64vARB");
+	printf("glProgramUniform1ui64vARB     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1ui64vNV");
 	printf("glProgramUniform1ui64vNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform1uiEXT");
@@ -30112,8 +31447,12 @@ int main(void)
 	printf("glProgramUniform2fvEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2i");
 	printf("glProgramUniform2i            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform2i64ARB");
+	printf("glProgramUniform2i64ARB       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2i64NV");
 	printf("glProgramUniform2i64NV        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform2i64vARB");
+	printf("glProgramUniform2i64vARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2i64vNV");
 	printf("glProgramUniform2i64vNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2iEXT");
@@ -30124,8 +31463,12 @@ int main(void)
 	printf("glProgramUniform2ivEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2ui");
 	printf("glProgramUniform2ui           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform2ui64ARB");
+	printf("glProgramUniform2ui64ARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2ui64NV");
 	printf("glProgramUniform2ui64NV       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform2ui64vARB");
+	printf("glProgramUniform2ui64vARB     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2ui64vNV");
 	printf("glProgramUniform2ui64vNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform2uiEXT");
@@ -30152,8 +31495,12 @@ int main(void)
 	printf("glProgramUniform3fvEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3i");
 	printf("glProgramUniform3i            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform3i64ARB");
+	printf("glProgramUniform3i64ARB       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3i64NV");
 	printf("glProgramUniform3i64NV        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform3i64vARB");
+	printf("glProgramUniform3i64vARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3i64vNV");
 	printf("glProgramUniform3i64vNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3iEXT");
@@ -30164,8 +31511,12 @@ int main(void)
 	printf("glProgramUniform3ivEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3ui");
 	printf("glProgramUniform3ui           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform3ui64ARB");
+	printf("glProgramUniform3ui64ARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3ui64NV");
 	printf("glProgramUniform3ui64NV       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform3ui64vARB");
+	printf("glProgramUniform3ui64vARB     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3ui64vNV");
 	printf("glProgramUniform3ui64vNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform3uiEXT");
@@ -30192,8 +31543,12 @@ int main(void)
 	printf("glProgramUniform4fvEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4i");
 	printf("glProgramUniform4i            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform4i64ARB");
+	printf("glProgramUniform4i64ARB       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4i64NV");
 	printf("glProgramUniform4i64NV        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform4i64vARB");
+	printf("glProgramUniform4i64vARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4i64vNV");
 	printf("glProgramUniform4i64vNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4iEXT");
@@ -30204,8 +31559,12 @@ int main(void)
 	printf("glProgramUniform4ivEXT        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4ui");
 	printf("glProgramUniform4ui           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform4ui64ARB");
+	printf("glProgramUniform4ui64ARB      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4ui64NV");
 	printf("glProgramUniform4ui64NV       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glProgramUniform4ui64vARB");
+	printf("glProgramUniform4ui64vARB     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4ui64vNV");
 	printf("glProgramUniform4ui64vNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glProgramUniform4uiEXT");
@@ -30324,6 +31683,10 @@ int main(void)
 	printf("glQueryMatrixxOES             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glQueryObjectParameteruiAMD");
 	printf("glQueryObjectParameteruiAMD   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glQueryResourceNV");
+	printf("glQueryResourceNV             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glQueryResourceTagNV");
+	printf("glQueryResourceTagNV          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRasterPos2d");
 	printf("glRasterPos2d                 : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRasterPos2dv");
@@ -30418,8 +31781,12 @@ int main(void)
 	printf("glRectxvOES                   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glReferencePlaneSGIX");
 	printf("glReferencePlaneSGIX          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glReleaseKeyedMutexWin32EXT");
+	printf("glReleaseKeyedMutexWin32EXT   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glReleaseShaderCompiler");
 	printf("glReleaseShaderCompiler       : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glRenderGpuMaskNV");
+	printf("glRenderGpuMaskNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRenderMode");
 	printf("glRenderMode                  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRenderbufferStorage");
@@ -30636,6 +32003,8 @@ int main(void)
 	printf("glSelectBuffer                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSelectPerfMonitorCountersAMD");
 	printf("glSelectPerfMonitorCountersAMD: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSemaphoreParameterui64vEXT");
+	printf("glSemaphoreParameterui64vEXT  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSeparableFilter2D");
 	printf("glSeparableFilter2D           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSeparableFilter2DEXT");
@@ -30670,6 +32039,16 @@ int main(void)
 	printf("glShaderStorageBlockBinding   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSharpenTexFuncSGIS");
 	printf("glSharpenTexFuncSGIS          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSignalSemaphoreEXT");
+	printf("glSignalSemaphoreEXT          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSignalVkFenceNV");
+	printf("glSignalVkFenceNV             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSignalVkSemaphoreNV");
+	printf("glSignalVkSemaphoreNV         : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSpecializeShader");
+	printf("glSpecializeShader            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glSpecializeShaderARB");
+	printf("glSpecializeShaderARB         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSpriteParameterfSGIX");
 	printf("glSpriteParameterfSGIX        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSpriteParameterfvSGIX");
@@ -31030,6 +32409,16 @@ int main(void)
 	printf("glTexStorage3D                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexStorage3DMultisample");
 	printf("glTexStorage3DMultisample     : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexStorageMem1DEXT");
+	printf("glTexStorageMem1DEXT          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexStorageMem2DEXT");
+	printf("glTexStorageMem2DEXT          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexStorageMem2DMultisampleEXT");
+	printf("glTexStorageMem2DMultisampleEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexStorageMem3DEXT");
+	printf("glTexStorageMem3DEXT          : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexStorageMem3DMultisampleEXT");
+	printf("glTexStorageMem3DMultisampleEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexStorageSparseAMD");
 	printf("glTexStorageSparseAMD         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexSubImage1D");
@@ -31132,6 +32521,16 @@ int main(void)
 	printf("glTextureStorage3DMultisample : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTextureStorage3DMultisampleEXT");
 	printf("glTextureStorage3DMultisampleEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureStorageMem1DEXT");
+	printf("glTextureStorageMem1DEXT      : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureStorageMem2DEXT");
+	printf("glTextureStorageMem2DEXT      : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureStorageMem2DMultisampleEXT");
+	printf("glTextureStorageMem2DMultisampleEXT: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureStorageMem3DEXT");
+	printf("glTextureStorageMem3DEXT      : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureStorageMem3DMultisampleEXT");
+	printf("glTextureStorageMem3DMultisampleEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTextureStorageSparseAMD");
 	printf("glTextureStorageSparseAMD     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTextureSubImage1D");
@@ -31198,8 +32597,12 @@ int main(void)
 	printf("glUniform1fvARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1i");
 	printf("glUniform1i                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform1i64ARB");
+	printf("glUniform1i64ARB              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1i64NV");
 	printf("glUniform1i64NV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform1i64vARB");
+	printf("glUniform1i64vARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1i64vNV");
 	printf("glUniform1i64vNV              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1iARB");
@@ -31210,8 +32613,12 @@ int main(void)
 	printf("glUniform1ivARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1ui");
 	printf("glUniform1ui                  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform1ui64ARB");
+	printf("glUniform1ui64ARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1ui64NV");
 	printf("glUniform1ui64NV              : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform1ui64vARB");
+	printf("glUniform1ui64vARB            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1ui64vNV");
 	printf("glUniform1ui64vNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform1uiEXT");
@@ -31234,8 +32641,12 @@ int main(void)
 	printf("glUniform2fvARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2i");
 	printf("glUniform2i                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform2i64ARB");
+	printf("glUniform2i64ARB              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2i64NV");
 	printf("glUniform2i64NV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform2i64vARB");
+	printf("glUniform2i64vARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2i64vNV");
 	printf("glUniform2i64vNV              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2iARB");
@@ -31246,8 +32657,12 @@ int main(void)
 	printf("glUniform2ivARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2ui");
 	printf("glUniform2ui                  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform2ui64ARB");
+	printf("glUniform2ui64ARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2ui64NV");
 	printf("glUniform2ui64NV              : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform2ui64vARB");
+	printf("glUniform2ui64vARB            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2ui64vNV");
 	printf("glUniform2ui64vNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform2uiEXT");
@@ -31270,8 +32685,12 @@ int main(void)
 	printf("glUniform3fvARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3i");
 	printf("glUniform3i                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform3i64ARB");
+	printf("glUniform3i64ARB              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3i64NV");
 	printf("glUniform3i64NV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform3i64vARB");
+	printf("glUniform3i64vARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3i64vNV");
 	printf("glUniform3i64vNV              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3iARB");
@@ -31282,8 +32701,12 @@ int main(void)
 	printf("glUniform3ivARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3ui");
 	printf("glUniform3ui                  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform3ui64ARB");
+	printf("glUniform3ui64ARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3ui64NV");
 	printf("glUniform3ui64NV              : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform3ui64vARB");
+	printf("glUniform3ui64vARB            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3ui64vNV");
 	printf("glUniform3ui64vNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform3uiEXT");
@@ -31306,8 +32729,12 @@ int main(void)
 	printf("glUniform4fvARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4i");
 	printf("glUniform4i                   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform4i64ARB");
+	printf("glUniform4i64ARB              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4i64NV");
 	printf("glUniform4i64NV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform4i64vARB");
+	printf("glUniform4i64vARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4i64vNV");
 	printf("glUniform4i64vNV              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4iARB");
@@ -31318,8 +32745,12 @@ int main(void)
 	printf("glUniform4ivARB               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4ui");
 	printf("glUniform4ui                  : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform4ui64ARB");
+	printf("glUniform4ui64ARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4ui64NV");
 	printf("glUniform4ui64NV              : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glUniform4ui64vARB");
+	printf("glUniform4ui64vARB            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4ui64vNV");
 	printf("glUniform4ui64vNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glUniform4uiEXT");
@@ -32170,8 +33601,16 @@ int main(void)
 	printf("glViewportIndexedf            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glViewportIndexedfv");
 	printf("glViewportIndexedfv           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glViewportPositionWScaleNV");
+	printf("glViewportPositionWScaleNV    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glViewportSwizzleNV");
+	printf("glViewportSwizzleNV           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glWaitSemaphoreEXT");
+	printf("glWaitSemaphoreEXT            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glWaitSync");
 	printf("glWaitSync                    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glWaitVkSemaphoreNV");
+	printf("glWaitVkSemaphoreNV           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glWeightPathsNV");
 	printf("glWeightPathsNV               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glWeightPointerARB");
@@ -32304,6 +33743,8 @@ int main(void)
 	printf("glWindowPos4sMESA             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glWindowPos4svMESA");
 	printf("glWindowPos4svMESA            : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glWindowRectanglesEXT");
+	printf("glWindowRectanglesEXT         : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glWriteMaskEXT");
 	printf("glWriteMaskEXT                : %p\n", p);
 	p = gl.OSMesaGetProcAddress("gluLookAt");

@@ -740,7 +740,7 @@ struct gl_public *slb_load_tiny_gl(const char *path)
 	 * compiled-in library name, so there is no way
 	 * to pass an alternative filename here
 	 */
-	ret = Slbopen("tiny_gl.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
+	ret = Slbopen("tiny_gl.slb", path, 4 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
 		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;

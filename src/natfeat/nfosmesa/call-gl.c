@@ -15,6 +15,13 @@ void OSMesaDriver::nfglAccumxOES(GLenum op, GLfixed value)
 	fn.glAccumxOES(op, value);
 }
 
+GLboolean OSMesaDriver::nfglAcquireKeyedMutexWin32EXT(GLuint memory, GLuint64 key, GLuint timeout)
+{
+	D(bug("nfosmesa: glAcquireKeyedMutexWin32EXT(%u, %" PRIu64 ", %u)", memory, key, timeout));
+	GLboolean __ret = fn.glAcquireKeyedMutexWin32EXT(memory, key, timeout);
+	return __ret;
+}
+
 void OSMesaDriver::nfglActiveProgramEXT(GLuint program)
 {
 	D(bug("nfosmesa: glActiveProgramEXT(%u)", program));
@@ -89,6 +96,18 @@ void OSMesaDriver::nfglAlphaFuncxOES(GLenum func, GLfixed ref)
 {
 	D(bug("nfosmesa: glAlphaFuncxOES(%s, 0x%x)", gl_enum_name(func), ref));
 	fn.glAlphaFuncxOES(func, ref);
+}
+
+void OSMesaDriver::nfglAlphaToCoverageDitherControlNV(GLenum mode)
+{
+	D(bug("nfosmesa: glAlphaToCoverageDitherControlNV(%s)", gl_enum_name(mode)));
+	fn.glAlphaToCoverageDitherControlNV(mode);
+}
+
+void OSMesaDriver::nfglApplyFramebufferAttachmentCMAAINTEL(void)
+{
+	D(bug("nfosmesa: glApplyFramebufferAttachmentCMAAINTEL()"));
+	fn.glApplyFramebufferAttachmentCMAAINTEL();
 }
 
 void OSMesaDriver::nfglApplyTextureEXT(GLenum mode)
@@ -938,6 +957,22 @@ void OSMesaDriver::nfglBufferStorage(GLenum target, GLsizeiptr size, const void 
 {
 	D(bug("nfosmesa: glBufferStorage(%s, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", gl_enum_name(target), size, AtariOffset(data), flags));
 FN_GLBUFFERSTORAGE(target, size, data, flags);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglBufferStorageExternalEXT(GLenum target, GLintptr offset, GLsizeiptr size, memptr clientBuffer, GLbitfield flags)
+#else
+void OSMesaDriver::nfglBufferStorageExternalEXT(GLenum target, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags)
+#endif
+{
+	D(bug("nfosmesa: glBufferStorageExternalEXT(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ", 0x%x)", gl_enum_name(target), offset, size, AtariOffset(clientBuffer), flags));
+FN_GLBUFFERSTORAGEEXTERNALEXT(target, offset, size, clientBuffer, flags);
+}
+
+void OSMesaDriver::nfglBufferStorageMemEXT(GLenum target, GLsizeiptr size, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glBufferStorageMemEXT(%s, %" PRI_IPTR ", %u, %" PRIu64 ")", gl_enum_name(target), size, memory, offset));
+	fn.glBufferStorageMemEXT(target, size, memory, offset);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -2304,6 +2339,18 @@ void OSMesaDriver::nfglCompressedTextureSubImage3DEXT(GLuint texture, GLenum tar
 FN_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT(texture, target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, bits);
 }
 
+void OSMesaDriver::nfglConservativeRasterParameterfNV(GLenum pname, GLfloat value)
+{
+	D(bug("nfosmesa: glConservativeRasterParameterfNV(%s, %f)", gl_enum_name(pname), value));
+	fn.glConservativeRasterParameterfNV(pname, value);
+}
+
+void OSMesaDriver::nfglConservativeRasterParameteriNV(GLenum pname, GLint param)
+{
+	D(bug("nfosmesa: glConservativeRasterParameteriNV(%s, %d)", gl_enum_name(pname), param));
+	fn.glConservativeRasterParameteriNV(pname, param);
+}
+
 #if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglConvolutionFilter1D(GLenum target, GLenum internalformat, GLsizei width, GLenum format, GLenum type, memptr image)
 #else
@@ -2732,6 +2779,23 @@ FN_GLCREATEFRAMEBUFFERS(n, framebuffers);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglCreateMemoryObjectsEXT(GLsizei n, memptr memoryObjects)
+#else
+void OSMesaDriver::nfglCreateMemoryObjectsEXT(GLsizei n, GLuint *memoryObjects)
+#endif
+{
+	D(bug("nfosmesa: glCreateMemoryObjectsEXT(%d, " PRI_PTR ")", n, AtariOffset(memoryObjects)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __memoryObjects_size = MAX(n, 0);
+	GLuint __memoryObjects_tmp[__memoryObjects_size];
+	fn.glCreateMemoryObjectsEXT(n, __memoryObjects_tmp);
+	Host2AtariIntArray(__memoryObjects_size, __memoryObjects_tmp, memoryObjects);
+#else
+	fn.glCreateMemoryObjectsEXT(n, HostAddr(memoryObjects, GLuint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglCreatePerfQueryINTEL(GLuint queryId, memptr queryHandle)
 #else
 void OSMesaDriver::nfglCreatePerfQueryINTEL(GLuint queryId, GLuint *queryHandle)
@@ -2930,36 +2994,36 @@ void OSMesaDriver::nfglCurrentPaletteMatrixARB(GLint index)
 
 #if 0
 #if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::nfglDebugMessageCallback(GLDEBUGPROC callback, memptr userParam)
+void OSMesaDriver::nfglDebugMessageCallback(memptr callback, memptr userParam)
 #else
 void OSMesaDriver::nfglDebugMessageCallback(GLDEBUGPROC callback, const void *userParam)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageCallback(" PRI_PTR ", " PRI_PTR ")", callback, AtariOffset(userParam)));
+	D(bug("nfosmesa: glDebugMessageCallback(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACK(callback, userParam);
 }
 #endif
 
 #if 0
 #if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::nfglDebugMessageCallbackAMD(GLDEBUGPROCAMD callback, memptr userParam)
+void OSMesaDriver::nfglDebugMessageCallbackAMD(memptr callback, memptr userParam)
 #else
 void OSMesaDriver::nfglDebugMessageCallbackAMD(GLDEBUGPROCAMD callback, void *userParam)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageCallbackAMD(" PRI_PTR ", " PRI_PTR ")", callback, AtariOffset(userParam)));
+	D(bug("nfosmesa: glDebugMessageCallbackAMD(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACKAMD(callback, userParam);
 }
 #endif
 
 #if 0
 #if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::nfglDebugMessageCallbackARB(GLDEBUGPROCARB callback, memptr userParam)
+void OSMesaDriver::nfglDebugMessageCallbackARB(memptr callback, memptr userParam)
 #else
 void OSMesaDriver::nfglDebugMessageCallbackARB(GLDEBUGPROCARB callback, const void *userParam)
 #endif
 {
-	D(bug("nfosmesa: glDebugMessageCallbackARB(" PRI_PTR ", " PRI_PTR ")", callback, AtariOffset(userParam)));
+	D(bug("nfosmesa: glDebugMessageCallbackARB(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACKARB(callback, userParam);
 }
 #endif
@@ -3181,6 +3245,23 @@ void OSMesaDriver::nfglDeleteLists(GLuint list, GLsizei range)
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglDeleteMemoryObjectsEXT(GLsizei n, memptr memoryObjects)
+#else
+void OSMesaDriver::nfglDeleteMemoryObjectsEXT(GLsizei n, const GLuint *memoryObjects)
+#endif
+{
+	D(bug("nfosmesa: glDeleteMemoryObjectsEXT(%d, " PRI_PTR ")", n, AtariOffset(memoryObjects)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __memoryObjects_size = MAX(n, 0);
+	GLuint __memoryObjects_tmp[__memoryObjects_size];
+	GLuint *__memoryObjects_ptmp = Atari2HostIntArray(__memoryObjects_size, memoryObjects, __memoryObjects_tmp);
+	fn.glDeleteMemoryObjectsEXT(n, __memoryObjects_ptmp);
+#else
+	fn.glDeleteMemoryObjectsEXT(n, HostAddr(memoryObjects, const GLuint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglDeleteNamedStringARB(GLint namelen, memptr name)
 #else
 void OSMesaDriver::nfglDeleteNamedStringARB(GLint namelen, const GLchar *name)
@@ -3301,6 +3382,23 @@ FN_GLDELETEQUERIESARB(n, ids);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglDeleteQueryResourceTagNV(GLsizei n, memptr tagIds)
+#else
+void OSMesaDriver::nfglDeleteQueryResourceTagNV(GLsizei n, const GLint *tagIds)
+#endif
+{
+	D(bug("nfosmesa: glDeleteQueryResourceTagNV(%d, " PRI_PTR ")", n, AtariOffset(tagIds)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __tagIds_size = MAX(n, 0);
+	GLint __tagIds_tmp[__tagIds_size];
+	GLint *__tagIds_ptmp = Atari2HostIntArray(__tagIds_size, tagIds, __tagIds_tmp);
+	fn.glDeleteQueryResourceTagNV(n, __tagIds_ptmp);
+#else
+	fn.glDeleteQueryResourceTagNV(n, HostAddr(tagIds, const GLint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglDeleteRenderbuffers(GLsizei n, memptr renderbuffers)
 #else
 void OSMesaDriver::nfglDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
@@ -3328,6 +3426,23 @@ void OSMesaDriver::nfglDeleteSamplers(GLsizei count, const GLuint *samplers)
 {
 	D(bug("nfosmesa: glDeleteSamplers(%d, " PRI_PTR ")", count, AtariOffset(samplers)));
 FN_GLDELETESAMPLERS(count, samplers);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglDeleteSemaphoresEXT(GLsizei n, memptr semaphores)
+#else
+void OSMesaDriver::nfglDeleteSemaphoresEXT(GLsizei n, const GLuint *semaphores)
+#endif
+{
+	D(bug("nfosmesa: glDeleteSemaphoresEXT(%d, " PRI_PTR ")", n, AtariOffset(semaphores)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __semaphores_size = MAX(n, 0);
+	GLuint __semaphores_tmp[__semaphores_size];
+	GLuint *__semaphores_ptmp = Atari2HostIntArray(__semaphores_size, semaphores, __semaphores_tmp);
+	fn.glDeleteSemaphoresEXT(n, __semaphores_ptmp);
+#else
+	fn.glDeleteSemaphoresEXT(n, HostAddr(semaphores, const GLuint *));
+#endif
 }
 
 void OSMesaDriver::nfglDeleteShader(GLuint shader)
@@ -3937,6 +4052,12 @@ void OSMesaDriver::nfglDrawTransformFeedbackStreamInstanced(GLenum mode, GLuint 
 	fn.glDrawTransformFeedbackStreamInstanced(mode, id, stream, instancecount);
 }
 
+void OSMesaDriver::nfglDrawVkImageNV(GLuint64 vkImage, GLuint sampler, GLfloat x0, GLfloat y0, GLfloat x1, GLfloat y1, GLfloat z, GLfloat s0, GLfloat t0, GLfloat s1, GLfloat t1)
+{
+	D(bug("nfosmesa: glDrawVkImageNV(%" PRIu64 ", %u, %f, %f, %f, %f, %f, %f, %f, %f, %f)", vkImage, sampler, x0, y0, x1, y1, z, s0, t0, s1, t1));
+	fn.glDrawVkImageNV(vkImage, sampler, x0, y0, x1, y1, z, s0, t0, s1, t1);
+}
+
 void OSMesaDriver::nfglEdgeFlag(GLboolean32 flag)
 {
 	D(bug("nfosmesa: glEdgeFlag(%d)", flag));
@@ -4325,6 +4446,12 @@ void OSMesaDriver::nfglEvalPoint2(GLint i, GLint j)
 {
 	D(bug("nfosmesa: glEvalPoint2(%d, %d)", i, j));
 	fn.glEvalPoint2(i, j);
+}
+
+void OSMesaDriver::nfglEvaluateDepthValuesARB(void)
+{
+	D(bug("nfosmesa: glEvaluateDepthValuesARB()"));
+	fn.glEvaluateDepthValuesARB();
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -4827,6 +4954,23 @@ void OSMesaDriver::nfglFramebufferRenderbufferEXT(GLenum target, GLenum attachme
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglFramebufferSampleLocationsfvARB(GLenum target, GLuint start, GLsizei count, memptr v)
+#else
+void OSMesaDriver::nfglFramebufferSampleLocationsfvARB(GLenum target, GLuint start, GLsizei count, const GLfloat *v)
+#endif
+{
+	D(bug("nfosmesa: glFramebufferSampleLocationsfvARB(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), start, count, AtariOffset(v)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __v_size = MAX(count, 0);
+	GLfloat __v_tmp[__v_size];
+	GLfloat *__v_ptmp = Atari2HostFloatArray(__v_size, v, __v_tmp);
+	fn.glFramebufferSampleLocationsfvARB(target, start, count, __v_ptmp);
+#else
+	fn.glFramebufferSampleLocationsfvARB(target, start, count, HostAddr(v, const GLfloat *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglFramebufferSampleLocationsfvNV(GLenum target, GLuint start, GLsizei count, memptr v)
 #else
 void OSMesaDriver::nfglFramebufferSampleLocationsfvNV(GLenum target, GLuint start, GLsizei count, const GLfloat *v)
@@ -4834,6 +4978,23 @@ void OSMesaDriver::nfglFramebufferSampleLocationsfvNV(GLenum target, GLuint star
 {
 	D(bug("nfosmesa: glFramebufferSampleLocationsfvNV(%s, %u, %d, " PRI_PTR ")", gl_enum_name(target), start, count, AtariOffset(v)));
 FN_GLFRAMEBUFFERSAMPLELOCATIONSFVNV(target, start, count, v);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglFramebufferSamplePositionsfvAMD(GLenum target, GLuint numsamples, GLuint pixelindex, memptr values)
+#else
+void OSMesaDriver::nfglFramebufferSamplePositionsfvAMD(GLenum target, GLuint numsamples, GLuint pixelindex, const GLfloat *values)
+#endif
+{
+	D(bug("nfosmesa: glFramebufferSamplePositionsfvAMD(%s, %u, %u, " PRI_PTR ")", gl_enum_name(target), numsamples, pixelindex, AtariOffset(values)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __values_size = MAX(numsamples, 0);
+	GLfloat __values_tmp[__values_size];
+	GLfloat *__values_ptmp = Atari2HostFloatArray(__values_size, values, __values_tmp);
+	fn.glFramebufferSamplePositionsfvAMD(target, numsamples, pixelindex, __values_ptmp);
+#else
+	fn.glFramebufferSamplePositionsfvAMD(target, numsamples, pixelindex, HostAddr(values, const GLfloat *));
+#endif
 }
 
 void OSMesaDriver::nfglFramebufferTexture(GLenum target, GLenum attachment, GLuint texture, GLint level)
@@ -5139,6 +5300,23 @@ FN_GLGENQUERIESARB(n, ids);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGenQueryResourceTagNV(GLsizei n, memptr tagIds)
+#else
+void OSMesaDriver::nfglGenQueryResourceTagNV(GLsizei n, GLint *tagIds)
+#endif
+{
+	D(bug("nfosmesa: glGenQueryResourceTagNV(%d, " PRI_PTR ")", n, AtariOffset(tagIds)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __tagIds_size = MAX(n, 0);
+	GLint __tagIds_tmp[__tagIds_size];
+	fn.glGenQueryResourceTagNV(n, __tagIds_tmp);
+	Host2AtariIntArray(__tagIds_size, __tagIds_tmp, tagIds);
+#else
+	fn.glGenQueryResourceTagNV(n, HostAddr(tagIds, GLint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGenRenderbuffers(GLsizei n, memptr renderbuffers)
 #else
 void OSMesaDriver::nfglGenRenderbuffers(GLsizei n, GLuint *renderbuffers)
@@ -5166,6 +5344,23 @@ void OSMesaDriver::nfglGenSamplers(GLsizei count, GLuint *samplers)
 {
 	D(bug("nfosmesa: glGenSamplers(%d, " PRI_PTR ")", count, AtariOffset(samplers)));
 FN_GLGENSAMPLERS(count, samplers);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGenSemaphoresEXT(GLsizei n, memptr semaphores)
+#else
+void OSMesaDriver::nfglGenSemaphoresEXT(GLsizei n, GLuint *semaphores)
+#endif
+{
+	D(bug("nfosmesa: glGenSemaphoresEXT(%d, " PRI_PTR ")", n, AtariOffset(semaphores)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __semaphores_size = MAX(n, 0);
+	GLuint __semaphores_tmp[__semaphores_size];
+	fn.glGenSemaphoresEXT(n, __semaphores_tmp);
+	Host2AtariIntArray(__semaphores_size, __semaphores_tmp, semaphores);
+#else
+	fn.glGenSemaphoresEXT(n, HostAddr(semaphores, GLuint *));
+#endif
 }
 
 GLuint OSMesaDriver::nfglGenSymbolsEXT(GLenum datatype, GLenum storagetype, GLenum range, GLuint components)
@@ -6322,6 +6517,23 @@ FN_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT(target, attachment, pname, params);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetFramebufferParameterfvAMD(GLenum target, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, memptr values)
+#else
+void OSMesaDriver::nfglGetFramebufferParameterfvAMD(GLenum target, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values)
+#endif
+{
+	D(bug("nfosmesa: glGetFramebufferParameterfvAMD(%s, %s, %u, %u, %d, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), numsamples, pixelindex, size, AtariOffset(values)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __values_size = MAX(numsamples, 0);
+	GLfloat __values_tmp[__values_size];
+	fn.glGetFramebufferParameterfvAMD(target, pname, numsamples, pixelindex, size, __values_tmp);
+	Host2AtariFloatArray(__values_size, __values_tmp, values);
+#else
+	fn.glGetFramebufferParameterfvAMD(target, pname, numsamples, pixelindex, size, HostAddr(values, GLfloat *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetFramebufferParameteriv(GLenum target, GLenum pname, memptr params)
 #else
 void OSMesaDriver::nfglGetFramebufferParameteriv(GLenum target, GLenum pname, GLint *params)
@@ -6818,6 +7030,23 @@ void OSMesaDriver::nfglGetMaterialxOES(GLenum face, GLenum pname, GLfixed param)
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglGetMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, GLint *params)
+#endif
+{
+	D(bug("nfosmesa: glGetMemoryObjectParameterivEXT(%u, %s, " PRI_PTR ")", memoryObject, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLint __params_tmp[__params_size];
+	fn.glGetMemoryObjectParameterivEXT(memoryObject, pname, __params_tmp);
+	Host2AtariIntArray(__params_size, __params_tmp, params);
+#else
+	fn.glGetMemoryObjectParameterivEXT(memoryObject, pname, HostAddr(params, GLint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetMinmax(GLenum target, GLboolean32 reset, GLenum format, GLenum type, memptr values)
 #else
 void OSMesaDriver::nfglGetMinmax(GLenum target, GLboolean32 reset, GLenum format, GLenum type, void *values)
@@ -7119,6 +7348,23 @@ void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameterivEXT(GLuint frameb
 {
 	D(bug("nfosmesa: glGetNamedFramebufferAttachmentParameterivEXT(%u, %s, %s, " PRI_PTR ")", framebuffer, gl_enum_name(attachment), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT(framebuffer, attachment, pname, params);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetNamedFramebufferParameterfvAMD(GLuint framebuffer, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, memptr values)
+#else
+void OSMesaDriver::nfglGetNamedFramebufferParameterfvAMD(GLuint framebuffer, GLenum pname, GLuint numsamples, GLuint pixelindex, GLsizei size, GLfloat *values)
+#endif
+{
+	D(bug("nfosmesa: glGetNamedFramebufferParameterfvAMD(%u, %s, %u, %u, %d, " PRI_PTR ")", framebuffer, gl_enum_name(pname), numsamples, pixelindex, size, AtariOffset(values)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __values_size = MAX(numsamples, 0);
+	GLfloat __values_tmp[__values_size];
+	fn.glGetNamedFramebufferParameterfvAMD(framebuffer, pname, numsamples, pixelindex, size, __values_tmp);
+	Host2AtariFloatArray(__values_size, __values_tmp, values);
+#else
+	fn.glGetNamedFramebufferParameterfvAMD(framebuffer, pname, numsamples, pixelindex, size, HostAddr(values, GLfloat *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -8227,6 +8473,23 @@ FN_GLGETSAMPLERPARAMETERIV(sampler, pname, params);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglGetSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, GLuint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glGetSemaphoreParameterui64vEXT(%u, %s, " PRI_PTR ")", semaphore, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLuint64 __params_tmp[__params_size];
+	fn.glGetSemaphoreParameterui64vEXT(semaphore, pname, __params_tmp);
+	Host2AtariInt64Array(__params_size, __params_tmp, params);
+#else
+	fn.glGetSemaphoreParameterui64vEXT(semaphore, pname, HostAddr(params, GLuint64 *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetSeparableFilter(GLenum target, GLenum format, GLenum type, memptr row, memptr column, memptr span)
 #else
 void OSMesaDriver::nfglGetSeparableFilter(GLenum target, GLenum format, GLenum type, void *row, void *column, void *span)
@@ -8946,6 +9209,16 @@ void OSMesaDriver::nfglGetUniformfvARB(GLhandleARB programObj, GLint location, G
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetUniformi64vARB(GLuint program, GLint location, memptr params)
+#else
+void OSMesaDriver::nfglGetUniformi64vARB(GLuint program, GLint location, GLint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glGetUniformi64vARB(%u, %d, " PRI_PTR ")", program, location, AtariOffset(params)));
+FN_GLGETUNIFORMI64VARB(program, location, params);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetUniformi64vNV(GLuint program, GLint location, memptr params)
 #else
 void OSMesaDriver::nfglGetUniformi64vNV(GLuint program, GLint location, GLint64EXT *params)
@@ -8983,6 +9256,16 @@ void OSMesaDriver::nfglGetUniformivARB(GLhandleARB programObj, GLint location, G
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetUniformui64vARB(GLuint program, GLint location, memptr params)
+#else
+void OSMesaDriver::nfglGetUniformui64vARB(GLuint program, GLint location, GLuint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glGetUniformui64vARB(%u, %d, " PRI_PTR ")", program, location, AtariOffset(params)));
+FN_GLGETUNIFORMUI64VARB(program, location, params);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetUniformui64vNV(GLuint program, GLint location, memptr params)
 #else
 void OSMesaDriver::nfglGetUniformui64vNV(GLuint program, GLint location, GLuint64EXT *params)
@@ -9011,6 +9294,30 @@ void OSMesaDriver::nfglGetUniformuivEXT(GLuint program, GLint location, GLuint *
 	D(bug("nfosmesa: glGetUniformuivEXT(%u, %d, " PRI_PTR ")", program, location, AtariOffset(params)));
 FN_GLGETUNIFORMUIVEXT(program, location, params);
 }
+
+#if 0
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetUnsignedBytei_vEXT(GLenum target, GLuint index, memptr data)
+#else
+void OSMesaDriver::nfglGetUnsignedBytei_vEXT(GLenum target, GLuint index, GLubyte *data)
+#endif
+{
+	D(bug("nfosmesa: glGetUnsignedBytei_vEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
+	fn.glGetUnsignedBytei_vEXT(target, index, data);
+}
+#endif
+
+#if 0
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetUnsignedBytevEXT(GLenum pname, memptr data)
+#else
+void OSMesaDriver::nfglGetUnsignedBytevEXT(GLenum pname, GLubyte *data)
+#endif
+{
+	D(bug("nfosmesa: glGetUnsignedBytevEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(data)));
+	fn.glGetUnsignedBytevEXT(pname, data);
+}
+#endif
 
 #if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetVariantArrayObjectfvATI(GLuint id, GLenum pname, memptr params)
@@ -9462,6 +9769,19 @@ void OSMesaDriver::nfglGetVideouivNV(GLuint video_slot, GLenum pname, GLuint *pa
 FN_GLGETVIDEOUIVNV(video_slot, pname, params);
 }
 
+#if 0
+#if NFOSMESA_POINTER_AS_MEMARG
+GLVULKANPROCNV OSMesaDriver::nfglGetVkProcAddrNV(memptr name)
+#else
+GLVULKANPROCNV OSMesaDriver::nfglGetVkProcAddrNV(const GLchar *name)
+#endif
+{
+	D(bug("nfosmesa: glGetVkProcAddrNV(" PRI_PTR ")", AtariOffset(name)));
+	GLVULKANPROCNV __ret = fn.glGetVkProcAddrNV(name);
+	return __ret;
+}
+#endif
+
 #if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetnColorTable(GLenum target, GLenum format, GLenum type, GLsizei bufSize, memptr table)
 #else
@@ -9783,6 +10103,16 @@ FN_GLGETNUNIFORMFVARB(program, location, bufSize, params);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetnUniformi64vARB(GLuint program, GLint location, GLsizei bufSize, memptr params)
+#else
+void OSMesaDriver::nfglGetnUniformi64vARB(GLuint program, GLint location, GLsizei bufSize, GLint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glGetnUniformi64vARB(%u, %d, %d, " PRI_PTR ")", program, location, bufSize, AtariOffset(params)));
+FN_GLGETNUNIFORMI64VARB(program, location, bufSize, params);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglGetnUniformiv(GLuint program, GLint location, GLsizei bufSize, memptr params)
 #else
 void OSMesaDriver::nfglGetnUniformiv(GLuint program, GLint location, GLsizei bufSize, GLint *params)
@@ -9800,6 +10130,16 @@ void OSMesaDriver::nfglGetnUniformivARB(GLuint program, GLint location, GLsizei 
 {
 	D(bug("nfosmesa: glGetnUniformivARB(%u, %d, %d, " PRI_PTR ")", program, location, bufSize, AtariOffset(params)));
 FN_GLGETNUNIFORMIVARB(program, location, bufSize, params);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglGetnUniformui64vARB(GLuint program, GLint location, GLsizei bufSize, memptr params)
+#else
+void OSMesaDriver::nfglGetnUniformui64vARB(GLuint program, GLint location, GLsizei bufSize, GLuint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glGetnUniformui64vARB(%u, %d, %d, " PRI_PTR ")", program, location, bufSize, AtariOffset(params)));
+FN_GLGETNUNIFORMUI64VARB(program, location, bufSize, params);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -9934,6 +10274,72 @@ void OSMesaDriver::nfglImageTransformParameterivHP(GLenum target, GLenum pname, 
 {
 	D(bug("nfosmesa: glImageTransformParameterivHP(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLIMAGETRANSFORMPARAMETERIVHP(target, pname, params);
+}
+
+void OSMesaDriver::nfglImportMemoryFdEXT(GLuint memory, GLuint64 size, GLenum handleType, GLint fd)
+{
+	D(bug("nfosmesa: glImportMemoryFdEXT(%u, %" PRIu64 ", %s, %d)", memory, size, gl_enum_name(handleType), fd));
+	fn.glImportMemoryFdEXT(memory, size, handleType, fd);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglImportMemoryWin32HandleEXT(GLuint memory, GLuint64 size, GLenum handleType, memptr handle)
+#else
+void OSMesaDriver::nfglImportMemoryWin32HandleEXT(GLuint memory, GLuint64 size, GLenum handleType, void *handle)
+#endif
+{
+	D(bug("nfosmesa: glImportMemoryWin32HandleEXT(%u, %" PRIu64 ", %s, " PRI_PTR ")", memory, size, gl_enum_name(handleType), AtariOffset(handle)));
+FN_GLIMPORTMEMORYWIN32HANDLEEXT(memory, size, handleType, handle);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglImportMemoryWin32NameEXT(GLuint memory, GLuint64 size, GLenum handleType, memptr name)
+#else
+void OSMesaDriver::nfglImportMemoryWin32NameEXT(GLuint memory, GLuint64 size, GLenum handleType, const void *name)
+#endif
+{
+	D(bug("nfosmesa: glImportMemoryWin32NameEXT(%u, %" PRIu64 ", %s, " PRI_PTR ")", memory, size, gl_enum_name(handleType), AtariOffset(name)));
+#if NFOSMESA_NEED_BYTE_CONV
+	GLint const __name_size = safe_strlen(name) + 1;
+	GLchar __name_tmp[__name_size];
+	GLchar *__name_ptmp = Atari2HostByteArray(__name_size, name, __name_tmp);
+	fn.glImportMemoryWin32NameEXT(memory, size, handleType, __name_ptmp);
+#else
+	fn.glImportMemoryWin32NameEXT(memory, size, handleType, HostAddr(name, const void *));
+#endif
+}
+
+void OSMesaDriver::nfglImportSemaphoreFdEXT(GLuint semaphore, GLenum handleType, GLint fd)
+{
+	D(bug("nfosmesa: glImportSemaphoreFdEXT(%u, %s, %d)", semaphore, gl_enum_name(handleType), fd));
+	fn.glImportSemaphoreFdEXT(semaphore, handleType, fd);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglImportSemaphoreWin32HandleEXT(GLuint semaphore, GLenum handleType, memptr handle)
+#else
+void OSMesaDriver::nfglImportSemaphoreWin32HandleEXT(GLuint semaphore, GLenum handleType, void *handle)
+#endif
+{
+	D(bug("nfosmesa: glImportSemaphoreWin32HandleEXT(%u, %s, " PRI_PTR ")", semaphore, gl_enum_name(handleType), AtariOffset(handle)));
+FN_GLIMPORTSEMAPHOREWIN32HANDLEEXT(semaphore, handleType, handle);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglImportSemaphoreWin32NameEXT(GLuint semaphore, GLenum handleType, memptr name)
+#else
+void OSMesaDriver::nfglImportSemaphoreWin32NameEXT(GLuint semaphore, GLenum handleType, const void *name)
+#endif
+{
+	D(bug("nfosmesa: glImportSemaphoreWin32NameEXT(%u, %s, " PRI_PTR ")", semaphore, gl_enum_name(handleType), AtariOffset(name)));
+#if NFOSMESA_NEED_BYTE_CONV
+	GLint const __name_size = safe_strlen(name) + 1;
+	GLchar __name_tmp[__name_size];
+	GLchar *__name_ptmp = Atari2HostByteArray(__name_size, name, __name_tmp);
+	fn.glImportSemaphoreWin32NameEXT(semaphore, handleType, __name_ptmp);
+#else
+	fn.glImportSemaphoreWin32NameEXT(semaphore, handleType, HostAddr(name, const void *));
+#endif
 }
 
 #if 0
@@ -10320,6 +10726,13 @@ GLboolean OSMesaDriver::nfglIsList(GLuint list)
 	return __ret;
 }
 
+GLboolean OSMesaDriver::nfglIsMemoryObjectEXT(GLuint memoryObject)
+{
+	D(bug("nfosmesa: glIsMemoryObjectEXT(%u)", memoryObject));
+	GLboolean __ret = fn.glIsMemoryObjectEXT(memoryObject);
+	return __ret;
+}
+
 GLboolean OSMesaDriver::nfglIsNameAMD(GLenum identifier, GLuint name)
 {
 	D(bug("nfosmesa: glIsNameAMD(%s, %u)", gl_enum_name(identifier), name));
@@ -10442,6 +10855,13 @@ GLboolean OSMesaDriver::nfglIsSampler(GLuint sampler)
 	return __ret;
 }
 
+GLboolean OSMesaDriver::nfglIsSemaphoreEXT(GLuint semaphore)
+{
+	D(bug("nfosmesa: glIsSemaphoreEXT(%u)", semaphore));
+	GLboolean __ret = fn.glIsSemaphoreEXT(semaphore);
+	return __ret;
+}
+
 GLboolean OSMesaDriver::nfglIsShader(GLuint shader)
 {
 	D(bug("nfosmesa: glIsShader(%u)", shader));
@@ -10531,6 +10951,35 @@ GLboolean OSMesaDriver::nfglIsVertexAttribEnabledAPPLE(GLuint index, GLenum pnam
 	D(bug("nfosmesa: glIsVertexAttribEnabledAPPLE(%u, %s)", index, gl_enum_name(pname)));
 	GLboolean __ret = fn.glIsVertexAttribEnabledAPPLE(index, pname);
 	return __ret;
+}
+
+void OSMesaDriver::nfglLGPUCopyImageSubDataNVX(GLuint sourceGpu, GLbitfield destinationGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srxY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei width, GLsizei height, GLsizei depth)
+{
+	D(bug("nfosmesa: glLGPUCopyImageSubDataNVX(%u, 0x%x, %u, %s, %d, %d, %d, %d, %u, %s, %d, %d, %d, %d, %d, %d, %d)", sourceGpu, destinationGpuMask, srcName, gl_enum_name(srcTarget), srcLevel, srcX, srxY, srcZ, dstName, gl_enum_name(dstTarget), dstLevel, dstX, dstY, dstZ, width, height, depth));
+	fn.glLGPUCopyImageSubDataNVX(sourceGpu, destinationGpuMask, srcName, srcTarget, srcLevel, srcX, srxY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, width, height, depth);
+}
+
+void OSMesaDriver::nfglLGPUInterlockNVX(void)
+{
+	D(bug("nfosmesa: glLGPUInterlockNVX()"));
+	fn.glLGPUInterlockNVX();
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglLGPUNamedBufferSubDataNVX(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, memptr data)
+#else
+void OSMesaDriver::nfglLGPUNamedBufferSubDataNVX(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
+#endif
+{
+	D(bug("nfosmesa: glLGPUNamedBufferSubDataNVX(0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gpuMask, buffer, offset, size, AtariOffset(data)));
+#if NFOSMESA_NEED_BYTE_CONV
+	GLint const __data_size = MAX(size, 0);
+	GLbyte __data_tmp[__data_size];
+	GLbyte *__data_ptmp = Atari2HostByteArray(__data_size, data, __data_tmp);
+	fn.glLGPUNamedBufferSubDataNVX(gpuMask, buffer, offset, size, __data_ptmp);
+#else
+	fn.glLGPUNamedBufferSubDataNVX(gpuMask, buffer, offset, size, HostAddr(data, const void *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -11467,6 +11916,18 @@ void OSMesaDriver::nfglMatrixTranslatefEXT(GLenum mode, GLfloat x, GLfloat y, GL
 	fn.glMatrixTranslatefEXT(mode, x, y, z);
 }
 
+void OSMesaDriver::nfglMaxShaderCompilerThreadsARB(GLuint count)
+{
+	D(bug("nfosmesa: glMaxShaderCompilerThreadsARB(%u)", count));
+	fn.glMaxShaderCompilerThreadsARB(count);
+}
+
+void OSMesaDriver::nfglMaxShaderCompilerThreadsKHR(GLuint count)
+{
+	D(bug("nfosmesa: glMaxShaderCompilerThreadsKHR(%u)", count));
+	fn.glMaxShaderCompilerThreadsKHR(count);
+}
+
 void OSMesaDriver::nfglMemoryBarrier(GLbitfield barriers)
 {
 	D(bug("nfosmesa: glMemoryBarrier(0x%x)", barriers));
@@ -11483,6 +11944,23 @@ void OSMesaDriver::nfglMemoryBarrierEXT(GLbitfield barriers)
 {
 	D(bug("nfosmesa: glMemoryBarrierEXT(0x%x)", barriers));
 	fn.glMemoryBarrierEXT(barriers);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglMemoryObjectParameterivEXT(GLuint memoryObject, GLenum pname, const GLint *params)
+#endif
+{
+	D(bug("nfosmesa: glMemoryObjectParameterivEXT(%u, %s, " PRI_PTR ")", memoryObject, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLint __params_tmp[__params_size];
+	GLint *__params_ptmp = Atari2HostIntArray(__params_size, params, __params_tmp);
+	fn.glMemoryObjectParameterivEXT(memoryObject, pname, __params_ptmp);
+#else
+	fn.glMemoryObjectParameterivEXT(memoryObject, pname, HostAddr(params, const GLint *));
+#endif
 }
 
 void OSMesaDriver::nfglMinSampleShading(GLfloat value)
@@ -11663,10 +12141,24 @@ void OSMesaDriver::nfglMultiDrawArraysIndirectBindlessNV(GLenum mode, const void
 FN_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV(mode, indirect, drawCount, stride, vertexBufferCount);
 }
 
-void OSMesaDriver::nfglMultiDrawArraysIndirectCountARB(GLenum mode, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMultiDrawArraysIndirectCount(GLenum mode, memptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#else
+void OSMesaDriver::nfglMultiDrawArraysIndirectCount(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#endif
 {
-	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), indirect, drawcount, maxdrawcount, stride));
-	fn.glMultiDrawArraysIndirectCountARB(mode, indirect, drawcount, maxdrawcount, stride);
+	D(bug("nfosmesa: glMultiDrawArraysIndirectCount(%s, " PRI_PTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), AtariOffset(indirect), drawcount, maxdrawcount, stride));
+FN_GLMULTIDRAWARRAYSINDIRECTCOUNT(mode, indirect, drawcount, maxdrawcount, stride);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMultiDrawArraysIndirectCountARB(GLenum mode, memptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#else
+void OSMesaDriver::nfglMultiDrawArraysIndirectCountARB(GLenum mode, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#endif
+{
+	D(bug("nfosmesa: glMultiDrawArraysIndirectCountARB(%s, " PRI_PTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), AtariOffset(indirect), drawcount, maxdrawcount, stride));
+FN_GLMULTIDRAWARRAYSINDIRECTCOUNTARB(mode, indirect, drawcount, maxdrawcount, stride);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -11749,10 +12241,24 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectBindlessNV(GLenum mode, GLenum t
 FN_GLMULTIDRAWELEMENTSINDIRECTBINDLESSNV(mode, type, indirect, drawCount, stride, vertexBufferCount);
 }
 
-void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMultiDrawElementsIndirectCount(GLenum mode, GLenum type, memptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#else
+void OSMesaDriver::nfglMultiDrawElementsIndirectCount(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#endif
 {
-	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(%s, %s, %" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), indirect, drawcount, maxdrawcount, stride));
-	fn.glMultiDrawElementsIndirectCountARB(mode, type, indirect, drawcount, maxdrawcount, stride);
+	D(bug("nfosmesa: glMultiDrawElementsIndirectCount(%s, %s, " PRI_PTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), drawcount, maxdrawcount, stride));
+FN_GLMULTIDRAWELEMENTSINDIRECTCOUNT(mode, type, indirect, drawcount, maxdrawcount, stride);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, memptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#else
+void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(GLenum mode, GLenum type, const void *indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+#endif
+{
+	D(bug("nfosmesa: glMultiDrawElementsIndirectCountARB(%s, %s, " PRI_PTR ", %" PRI_IPTR ", %d, %d)", gl_enum_name(mode), gl_enum_name(type), AtariOffset(indirect), drawcount, maxdrawcount, stride));
+FN_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB(mode, type, indirect, drawcount, maxdrawcount, stride);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -12879,6 +13385,138 @@ void OSMesaDriver::nfglMultiTexSubImage3DEXT(GLenum texunit, GLenum target, GLin
 FN_GLMULTITEXSUBIMAGE3DEXT(texunit, target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
+void OSMesaDriver::nfglMulticastBarrierNV(void)
+{
+	D(bug("nfosmesa: glMulticastBarrierNV()"));
+	fn.glMulticastBarrierNV();
+}
+
+void OSMesaDriver::nfglMulticastBlitFramebufferNV(GLuint srcGpu, GLuint dstGpu, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
+{
+	D(bug("nfosmesa: glMulticastBlitFramebufferNV(%u, %u, %d, %d, %d, %d, %d, %d, %d, %d, 0x%x, %s)", srcGpu, dstGpu, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, gl_enum_name(filter)));
+	fn.glMulticastBlitFramebufferNV(srcGpu, dstGpu, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastBufferSubDataNV(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, memptr data)
+#else
+void OSMesaDriver::nfglMulticastBufferSubDataNV(GLbitfield gpuMask, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
+#endif
+{
+	D(bug("nfosmesa: glMulticastBufferSubDataNV(0x%x, %u, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gpuMask, buffer, offset, size, AtariOffset(data)));
+#if NFOSMESA_NEED_BYTE_CONV
+	GLint const __data_size = MAX(size, 0);
+	GLbyte __data_tmp[__data_size];
+	GLbyte *__data_ptmp = Atari2HostByteArray(__data_size, data, __data_tmp);
+	fn.glMulticastBufferSubDataNV(gpuMask, buffer, offset, size, __data_ptmp);
+#else
+	fn.glMulticastBufferSubDataNV(gpuMask, buffer, offset, size, HostAddr(data, const void *));
+#endif
+}
+
+void OSMesaDriver::nfglMulticastCopyBufferSubDataNV(GLuint readGpu, GLbitfield writeGpuMask, GLuint readBuffer, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
+{
+	D(bug("nfosmesa: glMulticastCopyBufferSubDataNV(%u, 0x%x, %u, %u, %" PRI_IPTR ", %" PRI_IPTR ", %" PRI_IPTR ")", readGpu, writeGpuMask, readBuffer, writeBuffer, readOffset, writeOffset, size));
+	fn.glMulticastCopyBufferSubDataNV(readGpu, writeGpuMask, readBuffer, writeBuffer, readOffset, writeOffset, size);
+}
+
+void OSMesaDriver::nfglMulticastCopyImageSubDataNV(GLuint srcGpu, GLbitfield dstGpuMask, GLuint srcName, GLenum srcTarget, GLint srcLevel, GLint srcX, GLint srcY, GLint srcZ, GLuint dstName, GLenum dstTarget, GLint dstLevel, GLint dstX, GLint dstY, GLint dstZ, GLsizei srcWidth, GLsizei srcHeight, GLsizei srcDepth)
+{
+	D(bug("nfosmesa: glMulticastCopyImageSubDataNV(%u, 0x%x, %u, %s, %d, %d, %d, %d, %u, %s, %d, %d, %d, %d, %d, %d, %d)", srcGpu, dstGpuMask, srcName, gl_enum_name(srcTarget), srcLevel, srcX, srcY, srcZ, dstName, gl_enum_name(dstTarget), dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth));
+	fn.glMulticastCopyImageSubDataNV(srcGpu, dstGpuMask, srcName, srcTarget, srcLevel, srcX, srcY, srcZ, dstName, dstTarget, dstLevel, dstX, dstY, dstZ, srcWidth, srcHeight, srcDepth);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastFramebufferSampleLocationsfvNV(GLuint gpu, GLuint framebuffer, GLuint start, GLsizei count, memptr v)
+#else
+void OSMesaDriver::nfglMulticastFramebufferSampleLocationsfvNV(GLuint gpu, GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v)
+#endif
+{
+	D(bug("nfosmesa: glMulticastFramebufferSampleLocationsfvNV(%u, %u, %u, %d, " PRI_PTR ")", gpu, framebuffer, start, count, AtariOffset(v)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __v_size = MAX(count, 0);
+	GLfloat __v_tmp[__v_size];
+	GLfloat *__v_ptmp = Atari2HostFloatArray(__v_size, v, __v_tmp);
+	fn.glMulticastFramebufferSampleLocationsfvNV(gpu, framebuffer, start, count, __v_ptmp);
+#else
+	fn.glMulticastFramebufferSampleLocationsfvNV(gpu, framebuffer, start, count, HostAddr(v, const GLfloat *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastGetQueryObjecti64vNV(GLuint gpu, GLuint id, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglMulticastGetQueryObjecti64vNV(GLuint gpu, GLuint id, GLenum pname, GLint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glMulticastGetQueryObjecti64vNV(%u, %u, %s, " PRI_PTR ")", gpu, id, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLint64 __params_tmp[__params_size];
+	fn.glMulticastGetQueryObjecti64vNV(gpu, id, pname, __params_tmp);
+	Host2AtariInt64Array(__params_size, __params_tmp, params);
+#else
+	fn.glMulticastGetQueryObjecti64vNV(gpu, id, pname, HostAddr(params, GLint64 *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastGetQueryObjectivNV(GLuint gpu, GLuint id, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglMulticastGetQueryObjectivNV(GLuint gpu, GLuint id, GLenum pname, GLint *params)
+#endif
+{
+	D(bug("nfosmesa: glMulticastGetQueryObjectivNV(%u, %u, %s, " PRI_PTR ")", gpu, id, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLint __params_tmp[__params_size];
+	fn.glMulticastGetQueryObjectivNV(gpu, id, pname, __params_tmp);
+	Host2AtariIntArray(__params_size, __params_tmp, params);
+#else
+	fn.glMulticastGetQueryObjectivNV(gpu, id, pname, HostAddr(params, GLint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastGetQueryObjectui64vNV(GLuint gpu, GLuint id, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglMulticastGetQueryObjectui64vNV(GLuint gpu, GLuint id, GLenum pname, GLuint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glMulticastGetQueryObjectui64vNV(%u, %u, %s, " PRI_PTR ")", gpu, id, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLuint64 __params_tmp[__params_size];
+	fn.glMulticastGetQueryObjectui64vNV(gpu, id, pname, __params_tmp);
+	Host2AtariInt64Array(__params_size, __params_tmp, params);
+#else
+	fn.glMulticastGetQueryObjectui64vNV(gpu, id, pname, HostAddr(params, GLuint64 *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglMulticastGetQueryObjectuivNV(GLuint gpu, GLuint id, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglMulticastGetQueryObjectuivNV(GLuint gpu, GLuint id, GLenum pname, GLuint *params)
+#endif
+{
+	D(bug("nfosmesa: glMulticastGetQueryObjectuivNV(%u, %u, %s, " PRI_PTR ")", gpu, id, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLuint __params_tmp[__params_size];
+	fn.glMulticastGetQueryObjectuivNV(gpu, id, pname, __params_tmp);
+	Host2AtariIntArray(__params_size, __params_tmp, params);
+#else
+	fn.glMulticastGetQueryObjectuivNV(gpu, id, pname, HostAddr(params, GLuint *));
+#endif
+}
+
+void OSMesaDriver::nfglMulticastWaitSyncNV(GLuint signalGpu, GLbitfield waitGpuMask)
+{
+	D(bug("nfosmesa: glMulticastWaitSyncNV(%u, 0x%x)", signalGpu, waitGpuMask));
+	fn.glMulticastWaitSyncNV(signalGpu, waitGpuMask);
+}
+
 #if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglNamedBufferData(GLuint buffer, GLsizeiptr size, memptr data, GLenum usage)
 #else
@@ -12929,6 +13567,22 @@ void OSMesaDriver::nfglNamedBufferStorageEXT(GLuint buffer, GLsizeiptr size, con
 {
 	D(bug("nfosmesa: glNamedBufferStorageEXT(%u, %" PRI_IPTR ", " PRI_PTR ", 0x%x)", buffer, size, AtariOffset(data), flags));
 FN_GLNAMEDBUFFERSTORAGEEXT(buffer, size, data, flags);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglNamedBufferStorageExternalEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, memptr clientBuffer, GLbitfield flags)
+#else
+void OSMesaDriver::nfglNamedBufferStorageExternalEXT(GLuint buffer, GLintptr offset, GLsizeiptr size, GLeglClientBufferEXT clientBuffer, GLbitfield flags)
+#endif
+{
+	D(bug("nfosmesa: glNamedBufferStorageExternalEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ", 0x%x)", buffer, offset, size, AtariOffset(clientBuffer), flags));
+FN_GLNAMEDBUFFERSTORAGEEXTERNALEXT(buffer, offset, size, clientBuffer, flags);
+}
+
+void OSMesaDriver::nfglNamedBufferStorageMemEXT(GLuint buffer, GLsizeiptr size, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glNamedBufferStorageMemEXT(%u, %" PRI_IPTR ", %u, %" PRIu64 ")", buffer, size, memory, offset));
+	fn.glNamedBufferStorageMemEXT(buffer, size, memory, offset);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -13004,6 +13658,23 @@ void OSMesaDriver::nfglNamedFramebufferRenderbufferEXT(GLuint framebuffer, GLenu
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglNamedFramebufferSampleLocationsfvARB(GLuint framebuffer, GLuint start, GLsizei count, memptr v)
+#else
+void OSMesaDriver::nfglNamedFramebufferSampleLocationsfvARB(GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v)
+#endif
+{
+	D(bug("nfosmesa: glNamedFramebufferSampleLocationsfvARB(%u, %u, %d, " PRI_PTR ")", framebuffer, start, count, AtariOffset(v)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __v_size = MAX(count, 0);
+	GLfloat __v_tmp[__v_size];
+	GLfloat *__v_ptmp = Atari2HostFloatArray(__v_size, v, __v_tmp);
+	fn.glNamedFramebufferSampleLocationsfvARB(framebuffer, start, count, __v_ptmp);
+#else
+	fn.glNamedFramebufferSampleLocationsfvARB(framebuffer, start, count, HostAddr(v, const GLfloat *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglNamedFramebufferSampleLocationsfvNV(GLuint framebuffer, GLuint start, GLsizei count, memptr v)
 #else
 void OSMesaDriver::nfglNamedFramebufferSampleLocationsfvNV(GLuint framebuffer, GLuint start, GLsizei count, const GLfloat *v)
@@ -13011,6 +13682,23 @@ void OSMesaDriver::nfglNamedFramebufferSampleLocationsfvNV(GLuint framebuffer, G
 {
 	D(bug("nfosmesa: glNamedFramebufferSampleLocationsfvNV(%u, %u, %d, " PRI_PTR ")", framebuffer, start, count, AtariOffset(v)));
 FN_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV(framebuffer, start, count, v);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglNamedFramebufferSamplePositionsfvAMD(GLuint framebuffer, GLuint numsamples, GLuint pixelindex, memptr values)
+#else
+void OSMesaDriver::nfglNamedFramebufferSamplePositionsfvAMD(GLuint framebuffer, GLuint numsamples, GLuint pixelindex, const GLfloat *values)
+#endif
+{
+	D(bug("nfosmesa: glNamedFramebufferSamplePositionsfvAMD(%u, %u, %u, " PRI_PTR ")", framebuffer, numsamples, pixelindex, AtariOffset(values)));
+#if NFOSMESA_NEED_FLOAT_CONV
+	GLint const __values_size = MAX(numsamples, 0);
+	GLfloat __values_tmp[__values_size];
+	GLfloat *__values_ptmp = Atari2HostFloatArray(__values_size, values, __values_tmp);
+	fn.glNamedFramebufferSamplePositionsfvAMD(framebuffer, numsamples, pixelindex, __values_ptmp);
+#else
+	fn.glNamedFramebufferSamplePositionsfvAMD(framebuffer, numsamples, pixelindex, HostAddr(values, const GLfloat *));
+#endif
 }
 
 void OSMesaDriver::nfglNamedFramebufferTexture(GLuint framebuffer, GLenum attachment, GLuint texture, GLint level)
@@ -14135,6 +14823,12 @@ void OSMesaDriver::nfglPolygonOffset(GLfloat factor, GLfloat units)
 	fn.glPolygonOffset(factor, units);
 }
 
+void OSMesaDriver::nfglPolygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp)
+{
+	D(bug("nfosmesa: glPolygonOffsetClamp(%f, %f, %f)", factor, units, clamp));
+	fn.glPolygonOffsetClamp(factor, units, clamp);
+}
+
 void OSMesaDriver::nfglPolygonOffsetClampEXT(GLfloat factor, GLfloat units, GLfloat clamp)
 {
 	D(bug("nfosmesa: glPolygonOffsetClampEXT(%f, %f, %f)", factor, units, clamp));
@@ -14209,6 +14903,12 @@ void OSMesaDriver::nfglPresentFrameKeyedNV(GLuint video_slot, GLuint64EXT minPre
 {
 	D(bug("nfosmesa: glPresentFrameKeyedNV(%u, %" PRIu64 ", %u, %u, %s, %s, %u, %u, %s, %u, %u)", video_slot, minPresentTime, beginPresentTimeId, presentDurationId, gl_enum_name(type), gl_enum_name(target0), fill0, key0, gl_enum_name(target1), fill1, key1));
 	fn.glPresentFrameKeyedNV(video_slot, minPresentTime, beginPresentTimeId, presentDurationId, type, target0, fill0, key0, target1, fill1, key1);
+}
+
+void OSMesaDriver::nfglPrimitiveBoundingBoxARB(GLfloat minX, GLfloat minY, GLfloat minZ, GLfloat minW, GLfloat maxX, GLfloat maxY, GLfloat maxZ, GLfloat maxW)
+{
+	D(bug("nfosmesa: glPrimitiveBoundingBoxARB(%f, %f, %f, %f, %f, %f, %f, %f)", minX, minY, minZ, minW, maxX, maxY, maxZ, maxW));
+	fn.glPrimitiveBoundingBoxARB(minX, minY, minZ, minW, maxX, maxY, maxZ, maxW);
 }
 
 void OSMesaDriver::nfglPrimitiveRestartIndex(GLuint index)
@@ -14301,12 +15001,12 @@ FN_GLPROGRAMBUFFERPARAMETERSFVNV(target, bindingIndex, wordIndex, count, params)
 
 #if 0
 #if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::nfglProgramCallbackMESA(GLenum target, GLprogramcallbackMESA callback, memptr data)
+void OSMesaDriver::nfglProgramCallbackMESA(GLenum target, memptr callback, memptr data)
 #else
 void OSMesaDriver::nfglProgramCallbackMESA(GLenum target, GLprogramcallbackMESA callback, GLvoid *data)
 #endif
 {
-	D(bug("nfosmesa: glProgramCallbackMESA(%s, %p, " PRI_PTR ")", gl_enum_name(target), callback, AtariOffset(data)));
+	D(bug("nfosmesa: glProgramCallbackMESA(%s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), AtariOffset(callback), AtariOffset(data)));
 FN_GLPROGRAMCALLBACKMESA(target, callback, data);
 }
 #endif
@@ -14709,10 +15409,33 @@ void OSMesaDriver::nfglProgramUniform1i(GLuint program, GLint location, GLint v0
 	fn.glProgramUniform1i(program, location, v0);
 }
 
+void OSMesaDriver::nfglProgramUniform1i64ARB(GLuint program, GLint location, GLint64 x)
+{
+	D(bug("nfosmesa: glProgramUniform1i64ARB(%u, %d, %" PRId64 ")", program, location, x));
+	fn.glProgramUniform1i64ARB(program, location, x);
+}
+
 void OSMesaDriver::nfglProgramUniform1i64NV(GLuint program, GLint location, GLint64EXT x)
 {
 	D(bug("nfosmesa: glProgramUniform1i64NV(%u, %d, %" PRId64 ")", program, location, x));
 	fn.glProgramUniform1i64NV(program, location, x);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform1i64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform1i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform1i64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform1i64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform1i64vARB(program, location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -14722,7 +15445,14 @@ void OSMesaDriver::nfglProgramUniform1i64vNV(GLuint program, GLint location, GLs
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform1i64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM1I64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform1i64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform1i64vNV(program, location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform1iEXT(GLuint program, GLint location, GLint v0)
@@ -14757,10 +15487,33 @@ void OSMesaDriver::nfglProgramUniform1ui(GLuint program, GLint location, GLuint 
 	fn.glProgramUniform1ui(program, location, v0);
 }
 
+void OSMesaDriver::nfglProgramUniform1ui64ARB(GLuint program, GLint location, GLuint64 x)
+{
+	D(bug("nfosmesa: glProgramUniform1ui64ARB(%u, %d, %" PRIu64 ")", program, location, x));
+	fn.glProgramUniform1ui64ARB(program, location, x);
+}
+
 void OSMesaDriver::nfglProgramUniform1ui64NV(GLuint program, GLint location, GLuint64EXT x)
 {
 	D(bug("nfosmesa: glProgramUniform1ui64NV(%u, %d, %" PRIu64 ")", program, location, x));
 	fn.glProgramUniform1ui64NV(program, location, x);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform1ui64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform1ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform1ui64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform1ui64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform1ui64vARB(program, location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -14770,7 +15523,14 @@ void OSMesaDriver::nfglProgramUniform1ui64vNV(GLuint program, GLint location, GL
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform1ui64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM1UI64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform1ui64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform1ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform1uiEXT(GLuint program, GLint location, GLuint v0)
@@ -14869,10 +15629,33 @@ void OSMesaDriver::nfglProgramUniform2i(GLuint program, GLint location, GLint v0
 	fn.glProgramUniform2i(program, location, v0, v1);
 }
 
+void OSMesaDriver::nfglProgramUniform2i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y)
+{
+	D(bug("nfosmesa: glProgramUniform2i64ARB(%u, %d, %" PRId64 ", %" PRId64 ")", program, location, x, y));
+	fn.glProgramUniform2i64ARB(program, location, x, y);
+}
+
 void OSMesaDriver::nfglProgramUniform2i64NV(GLuint program, GLint location, GLint64EXT x, GLint64EXT y)
 {
 	D(bug("nfosmesa: glProgramUniform2i64NV(%u, %d, %" PRId64 ", %" PRId64 ")", program, location, x, y));
 	fn.glProgramUniform2i64NV(program, location, x, y);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform2i64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform2i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform2i64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform2i64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform2i64vARB(program, location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -14882,7 +15665,14 @@ void OSMesaDriver::nfglProgramUniform2i64vNV(GLuint program, GLint location, GLs
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform2i64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM2I64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform2i64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform2i64vNV(program, location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform2iEXT(GLuint program, GLint location, GLint v0, GLint v1)
@@ -14917,10 +15707,33 @@ void OSMesaDriver::nfglProgramUniform2ui(GLuint program, GLint location, GLuint 
 	fn.glProgramUniform2ui(program, location, v0, v1);
 }
 
+void OSMesaDriver::nfglProgramUniform2ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y)
+{
+	D(bug("nfosmesa: glProgramUniform2ui64ARB(%u, %d, %" PRIu64 ", %" PRIu64 ")", program, location, x, y));
+	fn.glProgramUniform2ui64ARB(program, location, x, y);
+}
+
 void OSMesaDriver::nfglProgramUniform2ui64NV(GLuint program, GLint location, GLuint64EXT x, GLuint64EXT y)
 {
 	D(bug("nfosmesa: glProgramUniform2ui64NV(%u, %d, %" PRIu64 ", %" PRIu64 ")", program, location, x, y));
 	fn.glProgramUniform2ui64NV(program, location, x, y);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform2ui64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform2ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform2ui64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform2ui64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform2ui64vARB(program, location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -14930,7 +15743,14 @@ void OSMesaDriver::nfglProgramUniform2ui64vNV(GLuint program, GLint location, GL
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform2ui64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM2UI64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform2ui64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform2ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform2uiEXT(GLuint program, GLint location, GLuint v0, GLuint v1)
@@ -15029,10 +15849,33 @@ void OSMesaDriver::nfglProgramUniform3i(GLuint program, GLint location, GLint v0
 	fn.glProgramUniform3i(program, location, v0, v1, v2);
 }
 
+void OSMesaDriver::nfglProgramUniform3i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z)
+{
+	D(bug("nfosmesa: glProgramUniform3i64ARB(%u, %d, %" PRId64 ", %" PRId64 ", %" PRId64 ")", program, location, x, y, z));
+	fn.glProgramUniform3i64ARB(program, location, x, y, z);
+}
+
 void OSMesaDriver::nfglProgramUniform3i64NV(GLuint program, GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z)
 {
 	D(bug("nfosmesa: glProgramUniform3i64NV(%u, %d, %" PRId64 ", %" PRId64 ", %" PRId64 ")", program, location, x, y, z));
 	fn.glProgramUniform3i64NV(program, location, x, y, z);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform3i64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform3i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform3i64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform3i64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform3i64vARB(program, location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -15042,7 +15885,14 @@ void OSMesaDriver::nfglProgramUniform3i64vNV(GLuint program, GLint location, GLs
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform3i64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM3I64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform3i64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform3i64vNV(program, location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform3iEXT(GLuint program, GLint location, GLint v0, GLint v1, GLint v2)
@@ -15077,10 +15927,33 @@ void OSMesaDriver::nfglProgramUniform3ui(GLuint program, GLint location, GLuint 
 	fn.glProgramUniform3ui(program, location, v0, v1, v2);
 }
 
+void OSMesaDriver::nfglProgramUniform3ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z)
+{
+	D(bug("nfosmesa: glProgramUniform3ui64ARB(%u, %d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", program, location, x, y, z));
+	fn.glProgramUniform3ui64ARB(program, location, x, y, z);
+}
+
 void OSMesaDriver::nfglProgramUniform3ui64NV(GLuint program, GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z)
 {
 	D(bug("nfosmesa: glProgramUniform3ui64NV(%u, %d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", program, location, x, y, z));
 	fn.glProgramUniform3ui64NV(program, location, x, y, z);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform3ui64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform3ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform3ui64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform3ui64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform3ui64vARB(program, location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -15090,7 +15963,14 @@ void OSMesaDriver::nfglProgramUniform3ui64vNV(GLuint program, GLint location, GL
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform3ui64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM3UI64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform3ui64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform3ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform3uiEXT(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2)
@@ -15189,10 +16069,33 @@ void OSMesaDriver::nfglProgramUniform4i(GLuint program, GLint location, GLint v0
 	fn.glProgramUniform4i(program, location, v0, v1, v2, v3);
 }
 
+void OSMesaDriver::nfglProgramUniform4i64ARB(GLuint program, GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w)
+{
+	D(bug("nfosmesa: glProgramUniform4i64ARB(%u, %d, %" PRId64 ", %" PRId64 ", %" PRId64 ", %" PRId64 ")", program, location, x, y, z, w));
+	fn.glProgramUniform4i64ARB(program, location, x, y, z, w);
+}
+
 void OSMesaDriver::nfglProgramUniform4i64NV(GLuint program, GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z, GLint64EXT w)
 {
 	D(bug("nfosmesa: glProgramUniform4i64NV(%u, %d, %" PRId64 ", %" PRId64 ", %" PRId64 ", %" PRId64 ")", program, location, x, y, z, w));
 	fn.glProgramUniform4i64NV(program, location, x, y, z, w);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform4i64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform4i64vARB(GLuint program, GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform4i64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform4i64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform4i64vARB(program, location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -15202,7 +16105,14 @@ void OSMesaDriver::nfglProgramUniform4i64vNV(GLuint program, GLint location, GLs
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform4i64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM4I64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform4i64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform4i64vNV(program, location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform4iEXT(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
@@ -15237,10 +16147,33 @@ void OSMesaDriver::nfglProgramUniform4ui(GLuint program, GLint location, GLuint 
 	fn.glProgramUniform4ui(program, location, v0, v1, v2, v3);
 }
 
+void OSMesaDriver::nfglProgramUniform4ui64ARB(GLuint program, GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w)
+{
+	D(bug("nfosmesa: glProgramUniform4ui64ARB(%u, %d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", program, location, x, y, z, w));
+	fn.glProgramUniform4ui64ARB(program, location, x, y, z, w);
+}
+
 void OSMesaDriver::nfglProgramUniform4ui64NV(GLuint program, GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z, GLuint64EXT w)
 {
 	D(bug("nfosmesa: glProgramUniform4ui64NV(%u, %d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", program, location, x, y, z, w));
 	fn.glProgramUniform4ui64NV(program, location, x, y, z, w);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglProgramUniform4ui64vARB(GLuint program, GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglProgramUniform4ui64vARB(GLuint program, GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glProgramUniform4ui64vARB(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform4ui64vARB(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform4ui64vARB(program, location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -15250,7 +16183,14 @@ void OSMesaDriver::nfglProgramUniform4ui64vNV(GLuint program, GLint location, GL
 #endif
 {
 	D(bug("nfosmesa: glProgramUniform4ui64vNV(%u, %d, %d, " PRI_PTR ")", program, location, count, AtariOffset(value)));
-FN_GLPROGRAMUNIFORM4UI64VNV(program, location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glProgramUniform4ui64vNV(program, location, count, __value_ptmp);
+#else
+	fn.glProgramUniform4ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglProgramUniform4uiEXT(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
@@ -15784,6 +16724,41 @@ void OSMesaDriver::nfglQueryObjectParameteruiAMD(GLenum target, GLuint id, GLenu
 	fn.glQueryObjectParameteruiAMD(target, id, pname, param);
 }
 
+#if NFOSMESA_POINTER_AS_MEMARG
+GLint OSMesaDriver::nfglQueryResourceNV(GLenum queryType, GLint tagId, GLuint bufSize, memptr buffer)
+#else
+GLint OSMesaDriver::nfglQueryResourceNV(GLenum queryType, GLint tagId, GLuint bufSize, GLint *buffer)
+#endif
+{
+	D(bug("nfosmesa: glQueryResourceNV(%s, %d, %u, " PRI_PTR ")", gl_enum_name(queryType), tagId, bufSize, AtariOffset(buffer)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __buffer_size = MAX(bufSize, 0);
+	GLint __buffer_tmp[__buffer_size];
+	GLint __ret = fn.glQueryResourceNV(queryType, tagId, bufSize, __buffer_tmp);
+	Host2AtariIntArray(__buffer_size, __buffer_tmp, buffer);
+#else
+	GLint __ret = fn.glQueryResourceNV(queryType, tagId, bufSize, HostAddr(buffer, GLint *));
+#endif
+	return __ret;
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglQueryResourceTagNV(GLint tagId, memptr tagString)
+#else
+void OSMesaDriver::nfglQueryResourceTagNV(GLint tagId, const GLchar *tagString)
+#endif
+{
+	D(bug("nfosmesa: glQueryResourceTagNV(%d, " PRI_PTR ")", tagId, AtariOffset(tagString)));
+#if NFOSMESA_NEED_BYTE_CONV
+	GLint const __tagString_size = safe_strlen(tagString) + 1;
+	GLchar __tagString_tmp[__tagString_size];
+	GLchar *__tagString_ptmp = Atari2HostByteArray(__tagString_size, tagString, __tagString_tmp);
+	fn.glQueryResourceTagNV(tagId, __tagString_ptmp);
+#else
+	fn.glQueryResourceTagNV(tagId, HostAddr(tagString, const GLchar *));
+#endif
+}
+
 void OSMesaDriver::nfglRasterPos2d(GLdouble x, GLdouble y)
 {
 	D(bug("nfosmesa: glRasterPos2d(%f, %f)", x, y));
@@ -16162,10 +17137,23 @@ void OSMesaDriver::nfglReferencePlaneSGIX(const GLdouble *equation)
 FN_GLREFERENCEPLANESGIX(equation);
 }
 
+GLboolean OSMesaDriver::nfglReleaseKeyedMutexWin32EXT(GLuint memory, GLuint64 key)
+{
+	D(bug("nfosmesa: glReleaseKeyedMutexWin32EXT(%u, %" PRIu64 ")", memory, key));
+	GLboolean __ret = fn.glReleaseKeyedMutexWin32EXT(memory, key);
+	return __ret;
+}
+
 void OSMesaDriver::nfglReleaseShaderCompiler(void)
 {
 	D(bug("nfosmesa: glReleaseShaderCompiler()"));
 	fn.glReleaseShaderCompiler();
+}
+
+void OSMesaDriver::nfglRenderGpuMaskNV(GLbitfield mask)
+{
+	D(bug("nfosmesa: glRenderGpuMaskNV(0x%x)", mask));
+	fn.glRenderGpuMaskNV(mask);
 }
 
 GLint OSMesaDriver::nfglRenderMode(GLenum mode)
@@ -16985,6 +17973,23 @@ FN_GLSELECTPERFMONITORCOUNTERSAMD(monitor, enable, group, numCounters, counterLi
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, memptr params)
+#else
+void OSMesaDriver::nfglSemaphoreParameterui64vEXT(GLuint semaphore, GLenum pname, const GLuint64 *params)
+#endif
+{
+	D(bug("nfosmesa: glSemaphoreParameterui64vEXT(%u, %s, " PRI_PTR ")", semaphore, gl_enum_name(pname), AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = nfglGetNumParams(pname);
+	GLuint64 __params_tmp[__params_size];
+	GLuint64 *__params_ptmp = Atari2HostInt64Array(__params_size, params, __params_tmp);
+	fn.glSemaphoreParameterui64vEXT(semaphore, pname, __params_ptmp);
+#else
+	fn.glSemaphoreParameterui64vEXT(semaphore, pname, HostAddr(params, const GLuint64 *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
 void OSMesaDriver::nfglSeparableFilter2D(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, memptr row, memptr column)
 #else
 void OSMesaDriver::nfglSeparableFilter2D(GLenum target, GLenum internalformat, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *row, const void *column)
@@ -17124,6 +18129,87 @@ void OSMesaDriver::nfglSharpenTexFuncSGIS(GLenum target, GLsizei n, const GLfloa
 {
 	D(bug("nfosmesa: glSharpenTexFuncSGIS(%s, %d, " PRI_PTR ")", gl_enum_name(target), n, AtariOffset(points)));
 FN_GLSHARPENTEXFUNCSGIS(target, n, points);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglSignalSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, memptr buffers, GLuint numTextureBarriers, memptr textures, memptr dstLayouts)
+#else
+void OSMesaDriver::nfglSignalSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *dstLayouts)
+#endif
+{
+	D(bug("nfosmesa: glSignalSemaphoreEXT(%u, %u, " PRI_PTR ", %u, " PRI_PTR ", " PRI_PTR ")", semaphore, numBufferBarriers, AtariOffset(buffers), numTextureBarriers, AtariOffset(textures), AtariOffset(dstLayouts)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __buffers_size = MAX(numBufferBarriers, 0);
+	GLuint __buffers_tmp[__buffers_size];
+	GLuint *__buffers_ptmp = Atari2HostIntArray(__buffers_size, buffers, __buffers_tmp);
+	GLint const __textures_size = MAX(numTextureBarriers, 0);
+	GLuint __textures_tmp[__textures_size];
+	GLuint *__textures_ptmp = Atari2HostIntArray(__textures_size, textures, __textures_tmp);
+	GLint const __dstLayouts_size = MAX(numTextureBarriers, 0);
+	GLenum __dstLayouts_tmp[__dstLayouts_size];
+	GLenum *__dstLayouts_ptmp = Atari2HostIntArray(__dstLayouts_size, dstLayouts, __dstLayouts_tmp);
+	fn.glSignalSemaphoreEXT(semaphore, numBufferBarriers, __buffers_ptmp, numTextureBarriers, __textures_ptmp, __dstLayouts_ptmp);
+#else
+	fn.glSignalSemaphoreEXT(semaphore, numBufferBarriers, HostAddr(buffers, const GLuint *), numTextureBarriers, HostAddr(textures, const GLuint *), HostAddr(dstLayouts, const GLenum *));
+#endif
+}
+
+void OSMesaDriver::nfglSignalVkFenceNV(GLuint64 vkFence)
+{
+	D(bug("nfosmesa: glSignalVkFenceNV(%" PRIu64 ")", vkFence));
+	fn.glSignalVkFenceNV(vkFence);
+}
+
+void OSMesaDriver::nfglSignalVkSemaphoreNV(GLuint64 vkSemaphore)
+{
+	D(bug("nfosmesa: glSignalVkSemaphoreNV(%" PRIu64 ")", vkSemaphore));
+	fn.glSignalVkSemaphoreNV(vkSemaphore);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglSpecializeShader(GLuint shader, memptr pEntryPoint, GLuint numSpecializationConstants, memptr pConstantIndex, memptr pConstantValue)
+#else
+void OSMesaDriver::nfglSpecializeShader(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue)
+#endif
+{
+	D(bug("nfosmesa: glSpecializeShader(%u, " PRI_PTR ", %u, " PRI_PTR ", " PRI_PTR ")", shader, AtariOffset(pEntryPoint), numSpecializationConstants, AtariOffset(pConstantIndex), AtariOffset(pConstantValue)));
+#if NFOSMESA_NEED_BYTE_CONV || NFOSMESA_NEED_INT_CONV
+	GLint const __pEntryPoint_size = safe_strlen(pEntryPoint) + 1;
+	GLchar __pEntryPoint_tmp[__pEntryPoint_size];
+	GLchar *__pEntryPoint_ptmp = Atari2HostByteArray(__pEntryPoint_size, pEntryPoint, __pEntryPoint_tmp);
+	GLint const __pConstantIndex_size = MAX(numSpecializationConstants, 0);
+	GLuint __pConstantIndex_tmp[__pConstantIndex_size];
+	GLuint *__pConstantIndex_ptmp = Atari2HostIntArray(__pConstantIndex_size, pConstantIndex, __pConstantIndex_tmp);
+	GLint const __pConstantValue_size = MAX(numSpecializationConstants, 0);
+	GLuint __pConstantValue_tmp[__pConstantValue_size];
+	GLuint *__pConstantValue_ptmp = Atari2HostIntArray(__pConstantValue_size, pConstantValue, __pConstantValue_tmp);
+	fn.glSpecializeShader(shader, __pEntryPoint_ptmp, numSpecializationConstants, __pConstantIndex_ptmp, __pConstantValue_ptmp);
+#else
+	fn.glSpecializeShader(shader, HostAddr(pEntryPoint, const GLchar *), numSpecializationConstants, HostAddr(pConstantIndex, const GLuint *), HostAddr(pConstantValue, const GLuint *));
+#endif
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglSpecializeShaderARB(GLuint shader, memptr pEntryPoint, GLuint numSpecializationConstants, memptr pConstantIndex, memptr pConstantValue)
+#else
+void OSMesaDriver::nfglSpecializeShaderARB(GLuint shader, const GLchar *pEntryPoint, GLuint numSpecializationConstants, const GLuint *pConstantIndex, const GLuint *pConstantValue)
+#endif
+{
+	D(bug("nfosmesa: glSpecializeShaderARB(%u, " PRI_PTR ", %u, " PRI_PTR ", " PRI_PTR ")", shader, AtariOffset(pEntryPoint), numSpecializationConstants, AtariOffset(pConstantIndex), AtariOffset(pConstantValue)));
+#if NFOSMESA_NEED_BYTE_CONV || NFOSMESA_NEED_INT_CONV
+	GLint const __pEntryPoint_size = safe_strlen(pEntryPoint) + 1;
+	GLchar __pEntryPoint_tmp[__pEntryPoint_size];
+	GLchar *__pEntryPoint_ptmp = Atari2HostByteArray(__pEntryPoint_size, pEntryPoint, __pEntryPoint_tmp);
+	GLint const __pConstantIndex_size = MAX(numSpecializationConstants, 0);
+	GLuint __pConstantIndex_tmp[__pConstantIndex_size];
+	GLuint *__pConstantIndex_ptmp = Atari2HostIntArray(__pConstantIndex_size, pConstantIndex, __pConstantIndex_tmp);
+	GLint const __pConstantValue_size = MAX(numSpecializationConstants, 0);
+	GLuint __pConstantValue_tmp[__pConstantValue_size];
+	GLuint *__pConstantValue_ptmp = Atari2HostIntArray(__pConstantValue_size, pConstantValue, __pConstantValue_tmp);
+	fn.glSpecializeShaderARB(shader, __pEntryPoint_ptmp, numSpecializationConstants, __pConstantIndex_ptmp, __pConstantValue_ptmp);
+#else
+	fn.glSpecializeShaderARB(shader, HostAddr(pEntryPoint, const GLchar *), numSpecializationConstants, HostAddr(pConstantIndex, const GLuint *), HostAddr(pConstantValue, const GLuint *));
+#endif
 }
 
 void OSMesaDriver::nfglSpriteParameterfSGIX(GLenum pname, GLfloat param)
@@ -18521,6 +19607,36 @@ void OSMesaDriver::nfglTexStorage3DMultisample(GLenum target, GLsizei samples, G
 	fn.glTexStorage3DMultisample(target, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
+void OSMesaDriver::nfglTexStorageMem1DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTexStorageMem1DEXT(%s, %d, %s, %d, %u, %" PRIu64 ")", gl_enum_name(target), levels, gl_enum_name(internalFormat), width, memory, offset));
+	fn.glTexStorageMem1DEXT(target, levels, internalFormat, width, memory, offset);
+}
+
+void OSMesaDriver::nfglTexStorageMem2DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTexStorageMem2DEXT(%s, %d, %s, %d, %d, %u, %" PRIu64 ")", gl_enum_name(target), levels, gl_enum_name(internalFormat), width, height, memory, offset));
+	fn.glTexStorageMem2DEXT(target, levels, internalFormat, width, height, memory, offset);
+}
+
+void OSMesaDriver::nfglTexStorageMem2DMultisampleEXT(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTexStorageMem2DMultisampleEXT(%s, %d, %s, %d, %d, %d, %u, %" PRIu64 ")", gl_enum_name(target), samples, gl_enum_name(internalFormat), width, height, fixedSampleLocations, memory, offset));
+	fn.glTexStorageMem2DMultisampleEXT(target, samples, internalFormat, width, height, fixedSampleLocations, memory, offset);
+}
+
+void OSMesaDriver::nfglTexStorageMem3DEXT(GLenum target, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTexStorageMem3DEXT(%s, %d, %s, %d, %d, %d, %u, %" PRIu64 ")", gl_enum_name(target), levels, gl_enum_name(internalFormat), width, height, depth, memory, offset));
+	fn.glTexStorageMem3DEXT(target, levels, internalFormat, width, height, depth, memory, offset);
+}
+
+void OSMesaDriver::nfglTexStorageMem3DMultisampleEXT(GLenum target, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTexStorageMem3DMultisampleEXT(%s, %d, %s, %d, %d, %d, %d, %u, %" PRIu64 ")", gl_enum_name(target), samples, gl_enum_name(internalFormat), width, height, depth, fixedSampleLocations, memory, offset));
+	fn.glTexStorageMem3DMultisampleEXT(target, samples, internalFormat, width, height, depth, fixedSampleLocations, memory, offset);
+}
+
 void OSMesaDriver::nfglTexStorageSparseAMD(GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags)
 {
 	D(bug("nfosmesa: glTexStorageSparseAMD(%s, %s, %d, %d, %d, %d, 0x%x)", gl_enum_name(target), gl_enum_name(internalFormat), width, height, depth, layers, flags));
@@ -18905,6 +20021,36 @@ void OSMesaDriver::nfglTextureStorage3DMultisampleEXT(GLuint texture, GLenum tar
 	fn.glTextureStorage3DMultisampleEXT(texture, target, samples, internalformat, width, height, depth, fixedsamplelocations);
 }
 
+void OSMesaDriver::nfglTextureStorageMem1DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTextureStorageMem1DEXT(%u, %d, %s, %d, %u, %" PRIu64 ")", texture, levels, gl_enum_name(internalFormat), width, memory, offset));
+	fn.glTextureStorageMem1DEXT(texture, levels, internalFormat, width, memory, offset);
+}
+
+void OSMesaDriver::nfglTextureStorageMem2DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTextureStorageMem2DEXT(%u, %d, %s, %d, %d, %u, %" PRIu64 ")", texture, levels, gl_enum_name(internalFormat), width, height, memory, offset));
+	fn.glTextureStorageMem2DEXT(texture, levels, internalFormat, width, height, memory, offset);
+}
+
+void OSMesaDriver::nfglTextureStorageMem2DMultisampleEXT(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTextureStorageMem2DMultisampleEXT(%u, %d, %s, %d, %d, %d, %u, %" PRIu64 ")", texture, samples, gl_enum_name(internalFormat), width, height, fixedSampleLocations, memory, offset));
+	fn.glTextureStorageMem2DMultisampleEXT(texture, samples, internalFormat, width, height, fixedSampleLocations, memory, offset);
+}
+
+void OSMesaDriver::nfglTextureStorageMem3DEXT(GLuint texture, GLsizei levels, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTextureStorageMem3DEXT(%u, %d, %s, %d, %d, %d, %u, %" PRIu64 ")", texture, levels, gl_enum_name(internalFormat), width, height, depth, memory, offset));
+	fn.glTextureStorageMem3DEXT(texture, levels, internalFormat, width, height, depth, memory, offset);
+}
+
+void OSMesaDriver::nfglTextureStorageMem3DMultisampleEXT(GLuint texture, GLsizei samples, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLboolean32 fixedSampleLocations, GLuint memory, GLuint64 offset)
+{
+	D(bug("nfosmesa: glTextureStorageMem3DMultisampleEXT(%u, %d, %s, %d, %d, %d, %d, %u, %" PRIu64 ")", texture, samples, gl_enum_name(internalFormat), width, height, depth, fixedSampleLocations, memory, offset));
+	fn.glTextureStorageMem3DMultisampleEXT(texture, samples, internalFormat, width, height, depth, fixedSampleLocations, memory, offset);
+}
+
 void OSMesaDriver::nfglTextureStorageSparseAMD(GLuint texture, GLenum target, GLenum internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLsizei layers, GLbitfield flags)
 {
 	D(bug("nfosmesa: glTextureStorageSparseAMD(%u, %s, %s, %d, %d, %d, %d, 0x%x)", texture, gl_enum_name(target), gl_enum_name(internalFormat), width, height, depth, layers, flags));
@@ -19190,10 +20336,33 @@ void OSMesaDriver::nfglUniform1i(GLint location, GLint v0)
 	fn.glUniform1i(location, v0);
 }
 
+void OSMesaDriver::nfglUniform1i64ARB(GLint location, GLint64 x)
+{
+	D(bug("nfosmesa: glUniform1i64ARB(%d, %" PRId64 ")", location, x));
+	fn.glUniform1i64ARB(location, x);
+}
+
 void OSMesaDriver::nfglUniform1i64NV(GLint location, GLint64EXT x)
 {
 	D(bug("nfosmesa: glUniform1i64NV(%d, %" PRId64 ")", location, x));
 	fn.glUniform1i64NV(location, x);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform1i64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform1i64vARB(GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform1i64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform1i64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform1i64vARB(location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19203,7 +20372,14 @@ void OSMesaDriver::nfglUniform1i64vNV(GLint location, GLsizei count, const GLint
 #endif
 {
 	D(bug("nfosmesa: glUniform1i64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM1I64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform1i64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform1i64vNV(location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform1iARB(GLint location, GLint v0)
@@ -19245,10 +20421,33 @@ void OSMesaDriver::nfglUniform1ui(GLint location, GLuint v0)
 	fn.glUniform1ui(location, v0);
 }
 
+void OSMesaDriver::nfglUniform1ui64ARB(GLint location, GLuint64 x)
+{
+	D(bug("nfosmesa: glUniform1ui64ARB(%d, %" PRIu64 ")", location, x));
+	fn.glUniform1ui64ARB(location, x);
+}
+
 void OSMesaDriver::nfglUniform1ui64NV(GLint location, GLuint64EXT x)
 {
 	D(bug("nfosmesa: glUniform1ui64NV(%d, %" PRIu64 ")", location, x));
 	fn.glUniform1ui64NV(location, x);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform1ui64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform1ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform1ui64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform1ui64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform1ui64vARB(location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19258,7 +20457,14 @@ void OSMesaDriver::nfglUniform1ui64vNV(GLint location, GLsizei count, const GLui
 #endif
 {
 	D(bug("nfosmesa: glUniform1ui64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM1UI64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(1 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform1ui64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform1ui64vNV(location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform1uiEXT(GLint location, GLuint v0)
@@ -19348,10 +20554,33 @@ void OSMesaDriver::nfglUniform2i(GLint location, GLint v0, GLint v1)
 	fn.glUniform2i(location, v0, v1);
 }
 
+void OSMesaDriver::nfglUniform2i64ARB(GLint location, GLint64 x, GLint64 y)
+{
+	D(bug("nfosmesa: glUniform2i64ARB(%d, %" PRId64 ", %" PRId64 ")", location, x, y));
+	fn.glUniform2i64ARB(location, x, y);
+}
+
 void OSMesaDriver::nfglUniform2i64NV(GLint location, GLint64EXT x, GLint64EXT y)
 {
 	D(bug("nfosmesa: glUniform2i64NV(%d, %" PRId64 ", %" PRId64 ")", location, x, y));
 	fn.glUniform2i64NV(location, x, y);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform2i64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform2i64vARB(GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform2i64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform2i64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform2i64vARB(location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19361,7 +20590,14 @@ void OSMesaDriver::nfglUniform2i64vNV(GLint location, GLsizei count, const GLint
 #endif
 {
 	D(bug("nfosmesa: glUniform2i64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM2I64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform2i64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform2i64vNV(location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform2iARB(GLint location, GLint v0, GLint v1)
@@ -19403,10 +20639,33 @@ void OSMesaDriver::nfglUniform2ui(GLint location, GLuint v0, GLuint v1)
 	fn.glUniform2ui(location, v0, v1);
 }
 
+void OSMesaDriver::nfglUniform2ui64ARB(GLint location, GLuint64 x, GLuint64 y)
+{
+	D(bug("nfosmesa: glUniform2ui64ARB(%d, %" PRIu64 ", %" PRIu64 ")", location, x, y));
+	fn.glUniform2ui64ARB(location, x, y);
+}
+
 void OSMesaDriver::nfglUniform2ui64NV(GLint location, GLuint64EXT x, GLuint64EXT y)
 {
 	D(bug("nfosmesa: glUniform2ui64NV(%d, %" PRIu64 ", %" PRIu64 ")", location, x, y));
 	fn.glUniform2ui64NV(location, x, y);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform2ui64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform2ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform2ui64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform2ui64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform2ui64vARB(location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19416,7 +20675,14 @@ void OSMesaDriver::nfglUniform2ui64vNV(GLint location, GLsizei count, const GLui
 #endif
 {
 	D(bug("nfosmesa: glUniform2ui64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM2UI64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(2 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform2ui64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform2ui64vNV(location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform2uiEXT(GLint location, GLuint v0, GLuint v1)
@@ -19506,10 +20772,33 @@ void OSMesaDriver::nfglUniform3i(GLint location, GLint v0, GLint v1, GLint v2)
 	fn.glUniform3i(location, v0, v1, v2);
 }
 
+void OSMesaDriver::nfglUniform3i64ARB(GLint location, GLint64 x, GLint64 y, GLint64 z)
+{
+	D(bug("nfosmesa: glUniform3i64ARB(%d, %" PRId64 ", %" PRId64 ", %" PRId64 ")", location, x, y, z));
+	fn.glUniform3i64ARB(location, x, y, z);
+}
+
 void OSMesaDriver::nfglUniform3i64NV(GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z)
 {
 	D(bug("nfosmesa: glUniform3i64NV(%d, %" PRId64 ", %" PRId64 ", %" PRId64 ")", location, x, y, z));
 	fn.glUniform3i64NV(location, x, y, z);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform3i64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform3i64vARB(GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform3i64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform3i64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform3i64vARB(location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19519,7 +20808,14 @@ void OSMesaDriver::nfglUniform3i64vNV(GLint location, GLsizei count, const GLint
 #endif
 {
 	D(bug("nfosmesa: glUniform3i64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM3I64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform3i64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform3i64vNV(location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform3iARB(GLint location, GLint v0, GLint v1, GLint v2)
@@ -19561,10 +20857,33 @@ void OSMesaDriver::nfglUniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v
 	fn.glUniform3ui(location, v0, v1, v2);
 }
 
+void OSMesaDriver::nfglUniform3ui64ARB(GLint location, GLuint64 x, GLuint64 y, GLuint64 z)
+{
+	D(bug("nfosmesa: glUniform3ui64ARB(%d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", location, x, y, z));
+	fn.glUniform3ui64ARB(location, x, y, z);
+}
+
 void OSMesaDriver::nfglUniform3ui64NV(GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z)
 {
 	D(bug("nfosmesa: glUniform3ui64NV(%d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", location, x, y, z));
 	fn.glUniform3ui64NV(location, x, y, z);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform3ui64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform3ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform3ui64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform3ui64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform3ui64vARB(location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19574,7 +20893,14 @@ void OSMesaDriver::nfglUniform3ui64vNV(GLint location, GLsizei count, const GLui
 #endif
 {
 	D(bug("nfosmesa: glUniform3ui64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM3UI64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(3 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform3ui64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform3ui64vNV(location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform3uiEXT(GLint location, GLuint v0, GLuint v1, GLuint v2)
@@ -19664,10 +20990,33 @@ void OSMesaDriver::nfglUniform4i(GLint location, GLint v0, GLint v1, GLint v2, G
 	fn.glUniform4i(location, v0, v1, v2, v3);
 }
 
+void OSMesaDriver::nfglUniform4i64ARB(GLint location, GLint64 x, GLint64 y, GLint64 z, GLint64 w)
+{
+	D(bug("nfosmesa: glUniform4i64ARB(%d, %" PRId64 ", %" PRId64 ", %" PRId64 ", %" PRId64 ")", location, x, y, z, w));
+	fn.glUniform4i64ARB(location, x, y, z, w);
+}
+
 void OSMesaDriver::nfglUniform4i64NV(GLint location, GLint64EXT x, GLint64EXT y, GLint64EXT z, GLint64EXT w)
 {
 	D(bug("nfosmesa: glUniform4i64NV(%d, %" PRId64 ", %" PRId64 ", %" PRId64 ", %" PRId64 ")", location, x, y, z, w));
 	fn.glUniform4i64NV(location, x, y, z, w);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform4i64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform4i64vARB(GLint location, GLsizei count, const GLint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform4i64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLint64 __value_tmp[__value_size];
+	GLint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform4i64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform4i64vARB(location, count, HostAddr(value, const GLint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19677,7 +21026,14 @@ void OSMesaDriver::nfglUniform4i64vNV(GLint location, GLsizei count, const GLint
 #endif
 {
 	D(bug("nfosmesa: glUniform4i64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM4I64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLint64EXT __value_tmp[__value_size];
+	GLint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform4i64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform4i64vNV(location, count, HostAddr(value, const GLint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform4iARB(GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
@@ -19719,10 +21075,33 @@ void OSMesaDriver::nfglUniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v
 	fn.glUniform4ui(location, v0, v1, v2, v3);
 }
 
+void OSMesaDriver::nfglUniform4ui64ARB(GLint location, GLuint64 x, GLuint64 y, GLuint64 z, GLuint64 w)
+{
+	D(bug("nfosmesa: glUniform4ui64ARB(%d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", location, x, y, z, w));
+	fn.glUniform4ui64ARB(location, x, y, z, w);
+}
+
 void OSMesaDriver::nfglUniform4ui64NV(GLint location, GLuint64EXT x, GLuint64EXT y, GLuint64EXT z, GLuint64EXT w)
 {
 	D(bug("nfosmesa: glUniform4ui64NV(%d, %" PRIu64 ", %" PRIu64 ", %" PRIu64 ", %" PRIu64 ")", location, x, y, z, w));
 	fn.glUniform4ui64NV(location, x, y, z, w);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglUniform4ui64vARB(GLint location, GLsizei count, memptr value)
+#else
+void OSMesaDriver::nfglUniform4ui64vARB(GLint location, GLsizei count, const GLuint64 *value)
+#endif
+{
+	D(bug("nfosmesa: glUniform4ui64vARB(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLuint64 __value_tmp[__value_size];
+	GLuint64 *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform4ui64vARB(location, count, __value_ptmp);
+#else
+	fn.glUniform4ui64vARB(location, count, HostAddr(value, const GLuint64 *));
+#endif
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -19732,7 +21111,14 @@ void OSMesaDriver::nfglUniform4ui64vNV(GLint location, GLsizei count, const GLui
 #endif
 {
 	D(bug("nfosmesa: glUniform4ui64vNV(%d, %d, " PRI_PTR ")", location, count, AtariOffset(value)));
-FN_GLUNIFORM4UI64VNV(location, count, value);
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __value_size = MAX(4 * count, 0);
+	GLuint64EXT __value_tmp[__value_size];
+	GLuint64EXT *__value_ptmp = Atari2HostInt64Array(__value_size, value, __value_tmp);
+	fn.glUniform4ui64vNV(location, count, __value_ptmp);
+#else
+	fn.glUniform4ui64vNV(location, count, HostAddr(value, const GLuint64EXT *));
+#endif
 }
 
 void OSMesaDriver::nfglUniform4uiEXT(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
@@ -23248,10 +24634,51 @@ void OSMesaDriver::nfglViewportIndexedfv(GLuint index, const GLfloat *v)
 FN_GLVIEWPORTINDEXEDFV(index, v);
 }
 
+void OSMesaDriver::nfglViewportPositionWScaleNV(GLuint index, GLfloat xcoeff, GLfloat ycoeff)
+{
+	D(bug("nfosmesa: glViewportPositionWScaleNV(%u, %f, %f)", index, xcoeff, ycoeff));
+	fn.glViewportPositionWScaleNV(index, xcoeff, ycoeff);
+}
+
+void OSMesaDriver::nfglViewportSwizzleNV(GLuint index, GLenum swizzlex, GLenum swizzley, GLenum swizzlez, GLenum swizzlew)
+{
+	D(bug("nfosmesa: glViewportSwizzleNV(%u, %s, %s, %s, %s)", index, gl_enum_name(swizzlex), gl_enum_name(swizzley), gl_enum_name(swizzlez), gl_enum_name(swizzlew)));
+	fn.glViewportSwizzleNV(index, swizzlex, swizzley, swizzlez, swizzlew);
+}
+
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglWaitSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, memptr buffers, GLuint numTextureBarriers, memptr textures, memptr srcLayouts)
+#else
+void OSMesaDriver::nfglWaitSemaphoreEXT(GLuint semaphore, GLuint numBufferBarriers, const GLuint *buffers, GLuint numTextureBarriers, const GLuint *textures, const GLenum *srcLayouts)
+#endif
+{
+	D(bug("nfosmesa: glWaitSemaphoreEXT(%u, %u, " PRI_PTR ", %u, " PRI_PTR ", " PRI_PTR ")", semaphore, numBufferBarriers, AtariOffset(buffers), numTextureBarriers, AtariOffset(textures), AtariOffset(srcLayouts)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __buffers_size = MAX(numBufferBarriers, 0);
+	GLuint __buffers_tmp[__buffers_size];
+	GLuint *__buffers_ptmp = Atari2HostIntArray(__buffers_size, buffers, __buffers_tmp);
+	GLint const __textures_size = MAX(numTextureBarriers, 0);
+	GLuint __textures_tmp[__textures_size];
+	GLuint *__textures_ptmp = Atari2HostIntArray(__textures_size, textures, __textures_tmp);
+	GLint const __srcLayouts_size = MAX(numTextureBarriers, 0);
+	GLenum __srcLayouts_tmp[__srcLayouts_size];
+	GLenum *__srcLayouts_ptmp = Atari2HostIntArray(__srcLayouts_size, srcLayouts, __srcLayouts_tmp);
+	fn.glWaitSemaphoreEXT(semaphore, numBufferBarriers, __buffers_ptmp, numTextureBarriers, __textures_ptmp, __srcLayouts_ptmp);
+#else
+	fn.glWaitSemaphoreEXT(semaphore, numBufferBarriers, HostAddr(buffers, const GLuint *), numTextureBarriers, HostAddr(textures, const GLuint *), HostAddr(srcLayouts, const GLenum *));
+#endif
+}
+
 void OSMesaDriver::nfglWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout)
 {
 	D(bug("nfosmesa: glWaitSync(" PRI_PTR ", 0x%x, %" PRIu64 ")", (unsigned int)(uintptr_t)sync, flags, timeout));
 	fn.glWaitSync(sync, flags, timeout);
+}
+
+void OSMesaDriver::nfglWaitVkSemaphoreNV(GLuint64 vkSemaphore)
+{
+	D(bug("nfosmesa: glWaitVkSemaphoreNV(%" PRIu64 ")", vkSemaphore));
+	fn.glWaitVkSemaphoreNV(vkSemaphore);
 }
 
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -23802,6 +25229,23 @@ void OSMesaDriver::nfglWindowPos4svMESA(const GLshort *v)
 FN_GLWINDOWPOS4SVMESA(v);
 }
 
+#if NFOSMESA_POINTER_AS_MEMARG
+void OSMesaDriver::nfglWindowRectanglesEXT(GLenum mode, GLsizei count, memptr box)
+#else
+void OSMesaDriver::nfglWindowRectanglesEXT(GLenum mode, GLsizei count, const GLint *box)
+#endif
+{
+	D(bug("nfosmesa: glWindowRectanglesEXT(%s, %d, " PRI_PTR ")", gl_enum_name(mode), count, AtariOffset(box)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __box_size = MAX(4 * count, 0);
+	GLint __box_tmp[__box_size];
+	GLint *__box_ptmp = Atari2HostIntArray(__box_size, box, __box_tmp);
+	fn.glWindowRectanglesEXT(mode, count, __box_ptmp);
+#else
+	fn.glWindowRectanglesEXT(mode, count, HostAddr(box, const GLint *));
+#endif
+}
+
 void OSMesaDriver::nfglWriteMaskEXT(GLuint res, GLuint in, GLenum outX, GLenum outY, GLenum outZ, GLenum outW)
 {
 	D(bug("nfosmesa: glWriteMaskEXT(%u, %u, %s, %s, %s, %s)", res, in, gl_enum_name(outX), gl_enum_name(outY), gl_enum_name(outZ), gl_enum_name(outW)));
@@ -23817,5 +25261,5 @@ void OSMesaDriver::nfgluLookAt(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdo
 #endif
 
 
-/* Functions generated: 2836 GL + 1 GLU */
-/* Automatically generated: 66 */
+/* Functions generated: 2954 GL + 1 GLU */
+/* Automatically generated: 130 */

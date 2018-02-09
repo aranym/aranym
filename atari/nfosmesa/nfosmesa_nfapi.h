@@ -26,7 +26,7 @@
 /* if you change anything in the enum {} below you have to increase 
    this ARANFOSMESA_NFAPI_VERSION!
 */
-#define ARANFOSMESA_NFAPI_VERSION	3
+#define ARANFOSMESA_NFAPI_VERSION	4
 
 enum {
 	GET_VERSION=0,	/* no parameters, return NFAPI_VERSION in d0 */

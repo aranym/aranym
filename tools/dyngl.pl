@@ -32,13 +32,13 @@
 #            memory would not point to emulated Atari memory. Look at glGetString()
 #            how this (sometimes) can be solved. Otherwise, if you decide not to
 #            export such a function, add it to the %blacklist hash.
-#          - add enums for new functions to enum-gl.h (at the end, dont reuse any existing numbers!)
+#          - add enums for new functions to atari/nfosmesa/enum-gl.h (at the end, dont reuse any existing numbers!)
 #            This is not done automatically, because the numbers must not change for old functions.
 #          - If new types are used in the prototypes, add them to atari/nfosmesa/gltypes.h
 #
 #     The current version (API Version 3) was generated from <GL/gl.h> on Linux,
-#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, $Revision: 31191 $Date: 2015-05-14 06:31:39 -0400
-#     and osmesa.h from Mesa 10.1.4.
+#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, Date 2018-01-14
+#     and osmesa.h from Mesa 11.2.
 #
 # -macros:
 #     Generate macro calls that are used to generate several tables.
@@ -177,6 +177,12 @@ my %blacklist = (
 	'glVDPAUSurfaceAccessNV' => 1,
 	'glVDPAUMapSurfacesNV' => 1,
 	'glVDPAUUnmapSurfacesNV' => 1,
+	# GL_NV_draw_vulkan_image
+	'glGetVkProcAddrNV' => 1,
+	# from GL_EXT_memory_object; could not figure out yet
+	# how to get at the size of those objects
+	'glGetUnsignedBytevEXT' => 1,
+	'glGetUnsignedBytei_vEXT' => 1,
 );
 
 #
@@ -188,6 +194,8 @@ my %pointer_types = (
 	'GLDEBUGPROCARB' => 1,
 	'GLDEBUGPROCAMD' => 1,
 	'GLprogramcallbackMESA' => 1,
+	'GLeglClientBufferEXT' => 1,
+	'GLVULKANPROCNV' => 1,
 );
 
 #
@@ -279,7 +287,9 @@ my %printf_formats = (
 	'GLDEBUGPROC' => '" PRI_PTR "',
 	'GLDEBUGPROCAMD' => '" PRI_PTR "',
 	'GLDEBUGPROCARB' => '" PRI_PTR "',
-	'GLprogramcallbackMESA' => '%p',
+	'GLprogramcallbackMESA' => '" PRI_PTR "',
+	'GLeglClientBufferEXT' => '" PRI_PTR "',
+	'GLVULKANPROCNV' => '" PRI_PTR "',
 	'OSMesaContext' => '%u',  # type is a pointer, but we return a handle instead
 );
 
@@ -501,6 +511,116 @@ my %paramlens = (
 
 	# GL_SGIS_detail_texture
 	'glDetailTexFuncSGIS' => [ { 'name' => 'points', 'inout' => 'in', 'len' => 'n * 2' } ],
+
+	# GL version 4.6
+	'glSpecializeShader' => [
+		{ 'name' => 'pEntryPoint', 'inout' => 'in', 'len' => 'safe_strlen(pEntryPoint) + 1' },
+		{ 'name' => 'pConstantIndex', 'inout' => 'in', 'len' => 'numSpecializationConstants' },
+		{ 'name' => 'pConstantValue', 'inout' => 'in', 'len' => 'numSpecializationConstants' },
+	],
+
+	# GL_ARB_gl_spirv
+	'glSpecializeShaderARB' => [
+		{ 'name' => 'pEntryPoint', 'inout' => 'in', 'len' => 'safe_strlen(pEntryPoint) + 1' },
+		{ 'name' => 'pConstantIndex', 'inout' => 'in', 'len' => 'numSpecializationConstants' },
+		{ 'name' => 'pConstantValue', 'inout' => 'in', 'len' => 'numSpecializationConstants' },
+	],
+
+	# GL_AMD_gpu_shader_int64
+	'glUniform1i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform2i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform3i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform4i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glUniform1ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform2ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform3ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform4ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glProgramUniform1i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glProgramUniform2i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glProgramUniform3i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glProgramUniform4i64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glProgramUniform1ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glProgramUniform2ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glProgramUniform3ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glProgramUniform4ui64vNV' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+
+	# GL_ARB_gpu_shader_int64
+	'glUniform1i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform2i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform3i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform4i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glUniform1ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glUniform2ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glUniform3ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glUniform4ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glProgramUniform1i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glProgramUniform2i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glProgramUniform3i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glProgramUniform4i64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+	'glProgramUniform1ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '1 * count' } ],
+	'glProgramUniform2ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '2 * count' } ],
+	'glProgramUniform3ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '3 * count' } ],
+	'glProgramUniform4ui64vARB' => [ { 'name' => 'value', 'inout' => 'in', 'len' => '4 * count' } ],
+
+	# GL_ARB_sample_locations
+	'glFramebufferSampleLocationsfvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => 'count' } ],
+	'glNamedFramebufferSampleLocationsfvARB' => [ { 'name' => 'v', 'inout' => 'in', 'len' => 'count' } ],
+	
+	# GL_EXT_memory_object
+	'glDeleteMemoryObjectsEXT' => [ { 'name' => 'memoryObjects', 'inout' => 'in', 'len' => 'n' } ],
+	'glCreateMemoryObjectsEXT' => [ { 'name' => 'memoryObjects', 'inout' => 'out', 'len' => 'n' } ],
+	'glMemoryObjectParameterivEXT' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetMemoryObjectParameterivEXT' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	
+	# GL_EXT_memory_object_win32
+	'glImportMemoryWin32NameEXT' => [ { 'name' => 'name', 'inout' => 'in', 'len' => 'safe_strlen(name) + 1', 'basetype' => 'GLchar' } ],
+	
+	# GL_EXT_semaphore
+	'glGenSemaphoresEXT' => [ { 'name' => 'semaphores', 'inout' => 'out', 'len' => 'n' } ],
+	'glDeleteSemaphoresEXT' => [ { 'name' => 'semaphores', 'inout' => 'in', 'len' => 'n' } ],
+	'glSemaphoreParameterui64vEXT' => [ { 'name' => 'params', 'inout' => 'in', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glGetSemaphoreParameterui64vEXT' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glWaitSemaphoreEXT' => [
+		{ 'name' => 'buffers', 'inout' => 'in', 'len' => 'numBufferBarriers' },
+		{ 'name' => 'textures', 'inout' => 'in', 'len' => 'numTextureBarriers' },
+		{ 'name' => 'srcLayouts', 'inout' => 'in', 'len' => 'numTextureBarriers' },
+	],
+	'glSignalSemaphoreEXT' => [
+		{ 'name' => 'buffers', 'inout' => 'in', 'len' => 'numBufferBarriers' },
+		{ 'name' => 'textures', 'inout' => 'in', 'len' => 'numTextureBarriers' },
+		{ 'name' => 'dstLayouts', 'inout' => 'in', 'len' => 'numTextureBarriers' },
+	],
+
+	# GL_EXT_semaphore_win32
+	'glImportSemaphoreWin32NameEXT' => [ { 'name' => 'name', 'inout' => 'in', 'len' => 'safe_strlen(name) + 1', 'basetype' => 'GLchar' } ],
+	
+	# GL_NVX_linked_gpu_multicast
+	'glLGPUNamedBufferSubDataNVX' => [ { 'name' => 'data', 'inout' => 'in', 'len' => 'size', 'basetype' => 'GLbyte' } ],
+
+	# GL_NV_gpu_multicast
+	'glMulticastBufferSubDataNV' => [ { 'name' => 'data', 'inout' => 'in', 'len' => 'size', 'basetype' => 'GLbyte' } ],
+	'glMulticastFramebufferSampleLocationsfvNV' => [ { 'name' => 'v', 'inout' => 'in', 'len' => 'count' } ],
+	'glMulticastGetQueryObjectivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glMulticastGetQueryObjectuivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glMulticastGetQueryObjecti64vNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+	'glMulticastGetQueryObjectui64vNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'nfglGetNumParams(pname)' } ],
+
+	# GL_NV_query_resource
+	'glQueryResourceNV' => [ { 'name' => 'buffer', 'inout' => 'out', 'len' => 'bufSize' } ],
+
+	# GL_NV_query_resource_tag
+	'glGenQueryResourceTagNV' => [ { 'name' => 'tagIds', 'inout' => 'out', 'len' => 'n' } ],
+	'glDeleteQueryResourceTagNV' => [ { 'name' => 'tagIds', 'inout' => 'in', 'len' => 'n' } ],
+	'glQueryResourceTagNV' => [ { 'name' => 'tagString', 'inout' => 'in', 'len' => 'safe_strlen(tagString) + 1' } ],
+
+	# GL_AMD_framebuffer_sample_positions 1
+	'glFramebufferSamplePositionsfvAMD' => [ { 'name' => 'values', 'inout' => 'in', 'len' => 'numsamples' } ],
+	'glNamedFramebufferSamplePositionsfvAMD' => [ { 'name' => 'values', 'inout' => 'in', 'len' => 'numsamples' } ],
+	'glGetFramebufferParameterfvAMD' => [ { 'name' => 'values', 'inout' => 'out', 'len' => 'numsamples' } ],
+	'glGetNamedFramebufferParameterfvAMD' => [ { 'name' => 'values', 'inout' => 'out', 'len' => 'numsamples' } ],
+
+	# GL_EXT_window_rectangles
+	'glWindowRectanglesEXT' => [ { 'name' => 'box', 'inout' => 'in', 'len' => '4 * count' } ],
 );
 
 
@@ -613,6 +733,10 @@ sub add_paramlens($)
 			$basetype =~ s/const//;
 			$basetype =~ s/^ *//;
 			$basetype =~ s/ *$//;
+			if (defined($lenparam->{basetype}))
+			{
+				$basetype = $lenparam->{basetype};
+			}
 			die "$me: $function_name($param->{name}): don't know how to convert type '$basetype'" unless (defined($copy_funcs{$basetype}));
 			$param->{inout} = $lenparam->{inout};
 			$param->{outlen} = $lenparam->{outlen} if defined($lenparam->{outlen});
@@ -722,12 +846,17 @@ sub gen_params()
 				}
 				$noconv_args .= "HostAddr($name, $type ${pointer})";
 			} else {
+				$type_mem = "$type";
 				if ($type eq 'GLsync' || $type eq 'GLhandleARB')
 				{
 					$debug_args .= '(unsigned int)(uintptr_t)' . $name;
 				} elsif ($type eq 'GLenum')
 				{
 					$debug_args .= "gl_enum_name($name)";
+				} elsif (defined($pointer_types{$type}))
+				{
+					$debug_args .= 'AtariOffset(' . $name . ')';
+					$type_mem = "memptr";
 				} else
 				{
 					$debug_args .= $name;
@@ -739,7 +868,6 @@ sub gen_params()
 					&warn("$key: dont know how to printf values of type $type");
 					$format = "%d";
 				}
-				$type_mem = "$type";
 				$args .= $name;
 				$noconv_args .= $name;
 			}
@@ -949,6 +1077,17 @@ sub read_enums()
 #
 # functions that need special attention;
 # each one needs a corresponding macro
+#
+# Most of these macros are for converting input/output arrays
+# to/from host format. For functions that don't need conversion
+# (ie. all parameters are passed as values)
+# no entry needs to be made here.
+# If there is an entry, AND its value is != 0,
+# a macro FN_UPPERCASENAME has to be defined in nfosmesa.cpp.
+# In some cases, the length of the array can be deduced from
+# some of the other parameters; in such cases, you should make
+# an entry to the paramlens hash above, and set the entry here to 0,
+# or remove it. The script will then generate the conversion code.
 #
 my %macros = (
 	# GL_ARB_window_pos
@@ -1428,36 +1567,36 @@ my %macros = (
 	'glUniform2i64NV' => 0,
 	'glUniform3i64NV' => 0,
 	'glUniform4i64NV' => 0,
-	'glUniform1i64vNV' => 1,
-	'glUniform2i64vNV' => 1,
-	'glUniform3i64vNV' => 1,
-	'glUniform4i64vNV' => 1,
+	'glUniform1i64vNV' => 0,
+	'glUniform2i64vNV' => 0,
+	'glUniform3i64vNV' => 0,
+	'glUniform4i64vNV' => 0,
 	'glUniform1ui64NV' => 0,
 	'glUniform2ui64NV' => 0,
 	'glUniform3ui64NV' => 0,
 	'glUniform4ui64NV' => 0,
-	'glUniform1ui64vNV' => 1,
-	'glUniform2ui64vNV' => 1,
-	'glUniform3ui64vNV' => 1,
-	'glUniform4ui64vNV' => 1,
+	'glUniform1ui64vNV' => 0,
+	'glUniform2ui64vNV' => 0,
+	'glUniform3ui64vNV' => 0,
+	'glUniform4ui64vNV' => 0,
 	'glGetUniformi64vNV' => 1,
 	'glGetUniformui64vNV' => 1,
 	'glProgramUniform1i64NV' => 0,
 	'glProgramUniform2i64NV' => 0,
 	'glProgramUniform3i64NV' => 0,
 	'glProgramUniform4i64NV' => 0,
-	'glProgramUniform1i64vNV' => 1,
-	'glProgramUniform2i64vNV' => 1,
-	'glProgramUniform3i64vNV' => 1,
-	'glProgramUniform4i64vNV' => 1,
+	'glProgramUniform1i64vNV' => 0,
+	'glProgramUniform2i64vNV' => 0,
+	'glProgramUniform3i64vNV' => 0,
+	'glProgramUniform4i64vNV' => 0,
 	'glProgramUniform1ui64NV' => 0,
 	'glProgramUniform2ui64NV' => 0,
 	'glProgramUniform3ui64NV' => 0,
 	'glProgramUniform4ui64NV' => 0,
-	'glProgramUniform1ui64vNV' => 1,
-	'glProgramUniform2ui64vNV' => 1,
-	'glProgramUniform3ui64vNV' => 1,
-	'glProgramUniform4ui64vNV' => 1,
+	'glProgramUniform1ui64vNV' => 0,
+	'glProgramUniform2ui64vNV' => 0,
+	'glProgramUniform3ui64vNV' => 0,
+	'glProgramUniform4ui64vNV' => 0,
 
 	# GL_EXT_vertex_shader
 	'glBeginVertexShaderEXT' => 0,
@@ -2674,6 +2813,178 @@ my %macros = (
 	
 	# GL_OVR_multiview
 	'glFramebufferTextureMultiviewOVR' => 0,
+
+	# ARB_indirect_parameters
+	'glMultiDrawArraysIndirectCountARB' => 1,
+	'glMultiDrawElementsIndirectCountARB' => 1,
+	
+	# GL_ARB_gl_spirv
+	'glSpecializeShaderARB' => 0,
+	
+	# GL_ARB_ES3_2_compatibility
+	'glPrimitiveBoundingBoxARB' => 0,
+	
+	# GL_ARB_gpu_shader_int64
+	'glUniform1i64ARB' => 0,
+	'glUniform2i64ARB' => 0,
+	'glUniform3i64ARB' => 0,
+	'glUniform4i64ARB' => 0,
+	'glUniform1i64vARB' => 0,
+	'glUniform2i64vARB' => 0,
+	'glUniform3i64vARB' => 0,
+	'glUniform4i64vARB' => 0,
+	'glUniform1ui64ARB' => 0,
+	'glUniform2ui64ARB' => 0,
+	'glUniform3ui64ARB' => 0,
+	'glUniform4ui64ARB' => 0,
+	'glUniform1ui64vARB' => 0,
+	'glUniform2ui64vARB' => 0,
+	'glUniform3ui64vARB' => 0,
+	'glUniform4ui64vARB' => 0,
+	'glGetUniformi64vARB' => 1,
+	'glGetUniformui64vARB' => 1,
+	'glGetnUniformi64vARB' => 1,
+	'glGetnUniformui64vARB' => 1,
+	'glProgramUniform1i64ARB' => 0,
+	'glProgramUniform2i64ARB' => 0,
+	'glProgramUniform3i64ARB' => 0,
+	'glProgramUniform4i64ARB' => 0,
+	'glProgramUniform1i64vARB' => 0,
+	'glProgramUniform2i64vARB' => 0,
+	'glProgramUniform3i64vARB' => 0,
+	'glProgramUniform4i64vARB' => 0,
+	'glProgramUniform1ui64ARB' => 0,
+	'glProgramUniform2ui64ARB' => 0,
+	'glProgramUniform3ui64ARB' => 0,
+	'glProgramUniform4ui64ARB' => 0,
+	'glProgramUniform1ui64vARB' => 0,
+	'glProgramUniform2ui64vARB' => 0,
+	'glProgramUniform3ui64vARB' => 0,
+	'glProgramUniform4ui64vARB' => 0,
+	
+	# GL_ARB_parallel_shader_compile
+	'glMaxShaderCompilerThreadsARB' => 0,
+	
+	# GL_ARB_sample_locations
+	'glFramebufferSampleLocationsfvARB' => 0,
+	'glNamedFramebufferSampleLocationsfvARB' => 0,
+	'glEvaluateDepthValuesARB' => 0,
+	
+	# GL_KHR_parallel_shader_compile
+	'glMaxShaderCompilerThreadsKHR' => 0,
+	
+	# GL_EXT_external_buffer
+	'glBufferStorageExternalEXT' => 1,
+	'glNamedBufferStorageExternalEXT' => 1,
+	
+	# GL_EXT_memory_object
+	'glGetUnsignedBytevEXT' => 0,
+	'glGetUnsignedBytei_vEXT' => 0,
+	'glDeleteMemoryObjectsEXT' => 0,
+	'glIsMemoryObjectEXT' => 0,
+	'glCreateMemoryObjectsEXT' => 0,
+	'glMemoryObjectParameterivEXT' => 0,
+	'glGetMemoryObjectParameterivEXT' => 0,
+	'glTexStorageMem2DEXT' => 0,
+	'glTexStorageMem2DMultisampleEXT' => 0,
+	'glTexStorageMem3DEXT' => 0,
+	'glTexStorageMem3DMultisampleEXT' => 0,
+	'glBufferStorageMemEXT' => 0,
+	'glTextureStorageMem2DEXT' => 0,
+	'glTextureStorageMem2DMultisampleEXT' => 0,
+	'glTextureStorageMem3DEXT' => 0,
+	'glTextureStorageMem3DMultisampleEXT' => 0,
+	'glNamedBufferStorageMemEXT' => 0,
+	'glTexStorageMem1DEXT' => 0,
+	'glTextureStorageMem1DEXT' => 0,
+	
+	# GL_EXT_memory_object_fd
+	'glImportMemoryFdEXT' => 0,
+	
+	# GL_EXT_memory_object_win32
+	'glImportMemoryWin32HandleEXT' => 1,
+	'glImportMemoryWin32NameEXT' => 0,
+
+	# GL_EXT_semaphore
+	'glGenSemaphoresEXT' => 0,
+	'glDeleteSemaphoresEXT' => 0,
+	'glIsSemaphoreEXT' => 0,
+	'glSemaphoreParameterui64vEXT' => 0,
+	'glGetSemaphoreParameterui64vEXT' => 0,
+	'glWaitSemaphoreEXT' => 0,
+	'glSignalSemaphoreEXT' => 0,
+	
+	# GL_EXT_semaphore_fd
+	'glImportSemaphoreFdEXT' => 0,
+	
+	# GL_EXT_semaphore_win32
+	'glImportSemaphoreWin32HandleEXT' => 1,
+	'glImportSemaphoreWin32NameEXT' => 0,
+	
+	# GL_EXT_win32_keyed_mutex
+	'glAcquireKeyedMutexWin32EXT' => 0,
+	'glReleaseKeyedMutexWin32EXT' => 0,
+	
+	# GL_NVX_linked_gpu_multicast
+	'glLGPUNamedBufferSubDataNVX' => 0,
+	'glLGPUCopyImageSubDataNVX' => 0,
+	'glLGPUInterlockNVX' => 0,
+	
+	# GL_NV_alpha_to_coverage_dither_control
+	'glAlphaToCoverageDitherControlNV' => 0,
+
+	# GL_NV_draw_vulkan_image
+	'glDrawVkImageNV' => 0,
+	'glGetVkProcAddrNV' => 0,
+	'glWaitVkSemaphoreNV' => 0,
+	'glSignalVkSemaphoreNV' => 0,
+	'glSignalVkFenceNV' => 0,
+
+	# GL_NV_gpu_multicast
+	'glRenderGpuMaskNV' => 0,
+	'glMulticastBufferSubDataNV' => 0,
+	'glMulticastCopyBufferSubDataNV' => 0,
+	'glMulticastCopyImageSubDataNV' => 0,
+	'glMulticastBlitFramebufferNV' => 0,
+	'glMulticastFramebufferSampleLocationsfvNV' => 0,
+	'glMulticastBarrierNV' => 0,
+	'glMulticastWaitSyncNV' => 0,
+	'glMulticastGetQueryObjectivNV' => 0,
+	'glMulticastGetQueryObjectuivNV' => 0,
+	'glMulticastGetQueryObjecti64vNV' => 0,
+	'glMulticastGetQueryObjectui64vNV' => 0,
+
+	# GL_NV_query_resource
+	'glQueryResourceNV' => 0,
+
+	# GL_NV_query_resource_tag
+	'glGenQueryResourceTagNV' => 0,
+	'glDeleteQueryResourceTagNV' => 0,
+	'glQueryResourceTagNV' => 0,
+
+	# GL_AMD_framebuffer_sample_positions 1
+	'glFramebufferSamplePositionsfvAMD' => 0,
+	'glNamedFramebufferSamplePositionsfvAMD' => 0,
+	'glGetFramebufferParameterfvAMD' => 0,
+	'glGetNamedFramebufferParameterfvAMD' => 0,
+
+	# GL_EXT_window_rectangles
+	'glWindowRectanglesEXT' => 0,
+
+	# GL_INTEL_framebuffer_CMAA
+	'glApplyFramebufferAttachmentCMAAINTEL' => 0,
+
+	# GL_NV_viewport_swizzle
+	'glViewportSwizzleNV' => 0,
+
+	# GL_NV_clip_space_w_scaling
+	'glViewportPositionWScaleNV' => 0,
+
+	# GL_NV_conservative_raster_dilate
+	'glConservativeRasterParameterfNV' => 0,
+
+	# GL_NV_conservative_raster_pre_snap_triangles
+	'glConservativeRasterParameteriNV' => 0,
 	
 	# Version 1.1
 	'glAccum' => 0,
@@ -3783,6 +4094,12 @@ my %macros = (
 	'glVertexArrayElementBuffer' => 0,
 	'glVertexArrayVertexBuffer' => 0,
 	'glVertexArrayVertexBuffers' => 1,
+
+	# Version 4.6
+	'glSpecializeShader' => 0,
+	'glMultiDrawArraysIndirectCount' => 1,
+	'glMultiDrawElementsIndirectCount' => 1,
+	'glPolygonOffsetClamp' => 0,
 );
 
 
@@ -6155,7 +6472,7 @@ struct gl_public *slb_load_tiny_gl(const char *path)
 	 * compiled-in library name, so there is no way
 	 * to pass an alternative filename here
 	 */
-	ret = Slbopen("tiny_gl.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
+	ret = Slbopen("tiny_gl.slb", path, 4 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
 		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;
@@ -6314,7 +6631,7 @@ struct gl_public *slb_load_osmesa(const char *path)
 	 * compiled-in library name, so there is no way
 	 * to pass an alternative filename here
 	 */
-	ret = Slbopen("osmesa.slb", path, 3 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
+	ret = Slbopen("osmesa.slb", path, 4 /* ARANFOSMESA_NFAPI_VERSION */, &gl_slb, &gl_exec);
 	if (ret >= 0)
 	{
 		long  __CDECL (*exec)(SLB_HANDLE, long, long, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *))gl_exec;

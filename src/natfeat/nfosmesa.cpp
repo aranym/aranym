@@ -76,6 +76,22 @@ verify(sizeof(GLuint64) == 8);
 
 #define M(m,row,col)  m[col*4+row]
 
+#ifndef GL_DEVICE_LUID_EXT
+#define GL_DEVICE_LUID_EXT                0x9599
+#endif
+#ifndef GL_LUID_SIZE_EXT
+#define GL_LUID_SIZE_EXT                  8
+#endif
+#ifndef GL_DEVICE_UUID_EXT
+#define GL_DEVICE_UUID_EXT                0x9597
+#endif
+#ifndef GL_DRIVER_UUID_EXT
+#define GL_DRIVER_UUID_EXT                0x9598
+#endif
+#ifndef GL_UUID_SIZE_EXT
+#define GL_UUID_SIZE_EXT                  16
+#endif
+
 /*--- Variables ---*/
 
 osmesa_funcs OSMesaDriver::fn;
@@ -141,7 +157,7 @@ void OSMesaDriver::reset()
 #define HostAddr(addr, t) (t)((addr) ? Atari2HostAddr(addr) : NULL)
 #define AtariAddr(addr, t) addr
 #define AtariOffset(addr) addr
-#define NFHost2AtariAddr(addr) (void *)(addr)
+#define NFHost2AtariAddr(addr) (void *)(uintptr_t)(addr)
 #else
 #define getStackedParameter(n) SDL_SwapBE32(ctx_ptr[n])
 #define getStackedParameter64(n) SDL_SwapBE64(*((Uint64 *)&ctx_ptr[n]))
@@ -2193,6 +2209,13 @@ int OSMesaDriver::nfglGetNumParams(GLenum pname)
 		break;
 	case GL_EVAL_VERTEX_ATTRIB1_NV: /* vertex weight */
 	case GL_EVAL_VERTEX_ATTRIB5_NV: /* fog coord */
+		break;
+	case GL_DEVICE_LUID_EXT:
+		count = GL_LUID_SIZE_EXT;
+		break;
+	case GL_DEVICE_UUID_EXT:
+	case GL_DRIVER_UUID_EXT:
+		count = GL_UUID_SIZE_EXT;
 		break;
 	/* TODO: */
 	case GL_COMBINER_INPUT_NV:
@@ -5106,182 +5129,6 @@ data store.
  */
 
 #if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM1I64VNV(program, location, count, value) \
-	GLint const size = 1 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform1i64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM1I64VNV(program, location, count, value) \
-	fn.glProgramUniform1i64vNV(program, location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM2I64VNV(program, location, count, value) \
-	GLint const size = 2 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform2i64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM2I64VNV(program, location, count, value) \
-	fn.glProgramUniform2i64vNV(program, location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM3I64VNV(program, location, count, value) \
-	GLint const size = 3 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform3i64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM3I64VNV(program, location, count, value) \
-	fn.glProgramUniform3i64vNV(program, location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM4I64VNV(program, location, count, value) \
-	GLint const size = 4 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform4i64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM4I64VNV(program, location, count, value) \
-	fn.glProgramUniform4i64vNV(program, location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM1UI64VNV(program, location, count, value) \
-	GLint const size = 1 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform1ui64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM1UI64VNV(program, location, count, value) \
-	fn.glProgramUniform1ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM2UI64VNV(program, location, count, value) \
-	GLint const size = 2 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform2ui64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM2UI64VNV(program, location, count, value) \
-	fn.glProgramUniform2ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM3UI64VNV(program, location, count, value) \
-	GLint const size = 3 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform3ui64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM3UI64VNV(program, location, count, value) \
-	fn.glProgramUniform3ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLPROGRAMUNIFORM4UI64VNV(program, location, count, value) \
-	GLint const size = 4 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glProgramUniform4ui64vNV(program, location, count, tmp)
-#else
-#define FN_GLPROGRAMUNIFORM4UI64VNV(program, location, count, value) \
-	fn.glProgramUniform4ui64vNV(program, location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM1I64VNV(location, count, value) \
-	GLint const size = 1 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform1i64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM1I64VNV(location, count, value) \
-	fn.glUniform1i64vNV(location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM2I64VNV(location, count, value) \
-	GLint const size = 2 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform2i64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM2I64VNV(location, count, value) \
-	fn.glUniform2i64vNV(location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM3I64VNV(location, count, value) \
-	GLint const size = 3 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform3i64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM3I64VNV(location, count, value) \
-	fn.glUniform3i64vNV(location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM4I64VNV(location, count, value) \
-	GLint const size = 4 * count; \
-	GLint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform4i64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM4I64VNV(location, count, value) \
-	fn.glUniform4i64vNV(location, count, HostAddr(value, const GLint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM1UI64VNV(location, count, value) \
-	GLint const size = 1 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform1ui64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM1UI64VNV(location, count, value) \
-	fn.glUniform1ui64vNV(location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM2UI64VNV(location, count, value) \
-	GLint const size = 2 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform2ui64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM2UI64VNV(location, count, value) \
-	fn.glUniform2ui64vNV(location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM3UI64VNV(location, count, value) \
-	GLint const size = 1 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform3ui64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM3UI64VNV(location, count, value) \
-	fn.glUniform3ui64vNV(location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
-#define FN_GLUNIFORM4UI64VNV(location, count, value) \
-	GLint const size = 1 * count; \
-	GLuint64EXT tmp[size]; \
-	Atari2HostInt64Array(size, value, tmp); \
-	fn.glUniform4ui64vNV(location, count, tmp)
-#else
-#define FN_GLUNIFORM4UI64VNV(location, count, value) \
-	fn.glUniform4ui64vNV(location, count, HostAddr(value, const GLuint64EXT *))
-#endif
-
-#if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETUNIFORMI64VNV(program, location, params) \
 	GLint const size = 1; \
 	GLint64 tmp[size]; \
@@ -5301,6 +5148,54 @@ data store.
 #else
 #define FN_GLGETUNIFORMUI64VNV(program, location, params) \
 	fn.glGetUniformui64vNV(program, location, HostAddr(params, GLuint64 *))
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_ARB_gpu_shader_int64
+ */
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETUNIFORMI64VARB(program, location, params) \
+	GLint const size = 1; \
+	GLint64 tmp[size]; \
+	fn.glGetUniformi64vARB(program, location, tmp); \
+	Host2AtariInt64Array(size, tmp, params)
+#else
+#define FN_GLGETUNIFORMI64VARB(program, location, params) \
+	fn.glGetUniformi64vARB(program, location, HostAddr(params, GLint64 *))
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETUNIFORMUI64VARB(program, location, params) \
+	GLint const size = 1; \
+	GLuint64 tmp[size]; \
+	fn.glGetUniformui64vARB(program, location, tmp); \
+	Host2AtariInt64Array(size, tmp, params)
+#else
+#define FN_GLGETUNIFORMUI64VARB(program, location, params) \
+	fn.glGetUniformui64vARB(program, location, HostAddr(params, GLuint64 *))
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNUNIFORMI64VARB(program, location, bufsize, params) \
+	GLint64 tmp[bufsize]; \
+	fn.glGetUniformi64vARB(program, location, tmp); \
+	Host2AtariInt64Array(bufsize, tmp, params)
+#else
+#define FN_GLGETNUNIFORMI64VARB(program, location, bufsize, params) \
+	fn.glGetnUniformi64vARB(program, location, bufsize, HostAddr(params, GLint64 *))
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLGETNUNIFORMUI64VARB(program, location, bufsize, params) \
+	GLuint64 tmp[bufsize]; \
+	fn.glGetUniformui64vARB(program, location, tmp); \
+	Host2AtariInt64Array(bufsize, tmp, params)
+#else
+#define FN_GLGETNUNIFORMUI64VARB(program, location, bufsize, params) \
+	fn.glGetnUniformui64vARB(program, location, bufsize, HostAddr(params, GLuint64 *))
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -13527,6 +13422,124 @@ data store.
 /* -------------------------------------------------------------------------- */
 
 /*
+ * ARB_indirect_parameters
+ */
+
+#define FN_GLMULTIDRAWARRAYSINDIRECTCOUNTARB(mode, indirect, drawcount, maxdrawcount, stride) \
+	/* \
+	 * The parameters addressed by indirect are packed into a structure that takes the form (in C): \
+	 * \
+	 *    typedef  struct { \
+	 *        uint  count; \
+	 *        uint  primCount; \
+	 *        uint  first; \
+	 *        uint  baseInstance; \
+	 *    } DrawArraysIndirectCommand; \
+	 */ \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		void *offset = NFHost2AtariAddr(indirect); \
+		fn.glMultiDrawArraysIndirectCountARB(mode, offset, drawcount, maxdrawcount, stride); \
+	} else if (indirect) { \
+		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		nfcmemptr indptr = (nfcmemptr)indirect; \
+		for (GLsizei n = 0; n < maxdrawcount; n++) { \
+			GLuint tmp[4] = { 0, 0, 0, 0 }; \
+			Atari2HostIntArray(4, indptr, tmp); \
+			GLuint count = tmp[0]; \
+			convertClientArrays(count); \
+			fn.glDrawArraysInstancedBaseInstance(mode, tmp[2], count, tmp[1], tmp[3]); \
+			indptr += stride; \
+		} \
+	}
+
+/*
+ * The parameters addressed by indirect are packed into a structure that takes the form (in C):
+ *
+ *    typedef  struct {
+ *        uint  count;
+ *        uint  primCount;
+ *        uint  firstIndex;
+ *        uint  baseVertex;
+ *        uint  baseInstance;
+ *    } DrawElemntsIndirectCommand;
+ */
+#define FN_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB(mode, type, indirect, drawcount, maxdrawcount, stride) \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		void *offset = NFHost2AtariAddr(indirect); \
+		fn.glMultiDrawElementsIndirectCountARB(mode, type, offset, drawcount, maxdrawcount, stride); \
+	} else if (indirect) { \
+		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		nfcmemptr pind = (nfcmemptr)indirect; \
+		for (GLsizei n = 0; n < maxdrawcount; n++) { \
+			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
+			Atari2HostIntArray(5, pind, tmp); \
+			GLuint count = tmp[0]; \
+			convertClientArrays(count); \
+			fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, (const void *)(uintptr_t)tmp[2], tmp[1], tmp[3], tmp[4]); \
+			pind += stride; \
+		} \
+	}
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_EXT_memory_object_win32
+ */
+/* FIXME: does not make much sense to return Win32 handle to Atari? */
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLIMPORTMEMORYWIN32HANDLEEXT(memory, size, handleType, handle) \
+	GLintptr tmp[1]; \
+	fn.glImportMemoryWin32HandleEXT(memory, size, handleType, tmp); \
+	Host2AtariIntArray(1, (const Uint32 *)tmp, AtariAddr(handle, GLuint *))
+#else
+#define FN_GLIMPORTMEMORYWIN32HANDLEEXT(memory, size, handleType, handle) \
+	fn.glImportMemoryWin32HandleEXT(memory, size, handleType, HostAddr(handle, void *))
+#endif
+	
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_EXT_semaphore_win32
+ */
+/* FIXME: does not make much sense to return Win32 handle to Atari? */
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLIMPORTSEMAPHOREWIN32HANDLEEXT(semaphore, handleType, handle) \
+	GLintptr tmp[1]; \
+	fn.glImportSemaphoreWin32HandleEXT(semaphore, handleType, tmp); \
+	Host2AtariIntArray(1, (const Uint32 *)tmp, AtariAddr(handle, GLuint *))
+#else
+#define FN_GLIMPORTSEMAPHOREWIN32HANDLEEXT(semaphore, handleType, handle) \
+	fn.glImportSemaphoreWin32HandleEXT(semaphore, handleType, HostAddr(handle, void *))
+#endif
+	
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_EXT_external_buffer
+ */
+#if NFOSMESA_NEED_BYTE_CONV
+#define FN_GLBUFFERSTORAGEEXTERNALEXT(target, offset, size, clientBuffer, flags) \
+	GLubyte tmp[MAX(size, 0)], *ptmp; \
+	ptmp = Atari2HostByteArray(sizeof(tmp), AtariAddr(clientBuffer, void *), tmp); \
+	fn.glBufferStorageExternalEXT(target, offset, size, ptmp, flags)
+#else
+#define FN_GLBUFFERSTORAGEEXTERNALEXT(target, offset, size, clientBuffer, flags) \
+	fn.glBufferStorageExternalEXT(target, offset, size, AtariAddr(clientBuffer, void *), flags)
+#endif
+
+#if NFOSMESA_NEED_BYTE_CONV
+#define FN_GLNAMEDBUFFERSTORAGEEXTERNALEXT(buffer, offset, size, clientBuffer, flags) \
+	GLubyte tmp[MAX(size, 0)], *ptmp; \
+	ptmp = Atari2HostByteArray(sizeof(tmp), AtariAddr(clientBuffer, void *), tmp); \
+	fn.glNamedBufferStorageExternalEXT(buffer, offset, size, ptmp, flags)
+#else
+#define FN_GLNAMEDBUFFERSTORAGEEXTERNALEXT(buffer, offset, size, clientBuffer, flags) \
+	fn.glNamedBufferStorageExternalEXT(buffer, offset, size, AtariAddr(clientBuffer, void *), flags)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
  * Version 1.1
  */
 
@@ -20804,6 +20817,67 @@ is read from the buffer rather than from client memory.
 	poffsets = Atari2HostIntptrArray(count, offsets, tmpoffs); \
 	pstrides = Atari2HostIntArray(count, strides, tmpstrides); \
 	fn.glVertexArrayVertexBuffers(vaobj, first, count, pbufs, poffsets, pstrides)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * Version 4.6
+ */
+
+#define FN_GLMULTIDRAWARRAYSINDIRECTCOUNT(mode, indirect, drawcount, maxdrawcount, stride) \
+	/* \
+	 * The parameters addressed by indirect are packed into a structure that takes the form (in C): \
+	 * \
+	 *    typedef  struct { \
+	 *        uint  count; \
+	 *        uint  primCount; \
+	 *        uint  first; \
+	 *        uint  baseInstance; \
+	 *    } DrawArraysIndirectCommand; \
+	 */ \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		void *offset = NFHost2AtariAddr(indirect); \
+		fn.glMultiDrawArraysIndirectCount(mode, offset, drawcount, maxdrawcount, stride); \
+	} else if (indirect) { \
+		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		nfcmemptr indptr = (nfcmemptr)indirect; \
+		for (GLsizei n = 0; n < maxdrawcount; n++) { \
+			GLuint tmp[4] = { 0, 0, 0, 0 }; \
+			Atari2HostIntArray(4, indptr, tmp); \
+			GLuint count = tmp[0]; \
+			convertClientArrays(count); \
+			fn.glDrawArraysInstancedBaseInstance(mode, tmp[2], count, tmp[1], tmp[3]); \
+			indptr += stride; \
+		} \
+	}
+
+/*
+ * The parameters addressed by indirect are packed into a structure that takes the form (in C):
+ *
+ *    typedef  struct {
+ *        uint  count;
+ *        uint  primCount;
+ *        uint  firstIndex;
+ *        uint  baseVertex;
+ *        uint  baseInstance;
+ *    } DrawElemntsIndirectCommand;
+ */
+#define FN_GLMULTIDRAWELEMENTSINDIRECTCOUNT(mode, type, indirect, drawcount, maxdrawcount, stride) \
+	if (contexts[cur_context].buffer_bindings.draw_indirect.id) { \
+		void *offset = NFHost2AtariAddr(indirect); \
+		fn.glMultiDrawElementsIndirectCount(mode, type, offset, drawcount, maxdrawcount, stride); \
+	} else if (indirect) { \
+		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		nfcmemptr pind = (nfcmemptr)indirect; \
+		for (GLsizei n = 0; n < maxdrawcount; n++) { \
+			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
+			Atari2HostIntArray(5, pind, tmp); \
+			GLuint count = tmp[0]; \
+			convertClientArrays(count); \
+			fn.glDrawElementsInstancedBaseVertexBaseInstance(mode, count, type, (const void *)(uintptr_t)tmp[2], tmp[1], tmp[3], tmp[4]); \
+			pind += stride; \
+		} \
+	}
 
 /* -------------------------------------------------------------------------- */
 

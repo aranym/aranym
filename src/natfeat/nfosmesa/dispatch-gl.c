@@ -17,6 +17,14 @@
 				getStackedParameter(0),  /* GLenum op */
 				getStackedParameter(1)  /* GLfixed value */);
 			break;
+		case NFOSMESA_GLACQUIREKEYEDMUTEXWIN32EXT:
+			D(funcname = "glAcquireKeyedMutexWin32EXT");
+			if (GL_ISAVAILABLE(glAcquireKeyedMutexWin32EXT))
+			ret = nfglAcquireKeyedMutexWin32EXT(
+				getStackedParameter(0),  /* GLuint memory */
+				getStackedParameter64(1),  /* GLuint64 key */
+				getStackedParameter(3)  /* GLuint timeout */);
+			break;
 		case NFOSMESA_GLACTIVEPROGRAMEXT:
 			D(funcname = "glActiveProgramEXT");
 			if (GL_ISAVAILABLE(glActiveProgramEXT))
@@ -119,6 +127,17 @@
 			nfglAlphaFuncxOES(
 				getStackedParameter(0),  /* GLenum func */
 				getStackedParameter(1)  /* GLfixed ref */);
+			break;
+		case NFOSMESA_GLALPHATOCOVERAGEDITHERCONTROLNV:
+			D(funcname = "glAlphaToCoverageDitherControlNV");
+			if (GL_ISAVAILABLE(glAlphaToCoverageDitherControlNV))
+			nfglAlphaToCoverageDitherControlNV(
+				getStackedParameter(0)  /* GLenum mode */);
+			break;
+		case NFOSMESA_GLAPPLYFRAMEBUFFERATTACHMENTCMAAINTEL:
+			D(funcname = "glApplyFramebufferAttachmentCMAAINTEL");
+			if (GL_ISAVAILABLE(glApplyFramebufferAttachmentCMAAINTEL))
+			nfglApplyFramebufferAttachmentCMAAINTEL();
 			break;
 		case NFOSMESA_GLAPPLYTEXTUREEXT:
 			D(funcname = "glApplyTextureEXT");
@@ -1094,6 +1113,25 @@
 				getStackedParameter(1),  /* GLsizeiptr size */
 				getStackedPointer(2, const void *),  /* const void *data */
 				getStackedParameter(3)  /* GLbitfield flags */);
+			break;
+		case NFOSMESA_GLBUFFERSTORAGEEXTERNALEXT:
+			D(funcname = "glBufferStorageExternalEXT");
+			if (GL_ISAVAILABLE(glBufferStorageExternalEXT))
+			nfglBufferStorageExternalEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLintptr offset */
+				getStackedParameter(2),  /* GLsizeiptr size */
+				getStackedPointer(3, GLeglClientBufferEXT ),  /* GLeglClientBufferEXT clientBuffer */
+				getStackedParameter(4)  /* GLbitfield flags */);
+			break;
+		case NFOSMESA_GLBUFFERSTORAGEMEMEXT:
+			D(funcname = "glBufferStorageMemEXT");
+			if (GL_ISAVAILABLE(glBufferStorageMemEXT))
+			nfglBufferStorageMemEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizeiptr size */
+				getStackedParameter(2),  /* GLuint memory */
+				getStackedParameter64(3)  /* GLuint64 offset */);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATA:
 			D(funcname = "glBufferSubData");
@@ -2588,6 +2626,20 @@
 				getStackedParameter(10),  /* GLsizei imageSize */
 				getStackedPointer(11, const void *)  /* const void *bits */);
 			break;
+		case NFOSMESA_GLCONSERVATIVERASTERPARAMETERFNV:
+			D(funcname = "glConservativeRasterParameterfNV");
+			if (GL_ISAVAILABLE(glConservativeRasterParameterfNV))
+			nfglConservativeRasterParameterfNV(
+				getStackedParameter(0),  /* GLenum pname */
+				getStackedFloat(1)  /* GLfloat value */);
+			break;
+		case NFOSMESA_GLCONSERVATIVERASTERPARAMETERINV:
+			D(funcname = "glConservativeRasterParameteriNV");
+			if (GL_ISAVAILABLE(glConservativeRasterParameteriNV))
+			nfglConservativeRasterParameteriNV(
+				getStackedParameter(0),  /* GLenum pname */
+				getStackedParameter(1)  /* GLint param */);
+			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1D:
 			D(funcname = "glConvolutionFilter1D");
 			if (GL_ISAVAILABLE(glConvolutionFilter1D))
@@ -3250,6 +3302,13 @@
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *framebuffers */);
 			break;
+		case NFOSMESA_GLCREATEMEMORYOBJECTSEXT:
+			D(funcname = "glCreateMemoryObjectsEXT");
+			if (GL_ISAVAILABLE(glCreateMemoryObjectsEXT))
+			nfglCreateMemoryObjectsEXT(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, GLuint *)  /* GLuint *memoryObjects */);
+			break;
 		case NFOSMESA_GLCREATEPERFQUERYINTEL:
 			D(funcname = "glCreatePerfQueryINTEL");
 			if (GL_ISAVAILABLE(glCreatePerfQueryINTEL))
@@ -3592,6 +3651,13 @@
 				getStackedParameter(0),  /* GLuint list */
 				getStackedParameter(1)  /* GLsizei range */);
 			break;
+		case NFOSMESA_GLDELETEMEMORYOBJECTSEXT:
+			D(funcname = "glDeleteMemoryObjectsEXT");
+			if (GL_ISAVAILABLE(glDeleteMemoryObjectsEXT))
+			nfglDeleteMemoryObjectsEXT(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, const GLuint *)  /* const GLuint *memoryObjects */);
+			break;
 		case NFOSMESA_GLDELETENAMEDSTRINGARB:
 			D(funcname = "glDeleteNamedStringARB");
 			if (GL_ISAVAILABLE(glDeleteNamedStringARB))
@@ -3687,6 +3753,13 @@
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *ids */);
 			break;
+		case NFOSMESA_GLDELETEQUERYRESOURCETAGNV:
+			D(funcname = "glDeleteQueryResourceTagNV");
+			if (GL_ISAVAILABLE(glDeleteQueryResourceTagNV))
+			nfglDeleteQueryResourceTagNV(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, const GLint *)  /* const GLint *tagIds */);
+			break;
 		case NFOSMESA_GLDELETERENDERBUFFERS:
 			D(funcname = "glDeleteRenderbuffers");
 			if (GL_ISAVAILABLE(glDeleteRenderbuffers))
@@ -3707,6 +3780,13 @@
 			nfglDeleteSamplers(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, const GLuint *)  /* const GLuint *samplers */);
+			break;
+		case NFOSMESA_GLDELETESEMAPHORESEXT:
+			D(funcname = "glDeleteSemaphoresEXT");
+			if (GL_ISAVAILABLE(glDeleteSemaphoresEXT))
+			nfglDeleteSemaphoresEXT(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, const GLuint *)  /* const GLuint *semaphores */);
 			break;
 		case NFOSMESA_GLDELETESHADER:
 			D(funcname = "glDeleteShader");
@@ -4351,6 +4431,22 @@
 				getStackedParameter(2),  /* GLuint stream */
 				getStackedParameter(3)  /* GLsizei instancecount */);
 			break;
+		case NFOSMESA_GLDRAWVKIMAGENV:
+			D(funcname = "glDrawVkImageNV");
+			if (GL_ISAVAILABLE(glDrawVkImageNV))
+			nfglDrawVkImageNV(
+				getStackedParameter64(0),  /* GLuint64 vkImage */
+				getStackedParameter(2),  /* GLuint sampler */
+				getStackedFloat(3),  /* GLfloat x0 */
+				getStackedFloat(4),  /* GLfloat y0 */
+				getStackedFloat(5),  /* GLfloat x1 */
+				getStackedFloat(6),  /* GLfloat y1 */
+				getStackedFloat(7),  /* GLfloat z */
+				getStackedFloat(8),  /* GLfloat s0 */
+				getStackedFloat(9),  /* GLfloat t0 */
+				getStackedFloat(10),  /* GLfloat s1 */
+				getStackedFloat(11)  /* GLfloat t1 */);
+			break;
 		case NFOSMESA_GLEDGEFLAG:
 			D(funcname = "glEdgeFlag");
 			if (GL_ISAVAILABLE(glEdgeFlag))
@@ -4707,6 +4803,11 @@
 			nfglEvalPoint2(
 				getStackedParameter(0),  /* GLint i */
 				getStackedParameter(1)  /* GLint j */);
+			break;
+		case NFOSMESA_GLEVALUATEDEPTHVALUESARB:
+			D(funcname = "glEvaluateDepthValuesARB");
+			if (GL_ISAVAILABLE(glEvaluateDepthValuesARB))
+			nfglEvaluateDepthValuesARB();
 			break;
 		case NFOSMESA_GLEXECUTEPROGRAMNV:
 			D(funcname = "glExecuteProgramNV");
@@ -5172,6 +5273,15 @@
 				getStackedParameter(2),  /* GLenum renderbuffertarget */
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
+		case NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVARB:
+			D(funcname = "glFramebufferSampleLocationsfvARB");
+			if (GL_ISAVAILABLE(glFramebufferSampleLocationsfvARB))
+			nfglFramebufferSampleLocationsfvARB(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLuint start */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
+			break;
 		case NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVNV:
 			D(funcname = "glFramebufferSampleLocationsfvNV");
 			if (GL_ISAVAILABLE(glFramebufferSampleLocationsfvNV))
@@ -5180,6 +5290,15 @@
 				getStackedParameter(1),  /* GLuint start */
 				getStackedParameter(2),  /* GLsizei count */
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
+			break;
+		case NFOSMESA_GLFRAMEBUFFERSAMPLEPOSITIONSFVAMD:
+			D(funcname = "glFramebufferSamplePositionsfvAMD");
+			if (GL_ISAVAILABLE(glFramebufferSamplePositionsfvAMD))
+			nfglFramebufferSamplePositionsfvAMD(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLuint numsamples */
+				getStackedParameter(2),  /* GLuint pixelindex */
+				getStackedPointer(3, const GLfloat *)  /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE:
 			D(funcname = "glFramebufferTexture");
@@ -5499,6 +5618,13 @@
 				getStackedParameter(0),  /* GLsizei n */
 				getStackedPointer(1, GLuint *)  /* GLuint *ids */);
 			break;
+		case NFOSMESA_GLGENQUERYRESOURCETAGNV:
+			D(funcname = "glGenQueryResourceTagNV");
+			if (GL_ISAVAILABLE(glGenQueryResourceTagNV))
+			nfglGenQueryResourceTagNV(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, GLint *)  /* GLint *tagIds */);
+			break;
 		case NFOSMESA_GLGENRENDERBUFFERS:
 			D(funcname = "glGenRenderbuffers");
 			if (GL_ISAVAILABLE(glGenRenderbuffers))
@@ -5519,6 +5645,13 @@
 			nfglGenSamplers(
 				getStackedParameter(0),  /* GLsizei count */
 				getStackedPointer(1, GLuint *)  /* GLuint *samplers */);
+			break;
+		case NFOSMESA_GLGENSEMAPHORESEXT:
+			D(funcname = "glGenSemaphoresEXT");
+			if (GL_ISAVAILABLE(glGenSemaphoresEXT))
+			nfglGenSemaphoresEXT(
+				getStackedParameter(0),  /* GLsizei n */
+				getStackedPointer(1, GLuint *)  /* GLuint *semaphores */);
 			break;
 		case NFOSMESA_GLGENSYMBOLSEXT:
 			D(funcname = "glGenSymbolsEXT");
@@ -6414,6 +6547,17 @@
 				getStackedParameter(2),  /* GLenum pname */
 				getStackedPointer(3, GLint *)  /* GLint *params */);
 			break;
+		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERFVAMD:
+			D(funcname = "glGetFramebufferParameterfvAMD");
+			if (GL_ISAVAILABLE(glGetFramebufferParameterfvAMD))
+			nfglGetFramebufferParameterfvAMD(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedParameter(2),  /* GLuint numsamples */
+				getStackedParameter(3),  /* GLuint pixelindex */
+				getStackedParameter(4),  /* GLsizei size */
+				getStackedPointer(5, GLfloat *)  /* GLfloat *values */);
+			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIV:
 			D(funcname = "glGetFramebufferParameteriv");
 			if (GL_ISAVAILABLE(glGetFramebufferParameteriv))
@@ -6830,6 +6974,14 @@
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedParameter(2)  /* GLfixed param */);
 			break;
+		case NFOSMESA_GLGETMEMORYOBJECTPARAMETERIVEXT:
+			D(funcname = "glGetMemoryObjectParameterivEXT");
+			if (GL_ISAVAILABLE(glGetMemoryObjectParameterivEXT))
+			nfglGetMemoryObjectParameterivEXT(
+				getStackedParameter(0),  /* GLuint memoryObject */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedPointer(2, GLint *)  /* GLint *params */);
+			break;
 		case NFOSMESA_GLGETMINMAX:
 			D(funcname = "glGetMinmax");
 			if (GL_ISAVAILABLE(glGetMinmax))
@@ -7097,6 +7249,17 @@
 				getStackedParameter(1),  /* GLenum attachment */
 				getStackedParameter(2),  /* GLenum pname */
 				getStackedPointer(3, GLint *)  /* GLint *params */);
+			break;
+		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERFVAMD:
+			D(funcname = "glGetNamedFramebufferParameterfvAMD");
+			if (GL_ISAVAILABLE(glGetNamedFramebufferParameterfvAMD))
+			nfglGetNamedFramebufferParameterfvAMD(
+				getStackedParameter(0),  /* GLuint framebuffer */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedParameter(2),  /* GLuint numsamples */
+				getStackedParameter(3),  /* GLuint pixelindex */
+				getStackedParameter(4),  /* GLsizei size */
+				getStackedPointer(5, GLfloat *)  /* GLfloat *values */);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIV:
 			D(funcname = "glGetNamedFramebufferParameteriv");
@@ -8050,6 +8213,14 @@
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
 			break;
+		case NFOSMESA_GLGETSEMAPHOREPARAMETERUI64VEXT:
+			D(funcname = "glGetSemaphoreParameterui64vEXT");
+			if (GL_ISAVAILABLE(glGetSemaphoreParameterui64vEXT))
+			nfglGetSemaphoreParameterui64vEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedPointer(2, GLuint64 *)  /* GLuint64 *params */);
+			break;
 		case NFOSMESA_GLGETSEPARABLEFILTER:
 			D(funcname = "glGetSeparableFilter");
 			if (GL_ISAVAILABLE(glGetSeparableFilter))
@@ -8667,6 +8838,14 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLfloat *)  /* GLfloat *params */);
 			break;
+		case NFOSMESA_GLGETUNIFORMI64VARB:
+			D(funcname = "glGetUniformi64vARB");
+			if (GL_ISAVAILABLE(glGetUniformi64vARB))
+			nfglGetUniformi64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedPointer(2, GLint64 *)  /* GLint64 *params */);
+			break;
 		case NFOSMESA_GLGETUNIFORMI64VNV:
 			D(funcname = "glGetUniformi64vNV");
 			if (GL_ISAVAILABLE(glGetUniformi64vNV))
@@ -8690,6 +8869,14 @@
 				(GLhandleARB)(uintptr_t)getStackedParameter(0),  /* GLhandleARB programObj */
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLint *)  /* GLint *params */);
+			break;
+		case NFOSMESA_GLGETUNIFORMUI64VARB:
+			D(funcname = "glGetUniformui64vARB");
+			if (GL_ISAVAILABLE(glGetUniformui64vARB))
+			nfglGetUniformui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedPointer(2, GLuint64 *)  /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETUNIFORMUI64VNV:
 			D(funcname = "glGetUniformui64vNV");
@@ -8715,6 +8902,25 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
+#if 0
+		case NFOSMESA_GLGETUNSIGNEDBYTEI_VEXT:
+			D(funcname = "glGetUnsignedBytei_vEXT");
+			if (GL_ISAVAILABLE(glGetUnsignedBytei_vEXT))
+			nfglGetUnsignedBytei_vEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLuint index */
+				getStackedPointer(2, GLubyte *)  /* GLubyte *data */);
+			break;
+#endif
+#if 0
+		case NFOSMESA_GLGETUNSIGNEDBYTEVEXT:
+			D(funcname = "glGetUnsignedBytevEXT");
+			if (GL_ISAVAILABLE(glGetUnsignedBytevEXT))
+			nfglGetUnsignedBytevEXT(
+				getStackedParameter(0),  /* GLenum pname */
+				getStackedPointer(1, GLubyte *)  /* GLubyte *data */);
+			break;
+#endif
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTFVATI:
 			D(funcname = "glGetVariantArrayObjectfvATI");
 			if (GL_ISAVAILABLE(glGetVariantArrayObjectfvATI))
@@ -9081,6 +9287,14 @@
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, GLuint *)  /* GLuint *params */);
 			break;
+#if 0
+		case NFOSMESA_GLGETVKPROCADDRNV:
+			D(funcname = "glGetVkProcAddrNV");
+			if (GL_ISAVAILABLE(glGetVkProcAddrNV))
+			ret = (uint32)(uintptr_t)nfglGetVkProcAddrNV(
+				getStackedPointer(0, const GLchar *)  /* const GLchar *name */);
+			break;
+#endif
 		case NFOSMESA_GLGETNCOLORTABLE:
 			D(funcname = "glGetnColorTable");
 			if (GL_ISAVAILABLE(glGetnColorTable))
@@ -9383,6 +9597,15 @@
 				getStackedParameter(2),  /* GLsizei bufSize */
 				getStackedPointer(3, GLfloat *)  /* GLfloat *params */);
 			break;
+		case NFOSMESA_GLGETNUNIFORMI64VARB:
+			D(funcname = "glGetnUniformi64vARB");
+			if (GL_ISAVAILABLE(glGetnUniformi64vARB))
+			nfglGetnUniformi64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei bufSize */
+				getStackedPointer(3, GLint64 *)  /* GLint64 *params */);
+			break;
 		case NFOSMESA_GLGETNUNIFORMIV:
 			D(funcname = "glGetnUniformiv");
 			if (GL_ISAVAILABLE(glGetnUniformiv))
@@ -9400,6 +9623,15 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2),  /* GLsizei bufSize */
 				getStackedPointer(3, GLint *)  /* GLint *params */);
+			break;
+		case NFOSMESA_GLGETNUNIFORMUI64VARB:
+			D(funcname = "glGetnUniformui64vARB");
+			if (GL_ISAVAILABLE(glGetnUniformui64vARB))
+			nfglGetnUniformui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei bufSize */
+				getStackedPointer(3, GLuint64 *)  /* GLuint64 *params */);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIV:
 			D(funcname = "glGetnUniformuiv");
@@ -9537,6 +9769,57 @@
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLenum pname */
 				getStackedPointer(2, const GLint *)  /* const GLint *params */);
+			break;
+		case NFOSMESA_GLIMPORTMEMORYFDEXT:
+			D(funcname = "glImportMemoryFdEXT");
+			if (GL_ISAVAILABLE(glImportMemoryFdEXT))
+			nfglImportMemoryFdEXT(
+				getStackedParameter(0),  /* GLuint memory */
+				getStackedParameter64(1),  /* GLuint64 size */
+				getStackedParameter(3),  /* GLenum handleType */
+				getStackedParameter(4)  /* GLint fd */);
+			break;
+		case NFOSMESA_GLIMPORTMEMORYWIN32HANDLEEXT:
+			D(funcname = "glImportMemoryWin32HandleEXT");
+			if (GL_ISAVAILABLE(glImportMemoryWin32HandleEXT))
+			nfglImportMemoryWin32HandleEXT(
+				getStackedParameter(0),  /* GLuint memory */
+				getStackedParameter64(1),  /* GLuint64 size */
+				getStackedParameter(3),  /* GLenum handleType */
+				getStackedPointer(4, void *)  /* void *handle */);
+			break;
+		case NFOSMESA_GLIMPORTMEMORYWIN32NAMEEXT:
+			D(funcname = "glImportMemoryWin32NameEXT");
+			if (GL_ISAVAILABLE(glImportMemoryWin32NameEXT))
+			nfglImportMemoryWin32NameEXT(
+				getStackedParameter(0),  /* GLuint memory */
+				getStackedParameter64(1),  /* GLuint64 size */
+				getStackedParameter(3),  /* GLenum handleType */
+				getStackedPointer(4, const void *)  /* const void *name */);
+			break;
+		case NFOSMESA_GLIMPORTSEMAPHOREFDEXT:
+			D(funcname = "glImportSemaphoreFdEXT");
+			if (GL_ISAVAILABLE(glImportSemaphoreFdEXT))
+			nfglImportSemaphoreFdEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLenum handleType */
+				getStackedParameter(2)  /* GLint fd */);
+			break;
+		case NFOSMESA_GLIMPORTSEMAPHOREWIN32HANDLEEXT:
+			D(funcname = "glImportSemaphoreWin32HandleEXT");
+			if (GL_ISAVAILABLE(glImportSemaphoreWin32HandleEXT))
+			nfglImportSemaphoreWin32HandleEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLenum handleType */
+				getStackedPointer(2, void *)  /* void *handle */);
+			break;
+		case NFOSMESA_GLIMPORTSEMAPHOREWIN32NAMEEXT:
+			D(funcname = "glImportSemaphoreWin32NameEXT");
+			if (GL_ISAVAILABLE(glImportSemaphoreWin32NameEXT))
+			nfglImportSemaphoreWin32NameEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLenum handleType */
+				getStackedPointer(2, const void *)  /* const void *name */);
 			break;
 #if 0
 		case NFOSMESA_GLIMPORTSYNCEXT:
@@ -9885,6 +10168,12 @@
 			ret = nfglIsList(
 				getStackedParameter(0)  /* GLuint list */);
 			break;
+		case NFOSMESA_GLISMEMORYOBJECTEXT:
+			D(funcname = "glIsMemoryObjectEXT");
+			if (GL_ISAVAILABLE(glIsMemoryObjectEXT))
+			ret = nfglIsMemoryObjectEXT(
+				getStackedParameter(0)  /* GLuint memoryObject */);
+			break;
 		case NFOSMESA_GLISNAMEAMD:
 			D(funcname = "glIsNameAMD");
 			if (GL_ISAVAILABLE(glIsNameAMD))
@@ -9994,6 +10283,12 @@
 			ret = nfglIsSampler(
 				getStackedParameter(0)  /* GLuint sampler */);
 			break;
+		case NFOSMESA_GLISSEMAPHOREEXT:
+			D(funcname = "glIsSemaphoreEXT");
+			if (GL_ISAVAILABLE(glIsSemaphoreEXT))
+			ret = nfglIsSemaphoreEXT(
+				getStackedParameter(0)  /* GLuint semaphore */);
+			break;
 		case NFOSMESA_GLISSHADER:
 			D(funcname = "glIsShader");
 			if (GL_ISAVAILABLE(glIsShader))
@@ -10073,6 +10368,43 @@
 			ret = nfglIsVertexAttribEnabledAPPLE(
 				getStackedParameter(0),  /* GLuint index */
 				getStackedParameter(1)  /* GLenum pname */);
+			break;
+		case NFOSMESA_GLLGPUCOPYIMAGESUBDATANVX:
+			D(funcname = "glLGPUCopyImageSubDataNVX");
+			if (GL_ISAVAILABLE(glLGPUCopyImageSubDataNVX))
+			nfglLGPUCopyImageSubDataNVX(
+				getStackedParameter(0),  /* GLuint sourceGpu */
+				getStackedParameter(1),  /* GLbitfield destinationGpuMask */
+				getStackedParameter(2),  /* GLuint srcName */
+				getStackedParameter(3),  /* GLenum srcTarget */
+				getStackedParameter(4),  /* GLint srcLevel */
+				getStackedParameter(5),  /* GLint srcX */
+				getStackedParameter(6),  /* GLint srxY */
+				getStackedParameter(7),  /* GLint srcZ */
+				getStackedParameter(8),  /* GLuint dstName */
+				getStackedParameter(9),  /* GLenum dstTarget */
+				getStackedParameter(10),  /* GLint dstLevel */
+				getStackedParameter(11),  /* GLint dstX */
+				getStackedParameter(12),  /* GLint dstY */
+				getStackedParameter(13),  /* GLint dstZ */
+				getStackedParameter(14),  /* GLsizei width */
+				getStackedParameter(15),  /* GLsizei height */
+				getStackedParameter(16)  /* GLsizei depth */);
+			break;
+		case NFOSMESA_GLLGPUINTERLOCKNVX:
+			D(funcname = "glLGPUInterlockNVX");
+			if (GL_ISAVAILABLE(glLGPUInterlockNVX))
+			nfglLGPUInterlockNVX();
+			break;
+		case NFOSMESA_GLLGPUNAMEDBUFFERSUBDATANVX:
+			D(funcname = "glLGPUNamedBufferSubDataNVX");
+			if (GL_ISAVAILABLE(glLGPUNamedBufferSubDataNVX))
+			nfglLGPUNamedBufferSubDataNVX(
+				getStackedParameter(0),  /* GLbitfield gpuMask */
+				getStackedParameter(1),  /* GLuint buffer */
+				getStackedParameter(2),  /* GLintptr offset */
+				getStackedParameter(3),  /* GLsizeiptr size */
+				getStackedPointer(4, const void *)  /* const void *data */);
 			break;
 		case NFOSMESA_GLLABELOBJECTEXT:
 			D(funcname = "glLabelObjectEXT");
@@ -11013,6 +11345,18 @@
 				getStackedFloat(2),  /* GLfloat y */
 				getStackedFloat(3)  /* GLfloat z */);
 			break;
+		case NFOSMESA_GLMAXSHADERCOMPILERTHREADSARB:
+			D(funcname = "glMaxShaderCompilerThreadsARB");
+			if (GL_ISAVAILABLE(glMaxShaderCompilerThreadsARB))
+			nfglMaxShaderCompilerThreadsARB(
+				getStackedParameter(0)  /* GLuint count */);
+			break;
+		case NFOSMESA_GLMAXSHADERCOMPILERTHREADSKHR:
+			D(funcname = "glMaxShaderCompilerThreadsKHR");
+			if (GL_ISAVAILABLE(glMaxShaderCompilerThreadsKHR))
+			nfglMaxShaderCompilerThreadsKHR(
+				getStackedParameter(0)  /* GLuint count */);
+			break;
 		case NFOSMESA_GLMEMORYBARRIER:
 			D(funcname = "glMemoryBarrier");
 			if (GL_ISAVAILABLE(glMemoryBarrier))
@@ -11030,6 +11374,14 @@
 			if (GL_ISAVAILABLE(glMemoryBarrierEXT))
 			nfglMemoryBarrierEXT(
 				getStackedParameter(0)  /* GLbitfield barriers */);
+			break;
+		case NFOSMESA_GLMEMORYOBJECTPARAMETERIVEXT:
+			D(funcname = "glMemoryObjectParameterivEXT");
+			if (GL_ISAVAILABLE(glMemoryObjectParameterivEXT))
+			nfglMemoryObjectParameterivEXT(
+				getStackedParameter(0),  /* GLuint memoryObject */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedPointer(2, const GLint *)  /* const GLint *params */);
 			break;
 		case NFOSMESA_GLMINSAMPLESHADING:
 			D(funcname = "glMinSampleShading");
@@ -11164,12 +11516,22 @@
 				getStackedParameter(3),  /* GLsizei stride */
 				getStackedParameter(4)  /* GLint vertexBufferCount */);
 			break;
+		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNT:
+			D(funcname = "glMultiDrawArraysIndirectCount");
+			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectCount))
+			nfglMultiDrawArraysIndirectCount(
+				getStackedParameter(0),  /* GLenum mode */
+				getStackedPointer(1, const void *),  /* const void *indirect */
+				getStackedParameter(2),  /* GLintptr drawcount */
+				getStackedParameter(3),  /* GLsizei maxdrawcount */
+				getStackedParameter(4)  /* GLsizei stride */);
+			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNTARB:
 			D(funcname = "glMultiDrawArraysIndirectCountARB");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectCountARB))
 			nfglMultiDrawArraysIndirectCountARB(
 				getStackedParameter(0),  /* GLenum mode */
-				getStackedParameter(1),  /* GLintptr indirect */
+				getStackedPointer(1, const void *),  /* const void *indirect */
 				getStackedParameter(2),  /* GLintptr drawcount */
 				getStackedParameter(3),  /* GLsizei maxdrawcount */
 				getStackedParameter(4)  /* GLsizei stride */);
@@ -11257,13 +11619,24 @@
 				getStackedParameter(4),  /* GLsizei stride */
 				getStackedParameter(5)  /* GLint vertexBufferCount */);
 			break;
+		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNT:
+			D(funcname = "glMultiDrawElementsIndirectCount");
+			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCount))
+			nfglMultiDrawElementsIndirectCount(
+				getStackedParameter(0),  /* GLenum mode */
+				getStackedParameter(1),  /* GLenum type */
+				getStackedPointer(2, const void *),  /* const void *indirect */
+				getStackedParameter(3),  /* GLintptr drawcount */
+				getStackedParameter(4),  /* GLsizei maxdrawcount */
+				getStackedParameter(5)  /* GLsizei stride */);
+			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB:
 			D(funcname = "glMultiDrawElementsIndirectCountARB");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCountARB))
 			nfglMultiDrawElementsIndirectCountARB(
 				getStackedParameter(0),  /* GLenum mode */
 				getStackedParameter(1),  /* GLenum type */
-				getStackedParameter(2),  /* GLintptr indirect */
+				getStackedPointer(2, const void *),  /* const void *indirect */
 				getStackedParameter(3),  /* GLintptr drawcount */
 				getStackedParameter(4),  /* GLsizei maxdrawcount */
 				getStackedParameter(5)  /* GLsizei stride */);
@@ -12307,6 +12680,125 @@
 				getStackedParameter(10),  /* GLenum type */
 				getStackedPointer(11, const void *)  /* const void *pixels */);
 			break;
+		case NFOSMESA_GLMULTICASTBARRIERNV:
+			D(funcname = "glMulticastBarrierNV");
+			if (GL_ISAVAILABLE(glMulticastBarrierNV))
+			nfglMulticastBarrierNV();
+			break;
+		case NFOSMESA_GLMULTICASTBLITFRAMEBUFFERNV:
+			D(funcname = "glMulticastBlitFramebufferNV");
+			if (GL_ISAVAILABLE(glMulticastBlitFramebufferNV))
+			nfglMulticastBlitFramebufferNV(
+				getStackedParameter(0),  /* GLuint srcGpu */
+				getStackedParameter(1),  /* GLuint dstGpu */
+				getStackedParameter(2),  /* GLint srcX0 */
+				getStackedParameter(3),  /* GLint srcY0 */
+				getStackedParameter(4),  /* GLint srcX1 */
+				getStackedParameter(5),  /* GLint srcY1 */
+				getStackedParameter(6),  /* GLint dstX0 */
+				getStackedParameter(7),  /* GLint dstY0 */
+				getStackedParameter(8),  /* GLint dstX1 */
+				getStackedParameter(9),  /* GLint dstY1 */
+				getStackedParameter(10),  /* GLbitfield mask */
+				getStackedParameter(11)  /* GLenum filter */);
+			break;
+		case NFOSMESA_GLMULTICASTBUFFERSUBDATANV:
+			D(funcname = "glMulticastBufferSubDataNV");
+			if (GL_ISAVAILABLE(glMulticastBufferSubDataNV))
+			nfglMulticastBufferSubDataNV(
+				getStackedParameter(0),  /* GLbitfield gpuMask */
+				getStackedParameter(1),  /* GLuint buffer */
+				getStackedParameter(2),  /* GLintptr offset */
+				getStackedParameter(3),  /* GLsizeiptr size */
+				getStackedPointer(4, const void *)  /* const void *data */);
+			break;
+		case NFOSMESA_GLMULTICASTCOPYBUFFERSUBDATANV:
+			D(funcname = "glMulticastCopyBufferSubDataNV");
+			if (GL_ISAVAILABLE(glMulticastCopyBufferSubDataNV))
+			nfglMulticastCopyBufferSubDataNV(
+				getStackedParameter(0),  /* GLuint readGpu */
+				getStackedParameter(1),  /* GLbitfield writeGpuMask */
+				getStackedParameter(2),  /* GLuint readBuffer */
+				getStackedParameter(3),  /* GLuint writeBuffer */
+				getStackedParameter(4),  /* GLintptr readOffset */
+				getStackedParameter(5),  /* GLintptr writeOffset */
+				getStackedParameter(6)  /* GLsizeiptr size */);
+			break;
+		case NFOSMESA_GLMULTICASTCOPYIMAGESUBDATANV:
+			D(funcname = "glMulticastCopyImageSubDataNV");
+			if (GL_ISAVAILABLE(glMulticastCopyImageSubDataNV))
+			nfglMulticastCopyImageSubDataNV(
+				getStackedParameter(0),  /* GLuint srcGpu */
+				getStackedParameter(1),  /* GLbitfield dstGpuMask */
+				getStackedParameter(2),  /* GLuint srcName */
+				getStackedParameter(3),  /* GLenum srcTarget */
+				getStackedParameter(4),  /* GLint srcLevel */
+				getStackedParameter(5),  /* GLint srcX */
+				getStackedParameter(6),  /* GLint srcY */
+				getStackedParameter(7),  /* GLint srcZ */
+				getStackedParameter(8),  /* GLuint dstName */
+				getStackedParameter(9),  /* GLenum dstTarget */
+				getStackedParameter(10),  /* GLint dstLevel */
+				getStackedParameter(11),  /* GLint dstX */
+				getStackedParameter(12),  /* GLint dstY */
+				getStackedParameter(13),  /* GLint dstZ */
+				getStackedParameter(14),  /* GLsizei srcWidth */
+				getStackedParameter(15),  /* GLsizei srcHeight */
+				getStackedParameter(16)  /* GLsizei srcDepth */);
+			break;
+		case NFOSMESA_GLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNV:
+			D(funcname = "glMulticastFramebufferSampleLocationsfvNV");
+			if (GL_ISAVAILABLE(glMulticastFramebufferSampleLocationsfvNV))
+			nfglMulticastFramebufferSampleLocationsfvNV(
+				getStackedParameter(0),  /* GLuint gpu */
+				getStackedParameter(1),  /* GLuint framebuffer */
+				getStackedParameter(2),  /* GLuint start */
+				getStackedParameter(3),  /* GLsizei count */
+				getStackedPointer(4, const GLfloat *)  /* const GLfloat *v */);
+			break;
+		case NFOSMESA_GLMULTICASTGETQUERYOBJECTI64VNV:
+			D(funcname = "glMulticastGetQueryObjecti64vNV");
+			if (GL_ISAVAILABLE(glMulticastGetQueryObjecti64vNV))
+			nfglMulticastGetQueryObjecti64vNV(
+				getStackedParameter(0),  /* GLuint gpu */
+				getStackedParameter(1),  /* GLuint id */
+				getStackedParameter(2),  /* GLenum pname */
+				getStackedPointer(3, GLint64 *)  /* GLint64 *params */);
+			break;
+		case NFOSMESA_GLMULTICASTGETQUERYOBJECTIVNV:
+			D(funcname = "glMulticastGetQueryObjectivNV");
+			if (GL_ISAVAILABLE(glMulticastGetQueryObjectivNV))
+			nfglMulticastGetQueryObjectivNV(
+				getStackedParameter(0),  /* GLuint gpu */
+				getStackedParameter(1),  /* GLuint id */
+				getStackedParameter(2),  /* GLenum pname */
+				getStackedPointer(3, GLint *)  /* GLint *params */);
+			break;
+		case NFOSMESA_GLMULTICASTGETQUERYOBJECTUI64VNV:
+			D(funcname = "glMulticastGetQueryObjectui64vNV");
+			if (GL_ISAVAILABLE(glMulticastGetQueryObjectui64vNV))
+			nfglMulticastGetQueryObjectui64vNV(
+				getStackedParameter(0),  /* GLuint gpu */
+				getStackedParameter(1),  /* GLuint id */
+				getStackedParameter(2),  /* GLenum pname */
+				getStackedPointer(3, GLuint64 *)  /* GLuint64 *params */);
+			break;
+		case NFOSMESA_GLMULTICASTGETQUERYOBJECTUIVNV:
+			D(funcname = "glMulticastGetQueryObjectuivNV");
+			if (GL_ISAVAILABLE(glMulticastGetQueryObjectuivNV))
+			nfglMulticastGetQueryObjectuivNV(
+				getStackedParameter(0),  /* GLuint gpu */
+				getStackedParameter(1),  /* GLuint id */
+				getStackedParameter(2),  /* GLenum pname */
+				getStackedPointer(3, GLuint *)  /* GLuint *params */);
+			break;
+		case NFOSMESA_GLMULTICASTWAITSYNCNV:
+			D(funcname = "glMulticastWaitSyncNV");
+			if (GL_ISAVAILABLE(glMulticastWaitSyncNV))
+			nfglMulticastWaitSyncNV(
+				getStackedParameter(0),  /* GLuint signalGpu */
+				getStackedParameter(1)  /* GLbitfield waitGpuMask */);
+			break;
 		case NFOSMESA_GLNAMEDBUFFERDATA:
 			D(funcname = "glNamedBufferData");
 			if (GL_ISAVAILABLE(glNamedBufferData))
@@ -12360,6 +12852,25 @@
 				getStackedParameter(1),  /* GLsizeiptr size */
 				getStackedPointer(2, const void *),  /* const void *data */
 				getStackedParameter(3)  /* GLbitfield flags */);
+			break;
+		case NFOSMESA_GLNAMEDBUFFERSTORAGEEXTERNALEXT:
+			D(funcname = "glNamedBufferStorageExternalEXT");
+			if (GL_ISAVAILABLE(glNamedBufferStorageExternalEXT))
+			nfglNamedBufferStorageExternalEXT(
+				getStackedParameter(0),  /* GLuint buffer */
+				getStackedParameter(1),  /* GLintptr offset */
+				getStackedParameter(2),  /* GLsizeiptr size */
+				getStackedPointer(3, GLeglClientBufferEXT ),  /* GLeglClientBufferEXT clientBuffer */
+				getStackedParameter(4)  /* GLbitfield flags */);
+			break;
+		case NFOSMESA_GLNAMEDBUFFERSTORAGEMEMEXT:
+			D(funcname = "glNamedBufferStorageMemEXT");
+			if (GL_ISAVAILABLE(glNamedBufferStorageMemEXT))
+			nfglNamedBufferStorageMemEXT(
+				getStackedParameter(0),  /* GLuint buffer */
+				getStackedParameter(1),  /* GLsizeiptr size */
+				getStackedParameter(2),  /* GLuint memory */
+				getStackedParameter64(3)  /* GLuint64 offset */);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATA:
 			D(funcname = "glNamedBufferSubData");
@@ -12445,6 +12956,15 @@
 				getStackedParameter(2),  /* GLenum renderbuffertarget */
 				getStackedParameter(3)  /* GLuint renderbuffer */);
 			break;
+		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARB:
+			D(funcname = "glNamedFramebufferSampleLocationsfvARB");
+			if (GL_ISAVAILABLE(glNamedFramebufferSampleLocationsfvARB))
+			nfglNamedFramebufferSampleLocationsfvARB(
+				getStackedParameter(0),  /* GLuint framebuffer */
+				getStackedParameter(1),  /* GLuint start */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
+			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV:
 			D(funcname = "glNamedFramebufferSampleLocationsfvNV");
 			if (GL_ISAVAILABLE(glNamedFramebufferSampleLocationsfvNV))
@@ -12453,6 +12973,15 @@
 				getStackedParameter(1),  /* GLuint start */
 				getStackedParameter(2),  /* GLsizei count */
 				getStackedPointer(3, const GLfloat *)  /* const GLfloat *v */);
+			break;
+		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMD:
+			D(funcname = "glNamedFramebufferSamplePositionsfvAMD");
+			if (GL_ISAVAILABLE(glNamedFramebufferSamplePositionsfvAMD))
+			nfglNamedFramebufferSamplePositionsfvAMD(
+				getStackedParameter(0),  /* GLuint framebuffer */
+				getStackedParameter(1),  /* GLuint numsamples */
+				getStackedParameter(2),  /* GLuint pixelindex */
+				getStackedPointer(3, const GLfloat *)  /* const GLfloat *values */);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE:
 			D(funcname = "glNamedFramebufferTexture");
@@ -13628,6 +14157,14 @@
 				getStackedFloat(0),  /* GLfloat factor */
 				getStackedFloat(1)  /* GLfloat units */);
 			break;
+		case NFOSMESA_GLPOLYGONOFFSETCLAMP:
+			D(funcname = "glPolygonOffsetClamp");
+			if (GL_ISAVAILABLE(glPolygonOffsetClamp))
+			nfglPolygonOffsetClamp(
+				getStackedFloat(0),  /* GLfloat factor */
+				getStackedFloat(1),  /* GLfloat units */
+				getStackedFloat(2)  /* GLfloat clamp */);
+			break;
 		case NFOSMESA_GLPOLYGONOFFSETCLAMPEXT:
 			D(funcname = "glPolygonOffsetClampEXT");
 			if (GL_ISAVAILABLE(glPolygonOffsetClampEXT))
@@ -13719,6 +14256,19 @@
 				getStackedParameter(9),  /* GLenum target1 */
 				getStackedParameter(10),  /* GLuint fill1 */
 				getStackedParameter(11)  /* GLuint key1 */);
+			break;
+		case NFOSMESA_GLPRIMITIVEBOUNDINGBOXARB:
+			D(funcname = "glPrimitiveBoundingBoxARB");
+			if (GL_ISAVAILABLE(glPrimitiveBoundingBoxARB))
+			nfglPrimitiveBoundingBoxARB(
+				getStackedFloat(0),  /* GLfloat minX */
+				getStackedFloat(1),  /* GLfloat minY */
+				getStackedFloat(2),  /* GLfloat minZ */
+				getStackedFloat(3),  /* GLfloat minW */
+				getStackedFloat(4),  /* GLfloat maxX */
+				getStackedFloat(5),  /* GLfloat maxY */
+				getStackedFloat(6),  /* GLfloat maxZ */
+				getStackedFloat(7)  /* GLfloat maxW */);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTINDEX:
 			D(funcname = "glPrimitiveRestartIndex");
@@ -14241,6 +14791,14 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLint v0 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM1I64ARB:
+			D(funcname = "glProgramUniform1i64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform1i64ARB))
+			nfglProgramUniform1i64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2)  /* GLint64 x */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64NV:
 			D(funcname = "glProgramUniform1i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform1i64NV))
@@ -14248,6 +14806,15 @@
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLint64EXT x */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM1I64VARB:
+			D(funcname = "glProgramUniform1i64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform1i64vARB))
+			nfglProgramUniform1i64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64VNV:
 			D(funcname = "glProgramUniform1i64vNV");
@@ -14292,6 +14859,14 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter(2)  /* GLuint v0 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM1UI64ARB:
+			D(funcname = "glProgramUniform1ui64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform1ui64ARB))
+			nfglProgramUniform1ui64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2)  /* GLuint64 x */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64NV:
 			D(funcname = "glProgramUniform1ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform1ui64NV))
@@ -14299,6 +14874,15 @@
 				getStackedParameter(0),  /* GLuint program */
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2)  /* GLuint64EXT x */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM1UI64VARB:
+			D(funcname = "glProgramUniform1ui64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform1ui64vARB))
+			nfglProgramUniform1ui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64VNV:
 			D(funcname = "glProgramUniform1ui64vNV");
@@ -14416,6 +15000,15 @@
 				getStackedParameter(2),  /* GLint v0 */
 				getStackedParameter(3)  /* GLint v1 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM2I64ARB:
+			D(funcname = "glProgramUniform2i64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform2i64ARB))
+			nfglProgramUniform2i64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLint64 x */
+				getStackedParameter64(4)  /* GLint64 y */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64NV:
 			D(funcname = "glProgramUniform2i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform2i64NV))
@@ -14424,6 +15017,15 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2),  /* GLint64EXT x */
 				getStackedParameter64(4)  /* GLint64EXT y */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM2I64VARB:
+			D(funcname = "glProgramUniform2i64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform2i64vARB))
+			nfglProgramUniform2i64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64VNV:
 			D(funcname = "glProgramUniform2i64vNV");
@@ -14470,6 +15072,15 @@
 				getStackedParameter(2),  /* GLuint v0 */
 				getStackedParameter(3)  /* GLuint v1 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM2UI64ARB:
+			D(funcname = "glProgramUniform2ui64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform2ui64ARB))
+			nfglProgramUniform2ui64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLuint64 x */
+				getStackedParameter64(4)  /* GLuint64 y */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64NV:
 			D(funcname = "glProgramUniform2ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform2ui64NV))
@@ -14478,6 +15089,15 @@
 				getStackedParameter(1),  /* GLint location */
 				getStackedParameter64(2),  /* GLuint64EXT x */
 				getStackedParameter64(4)  /* GLuint64EXT y */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM2UI64VARB:
+			D(funcname = "glProgramUniform2ui64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform2ui64vARB))
+			nfglProgramUniform2ui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64VNV:
 			D(funcname = "glProgramUniform2ui64vNV");
@@ -14601,6 +15221,16 @@
 				getStackedParameter(3),  /* GLint v1 */
 				getStackedParameter(4)  /* GLint v2 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM3I64ARB:
+			D(funcname = "glProgramUniform3i64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform3i64ARB))
+			nfglProgramUniform3i64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLint64 x */
+				getStackedParameter64(4),  /* GLint64 y */
+				getStackedParameter64(6)  /* GLint64 z */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64NV:
 			D(funcname = "glProgramUniform3i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform3i64NV))
@@ -14610,6 +15240,15 @@
 				getStackedParameter64(2),  /* GLint64EXT x */
 				getStackedParameter64(4),  /* GLint64EXT y */
 				getStackedParameter64(6)  /* GLint64EXT z */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM3I64VARB:
+			D(funcname = "glProgramUniform3i64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform3i64vARB))
+			nfglProgramUniform3i64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64VNV:
 			D(funcname = "glProgramUniform3i64vNV");
@@ -14658,6 +15297,16 @@
 				getStackedParameter(3),  /* GLuint v1 */
 				getStackedParameter(4)  /* GLuint v2 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM3UI64ARB:
+			D(funcname = "glProgramUniform3ui64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform3ui64ARB))
+			nfglProgramUniform3ui64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLuint64 x */
+				getStackedParameter64(4),  /* GLuint64 y */
+				getStackedParameter64(6)  /* GLuint64 z */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64NV:
 			D(funcname = "glProgramUniform3ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform3ui64NV))
@@ -14667,6 +15316,15 @@
 				getStackedParameter64(2),  /* GLuint64EXT x */
 				getStackedParameter64(4),  /* GLuint64EXT y */
 				getStackedParameter64(6)  /* GLuint64EXT z */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM3UI64VARB:
+			D(funcname = "glProgramUniform3ui64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform3ui64vARB))
+			nfglProgramUniform3ui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64VNV:
 			D(funcname = "glProgramUniform3ui64vNV");
@@ -14796,6 +15454,17 @@
 				getStackedParameter(4),  /* GLint v2 */
 				getStackedParameter(5)  /* GLint v3 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM4I64ARB:
+			D(funcname = "glProgramUniform4i64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform4i64ARB))
+			nfglProgramUniform4i64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLint64 x */
+				getStackedParameter64(4),  /* GLint64 y */
+				getStackedParameter64(6),  /* GLint64 z */
+				getStackedParameter64(8)  /* GLint64 w */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64NV:
 			D(funcname = "glProgramUniform4i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform4i64NV))
@@ -14806,6 +15475,15 @@
 				getStackedParameter64(4),  /* GLint64EXT y */
 				getStackedParameter64(6),  /* GLint64EXT z */
 				getStackedParameter64(8)  /* GLint64EXT w */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM4I64VARB:
+			D(funcname = "glProgramUniform4i64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform4i64vARB))
+			nfglProgramUniform4i64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64VNV:
 			D(funcname = "glProgramUniform4i64vNV");
@@ -14856,6 +15534,17 @@
 				getStackedParameter(4),  /* GLuint v2 */
 				getStackedParameter(5)  /* GLuint v3 */);
 			break;
+		case NFOSMESA_GLPROGRAMUNIFORM4UI64ARB:
+			D(funcname = "glProgramUniform4ui64ARB");
+			if (GL_ISAVAILABLE(glProgramUniform4ui64ARB))
+			nfglProgramUniform4ui64ARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter64(2),  /* GLuint64 x */
+				getStackedParameter64(4),  /* GLuint64 y */
+				getStackedParameter64(6),  /* GLuint64 z */
+				getStackedParameter64(8)  /* GLuint64 w */);
+			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64NV:
 			D(funcname = "glProgramUniform4ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform4ui64NV))
@@ -14866,6 +15555,15 @@
 				getStackedParameter64(4),  /* GLuint64EXT y */
 				getStackedParameter64(6),  /* GLuint64EXT z */
 				getStackedParameter64(8)  /* GLuint64EXT w */);
+			break;
+		case NFOSMESA_GLPROGRAMUNIFORM4UI64VARB:
+			D(funcname = "glProgramUniform4ui64vARB");
+			if (GL_ISAVAILABLE(glProgramUniform4ui64vARB))
+			nfglProgramUniform4ui64vARB(
+				getStackedParameter(0),  /* GLuint program */
+				getStackedParameter(1),  /* GLint location */
+				getStackedParameter(2),  /* GLsizei count */
+				getStackedPointer(3, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64VNV:
 			D(funcname = "glProgramUniform4ui64vNV");
@@ -15403,6 +16101,22 @@
 				getStackedParameter(2),  /* GLenum pname */
 				getStackedParameter(3)  /* GLuint param */);
 			break;
+		case NFOSMESA_GLQUERYRESOURCENV:
+			D(funcname = "glQueryResourceNV");
+			if (GL_ISAVAILABLE(glQueryResourceNV))
+			ret = nfglQueryResourceNV(
+				getStackedParameter(0),  /* GLenum queryType */
+				getStackedParameter(1),  /* GLint tagId */
+				getStackedParameter(2),  /* GLuint bufSize */
+				getStackedPointer(3, GLint *)  /* GLint *buffer */);
+			break;
+		case NFOSMESA_GLQUERYRESOURCETAGNV:
+			D(funcname = "glQueryResourceTagNV");
+			if (GL_ISAVAILABLE(glQueryResourceTagNV))
+			nfglQueryResourceTagNV(
+				getStackedParameter(0),  /* GLint tagId */
+				getStackedPointer(1, const GLchar *)  /* const GLchar *tagString */);
+			break;
 		case NFOSMESA_GLRASTERPOS2D:
 			D(funcname = "glRasterPos2d");
 			if (GL_ISAVAILABLE(glRasterPos2d))
@@ -15756,10 +16470,23 @@
 			nfglReferencePlaneSGIX(
 				getStackedPointer(0, const GLdouble *)  /* const GLdouble *equation */);
 			break;
+		case NFOSMESA_GLRELEASEKEYEDMUTEXWIN32EXT:
+			D(funcname = "glReleaseKeyedMutexWin32EXT");
+			if (GL_ISAVAILABLE(glReleaseKeyedMutexWin32EXT))
+			ret = nfglReleaseKeyedMutexWin32EXT(
+				getStackedParameter(0),  /* GLuint memory */
+				getStackedParameter64(1)  /* GLuint64 key */);
+			break;
 		case NFOSMESA_GLRELEASESHADERCOMPILER:
 			D(funcname = "glReleaseShaderCompiler");
 			if (GL_ISAVAILABLE(glReleaseShaderCompiler))
 			nfglReleaseShaderCompiler();
+			break;
+		case NFOSMESA_GLRENDERGPUMASKNV:
+			D(funcname = "glRenderGpuMaskNV");
+			if (GL_ISAVAILABLE(glRenderGpuMaskNV))
+			nfglRenderGpuMaskNV(
+				getStackedParameter(0)  /* GLbitfield mask */);
 			break;
 		case NFOSMESA_GLRENDERMODE:
 			D(funcname = "glRenderMode");
@@ -16602,6 +17329,14 @@
 				getStackedParameter(3),  /* GLint numCounters */
 				getStackedPointer(4, GLuint *)  /* GLuint *counterList */);
 			break;
+		case NFOSMESA_GLSEMAPHOREPARAMETERUI64VEXT:
+			D(funcname = "glSemaphoreParameterui64vEXT");
+			if (GL_ISAVAILABLE(glSemaphoreParameterui64vEXT))
+			nfglSemaphoreParameterui64vEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLenum pname */
+				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *params */);
+			break;
 		case NFOSMESA_GLSEPARABLEFILTER2D:
 			D(funcname = "glSeparableFilter2D");
 			if (GL_ISAVAILABLE(glSeparableFilter2D))
@@ -16748,6 +17483,49 @@
 				getStackedParameter(0),  /* GLenum target */
 				getStackedParameter(1),  /* GLsizei n */
 				getStackedPointer(2, const GLfloat *)  /* const GLfloat *points */);
+			break;
+		case NFOSMESA_GLSIGNALSEMAPHOREEXT:
+			D(funcname = "glSignalSemaphoreEXT");
+			if (GL_ISAVAILABLE(glSignalSemaphoreEXT))
+			nfglSignalSemaphoreEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLuint numBufferBarriers */
+				getStackedPointer(2, const GLuint *),  /* const GLuint *buffers */
+				getStackedParameter(3),  /* GLuint numTextureBarriers */
+				getStackedPointer(4, const GLuint *),  /* const GLuint *textures */
+				getStackedPointer(5, const GLenum *)  /* const GLenum *dstLayouts */);
+			break;
+		case NFOSMESA_GLSIGNALVKFENCENV:
+			D(funcname = "glSignalVkFenceNV");
+			if (GL_ISAVAILABLE(glSignalVkFenceNV))
+			nfglSignalVkFenceNV(
+				getStackedParameter64(0)  /* GLuint64 vkFence */);
+			break;
+		case NFOSMESA_GLSIGNALVKSEMAPHORENV:
+			D(funcname = "glSignalVkSemaphoreNV");
+			if (GL_ISAVAILABLE(glSignalVkSemaphoreNV))
+			nfglSignalVkSemaphoreNV(
+				getStackedParameter64(0)  /* GLuint64 vkSemaphore */);
+			break;
+		case NFOSMESA_GLSPECIALIZESHADER:
+			D(funcname = "glSpecializeShader");
+			if (GL_ISAVAILABLE(glSpecializeShader))
+			nfglSpecializeShader(
+				getStackedParameter(0),  /* GLuint shader */
+				getStackedPointer(1, const GLchar *),  /* const GLchar *pEntryPoint */
+				getStackedParameter(2),  /* GLuint numSpecializationConstants */
+				getStackedPointer(3, const GLuint *),  /* const GLuint *pConstantIndex */
+				getStackedPointer(4, const GLuint *)  /* const GLuint *pConstantValue */);
+			break;
+		case NFOSMESA_GLSPECIALIZESHADERARB:
+			D(funcname = "glSpecializeShaderARB");
+			if (GL_ISAVAILABLE(glSpecializeShaderARB))
+			nfglSpecializeShaderARB(
+				getStackedParameter(0),  /* GLuint shader */
+				getStackedPointer(1, const GLchar *),  /* const GLchar *pEntryPoint */
+				getStackedParameter(2),  /* GLuint numSpecializationConstants */
+				getStackedPointer(3, const GLuint *),  /* const GLuint *pConstantIndex */
+				getStackedPointer(4, const GLuint *)  /* const GLuint *pConstantValue */);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFSGIX:
 			D(funcname = "glSpriteParameterfSGIX");
@@ -18213,6 +18991,69 @@
 				getStackedParameter(5),  /* GLsizei depth */
 				getStackedParameter(6)  /* GLboolean32 fixedsamplelocations */);
 			break;
+		case NFOSMESA_GLTEXSTORAGEMEM1DEXT:
+			D(funcname = "glTexStorageMem1DEXT");
+			if (GL_ISAVAILABLE(glTexStorageMem1DEXT))
+			nfglTexStorageMem1DEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLuint memory */
+				getStackedParameter64(5)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXSTORAGEMEM2DEXT:
+			D(funcname = "glTexStorageMem2DEXT");
+			if (GL_ISAVAILABLE(glTexStorageMem2DEXT))
+			nfglTexStorageMem2DEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLuint memory */
+				getStackedParameter64(6)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXSTORAGEMEM2DMULTISAMPLEEXT:
+			D(funcname = "glTexStorageMem2DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTexStorageMem2DMultisampleEXT))
+			nfglTexStorageMem2DMultisampleEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizei samples */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLboolean32 fixedSampleLocations */
+				getStackedParameter(6),  /* GLuint memory */
+				getStackedParameter64(7)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXSTORAGEMEM3DEXT:
+			D(funcname = "glTexStorageMem3DEXT");
+			if (GL_ISAVAILABLE(glTexStorageMem3DEXT))
+			nfglTexStorageMem3DEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLsizei depth */
+				getStackedParameter(6),  /* GLuint memory */
+				getStackedParameter64(7)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXSTORAGEMEM3DMULTISAMPLEEXT:
+			D(funcname = "glTexStorageMem3DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTexStorageMem3DMultisampleEXT))
+			nfglTexStorageMem3DMultisampleEXT(
+				getStackedParameter(0),  /* GLenum target */
+				getStackedParameter(1),  /* GLsizei samples */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLsizei depth */
+				getStackedParameter(6),  /* GLboolean32 fixedSampleLocations */
+				getStackedParameter(7),  /* GLuint memory */
+				getStackedParameter64(8)  /* GLuint64 offset */);
+			break;
 		case NFOSMESA_GLTEXSTORAGESPARSEAMD:
 			D(funcname = "glTexStorageSparseAMD");
 			if (GL_ISAVAILABLE(glTexStorageSparseAMD))
@@ -18751,6 +19592,69 @@
 				getStackedParameter(6),  /* GLsizei depth */
 				getStackedParameter(7)  /* GLboolean32 fixedsamplelocations */);
 			break;
+		case NFOSMESA_GLTEXTURESTORAGEMEM1DEXT:
+			D(funcname = "glTextureStorageMem1DEXT");
+			if (GL_ISAVAILABLE(glTextureStorageMem1DEXT))
+			nfglTextureStorageMem1DEXT(
+				getStackedParameter(0),  /* GLuint texture */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLuint memory */
+				getStackedParameter64(5)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXTURESTORAGEMEM2DEXT:
+			D(funcname = "glTextureStorageMem2DEXT");
+			if (GL_ISAVAILABLE(glTextureStorageMem2DEXT))
+			nfglTextureStorageMem2DEXT(
+				getStackedParameter(0),  /* GLuint texture */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLuint memory */
+				getStackedParameter64(6)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXTURESTORAGEMEM2DMULTISAMPLEEXT:
+			D(funcname = "glTextureStorageMem2DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTextureStorageMem2DMultisampleEXT))
+			nfglTextureStorageMem2DMultisampleEXT(
+				getStackedParameter(0),  /* GLuint texture */
+				getStackedParameter(1),  /* GLsizei samples */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLboolean32 fixedSampleLocations */
+				getStackedParameter(6),  /* GLuint memory */
+				getStackedParameter64(7)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXTURESTORAGEMEM3DEXT:
+			D(funcname = "glTextureStorageMem3DEXT");
+			if (GL_ISAVAILABLE(glTextureStorageMem3DEXT))
+			nfglTextureStorageMem3DEXT(
+				getStackedParameter(0),  /* GLuint texture */
+				getStackedParameter(1),  /* GLsizei levels */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLsizei depth */
+				getStackedParameter(6),  /* GLuint memory */
+				getStackedParameter64(7)  /* GLuint64 offset */);
+			break;
+		case NFOSMESA_GLTEXTURESTORAGEMEM3DMULTISAMPLEEXT:
+			D(funcname = "glTextureStorageMem3DMultisampleEXT");
+			if (GL_ISAVAILABLE(glTextureStorageMem3DMultisampleEXT))
+			nfglTextureStorageMem3DMultisampleEXT(
+				getStackedParameter(0),  /* GLuint texture */
+				getStackedParameter(1),  /* GLsizei samples */
+				getStackedParameter(2),  /* GLenum internalFormat */
+				getStackedParameter(3),  /* GLsizei width */
+				getStackedParameter(4),  /* GLsizei height */
+				getStackedParameter(5),  /* GLsizei depth */
+				getStackedParameter(6),  /* GLboolean32 fixedSampleLocations */
+				getStackedParameter(7),  /* GLuint memory */
+				getStackedParameter64(8)  /* GLuint64 offset */);
+			break;
 		case NFOSMESA_GLTEXTURESTORAGESPARSEAMD:
 			D(funcname = "glTextureStorageSparseAMD");
 			if (GL_ISAVAILABLE(glTextureStorageSparseAMD))
@@ -19062,12 +19966,27 @@
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLint v0 */);
 			break;
+		case NFOSMESA_GLUNIFORM1I64ARB:
+			D(funcname = "glUniform1i64ARB");
+			if (GL_ISAVAILABLE(glUniform1i64ARB))
+			nfglUniform1i64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1)  /* GLint64 x */);
+			break;
 		case NFOSMESA_GLUNIFORM1I64NV:
 			D(funcname = "glUniform1i64NV");
 			if (GL_ISAVAILABLE(glUniform1i64NV))
 			nfglUniform1i64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLint64EXT x */);
+			break;
+		case NFOSMESA_GLUNIFORM1I64VARB:
+			D(funcname = "glUniform1i64vARB");
+			if (GL_ISAVAILABLE(glUniform1i64vARB))
+			nfglUniform1i64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1I64VNV:
 			D(funcname = "glUniform1i64vNV");
@@ -19107,12 +20026,27 @@
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter(1)  /* GLuint v0 */);
 			break;
+		case NFOSMESA_GLUNIFORM1UI64ARB:
+			D(funcname = "glUniform1ui64ARB");
+			if (GL_ISAVAILABLE(glUniform1ui64ARB))
+			nfglUniform1ui64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1)  /* GLuint64 x */);
+			break;
 		case NFOSMESA_GLUNIFORM1UI64NV:
 			D(funcname = "glUniform1ui64NV");
 			if (GL_ISAVAILABLE(glUniform1ui64NV))
 			nfglUniform1ui64NV(
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1)  /* GLuint64EXT x */);
+			break;
+		case NFOSMESA_GLUNIFORM1UI64VARB:
+			D(funcname = "glUniform1ui64vARB");
+			if (GL_ISAVAILABLE(glUniform1ui64vARB))
+			nfglUniform1ui64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64VNV:
 			D(funcname = "glUniform1ui64vNV");
@@ -19201,6 +20135,14 @@
 				getStackedParameter(1),  /* GLint v0 */
 				getStackedParameter(2)  /* GLint v1 */);
 			break;
+		case NFOSMESA_GLUNIFORM2I64ARB:
+			D(funcname = "glUniform2i64ARB");
+			if (GL_ISAVAILABLE(glUniform2i64ARB))
+			nfglUniform2i64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLint64 x */
+				getStackedParameter64(3)  /* GLint64 y */);
+			break;
 		case NFOSMESA_GLUNIFORM2I64NV:
 			D(funcname = "glUniform2i64NV");
 			if (GL_ISAVAILABLE(glUniform2i64NV))
@@ -19208,6 +20150,14 @@
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLint64EXT x */
 				getStackedParameter64(3)  /* GLint64EXT y */);
+			break;
+		case NFOSMESA_GLUNIFORM2I64VARB:
+			D(funcname = "glUniform2i64vARB");
+			if (GL_ISAVAILABLE(glUniform2i64vARB))
+			nfglUniform2i64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2I64VNV:
 			D(funcname = "glUniform2i64vNV");
@@ -19249,6 +20199,14 @@
 				getStackedParameter(1),  /* GLuint v0 */
 				getStackedParameter(2)  /* GLuint v1 */);
 			break;
+		case NFOSMESA_GLUNIFORM2UI64ARB:
+			D(funcname = "glUniform2ui64ARB");
+			if (GL_ISAVAILABLE(glUniform2ui64ARB))
+			nfglUniform2ui64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLuint64 x */
+				getStackedParameter64(3)  /* GLuint64 y */);
+			break;
 		case NFOSMESA_GLUNIFORM2UI64NV:
 			D(funcname = "glUniform2ui64NV");
 			if (GL_ISAVAILABLE(glUniform2ui64NV))
@@ -19256,6 +20214,14 @@
 				getStackedParameter(0),  /* GLint location */
 				getStackedParameter64(1),  /* GLuint64EXT x */
 				getStackedParameter64(3)  /* GLuint64EXT y */);
+			break;
+		case NFOSMESA_GLUNIFORM2UI64VARB:
+			D(funcname = "glUniform2ui64vARB");
+			if (GL_ISAVAILABLE(glUniform2ui64vARB))
+			nfglUniform2ui64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64VNV:
 			D(funcname = "glUniform2ui64vNV");
@@ -19349,6 +20315,15 @@
 				getStackedParameter(2),  /* GLint v1 */
 				getStackedParameter(3)  /* GLint v2 */);
 			break;
+		case NFOSMESA_GLUNIFORM3I64ARB:
+			D(funcname = "glUniform3i64ARB");
+			if (GL_ISAVAILABLE(glUniform3i64ARB))
+			nfglUniform3i64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLint64 x */
+				getStackedParameter64(3),  /* GLint64 y */
+				getStackedParameter64(5)  /* GLint64 z */);
+			break;
 		case NFOSMESA_GLUNIFORM3I64NV:
 			D(funcname = "glUniform3i64NV");
 			if (GL_ISAVAILABLE(glUniform3i64NV))
@@ -19357,6 +20332,14 @@
 				getStackedParameter64(1),  /* GLint64EXT x */
 				getStackedParameter64(3),  /* GLint64EXT y */
 				getStackedParameter64(5)  /* GLint64EXT z */);
+			break;
+		case NFOSMESA_GLUNIFORM3I64VARB:
+			D(funcname = "glUniform3i64vARB");
+			if (GL_ISAVAILABLE(glUniform3i64vARB))
+			nfglUniform3i64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3I64VNV:
 			D(funcname = "glUniform3i64vNV");
@@ -19400,6 +20383,15 @@
 				getStackedParameter(2),  /* GLuint v1 */
 				getStackedParameter(3)  /* GLuint v2 */);
 			break;
+		case NFOSMESA_GLUNIFORM3UI64ARB:
+			D(funcname = "glUniform3ui64ARB");
+			if (GL_ISAVAILABLE(glUniform3ui64ARB))
+			nfglUniform3ui64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLuint64 x */
+				getStackedParameter64(3),  /* GLuint64 y */
+				getStackedParameter64(5)  /* GLuint64 z */);
+			break;
 		case NFOSMESA_GLUNIFORM3UI64NV:
 			D(funcname = "glUniform3ui64NV");
 			if (GL_ISAVAILABLE(glUniform3ui64NV))
@@ -19408,6 +20400,14 @@
 				getStackedParameter64(1),  /* GLuint64EXT x */
 				getStackedParameter64(3),  /* GLuint64EXT y */
 				getStackedParameter64(5)  /* GLuint64EXT z */);
+			break;
+		case NFOSMESA_GLUNIFORM3UI64VARB:
+			D(funcname = "glUniform3ui64vARB");
+			if (GL_ISAVAILABLE(glUniform3ui64vARB))
+			nfglUniform3ui64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64VNV:
 			D(funcname = "glUniform3ui64vNV");
@@ -19506,6 +20506,16 @@
 				getStackedParameter(3),  /* GLint v2 */
 				getStackedParameter(4)  /* GLint v3 */);
 			break;
+		case NFOSMESA_GLUNIFORM4I64ARB:
+			D(funcname = "glUniform4i64ARB");
+			if (GL_ISAVAILABLE(glUniform4i64ARB))
+			nfglUniform4i64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLint64 x */
+				getStackedParameter64(3),  /* GLint64 y */
+				getStackedParameter64(5),  /* GLint64 z */
+				getStackedParameter64(7)  /* GLint64 w */);
+			break;
 		case NFOSMESA_GLUNIFORM4I64NV:
 			D(funcname = "glUniform4i64NV");
 			if (GL_ISAVAILABLE(glUniform4i64NV))
@@ -19515,6 +20525,14 @@
 				getStackedParameter64(3),  /* GLint64EXT y */
 				getStackedParameter64(5),  /* GLint64EXT z */
 				getStackedParameter64(7)  /* GLint64EXT w */);
+			break;
+		case NFOSMESA_GLUNIFORM4I64VARB:
+			D(funcname = "glUniform4i64vARB");
+			if (GL_ISAVAILABLE(glUniform4i64vARB))
+			nfglUniform4i64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLint64 *)  /* const GLint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4I64VNV:
 			D(funcname = "glUniform4i64vNV");
@@ -19560,6 +20578,16 @@
 				getStackedParameter(3),  /* GLuint v2 */
 				getStackedParameter(4)  /* GLuint v3 */);
 			break;
+		case NFOSMESA_GLUNIFORM4UI64ARB:
+			D(funcname = "glUniform4ui64ARB");
+			if (GL_ISAVAILABLE(glUniform4ui64ARB))
+			nfglUniform4ui64ARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter64(1),  /* GLuint64 x */
+				getStackedParameter64(3),  /* GLuint64 y */
+				getStackedParameter64(5),  /* GLuint64 z */
+				getStackedParameter64(7)  /* GLuint64 w */);
+			break;
 		case NFOSMESA_GLUNIFORM4UI64NV:
 			D(funcname = "glUniform4ui64NV");
 			if (GL_ISAVAILABLE(glUniform4ui64NV))
@@ -19569,6 +20597,14 @@
 				getStackedParameter64(3),  /* GLuint64EXT y */
 				getStackedParameter64(5),  /* GLuint64EXT z */
 				getStackedParameter64(7)  /* GLuint64EXT w */);
+			break;
+		case NFOSMESA_GLUNIFORM4UI64VARB:
+			D(funcname = "glUniform4ui64vARB");
+			if (GL_ISAVAILABLE(glUniform4ui64vARB))
+			nfglUniform4ui64vARB(
+				getStackedParameter(0),  /* GLint location */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLuint64 *)  /* const GLuint64 *value */);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64VNV:
 			D(funcname = "glUniform4ui64vNV");
@@ -22935,6 +23971,35 @@
 				getStackedParameter(0),  /* GLuint index */
 				getStackedPointer(1, const GLfloat *)  /* const GLfloat *v */);
 			break;
+		case NFOSMESA_GLVIEWPORTPOSITIONWSCALENV:
+			D(funcname = "glViewportPositionWScaleNV");
+			if (GL_ISAVAILABLE(glViewportPositionWScaleNV))
+			nfglViewportPositionWScaleNV(
+				getStackedParameter(0),  /* GLuint index */
+				getStackedFloat(1),  /* GLfloat xcoeff */
+				getStackedFloat(2)  /* GLfloat ycoeff */);
+			break;
+		case NFOSMESA_GLVIEWPORTSWIZZLENV:
+			D(funcname = "glViewportSwizzleNV");
+			if (GL_ISAVAILABLE(glViewportSwizzleNV))
+			nfglViewportSwizzleNV(
+				getStackedParameter(0),  /* GLuint index */
+				getStackedParameter(1),  /* GLenum swizzlex */
+				getStackedParameter(2),  /* GLenum swizzley */
+				getStackedParameter(3),  /* GLenum swizzlez */
+				getStackedParameter(4)  /* GLenum swizzlew */);
+			break;
+		case NFOSMESA_GLWAITSEMAPHOREEXT:
+			D(funcname = "glWaitSemaphoreEXT");
+			if (GL_ISAVAILABLE(glWaitSemaphoreEXT))
+			nfglWaitSemaphoreEXT(
+				getStackedParameter(0),  /* GLuint semaphore */
+				getStackedParameter(1),  /* GLuint numBufferBarriers */
+				getStackedPointer(2, const GLuint *),  /* const GLuint *buffers */
+				getStackedParameter(3),  /* GLuint numTextureBarriers */
+				getStackedPointer(4, const GLuint *),  /* const GLuint *textures */
+				getStackedPointer(5, const GLenum *)  /* const GLenum *srcLayouts */);
+			break;
 		case NFOSMESA_GLWAITSYNC:
 			D(funcname = "glWaitSync");
 			if (GL_ISAVAILABLE(glWaitSync))
@@ -22942,6 +24007,12 @@
 				(GLsync)(uintptr_t)getStackedParameter(0),  /* GLsync sync */
 				getStackedParameter(1),  /* GLbitfield flags */
 				getStackedParameter64(2)  /* GLuint64 timeout */);
+			break;
+		case NFOSMESA_GLWAITVKSEMAPHORENV:
+			D(funcname = "glWaitVkSemaphoreNV");
+			if (GL_ISAVAILABLE(glWaitVkSemaphoreNV))
+			nfglWaitVkSemaphoreNV(
+				getStackedParameter64(0)  /* GLuint64 vkSemaphore */);
 			break;
 		case NFOSMESA_GLWEIGHTPATHSNV:
 			D(funcname = "glWeightPathsNV");
@@ -23401,6 +24472,14 @@
 			nfglWindowPos4svMESA(
 				getStackedPointer(0, const GLshort *)  /* const GLshort *v */);
 			break;
+		case NFOSMESA_GLWINDOWRECTANGLESEXT:
+			D(funcname = "glWindowRectanglesEXT");
+			if (GL_ISAVAILABLE(glWindowRectanglesEXT))
+			nfglWindowRectanglesEXT(
+				getStackedParameter(0),  /* GLenum mode */
+				getStackedParameter(1),  /* GLsizei count */
+				getStackedPointer(2, const GLint *)  /* const GLint *box */);
+			break;
 		case NFOSMESA_GLWRITEMASKEXT:
 			D(funcname = "glWriteMaskEXT");
 			if (GL_ISAVAILABLE(glWriteMaskEXT))
@@ -23426,4 +24505,4 @@
 				getStackedDouble(16)  /* GLdouble upZ */);
 			break;
 
-/* Functions generated: 2836 GL + 1 GLU */
+/* Functions generated: 2954 GL + 1 GLU */
