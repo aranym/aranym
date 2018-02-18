@@ -1,4 +1,8 @@
 2018/02/18 - Thorsten
+Some NSAlert constants have been renamed in macOS 10.12
+
+
+2018/02/18 - Thorsten
 Fix some versioned symbol definitions in libcwrap.h for i586 and
 aarch64 systems.
 Reported by Christian Quante <chrischaan66@googlemail.com>

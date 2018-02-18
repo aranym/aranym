@@ -19,6 +19,14 @@ static BOOL gCalledAppMainline = FALSE;
 char gAranymFilesDirectory[MAXPATHLEN];	 // Path to the "AranymFiles" folder
 
 
+/* these were renamed in SDK 10.12 and above */
+#if !defined(MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#define NSAlertStyleWarning NSWarningAlertStyle
+#define NSAlertStyleInformational NSInformationalAlertStyle
+#define NSAlertStyleCritical NSCriticalAlertStyle
+#endif
+
+
 @interface NSApplication (SDLApplication)
 @end
 
