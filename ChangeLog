@@ -1,3 +1,9 @@
+2018/02/18 - Thorsten
+Fix some versioned symbol definitions in libcwrap.h for i586 and
+aarch64 systems.
+Reported by Christian Quante <chrischaan66@googlemail.com>
+
+
 2018/02/09 - Thorsten
 Recreate SDL resource files using updated ORCS version
 

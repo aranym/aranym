@@ -20,23 +20,46 @@ extern "C" {
 SYMVER(__longjmp_chk, GLIBC_2.11)
 SYMVER(_sys_errlist, GLIBC_2.4)
 SYMVER(_sys_nerr, GLIBC_2.4)
+#if defined(__x86_64__)
 SYMVER(clock_getcpuclockid, GLIBC_2.2.5)
 SYMVER(clock_getres, GLIBC_2.2.5)
 SYMVER(clock_gettime, GLIBC_2.2.5)
 SYMVER(clock_nanosleep, GLIBC_2.2.5)
 SYMVER(clock_settime, GLIBC_2.2.5)
+#else
+SYMVER(clock_getcpuclockid, GLIBC_2.2)
+SYMVER(clock_getres, GLIBC_2.2)
+SYMVER(clock_gettime, GLIBC_2.2)
+SYMVER(clock_nanosleep, GLIBC_2.2)
+SYMVER(clock_settime, GLIBC_2.2)
+#endif
 SYMVER(execvpe, GLIBC_2.11)
+#if defined(__i386__)
+SYMVER(fallocate64, GLIBC_2.11)
+#endif
+#if defined(__x86_64__)
 SYMVER(fmemopen, GLIBC_2.2.5)
 SYMVER(lgamma, GLIBC_2.2.5)
 SYMVER(lgammaf, GLIBC_2.2.5)
 SYMVER(lgammal, GLIBC_2.2.5)
 SYMVER(memcpy, GLIBC_2.2.5)
+#else
+SYMVER(fmemopen, GLIBC_2.2)
+SYMVER(lgamma, GLIBC_2.0)
+SYMVER(lgammaf, GLIBC_2.0)
+SYMVER(lgammal, GLIBC_2.0)
+#endif
 SYMVER(mkostemps, GLIBC_2.11)
 SYMVER(mkostemps64, GLIBC_2.11)
 SYMVER(mkstemps, GLIBC_2.11)
 SYMVER(mkstemps64, GLIBC_2.11)
+#if defined(__x86_64__)
 SYMVER(posix_spawn, GLIBC_2.2.5)
 SYMVER(posix_spawnp, GLIBC_2.2.5)
+#else
+SYMVER(posix_spawn, GLIBC_2.2)
+SYMVER(posix_spawnp, GLIBC_2.2)
+#endif
 SYMVER(pthread_sigqueue, GLIBC_2.11)
 SYMVER(quick_exit, GLIBC_2.10)
 SYMVER(sys_errlist, GLIBC_2.4)
@@ -438,7 +461,9 @@ SYMVER(ynf128, GLIBC_DONT_USE_THIS_VERSION_2.26)
 #if defined(__arm__) || defined(__aarch64__)
 
 /* Symbols redirected to earlier glibc versions */
+#if defined(__arm__)
 SYMVER(__longjmp_chk, GLIBC_2.11)
+#endif
 SYMVER(_sys_errlist, GLIBC_2.4)
 SYMVER(_sys_nerr, GLIBC_2.4)
 SYMVER(execvpe, GLIBC_2.11)
