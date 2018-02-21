@@ -79,6 +79,16 @@
 
 #include "../../atari/hostfs/hostfs_nfapi.h"	/* XFS_xx and DEV_xx enum */
 
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#define __builtin_available(...) 1
+#else
+#if !__has_builtin(__builtin_available)
+#define __builtin_available(...) 1
+#endif
+#endif
+
+
 static char *my_canonicalize_file_name(const char *filename, bool append_slash)
 {
 	if (filename == NULL)
@@ -2618,10 +2628,11 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			return TOS_E_OK;
 
 		case MINT_FUTIME:
+#ifdef HAVE_FUTIMENS
 			// Mintlib calls the dcntl(FUTIME_UTC, filename) first (below).
 			// but other libs might not know.
+			if (__builtin_available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *))
 			{
-#ifdef HAVE_FUTIMENS
 				struct timespec ts[2];
 				if (buff)
 				{
@@ -2636,7 +2647,9 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				ts[0].tv_nsec = ts[1].tv_nsec = 0;
 				if (futimens(fp->hostFd, ts))
 				    return errnoHost2Mint( errno, TOS_EACCES );
-#else
+			} else
+#endif
+			{
 				struct timeval tv[2];
 				if (buff)
 				{
@@ -2651,13 +2664,13 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				tv[0].tv_usec = tv[1].tv_usec = 0;
 				if (futimes(fp->hostFd, tv))
 				    return errnoHost2Mint( errno, TOS_EACCES );
-#endif
 			}
 			return TOS_E_OK;
 
 		case MINT_FUTIME_UTC:
-			{
 #ifdef HAVE_FUTIMENS
+			if (__builtin_available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *))
+			{
 				struct timespec ts[2];
 				if (buff)
 				{
@@ -2672,7 +2685,9 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				ts[0].tv_nsec = ts[1].tv_nsec = 0;
 				if (futimens(fp->hostFd, ts))
 				    return errnoHost2Mint( errno, TOS_EACCES );
-#else
+			} else
+#endif
+			{
 				struct timeval tv[2];
 				if (buff)
 				{
@@ -2687,7 +2702,6 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				tv[0].tv_usec = tv[1].tv_usec = 0;
 				if (futimes(fp->hostFd, tv))
 				    return errnoHost2Mint( errno, TOS_EACCES );
-#endif
 			}
 			return TOS_E_OK;
 
