@@ -2156,6 +2156,13 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		;;
 	darwin)
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
+		# X-Headers are not always available on macOS
+		tmp_cppflags="$CPPFLAGS"
+		# not nice to hardcode the path here,
+		# but it is also hardcoded in the XCode project
+		CPPFLAGS="$CPPFLAGS -I/usr/X11R6/include"
+		AC_CHECK_HEADERS(X11/Xlib.h)
+		CPPFLAGS="$tmp_cppflags"
 		;;
 	beos | haiku)
 		AC_DEFINE([NFCLIPBRD_SUPPORT], 1)

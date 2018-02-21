@@ -163,6 +163,14 @@ extern SDL_GLContext SDL_GL_GetCurrentContext(void);
 
 #if defined(SDL_VIDEO_DRIVER_X11)
 
+/*
+ * SDL_syswm includes <X11/Xlib.h>, but on macOS
+ * These headers are only available if XQuartz was installed
+ */
+#if !(defined(SDL_VIDEO_DRIVER_QUARTZ) || defined(SDL_VIDEO_DRIVER_COCOA)) || defined(HAVE_X11_XLIB_H)
+# define HAVE_X11_XLIB_H 1
+#endif
+
 extern SDL_GLContext SDL_GL_GetCurrentContext(void);
 
 #endif

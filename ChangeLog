@@ -1,3 +1,8 @@
+2018/02/21 - Thorsten
+Check for X11 headers being available on macOS; SDL_syswm.h
+needs them.
+
+
 2018/02/18 - Thorsten
 Some NSAlert constants have been renamed in macOS 10.12
 

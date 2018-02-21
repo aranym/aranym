@@ -42,7 +42,6 @@
 #include "debug.h"
 
 #include "SDL_compat.h"
-#include <SDL_syswm.h>
 #include "clipbrd.h"
 
 /* Joysticks */

@@ -22,7 +22,9 @@
 #include "SDL_compat.h"
 #include <SDL_loadso.h>
 #include <SDL_endian.h>
+#if !defined(SDL_VIDEO_DRIVER_X11) || defined(HAVE_X11_XLIB_H)
 #include <SDL_syswm.h>
+#endif
 #include <math.h>
 
 #include "cpu_emulation.h"
@@ -1756,7 +1758,7 @@ void OpenglContext::ColorClamp(GLboolean enable)
 
 /* X11 */
 
-#if defined(SDL_VIDEO_DRIVER_X11)
+#if defined(SDL_VIDEO_DRIVER_X11) && defined(HAVE_X11_XLIB_H)
 
 Display *X11OpenglContext::dpy;
 Window X11OpenglContext::sdlwindow;

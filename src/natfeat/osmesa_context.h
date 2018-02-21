@@ -24,7 +24,7 @@
 #if defined(__MACOSX__)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
-#if defined SDL_VIDEO_DRIVER_X11
+#if defined(SDL_VIDEO_DRIVER_X11) && defined(HAVE_X11_XLIB_H)
 #include <GL/glx.h>
 #endif
 
@@ -190,7 +190,7 @@ public:
 
 /*--- System dependant classes using OpenGL ---*/
 
-#if defined(SDL_VIDEO_DRIVER_X11)
+#if defined(SDL_VIDEO_DRIVER_X11) && defined(HAVE_X11_XLIB_H)
 class X11OpenglContext : public OpenglContext {
 protected:
 	GLXContext ctx;
