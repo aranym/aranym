@@ -1,4 +1,8 @@
 2018/02/21 - Thorsten
+Update macOS project files for XCode 9.2
+
+
+2018/02/21 - Thorsten
 Check for X11 headers being available on macOS; SDL_syswm.h
 needs them.
 

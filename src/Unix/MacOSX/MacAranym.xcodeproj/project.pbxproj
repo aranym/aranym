@@ -27,12 +27,12 @@
 
 /* Begin PBXBuildFile section */
 		002F39FA09D0881F00EBEB88 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
-		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		002F3A0009D0884600EBEB88 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		170539151555D457006A6DDE /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		170539161555D457006A6DDE /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
-		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
-		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
-		1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
+		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1705391B1555D5DC006A6DDE /* libmpfr.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1705391C1555D5DC006A6DDE /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		170C2B880BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2B8B0BB872920026484E /* dyngl.c in Sources */ = {isa = PBXBuildFile; fileRef = 170C2B850BB872920026484E /* dyngl.c */; };
 		170C2BA10BB873470026484E /* cpummu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DC30A652B51009733EB /* cpummu.cpp */; };
@@ -74,10 +74,10 @@
 		17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
 		17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
 		17473D2F15AA0A2700CAEA47 /* bpf_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1415AA07FD00CAEA47 /* bpf_helper.c */; };
-		17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
-		17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
-		17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
-		17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; };
+		17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
 		175909560CA453990089CF9F /* dirty_rects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 175909550CA453990089CF9F /* dirty_rects.cpp */; };
@@ -202,8 +202,8 @@
 		1778A4D71555A8A70005B336 /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
 		1778A4D81555A8A70005B336 /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
 		1778A4D91555A8A70005B336 /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
-		1778A4DB1555A8A70005B336 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
-		1778A4DC1555A8A70005B336 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		1778A4DB1555A8A70005B336 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		1778A4DC1555A8A70005B336 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1778A4E61555AA530005B336 /* fpu_mpfr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 171A3F0E154F2765005F6C9D /* fpu_mpfr.cpp */; };
 		17798F050A652EF1009733EB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
 		17798F0C0A652F24009733EB /* vm_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E870A652B52009733EB /* vm_alloc.cpp */; };
@@ -291,7 +291,7 @@
 		17BCD7DD0B20F64F00432CE1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		17BCD7DF0B20F64F00432CE1 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		17BCD7E40B20F64F00432CE1 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		17BCD7E40B20F64F00432CE1 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17BCD7F10B20F6BF00432CE1 /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		17BCD7F20B20F6BF00432CE1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D5E0A652B50009733EB /* main.cpp */; };
 		17BCD7F30B20F6BF00432CE1 /* vm_alloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E870A652B52009733EB /* vm_alloc.cpp */; };
@@ -398,9 +398,9 @@
 		17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
-		3424B2BE1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
-		3424B2BF1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
-		3424B2C01F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; };
+		3424B2BE1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3424B2BF1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3424B2C01F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		347084D81F52D105001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
@@ -500,7 +500,7 @@
 		B439AC8F0C5B2FD00046EFC9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		B439AC910C5B2FD00046EFC9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
+		B439AC960C5B2FD00046EFC9 /* SDL.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B439AC9E0C5B30040046EFC9 /* fpu_ieee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DCE0A652B51009733EB /* fpu_ieee.cpp */; };
 		B43DC1970C635DFA0014243B /* compemu_fpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DBD0A652B51009733EB /* compemu_fpp.cpp */; };
 		B442F1A1193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
@@ -508,11 +508,11 @@
 		B442F1A3193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
 		B442F1A4193C9BC100D515B8 /* nfcdrom_sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B442F19F193C9BC100D515B8 /* nfcdrom_sdl.cpp */; };
 		B449D9E00D2A8D37005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
-		B449D9EA0D2A8DD5005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
+		B449D9EA0D2A8DD5005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B449D9F30D2A8E68005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
-		B449D9F40D2A8E6F005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
+		B449D9F40D2A8E6F005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B449D9F50D2A8E78005F0CC6 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
-		B449D9F60D2A8E86005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; };
+		B449D9F60D2A8E86005F0CC6 /* SDL_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 17B2B51A0C41781B00595D44 /* SDL_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B449DA010D2A9222005F0CC6 /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
 		B449DA020D2A922C005F0CC6 /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
 		B449DA030D2A9234005F0CC6 /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
@@ -1991,7 +1991,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0920;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -2799,14 +2799,18 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CPU_TYPE_x86_64 = CPU_x86_64;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2963,6 +2967,7 @@
 				CPU_TYPE_ppc = CPU_powerpc;
 				CPU_TYPE_x86_64 = CPU_x86_64;
 				CURRENT_PROJECT_VERSION = "##VERSION##";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					.,
@@ -2970,8 +2975,11 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					SDL.framework/Headers,
 					SDL_image.framework/Headers,
@@ -2984,6 +2992,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				LIBRARY_SEARCH_PATHS = external/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-Lexternal/lib",
 					"-ljpeg",
