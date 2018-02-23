@@ -296,8 +296,8 @@ static int keysymToAtari(SDL_Keysym keysym)
 	int sym = keysym.scancode;
 
 	switch (keysym.sym) {
-	  case SDLK_LMETA:
-	  case SDLK_RMETA:
+	  case SDLK_LGUI:
+	  case SDLK_RGUI:
 		#if MAP_META_TO_CONTROL
 		  return 0x1D;
 		#else		

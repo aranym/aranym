@@ -500,10 +500,13 @@ void guialert(const char *fmt, ...)
 #endif
 
 
-#if defined(OS_cygwin) || defined(OS_mingw)
 /* we don't link to SDL_main */
 #undef main
+#if defined(__MACOS__) || defined(__MACOSX__)
+/* on macOS, the systems entry point is in SDLMain.M */
+#define main SDL_main
 #endif
+
 
 /*
  *  Main program

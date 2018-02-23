@@ -122,6 +122,7 @@ static char*	gConfigFile(NULL);
 	
 	//	Remember that application has started.
 	gCalledAppMainline = true;
+	SDL_SetMainReady();
 	
 	//	Hand over to main application code.
 	status = SDL_main(gArgc, gArgv);

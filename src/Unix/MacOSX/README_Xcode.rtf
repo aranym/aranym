@@ -1,8 +1,8 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1504
+{\rtf1\ansi\ansicpg1252\cocoartf1561
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;\f2\fnil\fcharset0 LucidaGrande;
 }
 {\colortbl;\red255\green255\blue255;\red35\green110\blue37;}
-{\*\expandedcolortbl;\csgray\c100000;\csgenericrgb\c13725\c43137\c14510;}
+{\*\expandedcolortbl;;\csgenericrgb\c13725\c43137\c14510;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
 \vieww18280\viewh15180\viewkind0
@@ -80,15 +80,19 @@ As you read this file I'm supposing you've already downloaded the ARAnyM source 
 \
 Then you're missing additional dependencies:\
 \pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\partightenfactor0
-\ls1\ilvl0\cf0 {\listtext	\'95	}SDL library can be found at {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org"}}{\fldrslt https://www.libsdl.org}} and the version 1.2 can be downloaded here {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/download-1.2.php"}}{\fldrslt https://www.libsdl.org/download-1.2.php}}.\uc0\u8232 Copy the 
+\ls1\ilvl0\cf0 {\listtext	\uc0\u8226 	}SDL library can be found at {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org"}}{\fldrslt https://www.libsdl.org}} and the version 1.2 can be downloaded here {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/download-1.2.php"}}{\fldrslt https://www.libsdl.org/download-1.2.php}}, and version 2.x here  {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/download-1.2.php"}}{\fldrslt https://www.libsdl.org/download-2.0.php}}.\uc0\u8232 Copy the 
 \f1\fs20 \CocoaLigature0 SDL.framework
-\f0\fs24 \CocoaLigature1  folder into the project folder (src/Unix/MacOSX/) .\
-{\listtext	\'95	}SDL_image 1.2 is a SDL project ({\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/}}) and the version 1.2 can be downloaded here: {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/release-1.2.html"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/release-1.2.html}}\uc0\u8232 Copy the 
+\f0\fs24 \CocoaLigature1  and  
+\f1\fs20 \CocoaLigature0 SDL2.framework 
+\f0\fs24 \CocoaLigature1 folders into the project folder (src/Unix/MacOSX/) .\
+{\listtext	\uc0\u8226 	}SDL_image 1.2 is a SDL project ({\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/}}) and the version 1.2 can be downloaded here: {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/release-1.2.html"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/release-1.2.html}}\uc0\u8232 Copy the 
 \f1\fs20 \CocoaLigature0 SDL_image.framework
-\f0\fs24 \CocoaLigature1  folder into the project folder beside the SDL.framework.\
-{\listtext	\'95	}At least since Xcode 6 you need to install "automake" and "autoconf\'93, as it is not delivered as part of the tool suite. \uc0\u8232 The easiest way is to use MacPorts ({\field{\*\fldinst{HYPERLINK "https://www.macports.org"}}{\fldrslt https://www.macports.org}}) or Homebrew ({\field{\*\fldinst{HYPERLINK "https://brew.sh"}}{\fldrslt https://brew.sh}}). After installing one of them you can use for MacPorts the command \'84sudo port install automake autoconf" or for Homebrew \'84brew install automake\'93.\
-{\listtext	\'95	}Similarly, you need to install a jpeg library. For MacPorts use the command \'84sudo port install jpeg +universal" or for Homebrew \'84brew install jpeg\'93.\
-{\listtext	\'95	}Further X11 is not included anymore as of OS X 10.6, but sadly SDL still has some references to X11 includes. This is why you have to install XQuartz ({\field{\*\fldinst{HYPERLINK "https://www.xquartz.org"}}{\fldrslt https://www.xquartz.org}}) to be able to compile on the latest systems.\
+\f0\fs24 \CocoaLigature1  and 
+\f1\fs20 \CocoaLigature0 SDL2_image.framework 
+\f0\fs24 \CocoaLigature1 folders into the project folder beside the SDL.framework.\
+{\listtext	\uc0\u8226 	}At least since Xcode 6 you need to install "automake" and "autoconf\'93, as it is not delivered as part of the tool suite. \uc0\u8232 The easiest way is to use MacPorts ({\field{\*\fldinst{HYPERLINK "https://www.macports.org"}}{\fldrslt https://www.macports.org}}) or Homebrew ({\field{\*\fldinst{HYPERLINK "https://brew.sh"}}{\fldrslt https://brew.sh}}). After installing one of them you can use for MacPorts the command \'84sudo port install automake autoconf" or for Homebrew \'84brew install automake\'93 (MacPorts is preferred, since the binaries provided by Homebrew are not universal, and you may not be able to link the i386 version).\
+{\listtext	\uc0\u8226 	}Similarly, you need to install a jpeg library. For MacPorts use the command \'84sudo port install jpeg +universal" or for Homebrew \'84brew install jpeg\'93.\
+{\listtext	\uc0\u8226 	}Further X11 is not included anymore as of OS X 10.6, but sadly SDL still has some references to X11 includes. This is why you have to install XQuartz ({\field{\*\fldinst{HYPERLINK "https://www.xquartz.org"}}{\fldrslt https://www.xquartz.org}}) to be able to compile on the latest systems.\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 \cf0 \
 That's it you can start up Xcode with 

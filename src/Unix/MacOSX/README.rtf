@@ -1,9 +1,10 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1504
+{\rtf1\ansi\ansicpg1252\cocoartf1561
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;\csgray\c100000;}
-{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+{\*\expandedcolortbl;;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
 \viewkind0
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
@@ -18,11 +19,15 @@ Please note that ARAnyM for Mac OS X does not support JIT compiler for CPU on th
 \
 Please read the README and NEWS files in the DOC folder. Some interesting technical information can also be found in the BUGS and TODO files.\
 \
-In this package you'll find three binaries:\
+In this package you'll find six binaries:\
 \pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\partightenfactor0
-\ls1\ilvl0\cf0 {\listtext	\'95	}MacAranym: standard version without MMU emulation\
-{\listtext	\'95	}MacAranym MMU: MMU enhanced version (good for running FreeMiNT with memory protection or Linux-m68k)\
-{\listtext	\'95	}MacAranym JIT: JIT compiler enabled version (Intel only, will not run on PowerPC based Macs)\
+\ls1\ilvl0\cf0 {\listtext	\uc0\u8226 	}MacAranym: standard version without MMU emulation\
+{\listtext	\uc0\u8226 	}MacAranym MMU: MMU enhanced version (good for running FreeMiNT with memory protection or Linux-m68k)\
+{\listtext	\uc0\u8226 	}MacAranym JIT: JIT compiler enabled version (Intel only, will not run on PowerPC based Macs)\
+\pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\partightenfactor0
+\ls2\ilvl0\cf0 {\listtext	\uc0\u8226 	}MacAranym SDL2: same as MacAranym, but using SDL2 library\
+{\listtext	\uc0\u8226 	}MacAranym MMU SDL2: same as MacAranym MMU, but using SDL2 library\
+{\listtext	\uc0\u8226 	}MacAranym JIT SDL2: same as MacAranym JIT, but using SDL2 library\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 \cf0 \
 MacAranym is looking for its configuration in two different locations. First it tries to load configuration from "Aranym_files" folder in the application directory, if this fails it's trying to locate an "Aranym_files" folder in the users "Documents" folder. The configuration file "config" is a plain text file and can be edited freely with any suitable text editor (TextEdit, for example). A commented template of the config file is in DOC\\config file.\

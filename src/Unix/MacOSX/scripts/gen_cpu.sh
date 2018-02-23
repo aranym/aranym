@@ -18,16 +18,20 @@ fi
 # remove old files
 rm -f "$DERIVED_FILES_DIR"/cpu*.*
 
-if [ "x$TARGET_NAME" = "xMacAranym JIT" ]; then
+
+case $TARGET_NAME in
+*JIT*)
   IS_JIT_COMPILE="+"
   JIT_ADDITIONAL_FILES="compemu.cpp compstbl.cpp comptbl.h"
   JIT_TARGET=./compemu.cpp
   echo "JIT CPU generation: $JIT_ADDITIONAL_FILES"
-else
+  ;;
+*)
   echo "no JIT CPU generation"
   IS_JIT_COMPILE="-"
   JIT_ADDITIONAL_FILES=
-fi
+  ;;
+esac
 
 for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))

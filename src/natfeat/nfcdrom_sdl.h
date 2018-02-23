@@ -25,6 +25,9 @@
 
 #include "nfcdrom.h"
 #include "SDL_compat.h"
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+
 #include <SDL_cdrom.h>
 
 /*--- Class ---*/
@@ -54,5 +57,7 @@ public:
 	virtual int Count();
 	virtual const char *DeviceName(int drive);
 };
+
+#endif
 
 #endif /* NFCDROM_SDL_H */

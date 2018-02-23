@@ -314,9 +314,7 @@ endif
 
 if NFCDROM_SUPPORT
 aranym_SOURCES += natfeat/nfcdrom.cpp natfeat/nfcdrom.h natfeat/nfcdrom_atari.h
-if !ENABLE_SDL2
 aranym_SOURCES += natfeat/nfcdrom_sdl.cpp natfeat/nfcdrom_sdl.h
-endif
 if OS_TYPE_linux
 aranym_SOURCES += natfeat/nfcdrom_linux.cpp natfeat/nfcdrom_linux.h
 endif

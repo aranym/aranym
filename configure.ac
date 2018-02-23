@@ -311,6 +311,7 @@ case "$host_cpu" in
 			darwin14* )	ISYSROOT="-mmacosx-version-min=10.10";;
             darwin15* )	ISYSROOT="-mmacosx-version-min=10.10";;
             darwin16* )	ISYSROOT="-mmacosx-version-min=10.10";;
+            darwin17* )	ISYSROOT="-mmacosx-version-min=10.13";;
 			*)
 				AC_MSG_ERROR([Sorry, unknown Darwin version: $host_os])
 				;;
@@ -1824,6 +1825,11 @@ else
 	fi
 fi
 AM_CONDITIONAL([ENABLE_SDL2], test "$enable_sdl2" = yes)
+#
+# SDL2 on macOS needs 10.6 or above
+if test "$enable_sdl2" = yes -a "$OS_TYPE" == darwin; then
+	export MACOSX_DEPLOYMENT_TARGET=10.6
+fi
 
 dnl Check for jpeg library
 have_jpeglib_h=no

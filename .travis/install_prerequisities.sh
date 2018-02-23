@@ -24,6 +24,8 @@ linux)
 osx)
 	curl --get https://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.dmg --output SDL_image.dmg
 	curl --get https://www.libsdl.org/release/SDL-1.2.15.dmg --output SDL.dmg
+	curl --get https://www.libsdl.org/release/SDL2-2.0.7.dmg --output SDL2.dmg
+	curl --get https://www.libsdl.org/projects/SDL_image/release/SDL2_image-2.0.2.dmg --output SDL2_image.dmg
 	mkdir -p ~/Library/Frameworks
 	
 	mountpoint=~/sdltmp
@@ -37,12 +39,24 @@ osx)
 	cp -R "$mountpoint/SDL_image.framework" ~/Library/Frameworks
 	hdiutil detach "$mountpoint"
 
+	hdiutil attach -mountpoint "$mountpoint" -readonly SDL2.dmg
+	cp -R "$mountpoint/SDL2.framework" ~/Library/Frameworks
+	hdiutil detach "$mountpoint"
+
+	hdiutil attach -mountpoint "$mountpoint" -readonly SDL2_image.dmg
+	cp -R "$mountpoint/SDL2_image.framework" ~/Library/Frameworks
+	hdiutil detach "$mountpoint"
+
 	rmdir "$mountpoint"
 	
 	rm -rf src/Unix/MacOSX/SDL.Framework
 	rm -rf src/Unix/MacOSX/SDL_image.Framework
+	rm -rf src/Unix/MacOSX/SDL2.Framework
+	rm -rf src/Unix/MacOSX/SDL2_image.Framework
 	ln -s ~/Library/Frameworks/SDL.Framework src/Unix/MacOSX/SDL.Framework
 	ln -s ~/Library/Frameworks/SDL_image.Framework src/Unix/MacOSX/SDL_image.Framework
+	ln -s ~/Library/Frameworks/SDL2.Framework src/Unix/MacOSX/SDL2.Framework
+	ln -s ~/Library/Frameworks/SDL2_image.Framework src/Unix/MacOSX/SDL2_image.Framework
 	
 	# we must install the macports version of the dependencies,
 	# because the brew packages are not universal

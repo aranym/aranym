@@ -1,3 +1,7 @@
+2018/02/23 - Thorsten
+Add SDL2 versions to the macOS project.
+
+
 2018/02/21 - Thorsten
 Protect futimens() calls by runtime checks on macOS
 
