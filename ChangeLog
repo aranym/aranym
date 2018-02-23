@@ -1,4 +1,8 @@
 2018/02/23 - Thorsten
+Small fixes for compilation on Haiku
+
+
+2018/02/23 - Thorsten
 Check for existence of futimes(); android and BeOS
 don't have it
 

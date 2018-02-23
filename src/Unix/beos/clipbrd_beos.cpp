@@ -18,6 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "sysdeps.h"
 #if defined(OS_beos)
 #include <Clipboard.h>
 #include <String.h>
@@ -27,9 +28,12 @@
 #include "SDL_compat.h"
 #include "clipbrd.h"
 
+#define DEBUG 0
+#include "debug.h"
+
 int init_aclip() { return 0; }
 
-int filter_aclip(const SDL_Event *event) { return 1; }
+int filter_aclip(const SDL_Event *event) { UNUSED(event); return 1; }
 
 void write_aclip(char *data, size_t len)
 {
@@ -51,7 +55,7 @@ void write_aclip(char *data, size_t len)
 char * read_aclip( size_t *len)
 {
 	const char *text;
-	int32 textLen;
+	ssize_t textLen;
 	BMessage *clip = NULL;
 	char *data = NULL;
 	fprintf(stderr, "%s()\n", __FUNCTION__);

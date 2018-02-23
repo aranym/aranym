@@ -492,8 +492,12 @@ aranym$(EXEEXT): $(aranym_OBJECTS) $(aranym_DEPENDENCIES) $(EXTRA_aranym_DEPENDE
 if OS_TYPE_beos
 	$(BEOS_RC) -o $(APP).rsrc $(BEOS_RESOURCES)
 	$(BEOS_XRES) -o $(APP) $(APP).rsrc
+	versfile="$(srcdir)/include/version.h"; \
+	major=`sed -n -e 's/#define[ \\t]*VER_MAJOR[ \\t]*\\([0-9]*\\)/\\1/p' $$versfile`; \
+	minor=`sed -n -e 's/#define[ \\t]*VER_MINOR[ \\t]*\\([0-9]*\\)/\\1/p' $$versfile`; \
+	micro=`sed -n -e 's/#define[ \\t]*VER_MICRO[ \\t]*\\([0-9]*\\)/\\1/p' $$versfile`; \
 	$(BEOS_SETVERSION) $(APP) \
-		-app 0 9 0 d 0 \
+		-app $$major $$minor $$micro d 0 \
 		-short "$(APP) $(PACKAGE_VERSION)" \
 		-long "$(APP) $(PACKAGE_VERSION)"
 endif

@@ -33,6 +33,7 @@ src/uae_cpu/compstbl.cpp
 src/uae_cpu/comptbl.h
 src/Makefile
 src/Makefile.in
+src/aranym.rsrc
 src/uae_cpu/Makefile
 src/uae_cpu/Makefile.in
 doc/Makefile
