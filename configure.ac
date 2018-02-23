@@ -422,7 +422,7 @@ AC_CHECK_FUNCS(mmap mprotect munmap)
 AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect sbrk)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
 AC_CHECK_FUNCS(usleep gettimeofday)
-AC_CHECK_FUNCS(fseeko fsync futimens link readlink symlink lstat truncate pathconf)
+AC_CHECK_FUNCS(fseeko fsync futimes futimens link readlink symlink lstat truncate pathconf)
 AC_CHECK_FUNCS(canonicalize_file_name realpath)
 
 AC_CACHE_CHECK([whether sigsetjmp is supported],
