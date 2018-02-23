@@ -1,4 +1,8 @@
 2018/02/23 - Thorsten
+Replace config.{sub,guess} by newer versions
+
+
+2018/02/23 - Thorsten
 Add SDL2 versions to the macOS project.
 
 
