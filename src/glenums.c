@@ -19,6 +19,7 @@
 */
 
 #include "sysdeps.h"
+#include "SDL_compat.h"
 #include "SDL_opengl_wrapper.h"
 #include <stdio.h>
 #include <string.h>

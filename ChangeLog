@@ -1,4 +1,9 @@
 2018/02/23 - Thorsten
+Workaround for some broken installations of SDL
+which define the PACKAGE_ macros in SDL_config.h
+
+
+2018/02/23 - Thorsten
 Replace config.{sub,guess} by newer versions
 
 

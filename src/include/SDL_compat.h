@@ -21,6 +21,18 @@
  */
 #define DIRECTFBPP_H
 
+/*
+ * some broken installations of SDL define the PACKAGE_* from
+ * the compilation of SDL itself in SDL_config.h;
+ * just undefine them to avoid redefinitions, we don't need them
+ */
+#undef PACKAGE_TARNAME
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_VERSION
+#undef PACKAGE_URL
+
 #include <SDL.h>
 
 #include <SDL_version.h>
