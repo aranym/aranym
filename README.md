@@ -63,6 +63,9 @@ Any help with programming/documentation/porting is very welcome!
 
 See [INSTALL](INSTALL) file and https://github.com/aranym/aranym/wiki
 
+You can also visit https://repology.org/metapackage/aranym/versions to check wether
+your distribution already has a pre-compiled version.
+
 
 # Configuring and running
 
@@ -119,7 +122,6 @@ is at https://groups.google.com/forum/#!forum/aranym
 Visit https://github.com/aranym/ for latest information and source code.
 
 Help us improve the Wiki documentation at https://github.com/aranym/aranym/wiki
-
 
 The "Power Without The Price" is back!
 

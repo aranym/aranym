@@ -1,4 +1,8 @@
 2018/02/24 - Thorsten
+Add a link to repology.org in README
+
+
+2018/02/24 - Thorsten
 Experimental support for JIT on Haiku; disabled for now as it panics the kernel
 
 
