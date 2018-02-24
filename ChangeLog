@@ -1,3 +1,7 @@
+2018/02/24 - Thorsten
+Experimental support for JIT on Haiku; disabled for now as it panics the kernel
+
+
 2018/02/23 - Thorsten
 Small fixes for compilation on Haiku
 

@@ -1240,6 +1240,21 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
           ;;
       esac
       ;;
+    beos* | haiku*)
+      case "$CPU_TYPE" in
+        i386)
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+	      ;;
+	x86_64)
+          AC_DEFINE(NO_NESTED_SIGSEGV, 1)
+          ;;
+        *)
+          AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+          ;;
+       esac
+       dnl disabled for now: compiles, but panics kernel :(
+       AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
+       ;;
     *)
       AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
       ;;
@@ -1299,6 +1314,11 @@ for am in $ADDRESSING_TEST_ORDER; do
       break
     fi
     if [[ "x$OS_TYPE" = "xsolaris" -a "x$HAVE=I386" ]]; then
+      ADDRESSING_MODE="fixed (0x51000000)"
+      DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
+      break
+    fi
+    if [[ "x$OS_TYPE" = "xbeos" -a "x$HAVE=I386" ]]; then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
