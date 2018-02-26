@@ -306,7 +306,7 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 
 
 static void segfault_vec(int /*sig*/, siginfo_t *sip, void *uc) {
-	mcontext_t *context = &(((struct ucontext *)uc)->uc_mcontext);
+	mcontext_t *context = &(((ucontext_t *)uc)->uc_mcontext);
 	unsigned long *regs = &context->arm_r0;
 	uintptr faultaddr = (uintptr)sip->si_addr;
 	memptr addr = (memptr)(faultaddr - fixed_memory_offset);

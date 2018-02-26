@@ -1,3 +1,7 @@
+2018/02/27 - Andreas
+- sigsegv_linux_arm.cpp: Use ucontext_t instead of struct ucontext
+
+
 2018/02/24 - Thorsten
 Add a link to repology.org in README
 
