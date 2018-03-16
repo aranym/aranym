@@ -3,8 +3,6 @@
 /*
  * fVDI utility function declarations
  *
- * $Id$
- *
  * Copyright 2003, Johan Klockars 
  * This software is licensed under the GNU General Public License.
  * Please, see LICENSE.TXT for further information.

@@ -48,7 +48,6 @@ extern long _cdecl (*nf_call)(long id, ...);
 
 
 /*
- * $Log$
  * Revision 1.2  2006/02/06 20:58:17  standa
  * Sync with the FreeMiNT CVS. The make.sh now only builds the BetaDOS
  * hostfs.dos.

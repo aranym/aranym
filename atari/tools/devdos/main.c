@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * The ARAnyM BetaDOS driver.
  *
  * 2001/2002 STan

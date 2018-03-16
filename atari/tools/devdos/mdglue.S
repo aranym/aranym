@@ -1,6 +1,4 @@
 //
-// $Header$ 
-//
 // 2001 STanda
 //
 // The basic file layout was taken from Julian Reschke's Cookies

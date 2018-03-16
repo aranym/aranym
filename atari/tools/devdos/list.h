@@ -20,12 +20,6 @@
  * WinDom: a high level GEM library
  * Copyright (c) 1997-2006 windom authors (see AUTHORS file)
  *
- * $Source$
- *
- * CVS info:
- *   $Author$
- *   $Date$
- *   $Revision$
  */
 
 #ifndef __WINDOM_LIST__

@@ -1,6 +1,4 @@
 /*
- * $Id$
- * 
  * ARAnyM Native Features suite.
  *
  * This file was taken from FreeMiNT.
