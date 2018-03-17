@@ -1380,6 +1380,7 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 	newFsFile->childCount = 0;
 	newFsFile->parent = dir->index;
 	newFsFile->created = false;
+	newFsFile->locks = 0;
 	dir->index->childCount++;
 
 	*fc = *dir;
@@ -1989,6 +1990,8 @@ int32 HostFs::xfs_readdir( XfsDir *dirh, memptr buff, int16 len, XfsCookie *fc )
 	newFsFile->parent = dirh->fc.index;
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
+	newFsFile->created = false;
+	newFsFile->locks = 0;
 
 	fc->drv = dirh->fc.drv;
 	fc->xfs = fc->drv->fsDrv;
@@ -2239,6 +2242,8 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 	fc->index->name = fc->drv->hostRoot;
 	fc->index->refCount = 1;
 	fc->index->childCount = 0;
+	fc->index->created = false;
+	fc->index->locks = 0;
 
 	D2(bug( "root result:\n"
 		   "  fs	= %08lx\n"
@@ -2351,6 +2356,8 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		newFsFile->name = strdup(fname);
 		newFsFile->refCount = 1;
 		newFsFile->childCount = 0;
+		newFsFile->created = false;
+		newFsFile->locks = 0;
 		dir->index->childCount++; /* same as: new->parent->childcnt++ */
 	}
 
@@ -2461,6 +2468,10 @@ int32 HostFs::xfs_getname( XfsCookie *relto, XfsCookie *dir, memptr pathName, in
 
 # define MINT_EXT2_IOC_GETVERSION     (('v'<< 8) | 1)
 # define MINT_EXT2_IOC_SETVERSION     (('v'<< 8) | 2)
+
+# define MINT_F_GETLK  5
+# define MINT_F_SETLK  6
+# define MINT_F_SETLKW 7
 
 
 int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
@@ -2705,14 +2716,27 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 			}
 			return TOS_E_OK;
 
-#if 0
 		case MINT_F_SETLK:
 		case MINT_F_SETLKW:
 		case MINT_F_GETLK:
-			// locking cant be handled here.
-			// It has to be done in hostfs.xfs on the Atari side.
-			break;			
-#endif
+			/*
+			 * locking can't be handled here.
+			 * It has to be done in hostfs.xfs on the Atari side
+			 * (and is done now, with newer kernels).
+			 * We must maintain the root pointer of MiNT's file
+			 * locks list, however.
+			 * Note that the "buff" arguments to flock() is a pointer
+			 * to a struct flock, and older kernels without implementing
+			 * the call will pass that to us, while the new implementation
+			 * just passes the address of the root of the locks list.
+			 */
+			if (!fp->fc.index)
+				return TOS_EIHNDL;
+			if (mode == MINT_F_GETLK)
+				WriteInt32(buff, fp->fc.index->locks);
+			else
+				fp->fc.index->locks = ReadInt32(buff);
+			return TOS_E_OK;			
 
 		case MINT_FTRUNCATE:
 			D(bug( "HOSTFS: fs_ioctl: FTRUNCATE( fd=%d, %08lx )", fp->hostFd, (unsigned long)ReadInt32(buff) ));

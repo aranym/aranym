@@ -72,6 +72,7 @@ class HostFs : public NF_Base
 		uint32	  childCount;
 		bool      created;      // only xfs_creat() was issued (no dev_open yet)
 
+		memptr locks;
 		char	  *name;
 	};
 
