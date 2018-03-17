@@ -51,7 +51,7 @@
 #include "sdlgui.sdl"
 
 static const char *ABOUT_TEXT =
-"            " VERSION_STRING "\n"
+"            %s\n"
 "            =============\n"
 "\n"
 "ARAnyM as an Open Source project has\n"
@@ -107,13 +107,36 @@ DlgMain::~DlgMain()
 #endif
 }
 
+#ifndef HAVE_VASPRINTF
+extern "C" int vasprintf(char **, const char *, va_list);
+#endif
+
+static void aboutalert(const char *fmt, ...)
+{
+	va_list args;
+	char *buf = NULL;
+	int ret;
+
+	va_start(args, fmt);
+	ret = vasprintf(&buf, fmt, args);
+	va_end(args);
+	if (ret >= 0)
+	{
+		SDLGui_Open(DlgAlertOpen(buf, ALERT_OK));
+		free(buf);
+	}
+	va_end(args);
+}
+
+
+
 int DlgMain::processDialog(void)
 {
 	int retval = Dialog::GUI_CONTINUE;
 
 	switch(return_obj) {
 		case ABOUT:
-			SDLGui_Open(DlgAlertOpen(ABOUT_TEXT, ALERT_OK));
+			aboutalert(ABOUT_TEXT, version_string);
 			break;
 		case DISCS:
 			SDLGui_Open(DlgDiskOpen());

@@ -39,7 +39,6 @@
 #include "hardware.h"
 #include "parameters.h"
 #include "newcpu.h"
-#include "version.h"
 #if defined _WIN32 || defined(OS_cygwin)
 #include "win32_supp.h"
 #endif
@@ -60,6 +59,34 @@
 # include <csignal>
 # include <signal.h>
 # include <cstdlib>
+
+#include "version_date.h"
+#include "version.h"
+
+#ifdef VERSION_DATE
+#define CVS_DATE	"git " VERSION_DATE
+#else
+#define CVS_DATE	"git"
+#endif
+
+#ifndef VER_STATUS
+#define VER_STATUS
+//#define VER_STATUS	"+" CVS_DATE
+//#define VER_STATUS	"alpha"
+//#define VER_STATUS	"beta"
+//#define VER_STATUS	"beta+" CVS_DATE
+#endif
+
+#define str(x)		_stringify (x)
+#define _stringify(x)	#x
+
+#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS 
+
+
+char const name_string[] = NAME_STRING;
+char const version_string[] = VERSION_STRING;
+
+
 
 #ifndef HAVE_SIGHANDLER_T
 typedef void (*sighandler_t)(int);
@@ -531,7 +558,7 @@ int main(int argc, char **argv)
 #endif
 
 	// display version string on console (help when users provide debug info)
-	infoprint("%s", VERSION_STRING);
+	infoprint("%s", version_string);
 
 	// parse command line switches
 	if (!decode_switches(argc, argv))

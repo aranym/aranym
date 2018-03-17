@@ -31,6 +31,7 @@
 
 int32 NF_Name::dispatch(uint32 fncode)
 {
+	char buf[strlen(version_string) + 80];
 	memptr name_ptr = getParameter(0);
 	uint32 name_maxlen = getParameter(1);
 	D(bug("NF_Name($%08x, %d)", name_ptr, name_maxlen));
@@ -38,11 +39,13 @@ int32 NF_Name::dispatch(uint32 fncode)
 	const char *text;
 	switch(fncode) {
 		case 0:/* get_pure_name(char *name, uint32 max_len) */
-			text = NAME_STRING;
+			text = name_string;
 			break;
 
 		case 1:	/* get_complete_name(char *name, uint32 max_len) */
-			text = VERSION_STRING " (Host: " OS_TYPE "/" CPU_TYPE ")";
+			strcpy(buf, version_string);
+			strcat(buf, " (Host: " OS_TYPE "/" CPU_TYPE ")");
+			text = buf;
 			break;
 
 		default:

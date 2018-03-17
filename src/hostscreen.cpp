@@ -226,9 +226,9 @@ void HostScreen::reset(void)
 #ifdef SDL_GUI
 	char key[HOTKEYS_STRING_SIZE];
 	keysymToString(key, &bx_options.hotkeys.setup);
-	buf = std::string(VERSION_STRING) + std::string("  (Press the [") + std::string(key) + std::string("] key for SETUP)");
+	buf = std::string(version_string) + std::string("  (Press the [") + std::string(key) + std::string("] key for SETUP)");
 #else
-	buf = std::string(VERSION_STRING);
+	buf = std::string(version_string);
 #endif /* SDL_GUI */
 	SetCaption(buf.c_str());
 }
@@ -428,7 +428,7 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 		
 		if (window == NULL)
 		{
-			window = SDL_CreateWindow(VERSION_STRING, x, y, width, height, windowFlags);
+			window = SDL_CreateWindow(version_string, x, y, width, height, windowFlags);
 			if (window)
 			{
 				SDL_GetWindowDisplayMode(window, &oldmode);

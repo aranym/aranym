@@ -1631,7 +1631,7 @@ static void presave_cfg() {
 static void print_version(void)
 {
 	loadSettings(config_file);
-	// infoprint("%s\n", VERSION_STRING);
+	// infoprint("%s\n", version_string);
 	infoprint("Configuration:");
 	infoprint("SDL (compiled)   : %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
 	SDL_version linked;

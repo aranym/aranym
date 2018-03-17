@@ -2,10 +2,14 @@
 #include <windows.h>
 #endif
 
+#include "version_date.h"
 #include "version.h"
 
+#define str(x)		_stringify (x)
+#define _stringify(x)	#x
+
 #undef VERSION_STRING
-#define VERSION_STRING	str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS 
+#define VERSION_STRING	str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS
 
 1 ICON "aranym.ico"
 

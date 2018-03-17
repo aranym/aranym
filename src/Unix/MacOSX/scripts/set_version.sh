@@ -6,7 +6,13 @@ if [ ! -f "$DERIVED_FILE_DIR/aranym_version" ]; then
 
   cat > aranym_version.c <<EOF
 #include <stdio.h>
+#include "version_date.h"
 #include "version.h"
+
+#define str(x)		_stringify (x)
+#define _stringify(x)	#x
+
+#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS
 
 int main() {
   puts(VERSION_STRING);

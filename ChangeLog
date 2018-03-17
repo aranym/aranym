@@ -1,4 +1,10 @@
 2018/03/15 - Thorsten
+Move some definitions from version.h to main_unix.cpp,
+in order to reduce the number of files that depend on
+version.h/version_date.h
+
+
+2018/03/15 - Thorsten
 Delete CVS's keywords like $Id$ from a bunch of files.
 This keywords are unused since the migration to Git, 4 years ago.
 
