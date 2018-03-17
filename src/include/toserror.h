@@ -9,11 +9,11 @@
 #define TOS_E_OK      0 /* Ok = no error */
 #define TOS_ERROR    -1 /* Error: unknown error */
 #define TOS_EDRVNR   -2 /* Drive not ready: device timeout */
-#define TOS_EUNCMD   -3 /* Unkown command: device access */
+#define TOS_EUNCMD   -3 /* Unknown command: device access */
 #define TOS_E_CRC    -4 /* CRC error: sector read */
 #define TOS_EBADRQ   -5 /* Bad request: error at device request */
 #define TOS_E_SEEK   -6 /* Seek error: wrong tracknumber */
-#define TOS_EMEDIA   -7 /* Unkown media: bootsector defect or not there */
+#define TOS_EMEDIA   -7 /* Unknown media: bootsector defect or not there */
 #define TOS_ESECNF   -8 /* Sector not found: wrong sectornumber */
 #define TOS_EPAPER   -9 /* Out of paper: printer not ready */
 #define TOS_EWRITF  -10 /* Write fault */
@@ -21,7 +21,7 @@
 #define TOS_EGENRL  -12 /* General error: reserved for future catastrophes */
 #define TOS_EROFS   -13 /* Write on write-protected media */
 #define TOS_E_CHNG  -14 /* Media change detected */
-#define TOS_EUNDEV  -15 /* Unkown device */
+#define TOS_EUNDEV  -15 /* Unknown device */
 #define TOS_EBADSF  -16 /* Bad sectors on format */
 #define TOS_EOTHER  -17 /* Insert other disk (request) */
 #define TOS_EINSERT -18 /* Insert disk: Metados error */
@@ -43,6 +43,7 @@
 #define TOS_EACCDN  -36 /* Access denied */
 #define TOS_EACCES TOS_EACCDN
 #define TOS_EIHNDL  -37 /* Invalid handle */
+#define TOS_EPERM   -38 /* permission denied */
 #define TOS_ENSMEM  -39 /* Insufficient memory */
 #define TOS_EIMBA   -40 /* Invalid memory block address */
 #define TOS_EDRIVE  -46 /* Invalid drive specification */

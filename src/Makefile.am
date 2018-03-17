@@ -134,6 +134,7 @@ aranym_SOURCES = \
 	natfeat/debugprintf.cpp natfeat/debugprintf.h \
 	natfeat/maptab.cpp natfeat/maptab.h \
 	natfeat/nf_scsidrv.cpp natfeat/nf_scsidrv.h \
+	natfeat/nf_hostexec.cpp natfeat/nf_hostexec.h \
 	uae_cpu/cpu_emulation.h \
 	uae_cpu/aranym_glue.cpp \
 	uae_cpu/memory.cpp uae_cpu/memory-uae.h \

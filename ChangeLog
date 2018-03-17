@@ -1,3 +1,8 @@
+2018/03/17 - Thorsten
+Add HOSTEXEC native feature.
+Proposed by Miro Kropáček <miro.kropacek@gmail.com>
+
+
 2018/03/15 - Thorsten
 Move some definitions from version.h to main_unix.cpp,
 in order to reduce the number of files that depend on

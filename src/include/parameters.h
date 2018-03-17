@@ -206,6 +206,7 @@ typedef struct {
 typedef struct {
 	char cdrom_driver[256];	/* CD-ROM driver */
 	char vdi_driver[256];	/* VDI driver */
+	bool hostexec_enabled;
 } bx_natfeat_options_t;
 
 // NFvdi options

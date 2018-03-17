@@ -65,9 +65,11 @@
 #ifdef NFSCSI_SUPPORT
 # include "nf_scsidrv.h"
 #endif
-
 #ifdef USBHOST_SUPPORT
 # include "usbhost.h"
+#endif
+#ifdef NFEXEC_SUPPORT
+# include "nf_hostexec.h"
 #endif
 /* add your NatFeat class definition here */
 
@@ -162,6 +164,10 @@ void NFCreate(void)
 
 #ifdef NFSCSI_SUPPORT
 	NFAdd(new SCSIDriver);
+#endif
+
+#ifdef NFEXEC_SUPPORT
+	NFAdd(new HostExec);
 #endif
 	/* add your NatFeat object declaration here */
 }

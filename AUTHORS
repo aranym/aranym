@@ -242,3 +242,6 @@ Anders Eriksson
 
 David Gálvez
 - USB NatFeat support
+
+Miro Kropacek <miro.kropacek@gmail.com>
+- host file execution NatFeat support

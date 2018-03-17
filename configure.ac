@@ -129,6 +129,8 @@ AC_ARG_ENABLE(nfvdi,           [AC_HELP_STRING([--enable-nfvdi], [enable NatFeat
 
 AC_ARG_ENABLE(scsi,            [AC_HELP_STRING([--enable-nfscsi], [enable NatFeat SCSI (default=yes)])], [WANT_NFSCSI=$enableval], [WANT_NFSCSI=yes])
 
+AC_ARG_ENABLE(nfexec,          [AC_HELP_STRING([--enable-nfexec], [enable NatFeat host file execution (default=yes)])], [WANT_NFEXEC=$enableval], [WANT_NFEXEC=yes])
+
 AC_ARG_ENABLE(ata-cdrom,       [AC_HELP_STRING([--enable-ata-cdrom], [enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -2207,6 +2209,18 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 fi
 AM_CONDITIONAL([NFCLIPBRD_SUPPORT], test "$WANT_NFCLIPBRD" = yes)
 
+dnl Natfeat host exec driver
+
+if [[ "$WANT_NFEXEC" = yes -a "$WANT_HOSTFS" != yes ]]; then
+	AC_MSG_WARN([NF exec disabled due to lack of support from HOSTFS])
+	WANT_NFEXEC=no
+fi
+if [[ "$WANT_NFEXEC" = yes ]]; then
+	AC_DEFINE([NFEXEC_SUPPORT], 1, [Define if you want to use NF host exec driver])
+	PROVIDES_NF="$PROVIDES_NF exec"
+fi
+AM_CONDITIONAL([NFEXEC_SUPPORT], test "$WANT_NFEXEC" = "yes")
+
 
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 	PROVIDES_NF="$PROVIDES_NF clipboard"
@@ -2382,6 +2396,7 @@ echo "NatFeat JPEG decoder ................... : $WANT_NFJPEG"
 echo "NatFeat Clipboard ...................... : $WANT_NFCLIPBRD"
 echo "NatFeat VDI driver ..................... : $WANT_NFVDI"
 echo "NatFeat SCSI driver .................... : $WANT_NFSCSI"
+echo "NatFeat host exec driver ............... : $WANT_NFEXEC"
 echo "Exception per second limiter ........... : $WANT_EPSLIMITER"
 echo "Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86"
 echo "Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT"
