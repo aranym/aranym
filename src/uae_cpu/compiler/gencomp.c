@@ -1573,7 +1573,7 @@ gen_opcode (unsigned int opcode)
 	     case i_BCLR: op="btr"; break;
 	     case i_BSET: op="bts"; break;
 	     case i_BTST: op="bt"; need_write=0; break;
-	    default: assert(0);
+	    default: op=""; assert(0);
 	    }
 	    comprintf("\t%s_l_rr(dst,s);\n"  /* Answer now in C */
 				  "\tsbb_l(s,s);\n" /* s is 0 if bit was 0, -1 otherwise */
@@ -3313,6 +3313,7 @@ generate_one_opcode (int rp, int noflags)
 	smsk = 3;
 	break;
     default:
+    smsk = 0;
 	assert(0);
     }
     dmsk = 7;

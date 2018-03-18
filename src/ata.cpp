@@ -1293,6 +1293,7 @@ if ( quantumsMax == 0)
 							{
 								D(panicbug("READ_TOC_EX: msf not set for format %i", format));
 							}
+							/* fall through */
 						case 0:
 						case 1:
 						case 5:

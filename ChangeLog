@@ -1,4 +1,8 @@
 2018/03/18 - Thorsten
+Avoid some warnings
+
+
+2018/03/18 - Thorsten
 Use another name for remove(), as it might conflict
 with c++11 <list> header
 
