@@ -751,7 +751,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 
 		fclose(outfile);
 		result = fcopy(config_file, tempfilename);
-		remove(tempfilename);
+		os_remove(tempfilename);
 
 		if (result < 0) {
 			panicbug("Error %d in fcopy.", result);
@@ -830,7 +830,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 	fclose(infile);
 	fclose(outfile);
 	result = fcopy(config_file, tempfilename);
-	remove(tempfilename);
+	os_remove(tempfilename);
 
 	if (result < 0) {
 		panicbug("Error %d in fcopy(%s,%s).", result, config_file, 

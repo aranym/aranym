@@ -190,7 +190,7 @@ bool File_Exists(const char *pszFileName)
 bool File_Delete(char *pszFileName)
 {
   /* Delete the file (must be closed first) */
-  return( remove(pszFileName) );
+  return( os_remove(pszFileName) );
 }
 
 

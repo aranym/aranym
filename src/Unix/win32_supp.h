@@ -54,7 +54,7 @@ extern "C" {
 #define S_ISUID 0004000 /* set user id on execution */
 #endif
 #ifndef S_IFLNK
-#define S_IFLNK S_IFLNK	0xa000	/* symbolic link */
+#define S_IFLNK 0xa000	/* symbolic link */
 #endif
 #ifndef S_ISLNK
 #define S_ISLNK(m)    (((m)&_S_IFMT) == S_IFLNK)
@@ -153,11 +153,13 @@ void rewinddir(DIR *_dirp);
 long telldir(DIR *_dirp);
 void seekdir(DIR *_dirp, long lPos);
 
+int win32_execv(const char *path, char *const *argv);
+
 #define open win32_open
 int __MINGW_NOTHROW open (const char*, int, ...);
 
 #define unlink win32_unlink
-#define remove win32_unlink
+#define os_remove win32_unlink
 int __MINGW_NOTHROW unlink (const char*);
 
 #define rmdir win32_rmdir
@@ -223,6 +225,10 @@ int win32_futimes(int fd, const struct timeval tv[2]);
 #ifdef __cplusplus
 }
 #endif
+
+#else
+
+#define os_remove remove
 
 #endif /* _WIN32 */
 
