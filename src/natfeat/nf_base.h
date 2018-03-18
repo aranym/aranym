@@ -43,7 +43,7 @@ public:
 	virtual bool isSuperOnly() = 0;
 	virtual int32 dispatch(uint32 fncode) = 0;
 	uint32 getParameter(int i) { return nf_getparameter(i); }
-	uint32 errnoHost2Mint( int unixerrno,int defaulttoserrno );
+	uint32 errnoHost2Mint( int unixerrno,int defaulttoserrno ) const;
 };
 
 #endif /* _NF_BASE_H */

@@ -1,3 +1,7 @@
+2018/03/18 - Thorsten
+Extend HOSTEXEC native feature with execv() method
+
+
 2018/03/17 - Thorsten
 Add HOSTEXEC native feature.
 Proposed by Miro Kropáček <miro.kropacek@gmail.com>

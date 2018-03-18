@@ -26,7 +26,7 @@
 #include "toserror.h"
 #include "debug.h"
 
-uint32 NF_Base::errnoHost2Mint(int unixerrno,int defaulttoserrno)
+uint32 NF_Base::errnoHost2Mint(int unixerrno,int defaulttoserrno) const
 {
 	int retval = defaulttoserrno;
 

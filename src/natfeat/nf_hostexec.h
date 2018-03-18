@@ -18,6 +18,8 @@ private:
 
 	std::string getc(uint8 c) const;
 	void exec(const std::string& path) const;
+	int execv(int argc, memptr argv) const;
+	int doexecv(char *const argv[]) const;
 	std::string trim(const std::string& str) const;
 	std::string translatePath(const std::string& path) const;
 };

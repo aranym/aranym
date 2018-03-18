@@ -21,6 +21,7 @@
 enum HOSTEXEC_OPERATIONS {
 	HOSTEXEC_INTERFACE_VERSION = 0,
 	HOSTEXEC_EXEC,
+	HOSTEXEC_EXECV,
 };
 
 
@@ -39,6 +40,7 @@ int32 HostExec::dispatch(uint32 fncode)
 		break;
 
 	case HOSTEXEC_EXEC:
+		{
 		memptr pPathStr = getParameter(0);
 		uint32 length = getParameter(1);
 		D(bug("HostExec($%08x, %d)", pPathStr, length));
@@ -60,6 +62,11 @@ int32 HostExec::dispatch(uint32 fncode)
 		}
 
 		ret = length;
+		}
+		break;
+
+	case HOSTEXEC_EXECV:
+		ret = execv(getParameter(0), getParameter(1));
 		break;
 	}
 
@@ -229,17 +236,83 @@ void HostExec::exec(const std::string& path) const
 			argv.push_back(const_cast<char*>(it->c_str()));
 		}
 		argv.push_back(NULL);
-
-		pid_t pid = fork();
-		if (pid == -1)
-		{
-			D(bug("HostExec::exec: fork() failed"));
-		} else if (pid == 0)
-		{
-			::execv(argv[0], &argv[0]);
-			_exit(127);
-		}
+		doexecv(&argv[0]);
 	}
+}
+
+int HostExec::doexecv(char *const argv[]) const
+{
+	pid_t pid = fork();
+	int ret = pid;
+	if (pid == -1)
+	{
+		D(bug("HostExec::exec: fork() failed"));
+		ret = errnoHost2Mint(errno, TOS_ENSMEM);
+	} else if (pid == 0)
+	{
+		::execv(argv[0], &argv[0]);
+		/* TODO: propagate errno from child to parent */
+		_exit(127);
+	} else
+	{
+		/*
+		 * We are in the parent.
+		 * TODO: should either wait() on the child and return the exitcode,
+		 * or return the pid to the caller
+		 */
+	}
+	return ret;
+}
+
+int HostExec::execv(int argc, memptr argv) const
+{
+	static const int MAXPATHNAMELEN = 2048;
+	int i;
+	int ret;
+	
+	if (argc <= 0)
+		return TOS_EINVAL;
+	memptr argv0 = ReadNFInt32(argv);
+	char fname[MAXPATHNAMELEN];
+	Atari2HostUtf8Copy(fname, argv0, sizeof(fname));
+	std::string translatedPath(translatePath(std::string(fname)));
+
+	if (translatedPath.empty())
+		return TOS_EINVAL;
+
+	std::vector<char*> execargv;
+	execargv.push_back(const_cast<char*>(translatedPath.c_str()));
+	
+	for (i = 1; i < argc; i++)
+	{
+		argv += 4; /* ATARI_SIZEOF_PTR */
+		memptr arg = ReadNFInt32(argv);
+		size_t len = Atari2HostSafeStrlen(arg);
+		if (len == 0)
+		{
+			ret = TOS_EINVAL;
+			goto fail;
+		}
+		char *parg = (char *)malloc(len);
+		if (parg == NULL)
+		{
+			ret = TOS_ENSMEM;
+			goto fail;
+		}
+		Atari2Host_memcpy(parg, arg, len);
+		execargv.push_back(parg);
+	}
+	execargv.push_back(NULL);
+	ret = doexecv(&execargv[0]);
+	
+fail:
+	while (i > 1)
+	{
+		--i;
+		free(execargv[i]);
+	}
+	
+	return ret;
 }
 
 #endif /* NFEXEC_SUPPORT */

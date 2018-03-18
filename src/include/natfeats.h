@@ -134,6 +134,29 @@ static inline void Host2AtariSafeStrncpy(memptr dst, const char *src, size_t cou
 #endif
 }
 
+static inline size_t Atari2HostSafeStrlen(memptr src)
+{
+	if (!src) return 0;
+	size_t count = 1;
+#if NATFEAT_LIBC_MEMCPY && NATFEAT_PHYS_ADDR
+	for (;;)
+	{
+		if (! ValidAtariAddr(src, false, 1))
+			BUS_ERROR(src);
+		char c = ReadNFInt8(src);
+		if (!c)
+			break;
+		count++;
+		src += 1;
+	}
+#else
+	while ((char)ReadNFInt8( src++ )) != 0 ) {
+		count++;
+	}
+#endif
+	return count;
+}
+
 void Atari2HostUtf8Copy(char *dst, memptr src, size_t count);
 void Host2AtariUtf8Copy(memptr dst, const char *src, size_t count);
 void charset_conv_error(unsigned short ch);
