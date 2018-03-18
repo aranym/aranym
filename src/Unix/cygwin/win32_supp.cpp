@@ -970,6 +970,90 @@ void win32_seekdir(DIR *_dirp, long lPos)
 }
 
 
+int win32_execv(const char *path, char *const *argv)
+{
+	wchar_t *wpath = win32_utf8_to_widechar(path);
+	size_t len;
+	const char *cp;
+	const char *const *p;
+	char *buf;
+	wchar_t *wbuf;
+	int ret;
+
+	len = 0;
+	p = argv;
+	while ((cp = *p) != NULL)
+	{
+		len += strlen(cp) + 1;
+		if (*cp == '\0' || strchr(cp, ' ') != NULL)
+			len += 2;
+		p++;
+	}
+
+	buf = (char *)malloc(len);
+	if (buf == NULL)
+		return ENOMEM;
+
+	p = argv;
+	*buf = '\0';
+	while ((cp = *p) != NULL)
+	{
+		if (*cp == '\0' || strchr(cp, ' ') != NULL)
+		{
+			strcat(buf, "\"");
+			strcat(buf, cp);
+			strcat(buf, "\"");
+		} else
+		{
+			strcat(buf, cp);
+		}
+		p++;
+		if (*p != NULL)
+			strcat(buf, " ");
+	}
+
+	wbuf = win32_utf8_to_widechar(buf);
+	free(buf);
+
+	{
+		STARTUPINFOW StartupInfo;
+		PROCESS_INFORMATION ProcessInformation;
+
+		StartupInfo.cb = sizeof(StartupInfo);
+		GetStartupInfoW(&StartupInfo);
+		StartupInfo.wShowWindow = SW_SHOWNORMAL;
+		StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
+
+		if (CreateProcessW(
+							  wpath, /* pointer to name of executable module */
+							  wbuf, /* pointer to command line string */
+							  NULL, /* pointer to process security attributes */
+							  NULL, /* pointer to thread security attributes */
+							  FALSE, /* handle inheritance flag */
+							  0, /* creation flags */
+							  NULL, /* pointer to new environment block */
+							  NULL, /* pointer to current directory name */
+							  & StartupInfo, /* pointer to STARTUPINFO */
+							  & ProcessInformation /*  pointer to PROCESS_INFORMATION */
+			))
+		{
+			ret = ProcessInformation.dwProcessId;
+			CloseHandle(ProcessInformation.hThread);
+			/* maybe needed later, when we wait for it */
+			CloseHandle(ProcessInformation.hProcess);
+		} else
+		{
+			ret = -win32_errno_from_oserr(GetLastError(), ENOENT);
+		}
+	}
+
+	free(wbuf);
+	free(wpath);
+
+	return ret;
+}
+
+
 #endif /* _WIN32 */
 
 #endif /* _WIN32 || __CYGWIN__ */

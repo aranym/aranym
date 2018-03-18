@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "sysdeps.h"
 #include "usbhost.h"
 #include "../../atari/usbhost/usbhost_nfapi.h"
 

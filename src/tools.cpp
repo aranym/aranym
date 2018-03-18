@@ -23,6 +23,7 @@
 
 #include "sysdeps.h"
 #include <cstring>
+#include <stdlib.h>
 
 #include "tools.h"
 

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
+#include <errno.h>
 
 #include <unistd.h>
 #include "maptab.h"
@@ -242,6 +243,12 @@ void HostExec::exec(const std::string& path) const
 
 int HostExec::doexecv(char *const argv[]) const
 {
+#if defined(_WIN32) && !defined(__CYGWIN___)
+	int ret = win32_execv(argv[0], &argv[0]);
+	if (ret < 0)
+		ret = errnoHost2Mint(-ret, TOS_ENSMEM);
+	return ret;
+#else
 	pid_t pid = fork();
 	int ret = pid;
 	if (pid == -1)
@@ -262,6 +269,7 @@ int HostExec::doexecv(char *const argv[]) const
 		 */
 	}
 	return ret;
+#endif
 }
 
 int HostExec::execv(int argc, memptr argv) const
