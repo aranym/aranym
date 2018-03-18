@@ -1,4 +1,8 @@
 2018/03/18 - Thorsten
+Avoid some conflicts with windows headers
+
+
+2018/03/18 - Thorsten
 Extend HOSTEXEC native feature with execv() method
 
 

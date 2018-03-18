@@ -13,21 +13,21 @@
 #define	VOID_PTR	uint32
 #define	UCHAR_PTR	uint32
 #define FUNC_PTR(x,y)	uint32 x
-#define LONG		int32
-#define ULONG		uint32
+#define _LONG		int32
+#define _ULONG		uint32
 #else
 #define VOID_PTR	void *
 #define UCHAR_PTR	unsigned char *
 #define FUNC_PTR(x,y)	short (*x)(y)
-#define LONG		long
-#define ULONG		unsigned long
+#define _LONG		long
+#define _ULONG		unsigned long
 #endif
 
 typedef struct _JPGD_STRUCT {
 	VOID_PTR	InPointer;							/* JPEG Image Pointer */
 	VOID_PTR	OutPointer;							/* Output Buffer/Filename Pointer (see OutFlag) */
-	LONG	InSize;									/* JPEG Image Size (Bytes) */
-	LONG	OutSize;								/* Output Image Size (Bytes) */
+	_LONG	InSize;									/* JPEG Image Size (Bytes) */
+	_LONG	OutSize;								/* Output Image Size (Bytes) */
 	short	InComponents;							/* JPEG Image Components Number (1->4) */
 	short	OutComponents;							/* Output Components Number (1->4) */
 	short	OutPixelSize;							/* Output Pixel Size (1->4) */
@@ -46,7 +46,7 @@ typedef struct _JPGD_STRUCT {
 	VOID_PTR	OutTmpPointer;						/* Current OutPointer / Temporary Disk Buffer Pointer (see OutFlag) */
 	short	MCUsCounter;							/* Number of MCUs not Decoded */
 	short	OutTmpHeight;							/* Number of Lines in OutTmpPointer */
-	LONG	User[2];								/* Free, Available for User */
+	_LONG	User[2];								/* Free, Available for User */
 	short	OutHandle;								/* 0 / Output File Handle (see OutFlag) */
 
 	/* Output image MFDB */
@@ -62,7 +62,7 @@ typedef struct _JPGD_STRUCT {
 
 	/* Official structure stop here, what follows is decoder-dependant */
 
-	ULONG handle;	/* ARAnyM image handle */
+	_ULONG handle;	/* ARAnyM image handle */
 } __attribute__((packed)) JPGD_STRUCT;
 typedef JPGD_STRUCT	*JPGD_PTR;
 
