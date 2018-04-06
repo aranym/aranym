@@ -1,4 +1,8 @@
 2018/04/06 - Thorsten
+Update glibc wrapper to include new symbols from glibc 2.27
+
+
+2018/04/06 - Thorsten
 Workaround for building with XCode 3.2.6
 
 Reported by Francois LE COAT; although already present in
