@@ -27,6 +27,22 @@
 
 #include "SDL_opengl_wrapper.h"
 
+/*
+ * duplicated from SDL_opengl_wrapper.h;
+ * for some unknown reason, on old MacOS 10.6.8,
+ * with Xcode 3.2.6, those are not included there
+ */
+#if defined(__MACOSX__)
+#include <OpenGL/gl.h>	/* Header File For The OpenGL Library */
+#include <OpenGL/glu.h>	/* Header File For The GLU Library */
+#elif defined(__MACOS__)
+#include <gl.h>		/* Header File For The OpenGL Library */
+#include <glu.h>	/* Header File For The GLU Library */
+#else
+#include <GL/gl.h>	/* Header File For The OpenGL Library */
+#include <GL/glu.h>	/* Header File For The GLU Library */
+#endif
+
 /*--- Defines ---*/
 
 /*--- Types ---*/
