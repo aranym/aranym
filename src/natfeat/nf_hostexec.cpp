@@ -8,6 +8,13 @@
 #include <cstdlib>
 #include <vector>
 #include <errno.h>
+#include <signal.h>
+#if !defined(_WIN32) || defined(__CYGWIN___)
+#include <sys/wait.h>
+#ifndef WNOHANG
+#define WNOHANG 0
+#endif
+#endif
 
 #include <unistd.h>
 #include "maptab.h"
@@ -207,6 +214,40 @@ std::string HostExec::trim(const std::string& str) const
 	return ret;
 }
 
+static void child_signal(int sig)
+{
+	int status;
+	pid_t pid;
+
+	if (sig == SIGCHLD)
+	{
+		for (;;)
+		{
+			pid = waitpid((pid_t)-1, &status, WNOHANG);
+			if (pid <= 0)
+				return;
+			if (WIFEXITED(status))
+			{
+				D(bug("child %d exited with status %d", pid, WEXITSTATUS(status)));
+#ifdef WIFSTOPPED
+			} else if (WIFSTOPPED(status))
+			{
+				D(bug("child %d was stopped by signal %d", pid, WSTOPSIG(status)));
+#endif
+#ifdef WIFCONTINUED
+			} else if (WIFCONTINUED(status))
+			{
+				D(bug("child %d was continued by signal %d", pid, WSTOPSIG(status)));
+#endif
+			} else if (WIFSIGNALED(status))
+			{
+				D(bug("child %d was killed by signal %d", pid, WTERMSIG(status)));
+			}
+		}
+	}
+}
+
+
 void HostExec::exec(const std::string& path) const
 {
 	D(bug("HostExec::exec: %s", path.c_str()));
@@ -249,25 +290,79 @@ int HostExec::doexecv(char *const argv[]) const
 		ret = errnoHost2Mint(-ret, TOS_ENSMEM);
 	return ret;
 #else
-	pid_t pid = fork();
-	int ret = pid;
+	int pipefds[2];
+	pid_t pid;
+	int ret;
+	int count, err;
+
+	if (pipe(pipefds))
+	{
+		return errnoHost2Mint(errno, TOS_EINVAL);
+	}
+	if (fcntl(pipefds[1], F_SETFD, fcntl(pipefds[1], F_GETFD) | FD_CLOEXEC))
+	{
+		err = errno;
+		::close(pipefds[0]);
+		::close(pipefds[1]);
+		return errnoHost2Mint(err, TOS_EINVAL);
+	}
+
+	pid = fork();
+	ret = pid;
 	if (pid == -1)
 	{
 		D(bug("HostExec::exec: fork() failed"));
 		ret = errnoHost2Mint(errno, TOS_ENSMEM);
 	} else if (pid == 0)
 	{
+		::close(pipefds[0]);
 		::execv(argv[0], &argv[0]);
-		/* TODO: propagate errno from child to parent */
+		err = errno;
+		while ((count = ::write(pipefds[1], &err, sizeof(err))) == -1)
+			if (errno != EAGAIN && errno != EINTR)
+				break;
 		_exit(127);
 	} else
 	{
+		::close(pipefds[1]);
+		while ((count = ::read(pipefds[0], &err, sizeof(err))) == -1)
+			if (errno != EAGAIN && errno != EINTR)
+				break;
+		::close(pipefds[0]);
+		if (count)
+		{
+			if (count != sizeof(err))
+				err = errno;
+			bug("NF_HOSTEXEC: exec failed: %s", strerror(err));
+			ret = errnoHost2Mint(err, TOS_ENSMEM);
+		}
 		/*
-		 * We are in the parent.
-		 * TODO: should either wait() on the child and return the exitcode,
-		 * or return the pid to the caller
+		 * we get here if we could not read the errno from the pipe,
+		 * because the pipe was closed by a successful execv() in the child
 		 */
 	}
+
+	{
+		static int signal_handler_installed;
+
+		if (!signal_handler_installed)
+		{
+			struct sigaction sa;
+			sigset_t set;
+
+			memset(&sa, 0, sizeof(sa));
+			sigemptyset(&set);
+#ifdef SA_NOCLDSTOP
+			sa.sa_flags |= SA_NOCLDSTOP;
+#endif
+			sa.sa_handler = child_signal;
+			sigaction(SIGCHLD, &sa, &sa);
+
+			signal_handler_installed = 1;
+		}
+	}
+
+	printf("execv: %d\n", ret);
 	return ret;
 #endif
 }
