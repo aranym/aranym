@@ -1,4 +1,10 @@
 2018/04/13 - Thorsten
+Setting the text segment to a fixed address broke
+the memory probing; make it more robust by skipping
+ranges of already existing mappings
+
+
+2018/04/13 - Thorsten
 Fix some typos, and some bogus tests in configure.ac
 
 

@@ -51,6 +51,9 @@
 #if USE_VALGRIND
 #include <valgrind/memcheck.h>
 #endif
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h>
+#endif
 
 #define DEBUG 0
 #include "debug.h"
@@ -418,42 +421,85 @@ void vm_probe_fixed(void)
 {	
 	// This might need tweaking
 	// 0x01000000 gives SIGSEGV without being catched by handler on linux
-	uintptr const probestart = 0x04000000;
-	uintptr const probeend   = 0xfff00000;
-	size_t  const step       = 0x00100000;
-	size_t  const mapsize    = (probeend - probestart) / step;
+	uintptr_t const probestart = 0x04000000;
+	uintptr_t const probeend   = 0xfff00000;
+	size_t    const step       = 0x00100000;
+	size_t    const mapsize    = (probeend - probestart) / step;
+	size_t    const reserved   = RAMSize + ROMSize + HWSize + RAMEnd;
 	
 	size_t ttram_size = 0;
 	size_t best_size = 0;
 	uintptr best_addr = 0;
 	uintptr addr;
-	char *maptab;
+	signed char *maptab;
 	size_t i, j;
 	
-	maptab = new char[mapsize];
+	maptab = new signed char[mapsize];
 	memset(maptab, 0, mapsize);
 	
 	vm_init();
 	/* no install_sigsegv() here; catch segfaults seperately */
 	
 	printf("probing available memory ranges (this may take a while)\n");
+	/*
+	 * try to blacklist ranges of already existing mappings
+	 * that might overlap. Attempting to use them
+	 * might result in un-catchable segmentation faults
+	 */
+	{
+		FILE *fp = fopen("/proc/self/maps", "r");
+		if (fp != NULL)
+		{
+			char buf[1024];
+			uintptr_t lower, upper;
+			
+			while (fgets(buf, sizeof(buf), fp) != NULL)
+			{
+				if (sscanf(buf, "%" SCNxPTR "-%" SCNxPTR, &lower, &upper) == 2)
+				{
+					lower = lower & ~(step - 1);
+					upper = (upper + step - 1) & ~(step - 1);
+					if (lower < probeend)
+					{
+						if (lower >= reserved)
+							addr = lower - reserved;
+						else
+							addr = lower;
+						for (; addr < (upper + reserved) && addr < probeend; addr += step)
+						{
+							if (addr >= probestart)
+							{
+								i = (addr - probestart) / step;
+								if (i < mapsize)
+								{
+									// printf("will skip 0x%08" PRIxPTR "-0x%08" PRIxPTR "\n", addr, addr + step);
+									maptab[i] = -1;
+								}
+							}
+						}
+					}
+				}
+			}
+			fclose(fp);
+		}
+	}
 	fflush(stdout);
 	for (addr = probestart; addr < probeend; addr += step)
 	{
-		if (try_acquire(addr, ttram_size))
-			maptab[(addr - probestart) / step] = 1;
+		i = (addr - probestart) / step;;
+		if (maptab[i] >= 0 && try_acquire(addr, ttram_size))
+			maptab[i] = 1;
 	}
 	for (i = 0; i < mapsize; i++)
 	{
-		if (maptab[i])
+		if (maptab[i] > 0)
 		{
 			for (j = i + 1; j < mapsize; j++)
-				if (!maptab[j])
+				if (maptab[j] <= 0)
 					break;
 			size_t size = (j - i) * step;
 			addr = probestart + i * step;
 			size_t ttram_size;
-			size_t const reserved = RAMSize + ROMSize + HWSize + RAMEnd;
 			if (size > reserved)
 				ttram_size = size - reserved;
 			else
