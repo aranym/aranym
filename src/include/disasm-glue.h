@@ -14,7 +14,7 @@
  *   we can think of. For this reason, rather bloated.
  *   The problem with this is if the systems default
  *   library doesn't contain support for 68k, you have to compile one yourself,
- *   and install it in a non-default place, or it clashes with the system libary.
+ *   and install it in a non-default place, or it clashes with the system library.
  */
 
 #if defined(MAIN) && !defined(DISASM_USE_BUILTIN) && !defined(DISASM_USE_OPCODES)

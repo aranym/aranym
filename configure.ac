@@ -7,7 +7,7 @@ m4_define(ARANYM_VERSION, m4_esyscmd([sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0
 s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
 s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n']))
 
-AC_INIT(aranym, ARANYM_VERSION, [aranym@lists.bobek.cz,aranym],,[https://sourceforge.net/projects/aranym/files/aranym/])
+AC_INIT(aranym, ARANYM_VERSION, [aranym@googlegroups.com],,[https://github.com/aranym/aranym])
 AC_PREREQ(2.52)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
@@ -288,15 +288,15 @@ fi
 
 dnl Target CPU type.
 ARCHFLAGS=
-HAVE_I386=no
-HAVE_ARM=no
-HAVE_SPARC=no
-HAVE_POWERPC=no
-HAVE_X86_64=no
+HAVE_I386=false
+HAVE_ARM=false
+HAVE_SPARC=false
+HAVE_POWERPC=false
+HAVE_X86_64=false
 case "$host_cpu" in
   i386* | i486* | i586* | i686* | i786* )
 	CPU_TYPE=i386
-	HAVE_I386=yes
+	HAVE_I386=true
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch i386"
         if [[ "x$DEVELOPER_SDK_DIR" = "x" ]]; then
@@ -323,14 +323,14 @@ case "$host_cpu" in
 		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
 	fi
 	;;
-  sparc* ) CPU_TYPE=sparc HAVE_SPARC=yes;;
-  arm* ) CPU_TYPE=arm HAVE_ARM=yes
+  sparc* ) CPU_TYPE=sparc HAVE_SPARC=true;;
+  arm* ) CPU_TYPE=arm HAVE_ARM=true
          CFLAGS="$CFLAGS -ffast-math"
          CXXFLAGS="$CXXFLAGS -ffast-math"          
   	;;
   powerpc* )
 	CPU_TYPE=powerpc
-	HAVE_POWERPC=yes
+	HAVE_POWERPC=true
 	if [[ "x$OS_TYPE" = "xdarwin" ]]; then
 		ARCHFLAGS="-arch ppc"
 		ISYSROOT="-mmacosx-version-min=10.3"
@@ -339,7 +339,7 @@ case "$host_cpu" in
 		LDFLAGS="$LDFLAGS $ISYSROOT $ARCHFLAGS"
 	fi
 	;;
-  x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=yes;;
+  x86_64* ) CPU_TYPE=x86_64 HAVE_X86_64=true;;
   *) CPU_TYPE=unknown;;
 esac
 AM_CONDITIONAL([CPU_TYPE_x86], test "$CPU_TYPE" = "i386")
@@ -719,7 +719,7 @@ fi dnl HAVE_MMAP_VM
 AH_TEMPLATE(HAVE_WIN32_VM, [Define if your system has a working VirtualAlloc()-based memory allocator.])
 if test "$OS_TYPE" = mingw; then
 	AC_DEFINE([HAVE_WIN32_VM])
-        if [[ "x$HAVE_I386" = "xyes" ]]; then
+        if $HAVE_I386; then
 		LDFLAGS="$LDFLAGS -Wl,--large-address-aware"
 	fi
 fi
@@ -1099,7 +1099,7 @@ if [[ "x$WANT_ETHERNET" = "xyes" ]]; then
     AC_DEFINE([ETHERNET_SUPPORT], 1)
     NEED_ARATAPIF="yes"
     HAVE_ETHERNET="yes"
-  elif [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+  elif test "x$OS_TYPE" = "xcygwin" && ( $HAVE_I386 || $HAVE_X86_64 ); then
     AC_DEFINE([ETHERNET_SUPPORT], 1)
     HAVE_ETHERNET="yes"
   elif [[ "x$OS_TYPE" = "xdarwin" ]]; then
@@ -1194,7 +1194,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       fi
       ;;
     netbsd*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
+      if $HAVE_I386 || $HAVE_X86_64; then
         :
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
@@ -1225,7 +1225,7 @@ if [[ "x$WANT_EXSIGSEGV" = "xyes" ]]; then
       esac
       ;;
     cygwin*|mingw*)
-      if [[ "x$HAVE_I386" = "xyes" ]]; then
+      if $HAVE_I386 || $HAVE_X86_64; then
         AC_DEFINE(NO_NESTED_SIGSEGV, 1)
       else
         AC_MSG_ERROR([Sorry, extended segfault handler not supported on your platform])
@@ -1285,42 +1285,42 @@ for am in $ADDRESSING_TEST_ORDER; do
     if [[ "x$HAVE_MMAP_VM" = "xno" -a "x$HAVE_MACH_VM" = "xno" ]]; then
       continue
     fi
-    if [[ "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "linux" && ( $HAVE_I386 || $HAVE_X86_64 || $HAVE_ARM ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xfreebsd" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "freebsd" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xopenbsd" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "openbsd" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xdarwin" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "darwin" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xcygwin" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "cygwin" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xmingw" -a "x$HAVE_I386" ]]; then
+    if test "$OS_TYPE" = "mingw" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xsolaris" -a "x$HAVE=I386" ]]; then
+    if test "$OS_TYPE" = "solaris" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if [[ "x$OS_TYPE" = "xbeos" -a "x$HAVE=I386" ]]; then
+    if test "$OS_TYPE" = "beos" && ( $HAVE_I386 || $HAVE_X86_64 ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
@@ -1381,7 +1381,7 @@ GENCOMP_ARCH=
 
 AH_TEMPLATE([HAVE_CFLAG_NO_REDZONE], [define if your compiler understand -mno-red-zone])
 
-if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
+if test "$GCC" = yes && $HAVE_I386; then
   dnl i386 CPU
   DEFINES="$DEFINES -DUNALIGNED_PROFITABLE -DREGPARAM=\"__attribute__((regparm(3)))\""
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
@@ -1390,7 +1390,7 @@ if [[ "x$GCC" = "xyes" -a "x$HAVE_I386" = "xyes" ]]; then
     CAN_JIT=yes
     GENCOMP_ARCH=x86
   fi
-elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
+elif test "$GCC" = yes && $HAVE_X86_64; then
   dnl x86-64 CPU
   DEFINES="$DEFINES -DUNALIGNED_PROFITABLE"
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
@@ -1412,7 +1412,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_X86_64" = "xyes" ]]; then
 	     AC_DEFINE([HAVE_CFLAG_NO_REDZONE], 1)
 	  fi
   fi
-elif [[ "x$GCC" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]]; then
+elif test "$GCC" = yes && $HAVE_SPARC; then
   dnl SPARC CPU
   case "$host_os" in
   solaris*)
@@ -1435,7 +1435,7 @@ elif [[ "x$GCC" = "xyes" -a "x$HAVE_SPARC" = "xyes" -a "x$HAVE_GAS" = "xyes" ]];
     esac
     ;;
   esac
-elif [[ "x$GCC" = "xyes" -a "x$HAVE_ARM" = "xyes" ]]; then
+elif test "$GCC" = yes && $HAVE_ARM; then
   dnl ARM CPU
   if [[ "x$HAVE_GAS" = "xyes" ]]; then
     case "$host_cpu" in
@@ -1466,7 +1466,7 @@ fi
 
 dnl Check for JIT Version 2
 if [[ "x$WANT_JIT2" = "xyes" ]]; then
-  if [[ "x$HAVE_ARM" = "xyes" ]]; then
+  if $HAVE_ARM; then
     DEFINES="$DEFINES -DUSE_JIT2=1"
   else
     AC_MSG_ERROR([JIT Version 2 is only available for ARM])
@@ -1495,7 +1495,7 @@ if [[ "x$WANT_JIT" = "xyes" -a "x$CAN_JIT" = "xyes" ]]; then
   if [[ "x$WANT_JIT_FPU" = "xyes" ]]; then
     DEFINES="$DEFINES -DUSE_JIT_FPU=1"
   fi
-  if test "$HAVE_X86_64" = yes -a "$OS_TYPE" != darwin; then
+  if test "$OS_TYPE" != darwin && $HAVE_X86_64; then
      # Force text address; needed at least on ArchLinux
      # where it is otherwise set to a high memory address
      # which is not in the range for the JIT addressing scheme
@@ -1564,7 +1564,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
     esac
     ;;
   x86)
-    if test ":$GCC:$HAVE_I386:$HAVE_GAS:" = ":yes:yes:yes:" -o ":$GCC:$HAVE_X86_64:$HAVE_GAS:" = ":yes:yes:yes:"; then
+    if test ":$GCC:$HAVE_I386:$HAVE_GAS:" = ":yes:true:yes:" -o ":$GCC:$HAVE_X86_64:$HAVE_GAS:" = ":yes:true:yes:"; then
       FPE_CORE="i387 fpu core"
       DEFINES="$DEFINES -DFPU_X86"
       break
@@ -2245,7 +2245,7 @@ fi
 dnl Linux/X86 hardware access for parallel port
 
 if test "x$WANT_PARALLELX86" = "xyes" ; then
-	if test "x$OS_TYPE" = "xlinux" -a "x$HAVE_I386" = "xyes"; then
+	if test "x$OS_TYPE" = "xlinux" && $HAVE_I386; then
 		AC_DEFINE([ENABLE_PARALLELX86], 1, [Define if you want to use Linux/X86 hardware access for parallel port])
 	else
 		WANT_PARALLELX86="no"
