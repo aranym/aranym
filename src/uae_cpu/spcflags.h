@@ -11,8 +11,6 @@
 
 #include "SDL_compat.h"
 
-typedef uae_u32 spcflags_t;
-
 enum {
 	SPCFLAG_STOP			= 0x01,
 	SPCFLAG_INTERNAL_IRQ	= 0x02,
@@ -70,7 +68,7 @@ enum {
 	regs.spcflags &= ~(m); \
 } while (0)
 
-#define SleepAndWait()	usleep(1000);
+#define SleepAndWait()	usleep(1000)
 
 #elif (defined(CPU_i386) || defined(CPU_x86_64)) && defined(X86_ASSEMBLY) && !defined(ENABLE_REALSTOP)
 
@@ -84,7 +82,7 @@ enum {
 	__asm__ __volatile__("lock\n\tandl %1,%0" : "=m" (regs.spcflags) : "i" (~(m))); \
 } while (0)
 
-#define SleepAndWait()	usleep(1000);
+#define SleepAndWait()	usleep(1000)
 
 #elif !defined(ENABLE_REALSTOP)
 
@@ -103,7 +101,7 @@ extern  SDL_mutex *spcflags_lock;
 	SDL_UnlockMutex(spcflags_lock);	\
 } while (0)
 
-#define SleepAndWait()	usleep(1000);
+#define SleepAndWait()	usleep(1000)
 
 #else
 /// Full STOP instruction implementation (default configuration)
