@@ -737,8 +737,9 @@ static void genmov16(uae_u32 opcode, struct instr *curi)
 		  "\tadd_l_ri(dst,4);\n"
 		  "\treadlong(src,tmp,scratchie);\n"
 		  "\twritelong_clobber(dst,tmp,scratchie);\n");
-	comprintf("\t} else {\n");
+	comprintf("\t} else\n");
 #endif
+	start_brace();
 	comprintf("\tint tmp=scratchie;\n");
 	comprintf("\tscratchie+=4;\n"
 		"\tget_n_addr(src,src,scratchie);\n"
@@ -754,9 +755,7 @@ static void genmov16(uae_u32 opcode, struct instr *curi)
 		"\tmov_l_Rr(dst,tmp+2,8);\n"
 		"\tforget_about(tmp+2);\n"
 		"\tmov_l_Rr(dst,tmp+3,12);\n");
-#ifdef UAE
-	comprintf("\t}\n");
-#endif
+	close_brace();
 }
 
 static void

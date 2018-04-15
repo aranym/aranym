@@ -677,6 +677,7 @@ static void gen_move16(uae_u32 opcode, struct instr *curi) {
 	else if ((opcode & 0xfff8) == 0xf608)
 		comprintf("\tarm_ADD_l_ri8(dstreg+8,16);\n");
 
+	start_brace();
 	comprintf("\tint tmp=scratchie;\n");
 	comprintf("\tscratchie+=4;\n");
 
@@ -693,6 +694,7 @@ static void gen_move16(uae_u32 opcode, struct instr *curi) {
 			"\tmov_l_Rr(dst,tmp+2,8);\n"
 			"\tforget_about(tmp+2);\n"
 			"\tmov_l_Rr(dst,tmp+3,12);\n");
+	close_brace();
 #endif
 }
 

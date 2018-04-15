@@ -1,3 +1,8 @@
+2018/04/15 - Thorsten
+Small fix to gencomp{_arm}.cpp to protect a generated local variable
+with braces
+
+
 2018/04/14 - Thorsten
 Remove an unused type
 
