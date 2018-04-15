@@ -191,7 +191,6 @@ void comp_frestore_opp (uae_u32 opcode);
 
 extern uae_u32 needed_flags;
 extern uae_u8* comp_pc_p;
-extern void* pushall_call_handler;
 
 #define VREGS 32
 #define VFREGS 16

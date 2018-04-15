@@ -356,10 +356,6 @@ static uintptr taken_pc_p;
 static int     branch_cc;
 static int redo_current_block;
 
-int segvcount=0;
-int soft_flush_count=0;
-int hard_flush_count=0;
-int checksum_count=0;
 static uae_u8* current_compile_p=NULL;
 static uae_u8* max_compile_start;
 static uae_u8* compiled_code=NULL;
@@ -367,7 +363,7 @@ static uae_s32 reg_alloc_run;
 const int POPALLSPACE_SIZE = 2048; /* That should be enough space */
 static uae_u8 *popallspace=NULL;
 
-void* pushall_call_handler=NULL;
+static void* pushall_call_handler=NULL;
 static void* popall_do_nothing=NULL;
 static void* popall_exec_nostats=NULL;
 static void* popall_execute_normal=NULL;
@@ -381,7 +377,7 @@ static void* popall_check_checksum=NULL;
  * lists that we maintain for each hash result.
  */
 static cacheline cache_tags[TAGSIZE];
-int letit=0;
+static int cache_enabled=0;
 static blockinfo* hold_bi[MAX_HOLD_BI];
 static blockinfo* active;
 static blockinfo* dormant;
@@ -438,7 +434,7 @@ uae_u32 m68k_pc_offset;
  * side effects they would have on the flags are not important. This
  * variable indicates whether we need the side effects or not
  */
-uae_u32 needflags=0;
+static uae_u32 needflags=0;
 
 /* Flag handling is complicated.
  *
@@ -3465,14 +3461,14 @@ void calc_disp_ea_020(int base, uae_u32 dp, int target, int tmp)
 
 void set_cache_state(int enabled)
 {
-	if (enabled!=letit)
+	if (enabled!=cache_enabled)
 		flush_icache_hard(77);
-	letit=enabled;
+	cache_enabled=enabled;
 }
 
 int get_cache_state(void)
 {
-	return letit;
+	return cache_enabled;
 }
 
 uae_u32 get_jitted_size(void)
@@ -3702,8 +3698,6 @@ static inline int block_check_checksum(blockinfo* bi)
 
 	if (bi->status!=BI_NEED_CHECK)
 		return 1;  /* This block is in a checked state */
-
-	checksum_count++;
 
 	if (bi->c1 || bi->c2)
 		calc_checksum(bi,&c1,&c2);
@@ -4251,7 +4245,6 @@ static void flush_icache_hard(int n)
 {
 	blockinfo* bi, *dbi;
 
-	hard_flush_count++;
 #ifndef UAE
 	jit_log("JIT: Flush Icache_hard(%d/%x/%p), %u KB",
 		n,regs.pc,regs.pc_p,current_cache_size/1024);
@@ -4308,7 +4301,6 @@ void flush_icache(int n)
 		return;
 	}
 #endif
-	soft_flush_count++;
 	if (!active)
 		return;
 
@@ -4441,11 +4433,11 @@ void compiler_dumpstate(void)
 #ifdef UAE
 void compile_block(cpu_history *pc_hist, int blocklen, int totcycles)
 {
-	if (letit && compiled_code && currprefs.cpu_model >= 68020) {
+	if (cache_enabled && compiled_code && currprefs.cpu_model >= 68020) {
 #else
 static void compile_block(cpu_history* pc_hist, int blocklen)
 {
-	if (letit && compiled_code) {
+	if (cache_enabled && compiled_code) {
 #endif
 #ifdef PROFILE_COMPILE_TIME
 		compile_count++;
