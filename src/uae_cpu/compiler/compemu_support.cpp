@@ -66,7 +66,7 @@
 #ifdef UAE
 #include "options.h"
 #include "events.h"
-#include "memory.h"
+#include "uae/memory.h"
 #include "custom.h"
 #else
 #include "cpu_emulation.h"
@@ -81,6 +81,9 @@
 #include "comptbl.h"
 #ifdef UAE
 #include "compemu.h"
+#ifdef FSUAE
+#include "codegen_udis86.h"
+#endif
 #else
 #include "compiler/compemu.h"
 #include "fpu/fpu.h"
@@ -90,6 +93,9 @@
 #include "verify.h"
 
 #ifdef UAE
+#ifdef FSUAE
+#include "uae/fs.h"
+#endif
 #include "uae/log.h"
 
 #include "uae/vm.h"
@@ -137,6 +143,15 @@ static inline int distrust_check(int value)
 	return 1;
 #else
 	int distrust = value;
+#ifdef FSUAE
+	switch (value) {
+	case 0: distrust = 0; break;
+	case 1: distrust = 1; break;
+	case 2: distrust = ((start_pc & 0xF80000) == 0xF80000); break;
+	case 3: distrust = !have_done_picasso; break;
+	default: abort();
+	}
+#endif
 	return distrust;
 #endif
 }
@@ -254,6 +269,8 @@ extern int quit_program;
 // gb-- Extra data for Basilisk II/JIT
 #ifdef JIT_DEBUG
 static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
+#else
+const bool		JITDebug			= false;	// Don't use JIT debug mode at all
 #endif
 #if USE_INLINING
 #ifdef UAE
@@ -363,7 +380,7 @@ static uae_s32 reg_alloc_run;
 const int POPALLSPACE_SIZE = 2048; /* That should be enough space */
 static uae_u8 *popallspace=NULL;
 
-static void* pushall_call_handler=NULL;
+void* pushall_call_handler=NULL;
 static void* popall_do_nothing=NULL;
 static void* popall_exec_nostats=NULL;
 static void* popall_execute_normal=NULL;
@@ -482,7 +499,7 @@ static inline blockinfo* get_blockinfo_addr(void* addr)
 /*******************************************************************
  * Disassembler support                                            *
  *******************************************************************/
-		
+
 #define TARGET_M68K		0
 #define TARGET_POWERPC	1
 #define TARGET_X86		2
@@ -513,7 +530,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 #if defined(HAVE_DISASM_M68K)
 		{
 			char buf[256];
-			
+
 			disasm_info.memory_vma = ((memptr)((uintptr_t)(start) - MEMBaseDiff));
 			while (length > 0)
 			{
@@ -534,7 +551,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 		{
 			const uint8 *end = start + length;
 			char buf[256];
-			
+
 			while (start < end)
 			{
 				start = x86_disasm(start, buf);
@@ -548,7 +565,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 		{
 			const uint8 *end = start + length;
 			char buf[256];
-			
+
 			while (start < end)
 			{
 				start = arm_disasm(start, buf);
@@ -2622,8 +2639,10 @@ static scratch_t scratch;
  * Support functions exposed to newcpu                              *
  ********************************************************************/
 
-#define str_on_off(b) b ? "on" : "off"
-
+static inline const char *str_on_off(bool b)
+{
+	return b ? "on" : "off";
+}
 
 #ifdef UAE
 static
@@ -2655,8 +2674,6 @@ void compiler_init(void)
 	cache_size = bx_options.jit.jitcachesize;
 	jit_log("<JIT compiler> : requested translation cache size : %d KB", cache_size);
 
-	// Initialize target CPU (check for features, e.g. CMOV, rat stalls)
-	raw_init_cpu();
 	setzflg_uses_bsf = target_check_bsf();
 	jit_log("<JIT compiler> : target processor has CMOV instructions : %s", have_cmov ? "yes" : "no");
 	jit_log("<JIT compiler> : target processor can suffer from partial register stalls : %s", have_rat_stall ? "yes" : "no");
@@ -3004,7 +3021,11 @@ void freescratch(void)
 #if defined(CPU_arm)
 		if (live.nat[i].locked && i != REG_WORK1 && i != REG_WORK2)
 #else
-		if (live.nat[i].locked && i!=ESP_INDEX)
+		if (live.nat[i].locked && i != ESP_INDEX
+#if defined(UAE) && defined(CPU_x86_64)
+			&& i != R12_INDEX
+#endif
+			)
 #endif
 		{
 			jit_log("Warning! %d is locked",i);
@@ -3480,54 +3501,9 @@ uae_u32 get_jitted_size(void)
 
 static uint8 *do_alloc_code(uint32 size, int depth)
 {
-#if defined(__linux__) && 0
-	/*
-	  This is a really awful hack that is known to work on Linux at
-	  least.
-	  
-	  The trick here is to make sure the allocated cache is nearby
-	  code segment, and more precisely in the positive half of a
-	  32-bit address space. i.e. addr < 0x80000000. Actually, it
-	  turned out that a 32-bit binary run on AMD64 yields a cache
-	  allocated around 0xa0000000, thus causing some troubles when
-	  translating addresses from m68k to x86.
-	*/
-	const int CODE_ALLOC_MAX_ATTEMPTS = 10;
-	const int CODE_ALLOC_BOUNDARIES   = 128 * 1024; // 128 KB
-
-	static uint8 * code_base = NULL;
-	if (code_base == NULL) {
-		uintptr page_size = getpagesize();
-		uintptr boundaries = CODE_ALLOC_BOUNDARIES;
-		if (boundaries < page_size)
-			boundaries = page_size;
-		code_base = (uint8 *)sbrk(0);
-		for (int attempts = 0; attempts < CODE_ALLOC_MAX_ATTEMPTS; attempts++) {
-			if (vm_acquire_fixed(code_base, size) == 0) {
-				uint8 *code = code_base;
-				code_base += size;
-				return code;
-			}
-			code_base += boundaries;
-		}
-		return NULL;
-	}
-
-	if (vm_acquire_fixed(code_base, size) == 0) {
-		uint8 *code = code_base;
-		code_base += size;
-		return code;
-	}
-
-	if (depth >= CODE_ALLOC_MAX_ATTEMPTS)
-		return NULL;
-
-	return do_alloc_code(size, depth + 1);
-#else
 	UNUSED(depth);
 	uint8 *code = (uint8 *)vm_acquire(size, VM_MAP_DEFAULT | VM_MAP_32BIT);
 	return code == VM_MAP_FAILED ? NULL : code;
-#endif
 }
 
 static inline uint8 *alloc_code(uint32 size)
@@ -3863,7 +3839,9 @@ static inline void create_popalls(void)
 	r=REG_PC_TMP;
 	compemu_raw_mov_l_rm(r, uae_p32(&regs.pc_p));
 	compemu_raw_and_l_ri(r,TAGMASK);
-	verify(sizeof(cache_tags[0]) == sizeof(void *));
+	{
+		verify(sizeof(cache_tags[0]) == sizeof(void *));
+	}
 	compemu_raw_jmp_m_indexed(uae_p32(cache_tags), r, sizeof(void *));
 
 	/* now the exit points */
@@ -4044,6 +4022,12 @@ static bool merge_blacklist()
 
 void build_comp(void)
 {
+#ifdef FSUAE
+	if (!g_fs_uae_jit_compiler) {
+		jit_log("JIT: JIT compiler is not enabled");
+		return;
+	}
+#endif
 	int i;
 	unsigned long opcode;
 	const struct comptbl* tbl=op_smalltbl_0_comp_ff;
@@ -4062,6 +4046,8 @@ void build_comp(void)
 		: op_smalltbl_5_nf);
 #endif
 #endif
+	// Initialize target CPU (check for features, e.g. CMOV, rat stalls)
+	raw_init_cpu();
 
 #ifdef NATMEM_OFFSET
 #ifdef UAE
@@ -4241,7 +4227,7 @@ static void flush_icache_none(int)
 	/* Nothing to do.  */
 }
 
-static void flush_icache_hard(int n)
+void flush_icache_hard(int n)
 {
 	blockinfo* bi, *dbi;
 
@@ -4406,27 +4392,31 @@ void compiler_dumpstate(void)
 	if (!JITDebug)
 		return;
 	
-	bug("### Host addresses");
-	bug("MEM_BASE    : %lx", (unsigned long)MEMBaseDiff);
-	bug("PC_P        : %p", &regs.pc_p);
-	bug("SPCFLAGS    : %p", &regs.spcflags);
-	bug("D0-D7       : %p-%p", &regs.regs[0], &regs.regs[7]);
-	bug("A0-A7       : %p-%p", &regs.regs[8], &regs.regs[15]);
-	bug(" ");
+	jit_log("### Host addresses");
+	jit_log("MEM_BASE    : %lx", (unsigned long)MEMBaseDiff);
+	jit_log("PC_P        : %p", &regs.pc_p);
+	jit_log("SPCFLAGS    : %p", &regs.spcflags);
+	jit_log("D0-D7       : %p-%p", &regs.regs[0], &regs.regs[7]);
+	jit_log("A0-A7       : %p-%p", &regs.regs[8], &regs.regs[15]);
+	jit_log(" ");
 	
-	bug("### M68k processor state");
+	jit_log("### M68k processor state");
+#ifdef UAE
+	m68k_dumpstate(NULL);
+#else
 	m68k_dumpstate(stderr, 0);
-	bug(" ");
+#endif
+	jit_log(" ");
 	
-	bug("### Block in Atari address space");
-	bug("M68K block   : %p",
+	jit_log("### Block in Atari address space");
+	jit_log("M68K block   : %p",
 			  (void *)(uintptr)last_regs_pc_p);
 	if (last_regs_pc_p != 0) {
-		bug("Native block : %p (%d bytes)",
+		jit_log("Native block : %p (%d bytes)",
 			  (void *)last_compiled_block_addr,
 			  get_blockinfo_addr(last_regs_pc_p)->direct_handler_size);
 	}
-	bug(" ");
+	jit_log(" ");
 }
 #endif
 
@@ -4444,7 +4434,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		clock_t start_time = clock();
 #endif
 #ifdef JIT_DEBUG
-		bool disasm_block = true;
+		bool disasm_block = false;
 #endif
 
 		/* OK, here we need to 'compile' a block */
@@ -4650,8 +4640,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					bool isnop = do_get_mem_word(pc_hist[i].location) == 0x4e71 ||
 						((i + 1) < blocklen && do_get_mem_word(pc_hist[i+1].location) == 0x4e71);
 					
+#ifdef WINUAE_ARANYM
 					if (isnop)
 						compemu_raw_mov_l_mi((uintptr)&regs.fault_pc, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
+#endif
 
 					comptbl[opcode](opcode);
 					freescratch();
@@ -4745,7 +4737,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			}
 #endif
 			log_flush();
-	
+
 			if (next_pc_p) { /* A branch was registered */
 				uintptr t1=next_pc_p;
 				uintptr t2=taken_pc_p;
@@ -4841,7 +4833,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 					tbi = get_blockinfo_addr_new((void*) v, 1);
 					match_states(tbi);
-	
+
 #ifdef UAE
 					raw_sub_l_mi(uae_p32(&countdown),scaled_cycles(totcycles));
 					raw_jcc_l_oponly(NATIVE_CC_PL);
@@ -4877,10 +4869,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		if (callers_need_recompile(&live,&(bi->env))) {
 			mark_callers_recompile(bi);
 		}
-	
+
 		big_to_small_state(&live,&(bi->env));
 #endif
-	
+
 #if USE_CHECKSUM_INFO
 		remove_from_list(bi);
 		if (trace_in_rom) {
@@ -4924,9 +4916,13 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 			uaecptr block_addr = start_pc + ((char *)pc_hist[0].location - (char *)start_pc_p);
 			jit_log("M68K block @ 0x%08x (%d insns)", block_addr, blocklen);
 			uae_u32 block_size = ((uae_u8 *)pc_hist[blocklen - 1].location - (uae_u8 *)pc_hist[0].location) + 1;
+#ifdef WINUAE_ARANYM
 			disasm_m68k_block((const uae_u8 *)pc_hist[0].location, block_size);
+#endif
 			jit_log("Compiled block @ %p", pc_hist[0].location);
+#ifdef WINUAE_ARANYM
 			disasm_native_block((const uae_u8 *)current_block_start_target, bi->direct_handler_size);
+#endif
 			UNUSED(block_addr);
 		}
 #endif
@@ -4977,11 +4973,6 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		do_extra_cycles(totcycles);
 #endif
 	}
-
-#ifndef UAE
-	/* Account for compilation time */
-	cpu_do_check_ticks();
-#endif
 }
 
 #ifdef UAE

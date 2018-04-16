@@ -107,6 +107,10 @@
 
 #if defined(CPU_x86_64)
 #ifdef UAE
+/* Register R12 (and ESP) cannot be used with simple [r/m + disp32] addressing,
+ * since r/m bits 100 implies SIB byte. Simplest fix is to not use these
+ * registers. Also note that these registers are listed in the freescratch
+ * function as well. */
 uae_s8 always_used[] = { ESP_INDEX, R12_INDEX, -1 };
 #else
 uae_s8 always_used[] = { ESP_INDEX, -1 };
@@ -3742,8 +3746,7 @@ cpuid(uae_u32 op, uae_u32 *eax, uae_u32 *ebx, uae_u32 *ecx, uae_u32 *edx)
 	cpuid_count(op, 0, eax, ebx, ecx, edx);
 }
 
-static void
-raw_init_cpu(void)
+static void raw_init_cpu(void)
 {
 	struct cpuinfo_x86 *c = &cpuinfo;
 	uae_u32 dummy;
@@ -4399,17 +4402,17 @@ LOWFUNC(NONE,NONE,2,raw_ftwotox_rr,(FW d, FR s))
 	emit_byte(0xd9);
 	emit_byte(0xfc);    /* frndint int(x) */
 	emit_byte(0xd9);
-	emit_byte(0xc9);  /* swap top two elements */
+	emit_byte(0xc9);    /* swap top two elements */
 	emit_byte(0xd8);
-	emit_byte(0xe1);  /* subtract rounded from original */
+	emit_byte(0xe1);    /* fsub frac(x) = x - int(x) */
 	emit_byte(0xd9);
-	emit_byte(0xf0);  /* f2xm1 */
-	x86_fadd_m((uintptr)&one);	/* Add '1' without using extra stack space */
+	emit_byte(0xf0);    /* f2xm1 (2^frac(x))-1 */
+	x86_fadd_m((uintptr) &one); /* Add '1' without using extra stack space */
 	emit_byte(0xd9);
-	emit_byte(0xfd);  /* and scale it */
+	emit_byte(0xfd);    /* fscale (2^frac(x))*2^int(x) */
 	emit_byte(0xdd);
-	emit_byte(0xd9);  /* take he rounded value off */
-	tos_make(d); /* store to destination */
+	emit_byte(0xd9);    /* fstp copy & pop */
+	tos_make(d);        /* store y=2^x */
 }
 LENDFUNC(NONE,NONE,2,raw_ftwotox_rr,(FW d, FR s))
 

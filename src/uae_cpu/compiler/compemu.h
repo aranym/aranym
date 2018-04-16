@@ -130,11 +130,19 @@ union cacheline {
 			  for jump targets */
 
 #define INDIVIDUAL_INST 0
+#ifdef WINUAE_ARANYM
 #define FLAG_X    0x0010
 #define FLAG_N    0x0008
 #define FLAG_Z    0x0004
 #define FLAG_V    0x0002
 #define FLAG_C    0x0001
+#else
+#define FLAG_C    0x0010
+#define FLAG_V    0x0008
+#define FLAG_Z    0x0004
+#define FLAG_N    0x0002
+#define FLAG_X    0x0001
+#endif
 #define FLAG_CZNV (FLAG_C | FLAG_Z | FLAG_N | FLAG_V)
 #define FLAG_ALL  (FLAG_C | FLAG_Z | FLAG_N | FLAG_V | FLAG_X)
 #define FLAG_ZNV  (FLAG_Z | FLAG_N | FLAG_V)
@@ -175,6 +183,7 @@ extern uae_u32 get_jitted_size(void);
 extern void (*flush_icache)(int n);
 #else
 extern void flush_icache(int n);
+extern void flush_icache_hard(int n);
 #endif
 #endif
 extern void alloc_cache(void);
@@ -191,6 +200,7 @@ void comp_frestore_opp (uae_u32 opcode);
 
 extern uae_u32 needed_flags;
 extern uae_u8* comp_pc_p;
+extern void* pushall_call_handler;
 
 #define VREGS 32
 #define VFREGS 16
