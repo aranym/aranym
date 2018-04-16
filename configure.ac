@@ -724,57 +724,6 @@ if test "$OS_TYPE" = mingw; then
 	fi
 fi
 
-dnl Check if we have POSIX shared memory support
-AC_CACHE_CHECK([whether POSIX shared memory is working],
-  ac_cv_have_posix_shm, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
-    #define HAVE_POSIX_SHM
-    $OSdarwinReq
-    #include "$srcdir/src/Unix/vm_alloc.cpp"
-    int main(void) { /* returns 0 if we have working POSIX shm */
-      if (vm_init() < 0) exit(2);
-      char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
-      if (m1 == VM_MAP_FAILED) exit(3);
-      vm_exit(); exit(0);
-    }
-  ], ac_cv_have_posix_shm=yes, ac_cv_have_posix_shm=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_have_posix_shm="guessing no"
-  )
-  AC_LANG_RESTORE
-  ]
-)
-AC_TRANSLATE_DEFINE(HAVE_POSIX_SHM, $ac_cv_have_posix_shm,
-  [Define if your system supports POSIX shared memory.])
-
-dnl Check if we have working 33-bit memory addressing
-AC_CACHE_CHECK([whether 33-bit memory addressing is working],
-  ac_cv_have_33bit_addressing, [
-  AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
-    #define USE_33BIT_ADDRESSING 1
-    #include "$srcdir/src/Unix/vm_alloc.cpp"
-    int main(void) { /* returns 0 if we have working 33-bit addressing */
-      if (sizeof(void *) < 8) exit(1);
-      if (vm_init() < 0) exit(2);
-      char *m1 = (char *)vm_acquire(32768, VM_MAP_DEFAULT | VM_MAP_33BIT);
-      if (m1 == VM_MAP_FAILED) exit(3);
-      char *m2 = m1 + (1L << 32);
-      m1[0] = 0x12; if (m2[0] != 0x12) exit(4);
-      m2[0] = 0x34; if (m1[0] != 0x34) exit(5);
-      vm_exit(); exit(0);
-    }
-  ], ac_cv_have_33bit_addressing=yes, ac_cv_have_33bit_addressing=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_have_33bit_addressing="guessing no"
-  )
-  AC_LANG_RESTORE
-  ]
-)
-
 dnl Check signal handlers need to be reinstalled
 AC_CACHE_CHECK([whether signal handlers need to be reinstalled],
   ac_cv_signal_need_reinstall, [
@@ -1398,7 +1347,6 @@ elif test "$GCC" = yes && $HAVE_X86_64; then
     DEFINES="$DEFINES -DX86_64_ASSEMBLY -DOPTIMIZED_FLAGS"
     CAN_JIT=yes
     GENCOMP_ARCH=x86
-    WANT_33BIT_ADDRESSING=yes
 	SAVED_CXXFLAGS="$CXXFLAGS"
 	CXXFLAGS="$CXXFLAGS -mno-red-zone"
 	  AC_CACHE_CHECK([whether GCC supports -mno-red-zone], ac_cv_gcc_no_red_zone, [
@@ -1512,13 +1460,6 @@ AM_CONDITIONAL([USE_JIT], test "$WANT_JIT" = "yes")
 AM_CONDITIONAL([USE_JIT_FPU], test "$WANT_JIT_FPU" = "yes")
 AM_CONDITIONAL([USE_JIT2], test "$WANT_JIT2" = "yes")
 
-
-dnl Use 33-bit memory addressing?
-if [[ "$ac_cv_have_33bit_addressing:$WANT_33BIT_ADDRESSING" = "yes:yes" ]]; then
-  use_33bit_addressing=yes
-fi
-AC_TRANSLATE_DEFINE(USE_33BIT_ADDRESSING, $use_33bit_addressing,
-  [Define to use 33-bit memory addressing on 64-bit JIT capable systems.])
 
 dnl Select appropriate FPU source.
 gcc_AC_C_FLOAT_FORMAT
