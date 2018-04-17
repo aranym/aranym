@@ -2727,7 +2727,7 @@ void compiler_exit(void)
 #else
 #if DEBUG
 #if defined(USE_DATA_BUFFER)
-	jit_log("data_wasted = %d bytes", data_wasted);
+	jit_log("data_wasted = %ld bytes", data_wasted);
 #endif
 #endif
 

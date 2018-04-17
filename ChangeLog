@@ -1,3 +1,7 @@
+2018/04/17 - Thorsten
+Add some missing declarations for arm
+
+
 2018/04/16 - Thorsten
 Remove long obsolete tests for 33bit adressing from configure
 
