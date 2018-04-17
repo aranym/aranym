@@ -116,8 +116,6 @@ extern struct instr {
 } *table68k;
 
 extern void read_table68k (void);
-extern void do_merges (void);
-extern int get_no_mismatches (void);
 extern int nr_cpuop_funcs;
 
 #ifdef __cplusplus

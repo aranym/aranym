@@ -92,6 +92,8 @@
 #endif
 #include "verify.h"
 
+static void build_comp(void);
+
 #ifdef UAE
 #ifdef FSUAE
 #include "uae/fs.h"
@@ -2812,7 +2814,7 @@ bool compiler_use_jit(void)
 }
 #endif
 
-void init_comp(void)
+static void init_comp(void)
 {
 	int i;
 	uae_s8* cb=can_byte;
@@ -3014,7 +3016,7 @@ static void flush_keepflags(void)
 }
 #endif
 
-void freescratch(void)
+static void freescratch(void)
 {
 	int i;
 	for (i=0;i<N_REGS;i++)
@@ -4020,7 +4022,7 @@ static bool merge_blacklist()
 	return true;
 }
 
-void build_comp(void)
+static void build_comp(void)
 {
 #ifdef FSUAE
 	if (!g_fs_uae_jit_compiler) {

@@ -168,13 +168,9 @@ extern void compiler_init(void);
 extern void compiler_exit(void);
 extern bool compiler_use_jit(void);
 #endif
-extern void init_comp(void);
 extern void flush(int save_regs);
-extern void small_flush(int save_regs);
 extern void set_target(uae_u8* t);
 extern uae_u8* get_target(void);
-extern void freescratch(void);
-extern void build_comp(void);
 extern void set_cache_state(int enabled);
 extern int get_cache_state(void);
 extern uae_u32 get_jitted_size(void);
@@ -461,7 +457,6 @@ void do_nothing(void);
 #else
 
 static inline void flush_icache(int) { }
-static inline void build_comp() { }
 
 #endif /* !USE_JIT */
 

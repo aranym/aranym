@@ -23,6 +23,8 @@ using std::strlen;
 using std::malloc;
 
 int nr_cpuop_funcs;
+struct instr *table68k;
+static int readcpu_mismatch;
 
 struct mnemolookup lookuptab[] = {
     { i_ILLG, "ILLEGAL" },
@@ -158,7 +160,6 @@ struct mnemolookup lookuptab[] = {
     { i_ILLG, "" },
 };
 
-struct instr *table68k;
 
 static inline amodes mode_from_str (const char *str)
 {
@@ -817,22 +818,6 @@ static void build_insn (int insn)
 }
 
 
-void read_table68k (void)
-{
-    int i;
-
-    table68k = (struct instr *)malloc (65536 * sizeof (struct instr));
-    for (i = 0; i < 65536; i++) {
-	table68k[i].mnemo = i_ILLG;
-	table68k[i].handler = -1;
-    }
-    for (i = 0; i < n_defs68k; i++) {
-	build_insn (i);
-    }
-}
-
-static int readcpu_mismatch;
-
 static void handle_merges (long int opcode)
 {
     uae_u16 smsk;
@@ -910,7 +895,7 @@ static void handle_merges (long int opcode)
     }
 }
 
-void do_merges (void)
+static void do_merges (void)
 {
     long int opcode;
     int nr = 0;
@@ -924,7 +909,18 @@ void do_merges (void)
     nr_cpuop_funcs = nr;
 }
 
-int get_no_mismatches (void)
+
+void read_table68k (void)
 {
-    return readcpu_mismatch;
+    int i;
+
+    table68k = (struct instr *)malloc (65536 * sizeof (struct instr));
+    for (i = 0; i < 65536; i++) {
+	table68k[i].mnemo = i_ILLG;
+	table68k[i].handler = -1;
+    }
+    for (i = 0; i < n_defs68k; i++) {
+	build_insn (i);
+    }
+    do_merges();
 }

@@ -225,7 +225,6 @@ void init_m68k (void)
 #ifdef USE_JIT
 	/* still needed by build_comp(); FIXME */
     read_table68k ();
-    do_merges ();
 #endif
     fpu_init (CPUType == 4);
 }
