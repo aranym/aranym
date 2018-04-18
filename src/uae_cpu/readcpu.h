@@ -115,7 +115,8 @@ extern struct instr {
     unsigned int unused2:2;
 } *table68k;
 
-extern void read_table68k (void);
+extern void init_table68k(void);
+extern void exit_table68k(void);
 extern int nr_cpuop_funcs;
 
 #ifdef __cplusplus

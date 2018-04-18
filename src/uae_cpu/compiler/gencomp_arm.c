@@ -4925,7 +4925,7 @@ void cygwin_mingw_abort()
 
 int main(void)
 {
-	read_table68k();
+	init_table68k();
 
 	opcode_map = (int *) malloc(sizeof(int) * nr_cpuop_funcs);
 	opcode_last_postfix = (int *) malloc(sizeof(int) * nr_cpuop_funcs);

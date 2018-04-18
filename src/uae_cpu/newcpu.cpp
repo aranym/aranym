@@ -222,19 +222,12 @@ void init_m68k (void)
 	movem_index2[i] = 7-j;
 	movem_next[i] = i & (~(1 << j));
     }
-#ifdef USE_JIT
-	/* still needed by build_comp(); FIXME */
-    read_table68k ();
-#endif
     fpu_init (CPUType == 4);
 }
 
 void exit_m68k (void)
 {
 	fpu_exit ();
-
-	free(table68k);
-	table68k = NULL;
 }
 
 struct regstruct regs, lastint_regs;

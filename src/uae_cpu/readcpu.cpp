@@ -910,10 +910,11 @@ static void do_merges (void)
 }
 
 
-void read_table68k (void)
+void init_table68k (void)
 {
     int i;
 
+	free(table68k);
     table68k = (struct instr *)malloc (65536 * sizeof (struct instr));
     for (i = 0; i < 65536; i++) {
 	table68k[i].mnemo = i_ILLG;
@@ -923,4 +924,11 @@ void read_table68k (void)
 	build_insn (i);
     }
     do_merges();
+}
+
+
+void exit_table68k (void)
+{
+	free(table68k);
+	table68k = NULL;
 }

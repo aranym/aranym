@@ -2701,6 +2701,7 @@ void compiler_init(void)
 	jit_log("<JIT compiler> : separate blockinfo allocation : %s", str_on_off(USE_SEPARATE_BIA));
 
 	// Build compiler tables
+	init_table68k();
 	build_comp();
 #endif
 
@@ -2794,6 +2795,8 @@ void compiler_exit(void)
 		   100.0*double(cum_reg_count)/double(tot_reg_count));
 	}
 #endif
+
+	exit_table68k();
 }
 
 #ifdef UAE
