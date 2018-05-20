@@ -30,6 +30,8 @@
 
 #ifdef HAVE_DISASM_X86 /* rest of file */
 
+#ifdef DISASM_USE_OPCODES
+
 #include <dis-asm.h>
 
 /*
@@ -44,11 +46,18 @@ extern int print_insn_i386               (bfd_vma, disassemble_info *);
 }
 #endif
 
+#else
+
+#include "disasm/disasm-x86.h"
+#include "disasm/disasm-builtin.h"
+
+#endif /* DISASM_USE_OPCODES */
+
 struct opcodes_info {
 	char linebuf[128];
 	size_t bufsize;
 	size_t linepos;
-	disassemble_info opcodes_info;
+	disassemble_info *opcodes_info;
 };
 
 
@@ -76,6 +85,7 @@ static int opcodes_printf(void *info, const char *format, ...)
 const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 {
 	struct opcodes_info info;
+	disassemble_info ainfo;
 	int len;
 	int i;
 	char *opcode;
@@ -83,29 +93,39 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 	
 	info.linepos = 0;
 	info.bufsize = sizeof(info.linebuf);
-	INIT_DISASSEMBLE_INFO(info.opcodes_info, &info, opcodes_printf);
-	info.opcodes_info.buffer = (bfd_byte *)ainstr;
-	info.opcodes_info.buffer_length = 15; // largest instruction size on x86
-	info.opcodes_info.buffer_vma = (uintptr)ainstr;
-	info.opcodes_info.arch = bfd_arch_i386;
+	info.opcodes_info = &ainfo;
+#ifdef DISASM_USE_OPCODES
+	INIT_DISASSEMBLE_INFO(*info.opcodes_info, &info, opcodes_printf);
+	ainfo.buffer = (bfd_byte *)ainstr;
+	ainfo.buffer_length = 15; // largest instruction size on x86
+	ainfo.buffer_vma = (uintptr)ainstr;
+	ainfo.arch = bfd_arch_i386;
 #ifdef CPU_i386
-	info.opcodes_info.mach = bfd_mach_i386_i386;
+	ainfo.mach = bfd_mach_i386_i386;
 #else
-	info.opcodes_info.mach = bfd_mach_x86_64;
+	ainfo.mach = bfd_mach_x86_64;
 #endif
-	disassemble_init_for_target(&info.opcodes_info);
-	len = print_insn_i386(info.opcodes_info.buffer_vma, &info.opcodes_info);
+	disassemble_init_for_target(&ainfo);
+	len = print_insn_i386(ainfo.buffer_vma, &ainfo);
+#endif
+
+#ifdef DISASM_USE_BUILTIN
+	x86_disassemble_init(&info.opcodes_info, &info, opcodes_printf);
+	len = x86_print_insn((bfd_vma)ainstr, info.opcodes_info);
+#endif
+
 	info.linebuf[info.linepos] = '\0';
+
 #ifdef CPU_i386
 	sprintf(buf, "[%08x]", (uintptr)ainstr);
 #else
 	sprintf(buf, "[%016lx]", (uintptr)ainstr);
 #endif
-	for (i = 0; i < 7 && i < len; i++)
+	for (i = 0; i < 12 && i < len; i++)
 	{
 		sprintf(buf + strlen(buf), " %02x", ainstr[i]);
 	}
-	for (; i < 7; i++)
+	for (; i < 12; i++)
 		strcat(buf, "   ");
 	opcode = info.linebuf;
 	if (strncmp(opcode, "addr32", 6) == 0)

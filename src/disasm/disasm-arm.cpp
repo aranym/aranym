@@ -50,6 +50,7 @@ extern int print_insn_aarch64          (bfd_vma, disassemble_info *);
 #else
 
 #include "disasm/disasm-arm.h"
+#include "disasm/disasm-builtin.h"
 
 #endif /* DISASM_USE_OPCODES */
 
@@ -57,7 +58,7 @@ struct opcodes_info {
 	char linebuf[128];
 	size_t bufsize;
 	size_t linepos;
-	disassemble_info opcodes_info;
+	disassemble_info *opcodes_info;
 };
 
 
@@ -85,6 +86,7 @@ static int opcodes_printf(void *info, const char *format, ...)
 const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 {
 	struct opcodes_info info;
+	disassemble_info ainfo;
 	int len;
 	int i;
 	char *opcode;
@@ -92,30 +94,31 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 	
 	info.linepos = 0;
 	info.bufsize = sizeof(info.linebuf);
+	info.opcodes_info = &ainfo;
 #ifdef DISASM_USE_OPCODES
 	INIT_DISASSEMBLE_INFO(info.opcodes_info, &info, opcodes_printf);
-	info.opcodes_info.buffer = (bfd_byte *)ainstr;
-	info.opcodes_info.buffer_length = 16;
-	info.opcodes_info.buffer_vma = (uintptr)ainstr;
+	ainfo.buffer = (bfd_byte *)ainstr;
+	ainfo.buffer_length = 16;
+	ainfo.buffer_vma = (uintptr)ainstr;
 #ifdef CPU_arm
-	info.opcodes_info.arch = bfd_arch_arm;
-	info.opcodes_info.mach = bfd_mach_arm_unknown;
-	disassemble_init_for_target(&info.opcodes_info);
-	len = print_insn_little_arm(info.opcodes_info.buffer_vma, &info.opcodes_info);
+	ainfo.arch = bfd_arch_arm;
+	ainfo.mach = bfd_mach_arm_unknown;
+	disassemble_init_for_target(&ainfo);
+	len = print_insn_little_arm(ainfo.buffer_vma, &ainfo);
 #else
-	info.opcodes_info.arch = bfd_arch_aarch64;
-	info.opcodes_info.mach = bfd_mach_aarch64;
-	disassemble_init_for_target(&info.opcodes_info);
-	len = print_insn_aarch64(info.opcodes_info.buffer_vma, &info.opcodes_info);
+	ainfo.arch = bfd_arch_aarch64;
+	ainfo.mach = bfd_mach_aarch64;
+	disassemble_init_for_target(&ainfo);
+	len = print_insn_aarch64(ainfo.buffer_vma, &ainfo);
 #endif
 #endif
 
 #ifdef DISASM_USE_BUILTIN
 	arm_disassemble_init(&info.opcodes_info, &info, opcodes_printf);
 #ifdef CPU_arm
-	len = arm_print_insn(ainstr, &info.opcodes_info);
+	len = arm_print_insn((bfd_vma)ainstr, info.opcodes_info);
 #else
-	len = aarch64_print_insn(ainstr, &info.opcodes_info);
+	len = aarch64_print_insn((bfd_vma)ainstr, info.opcodes_info);
 #endif
 #endif
 

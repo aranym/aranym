@@ -92,6 +92,8 @@ typedef struct _m68k_disasm_info {
 	enum m68k_fpu fpu;
 	enum m68k_mmu mmu;
 	
+	int is_64bit;
+
 	memptr memory_vma;
 	uae_u32 reloffset;
 	
@@ -151,7 +153,7 @@ int m68k_disasm_builtin(m68k_disasm_info *info);
 
 #endif /* HAVE_DISASM_M68K */
 
-#if defined(DISASM_USE_OPCODES) && (defined(CPU_i386) || defined(CPU_x86_64))
+#if (defined(DISASM_USE_BUILTIN) || defined(DISASM_USE_OPCODES)) && (defined(CPU_i386) || defined(CPU_x86_64))
 
 #define HAVE_DISASM_X86 1
 
@@ -167,15 +169,7 @@ const uint8 *ppc_disasm(const uint8 *ainstr, char *buf);
 
 #endif
 
-#if defined(DISASM_USE_OPCODES) && (defined(CPU_arm))
-
-#define HAVE_DISASM_ARM 1
-
-const uint8 *arm_disasm(const uint8 *ainstr, char *buf);
-
-#endif
-
-#if defined(DISASM_USE_BUILTIN) && (defined(CPU_arm))
+#if (defined(DISASM_USE_BUILTIN) || defined(DISASM_USE_OPCODES)) && (defined(CPU_arm))
 
 #define HAVE_DISASM_ARM 1
 

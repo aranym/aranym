@@ -80,14 +80,20 @@ aranym_SOURCES = \
 	cfgopts.cpp \
 	dirty_rects.cpp \
 	dsp.cpp \
-	disasm-glue.cpp \
-	disasm-builtin.cpp \
-	disasm-x86.cpp \
+	disasm/disasm-builtin.h \
+	disasm/disasm-bfd.h \
+	disasm/disasm-glue.cpp \
+	disasm/disasm-builtin.cpp \
+	disasm/disasm-x86.cpp \
 	disasm/disasm-arm.cpp \
 	disasm/disasm-arm.h \
 	disasm/arm.h \
-	disasm/disasm-bfd.h \
 	disasm/disasm-arm-builtin.c \
+	disasm/disasm-x86.h \
+	disasm/i386.h \
+	disasm/i386-opc.h \
+	disasm/i386-dis-evex.h \
+	disasm/disasm-x86-builtin.c \
 	emul_op.cpp \
 	glenums.c \
 	natfeats.cpp \

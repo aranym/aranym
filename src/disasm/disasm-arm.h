@@ -174,12 +174,6 @@ struct disassemble_info {
 
 };
 
-void arm_disassemble_init(disassemble_info *info, void *stream, fprintf_ftype fprintf_func);
-
-/* Disassemble one instruction at the given target address. 
-   Return number of octets processed.  */
-int arm_print_insn(const uint8 *, disassemble_info *);
-
 #ifdef __cplusplus
 }
 #endif

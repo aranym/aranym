@@ -26,10 +26,12 @@
 #ifdef DISASM_USE_BUILTIN				/* rest of file */
 
 #include "disasm-arm.h"
+#include "disasm-builtin.h"
 #include <stdio.h>
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
 
@@ -5628,17 +5630,24 @@ static int generic_symbol_at_address(bfd_vma vma, disassemble_info *info)
 }
 
 
-int arm_print_insn(const uint8 *ainst, disassemble_info *info)
+int arm_print_insn(bfd_vma ainst, disassemble_info *info)
 {
-	info->buffer = ainst;
+	info->buffer = (bfd_byte *)ainst;
 	info->buffer_length = 16;
 	info->buffer_vma = (uintptr_t)ainst;
 	return print_insn((uint32_t)(uintptr_t)ainst, info, TRUE);
 }
 
 
-void arm_disassemble_init(disassemble_info *info, void *stream, fprintf_ftype fprintf_func)
+void arm_disassemble_init(disassemble_info **pinfo, void *stream, fprintf_ftype fprintf_func)
 {
+	disassemble_info *info = *pinfo;
+	
+	if (info == NULL)
+	{
+		info = (disassemble_info *)malloc(sizeof(*info));
+		*pinfo = info;
+	}
 	memset(info, 0, sizeof(*info));
 	
 	info->fprintf_func = fprintf_func;

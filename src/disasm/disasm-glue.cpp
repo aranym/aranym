@@ -1,3 +1,26 @@
+/*
+ * disasm-glue.cpp - interface to either opcode library or builtin disassemblers
+ *
+ * Copyright (c) 2001-2018 Thorsten Otto of ARAnyM dev team (see AUTHORS)
+ * 
+ * This file is part of the ARAnyM project which builds a new and powerful
+ * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
+ *
+ * ARAnyM is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * ARAnyM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ARAnyM; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ 
 #include "sysdeps.h"
 
 #include "memory-uae.h"
@@ -28,15 +51,25 @@ m68k_disasm_info disasm_info;
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int print_insn_m68k               (bfd_vma, disassemble_info *);
+extern int print_insn_m68k(bfd_vma, disassemble_info *);
 #ifdef __cplusplus
 }
 #endif
 
+/*
+ * on 64-bit hosts, libopcodes prints all addresses with 16 digits,
+ * even if we are disassembling for a 32bit processor
+ */
+static void print_32bit_address (bfd_vma addr, struct disassemble_info *info)
+{
+	(*info->fprintf_func) (info->stream, "0x%08x", (unsigned int)addr);
+}
+
 struct opcodes_info {
 	char linebuf[128];
-	int linepos;
-	disassemble_info opcodes_info;
+	size_t bufsize;
+	size_t linepos;
+	disassemble_info *opcodes_info;
 };
 
 
@@ -48,7 +81,7 @@ static int opcodes_printf(void *info, const char *format, ...)
 	size_t remain;
 	
 	va_start(args, format);
-	remain = sizeof(opcodes_info->linebuf) - opcodes_info->linepos - 1;
+	remain = opcodes_info->bufsize - opcodes_info->linepos - 1;
 	len = vsnprintf(opcodes_info->linebuf + opcodes_info->linepos, remain, format, args);
 	if (len > 0)
 	{
@@ -60,14 +93,10 @@ static int opcodes_printf(void *info, const char *format, ...)
 	return len;
 }
 
-/*
- * on 64-bit hosts, libopcodes prints all addresses with 16 digits,
- * even if we are disassembling for a 32bit processor
- */
-static void print_32bit_address (bfd_vma addr, struct disassemble_info *info)
-{
-	(*info->fprintf_func) (info->stream, "0x%08x", (unsigned int)addr);
-}
+#else
+
+#include "disasm-bfd.h"
+#include "disasm-builtin.h"
 
 #endif /* DISASM_USE_OPCODES */
 
@@ -84,6 +113,7 @@ void m68k_disasm_init(m68k_disasm_info *info, enum m68k_cpu cpu)
 		info->cpu = cpu;
 	info->fpu = FPU_68881;
 	info->mmu = cpu >= CPU_68040 ? MMU_68040 : MMU_NONE;
+	info->is_64bit = FALSE;
 	info->memory_vma = m68k_getpc();
 	info->application_data = NULL;
 	info->opcode[0] = '\0';
@@ -99,10 +129,12 @@ void m68k_disasm_init(m68k_disasm_info *info, enum m68k_cpu cpu)
 		opcodes_info = (struct opcodes_info *)info->disasm_data;
 		if (opcodes_info == NULL)
 		{
-			opcodes_info = (struct opcodes_info *)malloc(sizeof(*opcodes_info));
+			opcodes_info = (struct opcodes_info *)calloc(sizeof(*opcodes_info));
+			opcodes_info->opcodes_info = (struct disassemble_info *)calloc(sizeof(struct disassemble_info), 1);
 			info->disasm_data = opcodes_info;
 		}
 		INIT_DISASSEMBLE_INFO(opcodes_info->opcodes_info, info->disasm_data, (fprintf_ftype)opcodes_printf);
+		opcodes_info->opcodes_info->arch = bfd_arch_m68k;
 		opcodes_info->opcodes_info.buffer = (unsigned char *)phys_get_real_address(0);
 		opcodes_info->opcodes_info.buffer_length = 2;
 		opcodes_info->opcodes_info.buffer_vma = 0;
@@ -110,75 +142,75 @@ void m68k_disasm_init(m68k_disasm_info *info, enum m68k_cpu cpu)
 		switch (info->cpu)
 		{
 		case CPU_68000:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68000;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68000;
 			break;
 		case CPU_68008:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68008;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68008;
 			break;
 		case CPU_68010:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68010;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68010;
 			break;
 		case CPU_68020:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68020;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68020;
 			break;
 		case CPU_68030:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68030;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68030;
 			break;
 		case CPU_68040:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68040;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68040;
 			break;
 		case CPU_68060:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68060;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68060;
 			break;
 		case CPU_68302:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68000;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68000;
 			break;
 		case CPU_68331:
 		case CPU_68332:
 		case CPU_68333:
-			opcodes_info->opcodes_info.mach = bfd_mach_m68020;
+			opcodes_info->opcodes_info->mach = bfd_mach_m68020;
 			break;
 		case CPU_CPU32:
-			opcodes_info->opcodes_info.mach = bfd_mach_cpu32;
+			opcodes_info->opcodes_info->mach = bfd_mach_cpu32;
 			break;
 		case CPU_5200:
 		case CPU_5202:
 		case CPU_5204:
 		case CPU_5206:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_c_nodiv;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_c_nodiv;
 			break;
 		case CPU_5206e:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_c_mac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_c_mac;
 			break;
 		case CPU_5207:
 		case CPU_5208:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_aplus_emac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_aplus_emac;
 			break;
 		case CPU_521x:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_aplus_mac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_aplus_mac;
 			break;
 		case CPU_5249:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_a_mac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_a_mac;
 			break;
 		case CPU_528x:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_aplus_emac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_aplus_emac;
 			break;
 		case CPU_5307:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_a_mac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_a_mac;
 			break;
 		case CPU_537x:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_a_emac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_a_emac;
 			break;
 		case CPU_5407:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_b_mac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_b_mac;
 			break;
 		case CPU_547x:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_b_emac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_b_emac;
 			break;
 		case CPU_548x:
 		case CPU_CFV4:
 		case CPU_CFV4e:
-			opcodes_info->opcodes_info.mach = bfd_mach_mcf_isa_b_float_emac;
+			opcodes_info->opcodes_info->mach = bfd_mach_mcf_isa_b_float_emac;
 			break;
 		default:
 			break;
@@ -223,10 +255,11 @@ int m68k_disasm_insn(m68k_disasm_info *info)
 					struct opcodes_info *opcodes_info = (struct opcodes_info *)info->disasm_data;
 					
 					opcodes_info->linepos = 0;
-					opcodes_info->opcodes_info.buffer = phys_get_real_address(info->memory_vma);
-					opcodes_info->opcodes_info.buffer_length = 22;
-					opcodes_info->opcodes_info.buffer_vma = info->memory_vma;
-					len = print_insn_m68k(info->memory_vma, &opcodes_info->opcodes_info);
+					opcodes_info->bufsize = sizeof(opcodes_info->linebuf);
+					opcodes_info->opcodes_info->buffer = phys_get_real_address(info->memory_vma);
+					opcodes_info->opcodes_info->buffer_length = 22;
+					opcodes_info->opcodes_info->buffer_vma = info->memory_vma;
+					len = print_insn_m68k(info->memory_vma, opcodes_info->opcodes_info);
 					opcodes_info->linebuf[opcodes_info->linepos] = '\0';
 					p = strchr(opcodes_info->linebuf, ' ');
 					if (p != NULL)
@@ -239,7 +272,7 @@ int m68k_disasm_insn(m68k_disasm_info *info)
 						 * are not data references
 						 * FIXME
 						 */
-						if (opcodes_info->opcodes_info.insn_type == dis_dref2)
+						if (opcodes_info->opcodes_info->insn_type == dis_dref2)
 							info->num_oper = 2;
 						else
 							info->num_oper = 1;
