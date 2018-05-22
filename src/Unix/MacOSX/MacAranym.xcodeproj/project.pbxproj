@@ -410,6 +410,14 @@
 		347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DB1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		8C54C7DD20B45A2D007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
+		8C54C7DE20B45A41007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
+		8C54C7DF20B45A64007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
+		8C54C7E020B45A71007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
+		8C54C7E120B45A8B007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
+		8C54C7E220B45A8B007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
+		8C54C7E320B45AAC007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
+		8C54C7E420B45AAC007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
 		8C5BB711205DBC76000B8CFC /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
 		8C5BB712205DBC76000B8CFC /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
 		8C5BB713205DBC76000B8CFC /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
@@ -1254,6 +1262,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdl_bmp.cpp; path = ../../sdl_bmp.cpp; sourceTree = "<group>"; };
+		8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "disasm-x86-builtin.c"; path = "../../disasm/disasm-x86-builtin.c"; sourceTree = "<group>"; };
+		8C54C7DB20B459A0007744DD /* disasm-x86.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-x86.cpp"; path = "../../disasm/disasm-x86.cpp"; sourceTree = "<group>"; };
 		8C5BB71A205DBCFD000B8CFC /* nf_hostexec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_hostexec.cpp; sourceTree = "<group>"; };
 		8C5BB71F205DBD31000B8CFC /* nf_hostexec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nf_hostexec.h; sourceTree = "<group>"; };
 		8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_scsidrv.cpp; sourceTree = "<group>"; };
@@ -1264,8 +1274,8 @@
 		8CB53CBC203F1EAD0005E5AD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-builtin.cpp"; path = "../../disasm-builtin.cpp"; sourceTree = "<group>"; };
-		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm-glue.cpp"; sourceTree = "<group>"; };
+		B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-builtin.cpp"; path = "../../disasm/disasm-builtin.cpp"; sourceTree = "<group>"; };
+		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm/disasm-glue.cpp"; sourceTree = "<group>"; };
 		B428FAF60C7BA7100039CA66 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/aranym.nib; sourceTree = "<group>"; };
 		B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4420ED71A0AAC240063F8A9 /* memory-uae.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "memory-uae.h"; sourceTree = "<group>"; };
@@ -1504,6 +1514,8 @@
 				175909550CA453990089CF9F /* dirty_rects.cpp */,
 				B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */,
 				B426E0F019D88567003EEB83 /* disasm-glue.cpp */,
+				8C54C7DB20B459A0007744DD /* disasm-x86.cpp */,
+				8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */,
 				17798CE90A652B50009733EB /* dsp.cpp */,
 				17EC07DF0ECB762900100ED7 /* dsp_core.c */,
 				17EC07E00ECB762900100ED7 /* dsp_cpu.c */,
@@ -2483,6 +2495,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C54C7E320B45AAC007744DD /* disasm-x86.cpp in Sources */,
+				8C54C7E420B45AAC007744DD /* disasm-x86-builtin.c in Sources */,
 				1778A4E61555AA530005B336 /* fpu_mpfr.cpp in Sources */,
 				1778A4651555A8A70005B336 /* cpustbl.cpp in Sources */,
 				1778A4661555A8A70005B336 /* cpuemu.cpp in Sources */,
@@ -2611,6 +2625,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C54C7E020B45A71007744DD /* disasm-x86-builtin.c in Sources */,
+				8C54C7DF20B45A64007744DD /* disasm-x86.cpp in Sources */,
 				17648A1A154F377A005C21BC /* fpu_uae.cpp in Sources */,
 				173598C013F1EE7400F84DB3 /* cpustbl.cpp in Sources */,
 				173598C113F1EE7800F84DB3 /* cpuemu.cpp in Sources */,
@@ -2739,6 +2755,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C54C7DE20B45A41007744DD /* disasm-x86.cpp in Sources */,
+				8C54C7DD20B45A2D007744DD /* disasm-x86-builtin.c in Sources */,
 				17AC409E13F1D42F003B4FAD /* cpudefs.cpp in Sources */,
 				17AC40A013F1D436003B4FAD /* cpustbl.cpp in Sources */,
 				17AC409F13F1D434003B4FAD /* cpuemu.cpp in Sources */,
@@ -2866,6 +2884,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C54C7E120B45A8B007744DD /* disasm-x86.cpp in Sources */,
+				8C54C7E220B45A8B007744DD /* disasm-x86-builtin.c in Sources */,
 				173598C413F1EFE400F84DB3 /* cpuemu.cpp in Sources */,
 				173598C513F1F01D00F84DB3 /* cpudefs.cpp in Sources */,
 				8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */,

@@ -48,8 +48,8 @@ extern int print_insn_i386               (bfd_vma, disassemble_info *);
 
 #else
 
-#include "disasm/disasm-x86.h"
-#include "disasm/disasm-builtin.h"
+#include "disasm-x86.h"
+#include "disasm-builtin.h"
 
 #endif /* DISASM_USE_OPCODES */
 
@@ -119,7 +119,7 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 #ifdef CPU_i386
 	sprintf(buf, "[%08x]", (uintptr)ainstr);
 #else
-	sprintf(buf, "[%016lx]", (uintptr)ainstr);
+	sprintf(buf, "[%016llx]", (unsigned long long)ainstr);
 #endif
 	for (i = 0; i < 12 && i < len; i++)
 	{

@@ -150,6 +150,7 @@ static char *my_stpcpy(char *dest, const char *src)
 	size_t len = strlen(src);
 	return (char *)memcpy(dest, src, len + 1) + len;
 }
+#undef stpcpy
 #define stpcpy my_stpcpy
 #endif
 
