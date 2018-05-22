@@ -347,8 +347,8 @@ MIDFUNC(2,rol_l_rr,(RW4 d, RR1 r))
 	CLOBBER_ROL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in rol_l_rr",r);
 	}
 	raw_rol_l_rr(d,r) ;
 	unlock2(r);
@@ -366,8 +366,8 @@ MIDFUNC(2,rol_w_rr,(RW2 d, RR1 r))
 	CLOBBER_ROL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in rol_w_rr",r);
 	}
 	raw_rol_w_rr(d,r) ;
 	unlock2(r);
@@ -386,8 +386,8 @@ MIDFUNC(2,rol_b_rr,(RW1 d, RR1 r))
 	CLOBBER_ROL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in rol_b_rr",r);
 	}
 	raw_rol_b_rr(d,r) ;
 	unlock2(r);
@@ -405,8 +405,8 @@ MIDFUNC(2,shll_l_rr,(RW4 d, RR1 r))
 	CLOBBER_SHLL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shll_l_rr",r);
 	}
 	raw_shll_l_rr(d,r) ;
 	unlock2(r);
@@ -424,8 +424,8 @@ MIDFUNC(2,shll_w_rr,(RW2 d, RR1 r))
 	CLOBBER_SHLL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shll_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shll_w_rr",r);
 	}
 	raw_shll_w_rr(d,r) ;
 	unlock2(r);
@@ -444,8 +444,8 @@ MIDFUNC(2,shll_b_rr,(RW1 d, RR1 r))
 	CLOBBER_SHLL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shll_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shll_b_rr",r);
 	}
 	raw_shll_b_rr(d,r) ;
 	unlock2(r);
@@ -542,8 +542,8 @@ MIDFUNC(2,shrl_l_rr,(RW4 d, RR1 r))
 	CLOBBER_SHRL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shrl_l_rr",r);
 	}
 	raw_shrl_l_rr(d,r) ;
 	unlock2(r);
@@ -561,8 +561,8 @@ MIDFUNC(2,shrl_w_rr,(RW2 d, RR1 r))
 	CLOBBER_SHRL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shrl_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shrl_w_rr",r);
 	}
 	raw_shrl_w_rr(d,r) ;
 	unlock2(r);
@@ -581,8 +581,8 @@ MIDFUNC(2,shrl_b_rr,(RW1 d, RR1 r))
 	CLOBBER_SHRL;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shrl_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shrl_b_rr",r);
 	}
 	raw_shrl_b_rr(d,r) ;
 	unlock2(r);
@@ -708,8 +708,8 @@ MIDFUNC(2,shra_l_rr,(RW4 d, RR1 r))
 	CLOBBER_SHRA;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,4,4);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_rol_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shra_l_rr",r);
 	}
 	raw_shra_l_rr(d,r) ;
 	unlock2(r);
@@ -727,8 +727,8 @@ MIDFUNC(2,shra_w_rr,(RW2 d, RR1 r))
 	CLOBBER_SHRA;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,2,2);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shra_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shra_w_rr",r);
 	}
 	raw_shra_w_rr(d,r) ;
 	unlock2(r);
@@ -747,8 +747,8 @@ MIDFUNC(2,shra_b_rr,(RW1 d, RR1 r))
 	CLOBBER_SHRA;
 	r=readreg_specific(r,1,SHIFTCOUNT_NREG);
 	d=rmw(d,1,1);
-	Dif (r!=1) {
-		jit_abort("Illegal register %d in raw_shra_b",r);
+	Dif (r!=X86_CL) {
+		jit_abort("Illegal register %d in shra_b_rr",r);
 	}
 	raw_shra_b_rr(d,r) ;
 	unlock2(r);
