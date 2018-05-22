@@ -27,9 +27,7 @@
 #include "parameters.h"
 #include "bootos.h"
 
-#ifdef JIT_DEBUG
-# include "compiler/compemu.h"
-#endif
+#include "compiler/compemu.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -39,11 +37,15 @@
  *  Execute EMUL_OP opcode (called by 68k emulator or Illegal Instruction trap handler)
  */
 
-void EmulOp(uint16 opcode, M68kRegisters *r)
+bool EmulOp(uint16 opcode, M68kRegisters *r)
 {
+#define SUPER_ONLY() \
+	if (!(r->sr & 0x2000)) { Exception(8, 0); return false; }
+
 	// D(bug("EmulOp %04x\n", opcode));
 	switch (opcode) {
 		case M68K_EMUL_BREAK: {				// Breakpoint
+			SUPER_ONLY();
 			printf("*** Breakpoint\n");
 			printf("d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
 			       "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
@@ -68,15 +70,17 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[7],
 			       r->sr);
 			QuitEmulator();
-			break;
+			return false;
 		}
 
 		case M68K_EMUL_RESET:	// used in Linux/m68k reboot routine
+			SUPER_ONLY();
 			bootOs->reset(false);	// reload linux kernel
 			Reset680x0();		// reset CPU so it fetches correct SP && PC
-			break;
+			return false;
 
 		case M68K_EMUL_INIT:
+			SUPER_ONLY();
 			{
 				ARADATA *ara = getARADATA();
 				if (ara)
@@ -93,6 +97,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 
 		// VT52 Xconout
 		case M68K_EMUL_OP_PUT_SCRAP:
+			SUPER_ONLY();
 			{
 				static bool Esc = false;
 				static bool inverse = false;
@@ -127,10 +132,12 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			break;
 
 		case M68K_EMUL_OP_CPUDEBUG_ON:
+			SUPER_ONLY();
 			cpu_debugging = true;
 			break;
 
 		case M68K_EMUL_OP_CPUDEBUG_OFF:
+			SUPER_ONLY();
 			cpu_debugging = false;
 			break;
 
@@ -144,6 +151,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_MON7:
 		case M68K_EMUL_OP_MON8:
 		case M68K_EMUL_OP_MON9:
+			SUPER_ONLY();
 			fprintf(stderr, "Monitor %08x\n", opcode);
 			fprintf(stderr, "d0 %08lx d1 %08lx d2 %08lx d3 %08lx\n"
 					"d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
@@ -176,6 +184,7 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 		case M68K_EMUL_OP_MONc:
 		case M68K_EMUL_OP_MONd:
 		case M68K_EMUL_OP_MONe:
+			SUPER_ONLY();
 			fprintf(stderr, "Monitor %08x\n", opcode);
 #ifdef JIT_DEBUG
 			compiler_dumpstate();
@@ -208,8 +217,42 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 #endif
 			break;
 		case M68K_EMUL_OP_DEBUGGER:
+			SUPER_ONLY();
 #ifdef DEBUGGER
 			activate_debugger();
+#endif
+			break;
+		case M68K_EMUL_OP_JIT:
+#ifdef USE_JIT
+			{
+				int32_t enable = r->d[0];
+				int32_t state;
+
+				state = bx_options.jit.jit & 1;
+#ifdef USE_JIT_FPU
+				state |= (bx_options.jit.jitfpu & 1) << 1;
+#endif
+#ifdef JIT_DEBUG
+				state |= (bx_options.jit.jitdebug & 1) << 2;
+#endif
+				state |= (get_cache_state() & 1) << 3;
+				enable = r->d[0];
+				if (enable >= 0)
+				{
+					bx_options.jit.jit = enable & 1;
+#ifdef USE_JIT_FPU
+					bx_options.jit.jitfpu = (enable >> 1) & 1;
+#endif
+#ifdef JIT_DEBUG
+					bx_options.jit.jitdebug = (enable >> 2) & 1;
+#endif
+					set_cache_state((enable >> 3) & 1);
+					/* FIXME: when toggling jitfpu, have to rebuild cpu tables */
+				}
+				r->d[0] = state;
+			}
+#else
+			r->d[0] = -1;
 #endif
 			break;
 		default:
@@ -237,8 +280,10 @@ void EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[7],
 			       r->sr);
 			QuitEmulator();
-			break;
+			return false;
 	}
+	
+	return true;
+
+#undef SUPER_ONLY
 }
-/* vim:ts=4:sw=4
- */

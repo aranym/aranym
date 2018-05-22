@@ -40,12 +40,13 @@ enum {
 	M68K_EXEC_RETURN = 0x7100,		// Extended opcodes (illegal moveq form)
 */
 	M68K_EMUL_BREAK = 0x7101,		// 0x7101 - breakpoint
-	M68K_EMUL_RESET,
- 	M68K_EMUL_EXIT,
-	M68K_EMUL_INIT,
+	M68K_EMUL_RESET = 0x7102,
+ 	M68K_EMUL_EXIT = 0x7103,
+	M68K_EMUL_INIT = 0x7104,
 	M68K_EMUL_OP_PUT_SCRAP = 0x712a,	// 0x712a - used in TOS ROM patch
-	M68K_EMUL_OP_CPUDEBUG_ON = 0x7139,		// 0x7139 - cpu_debugging on
-	M68K_EMUL_OP_CPUDEBUG_OFF,		// 0x713a - cpu_debugging off
+	M68K_EMUL_OP_CPUDEBUG_ON = 0x7139,	// 0x7139 - cpu_debugging on
+	M68K_EMUL_OP_CPUDEBUG_OFF = 0x713a,	// 0x713a - cpu_debugging off
+	M68K_EMUL_OP_JIT = 0x713b,			/* 0x713b - JIT state */
 	M68K_EMUL_OP_MAX,			// highest number
 	M68K_EMUL_OP_MON0 = 0x71f0,		// Monitor instructions
 	M68K_EMUL_OP_MON1 = 0x71f1,
@@ -66,6 +67,6 @@ enum {
 };
 
 // Functions
-extern void EmulOp(uint16 opcode, struct M68kRegisters *r);	// Execute EMUL_OP opcode (called by 68k emulator or Line-F trap handler)
+extern bool EmulOp(uint16 opcode, struct M68kRegisters *r);	// Execute EMUL_OP opcode (called by 68k emulator or Line-F trap handler)
 
 #endif

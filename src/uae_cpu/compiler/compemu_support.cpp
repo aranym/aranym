@@ -270,9 +270,9 @@ extern int quit_program;
 
 // gb-- Extra data for Basilisk II/JIT
 #ifdef JIT_DEBUG
-static bool		JITDebug			= false;	// Enable runtime disassemblers through mon?
+#define JITDebug bx_options.jit.jitdebug		// Enable runtime disassemblers through mon?
 #else
-const bool		JITDebug			= false;	// Don't use JIT debug mode at all
+#define JITDebug false			// Don't use JIT debug mode at all
 #endif
 #if USE_INLINING
 #ifdef UAE
@@ -288,6 +288,7 @@ const uae_u32 MIN_CACHE_SIZE = 1024; // Minimal translation cache size (1 MB)
 static uae_u32 cache_size = 0; // Size of total cache allocated for compiled blocks
 static uae_u32		current_cache_size	= 0;		// Cache grows upwards: how much has been consumed already
 static bool		lazy_flush		= true;	// Flag: lazy translation cache invalidation
+// Flag: compile FPU instructions ?
 #ifdef UAE
 #ifdef USE_JIT_FPU
 #define avoid_fpu (!currprefs.compfpu)
@@ -295,7 +296,11 @@ static bool		lazy_flush		= true;	// Flag: lazy translation cache invalidation
 #define avoid_fpu (true)
 #endif
 #else
-static bool avoid_fpu = true; // Flag: compile FPU instructions ?
+#ifdef USE_JIT_FPU
+#define avoid_fpu (!bx_options.jit.jitfpu)
+#else
+#define avoid_fpu (true)
+#endif
 #endif
 static bool		have_cmov		= false;	// target has CMOV instructions ?
 static bool		have_rat_stall		= true;	// target has partial register stalls ?
@@ -2657,19 +2662,8 @@ void compiler_init(void)
 
 #ifdef UAE
 #else
-#ifdef JIT_DEBUG
-	// JIT debug mode ?
-	JITDebug = bx_options.jit.jitdebug;
-#endif
 	jit_log("<JIT compiler> : enable runtime disassemblers : %s", JITDebug ? "yes" : "no");
 
-#ifdef USE_JIT_FPU
-	// Use JIT compiler for FPU instructions ?
-	avoid_fpu = !bx_options.jit.jitfpu;
-#else
-	// JIT FPU is always disabled
-	avoid_fpu = true;
-#endif
 	jit_log("<JIT compiler> : compile FPU instructions : %s", !avoid_fpu ? "yes" : "no");
 
 	// Get size of the translation cache (in KB)

@@ -1025,8 +1025,8 @@ void m68k_emulop(uae_u32 opcode)
 {
 	struct M68kRegisters r;
 	save_regs(r);
-	EmulOp(opcode, &r);
-	restore_regs(r);
+	if (EmulOp(opcode, &r))
+		restore_regs(r);
 }
 
 void m68k_natfeat_id(void)
