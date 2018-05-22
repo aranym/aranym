@@ -1,3 +1,7 @@
+2018/05/22 - Thorsten
+Assume that nf_id/nf_call/EmulOp pseudo instructions need all flags
+
+
 2018/05/21 - Thorsten
 Fix a bug in JIT compiled code for addx/subx that
 did not set the V flag correctly

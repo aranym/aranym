@@ -277,9 +277,9 @@
 1111 0101 iiii iSSS:42:?????:?????:T-:11: MMUOP    #i,s
 
 % EmulOp instructions (deprecated, to be removed)
-0111 0001 0000 0000:02:-----:-----:-R:00: EMULOP_RETURN
-0111 0001 EEEE EEEE:02:-----:-----:-J:10: EMULOP   #E
+0111 0001 0000 0000:02:-----:XNZVC:-R:00: EMULOP_RETURN
+0111 0001 EEEE EEEE:02:-----:XNZVC:-J:10: EMULOP   #E
 
 % NatFea instructions (do I have the srcaddr correct?)
-0111 0011 0000 0000:00:-----:-----:-J:00: NATFEAT_ID
-0111 0011 0000 0001:00:-----:-----:-J:00: NATFEAT_CALL
+0111 0011 0000 0000:00:-----:XNZVC:-J:00: NATFEAT_ID
+0111 0011 0000 0001:00:-----:XNZVC:-J:00: NATFEAT_CALL
