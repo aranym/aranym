@@ -1,3 +1,7 @@
+2018/05/25 - Thorsten
+Avoid some warnings from shifts in codegen_arm.h
+
+
 2018/05/24 - Thorsten
 Fix some corner-cases of flags handling in JIT compiled rotate instructions,
 when shift count is zero or greater than the operand size
