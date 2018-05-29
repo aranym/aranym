@@ -1,6 +1,5 @@
-/* 2002 MJ */
-#ifndef READCPU_H
-#define READCPU_H
+#ifndef UAE_READCPU_H
+#define UAE_READCPU_H
 
 #ifdef __cplusplus
 extern "C" {

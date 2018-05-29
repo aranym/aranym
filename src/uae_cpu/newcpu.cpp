@@ -400,8 +400,8 @@ void MakeSR (void)
 #endif
     regs.sr = ((regs.t1 << 15) | (regs.t0 << 14)
 	       | (regs.s << 13) | (regs.m << 12) | (regs.intmask << 8)
-	       | (GET_XFLG << 4) | (GET_NFLG << 3) | (GET_ZFLG << 2) | (GET_VFLG << 1)
-	       | GET_CFLG);
+	       | (GET_XFLG() << 4) | (GET_NFLG() << 3) | (GET_ZFLG() << 2) | (GET_VFLG() << 1)
+	       | GET_CFLG());
 }
 
 void MakeFromSR (void)
@@ -1531,7 +1531,7 @@ void m68k_dumpstate (FILE *out, uaecptr *nextpc)
 	    (unsigned long)regs.msp, (unsigned long)regs.vbr);
     fprintf (out, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d TCE=%d TCP=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
-	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, (int)GET_VFLG, (int)GET_CFLG, regs.intmask,
+	    (int)GET_XFLG(), (int)GET_NFLG(), (int)GET_ZFLG(), (int)GET_VFLG(), (int)GET_CFLG(), regs.intmask,
 	    regs.mmu_enabled, regs.mmu_pagesize_8k);
     fprintf (out, "CACR=%08lx CAAR=%08lx  URP=%08lx  SRP=%08lx\n",
             (unsigned long)regs.cacr,

@@ -119,9 +119,10 @@ MIDFUNC(0,duplicate_carry,(void))
 }
 MENDFUNC(0,duplicate_carry,(void))
 
-MIDFUNC(0,setcc_for_cntzero,(RR4))
+MIDFUNC(3,setcc_for_cntzero,(RR4 /* cnt */, RR4 data, int size))
 {
 	uae_u8 *branchadd;
+	uae_u8 *branchadd2;
 
 	evict(FLAGX);
 	make_flags_live_internal();
@@ -135,16 +136,31 @@ MIDFUNC(0,setcc_for_cntzero,(RR4))
 	raw_jz_b_oponly();
 	branchadd = get_target();
 	skip_byte();
+
+	/* shift count was non-zero; update also x-flag */
 	raw_popfl();
-	raw_pushfl();
 #ifdef UAE
 	COMPCALL(setcc_m)((uintptr)live.state[FLAGX].mem + 1, NATIVE_CC_CS);
 #else
 	COMPCALL(setcc_m)((uintptr)live.state[FLAGX].mem, NATIVE_CC_CS);
 #endif
 	log_vwrite(FLAGX);
+	raw_jmp_b_oponly();
+	branchadd2 = get_target();
+	skip_byte();
 	*branchadd = (uintptr)get_target() - ((uintptr)branchadd + 1);
+
+	/* shift count was zero; need to set Z & N flags since the native flags were unaffected */
 	raw_popfl();
+	data = readreg(data, size);
+	switch (size)
+	{
+		case 1: raw_test_b_rr(data, data); break;
+		case 2: raw_test_w_rr(data, data); break;
+		case 4: raw_test_l_rr(data, data); break;
+	}
+	unlock2(data);
+	*branchadd2 = (uintptr)get_target() - ((uintptr)branchadd2 + 1);
 }
 
 MIDFUNC(0,restore_carry,(void))
@@ -368,7 +384,7 @@ MENDFUNC(2,rol_l_ri,(RW4 r, IMM i))
 
 MIDFUNC(2,rol_l_rr,(RW4 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(rol_l_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -387,7 +403,7 @@ MENDFUNC(2,rol_l_rr,(RW4 d, RR1 r))
 MIDFUNC(2,rol_w_rr,(RW2 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(rol_w_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -406,7 +422,7 @@ MENDFUNC(2,rol_w_rr,(RW2 d, RR1 r))
 MIDFUNC(2,rol_b_rr,(RW1 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(rol_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -426,7 +442,7 @@ MENDFUNC(2,rol_b_rr,(RW1 d, RR1 r))
 
 MIDFUNC(2,shll_l_rr,(RW4 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shll_l_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -445,7 +461,7 @@ MENDFUNC(2,shll_l_rr,(RW4 d, RR1 r))
 MIDFUNC(2,shll_w_rr,(RW2 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shll_w_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -464,7 +480,7 @@ MENDFUNC(2,shll_w_rr,(RW2 d, RR1 r))
 MIDFUNC(2,shll_b_rr,(RW1 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shll_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -517,7 +533,7 @@ MENDFUNC(2,ror_l_ri,(RR4 r, IMM i))
 
 MIDFUNC(2,ror_l_rr,(RR4 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(ror_l_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -532,7 +548,7 @@ MENDFUNC(2,ror_l_rr,(RR4 d, RR1 r))
 
 MIDFUNC(2,ror_w_rr,(RR2 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(ror_w_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -547,7 +563,7 @@ MENDFUNC(2,ror_w_rr,(RR2 d, RR1 r))
 
 MIDFUNC(2,ror_b_rr,(RR1 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(ror_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -563,7 +579,7 @@ MENDFUNC(2,ror_b_rr,(RR1 d, RR1 r))
 
 MIDFUNC(2,shrl_l_rr,(RW4 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shrl_l_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -582,7 +598,7 @@ MENDFUNC(2,shrl_l_rr,(RW4 d, RR1 r))
 MIDFUNC(2,shrl_w_rr,(RW2 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shrl_w_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -601,7 +617,7 @@ MENDFUNC(2,shrl_w_rr,(RW2 d, RR1 r))
 MIDFUNC(2,shrl_b_rr,(RW1 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shrl_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -729,7 +745,7 @@ MENDFUNC(2,shra_b_ri,(RW1 r, IMM i))
 
 MIDFUNC(2,shra_l_rr,(RW4 d, RR1 r))
 {
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shra_l_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -748,7 +764,7 @@ MENDFUNC(2,shra_l_rr,(RW4 d, RR1 r))
 MIDFUNC(2,shra_w_rr,(RW2 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shra_w_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}
@@ -767,7 +783,7 @@ MENDFUNC(2,shra_w_rr,(RW2 d, RR1 r))
 MIDFUNC(2,shra_b_rr,(RW1 d, RR1 r))
 { /* Can only do this with r==1, i.e. cl */
 
-	if (isconst(r)) {
+	if (isconst(r) && (uae_u8)live.state[r].val != 0) {
 		COMPCALL(shra_b_ri)(d,(uae_u8)live.state[r].val);
 		return;
 	}

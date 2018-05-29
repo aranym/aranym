@@ -62,13 +62,13 @@ static inline void SET_CFLG_ALWAYS(uae_u32 x)
 #define SET_XFLG(y) do {uae_u32 dummy=(y); } while (0)
 
 #undef CLEAR_CZNV
-#define CLEAR_CZNV
+#define CLEAR_CZNV()
 #undef IOR_CZNV
 #define IOR_CZNV(y) do {uae_u32 dummy=(y); } while (0)
 #undef SET_CZNV
 #define SET_CZNV(y) do {uae_u32 dummy=(y); } while (0)
 #undef COPY_CARRY
-#define COPY_CARRY 
+#define COPY_CARRY()
 
 #ifdef  optflag_testl
 #undef  optflag_testl

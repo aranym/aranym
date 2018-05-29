@@ -92,11 +92,16 @@
 #define DISABLE_I_FSCC
 #define DISABLE_I_MOVE16
 */
+
 #endif /* UAE */
 
 #ifdef UAE
 #define JIT_PATH "jit/"
+#ifdef FSUAE
+#define GEN_PATH "gen/"
+#else
 #define GEN_PATH "jit/"
+#endif
 #define RETURN "return 0;"
 #define RETTYPE "uae_u32"
 #define NEXT_CPU_LEVEL 5
@@ -106,7 +111,6 @@
 #define RETURN "return;"
 #define RETTYPE "void"
 #define NEXT_CPU_LEVEL 4
-#define ua(s) s
 #endif
 
 #define BOOL_TYPE		"int"
@@ -2230,7 +2234,7 @@ gen_opcode (unsigned int opcode)
 		comprintf("\tlive_flags();\n");
 		comprintf("\tend_needflags();\n");
 		if (curi->smode!=immi)
-			comprintf("\tsetcc_for_cntzero(cnt);\n");
+			comprintf("\tsetcc_for_cntzero(cnt, data, %d);\n", curi->size == sz_byte ? 1 : curi->size == sz_word ? 2 : 4);
 		else
 			comprintf("\tduplicate_carry();\n");
 		comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -2304,7 +2308,7 @@ gen_opcode (unsigned int opcode)
 		comprintf("\tlive_flags();\n");
 		comprintf("\tend_needflags();\n");
 		if (curi->smode!=immi)
-			comprintf("\tsetcc_for_cntzero(cnt);\n");
+			comprintf("\tsetcc_for_cntzero(cnt, data, %d);\n", curi->size == sz_byte ? 1 : curi->size == sz_word ? 2 : 4);
 		else
 			comprintf("\tduplicate_carry();\n");
 		comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -2371,7 +2375,7 @@ gen_opcode (unsigned int opcode)
 		comprintf("\tlive_flags();\n");
 		comprintf("\tend_needflags();\n");
 		if (curi->smode!=immi)
-			comprintf("\tsetcc_for_cntzero(cnt);\n");
+			comprintf("\tsetcc_for_cntzero(cnt, data, %d);\n", curi->size == sz_byte ? 1 : curi->size == sz_word ? 2 : 4);
 		else
 			comprintf("\tduplicate_carry();\n");
 		comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -2438,7 +2442,7 @@ gen_opcode (unsigned int opcode)
 		comprintf("\tlive_flags();\n");
 		comprintf("\tend_needflags();\n");
 		if (curi->smode!=immi)
-			comprintf("\tsetcc_for_cntzero(cnt);\n");
+			comprintf("\tsetcc_for_cntzero(cnt, data, %d);\n", curi->size == sz_byte ? 1 : curi->size == sz_word ? 2 : 4);
 		else
 			comprintf("\tduplicate_carry();\n");
 		comprintf("if (!(needed_flags & FLAG_CZNV)) dont_care_flags();\n");
@@ -2823,7 +2827,7 @@ generate_includes (FILE * f)
 	fprintf (f, "#include \"sysdeps.h\"\n");
 #ifdef UAE
 	fprintf (f, "#include \"options.h\"\n");
-	fprintf (f, "#include \"memory.h\"\n");
+	fprintf (f, "#include \"uae/memory.h\"\n");
 #else
 	fprintf (f, "#include \"m68k.h\"\n");
 	fprintf (f, "#include \"memory-uae.h\"\n");
@@ -2837,7 +2841,6 @@ generate_includes (FILE * f)
 static int postfix;
 
 
-#ifdef UAE
 static char *decodeEA (amodes mode, wordsizes size)
 {
 	static char buffer[80];
@@ -2911,22 +2914,13 @@ static char *decodeEA (amodes mode, wordsizes size)
 	return buffer;
 }
 
-static char *outopcode (int opcode)
+static char *outopcode (const char *name, int opcode)
 {
 	static char out[100];
 	struct instr *ins;
-	int i;
 
 	ins = &table68k[opcode];
-	for (i = 0; lookuptab[i].name[0]; i++) {
-		if (ins->mnemo == lookuptab[i].mnemo)
-			break;
-	}
-	{
-		char *s = ua (lookuptab[i].name);
-		strcpy (out, s);
-		xfree (s);
-	}
+	strcpy (out, name);
 	if (ins->smode == immi)
 		strcat (out, "Q");
 	if (ins->size == sz_byte)
@@ -2944,7 +2938,6 @@ static char *outopcode (int opcode)
 	}
 	return out;
 }
-#endif
 
 
 static void
@@ -2956,11 +2949,7 @@ generate_one_opcode (int rp, int noflags)
     int aborted=0;
     int have_srcreg=0;
     int have_dstreg=0;
-#ifdef UAE
-	char *name;
-#else
 	const char *name;
-#endif
 
     if (table68k[opcode].mnemo == i_ILLG
 	|| table68k[opcode].clev > cpu_level)
@@ -3149,34 +3138,23 @@ generate_one_opcode (int rp, int noflags)
 	else
 		strcpy(flags, "0");
 
-#ifdef UAE
+#ifdef UAE /* RETTYPE != void */
 	comprintf ("return 0;\n");
 #endif
 	comprintf ("}\n");
 
-#ifdef UAE
-	name = ua (lookuptab[i].name);
-#else
 	name = lookuptab[i].name;
-#endif
 	if (aborted) {
 	    fprintf (stblfile, "{ NULL, %u, %s }, /* %s */\n", opcode, flags, name);
 	    com_discard();
 	} else {
 		const char *tbl = noflags ? "nf" : "ff";
-#ifdef UAE
-		printf ("/* %s */\n", outopcode (opcode));
-#else
-		printf ("/* %s */\n", name);
-#endif
 		fprintf (stblfile, "{ op_%x_%d_comp_%s, %u, %s }, /* %s */\n", opcode, postfix, tbl, opcode, flags, name);
 		fprintf (headerfile, "extern compop_func op_%x_%d_comp_%s;\n", opcode, postfix, tbl);
-		printf (RETTYPE " REGPARAM2 op_%x_%d_comp_%s(uae_u32 opcode)\n{\n", opcode, postfix, tbl);
+		printf ("/* %s */\n", outopcode (name, opcode));
+		printf (RETTYPE " REGPARAM2 op_%x_%d_comp_%s(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, tbl, name);
 	    com_flush();
 	}
-#ifdef UAE
-	xfree (name);
-#endif
     }
     opcode_next_clev[rp] = next_cpu_level;
     opcode_last_postfix[rp] = postfix;
@@ -3242,7 +3220,12 @@ void cygwin_mingw_abort()
 }
 #endif
 
+#if defined(FSUAE) && defined (WINDOWS)
+#include "windows.h"
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+#else
 int main(void)
+#endif
 {
     init_table68k ();
 

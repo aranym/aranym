@@ -171,6 +171,9 @@ extern bool compiler_use_jit(void);
 extern void flush(int save_regs);
 extern void set_target(uae_u8* t);
 extern uae_u8* get_target(void);
+#ifdef UAE
+extern void build_comp(void);
+#endif
 extern void set_cache_state(int enabled);
 extern int get_cache_state(void);
 extern uae_u32 get_jitted_size(void);
@@ -178,8 +181,16 @@ extern uae_u32 get_jitted_size(void);
 #ifdef WINUAE_ARANYM
 extern void (*flush_icache)(int n);
 #else
-extern void flush_icache(int n);
-extern void flush_icache_hard(int n);
+extern void flush_icache(uaecptr ptr, int n);
+extern void flush_icache_hard(uaecptr ptr, int n);
+static inline void flush_icache(int n)
+{
+	flush_icache(0, n);
+}
+static inline void flush_icache_hard(int n)
+{
+	flush_icache(0, n);
+}
 #endif
 #endif
 extern void alloc_cache(void);

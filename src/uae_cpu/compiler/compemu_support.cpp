@@ -89,16 +89,19 @@
 #include "fpu/fpu.h"
 #include "fpu/flags.h"
 #include "parameters.h"
+static void build_comp(void);
 #endif
 #include "verify.h"
-
-static void build_comp(void);
 
 #ifdef UAE
 #ifdef FSUAE
 #include "uae/fs.h"
 #endif
 #include "uae/log.h"
+
+#if defined(__pie__) || defined (__PIE__)
+#error Position-independent code (PIE) cannot be used with JIT
+#endif
 
 #include "uae/vm.h"
 #define VM_PAGE_READ UAE_VM_READ
@@ -380,6 +383,9 @@ static uintptr taken_pc_p;
 static int     branch_cc;
 static int redo_current_block;
 
+#ifdef UAE
+int segvcount=0;
+#endif
 static uae_u8* current_compile_p=NULL;
 static uae_u8* max_compile_start;
 static uae_u8* compiled_code=NULL;
@@ -4019,7 +4025,7 @@ static bool merge_blacklist()
 	return true;
 }
 
-static void build_comp(void)
+void build_comp(void)
 {
 #ifdef FSUAE
 	if (!g_fs_uae_jit_compiler) {
@@ -4183,7 +4189,7 @@ static void build_comp(void)
 	{
 		jit_log("<JIT compiler> : blacklist merge failure!");
 	}
-	
+
 	count=0;
 	for (opcode = 0; opcode < 65536; opcode++) {
 		if (compfunctbl[cft_map(opcode)])
@@ -4226,7 +4232,11 @@ static void flush_icache_none(int)
 	/* Nothing to do.  */
 }
 
+#ifdef UAE
+void flush_icache_hard(uaecptr ptr, int n)
+#else
 void flush_icache_hard(int n)
+#endif
 {
 	blockinfo* bi, *dbi;
 
@@ -4274,7 +4284,7 @@ void flush_icache_hard(int n)
 #ifdef WINUAE_ARANYM
 static inline void flush_icache_lazy(int)
 #else
-void flush_icache(int n)
+void flush_icache(uaecptr ptr, int n)
 #endif
 {
 	blockinfo* bi;
@@ -4282,7 +4292,7 @@ void flush_icache(int n)
 
 #ifdef UAE
 	if (currprefs.comp_hardflush) {
-		flush_icache_hard(n);
+		flush_icache_hard(ptr, n);
 		return;
 	}
 #endif
@@ -4400,11 +4410,7 @@ void compiler_dumpstate(void)
 	jit_log(" ");
 	
 	jit_log("### M68k processor state");
-#ifdef UAE
-	m68k_dumpstate(NULL);
-#else
 	m68k_dumpstate(stderr, 0);
-#endif
 	jit_log(" ");
 	
 	jit_log("### Block in Atari address space");
@@ -4636,10 +4642,10 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					}
 					was_comp=1;
 					
+#ifdef WINUAE_ARANYM
 					bool isnop = do_get_mem_word(pc_hist[i].location) == 0x4e71 ||
 						((i + 1) < blocklen && do_get_mem_word(pc_hist[i+1].location) == 0x4e71);
 					
-#ifdef WINUAE_ARANYM
 					if (isnop)
 						compemu_raw_mov_l_mi((uintptr)&regs.fault_pc, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
 #endif
@@ -4656,6 +4662,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					flush(1);
 					was_comp=0;
 #endif
+#ifdef WINUAE_ARANYM
 					/*
 					 * workaround for buserror handling: on a "nop", write registers back
 					 */
@@ -4665,6 +4672,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						nop();
 						was_comp=0;
 					}
+#endif
 				}
 
 				if (failure) {
@@ -4972,6 +4980,11 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		do_extra_cycles(totcycles);
 #endif
 	}
+
+#ifdef USE_CPU_EMUL_SERVICES
+	/* Account for compilation time */
+	cpu_do_check_ticks();
+#endif
 }
 
 #ifdef UAE

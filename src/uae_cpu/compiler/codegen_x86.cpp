@@ -697,7 +697,7 @@ LENDFUNC(NONE,NONE,2,raw_mul_64_32,(RW4 d, RW4 s))
 
 LOWFUNC(NONE,NONE,2,raw_mul_32_32,(RW4, R4))
 {
-	abort(); /* %^$&%^$%#^ x86! */
+	x86_emit_failure("raw_mul_32_32");							/* %^$&%^$%#^ x86! */
 }
 LENDFUNC(NONE,NONE,2,raw_mul_32_32,(RW4 d, R4 s))
 
@@ -3515,28 +3515,18 @@ static inline void raw_flags_init_FLAGGEN(void)
    flag reload to avoid the partial memory stall */
 static inline void raw_load_flagreg(uae_u32 target, uae_u32 r)
 {
-#if 1
+	/* attention: in 64bit mode, relies on LITTE_ENDIANESS of regflags.cznv */
 	raw_mov_l_rm(target,(uintptr)live.state[r].mem);
-#else
-	raw_mov_b_rm(target,(uintptr)live.state[r].mem);
-	raw_mov_b_rm(target+4,((uintptr)live.state[r].mem)+1);
-#endif
 }
 
-#ifdef UAE
-/* FLAGX is word-sized */
-#else
-/* FLAGX is byte sized, and we *do* write it at that size */
-#endif
 static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
 {
-#ifdef UAE
-	if (live.nat[target].canword)
-#else
+#if FLAGBIT_X < 8
 	if (live.nat[target].canbyte)
 		raw_mov_b_rm(target,(uintptr)live.state[r].mem);
-	else if (live.nat[target].canword)
+	else
 #endif
+	if (live.nat[target].canword)
 		raw_mov_w_rm(target,(uintptr)live.state[r].mem);
 	else
 		raw_mov_l_rm(target,(uintptr)live.state[r].mem);

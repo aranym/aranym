@@ -332,7 +332,7 @@ void ndebug::m68k_print(FILE * f)
 			(unsigned long) m68k_dreg(regs, 7), (unsigned long) regs.vbr);
 	fprintf(f, "T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%u C=%u           TC=%04x\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
-	    (int)GET_XFLG, (int)GET_NFLG, (int)GET_ZFLG, (unsigned)GET_VFLG, (unsigned)GET_CFLG,
+	    (int)GET_XFLG(), (int)GET_NFLG(), (int)GET_ZFLG(), (unsigned)GET_VFLG(), (unsigned)GET_CFLG(),
 	    		   (unsigned int) ((((int) regs.mmu_enabled) << 15) |
 				(((int) regs.mmu_pagesize_8k) << 14)));
 
