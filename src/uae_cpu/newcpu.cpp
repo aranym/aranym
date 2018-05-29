@@ -1457,7 +1457,7 @@ void m68k_disasm (FILE *f, uaecptr addr, uaecptr *nextpc, int cnt)
 
 	disasm_info.memory_vma = addr;
     while (cnt-- > 0) {
-		size = m68k_disasm_to_buf(&disasm_info, buf);
+		size = m68k_disasm_to_buf(&disasm_info, buf, 1);
     	fprintf(f, "%s\n", buf);
     	if (size < 0)
     		break;
@@ -1480,10 +1480,10 @@ void newm68k_disasm(FILE *f, uaecptr addr, uaecptr *nextpc, unsigned int cnt)
 
 	disasm_info.memory_vma = addr;
     if (cnt == 0) {
-		m68k_disasm_to_buf(&disasm_info, buf);
+		m68k_disasm_to_buf(&disasm_info, buf, 1);
     } else {
 	    while (cnt-- > 0) {
-		m68k_disasm_to_buf(&disasm_info, buf);
+		m68k_disasm_to_buf(&disasm_info, buf, 1);
     	fprintf(f, "%s\n", buf);
     	}
     }
@@ -1504,7 +1504,7 @@ void showDisasm(uaecptr addr) {
 	char buf[256];
 
 	disasm_info.memory_vma = addr;
-	m68k_disasm_to_buf(&disasm_info, buf);
+	m68k_disasm_to_buf(&disasm_info, buf, 1);
 	bug("%s", buf);
 #else
 	(void) addr;

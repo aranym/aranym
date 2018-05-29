@@ -83,7 +83,7 @@ static int opcodes_printf(void *info, const char *format, ...)
 }
 
 
-const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
+const uint8 *arm_disasm(const uint8 *ainstr, char *buf, int allbytes)
 {
 	struct opcodes_info info;
 	disassemble_info ainfo;
@@ -91,7 +91,8 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 	int i;
 	char *opcode;
 	char *p, *p2;
-	
+	const int bytes_per_line = 12;
+
 	info.linepos = 0;
 	info.bufsize = sizeof(info.linebuf);
 	info.opcodes_info = &ainfo;
@@ -125,11 +126,11 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 	info.linebuf[info.linepos] = '\0';
 
 #ifdef CPU_arm
-	sprintf(buf, "[%08x]", (uintptr)ainstr);
+	sprintf(buf, "[%08lx]", (unsigned long)ainstr);
 #else
-	sprintf(buf, "[%016lx]", (uintptr)ainstr);
+	sprintf(buf, "[%016llx]", (unsigned long long)ainstr);
 #endif
-	for (i = 0; i < 12 && (i + 4) <= len; i += 4)
+	for (i = 0; i < bytes_per_line && (i + 4) <= len; i += 4)
 	{
 		sprintf(buf + strlen(buf), " %08x",
 			((uint32_t)ainstr[i + 0]) |
@@ -137,10 +138,8 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 			((uint32_t)ainstr[i + 2] << 16) |
 			((uint32_t)ainstr[i + 3] << 24));
 	}
-	for (; i < 12 && i < len; i++)
-	{
-		sprintf(buf + strlen(buf), " %02x", ainstr[i]);
-	}
+	for (; i < bytes_per_line; i++)
+		strcat(buf, "   ");
 	opcode = info.linebuf;
 	p = strchr(opcode, ' ');
 	p2 = strchr(opcode, '\t');
@@ -155,6 +154,24 @@ const uint8 *arm_disasm(const uint8 *ainstr, char *buf)
 	sprintf(buf + strlen(buf), "  %-10s", opcode);
 	if (p)
 		strcat(buf, p);
+	if (len > bytes_per_line && allbytes)
+	{
+		/* should not happen; arm instructions are always 4 bytes */
+		strcat(buf, "\n");
+#ifdef CPU_arm
+		sprintf(buf + strlen(buf), "[%08lx]", (unsigned long)ainstr + bytes_per_line);
+#else
+		sprintf(buf + strlen(buf), "[%016llx]", (unsigned long long)ainstr + bytes_per_line);
+#endif
+		for (i = bytes_per_line; (i + 4) <= len; i += 4)
+		{
+			sprintf(buf + strlen(buf), " %08x",
+				((uint32_t)ainstr[i + 0]) |
+				((uint32_t)ainstr[i + 1] << 8) |
+				((uint32_t)ainstr[i + 2] << 16) |
+				((uint32_t)ainstr[i + 3] << 24));
+		}
+	}
 	if (len <= 0) /* make sure we advance in case there was an error */
 		len = 1;
 	ainstr += len;

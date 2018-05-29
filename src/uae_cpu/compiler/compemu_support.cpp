@@ -541,7 +541,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 			disasm_info.memory_vma = ((memptr)((uintptr_t)(start) - MEMBaseDiff));
 			while (length > 0)
 			{
-				int isize = m68k_disasm_to_buf(&disasm_info, buf);
+				int isize = m68k_disasm_to_buf(&disasm_info, buf, 1);
 				bug("%s", buf);
 				if (isize < 0)
 					break;
@@ -561,7 +561,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 
 			while (start < end)
 			{
-				start = x86_disasm(start, buf);
+				start = x86_disasm(start, buf, 1);
 				bug("%s", buf);
 			}
 		}
@@ -575,7 +575,7 @@ static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 
 			while (start < end)
 			{
-				start = arm_disasm(start, buf);
+				start = arm_disasm(start, buf, 1);
 				bug("%s", buf);
 			}
 		}

@@ -82,7 +82,7 @@ static int opcodes_printf(void *info, const char *format, ...)
 }
 
 
-const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
+const uint8 *x86_disasm(const uint8 *ainstr, char *buf, int allbytes)
 {
 	struct opcodes_info info;
 	disassemble_info ainfo;
@@ -90,7 +90,8 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 	int i;
 	char *opcode;
 	char *p;
-	
+	const int bytes_per_line = 7;
+
 	info.linepos = 0;
 	info.bufsize = sizeof(info.linebuf);
 	info.opcodes_info = &ainfo;
@@ -117,15 +118,15 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 	info.linebuf[info.linepos] = '\0';
 
 #ifdef CPU_i386
-	sprintf(buf, "[%08x]", (uintptr)ainstr);
+	sprintf(buf, "[%08lx]", (unsigned long)ainstr);
 #else
 	sprintf(buf, "[%016llx]", (unsigned long long)ainstr);
 #endif
-	for (i = 0; i < 12 && i < len; i++)
+	for (i = 0; i < bytes_per_line && i < len; i++)
 	{
 		sprintf(buf + strlen(buf), " %02x", ainstr[i]);
 	}
-	for (; i < 12; i++)
+	for (; i < bytes_per_line; i++)
 		strcat(buf, "   ");
 	opcode = info.linebuf;
 	if (strncmp(opcode, "addr32", 6) == 0)
@@ -144,6 +145,19 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf)
 	sprintf(buf + strlen(buf), "  %-10s", opcode);
 	if (p)
 		strcat(buf, p);
+	if (len > bytes_per_line && allbytes)
+	{
+		strcat(buf, "\n");
+#ifdef CPU_i386
+		sprintf(buf + strlen(buf), "[%08lx]", (usigned long)ainstr + bytes_per_line);
+#else
+		sprintf(buf + strlen(buf), "[%016llx]", (unsigned long long)ainstr + bytes_per_line);
+#endif
+		for (i = bytes_per_line; i < len; i++)
+		{
+			sprintf(buf + strlen(buf), " %02x", ainstr[i]);
+		}
+	}
 	if (len <= 0) /* make sure we advance in case there was an error */
 		len = 1;
 	ainstr += len;

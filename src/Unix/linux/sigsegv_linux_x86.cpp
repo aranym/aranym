@@ -84,9 +84,9 @@ static void segfault_vec(int /* sig */, siginfo_t *sip, void *_ucp)
 #ifdef HAVE_DISASM_X86
 		if (CONTEXT_AEIP != 0)
 		{
-			char buf[128];
+			char buf[256];
 			
-			x86_disasm((const uint8 *)CONTEXT_AEIP, buf);
+			x86_disasm((const uint8 *)CONTEXT_AEIP, buf, 1);
 			panicbug("%s", buf);
 		}
 #endif

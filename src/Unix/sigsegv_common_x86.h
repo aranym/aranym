@@ -938,9 +938,9 @@ static const int x86_reg_map[] = {
 	}
 #ifdef HAVE_DISASM_X86
 	{
-		char buf[128];
+		char buf[256];
 		
-		x86_disasm(ainstr, buf);
+		x86_disasm(ainstr, buf, 1);
 		bug("%s", buf);
 	}
 #endif

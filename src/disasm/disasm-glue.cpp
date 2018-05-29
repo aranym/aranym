@@ -318,19 +318,20 @@ int m68k_disasm_insn(m68k_disasm_info *info)
 
 
 
-int m68k_disasm_to_buf(m68k_disasm_info *info, char *buf)
+int m68k_disasm_to_buf(m68k_disasm_info *info, char *buf, int allbytes)
 {
 	int len;
 	int i;
 	memptr start = info->memory_vma;
+	const int words_per_line = 5;
 	
 	len = m68k_disasm_insn(info);
 	sprintf(buf, "[%08x]", start);
-	for (i = 0; i < 5 && i < info->num_insn_words; i++)
+	for (i = 0; i < words_per_line && i < info->num_insn_words; i++)
 	{
 		sprintf(buf + strlen(buf), " %04x", info->insn_words[i]);
 	}
-	for (; i < 5; i++)
+	for (; i < words_per_line; i++)
 		strcat(buf, "     ");
 #if 0
 	{
@@ -357,6 +358,15 @@ int m68k_disasm_to_buf(m68k_disasm_info *info, char *buf)
 		strcat(buf, " ; ");
 		strcat(buf, info->comments);
 	}
+	if (info->num_insn_words > words_per_line && allbytes)
+	{
+		strcat(buf, "\n");
+		sprintf(buf + strlen(buf), "[%08x]", start + words_per_line * 2);
+		for (i = words_per_line; i < info->num_insn_words; i++)
+		{
+			sprintf(buf + strlen(buf), " %04x", info->insn_words[i]);
+		}
+	}
 	return len;
 }
 
@@ -382,7 +392,7 @@ memptr gdb_dis(memptr start, unsigned int count)
 	disasm_info.memory_vma = start;
 	do
 	{
-		size = m68k_disasm_to_buf(&disasm_info, buf);
+		size = m68k_disasm_to_buf(&disasm_info, buf, TRUE);
 		puts(buf);
 		--count;
 	} while (size >= 0 && count);

@@ -481,7 +481,7 @@ int main(int argc, char **argv)
 	disasm_info.memory_vma = vma;
 	while (len > 0)
 	{
-		isize = m68k_disasm_to_buf(&disasm_info, buf);
+		isize = m68k_disasm_to_buf(&disasm_info, buf, TRUE);
 		fputs(buf, out);
 		fputs("\n", out);
 		if (isize < 0)

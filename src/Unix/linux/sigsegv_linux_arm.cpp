@@ -103,7 +103,7 @@ static inline void unknown_instruction(const unsigned long *pregs)
 		char buf[256];
 		const uint8 *ainstr = (const uint8 *)pc;
 		
-		arm_disasm(ainstr, buf);
+		arm_disasm(ainstr, buf, 1);
 		panicbug("%s", buf);
 	}
 #endif
@@ -216,9 +216,9 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 		reg_names[rt]);
 #ifdef HAVE_DISASM_ARM
 	{
-		char buf[128];
+		char buf[256];
 		
-		arm_disasm((const uint8_t *)pc, buf);
+		arm_disasm((const uint8_t *)pc, buf, 1);
 		bug("%s", buf);
 	}
 #endif
@@ -325,9 +325,9 @@ static void segfault_vec(int /*sig*/, siginfo_t *sip, void *uc) {
 #ifdef HAVE_DISASM_ARM
 		if (regs[ARM_REG_PC] != 0)
 		{
-			char buf[128];
+			char buf[256];
 			
-			arm_disasm((const uint8 *)regs[ARM_REG_PC], buf);
+			arm_disasm((const uint8 *)regs[ARM_REG_PC], buf, 1);
 			panicbug("%s", buf);
 		}
 #endif

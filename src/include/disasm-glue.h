@@ -139,7 +139,7 @@ extern m68k_disasm_info disasm_info;
 void m68k_disasm_init(m68k_disasm_info *info, enum m68k_cpu cpu);
 void m68k_disasm_exit(m68k_disasm_info *info);
 int m68k_disasm_insn(m68k_disasm_info *info);
-int m68k_disasm_to_buf(m68k_disasm_info *info, char *buf);
+int m68k_disasm_to_buf(m68k_disasm_info *info, char *buf, int allbytes);
 
 memptr gdb_dis(memptr start, unsigned int count);
 void gdb_regs(void);
@@ -157,7 +157,7 @@ int m68k_disasm_builtin(m68k_disasm_info *info);
 
 #define HAVE_DISASM_X86 1
 
-const uint8 *x86_disasm(const uint8 *ainstr, char *buf);
+const uint8 *x86_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
 #endif
 
@@ -165,7 +165,7 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf);
 
 #define HAVE_DISASM_PPC 1
 
-const uint8 *ppc_disasm(const uint8 *ainstr, char *buf);
+const uint8 *ppc_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
 #endif
 
@@ -173,7 +173,7 @@ const uint8 *ppc_disasm(const uint8 *ainstr, char *buf);
 
 #define HAVE_DISASM_ARM 1
 
-const uint8 *arm_disasm(const uint8 *ainstr, char *buf);
+const uint8 *arm_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
 #endif
 

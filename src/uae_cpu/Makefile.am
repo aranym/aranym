@@ -58,12 +58,12 @@ endif
 
 
 cpudefs.cpp: build68k$(EXEEXT) $(srcdir)/table68k
-	./build68k <$(srcdir)/table68k > $@
+	$(AM_V_GEN)./build68k <$(srcdir)/table68k > $@
 cpuemu.cpp: gencpu$(EXEEXT)
-	./gencpu$(EXEEXT)
+	$(AM_V_GEN)./gencpu$(EXEEXT)
 cpustbl.cpp cpufunctbl.cpp cputbl.h: cpuemu.cpp
 compemu.cpp: gencomp$(EXEEXT)
-	./gencomp$(EXEEXT)
+	$(AM_V_GEN)./gencomp$(EXEEXT)
 compstbl.cpp comptbl.h: compemu.cpp
 
 CLEANFILES = $(BUILT_SOURCES)

@@ -1,3 +1,8 @@
+2018/05/26 - Thorsten
+Rework disassemblers to print excessive instruction
+bytes on multiples lines
+
+
 2018/05/25 - Thorsten
 Avoid some warnings from shifts in codegen_arm.h
 
