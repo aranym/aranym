@@ -1418,7 +1418,6 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 					fpu_debug(("FMOVEM D%d (%X) -> FPU instruction_address\n", opcode & 7, FPU instruction_address));
 				}
 			}
-//		} else if ((opcode & 0x38) == 1) {
 		}
 		else if ((opcode & 0x38) == 8) { 
 			if (extra & 0x2000) { // dr bit

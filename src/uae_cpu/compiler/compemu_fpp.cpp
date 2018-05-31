@@ -970,15 +970,18 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
     int src;
     
     switch ((extra >> 13) & 0x7) {
-     case 3: /* 2nd most common */
+     case 1: /* illegal */
+        break;
+     case 3: /* FMOVE Fpn,<ea> */
+        /* 2nd most common */
 	if (put_fp_value ((extra >> 7)&7 , opcode, extra) < 0) {
 	    FAIL(1);
 	    return;
 
 	}
 	return;
-     case 6:
-     case 7: 
+     case 6: /* FMOVEM <ea>,<reglist> */
+     case 7: /* FMOVEM <reglist>,<ea> */
 	{
 	    uae_u32 ad, list = 0;
 	    int incr = 0;
@@ -986,11 +989,11 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 
 		/* FMOVEM FPP->memory */
 		switch ((extra >> 11) & 3) { /* Get out early if failure */
-		 case 0:
-		 case 2:
+		 case 0:	/* static pred */
+		 case 2:	/* static postinc */
 		    break;
-		 case 1:
-		 case 3: 
+		 case 1:	/* dynamic pred */
+		 case 3:	/* dynamic postinc */
 		 default:
 		    FAIL(1); return;
 		}
@@ -1058,11 +1061,11 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 
 		uae_u32 ad;
 		switch ((extra >> 11) & 3) { /* Get out early if failure */
-		 case 0:
-		 case 2:
+		 case 0:	/* static pred */
+		 case 2:	/* static postinc */
 		    break;
-		 case 1:
-		 case 3: 
+		 case 1:	/* dynamic pred */
+		 case 3: 	/* dynamic postinc */
 		 default:
 		    FAIL(1); return;
 		}
@@ -1132,9 +1135,11 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 	}
 	return;
 
-     case 4:
-     case 5:  /* rare */
+     case 4: /* FMOVEM <ea>,<control> */
+     case 5: /* FMOVEM <control>,<ea> */
+	/* rare */
 	if ((opcode & 0x30) == 0) {
+	    /* <ea> = Dn or An */
 	    if (extra & 0x2000) {
 		if (extra & 0x1000) {
 #if HANDLE_FPCR
@@ -1150,6 +1155,7 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		    return;
 		}
 		if (extra & 0x0400) {
+		    /* FPIAR: fixme; we cannot correctly return the address from compiled code */
 		    mov_l_rm(opcode & 15,(uintptr)&fpu.instruction_address);
 			return;
 		}
@@ -1176,15 +1182,15 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			FAIL(1);
 			return;
 #endif
-//		    return; gb-- FMOVEM could also operate on fpiar
 		}
 		if (extra & 0x0400) {
+		    /* FPIAR: does that make sense at all? */
 		    mov_l_mr((uintptr)&fpu.instruction_address,opcode & 15);
-//			return; gb-- we have to process all FMOVEM bits before returning
 		}
 		return;
 	    }
 	} else if ((opcode & 0x3f) == 0x3c) {
+	    /* <ea> = #imm */
 	    if ((extra & 0x2000) == 0) {
 		// gb-- moved here so that we may FAIL() without generating any code
 		if (extra & 0x0800) {
@@ -1209,12 +1215,10 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			FAIL(1);
 			return;
 #endif
-//		    return; gb-- FMOVEM could also operate on fpiar
 		}
 		if (extra & 0x0400) {
 		    uae_u32 val=comp_get_ilong((m68k_pc_offset+=4)-4);
 		    mov_l_mi((uintptr)&fpu.instruction_address,val);
-//		    return; gb-- we have to process all FMOVEM bits before returning
 		}
 		return;
 	    }

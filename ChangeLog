@@ -1,4 +1,8 @@
 2018/05/31 - Thorsten
+JIT: add some comments
+
+
+2018/05/31 - Thorsten
 JIT: properly declare FPU constants as long double,
 as they otherwise might be compiled inexactly
 
