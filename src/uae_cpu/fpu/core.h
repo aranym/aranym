@@ -142,7 +142,7 @@ struct fpu_t {
 	
 	/* Accrued Exception Byte */
 	uae_u32		accrued_exception;
-	#define		FPSR_ACCRUED_EXCEPTION	0x000000ff
+	#define		FPSR_ACCRUED_EXCEPTION	0x000000f8
 	#define		FPSR_ACCR_IOP			0x00000080
 	#define		FPSR_ACCR_OVFL			0x00000040
 	#define		FPSR_ACCR_UNFL			0x00000020
