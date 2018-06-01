@@ -186,27 +186,27 @@ PRIVATE inline uae_u32 FFPU get_fpccr(void)
 	uae_u32 fpccr = 0;
 	if (isnan(FPU result))
 		fpccr |= FPSR_CCB_NAN;
-	else if (FPU result == 0.0)
-		fpccr |= FPSR_CCB_ZERO;
-	else if (FPU result < 0.0)
-		fpccr |= FPSR_CCB_NEGATIVE;
-	if (isinf(FPU result))
+	else if (isinf(FPU result))
 		fpccr |= FPSR_CCB_INFINITY;
+	else if (iszero(FPU result))
+		fpccr |= FPSR_CCB_ZERO;
+	if (isneg(FPU result))
+		fpccr |= FPSR_CCB_NEGATIVE;
 	return fpccr;
 }
 
 /* M68k to native floating-point condition codes - SELF */
 PRIVATE inline void FFPU set_fpccr(uae_u32 new_fpcond)
 {
+	bool negative = (new_fpcond & FPSR_CCB_NEGATIVE) != 0;
 	if (new_fpcond & FPSR_CCB_NAN)
-		make_nan(FPU result);
+		make_nan(FPU result, negative);
+	else if (new_fpcond & FPSR_CCB_INFINITY)
+		negative ? make_inf_negative(FPU result) : make_inf_positive(FPU result);
 	else if (new_fpcond & FPSR_CCB_ZERO)
-		FPU result = 0.0;
-	else if (new_fpcond & FPSR_CCB_NEGATIVE)
-		FPU result = -1.0;
+		negative ? make_zero_negative(FPU result) : make_zero_positive(FPU result);
 	else
-		FPU result = +1.0;
-	/* gb-- where is Infinity ? */
+		FPU result = negative ? -1.0 : +1.0;
 }
 
 /* Make FPSR according to the value passed in argument */

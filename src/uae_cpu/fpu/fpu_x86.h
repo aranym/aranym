@@ -105,7 +105,7 @@ PRIVATE inline uae_u32 FFPU IS_ZERO (fpu_register const & f);
 PRIVATE inline uae_u32 FFPU IS_NEGATIVE (fpu_register const & f);
 
 // Make a special floating-point value
-PRIVATE inline void FFPU MAKE_NAN (fpu_register & f);
+PRIVATE inline void FFPU MAKE_NAN (fpu_register & f, bool negative);
 PRIVATE inline void FFPU MAKE_INF_POSITIVE (fpu_register & f);
 PRIVATE inline void FFPU MAKE_INF_NEGATIVE (fpu_register & f);
 PRIVATE inline void FFPU MAKE_ZERO_POSITIVE (fpu_register & f);

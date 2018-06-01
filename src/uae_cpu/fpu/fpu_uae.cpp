@@ -312,11 +312,11 @@ PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 	fl_source.in_range	= !fl_source.zero && !fl_source.infinity && !fl_source.nan;
 }
 
-PRIVATE inline void FFPU make_nan(fpu_register & r)
+PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative)
 {
 	fpu_register_parts p;
 	p.parts[FLO] = 0xffffffff;
-	p.parts[FHI] = 0x7fffffff;
+	p.parts[FHI] = negative ? 0xffffffff : 0x7fffffff;
 	r = p.val;
 }
 
@@ -523,7 +523,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 	// Is it NaN?
 	if( (wrd1 & 0x7FFF0000) == 0x7FFF0000 ) {
 		if( (wrd1 & 0x0000FFFF) || wrd2 || wrd3 ) {
-			make_nan(result);
+			make_nan(result, (wrd1 & 0x80000000) != 0);
 			return;
 		}
 	}
@@ -625,8 +625,8 @@ PRIVATE inline void FFPU extract_double(fpu_register const & src,
 PRIVATE inline void FFPU make_fpsr(fpu_register const & r)
 {
 	FPU fpsr.condition_codes
-		=	((r == 0.0) ? NATIVE_FFLAG_ZERO : 0)
-		|	((r < 0.0) ? NATIVE_FFLAG_NEGATIVE : 0)
+		=	(iszero(r) ? NATIVE_FFLAG_ZERO : 0)
+		|	(isneg(r) ? NATIVE_FFLAG_NEGATIVE : 0)
 		;
 }
 #endif
@@ -2073,7 +2073,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				else if (fl_dest.nan || fl_source.nan ||
 						fl_dest.zero && fl_source.infinity ||
 						fl_dest.infinity && fl_source.zero ) {
-					make_nan( FPU registers[reg] );
+					make_nan( FPU registers[reg], fl_dest.negative );
 				}
 				else if (fl_dest.zero || fl_source.zero ) {
 					if (fl_dest.negative && !fl_source.negative ||
@@ -2255,7 +2255,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			fpu_debug(("FGETEXP %.04f\n",(double)src));
 #if FPU_HAVE_IEEE_DOUBLE
 			if( isinf(src) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], isneg(src) );
 			}
 			else {
 				FPU registers[reg] = fast_fgetexp( src );
@@ -2279,7 +2279,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				FPU registers[reg] = 0;
 			}
 			else if( isinf(src) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], isneg(src) );
 			}
 			else {
 				FPU registers[reg] = src;
@@ -2331,7 +2331,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			else if (fl_dest.nan || fl_source.nan || 
 					(fl_dest.zero && fl_source.infinity) ||
 					(fl_dest.infinity && fl_source.zero) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], fl_dest.negative );
 			}
 			else if (fl_dest.zero || fl_source.zero ) {
 				if (( fl_dest.negative && !fl_source.negative) ||
@@ -2386,8 +2386,8 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			// Overflow, underflow
 
 #if FPU_HAVE_IEEE_DOUBLE
-			if( isinf(FPU registers[reg]) ) {
-				make_nan( FPU registers[reg] );
+			if( isinf(src) ) {
+				make_nan( FPU registers[reg], isneg(src) );
 			}
 			else {
 				// When the absolute value of the source operand is >= 2^14,

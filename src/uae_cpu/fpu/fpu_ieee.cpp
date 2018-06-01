@@ -311,7 +311,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 #if defined(USE_QUAD_DOUBLE)
 	// is it NaN?
 	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && ((wrd2 & 0x7fffffff) != 0 || wrd3 != 0)) {
-		make_nan(result);
+		make_nan(result, (wrd1 & 0x80000000) != 0);
 		return result;
 	}
 	// is it inf?
@@ -395,7 +395,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 	}
 	// is it NaN?
 	if ((wrd1 & 0x7fff0000) == 0x7fff0000 && ((wrd2 & 0x7fffffff) != 0 || wrd3 != 0)) {
-		make_nan(result);
+		make_nan(result, (wrd1 & 0x80000000) != 0);
 		return;
 	}
 #if defined(USE_QUAD_DOUBLE)
@@ -545,7 +545,7 @@ PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32
 			sm ? make_inf_negative(d) : make_inf_positive(d);
 		} else
 		{
-			make_nan(d);
+			make_nan(d, sm);
 		}
 		return d;
 	}
@@ -1903,7 +1903,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				else if (fl_dest.nan || fl_source.nan || 
 						 (fl_dest.zero && fl_source.infinity) || 
 						 (fl_dest.infinity && fl_source.zero) ) {
-					make_nan( FPU registers[reg] );
+					make_nan( FPU registers[reg], fl_dest.negative );
 				}
 				else if (fl_dest.zero || fl_source.zero ) {
 					if ( (fl_dest.negative && !fl_source.negative) ||
@@ -2059,7 +2059,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		case 0x1e:		/* FGETEXP */
 			fpu_debug(("FGETEXP %.04f\n",(double)src));
 			if( isinf(src) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], isneg(src) );
 			}
 			else {
 				FPU registers[reg] = fast_fgetexp( src );
@@ -2072,7 +2072,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				FPU registers[reg] = 0;
 			}
 			else if( isinf(src) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], isneg(src) );
 			}
 			else {
 				FPU registers[reg] = src;
@@ -2110,7 +2110,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			else if (fl_dest.nan || fl_source.nan || 
 					 (fl_dest.zero && fl_source.infinity) || 
 					 (fl_dest.infinity && fl_source.zero) ) {
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], fl_dest.negative );
 			}
 			else if (fl_dest.zero || fl_source.zero ) {
 				if ( (fl_dest.negative && !fl_source.negative) ||
@@ -2180,7 +2180,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			}
 			else if (fl_source.infinity) {
 				// Returns NaN for any Infinity source
-				make_nan( FPU registers[reg] );
+				make_nan( FPU registers[reg], fl_source.negative );
 			}
 			make_fpsr(FPU registers[reg]);
 			break;
@@ -2312,7 +2312,7 @@ PUBLIC void FFPU fpu_init (bool integral_68040)
 	FPU result = 1;
 	
 	for (int i = 0; i < 8; i++)
-		make_nan(FPU registers[i]);
+		make_nan(FPU registers[i], false);
 }
 
 PUBLIC void FFPU fpu_exit (void)

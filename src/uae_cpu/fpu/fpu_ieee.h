@@ -59,7 +59,7 @@ PRIVATE double_flags fl_dest;
 PRIVATE inline void FFPU get_dest_flags(fpu_register const & r);
 PRIVATE inline void FFPU get_source_flags(fpu_register const & r);
 
-PRIVATE inline void FFPU make_nan(fpu_register & r);
+PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative);
 PRIVATE inline void FFPU make_zero_positive(fpu_register & r);
 PRIVATE inline void FFPU make_zero_negative(fpu_register & r);
 PRIVATE inline void FFPU make_inf_positive(fpu_register & r);

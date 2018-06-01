@@ -1,3 +1,7 @@
+2018/06/01 - Thorsten
+Handle signbit of NaNs
+
+
 2018/05/31 - Thorsten
 JIT: add some comments
 

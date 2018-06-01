@@ -539,7 +539,7 @@ PRIVATE inline void FFPU get_source_flags(fpu_register const & r)
 	fl_source.in_range	= !fl_source.zero && !fl_source.infinity && !fl_source.nan;
 }
 
-PRIVATE inline void FFPU make_nan(fpu_register & r)
+PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative)
 {
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
@@ -555,6 +555,7 @@ PRIVATE inline void FFPU make_nan(fpu_register & r)
 	sxp.ieee.mantissa2	= 0xffffffff;
 	sxp.ieee.mantissa3	= 0xffffffff;
 #endif
+	sxp.ieee.negative   = negative;
 	r = sxp.value;
 }
 
