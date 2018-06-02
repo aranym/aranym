@@ -1741,7 +1741,6 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				fpu_debug(("FP const: ln(10)\n"));
 				break;
 			case 0x32:
-				// ??
 				FPU registers[reg] = LD(1.0e0);
 				fpu_debug(("FP const: 1.0e0\n"));
 				break;

@@ -1,3 +1,8 @@
+2018/05/31 - Thorsten
+JIT: properly declare FPU constants as long double,
+as they otherwise might be compiled inexactly
+
+
 2018/05/29 - Thorsten
 JIT: Fix some more flag handling in rotate instructions
 
