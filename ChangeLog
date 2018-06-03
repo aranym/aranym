@@ -1,3 +1,8 @@
+2018/06/03 - Thorsten
+According to Toni Wilen, the '040 does not mask out bits 0-3
+of the FPCR register
+
+
 2018/06/01 - Thorsten
 Mask off least significant 3 bits of accrued exception byte
 

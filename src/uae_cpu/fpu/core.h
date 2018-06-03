@@ -74,10 +74,7 @@ struct fpu_t {
 	/* --- Floating-Point Control Register                                --- */
 	/* ---------------------------------------------------------------------- */
 	
-	struct		{
-	
 	/* Exception Enable Byte */
-	uae_u32		exception_enable;
 	#define		FPCR_EXCEPTION_ENABLE	0x0000ff00
 	#define		FPCR_EXCEPTION_BSUN		0x00008000
 	#define		FPCR_EXCEPTION_SNAN		0x00004000
@@ -92,21 +89,19 @@ struct fpu_t {
 	#define		FPCR_MODE_CONTROL		0x000000ff
 	
 	/* Rounding precision */
-	uae_u32		rounding_precision;
 	#define		FPCR_ROUNDING_PRECISION	0x000000c0
 	#define		FPCR_PRECISION_SINGLE	0x00000040
 	#define		FPCR_PRECISION_DOUBLE	0x00000080
 	#define		FPCR_PRECISION_EXTENDED	0x00000000
 	
 	/* Rounding mode */
-	uae_u32		rounding_mode;
 	#define		FPCR_ROUNDING_MODE		0x00000030
 	#define		FPCR_ROUND_NEAR			0x00000000
 	#define		FPCR_ROUND_ZERO			0x00000010
 	#define		FPCR_ROUND_MINF			0x00000020
 	#define		FPCR_ROUND_PINF			0x00000030
 	
-	}			fpcr;
+	uae_u32 fpcr;
 	
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Status Register                                 --- */

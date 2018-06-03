@@ -1558,8 +1558,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		if ((opcode & 0x38) == 0) {
 			if (extra & 0x2000) { // dr bit
 				if (extra & 0x1000) {
-					// according to the manual, the msb bits are always zero.
-					m68k_dreg (regs, opcode & 7) = get_fpcr() & 0xFFFF;
+					m68k_dreg (regs, opcode & 7) = get_fpcr();
 					fpu_debug(("FMOVEM FPU fpcr (%X) -> D%d\n", get_fpcr(), opcode & 7));
 				}
 				if (extra & 0x0800) {
@@ -1590,8 +1589,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		else if ((opcode & 0x38) == 8) { 
 			if (extra & 0x2000) { // dr bit
 				if (extra & 0x1000) {
-					// according to the manual, the msb bits are always zero.
-					m68k_areg (regs, opcode & 7) = get_fpcr() & 0xFFFF;
+					m68k_areg (regs, opcode & 7) = get_fpcr();
 					fpu_debug(("FMOVEM FPU fpcr (%X) -> A%d\n", get_fpcr(), opcode & 7));
 				}
 				if (extra & 0x0800) {
@@ -1654,8 +1652,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			}
 			ad -= incr;
 			if (extra & 0x1000) {
-				// according to the manual, the msb bits are always zero.
-				put_long (ad, get_fpcr() & 0xFFFF);
+				put_long (ad, get_fpcr());
 				fpu_debug(("FMOVEM FPU fpcr (%X) -> mem %X\n", get_fpcr(), ad ));
 				ad += 4;
 			}
@@ -2117,7 +2114,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			fpu_debug(("FINT %.04f\n",(double)src));
 			// FPU registers[reg] = (int) (src + 0.5);
 			// FIXME: use native rounding mode flags
-			switch (get_fpcr() & 0x30) {
+			switch (get_fpcr() & FPCR_ROUNDING_MODE) {
 			case FPCR_ROUND_ZERO:
 				FPU registers[reg] = round_to_zero(src);
 				break;

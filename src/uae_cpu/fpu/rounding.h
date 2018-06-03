@@ -111,8 +111,8 @@ PRIVATE inline void set_host_control_word(void)
 	*/
 	x86_control_word
 		= (x86_control_word & ~(X86_ROUNDING_MODE|X86_ROUNDING_PRECISION))
-		| x86_control_word_rm_mac2host[(FPU fpcr.rounding_mode & FPCR_ROUNDING_MODE) >> 4]
-		| x86_control_word_rp_mac2host[(FPU fpcr.rounding_precision & FPCR_ROUNDING_PRECISION) >> 6]
+		| x86_control_word_rm_mac2host[(FPU fpcr & FPCR_ROUNDING_MODE) >> 4]
+		| x86_control_word_rp_mac2host[(FPU fpcr & FPCR_ROUNDING_PRECISION) >> 6]
 		;
 	__asm__ __volatile__("fldcw %0" : : "m" (x86_control_word));
 }
@@ -136,11 +136,11 @@ PRIVATE inline void set_host_control_word(void)
 
 /* Return the current rounding mode in m68k format */
 static inline uae_u32 FFPU get_rounding_mode(void)
-	{ return FPU fpcr.rounding_mode; }
+	{ return FPU fpcr & FPCR_ROUNDING_MODE; }
 
 /* Convert and set to native rounding mode */
-static inline void FFPU set_rounding_mode(uae_u32 new_rounding_mode)
-	{ FPU fpcr.rounding_mode = new_rounding_mode; }
+static inline void FFPU set_rounding_mode(uae_u32 /* new_rounding_mode */ )
+	{ }
 
 #endif
 
@@ -148,11 +148,11 @@ static inline void FFPU set_rounding_mode(uae_u32 new_rounding_mode)
 
 /* Return the current rounding precision in m68k format */
 static inline uae_u32 FFPU get_rounding_precision(void)
-	{ return FPU fpcr.rounding_precision; }
+	{ return FPU fpcr & FPCR_ROUNDING_PRECISION; }
 
 /* Convert and set to native rounding precision */
-static inline void FFPU set_rounding_precision(uae_u32 new_rounding_precision)
-	{ FPU fpcr.rounding_precision = new_rounding_precision; }
+static inline void FFPU set_rounding_precision(uae_u32 /* new_rounding_precision */)
+	{  }
 
 #endif
 
