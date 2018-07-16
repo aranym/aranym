@@ -320,34 +320,19 @@ PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative)
 	r = p.val;
 }
 
-PRIVATE inline void FFPU make_zero_positive(fpu_register & r)
-{
-	fpu_register_parts p;
-	p.parts[FLO] = p.parts[FHI] = 0;
-	r = p.val;
-}
-
-PRIVATE inline void FFPU make_zero_negative(fpu_register & r)
+PRIVATE inline void FFPU make_zero(fpu_register & r, bool negative)
 {
 	fpu_register_parts p;
 	p.parts[FLO] = 0;
-	p.parts[FHI] = 0x80000000;
+	p.parts[FHI] = negative ? 0x80000000 : 0;
 	r = p.val;
 }
 
-PRIVATE inline void FFPU make_inf_positive(fpu_register & r)
+PRIVATE inline void FFPU make_inf(fpu_register & r, bool negative)
 {
 	fpu_register_parts p;
 	p.parts[FLO] = 0;
-	p.parts[FHI] = 0x7FF00000;
-	r = p.val;
-}
-
-PRIVATE inline void FFPU make_inf_negative(fpu_register & r)
-{
-	fpu_register_parts p;
-	p.parts[FLO] = 0;
-	p.parts[FHI] = 0xFFF00000;
+	p.parts[FHI] = negative ? 0xFFF00000 : 0x7FF00000;
 	r = p.val;
 }
 
@@ -358,7 +343,7 @@ PRIVATE inline void FFPU fast_scale(fpu_register & r, int add)
 	// TODO: overflow flags
 	exp += add;
 	if(exp >= 2047) {
-		make_inf_positive(r);
+		make_inf(r, false);
 		return;
 	} else if(exp < 0) {
 		// keep sign (+/- 0)
@@ -516,7 +501,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 {
 	// Is it zero?
 	if ((wrd1 & 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0) {
-		make_zero_positive(result);
+		make_zero(result, false);
 		return;
 	}
 
@@ -2073,22 +2058,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 					make_nan( FPU registers[reg], fl_dest.negative );
 				}
 				else if (fl_dest.zero || fl_source.zero ) {
-					if (fl_dest.negative && !fl_source.negative ||
-						!fl_dest.negative && fl_source.negative)  {
-						make_zero_negative(FPU registers[reg]);
-					}
-					else {
-						make_zero_positive(FPU registers[reg]);
-					}
+					make_zero(FPU registers[reg], fl_dest.negative != fl_source.negative);
 				}
 				else {
-					if( fl_dest.negative && !fl_source.negative ||
-						!fl_dest.negative && fl_source.negative)  {
-						make_inf_negative(FPU registers[reg]);
-					}
-					else {
-						make_inf_positive(FPU registers[reg]);
-					}
+					make_inf(FPU registers[reg], fl_dest.negative != fl_source.negative);
 				}
 				make_fpsr(FPU registers[reg]);
 				break;
@@ -2331,22 +2304,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				make_nan( FPU registers[reg], fl_dest.negative );
 			}
 			else if (fl_dest.zero || fl_source.zero ) {
-				if (( fl_dest.negative && !fl_source.negative) ||
-					(!fl_dest.negative &&  fl_source.negative))  {
-					make_zero_negative(FPU registers[reg]);
-				}
-				else {
-					make_zero_positive(FPU registers[reg]);
-				}
+				make_zero(FPU registers[reg], fl_dest.negative != fl_source.negative);
 			}
 			else {
-				if(( fl_dest.negative && !fl_source.negative) ||
-				   (!fl_dest.negative &&  fl_source.negative))  {
-					make_inf_negative(FPU registers[reg]);
-				}
-				else {
-					make_inf_positive(FPU registers[reg]);
-				}
+				make_inf(FPU registers[reg], fl_dest.negative != fl_source.negative);
 			}
 #else
 			fpu_debug(("FMUL %.04f\n",(double)src));

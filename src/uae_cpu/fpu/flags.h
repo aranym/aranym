@@ -202,9 +202,9 @@ PRIVATE inline void FFPU set_fpccr(uae_u32 new_fpcond)
 	if (new_fpcond & FPSR_CCB_NAN)
 		make_nan(FPU result, negative);
 	else if (new_fpcond & FPSR_CCB_INFINITY)
-		negative ? make_inf_negative(FPU result) : make_inf_positive(FPU result);
+		make_inf(FPU result, negative);
 	else if (new_fpcond & FPSR_CCB_ZERO)
-		negative ? make_zero_negative(FPU result) : make_zero_positive(FPU result);
+		make_zero(FPU result, negative);
 	else
 		FPU result = negative ? -1.0 : +1.0;
 }

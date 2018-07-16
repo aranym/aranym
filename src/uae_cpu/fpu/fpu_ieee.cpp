@@ -316,10 +316,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 	}
 	// is it inf?
 	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && (wrd2 & 0x7fffffff) == 0 && wrd3 == 0) {
-		if ((wrd1 & 0x80000000) == 0)
-			make_inf_positive(result);
-		else
-			make_inf_negative(result);
+		make_inf(result, (wrd1 & 0x80000000) != 0);
 		return result;
 	}
 	fp_declare_init_shape(srp, extended);
@@ -387,10 +384,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 {
 	// is it zero?
 	if ((wrd1 & 0x7fff0000) == 0 && wrd2 == 0 && wrd3 == 0) {
-		if (wrd1 & 0x80000000)
-			make_zero_negative(result);
-		else
-			make_zero_positive(result);
+		make_zero(result, (wrd1 & 0x80000000) != 0);
 		return;
 	}
 	// is it NaN?
@@ -401,10 +395,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 #if defined(USE_QUAD_DOUBLE)
 	// is it inf?
 	if ((wrd1 & 0x7ffff000) == 0x7fff0000 && (wrd2 & 0x7fffffff) == 0 && wrd3 == 0) {
-		if ((wrd1 & 0x80000000) == 0)
-			make_inf_positive(result);
-		else
-			make_inf_negative(result);
+		make_inf(result, (wrd1 & 0x80000000) != 0);
 		return;
 	}
 	fp_declare_init_shape(srp, extended);
@@ -540,9 +531,9 @@ PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32
 	
 	if (exp == 0x7fff)
 	{
-		if (wrd2 == 0 && wrd3 == 0)
+		if ((wrd2 & 0x7fffffff) == 0 && wrd3 == 0)
 		{
-			sm ? make_inf_negative(d) : make_inf_positive(d);
+			make_inf(d, sm);
 		} else
 		{
 			make_nan(d, sm);
@@ -552,7 +543,7 @@ PRIVATE inline fpu_register FFPU make_packed(uae_u32 wrd1, uae_u32 wrd2, uae_u32
 	dig = wrd1 & 0x0000000f;
 	if (dig == 0 && wrd2 == 0 && wrd3 == 0)
 	{
-		sm ? make_zero_negative(d) : make_zero_positive(d);
+		make_zero(d, sm);
 		return d;
 	}
 
@@ -861,7 +852,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fpu_registe
 }
 
 /* Convert the FP value to integer according to the current m68k rounding mode */
-PRIVATE inline uae_s32 FFPU toint(fpu_register const & src)
+PRIVATE inline fpu_register FFPU fp_doround(fpu_register const & src)
 {
 	fpu_register result;
 	switch (get_fpcr() & FPCR_ROUNDING_MODE) {
@@ -881,7 +872,12 @@ PRIVATE inline uae_s32 FFPU toint(fpu_register const & src)
 		result = src; /* should never be reached */
 		break;
 	}
-	return (uae_s32)result;
+	return result;
+}
+
+PRIVATE inline uae_s32 FFPU toint(fpu_register const & src)
+{
+	return (uae_s32)fp_doround(src);
 }
 
 PRIVATE inline int FFPU put_fp_value (uae_u32 opcode, uae_u16 extra, fpu_register const & value)
@@ -1792,8 +1788,15 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			case 0x3f:
 				FPU registers[reg] = LD(1.0e4096);
 				fpu_debug(("FP const: 1.0e4096\n"));
-#endif
 				break;
+#else
+			case 0x3c:
+			case 0x3d:
+			case 0x3e:
+			case 0x3f:
+				make_inf(FPU registers[reg]);
+				break;
+#endif
 			default:
 				m68k_setpc (m68k_getpc () - 4);
 				op_illg (opcode);
@@ -1903,22 +1906,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 					make_nan( FPU registers[reg], fl_dest.negative );
 				}
 				else if (fl_dest.zero || fl_source.zero ) {
-					if ( (fl_dest.negative && !fl_source.negative) ||
-						(!fl_dest.negative && fl_source.negative) )  {
-						make_zero_negative(FPU registers[reg]);
-					}
-					else {
-						make_zero_positive(FPU registers[reg]);
-					}
+					make_zero(FPU registers[reg], fl_dest.negative != fl_source.negative);
 				}
 				else {
-					if ( (fl_dest.negative && !fl_source.negative) ||
-						(!fl_dest.negative && fl_source.negative) )  {
-						make_inf_negative(FPU registers[reg]);
-					}
-					else {
-						make_inf_positive(FPU registers[reg]);
-					}
+					make_inf(FPU registers[reg], fl_dest.negative != fl_source.negative);
 				}
 				make_fpsr(FPU registers[reg]);
 				break;
@@ -1939,43 +1930,68 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x01:		/* FINT */
+			/*
+			 * FIXME: in round-to-nearest, x87
+			 * uses round-to-odd, but m68k round-to-even rule
+			 */
 			fpu_debug(("FINT %.04f\n",(double)src));
-			FPU registers[reg] = toint(src);
+			if (isinf(src))
+				FPU registers[reg] = src;
+			else
+				FPU registers[reg] = fp_doround(src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x02:		/* FSINH */
 			fpu_debug(("FSINH %.04f\n",(double)src));
-			FPU registers[reg] = fp_sinh (src);
+			if (isinf(src))
+				FPU registers[reg] = src;
+			else
+				FPU registers[reg] = fp_sinh (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x03:		/* FINTRZ */
 			fpu_debug(("FINTRZ %.04f\n",(double)src));
-			FPU registers[reg] = fp_round_to_zero(src);
+			if (isinf(src))
+				FPU registers[reg] = src;
+			else
+				FPU registers[reg] = fp_round_to_zero(src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x04:		/* FSQRT */
 			fpu_debug(("FSQRT %.04f\n",(double)src));
-			FPU registers[reg] = fp_sqrt (src);
+			if (isinf(src) && !isneg(src))
+				FPU registers[reg] = src;
+			else
+				FPU registers[reg] = fp_sqrt (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x06:		/* FLOGNP1 */
 			fpu_debug(("FLOGNP1 %.04f\n",(double)src));
-			FPU registers[reg] = fp_log (src + 1.0);
+			if (isinf(src) && !isneg(src))
+				make_inf(FPU registers[reg], false);
+			else
+				FPU registers[reg] = fp_log1p (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x08:		/* FETOXM1 */
 			fpu_debug(("FETOXM1 %.04f\n",(double)src));
-			FPU registers[reg] = fp_exp (src) - 1.0;
+			FPU registers[reg] = fp_expm1 (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x09:		/* FTANH */
 			fpu_debug(("FTANH %.04f\n",(double)src));
-			FPU registers[reg] = fp_tanh (src);
+			if (isinf(src))
+				FPU registers[reg] = isneg(src) ? LD(-1.0) : LD(1.0);
+			else
+				FPU registers[reg] = fp_tanh (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x0a:		/* FATAN */
 			fpu_debug(("FATAN %.04f\n",(double)src));
-			FPU registers[reg] = fp_atan (src);
+			if (isinf(src))
+				FPU registers[reg] = isneg (src) ? LD(-1.570796326794896619231321691639751442) : LD(1.570796326794896619231321691639751442);
+			else
+				FPU registers[reg] = fp_atan (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x0c:		/* FASIN */
@@ -2000,32 +2016,65 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x10:		/* FETOX */
 			fpu_debug(("FETOX %.04f\n",(double)src));
-			FPU registers[reg] = fp_exp (src);
+			if (isinf(src))
+			{
+				make_zero(FPU registers[reg], isneg(src));
+			} else
+			{
+				FPU registers[reg] = fp_exp (src);
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x11:		/* FTWOTOX */
 			fpu_debug(("FTWOTOX %.04f\n",(double)src));
-			FPU registers[reg] = fp_pow(2.0, src);
+			if (isinf(src))
+			{
+				if (isneg(src))
+					make_zero(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], true);
+			} else
+			{
+				FPU registers[reg] = fp_pow2(src);
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x12:		/* FTENTOX */
 			fpu_debug(("FTENTOX %.04f\n",(double)src));
-			FPU registers[reg] = fp_pow(10.0, src);
+			if (isinf(src))
+			{
+				if (isneg(src))
+					make_zero(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], true);
+			} else
+			{
+				FPU registers[reg] = fp_pow10(src);
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x14:		/* FLOGN */
 			fpu_debug(("FLOGN %.04f\n",(double)src));
-			FPU registers[reg] = fp_log (src);
+			if (isinf(src) && !isneg(src))
+				make_inf(FPU registers[reg], false);
+			else
+				FPU registers[reg] = fp_log (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x15:		/* FLOG10 */
 			fpu_debug(("FLOG10 %.04f\n",(double)src));
-			FPU registers[reg] = fp_log10 (src);
+			if (isinf(src) && !isneg(src))
+				make_inf(FPU registers[reg], false);
+			else
+				FPU registers[reg] = fp_log10 (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x16:		/* FLOG2 */
 			fpu_debug(("FLOG2 %.04f\n",(double)src));
-			FPU registers[reg] = fp_log (src) / fp_log (2.0);
+			if (isinf(src) && !isneg(src))
+				make_inf(FPU registers[reg], false);
+			else
+				FPU registers[reg] = fp_log2 (src);
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x18:		/* FABS */
@@ -2035,7 +2084,13 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x19:		/* FCOSH */
 			fpu_debug(("FCOSH %.04f\n",(double)src));
-			FPU registers[reg] = fp_cosh(src);
+			if (isinf(src))
+			{
+				make_inf(FPU registers[reg], false);
+			} else
+			{
+				FPU registers[reg] = fp_cosh(src);
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x1a:		/* FNEG */
@@ -2058,18 +2113,22 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			if( isinf(src) ) {
 				make_nan( FPU registers[reg], isneg(src) );
 			}
+			else if( iszero(src) ) {
+				make_zero(FPU registers[reg], isneg(src));
+			}
 			else {
+				/* FIXME: subnormals not supported */
 				FPU registers[reg] = fast_fgetexp( src );
 			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x1f:		/* FGETMAN */
 			fpu_debug(("FGETMAN %.04f\n",(double)src));
-			if( src == 0 ) {
-				FPU registers[reg] = 0;
+			if( iszero(src)) {
+				make_zero(FPU registers[reg], isneg(src));
 			}
-			else if( isinf(src) ) {
-				make_nan( FPU registers[reg], isneg(src) );
+			else if( isinf(src) || isnan(src) ) {
+				make_nan( FPU registers[reg], 0 );
 			}
 			else {
 				FPU registers[reg] = src;
@@ -2079,7 +2138,28 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x20:		/* FDIV */
 			fpu_debug(("FDIV %.04f\n",(double)src));
-			FPU registers[reg] /= src;
+			if (isnan(src) || isnan(FPU registers[reg]))
+			{
+				make_nan(FPU registers[reg], false);
+			} else if (isinf(src))
+			{
+				if (isinf(FPU registers[reg]))
+					make_nan(FPU registers[reg], false);
+				else
+					make_zero(FPU registers[reg], isneg(src) != isneg(FPU registers[reg]));
+			} else if (isinf(FPU registers[reg]))
+			{
+				if (isinf(src))
+					make_nan(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], isneg(src) != isneg(FPU registers[reg]));
+			} else if (iszero(FPU registers[reg]) && !iszero(src))
+			{
+				make_zero(FPU registers[reg], isneg(FPU registers[reg]) != isneg(src));
+			} else
+			{
+				FPU registers[reg] /= src;
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x21:		/* FMOD */
@@ -2101,7 +2181,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				FPU registers[reg] *= src;
 				if (unlikely(isinf(FPU registers[reg])))
 				{
-					isneg(FPU registers[reg]) ? make_inf_negative(FPU registers[reg]) : make_inf_positive(FPU registers[reg]);
+					make_inf(FPU registers[reg], isneg(FPU registers[reg]));
 				}
 			}
 			else if (fl_dest.nan || fl_source.nan || 
@@ -2110,22 +2190,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				make_nan( FPU registers[reg], fl_dest.negative );
 			}
 			else if (fl_dest.zero || fl_source.zero ) {
-				if ( (fl_dest.negative && !fl_source.negative) ||
-					(!fl_dest.negative && fl_source.negative) )  {
-					make_zero_negative(FPU registers[reg]);
-				}
-				else {
-					make_zero_positive(FPU registers[reg]);
-				}
+				make_zero(FPU registers[reg], fl_dest.negative != fl_source.negative);
 			}
 			else {
-				if ( (fl_dest.negative && !fl_source.negative) ||
-					(!fl_dest.negative && fl_source.negative) )  {
-					make_inf_negative(FPU registers[reg]);
-				}
-				else {
-					make_inf_positive(FPU registers[reg]);
-				}
+				make_inf(FPU registers[reg], fl_dest.negative != fl_source.negative);
 			}
 			make_fpsr(FPU registers[reg]);
 			break;
@@ -2159,8 +2227,26 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 				fp_declare_init_shape(sxp, extended);
 				sxp.value = FPU registers[reg];
-				sxp.ieee.exponent += scale_factor;
-				FPU registers[reg] = sxp.value;
+				int exp = sxp.ieee.exponent;
+				exp += scale_factor;
+				if (scale_factor >= FP_EXTENDED_EXP_MAX || exp >= FP_EXTENDED_EXP_MAX) /* overflow */
+				{
+					make_inf(FPU registers[reg], isneg(FPU registers[reg]));
+					FPU fpsr.exception_status |= FPSR_EXCEPTION_OVFL;
+				} else if (scale_factor < -FP_EXTENDED_EXP_MAX || exp <= -64) /* underflow */
+				{
+					make_zero(FPU registers[reg], isneg(FPU registers[reg]));
+					FPU fpsr.exception_status |= FPSR_EXCEPTION_UNFL;
+				} else if (exp >= 0) /* normal result */
+				{
+					sxp.ieee.exponent = exp;
+					FPU registers[reg] = sxp.value;
+				} else /* subnormal result */
+				{
+					exp += 64;
+					sxp.ieee.exponent = exp;
+					sxp.value = sxp.value * 5.421010862427522170037e-20L; /* 2^-64 */
+				}
 #else
 				fp_declare_init_shape(sxp, double);
 				sxp.value = FPU registers[reg];
@@ -2175,9 +2261,12 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 				FPU registers[reg] = sxp.value;
 #endif
 			}
-			else if (fl_source.infinity) {
+			else if (fl_source.infinity || fl_source.nan) {
 				// Returns NaN for any Infinity source
 				make_nan( FPU registers[reg], fl_source.negative );
+			} else {
+				// source was zero, or dest was inf or nan
+				// in either case, dest is unchanged
 			}
 			make_fpsr(FPU registers[reg]);
 			break;
@@ -2188,15 +2277,51 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x28:		/* FSUB */
 			fpu_debug(("FSUB %.04f\n",(double)src));
-			FPU registers[reg] -= src;
+			if (isnan(src) || isnan(FPU registers[reg]))
+			{
+				make_nan(FPU registers[reg], false);
+			} else if (isinf(src))
+			{
+				if (isinf(FPU registers[reg]) && isneg(src) == isneg(FPU registers[reg]))
+					make_nan(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], isneg(src));
+			} else if (isinf(FPU registers[reg]))
+			{
+				if (isinf(src) && isneg(src) == isneg(FPU registers[reg]))
+					make_nan(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], isneg(FPU registers[reg]));
+			} else
+			{
+				FPU registers[reg] -= src;
+			}
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x22:		/* FADD */
 			fpu_debug(("FADD %.04f\n",(double)src));
-			FPU registers[reg] += src;
-			if (unlikely(isinf(FPU registers[reg])))
+			/*
+			 * WTF. inf + some value generates NaN on x87,
+			 * but we need inf in most cases
+			 */
+			if (isnan(src) || isnan(FPU registers[reg]))
 			{
-				isneg(FPU registers[reg]) ? make_inf_negative(FPU registers[reg]) : make_inf_positive(FPU registers[reg]);
+				make_nan(FPU registers[reg], false);
+			} else if (isinf(src))
+			{
+				if (isinf(FPU registers[reg]) && isneg(src) != isneg(FPU registers[reg]))
+					make_nan(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], isneg(src));
+			} else if (isinf(FPU registers[reg]))
+			{
+				if (isinf(src) && isneg(src) != isneg(FPU registers[reg]))
+					make_nan(FPU registers[reg], false);
+				else
+					make_inf(FPU registers[reg], isneg(FPU registers[reg]));
+			} else
+			{
+				FPU registers[reg] += src;
 			}
 			make_fpsr(FPU registers[reg]);
 			break;
@@ -2210,6 +2335,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		case 0x37:
 			fpu_debug(("FSINCOS %.04f\n",(double)src));
 			// Cosine must be calculated first if same register
+			// note: no need to use special sincos() function here; compiler will optimize that anyway
 			FPU registers[extra & 7] = fp_cos(src);
 			FPU registers[reg] = fp_sin (src);
 			// Set FPU fpsr according to the sine result
@@ -2227,7 +2353,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			}
 			else if (isinf(src))
 				make_fpsr(-src);
-      else
+			else
 				make_fpsr(FPU registers[reg] - src);
 			break;
 		case 0x3a:		/* FTST */

@@ -45,6 +45,7 @@
 
 #if defined(FPU_IEEE) && defined(USE_X87_ASSEMBLY)
 
+#if !defined(HAVE_EXP10L) && !defined(HAVE_POW10L)
 PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 {
 	fpu_extended value, exponent;
@@ -87,7 +88,9 @@ PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 	__asm__ __volatile__("fscale" : "=t" (value) : "0" (value), "u" (exponent));
 	return value;
 }
+#endif
 
+#ifndef HAVE_LOG1PL
 PRIVATE fpu_extended fp_do_log1p(fpu_extended x)
 {
 	// TODO: handle NaN and +inf/-inf
@@ -101,5 +104,6 @@ PRIVATE fpu_extended fp_do_log1p(fpu_extended x)
 		__asm__ __volatile__("fldln2; fxch; fyl2x" : "=t" (value) : "0" (x + 1.0));
 	return value;
 }
+#endif
 
 #endif

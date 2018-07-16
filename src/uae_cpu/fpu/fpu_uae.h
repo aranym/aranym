@@ -84,10 +84,8 @@ PRIVATE inline bool FFPU do_isneg(fpu_register const & r);
 PRIVATE inline bool FFPU do_iszero(fpu_register const & r);
 
 PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative);
-PRIVATE inline void FFPU make_zero_positive(fpu_register & r);
-PRIVATE inline void FFPU make_zero_negative(fpu_register & r);
-PRIVATE inline void FFPU make_inf_positive(fpu_register & r);
-PRIVATE inline void FFPU make_inf_negative(fpu_register & r);
+PRIVATE inline void FFPU make_zero(fpu_register & r, bool negative);
+PRIVATE inline void FFPU make_inf(fpu_register & r, bool negative);
 
 PRIVATE inline void FFPU fast_scale(fpu_register & r, int add);
 PRIVATE inline fpu_register FFPU fast_fgetexp(fpu_register const & r);

@@ -580,7 +580,7 @@ update_exceptions ()
     aexc |= FPSR_ACCR_INEX;
   set_accrued_exception (aexc);
 
-  if ((fpu.fpcr.exception_enable & exc) != 0)
+  if ((fpu.fpcr & exc) != 0)
     {
       fpu.instruction_address = cur_instruction_address;
       // TODO: raise exceptions
