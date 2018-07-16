@@ -1,4 +1,8 @@
 2018/07/16 - Thorsten
+Avoid using a restricted pointer
+
+
+2018/07/16 - Thorsten
 Fix some corner-cases of INF handling
 
 

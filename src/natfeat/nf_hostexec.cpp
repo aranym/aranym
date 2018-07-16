@@ -356,7 +356,7 @@ int HostExec::doexecv(char *const argv[]) const
 			sa.sa_flags |= SA_NOCLDSTOP;
 #endif
 			sa.sa_handler = child_signal;
-			sigaction(SIGCHLD, &sa, &sa);
+			sigaction(SIGCHLD, &sa, NULL);
 
 			signal_handler_installed = 1;
 		}
