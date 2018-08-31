@@ -1,4 +1,8 @@
 2018/08/31 - Thorsten
+Reformat ata.cpp
+
+
+2018/08/31 - Thorsten
 Don't flood console with messages from IDE driver that
 are actually debug messages
 
