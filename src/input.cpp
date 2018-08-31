@@ -695,7 +695,9 @@ SDL_bool hideMouse(SDL_bool hide)
 HOTKEY check_hotkey(int state, SDL_Keycode sym)
 {
 #define CHECK_HOTKEY(Hotkey) \
-	if (((bx_options.hotkeys.Hotkey.sym == 0 || sym == bx_options.hotkeys.Hotkey.sym) && state == bx_options.hotkeys.Hotkey.mod)) \
+	if (bx_options.hotkeys.Hotkey.sym != 0 && sym == bx_options.hotkeys.Hotkey.sym && state == bx_options.hotkeys.Hotkey.mod) \
+		return HOTKEY_ ## Hotkey; \
+	if (bx_options.hotkeys.Hotkey.sym == 0 && bx_options.hotkeys.Hotkey.mod != 0 && state == bx_options.hotkeys.Hotkey.mod) \
 		return HOTKEY_ ## Hotkey
 	CHECK_HOTKEY(setup);
 	CHECK_HOTKEY(quit);
