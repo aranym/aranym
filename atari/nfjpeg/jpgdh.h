@@ -66,7 +66,7 @@ typedef struct _JPGD_STRUCT {
 } __attribute__((packed)) JPGD_STRUCT;
 typedef JPGD_STRUCT	*JPGD_PTR;
 
-#define	JPGD_MAGIC	'_JPD'
+#define	JPGD_MAGIC	0x5F4A5044L /* '_JPD' */
 #define	JPGD_VERSION	1
 
 #undef NOERROR

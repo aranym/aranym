@@ -1,4 +1,13 @@
 2018/08/31 - Thorsten
+nfjpeg: don't wait for keypress
+
+The message(s) written by Cconws() might not be visible on the screen,
+when written to boot.log by MiNT or redirected to the host console.
+In that case the user has no idea that the driver is waiting for a keypress,
+and the boot will stop.
+
+
+2018/08/31 - Thorsten
 Reformat ata.cpp
 
 

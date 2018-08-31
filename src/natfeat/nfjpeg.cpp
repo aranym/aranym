@@ -305,6 +305,9 @@ int32 JpegDriver::dispatch(uint32 fncode)
 		case NFJPEG_OPENDRIVER:
 			ret = open_driver(getParameter(0));
 			break;
+		case NFJPEG_GETSTRUCTSIZE:
+			ret = sizeof(JPGD_STRUCT);
+			break;
 		case NFJPEG_CLOSEDRIVER:
 			ret = close_driver(getParameter(0));
 			break;

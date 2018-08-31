@@ -52,40 +52,36 @@
 #define DRIVER_NAME	"ARAnyM host JPEG driver"
 #define VERSION	"v0.4"
 
-#define CALLJPEGROUTINE(jpgd_ptr,func_ptr)	\
-__extension__	\
-({	\
-	register long retvalue __asm__("d0");	\
-	\
-	__asm__ volatile (	\
-		"movl	%1,a0\n\t"	\
-		"jbsr	%2@"	\
-		: "=r"(retvalue)	\
-		: "a"(jpgd_ptr), "a"(func_ptr)	\
-		: "a0", "memory" \
-	);	\
-	retvalue; \
-})
+static __inline__ long CALLJPEGROUTINE(JPGD_STRUCT *jpgd_ptr, short (*func_ptr)(JPGD_STRUCT *ptr))
+{
+	register short retvalue __asm__("d0");
+
+	__asm__ volatile (
+		" movl	%[jpgd_ptr],%%a0\n"
+		" jbsr	%[func_ptr]@\n"
+		: "=r"(retvalue)
+		: [jpgd_ptr]"a"(jpgd_ptr), [func_ptr]"a"(func_ptr)
+		: "a0", "cc", "memory"
+	);
+	return retvalue;
+}
 
 /*--- Functions prototypes ---*/
 
-JPGD_ENUM JpegDecOpenDriver(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM JpegDecCloseDriver(struct _JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM JpegDecOpenDriver(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM JpegDecCloseDriver(JPGD_STRUCT *jpgd_ptr);
 long JpegDecGetStructSize(void);
-JPGD_ENUM JpegDecGetImageInfo(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM JpegDecGetImageSize(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM JpegDecGetImageInfo(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM JpegDecGetImageSize(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM JpegDecDecodeImage(JPGD_STRUCT *jpgd_ptr);
 
-JPGD_ENUM OpenDriver(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM CloseDriver(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM GetImageInfo(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM GetImageSize(struct _JPGD_STRUCT *jpgd_ptr);
-JPGD_ENUM DecodeImage(struct _JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM OpenDriver(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM CloseDriver(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM GetImageInfo(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM GetImageSize(JPGD_STRUCT *jpgd_ptr);
+JPGD_ENUM DecodeImage(JPGD_STRUCT *jpgd_ptr);
 
 static void install_jpeg(void);
-static void press_any_key(void);
-
-static void *Atari_MxAlloc(unsigned long size);
 
 /*--- Local variables ---*/
 
@@ -104,6 +100,14 @@ static JPGDDRV_STRUCT nfjpeg_cookie = {
 
 /*--- Functions ---*/
 
+static void *Atari_MxAlloc(unsigned long size)
+{
+	void *ptr = (void *)Mxalloc(size, MX_PREFTTRAM);
+	if ((long)ptr == -32)
+		ptr = (void *)Malloc(size);
+	return ptr;
+}
+
 void install_driver(unsigned long resident_length)
 {
 	(void) Cconws(
@@ -114,7 +118,6 @@ void install_driver(unsigned long resident_length)
 	/* Check if _JPD already installed */
 	if (cookie_present(C__JPD, NULL)) {
 		(void) Cconws("A JPEG driver is already installed on this system\r\n");
-		press_any_key();
 		return;
 	}	
 
@@ -122,27 +125,25 @@ void install_driver(unsigned long resident_length)
 	nfOps = nf_init();
 	if (!nfOps) {
 		(void) Cconws("Native Features not present on this system\r\n");
-		press_any_key();
 		return;
 	}
 
 	nfJpegId = nfOps->get_id("JPEG");
 	if (nfJpegId==0) {
 		(void) Cconws("NF JPEG functions not present on this system\r\n");
-		press_any_key();
 		return;
 	}	
+
+	{
+		long size = nfOps->call(NFJPEG(NFJPEG_GETSTRUCTSIZE));
+		if (size != -32 && size != sizeof(JPGD_STRUCT))
+			(void) Cconws("NF JPEG: warning: struct size mismatch\r\n");
+	}
 
 	install_jpeg();
 
 	Ptermres(resident_length, 0);
 	for(;;);	/* Never ending loop, should not go there */
-}
-
-static void press_any_key(void)
-{
-	(void) Cconws("- Press any key to continue -\r\n");
-	Crawcin();
 }
 
 static void install_jpeg(void)
@@ -151,34 +152,37 @@ static void install_jpeg(void)
 	cookie_add(C__JPD, (unsigned long)&nfjpeg_cookie);
 }
 
-JPGD_ENUM JpegDecOpenDriver(struct _JPGD_STRUCT *jpgd_ptr)
+JPGD_ENUM JpegDecOpenDriver(JPGD_STRUCT *jpgd_ptr)
 {
 	return nfOps->call(NFJPEG(NFJPEG_OPENDRIVER), jpgd_ptr);
 }
 
-JPGD_ENUM JpegDecCloseDriver(struct _JPGD_STRUCT *jpgd_ptr)
+JPGD_ENUM JpegDecCloseDriver(JPGD_STRUCT *jpgd_ptr)
 {
 	return nfOps->call(NFJPEG(NFJPEG_CLOSEDRIVER), jpgd_ptr);
 }
 
 long JpegDecGetStructSize(void)
 {
-	return sizeof(struct _JPGD_STRUCT);
+	long size = nfOps->call(NFJPEG(NFJPEG_GETSTRUCTSIZE));
+	if (size == -32)
+		size = sizeof(JPGD_STRUCT);
+	return size;
 }
 
-JPGD_ENUM JpegDecGetImageInfo(struct _JPGD_STRUCT *jpgd_ptr)
+JPGD_ENUM JpegDecGetImageInfo(JPGD_STRUCT *jpgd_ptr)
 {
 	return nfOps->call(NFJPEG(NFJPEG_GETIMAGEINFO), jpgd_ptr);
 }
 
-JPGD_ENUM JpegDecGetImageSize(struct _JPGD_STRUCT *jpgd_ptr)
+JPGD_ENUM JpegDecGetImageSize(JPGD_STRUCT *jpgd_ptr)
 {
 	return nfOps->call(NFJPEG(NFJPEG_GETIMAGESIZE), jpgd_ptr);
 }
 
-JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
+JPGD_ENUM JpegDecDecodeImage(JPGD_STRUCT *jpgd_ptr)
 {
-	int row_length, y;
+	long row_length, y;
 
 	row_length = jpgd_ptr->XLoopCounter * 16 * 16 * jpgd_ptr->OutComponents;
 	jpgd_ptr->OutTmpHeight = 0;
@@ -206,7 +210,7 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 
 		jpgd_ptr->MFDBAddress = jpgd_ptr->OutPointer;
 	} else {
-		unsigned char *filename="output.tga";
+		const char *filename="output.tga";
 		long handle;
 
 		jpgd_ptr->OutTmpPointer = Atari_MxAlloc(jpgd_ptr->XLoopCounter * 16 * 16 * 4);
@@ -264,13 +268,4 @@ JPGD_ENUM JpegDecDecodeImage(struct _JPGD_STRUCT *jpgd_ptr)
 	}
 
 	return 0;
-}
-
-static void *Atari_MxAlloc(unsigned long size)
-{
-	if (((Sversion()&0xFF)>=0x01) | (Sversion()>=0x1900)) {
-		return (void *)Mxalloc(size, MX_PREFTTRAM);
-	}
-
-	return (void *)Malloc(size);
 }
