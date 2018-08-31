@@ -1,4 +1,8 @@
 2018/08/31 - Thorsten
+Do not send key releases of hotkeys to Atari
+
+
+2018/08/31 - Thorsten
 nfjpeg: don't wait for keypress
 
 The message(s) written by Cconws() might not be visible on the screen,

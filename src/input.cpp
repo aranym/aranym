@@ -798,10 +798,9 @@ static void process_keyboard_event(const SDL_Event &event)
 #endif
 
 	// process special hotkeys
+	int masked_mod = state & HOTKEYS_MOD_MASK;
+	HOTKEY hotkey = check_hotkey(masked_mod, sym);
 	if (pressed) {
-		int masked_mod = state & HOTKEYS_MOD_MASK;
-		HOTKEY hotkey = check_hotkey(masked_mod, sym);
-		
 		switch (hotkey)
 		{
 		case HOTKEY_none:
@@ -861,6 +860,9 @@ static void process_keyboard_event(const SDL_Event &event)
 			send2Atari = false;
 			break;
 		}
+	} else if (hotkey != HOTKEY_none)
+	{
+		send2Atari = false;
 	}
 
 	// map special keys to Atari range of scancodes
