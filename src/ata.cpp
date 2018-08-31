@@ -347,8 +347,8 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
   switch (port) {
     case 0x00: // hard disk data (16bit) (f00000)
       if (BX_SELECTED_CONTROLLER(channel).status.drq == 0) {
-	    panicbug("IO read(0x%08x) with drq == 0: last command was %02xh", address,
-		     (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
+	    D(bug("IO read(0x%08x) with drq == 0: last command was %02xh", address,
+		     (unsigned) BX_SELECTED_CONTROLLER(channel).current_command));
 	    return 0;
       }
       D(bug("IO read(0x%08x): current command is %02xh", address,
@@ -361,7 +361,9 @@ bx_hard_drive_c::read(Bit32u address, unsigned io_len)
                      (unsigned) address);
             }
           if (BX_SELECTED_CONTROLLER(channel).buffer_index >= 512)
-            panicbug("IO read(0x%08x): buffer_index >= 512", address);
+          {
+            D(bug("IO read(0x%08x): buffer_index >= 512", address));
+	  }
 
 #ifdef BX_SupportRepeatSpeedups
           if (BX_HD_THIS devices->bulkIOQuantumsRequested) {
@@ -492,8 +494,8 @@ if ( quantumsMax == 0)
 	  }
           else
           {
-            panicbug("IO read(0x%08x): current command is 0x%02x", address,
-              (unsigned) BX_SELECTED_CONTROLLER(channel).current_command);
+            D(bug("IO read(0x%08x): current command is 0x%02x", address,
+              (unsigned) BX_SELECTED_CONTROLLER(channel).current_command));
             command_aborted(channel, BX_SELECTED_CONTROLLER(channel).current_command);
 	  }
 	  break;
@@ -505,7 +507,9 @@ if ( quantumsMax == 0)
 		  // Load block if necessary
 		  if (index >= 2048) {
 			if (index > 2048)
-			      panicbug("index > 2048 : 0x%x", index);
+			{
+			      D(bug("index > 2048 : 0x%x", index));
+			}
 			switch (BX_SELECTED_DRIVE(channel).atapi.command) {
 			      case 0x28: // read (10)
 			      case 0xa8: // read (12)
@@ -518,7 +522,7 @@ if ( quantumsMax == 0)
 				    // one block transfered, start at beginnig
 				    index = 0;
 #else
-				    panicbug("Read with no LOWLEVEL_CDROM");
+				    D(panicbug("Read with no LOWLEVEL_CDROM"));
 #endif
 				    break;
 
