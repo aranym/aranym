@@ -68,5 +68,6 @@ GLboolean APIENTRY internal_OSMesaGetColorBuffer(gl_private *private, OSMesaCont
 OSMESAproc APIENTRY internal_OSMesaGetProcAddress(gl_private *private, const char *funcName);
 void APIENTRY internal_OSMesaColorClamp(gl_private *private, GLboolean32 enable);
 void APIENTRY internal_OSMesaPostprocess(gl_private *private, OSMesaContext osmesa, const char *filter, GLuint enable_value);
+OSMesaContext APIENTRY internal_OSMesaCreateContextAttribs(gl_private *private, const GLint *attribList, OSMesaContext sharelist);
 
 #endif

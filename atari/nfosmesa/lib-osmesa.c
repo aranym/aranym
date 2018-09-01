@@ -146,6 +146,15 @@ OSMesaContext APIENTRY internal_OSMesaCreateContextExt(gl_private *private, GLen
 	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTEXT, private->cur_context, &format);
 }
 
+OSMesaContext APIENTRY internal_OSMesaCreateContextAttribs(gl_private *private, const GLint *attribList, OSMesaContext sharelist)
+{
+	if (!InstallHostCall()) {
+		return NULL;
+	}
+
+	return (OSMesaContext)(*HostCall_p)(NFOSMESA_OSMESACREATECONTEXTATTRIBS, private->cur_context, &attribList);
+}
+
 void APIENTRY internal_OSMesaDestroyContext(gl_private *private, OSMesaContext ctx)
 {
 	(*HostCall_p)(NFOSMESA_OSMESADESTROYCONTEXT, private->cur_context, &ctx);

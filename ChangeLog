@@ -1,4 +1,8 @@
 2018/09/01
+Fix some build problems in the shared libs for osmesa
+
+
+2018/09/01
 Fix several bugs in NFJPEG driver
 
 - when output is to a file, and no user callbacks are used,

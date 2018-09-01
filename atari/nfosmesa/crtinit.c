@@ -47,7 +47,7 @@ void _crtinit(void)
 	_setstack((char *)bp + m);
 
 	/* shrink the TPA */
-	(void)Mshrink(0, bp, m);
+	(void)Mshrink(bp, m);
 
 	Pterm(main());
 	__builtin_unreachable();

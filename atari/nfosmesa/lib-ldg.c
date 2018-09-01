@@ -54,6 +54,12 @@ OSMesaContext APIENTRY OSMesaCreateContext(GLenum format, OSMesaContext sharelis
 }
 
 
+OSMesaContext APIENTRY OSMesaCreateContextAttribs(const GLint *attribList, OSMesaContext sharelist)
+{
+	return internal_OSMesaCreateContextAttribs(private, attribList, sharelist);
+}
+
+
 void APIENTRY OSMesaDestroyContext(OSMesaContext ctx)
 {
 	internal_OSMesaDestroyContext(private, ctx);

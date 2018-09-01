@@ -74,6 +74,11 @@ int err_old_nfapi(void)
 }
 
 
+#ifndef __STRINGIFY
+#define __STRING(x)	#x
+#define __STRINGIFY(x)	__STRING(x)
+#endif
+
 char const __Ident_osmesa[] = "$OSMesa: NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER " $";
 
 static LDGLIB const LibLdg = { 

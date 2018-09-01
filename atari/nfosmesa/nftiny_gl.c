@@ -288,6 +288,11 @@ static PROC const LibFunc[]={
 
 #include "versinfo.h"
 
+#ifndef __STRINGIFY
+#define __STRING(x)	#x
+#define __STRINGIFY(x)	__STRING(x)
+#endif
+
 char const __Ident_tinygl[] = "$NFTinyGL: TinyGL NFOSMesa API Version " __STRINGIFY(ARANFOSMESA_NFAPI_VERSION) " " ASCII_ARCH_TARGET " " ASCII_COMPILER " $";
 
 int err_old_nfapi(void)
