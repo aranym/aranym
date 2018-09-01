@@ -1,4 +1,9 @@
 2018/09/01
+Fix a long-standing in the IDE driver when byteswap is enabled,
+and the data register is accessed using long words
+
+
+2018/09/01
 Fix some build problems in the shared libs for osmesa
 
 

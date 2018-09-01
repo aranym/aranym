@@ -241,7 +241,12 @@ void bx_hard_drive_c::init(void)
 				{
 					panicbug("could not open hard drive image file '%s'", bx_options.atadevice[channel][device].path);
 				}
-				D2(bug("HD on ata%d-%d: '%s'", channel, device, bx_options.atadevice[channel][device].path));
+				D(bug("HD on ata%d-%d: '%s', CHS %u/%u/%u, swap %d", channel, device,
+					bx_options.atadevice[channel][device].path,
+					BX_DRIVE(channel, device).hard_drive->cylinders,
+					BX_DRIVE(channel, device).hard_drive->heads,
+					BX_DRIVE(channel, device).hard_drive->sectors,
+					BX_DRIVE(channel, device).hard_drive->byteswap));
 			} else if (bx_options.atadevice[channel][device].type == IDE_CDROM /* BX_ATA_DEVICE_CDROM */ )
 			{
 				D(bug("CDROM on target %d/%d", channel, device));
@@ -417,28 +422,38 @@ Bit32u bx_hard_drive_c::read(Bit32u address, unsigned io_len)
 			{
 				value32 = 0L;
 				bool bs = BX_SELECTED_DRIVE(channel).hard_drive->byteswap;	/* FALCON disk image (byte swap) */
-				int offset = 0;
 
 				switch (io_len)
 				{
 				case 4:
-					value32 |=
-						(BX_SELECTED_CONTROLLER(channel).
-						 buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + (bs ? offset++ : 3)] << 24);
-					value32 |=
-						(BX_SELECTED_CONTROLLER(channel).
-						 buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + (bs ? offset++ : 2)] << 16);
-					/* fall through */
+					if (bs)
+					{
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] << 24;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] << 16;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 2] << 8;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 3];
+						// value32 = ((value32 >> 16) & 0x0000ffff) | ((value32 & 0x0000ffff) << 16);	/* FALCON (word swap for long access to data register) */
+					} else
+					{
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] << 24;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] << 16;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 3] << 8;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 2];
+						// value32 = ((value32 >> 16) & 0x0000ffff) | ((value32 & 0x0000ffff) << 16);	/* FALCON (word swap for long access to data register) */
+					}
+					break;
 				case 2:
-					value32 |=
-						(BX_SELECTED_CONTROLLER(channel).
-						 buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + (bs ? offset++ : 1)] << 8);
-					value32 |=
-						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index +
-															   (bs ? offset : 0)];
+					if (bs)
+					{
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] << 8;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1];
+					} else
+					{
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] << 8;
+						value32 |= BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0];
+					}
+					break;
 				}
-				if (io_len == 4)
-					value32 = ((value32 >> 16) & 0x0000ffff) | ((value32 & 0x0000ffff) << 16);	/* FALCON (word swap for long access to data register) */
 				BX_SELECTED_CONTROLLER(channel).buffer_index += io_len;
 			}
 
@@ -1160,22 +1175,36 @@ void bx_hard_drive_c::write(Bit32u address, Bit32u value, unsigned io_len)
 #endif
 			{
 				bool bs = BX_SELECTED_DRIVE(channel).hard_drive->byteswap;	/* FALCON disk image (byte swap) */
-				int offset = 0;
 
 				switch (io_len)
 				{
 				case 4:
-					value = ((value >> 16) & 0x0000ffff) | ((value & 0x0000ffff) << 16);	/* FALCON (word swap for long access to data register) */
-					BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index +
-														   (bs ? offset++ : 3)] = (Bit8u) (value >> 24);
-					BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index +
-														   (bs ? offset++ : 2)] = (Bit8u) (value >> 16);
-					/* fall through */
+					// value = ((value >> 16) & 0x0000ffff) | ((value & 0x0000ffff) << 16);	/* FALCON (word swap for long access to data register) */
+					if (bs)
+					{
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] = (Bit8u) (value >> 24);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] = (Bit8u) (value >> 16);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 2] = (Bit8u) (value >> 8);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 3] = (Bit8u) value;
+					} else
+					{
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] = (Bit8u) (value >> 24);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] = (Bit8u) (value >> 16);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 3] = (Bit8u) (value >> 8);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 2] = (Bit8u) value;
+					}
+					break;
 				case 2:
-					BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index +
-														   (bs ? offset++ : 1)] = (Bit8u) (value >> 8);
-					BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index +
-														   (bs ? offset : 0)] = (Bit8u) value;
+					if (bs)
+					{
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] = (Bit8u) (value >> 8);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] = (Bit8u) value;
+					} else
+					{
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 1] = (Bit8u) (value >> 8);
+						BX_SELECTED_CONTROLLER(channel).buffer[BX_SELECTED_CONTROLLER(channel).buffer_index + 0] = (Bit8u) value;
+					}
+					break;
 				}
 				BX_SELECTED_CONTROLLER(channel).buffer_index += io_len;
 			}
