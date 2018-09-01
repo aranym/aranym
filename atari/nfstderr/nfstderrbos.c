@@ -78,7 +78,7 @@ static metados_bosheader_t * (*device_init_f)(void)=asm_init_devices;
 
 void *init_driver(void)
 {
-	struct nf_ops *nf_ops;
+	const struct nf_ops *nf_ops;
 	Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"

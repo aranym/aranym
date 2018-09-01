@@ -330,12 +330,12 @@ int32 JpegDriver::dispatch(uint32 fncode)
 
 int32 JpegDriver::open_driver(memptr jpeg_ptr)
 {
-	struct _JPGD_STRUCT *tmp;
+	JPGD_STRUCT *tmp;
 	int i, j;
 
 	D(bug("nfjpeg: open_driver(0x%08x)",jpeg_ptr));
 
-	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
 	/* Find a free handle */
 	j = 0;
@@ -350,76 +350,77 @@ int32 JpegDriver::open_driver(memptr jpeg_ptr)
 
 	if (j == 0)
 	{
-		return TOS_ENHNDL;
+		return DECODERBUSY;
 	}
 
 	tmp->handle = j;
 	images[j].used = true;
-	return TOS_E_OK;
+	return NOERROR;
 }
 
 int32 JpegDriver::close_driver(memptr jpeg_ptr)
 {
-	struct _JPGD_STRUCT *tmp;
+	JPGD_STRUCT *tmp;
 
 	D(bug("nfjpeg: close_driver(0x%08x)",jpeg_ptr));
 
-	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
-
+	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+		return DRIVERCLOSED;
 	if (images[tmp->handle].src)
 	{
 		SDL_FreeSurface(images[tmp->handle].src);
 		images[tmp->handle].src=NULL;
 	}
 	images[tmp->handle].used = false;
-	return TOS_E_OK;
+	return NOERROR;
 }
 
 int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 {
-	struct _JPGD_STRUCT *tmp;
+	JPGD_STRUCT *tmp;
 
 	D(bug("nfjpeg: get_image_info(0x%08x)",jpeg_ptr));
 
-	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+		return DRIVERCLOSED;
 
 	if (images[tmp->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
 		{
-			return TOS_ENSMEM;
+			return NOTENOUGHMEMORY;
 		}
 	}
-	return TOS_E_OK;
+	return NOERROR;
 }
 
 int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 {
-	struct _JPGD_STRUCT *tmp;
+	JPGD_STRUCT *tmp;
 	int image_size;
 	SDL_Surface *surface;
 
 	D(bug("nfjpeg: get_image_size(0x%08x)",jpeg_ptr));
 
-	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+		return DRIVERCLOSED;
 
 	if (images[tmp->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
 		{
-			return TOS_ENSMEM;
+			return NOTENOUGHMEMORY;
 		}
 	}
 
 	/* Recalculate OutSize and MFDBWordSize */
 	surface = images[tmp->handle].src;
-	image_size = surface->w;
-	if ((image_size & 15) != 0)
-	{
-		image_size = (image_size | 15)+1;
-	}
+	image_size = ((surface->w + xMCUs - 1) / xMCUs) * xMCUs;
 	image_size *= SDL_SwapBE16(tmp->OutPixelSize);
 	tmp->MFDBWordSize = SDL_SwapBE16(image_size>>1);
 
@@ -428,44 +429,50 @@ int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 
 	D(bug("nfjpeg: get_image_size() = %dx%dx%d -> %d",
 		surface->w, surface->h, SDL_SwapBE16(tmp->OutPixelSize), image_size));
-	return TOS_E_OK;
+	return NOERROR;
 }
 
 int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 {
-	struct _JPGD_STRUCT *tmp;
+	JPGD_STRUCT *tmp;
 	unsigned char *dest,*src, *src_line;
 	int width, height, r,g,b,x,y, line_length;
 	SDL_Surface *surface;
 	SDL_PixelFormat *format;
+	memptr addr;
 
 	D(bug("nfjpeg: decode_image(0x%08x,%d)",jpeg_ptr,row));
 
-	tmp = (struct _JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+		return DRIVERCLOSED;
 
 	if (images[tmp->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, Atari2HostAddr(SDL_SwapBE32(tmp->InPointer)),SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
 		{
-			return TOS_ENSMEM;
+			return NOTENOUGHMEMORY;
 		}
 	}
 
-	dest = (unsigned char *)Atari2HostAddr(SDL_SwapBE32(tmp->OutTmpPointer));
+	addr = SDL_SwapBE32(tmp->OutTmpPointer);
 	surface = images[tmp->handle].src;
 	src = (unsigned char *)surface->pixels;
-	src += surface->pitch * row * 16;
+	src += surface->pitch * row * yRows;
 	width = SDL_SwapBE16(tmp->MFDBPixelWidth);
 	line_length = SDL_SwapBE16(tmp->MFDBWordSize)*2;
-	height = surface->h - row*16;
-	if (height > 16)	/* not last row ? */
+	height = surface->h - row * yRows;
+	if (height > yRows)	/* not last row ? */
 	{
-		height = 16;
+		height = yRows;
 	}
 	format = surface->format;
+	if (!valid_address(addr, true, height * line_length))
+		return NOTENOUGHMEMORY;
+	dest = (unsigned char *)Atari2HostAddr(addr);
 
-	D(bug("nfjpeg: decode_image(), rows %d to %d", row*16, row*16+height-1));
+	D(bug("nfjpeg: decode_image(), rows %d to %d", row * yRows, row * yRows + height - 1));
 	D(bug("nfjpeg: decode_image(), OutPixelSize=%d,WordSize=%d,Width=%d",
 		SDL_SwapBE16(tmp->OutPixelSize),
 		SDL_SwapBE16(tmp->MFDBWordSize),
@@ -553,16 +560,21 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			break;
 	}
 
-	return TOS_E_OK;
+	return NOERROR;
 }
 
-bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size)
+bool JpegDriver::load_image(JPGD_STRUCT *jpgd_ptr, memptr addr, uint32 size)
 {
 	SDL_RWops *src;
 	SDL_Surface *surface;
 	int width, height, image_size;
+	uint8 *buffer;
 
 	D(bug("nfjpeg: load_image()"));
+
+	if (!valid_address(addr, false, size))
+		return false;
+	buffer = Atari2HostAddr(addr);
 
 	/* Load image from memory */
 	src = SDL_RWFromMem(buffer, size);
@@ -594,19 +606,11 @@ bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32
 	/* Fill values */
 	jpgd_ptr->InComponents = SDL_SwapBE16(3); /* RGB */
 
-	width = surface->w;
-	if ((width & 15) != 0)
-	{
-		width = (width | 15)+1;
-	}
-	jpgd_ptr->XLoopCounter = SDL_SwapBE16(width>>4);
+	width = ((surface->w + xMCUs - 1) / xMCUs) * xMCUs;
+	jpgd_ptr->XLoopCounter = SDL_SwapBE16(width / xMCUs);
 
-	height = surface->h;
-	if ((height & 15) != 0)
-	{
-		height = (height | 15)+1;
-	}
-	jpgd_ptr->YLoopCounter = SDL_SwapBE16(height>>4);
+	height = ((surface->h + yRows - 1) / yRows) * yRows;
+	jpgd_ptr->YLoopCounter = SDL_SwapBE16(height / yRows);
 
 	jpgd_ptr->MFDBAddress = 0;
 
@@ -620,10 +624,10 @@ bool JpegDriver::load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32
 
 	jpgd_ptr->MFDBBitPlanes = SDL_SwapBE16(jpgd_ptr->OutPixelSize) * 8;
 
+	jpgd_ptr->MFDBReserved1 = jpgd_ptr->MFDBReserved2 = jpgd_ptr->MFDBReserved3 = 0;
+
 	image_size = width * surface->h * SDL_SwapBE16(jpgd_ptr->OutPixelSize);
 	jpgd_ptr->OutSize = SDL_SwapBE32(image_size);
-
-	jpgd_ptr->MFDBReserved1 = jpgd_ptr->MFDBReserved2 = jpgd_ptr->MFDBReserved3 = 0;
 
 	return true;
 }
@@ -684,7 +688,3 @@ void JpegDriver::read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, in
 	*b <<= format->Bloss;
 }
 #endif /* NFJPEG_SUPPORT */
-
-/*
-vim:ts=4:sw=4:
-*/

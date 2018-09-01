@@ -68,13 +68,16 @@ private:
 	SDL_Surface *load_jpeg(SDL_RWops *src);
 #endif
 
+	const int xMCUs = 16;
+	const int yRows = 16;
+
 	int32 open_driver(memptr jpeg_ptr);
 	int32 close_driver(memptr jpeg_ptr);
 	int32 get_image_info(memptr jpeg_ptr);
 	int32 get_image_size(memptr jpeg_ptr);
 	int32 decode_image(memptr jpeg_ptr, uint32 row);
 
-	bool load_image(struct _JPGD_STRUCT *jpgd_ptr, uint8 *buffer, uint32 size);
+	bool load_image(JPGD_STRUCT *jpgd_ptr, memptr addr, uint32 size);
 	void read_rgb(SDL_PixelFormat *format, void *src, int *r, int *g, int *b);
 
 public:

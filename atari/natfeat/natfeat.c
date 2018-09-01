@@ -38,20 +38,51 @@
 # include "nf_ops.h"
 
 
-#define ARANYM 1
-# ifdef ARANYM
+#define NATFEAT_ID   0x7300
+#define NATFEAT_CALL 0x7301
 
 
-static unsigned long nf_get_id_instr = 0x73004e75UL;
-static unsigned long nf_call_instr = 0x73014e75UL;
+#pragma GCC optimize "-fomit-frame-pointer"
+#pragma GCC diagnostic ignored "-Wclobbered"
 
-static struct nf_ops _nf_ops = { (void*)&nf_get_id_instr, (void*)&nf_call_instr }; 
-static struct nf_ops *nf_ops = 0UL; 
+#define ASM_NATFEAT3(opcode) "\t.word " #opcode "\n"
+#define ASM_NATFEAT2(opcode) ASM_NATFEAT3(opcode)
+#define ASM_NATFEAT(n) ASM_NATFEAT2(n)
+
+static long __attribute__((noinline)) __CDECL _nf_get_id(const char *feature_name)
+{
+	register long ret __asm__ ("d0");
+	(void)(feature_name);
+	__asm__ volatile(
+		ASM_NATFEAT(NATFEAT_ID)
+	: "=g"(ret)  /* outputs */
+	: /* inputs  */
+	: __CLOBBER_RETURN("d0") "d1", "cc" AND_MEMORY /* clobbered regs */
+	);
+	return ret;
+}
+
+
+static long __attribute__((noinline)) __CDECL _nf_call(long id, ...)
+{
+	register long ret __asm__ ("d0");
+	(void)(id);
+	__asm__ volatile(
+		ASM_NATFEAT(NATFEAT_CALL)
+	: "=g"(ret)  /* outputs */
+	: /* inputs  */
+	: __CLOBBER_RETURN("d0") "d1", "cc" AND_MEMORY /* clobbered regs */
+	);
+	return ret;
+}
+
+
+static struct nf_ops const _nf_ops = { _nf_get_id, _nf_call, { 0, 0, 0 } }; 
+static const struct nf_ops *nf_ops; 
 
 extern int detect_native_features(void);
 
-struct nf_ops *
-nf_init(void)
+const struct nf_ops *nf_init(void)
 {
 	if (Supexec(detect_native_features))
 	{
@@ -114,5 +145,3 @@ nf_shutdown(void)
         		nf_ops->call(shutdown_id);
 	}
 }
-
-# endif

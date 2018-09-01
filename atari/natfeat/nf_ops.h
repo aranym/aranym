@@ -49,7 +49,7 @@ struct nf_ops
  * @return the pointer to 'struct nf_ops' or NULL when
  *         not available.
  **/
-struct nf_ops *nf_init(void);
+const struct nf_ops *nf_init(void);
 
 
 /* basic set native feature functions */

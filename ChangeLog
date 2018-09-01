@@ -1,3 +1,18 @@
+2018/09/01
+Fix several bugs in NFJPEG driver
+
+- when output is to a file, and no user callbacks are used,
+  create a proper TGA file header
+- error return codes should be the ones from jpgdh.h, not TOS
+  error codes
+- decoding loop was not aborted on request from user callback
+- user callbacks were called without declaring a clobber list,
+  resulting in trashed registers and possible endless loops
+- OutTmpHeight should reflect the number of just decoded rows,
+  not remaining until end-of-image
+- MCUsCounter must be updated before calling any user callbacks
+
+
 2018/08/31 - Thorsten
 Fix lookup of hotkeys that were disabled
 

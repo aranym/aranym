@@ -61,7 +61,7 @@ typedef struct {
 	unsigned long *subcookie;
 	unsigned long version;
 	pcibios_routine_t routines[43];
-} pcibios_cookie_t __attribute__((packed));
+} __attribute__((packed)) pcibios_cookie_t;
 
 /*--- Local variables ---*/
 
@@ -122,7 +122,7 @@ extern void (*pcixbios_oldtrap)(void);
 
 /*--- Functions prototypes ---*/
 
-static struct nf_ops *nfOps;
+static const struct nf_ops *nfOps;
 static void install_pci_bios(void);
 static void install_pci_xbios(void);
 static void press_any_key(void);

@@ -78,7 +78,7 @@ int cookie_present(unsigned long cookie, unsigned long *value)
 int cookie_add(unsigned long cookie, unsigned long value)
 {
 	unsigned long *cookie_jar;
-	int count;
+	unsigned long count;
 	
 	cookie_jar = read_cookie_jar_pointer();
 

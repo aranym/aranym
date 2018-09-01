@@ -82,7 +82,7 @@ static void press_any_key(void);
 
 /*--- Local variables ---*/
 
-static struct nf_ops *nfOps;
+static const struct nf_ops *nfOps;
 static unsigned long nfCdRomId;
 static unsigned long drives_mask;
 

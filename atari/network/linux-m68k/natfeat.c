@@ -31,7 +31,7 @@ static unsigned long nf_get_id_instr = 0x73004e75UL;
 static unsigned long nf_call_instr = 0x73014e75UL;
 
 static struct nf_ops _nf_ops = { &nf_get_id_instr, &nf_call_instr }; 
-static struct nf_ops *nf_ops = NULL; 
+static const struct nf_ops *nf_ops; 
 
 #define NF_GETID(a)		nf_ops->get_id(virt_to_phys(a))
 
@@ -65,7 +65,7 @@ int detect_native_features(void)
     return( ret );
 }
 
-struct nf_ops * nf_init(void)
+const struct nf_ops * nf_init(void)
 {
 	if (detect_native_features()) {
 		nf_ops = &_nf_ops;

@@ -39,7 +39,7 @@
 
 /*--- Local variables ---*/
 
-static struct nf_ops *nfOps;
+static const struct nf_ops *nfOps;
 static unsigned long nfOSMesaId=0;
 
 static long do_nothing(unsigned long function_number, OSMesaContext ctx, void *first_param)

@@ -6,7 +6,7 @@ SOBJS = entry.S nfjpeg_functions.S ../natfeat/natfeat_asm.S
 
 include ../CONFIGVARS
 
-CFLAGS  = -O2 -fomit-frame-pointer -Wall
+CFLAGS  = -O2 -fomit-frame-pointer -Wall -W -Wstrict-prototypes
 LDFLAGS = -nostdlib -Wl,--entry -Wl,_init_driver -lgcc -lc
 
 COBJECTS = $(COBJS:.c=.o)

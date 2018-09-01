@@ -17,7 +17,7 @@ struct nf_ops
 	long res[3];
 };
 
-struct nf_ops *nf_init(void);
+const struct nf_ops *nf_init(void);
 
 int nf_name(char *buf, int bufsize);
 int nf_debug(const char *msg);

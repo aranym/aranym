@@ -304,7 +304,7 @@ FILESYS hostfs_filesys =
 
 FILESYS *hostfs_init(void)
 {
-	struct nf_ops *ops;
+	const struct nf_ops *ops;
 
 #if __KERNEL__ == 1
 	boot_print (MSG_BOOT);

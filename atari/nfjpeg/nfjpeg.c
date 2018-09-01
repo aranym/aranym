@@ -61,7 +61,8 @@ static __inline__ long CALLJPEGROUTINE(JPGD_STRUCT *jpgd_ptr, short (*func_ptr)(
 		" jbsr	%[func_ptr]@\n"
 		: "=r"(retvalue)
 		: [jpgd_ptr]"a"(jpgd_ptr), [func_ptr]"a"(func_ptr)
-		: "a0", "cc", "memory"
+		/* the called functions have Pure-C calling conventions, and might trash d2 */
+		: __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "cc", "memory"
 	);
 	return retvalue;
 }
@@ -85,7 +86,7 @@ static void install_jpeg(void);
 
 /*--- Local variables ---*/
 
-static struct nf_ops *nfOps;
+static const struct nf_ops *nfOps;
 static unsigned long nfJpegId;
 
 static JPGDDRV_STRUCT nfjpeg_cookie = {
@@ -116,23 +117,32 @@ void install_driver(unsigned long resident_length)
 	);
 
 	/* Check if _JPD already installed */
-	if (cookie_present(C__JPD, NULL)) {
+	if (cookie_present(C__JPD, NULL))
+	{
 		(void) Cconws("A JPEG driver is already installed on this system\r\n");
 		return;
 	}	
 
 	/* Check if NF is present for NFJPEG */
 	nfOps = nf_init();
-	if (!nfOps) {
+	if (!nfOps)
+	{
 		(void) Cconws("Native Features not present on this system\r\n");
 		return;
 	}
 
 	nfJpegId = nfOps->get_id("JPEG");
-	if (nfJpegId==0) {
+	if (nfJpegId == 0)
+	{
 		(void) Cconws("NF JPEG functions not present on this system\r\n");
 		return;
 	}	
+
+	if (nfOps->call(NFJPEG(GET_VERSION)) != ARANFJPEG_NFAPI_VERSION)
+	{
+		(void) Cconws("NF JPEG: wrong interface version\r\n");
+		return;
+	}
 
 	{
 		long size = nfOps->call(NFJPEG(NFJPEG_GETSTRUCTSIZE));
@@ -182,90 +192,167 @@ JPGD_ENUM JpegDecGetImageSize(JPGD_STRUCT *jpgd_ptr)
 
 JPGD_ENUM JpegDecDecodeImage(JPGD_STRUCT *jpgd_ptr)
 {
-	long row_length, y;
+	long row_length;
+	JPGD_ENUM err = NOERROR;
+	short xMCUs = 16;
+	short yRows = 16;
+	short yLoop, y;
+	const struct nf_ops *ops = nfOps;
 
-	row_length = jpgd_ptr->XLoopCounter * 16 * 16 * jpgd_ptr->OutComponents;
+	row_length = (long)jpgd_ptr->XLoopCounter * xMCUs * yRows * jpgd_ptr->OutPixelSize;
 	jpgd_ptr->OutTmpHeight = 0;
-	jpgd_ptr->MCUsCounter = jpgd_ptr->XLoopCounter * jpgd_ptr->YLoopCounter;
+	yLoop = jpgd_ptr->YLoopCounter;
+	jpgd_ptr->MCUsCounter = jpgd_ptr->XLoopCounter * yLoop;
 
-	if (jpgd_ptr->OutFlag==0) {
+	if (jpgd_ptr->OutFlag == 0)
+	{
 		/* Allocate memory to hold complete image */
-		if (jpgd_ptr->OutPointer==NULL) {
+		if (jpgd_ptr->OutPointer == NULL)
+		{
 			return NOTENOUGHMEMORY;
 		}
 
 		jpgd_ptr->OutTmpPointer = jpgd_ptr->OutPointer;
-		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
-			/* Decode Y row in OutTmpPointer */
-			nfOps->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y);
+		for (y = 0; y < yLoop; y++)
+		{
+			jpgd_ptr->OutTmpHeight = jpgd_ptr->MFDBPixelHeight - y * yRows;
+			if (jpgd_ptr->OutTmpHeight > yRows)
+				jpgd_ptr->OutTmpHeight = yRows;
 
-			if (jpgd_ptr->UserRoutine) {
-				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);
+			/* Decode Y row in OutTmpPointer */
+			jpgd_ptr->User[0] = y;
+			err = ops->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, (long)y);
+			if (err != NOERROR)
+				break;
+
+			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
+			if (jpgd_ptr->UserRoutine)
+			{
+				if (CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine) != 0)
+				{
+					err = USERABORT;
+					break;
+				}
 			}
 
 			jpgd_ptr->OutTmpPointer += row_length;
-			jpgd_ptr->OutTmpHeight += 16;
-			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
 		}
 
 		jpgd_ptr->MFDBAddress = jpgd_ptr->OutPointer;
-	} else {
+	} else
+	{
 		const char *filename="output.tga";
-		long handle;
+		short handle;
 
-		jpgd_ptr->OutTmpPointer = Atari_MxAlloc(jpgd_ptr->XLoopCounter * 16 * 16 * 4);
-		if (jpgd_ptr->OutTmpPointer==NULL) {
+		jpgd_ptr->OutTmpPointer = Atari_MxAlloc(jpgd_ptr->XLoopCounter * xMCUs * yRows * 4);
+		if (jpgd_ptr->OutTmpPointer == NULL)
+		{
 			return NOTENOUGHMEMORY;
 		}
 
 		/* Open file */
-		if (jpgd_ptr->Create) {
+		if (jpgd_ptr->Create)
+		{
 			handle = CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Create);
-		} else {
-			if (jpgd_ptr->OutPointer) {
+		} else
+		{
+			if (jpgd_ptr->OutPointer)
+			{
 				filename = jpgd_ptr->OutPointer;
 			}
-			handle = Fopen(filename, S_WRITE);
+			handle = Fcreate(filename, 0);
 		}
-		if (handle<0) {
+		if (handle < 0)
+		{
 			Mfree(jpgd_ptr->OutTmpPointer);
+			jpgd_ptr->OutTmpPointer = NULL;
 			return (JPGD_ENUM) handle;
 		}
-		jpgd_ptr->OutHandle = handle & 0xffff;
+		jpgd_ptr->OutHandle = handle;
+
+		if (jpgd_ptr->Create == 0 &&
+			jpgd_ptr->Write == 0 &&
+			jpgd_ptr->Close == 0)
+		{
+			unsigned char tga_header[18];
+
+			tga_header[ 0] = 0; /* length of image ID field - we don't have one */
+			tga_header[ 1] = 0; /* color map type - none */
+			tga_header[ 2] = jpgd_ptr->OutPixelSize == 1 ? 3 : 2; /* image type - uncompressed grayscale/true color */
+			tga_header[ 3] = 0; /* color map specification */
+			tga_header[ 4] = 0;
+			tga_header[ 5] = 0;
+			tga_header[ 6] = 0;
+			tga_header[ 7] = 0;
+			tga_header[ 8] = 0; /* X-origin */
+			tga_header[ 9] = 0;
+			tga_header[10] = 0; /* Y-origin */
+			tga_header[11] = 0;
+			tga_header[12] = jpgd_ptr->MFDBPixelWidth; /* image width */
+			tga_header[13] = jpgd_ptr->MFDBPixelWidth >> 8;
+			tga_header[14] = jpgd_ptr->MFDBPixelHeight; /* image height */
+			tga_header[15] = jpgd_ptr->MFDBPixelHeight >> 8;
+			tga_header[16] = jpgd_ptr->OutPixelSize * 8; /* bits per pixel */
+			tga_header[17] = 0x20; /* image descriptor: origin in upper left, no alpha */
+			if (Fwrite(jpgd_ptr->OutHandle, sizeof(tga_header), tga_header) != sizeof(tga_header))
+			{
+				err = DISKFULL;
+				yLoop = 0;
+			}
+		}
 
 		/* Write part of image to file */
-		for (y=0;y<jpgd_ptr->YLoopCounter;y++) {
+		for (y = 0; y < yLoop; y++)
+		{
+			jpgd_ptr->OutTmpHeight = jpgd_ptr->MFDBPixelHeight - y * yRows;
+			if (jpgd_ptr->OutTmpHeight > yRows)
+				jpgd_ptr->OutTmpHeight = yRows;
+
 			/* Decode Y row in OutTmpPointer */
-			nfOps->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, y);
-			jpgd_ptr->OutTmpHeight = jpgd_ptr->MFDBPixelHeight - y*16;
-			if (jpgd_ptr->OutTmpHeight > 16) {
-				jpgd_ptr->OutTmpHeight = 16;
-			}
-
-			if (jpgd_ptr->UserRoutine) {
-				CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine);
-			}
-
-			if (jpgd_ptr->Write) {
-				if (CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Write)<0) {
-					break;
-				}
-			} else {
-				Fwrite(jpgd_ptr->OutHandle, row_length, jpgd_ptr->OutTmpPointer);
-			}
+			err = ops->call(NFJPEG(NFJPEG_DECODEIMAGE), jpgd_ptr, (long)y);
+			if (err != NOERROR)
+				break;
 
 			jpgd_ptr->MCUsCounter -= jpgd_ptr->XLoopCounter;
+			if (jpgd_ptr->UserRoutine)
+			{
+				if (CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->UserRoutine) != 0)
+				{
+					err = USERABORT;
+					break;
+				}
+			}
+
+			if (jpgd_ptr->Write)
+			{
+				if (CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Write) < 0)
+				{
+					err = DISKFULL;
+					break;
+				}
+			} else
+			{
+				row_length = (long)jpgd_ptr->XLoopCounter * xMCUs * jpgd_ptr->OutTmpHeight * jpgd_ptr->OutPixelSize;
+				if (Fwrite(jpgd_ptr->OutHandle, row_length, jpgd_ptr->OutTmpPointer) != row_length)
+				{
+					err = DISKFULL;
+					break;
+				}
+			}
 		}
 
 		/* Close file */
-		if (jpgd_ptr->Close) {
+		if (jpgd_ptr->Close)
+		{
 			CALLJPEGROUTINE(jpgd_ptr, jpgd_ptr->Close);
-		} else  {
+		} else
+		{
 			Fclose(jpgd_ptr->OutHandle);
 		}
 
 		Mfree(jpgd_ptr->OutTmpPointer);
+		jpgd_ptr->OutTmpPointer = NULL;
 	}
 
-	return 0;
+	return err;
 }
