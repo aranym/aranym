@@ -54,12 +54,6 @@
 // Use ISO C99 extended-precision math functions (glibc 2.1+)
 #define FPU_USE_ISO_C99 1
 
-// NOTE: this is irrelevant on Win32 platforms since the MS libraries
-// don't support extended-precision floating-point computations
-#ifdef WIN32
-#undef FPU_USE_ISO_C99
-#endif
-
 #if defined(FPU_USE_ISO_C99)
 // NOTE: no prior <math.h> shall be included at this point
 #define __USE_ISOC99 1 // for glibc 2.2.X and newer
@@ -761,7 +755,11 @@ PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_regis
 # define fp_pow10	pow10
 #endif
 #ifndef fp_pow2
-# define fp_pow2	pow2
+# ifdef HAVE_POW2
+#   define fp_pow2	pow2
+# else
+#   define fp_pow2	exp2
+# endif
 #endif
 #ifndef fp_fabs
 # define fp_fabs	fabs

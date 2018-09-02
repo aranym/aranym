@@ -1,4 +1,8 @@
 2018/09/02
+Fix build failures on win32
+
+
+2018/09/02
 Fix some more bugs in the jpeg driver when output is to file,
 and image width is not multiple of 16
 
