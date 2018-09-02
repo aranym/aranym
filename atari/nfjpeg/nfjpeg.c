@@ -332,12 +332,19 @@ JPGD_ENUM JpegDecDecodeImage(JPGD_STRUCT *jpgd_ptr)
 				}
 			} else
 			{
-				row_length = (long)jpgd_ptr->XLoopCounter * xMCUs * jpgd_ptr->OutTmpHeight * jpgd_ptr->OutPixelSize;
-				if (Fwrite(jpgd_ptr->OutHandle, row_length, jpgd_ptr->OutTmpPointer) != row_length)
+				long out_width = jpgd_ptr->MFDBPixelWidth * jpgd_ptr->OutPixelSize;
+				long in_width = (long)jpgd_ptr->XLoopCounter * xMCUs * jpgd_ptr->OutPixelSize;
+				short row;
+				const char *in = jpgd_ptr->OutTmpPointer;
+
+				for (row = 0; row < jpgd_ptr->OutTmpHeight && err == NOERROR; row++)
 				{
-					err = DISKFULL;
-					break;
+					if (Fwrite(jpgd_ptr->OutHandle, out_width, in) != out_width)
+						err = DISKFULL;
+					in += in_width;
 				}
+				if (err != NOERROR)
+					break;
 			}
 		}
 

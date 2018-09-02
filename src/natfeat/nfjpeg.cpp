@@ -330,12 +330,12 @@ int32 JpegDriver::dispatch(uint32 fncode)
 
 int32 JpegDriver::open_driver(memptr jpeg_ptr)
 {
-	JPGD_STRUCT *tmp;
+	JPGD_STRUCT *jpgd;
 	int i, j;
 
 	D(bug("nfjpeg: open_driver(0x%08x)",jpeg_ptr));
 
-	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	jpgd = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
 
 	/* Find a free handle */
 	j = 0;
@@ -353,43 +353,43 @@ int32 JpegDriver::open_driver(memptr jpeg_ptr)
 		return DECODERBUSY;
 	}
 
-	tmp->handle = j;
+	jpgd->handle = j;
 	images[j].used = true;
 	return NOERROR;
 }
 
 int32 JpegDriver::close_driver(memptr jpeg_ptr)
 {
-	JPGD_STRUCT *tmp;
+	JPGD_STRUCT *jpgd;
 
 	D(bug("nfjpeg: close_driver(0x%08x)",jpeg_ptr));
 
-	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
-	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+	jpgd = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (jpgd->handle <= 0 || jpgd->handle > MAX_NFJPEG_IMAGES || !images[jpgd->handle].used)
 		return DRIVERCLOSED;
-	if (images[tmp->handle].src)
+	if (images[jpgd->handle].src)
 	{
-		SDL_FreeSurface(images[tmp->handle].src);
-		images[tmp->handle].src=NULL;
+		SDL_FreeSurface(images[jpgd->handle].src);
+		images[jpgd->handle].src=NULL;
 	}
-	images[tmp->handle].used = false;
+	images[jpgd->handle].used = false;
 	return NOERROR;
 }
 
 int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 {
-	JPGD_STRUCT *tmp;
+	JPGD_STRUCT *jpgd;
 
 	D(bug("nfjpeg: get_image_info(0x%08x)",jpeg_ptr));
 
-	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
-	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+	jpgd = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (jpgd->handle <= 0 || jpgd->handle > MAX_NFJPEG_IMAGES || !images[jpgd->handle].used)
 		return DRIVERCLOSED;
 
-	if (images[tmp->handle].src == NULL)
+	if (images[jpgd->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(jpgd, SDL_SwapBE32(jpgd->InPointer), SDL_SwapBE32(jpgd->InSize)))
 		{
 			return NOTENOUGHMEMORY;
 		}
@@ -399,42 +399,42 @@ int32 JpegDriver::get_image_info(memptr jpeg_ptr)
 
 int32 JpegDriver::get_image_size(memptr jpeg_ptr)
 {
-	JPGD_STRUCT *tmp;
+	JPGD_STRUCT *jpgd;
 	int image_size;
 	SDL_Surface *surface;
 
 	D(bug("nfjpeg: get_image_size(0x%08x)",jpeg_ptr));
 
-	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
-	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+	jpgd = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (jpgd->handle <= 0 || jpgd->handle > MAX_NFJPEG_IMAGES || !images[jpgd->handle].used)
 		return DRIVERCLOSED;
 
-	if (images[tmp->handle].src == NULL)
+	if (images[jpgd->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(jpgd, SDL_SwapBE32(jpgd->InPointer), SDL_SwapBE32(jpgd->InSize)))
 		{
 			return NOTENOUGHMEMORY;
 		}
 	}
 
 	/* Recalculate OutSize and MFDBWordSize */
-	surface = images[tmp->handle].src;
+	surface = images[jpgd->handle].src;
 	image_size = ((surface->w + xMCUs - 1) / xMCUs) * xMCUs;
-	image_size *= SDL_SwapBE16(tmp->OutPixelSize);
-	tmp->MFDBWordSize = SDL_SwapBE16(image_size>>1);
+	image_size *= SDL_SwapBE16(jpgd->OutPixelSize);
+	jpgd->MFDBWordSize = SDL_SwapBE16(image_size>>1);
 
 	image_size *= surface->h;
-	tmp->OutSize = SDL_SwapBE32(image_size);
+	jpgd->OutSize = SDL_SwapBE32(image_size);
 
 	D(bug("nfjpeg: get_image_size() = %dx%dx%d -> %d",
-		surface->w, surface->h, SDL_SwapBE16(tmp->OutPixelSize), image_size));
+		surface->w, surface->h, SDL_SwapBE16(jpgd->OutPixelSize), image_size));
 	return NOERROR;
 }
 
 int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 {
-	JPGD_STRUCT *tmp;
+	JPGD_STRUCT *jpgd;
 	unsigned char *dest,*src, *src_line;
 	int width, height, r,g,b,x,y, line_length;
 	SDL_Surface *surface;
@@ -443,25 +443,25 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 
 	D(bug("nfjpeg: decode_image(0x%08x,%d)",jpeg_ptr,row));
 
-	tmp = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
-	if (tmp->handle <= 0 || tmp->handle > MAX_NFJPEG_IMAGES || !images[tmp->handle].used)
+	jpgd = (JPGD_STRUCT *)Atari2HostAddr(jpeg_ptr);
+	if (jpgd->handle <= 0 || jpgd->handle > MAX_NFJPEG_IMAGES || !images[jpgd->handle].used)
 		return DRIVERCLOSED;
 
-	if (images[tmp->handle].src == NULL)
+	if (images[jpgd->handle].src == NULL)
 	{
 		/* Damn, we need to decode it with SDL_image */
-		if (!load_image(tmp, SDL_SwapBE32(tmp->InPointer), SDL_SwapBE32(tmp->InSize)))
+		if (!load_image(jpgd, SDL_SwapBE32(jpgd->InPointer), SDL_SwapBE32(jpgd->InSize)))
 		{
 			return NOTENOUGHMEMORY;
 		}
 	}
 
-	addr = SDL_SwapBE32(tmp->OutTmpPointer);
-	surface = images[tmp->handle].src;
+	addr = SDL_SwapBE32(jpgd->OutTmpPointer);
+	surface = images[jpgd->handle].src;
 	src = (unsigned char *)surface->pixels;
 	src += surface->pitch * row * yRows;
-	width = SDL_SwapBE16(tmp->MFDBPixelWidth);
-	line_length = SDL_SwapBE16(tmp->MFDBWordSize)*2;
+	width = SDL_SwapBE16(jpgd->MFDBPixelWidth);
+	line_length = SDL_SwapBE16(jpgd->MFDBWordSize)*2;
 	height = surface->h - row * yRows;
 	if (height > yRows)	/* not last row ? */
 	{
@@ -474,13 +474,15 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 
 	D(bug("nfjpeg: decode_image(), rows %d to %d", row * yRows, row * yRows + height - 1));
 	D(bug("nfjpeg: decode_image(), OutPixelSize=%d,WordSize=%d,Width=%d",
-		SDL_SwapBE16(tmp->OutPixelSize),
-		SDL_SwapBE16(tmp->MFDBWordSize),
-		SDL_SwapBE16(tmp->MFDBPixelWidth)
+		SDL_SwapBE16(jpgd->OutPixelSize),
+		SDL_SwapBE16(jpgd->MFDBWordSize),
+		SDL_SwapBE16(jpgd->MFDBPixelWidth)
 	));
 
-	switch(SDL_SwapBE16(tmp->OutPixelSize))
+	if (jpgd->OutFlag == 0)
 	{
+		switch(SDL_SwapBE16(jpgd->OutPixelSize))
+		{
 		case 1:	/* Luminance */
 			for (y = 0; y < height; y++)
 			{
@@ -543,7 +545,7 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 			{
 				uint32 *dst_line;
 				uint32 pixel;
-				
+
 				src_line = src;
 				dst_line = (uint32 *)dest;
 				for (x = 0; x < width; x++)
@@ -558,12 +560,96 @@ int32 JpegDriver::decode_image(memptr jpeg_ptr, uint32 row)
 				dest += line_length;
 			}
 			break;
-	}
+		}
+	} else
+	{
+		/* disk output means TGA format and we must write BGR */
+		switch(SDL_SwapBE16(jpgd->OutPixelSize))
+		{
+		case 1:	/* Luminance */
+			for (y = 0; y < height; y++)
+			{
+				unsigned char *dst_line;
 
+				src_line = src;
+				dst_line = dest;
+				for (x = 0; x < width; x++)
+				{
+					read_rgb(format, src_line, &r, &g, &b);
+					*dst_line++ = (r*30+g*59+b*11)/100;
+					src_line+=format->BytesPerPixel;
+				}
+
+				src += surface->pitch;
+				dest += line_length;
+			}
+			break;
+		case 2:	/* A1R5G5B5 (little endian) */
+			for (y = 0; y < height; y++)
+			{
+				uint16 *dst_line;
+				uint16 pixel;
+
+				src_line = src;
+				dst_line = (uint16 *)dest;
+				for (x = 0; x < width; x++) {
+					read_rgb(format, src_line, &r, &g, &b);
+					pixel = ((r>>3)<<10) | ((g>>3)<<5) | (b>>3);
+					*dst_line++ = SDL_SwapLE16(pixel);
+					src_line+=format->BytesPerPixel;
+				}
+
+				src += surface->pitch;
+				dest += line_length;
+			}
+			break;
+		case 3:	/* R8G8B8 (little endian) */
+			for (y = 0; y < height; y++)
+			{
+				unsigned char *dst_line;
+
+				src_line = src;
+				dst_line = dest;
+				for (x = 0; x < width; x++)
+				{
+					read_rgb(format, src_line, &r, &g, &b);
+					*dst_line++ = b;
+					*dst_line++ = g;
+					*dst_line++ = r;
+					src_line+=format->BytesPerPixel;
+				}
+
+				src += surface->pitch;
+				dest += line_length;
+			}
+			break;
+		case 4:
+			for (y = 0; y < height; y++)
+			{
+				unsigned char *dst_line;
+
+				src_line = src;
+				dst_line = dest;
+				for (x = 0; x < width; x++)
+				{
+					read_rgb(format, src_line, &r, &g, &b);
+					*dst_line++ = b;
+					*dst_line++ = g;
+					*dst_line++ = r;
+					*dst_line++ = 0xff;
+					src_line+=format->BytesPerPixel;
+				}
+
+				src += surface->pitch;
+				dest += line_length;
+			}
+			break;
+		}
+	}
 	return NOERROR;
 }
 
-bool JpegDriver::load_image(JPGD_STRUCT *jpgd_ptr, memptr addr, uint32 size)
+bool JpegDriver::load_image(JPGD_STRUCT *jpgd, memptr addr, uint32 size)
 {
 	SDL_RWops *src;
 	SDL_Surface *surface;
@@ -601,33 +687,33 @@ bool JpegDriver::load_image(JPGD_STRUCT *jpgd_ptr, memptr addr, uint32 size)
 		surface->format->Gmask, surface->format->Bmask
 	));
 
-	images[jpgd_ptr->handle].src = surface;
+	images[jpgd->handle].src = surface;
 
 	/* Fill values */
-	jpgd_ptr->InComponents = SDL_SwapBE16(3); /* RGB */
+	jpgd->InComponents = SDL_SwapBE16(3); /* RGB */
 
 	width = ((surface->w + xMCUs - 1) / xMCUs) * xMCUs;
-	jpgd_ptr->XLoopCounter = SDL_SwapBE16(width / xMCUs);
+	jpgd->XLoopCounter = SDL_SwapBE16(width / xMCUs);
 
 	height = ((surface->h + yRows - 1) / yRows) * yRows;
-	jpgd_ptr->YLoopCounter = SDL_SwapBE16(height / yRows);
+	jpgd->YLoopCounter = SDL_SwapBE16(height / yRows);
 
-	jpgd_ptr->MFDBAddress = 0;
+	jpgd->MFDBAddress = 0;
 
-	jpgd_ptr->MFDBPixelWidth = SDL_SwapBE16(surface->w);
+	jpgd->MFDBPixelWidth = SDL_SwapBE16(surface->w);
 
-	jpgd_ptr->MFDBPixelHeight = SDL_SwapBE16(surface->h);
+	jpgd->MFDBPixelHeight = SDL_SwapBE16(surface->h);
 
-	jpgd_ptr->MFDBWordSize = SDL_SwapBE16((width * SDL_SwapBE16(jpgd_ptr->OutPixelSize))>>1);
+	jpgd->MFDBWordSize = SDL_SwapBE16((width * SDL_SwapBE16(jpgd->OutPixelSize))>>1);
 
-	jpgd_ptr->MFDBFormatFlag = 0;
+	jpgd->MFDBFormatFlag = 0;
 
-	jpgd_ptr->MFDBBitPlanes = SDL_SwapBE16(jpgd_ptr->OutPixelSize) * 8;
+	jpgd->MFDBBitPlanes = SDL_SwapBE16(jpgd->OutPixelSize) * 8;
 
-	jpgd_ptr->MFDBReserved1 = jpgd_ptr->MFDBReserved2 = jpgd_ptr->MFDBReserved3 = 0;
+	jpgd->MFDBReserved1 = jpgd->MFDBReserved2 = jpgd->MFDBReserved3 = 0;
 
-	image_size = width * surface->h * SDL_SwapBE16(jpgd_ptr->OutPixelSize);
-	jpgd_ptr->OutSize = SDL_SwapBE32(image_size);
+	image_size = width * surface->h * SDL_SwapBE16(jpgd->OutPixelSize);
+	jpgd->OutSize = SDL_SwapBE32(image_size);
 
 	return true;
 }

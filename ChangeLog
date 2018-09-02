@@ -1,3 +1,8 @@
+2018/09/02
+Fix some more bugs in the jpeg driver when output is to file,
+and image width is not multiple of 16
+
+
 2018/09/01
 Fix a long-standing in the IDE driver when byteswap is enabled,
 and the data register is accessed using long words
