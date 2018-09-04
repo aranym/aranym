@@ -1,3 +1,7 @@
+2018/09/04
+Avoid some buffer overflows in DSP disassembler
+
+
 2018/09/02
 Fix build failures on win32
 

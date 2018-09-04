@@ -948,7 +948,7 @@ static void dsp_andi(void)
 
 static void dsp_bchg(void)
 {
-	char name[16], addr_name[16];
+	char name[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -998,7 +998,7 @@ static void dsp_bchg(void)
 
 static void dsp_bclr(void)
 {
-	char name[16], addr_name[16];
+	char name[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1048,7 +1048,7 @@ static void dsp_bclr(void)
 
 static void dsp_bset(void)
 {
-	char name[16], addr_name[16];
+	char name[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1098,7 +1098,7 @@ static void dsp_bset(void)
 
 static void dsp_btst(void)
 {
-	char name[16], addr_name[16];
+	char name[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1214,7 +1214,7 @@ static void dsp_do_2(void)
 
 static void dsp_do_4(void)
 {
-	char addr_name[16], name[16];
+	char addr_name[16], name[18];
 	Uint32 ea_mode;
 	
 	ea_mode = (cur_inst>>8) & BITMASK(6);
@@ -1254,7 +1254,7 @@ static void dsp_illegal(void)
 
 static void dsp_jcc(void)
 {
-	char cond_name[16], addr_name[16];
+	char cond_name[18], addr_name[16];
 	Uint32 cc_code=0;
 	
 	switch((cur_inst >> 16) & BITMASK(8)) {
@@ -1274,7 +1274,7 @@ static void dsp_jcc(void)
 
 static void dsp_jclr(void)
 {
-	char srcname[16], addr_name[16];
+	char srcname[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1363,7 +1363,7 @@ static void dsp_jscc(void)
 	
 static void dsp_jsclr(void)
 {
-	char srcname[16], addr_name[16];
+	char srcname[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1416,7 +1416,7 @@ static void dsp_jsclr(void)
 
 static void dsp_jset(void)
 {
-	char srcname[16], addr_name[16];
+	char srcname[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1482,7 +1482,7 @@ static void dsp_jsr(void)
 
 static void dsp_jsset(void)
 {
-	char srcname[16], addr_name[16];
+	char srcname[18], addr_name[16];
 	Uint32 memspace, value, numbit;
 	
 	memspace = (cur_inst>>6) & 1;
@@ -1627,7 +1627,7 @@ static void dsp_movec_b(void)
 static void dsp_movec_d(void)
 {
 	const char *spacename;
-	char srcname[16], dstname[16], addr_name[16];
+	char srcname[18], dstname[18], addr_name[16];
 	Uint32 numreg, ea_mode;
 	int retour;
 
@@ -1667,7 +1667,7 @@ static void dsp_movec_d(void)
 
 static void dsp_movem(void)
 {
-	char addr_name[16], srcname[16], dstname[16];
+	char addr_name[16], srcname[18], dstname[18];
 	Uint32 ea_mode, numreg;
 
 	if (cur_inst & (1<<14)) {
@@ -1752,7 +1752,7 @@ static void dsp_movep_0(void)
 
 static void dsp_movep_1(void)
 {
-	char srcname[16]="",dstname[16]="",name[16]="";
+	char srcname[18]="",dstname[18]="",name[16]="";
 	Uint32 addr, memspace; 
 
 	/* p:ea,x:pp */
@@ -1791,7 +1791,7 @@ static void dsp_movep_1(void)
 
 static void dsp_movep_2(void)
 {
-	char srcname[16]="",dstname[16]="",name[16]="";
+	char srcname[18]="",dstname[18]="",name[16]="";
 	Uint32 addr, memspace, easpace, retour; 
 
 	/* x:ea,x:pp */
@@ -1936,7 +1936,7 @@ static void dsp_rep_3(void)
 
 static void dsp_rep_5(void)
 {
-	char name[16],addr_name[16];
+	char name[18],addr_name[16];
 
 	/* x:ea */
 	/* y:ea */
