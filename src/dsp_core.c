@@ -34,11 +34,9 @@
 #endif
 
 #define DEBUG 0
-#if DEBUG
-#  define DUNUSED(x)
-#else
-#  define DUNUSED(x)	((void)x)
-#endif
+
+#define UNUSED(x)	((void)(x))
+
 
 /* More disasm infos, if wanted */
 #define DSP_DISASM_HOSTREAD 0	/* Dsp->Host transfer */
@@ -247,7 +245,7 @@ void dsp_core_reset(dsp_core_t *dsp_core)
 /* Lock/unlock mutex functions */
 static void lockMutexNull(dsp_core_t *dsp_core)
 {
-	DUNUSED(dsp_core);
+	UNUSED(dsp_core);
 }
 
 static void lockMutexThread(dsp_core_t *dsp_core)
@@ -257,7 +255,7 @@ static void lockMutexThread(dsp_core_t *dsp_core)
 
 static void unlockMutexNull(dsp_core_t *dsp_core)
 {
-	DUNUSED(dsp_core);
+	UNUSED(dsp_core);
 }
 
 static void unlockMutexThread(dsp_core_t *dsp_core)
@@ -267,7 +265,7 @@ static void unlockMutexThread(dsp_core_t *dsp_core)
 
 static void pauseThreadNull(dsp_core_t *dsp_core)
 {
-	DUNUSED(dsp_core);
+	UNUSED(dsp_core);
 }
 
 static void pauseThreadThread(dsp_core_t *dsp_core)
@@ -277,7 +275,7 @@ static void pauseThreadThread(dsp_core_t *dsp_core)
 
 static void resumeThreadNull(dsp_core_t *dsp_core)
 {
-	DUNUSED(dsp_core);
+	UNUSED(dsp_core);
 }
 
 static void resumeThreadThread(dsp_core_t *dsp_core)

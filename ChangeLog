@@ -1,3 +1,8 @@
+2018/09/05
+dsp_core.c: some parameters are always unused, independent
+of DEBUG
+
+
 2018/09/04
 Avoid some buffer overflows in DSP disassembler
 
