@@ -1,4 +1,10 @@
 2018/09/09
+dsp_core.c: Replace algorithm to generate ROM tables
+by pre-generated tables (the a-law table was not exactly
+that found on real devices)
+
+
+2018/09/09
 dsp_disasm.c: fix a bug in disassembling movec #imm
 
 
