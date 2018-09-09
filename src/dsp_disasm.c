@@ -68,7 +68,7 @@ static Uint32 pc_save;
 #endif
 
 static const char *registers_name[64]={
-	"","","","",
+	"???","???","???","???",
 	"x0","x1","y0","y1",
 	"a0","b0","a2","b2",
 	"a1","b1","a","b",
@@ -80,12 +80,12 @@ static const char *registers_name[64]={
 
 	"m0","m1","m2","m3",
 	"m4","m5","m6","m7",
-	"","","","",
-	"","","","",
+	"???","???","???","???",
+	"???","???","???","???",
 
-	"","","","",
-	"","","","",
-	"","sr","omr","sp",
+	"???","???","???","???",
+	"???","???","???","???",
+	"???","sr","omr","sp",
 	"ssh","ssl","la","lc"
 };
 
@@ -236,17 +236,17 @@ static void dsp_do_0(void);
 static void dsp_do_2(void);
 static void dsp_do_4(void);
 static void dsp_do_c(void);
-static void dsp_movec_7(void);
-static void dsp_movec_9(void);
-static void dsp_movec_b(void);
-static void dsp_movec_d(void);
+static void dsp_movec_reg(void);
+static void dsp_movec_aa(void);
+static void dsp_movec_ea(void);
+static void dsp_movec_imm(void);
 static void dsp_movep_0(void);
 static void dsp_movep_1(void);
 static void dsp_movep_2(void);
-static void dsp_rep_1(void);
-static void dsp_rep_3(void);
-static void dsp_rep_5(void);
-static void dsp_rep_d(void);
+static void dsp_rep_aa(void);
+static void dsp_rep_imm(void);
+static void dsp_rep_ea(void);
+static void dsp_rep_reg(void);
 
 /* Parallel moves */
 static void dsp_pm(void);
@@ -538,17 +538,17 @@ static dsp_emul_t opcodes_movec[16]={
 	dsp_undefined,
 	dsp_undefined,
 	dsp_undefined,
-	dsp_movec_7,
+	dsp_movec_reg,
 
 	dsp_undefined,
-	dsp_movec_9,
+	dsp_movec_aa,
 	dsp_undefined,
-	dsp_movec_b,
+	dsp_movec_ea,
 
 	dsp_undefined,
-	dsp_movec_d,
+	dsp_movec_imm,
 	dsp_undefined,
-	dsp_movec_b
+	dsp_movec_imm
 };
 
 static dsp_emul_t opcodes_movep[4]={
@@ -560,24 +560,24 @@ static dsp_emul_t opcodes_movep[4]={
 
 static dsp_emul_t opcodes_rep[16]={
 	dsp_undefined,
-	dsp_rep_1,
+	dsp_rep_aa,
 	dsp_undefined,
-	dsp_rep_3,
+	dsp_rep_imm,
 
 	dsp_undefined,
-	dsp_rep_5,
+	dsp_rep_ea,
 	dsp_undefined,
-	dsp_rep_3,
+	dsp_rep_imm,
 
 	dsp_undefined,
 	dsp_undefined,
 	dsp_undefined,
-	dsp_rep_3,
+	dsp_rep_imm,
 
 	dsp_undefined,
-	dsp_rep_d,
+	dsp_rep_reg,
 	dsp_undefined,
-	dsp_rep_3
+	dsp_rep_imm
 };
 
 static dsp_emul_t opcodes_parmove[16]={
@@ -933,7 +933,7 @@ static void dsp_andi(void)
 			registers_changed[DSP_REG_OMR]=1;
 			break;
 		default:
-			regname="";
+			regname="???";
 			break;
 	}
 
@@ -1558,7 +1558,7 @@ static void dsp_movec(void)
 	registers_changed[DSP_REG_SR]=1;
 }
 
-static void dsp_movec_7(void)
+static void dsp_movec_reg(void)
 {
 	Uint32 numreg1, numreg2;
 
@@ -1579,7 +1579,7 @@ static void dsp_movec_7(void)
 	}
 }
 
-static void dsp_movec_9(void)
+static void dsp_movec_aa(void)
 {
 	const char *spacename;
 	char srcname[16],dstname[16];
@@ -1601,18 +1601,18 @@ static void dsp_movec_9(void)
 
 	if (cur_inst & (1<<15)) {
 		/* Write D1 */
-		sprintf(srcname, "%s:0x%04x", spacename, addr);
+		sprintf(srcname, "%s:<0x%04x", spacename, addr);
 		strcpy(dstname, registers_name[numreg]);
 	} else {
 		/* Read S1 */
 		strcpy(srcname, registers_name[numreg]);
-		sprintf(dstname, "%s:0x%04x", spacename, addr);
+		sprintf(dstname, "%s:<0x%04x", spacename, addr);
 	}
 
 	fprintf(stderr,"Dsp: 0x%04x: movec %s,%s\n",dsp_core->pc, srcname, dstname);
 }
 
-static void dsp_movec_b(void)
+static void dsp_movec_ea(void)
 {
 	Uint32 numreg;
 
@@ -1624,7 +1624,7 @@ static void dsp_movec_b(void)
 	fprintf(stderr,"Dsp: 0x%04x: movec #0x%02x,%s\n",dsp_core->pc, (cur_inst>>8) & BITMASK(8), registers_name[numreg]);
 }
 
-static void dsp_movec_d(void)
+static void dsp_movec_imm(void)
 {
 	const char *spacename;
 	char srcname[18], dstname[18], addr_name[16];
@@ -1885,7 +1885,7 @@ static void dsp_ori(void)
 			registers_changed[DSP_REG_OMR]=1;
 			break;
 		default:
-			regname="";
+			regname="???";
 			break;
 	}
 
@@ -1912,7 +1912,7 @@ static void dsp_rep(void)
 	registers_changed[DSP_REG_SR]=1;
 }
 
-static void dsp_rep_1(void)
+static void dsp_rep_aa(void)
 {
 	char name[16];
 
@@ -1920,21 +1920,21 @@ static void dsp_rep_1(void)
 	/* y:aa */
 
 	if (cur_inst & (1<<6)) {
-		sprintf(name, "y:0x%04x",(cur_inst>>8) & BITMASK(6));
+		sprintf(name, "y:<0x%04x",(cur_inst>>8) & BITMASK(6));
 	} else {
-		sprintf(name, "x:0x%04x",(cur_inst>>8) & BITMASK(6));
+		sprintf(name, "x:<0x%04x",(cur_inst>>8) & BITMASK(6));
 	}
 
 	fprintf(stderr,"Dsp: 0x%04x: rep %s\n",dsp_core->pc, name);
 }
 
-static void dsp_rep_3(void)
+static void dsp_rep_imm(void)
 {
 	/* #xxx */
 	fprintf(stderr,"Dsp: 0x%04x: rep #0x%02x\n",dsp_core->pc, (cur_inst>>8) & BITMASK(8));
 }
 
-static void dsp_rep_5(void)
+static void dsp_rep_ea(void)
 {
 	char name[18],addr_name[16];
 
@@ -1951,7 +1951,7 @@ static void dsp_rep_5(void)
 	fprintf(stderr,"Dsp: 0x%04x: rep %s\n",dsp_core->pc, name);
 }
 
-static void dsp_rep_d(void)
+static void dsp_rep_reg(void)
 {
 	/* R */
 
@@ -2467,7 +2467,7 @@ static void dsp_add(void)
 			srcname=registers_name[DSP_REG_Y1];
 			break;
 		default:
-			srcname="";
+			srcname="???";
 			break;
 	}
 
@@ -3146,7 +3146,7 @@ static void dsp_sub(void)
 			srcname=registers_name[DSP_REG_Y1];
 			break;
 		default:
-			srcname="";
+			srcname="???";
 			break;
 	}
 

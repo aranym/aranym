@@ -306,7 +306,7 @@ void dsp_core_dsp2host(dsp_core_t *dsp_core)
 	if (dsp_core->hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_RXDF)) {
 		return;
 	}
-	/* HTDE = 1 ==> nothing to tranfert from DSP port */
+	/* HTDE = 1 ==> nothing to transfer from DSP port */
 	if (dsp_core->periph[DSP_SPACE_X][DSP_HOST_HSR] & (1<<DSP_HOST_HSR_HTDE)) {
 		return;
 	}
@@ -329,7 +329,7 @@ void dsp_core_dsp2host(dsp_core_t *dsp_core)
 /* Host port transfer ? (host->dsp) */
 void dsp_core_host2dsp(dsp_core_t *dsp_core)
 {
-	/* TXDE = 1 ==> nothing to tranfert from host port */
+	/* TXDE = 1 ==> nothing to transfer from host port */
 	if (dsp_core->hostport[CPU_HOST_ISR] & (1<<CPU_HOST_ISR_TXDE)) {
 		return;
 	}
