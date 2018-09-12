@@ -38,7 +38,8 @@ class DlgHotkeys: public Dialog
 			STATE_UNGRAB,
 			STATE_DEBUG,
 			STATE_SCREENSHOT,
-			STATE_FULLSCREEN
+			STATE_FULLSCREEN,
+			STATE_SOUND
 		};
 
 		bx_hotkeys_t hotkeys;

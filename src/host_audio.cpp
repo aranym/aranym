@@ -98,7 +98,7 @@ HostAudio::HostAudio()
 
 	enabled = bx_options.audio.enabled;
 	recording = false;
-	SDL_PauseAudio(0);
+	Enable(enabled);
 }
 
 HostAudio::~HostAudio()
@@ -123,6 +123,13 @@ void HostAudio::reset(void)
 
 	SDL_UnlockAudio();
 */
+}
+
+void HostAudio::Enable(bool enable)
+{
+	enabled = enable;
+	if (SDL_WasInit(SDL_INIT_AUDIO))
+		SDL_PauseAudio(enable ? SDL_FALSE : SDL_TRUE);
 }
 
 void HostAudio::AddCallback(audio_callback_f callback, void *userdata)

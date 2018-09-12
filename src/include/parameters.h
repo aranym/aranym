@@ -250,6 +250,7 @@ typedef struct {
 	bx_hotkey	ungrab;
 	bx_hotkey	fullscreen;
 	bx_hotkey	screenshot;
+	bx_hotkey	sound;
 } bx_hotkeys_t;
 
 // Audio

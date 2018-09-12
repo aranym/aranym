@@ -707,6 +707,7 @@ HOTKEY check_hotkey(int state, SDL_Keycode sym)
 	CHECK_HOTKEY(ungrab);
 	CHECK_HOTKEY(screenshot);
 	CHECK_HOTKEY(fullscreen);
+	CHECK_HOTKEY(sound);
 #undef CHECK_HOTKEY
 	return HOTKEY_none;
 }
@@ -859,6 +860,10 @@ static void process_keyboard_event(const SDL_Event &event)
 			video->toggleFullScreen();
 			if (bx_options.video.fullscreen && !video->GrabbedMouse())
 				video->grabTheMouse();
+			send2Atari = false;
+			break;
+		case HOTKEY_sound:
+			host->audio.ToggleAudio();
 			send2Atari = false;
 			break;
 		}

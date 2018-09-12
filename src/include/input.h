@@ -19,6 +19,7 @@ typedef enum {
 	HOTKEY_ungrab,
 	HOTKEY_fullscreen,
 	HOTKEY_screenshot,
+	HOTKEY_sound,
 } HOTKEY;
 
 void InputInit();

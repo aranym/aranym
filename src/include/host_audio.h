@@ -56,12 +56,12 @@ class HostAudio {
 		SDL_AudioSpec	obtained;
 		
 		bool Recording(void) { return recording; }
-		void StartRecording() { recording = true; }
+		void StartRecording() { recording = true && enabled; }
 		void StopRecording() { recording = false; }
 		
 		bool Enabled(void) { return enabled; }
-		void Enable() { enabled = true; }
-		void Disable() { enabled = false; }
+		void Enable(bool enable);
+		void ToggleAudio() { Enable(!enabled); }
 		static const char *FormatName(Uint16 format);
 };
 

@@ -1,3 +1,7 @@
+2018/09/12
+Add a hotkey for turning audio on/off
+
+
 2018/09/09
 dsp_core.c: Replace algorithm to generate ROM tables
 by pre-generated tables (the a-law table was not exactly

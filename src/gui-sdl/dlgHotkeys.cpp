@@ -42,6 +42,7 @@ static char key_ungrab[HOTKEYS_STRING_SIZE];
 static char key_debug[HOTKEYS_STRING_SIZE];
 static char key_screenshot[HOTKEYS_STRING_SIZE];
 static char key_fullscreen[HOTKEYS_STRING_SIZE];
+static char key_sound[HOTKEYS_STRING_SIZE];
 
 /* The hotkeys dialog: */
 #define SDLGUI_INCLUDE_HOTKEYSDLG
@@ -57,6 +58,7 @@ static const char *HELP_TEXT = "Define hotkeys for certain functions:\n"
 "Debug ....... invoke internal debugger\n"
 "Screenshot... save screen image to file\n"
 "Fullscreen... switch from/to window mode\n"
+"Sound........ Toggle sound on/off\n"
 "\n"
 "LS = Left Shift, LC = Left Ctrl,\n"
 "RA = Right Alt, RM = Right Meta.\n"
@@ -77,6 +79,7 @@ DlgHotkeys::DlgHotkeys(SGOBJ *dlg)
 	UPDATE_BUTTON(debug);
 	UPDATE_BUTTON(screenshot);
 	UPDATE_BUTTON(fullscreen);
+	UPDATE_BUTTON(sound);
 }
 
 DlgHotkeys::~DlgHotkeys()
@@ -128,6 +131,11 @@ int DlgHotkeys::processDialog(void)
 			SDLGui_Open(dlgKeypress);
 			state = STATE_FULLSCREEN;
 			break;
+		case SOUND:
+			dlgKeypress = (DlgKeypress *) DlgKeypressOpen();
+			SDLGui_Open(dlgKeypress);
+			state = STATE_SOUND;
+			break;
 
 		case HELP:
 			SDLGui_Open(DlgAlertOpen(HELP_TEXT, ALERT_OK));
@@ -160,6 +168,7 @@ void DlgHotkeys::idle(void)
 	UPDATE_BUTTON(debug);
 	UPDATE_BUTTON(screenshot);
 	UPDATE_BUTTON(fullscreen);
+	UPDATE_BUTTON(sound);
 
 	/* Force redraw */
 	init();
@@ -213,6 +222,12 @@ void DlgHotkeys::processResult(void)
 		case STATE_FULLSCREEN:
 			if (dlgKeypress) {
 				hotkeys.fullscreen = dlgKeypress->getPressedKey();
+				dlgKeypress = NULL;
+			}
+			break;
+		case STATE_SOUND:
+			if (dlgKeypress) {
+				hotkeys.sound = dlgKeypress->getPressedKey();
 				dlgKeypress = NULL;
 			}
 			break;

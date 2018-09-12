@@ -1359,6 +1359,7 @@ struct Config_Tag hotkeys_conf[]={
 	{ "Debug", String_Tag, hotkeys[5], HOTKEYS_STRING_SIZE, 0},
 	{ "Screenshot", String_Tag, hotkeys[6], HOTKEYS_STRING_SIZE, 0},
 	{ "Fullscreen", String_Tag, hotkeys[7], HOTKEYS_STRING_SIZE, 0},
+	{ "Sound", String_Tag, hotkeys[8], HOTKEYS_STRING_SIZE, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -1372,7 +1373,8 @@ HOTKEYS_REL hotkeys_rel[]={
 	{ hotkeys[4], &bx_options.hotkeys.ungrab },
 	{ hotkeys[5], &bx_options.hotkeys.debug },
 	{ hotkeys[6], &bx_options.hotkeys.screenshot },
-	{ hotkeys[7], &bx_options.hotkeys.fullscreen }
+	{ hotkeys[7], &bx_options.hotkeys.fullscreen },
+	{ hotkeys[8], &bx_options.hotkeys.sound }
 };
 
 static void preset_hotkeys()
@@ -1387,6 +1389,7 @@ static void preset_hotkeys()
 	strcpy(hotkeys[5], "LM+d");
 	strcpy(hotkeys[6], "LM+s");
 	strcpy(hotkeys[7], "LM+f");
+	strcpy(hotkeys[8], "RM+s");
 #else
 	strcpy(hotkeys[0], "Pause");
 	strcpy(hotkeys[1], "LS+Pause");
@@ -1396,6 +1399,7 @@ static void preset_hotkeys()
 	strcpy(hotkeys[5], "LA+Pause");
 	strcpy(hotkeys[6], "PrintScreen");
 	strcpy(hotkeys[7], "ScrollLock");
+	strcpy(hotkeys[8], "RA+s");
 #endif
 }
 
@@ -1453,6 +1457,8 @@ static void preset_audio() {
 }
 
 static void postload_audio() {
+	if (host)
+		host->audio.Enable(bx_options.audio.enabled);
 }
 
 static void presave_audio() {

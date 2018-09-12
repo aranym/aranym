@@ -299,6 +299,8 @@ void DlgMain::handleHotkey(HOTKEY hotkey)
 	case HOTKEY_screenshot:
 		obj = SCREENSHOT;
 		break;
+	case HOTKEY_sound:
+		break;
 	}
 	if (obj >= 0)
 	{
