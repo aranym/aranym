@@ -391,6 +391,7 @@ void ACSIFDC::fdc_exec_command()
 	switch(d)
 	{
 		case 2:
+		case 6:
 			d=0;
 			break;
 		case 4:
@@ -398,7 +399,6 @@ void ACSIFDC::fdc_exec_command()
 			// we don't emulate second floppy drive
 			d=-1;
 			break;
-		case 6:
 		case 0:
 			d=-1;
 			break;
