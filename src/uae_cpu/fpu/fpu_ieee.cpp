@@ -1794,7 +1794,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			case 0x3d:
 			case 0x3e:
 			case 0x3f:
-				make_inf(FPU registers[reg]);
+				make_inf(FPU registers[reg], false);
 				break;
 #endif
 			default:
