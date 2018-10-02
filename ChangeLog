@@ -1,4 +1,8 @@
 2018/10/02
+Avoid a warning about using non-static data member initializers
+
+
+2018/10/02
 Fix a build error when long double is not available
 
 

@@ -68,8 +68,8 @@ private:
 	SDL_Surface *load_jpeg(SDL_RWops *src);
 #endif
 
-	const int xMCUs = 16;
-	const int yRows = 16;
+	static const int xMCUs = 16;
+	static const int yRows = 16;
 
 	int32 open_driver(memptr jpeg_ptr);
 	int32 close_driver(memptr jpeg_ptr);
