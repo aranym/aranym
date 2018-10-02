@@ -99,7 +99,8 @@ osx)
 	ARCHIVE="${PROJECT_LOWER}-${ATAG}.dmg"
 	(
 	cd src/Unix/MacOSX
-	xcodebuild -derivedDataPath "$OUT" -project MacAranym.xcodeproj -configuration Release -scheme Packaging 
+	xcodebuild -derivedDataPath "$OUT" -project MacAranym.xcodeproj -configuration Release -scheme Packaging -showBuildSettings
+	xcodebuild -derivedDataPath "$OUT" -project MacAranym.xcodeproj -configuration Release -scheme Packaging -quiet
 	)
 	mv "$OUT/Build/Products/Release/$DMG" "$OUT/$ARCHIVE" || exit 1
 	;;
