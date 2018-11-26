@@ -1,3 +1,7 @@
+2018/11/26
+Fix some typos in comments
+
+
 2018/10/02
 Run travis builds for macOS now with -quiet, since they changed
 the settings and builds are aborted when log file gets too long

@@ -221,7 +221,7 @@ uint8 MFP::handleRead(memptr addr)
 
 void MFP::set_active_edge(uint8 value)
 {
-static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
+static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15};	
   /* AER : 1=Rising (0->1), 0=Falling (1->0) */
   
   /* [mfp.txt]
@@ -239,7 +239,7 @@ static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;
    *    1     1   0     1     0   1      
    */
 	int i, j;
-	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
+	for(j = 0, i = 1; j < 8; j++, i <<= 1) {
 		if( ((active_edge & i) != (value & i))        /* if AER changes */
 				&& (! (data_direction & i))               /* for input lines */
 				&& ((active_edge & i) != (input & i))) {
@@ -258,7 +258,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
 	D(bug("Writing MFP data to %04lx = %d ($%02x) at %06x", addr, value, value, showPC()));
 	switch(addr) {
 		case 0x01:	//GPIP_data = value;
-					GPIP_data &= ~data_direction ;
+					GPIP_data &= ~data_direction;
 					GPIP_data |= value & data_direction;
 					D(bug("New GPIP=$%x from PC=$%x", GPIP_data, showPC()));
 					break;
@@ -410,7 +410,7 @@ void MFP::handleWrite(memptr addr, uint8 value) {
  */
 void MFP::setGPIPbit(int mask, int value)
 {
-	static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15} ;	
+	static int map_gpip_to_ier[8] = {0, 1, 2, 3, 6, 7, 14, 15};	
 	mask &= 0xff;
 
 	int oldGPIP = GPIP_data;
@@ -424,7 +424,7 @@ void MFP::setGPIPbit(int mask, int value)
 	GPIP_data &= 0xFF;
 	D(bug("setGPIPbit($%x, $%x): old=$%x, new=$%x", mask, value, oldGPIP, GPIP_data));
 	int i, j;
-	for(j = 0, i = 1 ; j < 8 ; j++, i <<= 1) {
+	for(j = 0, i = 1; j < 8; j++, i <<= 1) {
 		if ((oldGPIP & i) != (GPIP_data & i)) {
 			D(bug("setGPIPbit: i=$%x, irq_enable=$%x, old=$%x, new=$%x", i, irq_enable, oldGPIP, GPIP_data));
 			if (active_edge & i) {
@@ -438,7 +438,7 @@ void MFP::setGPIPbit(int mask, int value)
 					continue;
 			}
 			D(bug("calling IRQ(%d)->%d", j, map_gpip_to_ier[j]));
-			IRQ(map_gpip_to_ier[j], 1) ;
+			IRQ(map_gpip_to_ier[j], 1);
 		}
 	}	
 }
@@ -490,22 +490,22 @@ void MFP::IRQ(int int_level, int count)
         /* ok, we will request an interrupt to the mfp */
 #if 0
         if(int_level) {
-          panicbug( "mfp ask interrupt %d\n", int_level) ;
+          panicbug( "mfp ask interrupt %d\n", int_level);
         }
 #endif
-        irq_pending |= i ;
+        irq_pending |= i;
         /* interrupt masked ? */
         if( ! (irq_mask & i) ) {
                 /* irq_pending set but no irq : stop here */
                D(bug("irq_pending set but no irq"));
-          return ;
+          return;
         }
                 /* highest priority ? */
         if(irq_inservice > i) {
-                /* no, do nothing (the mfp whill check when the current
+                /* no, do nothing (the mfp will check when the current
                   interrupt resumes, i.e. when irq_inservice is being cleared). */
-				panicbug("irq_inservice has higher priority");
-                return ;
+				D(bug("irq_inservice has higher priority"));
+                return;
         }
         /* say we want to interrupt the cpu */  
         TriggerMFP(true);
@@ -519,27 +519,26 @@ void MFP::IRQ(int int_level, int count)
 // return : vector number, or zero if no interrupt
 int MFP::doInterrupt()
 {
-        int j, vector ;
+        int j, vector;
         unsigned i;
         
         /* what's happening here ? */
 #if 0
-        panicbug( "starting mfp_do_interrupt\n") ;
+        panicbug( "starting mfp_do_interrupt\n");
         panicbug( "ier %04x, ipr %04x, isr %04x, imr %04x\n",
-               irq_enable, irq_pending, irq_inservice, irq_mask) ;
+               irq_enable, irq_pending, irq_inservice, irq_mask);
 #endif
 
         /* any pending interrupts? */
-        for(j = 15, i = 0x8000 ; i ; j--, i>>=1) {
+        for(j = 15, i = 0x8000; i; j--, i>>=1) {
                 if(irq_pending & i & irq_mask)
-                        break ;
+                        break;
         }
         if(i == 0) {
           /* this shouldn't happen :-) */
-                panicbug( "mfp_do_interrupt called "
-                        "with no pending interrupt\n") ;
+                panicbug( "mfp_do_interrupt called with no pending interrupt\n");
                 TriggerMFP(false);
-                return 0 ;
+                return 0;
         }
         if(irq_inservice >= i) {
                 /* Still busy. We shouldn't come here. */
@@ -549,25 +548,25 @@ int MFP::doInterrupt()
 					Thus it is commented out.
                 
 				panicbug( "mfp_do_interrupt called when "
-                        "another higher priority interrupt is running\n") ;
+                        "another higher priority interrupt is running\n");
 				*/
 			
                 TriggerMFP(false);
-                return 0 ;
+                return 0;
         }
         
         /* ok, do the interrupt, i.e. "pass the vector". */
-        vector = (vr & MFP_VR_VECTOR) + j ;
+        vector = (vr & MFP_VR_VECTOR) + j;
 	
 	if (j != 5 || --timerCounter <= 0) {	// special hack for TimerC
-        irq_pending &= ~i ;
+        irq_pending &= ~i;
         TriggerMFP(false);
 	}
 
         if(vr & MFP_VR_SEI) {
                 /* software mode of interrupt : irq_inservice will remain set until
                    explicitely cleared by writing on it */
-                irq_inservice |= i ;
+                irq_inservice |= i;
         } else {
                 /* automatic mode of interrupt : irq_inservice automatically cleared
                    when the interrupt starts (which is now). In this case,
@@ -582,9 +581,9 @@ int MFP::doInterrupt()
         }
 
 #if 0
-        panicbug( "MFP::doInterrupt : vector %d\n", vector) ;
+        panicbug( "MFP::doInterrupt : vector %d\n", vector);
 #endif
-        return vector ;
+        return vector;
 }
 
 int MFP::timerC_ms_ticks()
@@ -593,7 +592,3 @@ int MFP::timerC_ms_ticks()
 
 	return 1000 / freq;
 }
-
-/*
-vim:ts=4:sw=4:
-*/
