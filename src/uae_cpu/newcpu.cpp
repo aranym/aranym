@@ -137,6 +137,7 @@ void dump_flight_recorder(void)
 		fprintf(f, "a0 %08x a1 %08x a2 %08x a3 %08x\n", frlog[j].a[0], frlog[j].a[1], frlog[j].a[2], frlog[j].a[3]);
 		fprintf(f, "a4 %08x a5 %08x a6 %08x a7 %08x\n", frlog[j].a[4], frlog[j].a[5], frlog[j].a[6], frlog[j].a[7]);
 #endif
+		m68k_disasm(f, frlog[j].pc, NULL, 1);
 	}
 	fclose(f);
 }
@@ -512,8 +513,7 @@ void Exception(int nr, uaecptr oldpc)
 #ifdef ENABLE_EPSLIMITER
         check_eps_limit(currpc);
 #endif
-        // panicbug("Exception Nr. %d CPC: %08lx NPC: %08lx SP=%08lx Addr: %08lx", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
-
+        // panicbug("Exception Nr. %d CPC: %08x NPC: %08x SP=%08x Addr: %08x", nr, currpc, get_long (regs.vbr + 4*nr), m68k_areg(regs, 7), regs.mmu_fault_addr);
 #ifdef EXCEPTIONS_VIA_LONGJMP
 	if (!building_bus_fault_stack_frame)
 #else
@@ -1394,7 +1394,7 @@ void m68k_do_execute (void)
 #endif
 	opcode = GET_OPCODE;
 #ifdef FLIGHT_RECORDER
-	m68k_record_step(m68k_getpc(), opcode);
+	m68k_record_step(m68k_getpc(), cft_map(opcode));
 #endif
 	(*cpufunctbl[opcode])(opcode);
 	cpu_check_ticks();

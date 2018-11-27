@@ -4626,7 +4626,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					prepare_for_call_1();
 					prepare_for_call_2();
 					raw_mov_l_ri(REG_PAR1, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
-					raw_mov_w_ri(REG_PAR2, opcode);
+					raw_mov_w_ri(REG_PAR2, cft_map(opcode));
 					raw_dec_sp(STACK_SHADOW_SPACE);
 					compemu_raw_call((uintptr)m68k_record_step);
 					raw_inc_sp(STACK_SHADOW_SPACE);
@@ -5004,7 +5004,7 @@ void exec_nostats(void)
 	for (;;)  { 
 		uae_u32 opcode = GET_OPCODE;
 #ifdef FLIGHT_RECORDER
-		m68k_record_step(m68k_getpc(), opcode);
+		m68k_record_step(m68k_getpc(), cft_map(opcode));
 #endif
 		(*cpufunctbl[opcode])(opcode);
 		cpu_check_ticks();
@@ -5034,7 +5034,7 @@ void execute_normal(void)
 			pc_hist[blocklen++].location = (uae_u16 *)regs.pc_p;
 			uae_u32 opcode = GET_OPCODE;
 #ifdef FLIGHT_RECORDER
-			m68k_record_step(m68k_getpc(), opcode);
+			m68k_record_step(m68k_getpc(), cft_map(opcode));
 #endif
 			(*cpufunctbl[opcode])(opcode);
 			cpu_check_ticks();
