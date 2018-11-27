@@ -231,10 +231,9 @@ void exit_m68k (void)
 	fpu_exit ();
 }
 
-struct regstruct regs, lastint_regs;
+struct regstruct regs;
 // MJ static struct regstruct regs_backup[16];
 // MJ static int backup_pointer = 0;
-int lastint_no;
 
 
 #ifdef FULLMMU
@@ -588,8 +587,6 @@ void Exception(int nr, uaecptr oldpc)
 static void Interrupt(int nr)
 {
     assert(nr < 8 && nr >= 0);
-    lastint_regs = regs;
-    lastint_no = nr;
     Exception(nr+24, 0);
 
     regs.intmask = nr;
@@ -600,8 +597,6 @@ static void Interrupt(int nr)
 static void SCCInterrupt(int nr)
 {
     // fprintf(stderr, "CPU: in SCCInterrupt\n");
-    lastint_regs = regs;
-    lastint_no = 5;// ex 5
     Exception(nr, 0);
 
     regs.intmask = 5;// ex 5
@@ -610,8 +605,6 @@ static void SCCInterrupt(int nr)
 static void MFPInterrupt(int nr)
 {
     // fprintf(stderr, "CPU: in MFPInterrupt\n");
-    lastint_regs = regs;
-    lastint_no = 6;
     Exception(nr, 0);
 
     regs.intmask = 6;

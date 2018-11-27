@@ -102,7 +102,7 @@ extern struct regstruct
 
     /* Cache reg*/
     uae_u32 cacr,caar;
-} regs, lastint_regs;
+} regs;
 
 static inline uaecptr m68k_getpc (void)
 {

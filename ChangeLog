@@ -1,4 +1,8 @@
 2018/11/27
+Remove some unused variables
+
+
+2018/11/27
 In the flight recorder, record the 68k opcode, not
 the unswapped little-endian opcode
 
