@@ -1,3 +1,8 @@
+2018/12/18
+Do not D(Bug()) nf_calls to NF_STDERR, they interfere
+with the actual output from the application
+
+
 2018/11/27
 Remove some unused variables
 

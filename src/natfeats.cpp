@@ -53,9 +53,13 @@ int32 nf_call(memptr stack, bool inSuper)
 	context = stack + 4;	/* parameters follow on the stack */
 
 	NF_Base *obj = nf_objects[idx];
-	D(bug("nf_call(%s, %d)", obj->name(), fncode));
+	if (strcmp(obj->name(), "NF_STDERR") != 0)
+	{
+		D(bug("nf_call(%s, %d)", obj->name(), fncode));
+	}
 
 	if (obj->isSuperOnly() && !inSuper) {
+		panicbug("nf_call(%s, %d): privilege violation", obj->name(), fncode);
 		THROW(8);	// privilege exception
 	}
 
