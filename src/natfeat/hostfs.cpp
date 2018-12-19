@@ -2429,7 +2429,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 		case MX_KER_XFSNAME:
 		{
 			D(bug( "HOSTFS: fs_fscntl: MX_KER_XFSNAME: arg = %08x", arg ));
-			Host2AtariUtf8Copy(arg, "hostfs-xfs", 32);
+			Host2AtariUtf8Copy(arg, "hostfs", 8);
 			return TOS_E_OK;
 		}
 		case MINT_FS_INFO:
@@ -2721,7 +2721,7 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 		case MX_KER_XFSNAME:
 			D(bug( "HOSTFS: fs_ioctl: MX_KER_XFSNAME: arg = %08lx", (unsigned long)buff ));
 			if (buff)
-			    Host2AtariUtf8Copy(buff, "hostfs-xfs", 32);
+			    Host2AtariUtf8Copy(buff, "hostfs", 8);
 			return TOS_E_OK;
 		
 #ifdef EXT2_IOC_GETFLAGS

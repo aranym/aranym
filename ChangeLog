@@ -1,3 +1,7 @@
+2018/12/19
+The buffer for MX_KER_XFSNAME is only 8 chars, do not overwrite it
+
+
 2018/12/18
 Do not D(Bug()) nf_calls to NF_STDERR, they interfere
 with the actual output from the application
