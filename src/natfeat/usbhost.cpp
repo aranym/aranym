@@ -752,7 +752,8 @@ int32 USBHost::submit_control_msg(uint32 pipe, memptr buffer,
 
 	D(bug("USBHost: bmRType %x, bReq %x, wValue %x, wIndex %x, wLength %x", bmRType, bReq, wValue, wIndex, wLength));
 
-	if (bReq == USB_REQ_SET_ADDRESS) {	/* Don't allow to change device's address set by the host OS */
+	/* Don't allow to change device's addresses set by the host OS */
+	if (bReq == USB_REQ_SET_ADDRESS) {
 		for (i = 0; i < NUMBER_OF_PORTS; i++) {
 			/*
 			 * We need to be careful to don't assign to an empty port an already connected
