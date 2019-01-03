@@ -18,6 +18,7 @@
 #  define __STRALIGN_H_ 1
 #endif
 
+#define GL_GLEXT_LEGACY
 #include <SDL_opengl.h>
 
 #if defined(__MACOSX__)

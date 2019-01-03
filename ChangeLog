@@ -1,3 +1,7 @@
+2019/01/03
+Avoid redefinition of GL_GLEXT_VERSION from newer versions of glext.h
+
+
 2018/12/19
 The buffer for MX_KER_XFSNAME is only 8 chars, do not overwrite it
 
