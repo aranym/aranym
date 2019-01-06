@@ -939,8 +939,13 @@ typedef char GLchar;
 
 #ifndef GL_ARB_vertex_buffer_object
 #define GL_ARB_vertex_buffer_object 1
+#ifdef __APPLE__
+typedef intptr_t GLsizeiptrARB;
+typedef intptr_t GLintptrARB;
+#else
 typedef ptrdiff_t GLsizeiptrARB;
 typedef ptrdiff_t GLintptrARB;
+#endif
 #endif
 
 #ifndef GL_NV_half_float
