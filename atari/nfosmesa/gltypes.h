@@ -922,8 +922,13 @@ GLAPI void GLAPIENTRY glPolygonOffset(GLfloat factor, GLfloat units);
 #ifndef GL_VERSION_1_5
 #ifndef __GLintptr_defined
 #include <stddef.h>
+#ifdef __APPLE__
+typedef intptr_t GLsizeiptr;
+typedef intptr_t GLintptr;
+#else
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
+#endif
 #define __GLintptr_defined
 #endif
 #endif

@@ -1,4 +1,8 @@
 2019/01/03
+Fix definition of GLintptr when using Apple legacy headers
+
+
+2019/01/03
 Fix definition of GLintptrARB when using Apple legacy headers
 
 

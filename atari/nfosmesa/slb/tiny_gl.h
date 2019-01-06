@@ -968,8 +968,13 @@ GLAPI void GLAPIENTRY glPolygonOffset(GLfloat factor, GLfloat units);
 #ifndef GL_VERSION_1_5
 #ifndef __GLintptr_defined
 #include <stddef.h>
+#ifdef __APPLE__
+typedef intptr_t GLsizeiptr;
+typedef intptr_t GLintptr;
+#else
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
+#endif
 #define __GLintptr_defined
 #endif
 #endif
@@ -985,8 +990,13 @@ typedef char GLchar;
 
 #ifndef GL_ARB_vertex_buffer_object
 #define GL_ARB_vertex_buffer_object 1
+#ifdef __APPLE__
+typedef intptr_t GLsizeiptrARB;
+typedef intptr_t GLintptrARB;
+#else
 typedef ptrdiff_t GLsizeiptrARB;
 typedef ptrdiff_t GLintptrARB;
+#endif
 #endif
 
 #ifndef GL_NV_half_float
@@ -1039,7 +1049,11 @@ typedef GLint GLfixed;
 #ifndef GL_ARB_shader_objects
 #define GL_ARB_shader_objects 1
 typedef char GLcharARB;
+#ifdef __APPLE__
+typedef void *GLhandleARB;
+#else
 typedef GLuint GLhandleARB;
+#endif
 #endif
 
 #ifndef GL_KHR_debug
