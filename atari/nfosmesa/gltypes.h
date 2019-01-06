@@ -993,7 +993,11 @@ typedef GLint GLfixed;
 #ifndef GL_ARB_shader_objects
 #define GL_ARB_shader_objects 1
 typedef char GLcharARB;
+#ifdef __APPLE__
+typedef void *GLhandleARB;
+#else
 typedef GLuint GLhandleARB;
+#endif
 #endif
 
 #ifndef GL_KHR_debug

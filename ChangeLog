@@ -1,4 +1,8 @@
 2019/01/03
+Fix definition of GLhandleARB when using Apple legacy headers
+
+
+2019/01/03
 Avoid redefinition of GL_GLEXT_VERSION from newer versions of glext.h
 
 
