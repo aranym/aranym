@@ -1,12 +1,28 @@
-#!/bin/sh
-
+#!/bin/bash
+sudo apt-get update
+sudo apt-get install -y \
+	curl \
+	git \
+	zsync \
+	xz-utils \
+	libjson-perl \
+	libwww-perl
+if ! ( echo $is | grep -q deploy ); then
 echo rvm_autoupdate_flag=0 >> ~/.rvmrc
 
 case "$TRAVIS_OS_NAME" in
 linux)
-	sudo apt-get update
+	chmod +x .travis/chroot.sh
+	if ( echo $ar | grep -q arm ); then # if arm run in qemu
+		sudo ./.travis/chroot.sh
+	else
 	sudo apt-get install -y \
-		curl \
+		autoconf \
+		automake \
+		build-essential \
+		gcc-4.8 \
+		g++-4.8 \
+		libx11-dev \
 		libosmesa6-dev \
 		libgl1-mesa-dev \
 		libglu1-mesa-dev \
@@ -14,11 +30,13 @@ linux)
 		libsdl-image1.2-dev \
 		libusb-dev \
 		libusb-1.0-0-dev \
-		libudev-dev \
-		zsync \
-		libjson-perl \
-		libwww-perl \
-		
+		libudev-dev
+	rm /usr/bin/gcc
+	rm /usr/bin/g++
+	ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
+	ln -s /usr/bin/g++-4.8 /usr/bin/g++
+	gcc -v
+	fi
 	;;
 
 osx)
@@ -74,3 +92,4 @@ osx)
 	exit 1
 	;;
 esac
+fi

@@ -1,6 +1,7 @@
 #!/bin/sh
 # Use as: ". setup_env.sh"
-
+if ! ( echo $ar | grep -q arm ); then # if arm do not exec
+export RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 export GITHUB_USER=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 1)
 export BASE_RAW_URL="https://raw.githubusercontent.com/${GITHUB_USER}"
 export PROJECT=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 2)
@@ -16,6 +17,9 @@ if echo "" | gcc -dM  -E - | grep -q __i386__; then
 fi
 if echo "" | gcc -dM  -E - | grep -q "__arm.*__"; then
 	CPU_TYPE=arm
+fi
+if ( echo $is | grep -q deploy ); then
+	CPU_TYPE=armhf
 fi
 export CPU_TYPE
 
@@ -76,3 +80,4 @@ if test "$suse_version" = '%{suse_version}' -o "$suse_version" = ""; then suse_v
 export suse_version
 
 export archive_tag
+fi
