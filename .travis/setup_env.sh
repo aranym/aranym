@@ -67,6 +67,10 @@ linux)
 		archive_tag=-`uname -s 2>/dev/null`-`uname -r 2>/dev/null`
 		;;
 	esac
+	if ( echo $is | grep -q deploy ); then
+		VENDOR=Raspbian
+		archive_tag=-stretch-${CPU_TYPE}
+	fi
 	;;
 
 osx)
