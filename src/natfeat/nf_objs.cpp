@@ -100,6 +100,7 @@ void NFCreate(void)
 	NFAdd(new NF_StdErr);
 
 	/* additional NF */
+	NFAdd(new NF_Exit);
 	NFAdd(new BootstrapNatFeat);
 	NFAdd(new DebugPrintf);
 	NFAdd(new XHDIDriver);

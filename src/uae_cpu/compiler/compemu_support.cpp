@@ -267,8 +267,6 @@ uae_u8* comp_pc_p;
 /* defined in uae.h */
 #else
 // External variables
-// newcpu.cpp
-extern int quit_program;
 #endif
 
 // gb-- Extra data for Basilisk II/JIT

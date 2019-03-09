@@ -74,8 +74,6 @@ uintptr FastRAMBaseDiff;
 
 uintptr VMEMBaseDiff;	// Global offset between a Atari VideoRAM address and /dev/fb0 mmap
 
-// From newcpu.cpp
-extern int quit_program;
 
 #if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
 SDL_mutex *spcflags_lock;

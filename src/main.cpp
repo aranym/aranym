@@ -328,9 +328,6 @@ bool InitOS(void)
 	return false;
 }
 
-// From newcpu.cpp
-extern int quit_program;
-
 /*
  *  Initialize everything, returns false on error
  */

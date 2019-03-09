@@ -642,9 +642,9 @@ int main(int argc, char **argv)
 	// returning from emulation after the NMI
 	remove_signal_handler();
 
-	QuitEmulator(0);
+	QuitEmulator(exit_val);
 
-	return 0;
+	return exit_val;
 }
 
 

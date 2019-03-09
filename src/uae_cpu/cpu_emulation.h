@@ -144,6 +144,10 @@ static inline bool ValidAddr(memptr addr, bool write, uint32 len) { return valid
 static inline uint8 *Atari2HostAddr(memptr addr) {return phys_get_real_address(addr);}
 
 
+// From newcpu.cpp
+extern int quit_program;
+extern int exit_val;
+
 /*
  *  680x0 emulation
  */

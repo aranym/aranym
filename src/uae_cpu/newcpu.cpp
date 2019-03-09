@@ -58,6 +58,7 @@
 struct fixup fixup = {0, 0, 0};
 
 int quit_program = 0;
+int exit_val = 0;
 
 // For instruction $7139
 bool cpu_debugging = false;

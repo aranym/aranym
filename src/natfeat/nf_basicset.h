@@ -50,6 +50,14 @@ public:
 	int32 dispatch(uint32 fncode);
 };
 
+class NF_Exit : public NF_Base
+{
+public:
+	const char *name() { return "NF_EXIT"; }
+	bool isSuperOnly() { return false; }
+	int32 dispatch(uint32 fncode);
+};
+
 class NF_StdErr : public NF_Base
 {
 public:

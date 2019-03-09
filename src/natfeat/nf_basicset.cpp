@@ -25,9 +25,11 @@
 #include "nf_basicset.h"
 #include "maptab.h"
 #include "version.h"
+#include "main.h"
 
 #define DEBUG 0
 #include "debug.h"
+
 
 int32 NF_Name::dispatch(uint32 fncode)
 {
@@ -65,8 +67,35 @@ int32 NF_Version::dispatch(uint32 /*fncode*/)
 // shut down the application
 int32 NF_Shutdown::dispatch(uint32 fncode)
 {
-	if (fncode == 0) {
+	switch (fncode)
+	{
+	case 0: /* shutdown(HALT) */
+		exit_val = 0;
 		Quit680x0();
+		break;
+	case 1: /* shutdown(BOOT) */
+		RestartAll(false);
+		break;
+	case 2: /* shutdown(COLDBOOT) */
+		RestartAll(true);
+		break;
+	case 3: /* shutdown(POWEROFF) */
+		exit_val = 0;
+		Quit680x0();
+		break;
+	}
+	return 0;
+}
+
+// shut down the application
+int32 NF_Exit::dispatch(uint32 fncode)
+{
+	switch (fncode)
+	{
+	case 0:
+		exit_val = getParameter(0);
+		Quit680x0();
+		break;
 	}
 	return 0;
 }
