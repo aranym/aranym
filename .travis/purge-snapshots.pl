@@ -20,7 +20,7 @@ $BINTRAY_USER = $ENV{BINTRAY_USER} if defined($ENV{BINTRAY_USER});
 my $BINTRAY_REPO_OWNER = $BINTRAY_USER;
 $BINTRAY_REPO_OWNER = $ENV{BINTRAY_REPO_OWNER} if defined($ENV{BINTRAY_REPO_OWNER});
 my $BINTRAY_REPO = 'aranym-files';
-$BINTRAY_REPO = $ENV{BINTRAY_REPO} if defined($ENV{BINTRAY_REPO});
+$BINTRAY_REPO = $ENV{BINTRAY_REPO_NAME} if defined($ENV{BINTRAY_REPO_NAME});
 $BINTRAY_REPO ="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO}";
 
 # Number of days of retention before purge
@@ -101,6 +101,7 @@ if (defined($ENV{TRAVIS_PULL_REQUEST}) && $ENV{TRAVIS_PULL_REQUEST} ne 'false')
 } else
 {
 	bintray_purge('snapshots');
+	bintray_purge('temp');
 }
 
 exit 0;

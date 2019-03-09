@@ -7,7 +7,33 @@ matrix:
     - os: osx
       osx_image: xcode8.3
       language: objective-c
-
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      env: 
+        - ar=arm
+        - typec=1
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      env: 
+        - ar=arm
+        - typec=2
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      env: 
+        - ar=arm
+        - typec=3
+    - stage: deploy
+      os: linux
+      dist: xenial
+      env: 
+        - is=deploy
+        
 branches:
   only:
     - master

@@ -6,7 +6,8 @@ STATIC_FILES=${top_srcdir}/appimage
 
 BINTRAY_USER="${BINTRAY_USER:-aranym}"
 BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
-BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO:-aranym-files}"
+BINTRAY_REPO_NAME="${BINTRAY_REPO_NAME:-aranym-files}"
+BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO_NAME}"
 
 case $CPU_TYPE in
 	x86_64) ARCH=x86_64 ;;

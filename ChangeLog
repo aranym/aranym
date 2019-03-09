@@ -1,3 +1,9 @@
+2019/03/09
+Add armhf automated builds
+
+Contributed by sagudev <samo@erazer.Home>
+
+
 2019/01/03
 Fix definition of GLintptr when using Apple legacy headers
 
