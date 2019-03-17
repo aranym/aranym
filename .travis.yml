@@ -39,7 +39,6 @@ matrix:
 branches:
   only:
     - master
-    - dev
 
 compiler:
   - gcc
@@ -60,8 +59,6 @@ script:
   - . ./.travis/build.sh
 
 deploy:
-  on:
-    all_branches: true
   skip_cleanup: true
   provider: script
   script: .travis/deploy.sh
