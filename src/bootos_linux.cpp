@@ -322,7 +322,7 @@ void LinuxBootOs::init(bool cold)
 #endif /* ENABLE_LILO */
 }
 
-void *LinuxBootOs::loadFile(char *filename, unsigned long *length)
+void *LinuxBootOs::loadFile(const char *filename, unsigned long *length)
 {
 	void *buffer = NULL;
 
@@ -372,7 +372,7 @@ void *LinuxBootOs::loadFile(char *filename, unsigned long *length)
 	// default
 	gzrewind(handle);
 	D(bug("lilo: uncompressing '%s'", filename));
-	D(bug("lilo:  uncompressed length: %d bytes", *length));
+	D(bug("lilo:  uncompressed length: %lu bytes", *length));
 
 	free(buffer);
 	buffer=NULL;
@@ -383,7 +383,7 @@ void *LinuxBootOs::loadFile(char *filename, unsigned long *length)
 
 	buffer = (char *)malloc(*length);
 	if (buffer==NULL) {
-		D(bug("lilo: unable to allocate %d bytes", *length));
+		D(bug("lilo: unable to allocate %ld bytes", *length));
 #ifdef HAVE_LIBZ
 		gzclose(handle);
 #else
@@ -401,8 +401,8 @@ void *LinuxBootOs::loadFile(char *filename, unsigned long *length)
 #endif
 
 #else
-	DUNUSED(filename);
-	DUNUSED(length);
+	UNUSED(filename);
+	UNUSED(length);
 #endif /* ENABLE_LILO */
 	return buffer;
 }
@@ -412,8 +412,10 @@ int LinuxBootOs::checkKernel(void)
 #ifdef ENABLE_LILO
     Elf32_Ehdr *kexec_elf;	/* header of kernel executable */
     Elf32_Phdr *kernel_phdrs;
-	unsigned long min_addr=0xffffffff, max_addr=0;
-	unsigned long kernel_size, mem_ptr, kernel_offset;
+	Elf32_Addr min_addr=0xffffffff, max_addr=0;
+	Elf32_Addr kernel_size;
+	Elf32_Addr mem_ptr;
+	Elf32_Addr kernel_offset;
 	int i;
 	const char *kname, *kernel_name="vmlinux";
 	bool load_to_fastram = bx_options.lilo.load_to_fastram && FastRAMSize > 0;
@@ -422,7 +424,7 @@ int LinuxBootOs::checkKernel(void)
 	if (memcmp( &kexec_elf->e_ident[EI_MAG0], ELFMAG, SELFMAG ) == 0) {
 		if ((SDL_SwapBE16(kexec_elf->e_type) != ET_EXEC) || (SDL_SwapBE16(kexec_elf->e_machine) != EM_68K) ||
 			(SDL_SwapBE32(kexec_elf->e_version) != EV_CURRENT)) {
-			fprintf(stderr, "lilo: Invalid ELF header contents in kernel\n");
+			bug("lilo: Invalid ELF header contents in kernel");
 			return -1;
 		}
 	}
@@ -478,7 +480,24 @@ int LinuxBootOs::checkKernel(void)
 		D(bug("lilo:  kernel_phdrs[0].p_memsz=0x%08x",SDL_SwapBE32(kernel_phdrs[0].p_memsz)));
 	}
 	kernel_size = max_addr - min_addr;
-	D(bug("lilo: kernel_size=%lu",kernel_size));
+	D(bug("lilo: kernel_size=%u",kernel_size));
+
+	if (load_to_fastram)
+	{
+		if (KERNEL_START + kernel_size > FastRAMSize)
+		{
+			bug("lilo: kernel of size %x does not fit in TT-RAM of size %x", kernel_size, FastRAMSize);
+			load_to_fastram = false;
+		}
+	}
+	if (!load_to_fastram)
+	{
+		if (KERNEL_START + kernel_size > RAMSize)
+		{
+			bug("lilo: kernel of size %x does not fit in RAM of size %x", kernel_size, RAMSize);
+			return -1;
+		}
+	}
 
 	if (load_to_fastram)
 		kernel_offset = FastRAMBase;
@@ -486,18 +505,18 @@ int LinuxBootOs::checkKernel(void)
 		kernel_offset = 0;
 	mem_ptr = KERNEL_START;
 	for (i=0; i<SDL_SwapBE16(kexec_elf->e_phnum); i++) {
-		unsigned long segment_length;
-		unsigned long segment_ptr;
-		unsigned long segment_offset;
+		Elf32_Word segment_length;
+		Elf32_Addr segment_ptr;
+		Elf32_Off segment_offset;
 
 		segment_offset = SDL_SwapBE32(kernel_phdrs[i].p_offset);
 		segment_length = SDL_SwapBE32(kernel_phdrs[i].p_filesz);
 
 		if (segment_offset == 0xffffffffUL) {
-		    fprintf(stderr, "lilo: Failed to seek to segment %d\n",i);
+		    bug("lilo: Failed to seek to segment %d",i);
 			return -1;
 		}
-		segment_ptr =  SDL_SwapBE32(kernel_phdrs[i].p_vaddr)-PAGE_SIZE;
+		segment_ptr = SDL_SwapBE32(kernel_phdrs[i].p_vaddr) - PAGE_SIZE;
 
 		if (load_to_fastram)
 			memcpy(FastRAMBaseHost + mem_ptr + segment_ptr, (char *) kexec_elf + segment_offset, segment_length);
@@ -509,9 +528,9 @@ int LinuxBootOs::checkKernel(void)
 
 	/*--- Copy the ramdisk after kernel (and reserved bootinfo) ---*/
 	if (ramdisk && ramdisk_length) {
-		unsigned long rd_start;
-		unsigned long rd_len;
-		unsigned long rd_offset;
+		Elf32_Addr rd_start;
+		Elf32_Word rd_len;
+		Elf32_Off rd_offset;
 
 		if (load_to_fastram)
 			rd_offset = KERNEL_START + kernel_size + MAX_BI_SIZE;
@@ -524,6 +543,14 @@ int LinuxBootOs::checkKernel(void)
 			memcpy(FastRAMBaseHost + rd_start - FastRAMBase, (unsigned char *)ramdisk + RAMDISK_FS_START, rd_len);
 		} else {
 			/* Load in ST-RAM */
+			if (load_to_fastram)
+				rd_offset = PAGE_SIZE;
+			else
+				rd_offset = KERNEL_START + kernel_size + MAX_BI_SIZE;
+			if (RAMSize < rd_offset + rd_len) {
+				bug("lilo: not enough memory to load ramdisk of size %u", rd_len);
+				return -1;
+			}
 			rd_start = RAMSize - rd_len;
 			memcpy(RAMBaseHost+rd_start, ((unsigned char *)ramdisk) + RAMDISK_FS_START, rd_len);
 		}
@@ -576,7 +603,7 @@ int LinuxBootOs::checkKernel(void)
 	bi.num_memory=SDL_SwapBE32(bi.num_memory);
 
 	if (!create_bootinfo()) {
-	    fprintf(stderr, "lilo: Can not create bootinfo structure\n");
+	    bug("lilo: Can not create bootinfo structure");
 		return -1;
 	}
 
@@ -678,7 +705,7 @@ int LinuxBootOs::add_bi_record( unsigned short tag, unsigned short size, const v
 
     size2 = (sizeof(struct bi_record)+size+3)&-4;
     if (bi_size+size2+sizeof(bi_union.record.tag) > MAX_BI_SIZE) {
-	fprintf (stderr, "Can't add bootinfo record. Ask a wizard to enlarge me.\n");
+	bug("Can't add bootinfo record. Ask a wizard to enlarge me.");
 	return(0);
     }
     record = (struct bi_record *)((char *)&bi_union.record+bi_size);
@@ -688,9 +715,9 @@ int LinuxBootOs::add_bi_record( unsigned short tag, unsigned short size, const v
     bi_size += size2;
 
 #else
-	DUNUSED(tag);
-	DUNUSED(size);
-	DUNUSED(data);
+	UNUSED(tag);
+	UNUSED(size);
+	UNUSED(data);
 #endif /* ENABLE_LILO */
     return(1);
 }
@@ -704,10 +731,8 @@ int LinuxBootOs::add_bi_string(unsigned short tag, const char *s)
 #ifdef ENABLE_LILO
     return add_bi_record(tag, strlen(s)+1, (void *)s);
 #else
-	DUNUSED(tag);
-	DUNUSED(s);
+	UNUSED(tag);
+	UNUSED(s);
 	return 0;
 #endif /* ENABLE_LILO */
 }
-/* vim:ts=4:sw=4
- */

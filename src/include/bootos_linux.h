@@ -61,7 +61,7 @@ class LinuxBootOs : public BootOs
 
 		void cleanup(void);
 		void init(bool cold);
-		void *loadFile(char *filename, unsigned long *length);
+		void *loadFile(const char *filename, unsigned long *length);
 		int checkKernel(void);
 		int create_bootinfo(void);
 		int add_bi_record(
