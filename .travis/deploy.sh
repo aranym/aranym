@@ -297,8 +297,10 @@ if ! ( echo $is | grep -q deploy ); then # build job
 			if ! ( echo $ar | grep -q no ); then # Except if is not arm linux
 				echo "------------ normal --------------------"
 				normal_deploy
-				bined
-				snap_create
+				if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+					bined
+					snap_create
+				fi
 			else # if arm finally use cache
 				echo "------------ cache --------------------"
 				cache_deploy
@@ -315,7 +317,9 @@ if ! ( echo $is | grep -q deploy ); then # build job
 else # deploy job
 	echo "------------ deploy --------------------"
 	uncache_deploy
-	bined
-	snap_create
+	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+		bined
+		snap_create
+	fi
 fi
 fi
