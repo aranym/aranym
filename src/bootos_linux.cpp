@@ -567,17 +567,24 @@ int LinuxBootOs::checkKernel(void)
 	/*--- Create the bootinfo structure ---*/
 
 	/* Command line */
-	strcpy(bi.command_line, bx_options.lilo.args);
 	kname = kernel_name;
     if (strncmp( kernel_name, "local:", 6 ) == 0) {
 		kname += 6;
 	}
-    if (strlen(kname)+12 < CL_SIZE-1) {
+    if (strlen(bx_options.lilo.args) > CL_SIZE-1) {
+		bug("lilo: kernel command line too long");
+		return -1;
+    }
+	strcpy(bi.command_line, bx_options.lilo.args);
+    if (strlen(bi.command_line)+1+strlen(kname)+12 < CL_SIZE-1) {
 		if (*bi.command_line) {
 			strcat( bi.command_line, " " );
 		}
 		strcat( bi.command_line, "BOOT_IMAGE=" );
 		strcat( bi.command_line, kname );
+    } else
+    {
+		bug("lilo: kernel command line too long to include kernel name");
     }
 
     D(bug("lilo: config_file command line: %s", bx_options.lilo.args ));
