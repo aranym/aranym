@@ -1,0 +1,142 @@
+name: aranym
+base: core18
+version: 1.0.2
+summary: Atari Running on Any Machine
+description: >
+  ARAnyM is a multiplatform virtual machine (a software layer, or an emulator) for
+  running Atari ST/TT/Falcon operating systems and applications on almost any hardware
+  with many host operating systems. The reason for writing ARAnyM is to provide
+  Atari power users with faster and better machines. The ultimate goal is to create
+  a new platform where TOS/GEM applications could continue to live forever.
+
+grade: stable # must be 'stable' to release into candidate/stable channels is devel or stable
+confinement: strict
+
+environment:
+  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio
+
+parts:
+  aranym:
+    plugin: dump
+    source: bined.tar.xz
+    stage-packages:
+      - libosmesa6-dev
+      - libgl1-mesa-dev
+      - libglu1-mesa-dev
+      - libsdl1.2-dev
+      - libsdl-image1.2-dev
+      - libusb-dev
+      - libusb-1.0-0-dev
+      - libslang2
+      - pulseaudio
+      - util-linux
+
+layout:
+  /usr/share/aranym/wm_icon.bmp:
+    bind-file: $SNAP/usr/share/aranym/wm_icon.bmp
+
+apps:
+  aranym:
+    command: aranym
+    plugs:
+    - desktop
+    - desktop-legacy
+    - wayland
+    - unity7
+    - alsa
+    - home
+    - network
+    - opengl
+    - pulseaudio
+    - screen-inhibit-control
+    - hardware-observe
+    - mount-observe
+    - network-bind
+    - network-control
+    - network-manager
+    - network-observe
+    - network-setup-control
+    - network-setup-observe
+    - network-status
+    - optical-drive
+    - raw-usb
+    - removable-media
+    - system-observe
+  aranym-jit:
+    command: aranym-jit
+    plugs:
+    - desktop
+    - desktop-legacy
+    - wayland
+    - unity7
+    - alsa
+    - home
+    - network
+    - opengl
+    - pulseaudio
+    - screen-inhibit-control
+    - hardware-observe
+    - mount-observe
+    - network-bind
+    - network-control
+    - network-manager
+    - network-observe
+    - network-setup-control
+    - network-setup-observe
+    - network-status
+    - optical-drive
+    - raw-usb
+    - removable-media
+    - system-observe
+  aranym-mmu:
+    command: aranym-mmu
+    plugs:
+    - desktop
+    - desktop-legacy
+    - wayland
+    - unity7
+    - alsa
+    - home
+    - network
+    - opengl
+    - pulseaudio
+    - screen-inhibit-control
+    - hardware-observe
+    - mount-observe
+    - network-bind
+    - network-control
+    - network-manager
+    - network-observe
+    - network-setup-control
+    - network-setup-observe
+    - network-status
+    - optical-drive
+    - raw-usb
+    - removable-media
+    - system-observe
+  aratapif:
+    command: aratapif
+    plugs:
+    - desktop
+    - desktop-legacy
+    - wayland
+    - unity7
+    - alsa
+    - home
+    - network
+    - opengl
+    - pulseaudio
+    - screen-inhibit-control
+    - hardware-observe
+    - mount-observe
+    - network-bind
+    - network-control
+    - network-manager
+    - network-observe
+    - network-setup-control
+    - network-setup-observe
+    - network-status
+    - optical-drive
+    - raw-usb
+    - removable-media
+    - system-observe

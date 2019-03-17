@@ -7,6 +7,10 @@ sudo apt-get install -y \
 	xz-utils \
 	libjson-perl \
 	libwww-perl
+if ! ( echo $ar | grep -q arm ); then
+	sudo snap install multipass --beta --classic
+	sudo snap install snapcraft --classic
+fi
 if ! ( echo $is | grep -q deploy ); then
 echo rvm_autoupdate_flag=0 >> ~/.rvmrc
 

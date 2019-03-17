@@ -14,6 +14,12 @@ then
 	exit 1
 fi
 
+if [ -z "$SNAP_TOKEN" ]
+then
+	echo "error: SNAP_TOKEN is undefined" >&2
+	exit 1
+fi
+export SRCDIR="${PWD}"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 BINTRAY_HOST=https://api.bintray.com
@@ -21,6 +27,46 @@ BINTRAY_USER="${BINTRAY_USER:-aranym}"
 BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
 BINTRAY_REPO_NAME="${BINTRAY_REPO_NAME:-aranym-files}"
 BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO_NAME}"
+SNAP_NAME="${SNAP_NAME:-aranym}"
+
+function bined {
+	cd ${SRCDIR}
+	OUT="${SRCDIR}/.travis/out"
+	# dirty hack for removing premisions
+	# see https://github.com/aranym/aranym/issues/12#issuecomment-473660193
+	mkdir bined
+	cp "$OUT/${ARCHIVE}" bined
+	cd bined
+	tar xf ${ARCHIVE}
+	rm ${ARCHIVE}
+	tar cvfJ "../bined.tar.xz" .
+	cd ${SRCDIR}
+}
+
+function snap_create {
+	echo $SNAP_TOKEN | snapcraft login --with -
+	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
+	echo "CPU_TYPE=$CPU_TYPE" >> env.list
+	docker run --rm --env-file env.list -v "$PWD":/build -w /build snapcore/snapcraft:beta bash \
+      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
+	rm env.list
+	if $isrelease; then
+		echo "Stable release on Snap"
+		case "$CPU_TYPE" in
+			64)
+				revision=$(snapcraft status $SNAP_NAME | grep 'edge' | awk '{print $NF}' | head -n 1)
+			;;
+			arm)
+				revision=$(snapcraft status $SNAP_NAME | grep 'edge' | awk '{print $NF}' | tail -n 1)
+			;;
+			*)
+				echo "Wrong arch in deploy for snap"
+			;;
+		esac
+		
+		snapcraft release $SNAP_NAME $revision stable
+	fi
+}
 
 function normal_deploy {
 	SRCDIR="${PWD}"
@@ -173,6 +219,9 @@ function uncache_deploy {
 	# and package all builds.
 	export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 	(
+		sudo chown root "$BUILDROOT${bindir}/aratapif"
+		sudo chgrp root "$BUILDROOT${bindir}/aratapif"
+		sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
@@ -248,6 +297,8 @@ if ! ( echo $is | grep -q deploy ); then # build job
 			if ! ( echo $ar | grep -q no ); then # Except if is not arm linux
 				echo "------------ normal --------------------"
 				normal_deploy
+				bined
+				snap_create
 			else # if arm finally use cache
 				echo "------------ cache --------------------"
 				cache_deploy
@@ -264,5 +315,7 @@ if ! ( echo $is | grep -q deploy ); then # build job
 else # deploy job
 	echo "------------ deploy --------------------"
 	uncache_deploy
+	bined
+	snap_create
 fi
 fi
