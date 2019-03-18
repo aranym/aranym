@@ -219,10 +219,10 @@ function uncache_deploy {
 	# and package all builds.
 	export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 	(
-		sudo chown root "$BUILDROOT${bindir}/aratapif"
-		sudo chgrp root "$BUILDROOT${bindir}/aratapif"
-		sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
 		cd "${BUILDROOT}"
+		sudo chown root "usr/bin/aratapif"
+		sudo chgrp root "usr/bin/aratapif"
+		sudo chmod 4755 "usr/bin/aratapif"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
 
