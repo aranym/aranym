@@ -2208,7 +2208,10 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			break;
 		case 0x1a:		/* FNEG */
 			fpu_debug(("FNEG %.04f\n",(double)src));
-			FPU registers[reg] = -src;
+			if (iszero(src))
+				make_zero(FPU registers[reg], !isneg(src));
+			else
+				FPU registers[reg] = -src;
 			make_fpsr(FPU registers[reg]);
 			break;
 		case 0x1c:		/* FACOS */

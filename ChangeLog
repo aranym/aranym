@@ -1,4 +1,8 @@
 2019/04/10
+Fix FNEG to handle negative/positive zero
+
+
+2019/04/10
 Long double INFs on x86 must have the explicit integer bit set,
 or they are treated as NaNs
 
