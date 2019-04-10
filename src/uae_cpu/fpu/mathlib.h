@@ -540,6 +540,7 @@ PRIVATE inline void FFPU make_nan(fpu_register & r, bool negative)
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.ieee.exponent	= FP_EXTENDED_EXP_MAX;
+	sxp.ieee.empty		= 0;
 	sxp.ieee.mantissa0	= 0xffffffff;
 #else
 	fp_declare_init_shape(sxp, double);
@@ -562,6 +563,7 @@ PRIVATE inline void FFPU make_zero(fpu_register & r, bool negative)
 #else
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
+	sxp.ieee.empty      = 0;
 #else
 	fp_declare_init_shape(sxp, double);
 #endif
@@ -582,12 +584,14 @@ PRIVATE inline void FFPU make_inf(fpu_register & r, bool negative)
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 	fp_declare_init_shape(sxp, extended);
 	sxp.ieee.exponent	= FP_EXTENDED_EXP_MAX;
+	sxp.ieee.mantissa0	= 0x80000000;
+	sxp.ieee.empty		= 0;
 #else
 	fp_declare_init_shape(sxp, double);
 	sxp.ieee.exponent	= FP_DOUBLE_EXP_MAX;
+	sxp.ieee.mantissa0	= 0;
 #endif
 	sxp.ieee.negative	= negative;
-	sxp.ieee.mantissa0	= 0;
 	sxp.ieee.mantissa1	= 0;
 #ifdef USE_QUAD_DOUBLE
 	sxp.ieee.mantissa2 = 0;
