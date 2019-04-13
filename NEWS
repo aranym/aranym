@@ -1,12 +1,38 @@
- o configurable directory for screenshots
+2019/04/1? - version 1.1.0 released
+==========
 
- o NatFeats SCSI driver for Linux
- o NatFeats host exec
+ List of changes is 60 pages long! No wonder as it's been four and half
+ years since last release and the development never stopped, mainly
+ thanks to Thorsten. See the 'ChangeLog' file for details.
+
+ Tons of things have been fixed in all parts of the ARAnyM and lots of
+ new features have been added. Let me cherry pick some of them, and
+ feel free to update this document with what you'll find important.
+
+ Notable changes:
+ ----------------
+ * armhf automated builds
+ * macOS automated builds
+ * hotkey for turning audio on/off
+ * HostFS MiNT file locking
+ * nfosmesa updated to OpenGL 4.6
+ * MetaDOS driver improved
+ * hotkeys in the SDL Gui setup dialog
+ * configurable directory for screenshots
+
+ New features:
+ -------------
+ * NatFeat SCSI driver for Linux
+ * NatFeat host exec
+ * NatFeat for query/set CPU JIT
+ * NatFeat for ARAnyM exit
+
 
 2014/10/17 - version 1.0.2 released
 ==========
 
  o typo error hopefully fixed
+
 
 2014/10/17 - version 1.0.1 released
 ==========
