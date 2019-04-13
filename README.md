@@ -5,7 +5,7 @@ Latest snapshot: [![Download](https://api.bintray.com/packages/aranym/aranym-fil
 Latest release: [![Download](https://api.bintray.com/packages/aranym/aranym-files/releases/images/download.svg) ](https://bintray.com/aranym/aranym-files/releases/_latestVersion#files)
 
       ARAnyM (Atari Running on Any Machine)
-      version 1.0.2 released on 2014/10/17
+      version 1.1.0 released on 2019/04/1?
 
 
 # License
@@ -63,8 +63,8 @@ Any help with programming/documentation/porting is very welcome!
 
 See [INSTALL](INSTALL) file and https://github.com/aranym/aranym/wiki
 
-You can also visit https://repology.org/metapackage/aranym/versions to check wether
-your distribution already has a pre-compiled version.
+You can also visit https://repology.org/metapackage/aranym/versions to check
+whether your distribution has a pre-compiled version already.
 
 
 # Configuring and running
