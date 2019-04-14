@@ -2,8 +2,8 @@
 # This scripts helps with building the source .tar.gz file
 
 VER_MAJOR=1
-VER_MINOR=0
-VER_MICRO=2
+VER_MINOR=1
+VER_MICRO=0
 VER_STATUS=
 #
 VERSION=$VER_MAJOR"."$VER_MINOR"."$VER_MICRO
@@ -21,7 +21,7 @@ FNAME="aranym_"$VERSION".orig.tar.gz"
 echo "download from upstream git repository? (y/N)"
 read key
 if [ "x$key" = "xy" ]; then
-	git clone git://git.code.sf.net/p/aranym/code aranym
+	git clone git://github.com/aranym/aranym.git
 	cd aranym
 	git checkout $TAG
 	cd ..
@@ -40,11 +40,6 @@ fi
 grep "define VER_MICRO" aranym/src/include/version.h | grep $VER_MICRO >/dev/null
 if [ $? -ne 0 ]; then
 	echo "ERROR: increase micro version in src/include/version.h"
-	exit 1
-fi
-grep "[Vv]ersion "$VERSION aranym/README >/dev/null
-if [ $? -ne 0 ]; then
-	echo "ERROR: increase version in README"
 	exit 1
 fi
 grep "[Vv]ersion "$VERSION aranym/README.md >/dev/null
@@ -67,5 +62,5 @@ cd aranym
 ./autogen.sh
 make distclean
 rm -rf .git
-cd .. && mv aranym $FOLDER && GZIP=--best tar chzf $FNAME --exclude=autogen.sh --exclude=CVS --exclude=.cvsignore $FOLDER
+cd .. && mv aranym $FOLDER && GZIP=--best tar chzf $FNAME --exclude=autogen.sh --exclude=.cvsignore $FOLDER
 
