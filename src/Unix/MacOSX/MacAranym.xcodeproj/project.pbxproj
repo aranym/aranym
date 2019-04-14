@@ -377,7 +377,7 @@
 		17BCD8BB0B21004100432CE1 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B30B21004100432CE1 /* COPYING */; };
 		17BCD8BC0B21004100432CE1 /* FAQ in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B40B21004100432CE1 /* FAQ */; };
 		17BCD8BD0B21004100432CE1 /* NEWS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B50B21004100432CE1 /* NEWS */; };
-		17BCD8BE0B21004100432CE1 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README */; };
+		17BCD8BE0B21004100432CE1 /* README.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B60B21004100432CE1 /* README.md */; };
 		17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8B70B21004100432CE1 /* TODO */; };
 		17BCD8C90B21010C00432CE1 /* config in CopyFiles */ = {isa = PBXBuildFile; fileRef = 17BCD8C80B21010C00432CE1 /* config */; };
 		17C0AFFD0CBB0A85000D2916 /* logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17C0AFFC0CBB0A85000D2916 /* logo.cpp */; };
@@ -887,7 +887,7 @@
 				17BCD8BB0B21004100432CE1 /* COPYING in CopyFiles */,
 				17BCD8BC0B21004100432CE1 /* FAQ in CopyFiles */,
 				17BCD8BD0B21004100432CE1 /* NEWS in CopyFiles */,
-				17BCD8BE0B21004100432CE1 /* README in CopyFiles */,
+				17BCD8BE0B21004100432CE1 /* README.md in CopyFiles */,
 				17BCD8BF0B21004100432CE1 /* TODO in CopyFiles */,
 				17BCD8C90B21010C00432CE1 /* config in CopyFiles */,
 				17398E120B21048100A9B4DB /* README.rtf in CopyFiles */,
@@ -1237,7 +1237,7 @@
 		17BCD8B30B21004100432CE1 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = COPYING; path = ../../../COPYING; sourceTree = SOURCE_ROOT; };
 		17BCD8B40B21004100432CE1 /* FAQ */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = FAQ; path = ../../../FAQ; sourceTree = SOURCE_ROOT; };
 		17BCD8B50B21004100432CE1 /* NEWS */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = NEWS; path = ../../../NEWS; sourceTree = SOURCE_ROOT; };
-		17BCD8B60B21004100432CE1 /* README */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = README; path = ../../../README; sourceTree = SOURCE_ROOT; };
+		17BCD8B60B21004100432CE1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = README.md; path = ../../../README.md; sourceTree = SOURCE_ROOT; };
 		17BCD8B70B21004100432CE1 /* TODO */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = TODO; path = ../../../TODO; sourceTree = SOURCE_ROOT; };
 		17BCD8C80B21010C00432CE1 /* config */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = config; path = ../../../doc/config; sourceTree = SOURCE_ROOT; };
 		17C0AFFC0CBB0A85000D2916 /* logo.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = logo.cpp; path = ../../logo.cpp; sourceTree = SOURCE_ROOT; };
@@ -1944,7 +1944,7 @@
 				17BCD8B40B21004100432CE1 /* FAQ */,
 				17E683EA0C90E38900A8BE0B /* INSTALL */,
 				17BCD8B50B21004100432CE1 /* NEWS */,
-				17BCD8B60B21004100432CE1 /* README */,
+				17BCD8B60B21004100432CE1 /* README.md */,
 				17BCD8B70B21004100432CE1 /* TODO */,
 				17BCD8C80B21010C00432CE1 /* config */,
 			);

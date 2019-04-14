@@ -152,9 +152,10 @@ function mkdist() {
 	
 	cp -a COPYING "$distdir/COPYING.txt" || exit 1
 	sed -e "s|@VERSION@|$VERSION|g" -e "s|@DATE@|$DATE|g" README-cygwin.in > "$distdir/README.txt" || exit 1
-	for f in AUTHORS BUGS README ChangeLog FAQ INSTALL NEWS TODO; do
+	for f in AUTHORS BUGS ChangeLog FAQ INSTALL NEWS TODO; do
 		cp -a $f "$distdir/doc/$f.txt" || exit 1
 	done
+	cp -a README.md "$distdir/doc/README.txt" || exit 1
 	for f in config; do
 		cp -a doc/$f "$distdir/doc/$f.txt" || exit 1
 	done
