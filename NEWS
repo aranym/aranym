@@ -1,32 +1,31 @@
-2019/04/1? - version 1.1.0 released
+2019/04/14 - version 1.1.0 released
 ==========
 
- List of changes is 60 pages long! No wonder as it's been four and half
- years since last release and the development never stopped, mainly
- thanks to Thorsten. See the 'ChangeLog' file for details.
+ List of changes in this release is 60 pages long! No wonder as it's been
+ four and half years since previous release, and the development never
+ stopped, mainly thanks to Thorsten. See the 'ChangeLog' file for details.
 
- Tons of things have been fixed in all parts of the ARAnyM and lots of
- new features have been added. Let me cherry pick some of them, and
- feel free to update this document with what you'll find important.
+ Tons of things have been fixed in all areas of the ARAnyM, and lots of
+ new features have been added. Following list is incomplete but still gives
+ you a good overview:
 
  Notable changes:
  ----------------
- * armhf automated builds
- * macOS automated builds
- * hotkey for turning audio on/off
- * HostFS MiNT file locking
+ * ARAnyM is hosted by GitHub.com at https://aranym.github.io/
+ * there are automated builds for x86/amd64, armhf and macOS
+ * added hotkey for turning audio on/off
+ * HostFS MiNT file locking implemented
  * nfosmesa updated to OpenGL 4.6
  * MetaDOS driver improved
- * hotkeys in the SDL Gui setup dialog
- * configurable directory for screenshots
- * on macOS the configuration file is now
-   looked up first in ~/Documents/Aranym_files
-   if it does not exist yet
- * displaying non-ascii characters in the fileselector
+ * hotkeys work in the Setup GUI dialog as well
+ * configurable directory for screenshots (via Setup GUI)
+ * on macOS the configuration file is now looked up first
+   in ~/Documents/Aranym_files (if it does not exist yet)
+ * displaying non-ASCII characters in the fileselector
    should work now
- * path of loaded TOS/EmuTOS can now be selected in the GUI
+ * path of loaded TOS/EmuTOS can now be selected in the Setup GUI
  * JIT CPU compiler now supports Solaris
- * JIT CPU compiler now supports more 64bit hosts
+ * JIT CPU compiler now supports more 64bit hosts (like kfreebsd)
 
  New features:
  -------------

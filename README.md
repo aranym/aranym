@@ -5,7 +5,7 @@ Latest snapshot: [![Download](https://api.bintray.com/packages/aranym/aranym-fil
 Latest release: [![Download](https://api.bintray.com/packages/aranym/aranym-files/releases/images/download.svg) ](https://bintray.com/aranym/aranym-files/releases/_latestVersion#files)
 
       ARAnyM (Atari Running on Any Machine)
-      version 1.1.0 released on 2019/04/1?
+      version 1.1.0 released on 2019/04/14
 
 
 # License
