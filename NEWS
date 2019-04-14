@@ -19,6 +19,14 @@
  * MetaDOS driver improved
  * hotkeys in the SDL Gui setup dialog
  * configurable directory for screenshots
+ * on macOS the configuration file is now
+   looked up first in ~/Documents/Aranym_files
+   if it does not exist yet
+ * displaying non-ascii characters in the fileselector
+   should work now
+ * path of loaded TOS/EmuTOS can now be selected in the GUI
+ * JIT CPU compiler now supports Solaris
+ * JIT CPU compiler now supports more 64bit hosts
 
  New features:
  -------------
@@ -26,6 +34,9 @@
  * NatFeat host exec
  * NatFeat for query/set CPU JIT
  * NatFeat for ARAnyM exit
+ * new command line option --option
+   that can set any value from the config file
+ * AppImage can now be built
 
 
 2014/10/17 - version 1.0.2 released
