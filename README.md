@@ -123,5 +123,4 @@ Visit https://github.com/aranym/ for latest information and source code.
 
 Help us improve the Wiki documentation at https://github.com/aranym/aranym/wiki
 
-The "Power Without The Price" is back!
-
+The "Power Without The Price" is back!    https://aranym.github.io/
