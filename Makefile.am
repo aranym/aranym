@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
+AUTOMAKE_OPTIONS = foreign
 
 pkgdatadir = @datadir@/aranym
 man1dir = $(mandir)/man1
