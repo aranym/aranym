@@ -44,7 +44,7 @@ install-data-local:
 	$(INSTALL_DATA) $(top_srcdir)/TODO $(DESTDIR)$(docdir)/TODO
 	$(INSTALL_DATA) $(top_srcdir)/AUTHORS $(DESTDIR)$(docdir)/AUTHORS
 	$(INSTALL_DATA) $(top_srcdir)/NEWS $(DESTDIR)$(docdir)/NEWS
-	$(INSTALL_DATA) $(top_srcdir)/README $(DESTDIR)$(docdir)/README
+	$(INSTALL_DATA) $(top_srcdir)/README.md $(DESTDIR)$(docdir)/README
 	$(INSTALL_DATA) $(top_srcdir)/FAQ $(DESTDIR)$(docdir)/FAQ
 	$(INSTALL_DATA) $(top_srcdir)/COPYING $(DESTDIR)$(docdir)/COPYING
 	$(INSTALL_DATA) $(top_srcdir)/BUGS $(DESTDIR)$(docdir)/BUGS
