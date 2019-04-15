@@ -84,6 +84,8 @@ JITCacheSize = 8192
 JITLazyFlush = 1
 
 # disable compiling of certain instructions (16-bit mask)
+# can be a list of single opcodes, opcode ranges, or
+# FPU instruction names, separated by a comma
 JITBlackList = 
 
 # ???

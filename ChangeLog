@@ -1,3 +1,7 @@
+2019/04/15
+Allow to blacklist FPU instructions by name for the JIT compiler
+
+
 2019/04/10
 Fix FNEG to handle negative/positive zero
 

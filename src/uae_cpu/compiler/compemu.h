@@ -197,6 +197,58 @@ extern void alloc_cache(void);
 extern int check_for_cache_miss(void);
 
 /* JIT FPU compilation */
+struct jit_disable_opcodes {
+	bool fbcc;
+	bool fdbcc;
+	bool fscc;
+	bool ftrapcc;
+	bool fsave;
+	bool frestore;
+	bool fmove;
+	bool fmovem;
+	bool fmovec;  /* for move control register */
+	bool fmovecr; /* for move from constant rom */
+	bool fint;
+	bool fsinh;
+	bool fintrz;
+	bool fsqrt;
+	bool flognp1;
+	bool fetoxm1;
+	bool ftanh;
+	bool fatan;
+	bool fasin;
+	bool fatanh;
+	bool fsin;
+	bool ftan;
+	bool fetox;
+	bool ftwotox;
+	bool ftentox;
+	bool flogn;
+	bool flog10;
+	bool flog2;
+	bool fabs;
+	bool fcosh;
+	bool fneg;
+	bool facos;
+	bool fcos;
+	bool fgetexp;
+	bool fgetman;
+	bool fdiv;
+	bool fmod;
+	bool fadd;
+	bool fmul;
+	bool fsgldiv;
+	bool frem;
+	bool fscale;
+	bool fsglmul;
+	bool fsub;
+	bool fsincos;
+	bool fcmp;
+	bool ftst;
+};
+extern struct jit_disable_opcodes jit_disable;
+
+
 extern void comp_fpp_opp (uae_u32 opcode, uae_u16 extra);
 extern void comp_fbcc_opp (uae_u32 opcode);
 extern void comp_fscc_opp (uae_u32 opcode, uae_u16 extra);

@@ -3979,12 +3979,98 @@ static int read_opcode(const char *p)
 	return opcode;
 }
 
+
+#ifdef USE_JIT_FPU
+static struct {
+	const char *name;
+	bool *const disabled;
+} const jit_opcodes[] = {
+	{ "fbcc", &jit_disable.fbcc },
+	{ "fdbcc", &jit_disable.fdbcc },
+	{ "fscc", &jit_disable.fscc },
+	{ "ftrapcc", &jit_disable.ftrapcc },
+	{ "fsave", &jit_disable.fsave },
+	{ "frestore", &jit_disable.frestore },
+	{ "fmove", &jit_disable.fmove },
+	{ "fmovec", &jit_disable.fmovec },
+	{ "fmovem", &jit_disable.fmovem },
+	{ "fmovecr", &jit_disable.fmovecr },
+	{ "fint", &jit_disable.fint },
+	{ "fsinh", &jit_disable.fsinh },
+	{ "fintrz", &jit_disable.fintrz },
+	{ "fsqrt", &jit_disable.fsqrt },
+	{ "flognp1", &jit_disable.flognp1 },
+	{ "fetoxm1", &jit_disable.fetoxm1 },
+	{ "ftanh", &jit_disable.ftanh },
+	{ "fatan", &jit_disable.fatan },
+	{ "fasin", &jit_disable.fasin },
+	{ "fatanh", &jit_disable.fatanh },
+	{ "fsin", &jit_disable.fsin },
+	{ "ftan", &jit_disable.ftan },
+	{ "fetox", &jit_disable.fetox },
+	{ "ftwotox", &jit_disable.ftwotox },
+	{ "ftentox", &jit_disable.ftentox },
+	{ "flogn", &jit_disable.flogn },
+	{ "flog10", &jit_disable.flog10 },
+	{ "flog2", &jit_disable.flog2 },
+	{ "fabs", &jit_disable.fabs },
+	{ "fcosh", &jit_disable.fcosh },
+	{ "fneg", &jit_disable.fneg },
+	{ "facos", &jit_disable.facos },
+	{ "fcos", &jit_disable.fcos },
+	{ "fgetexp", &jit_disable.fgetexp },
+	{ "fgetman", &jit_disable.fgetman },
+	{ "fdiv", &jit_disable.fdiv },
+	{ "fmod", &jit_disable.fmod },
+	{ "fadd", &jit_disable.fadd },
+	{ "fmul", &jit_disable.fmul },
+	{ "fsgldiv", &jit_disable.fsgldiv },
+	{ "frem", &jit_disable.frem },
+	{ "fscale", &jit_disable.fscale },
+	{ "fsglmul", &jit_disable.fsglmul },
+	{ "fsub", &jit_disable.fsub },
+	{ "fsincos", &jit_disable.fsincos },
+	{ "fcmp", &jit_disable.fcmp },
+	{ "ftst", &jit_disable.ftst },
+};
+
+static bool read_fpu_opcode(const char **pp)
+{
+	const char *p = *pp;
+	const char *end;
+	size_t len;
+	unsigned int i;
+	
+	end = p;
+	while (*end != '\0' && *end != ',')
+		end++;
+	len = end - p;
+	if (*end != '\0')
+		end++;
+	for (i = 0; i < (sizeof(jit_opcodes) / sizeof(jit_opcodes[0])); i++)
+	{
+		if (len == strlen(jit_opcodes[i].name) && strncasecmp(jit_opcodes[i].name, p, len) == 0)
+		{
+			*jit_opcodes[i].disabled = true;
+			jit_log("<JIT compiler> : disabled %s", jit_opcodes[i].name);
+			*pp = end;
+			return true;
+		}
+	}
+	return false;
+}
+#endif
+
 static bool merge_blacklist()
 {
 #ifdef UAE
 	const char *blacklist = "";
 #else
 	const char *blacklist = bx_options.jit.jitblacklist;
+#endif
+#ifdef USE_JIT_FPU
+	for (unsigned int i = 0; i < (sizeof(jit_opcodes) / sizeof(jit_opcodes[0])); i++)
+		*jit_opcodes[i].disabled = false;
 #endif
 	if (blacklist[0] != '\0') {
 		const char *p = blacklist;
@@ -3994,7 +4080,14 @@ static bool merge_blacklist()
 
 			int opcode1 = read_opcode(p);
 			if (opcode1 < 0)
+			{
+#ifdef USE_JIT_FPU
+				if (read_fpu_opcode(&p))
+					continue;
+#endif
+				bug("<JIT compiler> : invalid opcode %s", p);
 				return false;
+			}
 			p += 4;
 
 			int opcode2 = opcode1;
@@ -4002,7 +4095,10 @@ static bool merge_blacklist()
 				p++;
 				opcode2 = read_opcode(p);
 				if (opcode2 < 0)
+				{
+					bug("<JIT compiler> : invalid opcode %s", p);
 					return false;
+				}
 				p += 4;
 			}
 

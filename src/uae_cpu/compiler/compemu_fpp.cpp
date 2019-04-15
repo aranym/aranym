@@ -56,6 +56,8 @@
 #define DEBUG 0
 #include "debug.h"
 
+struct jit_disable_opcodes jit_disable;
+
 #if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
 #define LD(x) x ## L
 #else
@@ -573,6 +575,11 @@ STATIC_INLINE int get_fp_ad (uae_u32 opcode, uae_u32 * ad)
 
 void comp_fdbcc_opp (uae_u32 /* opcode */, uae_u16 /* extra */)
 {
+	if (jit_disable.fdbcc)
+	{
+		FAIL(1);
+		return;
+	}
     FAIL(1);
     return;
 }
@@ -588,6 +595,11 @@ void comp_fscc_opp (uae_u32 opcode, uae_u16 extra)
     fflush (stdout);
 #endif
 
+	if (jit_disable.fscc)
+	{
+		FAIL(1);
+		return;
+	}
 
     if (extra&0x20) {  /* only cc from 00 to 1f are defined */
 	FAIL(1);
@@ -658,6 +670,11 @@ void comp_fbcc_opp (uae_u32 opcode)
 	// comp_pc_p is expected to be bound to 32-bit addresses
 	assert((uintptr)comp_pc_p <= 0xffffffffUL);
 
+	if (jit_disable.fbcc)
+	{
+		FAIL(1);
+		return;
+	}
     if (opcode&0x20) {  /* only cc from 00 to 1f are defined */
 	FAIL(1);
 	return;
@@ -796,6 +813,11 @@ void comp_fsave_opp (uae_u32 opcode)
     int incr = (opcode & 0x38) == 0x20 ? -1 : 1;
     int i;
 
+	if (jit_disable.fsave)
+	{
+		FAIL(1);
+		return;
+	}
     FAIL(1);
     return;
 
@@ -851,6 +873,11 @@ void comp_frestore_opp (uae_u32 opcode)
     uae_u32 d;
     int incr = (opcode & 0x38) == 0x20 ? -1 : 1;
 
+	if (jit_disable.frestore)
+	{
+		FAIL(1);
+		return;
+	}
     FAIL(1);
     return;
 
@@ -974,6 +1001,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
         break;
      case 3: /* FMOVE Fpn,<ea> */
         /* 2nd most common */
+	if (jit_disable.fmove)
+	{
+	    FAIL(1);
+	    return;
+	}
+
 	if (put_fp_value ((extra >> 7)&7 , opcode, extra) < 0) {
 	    FAIL(1);
 	    return;
@@ -982,6 +1015,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 	return;
      case 6: /* FMOVEM <ea>,<reglist> */
      case 7: /* FMOVEM <reglist>,<ea> */
+	if (jit_disable.fmovem)
+	{
+	    FAIL(1);
+	    return;
+	}
+
 	{
 	    uae_u32 ad, list = 0;
 	    int incr = 0;
@@ -1137,6 +1176,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 
      case 4: /* FMOVEM <ea>,<control> */
      case 5: /* FMOVEM <control>,<ea> */
+	if (jit_disable.fmovec)
+	{
+	    FAIL(1);
+	    return;
+	}
+
 	/* rare */
 	if ((opcode & 0x30) == 0) {
 	    /* <ea> = Dn or An */
@@ -1238,6 +1283,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 	case 2: /* Extremely common */
 		reg = (extra >> 7) & 7;
 		if ((extra & 0xfc00) == 0x5c00) {
+			if (jit_disable.fmovecr)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			switch (extra & 0x7f) {
 			case 0x00:
 				fmov_pi(reg);
@@ -1310,6 +1361,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x40:  /* Explicit rounding. This is just a quick fix. Same
 					 * for all other cases that have three choices */
 		case 0x44:   
+			if (jit_disable.fmove)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1320,16 +1377,34 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (src);
 			break;
 		case 0x01:		/* FINT */
+			if (jit_disable.fint)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);    
 			return;
 			dont_care_fflags();
 			break;
 		case 0x02:		/* FSINH */
+			if (jit_disable.fsinh)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x03:		/* FINTRZ */
+			if (jit_disable.fintrz)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 #ifdef USE_X86_FPUCW 
 			/* If we have control over the CW, we can do this */
 			dont_care_fflags();
@@ -1357,6 +1432,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x04:		/* FSQRT */
 		case 0x41:
 		case 0x45:
+			if (jit_disable.fsqrt)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1367,36 +1448,78 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x06:		/* FLOGNP1 */
+			if (jit_disable.flognp1)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x08:		/* FETOXM1 */
+			if (jit_disable.fetoxm1)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x09:		/* FTANH */
+			if (jit_disable.ftanh)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x0a:		/* FATAN */
+			if (jit_disable.fatan)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x0c:		/* FASIN */
+			if (jit_disable.fasin)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x0d:		/* FATANH */
-			FAIL(1);  
+			if (jit_disable.fatanh)
+			{
+			    FAIL(1);
+			    return;
+			}
+
+			FAIL(1);
 			return;
 			dont_care_fflags();
 			break;
 		case 0x0e:		/* FSIN */
+			if (jit_disable.fsin)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1407,11 +1530,23 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x0f:		/* FTAN */
+			if (jit_disable.ftan)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x10:		/* FETOX */
+			if (jit_disable.fetox)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1422,6 +1557,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x11:		/* FTWOTOX */
+			if (jit_disable.ftwotox)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1432,21 +1573,45 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x12:		/* FTENTOX */
+			if (jit_disable.ftentox)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x14:		/* FLOGN */
+			if (jit_disable.flogn)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x15:		/* FLOG10 */
+			if (jit_disable.flog10)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x16:		/* FLOG2 */
+			if (jit_disable.flog2)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1459,6 +1624,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x18:		/* FABS */
 		case 0x58:
 		case 0x5c:
+			if (jit_disable.fabs)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1469,6 +1640,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x19:		/* FCOSH */
+			if (jit_disable.fcosh)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
@@ -1476,6 +1653,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x1a:		/* FNEG */
 		case 0x5a:
 		case 0x5e:
+			if (jit_disable.fneg)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1486,11 +1669,23 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x1c:		/* FACOS */
+			if (jit_disable.facos)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x1d:		/* FCOS */
+			if (jit_disable.fcos)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1501,11 +1696,23 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x1e:		/* FGETEXP */
+			if (jit_disable.fgetexp)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x1f:		/* FGETMAN */
+			if (jit_disable.fgetman)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
@@ -1513,6 +1720,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x20:		/* FDIV */
 		case 0x60:
 		case 0x64:
+			if (jit_disable.fdiv)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1523,6 +1736,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x21:		/* FMOD */
+			if (jit_disable.fmod)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1535,6 +1754,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x22:		/* FADD */
 		case 0x62:
 		case 0x66:
+			if (jit_disable.fadd)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1547,6 +1772,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x23:		/* FMUL */
 		case 0x63:
 		case 0x67:
+			if (jit_disable.fmul)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1557,6 +1788,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x24:		/* FSGLDIV */
+			if (jit_disable.fsgldiv)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1567,6 +1804,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x25:		/* FREM */
+			if (jit_disable.frem)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			// gb-- disabled because the quotient byte must be computed
 			// otherwise, free rotation in ClarisWorks doesn't work.
 			FAIL(1);
@@ -1581,11 +1824,23 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			MAKE_FPSR (reg);
 			break;
 		case 0x26:		/* FSCALE */
-			dont_care_fflags();
-			FAIL(1);  
+			if (jit_disable.fscale)
+			{
+			    FAIL(1);
+			    return;
+			}
+
+			dont_care_fflags(); /* ZZZ */
+			FAIL(1);
 			return;
 			break;
 		case 0x27:		/* FSGLMUL */
+			if (jit_disable.fsglmul)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1598,6 +1853,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x28:		/* FSUB */
 		case 0x68:
 		case 0x6c:
+			if (jit_disable.fsub)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			dont_care_fflags();
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
@@ -1615,11 +1876,23 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 		case 0x35:
 		case 0x36:
 		case 0x37:
+			if (jit_disable.fsincos)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			FAIL(1);  
 			return;
 			dont_care_fflags();
 			break;
 		case 0x38:		/* FCMP */
+			if (jit_disable.fcmp)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
 				FAIL(1);  /* Illegal instruction */
@@ -1629,6 +1902,12 @@ void comp_fpp_opp (uae_u32 opcode, uae_u16 extra)
 			fsub_rr(FP_RESULT,src); /* Right way? */
 			break;
 		case 0x3a:		/* FTST */
+			if (jit_disable.ftst)
+			{
+			    FAIL(1);
+			    return;
+			}
+
 			src=get_fp_value (opcode, extra);
 			if (src < 0) {
 				FAIL(1);  /* Illegal instruction */
