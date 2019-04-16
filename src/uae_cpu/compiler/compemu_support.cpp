@@ -4673,12 +4673,12 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #ifdef USE_CPU_EMUL_SERVICES
 			compemu_raw_sub_l_mi((uintptr)&emulated_ticks,blocklen);
 			compemu_raw_jcc_b_oponly(NATIVE_CC_GT);
-			uae_s8 *branchadd=(uae_s8*)get_target();
+			uae_u8 *branchadd=get_target();
 			skip_byte();
 			raw_dec_sp(STACK_SHADOW_SPACE);
 			compemu_raw_call((uintptr)cpu_do_check_ticks);
 			raw_inc_sp(STACK_SHADOW_SPACE);
-			*branchadd=(uintptr)get_target()-((uintptr)branchadd+1);
+			*branchadd=get_target()-(branchadd+1);
 #endif
 
 #ifdef JIT_DEBUG
@@ -4792,7 +4792,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 #endif
 
 					if (i < blocklen - 1) {
-						uae_s8* branchadd;
+						uae_u8* branchadd;
 
 						/* if (SPCFLAGS_TEST(SPCFLAG_STOP)) popall_do_nothing() */
 						compemu_raw_mov_l_rm(0,(uintptr)specflags);
@@ -4801,13 +4801,13 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						data_check_end(8, 64);  // just a pessimistic guess...
 #endif
 						compemu_raw_jz_b_oponly();
-						branchadd=(uae_s8*)get_target();
+						branchadd=get_target();
 						skip_byte();
 #ifdef UAE
 						raw_sub_l_mi(uae_p32(&countdown),scaled_cycles(totcycles));
 #endif
 						compemu_raw_jmp((uintptr)popall_do_nothing);
-						*branchadd=(uintptr)get_target()-(uintptr)branchadd-1;
+						*branchadd=get_target()-branchadd-1;
 					}
 				}
 			}
@@ -5008,7 +5008,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 		}
 #endif
 
-		current_cache_size += get_target() - (uae_u8 *)current_compile_p;
+		current_cache_size += get_target() - current_compile_p;
 
 #ifdef JIT_DEBUG
 		bi->direct_handler_size = get_target() - (uae_u8 *)current_block_start_target;
