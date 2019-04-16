@@ -31,20 +31,6 @@ if ! ( echo $is | grep -q deploy ); then
 fi
 export VERSION
 
-isrelease=false
-ATAG=${VERSION}${archive_tag}
-tag=`git tag --points-at ${TRAVIS_COMMIT}`
-case $tag in
-	ARANYM_*)
-		isrelease=true
-		;;
-	*)
-		ATAG=${VERSION}${archive_tag}-${SHORT_ID}
-		;;
-esac
-export ATAG
-export isrelease
-
 case $CPU_TYPE in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
 	*) build_jit=false ;;
@@ -168,6 +154,19 @@ osx)
 esac
 
 export ARCHIVE
+isrelease=false
+ATAG=${VERSION}${archive_tag}
+tag=`git tag --points-at ${TRAVIS_COMMIT}`
+case $tag in
+	ARANYM_*)
+		isrelease=true
+		;;
+	*)
+		ATAG=${VERSION}${archive_tag}-${SHORT_ID}
+		;;
+esac
+export ATAG
+export isrelease
 
 if $isrelease; then
 	make dist
