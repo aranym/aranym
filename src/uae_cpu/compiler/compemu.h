@@ -390,11 +390,9 @@ extern int touchcnt;
 #define FRW  uae_u32
 
 #define MIDFUNC(nargs,func,args) void func args
-#define MENDFUNC(nargs,func,args)
 #define COMPCALL(func) func
 
 #define LOWFUNC(flags,mem,nargs,func,args) static inline void func args
-#define LENDFUNC(flags,mem,nargs,func,args)
 
 /* What we expose to the outside */
 #define DECLARE_MIDFUNC(func) extern void func

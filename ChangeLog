@@ -1,4 +1,8 @@
 2019/04/17
+Remove useless LENDFUNC/MENDFUNC macros
+
+
+2019/04/17
 Remove old code which hasn't been used for decades
 
 
