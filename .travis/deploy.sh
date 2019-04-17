@@ -49,7 +49,7 @@ function snap_create {
 	echo "CPU_TYPE=$CPU_TYPE" >> env.list
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
-	docker run --rm --env-file env.list -v "$PWD":/build -w /build snapcore/snapcraft:beta bash \
+	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
       -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
 	rm env.list
 	if $isrelease; then
@@ -58,8 +58,11 @@ function snap_create {
 			x86_64)
 				revision=$(snapcraft status $SNAP_NAME | grep 'edge' | awk '{print $NF}' | head -n 1)
 			;;
-			arm)
-				revision=$(snapcraft status $SNAP_NAME | grep 'edge' | awk '{print $NF}' | tail -n 1)
+			i386)
+				revision=$(snapcraft status $SNAP_NAME --arch i386 | grep 'edge' | awk '{print $NF}')
+			;;
+			armhf)
+				revision=$(snapcraft status $SNAP_NAME --arch armhf | grep 'edge' | awk '{print $NF}')
 			;;
 			*)
 				echo "Wrong arch in deploy for snap"
