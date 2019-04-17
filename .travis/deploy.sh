@@ -55,7 +55,7 @@ function snap_create {
 	if $isrelease; then
 		echo "Stable release on Snap"
 		case "$CPU_TYPE" in
-			64)
+			x86_64)
 				revision=$(snapcraft status $SNAP_NAME | grep 'edge' | awk '{print $NF}' | head -n 1)
 			;;
 			arm)
