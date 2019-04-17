@@ -1,3 +1,7 @@
+2019/04/17
+Remove old code which hasn't been used for decades
+
+
 2019/04/15
 Update glibc wrapper to include new symbols from glibc 2.28+2.29
 
