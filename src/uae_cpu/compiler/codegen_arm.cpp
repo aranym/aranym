@@ -2051,17 +2051,17 @@ D(panicbug("raw_fp_cleanup_drop"));
     raw_fp_init();
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMPTRW m, FR r))
 {
 	jit_unimplemented("raw_fmov_mr_drop %x %x", m, r);
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMPTRW m, FR r))
 {
 	jit_unimplemented("raw_fmov_mr %x %x", m, r);
 }
 
-LOWFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMR m))
+LOWFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMPTRR m))
 {
 	jit_unimplemented("raw_fmov_rm %x %x", r, m);
 }

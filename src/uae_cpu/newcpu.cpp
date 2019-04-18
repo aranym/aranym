@@ -620,7 +620,7 @@ int m68k_move2c (int regno, uae_u32 *regp)
 #ifdef USE_JIT
 		 set_cache_state(regs.cacr & 0x8000);
 		 if (*regp & 0x08) {	/* Just to be on the safe side */
-			flush_icache(2);
+			flush_icache();
 		 }
 #endif
 		 break;

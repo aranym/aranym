@@ -2361,42 +2361,42 @@ static void gen_opcode (unsigned long int opcode)
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
  	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(31);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_CINVP:
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
 	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(32);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_CINVA:
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
 	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(33);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_CPUSHL:
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
 	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(41);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_CPUSHP:
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
 	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(42);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_CPUSHA:
 	printf ("\tflush_internals();\n");
         printf("#ifdef USE_JIT\n");
 	printf ("\tif (opcode&0x80)\n"
-		"\t\tflush_icache(43);\n");
+		"\t\tflush_icache();\n");
 	printf("#endif\n");
 	break;
      case i_MOVE16:

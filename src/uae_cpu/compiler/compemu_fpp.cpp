@@ -1554,7 +1554,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				return;
 			}
 			mov_l_ri(S1, 16);			/* Switch to "round to zero" mode */
-			fldcw_m_indexed(S1, (uae_u32) x86_fpucw);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 
 			frndint_rr(reg, src);
 

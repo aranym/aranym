@@ -2342,42 +2342,42 @@ MIDFUNC(1,fmov_0,(FW r))
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmov_rm,(FW r, MEMR m))
+MIDFUNC(2,fmov_rm,(FW r, MEMPTRR m))
 {
 	r=f_writereg(r);
 	raw_fmov_rm(r,m);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmovi_rm,(FW r, MEMR m))
+MIDFUNC(2,fmovi_rm,(FW r, MEMPTRR m))
 {
 	r=f_writereg(r);
 	raw_fmovi_rm(r,m);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmovi_mr,(MEMW m, FR r))
+MIDFUNC(2,fmovi_mr,(MEMPTRW m, FR r))
 {
 	r=f_readreg(r);
 	raw_fmovi_mr(m,r);
 	f_unlock(r);
 }
 
-MIDFUNC(3,fmovi_mrb,(MEMW m, FR r, double *bounds))
+MIDFUNC(3,fmovi_mrb,(MEMPTRW m, FR r, double *bounds))
 {
 	r=f_readreg(r);
 	raw_fmovi_mrb(m,r,bounds);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmovs_rm,(FW r, MEMR m))
+MIDFUNC(2,fmovs_rm,(FW r, MEMPTRR m))
 {
 	r=f_writereg(r);
 	raw_fmovs_rm(r,m);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmovs_mr,(MEMW m, FR r))
+MIDFUNC(2,fmovs_mr,(MEMPTRW m, FR r))
 {
 	r=f_readreg(r);
 	raw_fmovs_mr(m,r);
@@ -2398,21 +2398,21 @@ MIDFUNC(1,fcut_r,(FRW r))
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmov_ext_mr,(MEMW m, FR r))
+MIDFUNC(2,fmov_ext_mr,(MEMPTRW m, FR r))
 {
 	r=f_readreg(r);
 	raw_fmov_ext_mr(m,r);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmov_mr,(MEMW m, FR r))
+MIDFUNC(2,fmov_mr,(MEMPTRW m, FR r))
 {
 	r=f_readreg(r);
 	raw_fmov_mr(m,r);
 	f_unlock(r);
 }
 
-MIDFUNC(2,fmov_ext_rm,(FW r, MEMR m))
+MIDFUNC(2,fmov_ext_rm,(FW r, MEMPTRR m))
 {
 	r=f_writereg(r);
 	raw_fmov_ext_rm(r,m);

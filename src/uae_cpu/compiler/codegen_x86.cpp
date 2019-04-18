@@ -2038,7 +2038,7 @@ static inline void tos_make(int r)
 
 /* FP helper functions */
 #define DEFINE_OP(NAME, GEN)			\
-static inline void raw_##NAME(uint32 m)		\
+static inline void raw_##NAME(uintptr m)		\
 {						\
 	GEN(m, X86_NOREG, X86_NOREG, 1);		\
 }
@@ -2054,13 +2054,13 @@ DEFINE_OP(fldt,  FLDTm);
 DEFINE_OP(fistpl, FISTPLm);
 #undef DEFINE_OP
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_mr,(MEMPTRW m, FR r))
 {
 	make_tos(r);
 	raw_fstl(m);
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMPTRW m, FR r))
 {
 	make_tos(r);
 	raw_fstpl(m);
@@ -2069,25 +2069,25 @@ LOWFUNC(NONE,WRITE,2,raw_fmov_mr_drop,(MEMW m, FR r))
 	live.spos[r]=-2;
 }
 
-LOWFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMR m))
+LOWFUNC(NONE,READ,2,raw_fmov_rm,(FW r, MEMPTRR m))
 {
 	raw_fldl(m);
 	tos_make(r);
 }
 
-LOWFUNC(NONE,READ,2,raw_fmovi_rm,(FW r, MEMR m))
+LOWFUNC(NONE,READ,2,raw_fmovi_rm,(FW r, MEMPTRR m))
 {
 	raw_fildl(m);
 	tos_make(r);
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmovi_mr,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmovi_mr,(MEMPTRW m, FR r))
 {
 	make_tos(r);
 	raw_fistl(m);
 }
 
-LOWFUNC(NONE,WRITE,3,raw_fmovi_mrb,(MEMW m, FR r, double *bounds))
+LOWFUNC(NONE,WRITE,3,raw_fmovi_mrb,(MEMPTRW m, FR r, double *bounds))
 {
 	/* Clamp value to the given range and convert to integer. */
 
@@ -2119,19 +2119,19 @@ LOWFUNC(NONE,WRITE,3,raw_fmovi_mrb,(MEMW m, FR r, double *bounds))
 	raw_fistpl(m);
 }
 
-LOWFUNC(NONE,READ,2,raw_fmovs_rm,(FW r, MEMR m))
+LOWFUNC(NONE,READ,2,raw_fmovs_rm,(FW r, MEMPTRR m))
 {
 	raw_flds(m);
 	tos_make(r);
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmovs_mr,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmovs_mr,(MEMPTRW m, FR r))
 {
 	make_tos(r);
 	raw_fsts(m);
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMPTRW m, FR r))
 {
 	int rs;
 
@@ -2144,7 +2144,7 @@ LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr,(MEMW m, FR r))
 	raw_fstpt(m);	/* store and pop it */
 }
 
-LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr_drop,(MEMW m, FR r))
+LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr_drop,(MEMPTRW m, FR r))
 {
 	make_tos(r);
 	raw_fstpt(m);	/* store and pop it */
@@ -2153,7 +2153,7 @@ LOWFUNC(NONE,WRITE,2,raw_fmov_ext_mr_drop,(MEMW m, FR r))
 	live.spos[r]=-2;
 }
 
-LOWFUNC(NONE,READ,2,raw_fmov_ext_rm,(FW r, MEMR m))
+LOWFUNC(NONE,READ,2,raw_fmov_ext_rm,(FW r, MEMPTRR m))
 {
 	raw_fldt(m);
 	tos_make(r);

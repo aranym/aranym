@@ -285,7 +285,6 @@ static bool follow_const_jumps = true; // Flag: translation through constant jum
 const bool follow_const_jumps = false;
 #endif
 
-const uae_u32 MIN_CACHE_SIZE = 1024; // Minimal translation cache size (1 MB)
 static uae_u32 cache_size = 0; // Size of total cache allocated for compiled blocks
 static uae_u32		current_cache_size	= 0;		// Cache grows upwards: how much has been consumed already
 static bool		lazy_flush		= true;	// Flag: lazy translation cache invalidation
@@ -430,12 +429,10 @@ extern const struct cputbl op_smalltbl_4_nf[];
 extern const struct cputbl op_smalltbl_5_nf[];
 #endif
 
-#ifdef WINUAE_ARANYM
-static void flush_icache_hard(int n);
-static void flush_icache_lazy(int n);
-static void flush_icache_none(int n);
-void (*flush_icache)(int n) = flush_icache_none;
-#endif
+static void flush_icache_hard(void);
+static void flush_icache_lazy(void);
+static void flush_icache_none(void);
+void (*flush_icache)(void) = flush_icache_none;
 
 static bigstate live;
 static smallstate empty_ss;
@@ -2797,24 +2794,6 @@ void compiler_exit(void)
 	exit_table68k();
 }
 
-#ifdef UAE
-#else
-bool compiler_use_jit(void)
-{
-	// Check for the "jit" prefs item
-	if (!bx_options.jit.jit)
-		return false;
-	
-	// Don't use JIT if translation cache size is less then MIN_CACHE_SIZE KB
-	if (bx_options.jit.jitcachesize < MIN_CACHE_SIZE) {
-		panicbug("<JIT compiler> : translation cache size is less than %d KB. Disabling JIT.\n", MIN_CACHE_SIZE);
-		return false;
-	}
-	
-	return true;
-}
-#endif
-
 static void init_comp(void)
 {
 	int i;
@@ -3486,7 +3465,7 @@ void calc_disp_ea_020(int base, uae_u32 dp, int target, int tmp)
 void set_cache_state(int enabled)
 {
 	if (enabled!=cache_enabled)
-		flush_icache_hard(77);
+		flush_icache_hard();
 	cache_enabled=enabled;
 }
 
@@ -3520,7 +3499,7 @@ static inline uint8 *alloc_code(uint32 size)
 void alloc_cache(void)
 {
 	if (compiled_code) {
-		flush_icache_hard(6);
+		flush_icache_hard();
 		vm_release(compiled_code, cache_size * 1024);
 		compiled_code = 0;
 	}
@@ -4321,16 +4300,12 @@ void build_comp(void)
 }
 
 
-static void flush_icache_none(int)
+static void flush_icache_none(void)
 {
 	/* Nothing to do.  */
 }
 
-#ifdef UAE
-void flush_icache_hard(uaecptr ptr, int n)
-#else
-void flush_icache_hard(int n)
-#endif
+void flush_icache_hard(void)
 {
 	blockinfo* bi, *dbi;
 
@@ -4338,7 +4313,6 @@ void flush_icache_hard(int n)
 	jit_log("JIT: Flush Icache_hard(%d/%x/%p), %u KB",
 		n,regs.pc,regs.pc_p,current_cache_size/1024);
 #endif
-	UNUSED(n);
 	bi=active;
 	while(bi) {
 		cache_tags[cacheline(bi->pc_p)].handler=(cpuop_func*)popall_execute_normal;
@@ -4375,21 +4349,11 @@ void flush_icache_hard(int n)
    we simply mark everything as "needs to be checked".
 */
 
-#ifdef WINUAE_ARANYM
-static inline void flush_icache_lazy(int)
-#else
-void flush_icache(uaecptr ptr, int n)
-#endif
+static inline void flush_icache_lazy(void)
 {
 	blockinfo* bi;
 	blockinfo* bi2;
 
-#ifdef UAE
-	if (currprefs.comp_hardflush) {
-		flush_icache_hard(ptr, n);
-		return;
-	}
-#endif
 	if (!active)
 		return;
 
@@ -4424,10 +4388,9 @@ void flush_icache(uaecptr ptr, int n)
 	active=NULL;
 }
 
-#ifdef UAE
-static
-#endif
-void flush_icache_range(uae_u32 start, uae_u32 length)
+
+#if 0
+static void flush_icache_range(uae_u32 start, uae_u32 length)
 {
 	if (!active)
 		return;
@@ -4460,15 +4423,10 @@ void flush_icache_range(uae_u32 start, uae_u32 length)
 		UNUSED(start);
 		UNUSED(length);
 #endif
-	flush_icache(-1);
+	flush_icache();
 }
+#endif
 
-/*
-static void catastrophe(void)
-{
-	jit_abort("catastprophe");
-}
-*/
 
 int failure;
 
@@ -4557,7 +4515,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 		redo_current_block=0;
 		if (current_compile_p >= MAX_COMPILE_PTR)
-			flush_icache_hard(7);
+			flush_icache_hard();
 
 		alloc_blockinfos();
 
@@ -5060,7 +5018,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 
 		/* We will flush soon, anyway, so let's do it now */
 		if (current_compile_p >= MAX_COMPILE_PTR)
-			flush_icache_hard(7);
+			flush_icache_hard();
 
 		bi->status=BI_ACTIVE;
 		if (redo_current_block)
@@ -5190,7 +5148,7 @@ setjmpagain:
 			regs.fault_pc,
 			regs.mmu_fault_addr, get_long (regs.vbr + 4*prb),
 			regs.regs[15]);
-		flush_icache(0);
+		flush_icache();
 		Exception(prb, 0);
 		goto setjmpagain;
 	}

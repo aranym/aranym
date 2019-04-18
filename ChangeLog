@@ -1,4 +1,8 @@
 2019/04/17
+WIP: make compiler support functions real 64bit clean
+
+
+2019/04/17
 Remove useless LENDFUNC/MENDFUNC macros
 
 

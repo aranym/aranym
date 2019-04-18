@@ -959,7 +959,7 @@ void mmu_op(uae_u32 opcode, uae_u16 extra)
 		}
 		flush_internals();
 #ifdef USE_JIT
-		flush_icache(0);
+		flush_icache();
 #endif
 	} else if ((opcode & 0x0FD8) == 0x548) {
 		int write, regno;

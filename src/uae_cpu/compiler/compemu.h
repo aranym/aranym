@@ -178,20 +178,7 @@ extern void set_cache_state(int enabled);
 extern int get_cache_state(void);
 extern uae_u32 get_jitted_size(void);
 #ifdef JIT
-#ifdef WINUAE_ARANYM
-extern void (*flush_icache)(int n);
-#else
-extern void flush_icache(uaecptr ptr, int n);
-extern void flush_icache_hard(uaecptr ptr, int n);
-static inline void flush_icache(int n)
-{
-	flush_icache(0, n);
-}
-static inline void flush_icache_hard(int n)
-{
-	flush_icache(0, n);
-}
-#endif
+extern void (*flush_icache)(void);
 #endif
 extern void alloc_cache(void);
 extern int check_for_cache_miss(void);
@@ -383,7 +370,11 @@ extern int touchcnt;
 #define RW4 uae_u32
 #define MEMR uae_u32
 #define MEMW uae_u32
-#define MEMRW uae_u32
+#define MEMRW    uae_u32
+#define MEMPTR   uintptr
+#define MEMPTRR  MEMPTR
+#define MEMPTRW  MEMPTR
+#define MEMPTRRW MEMPTR
 
 #define FW   uae_u32
 #define FR   uae_u32
@@ -517,7 +508,7 @@ void do_nothing(void);
 
 #else
 
-static inline void flush_icache(int) { }
+static inline void flush_icache(void) { }
 
 #endif /* !USE_JIT */
 
