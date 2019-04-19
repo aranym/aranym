@@ -149,7 +149,7 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf, int allbytes)
 	{
 		strcat(buf, "\n");
 #ifdef CPU_i386
-		sprintf(buf + strlen(buf), "[%08lx]", (usigned long)ainstr + bytes_per_line);
+		sprintf(buf + strlen(buf), "[%08lx]", (unsigned long)ainstr + bytes_per_line);
 #else
 		sprintf(buf + strlen(buf), "[%016llx]", (unsigned long long)ainstr + bytes_per_line);
 #endif
