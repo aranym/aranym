@@ -1486,7 +1486,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
       dnl Math functions required by C99 standard, but probably not
       dnl implemented everywhere. In that case, we fall back to the
       dnl regular variant for doubles.
-      AC_CHECK_FUNCS(logl log10l expl powl exp2l pow2l exp10l pow10l fabsl sqrtl log1pl expm1l exp2 pow2)
+      AC_CHECK_FUNCS(logl log10l expl powl exp2l pow2l exp10l pow10l fabsl sqrtl log1pl expm1l exp2 pow2 pow10)
       AC_CHECK_FUNCS(sinl cosl tanl sinhl coshl tanhl)
       AC_CHECK_FUNCS(asinl acosl atanl asinhl acoshl atanhl)
       AC_CHECK_FUNCS(floorl ceill truncl roundl)

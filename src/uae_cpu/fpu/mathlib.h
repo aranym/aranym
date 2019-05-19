@@ -756,7 +756,11 @@ PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_regis
 # define fp_pow		pow
 #endif
 #ifndef fp_pow10
-# define fp_pow10	pow10
+# ifdef HAVE_POW10
+#   define fp_pow10	pow10
+# else
+#   define fp_pow10	exp10
+# endif
 #endif
 #ifndef fp_pow2
 # ifdef HAVE_POW2

@@ -1,3 +1,7 @@
+2019/05/19
+Use pow10 only if it exits
+
+
 2019/04/20
 Fix a typo in disassembler
 
