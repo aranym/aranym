@@ -69,6 +69,7 @@ function snap_create {
 		echo "Stable release on Snap"
 		docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
       -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && export revision=$(snapcraft status $SNAP_NAME --arch $CPU_TYPE | grep "edge" | awk '\''{print $NF}'\'') && snapcraft release $SNAP_NAME $revision stable'
+	fi
 	rm env.list
 }
 
