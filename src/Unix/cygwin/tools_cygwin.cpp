@@ -19,4 +19,16 @@ char *cygwin_path_to_win32(char *path, size_t size)
 	return path;
 }
 
+char *cygwin_path_to_posix(char *path, size_t size)
+{
+	char posixpath[1024];
+#if defined(CYGWIN_VERSION_CYGWIN_CONV) && CYGWIN_VERSION_DLL_COMBINED >= CYGWIN_VERSION_CYGWIN_CONV
+	cygwin_conv_path(CCP_WIN_A_TO_POSIX | CCP_ABSOLUTE, path, posixpath, sizeof(posixpath));
+#else
+	cygwin_conv_to_full_path_path(path, posixpath);
+#endif
+	safe_strncpy(path, posixpath, size);
+	return path;
+}
+
 #endif /* OS_cygwin */

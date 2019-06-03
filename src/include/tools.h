@@ -179,6 +179,7 @@ char *safe_strncat(char *dest, const char *src, size_t size);
 
 #ifdef OS_cygwin
 char* cygwin_path_to_win32(char *, size_t);
+char* cygwin_path_to_posix(char *, size_t);
 #endif
 
 char *my_canonicalize_file_name(const char *filename, bool append_slash);

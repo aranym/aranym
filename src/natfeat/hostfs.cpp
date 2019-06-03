@@ -1958,10 +1958,27 @@ int32 HostFs::xfs_rewinddir( XfsDir *dirh )
 	return TOS_E_OK;
 }
 
+#ifdef __CYGWIN__
+static int cyg_lstat(const char *fpathName, struct stat *statBuf)
+{
+	char path[1024];
+
+	/*
+	 * Be sure to use a posix path for the actual stat call,
+	 * otherwise cygwin does not translate all attributes.
+	 * Should fix #22.
+	 */
+	safe_strncpy(path, fpathName, sizeof(path));
+	return lstat(cygwin_path_to_posix(path, sizeof(path)), statBuf);
+}
+#else
+#define cyg_lstat lstat
+#endif
+
 int32 HostFs::host_stat64( XfsCookie *fc, const char *fpathName, struct stat *statBuf ) {
 
 	(void) fc;
-	if ( lstat(fpathName, statBuf) )
+	if ( cyg_lstat(fpathName, statBuf) )
 		return errnoHost2Mint(errno,TOS_EFILNF);
 
 	return TOS_E_OK;
@@ -2134,7 +2151,7 @@ int32 HostFs::xfs_chattr( XfsCookie *fc, int16 attr )
 
 	// perform the link stat itself
 	struct stat statBuf;
-    if ( lstat( fpathName, &statBuf ) )
+    if ( cyg_lstat( fpathName, &statBuf ) )
 		return errnoHost2Mint( errno, TOS_EACCDN );
 
     mode_t newmode;
@@ -2295,7 +2312,7 @@ int32 HostFs::xfs_lookup( XfsCookie *dir, memptr name, XfsCookie *fc )
 		D(bug( "HOSTFS: fs_lookup stat: %s", fpathName ));
 
 		struct stat statBuf;
-		if ( lstat( fpathName, &statBuf ) ) {
+		if ( cyg_lstat( fpathName, &statBuf ) ) {
 			delete newFsFile;
 			return errnoHost2Mint( errno, TOS_EFILNF );
 		}
