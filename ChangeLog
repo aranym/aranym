@@ -1,4 +1,8 @@
-2019/04/20
+2019/06/04
+Fix a problem with the X-bit handling on 32bit hosts
+
+
+2019/06/03
 On cygwin, use posix paths for stat() calls, otherwise cygwin does not translate all attributes.
 Should fix #22.
 

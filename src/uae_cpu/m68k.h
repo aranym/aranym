@@ -72,7 +72,7 @@ struct flag_struct {
 #define FLAGBIT_Z   6
 #define FLAGBIT_C   0
 #define FLAGBIT_V   11
-#define FLAGBIT_X   FLAGBIT_C /* should be in the same position as the x flag */
+#define FLAGBIT_X   0 /* must be in position 0 for duplicate_carry() to work */
 
 #define FLAGVAL_N   (1 << FLAGBIT_N)
 #define FLAGVAL_Z   (1 << FLAGBIT_Z)
@@ -255,7 +255,7 @@ extern struct flag_struct regflags __asm__ ("regflags");
 #define FLAGBIT_Z   14
 #define FLAGBIT_C   8
 #define FLAGBIT_V   0
-#define FLAGBIT_X   FLAGBIT_C /* should be in the same position as the x flag */
+#define FLAGBIT_X   0 /* must be in position 0 for duplicate_carry() to work */
 
 #define FLAGVAL_N   (1 << FLAGBIT_N)
 #define FLAGVAL_Z   (1 << FLAGBIT_Z)

@@ -104,6 +104,10 @@ MIDFUNC(0,dont_care_flags,(void))
 	live.flags_are_important=0;
 }
 
+/*
+ * store the state of the x86 carry bit into regflags.x,
+ * into the position denoted by FLAGBIT_X
+ */
 MIDFUNC(0,duplicate_carry,(void))
 {
 	evict(FLAGX);
@@ -160,22 +164,26 @@ MIDFUNC(3,setcc_for_cntzero,(RR4 /* cnt */, RR4 data, int size))
 	*branchadd2 = (uintptr)get_target() - ((uintptr)branchadd2 + 1);
 }
 
+/*
+ * Set the x86 carry flag from regflags.x, from the position
+ * denoted by FLAGBIT_X
+ */
 MIDFUNC(0,restore_carry,(void))
 {
 	if (!have_rat_stall) { /* Not a P6 core, i.e. no partial stalls */
 #ifdef UAE
-		bt_l_ri_noclobber(FLAGX, 8);
+		bt_l_ri_noclobber(FLAGX, FLAGBIT_X+8);
 #else
-		bt_l_ri_noclobber(FLAGX, 0);
+		bt_l_ri_noclobber(FLAGX, FLAGBIT_X);
 #endif
 	}
 	else {  /* Avoid the stall the above creates.
 		   This is slow on non-P6, though.
 		*/
-#ifdef UAE
-		COMPCALL(rol_w_ri(FLAGX, 8));
+#if defined(UAE) || FLAGBIT_X >= 8
+		COMPCALL(rol_w_ri(FLAGX, 16 - FLAGBIT_X));
 #else
-		COMPCALL(rol_b_ri(FLAGX, 8));
+		COMPCALL(rol_b_ri(FLAGX, 8 - FLAGBIT_X));
 #endif
 		isclean(FLAGX);
 	}
