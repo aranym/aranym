@@ -30,6 +30,7 @@
 #if defined _WIN32 || defined(OS_cygwin)
 # define SDL_MAIN_HANDLED
 #endif
+#define __STDC_FORMAT_MACROS 1
 
 #include "sysdeps.h"
 #include "cpu_emulation.h"

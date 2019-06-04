@@ -214,6 +214,7 @@ std::string HostExec::trim(const std::string& str) const
 	return ret;
 }
 
+#if !defined(_WIN32) || defined(__CYGWIN___)
 static void child_signal(int sig)
 {
 	int status;
@@ -246,6 +247,7 @@ static void child_signal(int sig)
 		}
 	}
 }
+#endif
 
 
 void HostExec::exec(const std::string& path) const
@@ -362,7 +364,6 @@ int HostExec::doexecv(char *const argv[]) const
 		}
 	}
 
-	printf("execv: %d\n", ret);
 	return ret;
 #endif
 }
