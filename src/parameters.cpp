@@ -1843,7 +1843,7 @@ static int process_cmdline(int argc, char **argv)
 						{ "dk", COUNTRY_DK }, { "da_DK", COUNTRY_DK },
 						{ "sa", COUNTRY_SA }, { "ar_SA", COUNTRY_SA },
 						{ "nl", COUNTRY_NL }, { "nl_NL", COUNTRY_NL },
-						{ "cz", COUNTRY_CZ }, { "cS_CZ", COUNTRY_CZ },
+						{ "cz", COUNTRY_CZ }, { "cs_CZ", COUNTRY_CZ },
 						{ "hu", COUNTRY_HU }, { "hu_HU", COUNTRY_HU }, 
 						{ "pl", COUNTRY_PL }, { "pl_PL", COUNTRY_PL }, 
 						{ "lt", COUNTRY_PL }, { "lt_LT", COUNTRY_LT }, 
@@ -1882,7 +1882,7 @@ static int process_cmdline(int argc, char **argv)
 					for(unsigned i=0; i<sizeof(countries)/sizeof(countries[0]); i++) {
 						if (strcasecmp(optarg, countries[i].name) == 0) {
 							i = countries[i].id;
-							bx_options.tos.cookie_akp = i << 8 | i;
+							bx_options.tos.cookie_akp = (i << 8) | i;
 							break;
 						}
 					}
@@ -2140,16 +2140,15 @@ void listConfigValues(bool type)
 		char *section_name = strdup(name);
 		section_name[len] = '\0';
 		
-		for (struct Config_Tag *conf = section->tags; conf->code; conf++)
+		for (const struct Config_Tag *conf = section->tags; conf->code; conf++)
 		{
 			if (ide_swap)
 			{
 				if (conf == diskc_configs) conf = diskd_configs;
 				else if (conf == diskd_configs) conf = diskc_configs;
 			}
-			char *value = cfgopts.get_config_value(conf, type);
+			const char *value = cfgopts.get_config_value(conf, type);
 			printf("%s:%s:%s\n", section_name, conf->code, value ? value : "");
-			
 		}
 		free(section_name);
 	}
@@ -2181,5 +2180,13 @@ const char *getConfigFile() {
 
 void setConfigFile(const char *filename)
 {
+#ifdef HAVE_REALPATH
+	char *tmp = realpath(filename, NULL);
+	if (tmp != NULL)
+		filename = tmp;
 	safe_strncpy(config_file, filename, sizeof(config_file));
+	free(tmp);
+#else
+	safe_strncpy(config_file, filename, sizeof(config_file));
+#endif
 }

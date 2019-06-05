@@ -1,3 +1,7 @@
+2019/06/05
+Use absolute path for config file specified on command line
+
+
 2019/06/04
 Small compilation fixes for win32 w/o cygwin
 
