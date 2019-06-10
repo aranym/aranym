@@ -2,8 +2,9 @@ matrix:
   include:
     - os: linux
       language: c
-      dist: trusty
+      dist: xenial
       sudo: required
+      services: docker
     - os: osx
       osx_image: xcode8.3
       language: objective-c
@@ -33,6 +34,7 @@ matrix:
       dist: xenial
       env: 
         - is=deploy
+      services: docker
         
 branches:
   only:

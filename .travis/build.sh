@@ -30,20 +30,22 @@ if ! ( echo $is | grep -q deploy ); then
 	NO_CONFIGURE=1 ./autogen.sh
 fi
 export VERSION
-
-isrelease=false
-ATAG=${VERSION}${archive_tag}
-tag=`git tag --points-at ${TRAVIS_COMMIT}`
-case $tag in
-	ARANYM_*)
-		isrelease=true
-		;;
-	*)
-		ATAG=${VERSION}${archive_tag}-${SHORT_ID}
-		;;
-esac
-export ATAG
-export isrelease
+tag_set() {
+	isrelease=false
+	ATAG=${VERSION}${archive_tag}
+	tag=`git tag --points-at ${TRAVIS_COMMIT}`
+	case $tag in
+		ARANYM_*)
+			isrelease=true
+			;;
+		*)
+			ATAG=${VERSION}${archive_tag}-${SHORT_ID}
+			;;
+	esac
+	export ATAG
+	export isrelease
+}
+export -f tag_set
 
 case $CPU_TYPE in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
@@ -88,6 +90,7 @@ linux)
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 		)
+		tag_set
 		(
 		export top_srcdir=`pwd`
 		cd appimage
@@ -168,6 +171,7 @@ osx)
 esac
 
 export ARCHIVE
+tag_set
 
 if $isrelease; then
 	make dist
@@ -177,4 +181,5 @@ if $isrelease; then
 	done
 fi
 fi
+tag_set
 fi

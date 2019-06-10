@@ -7,6 +7,7 @@ sudo apt-get install -y \
 	xz-utils \
 	libjson-perl \
 	libwww-perl
+
 if ! ( echo $is | grep -q deploy ); then
 echo rvm_autoupdate_flag=0 >> ~/.rvmrc
 

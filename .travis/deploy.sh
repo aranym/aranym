@@ -14,6 +14,12 @@ then
 	exit 1
 fi
 
+if [ -z "$SNAP_TOKEN" ]
+then
+	echo "error: SNAP_TOKEN is undefined" >&2
+	exit 1
+fi
+export SRCDIR="${PWD}"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 BINTRAY_HOST=https://api.bintray.com
@@ -21,6 +27,51 @@ BINTRAY_USER="${BINTRAY_USER:-aranym}"
 BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
 BINTRAY_REPO_NAME="${BINTRAY_REPO_NAME:-aranym-files}"
 BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO_NAME}"
+SNAP_NAME="${SNAP_NAME:-aranym}"
+
+function bined {
+	cd ${SRCDIR}
+	OUT="${SRCDIR}/.travis/out"
+	# dirty hack for removing premisions
+	# see https://github.com/aranym/aranym/issues/12#issuecomment-473660193
+	mkdir bined
+	cp "$OUT/${ARCHIVE}" bined
+	cd bined
+	tar xf ${ARCHIVE}
+	rm ${ARCHIVE}
+	tar cvfJ "../bined.tar.xz" .
+	cd ${SRCDIR}
+}
+
+function snap_create {
+	case "$CPU_TYPE" in
+		x86_64)
+			snap_cpu=amd64
+		;;
+		i386)
+			snap_cpu=i386
+		;;
+		armhf)
+			snap_cpu=armhf
+		;;
+		*)
+			echo "Wrong arch in deploy for snap"
+		;;
+		esac
+	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
+	echo "snap_cpu=$CPU_TYPE" >> env.list
+	echo "SNAP_NAME=$SNAP_NAME" >> env.list
+	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
+	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
+	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
+      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
+	if $isrelease; then
+		echo "Stable release on Snap"
+		docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
+      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && export revision=$(snapcraft status $SNAP_NAME --arch $CPU_TYPE | grep "edge" | awk '\''{print $NF}'\'') && snapcraft release $SNAP_NAME $revision stable'
+	fi
+	rm env.list
+}
 
 function normal_deploy {
 	SRCDIR="${PWD}"
@@ -174,6 +225,9 @@ function uncache_deploy {
 	export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 	(
 		cd "${BUILDROOT}"
+		sudo chown root "usr/bin/aratapif"
+		sudo chgrp root "usr/bin/aratapif"
+		sudo chmod 4755 "usr/bin/aratapif"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
 
@@ -248,6 +302,10 @@ if ! ( echo $is | grep -q deploy ); then # build job
 			if ! ( echo $ar | grep -q no ); then # Except if is not arm linux
 				echo "------------ normal --------------------"
 				normal_deploy
+				if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+					bined
+					snap_create
+				fi
 			else # if arm finally use cache
 				echo "------------ cache --------------------"
 				cache_deploy
@@ -264,5 +322,9 @@ if ! ( echo $is | grep -q deploy ); then # build job
 else # deploy job
 	echo "------------ deploy --------------------"
 	uncache_deploy
+	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+		bined
+		snap_create
+	fi
 fi
 fi
