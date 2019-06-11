@@ -192,7 +192,7 @@ aranym_SOURCES += \
 	gui-sdl/dialog.cpp gui-sdl/dialog.h \
 	gui-sdl/file.cpp gui-sdl/file.h \
 	gui-sdl/dlgMain.cpp gui-sdl/dlgMain.h \
-	gui-sdl/font.h gui-sdl/aranym.fnt \
+	gui-sdl/font.h gui-sdl/fontsmall.h gui-sdl/aranym.fnt \
 	gui-sdl/dlgAlert.cpp gui-sdl/dlgAlert.h \
 	gui-sdl/dlgDisk.cpp gui-sdl/dlgDisk.h \
 	gui-sdl/dlgFileSelect.cpp gui-sdl/dlgFileSelect.h \
@@ -579,6 +579,9 @@ EXTRA_DIST += \
 	Unix/MacOSX/bpf_helper.c \
 	gui-sdl/genmaptab.c \
 	gui-sdl/fntconv.c \
+	gui-sdl/aranym08.txt \
+	gui-sdl/aranym09.txt \
+	gui-sdl/aranym10.txt \
 	$(srcdir)/gui-osx/*.lproj \
 	gui-osx/Info.plist \
 	gui-osx/aranym.icns \

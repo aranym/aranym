@@ -1,3 +1,7 @@
+2019/06/11
+Add some files to Makefile.am that should be distributed
+
+
 2019/06/05
 Use absolute path for config file specified on command line
 
