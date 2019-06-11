@@ -64,7 +64,7 @@ function snap_create {
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
 	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
-      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
+      -c 'apt update -qq && echo "$SNAP_TOKEN" | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
 	if $isrelease; then
 		echo "Stable release on Snap"
 		docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
