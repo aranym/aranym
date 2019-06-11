@@ -58,7 +58,7 @@ function snap_create {
 			echo "Wrong arch in deploy for snap"
 		;;
 		esac
-	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
+	echo 'SNAP_TOKEN='"$SNAP_TOKEN" > env.list
 	echo "snap_cpu=$CPU_TYPE" >> env.list
 	echo "SNAP_NAME=$SNAP_NAME" >> env.list
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
