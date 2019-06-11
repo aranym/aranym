@@ -64,11 +64,11 @@ function snap_create {
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
 	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
-      -c 'apt update -qq && echo "$SNAP_TOKEN" | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$CPU_TYPE && snapcraft push --release=edge *.snap'
+      -c 'apt update -qq && echo "$SNAP_TOKEN" | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$snap_cpu && snapcraft push --release=edge *.snap'
 	if $isrelease; then
 		echo "Stable release on Snap"
 		docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
-      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && export revision=$(snapcraft status $SNAP_NAME --arch $CPU_TYPE | grep "edge" | awk '\''{print $NF}'\'') && snapcraft release $SNAP_NAME $revision stable'
+      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && export revision=$(snapcraft status $SNAP_NAME --arch $snap_cpu | grep "edge" | awk '\''{print $NF}'\'') && snapcraft release $SNAP_NAME $revision stable'
 	fi
 	rm env.list
 }
@@ -324,6 +324,7 @@ else # deploy job
 	uncache_deploy
 	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
 		bined
+		export CPU_TYPE=armhf
 		snap_create
 	fi
 fi
