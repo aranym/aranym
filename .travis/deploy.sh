@@ -324,6 +324,7 @@ else # deploy job
 	uncache_deploy
 	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
 		bined
+		export CPU_TYPE=armhf
 		snap_create
 	fi
 fi
