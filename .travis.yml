@@ -79,9 +79,7 @@ matrix:
       before_install:
         - .travis/install_ssh_id.sh
         - unset SSH_ID
-        - .travis/emu/install_prerequisities.sh
-      before_script:
-        - . ./.travis/setup_env.sh
+        - . ./.travis/emu/install_prerequisities.sh
       script:
         - echo "skipped" # skip script tag
       services: docker
