@@ -33,6 +33,11 @@ matrix:
       env: 
         - ar=arm
         - typec=3
+      before_install:
+        - . ./.travis/build.sh
+
+      before_script:
+        - . ./.travis/build.sh
       script:
         - . ./.travis/build.sh
     - stage: deploy
