@@ -28,13 +28,13 @@ matrix:
       before_install:
         - . ./.travis/emu/install_prerequisities.sh
       before_script:
-        - exit 0 # skip tag
+        - echo "skipped" # skip tag
       script:
         - sudo ./.travis/emu/chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
-        script: exit 0 # skip for now then move it from chroot
+        script: echo "skipped" # skip for now then move it from chroot
     - os: linux
       language: c
       dist: xenial
@@ -46,13 +46,13 @@ matrix:
       before_install:
         - . ./.travis/emu/install_prerequisities.sh
       before_script:
-        - exit 0 # skip tag
+        - echo "skipped" # skip tag
       script:
         - sudo ./.travis/emu/chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
-        script: exit 0 # skip for now then move it from chroot
+        script: echo "skipped" # skip for now then move it from chroot
     - os: linux
       language: c
       dist: xenial
@@ -64,13 +64,13 @@ matrix:
       before_install:
         - . ./.travis/emu/install_prerequisities.sh
       before_script:
-        - exit 0 # skip tag
+        - echo "skipped" # skip tag
       script:
         - sudo ./.travis/emu/chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
-        script: exit 0 # skip for now then move it from chroot
+        script: echo "skipped" # skip for now then move it from chroot
     - stage: deploy
       os: linux
       dist: xenial
@@ -83,7 +83,7 @@ matrix:
       before_script:
         - . ./.travis/setup_env.sh
       script:
-        - exit 0 # skip script tag
+        - echo "skipped" # skip script tag
       services: docker
 
 before_install:
