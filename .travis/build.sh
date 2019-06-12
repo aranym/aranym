@@ -57,13 +57,12 @@ linux)
 		install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
 		fi
 		install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
-
+		tag_set
 		ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 		(
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 		)
-		tag_set
 		(
 		export top_srcdir=`pwd`
 		cd appimage
@@ -81,6 +80,7 @@ linux)
 					cd ..
 					mkdir -p "$BUILDROOT${bindir}"
 					install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
+					tag_set
 					ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-jit.tar.xz"
 					(
 					cd "${BUILDROOT}"
@@ -99,6 +99,7 @@ linux)
 				cd ..
 				mkdir -p "$BUILDROOT${bindir}"
 				install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
+				tag_set
 				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-mmu.tar.xz"
 				(
 				cd "${BUILDROOT}"
@@ -114,7 +115,7 @@ linux)
 				sudo chown root "$BUILDROOT${bindir}/aratapif"
 				sudo chgrp root "$BUILDROOT${bindir}/aratapif"
 				sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
-
+				tag_set
 				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-nor.tar.xz"
 				(
 				cd "${BUILDROOT}"
@@ -131,6 +132,7 @@ linux)
 	;;
 
 osx)
+	tag_set
 	DMG="${PROJECT_LOWER}-${VERSION}${archive_tag}.dmg"
 	ARCHIVE="${PROJECT_LOWER}-${ATAG}.dmg"
 	(
@@ -153,5 +155,3 @@ if $isrelease; then
 		test -f "${SRCARCHIVE}" && mv "${SRCARCHIVE}" "$OUT"
 	done
 fi
-
-tag_set

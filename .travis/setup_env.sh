@@ -87,7 +87,7 @@ export archive_tag
 VERSION=`sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
 s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
 s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n'`
-
+echo VERSION
 export VERSION
 
 tag_set() {
