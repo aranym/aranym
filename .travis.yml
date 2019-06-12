@@ -5,29 +5,9 @@ matrix:
       dist: xenial
       sudo: required
       services: docker
-      before_install:
-        - .travis/install_ssh_id.sh
-        - unset SSH_ID
-        - .travis/install_prerequisities.sh
-
-      before_script:
-        - . ./.travis/setup_env.sh
-
-      script:
-        - . ./.travis/build.sh
     - os: osx
       osx_image: xcode8.3
       language: objective-c
-      before_install:
-        - .travis/install_ssh_id.sh
-        - unset SSH_ID
-        - .travis/install_prerequisities.sh
-
-      before_script:
-        - . ./.travis/setup_env.sh
-
-      script:
-        - . ./.travis/build.sh
     - os: linux
       language: c
       dist: xenial
@@ -71,6 +51,17 @@ matrix:
       script:
         - . ./.travis/build.sh
       services: docker
+
+before_install:
+  - .travis/install_ssh_id.sh
+  - unset SSH_ID
+  - .travis/install_prerequisities.sh
+
+before_script:
+  - . ./.travis/setup_env.sh
+
+script:
+  - . ./.travis/build.sh
         
 branches:
   only:
