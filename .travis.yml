@@ -26,7 +26,7 @@ matrix:
         - arch_build=armhf
         - typec=1
       before_install:
-        - .travis/emu/install_prerequisities.sh
+        - . ./.travis/emu/install_prerequisities.sh
       before_script:
         - exit 0 # skip tag
       script:
@@ -44,7 +44,7 @@ matrix:
         - arch_build=armhf
         - typec=2
       before_install:
-        - .travis/emu/install_prerequisities.sh
+        - . ./.travis/emu/install_prerequisities.sh
       before_script:
         - exit 0 # skip tag
       script:
@@ -62,7 +62,7 @@ matrix:
         - arch_build=armhf
         - typec=3
       before_install:
-        - .travis/emu/install_prerequisities.sh
+        - . ./.travis/emu/install_prerequisities.sh
       before_script:
         - exit 0 # skip tag
       script:
