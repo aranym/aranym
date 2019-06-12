@@ -5,9 +5,29 @@ matrix:
       dist: xenial
       sudo: required
       services: docker
+      before_install:
+        - .travis/install_ssh_id.sh
+        - unset SSH_ID
+        - .travis/install_prerequisities.sh
+
+      before_script:
+        - . ./.travis/setup_env.sh
+
+      script:
+        - . ./.travis/build.sh
     - os: osx
       osx_image: xcode8.3
       language: objective-c
+      before_install:
+        - .travis/install_ssh_id.sh
+        - unset SSH_ID
+        - .travis/install_prerequisities.sh
+
+      before_script:
+        - . ./.travis/setup_env.sh
+
+      script:
+        - . ./.travis/build.sh
     - os: linux
       language: c
       dist: xenial
@@ -15,6 +35,8 @@ matrix:
       env: 
         - ar=arm
         - typec=1
+      script:
+        - . ./.travis/build.sh
     - os: linux
       language: c
       dist: xenial
@@ -22,6 +44,8 @@ matrix:
       env: 
         - ar=arm
         - typec=2
+      script:
+        - . ./.travis/build.sh
     - os: linux
       language: c
       dist: xenial
@@ -29,11 +53,23 @@ matrix:
       env: 
         - ar=arm
         - typec=3
+      script:
+        - . ./.travis/build.sh
     - stage: deploy
       os: linux
       dist: xenial
       env: 
         - is=deploy
+      before_install:
+        - .travis/install_ssh_id.sh
+        - unset SSH_ID
+        - .travis/install_prerequisities.sh
+
+      before_script:
+        - . ./.travis/setup_env.sh
+
+      script:
+        - . ./.travis/build.sh
       services: docker
         
 branches:
@@ -46,17 +82,6 @@ compiler:
 env:
   global:
     - MAKEFLAGS="-j 2"
-
-before_install:
-  - .travis/install_ssh_id.sh
-  - unset SSH_ID
-  - .travis/install_prerequisities.sh
-
-before_script:
-  - . ./.travis/setup_env.sh
-
-script:
-  - . ./.travis/build.sh
 
 deploy:
   skip_cleanup: true
