@@ -8,15 +8,10 @@ sudo apt-get install -y \
 	libjson-perl \
 	libwww-perl
 
-if ! ( echo $is | grep -q deploy ); then
 echo rvm_autoupdate_flag=0 >> ~/.rvmrc
 
 case "$TRAVIS_OS_NAME" in
 linux)
-	chmod +x .travis/chroot.sh
-	if ( echo $ar | grep -q arm ); then # if arm run in qemu
-		sudo ./.travis/chroot.sh
-	else
 	sudo apt-get install -y \
 		autoconf \
 		automake \
@@ -37,7 +32,6 @@ linux)
 	ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
 	ln -s /usr/bin/g++-4.8 /usr/bin/g++
 	gcc -v
-	fi
 	;;
 
 osx)
@@ -93,4 +87,4 @@ osx)
 	exit 1
 	;;
 esac
-fi
+

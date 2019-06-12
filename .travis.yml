@@ -5,6 +5,15 @@ matrix:
       dist: xenial
       sudo: required
       services: docker
+      env:
+        - arch_build=amd64
+#    - os: linux
+#      language: c
+#      dist: xenial
+#      sudo: required
+#      services: docker
+#      env:
+#        - arch_build=i386
     - os: osx
       osx_image: xcode8.3
       language: objective-c
@@ -13,33 +22,55 @@ matrix:
       dist: xenial
       sudo: required
       env: 
-        - ar=arm
+        - emu=true
+        - arch_build=armhf
         - typec=1
+      before_install:
+        - .travis/emu/install_prerequisities.sh
+      before_script:
+        - exit 0 # skip tag
       script:
-        - . ./.travis/build.sh
+        - sudo ./.travis/emu/chroot.sh
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: exit 0 # skip for now then move it from chroot
     - os: linux
       language: c
       dist: xenial
       sudo: required
       env: 
-        - ar=arm
+        - emu=true
+        - arch_build=armhf
         - typec=2
+      before_install:
+        - .travis/emu/install_prerequisities.sh
+      before_script:
+        - exit 0 # skip tag
       script:
-        - . ./.travis/build.sh
+        - sudo ./.travis/emu/chroot.sh
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: exit 0 # skip for now then move it from chroot
     - os: linux
       language: c
       dist: xenial
       sudo: required
       env: 
-        - ar=arm
+        - emu=true
+        - arch_build=armhf
         - typec=3
       before_install:
-        - . ./.travis/build.sh
-
+        - .travis/emu/install_prerequisities.sh
       before_script:
-        - . ./.travis/build.sh
+        - exit 0 # skip tag
       script:
-        - . ./.travis/build.sh
+        - sudo ./.travis/emu/chroot.sh
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: exit 0 # skip for now then move it from chroot
     - stage: deploy
       os: linux
       dist: xenial
@@ -48,13 +79,11 @@ matrix:
       before_install:
         - .travis/install_ssh_id.sh
         - unset SSH_ID
-        - .travis/install_prerequisities.sh
-
+        - .travis/emu/install_prerequisities.sh
       before_script:
         - . ./.travis/setup_env.sh
-
       script:
-        - . ./.travis/build.sh
+        - exit 0 # skip script tag
       services: docker
 
 before_install:

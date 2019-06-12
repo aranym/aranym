@@ -1,6 +1,5 @@
 #!/bin/sh
 # Use as: ". setup_env.sh"
-if ! ( echo $ar | grep -q arm ); then # if arm do not exec
 export RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 export GITHUB_USER=$(echo "${TRAVIS_REPO_SLUG}" | cut -d '/' -f 1)
 export BASE_RAW_URL="https://raw.githubusercontent.com/${GITHUB_USER}"
@@ -84,4 +83,31 @@ if test "$suse_version" = '%{suse_version}' -o "$suse_version" = ""; then suse_v
 export suse_version
 
 export archive_tag
-fi
+
+VERSION=`sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
+s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
+s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n'`
+
+export VERSION
+
+tag_set() {
+	isrelease=false
+	ATAG=${VERSION}${archive_tag}
+	tag=`git tag --points-at ${TRAVIS_COMMIT}`
+	case $tag in
+		ARANYM_*)
+			isrelease=true
+			;;
+		*)
+			ATAG=${VERSION}${archive_tag}-${SHORT_ID}
+			;;
+	esac
+	export ATAG
+	export isrelease
+}
+export -f tag_set
+
+case $CPU_TYPE in
+	i[3456]86 | x86_64 | arm*) build_jit=true ;;
+	*) build_jit=false ;;
+esac

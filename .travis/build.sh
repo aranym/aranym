@@ -1,6 +1,5 @@
 #!/bin/sh
 
-if ! ( echo $ar | grep -q arm ); then # if arm do not exec
 #
 # actual build script
 # most of the steps are ported from the aranym.spec file
@@ -17,41 +16,15 @@ prefix=/usr
 bindir=$prefix/bin
 datadir=$prefix/share
 icondir=$datadir/icons/hicolor
-if ! ( echo $is | grep -q deploy ); then
-	if test "$suse_version" -ge 1200; then
-		with_nfosmesa=--enable-nfosmesa
-	fi
-	common_opts="--prefix=$prefix --enable-addressing=direct --enable-usbhost --disable-sdl2 $with_nfosmesa"
-fi
-VERSION=`sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
-s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
-s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n'`
-if ! ( echo $is | grep -q deploy ); then
-	NO_CONFIGURE=1 ./autogen.sh
-fi
-export VERSION
-tag_set() {
-	isrelease=false
-	ATAG=${VERSION}${archive_tag}
-	tag=`git tag --points-at ${TRAVIS_COMMIT}`
-	case $tag in
-		ARANYM_*)
-			isrelease=true
-			;;
-		*)
-			ATAG=${VERSION}${archive_tag}-${SHORT_ID}
-			;;
-	esac
-	export ATAG
-	export isrelease
-}
-export -f tag_set
 
-case $CPU_TYPE in
-	i[3456]86 | x86_64 | arm*) build_jit=true ;;
-	*) build_jit=false ;;
-esac
-if ! ( echo $is | grep -q deploy ); then
+if test "$suse_version" -ge 1200; then
+	with_nfosmesa=--enable-nfosmesa
+fi
+common_opts="--prefix=$prefix --enable-addressing=direct --enable-usbhost --disable-sdl2 $with_nfosmesa"
+
+
+NO_CONFIGURE=1 ./autogen.sh
+
 
 case "$TRAVIS_OS_NAME" in
 linux)
@@ -180,6 +153,5 @@ if $isrelease; then
 		test -f "${SRCARCHIVE}" && mv "${SRCARCHIVE}" "$OUT"
 	done
 fi
-fi
+
 tag_set
-fi
