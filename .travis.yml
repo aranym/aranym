@@ -75,6 +75,7 @@ matrix:
 branches:
   only:
     - master
+    - new_arch
 
 compiler:
   - gcc
@@ -84,6 +85,8 @@ env:
     - MAKEFLAGS="-j 2"
 
 deploy:
+  on:
+    all_branches: true
   skip_cleanup: true
   provider: script
   script: .travis/deploy.sh
