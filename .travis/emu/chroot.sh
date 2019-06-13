@@ -31,16 +31,9 @@
 # https://disconnected.systems/blog/another-bash-strict-mode for
 # details.
 sudo apt-get update
-sudo apt-get install -y -qq qemu qemu-user-static binfmt-support
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 IFS=$'\n\t'
-
-# Ensure root.
-if [[ $EUID -ne 0 ]]; then
-    echo "Error: This script must be run as root or sudo."
-    exit 1
-fi
 
 # User-defined variables. Adjust these to your needs.
 mount="/mnt/alphapi"
@@ -107,8 +100,8 @@ mount -o loop,offset=$[root_start_sector * sector_size] ${orig_img_name} ${mount
 mount -o loop,offset=$[boot_start_sector * sector_size] ${orig_img_name} ${mount}/boot
 
 # Copy the image setup script.
-chmod +x "${host_home}/.travis/chtest.sh"
-install -Dm755 "${host_home}/.travis/chtest.sh" "${mount}${host_home}/.travis/chtest.sh"
+chmod +x "${host_home}/.travis/emu/in_chroot.sh"
+install -Dm755 "${host_home}/.travis/emu/in_chroot.sh" "${mount}${host_home}/.travis/emu/in_chroot.sh"
 
 # Prep the chroot.
 mount -t proc none ${mount}/proc
@@ -126,4 +119,4 @@ echo "Mounting host home directory..."
 echo "Mount point: ${mount}${host_home}"
 mkdir -p "${mount}${host_home}"
 mount -o bind ${host_home} ${mount}${host_home}
-sudo chroot ${mount} "${host_home}/.travis/chtest.sh"
+sudo chroot ${mount} "${host_home}/.travis/emu/in_chroot.sh"
