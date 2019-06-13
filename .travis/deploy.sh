@@ -1,5 +1,4 @@
 #!/bin/bash
-if ! ( echo $ar | grep -q arm ); then # if arm do not exec
 # This script deploys the built binaries to bintray:
 # https://bintray.com/aranym/aranym-files
 
@@ -327,5 +326,4 @@ else # deploy job
 		export CPU_TYPE=armhf
 		snap_create
 	fi
-fi
 fi
