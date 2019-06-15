@@ -3,8 +3,10 @@ if [ -z "$BINTRAY_API_KEY" ]
 then
 	echo "error: BINTRAY_API_KEY is undefined" >&2
 fi
-export ar=no
 uname -a
+if ( echo $arch_build | grep -q i386 ); then 
+	apt install sudo -y -qq
+fi
 env
 cd "/home/travis/build/${TRAVIS_REPO_SLUG}"
 echo "LC_ALL=en_US.UTF-8" >> /etc/environment
@@ -16,4 +18,6 @@ unset SSH_ID
 . ./.travis/install_prerequisities.sh
 . ./.travis/setup_env.sh
 . ./.travis/build.sh
+if !( echo $arch_build | grep -q i386 ); then 
 . ./.travis/deploy.sh
+fi

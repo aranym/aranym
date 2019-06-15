@@ -63,11 +63,13 @@ linux)
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 		)
-		(
-		export top_srcdir=`pwd`
-		cd appimage
-		./build.sh
-		)
+		if ! ( echo $arch_build | grep -q i386 ); then
+			(
+			export top_srcdir=`pwd`
+			cd appimage
+			./build.sh
+			)
+		fi
 	else
 		case "$typec" in
 			1) # jit

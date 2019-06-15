@@ -7,13 +7,18 @@ matrix:
       services: docker
       env:
         - arch_build=amd64
-#    - os: linux
-#      language: c
-#      dist: xenial
-#      sudo: required
-#      services: docker
-#      env:
-#        - arch_build=i386
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      services: docker
+      env: 
+        - emu=true
+        - arch_build=i386
+      before_install:
+        - . ./.travis/emu/install_prerequisities.sh
+      script:
+        - sudo sg sbuild -c "bash .travis/emu/i386_chroot.sh"
     - os: osx
       osx_image: xcode8.3
       language: objective-c
@@ -30,7 +35,7 @@ matrix:
       before_script:
         - echo "skipped" # skip tag
       script:
-        - sudo ./.travis/emu/chroot.sh
+        - sudo ./.travis/emu/armhf_chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
@@ -48,7 +53,7 @@ matrix:
       before_script:
         - echo "skipped" # skip tag
       script:
-        - sudo ./.travis/emu/chroot.sh
+        - sudo ./.travis/emu/armhf_chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
@@ -66,7 +71,7 @@ matrix:
       before_script:
         - echo "skipped" # skip tag
       script:
-        - sudo ./.travis/emu/chroot.sh
+        - sudo ./.travis/emu/armhf_chroot.sh
       deploy:
         skip_cleanup: true
         provider: script
@@ -99,6 +104,7 @@ branches:
   only:
     - master
     - new_arch
+    - emu
 
 compiler:
   - gcc

@@ -18,6 +18,9 @@ then
 	echo "error: SNAP_TOKEN is undefined" >&2
 	exit 1
 fi
+if ( echo $arch_build | grep -q i386 ); then 
+	ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
+fi
 export SRCDIR="${PWD}"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
@@ -207,9 +210,11 @@ function cache_deploy {
 function uncache_deploy {
 	SRCDIR="${PWD}"
 	OUT="${SRCDIR}/.travis/out"
+	TMP="${SRCDIR}/.travis/tmp"
 	mkdir -p $OUT
+	mkdir -p $TMP
 	(
-		cd "${BUILDROOT}"
+		cd "${TMP}"
 		# firstly merge builds
 		for build_type in jit mmu nor; do
 			echo "get $build_type";
@@ -223,7 +228,7 @@ function uncache_deploy {
 	# and package all builds.
 	export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 	(
-		cd "${BUILDROOT}"
+		cd "${TMP}"
 		sudo chown root "usr/bin/aratapif"
 		sudo chgrp root "usr/bin/aratapif"
 		sudo chmod 4755 "usr/bin/aratapif"
@@ -273,32 +278,13 @@ function uncache_deploy {
 	$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1" || exit 1
 	echo ""
 
-	if $isrelease; then
-
-		echo "celebrating new release ${VERSION}"
-		BINTRAY_DIR=releases
-		BINTRAY_VERSION=$VERSION
-
-	#create version:
-		echo "creating version ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-		$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
-		echo ""
-		
-		echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
-		$CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${VERSION}/${ARCHIVE}?publish=1?override=0?explode=0"
-		
-		# publish the version
-		echo "publish ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-		$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1"
-		echo ""
-	fi
 }
 
 # Check if it is deploy or build job
 if ! ( echo $is | grep -q deploy ); then # build job
 	case "$TRAVIS_OS_NAME" in
 		linux) # if linux use cache
-			if ! ( echo $ar | grep -q no ); then # Except if is not arm linux
+			if ! ( echo $arch_build | grep -q armhf ); then # Except if is not arm linux
 				echo "------------ normal --------------------"
 				normal_deploy
 				if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then

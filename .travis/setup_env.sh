@@ -73,6 +73,10 @@ linux)
 		VENDOR=Raspbian
 		archive_tag=-stretch-${CPU_TYPE}
 	fi
+	if ( echo $arch_build | grep -q i386 ); then
+		VENDOR=Ubuntu
+		archive_tag=-xenial-${CPU_TYPE}
+	fi
 	;;
 
 osx)
@@ -109,7 +113,9 @@ tag_set() {
 	export isrelease
 }
 export -f tag_set
-
+tag_set
+export ATAG
+export isrelease
 case $CPU_TYPE in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
 	*) build_jit=false ;;
