@@ -1,6 +1,5 @@
 #!/bin/sh
 
-if ! ( echo $ar | grep -q arm ); then # if arm do not exec
 #
 # actual build script
 # most of the steps are ported from the aranym.spec file
@@ -17,41 +16,15 @@ prefix=/usr
 bindir=$prefix/bin
 datadir=$prefix/share
 icondir=$datadir/icons/hicolor
-if ! ( echo $is | grep -q deploy ); then
-	if test "$suse_version" -ge 1200; then
-		with_nfosmesa=--enable-nfosmesa
-	fi
-	common_opts="--prefix=$prefix --enable-addressing=direct --enable-usbhost --disable-sdl2 $with_nfosmesa"
-fi
-VERSION=`sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
-s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
-s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n'`
-if ! ( echo $is | grep -q deploy ); then
-	NO_CONFIGURE=1 ./autogen.sh
-fi
-export VERSION
-tag_set() {
-	isrelease=false
-	ATAG=${VERSION}${archive_tag}
-	tag=`git tag --points-at ${TRAVIS_COMMIT}`
-	case $tag in
-		ARANYM_*)
-			isrelease=true
-			;;
-		*)
-			ATAG=${VERSION}${archive_tag}-${SHORT_ID}
-			;;
-	esac
-	export ATAG
-	export isrelease
-}
-export -f tag_set
 
-case $CPU_TYPE in
-	i[3456]86 | x86_64 | arm*) build_jit=true ;;
-	*) build_jit=false ;;
-esac
-if ! ( echo $is | grep -q deploy ); then
+if test "$suse_version" -ge 1200; then
+	with_nfosmesa=--enable-nfosmesa
+fi
+common_opts="--prefix=$prefix --enable-addressing=direct --enable-usbhost --disable-sdl2 $with_nfosmesa"
+
+
+NO_CONFIGURE=1 ./autogen.sh
+
 
 case "$TRAVIS_OS_NAME" in
 linux)
@@ -84,18 +57,19 @@ linux)
 		install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
 		fi
 		install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
-
+		tag_set
 		ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
 		(
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 		)
-		tag_set
-		(
-		export top_srcdir=`pwd`
-		cd appimage
-		./build.sh
-		)
+		if ! ( echo $arch_build | grep -q i386 ); then
+			(
+			export top_srcdir=`pwd`
+			cd appimage
+			./build.sh
+			)
+		fi
 	else
 		case "$typec" in
 			1) # jit
@@ -108,6 +82,7 @@ linux)
 					cd ..
 					mkdir -p "$BUILDROOT${bindir}"
 					install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
+					tag_set
 					ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-jit.tar.xz"
 					(
 					cd "${BUILDROOT}"
@@ -126,6 +101,7 @@ linux)
 				cd ..
 				mkdir -p "$BUILDROOT${bindir}"
 				install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
+				tag_set
 				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-mmu.tar.xz"
 				(
 				cd "${BUILDROOT}"
@@ -141,7 +117,7 @@ linux)
 				sudo chown root "$BUILDROOT${bindir}/aratapif"
 				sudo chgrp root "$BUILDROOT${bindir}/aratapif"
 				sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
-
+				tag_set
 				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-nor.tar.xz"
 				(
 				cd "${BUILDROOT}"
@@ -158,6 +134,7 @@ linux)
 	;;
 
 osx)
+	tag_set
 	DMG="${PROJECT_LOWER}-${VERSION}${archive_tag}.dmg"
 	ARCHIVE="${PROJECT_LOWER}-${ATAG}.dmg"
 	(
@@ -179,7 +156,4 @@ if $isrelease; then
 		SRCARCHIVE="${PROJECT_LOWER}-${VERSION}.tar.${ext}"
 		test -f "${SRCARCHIVE}" && mv "${SRCARCHIVE}" "$OUT"
 	done
-fi
-fi
-tag_set
 fi
