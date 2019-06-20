@@ -24,16 +24,22 @@
 #include "sysdeps.h"
 
 class Parallel {
+	protected:
+		bool direction;
 	public:
 		Parallel(void);
 		virtual ~Parallel(void);
-		virtual void reset(void);
+		bool Enabled();
+
+		virtual void reset(void) = 0;
+		virtual void check_pipe() {}
 		
-		virtual void setDirection(bool out);
-		virtual uint8 getData();
-		virtual void setData(uint8 value);
-		virtual uint8 getBusy();
-		virtual void setStrobe(bool high);
+		virtual bool getDirection(void) { return direction; }
+		virtual void setDirection(bool out) = 0;
+		virtual uint8 getData() = 0;
+		virtual void setData(uint8 value) = 0;
+		virtual uint8 getBusy() = 0;
+		virtual void setStrobe(bool high) = 0;
 };
 
 #endif /* _PARALLEL_H */

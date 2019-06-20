@@ -1,3 +1,8 @@
+2019/06/19
+new "pipe" setting for output written to the parallel port,
+allowing to pass it eg. directly to lpr
+
+
 2019/06/11
 Add some files to Makefile.am that should be distributed
 

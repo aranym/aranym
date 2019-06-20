@@ -29,6 +29,7 @@
 #include "parameters.h"
 #include "parallel.h"
 #include "parallel_file.h"
+#include "parallel_pipe.h"
 #ifdef ENABLE_PARALLELX86
 #include "parallel_x86.h"
 #endif
@@ -52,14 +53,24 @@ YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 		parallel = new ParallelParport;
 	else
 #endif
+	if (strcmp("pipe", bx_options.parallel.type)==0)
+		parallel = new ParallelPipe;
+	else if (strcmp("file", bx_options.parallel.type)==0)
 		parallel = new ParallelFile;
-
+	else {
+		bug("unsupported parallel port type %s", bx_options.parallel.type);
+		parallel = 0;
+	}
 	reset();
 }
 
 YAMAHA::~YAMAHA()
 {
-	delete parallel;
+	if (parallel)
+	{
+		delete parallel;
+		parallel = 0;
+	}
 }
 
 void YAMAHA::reset()
@@ -68,7 +79,8 @@ void YAMAHA::reset()
 	for(unsigned int i=0; i<sizeof(yamaha_regs)/sizeof(yamaha_regs[0]); i++)
 		yamaha_regs[i] = 0;
 
-	parallel->reset();
+	if (parallel)
+		parallel->reset();
 }
 
 uint8 YAMAHA::handleRead(memptr addr) {
@@ -78,7 +90,8 @@ uint8 YAMAHA::handleRead(memptr addr) {
 	if (addr == 0) {
 		switch(active_reg) {
 			case 15:
-				value=parallel->getData();
+				if (parallel && parallel->Enabled() && !parallel->getDirection())
+					value=parallel->getData();
 				break;
 			default:
 				value=yamaha_regs[active_reg];
@@ -101,16 +114,19 @@ void YAMAHA::handleWrite(memptr addr, uint8 value) {
 			yamaha_regs[active_reg] = value;
 			switch(active_reg) {
 				case 7:
-					parallel->setDirection(value >> 7);
+					if (parallel && parallel->Enabled())
+						parallel->setDirection(value >> 7);
 					break;
 				case 14:
-					parallel->setStrobe((value >> 5) & 0x01);
+					if (parallel && parallel->Enabled())
+						parallel->setStrobe((value >> 5) & 0x01);
 					if (value & (1<<4)) {
 						getDSP()->reset();
 					}
 					break;
 				case 15:
-					parallel->setData(value);
+					if (parallel && parallel->Enabled() && parallel->getDirection())
+						parallel->setData(value);
 					break;
 			}
 			break;

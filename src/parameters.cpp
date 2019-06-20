@@ -1269,7 +1269,9 @@ struct Config_Tag parallel_conf[]={
 	{ "Type", String_Tag, &PARALLEL_CONF(type), sizeof(PARALLEL_CONF(type)), 0},
 	{ "File", String_Tag, &PARALLEL_CONF(file), sizeof(PARALLEL_CONF(file)), 0},
 	{ "Parport", String_Tag, &PARALLEL_CONF(parport), sizeof(PARALLEL_CONF(parport)), 0},
+	{ "Program", String_Tag, &PARALLEL_CONF(program), sizeof(PARALLEL_CONF(program)), 0},
 	{ "Enabled", Bool_Tag, &PARALLEL_CONF(enabled), 0, 0},
+	{ "Timeout", Int_Tag, &PARALLEL_CONF(timeout), 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -1277,6 +1279,9 @@ static void preset_parallel() {
   safe_strncpy(PARALLEL_CONF(type), "file", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(file), "stderr", sizeof(PARALLEL_CONF(type)));
   safe_strncpy(PARALLEL_CONF(parport), "/dev/parport0", sizeof(PARALLEL_CONF(parport)));
+  safe_strncpy(PARALLEL_CONF(program), "lpr -T \"ARAnyM output\"", sizeof(PARALLEL_CONF(program)));
+  PARALLEL_CONF(enabled) = true;
+  PARALLEL_CONF(timeout) = 10;
 }
 
 static void postload_parallel() {

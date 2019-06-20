@@ -150,7 +150,10 @@ uint8 MFP::handleRead(memptr addr)
 
 	uint8 value;
 	switch(addr) {
-		case 0x01:	value = (GPIP_data & ~ 0x21) | getYAMAHA()->parallel->getBusy();
+		case 0x01:	{
+						Parallel *parallel = getYAMAHA()->parallel;
+						value = (GPIP_data & ~ 0x21) | (parallel && parallel->Enabled() ? parallel->getBusy() : 0x01);
+					}
 					break;
 
 		case 0x03:	value = active_edge;

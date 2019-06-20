@@ -63,6 +63,7 @@ inline void ParallelX86::clr_ctrl(int x)
 
 void ParallelX86::setDirection(bool out)
 {
+	direction = out;
 	if (out)
 		clr_ctrl(5);
 	else

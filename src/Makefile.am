@@ -122,11 +122,13 @@ aranym_SOURCES = \
 	ncr5380.cpp \
 	parallel.cpp \
 	parallel_file.cpp \
+	parallel_pipe.cpp \
 	parameters.cpp \
 	romdiff.cpp \
 	rtc.cpp \
 	serial.cpp \
 	scc.cpp \
+	shellparse.cpp \
 	tools.cpp \
 	videl.cpp \
 	videl_zoom.cpp \

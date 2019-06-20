@@ -219,7 +219,9 @@ typedef struct {
 	char type[256];
 	char file[256];
 	char parport[256];
+	char program[256];
 	bool enabled;
+	uint32 timeout;
 } bx_parallel_options_t;
 
 // Serial port options

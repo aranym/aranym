@@ -1,3 +1,9 @@
+ New features:
+ -------------
+ * new "pipe" setting for output written to the parallel port,
+   allowing to pass it eg. directly to lpr
+
+
 2019/04/14 - version 1.1.0 released
 ==========
 

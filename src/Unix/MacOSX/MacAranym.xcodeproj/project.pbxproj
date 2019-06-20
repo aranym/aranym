@@ -410,6 +410,14 @@
 		347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DB1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		8C21E59C22BF46F700033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
+		8C21E59D22BF46FE00033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
+		8C21E59E22BF470000033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
+		8C21E59F22BF470200033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
+		8C21E5A222BF48F400033271 /* shellparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E5A022BF48E900033271 /* shellparse.cpp */; };
+		8C21E5A322BF48F600033271 /* shellparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E5A022BF48E900033271 /* shellparse.cpp */; };
+		8C21E5A422BF48F700033271 /* shellparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E5A022BF48E900033271 /* shellparse.cpp */; };
+		8C21E5A522BF48F900033271 /* shellparse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E5A022BF48E900033271 /* shellparse.cpp */; };
 		8C54C7DD20B45A2D007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
 		8C54C7DE20B45A41007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
 		8C54C7DF20B45A64007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
@@ -1262,6 +1270,9 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdl_bmp.cpp; path = ../../sdl_bmp.cpp; sourceTree = "<group>"; };
+		8C21E59922BF46B200033271 /* parallel_pipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parallel_pipe.h; sourceTree = "<group>"; };
+		8C21E59A22BF46E300033271 /* parallel_pipe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parallel_pipe.cpp; path = ../../parallel_pipe.cpp; sourceTree = SOURCE_ROOT; };
+		8C21E5A022BF48E900033271 /* shellparse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shellparse.cpp; path = ../../shellparse.cpp; sourceTree = SOURCE_ROOT; };
 		8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "disasm-x86-builtin.c"; path = "../../disasm/disasm-x86-builtin.c"; sourceTree = "<group>"; };
 		8C54C7DB20B459A0007744DD /* disasm-x86.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-x86.cpp"; path = "../../disasm/disasm-x86.cpp"; sourceTree = "<group>"; };
 		8C5BB71A205DBCFD000B8CFC /* nf_hostexec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_hostexec.cpp; sourceTree = "<group>"; };
@@ -1550,6 +1561,7 @@
 				17798DAB0A652B51009733EB /* ncr5380.cpp */,
 				17798DAC0A652B51009733EB /* ndebug.cpp */,
 				17798DAD0A652B51009733EB /* parallel_file.cpp */,
+				8C21E59A22BF46E300033271 /* parallel_pipe.cpp */,
 				17798DAE0A652B51009733EB /* parallel_parport.cpp */,
 				17798DAF0A652B51009733EB /* parallel_x86.cpp */,
 				17798DB00A652B51009733EB /* parallel.cpp */,
@@ -1560,6 +1572,7 @@
 				3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */,
 				1732BC861245412B00272489 /* serial.cpp */,
 				1732BC871245412B00272489 /* serial_port.cpp */,
+				8C21E5A022BF48E900033271 /* shellparse.cpp */,
 				17798DB50A652B51009733EB /* tools.cpp */,
 				17798E8B0A652B52009733EB /* videl.cpp */,
 				F83B576C0C8B1F0100BA68D4 /* videl_zoom.cpp */,
@@ -1656,6 +1669,7 @@
 				17798D2B0A652B50009733EB /* ndebug.h */,
 				17798D2C0A652B50009733EB /* parallel.h */,
 				17798D2D0A652B50009733EB /* parallel_file.h */,
+				8C21E59922BF46B200033271 /* parallel_pipe.h */,
 				17798D2E0A652B50009733EB /* parallel_parport.h */,
 				17798D2F0A652B50009733EB /* parallel_x86.h */,
 				17798D300A652B50009733EB /* parameters.h */,
@@ -2519,6 +2533,7 @@
 				1778A4771555A8A70005B336 /* bootos_emutos.cpp in Sources */,
 				1778A4781555A8A70005B336 /* bootos_linux.cpp in Sources */,
 				1778A4791555A8A70005B336 /* bootos_tos.cpp in Sources */,
+				8C21E59F22BF470200033271 /* parallel_pipe.cpp in Sources */,
 				1778A47A1555A8A70005B336 /* cdrom.cpp in Sources */,
 				1778A47B1555A8A70005B336 /* cfgopts.cpp in Sources */,
 				1778A47C1555A8A70005B336 /* dsp.cpp in Sources */,
@@ -2532,6 +2547,7 @@
 				1778A4841555A8A70005B336 /* hostscreen.cpp in Sources */,
 				1778A4851555A8A70005B336 /* ide.cpp in Sources */,
 				1778A4861555A8A70005B336 /* identify.cpp in Sources */,
+				8C21E5A422BF48F700033271 /* shellparse.cpp in Sources */,
 				1778A4871555A8A70005B336 /* ikbd.cpp in Sources */,
 				1778A4881555A8A70005B336 /* input.cpp in Sources */,
 				1778A4891555A8A70005B336 /* md5.cpp in Sources */,
@@ -2649,6 +2665,7 @@
 				17BCD7FE0B20F6BF00432CE1 /* bootos_emutos.cpp in Sources */,
 				17BCD7FF0B20F6BF00432CE1 /* bootos_linux.cpp in Sources */,
 				17BCD8000B20F6BF00432CE1 /* bootos_tos.cpp in Sources */,
+				8C21E59D22BF46FE00033271 /* parallel_pipe.cpp in Sources */,
 				17BCD8010B20F6BF00432CE1 /* cdrom.cpp in Sources */,
 				17BCD8020B20F6BF00432CE1 /* cfgopts.cpp in Sources */,
 				17BCD8030B20F6BF00432CE1 /* dsp.cpp in Sources */,
@@ -2662,6 +2679,7 @@
 				17BCD80B0B20F6BF00432CE1 /* hostscreen.cpp in Sources */,
 				17BCD80C0B20F6BF00432CE1 /* ide.cpp in Sources */,
 				17BCD80D0B20F6BF00432CE1 /* identify.cpp in Sources */,
+				8C21E5A222BF48F400033271 /* shellparse.cpp in Sources */,
 				17BCD80E0B20F6BF00432CE1 /* ikbd.cpp in Sources */,
 				17BCD80F0B20F6BF00432CE1 /* input.cpp in Sources */,
 				17BCD8100B20F6BF00432CE1 /* md5.cpp in Sources */,
@@ -2785,6 +2803,7 @@
 				17798F1F0A652F99009733EB /* dsp.cpp in Sources */,
 				17798F200A652F9C009733EB /* emul_op.cpp in Sources */,
 				17798F210A652FA6009733EB /* natfeats.cpp in Sources */,
+				8C21E59C22BF46F700033271 /* parallel_pipe.cpp in Sources */,
 				17798F220A652FB3009733EB /* fakeio.cpp in Sources */,
 				17798F230A652FB6009733EB /* hardware.cpp in Sources */,
 				17798F240A652FB9009733EB /* host.cpp in Sources */,
@@ -2824,6 +2843,7 @@
 				17798F430A65303B009733EB /* nfvdi_soft.cpp in Sources */,
 				17798F450A653062009733EB /* nfcdrom.cpp in Sources */,
 				17798F470A653093009733EB /* hostfs.cpp in Sources */,
+				8C21E5A522BF48F900033271 /* shellparse.cpp in Sources */,
 				17798F480A6530AC009733EB /* aranym_glue.cpp in Sources */,
 				17798F490A6530B5009733EB /* memory.cpp in Sources */,
 				B426E0F519D88567003EEB83 /* disasm-glue.cpp in Sources */,
@@ -2969,6 +2989,7 @@
 				B439AC7B0C5B2FD00046EFC9 /* dlgDisk.cpp in Sources */,
 				B439AC7C0C5B2FD00046EFC9 /* dlgKeyboard.cpp in Sources */,
 				B439AC7D0C5B2FD00046EFC9 /* dlgHotkeys.cpp in Sources */,
+				8C21E59E22BF470000033271 /* parallel_pipe.cpp in Sources */,
 				B439AC7E0C5B2FD00046EFC9 /* dlgAlert.cpp in Sources */,
 				B439AC7F0C5B2FD00046EFC9 /* main_unix.cpp in Sources */,
 				B439AC800C5B2FD00046EFC9 /* midi_file.cpp in Sources */,
@@ -3015,6 +3036,7 @@
 				CBCE37AF1B05B76100A19E4D /* maptab.cpp in Sources */,
 				CBD862F21B2D8FA3003357BC /* nfosmesa.cpp in Sources */,
 				CBD0F4951B5CFDD60081A555 /* osmesa_context.cpp in Sources */,
+				8C21E5A322BF48F600033271 /* shellparse.cpp in Sources */,
 				CBBC87021B5F97DE00C0DABF /* glenums.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

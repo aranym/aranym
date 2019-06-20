@@ -47,6 +47,12 @@
 #include "sdlgui.h"
 #include "dlgAlert.h"
 #endif
+#if !defined(_WIN32) || defined(__CYGWIN___)
+#include <sys/wait.h>
+#ifndef WNOHANG
+#define WNOHANG 0
+#endif
+#endif
 
 #define USE_VALGRIND 0
 #if USE_VALGRIND
@@ -138,6 +144,67 @@ void segmentationfault(int)
 {
 	real_segmentationfault();
 }
+
+
+#if !defined(_WIN32) || defined(__CYGWIN___)
+static void child_signal(int sig)
+{
+	int status;
+	pid_t pid;
+
+	if (sig == SIGCHLD)
+	{
+		for (;;)
+		{
+			pid = waitpid((pid_t)-1, &status, WNOHANG);
+			if (pid <= 0)
+				return;
+			if (WIFEXITED(status))
+			{
+				D(bug("child %d exited with status %d", pid, WEXITSTATUS(status)));
+#ifdef WIFSTOPPED
+			} else if (WIFSTOPPED(status))
+			{
+				D(bug("child %d was stopped by signal %d", pid, WSTOPSIG(status)));
+#endif
+#ifdef WIFCONTINUED
+			} else if (WIFCONTINUED(status))
+			{
+				D(bug("child %d was continued by signal %d", pid, WSTOPSIG(status)));
+#endif
+			} else if (WIFSIGNALED(status))
+			{
+				D(bug("child %d was killed by signal %d", pid, WTERMSIG(status)));
+			}
+		}
+	}
+}
+#endif
+
+
+void install_sigchild_handler(void)
+{
+#if !defined(_WIN32) || defined(__CYGWIN___)
+	static int signal_handler_installed;
+
+	if (!signal_handler_installed)
+	{
+		struct sigaction sa;
+		sigset_t set;
+
+		memset(&sa, 0, sizeof(sa));
+		sigemptyset(&set);
+#ifdef SA_NOCLDSTOP
+		sa.sa_flags |= SA_NOCLDSTOP;
+#endif
+		sa.sa_handler = child_signal;
+		sigaction(SIGCHLD, &sa, NULL);
+
+		signal_handler_installed = 1;
+	}
+#endif
+}
+
 
 #if FIXED_ADDRESSING
 bool allocate_all_memory(uintptr fmemory, bool quiet)

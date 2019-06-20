@@ -54,7 +54,7 @@ void ParallelFile::reset(void)
 
 void ParallelFile::setDirection(bool out)
 {
-	DUNUSED(out);
+	direction = out;
 	D(bug("parallel_file: setDirection"));
 }
 
@@ -69,7 +69,8 @@ void ParallelFile::setData(uint8 value)
 	D(bug("parallel_file: setData"));
 	if (!handle) {
 		bx_parallel_options_t * p = &bx_options.parallel;
-		if (strcmp("file", p->type)==0) {
+		if (strcmp("file", p->type) == 0 && p->enabled)
+		{
 			if (strcmp("stdout", p->file)==0) {
 				handle = stdout;
 			} else if (strcmp("stderr", p->file)==0) {
@@ -84,9 +85,12 @@ void ParallelFile::setData(uint8 value)
 			}
 		}
 	}
-	fputc(value,handle);	
-	if (!close_handle) {
-		fflush(handle);	/* useful if you want to see the output before EOLN */
+	if (handle)
+	{
+		fputc(value,handle);	
+		if (!close_handle) {
+			fflush(handle);	/* useful if you want to see the output before EOLN */
+		}
 	}
 }
 
@@ -101,7 +105,3 @@ void ParallelFile::setStrobe(bool high)
 	DUNUSED(high);
 	D(bug("parallel_file: setStrobe"));
 }
-
-/*
-vim:ts=4:sw=4:
-*/

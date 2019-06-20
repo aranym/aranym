@@ -201,6 +201,11 @@ void invoke200HzInterrupt()
 		VBL_counter -= VBL_MS;
 		do_vbl_irq();
 	}
+	{
+		Parallel *parallel = getYAMAHA()->parallel;
+		if (parallel)
+			parallel->check_pipe();
+	}
 }
 
 #ifdef RTC_TIMER

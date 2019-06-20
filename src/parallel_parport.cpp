@@ -82,6 +82,7 @@ void ParallelParport::setDirection(bool out)
 	if (ioctl(handle, PPDATADIR, &datadir)<0) {
 		panicbug("ParallelParport: Can not set direction");
 	}
+	direction = out;
 }
 
 uint8 ParallelParport::getData()
@@ -111,9 +112,9 @@ uint8 ParallelParport::getBusy()
 {
 	uint8 value;
 
-	value=0;
+	value=PARPORT_STATUS_BUSY;
 	D(bug("ParallelParport: getBusy"));
-	if (handle>=0) {
+	if (handle>=0 && getDirection()) {
 		if (ioctl(handle, PPRSTATUS, &value)<0) {
 			panicbug("ParallelParport: Can not read BUSY line");
 		}

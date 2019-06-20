@@ -29,6 +29,7 @@
 /*--- Public functions ---*/
 
 Parallel::Parallel(void)
+	: direction(true)
 {
 	D(bug("parallel: created"));
 }
@@ -38,41 +39,7 @@ Parallel::~Parallel(void)
 	D(bug("parallel: destroyed"));
 }
 
-void Parallel::reset(void)
+bool Parallel::Enabled(void)
 {
-	D(bug("parallel: reset"));
+	return bx_options.parallel.enabled;
 }
-
-void Parallel::setDirection(bool out)
-{
-	DUNUSED(out);
-	D(bug("parallel: setDirection"));
-}
-
-uint8 Parallel::getData()
-{
-	D(bug("parallel: getData"));
-	return 0;
-}
-
-void Parallel::setData(uint8 value)
-{
-	DUNUSED(value);
-	D(bug("parallel: setData"));
-}
-
-uint8 Parallel::getBusy()
-{
-	D(bug("parallel: getBusy"));
-	return 0;
-}
-
-void Parallel::setStrobe(bool high)
-{
-	DUNUSED(high);
-	D(bug("parallel: setStrobe"));
-}
-
-/*
-vim:ts=4:sw=4:
-*/

@@ -161,6 +161,7 @@
 extern void install_sigsegv(void);
 extern void uninstall_sigsegv(void);
 void real_segmentationfault(void);
+void install_sigchild_handler(void);
 
 #if (defined(OS_cygwin) || defined(OS_mingw)) && defined(EXTENDED_SIGSEGV)
 #ifdef __cplusplus

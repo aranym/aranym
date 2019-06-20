@@ -242,6 +242,7 @@ LibOSMesa = libOSMesa.so
 #  file -> Output to file
 #  x86 -> Hardware access under Linux/X86
 #  parport -> Use /dev/parport device under Linux
+#  pipe -> -> pipe output to program, eg. lpr
 Type = file
 # Output to file: filename, stdout, or stderr
 File = stderr
@@ -249,6 +250,8 @@ File = stderr
 #  File = stderr
 # Linux parport device for Type=parport
 Parport = /dev/parport0
+# printer daemon
+Program = lpr -T "ARAnyM output"
 
 
 [NATFEATS]
