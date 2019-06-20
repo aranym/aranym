@@ -45,7 +45,7 @@ typedef enum {
 	COUNTRY_NL,	// Holland
 	COUNTRY_CZ,	// Czech Republic
 	COUNTRY_HU,	// Hungary
-// the following entries are from EmuTOS and TOS.HYP (http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP)
+// the following entries are from EmuTOS and TOS.HYP (https://freemint.github.io/tos.hyp/en/bios_cookiejar.html#Cookie_2C_20_AKP)
 	COUNTRY_PL,	// Poland
 	COUNTRY_LT,	// Lithuania
 	COUNTRY_RU, // Russia
