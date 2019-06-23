@@ -2,7 +2,7 @@
  * scc.h - 85C30 emulation code - declaration
  *
  * Copyright (c) 2001-2004 Petr Stehlik of ARAnyM dev team (see AUTHORS)
- * 
+ *
  * This file is part of the ARAnyM project which builds a new and powerful
  * TOS/FreeMiNT compatible virtual machine running on almost any hardware.
  *
@@ -55,14 +55,26 @@
 /*
  * bits in WR9 (Master Interrupt control)
  */
-#define SCC_RESETA  (1 << 7) /* Reset channel A */
-#define SCC_RESETB  (1 << 6) /* Reset channel B */
-#define SCC_INTACK  (1 << 5) /* Software INTACK Enable */
-#define SCC_STATUS  (1 << 4) /* Status High/Status Low */
-#define SCC_MIE     (1 << 3) /* Master Interrupt Enable */
-#define SCC_DLC     (1 << 2) /* Disable Lower chain */
-#define SCC_NV      (1 << 1) /* No Vector select */
 #define SCC_VIS     (1 << 0) /* Vector Includes Status */
+#define SCC_NV      (1 << 1) /* No Vector select */
+#define SCC_DLC     (1 << 2) /* Disable Lower chain */
+#define SCC_MIE     (1 << 3) /* Master Interrupt Enable */
+#define SCC_STATUS  (1 << 4) /* Status High/Status Low */
+#define SCC_INTACK  (1 << 5) /* Software INTACK Enable */
+#define SCC_RESETB  (1 << 6) /* Reset channel B */
+#define SCC_RESETA  (1 << 7) /* Reset channel A */
+
+/*
+ * bits in WR15 (External/Status Interrupt Control)
+ */
+#define SCC_SDLC_FEATURE_ENABLE (1 << 0) /* WR7 prime SDLC Feature Enable */
+#define SCC_ZERO_COUNT_IE       (1 << 1) /* Zero Count Interrupt Enable */
+#define SCC_SDLC_FIFO_ENABLE    (1 << 2) /* SDLC FIFO Enable */
+#define SCC_DCD_IE              (1 << 3) /* DCD Interrupt Enable */
+#define SCC_SYNC_IE             (1 << 4) /* Sync/Hunt Interrupt Enable */
+#define SCC_CTS_IE              (1 << 5) /* CTS Interrupt Enable */
+#define SCC_TXERR_IE            (1 << 6) /* TX Underrun/EOM Interrupt Enable */
+#define SCC_BREAK_IE            (1 << 7) /* Break/Abort Interrupt Enable */
 
 
 class SCC : public BASE_IO {
@@ -76,6 +88,7 @@ private:
 		 * read registers are emulated
 		 */
 		uint8 regs[16];
+		uint8 wr7_prime;
 		int charcount;
 
 		void reset(int num);

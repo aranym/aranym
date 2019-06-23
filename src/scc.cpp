@@ -75,11 +75,12 @@ void SCC::SCCchannel::reset(int num)
 	charcount = 0;
 	for (unsigned int i = 0; i < sizeof(regs) / sizeof(regs[0]); i++)
 		regs[i] = 0;
-	regs[15] = 0xF8;
+	regs[15] = SCC_BREAK_IE | SCC_TXERR_IE | SCC_CTS_IE | SCC_SYNC_IE | SCC_DCD_IE;
 	regs[14] = 0xA0;
 	regs[11] = 0x08;
 	regs[9] = 0;
 	regs[0] = SCC_TBE;				//RR0A
+	wr7_prime = 0;
 }
 
 
@@ -96,6 +97,21 @@ uint8 SCC::handleRead(memptr addr)
 	case 4:							// channel B
 		switch (channel.active_reg)
 		{
+		case 4:
+			/*
+			 * On the ESCC, Read Register 4 reflects the contents of
+			 * Write Register 4 provided the Extended Read option is en-
+			 * abled. Otherwise, this register returns an image of RR0.
+			 * On the NMOS/CMOS version, a read to this location re-
+			 * turns an image of RR0.
+			 */
+			if (channel.wr7_prime & 0x40)
+			{
+				value = channel.regs[4];
+				break;
+			}
+			/* fall through */
+
 		case 0:
 			if (channel.channel)
 			{							// RR0B
@@ -112,6 +128,15 @@ uint8 SCC::handleRead(memptr addr)
 			}
 			break;
 
+		case 6:
+			/*
+			 * On the CMOS and ESCC, Read Register 6 contains the
+			 * least significant byte of the frame byte count that is currently
+			 * at the top of the Status FIFO. This register is readable only
+			 * if the FIFO is enabled. Otherwise, this register is an image of RR2.
+			 * On the NMOS version, a read to this register location re-
+			 * turns an image of RR2.
+			 */
 		case 2:
 			/*
 			 * RR2 contains the interrupt vector written into WR2. When
@@ -203,17 +228,6 @@ uint8 SCC::handleRead(memptr addr)
 			value = channel.channel ? 0 : RR3;	//access on A channel only
 			break;
 
-		case 4:
-			/*
-			 * On the ESCC, Read Register 4 reflects the contents of
-			 * Write Register 4 provided the Extended Read option is en-
-			 * abled. Otherwise, this register returns an image of RR0.
-			 * On the NMOS/CMOS version, a read to this location re-
-			 * turns an image of RR0.
-			 */
-			value = channel.regs[0];
-			break;
-
 		case 8:
 			/* RR8 is the Receive Data register */
 			if (channel.channel)
@@ -234,7 +248,27 @@ uint8 SCC::handleRead(memptr addr)
 			 * On the NMOS/CMOS version, a read to this location re-
 			 * turns an image of RR13.
 			 */
-			value = channel.regs[13];
+			if (channel.wr7_prime & 0x40)
+			{
+				value = channel.regs[3];
+				break;
+			}
+			/* fall through */
+
+		case 13:
+			/*
+			 * RR13 returns the value stored in WR13, the upper byte of
+			 * the time constant for the BRG.
+			 */
+			value = channel.regs[channel.active_reg];
+			break;
+
+		case 12:
+			/*
+			 * RR12 returns the value stored in WR12, the lower byte of
+			 * the time constant, for the BRG.
+			 */
+			value = channel.regs[channel.active_reg];
 			break;
 
 		case 11:
@@ -246,33 +280,22 @@ uint8 SCC::handleRead(memptr addr)
 			 * On the NMOS/CMOS version, a read to this location re-
 			 * turns an image of RR15.
 			 */
+			if (channel.wr7_prime & 0x40)
+			{
+				value = channel.regs[10];
+				break;
+			}
+			/* fall through */
+
 		case 15:						// EXT/STATUS IT Ctrl
 			/*
 			 * RR15 reflects the value stored in WR15, the
 			 * External/Status IE bits. The two unused bits are always
 			 * returned as Os.
 			 */
-			value = channel.regs[15] &= 0xFA;	// mask out D2 and D0
+			value = channel.regs[15];
 			break;
 
-		case 12:
-			/*
-			 * RR12 returns the value stored in WR12, the lower byte of
-			 * the time constant, for the BRG.
-			 */
-		case 13:
-			/*
-			 * RR13 returns the value stored in WR13, the upper byte of
-			 * the time constant for the BRG.
-			 */
-			value = channel.regs[channel.active_reg];
-			break;
-
-		case 1:
-			/*
-			 * RR1 contains the Special Receive Condition status bits
-			 * and the residue codes for the l-field in SDLC mode.
-			 */
 		case 5:
 			/*
 			 * On the ESCC, Read Register 5 reflects the contents of
@@ -281,15 +304,47 @@ uint8 SCC::handleRead(memptr addr)
 			 * On the NMOS/CMOS version, a read to this register re-
 			 * turns an image of RR1.
 			 */
-		case 6:
+			if (channel.wr7_prime & 0x40)
+			{
+				value = channel.regs[5];
+				break;
+			}
+			/* fall through */
+
+		case 1:
 			/*
-			 * On the CMOS and ESCC, Read Register 6 contains the
-			 * least significant byte of the frame byte count that is currently
-			 * at the top of the Status FIFO. This register is readable only
-			 * if the FIFO is enabled. Otherwise, this register is an image of RR2.
-			 * On the NMOS version, a read to this register location re-
-			 * turns an image of RR2.
+			 * RR1 contains the Special Receive Condition status bits
+			 * and the residue codes for the l-field in SDLC mode.
 			 */
+			D(bug("scc : unprocessed register %d read *********", channel.active_reg));
+			value = 0;
+			break;
+
+		case 14:
+			/*
+			 * On the ESCC, Read Register 14 reflects the contents of
+			 * Write Register 7 Prime provided the Extended Read option
+			 * has been enabled. Otherwise, this register returns an im-
+			 * age of RR10.
+			 * On the NMOS/CMOS version, a read to this location re-
+			 * turns an image of RR10.
+			 */
+			if (channel.wr7_prime & 0x40)
+			{
+				value = channel.wr7_prime;
+				break;
+			}
+			/* fall through */
+
+		case 10:
+			/*
+			 * RR10 contains some miscellaneous status bits. Unused
+			 * bits are always 0.
+			 */
+			D(bug("scc : unprocessed register %d read *********", channel.active_reg));
+			value = 0;
+			break;
+
 		case 7:
 			/*
 			 * On the CMOS and ESCC, Read Register 7 contains the
@@ -302,11 +357,6 @@ uint8 SCC::handleRead(memptr addr)
 			 * registers should be read in the following order: RR7, RR6,
 			 * RR1.
 			 */
-		case 10:
-			/*
-			 * RR10 contains some miscellaneous status bits. Unused
-			 * bits are always 0.
-			 */
 			D(bug("scc : unprocessed register %d read *********", channel.active_reg));
 			value = 0;
 			break;
@@ -315,6 +365,8 @@ uint8 SCC::handleRead(memptr addr)
 			value = 0;
 			break;
 		}
+		// next access for RR0 or WR0
+		channel.active_reg = 0;
 		break;
 	case 2:							// channel A
 		value = A.regs[8];			// TBD (LAN)
@@ -327,7 +379,6 @@ uint8 SCC::handleRead(memptr addr)
 		D(bug("scc : illegal read address=$%x", addr + getHWoffset()));
 		break;
 	}
-	channel.active_reg = 0;						// next access for RR0 or WR0
 /*	D(bug("HWget_b(0x%08x)=0x%02x at 0x%08x", addr + getHWoffset(), value, showPC()));*/
 	return value;
 }
@@ -391,9 +442,10 @@ void SCC::handleWrite(memptr addr, uint8 value)
 					else
 						RR3 &= ~SCCA_CTS_INT;		// channel A
 				}
-				TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));	// clear SCC flag if no pending IT
+				// clear SCC flag if no pending IT
 				// or no properly configured WR9
 				// must be done here to avoid scc_do_Interrupt call without pending IT
+				TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));
 			}
 			break;
 
@@ -401,7 +453,12 @@ void SCC::handleWrite(memptr addr, uint8 value)
 			channel.regs[channel.active_reg] = value;
 			// single WR2 on SCC
 			other_channel.regs[channel.active_reg] = value;
-			channel.active_reg = 0;				// next access for RR0 or WR0
+
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
+
+			// set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
+			TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));
 			break;
 
 		case 8:
@@ -409,7 +466,9 @@ void SCC::handleWrite(memptr addr, uint8 value)
 			if (channel.channel)
 				serial->setData(value);	// channel B only
 			// channel A to be done if necessary
-			channel.active_reg = 0;				// next access for RR0 or WR0
+
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		case 1:
@@ -447,7 +506,12 @@ void SCC::handleWrite(memptr addr, uint8 value)
 				else
 					RR3 &= ~SCCA_RCV_INT;
 			}
-			channel.active_reg = 0;				// next access for RR0 or WR0
+
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
+
+			// set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
+			TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));
 			break;
 
 		case 5:
@@ -460,7 +524,8 @@ void SCC::handleWrite(memptr addr, uint8 value)
 			}
 			// Tx character format & Tx CRC would be selected also here (8 bits/char and no CRC assumed)
 
-			channel.active_reg = 0;				// next access for RR0 or WR0
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		case 9:
@@ -482,7 +547,11 @@ void SCC::handleWrite(memptr addr, uint8 value)
 			}
 			//  set or clear SCC flag accordingly (see later)
 
-			channel.active_reg = 0;				// next access for RR0 or WR0
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
+
+			// set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
+			TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));
 			break;
 
 		case 12:
@@ -491,7 +560,9 @@ void SCC::handleWrite(memptr addr, uint8 value)
 			 * baud rate generator.
 			 */
 			channel.regs[channel.active_reg] = value;
-			channel.active_reg = 0;				// next access for RR0 or WR0
+
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		case 13:
@@ -637,22 +708,21 @@ Rsconf    Falcon    Falcon(+HSMODEM)          Aranym      Aranym(+HSMODEM)
 15            50         76800                    50          50
 
 */
-			channel.active_reg = 0;				// next access for RR0 or WR0
+
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		case 15:
 			// external status int control
-			channel.regs[channel.active_reg] = value;
-			if (value & 1)
+			// mask out D2 and D0
+			channel.regs[channel.active_reg] = value & ~(SCC_SDLC_FIFO_ENABLE|SCC_SDLC_FEATURE_ENABLE);
+			if (value & SCC_SDLC_FEATURE_ENABLE)
 			{
 				D(bug("SCC WR7 prime not yet processed"));
 			}
-			channel.active_reg = 0;				// next access for RR0 or WR0
-			break;
-
-			if (channel.active_reg == 1 || channel.active_reg == 2 || channel.active_reg == 9)
-				TriggerSCC((RR3 & RR3M) && (((SCC_MIE|SCC_NV|SCC_VIS) & A.regs[9]) == (SCC_MIE|SCC_VIS)));	// set or clear SCC flag accordingly. Yes it's ugly but avoids unnecessary useless calls
-			channel.active_reg = 0;				// next access for RR0 or WR0
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		case 3:
@@ -661,14 +731,17 @@ Rsconf    Falcon    Falcon(+HSMODEM)          Aranym      Aranym(+HSMODEM)
 		case 7:
 		case 10:
 		case 11:
+		case 14:
 			channel.regs[channel.active_reg] = value;
-			D(bug("scc : unprocessed register %d read *********", channel.active_reg));
-			channel.active_reg = 0;				// next access for RR0 or WR0
+			D(bug("scc : unprocessed register %d written *********", channel.active_reg));
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 
 		default:
 			panicbug("scc : illegal register %d written *********", channel.active_reg);
-			channel.active_reg = 0;				// next access for RR0 or WR0
+			// next access for RR0 or WR0
+			channel.active_reg = 0;
 			break;
 		}
 		break;

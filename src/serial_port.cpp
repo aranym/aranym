@@ -134,7 +134,7 @@ void Serialport::setBaud(uint32 value)
 		case 75:		new_speed = B75;	break;
 		case 50:		new_speed = B50;	break;
 		case 0:			new_speed = B0;		break; /* used by some drivers to drop DTR */
-		default:		D(bug("unregistered baud value $%x", value)); return;
+		default:		D(bug("unregistered baud value %d", value)); return;
 	}
 
 	struct termios options;
