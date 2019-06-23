@@ -27,6 +27,7 @@
 #include "parallel.h"
 #include "parallel_pipe.h"
 #include "shellparse.h"
+#include <errno.h>
 
 #define DEBUG 0
 #include "debug.h"

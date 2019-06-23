@@ -1,4 +1,8 @@
 2019/06/23
+Add a missing include
+
+
+2019/06/23
 Rework the way VERSION_STRING is generated, so snapshot versions
 can be distinguished
 
