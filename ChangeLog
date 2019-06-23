@@ -1,4 +1,9 @@
 2019/06/23
+Rework the way VERSION_STRING is generated, so snapshot versions
+can be distinguished
+
+
+2019/06/23
 Reorganize SCC driver
 
 

@@ -9,7 +9,7 @@
 #define _stringify(x)	#x
 
 #undef VERSION_STRING
-#define VERSION_STRING	str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS
+#define VERSION_STRING	str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VERSION_DATE
 
 1 ICON "aranym.ico"
 

@@ -22,14 +22,8 @@
 #define VER_MAJOR	1
 #define VER_MINOR	1
 #define VER_MICRO	0
+#define RELEASE_DATE "2019/04/14"
 
-#ifndef VER_STATUS
-#define VER_STATUS
-//#define VER_STATUS	"+" CVS_DATE
-//#define VER_STATUS	"alpha"
-//#define VER_STATUS	"beta"
-//#define VER_STATUS	"beta+" CVS_DATE
-#endif
 
 #define NAME_STRING "ARAnyM"
 

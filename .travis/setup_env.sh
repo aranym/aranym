@@ -104,6 +104,7 @@ tag_set() {
 	case $tag in
 		ARANYM_*)
 			isrelease=true
+			echo yes > .isrelease
 			;;
 		*)
 			ATAG=${VERSION}${archive_tag}-${SHORT_ID}

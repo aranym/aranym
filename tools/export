@@ -4,15 +4,10 @@
 VER_MAJOR=1
 VER_MINOR=1
 VER_MICRO=0
-VER_STATUS=
+
 #
 VERSION=$VER_MAJOR"."$VER_MINOR"."$VER_MICRO
 TAG="ARANYM_"$VER_MAJOR"_"$VER_MINOR"_"$VER_MICRO
-if [ "x$VER_STATUS" != "x" ]
-then
-	VERSION=$VERSION""$VER_STATUS
-	TAG=$TAG"_"$VER_STATUS
-fi
 #upper case the tag
 TAG=`echo $TAG | tr '[:lower:]' '[:upper:]'`
 FOLDER="aranym-"$VERSION

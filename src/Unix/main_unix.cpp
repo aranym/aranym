@@ -73,16 +73,10 @@
 #include "version_date.h"
 #include "version.h"
 
-#ifdef VERSION_DATE
-#define CVS_DATE	"git " VERSION_DATE
-#else
-#define CVS_DATE	"git"
-#endif
-
 #define str(x)		_stringify (x)
 #define _stringify(x)	#x
 
-#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS 
+#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VERSION_DATE 
 
 
 char const name_string[] = NAME_STRING;

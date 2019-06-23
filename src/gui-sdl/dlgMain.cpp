@@ -50,9 +50,12 @@
 #define SDLGUI_INCLUDE_MAINDLG
 #include "sdlgui.sdl"
 
+static char const equals[] = "=======================================";
+static char const spaces[] = "                                       ";
+
 static const char *ABOUT_TEXT =
-"            %s\n"
-"            =============\n"
+"%.*s%s\n"
+"%.*s%.*s\n"
 "\n"
 "ARAnyM as an Open Source project has\n"
 "been developed by a loosely knit team\n"
@@ -111,6 +114,7 @@ DlgMain::~DlgMain()
 extern "C" int vasprintf(char **, const char *, va_list);
 #endif
 
+
 static void aboutalert(const char *fmt, ...)
 {
 	va_list args;
@@ -136,7 +140,20 @@ int DlgMain::processDialog(void)
 
 	switch(return_obj) {
 		case ABOUT:
-			aboutalert(ABOUT_TEXT, version_string);
+			{
+				int version_len = (int)strlen(version_string);
+				int padlen = (int)strlen(spaces);
+				int equal_len = version_len;
+				if (version_len >= padlen)
+				{
+					equal_len = padlen;
+					padlen = 0;
+				} else
+				{
+					padlen = (padlen - version_len) / 2;
+				}
+				aboutalert(ABOUT_TEXT, padlen, spaces, version_string, padlen, spaces, equal_len, equals);
+			}
 			break;
 		case DISCS:
 			SDLGui_Open(DlgDiskOpen());

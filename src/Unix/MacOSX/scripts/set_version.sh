@@ -12,7 +12,7 @@ if [ ! -f "$DERIVED_FILE_DIR/aranym_version" ]; then
 #define str(x)		_stringify (x)
 #define _stringify(x)	#x
 
-#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VER_STATUS
+#define VERSION_STRING	NAME_STRING " " str (VER_MAJOR) "." str (VER_MINOR) "." str (VER_MICRO) VERSION_DATE
 
 int main() {
   puts(VERSION_STRING);

@@ -32,9 +32,18 @@ BUILT_SOURCES = \
 	$(top_srcdir)/atari/nfosmesa/osmesa_loadslb.c \
 	$(empty)
 
-version_date.h: $(top_srcdir)/ChangeLog
-	echo '/* generated from ChangeLog */' > $@
-	sed -n '/^20[0-9][0-9]\/[0-9]*\/[0-9]/p' < $(top_srcdir)/ChangeLog | sed 's/^\(20[0-9][0-9]\/[0-9]*\/[0-9]*\).*/#define VERSION_DATE "\1"/;q' >> $@
+version_date.h:
+	@echo generating $@
+	@( if test -f "$(top_srcdir)/.isrelease"; then \
+		echo '/* generated from version.h */'; \
+		echo '#define VERSION_DATE " " RELEASE_DATE " (release)"'; \
+	  elif test -d "$(top_srcdir)/.git"; then \
+		echo '/* generated from git log */'; \
+		cd "$(top_srcdir)" && git log -n 1 --pretty=format:'#define VERSION_DATE " %ad (git:%h)"%n' --date=format:%Y/%m/%d; \
+	  else \
+		echo '/* generated from local source */'; \
+		echo '#define VERSION_DATE " " __DATE__ " (local)"'; \
+	  fi ) > $@
 
 built_sources: $(BUILT_SOURCES)
 
