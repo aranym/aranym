@@ -38,6 +38,7 @@
 #include "videl.h"
 #include "videl_zoom.h"
 #include "joypads.h"
+#include "scc.h"
 
 #define DEBUG 0
 #include "debug.h"

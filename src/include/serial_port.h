@@ -28,19 +28,19 @@ class Serialport: public Serial
 		int handle;
 		uint16 oldTBE;
 		uint16 oldStatus;
-		uint16 getTBE();
 
 	public:
-		Serialport(void);
+		Serialport(const char *device);
 		~Serialport(void);
 		void reset(void);
 		
 		uint8 getData();
 		void setData(uint8 value);
 		void setBaud(uint32 value);
-		uint16 getStatus();
+		uint16 getStatus(int &charcount);
 		void setRTS(bool value);
 		void setDTR(bool value);
+		uint16 getTBE();
 };
 
 #endif /* SERIAL_PORT_H */

@@ -1300,6 +1300,7 @@ struct Config_Tag serial_conf[]={
 
 static void preset_serial() {
   safe_strncpy(SERIAL_CONF(serport), DEFAULT_SERIAL, sizeof(SERIAL_CONF(serport)));
+  SERIAL_CONF(enabled) = false;
 }
 
 static void postload_serial() {

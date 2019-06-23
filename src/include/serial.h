@@ -33,7 +33,7 @@ class Serial {
 		virtual uint8 getData();
 		virtual void setData(uint8 value);
 		virtual void setBaud(uint32 value);
-		virtual uint16 getStatus();
+		virtual uint16 getStatus(int &charcount);
 		virtual void setRTS(bool value);
 		virtual void setDTR(bool value);
 		virtual uint16 getTBE();

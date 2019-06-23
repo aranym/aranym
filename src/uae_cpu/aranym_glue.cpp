@@ -28,6 +28,7 @@
 #include "cpu_emulation.h"
 #include "newcpu.h"
 #include "hardware.h"
+#include "scc.h"
 #include "input.h"
 #ifdef USE_JIT
 # include "compiler/compemu.h"

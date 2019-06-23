@@ -250,7 +250,7 @@ File = stderr
 #  File = stderr
 # Linux parport device for Type=parport
 Parport = /dev/parport0
-# printer daemon
+# program to run for Type=pipe
 Program = lpr -T "ARAnyM output"
 
 

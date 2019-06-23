@@ -38,11 +38,9 @@
 #include "audio_dma.h"
 #include "audio_crossbar.h"
 #include "joypads.h"
-#include "scc.h"
 
+class SCC;
 extern Parallel *parallel;
-
-extern Serial *serial;
 
 extern uae_u32 vram_addr;
 

@@ -38,6 +38,11 @@ Serial::~Serial(void)
 	D(bug("serial: destroyed"));
 }
 
+/*
+ * dummy implementations; only used
+ * when no serial device support is available;
+ * need not be called by derived classes
+ */
 void Serial::reset(void)
 {
 	D(bug("serial: reset"));
@@ -61,9 +66,10 @@ void Serial::setBaud(uint32 value)
 	D(bug("serial: setBaud"));
 }
 
-uint16 Serial::getStatus()
+uint16 Serial::getStatus(int &charcount)
 {
 	D(bug("serial: getStatus"));
+	charcount = 0;
 	return 0;
 }
 
@@ -84,7 +90,3 @@ uint16 Serial::getTBE()
 	D(bug("serial: getTBE"));
 	return 0;
 }
-
-/*
-vim:ts=4:sw=4:
-*/

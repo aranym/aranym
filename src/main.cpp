@@ -28,6 +28,7 @@
 #include "main.h"
 #include "input.h"
 #include "hardware.h"
+#include "scc.h"
 #include "parameters.h"
 #include "host.h"			// for the HostScreen
 #include "parameters.h"
