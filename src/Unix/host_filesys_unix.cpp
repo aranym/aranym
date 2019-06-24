@@ -37,8 +37,8 @@ char *HostFilesys::getHomeFolder(char *buffer, unsigned int bufsize)
 
 	// Unix-like systems define HOME variable as the user home folder
 	char *home = getenv("HOME");
-	if ( home )
-		strncpy( buffer, home, bufsize );
+	if (home && strlen(home) < bufsize)
+		strcpy(buffer, home);
 	return buffer;
 }
 
