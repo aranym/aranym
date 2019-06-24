@@ -991,7 +991,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 			// and the extension
 			extLen = MIN(3,extLen);
 			dest[nameLen] = '.';
-			strncpy(&dest[nameLen+1], dot, extLen);
+			memcpy(&dest[nameLen+1], dot, extLen);
 		}
 
 		dest[ nameLen+extLen+1 ] = '\0';
