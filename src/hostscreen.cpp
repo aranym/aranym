@@ -856,13 +856,18 @@ SDL_bool HostScreen::grabMouse(SDL_bool grab)
 	{
 		char ungrab_key[HOTKEYS_STRING_SIZE];
 		std::string buf;
+		/*
+		 * with eiffel emulation, middle button is not used for ungrab,
+		 * so don't report it
+		 */
+		std::string middle = bx_options.ikbd.wheel_eiffel ? "" : "or middle mouse button ";
 		keysymToString(ungrab_key, &bx_options.hotkeys.ungrab);
 #ifdef SDL_GUI
 		char setup_key[HOTKEYS_STRING_SIZE];
 		keysymToString(setup_key, &bx_options.hotkeys.setup);
-		buf = "ARAnyM: press [" + std::string(setup_key) + std::string("] for SETUP, [") + std::string(ungrab_key) + std::string("] or middle mouse button to release input grab");
+		buf = "ARAnyM: press [" + std::string(setup_key) + std::string("] for SETUP, [") + std::string(ungrab_key) + std::string("] ") + middle + std::string("to release input grab");
 #else
-		buf = std::string("ARAnyM: press [") + std::string(ungrab_key) + std::string("] or middle mouse button to release input grab");
+		buf = std::string("ARAnyM: press [") + std::string(ungrab_key) + std::string("] ") + middle + std::string("to release input grab");
 #endif
 		SetCaption(buf.c_str());
 	}
