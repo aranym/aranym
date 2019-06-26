@@ -1045,16 +1045,37 @@ static void process_mouse_event(const SDL_Event &event)
 				break;
 
 			case SDL_BUTTON_MIDDLE:
-				if (bx_options.ikbd.wheel_eiffel) {
+				if (bx_options.ikbd.mbutton == MB_eiffel) {
 					D(bug("Middle mouse button"));
 					getIKBD()->SendKey(0x37 | releaseKeyMask);
 				}
 				else if (clicked) {
-					// ungrab on middle mouse button click
-					if ( bx_options.video.fullscreen )
+					switch (bx_options.ikbd.mbutton)
+					{
+					case MB_ignore:
+					case MB_eiffel:
+						break;
+					case MB_ungrab:
+						// ungrab on middle mouse button click
+						if ( bx_options.video.fullscreen )
+							video->toggleFullScreen();
+						video->releaseTheMouse();
+						video->CanGrabMouseAgain(false);	// let it leave our window
+						break;
+					case MB_setup:
+#ifdef SDL_GUI
+						open_GUI();
+#endif
+						break;
+					case MB_screenshot:
+						video->doScreenshot();
+						break;
+					case MB_fullscreen:
 						video->toggleFullScreen();
-					video->releaseTheMouse();
-					video->CanGrabMouseAgain(false);	// let it leave our window
+						if (bx_options.video.fullscreen && !video->GrabbedMouse())
+							video->grabTheMouse();
+						break;
+					}
 				}
 				return;
 

@@ -857,10 +857,9 @@ SDL_bool HostScreen::grabMouse(SDL_bool grab)
 		char ungrab_key[HOTKEYS_STRING_SIZE];
 		std::string buf;
 		/*
-		 * with eiffel emulation, middle button is not used for ungrab,
-		 * so don't report it
+		 * don't report middle button if not configured to ungrab.
 		 */
-		std::string middle = bx_options.ikbd.wheel_eiffel ? "" : "or middle mouse button ";
+		std::string middle = bx_options.ikbd.mbutton != MB_ungrab ? "" : "or middle mouse button ";
 		keysymToString(ungrab_key, &bx_options.hotkeys.ungrab);
 #ifdef SDL_GUI
 		char setup_key[HOTKEYS_STRING_SIZE];

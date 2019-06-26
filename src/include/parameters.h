@@ -230,10 +230,20 @@ typedef struct {
 	bool enabled;
 } bx_serial_options_t;
 
+typedef enum {
+	MB_ignore,
+	MB_ungrab,
+	MB_setup,
+	MB_fullscreen,
+	MB_screenshot,
+	MB_eiffel,
+} MIDDLE_BUTTON;
+
 // Keyboard and mouse
 typedef struct {
   bool wheel_eiffel;	// eiffel compatible scancodes for mouse wheel
   bool altgr;			// real AltGr like on Milan
+  uint32 /* MIDDLE_BUTTON */ mbutton;
 } bx_ikbd_options_t;
 
 // Hotkeys

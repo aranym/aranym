@@ -1,5 +1,6 @@
  New features:
  -------------
+ * action to be taken on middle mouse button press can now be configured
  * new "pipe" setting for output written to the parallel port,
    allowing to pass it eg. directly to lpr
 

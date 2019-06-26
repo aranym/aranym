@@ -37,6 +37,12 @@ DlgKeyboard::DlgKeyboard(SGOBJ *dlg)
 	keyboarddlg[ARROWKEYS].state = bx_options.ikbd.wheel_eiffel ? 0 : SG_SELECTED;
 	keyboarddlg[MILAN_ALTGR].state = bx_options.ikbd.altgr ? SG_SELECTED : 0;
 	keyboarddlg[ATARI_ALT].state = bx_options.ikbd.altgr ? 0 : SG_SELECTED;
+	keyboarddlg[MIDDLE_IGNORE].state = bx_options.ikbd.mbutton == MB_ignore ? SG_SELECTED : 0;
+	keyboarddlg[MIDDLE_UNGRAB].state = bx_options.ikbd.mbutton == MB_ungrab ? SG_SELECTED : 0;
+	keyboarddlg[MIDDLE_SETUP].state = bx_options.ikbd.mbutton == MB_setup ? SG_SELECTED : 0;
+	keyboarddlg[MIDDLE_FULLSCREEN].state = bx_options.ikbd.mbutton == MB_fullscreen ? SG_SELECTED : 0;
+	keyboarddlg[MIDDLE_SCREENSHOT].state = bx_options.ikbd.mbutton == MB_screenshot ? SG_SELECTED : 0;
+	keyboarddlg[MIDDLE_EIFFEL].state = bx_options.ikbd.mbutton == MB_eiffel ? SG_SELECTED : 0;
 }
 
 DlgKeyboard::~DlgKeyboard()
@@ -61,8 +67,20 @@ int DlgKeyboard::processDialog(void)
 
 void DlgKeyboard::confirm(void)
 {
-	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED);
-	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED);
+	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED) != 0;
+	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED) != 0;
+	if (keyboarddlg[MIDDLE_IGNORE].state & SG_SELECTED)
+		bx_options.ikbd.mbutton = MB_ignore;
+	else if (keyboarddlg[MIDDLE_SETUP].state & SG_SELECTED)
+		bx_options.ikbd.mbutton = MB_setup;
+	else if (keyboarddlg[MIDDLE_FULLSCREEN].state & SG_SELECTED)
+		bx_options.ikbd.mbutton = MB_fullscreen;
+	else if (keyboarddlg[MIDDLE_SCREENSHOT].state & SG_SELECTED)
+		bx_options.ikbd.mbutton = MB_screenshot;
+	else if (keyboarddlg[MIDDLE_EIFFEL].state & SG_SELECTED)
+		bx_options.ikbd.mbutton = MB_eiffel;
+	else /* if (keyboarddlg[MIDDLE_UNGRAB].state & SG_SELECTED) */
+		bx_options.ikbd.mbutton = MB_ungrab;
 }
 
 Dialog *DlgKeyboardOpen(void)
