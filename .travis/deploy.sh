@@ -56,13 +56,17 @@ function snap_create {
 		armhf)
 			snap_cpu=armhf
 		;;
+		aarch)
+			snap_cpu=arm64
+		;;
 		*)
 			echo "Wrong arch in deploy for snap"
 		;;
 		esac
 	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
-	echo "snap_cpu=$CPU_TYPE" >> env.list
+	echo "snap_cpu=$snap_cpu" >> env.list
 	echo "SNAP_NAME=$SNAP_NAME" >> env.list
+	sed -i '65,90d' snap/snapcraft.yaml # no jit in aarch64
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
 	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
@@ -217,8 +221,13 @@ function uncache_deploy {
 		cd "${TMP}"
 		# firstly merge builds
 		for build_type in jit mmu nor; do
+			if ( echo $arch | grep -q aarch ); then
+				if ( echo $build_type | grep -q jit ); then
+					continue
+				fi
+			fi
 			echo "get $build_type";
-			TARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-${build_type}.tar.xz"
+			TARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-${build_type}.tar.xz"
 			echo "url: https://dl.bintray.com/${BINTRAY_REPO}/temp/${TARCHIVE}"
 			curl -L "https://dl.bintray.com/${BINTRAY_REPO}/temp/${TARCHIVE}" -o ${TARCHIVE}
 			tar xf ${TARCHIVE}
@@ -284,14 +293,20 @@ function uncache_deploy {
 if ! ( echo $is | grep -q deploy ); then # build job
 	case "$TRAVIS_OS_NAME" in
 		linux) # if linux use cache
-			if ! ( echo $arch_build | grep -q armhf ); then # Except if is not arm linux
-				echo "------------ normal --------------------"
-				normal_deploy
-				if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-					bined
-					snap_create
+			if ! ( echo $arch_build | grep -q armhf ); then # Except if is not armhf linux
+				if ! ( echo $arch_build | grep -q aarch ); then
+					echo "------------ normal --------------------"
+					normal_deploy
+					if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+						bined
+						snap_create
+					fi
+				else
+					echo "------------ cache --------------------"
+					cache_deploy
 				fi
-			else # if arm finally use cache
+
+			else # if armhf use cache
 				echo "------------ cache --------------------"
 				cache_deploy
 			fi
@@ -309,7 +324,6 @@ else # deploy job
 	uncache_deploy
 	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
 		bined
-		export CPU_TYPE=armhf
 		snap_create
 	fi
 fi

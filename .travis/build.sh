@@ -83,13 +83,13 @@ linux)
 					mkdir -p "$BUILDROOT${bindir}"
 					install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
 					tag_set
-					ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-jit.tar.xz"
+					ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-jit.tar.xz"
 					(
 					cd "${BUILDROOT}"
 					tar cvfJ "${OUT}/${ARCHIVE}" .
 					)
 				else
-					echo "Jit on armhf cannot be build."
+					echo "Jit cannot be build."
 				fi
 			;;
 			2) # mmu
@@ -102,7 +102,7 @@ linux)
 				mkdir -p "$BUILDROOT${bindir}"
 				install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
 				tag_set
-				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-mmu.tar.xz"
+				ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-mmu.tar.xz"
 				(
 				cd "${BUILDROOT}"
 				tar cvfJ "${OUT}/${ARCHIVE}" .
@@ -118,7 +118,7 @@ linux)
 				sudo chgrp root "$BUILDROOT${bindir}/aratapif"
 				sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
 				tag_set
-				ARCHIVE="${PROJECT_LOWER}-${TRAVIS_COMMIT}-nor.tar.xz"
+				ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-nor.tar.xz"
 				(
 				cd "${BUILDROOT}"
 				tar cvfJ "${OUT}/${ARCHIVE}" .

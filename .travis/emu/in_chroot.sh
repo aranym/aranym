@@ -4,10 +4,9 @@ then
 	echo "error: BINTRAY_API_KEY is undefined" >&2
 fi
 uname -a
-if ( echo $arch_build | grep -q i386 ); then 
+if !( echo $arch_build | grep -q armhf ); then 
 	apt install sudo -y -qq
 fi
-env
 cd "/home/travis/build/${TRAVIS_REPO_SLUG}"
 echo "LC_ALL=en_US.UTF-8" >> /etc/environment
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen

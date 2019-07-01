@@ -76,11 +76,80 @@ matrix:
         skip_cleanup: true
         provider: script
         script: echo "skipped" # skip for now then move it from chroot
+ # enable when aarch64 will support jit
+    # - os: linux
+    #   language: c
+    #   dist: xenial
+    #   sudo: required
+    #   env: 
+    #     - emu=true
+    #     - arch_build=aarch
+    #     - typec=1
+    #   before_install:
+    #     - . ./.travis/emu/install_prerequisities.sh
+    #   before_script:
+    #     - echo "skipped" # skip tag
+    #   script:
+    #     - sudo ./.travis/emu/aarch_chroot.sh
+    #   deploy:
+    #     skip_cleanup: true
+    #     provider: script
+    #     script: echo "skipped" # skip for now then move it from chroot
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      env: 
+        - emu=true
+        - arch_build=aarch
+        - typec=2
+      before_install:
+        - . ./.travis/emu/install_prerequisities.sh
+      before_script:
+        - echo "skipped" # skip tag
+      script:
+        - sudo sg sbuild -c "bash .travis/emu/aarch_chroot.sh"
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: echo "skipped" # skip for now then move it from chroot
+    - os: linux
+      language: c
+      dist: xenial
+      sudo: required
+      env: 
+        - emu=true
+        - arch_build=aarch
+        - typec=3
+      before_install:
+        - . ./.travis/emu/install_prerequisities.sh
+      before_script:
+        - echo "skipped" # skip tag
+      script:
+        - sudo sg sbuild -c "bash .travis/emu/aarch_chroot.sh"
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: echo "skipped" # skip for now then move it from chroot
     - stage: deploy
       os: linux
       dist: xenial
       env: 
         - is=deploy
+        - arch=armhf
+      before_install:
+        - .travis/install_ssh_id.sh
+        - unset SSH_ID
+        - . ./.travis/emu/install_prerequisities.sh
+      script:
+        - echo "skipped" # skip script tag
+      services: docker
+    - stage: deploy
+      os: linux
+      dist: xenial
+      env: 
+        - is=deploy
+        - arch=aarch
       before_install:
         - .travis/install_ssh_id.sh
         - unset SSH_ID
@@ -103,8 +172,6 @@ script:
 branches:
   only:
     - master
-    - new_arch
-    - emu
 
 compiler:
   - gcc
@@ -114,8 +181,6 @@ env:
     - MAKEFLAGS="-j 2"
 
 deploy:
-  on:
-    all_branches: true
   skip_cleanup: true
   provider: script
   script: .travis/deploy.sh

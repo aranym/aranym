@@ -7,10 +7,11 @@ sudo apt-get install -y -qq \
 	zsync \
 	xz-utils \
 	libjson-perl \
-	libwww-perl
+	libwww-perl \
+	lsb-release
 if ! ( echo $is | grep -q deploy ); then
 	sudo apt-get update
-	if ( echo $arch_build | grep -q i386 ); then
+	if ! ( echo $arch_build | grep -q armhf ); then
 		sudo apt-get install build-essential sbuild debootstrap debhelper schroot ubuntu-dev-tools moreutils piuparts -y -qq
 		chmod +x .travis/emu/i386_chroot.sh
 		sudo adduser $USER sbuild
@@ -24,6 +25,7 @@ if ! ( echo $is | grep -q deploy ); then
 		qemu-user-static \
 		binfmt-support
 	chmod +x .travis/emu/armhf_chroot.sh
+	chmod +x .travis/emu/aarch_chroot.sh
 
 
 

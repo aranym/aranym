@@ -18,10 +18,16 @@ if echo "" | gcc -dM  -E - | grep -q "__arm.*__"; then
 	CPU_TYPE=arm
 fi
 if ( echo $is | grep -q deploy ); then
-	CPU_TYPE=armhf
+	CPU_TYPE=$arch
 fi
 if ( echo $arch_build | grep -q i386 ); then
 	CPU_TYPE=i386
+fi
+if ( echo $arch_build | grep -q aarch ); then
+	CPU_TYPE=aarch
+fi
+if ( echo $arch_build | grep -q armhf ); then
+	CPU_TYPE=armhf
 fi
 export CPU_TYPE
 
@@ -70,13 +76,19 @@ linux)
 		;;
 	esac
 	if ( echo $is | grep -q deploy ); then
-		VENDOR=Raspbian
-		archive_tag=-stretch-${CPU_TYPE}
+		if ( echo $arch | grep -q armhf ); then
+			VENDOR=Raspbian
+			archive_tag=-stretch-${CPU_TYPE}
+		elif ( echo $arch | grep -q aarch ); then
+			VENDOR=Ubuntu
+	 		archive_tag=-xenial-${CPU_TYPE}
+		fi
 	fi
-	if ( echo $arch_build | grep -q i386 ); then
-		VENDOR=Ubuntu
-		archive_tag=-xenial-${CPU_TYPE}
-	fi
+	# should not be needed
+	# if ( echo $arch_build | grep -q i386 ); then
+	# 	VENDOR=Ubuntu
+	# 	archive_tag=-xenial-${CPU_TYPE}
+	# fi
 	;;
 
 osx)
