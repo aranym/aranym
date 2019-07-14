@@ -410,6 +410,10 @@
 		347084D91F52D106001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DA1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
 		347084DB1F52D107001D466A /* sdl_bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */; };
+		8C211F8F22DB8F8D00C0E7F4 /* nf_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */; };
+		8C211F9022DB8F8E00C0E7F4 /* nf_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */; };
+		8C211F9122DB8FA000C0E7F4 /* nf_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */; };
+		8C211F9222DB8FA300C0E7F4 /* nf_config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */; };
 		8C21E59C22BF46F700033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
 		8C21E59D22BF46FE00033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
 		8C21E59E22BF470000033271 /* parallel_pipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C21E59A22BF46E300033271 /* parallel_pipe.cpp */; };
@@ -1270,6 +1274,7 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		3424B2C11F52CF7300E0EFC3 /* sdl_bmp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sdl_bmp.cpp; path = ../../sdl_bmp.cpp; sourceTree = "<group>"; };
+		8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_config.cpp; sourceTree = "<group>"; };
 		8C21E59922BF46B200033271 /* parallel_pipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parallel_pipe.h; sourceTree = "<group>"; };
 		8C21E59A22BF46E300033271 /* parallel_pipe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = parallel_pipe.cpp; path = ../../parallel_pipe.cpp; sourceTree = SOURCE_ROOT; };
 		8C21E5A022BF48E900033271 /* shellparse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shellparse.cpp; path = ../../shellparse.cpp; sourceTree = SOURCE_ROOT; };
@@ -1694,6 +1699,7 @@
 		17798D630A652B51009733EB /* natfeat */ = {
 			isa = PBXGroup;
 			children = (
+				8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */,
 				CBD0F4991B5CFDE50081A555 /* osmesa_context.h */,
 				CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */,
 				17798D650A652B51009733EB /* atari_example_gfa.lst */,
@@ -2520,6 +2526,7 @@
 				1778A46A1555A8A70005B336 /* parameters_MacOSX.cpp in Sources */,
 				1778A46B1555A8A70005B336 /* main.cpp in Sources */,
 				1778A46C1555A8A70005B336 /* vm_alloc.cpp in Sources */,
+				8C211F9222DB8FA300C0E7F4 /* nf_config.cpp in Sources */,
 				1778A46D1555A8A70005B336 /* host_clock_unix.cpp in Sources */,
 				1778A46E1555A8A70005B336 /* acia.cpp in Sources */,
 				1778A46F1555A8A70005B336 /* acsifdc.cpp in Sources */,
@@ -2652,6 +2659,7 @@
 				17BCD7F10B20F6BF00432CE1 /* parameters_MacOSX.cpp in Sources */,
 				17BCD7F20B20F6BF00432CE1 /* main.cpp in Sources */,
 				17BCD7F30B20F6BF00432CE1 /* vm_alloc.cpp in Sources */,
+				8C211F9022DB8F8E00C0E7F4 /* nf_config.cpp in Sources */,
 				17BCD7F40B20F6BF00432CE1 /* host_clock_unix.cpp in Sources */,
 				17BCD7F50B20F6BF00432CE1 /* acia.cpp in Sources */,
 				17BCD7F60B20F6BF00432CE1 /* acsifdc.cpp in Sources */,
@@ -2887,6 +2895,7 @@
 				17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 				1732BC82124540FF00272489 /* scc.cpp in Sources */,
 				1732BC881245412B00272489 /* serial.cpp in Sources */,
+				8C211F8F22DB8F8D00C0E7F4 /* nf_config.cpp in Sources */,
 				1732BC891245412B00272489 /* serial_port.cpp in Sources */,
 				1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */,
 				17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */,
@@ -2978,6 +2987,7 @@
 				B439AC6E0C5B2FD00046EFC9 /* nfvdi_soft.cpp in Sources */,
 				B439AC6F0C5B2FD00046EFC9 /* nfcdrom.cpp in Sources */,
 				B439AC700C5B2FD00046EFC9 /* hostfs.cpp in Sources */,
+				8C211F9122DB8FA000C0E7F4 /* nf_config.cpp in Sources */,
 				B439AC710C5B2FD00046EFC9 /* aranym_glue.cpp in Sources */,
 				B439AC720C5B2FD00046EFC9 /* memory.cpp in Sources */,
 				B439AC730C5B2FD00046EFC9 /* newcpu.cpp in Sources */,
