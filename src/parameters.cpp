@@ -36,6 +36,8 @@
 #include "rtc.h"
 #include "vm_alloc.h"
 #include "main.h"
+#include "nf_objs.h"
+#include "nf_config.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -677,6 +679,8 @@ static void preset_global()
 static void postload_global()
 {
 #ifndef FixedSizeFastRAM
+	if (bx_options.fastram > MAX_FASTRAM)
+		bx_options.fastram = 0;
 	FastRAMSize = bx_options.fastram * 1024 * 1024;
 #endif
 #if FIXED_ADDRESSING
@@ -1506,6 +1510,56 @@ static void presave_joysticks() {
 
 /*************************************************************************/
 
+static void userconf_func(int type, const char *name, void *value)
+{
+	uint32_t temp;
+	uint32_t nameval;
+	NF_Config *config;
+	
+	switch (type)
+	{
+	case 0:
+		strcpy((char *)value, "int");
+		break;
+	case 1:
+		break;
+	case 2:
+		sscanf((const char *)value, "%u", &temp);
+		nameval = ((uint32_t)(unsigned char)name[0] << 24) |
+		          ((uint32_t)(unsigned char)name[1] << 16) |
+		          ((uint32_t)(unsigned char)name[2] << 8) |
+		          ((uint32_t)(unsigned char)name[3] << 0);
+		config = NF_Config::GetNFConfig();
+		if (config)
+			config->SetValue(nameval, temp);
+		break;
+	case 3:
+		config = NF_Config::GetNFConfig();
+		if (config)
+		{
+			FILE *outfile = (FILE *)value;
+			nameval = 0;
+			while (config->ListValue(nameval, temp))
+			{
+				fprintf(outfile, "%c%c%c%c = %u\n",
+					(int)((nameval >> 24) & 0xff),
+					(int)((nameval >> 16) & 0xff),
+					(int)((nameval >> 8) & 0xff),
+					(int)((nameval >> 0) & 0xff),
+					temp);
+			}
+		}
+		break;
+	}
+}
+
+struct Config_Tag user_conf[]={
+	{ "*", Function_Tag, (void *)userconf_func, 0, 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+/*************************************************************************/
+
 struct Config_Tag cmdline_conf[]={
 	{ "IdeSwap", Bool_Tag, &ide_swap, 0, 0 },
 	{ "BootEmutos", Bool_Tag, &boot_emutos, 0, 0 },
@@ -1556,6 +1610,7 @@ static struct Config_Section const all_sections[] = {
 	{ "[NFVDI]",      nfvdi_conf,    false, preset_nfvdi, postload_nfvdi, presave_nfvdi },
 	{ "[AUDIO]",      audio_conf,    false, preset_audio, postload_audio, presave_audio },
 	{ "[JOYSTICKS]",  joysticks_conf,false, preset_joysticks, postload_joysticks, presave_joysticks },
+	{ "[USERCONF]",   user_conf,     false, 0, 0, 0 },
 	{ "cmdline",      cmdline_conf,  false, 0, 0, 0 },
 	{ 0, 0, false, 0, 0, 0 }
 };
@@ -1826,7 +1881,7 @@ static int process_cmdline(int argc, char **argv)
 
 #ifndef FixedSizeFastRAM
 			case 'F':
-				bx_options.fastram = atoi(optarg);
+				bx_options.fastram = strtoul(optarg, NULL, 0);
 				break;
 #endif
 
@@ -2117,7 +2172,7 @@ bool setConfigValue(const char *section_name, const char *key, const char *value
 		{
 			if (strcmp(conf->code, key) == 0)
 			{
-				bool ret = cfgopts.set_config_value(conf, value);
+				bool ret = cfgopts.set_config_value(conf, key, value);
 				if (ret && section->postload)
 					section->postload();
 				return ret;
@@ -2155,8 +2210,11 @@ void listConfigValues(bool type)
 				if (conf == diskc_configs) conf = diskd_configs;
 				else if (conf == diskd_configs) conf = diskc_configs;
 			}
-			const char *value = cfgopts.get_config_value(conf, type);
-			printf("%s:%s:%s\n", section_name, conf->code, value ? value : "");
+			if (type || strcmp(conf->code, "*") != 0)
+			{
+				const char *value = cfgopts.get_config_value(conf, type);
+				printf("%s:%s:%s\n", section_name, conf->code, value ? value : "");
+			}
 		}
 		free(section_name);
 	}

@@ -71,6 +71,9 @@
 #ifdef NFEXEC_SUPPORT
 # include "nf_hostexec.h"
 #endif
+#ifdef NFCONFIG_SUPPORT
+# include "nf_config.h"
+#endif
 /* add your NatFeat class definition here */
 
 /*--- Defines ---*/
@@ -169,6 +172,10 @@ void NFCreate(void)
 
 #ifdef NFEXEC_SUPPORT
 	NFAdd(new HostExec);
+#endif
+
+#ifdef NFCONFIG_SUPPORT
+	NFAdd(NF_Config::GetNFConfig());
 #endif
 	/* add your NatFeat object declaration here */
 }

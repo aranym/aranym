@@ -74,7 +74,7 @@ class ConfigOptions
 		ConfigOptions(const char *cfgfile, const char *home, const char *data);
 		int input_config(struct Config_Tag *configs, const char *section);
 		int update_config(struct Config_Tag *configs, const char *section);
-		bool set_config_value(struct Config_Tag *tag, const char *value);
+		bool set_config_value(struct Config_Tag *tag, const char *name, const char *value);
 		char *get_config_value(const struct Config_Tag *ptr, bool type);
 		int process_config(struct Config_Tag *configs, const char *section, bool verbose);
 

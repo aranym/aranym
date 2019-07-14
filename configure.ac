@@ -131,6 +131,8 @@ AC_ARG_ENABLE(scsi,            [AC_HELP_STRING([--enable-nfscsi], [enable NatFea
 
 AC_ARG_ENABLE(nfexec,          [AC_HELP_STRING([--enable-nfexec], [enable NatFeat host file execution (default=yes)])], [WANT_NFEXEC=$enableval], [WANT_NFEXEC=yes])
 
+AC_ARG_ENABLE(nfconfig,        [AC_HELP_STRING([--enable-nfconfig], [enable NatFeat config support (default=yes)])], [WANT_NFCONFIG=$enableval], [WANT_NFCONFIG=yes])
+
 AC_ARG_ENABLE(ata-cdrom,       [AC_HELP_STRING([--enable-ata-cdrom], [enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
 AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
@@ -2163,6 +2165,15 @@ fi
 AM_CONDITIONAL([NFEXEC_SUPPORT], test "$WANT_NFEXEC" = "yes")
 
 
+dnl Natfeat configuration values
+
+if [[ "$WANT_NFCONFIG" = yes ]]; then
+	AC_DEFINE([NFCONFIG_SUPPORT], 1, [Define if you want to use NF configuration])
+	PROVIDES_NF="$PROVIDES_NF config"
+fi
+AM_CONDITIONAL([NFCONFIG_SUPPORT], test "$WANT_NFCONFIG" = "yes")
+
+
 if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 	PROVIDES_NF="$PROVIDES_NF clipboard"
 fi
@@ -2338,6 +2349,7 @@ echo "NatFeat Clipboard ...................... : $WANT_NFCLIPBRD"
 echo "NatFeat VDI driver ..................... : $WANT_NFVDI"
 echo "NatFeat SCSI driver .................... : $WANT_NFSCSI"
 echo "NatFeat host exec driver ............... : $WANT_NFEXEC"
+echo "NatFeat configuration .................. : $WANT_NFCONFIG"
 echo "Exception per second limiter ........... : $WANT_EPSLIMITER"
 echo "Linux/X86 h/w access for parallel port.. : $WANT_PARALLELX86"
 echo "Linux /dev/parport for parallel port.... : $WANT_PARALLELPARPORT"

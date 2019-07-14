@@ -303,7 +303,7 @@ void ConfigOptions::compress_path(char *dest, char *path, unsigned short buf_siz
 }
 
 
-bool ConfigOptions::set_config_value(struct Config_Tag *ptr, const char *value)
+bool ConfigOptions::set_config_value(struct Config_Tag *ptr, const char *name, const char *value)
 {
 	int temp;
 	
@@ -384,7 +384,14 @@ bool ConfigOptions::set_config_value(struct Config_Tag *ptr, const char *value)
 			panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
 		}
 		break;
+
 	case Function_Tag:
+		{
+			void (*func)(int, const char *, const char *) = (void (*)(int, const char *, const char *))ptr->buf;
+			(*func)(2, name, value);
+		}
+		break;
+
 	case Error_Tag:
 	default:
 		return false;
@@ -514,7 +521,17 @@ char *ConfigOptions::get_config_value(const struct Config_Tag *ptr, bool type)
 			panicbug(">>> Wrong buf_size in Config_Tag struct: directive %s, buf_size %d !!!", ptr->code, ptr->buf_size);
 		}
 		break;
+
 	case Function_Tag:
+		{
+			void (*func)(int, const char *, void *) = (void (*)(int, const char *, void *))ptr->buf;
+			if (type)
+				(*func)(0, NULL, value);
+			else
+				(*func)(1, NULL, value);
+		}
+		break;
+
 	case Error_Tag:
 	default:
 		return NULL;
@@ -565,8 +582,8 @@ int	ConfigOptions::input_config(struct Config_Tag configs[], const char *header)
 			if ( tok != NULL ) {
 				next = trim(strtok(NULL, "\n\r")); /* get actual config information */
 				for ( ptr = configs; ptr->code; ++ptr )	 /* scan for token */ {
-					if ( !strcasecmp( tok , ptr->code ) )  /* got a match? */ {
-						if (!set_config_value(ptr, next))
+					if ( strcmp(ptr->code, "*") == 0 || !strcasecmp( tok , ptr->code ) )  /* got a match? */ {
+						if (!set_config_value(ptr, tok, next))
 						{
 							if (next == NULL)
 								panicbug(">>> Missing value in Config file %s on line %d !!!", config_file, lineno);
@@ -624,9 +641,11 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 	int temp;
 	bool ret_flag = true;
 
-	ptr->stat = 1;	/* jiz ulozeno do souboru */
+	ptr->stat = 1;	/* already saved to file */
 
-	fprintf(outfile, "%s = ", ptr->code);
+	if (strcmp(ptr->code, "*") != 0)
+		fprintf(outfile, "%s = ", ptr->code);
+
 	switch ( ptr->type )  /* check type */ {
 	case Bool_Tag:
 		fprintf(outfile, "%s\n", *((bool *)(ptr->buf)) ? "Yes" : "No");
@@ -689,8 +708,14 @@ bool ConfigOptions::write_token(FILE *outfile, struct Config_Tag *ptr)
 		fprintf(outfile, "%s\n", (char *)ptr->buf);
 		break;
 
-	case Error_Tag:
 	case Function_Tag:
+		{
+			void (*func)(int, const char *, void *) = (void (*)(int, const char *, void *))ptr->buf;
+			(*func)(3, NULL, outfile);
+		}
+		break;
+
+	case Error_Tag:
 	default:
 		printf("Error in Config structure (Contact author).\n");
 		ret_flag = false;
@@ -740,7 +765,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 	}
 	infile = fopen(config_file, "r");
 	if ( infile == NULL ) {
-/* konfiguracni soubor jeste vubec neexistuje */
+/* the configuration file doesn't exist anymore */
 		if ( header != NULL ) {
 			fprintf(outfile, "%s\n", header);
 		}
@@ -760,7 +785,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 		return count;
 	}
 	if ( header != NULL ) {
-/* konfiguracni soubor existuje a je otevren - hledame nasi sekci */
+/* configuration file exists and is open - we are looking for our section */
 		do {
 			fptr = trim(fgets(line, sizeof(line), infile));	 /* get input line */
 			if (feof(infile))
@@ -770,7 +795,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 		} while ( memcmp(line, header, strlen(header)));
 	}
 	if ( feof(infile) ) {
-/* v jiz existujicim konfiguracnim souboru neni sekce, kterou zapisujeme */
+/* the section we are writing does not exist in the existing configuration file */
 
 		if ( header != NULL ) {
 			fprintf(outfile, "\n%s\n", header);
@@ -780,7 +805,7 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 				++count;
 		}
 	} else {
-/* v jiz existujicim souboru byla nalezena sekce, kterou mame updatovat */
+/* in the already existing file we found a section to update */
 		for (;;) {
 			fptr = trim(fgets(line, sizeof(line), infile)); /* get input line */
 			if ( fptr == NULL ) 
@@ -790,8 +815,8 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 				fprintf(outfile, "%s", line);
 				continue;  /* skip comments */
 			}
-			if ( line[0] == '[' || feof(infile) ) {	/* konec nasi sekce */
-				break;	/* zbytek konfig. souboru jen opis z puvodniho */
+			if ( line[0] == '[' || feof(infile) ) {	/* the end of our section */
+				break;	/* rest config. only the original copy of the file */
 			}
 
 			tok = trim(strtok(line, "=\n\r"));	/* get first token */
@@ -816,9 +841,9 @@ int	ConfigOptions::update_config(struct Config_Tag configs[], const char *header
 		}
 
 		if ( !feof(infile) && fptr != NULL)
-				fprintf(outfile, "\n%s", line);/* doplnit prvni radku dalsi sekce */
+				fprintf(outfile, "\n%s", line);/* add the first line to the next section */
 
-		/* zkopirovat zbytek konfiguracniho souboru (cizi sekce) */
+		/* copy the rest of the configuration file (foreign section) */
 		for(;;) {
 			fptr = trim(fgets(line, sizeof(line), infile));	 /* get input line */
 			if (feof(infile))

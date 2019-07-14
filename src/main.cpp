@@ -387,7 +387,7 @@ bool InitAll(void)
 	InterruptFlagLock = SDL_CreateMutex();
 
 	CPUType = 4;
-	FPUType = 1;
+	FPUType = CPUType == 4 || CPUType == 6 ? CPUType : 1;
 
 #ifdef HAVE_DISASM_M68K
 	D(bug("Initializing disassembler..."));

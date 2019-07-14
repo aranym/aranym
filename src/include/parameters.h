@@ -331,6 +331,8 @@ extern uint32 FastRAMSize;	// Size of Fast-RAM
 #if FIXED_ADDRESSING
 extern uintptr fixed_memory_offset;	// Virtual address of atari memory
 #endif
+/* maximum FASTRAM possible (in MB) */
+#define MAX_FASTRAM (2032U)
 
 extern char *program_name;
 extern bool boot_emutos;
