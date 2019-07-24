@@ -4,7 +4,7 @@
 Latest snapshot: [![Download](https://api.bintray.com/packages/aranym/aranym-files/snapshots/images/download.svg) ](https://bintray.com/aranym/aranym-files/snapshots/_latestVersion#files)
 Latest release: [![Download](https://api.bintray.com/packages/aranym/aranym-files/releases/images/download.svg) ](https://bintray.com/aranym/aranym-files/releases/_latestVersion#files)
 
-[![snapcraft](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/aranym)
+<img alt="Get it from the Snap Store" href="https://snapcraft.io/aranym" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" width="100">
 
       ARAnyM (Atari Running on Any Machine)
       version 1.1.0 released on 2019/04/14
