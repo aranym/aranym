@@ -1,3 +1,7 @@
+2019/09/21
+Add additional check to stripex tool
+
+
 2019/07/18
 Fix a typo in the configure script, preventing --{enable,disable}-nfscsi to work
 

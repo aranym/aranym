@@ -29,6 +29,7 @@
 
 static unsigned char mybuf[NEWBUFSIZ];
 static int verbose;
+static int force;
 
 static char tmpname[1024];
 
@@ -294,7 +295,7 @@ static int strip(const char *name)
 	register int tfd;
 	register long count, rbytes, sbytes;
 	struct aexec ahead;
-	unsigned char buf[2 * SIZEOF_LONG];
+	unsigned char buf[8 * SIZEOF_LONG];
 	long magic1, magic2;
 	
 	if ((fd = open(name, O_RDONLY | O_BINARY, 0755)) < 0)
@@ -308,8 +309,12 @@ static int strip(const char *name)
 		close(fd);
 		return 1;
 	}
+	
+	/*
+	 * read g_jump_entry and first 6 longs of exec header
+	 */
 	if (read_head(fd, &ahead) < 0 ||
-		read(fd, buf, (2 * SIZEOF_LONG)) != (2 * SIZEOF_LONG))
+		(int)read(fd, buf, sizeof(buf)) != (int)sizeof(buf))
 	{
 		perror(name);
 		close(tfd);
@@ -333,6 +338,33 @@ static int strip(const char *name)
 		close(fd);
 		return 1;
 	}
+#if 0
+	magic1 = read_belong(buf + 2 * SIZEOF_LONG);
+	printf("e_info: %08lx\n", magic1);
+	magic1 = read_belong(buf + 3 * SIZEOF_LONG);
+	printf("e_text: %08lx\n", magic1);
+	magic1 = read_belong(buf + 4 * SIZEOF_LONG);
+	printf("e_data: %08lx\n", magic1);
+	magic1 = read_belong(buf + 5 * SIZEOF_LONG);
+	printf("e_bss: %08lx\n", magic1);
+	magic1 = read_belong(buf + 6 * SIZEOF_LONG);
+	printf("e_syms: %08lx\n", magic1);
+#endif
+	magic1 = read_belong(buf + 7 * SIZEOF_LONG);
+#if 0
+	printf("e_entry: %08lx\n", magic1);
+#endif
+	if (magic1 != SIZEOF_BINUTILS_AEXEC)
+	{
+		fprintf(stderr, "%s: warning: entry %08lx not at start of text segment\n", name, magic1);
+		if (!force)
+		{
+			fprintf(stderr, "use -f to override\n");
+			close(tfd);
+			close(fd);
+			return 1;
+		}
+	}
 	sbytes = ahead.a_syms;
 	if (verbose)
 	{
@@ -349,7 +381,7 @@ static int strip(const char *name)
 		close(fd);
 		return 1;
 	}
-	if (lseek(fd, SIZEOF_BINUTILS_AEXEC - (2 * SIZEOF_LONG), SEEK_CUR) < 0)
+	if (lseek(fd, SIZEOF_BINUTILS_AEXEC - sizeof(buf), SEEK_CUR) < 0)
 	{
 		fprintf(stderr, "%s: seek error\n", name);
 		close(tfd);
@@ -443,7 +475,7 @@ static int strip(const char *name)
 static void usage(const char *s)
 {
 	fprintf(stderr, "%s", s);
-	fprintf(stderr, "Usage: stripex files ...\n");
+	fprintf(stderr, "Usage: stripex [-f] files ...\n");
 	fprintf(stderr, "strip GNU-binutils aexec header from executables\n");
 	exit(1);
 }
@@ -465,6 +497,9 @@ int main(int argc, char **argv)
 		{
 		case 'v':
 			verbose = 1;
+			break;
+		case 'f':
+			force = 1;
 			break;
 		default:
 			usage("");
