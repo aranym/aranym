@@ -1,4 +1,9 @@
 2019/09/21
+convert_to_xattr: make sure filesize does not exceed the range of
+the 32bit st_size field
+
+
+2019/09/21
 Add additional check to stripex tool
 
 

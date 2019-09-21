@@ -1996,8 +1996,11 @@ void HostFs::convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr
 	/* UWORD nlink	   */  WriteInt16( xattrp + 10, statBuf->st_nlink );
 	/* UWORD uid	   */  WriteInt16( xattrp + 12, statBuf->st_uid );	 // FIXME: this is Linux's one
 	/* UWORD gid	   */  WriteInt16( xattrp + 14, statBuf->st_gid );	 // FIXME: this is Linux's one
+	if ((uint64)statBuf->st_size >= 0x100000000ULL)
+	/* LONG	 size	   */  WriteInt32( xattrp + 16, 0xFFFFFFFFUL);
+	else
 	/* LONG	 size	   */  WriteInt32( xattrp + 16, statBuf->st_size );
-	unsigned long blksize, blocks;
+	uint64 blksize, blocks;
 #ifdef __MINGW32__
 	blksize = 512 ; // FIXME: I just made up the number
 #else
@@ -2014,6 +2017,8 @@ void HostFs::convert_to_xattr( ExtDrive *drv, const struct stat *statBuf, memptr
 #else
 	blocks = (statBuf->st_blocks * 512 + blksize - 1) / blksize;
 #endif
+	if (blocks >= 0x100000000ULL)
+		blocks = 0xFFFFFFFFUL;
 	/* LONG	 nblocks   */  WriteInt32( xattrp + 24, blocks );
     if (drv->fsFlags & FS_EXT_3)
     {

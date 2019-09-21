@@ -51,7 +51,8 @@ bool EmulOp(uint16 opcode, M68kRegisters *r)
 			       "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
 			       "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
 			       "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
-			       "sr %04x\n",
+			       "sr %04x\n"
+			       "pc %08lx\n",
 			       (unsigned long)r->d[0],
 			       (unsigned long)r->d[1],
 			       (unsigned long)r->d[2],
@@ -68,7 +69,8 @@ bool EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[5],
 			       (unsigned long)r->a[6],
 			       (unsigned long)r->a[7],
-			       r->sr);
+			       r->sr,
+				   (unsigned long)m68k_getpc());
 			QuitEmulator();
 			return false;
 		}
@@ -261,7 +263,8 @@ bool EmulOp(uint16 opcode, M68kRegisters *r)
 			       "d4 %08lx d5 %08lx d6 %08lx d7 %08lx\n"
 			       "a0 %08lx a1 %08lx a2 %08lx a3 %08lx\n"
 			       "a4 %08lx a5 %08lx a6 %08lx a7 %08lx\n"
-			       "sr %04x\n",
+			       "sr %04x\n"
+			       "pc %08lx\n",
 			       (unsigned long)r->d[0],
 			       (unsigned long)r->d[1],
 			       (unsigned long)r->d[2],
@@ -278,7 +281,8 @@ bool EmulOp(uint16 opcode, M68kRegisters *r)
 			       (unsigned long)r->a[5],
 			       (unsigned long)r->a[6],
 			       (unsigned long)r->a[7],
-			       r->sr);
+			       r->sr,
+				   (unsigned long)m68k_getpc());
 			QuitEmulator();
 			return false;
 	}
