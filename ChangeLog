@@ -1,3 +1,7 @@
+2019/09/28
+Avoid excessive calls to NFGetdriver("fVDI")
+
+
 2019/09/21
 convert_to_xattr: make sure filesize does not exceed the range of
 the 32bit st_size field

@@ -160,6 +160,9 @@ void HostScreen::SetWMIcon(void)
 
 HostScreen::HostScreen(void)
   : DirtyRects(),
+#ifdef NFVDI_SUPPORT
+	fvdi(0),
+#endif
   	logo(NULL),
   	clear_screen(true),
 	force_refresh(true),
@@ -732,6 +735,9 @@ void HostScreen::checkSwitchToVidel(void)
 	/* No logo ? */
 	if (!logo || !logo->getSurface()) {
 		numScreen = SCREEN_VIDEL;
+#ifdef NFVDI_SUPPORT
+		fvdi = 0;
+#endif
 		return;
 	}
 
@@ -750,6 +756,9 @@ void HostScreen::checkSwitchToVidel(void)
 		}
 #endif
 		numScreen = SCREEN_VIDEL;
+#ifdef NFVDI_SUPPORT
+		fvdi = 0;
+#endif
 	}
 }
 
@@ -757,7 +766,8 @@ void HostScreen::forceRefreshNfvdi(void)
 {
 #ifdef NFVDI_SUPPORT
 	/* Force nfvdi surface refresh */
-	NF_Base* fvdi = NFGetDriver("fVDI");
+	if (!fvdi)
+		fvdi = NFGetDriver("fVDI");
 	if (!fvdi) {
 		return;
 	}
@@ -775,7 +785,8 @@ void HostScreen::forceRefreshNfvdi(void)
 void HostScreen::refreshNfvdi(void)
 {
 #ifdef NFVDI_SUPPORT
-	NF_Base* fvdi = NFGetDriver("fVDI");
+	if (!fvdi)
+		fvdi = NFGetDriver("fVDI");
 	if (!fvdi) {
 		return;
 	}

@@ -28,6 +28,11 @@
 
 #include "dirty_rects.h"
 
+#ifdef NFVDI_SUPPORT
+# include "nf_objs.h"
+# include "nfvdi.h"
+#endif
+
 class HostSurface;
 class Logo;
 
@@ -48,6 +53,10 @@ class HostScreen: public DirtyRects
 	void refreshNfvdi(void);
 	void forceRefreshNfvdi(void);
 	void refreshGui(void);
+
+#ifdef NFVDI_SUPPORT
+	NF_Base* fvdi;
+#endif
 
 	void refreshSurface(HostSurface *hsurf);
 
