@@ -1470,3 +1470,73 @@ sys_f_stat64 (MetaDOSDir int flag, const char *name, STAT *stat)
 	release_cookie (&fc);
 	return r;
 }
+
+long _cdecl sys_d_dsetpath (MetaDOSDir const char *path)
+{
+	struct proc *p = get_curproc();
+	fcookie parentdir, targdir;
+	int d;
+	char temp1[PATH_MAX];
+	long r;
+	XATTR xattr;
+	ushort mode;
+
+	d = tolower(pathNameMD[0]);
+	if (d >= '1' && d <= '6')
+		d = d - '1' + 26;
+	else
+		d = d - 'a';
+	if (d < 0 || d >= NUM_DRIVES)
+		return ENXIO;
+	parentdir = p->p_cwd->root[d];
+	TRACE(("Dsetpath(%s)", path));
+
+	if (!parentdir.fs)
+	{
+		DEBUG(("Dfree: bad drive"));
+		return ENXIO;
+	}
+
+	r = path2cookie(p, path, temp1, &parentdir);
+	if (r)
+	{
+		DEBUG(("Dsetpath(%s): returning %ld", path, r));
+		return r;
+	}
+
+	r = dir_access(p->p_cred->ucr, &parentdir, S_IROTH, &mode);
+	if (r)
+	{
+		DEBUG(("Dsetpath(%s): read access to directory denied",path));
+		release_cookie(&parentdir);
+		return r;
+	}
+
+	/* now get the info on the file itself */
+	r = relpath2cookie (p, &parentdir, temp1, NULL, &targdir, 0);
+	if (r)
+	{
+		release_cookie (&parentdir);
+		if (r == ENOENT)
+			r = ENOTDIR;
+		DEBUG(("Dsetpath: error %ld on %s", r, path));
+		return r;
+	}
+
+	r = xfs_getxattr (targdir.fs, &targdir, &xattr);
+	if (r)
+	{
+		DEBUG(("Dsetpath: error %ld on %s", r, path));
+	} else if (!S_ISDIR(xattr.mode))
+	{
+		DEBUG(("Dsetpath: %s is not a directory", path));
+		r = ENOTDIR;
+	} else
+	{
+		r = 0;
+	}
+
+	release_cookie (&targdir);
+	release_cookie (&parentdir);
+	return r;
+}

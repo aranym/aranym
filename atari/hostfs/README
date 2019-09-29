@@ -2,6 +2,8 @@ hostfs.xfs
 ==========
 
 The .xfs driver is now maintained in the FreeMiNT CVS repository.
+When using the ARAnyM-optimized MiNT kernel, it is built into the
+kernel, so you should not install a separate hostfs.xfs.
 
 
 hostfs.dos

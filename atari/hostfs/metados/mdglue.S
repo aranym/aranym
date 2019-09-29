@@ -176,7 +176,7 @@ functionTable:
 	dc.l	-1
 	dc.l	wrap_dcreate		/* 57 */
 	dc.l	wrap_ddelete		/* 58 */
-	dc.l	-1 /* FIXME? wrap_dsetpath */		/* 59 */
+	dc.l	wrap_dsetpath		/* 59 */
 	dc.l	wrap_fcreate		/* 60 */
 	dc.l	wrap_fopen			/* 61 */
 	dc.l	wrap_fclose			/* 62 */
@@ -547,7 +547,7 @@ wrap_dsetpath:
 	SSTCK	a0
 
 	move.l	a4,-(sp)	/* name - 6(a0) or a4 MD */
-/*	MDBSR	a0,_sys_d_dsetpath */
+	MDBSR	a0,_sys_d_dsetpath
 	lea	4(sp),sp
 
 	RSTCK

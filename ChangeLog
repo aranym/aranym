@@ -1,4 +1,10 @@
 2019/09/28
+Implement Dsetpath for MetaDOS driver.
+
+Should fix https://github.com/aranym/aranym/issues/43
+
+
+2019/09/28
 Avoid excessive calls to NFGetdriver("fVDI")
 
 

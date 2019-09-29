@@ -20,7 +20,7 @@
 
 
 #define DEVNAME "ARAnyM Host Filesystem"
-#define VERSION "0.60"
+#define VERSION "0.61"
 
 char DriverName[] = DEVNAME" "VERSION;
 long ldp;

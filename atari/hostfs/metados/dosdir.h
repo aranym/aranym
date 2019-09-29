@@ -49,6 +49,7 @@ long _cdecl sys_f_stat64	(MetaDOSDir int flag, const char *name, STAT *stat);
 long _cdecl sys_f_chdir		(MetaDOSFile short fd);
 long _cdecl sys_f_opendir	(MetaDOSFile short fd);
 long _cdecl sys_f_dirfd		(MetaDOSFile long handle);
+long _cdecl sys_d_dsetpath  (MetaDOSDir const char *path);
 
 
 # endif /* _dosdir_h */
