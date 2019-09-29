@@ -99,7 +99,7 @@ void *init_driver(void)
 	int i;
 	char letter[2]={0,0};
 
-	Cconws(
+	(void)Cconws(
 		"\033p " DRIVER_NAME " " VERSION " \033q\r\n"
 		"Copyright (c) ARAnyM Development Team, " __DATE__ "\r\n"
 	);
@@ -108,7 +108,7 @@ void *init_driver(void)
 
 	nfOps = nf_init();
 	if (!nfOps) {
-		Cconws("__NF cookie not present on this system\r\n");
+		(void)Cconws("__NF cookie not present on this system\r\n");
 		press_any_key();
 		return &device_init_f;
 	}
@@ -116,27 +116,27 @@ void *init_driver(void)
 	/* List present drives */
 	nfCdRomId=nfOps->get_id("CDROM");
 	if (nfCdRomId == 0) {
-		Cconws("NF CD-ROM functions not present on this system\r\n");
+		(void)Cconws("NF CD-ROM functions not present on this system\r\n");
 		press_any_key();
 		return &device_init_f;
 	}
 
 	drives_mask=nfOps->call(NFCDROM(NFCD_DRIVESMASK));
-	Cconws(" Host drives present: ");
+	(void)Cconws(" Host drives present: ");
 	for (i='A'; i<='Z'; i++) {
 		if (drives_mask & (1<<(i-'A'))) {
 			letter[0]=i;
-			Cconws(letter);			
+			(void)Cconws(letter);			
 		}		
 	}
-	Cconws("\r\n");
+	(void)Cconws("\r\n");
 
 	return &device_init_f;
 }
 
 static void press_any_key(void)
 {
-	Cconws("- Press any key to continue -\r\n");
+	(void)Cconws("- Press any key to continue -\r\n");
 	Crawcin();
 }
 
@@ -147,7 +147,7 @@ metados_bosheader_t *init_devices(unsigned long phys_letter, unsigned long phys_
 	metados_bosfunctions_t *DefaultFunctions;
 
 	if (nfCdRomId == 0) {
-		Cconws(" ARAnyM host CD-ROM driver unavailable\r\n");
+		(void)Cconws(" ARAnyM host CD-ROM driver unavailable\r\n");
 		return (metados_bosheader_t *)-39;
 	}
 

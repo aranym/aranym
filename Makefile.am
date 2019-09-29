@@ -64,6 +64,7 @@ install-data-local:
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/bdconfig.sys $(DESTDIR)$(pkgdatadir)/atari/hostfs/bdconfig.sys
 	$(INSTALL_DATA) $(top_srcdir)/atari/hostfs/README $(DESTDIR)$(pkgdatadir)/atari/hostfs/README
 	$(INSTALL_DATA) $(top_srcdir)/extras/hostfs/hostfs.dos $(DESTDIR)$(pkgdatadir)/atari/hostfs/hostfs.dos
+	$(INSTALL_DATA) $(top_srcdir)/extras/nfcdrom/nfcdrom.bos $(DESTDIR)$(pkgdatadir)/atari/nfcdrom/nfcdrom.bos
 	$(INSTALL_DATA) $(top_srcdir)/atari/nfosmesa/README $(DESTDIR)$(pkgdatadir)/atari/nfosmesa/README
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/nfeth-config/eth0-config.sh $(DESTDIR)$(pkgdatadir)/atari/network/eth0-config.sh
 	$(INSTALL_DATA) $(top_srcdir)/atari/network/ethernet/README $(DESTDIR)$(pkgdatadir)/atari/network/README
@@ -106,6 +107,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/hostfs/bdconfig.sys
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/hostfs/README
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/hostfs/hostfs.dos
+	rm -f $(DESTDIR)$(pkgdatadir)/atari/nfcdrom/nfcdrom.bos
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/nfosmesa/README
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/network/eth0-config.sh
 	rm -f $(DESTDIR)$(pkgdatadir)/atari/network/README
