@@ -1,4 +1,8 @@
 2019/09/28
+Add precompiled metados driver to distribution
+
+
+2019/09/28
 Implement Dsetpath for MetaDOS driver.
 
 Should fix https://github.com/aranym/aranym/issues/43
