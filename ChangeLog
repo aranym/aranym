@@ -1,3 +1,10 @@
+2019/09/31
+Support extended OS header of EmuTOS
+
+This will be used to contain EmuTOS-specific information, including
+version and information on supported features.
+
+
 2019/09/28
 Add precompiled jpeg driver to distribution
 

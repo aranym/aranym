@@ -26,6 +26,7 @@ enum NFCONFIG_OPERATIONS {
 	NFCONFIG_GETVALUE,
 	NFCONFIG_SETVALUE,
 	NFCONFIG_GETNAMES,
+	NFCONFIG_LINEA,
 };
 
 NF_Config *NF_Config::nf_config;
@@ -288,6 +289,15 @@ int32 NF_Config::dispatch(uint32 fncode)
 				ret = TOS_ENMFIL;
 			}
 		}
+		break;
+
+	case NFCONFIG_LINEA:
+		{
+			ARADATA *ara = getARADATA();
+			if (ara)
+				ara->setAbase(getParameter(0));
+		}
+		ret = 0;
 		break;
 	}
 
