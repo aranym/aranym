@@ -1,4 +1,8 @@
 2019/09/31
+devname in cdrom.cpp must be const with newer versions of macOS
+
+
+2019/09/31
 Replace symlinks by hardlinks of external libraries for macOS
 
 This seems to be needed by XCode 11 and above
