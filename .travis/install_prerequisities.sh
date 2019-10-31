@@ -83,6 +83,27 @@ osx)
 		curl --get https://packages.macports.org/$i --output $f
 		tar -C src/Unix/MacOSX/external --include="./opt/local" --strip-components=3 -xf $f
 	done
+	# replace symlinks; with XCode 11, only the symlinks will be copied
+	# to the application folder and can't be signed locally
+	cwd=`pwd`
+	cd src/Unix/MacOSX/external/lib
+	rm -f libjpeg.dylib
+	for i in .7 .8 .9; do
+		test -f libjpeg${i}.dylib && ln libjpeg${i}.dylib libjpeg.dylib
+	done
+	rm -f libgmp.dylib
+	for i in .10; do
+		test -f libgmp{$i}.dylib && ln libgmp{$i}.dylib libgmp.dylib
+	done
+	rm -f libgmpxx.dylib
+	for i in .4; do
+		test -f ln libgmpxx${i}.dylib && ln libgmpxx${i}.dylib libgmpxx.dylib
+	done
+	rm -f libmpfr.dylib
+	for i in .4; do
+		test -f ln libmpfr${i}.dylib && ln libmpfr${i}.dylib libmpfr.dylib
+	done
+	cd "$cwd"
 	;;
 
 *)
