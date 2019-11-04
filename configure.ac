@@ -41,7 +41,9 @@ AH_TOP([
 #endif
 
 #ifndef _FORTIFY_SOURCE
+# if defined __OPTIMIZE__ && __OPTIMIZE__ > 0
 #  define _FORTIFY_SOURCE 2
+# endif
 #endif
 
 ])
