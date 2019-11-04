@@ -279,6 +279,7 @@ typedef struct {
   uae_u8 needflush;
 } freg_status;
 
+#define SP_REG 15
 #define PC_P 16
 #define FLAGX 17
 #define FLAGTMP 18

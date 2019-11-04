@@ -267,6 +267,7 @@ static inline void x86_64_prefix(
 #define compemu_raw_jmp_r(a)			raw_jmp_r(a)
 #define compemu_raw_jnz(a)				raw_jnz(a)
 #define compemu_raw_jz_b_oponly()		raw_jz_b_oponly()
+#define compemu_raw_jnz_b_oponly()		raw_jnz_b_oponly()
 #define compemu_raw_lea_l_brr(a,b,c) 	raw_lea_l_brr(a,b,c)
 #define compemu_raw_lea_l_brr_indexed(a,b,c,d,e)	raw_lea_l_brr_indexed(a,b,c,d,e)
 #define compemu_raw_mov_b_mr(a,b)		raw_mov_b_mr(a,b)
@@ -1185,52 +1186,53 @@ static inline void raw_jmp(uae_u32 t)
 	ADDR32 JMPm(t);
 }
 
-static inline void raw_jl(uae_u32 t)
-{
-	emit_byte(0x0f);
-	emit_byte(0x8c);
-	emit_long(t-(uintptr)target-4);
-}
-
-static inline void raw_jz(uae_u32 t)
-{
-	emit_byte(0x0f);
-	emit_byte(0x84);
-	emit_long(t-(uintptr)target-4);
-}
-
-static inline void raw_jnz(uae_u32 t)
-{
-	emit_byte(0x0f);
-	emit_byte(0x85);
-	emit_long(t-(uintptr)target-4);
-}
-
-static inline void raw_jnz_l_oponly(void)
-{
-	emit_byte(0x0f);
-	emit_byte(0x85);
-}
-
 static inline void raw_jcc_l_oponly(int cc)
 {
 	emit_byte(0x0f);
 	emit_byte(0x80+cc);
 }
 
-static inline void raw_jnz_b_oponly(void)
+static inline void raw_jz_l_oponly(void)
 {
-	emit_byte(0x75);
+	raw_jcc_l_oponly(NATIVE_CC_EQ);
 }
 
-static inline void raw_jz_b_oponly(void)
+static inline void raw_jnz_l_oponly(void)
 {
-	emit_byte(0x74);
+	raw_jcc_l_oponly(NATIVE_CC_NE);
+}
+
+static inline void raw_jl(uae_u32 t)
+{
+	raw_jcc_l_oponly(NATIVE_CC_LT);
+	emit_long(t-(uintptr)target-4);
+}
+
+static inline void raw_jz(uae_u32 t)
+{
+	raw_jz_l_oponly();
+	emit_long(t-(uintptr)target-4);
+}
+
+static inline void raw_jnz(uae_u32 t)
+{
+	raw_jnz_l_oponly();
+	emit_long(t-(uintptr)target-4);
 }
 
 static inline void raw_jcc_b_oponly(int cc)
 {
 	emit_byte(0x70+cc);
+}
+
+static inline void raw_jnz_b_oponly(void)
+{
+	raw_jcc_b_oponly(NATIVE_CC_NE);
+}
+
+static inline void raw_jz_b_oponly(void)
+{
+	raw_jcc_b_oponly(NATIVE_CC_EQ);
 }
 
 static inline void raw_jmp_l_oponly(void)

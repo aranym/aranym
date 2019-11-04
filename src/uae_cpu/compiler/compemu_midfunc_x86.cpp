@@ -1718,19 +1718,19 @@ MIDFUNC(2,mov_b_ri,(W1 d, IMM s))
 MIDFUNC(2,add_l_mi,(IMM d, IMM s))
 {
 	CLOBBER_ADD;
-	raw_add_l_mi(d,s) ;
+	raw_add_l_mi(d,s);
 }
 
 MIDFUNC(2,add_w_mi,(IMM d, IMM s))
 {
 	CLOBBER_ADD;
-	raw_add_w_mi(d,s) ;
+	raw_add_w_mi(d,s);
 }
 
 MIDFUNC(2,add_b_mi,(IMM d, IMM s))
 {
 	CLOBBER_ADD;
-	raw_add_b_mi(d,s) ;
+	raw_add_b_mi(d,s);
 }
 
 MIDFUNC(2,test_l_ri,(RR4 d, IMM i))
@@ -1774,7 +1774,6 @@ MIDFUNC(2,test_b_rr,(RR1 d, RR1 s))
 	unlock2(d);
 	unlock2(s);
 }
-
 
 MIDFUNC(2,and_l_ri,(RW4 d, IMM i))
 {

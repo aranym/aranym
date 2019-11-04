@@ -1797,12 +1797,12 @@ gen_opcode (unsigned int opcode)
 	comprintf("\tadd_l_ri(offs,4);\n");
 	start_brace();
 	comprintf("\tint newad=scratchie++;\n"
-		  "\treadlong(15,newad,scratchie);\n"
+		  "\treadlong(SP_REG,newad,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc,newad);\n"
 		  "\tget_n_addr_jmp(newad,PC_P,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc_oldp,PC_P);\n"
 		  "\tm68k_pc_offset=0;\n"
-		  "\tadd_l(15,offs);\n");
+		  "\tadd_l(SP_REG,offs);\n");
 	gen_update_next_handler();
 	isjump;
 	break;
@@ -1813,12 +1813,12 @@ gen_opcode (unsigned int opcode)
 #endif
 	genamode (curi->smode, "srcreg", sz_long, "src", 1, 0);
 	genamode (curi->dmode, "dstreg", curi->size, "offs", 1, 0);
-	comprintf("\tsub_l_ri(15,4);\n"
-		  "\twritelong_clobber(15,src,scratchie);\n"
-		  "\tmov_l_rr(src,15);\n");
+	comprintf("\tsub_l_ri(SP_REG,4);\n"
+		  "\twritelong_clobber(SP_REG,src,scratchie);\n"
+		  "\tmov_l_rr(src,SP_REG);\n");
 	if (curi->size==sz_word)
 	    comprintf("\tsign_extend_16_rr(offs,offs);\n");
-	comprintf("\tadd_l(15,offs);\n");
+	comprintf("\tadd_l(SP_REG,offs);\n");
 	genastore ("src", curi->smode, "srcreg", sz_long, "src");
 	break;
 
@@ -1827,9 +1827,9 @@ gen_opcode (unsigned int opcode)
     failure;
 #endif
 	genamode (curi->smode, "srcreg", curi->size, "src", 1, 0);
-	comprintf("\tmov_l_rr(15,src);\n"
-		  "\treadlong(15,src,scratchie);\n"
-		  "\tadd_l_ri(15,4);\n");
+	comprintf("\tmov_l_rr(SP_REG,src);\n"
+		  "\treadlong(SP_REG,src,scratchie);\n"
+		  "\tadd_l_ri(SP_REG,4);\n");
 	genastore ("src", curi->smode, "srcreg", curi->size, "src");
 	break;
 
@@ -1838,12 +1838,12 @@ gen_opcode (unsigned int opcode)
 	failure;
 #endif
 	comprintf("\tint newad=scratchie++;\n"
-		  "\treadlong(15,newad,scratchie);\n"
+		  "\treadlong(SP_REG,newad,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc,newad);\n"
 		  "\tget_n_addr_jmp(newad,PC_P,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc_oldp,PC_P);\n"
 		  "\tm68k_pc_offset=0;\n"
-		  "\tlea_l_brr(15,15,4);\n");
+		  "\tlea_l_brr(SP_REG,SP_REG,4);\n");
 	gen_update_next_handler();
 	isjump;
 	break;
@@ -1868,8 +1868,8 @@ gen_opcode (unsigned int opcode)
 	comprintf("\tuae_u32 retadd=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset;\n");
 	comprintf("\tint ret=scratchie++;\n"
 		  "\tmov_l_ri(ret,retadd);\n"
-		  "\tsub_l_ri(15,4);\n"
-		  "\twritelong_clobber(15,ret,scratchie);\n");
+		  "\tsub_l_ri(SP_REG,4);\n"
+		  "\twritelong_clobber(SP_REG,ret,scratchie);\n");
 	comprintf("\tmov_l_mr((uintptr)&regs.pc,srca);\n"
 		  "\tget_n_addr_jmp(srca,PC_P,scratchie);\n"
 		  "\tmov_l_mr((uintptr)&regs.pc_oldp,PC_P);\n"
@@ -1900,8 +1900,8 @@ gen_opcode (unsigned int opcode)
 	comprintf("\tuae_u32 retadd=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset;\n");
 	comprintf("\tint ret=scratchie++;\n"
 		  "\tmov_l_ri(ret,retadd);\n"
-		  "\tsub_l_ri(15,4);\n"
-		  "\twritelong_clobber(15,ret,scratchie);\n");
+		  "\tsub_l_ri(SP_REG,4);\n"
+		  "\twritelong_clobber(SP_REG,ret,scratchie);\n");
 	comprintf("\tadd_l_ri(src,m68k_pc_offset_thisinst+2);\n");
 	comprintf("\tm68k_pc_offset=0;\n");
 	comprintf("\tadd_l(PC_P,src);\n");
