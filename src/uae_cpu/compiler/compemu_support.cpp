@@ -527,7 +527,9 @@ static inline blockinfo* get_blockinfo_addr(void* addr)
 #endif
 #include "disasm-glue.h"
 
-#ifdef JIT_DEBUG
+bool disasm_this_inst;
+
+#if defined(JIT_DEBUG) || (defined(HAVE_DISASM_NATIVE) && defined(HAVE_DISASM_M68K))
 static void disasm_block(int disasm_target, const uint8 *start, size_t length)
 {
 	UNUSED(start);
@@ -595,7 +597,7 @@ static inline void disasm_m68k_block(const uint8 *start, size_t length)
 	disasm_block(TARGET_M68K, start, length);
 }
 #endif
-#endif
+#endif /* WINUAE_ARANYM */
 
 
 /*******************************************************************
@@ -1764,6 +1766,7 @@ static inline void disassociate(int r)
 	evict(r);
 }
 
+/* XXFIXME: val may be 64bit address for PC_P */
 static inline void set_const(int r, uae_u32 val)
 {
 	disassociate(r);
@@ -4677,7 +4680,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					remove_all_offsets();
 					prepare_for_call_1();
 					prepare_for_call_2();
-					raw_mov_l_ri(REG_PAR1, ((uintptr)(pc_hist[i].location)) - MEMBaseDiff);
+					raw_mov_l_ri(REG_PAR1, (memptr)((uintptr)pc_hist[i].location - MEMBaseDiff));
 					raw_mov_w_ri(REG_PAR2, cft_map(opcode));
 					raw_dec_sp(STACK_SHADOW_SPACE);
 					compemu_raw_call((uintptr)m68k_record_step);
@@ -4694,6 +4697,11 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					}
 					was_comp=1;
 					
+#if defined(HAVE_DISASM_NATIVE) && defined(HAVE_DISASM_M68K)
+					disasm_this_inst = false;
+					const uae_u8 *start_m68k_thisinst = (const uae_u8 *)pc_hist[i].location;
+					uae_u8 *start_native_thisinst = get_target();
+#endif
 #ifdef WINUAE_ARANYM
 					bool isnop = do_get_mem_word(pc_hist[i].location) == 0x4e71 ||
 						((i + 1) < blocklen && do_get_mem_word(pc_hist[i+1].location) == 0x4e71);
@@ -4723,6 +4731,17 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						flush(1);
 						nop();
 						was_comp=0;
+					}
+#endif
+#if defined(HAVE_DISASM_NATIVE) && defined(HAVE_DISASM_M68K)
+					if (disasm_this_inst)
+					{
+						disasm_m68k_block(start_m68k_thisinst, 1);
+						disasm_native_block(start_native_thisinst, get_target() - start_native_thisinst);
+						if (failure)
+						{
+							bug("(discarded)");
+						}
 					}
 #endif
 				}
@@ -4765,7 +4784,7 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						raw_sub_l_mi(uae_p32(&countdown),scaled_cycles(totcycles));
 #endif
 						compemu_raw_jmp((uintptr)popall_do_nothing);
-						*branchadd=get_target()-branchadd-1;
+						*branchadd = get_target() - (branchadd + 1);
 					}
 				}
 			}

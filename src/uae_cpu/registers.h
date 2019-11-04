@@ -63,7 +63,7 @@ extern struct regstruct
     flagtype m;
     flagtype x;
     flagtype stopped;
-    int intmask;
+    uint32_t intmask;
 
     uae_u32 pc;
     uae_u32 fault_pc;

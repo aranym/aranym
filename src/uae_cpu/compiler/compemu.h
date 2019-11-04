@@ -427,6 +427,8 @@ extern void sync_m68k_pc(void);
 extern uae_u32 get_const(int r);
 extern int  is_const(int r);
 extern void register_branch(uae_u32 not_taken, uae_u32 taken, uae_u8 cond);
+void compemu_bkpt(void);
+extern bool disasm_this_inst;
 
 #define comp_get_ibyte(o) do_get_mem_byte((uae_u8 *)(comp_pc_p + (o) + 1))
 #define comp_get_iword(o) do_get_mem_word((uae_u16 *)(comp_pc_p + (o)))

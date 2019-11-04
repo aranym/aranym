@@ -358,6 +358,12 @@ sync_m68k_pc (void)
 }
 
 
+static void disasm_this_inst(void)
+{
+	comprintf("\tdisasm_this_inst = true;\n");
+}
+
+
 /* getv == 1: fetch data; getv != 0: check for odd address. If movem != 0,
  * the calling routine handles Apdi and Aipi modes.
  * gb-- movem == 2 means the same thing but for a MOVE16 instruction */
@@ -1901,6 +1907,7 @@ gen_opcode (unsigned int opcode)
 	comprintf("\tadd_l(PC_P,src);\n");
 
 	comprintf("\tcomp_pc_p=(uae_u8*)(uintptr)get_const(PC_P);\n");
+	gen_update_next_handler();
 	break;
 
      case i_Bcc:
@@ -3283,6 +3290,7 @@ int main(void)
     free (table68k);
 	fclose (stblfile);
 	fclose (headerfile);
+	(void)disasm_this_inst;
     return 0;
 }
 

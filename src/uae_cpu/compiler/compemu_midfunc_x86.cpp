@@ -2821,3 +2821,9 @@ static inline void write_jmp_target(uae_u32 *jmpaddr, cpuop_func* a) {
 static inline void emit_jmp_target(uae_u32 a) {
 	emit_long(a-((uintptr)target+4));
 }
+
+
+void compemu_bkpt(void)
+{
+	emit_byte(0xcc);
+}

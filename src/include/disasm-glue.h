@@ -156,6 +156,7 @@ int m68k_disasm_builtin(m68k_disasm_info *info);
 #if (defined(DISASM_USE_BUILTIN) || defined(DISASM_USE_OPCODES)) && (defined(CPU_i386) || defined(CPU_x86_64))
 
 #define HAVE_DISASM_X86 1
+#define HAVE_DISASM_NATIVE 1
 
 const uint8 *x86_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
@@ -164,6 +165,7 @@ const uint8 *x86_disasm(const uint8 *ainstr, char *buf, int allbytes);
 #if defined(DISASM_USE_OPCODES) && (defined(CPU_powerpc))
 
 #define HAVE_DISASM_PPC 1
+#define HAVE_DISASM_NATIVE 1
 
 const uint8 *ppc_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
@@ -172,6 +174,7 @@ const uint8 *ppc_disasm(const uint8 *ainstr, char *buf, int allbytes);
 #if (defined(DISASM_USE_BUILTIN) || defined(DISASM_USE_OPCODES)) && (defined(CPU_arm))
 
 #define HAVE_DISASM_ARM 1
+#define HAVE_DISASM_NATIVE 1
 
 const uint8 *arm_disasm(const uint8 *ainstr, char *buf, int allbytes);
 
