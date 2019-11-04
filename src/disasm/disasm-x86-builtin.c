@@ -17834,7 +17834,7 @@ static void generic_print_address(bfd_vma addr, disassemble_info *info)
 
 int x86_print_insn(bfd_vma ainst, disassemble_info *info)
 {
-	info->buffer = (bfd_byte *)ainst;
+	info->buffer = (bfd_byte *)(uintptr_t)ainst;
 	info->buffer_length = 16;
 	info->buffer_vma = (uintptr_t)ainst;
 	return print_insn(ainst, info);

@@ -5632,7 +5632,7 @@ static int generic_symbol_at_address(bfd_vma vma, disassemble_info *info)
 
 int arm_print_insn(bfd_vma ainst, disassemble_info *info)
 {
-	info->buffer = (bfd_byte *)ainst;
+	info->buffer = (bfd_byte *)(uintptr_t)ainst;
 	info->buffer_length = 16;
 	info->buffer_vma = (uintptr_t)ainst;
 	return print_insn((uint32_t)(uintptr_t)ainst, info, TRUE);

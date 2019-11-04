@@ -242,12 +242,12 @@ int32 NF_Config::dispatch(uint32 fncode)
 				}
 				break;
 			case 0x5f4d4348: /* '_MCH' */
-				changed |= bx_options.tos.cookie_mch != value;
+				changed |= (uint32_t)bx_options.tos.cookie_mch != value;
 				bx_options.tos.cookie_mch = value;
 				ret = 0;
 				break;
 			case 0x5f414b50: /* '_AKP' */
-				changed |= bx_options.tos.cookie_akp;
+				changed |= (uint32_t)bx_options.tos.cookie_akp != value;
 				bx_options.tos.cookie_akp = value;
 				ret = 0;
 				break;
