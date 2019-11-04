@@ -269,7 +269,6 @@ typedef int64 intptr;
 #define uae_s64 int64
 #define uae_u64 uint64
 typedef uae_u32 uaecptr;
-typedef char flagtype;
 
 #ifdef __cplusplus
 # if __cplusplus >= 201103L
