@@ -261,6 +261,7 @@ finish_braces (void)
 {
     while (n_braces > 0)
 	close_brace ();
+    comprintf ("\n");
 }
 
 static inline void gen_update_next_handler(void)
@@ -354,7 +355,7 @@ swap_opcode (void)
 static void
 sync_m68k_pc (void)
 {
-	comprintf("\t if (m68k_pc_offset > SYNC_PC_OFFSET) sync_m68k_pc();\n");
+	comprintf("    if (m68k_pc_offset > SYNC_PC_OFFSET)\n        sync_m68k_pc();\n");
 }
 
 
@@ -2035,7 +2036,7 @@ gen_opcode (unsigned int opcode)
 	 case 1:
 	    comprintf("\tstart_needflags();\n");
 	    comprintf("\tsub_w_ri(src,1);\n");
-	    comprintf("\t end_needflags();\n");
+	    comprintf("\tend_needflags();\n");
 	    start_brace();
 	    comprintf("\tuae_u32 v2,v;\n"
 		      "\tuae_u32 v1=get_const(PC_P);\n");
@@ -2069,9 +2070,9 @@ gen_opcode (unsigned int opcode)
 	       so whether we move them around doesn't matter. However,
 	       if cc=false, we have offs==jump_pc, and src==nsrc-1 */
 
-	    comprintf("\t start_needflags();\n");
+	    comprintf("\tstart_needflags();\n");
 	    comprintf("\ttest_w_rr(nsrc,nsrc);\n");
-	    comprintf("\t end_needflags();\n");
+	    comprintf("\tend_needflags();\n");
 	    comprintf("\tcmov_l_rr(PC_P,offs,%d);\n", NATIVE_CC_NE);
 	    break;
 	 default: assert(0);
@@ -2180,10 +2181,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-	    comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-		"  FAIL(1);\n"
-		"  " RETURN "\n"
-		"} \n");
+	    comprintf(
+	    	"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 	    start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2255,10 +2257,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-	    comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-		"  FAIL(1);\n"
-		"  " RETURN "\n"
-		"} \n");
+	    comprintf(
+	    	"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 	    start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2266,10 +2269,11 @@ gen_opcode (unsigned int opcode)
 	   LSL. The handling of V is, uhm, unpleasant, so if it's needed,
 	   let the normal emulation handle it. Shoulders of giants kinda
 	   thing ;-) */
-	comprintf("if (needed_flags & FLAG_V) {\n"
-		  "  FAIL(1);\n"
-		  "  " RETURN "\n"
-		  "} \n");
+	comprintf(
+		"    if (needed_flags & FLAG_V) {\n"
+		"        FAIL(1);\n"
+		"        " RETURN "\n"
+		"    }\n");
 
 	genamode (curi->smode, "srcreg", curi->size, "cnt", 1, 0);
 	genamode (curi->dmode, "dstreg", curi->size, "data", 1, 0);
@@ -2329,10 +2333,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-	    comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-		"  FAIL(1);\n"
-		"  " RETURN "\n"
-		"} \n");
+	    comprintf(
+	    	"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 	    start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2396,10 +2401,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-		comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-				"  FAIL(1);\n"
-				"  " RETURN "\n"
-				"} \n");
+		comprintf(
+			"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 		start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2463,10 +2469,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-	    comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-		"  FAIL(1);\n"
-		"  " RETURN "\n"
-		"} \n");
+	    comprintf(
+	    	"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 	    start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2475,9 +2482,9 @@ gen_opcode (unsigned int opcode)
 	start_brace ();
 
 	switch(curi->size) {
-	 case sz_long: comprintf("\t rol_l_rr(data,cnt);\n"); break;
-	 case sz_word: comprintf("\t rol_w_rr(data,cnt);\n"); break;
-	 case sz_byte: comprintf("\t rol_b_rr(data,cnt);\n"); break;
+	 case sz_long: comprintf("\trol_l_rr(data,cnt);\n"); break;
+	 case sz_word: comprintf("\trol_w_rr(data,cnt);\n"); break;
+	 case sz_byte: comprintf("\trol_b_rr(data,cnt);\n"); break;
 	}
 
 	if (!noflags) {
@@ -2487,13 +2494,13 @@ gen_opcode (unsigned int opcode)
 	     */
 	    comprintf("\tif (needed_flags & FLAG_ZNV)\n");
 	    switch(curi->size) {
-	     case sz_byte: comprintf("\t  test_b_rr(data,data);\n"); break;
-	     case sz_word: comprintf("\t  test_w_rr(data,data);\n"); break;
-	     case sz_long: comprintf("\t  test_l_rr(data,data);\n"); break;
+	     case sz_byte: comprintf("\t    test_b_rr(data,data);\n"); break;
+	     case sz_word: comprintf("\t    test_w_rr(data,data);\n"); break;
+	     case sz_long: comprintf("\t    test_l_rr(data,data);\n"); break;
 	    }
-	    comprintf("\t bt_l_ri(data,0x00);\n"); /* Set C */
-	    comprintf("\t live_flags();\n");
-	    comprintf("\t end_needflags();\n");
+	    comprintf("\tbt_l_ri(data,0x00);\n"); /* Set C */
+	    comprintf("\tlive_flags();\n");
+	    comprintf("\tend_needflags();\n");
 	}
 	genastore ("data", curi->dmode, "dstreg", curi->size, "data");
 	break;
@@ -2504,10 +2511,11 @@ gen_opcode (unsigned int opcode)
 #endif
 	mayfail;
 	if (curi->smode==Dreg) {
-	    comprintf("if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
-		"  FAIL(1);\n"
-		"  " RETURN "\n"
-		"} \n");
+	    comprintf(
+	    	"    if ((uae_u32)srcreg==(uae_u32)dstreg) {\n"
+			"        FAIL(1);\n"
+			"        " RETURN "\n"
+			"    }\n");
 	    start_brace();
 	}
 	comprintf("\tdont_care_flags();\n");
@@ -2516,9 +2524,9 @@ gen_opcode (unsigned int opcode)
 	start_brace ();
 
 	switch(curi->size) {
-	 case sz_long: comprintf("\t ror_l_rr(data,cnt);\n"); break;
-	 case sz_word: comprintf("\t ror_w_rr(data,cnt);\n"); break;
-	 case sz_byte: comprintf("\t ror_b_rr(data,cnt);\n"); break;
+	 case sz_long: comprintf("\tror_l_rr(data,cnt);\n"); break;
+	 case sz_word: comprintf("\tror_w_rr(data,cnt);\n"); break;
+	 case sz_byte: comprintf("\tror_b_rr(data,cnt);\n"); break;
 	}
 
 	if (!noflags) {
@@ -2528,17 +2536,17 @@ gen_opcode (unsigned int opcode)
 	     */
 	    comprintf("\tif (needed_flags & FLAG_ZNV)\n");
 	    switch(curi->size) {
-	     case sz_byte: comprintf("\t  test_b_rr(data,data);\n"); break;
-	     case sz_word: comprintf("\t  test_w_rr(data,data);\n"); break;
-	     case sz_long: comprintf("\t  test_l_rr(data,data);\n"); break;
+	     case sz_byte: comprintf("\t    test_b_rr(data,data);\n"); break;
+	     case sz_word: comprintf("\t    test_w_rr(data,data);\n"); break;
+	     case sz_long: comprintf("\t    test_l_rr(data,data);\n"); break;
 	    }
 	    switch(curi->size) {
-	     case sz_byte: comprintf("\t bt_l_ri(data,0x07);\n"); break;
-	     case sz_word: comprintf("\t bt_l_ri(data,0x0f);\n"); break;
-	     case sz_long: comprintf("\t bt_l_ri(data,0x1f);\n"); break;
+	     case sz_byte: comprintf("\tbt_l_ri(data,0x07);\n"); break;
+	     case sz_word: comprintf("\tbt_l_ri(data,0x0f);\n"); break;
+	     case sz_long: comprintf("\tbt_l_ri(data,0x1f);\n"); break;
 	    }
-	    comprintf("\t live_flags();\n");
-	    comprintf("\t end_needflags();\n");
+	    comprintf("\tlive_flags();\n");
+	    comprintf("\tend_needflags();\n");
 	}
 	genastore ("data", curi->dmode, "dstreg", curi->size, "data");
 	break;
@@ -2822,7 +2830,7 @@ gen_opcode (unsigned int opcode)
     finish_braces ();
     sync_m68k_pc ();
     if (global_mayfail)
-	comprintf("\tif (failure)  m68k_pc_offset=m68k_pc_offset_thisinst;\n");
+	comprintf("    if (failure)\n        m68k_pc_offset = m68k_pc_offset_thisinst;\n");
     return global_failure;
 }
 

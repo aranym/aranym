@@ -2606,12 +2606,14 @@ static inline void compemu_raw_call(uae_u32 t)
 #endif
 }
 
+#if defined(UAE)
 static inline void compemu_raw_call_r(RR4 r)
 {
 	PUSH(RLR_INDEX);  // push    {lr}
 	BLX_r(r);					// blx	   r0
 	POP(RLR_INDEX);   // pop     {lr}
 }
+#endif
 
 static inline void compemu_raw_jcc_l_oponly(int cc)
 {

@@ -444,8 +444,6 @@ static void unlock2(int r);
 static void setlock(int r);
 static int readreg_specific(int r, int size, int spec);
 static int writereg_specific(int r, int size, int spec);
-static void prepare_for_call_1(void);
-static void prepare_for_call_2(void);
 static void align_target(uae_u32 a);
 
 static void inline flush_cpu_icache(void *from, void *to);
@@ -2583,6 +2581,80 @@ static inline int f_writereg(int r)
 	return answer;
 }
 
+/********************************************************************
+ * Support functions, internal                                      *
+ ********************************************************************/
+
+
+static void align_target(uae_u32 a)
+{
+	if (!a)
+		return;
+
+	if (tune_nop_fillers)
+		raw_emit_nop_filler(a - (((uintptr)target) & (a - 1)));
+	else {
+		/* Fill with NOPs --- makes debugging with gdb easier */
+		while ((uintptr)target&(a-1))
+			emit_byte(0x90); // Attention x86 specific code
+	}
+}
+
+static inline int isinrom(uintptr addr)
+{
+#ifdef UAE
+	return (addr >= uae_p32(kickmem_bank.baseaddr) &&
+			addr < uae_p32(kickmem_bank.baseaddr + 8 * 65536));
+#else
+	return ((addr >= (uintptr)ROMBaseHost) && (addr < (uintptr)ROMBaseHost + ROMSize));
+#endif
+}
+
+#if defined(UAE) || defined(FLIGHT_RECORDER)
+static void flush_all(void)
+{
+	int i;
+
+	log_flush();
+	for (i=0;i<VREGS;i++)
+		if (live.state[i].status==DIRTY) {
+			if (!call_saved[live.state[i].realreg]) {
+				tomem(i);
+			}
+		}
+	for (i=0;i<VFREGS;i++)
+		if (f_isinreg(i))
+			f_evict(i);
+	raw_fp_cleanup_drop();
+}
+
+/* Make sure all registers that will get clobbered by a call are
+   save and sound in memory */
+static void prepare_for_call_1(void)
+{
+	flush_all();  /* If there are registers that don't get clobbered,
+		           * we should be a bit more selective here */
+}
+
+/* We will call a C routine in a moment. That will clobber all registers,
+   so we need to disassociate everything */
+static void prepare_for_call_2(void)
+{
+	int i;
+	for (i=0;i<N_REGS;i++)
+		if (!call_saved[i] && live.nat[i].nholds>0)
+			free_nreg(i);
+
+	for (i=0;i<N_FREGS;i++)
+		if (live.fat[i].nholds>0)
+			f_free_nreg(i);
+
+	live.flags_in_flags=TRASH;  /* Note: We assume we already rescued the
+								   flags at the very start of the call_r
+								   functions! */
+}
+#endif
+
 #if defined(CPU_arm)
 #include "compemu_midfunc_arm.cpp"
 
@@ -3025,78 +3097,6 @@ static void freescratch(void)
 		if (live.fate[i].needflush==NF_SCRATCH) {
 			f_forget_about(i);
 		}
-}
-
-/********************************************************************
- * Support functions, internal                                      *
- ********************************************************************/
-
-
-static void align_target(uae_u32 a)
-{
-	if (!a)
-		return;
-
-	if (tune_nop_fillers)
-		raw_emit_nop_filler(a - (((uintptr)target) & (a - 1)));
-	else {
-		/* Fill with NOPs --- makes debugging with gdb easier */
-		while ((uintptr)target&(a-1))
-			emit_byte(0x90); // Attention x86 specific code
-	}
-}
-
-static inline int isinrom(uintptr addr)
-{
-#ifdef UAE
-	return (addr >= uae_p32(kickmem_bank.baseaddr) &&
-			addr < uae_p32(kickmem_bank.baseaddr + 8 * 65536));
-#else
-	return ((addr >= (uintptr)ROMBaseHost) && (addr < (uintptr)ROMBaseHost + ROMSize));
-#endif
-}
-
-static void flush_all(void)
-{
-	int i;
-
-	log_flush();
-	for (i=0;i<VREGS;i++)
-		if (live.state[i].status==DIRTY) {
-			if (!call_saved[live.state[i].realreg]) {
-				tomem(i);
-			}
-		}
-	for (i=0;i<VFREGS;i++)
-		if (f_isinreg(i))
-			f_evict(i);
-	raw_fp_cleanup_drop();
-}
-
-/* Make sure all registers that will get clobbered by a call are
-   save and sound in memory */
-static void prepare_for_call_1(void)
-{
-	flush_all();  /* If there are registers that don't get clobbered,
-		           * we should be a bit more selective here */
-}
-
-/* We will call a C routine in a moment. That will clobber all registers,
-   so we need to disassociate everything */
-static void prepare_for_call_2(void)
-{
-	int i;
-	for (i=0;i<N_REGS;i++)
-		if (!call_saved[i] && live.nat[i].nholds>0)
-			free_nreg(i);
-
-	for (i=0;i<N_FREGS;i++)
-		if (live.fat[i].nholds>0)
-			f_free_nreg(i);
-
-	live.flags_in_flags=TRASH;  /* Note: We assume we already rescued the
-								   flags at the very start of the call_r
-								   functions! */
 }
 
 /********************************************************************
@@ -4771,8 +4771,8 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 					if (i < blocklen - 1) {
 						uae_u8* branchadd;
 
-						/* if (SPCFLAGS_TEST(SPCFLAG_STOP)) popall_do_nothing() */
-						compemu_raw_mov_l_rm(0,(uintptr)specflags);
+						/* if (SPCFLAGS_TEST(SPCFLAG_ALL)) popall_do_nothing() */
+						compemu_raw_mov_l_rm(0, (uintptr)specflags);
 						compemu_raw_test_l_rr(0,0);
 #if defined(USE_DATA_BUFFER)
 						data_check_end(8, 64);  // just a pessimistic guess...
