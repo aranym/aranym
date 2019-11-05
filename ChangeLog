@@ -1,4 +1,8 @@
 2019/11/05
+X-flag is only in regflags, not regs
+
+
+2019/11/05
 Ifdef out some unused code
 
 

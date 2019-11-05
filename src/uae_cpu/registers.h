@@ -61,7 +61,6 @@ extern struct regstruct
     flagtype t0;
     flagtype s;
     flagtype m;
-    flagtype x;
     flagtype stopped;
     uint32_t intmask;
 
