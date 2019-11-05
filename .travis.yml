@@ -157,6 +157,10 @@ matrix:
       script:
         - echo "skipped" # skip script tag
       services: docker
+  allow_failures:
+    - os: osx
+      osx_image: xcode11.1
+      language: objective-c
 
 before_install:
   - .travis/install_ssh_id.sh
