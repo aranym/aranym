@@ -48,6 +48,7 @@ enum type_size_t {
 	SIZE_UNKNOWN,
 	SIZE_BYTE,
 	SIZE_WORD,
+	SIZE_3,
 	SIZE_INT
 };
 
@@ -58,6 +59,10 @@ typedef void (*sighandler_t)(int);
 #endif
 
 int in_handler = 0;
+
+#ifndef MMU_SW_RW
+# define MMU_SW_RW 0x100
+#endif
 
 enum {
 	ARM_REG_R0 = 0,
@@ -230,6 +235,7 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
 
+	regs.mmu_ssw = ((transfer_size & 3) << 5) | (transfer_type == TYPE_STORE ? 0 : MMU_SW_RW);
 	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
 		goto buserr;
 
@@ -295,7 +301,10 @@ static __attribute_noinline__ void handle_arm_instruction(unsigned long *pregs, 
 		 * triggered by one of the HWget_x/HWput_x calls
 		 * in the handler above
 		 */
-		D(bug("Atari bus error (%s)", (regs.mmu_fault_addr < 0x00f00000) || (regs.mmu_fault_addr > 0x00ffffff) ? "mem" : "hw"));
+		D(bug("Atari bus error %s $%08x (%s)",
+			regs.mmu_ssw & MMU_SW_RW ? "read" : "write",
+			regs.mmu_fault_addr,
+			(regs.mmu_fault_addr < 0x00f00000) || (regs.mmu_fault_addr > 0x00ffffff) ? "mem" : "hw"));
 		pregs[ARM_REG_PC] = (uintptr)atari_bus_fault;
 		return;
 	}

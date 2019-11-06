@@ -1,4 +1,8 @@
 2019/11/06
+Set MMU status word in sigsegv handler, for consistency
+
+
+2019/11/06
 Move generated code for RTE instruction to separate function
 
 

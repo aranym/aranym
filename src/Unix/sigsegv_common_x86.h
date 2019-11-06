@@ -27,6 +27,10 @@ int in_handler = 0;
 static unsigned long x86_opcodes[256];
 #endif
 
+#ifndef MMU_SW_RW
+# define MMU_SW_RW 0x100
+#endif
+
 enum instruction_t {
 	INSTR_UNKNOWN,
 	INSTR_MOVZX8,
@@ -949,6 +953,7 @@ static const int x86_reg_map[] = {
 	if (addr >= 0xff000000)
 		addr &= 0x00ffffff;
 
+	regs.mmu_ssw = ((size & 3) << 5) | (transfer_type == TYPE_STORE ? 0 : MMU_SW_RW);
 	if ((addr < 0x00f00000) || (addr > 0x00ffffff))
 		goto buserr;
 
@@ -1772,7 +1777,10 @@ static __attribute_noinline__ void handle_access_fault(CONTEXT_ATYPE CONTEXT_NAM
 		 * triggered by one of the HWget_x/HWput_x calls
 		 * in the handler above
 		 */
-		D(bug("Atari bus error (%s)", (regs.mmu_fault_addr < 0x00f00000) || (regs.mmu_fault_addr > 0x00ffffff) ? "mem" : "hw"));
+		D(bug("Atari bus error %s $%08x (%s)",
+			regs.mmu_ssw & MMU_SW_RW ? "read" : "write",
+			regs.mmu_fault_addr,
+			(regs.mmu_fault_addr < 0x00f00000) || (regs.mmu_fault_addr > 0x00ffffff) ? "mem" : "hw"));
 		CONTEXT_AEIP = (uintptr)atari_bus_fault;
 		return;
 	}
