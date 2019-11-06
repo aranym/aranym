@@ -1,3 +1,7 @@
+2019/11/06
+Move generated code for RTE instruction to separate function
+
+
 2019/11/05
 X-flag is only in regflags, not regs
 

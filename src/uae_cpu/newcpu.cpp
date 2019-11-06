@@ -486,6 +486,40 @@ static inline void exc_make_frame(
     exc_push_word(sr);
 }
 
+
+void ex_rte(void)
+{
+	uae_u16 newsr;
+	uae_u32 newpc;
+	uae_s16 format;
+
+	for (;;)
+	{
+		newsr = get_word(m68k_areg(regs, 7));
+		m68k_areg(regs, 7) += 2;
+		newpc = get_long(m68k_areg(regs, 7));
+		m68k_areg(regs, 7) += 4;
+		format = get_word(m68k_areg(regs, 7));
+		m68k_areg(regs, 7) += 2;
+		if ((format & 0xF000) == 0x0000) break;
+		else if ((format & 0xF000) == 0x1000) { ; }
+		else if ((format & 0xF000) == 0x2000) { m68k_areg(regs, 7) += 4; break; }
+//		else if ((format & 0xF000) == 0x3000) { m68k_areg(regs, 7) += 4; break; }
+		else if ((format & 0xF000) == 0x7000) { m68k_areg(regs, 7) += 52; break; }
+		else if ((format & 0xF000) == 0x8000) { m68k_areg(regs, 7) += 50; break; }
+		else if ((format & 0xF000) == 0x9000) { m68k_areg(regs, 7) += 12; break; }
+		else if ((format & 0xF000) == 0xa000) { m68k_areg(regs, 7) += 24; break; }
+		else if ((format & 0xF000) == 0xb000) { m68k_areg(regs, 7) += 84; break; }
+		else { Exception(14,0); return; }
+		regs.sr = newsr;
+		MakeFromSR();
+	}
+	regs.sr = newsr;
+	MakeFromSR();
+	m68k_setpc_rte(newpc);
+	fill_prefetch_0();
+}
+
 #ifdef EXCEPTIONS_VIA_LONGJMP
 static int building_bus_fault_stack_frame=0;
 #endif
