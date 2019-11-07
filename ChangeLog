@@ -1,3 +1,7 @@
+2019/11/07
+In the disassembler, print some special addresses in cleartext
+
+
 2019/11/06
 Set MMU status word in sigsegv handler, for consistency
 

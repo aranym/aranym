@@ -47,6 +47,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include "registers.h"
+#include "m68k.h"
 
 #ifndef _
 #define _(x) x
@@ -17829,6 +17831,32 @@ static void generic_print_address(bfd_vma addr, disassemble_info *info)
 	else
 		sprintf(buf, "%08" PRIx32, (uint32_t)addr);
 	(*info->fprintf_func) (info->stream, "0x%s", buf);
+	if (addr == (uintptr_t)&regs.pc_p)
+		(*info->fprintf_func) (info->stream, " (regs.pc_p)");
+	else if (addr == (uintptr_t)&regs.pc)
+		(*info->fprintf_func) (info->stream, " (regs.pc)");
+	else if (addr == (uintptr_t)&regs.pc_oldp)
+		(*info->fprintf_func) (info->stream, " (regs.pc_oldp)");
+	else if (addr == (uintptr_t)&regs.fault_pc)
+		(*info->fprintf_func) (info->stream, " (regs.fault_pc)");
+	else if (addr == (uintptr_t)&regflags.cznv)
+		(*info->fprintf_func) (info->stream, " (regflags.cznv)");
+	else if (addr == (uintptr_t)&regflags.x)
+		(*info->fprintf_func) (info->stream, " (regflags.x)");
+	else if (addr == (uintptr_t)&regs.s)
+		(*info->fprintf_func) (info->stream, " (regs.s)");
+	else if (addr == (uintptr_t)&regs.intmask)
+		(*info->fprintf_func) (info->stream, " (regs.intmask)");
+	else if (addr == (uintptr_t)&regs.sr)
+		(*info->fprintf_func) (info->stream, " (regs.sr)");
+	else if (addr == (uintptr_t)&regs.vbr)
+		(*info->fprintf_func) (info->stream, " (regs.vbr)");
+	else if (addr == (uintptr_t)&regs.usp)
+		(*info->fprintf_func) (info->stream, " (regs.usp)");
+	else if (addr == (uintptr_t)&regs.isp)
+		(*info->fprintf_func) (info->stream, " (regs.isp)");
+	else if (addr == (uintptr_t)&regs.regs[15])
+		(*info->fprintf_func) (info->stream, " (regs.sp)");
 }
 
 
