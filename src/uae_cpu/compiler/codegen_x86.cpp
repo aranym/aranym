@@ -1358,7 +1358,7 @@ static inline void raw_flags_evicted(int r)
 	live.nat[r].nholds=0;
 }
 
-#define FLAG_NREG1_FLAGREG 0  /* Set to -1 if any register will do */
+#define FLAG_NREG1_FLAGREG EAX_INDEX  /* Set to -1 if any register will do */
 static inline void raw_flags_to_reg_FLAGREG(int r)
 {
 	raw_lahf(0);  /* Most flags in AH */
@@ -1372,14 +1372,14 @@ static inline void raw_flags_to_reg_FLAGREG(int r)
 #endif
 }
 
-#define FLAG_NREG2_FLAGREG 0  /* Set to -1 if any register will do */
+#define FLAG_NREG2_FLAGREG EAX_INDEX  /* Set to -1 if any register will do */
 static inline void raw_reg_to_flags_FLAGREG(int r)
 {
 	raw_cmp_b_ri(r,-127); /* set V */
 	raw_sahf(0);
 }
 
-#define FLAG_NREG3_FLAGREG 0  /* Set to -1 if any register will do */
+#define FLAG_NREG3_FLAGREG EAX_INDEX  /* Set to -1 if any register will do */
 static __inline__ void raw_flags_set_zero_FLAGREG(int s, int tmp)
 {
 	raw_mov_l_rr(tmp,s);
@@ -1431,7 +1431,7 @@ static inline void raw_flags_init_FLAGSTK(void) { }
 /* Try to use the LAHF/SETO method on x86_64 since it is faster.
    This can't be the default because some older CPUs don't support
    LAHF/SAHF in long mode.  */
-static int FLAG_NREG1_FLAGGEN = 0;
+static int FLAG_NREG1_FLAGGEN = EAX_INDEX;
 static inline void raw_flags_to_reg_FLAGGEN(int r)
 {
 	if (have_lahf_lm) {
@@ -1450,7 +1450,7 @@ static inline void raw_flags_to_reg_FLAGGEN(int r)
 		raw_flags_to_reg_FLAGSTK(r);
 }
 
-static int FLAG_NREG2_FLAGGEN = 0;
+static int FLAG_NREG2_FLAGGEN = EAX_INDEX;
 static inline void raw_reg_to_flags_FLAGGEN(int r)
 {
 	if (have_lahf_lm) {
@@ -1462,7 +1462,7 @@ static inline void raw_reg_to_flags_FLAGGEN(int r)
 		raw_reg_to_flags_FLAGSTK(r);
 }
 
-static int FLAG_NREG3_FLAGGEN = 0;
+static int FLAG_NREG3_FLAGGEN = EAX_INDEX;
 static inline void raw_flags_set_zero_FLAGGEN(int s, int tmp)
 {
 	if (have_lahf_lm)
@@ -1476,12 +1476,12 @@ static inline void raw_flags_init_FLAGGEN(void)
 	if (have_lahf_lm) {
 		FLAG_NREG1_FLAGGEN = FLAG_NREG1_FLAGREG;
 		FLAG_NREG2_FLAGGEN = FLAG_NREG2_FLAGREG;
-		FLAG_NREG1_FLAGGEN = FLAG_NREG3_FLAGREG;
+		FLAG_NREG3_FLAGGEN = FLAG_NREG3_FLAGREG;
 	}
 	else {
 		FLAG_NREG1_FLAGGEN = FLAG_NREG1_FLAGSTK;
 		FLAG_NREG2_FLAGGEN = FLAG_NREG2_FLAGSTK;
-		FLAG_NREG1_FLAGGEN = FLAG_NREG3_FLAGSTK;
+		FLAG_NREG3_FLAGGEN = FLAG_NREG3_FLAGSTK;
 	}
 }
 #endif
@@ -1508,23 +1508,23 @@ static inline void raw_flags_init_FLAGGEN(void)
 
 /* Apparently, there are enough instructions between flag store and
    flag reload to avoid the partial memory stall */
-static inline void raw_load_flagreg(uae_u32 target, uae_u32 r)
+static inline void raw_load_flagreg(uae_u32 target)
 {
 	/* attention: in 64bit mode, relies on LITTE_ENDIANESS of regflags.cznv */
-	raw_mov_l_rm(target,(uintptr)live.state[r].mem);
+	raw_mov_l_rm(target,(uintptr)live.state[FLAGTMP].mem);
 }
 
-static inline void raw_load_flagx(uae_u32 target, uae_u32 r)
+static inline void raw_load_flagx(uae_u32 target)
 {
 #if FLAGBIT_X < 8
 	if (live.nat[target].canbyte)
-		raw_mov_b_rm(target,(uintptr)live.state[r].mem);
+		raw_mov_b_rm(target,(uintptr)live.state[FLAGX].mem);
 	else
 #endif
 	if (live.nat[target].canword)
-		raw_mov_w_rm(target,(uintptr)live.state[r].mem);
+		raw_mov_w_rm(target,(uintptr)live.state[FLAGX].mem);
 	else
-		raw_mov_l_rm(target,(uintptr)live.state[r].mem);
+		raw_mov_l_rm(target,(uintptr)live.state[FLAGX].mem);
 }
 
 static inline void raw_dec_sp(int off)

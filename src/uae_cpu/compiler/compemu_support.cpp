@@ -226,7 +226,7 @@ void jit_abort(const char *format, ...)
 
 #ifdef RECORD_REGISTER_USAGE
 static uint64 reg_count[16];
-static int reg_count_local[16];
+static uint64 reg_count_local[16];
 
 static int reg_count_compare(const void *ap, const void *bp)
 {
@@ -444,11 +444,8 @@ static void unlock2(int r);
 static void setlock(int r);
 static int readreg_specific(int r, int size, int spec);
 static int writereg_specific(int r, int size, int spec);
-static void align_target(uae_u32 a);
 
-static void inline flush_cpu_icache(void *from, void *to);
 static void inline write_jmp_target(uae_u32 *jmpaddr, cpuop_func* a);
-static void inline emit_jmp_target(uae_u32 a);
 
 uae_u32 m68k_pc_offset;
 
@@ -1541,9 +1538,9 @@ static inline void log_visused(int r)
 static inline void do_load_reg(int n, int r)
 {
 	if (r == FLAGTMP)
-		raw_load_flagreg(n, r);
+		raw_load_flagreg(n);
 	else if (r == FLAGX)
-		raw_load_flagx(n, r);
+		raw_load_flagx(n);
 	else
 		compemu_raw_mov_l_rm(n, (uintptr) live.state[r].mem);
 }

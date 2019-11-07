@@ -597,7 +597,7 @@ void Exception(int nr, uaecptr oldpc)
     } else if (nr == 3) {
 	exc_make_frame(2, regs.sr, last_addr_for_exception_3, nr,
 			last_fault_for_exception_3 & 0xfffffffe, 0);
-    } else if (nr ==5 || nr == 6 || nr == 7 || nr == 9) {
+    } else if (nr == 5 || nr == 6 || nr == 7 || nr == 9) {
 	/* div by zero, CHK, TRAP or TRACE */
 	exc_make_frame(2, regs.sr, currpc, nr, oldpc, 0);
     } else if (regs.m && nr >= 24 && nr < 32) {

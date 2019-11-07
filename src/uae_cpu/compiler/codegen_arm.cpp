@@ -1961,9 +1961,9 @@ static inline void raw_pop_preserved_regs(void) {
 
 // Verify!!!
 /* FLAGX is byte sized, and we *do* write it at that size */
-static inline void raw_load_flagx(uae_u32 t, uae_u32 r)
+static inline void raw_load_flagx(uae_u32 t)
 {
-    raw_mov_l_rm(t,(uintptr)live.state[r].mem);
+    raw_mov_l_rm(t,(uintptr)live.state[FLAGX].mem);
 }
 
 static inline void raw_flags_evicted(int r)
@@ -2007,9 +2007,9 @@ static inline void raw_reg_to_flags(int r)
 
 /* Apparently, there are enough instructions between flag store and
    flag reload to avoid the partial memory stall */
-static inline void raw_load_flagreg(uae_u32 t, uae_u32 r)
+static inline void raw_load_flagreg(uae_u32 t)
 {
-	raw_mov_l_rm(t,(uintptr)live.state[r].mem);
+	raw_mov_l_rm(t,(uintptr)live.state[FLAGTMP].mem);
 }
 
 /* %eax register is clobbered if target processor doesn't support fucomi */
