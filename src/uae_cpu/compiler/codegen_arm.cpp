@@ -2708,7 +2708,18 @@ static inline void compemu_raw_jz_b_oponly(void)
 	LDRSB_rRI(REG_WORK1, RPC_INDEX, 3);			// ldrsb	r2,[pc,#3]
 	ADD_rrr(RPC_INDEX, RPC_INDEX, REG_WORK1); 	// add		pc,pc,r2
 
-	skip_n_bytes(3);
+	skip_n_bytes(3); /* additionally 1 byte skipped by generic code */
+
+	// <jp:>
+}
+
+static inline void compemu_raw_jnz_b_oponly(void)
+{
+	BEQ_i(2);									// beq jp
+	LDRSB_rRI(REG_WORK1, RPC_INDEX, 3);			// ldrsb	r2,[pc,#3]
+	ADD_rrr(RPC_INDEX, RPC_INDEX, REG_WORK1); 	// add		pc,pc,r2
+
+	skip_n_bytes(3); /* additionally 1 byte skipped by generic code */
 
 	// <jp:>
 }

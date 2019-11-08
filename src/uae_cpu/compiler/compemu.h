@@ -169,6 +169,7 @@ extern void compiler_exit(void);
 extern bool compiler_use_jit(void);
 #endif
 extern void flush(int save_regs);
+void flush_reg(int reg);
 extern void set_target(uae_u8* t);
 extern uae_u8* get_target(void);
 #ifdef UAE
@@ -428,6 +429,9 @@ extern void sync_m68k_pc(void);
 extern uae_u32 get_const(int r);
 extern int  is_const(int r);
 extern void register_branch(uae_u32 not_taken, uae_u32 taken, uae_u8 cond);
+void compemu_make_sr(int sr, int tmp);
+void compemu_enter_super(int sr);
+void compemu_exc_make_frame(int format, int sr, int currpc, int nr, int tmp);
 void compemu_bkpt(void);
 extern bool disasm_this_inst;
 

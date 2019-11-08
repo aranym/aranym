@@ -148,6 +148,7 @@ DECLARE_MIDFUNC(test_l_ri(RR4 d, IMM i));
 DECLARE_MIDFUNC(test_l_rr(RR4 d, RR4 s));
 DECLARE_MIDFUNC(test_w_rr(RR2 d, RR2 s));
 DECLARE_MIDFUNC(test_b_rr(RR1 d, RR1 s));
+DECLARE_MIDFUNC(test_b_mi(IMM d, IMM s));
 DECLARE_MIDFUNC(and_l_ri(RW4 d, IMM i));
 DECLARE_MIDFUNC(and_l(RW4 d, RR4 s));
 DECLARE_MIDFUNC(and_w(RW2 d, RR2 s));

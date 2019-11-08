@@ -359,6 +359,26 @@ sync_m68k_pc (void)
 }
 
 
+static void gen_set_fault_pc(void)
+{
+	start_brace();
+	comprintf("\tsync_m68k_pc();\n");
+	comprintf("\tuae_u32 retadd=start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset;\n");
+	comprintf("\tint ret=scratchie++;\n"
+		  "\tmov_l_ri(ret,retadd);\n"
+		  "\tmov_l_mr((uintptr)&regs.fault_pc,ret);\n");
+}
+
+
+static void make_sr(void)
+{
+	start_brace();
+	comprintf("\tint sr = scratchie++;\n");
+	comprintf("\tint tmp = scratchie++;\n");
+	comprintf("\tcompemu_make_sr(sr, tmp);\n");
+}
+
+
 static void disasm_this_inst(void)
 {
 	comprintf("\tdisasm_this_inst = true;\n");
@@ -1757,7 +1777,31 @@ gen_opcode (unsigned int opcode)
 	break;
 
 	 case i_TRAP:
+#ifdef DISABLE_I_TRAP
+	failure;
+#endif
 	isjump;
+	mayfail;
+	start_brace();
+	comprintf("    int trapno = srcreg + 32;\n");
+	gen_set_fault_pc();
+	make_sr();
+	comprintf("    compemu_enter_super(sr);\n");
+	comprintf("    compemu_exc_make_frame(0, sr, ret, trapno, scratchie);\n");
+	comprintf("    forget_about(ret);\n");
+	/* m68k_setpc (get_long (regs.vbr + 4*nr)); */
+	start_brace();
+	comprintf("    int srca = scratchie++;\n");
+	comprintf("    mov_l_rm(srca, (uintptr)&regs.vbr);\n");
+	comprintf("    mov_l_brR(srca, srca, MEMBaseDiff + trapno * 4); mid_bswap_32(srca);\n");
+	comprintf("    mov_l_mr((uintptr)&regs.pc, srca);\n");
+	comprintf("    get_n_addr_jmp(srca, PC_P, scratchie);\n");
+	comprintf("    mov_l_mr((uintptr)&regs.pc_oldp, PC_P);\n");
+	gen_update_next_handler();
+	disasm_this_inst(); /* for debugging only */
+	/*
+	 * this currently deactivates this feature, since it does not work yet
+	 */
 	failure;
 	break;
 

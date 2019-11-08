@@ -922,6 +922,11 @@ LOWFUNC(WRITE,NONE,2,raw_test_b_rr,(R1 d, R1 s))
 	TESTBrr(s, d);
 }
 
+LOWFUNC(WRITE,READ,2,raw_test_b_mi,(IMM d, IMM s))
+{
+	ADDR32 TESTBim(s, d, X86_NOREG, X86_NOREG, 1);
+}
+
 LOWFUNC(WRITE,NONE,2,raw_xor_l_ri,(RW4 d, IMM i))
 {
 	XORLir(i, d);

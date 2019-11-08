@@ -1775,6 +1775,12 @@ MIDFUNC(2,test_b_rr,(RR1 d, RR1 s))
 	unlock2(s);
 }
 
+MIDFUNC(2,test_b_mi,(IMM d, IMM s))
+{
+	CLOBBER_TEST;
+	raw_test_b_mi(d,s);
+}
+
 MIDFUNC(2,and_l_ri,(RW4 d, IMM i))
 {
 	if (isconst(d) && !needflags) {

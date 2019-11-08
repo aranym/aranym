@@ -1,3 +1,9 @@
+2019/11/08
+Add experimental code to compile TRAP instruction
+
+Deactivated for now since it does work yet completely
+
+
 2019/11/07
 Some simplifications
 
