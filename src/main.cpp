@@ -330,7 +330,7 @@ bool InitOS(void)
 	}
 
 	guialert("No operating system found. ARAnyM can not boot!\n"
-			 "Visit http://emutos.sourceforge.net/ and get your copy of EmuTOS now.");
+			 "Visit https://emutos.sourceforge.io/ and get your copy of EmuTOS now.");
 	return false;
 }
 
