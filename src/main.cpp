@@ -340,7 +340,9 @@ bool InitOS(void)
 
 bool InitAll(void)
 {
+#ifdef SDL_GUI
 	bool needToReboot = false;
+#endif
 
 #ifndef NOT_MALLOC
 	if (ROMBaseHost == NULL) {
@@ -436,8 +438,10 @@ bool InitAll(void)
 
 	if (! InitOS())
 	{
+#ifdef SDL_GUI
 		startupGUI = true;
 		needToReboot = true;
+#endif
 	}
 	
 #ifdef SDL_GUI

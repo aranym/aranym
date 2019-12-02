@@ -97,8 +97,10 @@ SDL_Joystick *sdl_joysticks[4]={
  * Mouse handling
  *********************************************************************/
 
+#ifdef SDL_GUI
 static SDL_bool grabbedMouse = SDL_FALSE;
 static SDL_bool hiddenMouse = SDL_FALSE;
+#endif
 SDL_Cursor *aranym_cursor = NULL;
 SDL_Cursor *empty_cursor = NULL;
 

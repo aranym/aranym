@@ -1,4 +1,8 @@
 2019/12/02
+Fix builds with --disable-gui
+
+
+2019/12/02
 Fix a build problem with SDL2 and --enable-nfosmesa
 
 Fixes https://github.com/aranym/aranym/issues/54

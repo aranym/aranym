@@ -38,6 +38,7 @@
 #include "parameters.h"	/* bx_options */
 #include "main.h"	/* QuitEmulator */
 #include "input.h"
+#include "host_filesys.h"
 
 #ifdef NFVDI_SUPPORT
 # include "nf_objs.h"
