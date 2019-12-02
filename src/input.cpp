@@ -81,7 +81,7 @@ SDL_Joystick *sdl_joysticks[4]={
 #define KEYSYM_SYMTABLE	0
 #define KEYSYM_MACSCANCODE 1
 #define KEYSYM_SCANCODE	3
-#define UNDEFINED_OFFSET	-1
+#define UNDEFINED_OFFSET	((unsigned int)-1)
 
 #ifdef OS_darwin
 #define KEYBOARD_TRANSLATION	KEYSYM_MACSCANCODE
@@ -384,72 +384,76 @@ static int keysymToAtari(SDL_Keysym keysym)
 #if KEYBOARD_TRANSLATION == KEYSYM_SCANCODE
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-static int findScanCodeOffset(SDL_keysym keysym)
+static int findScanCodeOffset(SDL_keysym *keysym)
 {
-	unsigned int scanPC = keysym.scancode;
+	unsigned int scanPC = keysym->scancode;
 	int offset = UNDEFINED_OFFSET;
 
-	switch(keysym.sym) {
-		case SDLK_ESCAPE:	offset = scanPC - 0x01; break;
-		case SDLK_1:	offset = scanPC - 0x02; break;
-		case SDLK_2:	offset = scanPC - 0x03; break;
-		case SDLK_3:	offset = scanPC - 0x04; break;
-		case SDLK_4:	offset = scanPC - 0x05; break;
-		case SDLK_5:	offset = scanPC - 0x06; break;
-		case SDLK_6:	offset = scanPC - 0x07; break;
-		case SDLK_7:	offset = scanPC - 0x08; break;
-		case SDLK_8:	offset = scanPC - 0x09; break;
-		case SDLK_9:	offset = scanPC - 0x0a; break;
-		case SDLK_0:	offset = scanPC - 0x0b; break;
-		case SDLK_BACKSPACE:	offset = scanPC - 0x0e; break;
-		case SDLK_TAB:	offset = scanPC - 0x0f; break;
-		case SDLK_RETURN:	offset = scanPC - 0x1c; break;
-		case SDLK_SPACE:	offset = scanPC - 0x39; break;
-		case SDLK_q:	offset = scanPC - 0x10; break;
-		case SDLK_w:	offset = scanPC - 0x11; break;
-		case SDLK_e:	offset = scanPC - 0x12; break;
-		case SDLK_r:	offset = scanPC - 0x13; break;
-		case SDLK_t:	offset = scanPC - 0x14; break;
-		case SDLK_y:	offset = scanPC - 0x15; break;
-		case SDLK_u:	offset = scanPC - 0x16; break;
-		case SDLK_i:	offset = scanPC - 0x17; break;
-		case SDLK_o:	offset = scanPC - 0x18; break;
-		case SDLK_p:	offset = scanPC - 0x19; break;
-		case SDLK_a:	offset = scanPC - 0x1e; break;
-		case SDLK_s:	offset = scanPC - 0x1f; break;
-		case SDLK_d:	offset = scanPC - 0x20; break;
-		case SDLK_f:	offset = scanPC - 0x21; break;
-		case SDLK_g:	offset = scanPC - 0x22; break;
-		case SDLK_h:	offset = scanPC - 0x23; break;
-		case SDLK_j:	offset = scanPC - 0x24; break;
-		case SDLK_k:	offset = scanPC - 0x25; break;
-		case SDLK_l:	offset = scanPC - 0x26; break;
-		case SDLK_z:	offset = scanPC - 0x2c; break;
-		case SDLK_x:	offset = scanPC - 0x2d; break;
-		case SDLK_c:	offset = scanPC - 0x2e; break;
-		case SDLK_v:	offset = scanPC - 0x2f; break;
-		case SDLK_b:	offset = scanPC - 0x30; break;
-		case SDLK_n:	offset = scanPC - 0x31; break;
-		case SDLK_m:	offset = scanPC - 0x32; break;
-		case SDLK_CAPSLOCK:	offset = scanPC - 0x3a; break;
-		case SDLK_RSHIFT:	offset = scanPC - 0x36; break;
-		case SDLK_LSHIFT:	offset = scanPC - 0x2a; break;
-		case SDLK_LCTRL:	offset = scanPC - 0x1d; break;
-		case SDLK_LALT:	offset = scanPC - 0x38; break;
-		case SDLK_F1:	offset = scanPC - 0x3b; break;
-		case SDLK_F2:	offset = scanPC - 0x3c; break;
-		case SDLK_F3:	offset = scanPC - 0x3d; break;
-		case SDLK_F4:	offset = scanPC - 0x3e; break;
-		case SDLK_F5:	offset = scanPC - 0x3f; break;
-		case SDLK_F6:	offset = scanPC - 0x40; break;
-		case SDLK_F7:	offset = scanPC - 0x41; break;
-		case SDLK_F8:	offset = scanPC - 0x42; break;
-		case SDLK_F9:	offset = scanPC - 0x43; break;
-		case SDLK_F10:	offset = scanPC - 0x44; break;
-		default:	break;
+	switch (keysym->sym)
+	{
+		case SDLK_ESCAPE: offset = scanPC - 0x01; break;
+		case SDLK_1: offset = scanPC - 0x02; break;
+		case SDLK_2: offset = scanPC - 0x03; break;
+		case SDLK_3: offset = scanPC - 0x04; break;
+		case SDLK_4: offset = scanPC - 0x05; break;
+		case SDLK_5: offset = scanPC - 0x06; break;
+		case SDLK_6: offset = scanPC - 0x07; break;
+		case SDLK_7: offset = scanPC - 0x08; break;
+		case SDLK_8: offset = scanPC - 0x09; break;
+		case SDLK_9: offset = scanPC - 0x0a; break;
+		case SDLK_0: offset = scanPC - 0x0b; break;
+		case SDLK_BACKSPACE: offset = scanPC - 0x0e; break;
+		case SDLK_TAB: offset = scanPC - 0x0f; break;
+		case SDLK_RETURN: offset = scanPC - 0x1c; break;
+		case SDLK_SPACE: offset = scanPC - 0x39; break;
+		case SDLK_q: offset = scanPC - 0x10; break;
+		case SDLK_w: offset = scanPC - 0x11; break;
+		case SDLK_e: offset = scanPC - 0x12; break;
+		case SDLK_r: offset = scanPC - 0x13; break;
+		case SDLK_t: offset = scanPC - 0x14; break;
+		case SDLK_y: offset = scanPC - 0x15; break;
+		case SDLK_u: offset = scanPC - 0x16; break;
+		case SDLK_i: offset = scanPC - 0x17; break;
+		case SDLK_o: offset = scanPC - 0x18; break;
+		case SDLK_p: offset = scanPC - 0x19; break;
+		case SDLK_a: offset = scanPC - 0x1e; break;
+		case SDLK_s: offset = scanPC - 0x1f; break;
+		case SDLK_d: offset = scanPC - 0x20; break;
+		case SDLK_f: offset = scanPC - 0x21; break;
+		case SDLK_g: offset = scanPC - 0x22; break;
+		case SDLK_h: offset = scanPC - 0x23; break;
+		case SDLK_j: offset = scanPC - 0x24; break;
+		case SDLK_k: offset = scanPC - 0x25; break;
+		case SDLK_l: offset = scanPC - 0x26; break;
+		case SDLK_z: offset = scanPC - 0x2c; break;
+		case SDLK_x: offset = scanPC - 0x2d; break;
+		case SDLK_c: offset = scanPC - 0x2e; break;
+		case SDLK_v: offset = scanPC - 0x2f; break;
+		case SDLK_b: offset = scanPC - 0x30; break;
+		case SDLK_n: offset = scanPC - 0x31; break;
+		case SDLK_m: offset = scanPC - 0x32; break;
+		case SDLK_CAPSLOCK: offset = scanPC - 0x3a; break;
+		case SDLK_RSHIFT: offset = scanPC - 0x36; break;
+		case SDLK_LSHIFT: offset = scanPC - 0x2a; break;
+		case SDLK_LCTRL: offset = scanPC - 0x1d; break;
+		case SDLK_LALT: offset = scanPC - 0x38; break;
+		case SDLK_F1: offset = scanPC - 0x3b; break;
+		case SDLK_F2: offset = scanPC - 0x3c; break;
+		case SDLK_F3: offset = scanPC - 0x3d; break;
+		case SDLK_F4: offset = scanPC - 0x3e; break;
+		case SDLK_F5: offset = scanPC - 0x3f; break;
+		case SDLK_F6: offset = scanPC - 0x40; break;
+		case SDLK_F7: offset = scanPC - 0x41; break;
+		case SDLK_F8: offset = scanPC - 0x42; break;
+		case SDLK_F9: offset = scanPC - 0x43; break;
+		case SDLK_F10: offset = scanPC - 0x44; break;
+		default: break;
 	}
-	if (offset != UNDEFINED_OFFSET) {
-		D(bug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym.sym), scanPC));
+	if (offset < 0)
+		offset = UNDEFINED_OFFSET;
+	if (offset >= 0)
+	{
+		D(bug("Detected scancode offset = %d (key: '%s' with scancode $%02x)", offset, SDL_GetKeyName(keysym->sym), scanPC));
 	}
 
 	return offset;
@@ -457,156 +461,173 @@ static int findScanCodeOffset(SDL_keysym keysym)
 #endif
 
 
-static int keysymToAtari(SDL_Keysym keysym)
+static int keysymToAtari(SDL_Keysym *keysym)
 {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	switch( (unsigned int) keysym.scancode) {
-		case SDL_SCANCODE_ESCAPE: return 0x01;
-		case SDL_SCANCODE_1:	return 0x02;
-		case SDL_SCANCODE_2:	return 0x03;
-		case SDL_SCANCODE_3:	return 0x04;
-		case SDL_SCANCODE_4:	return 0x05;
-		case SDL_SCANCODE_5:	return 0x06;
-		case SDL_SCANCODE_6:	return 0x07;
-		case SDL_SCANCODE_7:	return 0x08;
-		case SDL_SCANCODE_8:	return 0x09;
-		case SDL_SCANCODE_9:	return 0x0a;
-		case SDL_SCANCODE_0:	return 0x0b;
-		case SDL_SCANCODE_MINUS: return 0x0c;
-		case SDL_SCANCODE_EQUALS: return 0x0d;
-		case SDL_SCANCODE_BACKSPACE:	return 0x0e;
-		case SDL_SCANCODE_TAB:	return 0x0f;
-		case SDL_SCANCODE_Q:	return 0x10;
-		case SDL_SCANCODE_W:	return 0x11;
-		case SDL_SCANCODE_E:	return 0x12;
-		case SDL_SCANCODE_R:	return 0x13;
-		case SDL_SCANCODE_T:	return 0x14;
-		case SDL_SCANCODE_Y:	return 0x15;
-		case SDL_SCANCODE_U:	return 0x16;
-		case SDL_SCANCODE_I:	return 0x17;
-		case SDL_SCANCODE_O:	return 0x18;
-		case SDL_SCANCODE_P:	return 0x19;
-		case SDL_SCANCODE_LEFTBRACKET: return 0x1a;
-		case SDL_SCANCODE_RIGHTBRACKET: return 0x1b;
-		case SDL_SCANCODE_RETURN:	return 0x1c;
-		case SDL_SCANCODE_LCTRL:	return 0x1d;
-		case SDL_SCANCODE_A:	return 0x1e;
-		case SDL_SCANCODE_S:	return 0x1f;
-		case SDL_SCANCODE_D:	return 0x20;
-		case SDL_SCANCODE_F:	return 0x21;
-		case SDL_SCANCODE_G:	return 0x22;
-		case SDL_SCANCODE_H:	return 0x23;
-		case SDL_SCANCODE_J:	return 0x24;
-		case SDL_SCANCODE_K:	return 0x25;
-		case SDL_SCANCODE_L:	return 0x26;
-		case SDL_SCANCODE_SEMICOLON: return 0x27;
-		case SDL_SCANCODE_APOSTROPHE: return 0x28;
-		case SDL_SCANCODE_GRAVE: return 0x29;
-		case SDL_SCANCODE_LSHIFT:	return 0x2a;
-		case SDL_SCANCODE_BACKSLASH: return 0x2b;
-		case SDL_SCANCODE_Z:	return 0x2c;
-		case SDL_SCANCODE_X:	return 0x2d;
-		case SDL_SCANCODE_C:	return 0x2e;
-		case SDL_SCANCODE_V:	return 0x2f;
-		case SDL_SCANCODE_B:	return 0x30;
-		case SDL_SCANCODE_N:	return 0x31;
-		case SDL_SCANCODE_M:	return 0x32;
-		case SDL_SCANCODE_COMMA: return 0x33;
-		case SDL_SCANCODE_PERIOD: return 0x34;
-		case SDL_SCANCODE_SLASH: return 0x35;
-		case SDL_SCANCODE_RSHIFT:	return 0x36;
-		case SDL_SCANCODE_PRINTSCREEN: return 0x37;
-		case SDL_SCANCODE_LALT:	return 0x38;
-		case SDL_SCANCODE_SPACE:	return 0x39;
-		case SDL_SCANCODE_CAPSLOCK:	return 0x3a;
-		case SDL_SCANCODE_F1:	return 0x3b;
-		case SDL_SCANCODE_F2:	return 0x3c;
-		case SDL_SCANCODE_F3:	return 0x3d;
-		case SDL_SCANCODE_F4:	return 0x3e;
-		case SDL_SCANCODE_F5:	return 0x3f;
-		case SDL_SCANCODE_F6:	return 0x40;
-		case SDL_SCANCODE_F7:	return 0x41;
-		case SDL_SCANCODE_F8:	return 0x42;
-		case SDL_SCANCODE_F9:	return 0x43;
-		case SDL_SCANCODE_F10:	return 0x44;
+	unsigned int scancode = 0;
 
-		case SDL_SCANCODE_NONUSBACKSLASH: return 0x60;
-		case SDL_SCANCODE_KP_LEFTPAREN: return 0x63;
-		case SDL_SCANCODE_KP_RIGHTPAREN: return 0x64;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	switch( (unsigned int) keysym->scancode)
+	{
+		case SDL_SCANCODE_ESCAPE: scancode = 0x01; break;
+		case SDL_SCANCODE_1: scancode = 0x02; break;
+		case SDL_SCANCODE_2: scancode = 0x03; break;
+		case SDL_SCANCODE_3: scancode = 0x04; break;
+		case SDL_SCANCODE_4: scancode = 0x05; break;
+		case SDL_SCANCODE_5: scancode = 0x06; break;
+		case SDL_SCANCODE_6: scancode = 0x07; break;
+		case SDL_SCANCODE_7: scancode = 0x08; break;
+		case SDL_SCANCODE_8: scancode = 0x09; break;
+		case SDL_SCANCODE_9: scancode = 0x0a; break;
+		case SDL_SCANCODE_0: scancode = 0x0b; break;
+		case SDL_SCANCODE_MINUS: scancode = 0x0c; break;
+		case SDL_SCANCODE_EQUALS: scancode = 0x0d; break;
+		case SDL_SCANCODE_BACKSPACE: scancode = 0x0e; break;
+		case SDL_SCANCODE_TAB: scancode = 0x0f; break;
+		case SDL_SCANCODE_Q: scancode = 0x10; break;
+		case SDL_SCANCODE_W: scancode = 0x11; break;
+		case SDL_SCANCODE_E: scancode = 0x12; break;
+		case SDL_SCANCODE_R: scancode = 0x13; break;
+		case SDL_SCANCODE_T: scancode = 0x14; break;
+		case SDL_SCANCODE_Y: scancode = 0x15; break;
+		case SDL_SCANCODE_U: scancode = 0x16; break;
+		case SDL_SCANCODE_I: scancode = 0x17; break;
+		case SDL_SCANCODE_O: scancode = 0x18; break;
+		case SDL_SCANCODE_P: scancode = 0x19; break;
+		case SDL_SCANCODE_LEFTBRACKET: scancode = 0x1a; break;
+		case SDL_SCANCODE_RIGHTBRACKET: scancode = 0x1b; break;
+		case SDL_SCANCODE_RETURN: scancode = 0x1c; break;
+		case SDL_SCANCODE_LCTRL: scancode = 0x1d; break;
+		case SDL_SCANCODE_A: scancode = 0x1e; break;
+		case SDL_SCANCODE_S: scancode = 0x1f; break;
+		case SDL_SCANCODE_D: scancode = 0x20; break;
+		case SDL_SCANCODE_F: scancode = 0x21; break;
+		case SDL_SCANCODE_G: scancode = 0x22; break;
+		case SDL_SCANCODE_H: scancode = 0x23; break;
+		case SDL_SCANCODE_J: scancode = 0x24; break;
+		case SDL_SCANCODE_K: scancode = 0x25; break;
+		case SDL_SCANCODE_L: scancode = 0x26; break;
+		case SDL_SCANCODE_SEMICOLON: scancode = 0x27; break;
+		case SDL_SCANCODE_APOSTROPHE: scancode = 0x28; break;
+		case SDL_SCANCODE_GRAVE: scancode = 0x29; break;
+		case SDL_SCANCODE_LSHIFT: scancode = 0x2a; break;
+		case SDL_SCANCODE_BACKSLASH: scancode = 0x2b; break;
+		case SDL_SCANCODE_Z: scancode = 0x2c; break;
+		case SDL_SCANCODE_X: scancode = 0x2d; break;
+		case SDL_SCANCODE_C: scancode = 0x2e; break;
+		case SDL_SCANCODE_V: scancode = 0x2f; break;
+		case SDL_SCANCODE_B: scancode = 0x30; break;
+		case SDL_SCANCODE_N: scancode = 0x31; break;
+		case SDL_SCANCODE_M: scancode = 0x32; break;
+		case SDL_SCANCODE_COMMA: scancode = 0x33; break;
+		case SDL_SCANCODE_PERIOD: scancode = 0x34; break;
+		case SDL_SCANCODE_SLASH: scancode = 0x35; break;
+		case SDL_SCANCODE_RSHIFT: scancode = 0x36; break;
+		case SDL_SCANCODE_PRINTSCREEN: scancode = 0x37; break;
+		case SDL_SCANCODE_LALT: scancode = 0x38; break;
+		case SDL_SCANCODE_SPACE: scancode = 0x39; break;
+		case SDL_SCANCODE_CAPSLOCK: scancode = 0x3a; break;
+		case SDL_SCANCODE_F1: scancode = 0x3b; break;
+		case SDL_SCANCODE_F2: scancode = 0x3c; break;
+		case SDL_SCANCODE_F3: scancode = 0x3d; break;
+		case SDL_SCANCODE_F4: scancode = 0x3e; break;
+		case SDL_SCANCODE_F5: scancode = 0x3f; break;
+		case SDL_SCANCODE_F6: scancode = 0x40; break;
+		case SDL_SCANCODE_F7: scancode = 0x41; break;
+		case SDL_SCANCODE_F8: scancode = 0x42; break;
+		case SDL_SCANCODE_F9: scancode = 0x43; break;
+		case SDL_SCANCODE_F10: scancode = 0x44; break;
+
+		case SDL_SCANCODE_NONUSBACKSLASH: scancode = 0x60; break;
+		case SDL_SCANCODE_KP_LEFTPAREN: scancode = 0x63; break;
+		case SDL_SCANCODE_KP_RIGHTPAREN: scancode = 0x64; break;
 		
-		case SDL_SCANCODE_SCROLLLOCK: return 0x00;
-		case SDL_SCANCODE_PAUSE: return 0x00;
+		case SDL_SCANCODE_SCROLLLOCK: scancode = 0x00; break;
+		case SDL_SCANCODE_PAUSE: scancode = 0x00; break;
+	}
+	if (scancode != 0)
+	{
+		keysym->scancode = SDL_Scancode(scancode);
+		return scancode;
 	}
 #endif
-	switch((unsigned int) keysym.sym) {
-		// Numeric Pad
-		case SDLK_KP_DIVIDE:	return 0x65;	/* Numpad / */
-		case SDLK_KP_MULTIPLY:	return 0x66;	/* NumPad * */
-		case SDLK_KP_7:	return 0x67;	/* NumPad 7 */
-		case SDLK_KP_8:	return 0x68;	/* NumPad 8 */
-		case SDLK_KP_9:	return 0x69;	/* NumPad 9 */
-		case SDLK_KP_4:	return 0x6a;	/* NumPad 4 */
-		case SDLK_KP_5:	return 0x6b;	/* NumPad 5 */
-		case SDLK_KP_6:	return 0x6c;	/* NumPad 6 */
-		case SDLK_KP_1:	return 0x6d;	/* NumPad 1 */
-		case SDLK_KP_2:	return 0x6e;	/* NumPad 2 */
-		case SDLK_KP_3:	return 0x6f;	/* NumPad 3 */
-		case SDLK_KP_0:	return 0x70;	/* NumPad 0 */
-		case SDLK_KP_PERIOD:	return 0x71;	/* NumPad . */
-		case SDLK_KP_ENTER:	return 0x72;	/* NumPad Enter */
-		case SDLK_KP_MINUS:	return 0x4a;	/* NumPad - */
-		case SDLK_KP_PLUS:	return 0x4e;	/* NumPad + */
+	switch ((unsigned int) keysym->sym)
+	{
+		/* Numeric Pad */
+		case SDLK_KP_DIVIDE: scancode = 0x65; break;	/* Numpad / */
+		case SDLK_KP_MULTIPLY: scancode = 0x66; break;	/* NumPad * */
+		case SDLK_KP_7: scancode = 0x67; break;	/* NumPad 7 */
+		case SDLK_KP_8: scancode = 0x68; break;	/* NumPad 8 */
+		case SDLK_KP_9: scancode = 0x69; break;	/* NumPad 9 */
+		case SDLK_KP_4: scancode = 0x6a; break;	/* NumPad 4 */
+		case SDLK_KP_5: scancode = 0x6b; break;	/* NumPad 5 */
+		case SDLK_KP_6: scancode = 0x6c; break;	/* NumPad 6 */
+		case SDLK_KP_1: scancode = 0x6d; break;	/* NumPad 1 */
+		case SDLK_KP_2: scancode = 0x6e; break;	/* NumPad 2 */
+		case SDLK_KP_3: scancode = 0x6f; break;	/* NumPad 3 */
+		case SDLK_KP_0: scancode = 0x70; break;	/* NumPad 0 */
+		case SDLK_KP_PERIOD: scancode = 0x71; break;	/* NumPad . */
+		case SDLK_KP_ENTER: scancode = 0x72; break;	/* NumPad Enter */
+		case SDLK_KP_MINUS: scancode = 0x4a; break;	/* NumPad - */
+		case SDLK_KP_PLUS: scancode = 0x4e; break;	/* NumPad + */
 
-		// Special Keys
-		case SDLK_F11:	return 0x62;	/* F11 => Help */
-		case SDLK_F12:	return 0x61;	/* F12 => Undo */
-		case SDLK_HOME:	return 0x47;	/* Home */
-		case SDLK_UP:	return 0x48;	/* Arrow Up */
-		case SDLK_PAGEUP: return 0x49;	/* Page Up */
-		case SDLK_LEFT:	return 0x4b;	/* Arrow Left */
-		case SDLK_RIGHT:	return 0x4d;	/* Arrow Right */
-		case SDLK_END:	return 0x4f;	/* Milan's scancode for End */
-		case SDLK_DOWN:	return 0x50;	/* Arrow Down */
-		case SDLK_PAGEDOWN:	return 0x51;	/* Page Down */
-		case SDLK_INSERT:	return 0x52;	/* Insert */
-		case SDLK_DELETE:	return 0x53;	/* Delete */
+		/* Special Keys */
+		case SDLK_F11: scancode = 0x62; break;	/* F11 => Help */
+		case SDLK_F12: scancode = 0x61; break;	/* F12 => Undo */
+		case SDLK_HOME: scancode = 0x47; break;	/* Home */
+		case SDLK_UP: scancode = 0x48; break;	/* Arrow Up */
+		case SDLK_PAGEUP: scancode = 0x49; break;	/* Page Up */
+		case SDLK_LEFT: scancode = 0x4b; break;	/* Arrow Left */
+		case SDLK_RIGHT: scancode = 0x4d; break;	/* Arrow Right */
+		case SDLK_END: scancode = 0x4f; break;	/* Milan's scancode for End */
+		case SDLK_DOWN: scancode = 0x50; break;	/* Arrow Down */
+		case SDLK_PAGEDOWN: scancode = 0x51; break;	/* Page Down */
+		case SDLK_INSERT: scancode = 0x52; break;	/* Insert */
+		case SDLK_DELETE: scancode = 0x53; break;	/* Delete */
 
-		case SDLK_NUMLOCKCLEAR: return 0x63;
+		case SDLK_NUMLOCKCLEAR: scancode = 0x63; break;
 		
 		case SDLK_BACKQUOTE:
-		case SDLK_LESS: return 0x60;	/* a '<>' key next to short left Shift */
+		case SDLK_LESS: scancode = 0x60; break;	/* a '<>' key next to short left Shift */
 
-		// keys not found on original Atari keyboard
-		case SDLK_RCTRL:	return 0x1d;	/* map right Control to Atari control */
+		/* keys not found on some keyboards */
+		case SDLK_RCTRL: scancode = 0x1d; break;
 		case SDLK_MODE: /* passthru */ /* Alt Gr key according to SDL docs */
-		case SDLK_RALT:		return RALT_ATARI_SCANCODE;
+		case SDLK_RALT: scancode = RALT_ATARI_SCANCODE; break;
 	}
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-	static int offset = UNDEFINED_OFFSET;
+	static unsigned int offset = UNDEFINED_OFFSET;
+	if (scancode == 0)
+	{
+		/*
+		 * Process remaining keys: assume that it's PC101 keyboard
+		 * and that it is compatible with Atari ST keyboard (basically
+		 * same scancodes but on different platforms with different
+		 * base offset (framebuffer = 0, X11 = 8).
+		 * Try to detect the offset using a little bit of black magic.
+		 * If offset is known then simply pass the scancode.
+		 */
+		scancode = keysym->scancode;
+		if (offset == UNDEFINED_OFFSET)
+		{
+			offset = findScanCodeOffset(keysym);
+		}
 
-	// Process remaining keys: assume that it's PC101 keyboard
-	// and that it is compatible with Atari ST keyboard (basically
-	// same scancodes but on different platforms with different
-	// base offset (framebuffer = 0, X11 = 8).
-	// Try to detect the offset using a little bit of black magic.
-	// If offset is known then simply pass the scancode.
-	int scanPC = keysym.scancode;
-	if (offset == UNDEFINED_OFFSET /* || scanPC == 0 */) {
-		offset = findScanCodeOffset(keysym);
+		/* offset is defined so pass the scancode directly */
+		if (offset != UNDEFINED_OFFSET && scancode > offset)
+		{
+			scancode -= offset;
+		}
 	}
-
-	// offset is defined so pass the scancode directly
-	if (offset != UNDEFINED_OFFSET && scanPC > offset)
-		return scanPC - offset;
 #endif
 
-	if (keysym.scancode != 0)
-	bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
-		keysym.sym, keysym.sym,
-		keysym.scancode, keysym.scancode,
-		SDL_GetKeyName(keysym.sym));
-	return 0;
+	if (scancode == 0 && keysym->scancode != 0)
+		bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
+			keysym->sym, keysym->sym,
+			keysym->scancode, keysym->scancode,
+			SDL_GetKeyName(keysym->sym));
+	keysym->scancode = SDL_Scancode(scancode);
+	return scancode;
 }
 #endif /* KEYSYM_SCANCODE */
 
@@ -903,7 +924,7 @@ static void process_keyboard_event(const SDL_Event &event)
 
 	// send all pressed keys to IKBD
 	if (send2Atari) {
-		int scanAtari = keysymToAtari(keysym);
+		int scanAtari = keysymToAtari(&keysym);
 		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, pressed ? scanAtari : scanAtari|0x80, pressed ? scanAtari : scanAtari|0x80, SDL_GetKeyName(sym), sym));
 		if (scanAtari > 0) {
 			if (!pressed)
