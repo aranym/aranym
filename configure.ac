@@ -2143,6 +2143,7 @@ if [[ "x$WANT_NFCLIPBRD" = "xyes" ]]; then
 		;;
 	*)
 		AC_CHECK_LIB(X11, XOpenDisplay,[SDL_LIBS="$SDL_LIBS -lX11"],,[-L/usr/X11R6/lib])
+		AC_CHECK_HEADERS(X11/Xlib.h)
 		if [[ "x$ac_cv_lib_X11_XOpenDisplay" = "xyes" ]]; then
 			AC_DEFINE([NFCLIPBRD_SUPPORT], 1)
 		else

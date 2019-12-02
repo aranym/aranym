@@ -1,4 +1,10 @@
 2019/12/02
+Fix a build problem with SDL2 and --enable-nfosmesa
+
+Fixes https://github.com/aranym/aranym/issues/54
+
+
+2019/12/02
 Reject BMP files with invalid width/height
 
 

@@ -175,6 +175,14 @@ extern SDL_GLContext SDL_GL_GetCurrentContext(void);
 
 #if defined(SDL_VIDEO_DRIVER_X11)
 
+extern SDL_GLContext SDL_GL_GetCurrentContext(void);
+
+#endif
+
+#endif /* SDL_VERSION_ATLEAST(2, 0, 0) */
+
+
+#if defined(SDL_VIDEO_DRIVER_X11)
 /*
  * SDL_syswm includes <X11/Xlib.h>, but on macOS
  * These headers are only available if XQuartz was installed
@@ -182,12 +190,8 @@ extern SDL_GLContext SDL_GL_GetCurrentContext(void);
 #if !(defined(SDL_VIDEO_DRIVER_QUARTZ) || defined(SDL_VIDEO_DRIVER_COCOA)) || defined(HAVE_X11_XLIB_H)
 # define HAVE_X11_XLIB_H 1
 #endif
-
-extern SDL_GLContext SDL_GL_GetCurrentContext(void);
-
 #endif
 
-#endif
 
 #if !defined(SDL_VIDEO_DRIVER_WINDOWS) && (defined(SDL_VIDEO_DRIVER_WINRT) || defined(SDL_VIDEO_DRIVER_WINDIB) || defined(SDL_VIDEO_DRIVER_DDRAW) || defined(SDL_VIDEO_DRIVER_GAPI))
 #  define SDL_VIDEO_DRIVER_WINDOWS 1
@@ -205,6 +209,7 @@ extern void SDL_GL_SetCurrentContext(SDL_GLContext ctx);
  * possible driver names:
  *
  * SDL1:
+ * null
  * riscos
  * svgalib
  * bwindow
@@ -239,8 +244,9 @@ extern void SDL_GL_SetCurrentContext(SDL_GLContext ctx);
  * ps3
  *
  * SDL2:
+ * null
  * PSP
- * RPI (RaspBery Pi, GLES)
+ * RPI (RaspBerry Pi, GLES)
  * uikit
  * wayland
  * windows
@@ -253,6 +259,11 @@ extern void SDL_GL_SetCurrentContext(SDL_GLContext ctx);
  * mir
  * dummy
  * wiz
+ * pandora
+ * nacl
+ * emscripten
+ * KMSDRM
+ * vivante
  */
 
 static inline int SDL_IsVideoDriver(const char *name)
