@@ -291,13 +291,13 @@ static int keyboardTable[0x80] = {
 /*78-7f*/ -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-static int keysymToAtari(SDL_Keysym keysym)
+static int keysymToAtari(SDL_Keysym *keysym)
 {
-    // panicbug("scancode: %x - sym: %x - char: %s", keysym.scancode, keysym.sym, SDL_GetKeyName (keysym.sym));
+    // panicbug("scancode: %x - sym: %x - char: %s", keysym->scancode, keysym->sym, SDL_GetKeyName (keysym->sym));
 
-	int sym = keysym.scancode;
+	int sym = keysym->scancode;
 
-	switch (keysym.sym) {
+	switch (keysym->sym) {
 	  case SDLK_LGUI:
 	  case SDLK_RGUI:
 		#if MAP_META_TO_CONTROL
@@ -330,15 +330,15 @@ static int keysymToAtari(SDL_Keysym keysym)
 	}
 	for (int i = 0; i < 0x73; i++) {
 		if (keyboardTable[i] == sym) {
-			//panicbug ("scancode mac:%x - scancode atari: %x", keysym.scancode, i);
+			//panicbug ("scancode mac:%x - scancode atari: %x", keysym->scancode, i);
 			return i;
 		}
 	}
-	if (keysym.scancode != 0)
+	if (keysym->scancode != 0)
 	bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
-		keysym.sym, keysym.sym,
-		keysym.scancode, keysym.scancode,
-		SDL_GetKeyName(keysym.sym));
+		keysym->sym, keysym->sym,
+		keysym->scancode, keysym->scancode,
+		SDL_GetKeyName(keysym->sym));
 	
 	return 0;	/* invalid scancode */
 }
@@ -364,10 +364,10 @@ static SDL_Keycode keyboardTable[0x80] = {
 /*78-7f*/ 0,              0,               0,              0,                 0,                  0,              0,                0
 };
 
-static int keysymToAtari(SDL_Keysym keysym)
+static int keysymToAtari(SDL_Keysym *keysym)
 {
  
-	int sym = keysym.sym;
+	int sym = keysym->sym;
 	if (sym == SDLK_RALT || sym == SDLK_MODE /* Alt Gr */)
 		return RALT_ATARI_SCANCODE;
 	// map right Control key to the left one
