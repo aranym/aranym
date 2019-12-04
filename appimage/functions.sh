@@ -255,14 +255,14 @@ fix_desktop() {
 # Find the icon file and copy it to the AppDir
 get_icon()
 {
-  find ./usr/share/pixmaps/$LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *32* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *48* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *64* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *128* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *256* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  find ./usr/share/icons -path *512* -name $LOWERAPP.png -exec cp {} . \; 2>/dev/null || true
-  ls -lh $LOWERAPP.png || true
+  find ./usr/share/pixmaps/aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *32* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *48* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *64* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *128* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *256* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  find ./usr/share/icons -path *512* -name aranym.png -exec cp {} . \; 2>/dev/null || true
+  ls -lh aranym.png || true
 }
 
 # Find out the version

@@ -35,6 +35,7 @@ linux)
 			../configure $common_opts --enable-jit-compiler --enable-jit-fpu || exit 1
 			make depend
 			make || exit 1
+			make DESTDIR="$BUILDROOT" install-strip || exit 1
 			cd ..
 		fi
 		
@@ -43,13 +44,14 @@ linux)
 		../configure $common_opts --enable-lilo --enable-fullmmu || exit 1
 		make depend
 		make || exit 1
+		make DESTDIR="$BUILDROOT" install-strip || exit 1
 		cd ..
 		
 		./configure $common_opts || exit 1
 		make depend
 		make || exit 1
-		
 		make DESTDIR="$BUILDROOT" install-strip || exit 1
+
 		sudo chown root "$BUILDROOT${bindir}/aratapif"
 		sudo chgrp root "$BUILDROOT${bindir}/aratapif"
 		sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"

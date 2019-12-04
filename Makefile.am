@@ -34,16 +34,7 @@ BUILT_SOURCES = \
 
 version_date.h:
 	@echo generating $@
-	@( if test -f "$(top_srcdir)/.isrelease"; then \
-		echo '/* generated from version.h */'; \
-		echo '#define VERSION_DATE " " RELEASE_DATE " (release)"'; \
-	  elif test -d "$(top_srcdir)/.git"; then \
-		echo '/* generated from git log */'; \
-		cd "$(top_srcdir)" && git log -n 1 --pretty=format:'#define VERSION_DATE " %ad (git:%h)"%n' --date=format:%Y/%m/%d; \
-	  else \
-		echo '/* generated from local source */'; \
-		echo '#define VERSION_DATE " " __DATE__ " (local)"'; \
-	  fi ) > $@
+	@$(top_srcdir)/version_date.sh $(top_srcdir) > $@
 
 built_sources: $(BUILT_SOURCES)
 
@@ -79,18 +70,19 @@ install-data-local:
 	for s in 32 48; do \
 		$(mkinstalldirs) "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/"; \
 		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym.png"; \
-		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym-jit.png"; \
-		$(INSTALL_DATA) $(top_srcdir)/contrib/icon-$${s}.png "${DESTDIR}${datadir}/icons/hicolor/$${s}x$${s}/apps/aranym-mmu.png"; \
 	done
 	$(mkinstalldirs) "${DESTDIR}${datadir}/pixmaps"
-	rm -f "${DESTDIR}${datadir}/pixmaps/aranym"*.png
-	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym.png"
-	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym-jit.png"
-	ln -s ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym-mmu.png"
+	ln -sf ../icons/hicolor/32x32/apps/aranym.png "${DESTDIR}${datadir}/pixmaps/aranym.png"
 	$(mkinstalldirs) "${DESTDIR}${datadir}/applications"
-	for name in aranym aranym-jit aranym-mmu; do \
-		$(INSTALL_DATA) "$(top_srcdir)/contrib/$${name}.desktop" "${DESTDIR}${datadir}/applications/$${name}.desktop"; \
-	done
+if USE_JIT
+	$(INSTALL_DATA) "$(top_srcdir)/contrib/aranym-jit.desktop" "${DESTDIR}${datadir}/applications/aranym-jit.desktop"
+else
+if FULLMMU
+	$(INSTALL_DATA) "$(top_srcdir)/contrib/aranym-mmu.desktop" "${DESTDIR}${datadir}/applications/aranym-mmu.desktop"
+else
+	$(INSTALL_DATA) "$(top_srcdir)/contrib/aranym.desktop" "${DESTDIR}${datadir}/applications/aranym.desktop"
+endif
+endif
 
 uninstall-local:
 	rm -f $(DESTDIR)$(docdir)/changelog

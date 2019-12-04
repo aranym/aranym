@@ -18,7 +18,7 @@ versfile=src/include/version.h
 
 NO_CONFIGURE=1 ./autogen.sh
 
-make -f Makefile.am top_srcdir=. "$datefile"
+./version_date.sh > "$datefile"
 
 if ! test -f $datefile; then
 	echo "$0: $datefile missing" >&2
