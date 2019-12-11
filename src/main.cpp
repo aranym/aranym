@@ -382,6 +382,8 @@ bool InitAll(void)
 		return false;
 	}
 	atexit(SDL_Quit);
+	infoprint("Using video driver %s", SDL_GetVideoDriverName());
+	infoprint("Using audio driver %s", SDL_GetAudioDriverName());
 
 	host = new Host();
 

@@ -105,6 +105,7 @@ extern DECLSPEC int SDLCALL SDL_putenv(const char *variable);
 	 (sym) == SDLK_MODE)
 
 #define SDL_GetVideoDriverName() SDL_GetCurrentVideoDriver()
+#define SDL_GetAudioDriverName() SDL_GetCurrentAudioDriver()
 
 #else
 
@@ -150,6 +151,12 @@ static inline const char *SDL_GetVideoDriverName(void)
 {
 	static char namebuf[80];
 	return SDL_VideoDriverName(namebuf, (int)sizeof(namebuf));
+}
+
+static inline const char *SDL_GetAudioDriverName(void)
+{
+	static char namebuf[80];
+	return SDL_AudioDriverName(namebuf, (int)sizeof(namebuf));
 }
 
 typedef void *SDL_GLContext;
