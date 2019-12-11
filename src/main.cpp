@@ -445,7 +445,7 @@ bool InitAll(void)
 	}
 	
 #ifdef SDL_GUI
-	isGuiAvailable = SDLGui_Init();
+	isGuiAvailable = SDLGui_Init() && strcmp(SDL_GetVideoDriverName(), "dummy") != 0;
 	
 	if (isGuiAvailable && startupGUI) {
 		do

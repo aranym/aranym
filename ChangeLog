@@ -1,3 +1,7 @@
+2019/12/07
+Do not attempt to open the SDL gui when running headless
+
+
 2019/12/02
 Fix builds with --disable-gui
 
