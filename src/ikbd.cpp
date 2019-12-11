@@ -26,6 +26,7 @@
 #include "cpu_emulation.h"
 #include "memory-uae.h"
 #include "ikbd.h"
+#include "bootos.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -331,6 +332,18 @@ void IKBD::SendKey(uint8 scancode)
 {
 	intype = IKBD_PACKET_KEYBOARD;
 	send(scancode);
+}
+
+void IKBD::ReleaseShiftKeys(void)
+{
+	if (!bootOs)
+		return;
+	SendKey(0x80 | 0x2a);
+	SendKey(0x80 | 0x36);
+	SendKey(0x80 | 0x1d);
+	SendKey(0x80 | 0x38);
+	if (bx_options.ikbd.altgr)
+		SendKey(0x80 | 0x4c);
 }
 
 void IKBD::SendMouseMotion(int relx, int rely, int buttons, bool slow)

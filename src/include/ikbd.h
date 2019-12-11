@@ -90,6 +90,7 @@ class IKBD: public ACIA {
 		void WriteData(uae_u8 value);
 
 		void SendKey(uae_u8 scancode);
+		void ReleaseShiftKeys(void);
 		void SendMouseMotion(int relx, int rely, int buttons, bool slow);
 		void SendJoystickAxis(int numjoy, int numaxis, int value);
 		void SendJoystickHat(int numjoy, int value);

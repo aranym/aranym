@@ -846,17 +846,7 @@ static void process_keyboard_event(const SDL_Event &event)
 		case HOTKEY_setup:
 #ifdef SDL_GUI
 			/* release shifters (if any) */
-			if ( bx_options.hotkeys.setup.mod & KMOD_LSHIFT )
-				getIKBD()->SendKey(0x80 | 0x2a);
-			if ( bx_options.hotkeys.setup.mod & KMOD_RSHIFT )
-				getIKBD()->SendKey(0x80 | 0x36);
-			if ( bx_options.hotkeys.setup.mod & KMOD_CTRL )
-				getIKBD()->SendKey(0x80 | 0x1d);
-			if ( bx_options.hotkeys.setup.mod & KMOD_LALT )
-				getIKBD()->SendKey(0x80 | 0x38);
-			if ( bx_options.hotkeys.setup.mod & (KMOD_MODE|KMOD_RALT) )
-				getIKBD()->SendKey(0x80 | RALT_ATARI_SCANCODE);
-			
+			getIKBD()->ReleaseShiftKeys();
 			open_GUI();
 			send2Atari = false;
 #endif
@@ -864,6 +854,7 @@ static void process_keyboard_event(const SDL_Event &event)
 		case HOTKEY_debug:
 #ifdef DEBUGGER
 			// activate debugger
+			getIKBD()->ReleaseShiftKeys();
 			activate_debugger();
 			send2Atari = false;
 #endif
@@ -1087,6 +1078,7 @@ static void process_mouse_event(const SDL_Event &event)
 						break;
 					case MB_setup:
 #ifdef SDL_GUI
+						getIKBD()->ReleaseShiftKeys();
 						open_GUI();
 #endif
 						break;
@@ -1276,6 +1268,10 @@ static void process_active_event(const SDL_Event &event)
 
 	if (input_focus) {
 		D(bug("%d: ARAnyM window is %s input focus", ticks, gained ? "gaining" : "losing"));
+		if (!gained)
+		{
+			getIKBD()->ReleaseShiftKeys();
+		}
 	}
 
 	// if it's mouse focus event
