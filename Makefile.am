@@ -305,6 +305,8 @@ EXTRA_DIST = \
 	aranym.spec autogen.sh \
 	android atari contrib data tools \
 	extras/hostfs/hostfs.dos \
+	extras/nfcdrom/nfcdrom.bos \
+	extras/nfjpeg/nfjpeg.prg \
 	appimage/build.sh \
 	appimage/desktopintegration \
 	appimage/excludelist \
