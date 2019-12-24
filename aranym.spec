@@ -1,97 +1,117 @@
 # generic defines used by all distributions.
 #
-%define ver			1.1.0
+%define ver                     1.1.0
+%define aver                    1-19-c2e
 
 #
 #
-%define	myrelease		1
-%define mybuild			1
-%define _rel			%{myrelease}.%{mybuild}
+%define myrelease               1
+%define mybuild                 1
+%define _rel                    %{myrelease}.%{mybuild}
+
+%define with_nfosmesa           0
 
 # define the package groups. If they all followed the same naming convention,
 # these would be the same. They don't, and so they aren't :(
 #
-%define	suse_group		System/Emulators/Others
-%define	mandriva_group		Console/Emulators
-%define	fedora_group		Console/Emulators
+%define suse_group              System/Emulators/Others
 
 # defaults
 #
-%define group			Console/Emulators
-%define	rel			%{_rel}
+%define group                   Console/Emulators
+%define rel                     %{_rel}
 
-%define	my_suse			0
-%define	my_mandriva		0
-%define	my_fedora		0
-%define	my_centos		0
+%define my_suse                 0
+%define my_sles                 0
+%define my_mandriva             0
+%define my_fedora               0
+%define my_centos               0
+%define my_rhel                 0
+%define my_scientificlinux      0
+%define my_mageia               0
+%define use_python2             0
+%define use_python3             0
+%define my_vendor               unknown
+%define my_version              0
 
 
-%if 0%{?suse_version:1}%{?sles_version:1}
-%define	my_suse			1
+%if 0%{?suse_version:1}%{?sle_version:1}
+  %define my_suse               1
+  %define my_vendor             opensuse
 %endif
 
-# if present, use %distversion to find out which Mandriva version is being built
-# define %distversion and %_icondir in your .rpmmacros if build fails
+# if present, use %%distversion to find out which Mandriva version is being built
+# define %%distversion and %%_icondir in your .rpmmacros if build fails
 #
 %if 0%{?distversion:1}
 %if 0%{?!mandriva_version:1}
-%define	mandriva_version	%(echo $[%{distversion}/10])
+%define mandriva_version        %(echo $[%{distversion}/10])
 %endif
 %endif
 
 %if 0%{?mandriva_version:1}
-%define	my_mandriva		1
-%define my_vendor		mandriva
+  %define my_mandriva           1
+  %define my_vendor             mandriva
 %endif
 
-# if present, decode %dist to find out which OS package is being built on
-#
-%if 0%{?dist:1}
-
-# Centos or Fedora
-#
-%define	my_which_os		%(i=%{dist} ; if [ "${i::3}" == ".fc" ] ; then echo "1" ; else echo "0" ; fi )
-
-%if %{my_which_os}
-
-%if 0%{?!fedora_version:1}
-%define fedora_version		%(i=%{dist} ; echo "${i:3}" )
-%endif
-
-%else
-
-%if 0%{?!centos_version:1}
-%define centos_version		%(i=%{dist} ; echo "${i:3}00" )
-%endif
-
-%endif
-
+%if 0%{?sle_version:1}
+  %define my_sles               1
+  %define my_vendor             suselinuxenterprise
 %endif
 
 %if 0%{?fedora_version:1}
-%define	my_fedora		1
-%define my_vendor		fedora
+  %define my_fedora             1
+  %define my_vendor             fedora
+%endif
+
+%if 0%{?mageia:1}
+  %define my_mageia             1
+  %define my_vendor             mageia
 %endif
 
 %if 0%{?centos_version:1}
-%define	my_centos		1
-%define my_vendor		centos
+  %define my_centos             1
+  %define my_vendor             centos
+%endif
+
+%if 0%{?rhel_version:1}
+  %define my_rhel               1
+  %define my_vendor             redhat
+%endif
+
+%if 0%{?scientificlinux_version:1}
+  %define my_scientificlinux    1
+  %define my_vendor             scientificlinux
 %endif
 
 
 %if %{my_suse}
 
-%if %{suse_version}
-%define	rel			%{myrelease}.suse%(echo $[%suse_version/10]).%{mybuild}
-%else
-%define	rel			%{myrelease}.sles%{sles_version}.%{mybuild}
-%endif
+  %if !%{my_sles}
+    %define     rel             %{myrelease}.suse%(echo $[%suse_version/10]).%{mybuild}
+    %define     my_version      %{suse_version}
 
-%if %suse_version >= 930
-%define debugrpm 1
-%endif
+    %if %suse_version >= 930
+      %define debugrpm 1
+    %endif
 
-%define	group			%{suse_group}
+    %if %suse_version >= 1500
+      %define use_python3 1
+    %endif
+  %else
+    %define     rel             %{myrelease}.sles%{sle_version}.%{mybuild}
+    %define     my_version      %{sle_version}
+
+    %if %sle_version >= 120000
+      %define debugrpm 1
+    %endif
+
+    %if %sle_version >= 150000
+      %define use_python3 1
+    %endif
+  %endif
+
+  %define       group           %{suse_group}
 
 %endif
 
@@ -102,9 +122,7 @@
 #
 %if %{my_mandriva}
 
-%define rel			%{myrelease}.mdv%{mandriva_version}.%{mybuild}
-
-%define group			%{mandriva_group}
+%define rel                     %{myrelease}.mdv%{mandriva_version}.%{mybuild}
 
 %endif
 
@@ -115,16 +133,44 @@
 #
 %if %{my_fedora}
 
-%if 0%{?!fedora_version:1}
-%define	fedora_version		%(i="%dist" ; echo "${i:3}")
+  %if 0%{?!fedora_version:1}
+    %define     fedora_version  %(i="%dist" ; echo "${i:3}")
+  %endif
+
+  %if 0%{?!dist:1}
+    %define     dist            .fc%{fedora_version}
+  %endif
+
+  %define       rel             %{myrelease}%{dist}.%{mybuild}
+  %define       my_version      %{fedora_version}
+
+  %if %fedora_version >= 30
+    %define use_python3 1
+  %endif
+
 %endif
 
-%if 0%{?!dist:1}
-%define	dist			.fc%{fedora_version}
-%endif
 
-%define	rel			%{myrelease}%{dist}.%{mybuild}
-%define	group			%{fedora_group}
+# building on a Mageia Linux system.
+#
+# this should create a release that conforms to the Mageia naming conventions.
+#
+%if %{my_mageia}
+
+  %if 0%{?!mageia:1}
+    %define     mageia  %(i="%dist" ; echo "${i:3}")
+  %endif
+
+  %if 0%{?!dist:1}
+    %define     dist            .mga%{mageia}
+  %endif
+
+  %define       rel             %{myrelease}%{dist}.%{mybuild}
+  %define       my_version      %{mageia}
+
+  %if %mageia >= 7
+    %define use_python3 1
+  %endif
 
 %endif
 
@@ -135,16 +181,64 @@
 #
 %if %{my_centos}
 
-%if 0%{?!centos_version:1}
-%define	centos_version		%(i="%dist" ; echo "${i:3}")
+  %if 0%{?!centos_version:1}
+    %define     centos_version  %(i="%dist" ; echo "${i:3}")
+  %endif
+
+  %if 0%{?!dist:1}
+    %define     dist            .el%{centos_version}
+  %endif
+
+  %define       rel             %{myrelease}%{dist}.%{mybuild}
+  %define       my_version      %{centos_version}
+
+  %if %centos_version >= 800
+    %define use_python3 1
+  %endif
+
 %endif
 
-%if 0%{?!dist:1}
-%define	dist			.el%{centos_version}
+
+# building on a RHEL Linux system.
+#
+# this should create a release that conforms to the RHEL naming conventions.
+#
+%if %{my_rhel}
+
+  %if 0%{?!rhel_version:1}
+    %define     rhel_version	%(i="%dist" ; echo "${i:3}")
+  %endif
+
+  %if 0%{?!dist:1}
+    %define     dist            .el%{rhel_version}
+  %endif
+
+  %define       rel             %{myrelease}%{dist}.%{mybuild}
+  %define       my_version      %{rhel_version}
+
+  %if %rhel_version >= 800
+    %define use_python3 1
+  %endif
+
 %endif
 
-%define	rel			%{myrelease}%{dist}.%{mybuild}
-%define	group			%{fedora_group}
+
+# building on a Scientific Linux system.
+#
+# this should create a release that conforms to the Scientific naming conventions.
+#
+%if %{my_scientificlinux}
+
+  %if 0%{?!scientificlinux_version:1}
+    %define     scientificlinux_version %(i="%dist" ; echo "${i:3}")
+  %endif
+
+  %if 0%{?!dist:1}
+    %define     dist                    .el%{scientificlinux_version}
+  %endif
+
+  %define       rel                     %{myrelease}%{dist}.%{mybuild}
+  %define       my_version              %{scientificlinux_version}
 
 %endif
 
@@ -152,86 +246,152 @@
 # move the icons into a standardised location
 #
 %if 0%{?!_icondir:1}
-%define	_icondir		%{_datadir}/icons/hicolor/
+  %define       _icondir                %{_datadir}/icons/hicolor/
 %endif
+
+%define _pixmapdir                      %{_datadir}/pixmaps
 
 
 # ensure where RPM thinks the docs should be matches reality
-# gets around SUSE using %{_prefix}/share/doc/packages and
-# fedora using %{_defaultdocdir}
+# gets around SUSE using %%{_prefix}/share/doc/packages and
+# fedora using %%{_defaultdocdir}
 #
-%define	_docdir			%{_prefix}/share/doc
+%define _docdir                         %{_prefix}/share/doc
 
 %if %{my_suse}
-Requires:			libSDL-1_2-0 >= 1.2.12
-Requires:			libSDL_image-1_2-0 >= 1.2.5
-Requires:			zlib >= 1.2.3
-Requires:			libmpfr4 >= 3.0.0
-Requires:			libusb-1_0-0 >= 1.0.0
-BuildRequires:			libSDL-devel >= 1.2.12
-BuildRequires:			libSDL_image-devel >= 1.2.5
-BuildRequires:			zlib-devel >= 1.2.3
-BuildRequires:			mpfr-devel >= 3.0.0
-BuildRequires:			libusb-1_0-devel >= 1.0.0
-BuildRequires:			update-desktop-files
-BuildRequires:			make
+Requires:                               libSDL-1_2-0 >= 1.2.12
+Requires:                               libSDL_image-1_2-0 >= 1.2.5
+Requires:                               zlib >= 1.2.3
+Requires:                               libjpeg8 >= 8.0.0
+%if %{suse_version} >= 1500
+Requires:                               libmpfr6 >= 3.0.0
+%else
+Requires:                               libmpfr4 >= 3.0.0
+%endif
+Requires:                               libusb-1_0-0 >= 1.0.0
+BuildRequires:                          libSDL-devel >= 1.2.12
+%if %{my_sles}
+%else
+BuildRequires:                          libSDL_image-devel >= 1.2.5
+%endif
+%if %{suse_version} >= 1200
+BuildRequires:                          libOSMesa-devel
+%define with_nfosmesa                   1
+%endif
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          libjpeg8-devel >= 8.0.0
+BuildRequires:                          mpfr-devel >= 3.0.0
+BuildRequires:                          libusb-1_0-devel >= 1.0.0
+BuildRequires:                          update-desktop-files
+BuildRequires:                          make
+BuildRequires:                          automake
+BuildRequires:                          glibc
+BuildRequires:                          glibc-devel
+BuildRequires:                          unzip
+Requires(post):                         permissions
 %endif
 
 %if %{my_mandriva}
-Requires:			libSDL1.2_0 >= 1.2.12
-Requires:			libSDL_image1.2_0 >= 1.2.5
-Requires:			zlib >= 1.2.3
-Requires:			libmpfr4 >= 3.0.0
-Requires:			libusb1.0_0 >= 1.0.0
-BuildRequires:			libSDL-devel >= 1.2.12
-BuildRequires:			libSDL_image-devel >= 1.2.5
-BuildRequires:			zlib-devel >= 1.2.3
-BuildRequires:			libmpfr-devel >= 3.0.0
-BuildRequires:			libusb1-devel >= 1.0.0
+Requires:                               libSDL1.2_0 >= 1.2.12
+Requires:                               libSDL_image1.2_0 >= 1.2.5
+Requires:                               zlib >= 1.2.3
+Requires:                               libjpeg8 >= 1.0.0
+Requires:                               libmpfr4 >= 3.0.0
+Requires:                               libusb1.0_0 >= 1.0.0
+BuildRequires:                          libSDL-devel >= 1.2.12
+BuildRequires:                          libSDL_image-devel >= 1.2.5
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          libjpeg8-devel >= 1.0.0
+BuildRequires:                          libmpfr-devel >= 3.0.0
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          unzip
+%endif
+
+%if %{my_mageia}
+Requires:                               SDL >= 1.2.12
+Requires:                               zlib >= 1.2.3
+Requires:                               libjpeg8 >= 1.0.0
+Requires:                               libmpfr >= 3.0.0
+Requires:                               libusb1.0_0 >= 1.0.0
+BuildRequires:                          libSDL-devel >= 1.2.12
+BuildRequires:                          libzlib-devel >= 1.2.3
+BuildRequires:                          libmpfr-devel >= 3.0.0
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          jpeg8-devel >= 1.0.0
+BuildRequires:                          mpfr-devel >= 3.0.0
+BuildRequires:                          make
+BuildRequires:                          automake
+BuildRequires:                          unzip
 %endif
 
 %if %{my_fedora}
-Requires:			SDL >= 1.2.12
-Requires:			SDL_image >= 1.2.5
-Requires:			zlib >= 1.2.3
-Requires:			mpfr >= 3.0.0
-Requires:			libusb1 >= 1.0.0
-BuildRequires:			SDL-devel >= 1.2.12
-BuildRequires:			SDL_image-devel >= 1.2.5
-BuildRequires:			zlib-devel >= 1.2.3
-BuildRequires:			mpfr-devel >= 3.0.0
-BuildRequires:			libusb1-devel >= 1.0.0
+Requires:                               SDL >= 1.2.12
+Requires:                               zlib >= 1.2.3
+Requires:                               libjpeg-turbo >= 1.0.0
+Requires:                               mpfr >= 3.0.0
+Requires:                               libusb1 >= 1.0.0
+BuildRequires:                          SDL-devel >= 1.2.12
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          libjpeg-turbo-devel >= 1.0.0
+BuildRequires:                          mpfr-devel >= 3.0.0
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          unzip
 %endif
 
 %if %{my_centos}
-Requires:                       SDL >= 1.2.12
-Requires:			SDL_image >= 1.2.5
-Requires:                       zlib >= 1.2.3
-Requires:                       mpfr >= 2.4.1
-Requires:                       libusb1 >= 1.0.0
-BuildRequires:                  SDL-devel >= 1.2.12
-BuildRequires:			SDL_image-devel >= 1.2.5
-BuildRequires:                  zlib-devel >= 1.2.3
-BuildRequires:                  mpfr-devel >= 2.4.1
-BuildRequires:                  libusb1-devel >= 1.0.0
+Requires:                               SDL >= 1.2.12
+Requires:                               zlib >= 1.2.3
+Requires:                               libjpeg-turbo >= 1.0.0
+Requires:                               mpfr >= 2.4.1
+Requires:                               libusb1 >= 1.0.0
+BuildRequires:                          SDL-devel >= 1.2.12
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          libjpeg-turbo-devel >= 1.0.0
+BuildRequires:                          mpfr-devel >= 2.4.1
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          unzip
+%endif
+
+%if %{my_rhel}
+Requires:                               SDL >= 1.2.12
+Requires:                               zlib >= 1.2.3
+Requires:                               mpfr >= 2.4.1
+Requires:                               libusb1 >= 1.0.0
+BuildRequires:                          SDL-devel >= 1.2.12
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          mpfr-devel >= 2.4.1
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          unzip
+%endif
+
+%if %{my_scientificlinux}
+Requires:                               SDL >= 1.2.12
+Requires:                               zlib >= 1.2.3
+Requires:                               mpfr >= 2.4.1
+Requires:                               libusb1 >= 1.0.0
+BuildRequires:                          SDL-devel >= 1.2.12
+BuildRequires:                          zlib-devel >= 1.2.3
+BuildRequires:                          mpfr-devel >= 2.4.1
+BuildRequires:                          libusb1-devel >= 1.0.0
+BuildRequires:                          unzip
 %endif
 
 # Now for the meat of the spec file
 #
-Name:			aranym
-Version:		%{ver}
-Release:		%{rel}
-License:		GPLv2
-Summary:		32-bit Atari personal computer (similar to Falcon030 but better) virtual machine
-URL:			https://aranym.github.io/
-Group:			%{group}
-Source0:		http://prdownloads.sourceforge.net/aranym/%{name}_%{version}.orig.tar.gz
-BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-buildroot
-Requires:		hicolor-icon-theme
-BuildRequires:		hicolor-icon-theme
-BuildRequires:		desktop-file-utils
-BuildRequires:		gcc-c++
-#Patch0:			aranym-0.9.7beta-desktop.patch
+Name:                                   aranym
+Version:                                %{ver}
+Release:                                %{rel}
+License:                                GPL-2.0-or-later
+Summary:                                Atari Running on Any Machine
+URL:                                    https://aranym.github.io/
+Group:                                  %{group}
+Source:                                 %{name}-%{version}.tar.gz
+Source1:                                aranym-%{aver}.zip
+BuildRoot:                              %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+Requires:                               hicolor-icon-theme
+BuildRequires:                          hicolor-icon-theme
+BuildRequires:                          desktop-file-utils
+BuildRequires:                          gcc-c++
 
 
 %description
@@ -245,24 +405,45 @@ Didier MEQUIGNON, Patrice Mandin and others (see AUTHORS for a full list).
 
 %{?debugrpm:%debug_package}
 %prep
-%setup -q
-#%%patch0
+%setup -q -n %{name}-%{version} -a 1
+
+echo "Vendor: %{my_vendor}  Version: %{my_version}"
 
 
 %build
-%configure --enable-jit-compiler --enable-usbhost
+unset LC_ALL LC_MEASUREMENT LC_MONETARY LC_SOURCED LC_COLLATE LC_NUMERIC LC_TIME LC_MESSAGES LANG LANGUAGE
+
+%define common_opts --enable-addressing=direct --enable-usbhost --disable-sdl2 --enable-blitmemmove %{?with_nfosmesa:--enable-nfosmesa}
+# workaround a nonsense in Mageia that runs libtoolize and removes the depcomp & missing scripts
+%define __libtoolize true
+
+NO_CONFIGURE=1 ./autogen.sh
+
+# JIT compiler for X86-32 and X86-64
+%ifarch %ix86 x86_64
+%configure %common_opts --enable-jit-compiler --enable-jit-fpu
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-jit
 %{__make} clean
+%endif
 
-%configure --enable-fullmmu --enable-lilo --enable-usbhost
+# JIT compiler for ARM
+%ifarch %arm
+%configure %common_opts --enable-jit2 --enable-jit-fpu
+%{__make} depend
+%{__make}
+%{__mv} aranym aranym-jit
+%{__make} clean
+%endif
+
+%configure %common_opts --enable-fullmmu --enable-lilo
 %{__make} depend
 %{__make}
 %{__mv} aranym aranym-mmu
 %{__make} clean
 
-%configure --enable-usbhost
+%configure %common_opts
 %{__make} depend
 %{__make}
 
@@ -278,7 +459,13 @@ install -m 755 aranym-mmu %{buildroot}%{_bindir}
 #
 install -m 755 aratapif %{buildroot}%{_bindir}
 
+%ifarch %ix86 x86_64 %arm
 install -m 755 aranym-jit %{buildroot}%{_bindir}
+%endif
+
+# aranym-1-19-xxx install
+cp -a aranym-%{aver} $RPM_BUILD_ROOT%{_datadir}/aranym/aranym-%{aver}
+find $RPM_BUILD_ROOT%{_datadir}/aranym/aranym-%{aver} -type d -name CVS -exec rm -rf {} +
 
 
 # add a desktop menu entry
@@ -289,10 +476,18 @@ mkdir -p %{buildroot}/%{_icondir}/48x48/apps
 install -m 644 contrib/icon-32.png %{buildroot}/%{_icondir}/32x32/apps/aranym.png
 install -m 644 contrib/icon-48.png %{buildroot}/%{_icondir}/48x48/apps/aranym.png
 
-%if %{my_suse}%{my_mandriva}
+%if %{my_suse}%{my_mageia}%{my_mandriva}
 install -m 644 contrib/%{name}.desktop %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %if %{my_suse}
 %suse_update_desktop_file -i %{name}
+%endif
+%if %{my_mageia}
+desktop-file-install                                    \
+ --delete-original                                      \
+ --dir %{buildroot}%{_datadir}/applications             \
+ --add-category System                                  \
+ --add-category Emulator                                \
+ %{buildroot}/%{_datadir}/applications/%{name}.desktop
 %endif
 %if %{my_mandriva}
 desktop-file-install                                    \
@@ -316,16 +511,20 @@ desktop-file-install                                    \
  %{buildroot}/%{_datadir}/applications/%{my_vendor}-%{name}.desktop
 %endif
 
-%if %{my_suse}%{my_mandriva}
+%if %{my_suse}%{my_mageia}%{my_mandriva}
+%ifarch %ix86 x86_64 %arm
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}/%{_datadir}/applications/%{name}-jit.desktop
+%endif
 %endif
 
 %if %{my_fedora}%{my_centos}
+%ifarch %ix86 x86_64 %arm
 install -m 644 contrib/%{name}-jit.desktop %{buildroot}%{_datadir}/applications/%{my_vendor}-%{name}-jit.desktop
+%endif
 %endif
 
 
-%if %{my_suse}%{my_mandriva}
+%if %{my_suse}%{my_mageia}%{my_mandriva}
 install -m 644 contrib/%{name}-mmu.desktop %{buildroot}/%{_datadir}/applications/%{name}-mmu.desktop
 %endif
 
@@ -334,13 +533,13 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 %endif
 
 
-%if %{my_mandriva}
+%if %{my_mageia}%{my_mandriva}
 %post
 %update_menus
 %endif
 
 
-%if %{my_mandriva}
+%if %{my_mageia}%{my_mandriva}
 %postun
 %clean_menus
 %endif
@@ -358,13 +557,22 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 %{_datadir}/%{name}
 %{_docdir}/%{name}
 %{_icondir}/32x32/apps/%{name}.png
+%{_icondir}/32x32/apps/%{name}-mmu.png
 %{_icondir}/48x48/apps/%{name}.png
+%{_icondir}/48x48/apps/%{name}-mmu.png
+%{_pixmapdir}/%{name}.png
+%{_pixmapdir}/%{name}-mmu.png
+%{_icondir}/32x32/apps/%{name}-jit.png
+%{_icondir}/48x48/apps/%{name}-jit.png
+%{_pixmapdir}/%{name}-jit.png
 %{_datadir}/applications/*%{name}.desktop
 %{_bindir}/aratapif
 %{_bindir}/aranym
 
 
+%ifarch %ix86 x86_64 %arm
 %{_bindir}/aranym-jit
+%endif
 %{_mandir}/man1/%{name}-jit.1*
 %{_datadir}/applications/*%{name}-jit.desktop
 
@@ -379,7 +587,7 @@ install -m 644 contrib/%{name}-mmu.desktop %{buildroot}%{_datadir}/applications/
 * Tue Feb 06 2018 Thorsten Otto <admin@tho-otto.de>
 URL changed to aranym.github.io. Also updated in NEWS/README files.
 
-* Wed Oct 10 2014 Petr Stehlik <pstehlik@sophics.cz> 1.0.0
+* Fri Oct 10 2014 Petr Stehlik <pstehlik@sophics.cz> 1.0.0
 New ARAnyM release.
 Reset the minimal SDL version down to 1.2.12
 
@@ -389,7 +597,7 @@ Bumped the minimal SDL version to 1.2.15
 * Tue Jun 03 2014 Jens Heitmann <jens.heitmann@stc-de.com>
 Desktop copy added for CentOS; dependencies for centos (JIT version crashes with SDL < 1.2.15)
 
-* Mon Apr 12 2014 Petr Stehlik <pstehlik@sophics.cz> 0.9.16
+* Sat Apr 12 2014 Petr Stehlik <pstehlik@sophics.cz> 0.9.16
 New upstream ARAnyM release. JIT supported on 64-bit now.
 
 * Mon Apr 15 2013 Petr Stehlik <pstehlik@sophics.cz> 0.9.15
@@ -436,7 +644,7 @@ New release. Version increased. Other changes in NEWS file.
 * Mon Jul 09 2007 Petr Stehlik <pstehlik@sophics.cz>
 New release. Version increased. Other changes in NEWS file.
 
-* Tue Oct 11 2006 David Bolt <davjam@davjam.org>	0.9.4beta
+* Wed Oct 11 2006 David Bolt <davjam@davjam.org>	0.9.4beta
 Added an aranym.desktop file for inclusion in desktop menus.
 Temporarily uses emulator.png as the menu icon.
 Added bits to spec file to try and build packages for (open)SUSE, Mandriva
@@ -490,7 +698,7 @@ Version increased. NFCDROM.BOS added.
 * Fri Apr 11 2003 Petr Stehlik <pstehlik@sophics.cz>
 Man dir fixed. Debug info disabled.
 
-* Mon Apr 08 2003 Petr Stehlik <pstehlik@sophics.cz>
+* Tue Apr 08 2003 Petr Stehlik <pstehlik@sophics.cz>
 Various fixes for the 0.8.0. And full 68040 PMMU build added as aranym-mmu.
 Also manual page added.
 
