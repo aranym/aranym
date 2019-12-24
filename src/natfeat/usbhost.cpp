@@ -422,8 +422,12 @@ void usbhost_init_libusb(void)
 		return;
 	}
 
+#if defined(LIBUSB_API_VERSION) && (LIBUSB_API_VERSION >= 0x01000106)
+	libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_INFO);
+#else
 	libusb_set_debug(NULL, 3);
-	
+#endif
+
 	for (int i = 0; i < USB_MAX_DEVICE; i++) {
 		virtual_device[i].connected = false;
 		virtual_device[i].virtdev_available = false;

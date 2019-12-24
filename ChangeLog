@@ -1,3 +1,7 @@
+2019/12/25
+Avoid deprecated libusb_set_debug
+
+
 2019/12/23
 Add -no-lto when trying to compile the floating point format test
 (needed on openSuSE Tumbleweed, and maybe others)
