@@ -1,4 +1,8 @@
 2019/12/25
+Update glibc wrapper to include new symbols from glibc 2.30
+
+
+2019/12/25
 Avoid deprecated libusb_set_debug
 
 
