@@ -1711,14 +1711,6 @@ if [[ "x$GCC" = "xyes" ]]; then
   fi
 fi
 
-dnl Or if we have -Ofast
-if [[ "x$HAVE_OFAST" = "xyes" ]]; then
-  CFLAGS="`echo $CFLAGS | sed -e 's/-g//g'` -Ofast"
-  CXXFLAGS="`echo $CXXFLAGS | sed -e 's/-g//g'` -Ofast"
-  CXXFLAGS="-LANG:std $CXXFLAGS"
-  LDFLAGS="$LDFLAGS -ipa"
-fi
-
 dnl Check for SDL and/or SDL2
 m4_define(use_sdl2_default, yes)
 m4_case(use_sdl2_default, yes,
