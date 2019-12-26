@@ -1,3 +1,8 @@
+2019/12/26
+Avoid redirection of fcntl() to fcntl64() in 32bit builds,
+which is only available in glibc >= 2.28
+
+
 2019/12/25
 Update glibc wrapper to include new symbols from glibc 2.30
 

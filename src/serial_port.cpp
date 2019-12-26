@@ -59,7 +59,6 @@ Serialport::~Serialport(void)
 	D(bug("Serialport: interface destroyed"));
 	if (handle >= 0)
 	{
-		fcntl(handle, F_SETFL, 0);// back to (almost...) normal
 		close(handle);
 		handle = -1;
 	}

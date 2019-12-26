@@ -125,7 +125,18 @@
 #endif
 
 #ifdef HAVE_FCNTL_H
+/* make sure fcntl() does not get redirected to fcntl64() in 32bit builds */
+# if defined(__linux__) && __SIZEOF_POINTER__ < 8
+#  undef fcntl
+#  ifdef __cplusplus
+extern "C"
+#  endif
+int fcntl(int __fd, int __cmd, ...) __asm__("fcntl");
+# endif
 # include <fcntl.h>
+# if defined(__linux__) && __SIZEOF_POINTER__ < 8
+#  undef fcntl
+# endif
 #endif
 
 #ifdef TIME_WITH_SYS_TIME
