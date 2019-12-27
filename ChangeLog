@@ -1,3 +1,8 @@
+2019/12/27
+nfosmesa: move decoding of arguments to member functions,
+to reduce the size of the big switch
+
+
 2019/12/26
 Avoid redirection of fcntl() to fcntl64() in 32bit builds,
 which is only available in glibc >= 2.28

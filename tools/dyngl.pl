@@ -978,6 +978,7 @@ sub read_includes()
 							my $name = $2;
 							$type =~ s/^ *//;
 							$type =~ s/ *$//;
+							$type = 'GLuint' if ($type eq 'unsigned');
 							my $pointer = ($type =~ s/\*$//);
 							if ($pointer) {
 								$type =~ s/ *$//;
@@ -4342,6 +4343,7 @@ sub gen_calls() {
 	my $uppername;
 	my $gl;
 	my $args;
+	my $params;
 	my $debug_args;
 	my $noconv_args;
 	my $printf_format;
@@ -4364,7 +4366,8 @@ sub gen_calls() {
 		$debug_args = $ent->{debug_args};
 		$printf_format = $ent->{printf_format};
 		$uppername = uc($function_name);
-	
+		$params = $ent->{params};
+
 		if ($return_type eq "void")
 		{
 			$retvar = "";
@@ -4379,18 +4382,69 @@ sub gen_calls() {
 			print "/* FIXME: $return_type cannot be returned */\n";
 			++$num_longlongs;
 		}
-		if ($prototype ne $prototype_mem)
-		{
-			print "#if NFOSMESA_POINTER_AS_MEMARG\n";
-			print "$return_type OSMesaDriver::nf$function_name($prototype_mem)\n";
-			print "#else\n";
-			print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
-			print "#endif\n";
+		print "$return_type OSMesaDriver::nf$function_name(const uint32_t *nf_params)\n";
+		print "{\n";
+		my $argcount = $#$params + 1;
+		if ($argcount > 0) {
+			my $paramnum = 0;
+			my $indent = "\t";
+			for (my $argc = 0; $argc < $argcount; $argc++)
+			{
+				my $type = $params->[$argc]->{type};
+				my $name = $params->[$argc]->{name};
+				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
+				if ($params->[$argc]->{pointer} || defined($pointer_types{$type}))
+				{
+					print "#if NFOSMESA_POINTER_AS_MEMARG\n";
+					print "${indent}memptr\n";
+					print "#else\n";
+					print "${indent}$type";
+					if ($params->[$argc]->{pointer} <= 1 && !defined($pointer_types{$type}))
+					{
+						print " *";
+					}
+					print "\n#endif\n";
+					print "\t${indent}$name = ";
+				} else
+				{
+					print "${indent}$type $name = ";
+				}
+				if ($params->[$argc]->{pointer} || defined($pointer_types{$type}))
+				{
+					print "getStackedPointer($paramnum, ${type} ${pointer});\n";
+					++$paramnum;
+				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
+				{
+					print "getStackedDouble($paramnum);\n";
+					$paramnum += 2;
+				} elsif ($type eq 'GLfloat' || $type eq 'GLclampf')
+				{
+					print "getStackedFloat($paramnum);\n";
+					++$paramnum;
+				} elsif (defined($longlong_types{$type}))
+				{
+					print "getStackedParameter64($paramnum);\n";
+					$paramnum += 2;
+				} elsif ($type eq 'GLhandleARB')
+				{
+					# legacy MacOSX headers declare GLhandleARB as void *
+					print "(GLhandleARB)(uintptr_t)getStackedParameter($paramnum);\n";
+					++$paramnum;
+				} elsif ($type eq 'GLsync')
+				{
+					# GLsync declared as pointer type on host; need a cast here
+					print "(GLsync)(uintptr_t)getStackedParameter($paramnum);\n";
+					++$paramnum;
+				} else
+				{
+					print "getStackedParameter($paramnum);\n";
+					++$paramnum;
+				}
+			}
 		} else
 		{
-			print "$return_type OSMesaDriver::nf$function_name($prototype)\n";
+			print "\tUNUSED(nf_params);\n";
 		}
-		print "{\n";
 		print "\tD(bug(\"nfosmesa: $function_name($printf_format)\"";
 		print ", " unless ($args eq "");
 		print "$debug_args));\n";
@@ -4708,52 +4762,7 @@ sub gen_dispatch() {
 		my $argcount = $#$params + 1;
 		print "\t\t\tD(funcname = \"${function_name}\");\n";
 		print "\t\t\tif (GL_ISAVAILABLE(${function_name}))\n" if ($gl eq 'gl');
-		print "\t\t\t${ret}nf${function_name}(";
-		
-		if ($argcount > 0) {
-			my $paramnum = 0;
-			my $indent = "\n\t\t\t\t";
-			for (my $argc = 0; $argc < $argcount; $argc++)
-			{
-				my $type = $params->[$argc]->{type};
-				my $name = $params->[$argc]->{name};
-				my $pointer = $params->[$argc]->{pointer} ? "*" : "";
-				my $comment = " /* ${type} ${pointer}${name} */";
-				my $comma = ($argc < ($argcount - 1)) ? "," : "";
-				if ($params->[$argc]->{pointer} || defined($pointer_types{$type}))
-				{
-					print "${indent}getStackedPointer($paramnum, ${type} ${pointer})$comma $comment";
-					++$paramnum;
-				} elsif ($type eq 'GLdouble' || $type eq 'GLclampd')
-				{
-					print "${indent}getStackedDouble($paramnum)$comma $comment";
-					$paramnum += 2;
-				} elsif ($type eq 'GLfloat' || $type eq 'GLclampf')
-				{
-					print "${indent}getStackedFloat($paramnum)$comma $comment";
-					++$paramnum;
-				} elsif (defined($longlong_types{$type}))
-				{
-					print "${indent}getStackedParameter64($paramnum)$comma $comment";
-					$paramnum += 2;
-				} elsif ($type eq 'GLhandleARB')
-				{
-					# legacy MacOSX headers declare GLhandleARB as void *
-					print "${indent}(GLhandleARB)(uintptr_t)getStackedParameter($paramnum)$comma $comment";
-					++$paramnum;
-				} elsif ($type eq 'GLsync')
-				{
-					# GLsync declared as pointer type on host; need a cast here
-					print "${indent}(GLsync)(uintptr_t)getStackedParameter($paramnum)$comma $comment";
-					++$paramnum;
-				} else
-				{
-					print "${indent}getStackedParameter($paramnum)$comma $comment";
-					++$paramnum;
-				}
-			}
-		}
-		print ");\n";
+		print "\t\t\t${ret}nf${function_name}(nf_params);\n";
 		print "\t\t\tbreak;\n";
 		print("#endif\n") if (defined($blacklist{$function_name}));
 		

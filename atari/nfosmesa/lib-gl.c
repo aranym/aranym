@@ -25,7 +25,7 @@
 #include "lib-osmesa.h"
 #include "nfosmesa_nfapi.h"
 
-extern gl_private *private;;
+extern gl_private *private;
 
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
 #define GL_GETSTRING(type, gl, name, export, upper, proto, args, first, ret)

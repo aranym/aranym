@@ -148,22 +148,19 @@ void OSMesaDriver::reset()
 
 /* Read parameter on m68k stack */
 
-#if NFOSMESA_POINTER_AS_MEMARG
-#define getStackedParameter(n) params[n]
+#define getStackedParameter(n) nf_params[n]
 #define getStackedParameter64(n) (((GLuint64)getStackedParameter(n) << 32) | (GLuint64)getStackedParameter((n) + 1))
 #define getStackedFloat(n) Atari2HostFloat(getStackedParameter(n))
 #define getStackedDouble(n) Atari2HostDouble(getStackedParameter(n), getStackedParameter((n) + 1))
+
+#if NFOSMESA_POINTER_AS_MEMARG
 #define getStackedPointer(n, t) getStackedParameter(n)
 #define HostAddr(addr, t) (t)((addr) ? Atari2HostAddr(addr) : NULL)
 #define AtariAddr(addr, t) addr
 #define AtariOffset(addr) addr
 #define NFHost2AtariAddr(addr) (void *)(uintptr_t)(addr)
 #else
-#define getStackedParameter(n) SDL_SwapBE32(ctx_ptr[n])
-#define getStackedParameter64(n) SDL_SwapBE64(*((Uint64 *)&ctx_ptr[n]))
-#define getStackedFloat(n) Atari2HostFloat(getStackedParameter(n))
-#define getStackedDouble(n) Atari2HostDouble(getStackedParameter(n), getStackedParameter((n) + 1))
-#define getStackedPointer(n, t) (t)(ctx_ptr[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
+#define getStackedPointer(n, t) (t)(nf_params[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
 #define HostAddr(addr, t) (t)(addr)
 #define AtariAddr(addr, t) (t)(addr)
 	/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
@@ -188,7 +185,6 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 		return TOS_ENOSYS;
 	}
 	
-#if NFOSMESA_POINTER_AS_MEMARG
 	/*
 	 * doing several thousand inlined calls of ReadInt32()
 	 * results in
@@ -201,17 +197,12 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 	 */
 	
 	memptr ctx_ptr;	/* Current parameter list */
-	Uint32 params[NFOSMESA_MAXPARAMS];
+	uint32_t nf_params[NFOSMESA_MAXPARAMS];
 
 	ctx_ptr = getParameter(1);
 
 	for (unsigned int i = 0; i < paramcount[fncode]; i++)
-		params[i] = ReadInt32(ctx_ptr + 4 * (i));
-#else
-	Uint32 *ctx_ptr;	/* Current parameter list */
-
-	ctx_ptr = (Uint32 *)Atari2HostAddr(getParameter(1));
-#endif
+		nf_params[i] = ReadInt32(ctx_ptr + 4 * (i));
 		
 	if (fncode != NFOSMESA_OSMESAPOSTPROCESS && fncode != GET_VERSION)
 	{
@@ -239,61 +230,37 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 			break;
 		case NFOSMESA_LENGLGETSTRING:
 			D(funcname = "glGetString");
-			ret = LenglGetString(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedParameter(1) /* GLenum name */);
+			ret = LenglGetString(nf_params);
 			break;
 		case NFOSMESA_PUTGLGETSTRING:
 			D(funcname = "glGetString");
-			PutglGetString(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedParameter(1) /* GLenum name */,
-				getStackedPointer(2, GLubyte *) /* GLubyte *buffer */);
+			PutglGetString(nf_params);
 			break;
 		case NFOSMESA_LENGLGETSTRINGI:
 			D(funcname = "glGetStringi");
-			ret = LenglGetStringi(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedParameter(1) /* GLenum name */,
-				getStackedParameter(2) /* GLuint index */);
+			ret = LenglGetStringi(nf_params);
 			break;
 		case NFOSMESA_PUTGLGETSTRINGI:
 			D(funcname = "glGetStringi");
-			PutglGetStringi(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedParameter(1) /* GLenum name */,
-				getStackedParameter(2) /* GLuint index */,
-				getStackedPointer(3, GLubyte *) /* GLubyte *buffer */);
+			PutglGetStringi(nf_params);
 			break;
 
 		case NFOSMESA_OSMESACREATECONTEXT:
 			D(funcname = "OSMesaCreateContext");
-			ret = OSMesaCreateContext(
-				getStackedParameter(0) /* GLenum format */,
-				getStackedParameter(1) /* Uint32 sharelist */);
+			ret = OSMesaCreateContext(nf_params);
 			break;
 		case NFOSMESA_OSMESACREATECONTEXTEXT:
 			D(funcname = "OSMesaCreateContextExt");
-			ret = OSMesaCreateContextExt(
-				getStackedParameter(0) /* GLenum format */,
-				getStackedParameter(1) /* GLint depthBits */,
-				getStackedParameter(2) /* GLint stencilBits */,
-				getStackedParameter(3) /* GLint accumBits */,
-				getStackedParameter(4) /* Uint32 sharelist */);
+			ret = OSMesaCreateContextExt(nf_params);
 			break;
 		case NFOSMESA_OSMESADESTROYCONTEXT:
 			D(funcname = "OSMesaDestroyContext");
 			OSMesaDestroyContext(
-				getStackedParameter(0) /* Uint32 ctx */);
+				getStackedParameter(0) /* uint32_t ctx */);
 			break;
 		case NFOSMESA_OSMESAMAKECURRENT:
 			D(funcname = "OSMesaMakeCurrent");
-			ret = OSMesaMakeCurrent(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedParameter(1) /* memptr buffer */,
-				getStackedParameter(2) /* GLenum type */,
-				getStackedParameter(3) /* GLsizei width */,
-				getStackedParameter(4) /* GLsizei height */);
+			ret = OSMesaMakeCurrent(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETCURRENTCONTEXT:
 			D(funcname = "OSMesaGetCurrentContext");
@@ -301,53 +268,31 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 			break;
 		case NFOSMESA_OSMESAPIXELSTORE:
 			D(funcname = "OSMesaPixelStore");
-			OSMesaPixelStore(
-				getStackedParameter(0) /* GLint pname */,
-				getStackedParameter(1) /* GLint value */);
+			OSMesaPixelStore(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETINTEGERV:
 			D(funcname = "OSMesaGetIntegerv");
-			OSMesaGetIntegerv(
-				getStackedParameter(0) /* GLint pname */,
-				getStackedPointer(1, GLint *) /* GLint *values */);
+			OSMesaGetIntegerv(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETDEPTHBUFFER:
 			D(funcname = "OSMesaGetDepthBuffer");
-			ret = OSMesaGetDepthBuffer(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedPointer(1, GLint *) /* GLint *width */,
-				getStackedPointer(2, GLint *) /* GLint *height */,
-				getStackedPointer(3, GLint *) /* GLint *bytesPerValue */,
-				getStackedPointer(4, void **) /* void **buffer */);
+			ret = OSMesaGetDepthBuffer(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETCOLORBUFFER:
 			D(funcname = "OSMesaGetColorBuffer");
-			ret = OSMesaGetColorBuffer(
-				getStackedParameter(0) /* Uint32 ctx */,
-				getStackedPointer(1, GLint *) /* GLint *width */,
-				getStackedPointer(2, GLint *) /* GLint *height */,
-				getStackedPointer(3, GLint *) /* GLint *format */,
-				getStackedPointer(4, void **) /* void **buffer */);
+			ret = OSMesaGetColorBuffer(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETPROCADDRESS:
 			D(funcname = "OSMesaGetProcAddress");
-			ret = OSMesaGetProcAddress(
-				getStackedPointer(0, const char *) /* const char *funcName */);
+			ret = OSMesaGetProcAddress(nf_params);
 			break;
 		case NFOSMESA_OSMESACOLORCLAMP:
 			D(funcname = "OSMesaColorClamp");
-			OSMesaColorClamp(getStackedParameter(0) /* GLboolean enable */);
+			OSMesaColorClamp(nf_params);
 			break;
 		case NFOSMESA_OSMESAPOSTPROCESS:
 			D(funcname = "OSMesaPostprocess");
-			{
-				GLubyte tmp[safe_strlen(getStackedPointer(1, const char *)) + 1], *filter;
-				filter = Atari2HostByteArray(sizeof(tmp), getStackedPointer(1, const GLubyte *), tmp);
-				OSMesaPostprocess(
-					getStackedParameter(0) /* Uint32 ctx */,
-					(const char *)filter,
-					getStackedParameter(2) /* GLuint enable_value */);
-			}
+			OSMesaPostprocess(nf_params);
 			break;
 
 		/*
@@ -356,43 +301,22 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 		 */
 		case NFOSMESA_GLULOOKATF:
 			D(funcname = "gluLookAtf");
-			nfgluLookAtf(
-				getStackedFloat(0) /* GLfloat eyeX */,
-				getStackedFloat(1) /* GLfloat eyeY */,
-				getStackedFloat(2) /* GLfloat eyeZ */,
-				getStackedFloat(3) /* GLfloat centerX */,
-				getStackedFloat(4) /* GLfloat centerY */,
-				getStackedFloat(5) /* GLfloat centerZ */,
-				getStackedFloat(6) /* GLfloat upX */,
-				getStackedFloat(7) /* GLfloat upY */,
-				getStackedFloat(8) /* GLfloat upZ */);
+			nfgluLookAtf(nf_params);
 			break;
 		
 		case NFOSMESA_GLFRUSTUMF:
 			D(funcname = "glFrustumf");
-			nfglFrustumf(
-				getStackedFloat(0) /* GLfloat left */,
-				getStackedFloat(1) /* GLfloat right */,
-				getStackedFloat(2) /* GLfloat bottom */,
-				getStackedFloat(3) /* GLfloat top */,
-				getStackedFloat(4) /* GLfloat near_val */,
-				getStackedFloat(5) /* GLfloat far_val */);
+			nfglFrustumf(nf_params);
 			break;
 		
 		case NFOSMESA_GLORTHOF:
 			D(funcname = "glOrthof");
-			nfglOrthof(
-				getStackedFloat(0) /* GLfloat left */,
-				getStackedFloat(1) /* GLfloat right */,
-				getStackedFloat(2) /* GLfloat bottom */,
-				getStackedFloat(3) /* GLfloat top */,
-				getStackedFloat(4) /* GLfloat near_val */,
-				getStackedFloat(5) /* GLfloat far_val */);
+			nfglOrthof(nf_params);
 			break;
 		
 		case NFOSMESA_TINYGLSWAPBUFFER:
 			D(funcname = "swapbuffer");
-			nftinyglswapbuffer(getStackedParameter(0));
+			nftinyglswapbuffer(nf_params);
 			break;
 
 #include "nfosmesa/dispatch-gl.c"
@@ -723,7 +647,7 @@ void OSMesaDriver::InitPointersOSMesa(void *handle)
 }
 
 
-bool OSMesaDriver::SelectContext(Uint32 ctx)
+bool OSMesaDriver::SelectContext(uint32_t ctx)
 {
 	bool ret = true;
 	
@@ -754,10 +678,13 @@ bool OSMesaDriver::SelectContext(Uint32 ctx)
 	return ret;
 }
 
-Uint32 OSMesaDriver::OSMesaCreateContext( GLenum format, Uint32 sharelist )
+uint32_t OSMesaDriver::OSMesaCreateContext(const uint32_t *nf_params)
 {
+	GLenum format = getStackedParameter(0);
+	uint32_t sharelist = getStackedParameter(1);
 	D(bug("nfosmesa: OSMesaCreateContext(0x%x, 0x%x)", format, sharelist));
-	return OSMesaCreateContextExt(format, 16, 8, (format == OSMESA_COLOR_INDEX) ? 0 : 16, sharelist);
+	uint32_t extparams[5] = { format, 16, 8, format == OSMESA_COLOR_INDEX ? 0u : 16u, sharelist };
+	return OSMesaCreateContextExt(extparams);
 }
 
 
@@ -800,8 +727,13 @@ OffscreenContext *OSMesaDriver::TryCreateContext(void)
 }
 
 
-Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, Uint32 sharelist )
+uint32_t OSMesaDriver::OSMesaCreateContextExt(const uint32_t *nf_params)
 {
+	GLenum format = getStackedParameter(0);
+	GLint depthBits = getStackedParameter(1);
+	GLint stencilBits = getStackedParameter(2);
+	GLint accumBits = getStackedParameter(3);
+	uint32_t sharelist = getStackedParameter(4);
 	int i,j;
 	OffscreenContext *share_ctx;
 	
@@ -854,7 +786,7 @@ Uint32 OSMesaDriver::OSMesaCreateContextExt( GLenum format, GLint depthBits, GLi
 }
 
 
-void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
+void OSMesaDriver::OSMesaDestroyContext( uint32_t ctx )
 {
 	D(bug("nfosmesa: OSMesaDestroyContext(%u)", ctx));
 	if (ctx > MAX_OSMESA_CONTEXTS || !contexts[ctx].ctx)
@@ -893,8 +825,13 @@ void OSMesaDriver::OSMesaDestroyContext( Uint32 ctx )
 */
 }
 
-GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, memptr buffer, GLenum type, GLsizei width, GLsizei height )
+GLboolean OSMesaDriver::OSMesaMakeCurrent(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	memptr buffer = getStackedParameter(1);
+	GLenum type = getStackedParameter(2);
+	GLsizei width = getStackedParameter(3);
+	GLsizei height = getStackedParameter(4);
 	GLboolean ret = GL_TRUE;
 	
 	D(bug("nfosmesa: OSMesaMakeCurrent(%u,$%08x,%s,%d,%d)", ctx, buffer, gl_enum_name(type), width, height));
@@ -925,9 +862,9 @@ GLboolean OSMesaDriver::OSMesaMakeCurrent( Uint32 ctx, memptr buffer, GLenum typ
 	return ret;
 }
 
-Uint32 OSMesaDriver::OSMesaGetCurrentContext( void )
+uint32_t OSMesaDriver::OSMesaGetCurrentContext(void)
 {
-	Uint32 ctx;
+	uint32_t ctx;
 #if 0
 	/*
 	 * wrong; the host manages his current context for all processes using NFOSMesa;
@@ -941,70 +878,82 @@ Uint32 OSMesaDriver::OSMesaGetCurrentContext( void )
 	return ctx;
 }
 
-void OSMesaDriver::OSMesaPixelStore(GLint pname, GLint value)
+void OSMesaDriver::OSMesaPixelStore(const uint32_t *nf_params)
 {
+	GLint pname = getStackedParameter(0);
+	GLint value = getStackedParameter(1);
 	D(bug("nfosmesa: OSMesaPixelStore(0x%x, %d)", pname, value));
-	Uint32 ctx = cur_context;
+	uint32_t ctx = cur_context;
 	if (ctx && contexts[ctx].ctx)
 		contexts[ctx].ctx->PixelStore(pname, value);
 }
 
-#if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::OSMesaGetIntegerv(GLint pname, memptr value )
-#else
-void OSMesaDriver::OSMesaGetIntegerv(GLint pname, GLint *value )
-#endif
+void OSMesaDriver::OSMesaGetIntegerv(const uint32_t *nf_params)
 {
+	GLint pname = getStackedParameter(0);
+	memptr value = getStackedParameter(1);
 	GLint tmp = 0;
-	Uint32 ctx = cur_context;
+	uint32_t ctx = cur_context;
 	
 	D(bug("nfosmesa: OSMesaGetIntegerv(0x%x)", pname));
 	if (ctx && contexts[ctx].ctx)
 		if (!contexts[ctx].ctx->GetIntegerv(pname, &tmp))
 			glSetError(GL_INVALID_ENUM);
-	Host2AtariIntArray(1, &tmp, value);
+	if (value)
+		WriteInt32(value, tmp);
 }
 
-#if NFOSMESA_POINTER_AS_MEMARG
-GLboolean OSMesaDriver::OSMesaGetDepthBuffer(Uint32 ctx, memptr width, memptr height, memptr bytesPerValue, memptr buffer )
-#else
-GLboolean OSMesaDriver::OSMesaGetDepthBuffer(Uint32 ctx, GLint *width, GLint *height, GLint *bytesPerValue, void **buffer )
-#endif
+GLboolean OSMesaDriver::OSMesaGetDepthBuffer(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	memptr width = getStackedParameter(1);
+	memptr height = getStackedParameter(2);
+	memptr bytesPerValue = getStackedParameter(3);
+	memptr buffer = getStackedParameter(4);
 	GLint w, h, bpp;
 	memptr b;
 	D(bug("nfosmesa: OSMesaGetDepthBuffer(%u)", ctx));
 	if (!SelectContext(ctx) || ctx == 0)
 		return GL_FALSE;
 	contexts[ctx].ctx->GetDepthBuffer(&w, &h, &bpp, &b);
-	Host2AtariIntArray(1, &w, width);
-	Host2AtariIntArray(1, &h, height);
-	Host2AtariIntArray(1, &bpp, bytesPerValue);
-	Host2AtariIntArray(1, &b, AtariAddr(buffer, memptr *));
+	if (width)
+		WriteInt32(width, w);
+	if (height)
+		WriteInt32(height, h);
+	if (bytesPerValue)
+		WriteInt32(bytesPerValue, bpp);
+	if (buffer)
+		WriteInt32(buffer, b);
 	return GL_TRUE;
 }
 
-#if NFOSMESA_POINTER_AS_MEMARG
-GLboolean OSMesaDriver::OSMesaGetColorBuffer(Uint32 ctx, memptr width, memptr height, memptr format, memptr buffer )
-#else
-GLboolean OSMesaDriver::OSMesaGetColorBuffer(Uint32 ctx, GLint *width, GLint *height, GLint *format, void **buffer )
-#endif
+GLboolean OSMesaDriver::OSMesaGetColorBuffer(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	memptr width = getStackedParameter(1);
+	memptr height = getStackedParameter(2);
+	memptr format = getStackedParameter(3);
+	memptr buffer = getStackedParameter(4);
 	GLint w, h, f;
 	memptr b;
 	D(bug("nfosmesa: OSMesaGetColorBuffer(%u)", ctx));
 	if (!SelectContext(ctx) || ctx == 0)
 		return GL_FALSE;
 	contexts[ctx].ctx->GetColorBuffer(&w, &h, &f, &b);
-	Host2AtariIntArray(1, &w, width);
-	Host2AtariIntArray(1, &h, height);
-	Host2AtariIntArray(1, &f, format);
-	Host2AtariIntArray(1, &b, AtariAddr(buffer, memptr *));
+	if (width)
+		WriteInt32(width, w);
+	if (height)
+		WriteInt32(height, h);
+	if (format)
+		WriteInt32(format, f);
+	if (buffer)
+		WriteInt32(buffer, b);
 	return GL_TRUE;
 }
 
-unsigned int OSMesaDriver::OSMesaGetProcAddress( nfcmemptr funcname )
+unsigned int OSMesaDriver::OSMesaGetProcAddress(const uint32_t *nf_params)
 {
+	nfcmemptr funcname = getStackedPointer(0, const char *);
 	unsigned int ret = 0;
 	if (!funcname)
 		return 0;
@@ -1055,26 +1004,34 @@ unsigned int OSMesaDriver::OSMesaGetProcAddress( nfcmemptr funcname )
 	return ret;
 }
 
-void OSMesaDriver::OSMesaColorClamp(GLboolean enable)
+void OSMesaDriver::OSMesaColorClamp(const uint32_t *nf_params)
 {
+	GLboolean enable = getStackedParameter(0);
 	D(bug("nfosmesa: OSMesaColorClamp(%d)", enable));
-	Uint32 ctx = cur_context;
+	uint32_t ctx = cur_context;
 	if (ctx == 0 || !contexts[ctx].ctx)
 		return;
 	contexts[ctx].ctx->ColorClamp(enable);
 }
 
-void OSMesaDriver::OSMesaPostprocess(Uint32 ctx, const char *filter, GLuint enable_value)
+void OSMesaDriver::OSMesaPostprocess(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	nfcmemptr filterName = getStackedPointer(1, const char *);
+	GLuint enable_value = getStackedParameter(2);
+	GLubyte tmp[safe_strlen(filterName) + 1], *filter;
+	filter = Atari2HostByteArray(sizeof(tmp), filterName, tmp);
 	D(bug("nfosmesa: OSMesaPostprocess(%u, %s, %d)", ctx, filter, enable_value));
 	if (ctx > MAX_OSMESA_CONTEXTS || ctx == 0 || !contexts[ctx].ctx)
 		return;
 	/* no SelectContext() here; OSMesaPostprocess must be called without having a current context */
-	contexts[ctx].ctx->Postprocess(filter, enable_value);
+	contexts[ctx].ctx->Postprocess((const char *)filter, enable_value);
 }
 
-Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
+uint32_t OSMesaDriver::LenglGetString(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	GLenum name = getStackedParameter(1);
 	UNUSED(ctx);
 	D(bug("nfosmesa: LenglGetString(%u, 0x%x)", ctx, name));
 	if (!GL_ISAVAILABLE(glGetString)) return 0;
@@ -1083,12 +1040,15 @@ Uint32 OSMesaDriver::LenglGetString(Uint32 ctx, GLenum name)
 	return strlen(s);
 }
 
-#if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, memptr buffer)
-#else
-void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
-#endif
+void OSMesaDriver::PutglGetString(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	GLenum name = getStackedParameter(1);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr buffer = getStackedPointer(2, GLubyte *);
+#else
+	GLubyte *buffer = getStackedPointer(2, GLubyte *);
+#endif
 	UNUSED(ctx);
 	const char *s = (const char *)(GL_ISAVAILABLE(glGetString) ? fn.glGetString(name) : 0);
 	D(bug("nfosmesa: PutglGetString(%u, 0x%x, " PRI_PTR "): %s", ctx, name, AtariOffset(buffer), s));
@@ -1103,22 +1063,29 @@ void OSMesaDriver::PutglGetString(Uint32 ctx, GLenum name, GLubyte *buffer)
 	}
 }
 
-Uint32 OSMesaDriver::LenglGetStringi(Uint32 ctx, GLenum name, GLuint index)
+uint32_t OSMesaDriver::LenglGetStringi(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	GLenum name = getStackedParameter(1);
+	GLuint index = getStackedParameter(2);
 	UNUSED(ctx);
 	D(bug("nfosmesa: LenglGetStringi(%u, 0x%x, %u)", ctx, name, index));
-	if (!GL_ISAVAILABLE(glGetStringi)) return (Uint32)-1;
+	if (!GL_ISAVAILABLE(glGetStringi)) return (uint32_t)-1;
 	const char *s = (const char *)fn.glGetStringi(name, index);
-	if (s == NULL) return (Uint32)-1;
+	if (s == NULL) return (uint32_t)-1;
 	return strlen(s);
 }
 
-#if NFOSMESA_POINTER_AS_MEMARG
-void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, memptr buffer)
-#else
-void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, GLubyte *buffer)
-#endif
+void OSMesaDriver::PutglGetStringi(const uint32_t *nf_params)
 {
+	uint32_t ctx = getStackedParameter(0);
+	GLenum name = getStackedParameter(1);
+	GLuint index = getStackedParameter(2);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr buffer = getStackedPointer(2, GLubyte *);
+#else
+	GLubyte *buffer = getStackedPointer(2, GLubyte *);
+#endif
 	UNUSED(ctx);
 	D(bug("nfosmesa: PutglGetStringi(%u, 0x%x, %d, " PRI_PTR ")", ctx, name, index, AtariOffset(buffer)));
 	const char *s = (const char *)(GL_ISAVAILABLE(glGetStringi) ? fn.glGetStringi(name, index) : 0);
@@ -1133,7 +1100,7 @@ void OSMesaDriver::PutglGetStringi(Uint32 ctx, GLenum name, GLuint index, GLubyt
 	}
 }
 
-void OSMesaDriver::ConvertContext(Uint32 ctx)
+void OSMesaDriver::ConvertContext(uint32_t ctx)
 {
 	if (ctx == 0 || !contexts[ctx].ctx)
 		return;
@@ -1323,7 +1290,7 @@ void OSMesaDriver::pixelBuffer::convertToAtari(const char *src, nfmemptr dst)
 	else if (basesize == 2)
 		OSMesaDriver::Host2AtariShortArray(count, (const GLushort *)src, AtariAddr(dst, Uint16 *));
 	else /* if (basesize == 4) */
-		OSMesaDriver::Host2AtariIntArray(count, (const GLuint *)src, AtariAddr(dst, Uint32 *));
+		OSMesaDriver::Host2AtariIntArray(count, (const GLuint *)src, AtariAddr(dst, uint32_t *));
 }
 
 
@@ -1343,7 +1310,7 @@ void *OSMesaDriver::pixelBuffer::convertPixels(GLsizei _width, GLsizei _height, 
 	else if (basesize == 2)
 		OSMesaDriver::Atari2HostShortArray(count, AtariAddr(pixels, const Uint16 *), (GLushort *)result);
 	else /* if (basesize == 4) */
-		OSMesaDriver::Atari2HostIntArray(count, AtariAddr(pixels, const Uint32 *), (GLuint *)result);
+		OSMesaDriver::Atari2HostIntArray(count, AtariAddr(pixels, const uint32_t *), (GLuint *)result);
 	return result;
 }
 
@@ -1397,7 +1364,7 @@ void OSMesaDriver::setupClientArray(GLenum texunit, vertexarray_t &array, GLint 
 	case GL_UNSIGNED_INT_2_10_10_10_REV:
 	case GL_FIXED:
 	case 4:
-		array.basesize = sizeof(Uint32);
+		array.basesize = sizeof(uint32_t);
 		basesize = sizeof(GLint);
 		break;
 	case GL_FLOAT:
@@ -1600,7 +1567,7 @@ void OSMesaDriver::convertClientArray(GLsizei count, vertexarray_t &array)
 				else if (array.basesize == 2)
 					Atari2HostShortArray(array.size, AtariAddr(src, const Uint16 *), (GLushort *)dst);
 				else /* if (array.basesize == 4) */
-					Atari2HostIntArray(array.size, AtariAddr(src, const Uint32 *), (GLuint *)dst);
+					Atari2HostIntArray(array.size, AtariAddr(src, const uint32_t *), (GLuint *)dst);
 				array.converted++;
 			}
 			array.alloced = true;
@@ -1763,33 +1730,28 @@ void OSMesaDriver::nfglInterleavedArraysHelper(GLenum format, GLsizei stride, nf
 		stride = defstride;
 	}
 
-	/*
-	 * FIXME:
-	 * calling the dispatch functions here would trace
-	 * calls to functions the client did not call directly
-	 */
-	nfglDisableClientState(GL_EDGE_FLAG_ARRAY);
-	nfglDisableClientState(GL_INDEX_ARRAY);
+	fn.glDisableClientState(GL_EDGE_FLAG_ARRAY);
+	fn.glDisableClientState(GL_INDEX_ARRAY);
 	if(enable_normal) {
-		nfglEnableClientState(GL_NORMAL_ARRAY);
-		nfglNormalPointer(GL_FLOAT, stride, normal_ptr);
+		fn.glEnableClientState(GL_NORMAL_ARRAY);
+		fn.glNormalPointer(GL_FLOAT, stride, normal_ptr);
 	} else {
-		nfglDisableClientState(GL_NORMAL_ARRAY);
+		fn.glDisableClientState(GL_NORMAL_ARRAY);
 	}
 	if(enable_color) {
-		nfglEnableClientState(GL_COLOR_ARRAY);
-		nfglColorPointer(color_size, color_type, stride, color_ptr);
+		fn.glEnableClientState(GL_COLOR_ARRAY);
+		fn.glColorPointer(color_size, color_type, stride, color_ptr);
 	} else {
-		nfglDisableClientState(GL_COLOR_ARRAY);
+		fn.glDisableClientState(GL_COLOR_ARRAY);
 	}
 	if(enable_texcoord) {
-		nfglEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		nfglTexCoordPointer(texcoord_size, GL_FLOAT, stride, texcoord_ptr);
+		fn.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		fn.glTexCoordPointer(texcoord_size, GL_FLOAT, stride, texcoord_ptr);
 	} else {
-		nfglDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		fn.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
-	nfglEnableClientState(GL_VERTEX_ARRAY);
-	nfglVertexPointer(vertex_size, GL_FLOAT, stride, vertex_ptr);
+	fn.glEnableClientState(GL_VERTEX_ARRAY);
+	fn.glVertexPointer(vertex_size, GL_FLOAT, stride, vertex_ptr);
 }
 
 /*---
@@ -1797,8 +1759,14 @@ void OSMesaDriver::nfglInterleavedArraysHelper(GLenum format, GLsizei stride, nf
  * functions with double as arguments in GL
  ---*/
 
-void OSMesaDriver::nfglFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
+void OSMesaDriver::nfglFrustumf(const uint32_t *nf_params)
 {
+	GLfloat left = getStackedFloat(0);
+	GLfloat right = getStackedFloat(1);
+	GLfloat bottom = getStackedFloat(2);
+	GLfloat top = getStackedFloat(3);
+	GLfloat near_val = getStackedFloat(4);
+	GLfloat far_val = getStackedFloat(5);
 	D(bug("nfosmesa: glFrustumf(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, near_val, far_val));
 #if 0
 	if (GL_ISAVAILABLE(glFrustumfOES))
@@ -1834,8 +1802,14 @@ void OSMesaDriver::nfglFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLf
 #endif
 }
 
-void OSMesaDriver::nfglOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val)
+void OSMesaDriver::nfglOrthof(const uint32_t *nf_params)
 {
+	GLfloat left = getStackedFloat(0);
+	GLfloat right = getStackedFloat(1);
+	GLfloat bottom = getStackedFloat(2);
+	GLfloat top = getStackedFloat(3);
+	GLfloat near_val = getStackedFloat(4);
+	GLfloat far_val = getStackedFloat(5);
 	D(bug("nfosmesa: glOrthof(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, near_val, far_val));
 #if 0
 	if (GL_ISAVAILABLE(glOrthofOES))
@@ -1883,8 +1857,17 @@ void OSMesaDriver::nfglOrthof(GLfloat left, GLfloat right, GLfloat bottom, GLflo
  * GLU functions
  ---*/
 
-void OSMesaDriver::nfgluLookAtf(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ )
+void OSMesaDriver::nfgluLookAtf(const uint32_t *nf_params)
 {
+	GLfloat eyeX = getStackedFloat(0);
+	GLfloat eyeY = getStackedFloat(1);
+	GLfloat eyeZ = getStackedFloat(2);
+	GLfloat centerX = getStackedFloat(3);
+	GLfloat centerY = getStackedFloat(4);
+	GLfloat centerZ = getStackedFloat(5);
+	GLfloat upX = getStackedFloat(6);
+	GLfloat upY = getStackedFloat(7);
+	GLfloat upZ = getStackedFloat(8);
 	GLfloat m[16];
 	GLfloat x[3], y[3], z[3];
 	GLfloat mag;
@@ -1951,19 +1934,90 @@ void OSMesaDriver::nfgluLookAtf(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloa
 	fn.glTranslatef(-eyeX, -eyeY, -eyeZ);
 }
 
-void OSMesaDriver::nfgluLookAt( GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX, GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ )
+void OSMesaDriver::nfgluLookAt(const uint32_t *nf_params)
 {
+	GLdouble eyeX = getStackedDouble(0);
+	GLdouble eyeY = getStackedDouble(1);
+	GLdouble eyeZ = getStackedDouble(2);
+	GLdouble centerX = getStackedDouble(3);
+	GLdouble centerY = getStackedDouble(4);
+	GLdouble centerZ = getStackedDouble(5);
+	GLdouble upX = getStackedDouble(6);
+	GLdouble upY = getStackedDouble(7);
+	GLdouble upZ = getStackedDouble(8);
 	D(bug("nfosmesa: gluLookAt(%f, %f, %f, %f, %f, %f, %f, %f, %f)", eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ));
-	nfgluLookAtf(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ);
+	GLdouble m[16];
+	GLdouble x[3], y[3], z[3];
+	GLdouble mag;
+
+	/* Make rotation matrix */
+
+	/* Z vector */
+	z[0] = eyeX - centerX;
+	z[1] = eyeY - centerY;
+	z[2] = eyeZ - centerZ;
+	mag = sqrtf(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
+	if (mag)
+	{
+		z[0] /= mag;
+		z[1] /= mag;
+		z[2] /= mag;
+	}
+
+	/* Y vector */
+	y[0] = upX;
+	y[1] = upY;
+	y[2] = upZ;
+
+	/* X vector = Y cross Z */
+	x[0] = y[1] * z[2] - y[2] * z[1];
+	x[1] = -y[0] * z[2] + y[2] * z[0];
+	x[2] = y[0] * z[1] - y[1] * z[0];
+
+	/* Recompute Y = Z cross X */
+	y[0] = z[1] * x[2] - z[2] * x[1];
+	y[1] = -z[0] * x[2] + z[2] * x[0];
+	y[2] = z[0] * x[1] - z[1] * x[0];
+
+	/* cross product gives area of parallelogram, which is < 1.0 for
+	 * non-perpendicular unit-length vectors; so normalize x, y here
+	 */
+
+	mag = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
+	if (mag)
+	{
+		x[0] /= mag;
+		x[1] /= mag;
+		x[2] /= mag;
+	}
+
+	mag = sqrt(y[0] * y[0] + y[1] * y[1] + y[2] * y[2]);
+	if (mag)
+	{
+		y[0] /= mag;
+		y[1] /= mag;
+		y[2] /= mag;
+	}
+
+	M(m, 0, 0) = x[0]; M(m, 0, 1) = x[1]; M(m, 0, 2) = x[2]; M(m, 0, 3) = 0.0; 
+	M(m, 1, 0) = y[0]; M(m, 1, 1) = y[1]; M(m, 1, 2) = y[2]; M(m, 1, 3) = 0.0; 
+	M(m, 2, 0) = z[0]; M(m, 2, 1) = z[1]; M(m, 2, 2) = z[2]; M(m, 2, 3) = 0.0;
+	M(m, 3, 0) = 0.0;  M(m, 3, 1) = 0.0;  M(m, 3, 2) = 0.0;  M(m, 3, 3) = 1.0;
+
+	fn.glMultMatrixd(m);
+
+	/* Translate Eye to Origin */
+	fn.glTranslated(-eyeX, -eyeY, -eyeZ);
 }
 
 /*---
  * other functions needed by tiny_gl.ldg
  ---*/
 
-void OSMesaDriver::nftinyglswapbuffer(memptr buffer)
+void OSMesaDriver::nftinyglswapbuffer(const uint32_t *nf_params)
 {
-	Uint32 ctx = cur_context;
+	memptr buffer = getStackedParameter(0);
+	uint32_t ctx = cur_context;
 	
 	D(bug("nfosmesa: swapbuffer($%08x)", buffer));
 
@@ -3366,10 +3420,10 @@ data store.
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETPERFQUERYDATAINTEL(queryHandle, flags, dataSize, data, bytesWritten) \
 	GLuint bytes = 0;\
-	GLuint tmp[MAX(dataSize / sizeof(Uint32), 0)]; \
+	GLuint tmp[MAX(dataSize / sizeof(uint32_t), 0)]; \
 	fn.glGetPerfQueryDataINTEL(queryHandle, flags, dataSize, tmp, &bytes); \
 	Host2AtariIntArray(1, &bytes, bytesWritten); \
-	Host2AtariIntArray(bytes / sizeof(GLuint), tmp, AtariAddr(data, Uint32 *))
+	Host2AtariIntArray(bytes / sizeof(GLuint), tmp, AtariAddr(data, uint32_t *))
 #else
 #define FN_GLGETPERFQUERYDATAINTEL(queryHandle, flags, dataSize, data, bytesWritten) \
 	fn.glGetPerfQueryDataINTEL(queryHandle, flags, dataSize, HostAddr(data, void *), HostAddr(bytesWritten, GLuint *))
@@ -5934,7 +5988,7 @@ data store.
 /*
  * GL_ATI_vertex_array_object
  */
-#define FN_GLDELETEOBJECTBUFFERATI(buffer) nfglFreeObjectBufferATI(buffer)
+#define FN_GLDELETEOBJECTBUFFERATI(buffer) fn.glFreeObjectBufferATI(buffer)
 
 #define FN_GLNEWOBJECTBUFFERATI(size, pointer, usage) \
 	gl_buffer_t *buf = gl_make_buffer(size, AtariAddr(pointer, nfcmemptr)); \
@@ -7003,7 +7057,7 @@ data store.
 			GLint const size = 1; \
 			GLenum tmp[size]; \
 			fn.glGetPerfMonitorCounterInfoAMD(group, counter, pname, tmp); \
-			Host2AtariIntArray(size, tmp, AtariAddr(data, Uint32 *)); \
+			Host2AtariIntArray(size, tmp, AtariAddr(data, uint32_t *)); \
 		} \
 		break; \
 	case GL_COUNTER_RANGE_AMD: \
@@ -7016,14 +7070,14 @@ data store.
 				{ \
 					GLuint tmp[size]; \
 					fn.glGetPerfMonitorCounterInfoAMD(group, counter, pname, tmp); \
-					Host2AtariIntArray(size, tmp, AtariAddr(data, Uint32 *)); \
+					Host2AtariIntArray(size, tmp, AtariAddr(data, uint32_t *)); \
 				} \
 				break; \
 			case GL_UNSIGNED_INT64_AMD: \
 				{ \
 					GLuint64 tmp[size]; \
 					fn.glGetPerfMonitorCounterInfoAMD(group, counter, pname, tmp); \
-					Host2AtariInt64Array(size, tmp, AtariAddr(data, Uint64 *)); \
+					Host2AtariInt64Array(size, tmp, AtariAddr(data, uint64_t *)); \
 				} \
 				break; \
 			case GL_FLOAT: \
@@ -11614,7 +11668,7 @@ data store.
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETNMAPIVARB(target, query, bufSize, v) \
-	GLint const size = bufSize / sizeof(Uint32); \
+	GLint const size = bufSize / sizeof(uint32_t); \
 	if (size <= 0) return; \
 	GLint tmp[size]; \
 	fn.glGetnMapivARB(target, query, size * sizeof(*tmp), tmp); \
@@ -11638,7 +11692,7 @@ data store.
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETNPIXELMAPUIVARB(map, bufSize, v) \
-	GLint const size = bufSize / sizeof(Uint32); \
+	GLint const size = bufSize / sizeof(uint32_t); \
 	if (size <= 0) return; \
 	GLuint tmp[size]; \
 	fn.glGetnPixelMapuivARB(map, size * sizeof(*tmp), tmp); \
@@ -12041,7 +12095,7 @@ data store.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawArraysIndirectAMD(mode, offset, drawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		if (stride == 0) stride = 4 * sizeof(uint32_t); \
 		nfcmemptr indptr = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < drawcount; n++) { \
 			GLuint tmp[4] = { 0, 0, 0, 0 }; \
@@ -12069,7 +12123,7 @@ data store.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawElementsIndirectAMD(mode, type, offset, drawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		if (stride == 0) stride = 5 * sizeof(uint32_t); \
 		nfmemptr indptr = (nfmemptr)indirect; \
 		for (GLsizei n = 0; n < drawcount; n++) { \
 			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
@@ -13440,7 +13494,7 @@ data store.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawArraysIndirectCountARB(mode, offset, drawcount, maxdrawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		if (stride == 0) stride = 4 * sizeof(uint32_t); \
 		nfcmemptr indptr = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < maxdrawcount; n++) { \
 			GLuint tmp[4] = { 0, 0, 0, 0 }; \
@@ -13468,7 +13522,7 @@ data store.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawElementsIndirectCountARB(mode, type, offset, drawcount, maxdrawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		if (stride == 0) stride = 5 * sizeof(uint32_t); \
 		nfcmemptr pind = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < maxdrawcount; n++) { \
 			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
@@ -13490,7 +13544,7 @@ data store.
 #define FN_GLIMPORTMEMORYWIN32HANDLEEXT(memory, size, handleType, handle) \
 	GLintptr tmp[1]; \
 	fn.glImportMemoryWin32HandleEXT(memory, size, handleType, tmp); \
-	Host2AtariIntArray(1, (const Uint32 *)tmp, AtariAddr(handle, GLuint *))
+	Host2AtariIntArray(1, (const uint32_t *)tmp, AtariAddr(handle, GLuint *))
 #else
 #define FN_GLIMPORTMEMORYWIN32HANDLEEXT(memory, size, handleType, handle) \
 	fn.glImportMemoryWin32HandleEXT(memory, size, handleType, HostAddr(handle, void *))
@@ -13506,7 +13560,7 @@ data store.
 #define FN_GLIMPORTSEMAPHOREWIN32HANDLEEXT(semaphore, handleType, handle) \
 	GLintptr tmp[1]; \
 	fn.glImportSemaphoreWin32HandleEXT(semaphore, handleType, tmp); \
-	Host2AtariIntArray(1, (const Uint32 *)tmp, AtariAddr(handle, GLuint *))
+	Host2AtariIntArray(1, (const uint32_t *)tmp, AtariAddr(handle, GLuint *))
 #else
 #define FN_GLIMPORTSEMAPHOREWIN32HANDLEEXT(semaphore, handleType, handle) \
 	fn.glImportSemaphoreWin32HandleEXT(semaphore, handleType, HostAddr(handle, void *))
@@ -17937,7 +17991,7 @@ data store.
 	Atari2HostMemPtrArray(drawcount, indices, tmpind); \
 	Atari2HostIntArray(drawcount, basevertex, tmpbase); \
 	for (GLsizei i = 0; i < drawcount; i++) { \
-		nfglDrawElementsBaseVertex(mode, tmpcount[i], type, tmpind[i], tmpbase[i]); \
+		fn.glDrawElementsBaseVertex(mode, tmpcount[i], type, tmpind[i], tmpbase[i]); \
 	}
 	
 #define FN_GLDRAWELEMENTSINSTANCEDBASEVERTEX(mode, count, type, indices, instancecount, basevertex) \
@@ -19659,7 +19713,7 @@ is read from the buffer rather than from client memory.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawArraysIndirect(mode, offset, drawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		if (stride == 0) stride = 4 * sizeof(uint32_t); \
 		nfcmemptr indptr = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < drawcount; n++) { \
 			GLuint tmp[4] = { 0, 0, 0, 0 }; \
@@ -19687,7 +19741,7 @@ is read from the buffer rather than from client memory.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawElementsIndirect(mode, type, offset, drawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		if (stride == 0) stride = 5 * sizeof(uint32_t); \
 		nfcmemptr pind = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < drawcount; n++) { \
 			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
@@ -20493,7 +20547,7 @@ is read from the buffer rather than from client memory.
 
 #if NFOSMESA_NEED_INT_CONV
 #define FN_GLGETNPIXELMAPUIV(map, bufSize, v) \
-	GLint const size = bufSize / sizeof(Uint32); \
+	GLint const size = bufSize / sizeof(uint32_t); \
 	if (size <= 0) return; \
 	GLuint tmp[size]; \
 	fn.glGetnPixelMapuiv(map, sizeof(tmp), tmp); \
@@ -20839,7 +20893,7 @@ is read from the buffer rather than from client memory.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawArraysIndirectCount(mode, offset, drawcount, maxdrawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 4 * sizeof(Uint32); \
+		if (stride == 0) stride = 4 * sizeof(uint32_t); \
 		nfcmemptr indptr = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < maxdrawcount; n++) { \
 			GLuint tmp[4] = { 0, 0, 0, 0 }; \
@@ -20867,7 +20921,7 @@ is read from the buffer rather than from client memory.
 		void *offset = NFHost2AtariAddr(indirect); \
 		fn.glMultiDrawElementsIndirectCount(mode, type, offset, drawcount, maxdrawcount, stride); \
 	} else if (indirect) { \
-		if (stride == 0) stride = 5 * sizeof(Uint32); \
+		if (stride == 0) stride = 5 * sizeof(uint32_t); \
 		nfcmemptr pind = (nfcmemptr)indirect; \
 		for (GLsizei n = 0; n < maxdrawcount; n++) { \
 			GLuint tmp[5] = { 0, 0, 0, 0, 0 }; \
@@ -20883,4 +20937,4 @@ is read from the buffer rather than from client memory.
 
 #include "nfosmesa/call-gl.c"
 
-#endif
+#endif /* NFOSMESA_SUPPORT */
