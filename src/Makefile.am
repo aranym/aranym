@@ -458,7 +458,8 @@ endif
 if NFOSMESA_SUPPORT
 aranym_SOURCES += \
 	natfeat/nfosmesa.cpp natfeat/nfosmesa.h \
-	natfeat/osmesa_context.cpp natfeat/osmesa_context.h
+	natfeat/osmesa_context.cpp natfeat/osmesa_context.h \
+	natfeat/nfosmesa_macros.h
 endif
 
 if NFJPEG_SUPPORT
