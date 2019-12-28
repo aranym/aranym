@@ -263,11 +263,11 @@ protected:
 	void glSetError(GLenum e);
 
 	/* Some special functions, which need a bit more work */
-	uint32_t LenglGetString(const uint32_t *nf_params);
-	void PutglGetString(const uint32_t *nf_params);
+	uint32_t nfLenGlGetString(const uint32_t *nf_params);
+	void nfPutGlGetString(const uint32_t *nf_params);
 
-	uint32_t LenglGetStringi(const uint32_t *nf_params);
-	void PutglGetStringi(const uint32_t *nf_params);
+	uint32_t nfLenGlGetStringi(const uint32_t *nf_params);
+	void nfPutGlGetStringi(const uint32_t *nf_params);
 	static GLsizei nfglPixelmapSize(GLenum pname);
 	static int nfglGetNumParams(GLenum pname);
 	static GLint __glGetMap_Evalk(GLenum target);
@@ -987,18 +987,20 @@ protected:
 	vertexarray_t *gl_get_array(GLenum pname);
 	
 	/* OSMesa functions */
-	uint32_t OSMesaCreateContext(const uint32_t *nf_params);
-	uint32_t OSMesaCreateContextExt(const uint32_t *nf_params);
-	void OSMesaDestroyContext( uint32_t ctx );
-	GLboolean OSMesaMakeCurrent(const uint32_t *nf_params);
-	uint32_t OSMesaGetCurrentContext(void);
-	void OSMesaPixelStore(const uint32_t *nf_params);
-	void OSMesaGetIntegerv(const uint32_t *nf_params);
-	GLboolean OSMesaGetDepthBuffer(const uint32_t *nf_params);
-	GLboolean OSMesaGetColorBuffer(const uint32_t *nf_params);
-	void OSMesaPostprocess(const uint32_t *nf_params);
-	unsigned int OSMesaGetProcAddress(const uint32_t *nf_params);
-	void OSMesaColorClamp(const uint32_t *nf_params);
+	uint32_t nfOSMesaCreateContext(const uint32_t *nf_params);
+	uint32_t nfOSMesaCreateContextExt(const uint32_t *nf_params);
+	uint32_t nfOSMesaCreateContextAttribs(const uint32_t *nf_params);
+	void nfOSMesaDestroyContext(const uint32_t *nf_params);
+	GLboolean nfOSMesaMakeCurrent(const uint32_t *nf_params);
+	uint32_t nfOSMesaGetCurrentContext(void);
+	void nfOSMesaPixelStore(const uint32_t *nf_params);
+	void nfOSMesaGetIntegerv(const uint32_t *nf_params);
+	GLboolean nfOSMesaGetDepthBuffer(const uint32_t *nf_params);
+	GLboolean nfOSMesaGetColorBuffer(const uint32_t *nf_params);
+	void nfOSMesaPostprocess(const uint32_t *nf_params);
+	uint32_t nfOSMesaGetProcAddress(const uint32_t *nf_params);
+	void nfOSMesaColorClamp(const uint32_t *nf_params);
+	void OSMesaDestroyContextInternal(uint32_t ctx);
 	
 	/* tinyGL functions */
 	void nfglFrustumf(const uint32_t *nf_params);

@@ -7808,6 +7808,75 @@ data store.
  * GL_NV_vdpau_interop
  */
 /* not implementable */
+#define FN_GLVDPAUINITNV(vdpDevice, getProcAddress) \
+	UNUSED(vdpDevice); \
+	UNUSED(getProcAddress); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUFININV() \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUREGISTERVIDEOSURFACENV(vdpSurface, target, numTextureNames, textureNames) \
+	UNUSED(vdpSurface); \
+	UNUSED(target); \
+	UNUSED(numTextureNames); \
+	UNUSED(textureNames); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLVDPAUREGISTEROUTPUTSURFACENV(vdpSurface, target, numTextureNames, textureNames) \
+	UNUSED(vdpSurface); \
+	UNUSED(target); \
+	UNUSED(numTextureNames); \
+	UNUSED(textureNames); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLVDPAUISSURFACENV(surface) \
+	UNUSED(surface); \
+	glSetError(GL_INVALID_OPERATION); \
+	return GL_FALSE
+
+#define FN_GLVDPAUUNREGISTERSURFACENV(surface) \
+	UNUSED(surface); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUGETSURFACEIVNV(surface, pname, bufSize, length, values) \
+	UNUSED(surface); \
+	UNUSED(pname); \
+	UNUSED(bufSize); \
+	UNUSED(length); \
+	UNUSED(values); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUSURFACEACCESSNV(surface, access) \
+	UNUSED(surface); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUMAPSURFACESNV(numSurfaces, surfaces) \
+	UNUSED(numSurfaces); \
+	UNUSED(surfaces); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLVDPAUUNMAPSURFACESNV(numSurface, surfaces) \
+	UNUSED(numSurface); \
+	UNUSED(surfaces); \
+	glSetError(GL_INVALID_OPERATION)
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_NV_vdpau_interop2
+ */
+#define FN_GLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENV(vdpSurface, target, numTextureNames, textureNames, isFrameStructure) \
+	UNUSED(vdpSurface); \
+	UNUSED(target); \
+	UNUSED(numTextureNames); \
+	UNUSED(textureNames); \
+	UNUSED(isFrameStructure); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
 
 /* -------------------------------------------------------------------------- */
 
@@ -18540,3 +18609,141 @@ is read from the buffer rather than from client memory.
 
 /* -------------------------------------------------------------------------- */
 
+/*
+ * functions which cannot easily be implemented
+ * Most of them would return a host address
+ */ 
+#define FN_GLCREATESYNCFROMCLEVENTARB(context, event, flags) \
+	UNUSED(context); \
+	UNUSED(event); \
+	UNUSED(flags); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLDEBUGMESSAGECALLBACK(callback, userparam) \
+	UNUSED(callback); \
+	UNUSED(userparam); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLDEBUGMESSAGECALLBACKAMD(callback, userparam) \
+	UNUSED(callback); \
+	UNUSED(userparam); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLDEBUGMESSAGECALLBACKARB(callback, userparam) \
+	UNUSED(callback); \
+	UNUSED(userparam); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLGETBUFFERSUBDATA(target, offset, size, data) \
+	UNUSED(target); \
+	UNUSED(offset); \
+	UNUSED(size); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLGETBUFFERSUBDATAARB(target, offset, size, data) \
+	UNUSED(target); \
+	UNUSED(offset); \
+	UNUSED(size); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLGETNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data) \
+	UNUSED(buffer); \
+	UNUSED(offset); \
+	UNUSED(size); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLGETNAMEDBUFFERSUBDATA(buffer, offset, size, data) \
+	UNUSED(buffer); \
+	UNUSED(offset); \
+	UNUSED(size); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLMAPBUFFER(target, access) \
+	UNUSED(target); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPBUFFERARB(target, access) \
+	UNUSED(target); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPBUFFERRANGE(target, offset, length, access) \
+	UNUSED(target); \
+	UNUSED(offset); \
+	UNUSED(length); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPOBJECTBUFFERATI(buffer) \
+	UNUSED(buffer); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPNAMEDBUFFEREXT(buffer, access) \
+	UNUSED(buffer); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPNAMEDBUFFERRANGEEXT(buffer, offset, length, access) \
+	UNUSED(buffer); \
+	UNUSED(offset); \
+	UNUSED(length); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPNAMEDBUFFER(buffer, access) \
+	UNUSED(buffer); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPNAMEDBUFFERRANGE(buffer, offset, length, access) \
+	UNUSED(buffer); \
+	UNUSED(offset); \
+	UNUSED(length); \
+	UNUSED(access); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLMAPTEXTURE2DINTEL(texture, level, access, stride, layout) \
+	UNUSED(texture); \
+	UNUSED(level); \
+	UNUSED(access); \
+	UNUSED(stride); \
+	UNUSED(layout); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLIMPORTSYNCEXT(external_sync_type, external_sync, flags) \
+	UNUSED(external_sync_type); \
+	UNUSED(external_sync); \
+	UNUSED(flags); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLGETVKPROCADDRNV(name) \
+	UNUSED(name); \
+	glSetError(GL_INVALID_OPERATION); \
+	return 0
+
+#define FN_GLGETUNSIGNEDBYTEVEXT(pname, data) \
+	UNUSED(pname); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)
+
+#define FN_GLGETUNSIGNEDBYTEI_VEXT(target, index, data) \
+	UNUSED(target); \
+	UNUSED(index); \
+	UNUSED(data); \
+	glSetError(GL_INVALID_OPERATION)

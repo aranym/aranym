@@ -13,7 +13,7 @@
 #     Usage: dyngl.pl -protos /usr/include/GL/gl.h /usr/include/GL/glext.h /usr/include/GL/osmesa.h > tools/glfuncs.h
 #
 #     This file MUST NOT automatically be recreated by make, for several reasons:
-#        - The gl headers may be different from system to system. However, the NFOSMesa interface expect
+#        - The gl headers may be different from system to system. However, the NFOSMesa interface expects
 #          a certain list of functions to be available.
 #        - This script (and make) may not know where the headers are actually stored,
 #          only the compiler knows.
@@ -31,7 +31,8 @@
 #          - Return types that are pointers usually dont work, because that
 #            memory would not point to emulated Atari memory. Look at glGetString()
 #            how this (sometimes) can be solved. Otherwise, if you decide not to
-#            export such a function, add it to the %blacklist hash.
+#            export such a function, add it to the %blacklist hash,
+#            or create a dummy macro that returns an error code
 #          - add enums for new functions to atari/nfosmesa/enum-gl.h (at the end, dont reuse any existing numbers!)
 #            This is not done automatically, because the numbers must not change for old functions.
 #          - If new types are used in the prototypes, add them to atari/nfosmesa/gltypes.h
@@ -75,6 +76,11 @@
 #     Generate the case statements that are used to implement the NFOSMesa feature.
 #
 #     Usage: dyngl.pl -dispatch tools/glfuncs.h > src/natfeat/nfosmesa/dispatch-gl.c
+#
+#  -paramcount:
+#     Generate a table with number of function parameters to fetch from callers stack
+#
+#     Usage: dyngl.pl -paramcount tools/glfuncs.h > src/natfeat/nfosmesa/paramcount-gl.c
 #
 #  -ldgheader:
 #     Generate the atari header file needed to use osmesa.ldg.
@@ -144,47 +150,6 @@ my $inc_gltypes = "atari/nfosmesa/gltypes.h";
 my %blacklist = (
 	'glGetString' => 1,     # handled separately
 	'glGetStringi' => 1,    # handled separately
-	'glCreateSyncFromCLeventARB' => 1,
-	'glDebugMessageCallback' => 1,
-	'glDebugMessageCallbackAMD' => 1,
-	'glDebugMessageCallbackARB' => 1,
-	'glGetBufferSubData' => 1,
-	'glGetBufferSubDataARB' => 1,
-	'glGetNamedBufferSubDataEXT' => 1,
-	'glGetNamedBufferSubData' => 1,
-	'glMapBuffer' => 1,
-	'glMapBufferARB' => 1,
-	'glMapBufferRange' => 1,
-	'glMapObjectBufferATI' => 1,
-	'glMapNamedBufferEXT' => 1,
-	'glMapNamedBufferRangeEXT' => 1,
-	'glMapNamedBuffer' => 1,
-	'glMapNamedBufferRange' => 1,
-	'glMapTexture2DINTEL' => 1,
-	'glImportSyncEXT' => 1,
-	'glProgramCallbackMESA' => 1,
-	'glTextureRangeAPPLE' => 1,
-	'glGetTexParameterPointervAPPLE' => 1,
-	'glInstrumentsBufferSGIX' => 1,
-	# GL_NV_vdpau_interop
-	'glVDPAUInitNV' => 1,
-	'glVDPAUFiniNV' => 1,
-	'glVDPAURegisterVideoSurfaceNV' => 1,
-	'glVDPAURegisterOutputSurfaceNV' => 1,
-	'glVDPAUIsSurfaceNV' => 1,
-	'glVDPAUUnregisterSurfaceNV' => 1,
-	'glVDPAUGetSurfaceivNV' => 1,
-	'glVDPAUSurfaceAccessNV' => 1,
-	'glVDPAUMapSurfacesNV' => 1,
-	'glVDPAUUnmapSurfacesNV' => 1,
-	# GL_NV_vdpau_interop
-	'glVDPAURegisterVideoSurfaceWithPictureStructureNV' => 1,
-	# GL_NV_draw_vulkan_image
-	'glGetVkProcAddrNV' => 1,
-	# from GL_EXT_memory_object; could not figure out yet
-	# how to get at the size of those objects
-	'glGetUnsignedBytevEXT' => 1,
-	'glGetUnsignedBytei_vEXT' => 1,
 );
 
 #
@@ -1104,7 +1069,7 @@ sub read_enums()
 # (ie. all parameters are passed as values)
 # no entry needs to be made here.
 # If there is an entry, AND its value is != 0,
-# a macro FN_UPPERCASENAME has to be defined in nfosmesa.cpp.
+# a macro FN_UPPERCASENAME has to be defined in nfosmesa_macros.h.
 # In some cases, the length of the array can be deduced from
 # some of the other parameters; in such cases, you should make
 # an entry to the paramlens hash above, and set the entry here to 0,
@@ -4162,6 +4127,49 @@ my %macros = (
 	'glMultiDrawArraysIndirectCount' => 1,
 	'glMultiDrawElementsIndirectCount' => 1,
 	'glPolygonOffsetClamp' => 0,
+	
+	# unimplemented
+	'glCreateSyncFromCLeventARB' => 1,
+	'glDebugMessageCallback' => 1,
+	'glDebugMessageCallbackAMD' => 1,
+	'glDebugMessageCallbackARB' => 1,
+	'glGetBufferSubData' => 1,
+	'glGetBufferSubDataARB' => 1,
+	'glGetNamedBufferSubDataEXT' => 1,
+	'glGetNamedBufferSubData' => 1,
+	'glMapBuffer' => 1,
+	'glMapBufferARB' => 1,
+	'glMapBufferRange' => 1,
+	'glMapObjectBufferATI' => 1,
+	'glMapNamedBufferEXT' => 1,
+	'glMapNamedBufferRangeEXT' => 1,
+	'glMapNamedBuffer' => 1,
+	'glMapNamedBufferRange' => 1,
+	'glMapTexture2DINTEL' => 1,
+	'glImportSyncEXT' => 1,
+	'glProgramCallbackMESA' => 1,
+	'glTextureRangeAPPLE' => 1,
+	'glGetTexParameterPointervAPPLE' => 1,
+	'glInstrumentsBufferSGIX' => 1,
+	# GL_NV_vdpau_interop
+	'glVDPAUInitNV' => 1,
+	'glVDPAUFiniNV' => 1,
+	'glVDPAURegisterVideoSurfaceNV' => 1,
+	'glVDPAURegisterOutputSurfaceNV' => 1,
+	'glVDPAUIsSurfaceNV' => 1,
+	'glVDPAUUnregisterSurfaceNV' => 1,
+	'glVDPAUGetSurfaceivNV' => 1,
+	'glVDPAUSurfaceAccessNV' => 1,
+	'glVDPAUMapSurfacesNV' => 1,
+	'glVDPAUUnmapSurfacesNV' => 1,
+	# GL_NV_vdpau_interop2
+	'glVDPAURegisterVideoSurfaceWithPictureStructureNV' => 1,
+	# GL_NV_draw_vulkan_image
+	'glGetVkProcAddrNV' => 1,
+	# from GL_EXT_memory_object; could not figure out yet
+	# how to get at the size of those objects
+	'glGetUnsignedBytevEXT' => 1,
+	'glGetUnsignedBytei_vEXT' => 1,
 );
 
 
@@ -4753,6 +4761,7 @@ sub gen_paramcount() {
 	print "\n};\n";
 	print "#define NFOSMESA_MAXPARAMS $maxcount\n";
 	print "\n\n";
+
 	print "static struct {\n";
 	print "\tconst char *name;\n";
 	print "\tunsigned int funcno;\n";
@@ -4817,11 +4826,10 @@ sub gen_dispatch() {
 			$ret = "ret = ";
 			if ($return_type =~ /\*/ || defined($pointer_types{$return_type}) || $return_type eq 'GLhandleARB' || $return_type eq 'GLsync')
 			{
-				$ret .= '(uint32)(uintptr_t)';
+				$ret .= '(uint32_t)(uintptr_t)';
 			}
 		}
 		my $argcount = $#$params + 1;
-		print "\t\t\tD(funcname = \"${function_name}\");\n";
 		print "\t\t\tif (GL_ISAVAILABLE(${function_name}))\n" if ($gl eq 'gl');
 		print "\t\t\t${ret}nf${function_name}(nf_params);\n";
 		print "\t\t\tbreak;\n";

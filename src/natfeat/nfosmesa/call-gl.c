@@ -4619,7 +4619,6 @@ void OSMesaDriver::nfglCreateStatesNV(const uint32_t *nf_params)
 FN_GLCREATESTATESNV(n, states);
 }
 
-#if 0
 GLsync OSMesaDriver::nfglCreateSyncFromCLeventARB(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -4636,10 +4635,8 @@ GLsync OSMesaDriver::nfglCreateSyncFromCLeventARB(const uint32_t *nf_params)
 		event = getStackedPointer(1, struct _cl_event *);
 	GLbitfield flags = getStackedParameter(2);
 	D(bug("nfosmesa: glCreateSyncFromCLeventARB(" PRI_PTR ", " PRI_PTR ", 0x%x)", AtariOffset(context), AtariOffset(event), flags));
-	GLsync __ret = fn.glCreateSyncFromCLeventARB(context, event, flags);
-	return __ret;
+FN_GLCREATESYNCFROMCLEVENTARB(context, event, flags);
 }
-#endif
 
 void OSMesaDriver::nfglCreateTextures(const uint32_t *nf_params)
 {
@@ -4735,7 +4732,6 @@ void OSMesaDriver::nfglCurrentPaletteMatrixARB(const uint32_t *nf_params)
 	fn.glCurrentPaletteMatrixARB(index);
 }
 
-#if 0
 void OSMesaDriver::nfglDebugMessageCallback(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -4753,9 +4749,7 @@ void OSMesaDriver::nfglDebugMessageCallback(const uint32_t *nf_params)
 	D(bug("nfosmesa: glDebugMessageCallback(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACK(callback, userParam);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglDebugMessageCallbackAMD(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -4773,9 +4767,7 @@ void OSMesaDriver::nfglDebugMessageCallbackAMD(const uint32_t *nf_params)
 	D(bug("nfosmesa: glDebugMessageCallbackAMD(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACKAMD(callback, userParam);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglDebugMessageCallbackARB(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -4793,7 +4785,6 @@ void OSMesaDriver::nfglDebugMessageCallbackARB(const uint32_t *nf_params)
 	D(bug("nfosmesa: glDebugMessageCallbackARB(" PRI_PTR ", " PRI_PTR ")", AtariOffset(callback), AtariOffset(userParam)));
 FN_GLDEBUGMESSAGECALLBACKARB(callback, userParam);
 }
-#endif
 
 void OSMesaDriver::nfglDebugMessageControl(const uint32_t *nf_params)
 {
@@ -8817,7 +8808,6 @@ void OSMesaDriver::nfglGetBufferPointervARB(const uint32_t *nf_params)
 FN_GLGETBUFFERPOINTERVARB(target, pname, params);
 }
 
-#if 0
 void OSMesaDriver::nfglGetBufferSubData(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -8832,9 +8822,7 @@ void OSMesaDriver::nfglGetBufferSubData(const uint32_t *nf_params)
 	D(bug("nfosmesa: glGetBufferSubData(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLGETBUFFERSUBDATA(target, offset, size, data);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglGetBufferSubDataARB(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -8849,7 +8837,6 @@ void OSMesaDriver::nfglGetBufferSubDataARB(const uint32_t *nf_params)
 	D(bug("nfosmesa: glGetBufferSubDataARB(%s, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", gl_enum_name(target), offset, size, AtariOffset(data)));
 FN_GLGETBUFFERSUBDATAARB(target, offset, size, data);
 }
-#endif
 
 void OSMesaDriver::nfglGetClipPlane(const uint32_t *nf_params)
 {
@@ -11063,7 +11050,6 @@ void OSMesaDriver::nfglGetNamedBufferPointervEXT(const uint32_t *nf_params)
 FN_GLGETNAMEDBUFFERPOINTERVEXT(buffer, pname, params);
 }
 
-#if 0
 void OSMesaDriver::nfglGetNamedBufferSubData(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -11078,9 +11064,7 @@ void OSMesaDriver::nfglGetNamedBufferSubData(const uint32_t *nf_params)
 	D(bug("nfosmesa: glGetNamedBufferSubData(%u, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", buffer, offset, size, AtariOffset(data)));
 FN_GLGETNAMEDBUFFERSUBDATA(buffer, offset, size, data);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglGetNamedBufferSubDataEXT(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -11095,7 +11079,6 @@ void OSMesaDriver::nfglGetNamedBufferSubDataEXT(const uint32_t *nf_params)
 	D(bug("nfosmesa: glGetNamedBufferSubDataEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", " PRI_PTR ")", buffer, offset, size, AtariOffset(data)));
 FN_GLGETNAMEDBUFFERSUBDATAEXT(buffer, offset, size, data);
 }
-#endif
 
 void OSMesaDriver::nfglGetNamedFramebufferAttachmentParameteriv(const uint32_t *nf_params)
 {
@@ -13521,7 +13504,6 @@ void OSMesaDriver::nfglGetTexParameterIuivEXT(const uint32_t *nf_params)
 FN_GLGETTEXPARAMETERIUIVEXT(target, pname, params);
 }
 
-#if 0
 void OSMesaDriver::nfglGetTexParameterPointervAPPLE(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -13535,7 +13517,6 @@ void OSMesaDriver::nfglGetTexParameterPointervAPPLE(const uint32_t *nf_params)
 	D(bug("nfosmesa: glGetTexParameterPointervAPPLE(%s, %s, " PRI_PTR ")", gl_enum_name(target), gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETTEXPARAMETERPOINTERVAPPLE(target, pname, params);
 }
-#endif
 
 void OSMesaDriver::nfglGetTexParameterfv(const uint32_t *nf_params)
 {
@@ -14250,7 +14231,6 @@ void OSMesaDriver::nfglGetUniformuivEXT(const uint32_t *nf_params)
 FN_GLGETUNIFORMUIVEXT(program, location, params);
 }
 
-#if 0
 void OSMesaDriver::nfglGetUnsignedBytei_vEXT(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -14262,11 +14242,9 @@ void OSMesaDriver::nfglGetUnsignedBytei_vEXT(const uint32_t *nf_params)
 #endif
 		data = getStackedPointer(2, GLubyte *);
 	D(bug("nfosmesa: glGetUnsignedBytei_vEXT(%s, %u, " PRI_PTR ")", gl_enum_name(target), index, AtariOffset(data)));
-	fn.glGetUnsignedBytei_vEXT(target, index, data);
+FN_GLGETUNSIGNEDBYTEI_VEXT(target, index, data);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglGetUnsignedBytevEXT(const uint32_t *nf_params)
 {
 	GLenum pname = getStackedParameter(0);
@@ -14277,9 +14255,8 @@ void OSMesaDriver::nfglGetUnsignedBytevEXT(const uint32_t *nf_params)
 #endif
 		data = getStackedPointer(1, GLubyte *);
 	D(bug("nfosmesa: glGetUnsignedBytevEXT(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(data)));
-	fn.glGetUnsignedBytevEXT(pname, data);
+FN_GLGETUNSIGNEDBYTEVEXT(pname, data);
 }
-#endif
 
 void OSMesaDriver::nfglGetVariantArrayObjectfvATI(const uint32_t *nf_params)
 {
@@ -14917,7 +14894,6 @@ void OSMesaDriver::nfglGetVideouivNV(const uint32_t *nf_params)
 FN_GLGETVIDEOUIVNV(video_slot, pname, params);
 }
 
-#if 0
 GLVULKANPROCNV OSMesaDriver::nfglGetVkProcAddrNV(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -14927,10 +14903,8 @@ GLVULKANPROCNV OSMesaDriver::nfglGetVkProcAddrNV(const uint32_t *nf_params)
 #endif
 		name = getStackedPointer(0, const GLchar *);
 	D(bug("nfosmesa: glGetVkProcAddrNV(" PRI_PTR ")", AtariOffset(name)));
-	GLVULKANPROCNV __ret = fn.glGetVkProcAddrNV(name);
-	return __ret;
+FN_GLGETVKPROCADDRNV(name);
 }
-#endif
 
 void OSMesaDriver::nfglGetnColorTable(const uint32_t *nf_params)
 {
@@ -15778,17 +15752,14 @@ void OSMesaDriver::nfglImportSemaphoreWin32NameEXT(const uint32_t *nf_params)
 #endif
 }
 
-#if 0
 GLsync OSMesaDriver::nfglImportSyncEXT(const uint32_t *nf_params)
 {
 	GLenum external_sync_type = getStackedParameter(0);
 	GLintptr external_sync = getStackedParameter(1);
 	GLbitfield flags = getStackedParameter(2);
 	D(bug("nfosmesa: glImportSyncEXT(%s, %" PRI_IPTR ", 0x%x)", gl_enum_name(external_sync_type), external_sync, flags));
-	GLsync __ret = fn.glImportSyncEXT(external_sync_type, external_sync, flags);
-	return __ret;
+FN_GLIMPORTSYNCEXT(external_sync_type, external_sync, flags);
 }
-#endif
 
 void OSMesaDriver::nfglIndexFormatNV(const uint32_t *nf_params)
 {
@@ -16015,7 +15986,6 @@ void OSMesaDriver::nfglInsertEventMarkerEXT(const uint32_t *nf_params)
 #endif
 }
 
-#if 0
 void OSMesaDriver::nfglInstrumentsBufferSGIX(const uint32_t *nf_params)
 {
 	GLsizei size = getStackedParameter(0);
@@ -16028,7 +15998,6 @@ void OSMesaDriver::nfglInstrumentsBufferSGIX(const uint32_t *nf_params)
 	D(bug("nfosmesa: glInstrumentsBufferSGIX(%d, " PRI_PTR ")", size, AtariOffset(buffer)));
 FN_GLINSTRUMENTSBUFFERSGIX(size, buffer);
 }
-#endif
 
 void OSMesaDriver::nfglInterleavedArrays(const uint32_t *nf_params)
 {
@@ -17229,7 +17198,6 @@ void OSMesaDriver::nfglMap2xOES(const uint32_t *nf_params)
 	fn.glMap2xOES(target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points);
 }
 
-#if 0
 void * OSMesaDriver::nfglMapBuffer(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -17237,9 +17205,7 @@ void * OSMesaDriver::nfglMapBuffer(const uint32_t *nf_params)
 	D(bug("nfosmesa: glMapBuffer(%s, %s)", gl_enum_name(target), gl_enum_name(access)));
 FN_GLMAPBUFFER(target, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapBufferARB(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -17247,9 +17213,7 @@ void * OSMesaDriver::nfglMapBufferARB(const uint32_t *nf_params)
 	D(bug("nfosmesa: glMapBufferARB(%s, %s)", gl_enum_name(target), gl_enum_name(access)));
 FN_GLMAPBUFFERARB(target, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapBufferRange(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -17259,7 +17223,6 @@ void * OSMesaDriver::nfglMapBufferRange(const uint32_t *nf_params)
 	D(bug("nfosmesa: glMapBufferRange(%s, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", gl_enum_name(target), offset, length, access));
 FN_GLMAPBUFFERRANGE(target, offset, length, access);
 }
-#endif
 
 void OSMesaDriver::nfglMapControlPointsNV(const uint32_t *nf_params)
 {
@@ -17343,7 +17306,6 @@ void OSMesaDriver::nfglMapGrid2xOES(const uint32_t *nf_params)
 	fn.glMapGrid2xOES(n, u1, u2, v1, v2);
 }
 
-#if 0
 void * OSMesaDriver::nfglMapNamedBuffer(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -17351,20 +17313,15 @@ void * OSMesaDriver::nfglMapNamedBuffer(const uint32_t *nf_params)
 	D(bug("nfosmesa: glMapNamedBuffer(%u, %s)", buffer, gl_enum_name(access)));
 FN_GLMAPNAMEDBUFFER(buffer, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapNamedBufferEXT(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
 	GLenum access = getStackedParameter(1);
 	D(bug("nfosmesa: glMapNamedBufferEXT(%u, %s)", buffer, gl_enum_name(access)));
-	void * __ret = fn.glMapNamedBufferEXT(buffer, access);
-	return __ret;
+FN_GLMAPNAMEDBUFFEREXT(buffer, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapNamedBufferRange(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -17374,9 +17331,7 @@ void * OSMesaDriver::nfglMapNamedBufferRange(const uint32_t *nf_params)
 	D(bug("nfosmesa: glMapNamedBufferRange(%u, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", buffer, offset, length, access));
 FN_GLMAPNAMEDBUFFERRANGE(buffer, offset, length, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapNamedBufferRangeEXT(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -17384,20 +17339,15 @@ void * OSMesaDriver::nfglMapNamedBufferRangeEXT(const uint32_t *nf_params)
 	GLsizeiptr length = getStackedParameter(2);
 	GLbitfield access = getStackedParameter(3);
 	D(bug("nfosmesa: glMapNamedBufferRangeEXT(%u, %" PRI_IPTR ", %" PRI_IPTR ", 0x%x)", buffer, offset, length, access));
-	void * __ret = fn.glMapNamedBufferRangeEXT(buffer, offset, length, access);
-	return __ret;
+FN_GLMAPNAMEDBUFFERRANGEEXT(buffer, offset, length, access);
 }
-#endif
 
-#if 0
 void * OSMesaDriver::nfglMapObjectBufferATI(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
 	D(bug("nfosmesa: glMapObjectBufferATI(%u)", buffer));
-	void * __ret = fn.glMapObjectBufferATI(buffer);
-	return __ret;
+FN_GLMAPOBJECTBUFFERATI(buffer);
 }
-#endif
 
 void OSMesaDriver::nfglMapParameterfvNV(const uint32_t *nf_params)
 {
@@ -17427,7 +17377,6 @@ void OSMesaDriver::nfglMapParameterivNV(const uint32_t *nf_params)
 FN_GLMAPPARAMETERIVNV(target, pname, params);
 }
 
-#if 0
 void * OSMesaDriver::nfglMapTexture2DINTEL(const uint32_t *nf_params)
 {
 	GLuint texture = getStackedParameter(0);
@@ -17446,10 +17395,8 @@ void * OSMesaDriver::nfglMapTexture2DINTEL(const uint32_t *nf_params)
 #endif
 		layout = getStackedPointer(4, const GLenum *);
 	D(bug("nfosmesa: glMapTexture2DINTEL(%u, %d, 0x%x, " PRI_PTR ", " PRI_PTR ")", texture, level, access, AtariOffset(stride), AtariOffset(layout)));
-	void * __ret = fn.glMapTexture2DINTEL(texture, level, access, stride, layout);
-	return __ret;
+FN_GLMAPTEXTURE2DINTEL(texture, level, access, stride, layout);
 }
-#endif
 
 void OSMesaDriver::nfglMapVertexAttrib1dAPPLE(const uint32_t *nf_params)
 {
@@ -22611,7 +22558,6 @@ void OSMesaDriver::nfglProgramBufferParametersfvNV(const uint32_t *nf_params)
 FN_GLPROGRAMBUFFERPARAMETERSFVNV(target, bindingIndex, wordIndex, count, params);
 }
 
-#if 0
 void OSMesaDriver::nfglProgramCallbackMESA(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -22630,7 +22576,6 @@ void OSMesaDriver::nfglProgramCallbackMESA(const uint32_t *nf_params)
 	D(bug("nfosmesa: glProgramCallbackMESA(%s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), AtariOffset(callback), AtariOffset(data)));
 FN_GLPROGRAMCALLBACKMESA(target, callback, data);
 }
-#endif
 
 void OSMesaDriver::nfglProgramEnvParameter4dARB(const uint32_t *nf_params)
 {
@@ -30397,7 +30342,6 @@ void OSMesaDriver::nfglTextureParameterivEXT(const uint32_t *nf_params)
 FN_GLTEXTUREPARAMETERIVEXT(texture, target, pname, params);
 }
 
-#if 0
 void OSMesaDriver::nfglTextureRangeAPPLE(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -30411,7 +30355,6 @@ void OSMesaDriver::nfglTextureRangeAPPLE(const uint32_t *nf_params)
 	D(bug("nfosmesa: glTextureRangeAPPLE(%s, %d, " PRI_PTR ")", gl_enum_name(target), length, AtariOffset(pointer)));
 FN_GLTEXTURERANGEAPPLE(target, length, pointer);
 }
-#endif
 
 void OSMesaDriver::nfglTextureRenderbufferEXT(const uint32_t *nf_params)
 {
@@ -32738,16 +32681,13 @@ void OSMesaDriver::nfglUseShaderProgramEXT(const uint32_t *nf_params)
 	fn.glUseShaderProgramEXT(type, program);
 }
 
-#if 0
 void OSMesaDriver::nfglVDPAUFiniNV(const uint32_t *nf_params)
 {
 	UNUSED(nf_params);
 	D(bug("nfosmesa: glVDPAUFiniNV()"));
 FN_GLVDPAUFININV();
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUGetSurfaceivNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
@@ -32768,9 +32708,7 @@ void OSMesaDriver::nfglVDPAUGetSurfaceivNV(const uint32_t *nf_params)
 	D(bug("nfosmesa: glVDPAUGetSurfaceivNV(" PRI_IPTR ", %s, %d, " PRI_PTR ", " PRI_PTR ")", surface, gl_enum_name(pname), bufSize, AtariOffset(length), AtariOffset(values)));
 FN_GLVDPAUGETSURFACEIVNV(surface, pname, bufSize, length, values);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUInitNV(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -32788,18 +32726,14 @@ void OSMesaDriver::nfglVDPAUInitNV(const uint32_t *nf_params)
 	D(bug("nfosmesa: glVDPAUInitNV(" PRI_PTR ", " PRI_PTR ")", AtariOffset(vdpDevice), AtariOffset(getProcAddress)));
 FN_GLVDPAUINITNV(vdpDevice, getProcAddress);
 }
-#endif
 
-#if 0
 GLboolean OSMesaDriver::nfglVDPAUIsSurfaceNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
 	D(bug("nfosmesa: glVDPAUIsSurfaceNV(" PRI_IPTR ")", surface));
 FN_GLVDPAUISSURFACENV(surface);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUMapSurfacesNV(const uint32_t *nf_params)
 {
 	GLsizei numSurfaces = getStackedParameter(0);
@@ -32812,9 +32746,7 @@ void OSMesaDriver::nfglVDPAUMapSurfacesNV(const uint32_t *nf_params)
 	D(bug("nfosmesa: glVDPAUMapSurfacesNV(%d, " PRI_PTR ")", numSurfaces, AtariOffset(surfaces)));
 FN_GLVDPAUMAPSURFACESNV(numSurfaces, surfaces);
 }
-#endif
 
-#if 0
 GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterOutputSurfaceNV(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -32834,9 +32766,7 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterOutputSurfaceNV(const uint32_t *
 	D(bug("nfosmesa: glVDPAURegisterOutputSurfaceNV(" PRI_PTR ", %s, %d, " PRI_PTR ")", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames)));
 FN_GLVDPAUREGISTEROUTPUTSURFACENV(vdpSurface, target, numTextureNames, textureNames);
 }
-#endif
 
-#if 0
 GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceNV(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -32856,9 +32786,7 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceNV(const uint32_t *n
 	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceNV(" PRI_PTR ", %s, %d, " PRI_PTR ")", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames)));
 FN_GLVDPAUREGISTERVIDEOSURFACENV(vdpSurface, target, numTextureNames, textureNames);
 }
-#endif
 
-#if 0
 GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceWithPictureStructureNV(const uint32_t *nf_params)
 {
 #if NFOSMESA_POINTER_AS_MEMARG
@@ -32877,12 +32805,9 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceWithPictureStructure
 		textureNames = getStackedPointer(3, const GLuint *);
 	GLboolean32 isFrameStructure = getStackedParameter(4);
 	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceWithPictureStructureNV(" PRI_PTR ", %s, %d, " PRI_PTR ", %d)", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames), isFrameStructure));
-	GLvdpauSurfaceNV __ret = fn.glVDPAURegisterVideoSurfaceWithPictureStructureNV(vdpSurface, target, numTextureNames, textureNames, isFrameStructure);
-	return __ret;
+FN_GLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENV(vdpSurface, target, numTextureNames, textureNames, isFrameStructure);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUSurfaceAccessNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
@@ -32890,9 +32815,7 @@ void OSMesaDriver::nfglVDPAUSurfaceAccessNV(const uint32_t *nf_params)
 	D(bug("nfosmesa: glVDPAUSurfaceAccessNV(" PRI_IPTR ", %s)", surface, gl_enum_name(access)));
 FN_GLVDPAUSURFACEACCESSNV(surface, access);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUUnmapSurfacesNV(const uint32_t *nf_params)
 {
 	GLsizei numSurface = getStackedParameter(0);
@@ -32905,16 +32828,13 @@ void OSMesaDriver::nfglVDPAUUnmapSurfacesNV(const uint32_t *nf_params)
 	D(bug("nfosmesa: glVDPAUUnmapSurfacesNV(%d, " PRI_PTR ")", numSurface, AtariOffset(surfaces)));
 FN_GLVDPAUUNMAPSURFACESNV(numSurface, surfaces);
 }
-#endif
 
-#if 0
 void OSMesaDriver::nfglVDPAUUnregisterSurfaceNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
 	D(bug("nfosmesa: glVDPAUUnregisterSurfaceNV(" PRI_IPTR ")", surface));
 FN_GLVDPAUUNREGISTERSURFACENV(surface);
 }
-#endif
 
 void OSMesaDriver::nfglValidateProgram(const uint32_t *nf_params)
 {

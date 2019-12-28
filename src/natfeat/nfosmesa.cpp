@@ -21,6 +21,9 @@
 #define __STDC_FORMAT_MACROS
 
 #include "sysdeps.h"
+
+#ifdef NFOSMESA_SUPPORT
+
 #include "SDL_compat.h"
 #include <SDL_loadso.h>
 #include <SDL_endian.h>
@@ -55,7 +58,6 @@
 #include "debug.h"
 #include "verify.h"
 
-#ifdef NFOSMESA_SUPPORT
 /*--- Assumptions ---*/
 
 /* these native types must match the Atari types */
@@ -130,7 +132,7 @@ void OSMesaDriver::reset()
 	{
 		if (contexts[i].ctx)
 		{
-			OSMesaDestroyContext(i);
+			OSMesaDestroyContextInternal(i);
 			contexts[i].ctx = NULL;
 		}
 	}
@@ -175,9 +177,6 @@ void OSMesaDriver::reset()
 int32 OSMesaDriver::dispatch(uint32 fncode)
 {
 	int32 ret = 0;
-#if DEBUG
-	const char *funcname = "???";
-#endif
 	
 	if (fncode >= NFOSMESA_LAST)
 	{
@@ -229,70 +228,56 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
     		ret = ARANFOSMESA_NFAPI_VERSION;
 			break;
 		case NFOSMESA_LENGLGETSTRING:
-			D(funcname = "glGetString");
-			ret = LenglGetString(nf_params);
+			ret = nfLenGlGetString(nf_params);
 			break;
 		case NFOSMESA_PUTGLGETSTRING:
-			D(funcname = "glGetString");
-			PutglGetString(nf_params);
+			nfPutGlGetString(nf_params);
 			break;
 		case NFOSMESA_LENGLGETSTRINGI:
-			D(funcname = "glGetStringi");
-			ret = LenglGetStringi(nf_params);
+			ret = nfLenGlGetStringi(nf_params);
 			break;
 		case NFOSMESA_PUTGLGETSTRINGI:
-			D(funcname = "glGetStringi");
-			PutglGetStringi(nf_params);
+			nfPutGlGetStringi(nf_params);
 			break;
 
 		case NFOSMESA_OSMESACREATECONTEXT:
-			D(funcname = "OSMesaCreateContext");
-			ret = OSMesaCreateContext(nf_params);
+			ret = nfOSMesaCreateContext(nf_params);
 			break;
 		case NFOSMESA_OSMESACREATECONTEXTEXT:
-			D(funcname = "OSMesaCreateContextExt");
-			ret = OSMesaCreateContextExt(nf_params);
+			ret = nfOSMesaCreateContextExt(nf_params);
+			break;
+		case NFOSMESA_OSMESACREATECONTEXTATTRIBS:
+			ret = nfOSMesaCreateContextAttribs(nf_params);
 			break;
 		case NFOSMESA_OSMESADESTROYCONTEXT:
-			D(funcname = "OSMesaDestroyContext");
-			OSMesaDestroyContext(
-				getStackedParameter(0) /* uint32_t ctx */);
+			nfOSMesaDestroyContext(nf_params);
 			break;
 		case NFOSMESA_OSMESAMAKECURRENT:
-			D(funcname = "OSMesaMakeCurrent");
-			ret = OSMesaMakeCurrent(nf_params);
+			ret = nfOSMesaMakeCurrent(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETCURRENTCONTEXT:
-			D(funcname = "OSMesaGetCurrentContext");
-			ret = OSMesaGetCurrentContext();
+			ret = nfOSMesaGetCurrentContext();
 			break;
 		case NFOSMESA_OSMESAPIXELSTORE:
-			D(funcname = "OSMesaPixelStore");
-			OSMesaPixelStore(nf_params);
+			nfOSMesaPixelStore(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETINTEGERV:
-			D(funcname = "OSMesaGetIntegerv");
-			OSMesaGetIntegerv(nf_params);
+			nfOSMesaGetIntegerv(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETDEPTHBUFFER:
-			D(funcname = "OSMesaGetDepthBuffer");
-			ret = OSMesaGetDepthBuffer(nf_params);
+			ret = nfOSMesaGetDepthBuffer(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETCOLORBUFFER:
-			D(funcname = "OSMesaGetColorBuffer");
-			ret = OSMesaGetColorBuffer(nf_params);
+			ret = nfOSMesaGetColorBuffer(nf_params);
 			break;
 		case NFOSMESA_OSMESAGETPROCADDRESS:
-			D(funcname = "OSMesaGetProcAddress");
-			ret = OSMesaGetProcAddress(nf_params);
+			ret = nfOSMesaGetProcAddress(nf_params);
 			break;
 		case NFOSMESA_OSMESACOLORCLAMP:
-			D(funcname = "OSMesaColorClamp");
-			OSMesaColorClamp(nf_params);
+			nfOSMesaColorClamp(nf_params);
 			break;
 		case NFOSMESA_OSMESAPOSTPROCESS:
-			D(funcname = "OSMesaPostprocess");
-			OSMesaPostprocess(nf_params);
+			nfOSMesaPostprocess(nf_params);
 			break;
 
 		/*
@@ -300,22 +285,18 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 		 * which is not checked here.
 		 */
 		case NFOSMESA_GLULOOKATF:
-			D(funcname = "gluLookAtf");
 			nfgluLookAtf(nf_params);
 			break;
 		
 		case NFOSMESA_GLFRUSTUMF:
-			D(funcname = "glFrustumf");
 			nfglFrustumf(nf_params);
 			break;
 		
 		case NFOSMESA_GLORTHOF:
-			D(funcname = "glOrthof");
 			nfglOrthof(nf_params);
 			break;
 		
 		case NFOSMESA_TINYGLSWAPBUFFER:
-			D(funcname = "swapbuffer");
 			nftinyglswapbuffer(nf_params);
 			break;
 
@@ -333,7 +314,14 @@ int32 OSMesaDriver::dispatch(uint32 fncode)
 	if (contexts[cur_context].error_check_enabled)
 	{
 		GLenum last;
-		
+		const char *funcname = "???";
+
+		for (int i = 0; i < (int)(sizeof(gl_functionnames) / sizeof(gl_functionnames[0])); i++)
+			if (gl_functionnames[i].funcno == fncode)
+			{
+				funcname = gl_functionnames[i].name;
+				break;
+			}
 		last = contexts[cur_context].error_code;
 		if (last != GL_NO_ERROR)
 		{
@@ -678,13 +666,25 @@ bool OSMesaDriver::SelectContext(uint32_t ctx)
 	return ret;
 }
 
-uint32_t OSMesaDriver::OSMesaCreateContext(const uint32_t *nf_params)
+uint32_t OSMesaDriver::nfOSMesaCreateContext(const uint32_t *nf_params)
 {
 	GLenum format = getStackedParameter(0);
 	uint32_t sharelist = getStackedParameter(1);
 	D(bug("nfosmesa: OSMesaCreateContext(0x%x, 0x%x)", format, sharelist));
 	uint32_t extparams[5] = { format, 16, 8, format == OSMESA_COLOR_INDEX ? 0u : 16u, sharelist };
-	return OSMesaCreateContextExt(extparams);
+	return nfOSMesaCreateContextExt(extparams);
+}
+
+
+uint32_t OSMesaDriver::nfOSMesaCreateContextAttribs(const uint32_t *nf_params)
+{
+	memptr attribList = getStackedParameter(0);
+	uint32_t sharelist = getStackedParameter(1);
+	D(bug("nfosmesa: OSMesaCreateContextAttribs(0x%x, 0x%x)", attribList, sharelist));
+	/* NYI */
+	UNUSED(attribList);
+	UNUSED(sharelist);
+	return 0;
 }
 
 
@@ -727,7 +727,7 @@ OffscreenContext *OSMesaDriver::TryCreateContext(void)
 }
 
 
-uint32_t OSMesaDriver::OSMesaCreateContextExt(const uint32_t *nf_params)
+uint32_t OSMesaDriver::nfOSMesaCreateContextExt(const uint32_t *nf_params)
 {
 	GLenum format = getStackedParameter(0);
 	GLint depthBits = getStackedParameter(1);
@@ -786,9 +786,8 @@ uint32_t OSMesaDriver::OSMesaCreateContextExt(const uint32_t *nf_params)
 }
 
 
-void OSMesaDriver::OSMesaDestroyContext( uint32_t ctx )
+void OSMesaDriver::OSMesaDestroyContextInternal(uint32_t ctx)
 {
-	D(bug("nfosmesa: OSMesaDestroyContext(%u)", ctx));
 	if (ctx > MAX_OSMESA_CONTEXTS || !contexts[ctx].ctx)
 	{
 		bug("nfosmesa: OSMesaDestroyContext(%u): invalid context", ctx);
@@ -825,7 +824,14 @@ void OSMesaDriver::OSMesaDestroyContext( uint32_t ctx )
 */
 }
 
-GLboolean OSMesaDriver::OSMesaMakeCurrent(const uint32_t *nf_params)
+void OSMesaDriver::nfOSMesaDestroyContext(const uint32_t *nf_params)
+{
+	uint32_t ctx = getStackedParameter(0);
+	D(bug("nfosmesa: OSMesaDestroyContext(%u)", ctx));
+	OSMesaDestroyContextInternal(ctx);
+}
+
+GLboolean OSMesaDriver::nfOSMesaMakeCurrent(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	memptr buffer = getStackedParameter(1);
@@ -862,7 +868,7 @@ GLboolean OSMesaDriver::OSMesaMakeCurrent(const uint32_t *nf_params)
 	return ret;
 }
 
-uint32_t OSMesaDriver::OSMesaGetCurrentContext(void)
+uint32_t OSMesaDriver::nfOSMesaGetCurrentContext(void)
 {
 	uint32_t ctx;
 #if 0
@@ -878,7 +884,7 @@ uint32_t OSMesaDriver::OSMesaGetCurrentContext(void)
 	return ctx;
 }
 
-void OSMesaDriver::OSMesaPixelStore(const uint32_t *nf_params)
+void OSMesaDriver::nfOSMesaPixelStore(const uint32_t *nf_params)
 {
 	GLint pname = getStackedParameter(0);
 	GLint value = getStackedParameter(1);
@@ -888,7 +894,7 @@ void OSMesaDriver::OSMesaPixelStore(const uint32_t *nf_params)
 		contexts[ctx].ctx->PixelStore(pname, value);
 }
 
-void OSMesaDriver::OSMesaGetIntegerv(const uint32_t *nf_params)
+void OSMesaDriver::nfOSMesaGetIntegerv(const uint32_t *nf_params)
 {
 	GLint pname = getStackedParameter(0);
 	memptr value = getStackedParameter(1);
@@ -903,7 +909,7 @@ void OSMesaDriver::OSMesaGetIntegerv(const uint32_t *nf_params)
 		WriteInt32(value, tmp);
 }
 
-GLboolean OSMesaDriver::OSMesaGetDepthBuffer(const uint32_t *nf_params)
+GLboolean OSMesaDriver::nfOSMesaGetDepthBuffer(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	memptr width = getStackedParameter(1);
@@ -927,7 +933,7 @@ GLboolean OSMesaDriver::OSMesaGetDepthBuffer(const uint32_t *nf_params)
 	return GL_TRUE;
 }
 
-GLboolean OSMesaDriver::OSMesaGetColorBuffer(const uint32_t *nf_params)
+GLboolean OSMesaDriver::nfOSMesaGetColorBuffer(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	memptr width = getStackedParameter(1);
@@ -951,10 +957,10 @@ GLboolean OSMesaDriver::OSMesaGetColorBuffer(const uint32_t *nf_params)
 	return GL_TRUE;
 }
 
-unsigned int OSMesaDriver::OSMesaGetProcAddress(const uint32_t *nf_params)
+uint32_t OSMesaDriver::nfOSMesaGetProcAddress(const uint32_t *nf_params)
 {
 	nfcmemptr funcname = getStackedPointer(0, const char *);
-	unsigned int ret = 0;
+	uint32_t ret = 0;
 	if (!funcname)
 		return 0;
 	char tmp[safe_strlen(funcname) + 1], *funcName;
@@ -1004,7 +1010,7 @@ unsigned int OSMesaDriver::OSMesaGetProcAddress(const uint32_t *nf_params)
 	return ret;
 }
 
-void OSMesaDriver::OSMesaColorClamp(const uint32_t *nf_params)
+void OSMesaDriver::nfOSMesaColorClamp(const uint32_t *nf_params)
 {
 	GLboolean enable = getStackedParameter(0);
 	D(bug("nfosmesa: OSMesaColorClamp(%d)", enable));
@@ -1014,7 +1020,7 @@ void OSMesaDriver::OSMesaColorClamp(const uint32_t *nf_params)
 	contexts[ctx].ctx->ColorClamp(enable);
 }
 
-void OSMesaDriver::OSMesaPostprocess(const uint32_t *nf_params)
+void OSMesaDriver::nfOSMesaPostprocess(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	nfcmemptr filterName = getStackedPointer(1, const char *);
@@ -1028,19 +1034,19 @@ void OSMesaDriver::OSMesaPostprocess(const uint32_t *nf_params)
 	contexts[ctx].ctx->Postprocess((const char *)filter, enable_value);
 }
 
-uint32_t OSMesaDriver::LenglGetString(const uint32_t *nf_params)
+uint32_t OSMesaDriver::nfLenGlGetString(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	GLenum name = getStackedParameter(1);
 	UNUSED(ctx);
-	D(bug("nfosmesa: LenglGetString(%u, 0x%x)", ctx, name));
+	D(bug("nfosmesa: LenGlGetString(%u, 0x%x)", ctx, name));
 	if (!GL_ISAVAILABLE(glGetString)) return 0;
 	const char *s = (const char *)fn.glGetString(name);
 	if (s == NULL) return 0;
 	return strlen(s);
 }
 
-void OSMesaDriver::PutglGetString(const uint32_t *nf_params)
+void OSMesaDriver::nfPutGlGetString(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	GLenum name = getStackedParameter(1);
@@ -1051,7 +1057,7 @@ void OSMesaDriver::PutglGetString(const uint32_t *nf_params)
 #endif
 	UNUSED(ctx);
 	const char *s = (const char *)(GL_ISAVAILABLE(glGetString) ? fn.glGetString(name) : 0);
-	D(bug("nfosmesa: PutglGetString(%u, 0x%x, " PRI_PTR "): %s", ctx, name, AtariOffset(buffer), s));
+	D(bug("nfosmesa: PutGlGetString(%u, 0x%x, " PRI_PTR "): %s", ctx, name, buffer ? AtariOffset(buffer) : 0, s ? s : "(null)"));
 	if (buffer)
 	{
 		if (!s) s = "";
@@ -1063,20 +1069,20 @@ void OSMesaDriver::PutglGetString(const uint32_t *nf_params)
 	}
 }
 
-uint32_t OSMesaDriver::LenglGetStringi(const uint32_t *nf_params)
+uint32_t OSMesaDriver::nfLenGlGetStringi(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	GLenum name = getStackedParameter(1);
 	GLuint index = getStackedParameter(2);
 	UNUSED(ctx);
-	D(bug("nfosmesa: LenglGetStringi(%u, 0x%x, %u)", ctx, name, index));
+	D(bug("nfosmesa: LenGlGetStringi(%u, 0x%x, %u)", ctx, name, index));
 	if (!GL_ISAVAILABLE(glGetStringi)) return (uint32_t)-1;
 	const char *s = (const char *)fn.glGetStringi(name, index);
 	if (s == NULL) return (uint32_t)-1;
 	return strlen(s);
 }
 
-void OSMesaDriver::PutglGetStringi(const uint32_t *nf_params)
+void OSMesaDriver::nfPutGlGetStringi(const uint32_t *nf_params)
 {
 	uint32_t ctx = getStackedParameter(0);
 	GLenum name = getStackedParameter(1);
@@ -1087,7 +1093,7 @@ void OSMesaDriver::PutglGetStringi(const uint32_t *nf_params)
 	GLubyte *buffer = getStackedPointer(2, GLubyte *);
 #endif
 	UNUSED(ctx);
-	D(bug("nfosmesa: PutglGetStringi(%u, 0x%x, %d, " PRI_PTR ")", ctx, name, index, AtariOffset(buffer)));
+	D(bug("nfosmesa: PutGlGetStringi(%u, 0x%x, %d, " PRI_PTR ")", ctx, name, index, buffer ? AtariOffset(buffer) : 0));
 	const char *s = (const char *)(GL_ISAVAILABLE(glGetStringi) ? fn.glGetStringi(name, index) : 0);
 	if (buffer)
 	{
@@ -1284,13 +1290,13 @@ void OSMesaDriver::pixelBuffer::convertToAtari(const char *src, nfmemptr dst)
 	if (!valid || !dst || HostAddr(dst, const char *) == src)
 		return;
 	if (type == GL_FLOAT)
-		OSMesaDriver::Host2AtariFloatArray(count, (const GLfloat *)src, AtariAddr(dst, GLfloat *));
+		Host2AtariFloatArray(count, (const GLfloat *)src, AtariAddr(dst, GLfloat *));
 	else if (basesize == 1)
-		OSMesaDriver::Host2AtariByteArray(count, (const GLubyte *)src, AtariAddr(dst, GLubyte *));
+		Host2AtariByteArray(count, (const GLubyte *)src, AtariAddr(dst, GLubyte *));
 	else if (basesize == 2)
-		OSMesaDriver::Host2AtariShortArray(count, (const GLushort *)src, AtariAddr(dst, Uint16 *));
+		Host2AtariShortArray(count, (const GLushort *)src, AtariAddr(dst, Uint16 *));
 	else /* if (basesize == 4) */
-		OSMesaDriver::Host2AtariIntArray(count, (const GLuint *)src, AtariAddr(dst, uint32_t *));
+		Host2AtariIntArray(count, (const GLuint *)src, AtariAddr(dst, uint32_t *));
 }
 
 
@@ -1304,13 +1310,13 @@ void *OSMesaDriver::pixelBuffer::convertPixels(GLsizei _width, GLsizei _height, 
 	
 	/* FIXME: glPixelStore parameters are not taken into account */
 	if (type == GL_FLOAT)
-		OSMesaDriver::Atari2HostFloatArray(count, AtariAddr(pixels, const GLfloat *), (GLfloat *)result);
+		Atari2HostFloatArray(count, AtariAddr(pixels, const GLfloat *), (GLfloat *)result);
 	else if (basesize == 1)
-		OSMesaDriver::Atari2HostByteArray(count, AtariAddr(pixels, const GLubyte *), (GLubyte *)result);
+		Atari2HostByteArray(count, AtariAddr(pixels, const GLubyte *), (GLubyte *)result);
 	else if (basesize == 2)
-		OSMesaDriver::Atari2HostShortArray(count, AtariAddr(pixels, const Uint16 *), (GLushort *)result);
+		Atari2HostShortArray(count, AtariAddr(pixels, const Uint16 *), (GLushort *)result);
 	else /* if (basesize == 4) */
-		OSMesaDriver::Atari2HostIntArray(count, AtariAddr(pixels, const uint32_t *), (GLuint *)result);
+		Atari2HostIntArray(count, AtariAddr(pixels, const uint32_t *), (GLuint *)result);
 	return result;
 }
 
@@ -1956,7 +1962,7 @@ void OSMesaDriver::nfgluLookAt(const uint32_t *nf_params)
 	z[0] = eyeX - centerX;
 	z[1] = eyeY - centerY;
 	z[2] = eyeZ - centerZ;
-	mag = sqrtf(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
+	mag = sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
 	if (mag)
 	{
 		z[0] /= mag;
@@ -2241,29 +2247,29 @@ GLint OSMesaDriver::__glGetMap_Evalk(GLenum target)
 {
 	switch (target)
 	{
-		case GL_MAP1_INDEX:
-		case GL_MAP1_TEXTURE_COORD_1:
-		case GL_MAP2_INDEX:
-		case GL_MAP2_TEXTURE_COORD_1:
-			return 1;
-		case GL_MAP1_TEXTURE_COORD_2:
-		case GL_MAP2_TEXTURE_COORD_2:
-			return 2;
-		case GL_MAP1_VERTEX_3:
-		case GL_MAP1_NORMAL:
-		case GL_MAP1_TEXTURE_COORD_3:
-		case GL_MAP2_VERTEX_3:
-		case GL_MAP2_NORMAL:
-		case GL_MAP2_TEXTURE_COORD_3:
-			return 3;
-		case GL_MAP1_VERTEX_4:
-		case GL_MAP1_COLOR_4:
-		case GL_MAP1_TEXTURE_COORD_4:
-		case GL_MAP2_VERTEX_4:
-		case GL_MAP2_COLOR_4:
-		case GL_MAP2_TEXTURE_COORD_4:
-		default:
-			return 4;
+	case GL_MAP1_INDEX:
+	case GL_MAP1_TEXTURE_COORD_1:
+	case GL_MAP2_INDEX:
+	case GL_MAP2_TEXTURE_COORD_1:
+		return 1;
+	case GL_MAP1_TEXTURE_COORD_2:
+	case GL_MAP2_TEXTURE_COORD_2:
+		return 2;
+	case GL_MAP1_VERTEX_3:
+	case GL_MAP1_NORMAL:
+	case GL_MAP1_TEXTURE_COORD_3:
+	case GL_MAP2_VERTEX_3:
+	case GL_MAP2_NORMAL:
+	case GL_MAP2_TEXTURE_COORD_3:
+		return 3;
+	case GL_MAP1_VERTEX_4:
+	case GL_MAP1_COLOR_4:
+	case GL_MAP1_TEXTURE_COORD_4:
+	case GL_MAP2_VERTEX_4:
+	case GL_MAP2_COLOR_4:
+	case GL_MAP2_TEXTURE_COORD_4:
+	default:
+		return 4;
 	}
 }
 

@@ -4,14978 +4,11926 @@
  */
 
 		case NFOSMESA_GLACCUM:
-			D(funcname = "glAccum");
 			if (GL_ISAVAILABLE(glAccum))
 			nfglAccum(nf_params);
 			break;
 		case NFOSMESA_GLACCUMXOES:
-			D(funcname = "glAccumxOES");
 			if (GL_ISAVAILABLE(glAccumxOES))
 			nfglAccumxOES(nf_params);
 			break;
 		case NFOSMESA_GLACQUIREKEYEDMUTEXWIN32EXT:
-			D(funcname = "glAcquireKeyedMutexWin32EXT");
 			if (GL_ISAVAILABLE(glAcquireKeyedMutexWin32EXT))
 			ret = nfglAcquireKeyedMutexWin32EXT(nf_params);
 			break;
 		case NFOSMESA_GLACTIVEPROGRAMEXT:
-			D(funcname = "glActiveProgramEXT");
 			if (GL_ISAVAILABLE(glActiveProgramEXT))
 			nfglActiveProgramEXT(nf_params);
 			break;
 		case NFOSMESA_GLACTIVESHADERPROGRAM:
-			D(funcname = "glActiveShaderProgram");
 			if (GL_ISAVAILABLE(glActiveShaderProgram))
 			nfglActiveShaderProgram(nf_params);
 			break;
 		case NFOSMESA_GLACTIVESTENCILFACEEXT:
-			D(funcname = "glActiveStencilFaceEXT");
 			if (GL_ISAVAILABLE(glActiveStencilFaceEXT))
 			nfglActiveStencilFaceEXT(nf_params);
 			break;
 		case NFOSMESA_GLACTIVETEXTURE:
-			D(funcname = "glActiveTexture");
 			if (GL_ISAVAILABLE(glActiveTexture))
 			nfglActiveTexture(nf_params);
 			break;
 		case NFOSMESA_GLACTIVETEXTUREARB:
-			D(funcname = "glActiveTextureARB");
 			if (GL_ISAVAILABLE(glActiveTextureARB))
 			nfglActiveTextureARB(nf_params);
 			break;
 		case NFOSMESA_GLACTIVEVARYINGNV:
-			D(funcname = "glActiveVaryingNV");
 			if (GL_ISAVAILABLE(glActiveVaryingNV))
 			nfglActiveVaryingNV(nf_params);
 			break;
 		case NFOSMESA_GLADDSWAPHINTRECTWIN:
-			D(funcname = "glAddSwapHintRectWIN");
 			if (GL_ISAVAILABLE(glAddSwapHintRectWIN))
 			nfglAddSwapHintRectWIN(nf_params);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP1ATI:
-			D(funcname = "glAlphaFragmentOp1ATI");
 			if (GL_ISAVAILABLE(glAlphaFragmentOp1ATI))
 			nfglAlphaFragmentOp1ATI(nf_params);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP2ATI:
-			D(funcname = "glAlphaFragmentOp2ATI");
 			if (GL_ISAVAILABLE(glAlphaFragmentOp2ATI))
 			nfglAlphaFragmentOp2ATI(nf_params);
 			break;
 		case NFOSMESA_GLALPHAFRAGMENTOP3ATI:
-			D(funcname = "glAlphaFragmentOp3ATI");
 			if (GL_ISAVAILABLE(glAlphaFragmentOp3ATI))
 			nfglAlphaFragmentOp3ATI(nf_params);
 			break;
 		case NFOSMESA_GLALPHAFUNC:
-			D(funcname = "glAlphaFunc");
 			if (GL_ISAVAILABLE(glAlphaFunc))
 			nfglAlphaFunc(nf_params);
 			break;
 		case NFOSMESA_GLALPHAFUNCXOES:
-			D(funcname = "glAlphaFuncxOES");
 			if (GL_ISAVAILABLE(glAlphaFuncxOES))
 			nfglAlphaFuncxOES(nf_params);
 			break;
 		case NFOSMESA_GLALPHATOCOVERAGEDITHERCONTROLNV:
-			D(funcname = "glAlphaToCoverageDitherControlNV");
 			if (GL_ISAVAILABLE(glAlphaToCoverageDitherControlNV))
 			nfglAlphaToCoverageDitherControlNV(nf_params);
 			break;
 		case NFOSMESA_GLAPPLYFRAMEBUFFERATTACHMENTCMAAINTEL:
-			D(funcname = "glApplyFramebufferAttachmentCMAAINTEL");
 			if (GL_ISAVAILABLE(glApplyFramebufferAttachmentCMAAINTEL))
 			nfglApplyFramebufferAttachmentCMAAINTEL(nf_params);
 			break;
 		case NFOSMESA_GLAPPLYTEXTUREEXT:
-			D(funcname = "glApplyTextureEXT");
 			if (GL_ISAVAILABLE(glApplyTextureEXT))
 			nfglApplyTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLAREPROGRAMSRESIDENTNV:
-			D(funcname = "glAreProgramsResidentNV");
 			if (GL_ISAVAILABLE(glAreProgramsResidentNV))
 			ret = nfglAreProgramsResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENT:
-			D(funcname = "glAreTexturesResident");
 			if (GL_ISAVAILABLE(glAreTexturesResident))
 			ret = nfglAreTexturesResident(nf_params);
 			break;
 		case NFOSMESA_GLARETEXTURESRESIDENTEXT:
-			D(funcname = "glAreTexturesResidentEXT");
 			if (GL_ISAVAILABLE(glAreTexturesResidentEXT))
 			ret = nfglAreTexturesResidentEXT(nf_params);
 			break;
 		case NFOSMESA_GLARRAYELEMENT:
-			D(funcname = "glArrayElement");
 			if (GL_ISAVAILABLE(glArrayElement))
 			nfglArrayElement(nf_params);
 			break;
 		case NFOSMESA_GLARRAYELEMENTEXT:
-			D(funcname = "glArrayElementEXT");
 			if (GL_ISAVAILABLE(glArrayElementEXT))
 			nfglArrayElementEXT(nf_params);
 			break;
 		case NFOSMESA_GLARRAYOBJECTATI:
-			D(funcname = "glArrayObjectATI");
 			if (GL_ISAVAILABLE(glArrayObjectATI))
 			nfglArrayObjectATI(nf_params);
 			break;
 		case NFOSMESA_GLASYNCMARKERSGIX:
-			D(funcname = "glAsyncMarkerSGIX");
 			if (GL_ISAVAILABLE(glAsyncMarkerSGIX))
 			nfglAsyncMarkerSGIX(nf_params);
 			break;
 		case NFOSMESA_GLATTACHOBJECTARB:
-			D(funcname = "glAttachObjectARB");
 			if (GL_ISAVAILABLE(glAttachObjectARB))
 			nfglAttachObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLATTACHSHADER:
-			D(funcname = "glAttachShader");
 			if (GL_ISAVAILABLE(glAttachShader))
 			nfglAttachShader(nf_params);
 			break;
 		case NFOSMESA_GLBEGIN:
-			D(funcname = "glBegin");
 			if (GL_ISAVAILABLE(glBegin))
 			nfglBegin(nf_params);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDER:
-			D(funcname = "glBeginConditionalRender");
 			if (GL_ISAVAILABLE(glBeginConditionalRender))
 			nfglBeginConditionalRender(nf_params);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDERNV:
-			D(funcname = "glBeginConditionalRenderNV");
 			if (GL_ISAVAILABLE(glBeginConditionalRenderNV))
 			nfglBeginConditionalRenderNV(nf_params);
 			break;
 		case NFOSMESA_GLBEGINCONDITIONALRENDERNVX:
-			D(funcname = "glBeginConditionalRenderNVX");
 			if (GL_ISAVAILABLE(glBeginConditionalRenderNVX))
 			nfglBeginConditionalRenderNVX(nf_params);
 			break;
 		case NFOSMESA_GLBEGINFRAGMENTSHADERATI:
-			D(funcname = "glBeginFragmentShaderATI");
 			if (GL_ISAVAILABLE(glBeginFragmentShaderATI))
 			nfglBeginFragmentShaderATI(nf_params);
 			break;
 		case NFOSMESA_GLBEGINOCCLUSIONQUERYNV:
-			D(funcname = "glBeginOcclusionQueryNV");
 			if (GL_ISAVAILABLE(glBeginOcclusionQueryNV))
 			nfglBeginOcclusionQueryNV(nf_params);
 			break;
 		case NFOSMESA_GLBEGINPERFMONITORAMD:
-			D(funcname = "glBeginPerfMonitorAMD");
 			if (GL_ISAVAILABLE(glBeginPerfMonitorAMD))
 			nfglBeginPerfMonitorAMD(nf_params);
 			break;
 		case NFOSMESA_GLBEGINPERFQUERYINTEL:
-			D(funcname = "glBeginPerfQueryINTEL");
 			if (GL_ISAVAILABLE(glBeginPerfQueryINTEL))
 			nfglBeginPerfQueryINTEL(nf_params);
 			break;
 		case NFOSMESA_GLBEGINQUERY:
-			D(funcname = "glBeginQuery");
 			if (GL_ISAVAILABLE(glBeginQuery))
 			nfglBeginQuery(nf_params);
 			break;
 		case NFOSMESA_GLBEGINQUERYARB:
-			D(funcname = "glBeginQueryARB");
 			if (GL_ISAVAILABLE(glBeginQueryARB))
 			nfglBeginQueryARB(nf_params);
 			break;
 		case NFOSMESA_GLBEGINQUERYINDEXED:
-			D(funcname = "glBeginQueryIndexed");
 			if (GL_ISAVAILABLE(glBeginQueryIndexed))
 			nfglBeginQueryIndexed(nf_params);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACK:
-			D(funcname = "glBeginTransformFeedback");
 			if (GL_ISAVAILABLE(glBeginTransformFeedback))
 			nfglBeginTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACKEXT:
-			D(funcname = "glBeginTransformFeedbackEXT");
 			if (GL_ISAVAILABLE(glBeginTransformFeedbackEXT))
 			nfglBeginTransformFeedbackEXT(nf_params);
 			break;
 		case NFOSMESA_GLBEGINTRANSFORMFEEDBACKNV:
-			D(funcname = "glBeginTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glBeginTransformFeedbackNV))
 			nfglBeginTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLBEGINVERTEXSHADEREXT:
-			D(funcname = "glBeginVertexShaderEXT");
 			if (GL_ISAVAILABLE(glBeginVertexShaderEXT))
 			nfglBeginVertexShaderEXT(nf_params);
 			break;
 		case NFOSMESA_GLBEGINVIDEOCAPTURENV:
-			D(funcname = "glBeginVideoCaptureNV");
 			if (GL_ISAVAILABLE(glBeginVideoCaptureNV))
 			nfglBeginVideoCaptureNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATION:
-			D(funcname = "glBindAttribLocation");
 			if (GL_ISAVAILABLE(glBindAttribLocation))
 			nfglBindAttribLocation(nf_params);
 			break;
 		case NFOSMESA_GLBINDATTRIBLOCATIONARB:
-			D(funcname = "glBindAttribLocationARB");
 			if (GL_ISAVAILABLE(glBindAttribLocationARB))
 			nfglBindAttribLocationARB(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFER:
-			D(funcname = "glBindBuffer");
 			if (GL_ISAVAILABLE(glBindBuffer))
 			nfglBindBuffer(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERARB:
-			D(funcname = "glBindBufferARB");
 			if (GL_ISAVAILABLE(glBindBufferARB))
 			nfglBindBufferARB(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASE:
-			D(funcname = "glBindBufferBase");
 			if (GL_ISAVAILABLE(glBindBufferBase))
 			nfglBindBufferBase(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASEEXT:
-			D(funcname = "glBindBufferBaseEXT");
 			if (GL_ISAVAILABLE(glBindBufferBaseEXT))
 			nfglBindBufferBaseEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERBASENV:
-			D(funcname = "glBindBufferBaseNV");
 			if (GL_ISAVAILABLE(glBindBufferBaseNV))
 			nfglBindBufferBaseNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFEROFFSETEXT:
-			D(funcname = "glBindBufferOffsetEXT");
 			if (GL_ISAVAILABLE(glBindBufferOffsetEXT))
 			nfglBindBufferOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFEROFFSETNV:
-			D(funcname = "glBindBufferOffsetNV");
 			if (GL_ISAVAILABLE(glBindBufferOffsetNV))
 			nfglBindBufferOffsetNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGE:
-			D(funcname = "glBindBufferRange");
 			if (GL_ISAVAILABLE(glBindBufferRange))
 			nfglBindBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGEEXT:
-			D(funcname = "glBindBufferRangeEXT");
 			if (GL_ISAVAILABLE(glBindBufferRangeEXT))
 			nfglBindBufferRangeEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERRANGENV:
-			D(funcname = "glBindBufferRangeNV");
 			if (GL_ISAVAILABLE(glBindBufferRangeNV))
 			nfglBindBufferRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERSBASE:
-			D(funcname = "glBindBuffersBase");
 			if (GL_ISAVAILABLE(glBindBuffersBase))
 			nfglBindBuffersBase(nf_params);
 			break;
 		case NFOSMESA_GLBINDBUFFERSRANGE:
-			D(funcname = "glBindBuffersRange");
 			if (GL_ISAVAILABLE(glBindBuffersRange))
 			nfglBindBuffersRange(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATION:
-			D(funcname = "glBindFragDataLocation");
 			if (GL_ISAVAILABLE(glBindFragDataLocation))
 			nfglBindFragDataLocation(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONEXT:
-			D(funcname = "glBindFragDataLocationEXT");
 			if (GL_ISAVAILABLE(glBindFragDataLocationEXT))
 			nfglBindFragDataLocationEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAGDATALOCATIONINDEXED:
-			D(funcname = "glBindFragDataLocationIndexed");
 			if (GL_ISAVAILABLE(glBindFragDataLocationIndexed))
 			nfglBindFragDataLocationIndexed(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAGMENTSHADERATI:
-			D(funcname = "glBindFragmentShaderATI");
 			if (GL_ISAVAILABLE(glBindFragmentShaderATI))
 			nfglBindFragmentShaderATI(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAMEBUFFER:
-			D(funcname = "glBindFramebuffer");
 			if (GL_ISAVAILABLE(glBindFramebuffer))
 			nfglBindFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLBINDFRAMEBUFFEREXT:
-			D(funcname = "glBindFramebufferEXT");
 			if (GL_ISAVAILABLE(glBindFramebufferEXT))
 			nfglBindFramebufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTURE:
-			D(funcname = "glBindImageTexture");
 			if (GL_ISAVAILABLE(glBindImageTexture))
 			nfglBindImageTexture(nf_params);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTUREEXT:
-			D(funcname = "glBindImageTextureEXT");
 			if (GL_ISAVAILABLE(glBindImageTextureEXT))
 			nfglBindImageTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDIMAGETEXTURES:
-			D(funcname = "glBindImageTextures");
 			if (GL_ISAVAILABLE(glBindImageTextures))
 			nfglBindImageTextures(nf_params);
 			break;
 		case NFOSMESA_GLBINDLIGHTPARAMETEREXT:
-			D(funcname = "glBindLightParameterEXT");
 			if (GL_ISAVAILABLE(glBindLightParameterEXT))
 			ret = nfglBindLightParameterEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDMATERIALPARAMETEREXT:
-			D(funcname = "glBindMaterialParameterEXT");
 			if (GL_ISAVAILABLE(glBindMaterialParameterEXT))
 			ret = nfglBindMaterialParameterEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDMULTITEXTUREEXT:
-			D(funcname = "glBindMultiTextureEXT");
 			if (GL_ISAVAILABLE(glBindMultiTextureEXT))
 			nfglBindMultiTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDPARAMETEREXT:
-			D(funcname = "glBindParameterEXT");
 			if (GL_ISAVAILABLE(glBindParameterEXT))
 			ret = nfglBindParameterEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDPROGRAMARB:
-			D(funcname = "glBindProgramARB");
 			if (GL_ISAVAILABLE(glBindProgramARB))
 			nfglBindProgramARB(nf_params);
 			break;
 		case NFOSMESA_GLBINDPROGRAMNV:
-			D(funcname = "glBindProgramNV");
 			if (GL_ISAVAILABLE(glBindProgramNV))
 			nfglBindProgramNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDPROGRAMPIPELINE:
-			D(funcname = "glBindProgramPipeline");
 			if (GL_ISAVAILABLE(glBindProgramPipeline))
 			nfglBindProgramPipeline(nf_params);
 			break;
 		case NFOSMESA_GLBINDRENDERBUFFER:
-			D(funcname = "glBindRenderbuffer");
 			if (GL_ISAVAILABLE(glBindRenderbuffer))
 			nfglBindRenderbuffer(nf_params);
 			break;
 		case NFOSMESA_GLBINDRENDERBUFFEREXT:
-			D(funcname = "glBindRenderbufferEXT");
 			if (GL_ISAVAILABLE(glBindRenderbufferEXT))
 			nfglBindRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDSAMPLER:
-			D(funcname = "glBindSampler");
 			if (GL_ISAVAILABLE(glBindSampler))
 			nfglBindSampler(nf_params);
 			break;
 		case NFOSMESA_GLBINDSAMPLERS:
-			D(funcname = "glBindSamplers");
 			if (GL_ISAVAILABLE(glBindSamplers))
 			nfglBindSamplers(nf_params);
 			break;
 		case NFOSMESA_GLBINDSHADINGRATEIMAGENV:
-			D(funcname = "glBindShadingRateImageNV");
 			if (GL_ISAVAILABLE(glBindShadingRateImageNV))
 			nfglBindShadingRateImageNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXGENPARAMETEREXT:
-			D(funcname = "glBindTexGenParameterEXT");
 			if (GL_ISAVAILABLE(glBindTexGenParameterEXT))
 			ret = nfglBindTexGenParameterEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXTURE:
-			D(funcname = "glBindTexture");
 			if (GL_ISAVAILABLE(glBindTexture))
 			nfglBindTexture(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXTUREEXT:
-			D(funcname = "glBindTextureEXT");
 			if (GL_ISAVAILABLE(glBindTextureEXT))
 			nfglBindTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXTUREUNIT:
-			D(funcname = "glBindTextureUnit");
 			if (GL_ISAVAILABLE(glBindTextureUnit))
 			nfglBindTextureUnit(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXTUREUNITPARAMETEREXT:
-			D(funcname = "glBindTextureUnitParameterEXT");
 			if (GL_ISAVAILABLE(glBindTextureUnitParameterEXT))
 			ret = nfglBindTextureUnitParameterEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDTEXTURES:
-			D(funcname = "glBindTextures");
 			if (GL_ISAVAILABLE(glBindTextures))
 			nfglBindTextures(nf_params);
 			break;
 		case NFOSMESA_GLBINDTRANSFORMFEEDBACK:
-			D(funcname = "glBindTransformFeedback");
 			if (GL_ISAVAILABLE(glBindTransformFeedback))
 			nfglBindTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLBINDTRANSFORMFEEDBACKNV:
-			D(funcname = "glBindTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glBindTransformFeedbackNV))
 			nfglBindTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDVERTEXARRAY:
-			D(funcname = "glBindVertexArray");
 			if (GL_ISAVAILABLE(glBindVertexArray))
 			nfglBindVertexArray(nf_params);
 			break;
 		case NFOSMESA_GLBINDVERTEXARRAYAPPLE:
-			D(funcname = "glBindVertexArrayAPPLE");
 			if (GL_ISAVAILABLE(glBindVertexArrayAPPLE))
 			nfglBindVertexArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLBINDVERTEXBUFFER:
-			D(funcname = "glBindVertexBuffer");
 			if (GL_ISAVAILABLE(glBindVertexBuffer))
 			nfglBindVertexBuffer(nf_params);
 			break;
 		case NFOSMESA_GLBINDVERTEXBUFFERS:
-			D(funcname = "glBindVertexBuffers");
 			if (GL_ISAVAILABLE(glBindVertexBuffers))
 			nfglBindVertexBuffers(nf_params);
 			break;
 		case NFOSMESA_GLBINDVERTEXSHADEREXT:
-			D(funcname = "glBindVertexShaderEXT");
 			if (GL_ISAVAILABLE(glBindVertexShaderEXT))
 			nfglBindVertexShaderEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINDVIDEOCAPTURESTREAMBUFFERNV:
-			D(funcname = "glBindVideoCaptureStreamBufferNV");
 			if (GL_ISAVAILABLE(glBindVideoCaptureStreamBufferNV))
 			nfglBindVideoCaptureStreamBufferNV(nf_params);
 			break;
 		case NFOSMESA_GLBINDVIDEOCAPTURESTREAMTEXTURENV:
-			D(funcname = "glBindVideoCaptureStreamTextureNV");
 			if (GL_ISAVAILABLE(glBindVideoCaptureStreamTextureNV))
 			nfglBindVideoCaptureStreamTextureNV(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3BEXT:
-			D(funcname = "glBinormal3bEXT");
 			if (GL_ISAVAILABLE(glBinormal3bEXT))
 			nfglBinormal3bEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3BVEXT:
-			D(funcname = "glBinormal3bvEXT");
 			if (GL_ISAVAILABLE(glBinormal3bvEXT))
 			nfglBinormal3bvEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3DEXT:
-			D(funcname = "glBinormal3dEXT");
 			if (GL_ISAVAILABLE(glBinormal3dEXT))
 			nfglBinormal3dEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3DVEXT:
-			D(funcname = "glBinormal3dvEXT");
 			if (GL_ISAVAILABLE(glBinormal3dvEXT))
 			nfglBinormal3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3FEXT:
-			D(funcname = "glBinormal3fEXT");
 			if (GL_ISAVAILABLE(glBinormal3fEXT))
 			nfglBinormal3fEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3FVEXT:
-			D(funcname = "glBinormal3fvEXT");
 			if (GL_ISAVAILABLE(glBinormal3fvEXT))
 			nfglBinormal3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3IEXT:
-			D(funcname = "glBinormal3iEXT");
 			if (GL_ISAVAILABLE(glBinormal3iEXT))
 			nfglBinormal3iEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3IVEXT:
-			D(funcname = "glBinormal3ivEXT");
 			if (GL_ISAVAILABLE(glBinormal3ivEXT))
 			nfglBinormal3ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3SEXT:
-			D(funcname = "glBinormal3sEXT");
 			if (GL_ISAVAILABLE(glBinormal3sEXT))
 			nfglBinormal3sEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMAL3SVEXT:
-			D(funcname = "glBinormal3svEXT");
 			if (GL_ISAVAILABLE(glBinormal3svEXT))
 			nfglBinormal3svEXT(nf_params);
 			break;
 		case NFOSMESA_GLBINORMALPOINTEREXT:
-			D(funcname = "glBinormalPointerEXT");
 			if (GL_ISAVAILABLE(glBinormalPointerEXT))
 			nfglBinormalPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLBITMAP:
-			D(funcname = "glBitmap");
 			if (GL_ISAVAILABLE(glBitmap))
 			nfglBitmap(nf_params);
 			break;
 		case NFOSMESA_GLBITMAPXOES:
-			D(funcname = "glBitmapxOES");
 			if (GL_ISAVAILABLE(glBitmapxOES))
 			nfglBitmapxOES(nf_params);
 			break;
 		case NFOSMESA_GLBLENDBARRIERKHR:
-			D(funcname = "glBlendBarrierKHR");
 			if (GL_ISAVAILABLE(glBlendBarrierKHR))
 			nfglBlendBarrierKHR(nf_params);
 			break;
 		case NFOSMESA_GLBLENDBARRIERNV:
-			D(funcname = "glBlendBarrierNV");
 			if (GL_ISAVAILABLE(glBlendBarrierNV))
 			nfglBlendBarrierNV(nf_params);
 			break;
 		case NFOSMESA_GLBLENDCOLOR:
-			D(funcname = "glBlendColor");
 			if (GL_ISAVAILABLE(glBlendColor))
 			nfglBlendColor(nf_params);
 			break;
 		case NFOSMESA_GLBLENDCOLOREXT:
-			D(funcname = "glBlendColorEXT");
 			if (GL_ISAVAILABLE(glBlendColorEXT))
 			nfglBlendColorEXT(nf_params);
 			break;
 		case NFOSMESA_GLBLENDCOLORXOES:
-			D(funcname = "glBlendColorxOES");
 			if (GL_ISAVAILABLE(glBlendColorxOES))
 			nfglBlendColorxOES(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATION:
-			D(funcname = "glBlendEquation");
 			if (GL_ISAVAILABLE(glBlendEquation))
 			nfglBlendEquation(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONEXT:
-			D(funcname = "glBlendEquationEXT");
 			if (GL_ISAVAILABLE(glBlendEquationEXT))
 			nfglBlendEquationEXT(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONINDEXEDAMD:
-			D(funcname = "glBlendEquationIndexedAMD");
 			if (GL_ISAVAILABLE(glBlendEquationIndexedAMD))
 			nfglBlendEquationIndexedAMD(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATE:
-			D(funcname = "glBlendEquationSeparate");
 			if (GL_ISAVAILABLE(glBlendEquationSeparate))
 			nfglBlendEquationSeparate(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEATI:
-			D(funcname = "glBlendEquationSeparateATI");
 			if (GL_ISAVAILABLE(glBlendEquationSeparateATI))
 			nfglBlendEquationSeparateATI(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEEXT:
-			D(funcname = "glBlendEquationSeparateEXT");
 			if (GL_ISAVAILABLE(glBlendEquationSeparateEXT))
 			nfglBlendEquationSeparateEXT(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEINDEXEDAMD:
-			D(funcname = "glBlendEquationSeparateIndexedAMD");
 			if (GL_ISAVAILABLE(glBlendEquationSeparateIndexedAMD))
 			nfglBlendEquationSeparateIndexedAMD(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEI:
-			D(funcname = "glBlendEquationSeparatei");
 			if (GL_ISAVAILABLE(glBlendEquationSeparatei))
 			nfglBlendEquationSeparatei(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONSEPARATEIARB:
-			D(funcname = "glBlendEquationSeparateiARB");
 			if (GL_ISAVAILABLE(glBlendEquationSeparateiARB))
 			nfglBlendEquationSeparateiARB(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONI:
-			D(funcname = "glBlendEquationi");
 			if (GL_ISAVAILABLE(glBlendEquationi))
 			nfglBlendEquationi(nf_params);
 			break;
 		case NFOSMESA_GLBLENDEQUATIONIARB:
-			D(funcname = "glBlendEquationiARB");
 			if (GL_ISAVAILABLE(glBlendEquationiARB))
 			nfglBlendEquationiARB(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNC:
-			D(funcname = "glBlendFunc");
 			if (GL_ISAVAILABLE(glBlendFunc))
 			nfglBlendFunc(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCINDEXEDAMD:
-			D(funcname = "glBlendFuncIndexedAMD");
 			if (GL_ISAVAILABLE(glBlendFuncIndexedAMD))
 			nfglBlendFuncIndexedAMD(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATE:
-			D(funcname = "glBlendFuncSeparate");
 			if (GL_ISAVAILABLE(glBlendFuncSeparate))
 			nfglBlendFuncSeparate(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEEXT:
-			D(funcname = "glBlendFuncSeparateEXT");
 			if (GL_ISAVAILABLE(glBlendFuncSeparateEXT))
 			nfglBlendFuncSeparateEXT(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEINGR:
-			D(funcname = "glBlendFuncSeparateINGR");
 			if (GL_ISAVAILABLE(glBlendFuncSeparateINGR))
 			nfglBlendFuncSeparateINGR(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEINDEXEDAMD:
-			D(funcname = "glBlendFuncSeparateIndexedAMD");
 			if (GL_ISAVAILABLE(glBlendFuncSeparateIndexedAMD))
 			nfglBlendFuncSeparateIndexedAMD(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEI:
-			D(funcname = "glBlendFuncSeparatei");
 			if (GL_ISAVAILABLE(glBlendFuncSeparatei))
 			nfglBlendFuncSeparatei(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCSEPARATEIARB:
-			D(funcname = "glBlendFuncSeparateiARB");
 			if (GL_ISAVAILABLE(glBlendFuncSeparateiARB))
 			nfglBlendFuncSeparateiARB(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCI:
-			D(funcname = "glBlendFunci");
 			if (GL_ISAVAILABLE(glBlendFunci))
 			nfglBlendFunci(nf_params);
 			break;
 		case NFOSMESA_GLBLENDFUNCIARB:
-			D(funcname = "glBlendFunciARB");
 			if (GL_ISAVAILABLE(glBlendFunciARB))
 			nfglBlendFunciARB(nf_params);
 			break;
 		case NFOSMESA_GLBLENDPARAMETERINV:
-			D(funcname = "glBlendParameteriNV");
 			if (GL_ISAVAILABLE(glBlendParameteriNV))
 			nfglBlendParameteriNV(nf_params);
 			break;
 		case NFOSMESA_GLBLITFRAMEBUFFER:
-			D(funcname = "glBlitFramebuffer");
 			if (GL_ISAVAILABLE(glBlitFramebuffer))
 			nfglBlitFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLBLITFRAMEBUFFEREXT:
-			D(funcname = "glBlitFramebufferEXT");
 			if (GL_ISAVAILABLE(glBlitFramebufferEXT))
 			nfglBlitFramebufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLBLITNAMEDFRAMEBUFFER:
-			D(funcname = "glBlitNamedFramebuffer");
 			if (GL_ISAVAILABLE(glBlitNamedFramebuffer))
 			nfglBlitNamedFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERADDRESSRANGENV:
-			D(funcname = "glBufferAddressRangeNV");
 			if (GL_ISAVAILABLE(glBufferAddressRangeNV))
 			nfglBufferAddressRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERATTACHMEMORYNV:
-			D(funcname = "glBufferAttachMemoryNV");
 			if (GL_ISAVAILABLE(glBufferAttachMemoryNV))
 			nfglBufferAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERDATA:
-			D(funcname = "glBufferData");
 			if (GL_ISAVAILABLE(glBufferData))
 			nfglBufferData(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERDATAARB:
-			D(funcname = "glBufferDataARB");
 			if (GL_ISAVAILABLE(glBufferDataARB))
 			nfglBufferDataARB(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERPAGECOMMITMENTARB:
-			D(funcname = "glBufferPageCommitmentARB");
 			if (GL_ISAVAILABLE(glBufferPageCommitmentARB))
 			nfglBufferPageCommitmentARB(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERPARAMETERIAPPLE:
-			D(funcname = "glBufferParameteriAPPLE");
 			if (GL_ISAVAILABLE(glBufferParameteriAPPLE))
 			nfglBufferParameteriAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERSTORAGE:
-			D(funcname = "glBufferStorage");
 			if (GL_ISAVAILABLE(glBufferStorage))
 			nfglBufferStorage(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERSTORAGEEXTERNALEXT:
-			D(funcname = "glBufferStorageExternalEXT");
 			if (GL_ISAVAILABLE(glBufferStorageExternalEXT))
 			nfglBufferStorageExternalEXT(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERSTORAGEMEMEXT:
-			D(funcname = "glBufferStorageMemEXT");
 			if (GL_ISAVAILABLE(glBufferStorageMemEXT))
 			nfglBufferStorageMemEXT(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATA:
-			D(funcname = "glBufferSubData");
 			if (GL_ISAVAILABLE(glBufferSubData))
 			nfglBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERSUBDATAARB:
-			D(funcname = "glBufferSubDataARB");
 			if (GL_ISAVAILABLE(glBufferSubDataARB))
 			nfglBufferSubDataARB(nf_params);
 			break;
 		case NFOSMESA_GLCALLCOMMANDLISTNV:
-			D(funcname = "glCallCommandListNV");
 			if (GL_ISAVAILABLE(glCallCommandListNV))
 			nfglCallCommandListNV(nf_params);
 			break;
 		case NFOSMESA_GLCALLLIST:
-			D(funcname = "glCallList");
 			if (GL_ISAVAILABLE(glCallList))
 			nfglCallList(nf_params);
 			break;
 		case NFOSMESA_GLCALLLISTS:
-			D(funcname = "glCallLists");
 			if (GL_ISAVAILABLE(glCallLists))
 			nfglCallLists(nf_params);
 			break;
 		case NFOSMESA_GLCHECKFRAMEBUFFERSTATUS:
-			D(funcname = "glCheckFramebufferStatus");
 			if (GL_ISAVAILABLE(glCheckFramebufferStatus))
 			ret = nfglCheckFramebufferStatus(nf_params);
 			break;
 		case NFOSMESA_GLCHECKFRAMEBUFFERSTATUSEXT:
-			D(funcname = "glCheckFramebufferStatusEXT");
 			if (GL_ISAVAILABLE(glCheckFramebufferStatusEXT))
 			ret = nfglCheckFramebufferStatusEXT(nf_params);
 			break;
 		case NFOSMESA_GLCHECKNAMEDFRAMEBUFFERSTATUS:
-			D(funcname = "glCheckNamedFramebufferStatus");
 			if (GL_ISAVAILABLE(glCheckNamedFramebufferStatus))
 			ret = nfglCheckNamedFramebufferStatus(nf_params);
 			break;
 		case NFOSMESA_GLCHECKNAMEDFRAMEBUFFERSTATUSEXT:
-			D(funcname = "glCheckNamedFramebufferStatusEXT");
 			if (GL_ISAVAILABLE(glCheckNamedFramebufferStatusEXT))
 			ret = nfglCheckNamedFramebufferStatusEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLAMPCOLOR:
-			D(funcname = "glClampColor");
 			if (GL_ISAVAILABLE(glClampColor))
 			nfglClampColor(nf_params);
 			break;
 		case NFOSMESA_GLCLAMPCOLORARB:
-			D(funcname = "glClampColorARB");
 			if (GL_ISAVAILABLE(glClampColorARB))
 			nfglClampColorARB(nf_params);
 			break;
 		case NFOSMESA_GLCLEAR:
-			D(funcname = "glClear");
 			if (GL_ISAVAILABLE(glClear))
 			nfglClear(nf_params);
 			break;
 		case NFOSMESA_GLCLEARACCUM:
-			D(funcname = "glClearAccum");
 			if (GL_ISAVAILABLE(glClearAccum))
 			nfglClearAccum(nf_params);
 			break;
 		case NFOSMESA_GLCLEARACCUMXOES:
-			D(funcname = "glClearAccumxOES");
 			if (GL_ISAVAILABLE(glClearAccumxOES))
 			nfglClearAccumxOES(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERDATA:
-			D(funcname = "glClearBufferData");
 			if (GL_ISAVAILABLE(glClearBufferData))
 			nfglClearBufferData(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERSUBDATA:
-			D(funcname = "glClearBufferSubData");
 			if (GL_ISAVAILABLE(glClearBufferSubData))
 			nfglClearBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERFI:
-			D(funcname = "glClearBufferfi");
 			if (GL_ISAVAILABLE(glClearBufferfi))
 			nfglClearBufferfi(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERFV:
-			D(funcname = "glClearBufferfv");
 			if (GL_ISAVAILABLE(glClearBufferfv))
 			nfglClearBufferfv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERIV:
-			D(funcname = "glClearBufferiv");
 			if (GL_ISAVAILABLE(glClearBufferiv))
 			nfglClearBufferiv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARBUFFERUIV:
-			D(funcname = "glClearBufferuiv");
 			if (GL_ISAVAILABLE(glClearBufferuiv))
 			nfglClearBufferuiv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARCOLOR:
-			D(funcname = "glClearColor");
 			if (GL_ISAVAILABLE(glClearColor))
 			nfglClearColor(nf_params);
 			break;
 		case NFOSMESA_GLCLEARCOLORIIEXT:
-			D(funcname = "glClearColorIiEXT");
 			if (GL_ISAVAILABLE(glClearColorIiEXT))
 			nfglClearColorIiEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLEARCOLORIUIEXT:
-			D(funcname = "glClearColorIuiEXT");
 			if (GL_ISAVAILABLE(glClearColorIuiEXT))
 			nfglClearColorIuiEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLEARCOLORXOES:
-			D(funcname = "glClearColorxOES");
 			if (GL_ISAVAILABLE(glClearColorxOES))
 			nfglClearColorxOES(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEBUGLOGMESA:
-			D(funcname = "glClearDebugLogMESA");
 			if (GL_ISAVAILABLE(glClearDebugLogMESA))
 			nfglClearDebugLogMESA(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEPTH:
-			D(funcname = "glClearDepth");
 			if (GL_ISAVAILABLE(glClearDepth))
 			nfglClearDepth(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEPTHDNV:
-			D(funcname = "glClearDepthdNV");
 			if (GL_ISAVAILABLE(glClearDepthdNV))
 			nfglClearDepthdNV(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEPTHF:
-			D(funcname = "glClearDepthf");
 			if (GL_ISAVAILABLE(glClearDepthf))
 			nfglClearDepthf(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEPTHFOES:
-			D(funcname = "glClearDepthfOES");
 			if (GL_ISAVAILABLE(glClearDepthfOES))
 			nfglClearDepthfOES(nf_params);
 			break;
 		case NFOSMESA_GLCLEARDEPTHXOES:
-			D(funcname = "glClearDepthxOES");
 			if (GL_ISAVAILABLE(glClearDepthxOES))
 			nfglClearDepthxOES(nf_params);
 			break;
 		case NFOSMESA_GLCLEARINDEX:
-			D(funcname = "glClearIndex");
 			if (GL_ISAVAILABLE(glClearIndex))
 			nfglClearIndex(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERDATA:
-			D(funcname = "glClearNamedBufferData");
 			if (GL_ISAVAILABLE(glClearNamedBufferData))
 			nfglClearNamedBufferData(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERDATAEXT:
-			D(funcname = "glClearNamedBufferDataEXT");
 			if (GL_ISAVAILABLE(glClearNamedBufferDataEXT))
 			nfglClearNamedBufferDataEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERSUBDATA:
-			D(funcname = "glClearNamedBufferSubData");
 			if (GL_ISAVAILABLE(glClearNamedBufferSubData))
 			nfglClearNamedBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDBUFFERSUBDATAEXT:
-			D(funcname = "glClearNamedBufferSubDataEXT");
 			if (GL_ISAVAILABLE(glClearNamedBufferSubDataEXT))
 			nfglClearNamedBufferSubDataEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFI:
-			D(funcname = "glClearNamedFramebufferfi");
 			if (GL_ISAVAILABLE(glClearNamedFramebufferfi))
 			nfglClearNamedFramebufferfi(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERFV:
-			D(funcname = "glClearNamedFramebufferfv");
 			if (GL_ISAVAILABLE(glClearNamedFramebufferfv))
 			nfglClearNamedFramebufferfv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERIV:
-			D(funcname = "glClearNamedFramebufferiv");
 			if (GL_ISAVAILABLE(glClearNamedFramebufferiv))
 			nfglClearNamedFramebufferiv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARNAMEDFRAMEBUFFERUIV:
-			D(funcname = "glClearNamedFramebufferuiv");
 			if (GL_ISAVAILABLE(glClearNamedFramebufferuiv))
 			nfglClearNamedFramebufferuiv(nf_params);
 			break;
 		case NFOSMESA_GLCLEARSTENCIL:
-			D(funcname = "glClearStencil");
 			if (GL_ISAVAILABLE(glClearStencil))
 			nfglClearStencil(nf_params);
 			break;
 		case NFOSMESA_GLCLEARTEXIMAGE:
-			D(funcname = "glClearTexImage");
 			if (GL_ISAVAILABLE(glClearTexImage))
 			nfglClearTexImage(nf_params);
 			break;
 		case NFOSMESA_GLCLEARTEXSUBIMAGE:
-			D(funcname = "glClearTexSubImage");
 			if (GL_ISAVAILABLE(glClearTexSubImage))
 			nfglClearTexSubImage(nf_params);
 			break;
 		case NFOSMESA_GLCLIENTACTIVETEXTURE:
-			D(funcname = "glClientActiveTexture");
 			if (GL_ISAVAILABLE(glClientActiveTexture))
 			nfglClientActiveTexture(nf_params);
 			break;
 		case NFOSMESA_GLCLIENTACTIVETEXTUREARB:
-			D(funcname = "glClientActiveTextureARB");
 			if (GL_ISAVAILABLE(glClientActiveTextureARB))
 			nfglClientActiveTextureARB(nf_params);
 			break;
 		case NFOSMESA_GLCLIENTACTIVEVERTEXSTREAMATI:
-			D(funcname = "glClientActiveVertexStreamATI");
 			if (GL_ISAVAILABLE(glClientActiveVertexStreamATI))
 			nfglClientActiveVertexStreamATI(nf_params);
 			break;
 		case NFOSMESA_GLCLIENTATTRIBDEFAULTEXT:
-			D(funcname = "glClientAttribDefaultEXT");
 			if (GL_ISAVAILABLE(glClientAttribDefaultEXT))
 			nfglClientAttribDefaultEXT(nf_params);
 			break;
 		case NFOSMESA_GLCLIENTWAITSYNC:
-			D(funcname = "glClientWaitSync");
 			if (GL_ISAVAILABLE(glClientWaitSync))
 			ret = nfglClientWaitSync(nf_params);
 			break;
 		case NFOSMESA_GLCLIPCONTROL:
-			D(funcname = "glClipControl");
 			if (GL_ISAVAILABLE(glClipControl))
 			nfglClipControl(nf_params);
 			break;
 		case NFOSMESA_GLCLIPPLANE:
-			D(funcname = "glClipPlane");
 			if (GL_ISAVAILABLE(glClipPlane))
 			nfglClipPlane(nf_params);
 			break;
 		case NFOSMESA_GLCLIPPLANEFOES:
-			D(funcname = "glClipPlanefOES");
 			if (GL_ISAVAILABLE(glClipPlanefOES))
 			nfglClipPlanefOES(nf_params);
 			break;
 		case NFOSMESA_GLCLIPPLANEXOES:
-			D(funcname = "glClipPlanexOES");
 			if (GL_ISAVAILABLE(glClipPlanexOES))
 			nfglClipPlanexOES(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3B:
-			D(funcname = "glColor3b");
 			if (GL_ISAVAILABLE(glColor3b))
 			nfglColor3b(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3BV:
-			D(funcname = "glColor3bv");
 			if (GL_ISAVAILABLE(glColor3bv))
 			nfglColor3bv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3D:
-			D(funcname = "glColor3d");
 			if (GL_ISAVAILABLE(glColor3d))
 			nfglColor3d(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3DV:
-			D(funcname = "glColor3dv");
 			if (GL_ISAVAILABLE(glColor3dv))
 			nfglColor3dv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3F:
-			D(funcname = "glColor3f");
 			if (GL_ISAVAILABLE(glColor3f))
 			nfglColor3f(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3FVERTEX3FSUN:
-			D(funcname = "glColor3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glColor3fVertex3fSUN))
 			nfglColor3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3FVERTEX3FVSUN:
-			D(funcname = "glColor3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glColor3fVertex3fvSUN))
 			nfglColor3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3FV:
-			D(funcname = "glColor3fv");
 			if (GL_ISAVAILABLE(glColor3fv))
 			nfglColor3fv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3HNV:
-			D(funcname = "glColor3hNV");
 			if (GL_ISAVAILABLE(glColor3hNV))
 			nfglColor3hNV(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3HVNV:
-			D(funcname = "glColor3hvNV");
 			if (GL_ISAVAILABLE(glColor3hvNV))
 			nfglColor3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3I:
-			D(funcname = "glColor3i");
 			if (GL_ISAVAILABLE(glColor3i))
 			nfglColor3i(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3IV:
-			D(funcname = "glColor3iv");
 			if (GL_ISAVAILABLE(glColor3iv))
 			nfglColor3iv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3S:
-			D(funcname = "glColor3s");
 			if (GL_ISAVAILABLE(glColor3s))
 			nfglColor3s(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3SV:
-			D(funcname = "glColor3sv");
 			if (GL_ISAVAILABLE(glColor3sv))
 			nfglColor3sv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3UB:
-			D(funcname = "glColor3ub");
 			if (GL_ISAVAILABLE(glColor3ub))
 			nfglColor3ub(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3UBV:
-			D(funcname = "glColor3ubv");
 			if (GL_ISAVAILABLE(glColor3ubv))
 			nfglColor3ubv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3UI:
-			D(funcname = "glColor3ui");
 			if (GL_ISAVAILABLE(glColor3ui))
 			nfglColor3ui(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3UIV:
-			D(funcname = "glColor3uiv");
 			if (GL_ISAVAILABLE(glColor3uiv))
 			nfglColor3uiv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3US:
-			D(funcname = "glColor3us");
 			if (GL_ISAVAILABLE(glColor3us))
 			nfglColor3us(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3USV:
-			D(funcname = "glColor3usv");
 			if (GL_ISAVAILABLE(glColor3usv))
 			nfglColor3usv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3XOES:
-			D(funcname = "glColor3xOES");
 			if (GL_ISAVAILABLE(glColor3xOES))
 			nfglColor3xOES(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR3XVOES:
-			D(funcname = "glColor3xvOES");
 			if (GL_ISAVAILABLE(glColor3xvOES))
 			nfglColor3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4B:
-			D(funcname = "glColor4b");
 			if (GL_ISAVAILABLE(glColor4b))
 			nfglColor4b(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4BV:
-			D(funcname = "glColor4bv");
 			if (GL_ISAVAILABLE(glColor4bv))
 			nfglColor4bv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4D:
-			D(funcname = "glColor4d");
 			if (GL_ISAVAILABLE(glColor4d))
 			nfglColor4d(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4DV:
-			D(funcname = "glColor4dv");
 			if (GL_ISAVAILABLE(glColor4dv))
 			nfglColor4dv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4F:
-			D(funcname = "glColor4f");
 			if (GL_ISAVAILABLE(glColor4f))
 			nfglColor4f(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glColor4fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glColor4fNormal3fVertex3fSUN))
 			nfglColor4fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glColor4fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glColor4fNormal3fVertex3fvSUN))
 			nfglColor4fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4FV:
-			D(funcname = "glColor4fv");
 			if (GL_ISAVAILABLE(glColor4fv))
 			nfglColor4fv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4HNV:
-			D(funcname = "glColor4hNV");
 			if (GL_ISAVAILABLE(glColor4hNV))
 			nfglColor4hNV(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4HVNV:
-			D(funcname = "glColor4hvNV");
 			if (GL_ISAVAILABLE(glColor4hvNV))
 			nfglColor4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4I:
-			D(funcname = "glColor4i");
 			if (GL_ISAVAILABLE(glColor4i))
 			nfglColor4i(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4IV:
-			D(funcname = "glColor4iv");
 			if (GL_ISAVAILABLE(glColor4iv))
 			nfglColor4iv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4S:
-			D(funcname = "glColor4s");
 			if (GL_ISAVAILABLE(glColor4s))
 			nfglColor4s(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4SV:
-			D(funcname = "glColor4sv");
 			if (GL_ISAVAILABLE(glColor4sv))
 			nfglColor4sv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UB:
-			D(funcname = "glColor4ub");
 			if (GL_ISAVAILABLE(glColor4ub))
 			nfglColor4ub(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX2FSUN:
-			D(funcname = "glColor4ubVertex2fSUN");
 			if (GL_ISAVAILABLE(glColor4ubVertex2fSUN))
 			nfglColor4ubVertex2fSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX2FVSUN:
-			D(funcname = "glColor4ubVertex2fvSUN");
 			if (GL_ISAVAILABLE(glColor4ubVertex2fvSUN))
 			nfglColor4ubVertex2fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FSUN:
-			D(funcname = "glColor4ubVertex3fSUN");
 			if (GL_ISAVAILABLE(glColor4ubVertex3fSUN))
 			nfglColor4ubVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UBVERTEX3FVSUN:
-			D(funcname = "glColor4ubVertex3fvSUN");
 			if (GL_ISAVAILABLE(glColor4ubVertex3fvSUN))
 			nfglColor4ubVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UBV:
-			D(funcname = "glColor4ubv");
 			if (GL_ISAVAILABLE(glColor4ubv))
 			nfglColor4ubv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UI:
-			D(funcname = "glColor4ui");
 			if (GL_ISAVAILABLE(glColor4ui))
 			nfglColor4ui(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4UIV:
-			D(funcname = "glColor4uiv");
 			if (GL_ISAVAILABLE(glColor4uiv))
 			nfglColor4uiv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4US:
-			D(funcname = "glColor4us");
 			if (GL_ISAVAILABLE(glColor4us))
 			nfglColor4us(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4USV:
-			D(funcname = "glColor4usv");
 			if (GL_ISAVAILABLE(glColor4usv))
 			nfglColor4usv(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4XOES:
-			D(funcname = "glColor4xOES");
 			if (GL_ISAVAILABLE(glColor4xOES))
 			nfglColor4xOES(nf_params);
 			break;
 		case NFOSMESA_GLCOLOR4XVOES:
-			D(funcname = "glColor4xvOES");
 			if (GL_ISAVAILABLE(glColor4xvOES))
 			nfglColor4xvOES(nf_params);
 			break;
 		case NFOSMESA_GLCOLORFORMATNV:
-			D(funcname = "glColorFormatNV");
 			if (GL_ISAVAILABLE(glColorFormatNV))
 			nfglColorFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP1ATI:
-			D(funcname = "glColorFragmentOp1ATI");
 			if (GL_ISAVAILABLE(glColorFragmentOp1ATI))
 			nfglColorFragmentOp1ATI(nf_params);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP2ATI:
-			D(funcname = "glColorFragmentOp2ATI");
 			if (GL_ISAVAILABLE(glColorFragmentOp2ATI))
 			nfglColorFragmentOp2ATI(nf_params);
 			break;
 		case NFOSMESA_GLCOLORFRAGMENTOP3ATI:
-			D(funcname = "glColorFragmentOp3ATI");
 			if (GL_ISAVAILABLE(glColorFragmentOp3ATI))
 			nfglColorFragmentOp3ATI(nf_params);
 			break;
 		case NFOSMESA_GLCOLORMASK:
-			D(funcname = "glColorMask");
 			if (GL_ISAVAILABLE(glColorMask))
 			nfglColorMask(nf_params);
 			break;
 		case NFOSMESA_GLCOLORMASKINDEXEDEXT:
-			D(funcname = "glColorMaskIndexedEXT");
 			if (GL_ISAVAILABLE(glColorMaskIndexedEXT))
 			nfglColorMaskIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOLORMASKI:
-			D(funcname = "glColorMaski");
 			if (GL_ISAVAILABLE(glColorMaski))
 			nfglColorMaski(nf_params);
 			break;
 		case NFOSMESA_GLCOLORMATERIAL:
-			D(funcname = "glColorMaterial");
 			if (GL_ISAVAILABLE(glColorMaterial))
 			nfglColorMaterial(nf_params);
 			break;
 		case NFOSMESA_GLCOLORP3UI:
-			D(funcname = "glColorP3ui");
 			if (GL_ISAVAILABLE(glColorP3ui))
 			nfglColorP3ui(nf_params);
 			break;
 		case NFOSMESA_GLCOLORP3UIV:
-			D(funcname = "glColorP3uiv");
 			if (GL_ISAVAILABLE(glColorP3uiv))
 			nfglColorP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLCOLORP4UI:
-			D(funcname = "glColorP4ui");
 			if (GL_ISAVAILABLE(glColorP4ui))
 			nfglColorP4ui(nf_params);
 			break;
 		case NFOSMESA_GLCOLORP4UIV:
-			D(funcname = "glColorP4uiv");
 			if (GL_ISAVAILABLE(glColorP4uiv))
 			nfglColorP4uiv(nf_params);
 			break;
 		case NFOSMESA_GLCOLORPOINTER:
-			D(funcname = "glColorPointer");
 			if (GL_ISAVAILABLE(glColorPointer))
 			nfglColorPointer(nf_params);
 			break;
 		case NFOSMESA_GLCOLORPOINTEREXT:
-			D(funcname = "glColorPointerEXT");
 			if (GL_ISAVAILABLE(glColorPointerEXT))
 			nfglColorPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOLORPOINTERLISTIBM:
-			D(funcname = "glColorPointerListIBM");
 			if (GL_ISAVAILABLE(glColorPointerListIBM))
 			nfglColorPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLCOLORPOINTERVINTEL:
-			D(funcname = "glColorPointervINTEL");
 			if (GL_ISAVAILABLE(glColorPointervINTEL))
 			nfglColorPointervINTEL(nf_params);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLE:
-			D(funcname = "glColorSubTable");
 			if (GL_ISAVAILABLE(glColorSubTable))
 			nfglColorSubTable(nf_params);
 			break;
 		case NFOSMESA_GLCOLORSUBTABLEEXT:
-			D(funcname = "glColorSubTableEXT");
 			if (GL_ISAVAILABLE(glColorSubTableEXT))
 			nfglColorSubTableEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLE:
-			D(funcname = "glColorTable");
 			if (GL_ISAVAILABLE(glColorTable))
 			nfglColorTable(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLEEXT:
-			D(funcname = "glColorTableEXT");
 			if (GL_ISAVAILABLE(glColorTableEXT))
 			nfglColorTableEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFV:
-			D(funcname = "glColorTableParameterfv");
 			if (GL_ISAVAILABLE(glColorTableParameterfv))
 			nfglColorTableParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERFVSGI:
-			D(funcname = "glColorTableParameterfvSGI");
 			if (GL_ISAVAILABLE(glColorTableParameterfvSGI))
 			nfglColorTableParameterfvSGI(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIV:
-			D(funcname = "glColorTableParameteriv");
 			if (GL_ISAVAILABLE(glColorTableParameteriv))
 			nfglColorTableParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLEPARAMETERIVSGI:
-			D(funcname = "glColorTableParameterivSGI");
 			if (GL_ISAVAILABLE(glColorTableParameterivSGI))
 			nfglColorTableParameterivSGI(nf_params);
 			break;
 		case NFOSMESA_GLCOLORTABLESGI:
-			D(funcname = "glColorTableSGI");
 			if (GL_ISAVAILABLE(glColorTableSGI))
 			nfglColorTableSGI(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERINPUTNV:
-			D(funcname = "glCombinerInputNV");
 			if (GL_ISAVAILABLE(glCombinerInputNV))
 			nfglCombinerInputNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINEROUTPUTNV:
-			D(funcname = "glCombinerOutputNV");
 			if (GL_ISAVAILABLE(glCombinerOutputNV))
 			nfglCombinerOutputNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERFNV:
-			D(funcname = "glCombinerParameterfNV");
 			if (GL_ISAVAILABLE(glCombinerParameterfNV))
 			nfglCombinerParameterfNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERFVNV:
-			D(funcname = "glCombinerParameterfvNV");
 			if (GL_ISAVAILABLE(glCombinerParameterfvNV))
 			nfglCombinerParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERINV:
-			D(funcname = "glCombinerParameteriNV");
 			if (GL_ISAVAILABLE(glCombinerParameteriNV))
 			nfglCombinerParameteriNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERPARAMETERIVNV:
-			D(funcname = "glCombinerParameterivNV");
 			if (GL_ISAVAILABLE(glCombinerParameterivNV))
 			nfglCombinerParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMBINERSTAGEPARAMETERFVNV:
-			D(funcname = "glCombinerStageParameterfvNV");
 			if (GL_ISAVAILABLE(glCombinerStageParameterfvNV))
 			nfglCombinerStageParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMMANDLISTSEGMENTSNV:
-			D(funcname = "glCommandListSegmentsNV");
 			if (GL_ISAVAILABLE(glCommandListSegmentsNV))
 			nfglCommandListSegmentsNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMPILECOMMANDLISTNV:
-			D(funcname = "glCompileCommandListNV");
 			if (GL_ISAVAILABLE(glCompileCommandListNV))
 			nfglCompileCommandListNV(nf_params);
 			break;
 		case NFOSMESA_GLCOMPILESHADER:
-			D(funcname = "glCompileShader");
 			if (GL_ISAVAILABLE(glCompileShader))
 			nfglCompileShader(nf_params);
 			break;
 		case NFOSMESA_GLCOMPILESHADERARB:
-			D(funcname = "glCompileShaderARB");
 			if (GL_ISAVAILABLE(glCompileShaderARB))
 			nfglCompileShaderARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPILESHADERINCLUDEARB:
-			D(funcname = "glCompileShaderIncludeARB");
 			if (GL_ISAVAILABLE(glCompileShaderIncludeARB))
 			nfglCompileShaderIncludeARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE1DEXT:
-			D(funcname = "glCompressedMultiTexImage1DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexImage1DEXT))
 			nfglCompressedMultiTexImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE2DEXT:
-			D(funcname = "glCompressedMultiTexImage2DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexImage2DEXT))
 			nfglCompressedMultiTexImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXIMAGE3DEXT:
-			D(funcname = "glCompressedMultiTexImage3DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexImage3DEXT))
 			nfglCompressedMultiTexImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE1DEXT:
-			D(funcname = "glCompressedMultiTexSubImage1DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage1DEXT))
 			nfglCompressedMultiTexSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE2DEXT:
-			D(funcname = "glCompressedMultiTexSubImage2DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage2DEXT))
 			nfglCompressedMultiTexSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDMULTITEXSUBIMAGE3DEXT:
-			D(funcname = "glCompressedMultiTexSubImage3DEXT");
 			if (GL_ISAVAILABLE(glCompressedMultiTexSubImage3DEXT))
 			nfglCompressedMultiTexSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1D:
-			D(funcname = "glCompressedTexImage1D");
 			if (GL_ISAVAILABLE(glCompressedTexImage1D))
 			nfglCompressedTexImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE1DARB:
-			D(funcname = "glCompressedTexImage1DARB");
 			if (GL_ISAVAILABLE(glCompressedTexImage1DARB))
 			nfglCompressedTexImage1DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2D:
-			D(funcname = "glCompressedTexImage2D");
 			if (GL_ISAVAILABLE(glCompressedTexImage2D))
 			nfglCompressedTexImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE2DARB:
-			D(funcname = "glCompressedTexImage2DARB");
 			if (GL_ISAVAILABLE(glCompressedTexImage2DARB))
 			nfglCompressedTexImage2DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3D:
-			D(funcname = "glCompressedTexImage3D");
 			if (GL_ISAVAILABLE(glCompressedTexImage3D))
 			nfglCompressedTexImage3D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXIMAGE3DARB:
-			D(funcname = "glCompressedTexImage3DARB");
 			if (GL_ISAVAILABLE(glCompressedTexImage3DARB))
 			nfglCompressedTexImage3DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1D:
-			D(funcname = "glCompressedTexSubImage1D");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage1D))
 			nfglCompressedTexSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE1DARB:
-			D(funcname = "glCompressedTexSubImage1DARB");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage1DARB))
 			nfglCompressedTexSubImage1DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2D:
-			D(funcname = "glCompressedTexSubImage2D");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage2D))
 			nfglCompressedTexSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE2DARB:
-			D(funcname = "glCompressedTexSubImage2DARB");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage2DARB))
 			nfglCompressedTexSubImage2DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3D:
-			D(funcname = "glCompressedTexSubImage3D");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage3D))
 			nfglCompressedTexSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXSUBIMAGE3DARB:
-			D(funcname = "glCompressedTexSubImage3DARB");
 			if (GL_ISAVAILABLE(glCompressedTexSubImage3DARB))
 			nfglCompressedTexSubImage3DARB(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE1DEXT:
-			D(funcname = "glCompressedTextureImage1DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureImage1DEXT))
 			nfglCompressedTextureImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE2DEXT:
-			D(funcname = "glCompressedTextureImage2DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureImage2DEXT))
 			nfglCompressedTextureImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTUREIMAGE3DEXT:
-			D(funcname = "glCompressedTextureImage3DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureImage3DEXT))
 			nfglCompressedTextureImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE1D:
-			D(funcname = "glCompressedTextureSubImage1D");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage1D))
 			nfglCompressedTextureSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE1DEXT:
-			D(funcname = "glCompressedTextureSubImage1DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage1DEXT))
 			nfglCompressedTextureSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE2D:
-			D(funcname = "glCompressedTextureSubImage2D");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage2D))
 			nfglCompressedTextureSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE2DEXT:
-			D(funcname = "glCompressedTextureSubImage2DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage2DEXT))
 			nfglCompressedTextureSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE3D:
-			D(funcname = "glCompressedTextureSubImage3D");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage3D))
 			nfglCompressedTextureSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLCOMPRESSEDTEXTURESUBIMAGE3DEXT:
-			D(funcname = "glCompressedTextureSubImage3DEXT");
 			if (GL_ISAVAILABLE(glCompressedTextureSubImage3DEXT))
 			nfglCompressedTextureSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONSERVATIVERASTERPARAMETERFNV:
-			D(funcname = "glConservativeRasterParameterfNV");
 			if (GL_ISAVAILABLE(glConservativeRasterParameterfNV))
 			nfglConservativeRasterParameterfNV(nf_params);
 			break;
 		case NFOSMESA_GLCONSERVATIVERASTERPARAMETERINV:
-			D(funcname = "glConservativeRasterParameteriNV");
 			if (GL_ISAVAILABLE(glConservativeRasterParameteriNV))
 			nfglConservativeRasterParameteriNV(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1D:
-			D(funcname = "glConvolutionFilter1D");
 			if (GL_ISAVAILABLE(glConvolutionFilter1D))
 			nfglConvolutionFilter1D(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER1DEXT:
-			D(funcname = "glConvolutionFilter1DEXT");
 			if (GL_ISAVAILABLE(glConvolutionFilter1DEXT))
 			nfglConvolutionFilter1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2D:
-			D(funcname = "glConvolutionFilter2D");
 			if (GL_ISAVAILABLE(glConvolutionFilter2D))
 			nfglConvolutionFilter2D(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONFILTER2DEXT:
-			D(funcname = "glConvolutionFilter2DEXT");
 			if (GL_ISAVAILABLE(glConvolutionFilter2DEXT))
 			nfglConvolutionFilter2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERF:
-			D(funcname = "glConvolutionParameterf");
 			if (GL_ISAVAILABLE(glConvolutionParameterf))
 			nfglConvolutionParameterf(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFEXT:
-			D(funcname = "glConvolutionParameterfEXT");
 			if (GL_ISAVAILABLE(glConvolutionParameterfEXT))
 			nfglConvolutionParameterfEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFV:
-			D(funcname = "glConvolutionParameterfv");
 			if (GL_ISAVAILABLE(glConvolutionParameterfv))
 			nfglConvolutionParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERFVEXT:
-			D(funcname = "glConvolutionParameterfvEXT");
 			if (GL_ISAVAILABLE(glConvolutionParameterfvEXT))
 			nfglConvolutionParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERI:
-			D(funcname = "glConvolutionParameteri");
 			if (GL_ISAVAILABLE(glConvolutionParameteri))
 			nfglConvolutionParameteri(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIEXT:
-			D(funcname = "glConvolutionParameteriEXT");
 			if (GL_ISAVAILABLE(glConvolutionParameteriEXT))
 			nfglConvolutionParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIV:
-			D(funcname = "glConvolutionParameteriv");
 			if (GL_ISAVAILABLE(glConvolutionParameteriv))
 			nfglConvolutionParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERIVEXT:
-			D(funcname = "glConvolutionParameterivEXT");
 			if (GL_ISAVAILABLE(glConvolutionParameterivEXT))
 			nfglConvolutionParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERXOES:
-			D(funcname = "glConvolutionParameterxOES");
 			if (GL_ISAVAILABLE(glConvolutionParameterxOES))
 			nfglConvolutionParameterxOES(nf_params);
 			break;
 		case NFOSMESA_GLCONVOLUTIONPARAMETERXVOES:
-			D(funcname = "glConvolutionParameterxvOES");
 			if (GL_ISAVAILABLE(glConvolutionParameterxvOES))
 			nfglConvolutionParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLCOPYBUFFERSUBDATA:
-			D(funcname = "glCopyBufferSubData");
 			if (GL_ISAVAILABLE(glCopyBufferSubData))
 			nfglCopyBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCOLORSUBTABLE:
-			D(funcname = "glCopyColorSubTable");
 			if (GL_ISAVAILABLE(glCopyColorSubTable))
 			nfglCopyColorSubTable(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCOLORSUBTABLEEXT:
-			D(funcname = "glCopyColorSubTableEXT");
 			if (GL_ISAVAILABLE(glCopyColorSubTableEXT))
 			nfglCopyColorSubTableEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCOLORTABLE:
-			D(funcname = "glCopyColorTable");
 			if (GL_ISAVAILABLE(glCopyColorTable))
 			nfglCopyColorTable(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCOLORTABLESGI:
-			D(funcname = "glCopyColorTableSGI");
 			if (GL_ISAVAILABLE(glCopyColorTableSGI))
 			nfglCopyColorTableSGI(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER1D:
-			D(funcname = "glCopyConvolutionFilter1D");
 			if (GL_ISAVAILABLE(glCopyConvolutionFilter1D))
 			nfglCopyConvolutionFilter1D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER1DEXT:
-			D(funcname = "glCopyConvolutionFilter1DEXT");
 			if (GL_ISAVAILABLE(glCopyConvolutionFilter1DEXT))
 			nfglCopyConvolutionFilter1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER2D:
-			D(funcname = "glCopyConvolutionFilter2D");
 			if (GL_ISAVAILABLE(glCopyConvolutionFilter2D))
 			nfglCopyConvolutionFilter2D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYCONVOLUTIONFILTER2DEXT:
-			D(funcname = "glCopyConvolutionFilter2DEXT");
 			if (GL_ISAVAILABLE(glCopyConvolutionFilter2DEXT))
 			nfglCopyConvolutionFilter2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYIMAGESUBDATA:
-			D(funcname = "glCopyImageSubData");
 			if (GL_ISAVAILABLE(glCopyImageSubData))
 			nfglCopyImageSubData(nf_params);
 			break;
 		case NFOSMESA_GLCOPYIMAGESUBDATANV:
-			D(funcname = "glCopyImageSubDataNV");
 			if (GL_ISAVAILABLE(glCopyImageSubDataNV))
 			nfglCopyImageSubDataNV(nf_params);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXIMAGE1DEXT:
-			D(funcname = "glCopyMultiTexImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyMultiTexImage1DEXT))
 			nfglCopyMultiTexImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXIMAGE2DEXT:
-			D(funcname = "glCopyMultiTexImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyMultiTexImage2DEXT))
 			nfglCopyMultiTexImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE1DEXT:
-			D(funcname = "glCopyMultiTexSubImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyMultiTexSubImage1DEXT))
 			nfglCopyMultiTexSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE2DEXT:
-			D(funcname = "glCopyMultiTexSubImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyMultiTexSubImage2DEXT))
 			nfglCopyMultiTexSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYMULTITEXSUBIMAGE3DEXT:
-			D(funcname = "glCopyMultiTexSubImage3DEXT");
 			if (GL_ISAVAILABLE(glCopyMultiTexSubImage3DEXT))
 			nfglCopyMultiTexSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYNAMEDBUFFERSUBDATA:
-			D(funcname = "glCopyNamedBufferSubData");
 			if (GL_ISAVAILABLE(glCopyNamedBufferSubData))
 			nfglCopyNamedBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLCOPYPATHNV:
-			D(funcname = "glCopyPathNV");
 			if (GL_ISAVAILABLE(glCopyPathNV))
 			nfglCopyPathNV(nf_params);
 			break;
 		case NFOSMESA_GLCOPYPIXELS:
-			D(funcname = "glCopyPixels");
 			if (GL_ISAVAILABLE(glCopyPixels))
 			nfglCopyPixels(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE1D:
-			D(funcname = "glCopyTexImage1D");
 			if (GL_ISAVAILABLE(glCopyTexImage1D))
 			nfglCopyTexImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE1DEXT:
-			D(funcname = "glCopyTexImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyTexImage1DEXT))
 			nfglCopyTexImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE2D:
-			D(funcname = "glCopyTexImage2D");
 			if (GL_ISAVAILABLE(glCopyTexImage2D))
 			nfglCopyTexImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXIMAGE2DEXT:
-			D(funcname = "glCopyTexImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyTexImage2DEXT))
 			nfglCopyTexImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE1D:
-			D(funcname = "glCopyTexSubImage1D");
 			if (GL_ISAVAILABLE(glCopyTexSubImage1D))
 			nfglCopyTexSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE1DEXT:
-			D(funcname = "glCopyTexSubImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyTexSubImage1DEXT))
 			nfglCopyTexSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE2D:
-			D(funcname = "glCopyTexSubImage2D");
 			if (GL_ISAVAILABLE(glCopyTexSubImage2D))
 			nfglCopyTexSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE2DEXT:
-			D(funcname = "glCopyTexSubImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyTexSubImage2DEXT))
 			nfglCopyTexSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE3D:
-			D(funcname = "glCopyTexSubImage3D");
 			if (GL_ISAVAILABLE(glCopyTexSubImage3D))
 			nfglCopyTexSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXSUBIMAGE3DEXT:
-			D(funcname = "glCopyTexSubImage3DEXT");
 			if (GL_ISAVAILABLE(glCopyTexSubImage3DEXT))
 			nfglCopyTexSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTUREIMAGE1DEXT:
-			D(funcname = "glCopyTextureImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyTextureImage1DEXT))
 			nfglCopyTextureImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTUREIMAGE2DEXT:
-			D(funcname = "glCopyTextureImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyTextureImage2DEXT))
 			nfglCopyTextureImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE1D:
-			D(funcname = "glCopyTextureSubImage1D");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage1D))
 			nfglCopyTextureSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE1DEXT:
-			D(funcname = "glCopyTextureSubImage1DEXT");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage1DEXT))
 			nfglCopyTextureSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE2D:
-			D(funcname = "glCopyTextureSubImage2D");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage2D))
 			nfglCopyTextureSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE2DEXT:
-			D(funcname = "glCopyTextureSubImage2DEXT");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage2DEXT))
 			nfglCopyTextureSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE3D:
-			D(funcname = "glCopyTextureSubImage3D");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage3D))
 			nfglCopyTextureSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLCOPYTEXTURESUBIMAGE3DEXT:
-			D(funcname = "glCopyTextureSubImage3DEXT");
 			if (GL_ISAVAILABLE(glCopyTextureSubImage3DEXT))
 			nfglCopyTextureSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLCOVERFILLPATHINSTANCEDNV:
-			D(funcname = "glCoverFillPathInstancedNV");
 			if (GL_ISAVAILABLE(glCoverFillPathInstancedNV))
 			nfglCoverFillPathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLCOVERFILLPATHNV:
-			D(funcname = "glCoverFillPathNV");
 			if (GL_ISAVAILABLE(glCoverFillPathNV))
 			nfglCoverFillPathNV(nf_params);
 			break;
 		case NFOSMESA_GLCOVERSTROKEPATHINSTANCEDNV:
-			D(funcname = "glCoverStrokePathInstancedNV");
 			if (GL_ISAVAILABLE(glCoverStrokePathInstancedNV))
 			nfglCoverStrokePathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLCOVERSTROKEPATHNV:
-			D(funcname = "glCoverStrokePathNV");
 			if (GL_ISAVAILABLE(glCoverStrokePathNV))
 			nfglCoverStrokePathNV(nf_params);
 			break;
 		case NFOSMESA_GLCOVERAGEMODULATIONNV:
-			D(funcname = "glCoverageModulationNV");
 			if (GL_ISAVAILABLE(glCoverageModulationNV))
 			nfglCoverageModulationNV(nf_params);
 			break;
 		case NFOSMESA_GLCOVERAGEMODULATIONTABLENV:
-			D(funcname = "glCoverageModulationTableNV");
 			if (GL_ISAVAILABLE(glCoverageModulationTableNV))
 			nfglCoverageModulationTableNV(nf_params);
 			break;
 		case NFOSMESA_GLCREATEBUFFERS:
-			D(funcname = "glCreateBuffers");
 			if (GL_ISAVAILABLE(glCreateBuffers))
 			nfglCreateBuffers(nf_params);
 			break;
 		case NFOSMESA_GLCREATECOMMANDLISTSNV:
-			D(funcname = "glCreateCommandListsNV");
 			if (GL_ISAVAILABLE(glCreateCommandListsNV))
 			nfglCreateCommandListsNV(nf_params);
 			break;
 		case NFOSMESA_GLCREATEDEBUGOBJECTMESA:
-			D(funcname = "glCreateDebugObjectMESA");
 			if (GL_ISAVAILABLE(glCreateDebugObjectMESA))
-			ret = (uint32)(uintptr_t)nfglCreateDebugObjectMESA(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglCreateDebugObjectMESA(nf_params);
 			break;
 		case NFOSMESA_GLCREATEFRAMEBUFFERS:
-			D(funcname = "glCreateFramebuffers");
 			if (GL_ISAVAILABLE(glCreateFramebuffers))
 			nfglCreateFramebuffers(nf_params);
 			break;
 		case NFOSMESA_GLCREATEMEMORYOBJECTSEXT:
-			D(funcname = "glCreateMemoryObjectsEXT");
 			if (GL_ISAVAILABLE(glCreateMemoryObjectsEXT))
 			nfglCreateMemoryObjectsEXT(nf_params);
 			break;
 		case NFOSMESA_GLCREATEPERFQUERYINTEL:
-			D(funcname = "glCreatePerfQueryINTEL");
 			if (GL_ISAVAILABLE(glCreatePerfQueryINTEL))
 			nfglCreatePerfQueryINTEL(nf_params);
 			break;
 		case NFOSMESA_GLCREATEPROGRAM:
-			D(funcname = "glCreateProgram");
 			if (GL_ISAVAILABLE(glCreateProgram))
 			ret = nfglCreateProgram(nf_params);
 			break;
 		case NFOSMESA_GLCREATEPROGRAMOBJECTARB:
-			D(funcname = "glCreateProgramObjectARB");
 			if (GL_ISAVAILABLE(glCreateProgramObjectARB))
-			ret = (uint32)(uintptr_t)nfglCreateProgramObjectARB(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglCreateProgramObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLCREATEPROGRAMPIPELINES:
-			D(funcname = "glCreateProgramPipelines");
 			if (GL_ISAVAILABLE(glCreateProgramPipelines))
 			nfglCreateProgramPipelines(nf_params);
 			break;
 		case NFOSMESA_GLCREATEQUERIES:
-			D(funcname = "glCreateQueries");
 			if (GL_ISAVAILABLE(glCreateQueries))
 			nfglCreateQueries(nf_params);
 			break;
 		case NFOSMESA_GLCREATERENDERBUFFERS:
-			D(funcname = "glCreateRenderbuffers");
 			if (GL_ISAVAILABLE(glCreateRenderbuffers))
 			nfglCreateRenderbuffers(nf_params);
 			break;
 		case NFOSMESA_GLCREATESAMPLERS:
-			D(funcname = "glCreateSamplers");
 			if (GL_ISAVAILABLE(glCreateSamplers))
 			nfglCreateSamplers(nf_params);
 			break;
 		case NFOSMESA_GLCREATESHADER:
-			D(funcname = "glCreateShader");
 			if (GL_ISAVAILABLE(glCreateShader))
 			ret = nfglCreateShader(nf_params);
 			break;
 		case NFOSMESA_GLCREATESHADEROBJECTARB:
-			D(funcname = "glCreateShaderObjectARB");
 			if (GL_ISAVAILABLE(glCreateShaderObjectARB))
-			ret = (uint32)(uintptr_t)nfglCreateShaderObjectARB(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglCreateShaderObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMEXT:
-			D(funcname = "glCreateShaderProgramEXT");
 			if (GL_ISAVAILABLE(glCreateShaderProgramEXT))
 			ret = nfglCreateShaderProgramEXT(nf_params);
 			break;
 		case NFOSMESA_GLCREATESHADERPROGRAMV:
-			D(funcname = "glCreateShaderProgramv");
 			if (GL_ISAVAILABLE(glCreateShaderProgramv))
 			ret = nfglCreateShaderProgramv(nf_params);
 			break;
 		case NFOSMESA_GLCREATESTATESNV:
-			D(funcname = "glCreateStatesNV");
 			if (GL_ISAVAILABLE(glCreateStatesNV))
 			nfglCreateStatesNV(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLCREATESYNCFROMCLEVENTARB:
-			D(funcname = "glCreateSyncFromCLeventARB");
 			if (GL_ISAVAILABLE(glCreateSyncFromCLeventARB))
-			ret = (uint32)(uintptr_t)nfglCreateSyncFromCLeventARB(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglCreateSyncFromCLeventARB(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLCREATETEXTURES:
-			D(funcname = "glCreateTextures");
 			if (GL_ISAVAILABLE(glCreateTextures))
 			nfglCreateTextures(nf_params);
 			break;
 		case NFOSMESA_GLCREATETRANSFORMFEEDBACKS:
-			D(funcname = "glCreateTransformFeedbacks");
 			if (GL_ISAVAILABLE(glCreateTransformFeedbacks))
 			nfglCreateTransformFeedbacks(nf_params);
 			break;
 		case NFOSMESA_GLCREATEVERTEXARRAYS:
-			D(funcname = "glCreateVertexArrays");
 			if (GL_ISAVAILABLE(glCreateVertexArrays))
 			nfglCreateVertexArrays(nf_params);
 			break;
 		case NFOSMESA_GLCULLFACE:
-			D(funcname = "glCullFace");
 			if (GL_ISAVAILABLE(glCullFace))
 			nfglCullFace(nf_params);
 			break;
 		case NFOSMESA_GLCULLPARAMETERDVEXT:
-			D(funcname = "glCullParameterdvEXT");
 			if (GL_ISAVAILABLE(glCullParameterdvEXT))
 			nfglCullParameterdvEXT(nf_params);
 			break;
 		case NFOSMESA_GLCULLPARAMETERFVEXT:
-			D(funcname = "glCullParameterfvEXT");
 			if (GL_ISAVAILABLE(glCullParameterfvEXT))
 			nfglCullParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLCURRENTPALETTEMATRIXARB:
-			D(funcname = "glCurrentPaletteMatrixARB");
 			if (GL_ISAVAILABLE(glCurrentPaletteMatrixARB))
 			nfglCurrentPaletteMatrixARB(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACK:
-			D(funcname = "glDebugMessageCallback");
 			if (GL_ISAVAILABLE(glDebugMessageCallback))
 			nfglDebugMessageCallback(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKAMD:
-			D(funcname = "glDebugMessageCallbackAMD");
 			if (GL_ISAVAILABLE(glDebugMessageCallbackAMD))
 			nfglDebugMessageCallbackAMD(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLDEBUGMESSAGECALLBACKARB:
-			D(funcname = "glDebugMessageCallbackARB");
 			if (GL_ISAVAILABLE(glDebugMessageCallbackARB))
 			nfglDebugMessageCallbackARB(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLDEBUGMESSAGECONTROL:
-			D(funcname = "glDebugMessageControl");
 			if (GL_ISAVAILABLE(glDebugMessageControl))
 			nfglDebugMessageControl(nf_params);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGECONTROLARB:
-			D(funcname = "glDebugMessageControlARB");
 			if (GL_ISAVAILABLE(glDebugMessageControlARB))
 			nfglDebugMessageControlARB(nf_params);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEENABLEAMD:
-			D(funcname = "glDebugMessageEnableAMD");
 			if (GL_ISAVAILABLE(glDebugMessageEnableAMD))
 			nfglDebugMessageEnableAMD(nf_params);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERT:
-			D(funcname = "glDebugMessageInsert");
 			if (GL_ISAVAILABLE(glDebugMessageInsert))
 			nfglDebugMessageInsert(nf_params);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTAMD:
-			D(funcname = "glDebugMessageInsertAMD");
 			if (GL_ISAVAILABLE(glDebugMessageInsertAMD))
 			nfglDebugMessageInsertAMD(nf_params);
 			break;
 		case NFOSMESA_GLDEBUGMESSAGEINSERTARB:
-			D(funcname = "glDebugMessageInsertARB");
 			if (GL_ISAVAILABLE(glDebugMessageInsertARB))
 			nfglDebugMessageInsertARB(nf_params);
 			break;
 		case NFOSMESA_GLDEFORMSGIX:
-			D(funcname = "glDeformSGIX");
 			if (GL_ISAVAILABLE(glDeformSGIX))
 			nfglDeformSGIX(nf_params);
 			break;
 		case NFOSMESA_GLDEFORMATIONMAP3DSGIX:
-			D(funcname = "glDeformationMap3dSGIX");
 			if (GL_ISAVAILABLE(glDeformationMap3dSGIX))
 			nfglDeformationMap3dSGIX(nf_params);
 			break;
 		case NFOSMESA_GLDEFORMATIONMAP3FSGIX:
-			D(funcname = "glDeformationMap3fSGIX");
 			if (GL_ISAVAILABLE(glDeformationMap3fSGIX))
 			nfglDeformationMap3fSGIX(nf_params);
 			break;
 		case NFOSMESA_GLDELETEASYNCMARKERSSGIX:
-			D(funcname = "glDeleteAsyncMarkersSGIX");
 			if (GL_ISAVAILABLE(glDeleteAsyncMarkersSGIX))
 			nfglDeleteAsyncMarkersSGIX(nf_params);
 			break;
 		case NFOSMESA_GLDELETEBUFFERS:
-			D(funcname = "glDeleteBuffers");
 			if (GL_ISAVAILABLE(glDeleteBuffers))
 			nfglDeleteBuffers(nf_params);
 			break;
 		case NFOSMESA_GLDELETEBUFFERSARB:
-			D(funcname = "glDeleteBuffersARB");
 			if (GL_ISAVAILABLE(glDeleteBuffersARB))
 			nfglDeleteBuffersARB(nf_params);
 			break;
 		case NFOSMESA_GLDELETECOMMANDLISTSNV:
-			D(funcname = "glDeleteCommandListsNV");
 			if (GL_ISAVAILABLE(glDeleteCommandListsNV))
 			nfglDeleteCommandListsNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEFENCESAPPLE:
-			D(funcname = "glDeleteFencesAPPLE");
 			if (GL_ISAVAILABLE(glDeleteFencesAPPLE))
 			nfglDeleteFencesAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLDELETEFENCESNV:
-			D(funcname = "glDeleteFencesNV");
 			if (GL_ISAVAILABLE(glDeleteFencesNV))
 			nfglDeleteFencesNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEFRAGMENTSHADERATI:
-			D(funcname = "glDeleteFragmentShaderATI");
 			if (GL_ISAVAILABLE(glDeleteFragmentShaderATI))
 			nfglDeleteFragmentShaderATI(nf_params);
 			break;
 		case NFOSMESA_GLDELETEFRAMEBUFFERS:
-			D(funcname = "glDeleteFramebuffers");
 			if (GL_ISAVAILABLE(glDeleteFramebuffers))
 			nfglDeleteFramebuffers(nf_params);
 			break;
 		case NFOSMESA_GLDELETEFRAMEBUFFERSEXT:
-			D(funcname = "glDeleteFramebuffersEXT");
 			if (GL_ISAVAILABLE(glDeleteFramebuffersEXT))
 			nfglDeleteFramebuffersEXT(nf_params);
 			break;
 		case NFOSMESA_GLDELETELISTS:
-			D(funcname = "glDeleteLists");
 			if (GL_ISAVAILABLE(glDeleteLists))
 			nfglDeleteLists(nf_params);
 			break;
 		case NFOSMESA_GLDELETEMEMORYOBJECTSEXT:
-			D(funcname = "glDeleteMemoryObjectsEXT");
 			if (GL_ISAVAILABLE(glDeleteMemoryObjectsEXT))
 			nfglDeleteMemoryObjectsEXT(nf_params);
 			break;
 		case NFOSMESA_GLDELETENAMEDSTRINGARB:
-			D(funcname = "glDeleteNamedStringARB");
 			if (GL_ISAVAILABLE(glDeleteNamedStringARB))
 			nfglDeleteNamedStringARB(nf_params);
 			break;
 		case NFOSMESA_GLDELETENAMESAMD:
-			D(funcname = "glDeleteNamesAMD");
 			if (GL_ISAVAILABLE(glDeleteNamesAMD))
 			nfglDeleteNamesAMD(nf_params);
 			break;
 		case NFOSMESA_GLDELETEOBJECTARB:
-			D(funcname = "glDeleteObjectARB");
 			if (GL_ISAVAILABLE(glDeleteObjectARB))
 			nfglDeleteObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLDELETEOBJECTBUFFERATI:
-			D(funcname = "glDeleteObjectBufferATI");
 			if (GL_ISAVAILABLE(glDeleteObjectBufferATI))
 			nfglDeleteObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLDELETEOCCLUSIONQUERIESNV:
-			D(funcname = "glDeleteOcclusionQueriesNV");
 			if (GL_ISAVAILABLE(glDeleteOcclusionQueriesNV))
 			nfglDeleteOcclusionQueriesNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPATHSNV:
-			D(funcname = "glDeletePathsNV");
 			if (GL_ISAVAILABLE(glDeletePathsNV))
 			nfglDeletePathsNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPERFMONITORSAMD:
-			D(funcname = "glDeletePerfMonitorsAMD");
 			if (GL_ISAVAILABLE(glDeletePerfMonitorsAMD))
 			nfglDeletePerfMonitorsAMD(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPERFQUERYINTEL:
-			D(funcname = "glDeletePerfQueryINTEL");
 			if (GL_ISAVAILABLE(glDeletePerfQueryINTEL))
 			nfglDeletePerfQueryINTEL(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPROGRAM:
-			D(funcname = "glDeleteProgram");
 			if (GL_ISAVAILABLE(glDeleteProgram))
 			nfglDeleteProgram(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMPIPELINES:
-			D(funcname = "glDeleteProgramPipelines");
 			if (GL_ISAVAILABLE(glDeleteProgramPipelines))
 			nfglDeleteProgramPipelines(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSARB:
-			D(funcname = "glDeleteProgramsARB");
 			if (GL_ISAVAILABLE(glDeleteProgramsARB))
 			nfglDeleteProgramsARB(nf_params);
 			break;
 		case NFOSMESA_GLDELETEPROGRAMSNV:
-			D(funcname = "glDeleteProgramsNV");
 			if (GL_ISAVAILABLE(glDeleteProgramsNV))
 			nfglDeleteProgramsNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEQUERIES:
-			D(funcname = "glDeleteQueries");
 			if (GL_ISAVAILABLE(glDeleteQueries))
 			nfglDeleteQueries(nf_params);
 			break;
 		case NFOSMESA_GLDELETEQUERIESARB:
-			D(funcname = "glDeleteQueriesARB");
 			if (GL_ISAVAILABLE(glDeleteQueriesARB))
 			nfglDeleteQueriesARB(nf_params);
 			break;
 		case NFOSMESA_GLDELETEQUERYRESOURCETAGNV:
-			D(funcname = "glDeleteQueryResourceTagNV");
 			if (GL_ISAVAILABLE(glDeleteQueryResourceTagNV))
 			nfglDeleteQueryResourceTagNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERS:
-			D(funcname = "glDeleteRenderbuffers");
 			if (GL_ISAVAILABLE(glDeleteRenderbuffers))
 			nfglDeleteRenderbuffers(nf_params);
 			break;
 		case NFOSMESA_GLDELETERENDERBUFFERSEXT:
-			D(funcname = "glDeleteRenderbuffersEXT");
 			if (GL_ISAVAILABLE(glDeleteRenderbuffersEXT))
 			nfglDeleteRenderbuffersEXT(nf_params);
 			break;
 		case NFOSMESA_GLDELETESAMPLERS:
-			D(funcname = "glDeleteSamplers");
 			if (GL_ISAVAILABLE(glDeleteSamplers))
 			nfglDeleteSamplers(nf_params);
 			break;
 		case NFOSMESA_GLDELETESEMAPHORESEXT:
-			D(funcname = "glDeleteSemaphoresEXT");
 			if (GL_ISAVAILABLE(glDeleteSemaphoresEXT))
 			nfglDeleteSemaphoresEXT(nf_params);
 			break;
 		case NFOSMESA_GLDELETESHADER:
-			D(funcname = "glDeleteShader");
 			if (GL_ISAVAILABLE(glDeleteShader))
 			nfglDeleteShader(nf_params);
 			break;
 		case NFOSMESA_GLDELETESTATESNV:
-			D(funcname = "glDeleteStatesNV");
 			if (GL_ISAVAILABLE(glDeleteStatesNV))
 			nfglDeleteStatesNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETESYNC:
-			D(funcname = "glDeleteSync");
 			if (GL_ISAVAILABLE(glDeleteSync))
 			nfglDeleteSync(nf_params);
 			break;
 		case NFOSMESA_GLDELETETEXTURES:
-			D(funcname = "glDeleteTextures");
 			if (GL_ISAVAILABLE(glDeleteTextures))
 			nfglDeleteTextures(nf_params);
 			break;
 		case NFOSMESA_GLDELETETEXTURESEXT:
-			D(funcname = "glDeleteTexturesEXT");
 			if (GL_ISAVAILABLE(glDeleteTexturesEXT))
 			nfglDeleteTexturesEXT(nf_params);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKS:
-			D(funcname = "glDeleteTransformFeedbacks");
 			if (GL_ISAVAILABLE(glDeleteTransformFeedbacks))
 			nfglDeleteTransformFeedbacks(nf_params);
 			break;
 		case NFOSMESA_GLDELETETRANSFORMFEEDBACKSNV:
-			D(funcname = "glDeleteTransformFeedbacksNV");
 			if (GL_ISAVAILABLE(glDeleteTransformFeedbacksNV))
 			nfglDeleteTransformFeedbacksNV(nf_params);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYS:
-			D(funcname = "glDeleteVertexArrays");
 			if (GL_ISAVAILABLE(glDeleteVertexArrays))
 			nfglDeleteVertexArrays(nf_params);
 			break;
 		case NFOSMESA_GLDELETEVERTEXARRAYSAPPLE:
-			D(funcname = "glDeleteVertexArraysAPPLE");
 			if (GL_ISAVAILABLE(glDeleteVertexArraysAPPLE))
 			nfglDeleteVertexArraysAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLDELETEVERTEXSHADEREXT:
-			D(funcname = "glDeleteVertexShaderEXT");
 			if (GL_ISAVAILABLE(glDeleteVertexShaderEXT))
 			nfglDeleteVertexShaderEXT(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHBOUNDSEXT:
-			D(funcname = "glDepthBoundsEXT");
 			if (GL_ISAVAILABLE(glDepthBoundsEXT))
 			nfglDepthBoundsEXT(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHBOUNDSDNV:
-			D(funcname = "glDepthBoundsdNV");
 			if (GL_ISAVAILABLE(glDepthBoundsdNV))
 			nfglDepthBoundsdNV(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHFUNC:
-			D(funcname = "glDepthFunc");
 			if (GL_ISAVAILABLE(glDepthFunc))
 			nfglDepthFunc(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHMASK:
-			D(funcname = "glDepthMask");
 			if (GL_ISAVAILABLE(glDepthMask))
 			nfglDepthMask(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGE:
-			D(funcname = "glDepthRange");
 			if (GL_ISAVAILABLE(glDepthRange))
 			nfglDepthRange(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEARRAYV:
-			D(funcname = "glDepthRangeArrayv");
 			if (GL_ISAVAILABLE(glDepthRangeArrayv))
 			nfglDepthRangeArrayv(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEINDEXED:
-			D(funcname = "glDepthRangeIndexed");
 			if (GL_ISAVAILABLE(glDepthRangeIndexed))
 			nfglDepthRangeIndexed(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEDNV:
-			D(funcname = "glDepthRangedNV");
 			if (GL_ISAVAILABLE(glDepthRangedNV))
 			nfglDepthRangedNV(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEF:
-			D(funcname = "glDepthRangef");
 			if (GL_ISAVAILABLE(glDepthRangef))
 			nfglDepthRangef(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEFOES:
-			D(funcname = "glDepthRangefOES");
 			if (GL_ISAVAILABLE(glDepthRangefOES))
 			nfglDepthRangefOES(nf_params);
 			break;
 		case NFOSMESA_GLDEPTHRANGEXOES:
-			D(funcname = "glDepthRangexOES");
 			if (GL_ISAVAILABLE(glDepthRangexOES))
 			nfglDepthRangexOES(nf_params);
 			break;
 		case NFOSMESA_GLDETACHOBJECTARB:
-			D(funcname = "glDetachObjectARB");
 			if (GL_ISAVAILABLE(glDetachObjectARB))
 			nfglDetachObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLDETACHSHADER:
-			D(funcname = "glDetachShader");
 			if (GL_ISAVAILABLE(glDetachShader))
 			nfglDetachShader(nf_params);
 			break;
 		case NFOSMESA_GLDETAILTEXFUNCSGIS:
-			D(funcname = "glDetailTexFuncSGIS");
 			if (GL_ISAVAILABLE(glDetailTexFuncSGIS))
 			nfglDetailTexFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLDISABLE:
-			D(funcname = "glDisable");
 			if (GL_ISAVAILABLE(glDisable))
 			nfglDisable(nf_params);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATE:
-			D(funcname = "glDisableClientState");
 			if (GL_ISAVAILABLE(glDisableClientState))
 			nfglDisableClientState(nf_params);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATEINDEXEDEXT:
-			D(funcname = "glDisableClientStateIndexedEXT");
 			if (GL_ISAVAILABLE(glDisableClientStateIndexedEXT))
 			nfglDisableClientStateIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLECLIENTSTATEIEXT:
-			D(funcname = "glDisableClientStateiEXT");
 			if (GL_ISAVAILABLE(glDisableClientStateiEXT))
 			nfglDisableClientStateiEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEINDEXEDEXT:
-			D(funcname = "glDisableIndexedEXT");
 			if (GL_ISAVAILABLE(glDisableIndexedEXT))
 			nfglDisableIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLETRACEMESA:
-			D(funcname = "glDisableTraceMESA");
 			if (GL_ISAVAILABLE(glDisableTraceMESA))
 			nfglDisableTraceMESA(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVARIANTCLIENTSTATEEXT:
-			D(funcname = "glDisableVariantClientStateEXT");
 			if (GL_ISAVAILABLE(glDisableVariantClientStateEXT))
 			nfglDisableVariantClientStateEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYATTRIB:
-			D(funcname = "glDisableVertexArrayAttrib");
 			if (GL_ISAVAILABLE(glDisableVertexArrayAttrib))
 			nfglDisableVertexArrayAttrib(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYATTRIBEXT:
-			D(funcname = "glDisableVertexArrayAttribEXT");
 			if (GL_ISAVAILABLE(glDisableVertexArrayAttribEXT))
 			nfglDisableVertexArrayAttribEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXARRAYEXT:
-			D(funcname = "glDisableVertexArrayEXT");
 			if (GL_ISAVAILABLE(glDisableVertexArrayEXT))
 			nfglDisableVertexArrayEXT(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBAPPLE:
-			D(funcname = "glDisableVertexAttribAPPLE");
 			if (GL_ISAVAILABLE(glDisableVertexAttribAPPLE))
 			nfglDisableVertexAttribAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBARRAY:
-			D(funcname = "glDisableVertexAttribArray");
 			if (GL_ISAVAILABLE(glDisableVertexAttribArray))
 			nfglDisableVertexAttribArray(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEVERTEXATTRIBARRAYARB:
-			D(funcname = "glDisableVertexAttribArrayARB");
 			if (GL_ISAVAILABLE(glDisableVertexAttribArrayARB))
 			nfglDisableVertexAttribArrayARB(nf_params);
 			break;
 		case NFOSMESA_GLDISABLEI:
-			D(funcname = "glDisablei");
 			if (GL_ISAVAILABLE(glDisablei))
 			nfglDisablei(nf_params);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTE:
-			D(funcname = "glDispatchCompute");
 			if (GL_ISAVAILABLE(glDispatchCompute))
 			nfglDispatchCompute(nf_params);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTEGROUPSIZEARB:
-			D(funcname = "glDispatchComputeGroupSizeARB");
 			if (GL_ISAVAILABLE(glDispatchComputeGroupSizeARB))
 			nfglDispatchComputeGroupSizeARB(nf_params);
 			break;
 		case NFOSMESA_GLDISPATCHCOMPUTEINDIRECT:
-			D(funcname = "glDispatchComputeIndirect");
 			if (GL_ISAVAILABLE(glDispatchComputeIndirect))
 			nfglDispatchComputeIndirect(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYS:
-			D(funcname = "glDrawArrays");
 			if (GL_ISAVAILABLE(glDrawArrays))
 			nfglDrawArrays(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSEXT:
-			D(funcname = "glDrawArraysEXT");
 			if (GL_ISAVAILABLE(glDrawArraysEXT))
 			nfglDrawArraysEXT(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINDIRECT:
-			D(funcname = "glDrawArraysIndirect");
 			if (GL_ISAVAILABLE(glDrawArraysIndirect))
 			nfglDrawArraysIndirect(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCED:
-			D(funcname = "glDrawArraysInstanced");
 			if (GL_ISAVAILABLE(glDrawArraysInstanced))
 			nfglDrawArraysInstanced(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDARB:
-			D(funcname = "glDrawArraysInstancedARB");
 			if (GL_ISAVAILABLE(glDrawArraysInstancedARB))
 			nfglDrawArraysInstancedARB(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDBASEINSTANCE:
-			D(funcname = "glDrawArraysInstancedBaseInstance");
 			if (GL_ISAVAILABLE(glDrawArraysInstancedBaseInstance))
 			nfglDrawArraysInstancedBaseInstance(nf_params);
 			break;
 		case NFOSMESA_GLDRAWARRAYSINSTANCEDEXT:
-			D(funcname = "glDrawArraysInstancedEXT");
 			if (GL_ISAVAILABLE(glDrawArraysInstancedEXT))
 			nfglDrawArraysInstancedEXT(nf_params);
 			break;
 		case NFOSMESA_GLDRAWBUFFER:
-			D(funcname = "glDrawBuffer");
 			if (GL_ISAVAILABLE(glDrawBuffer))
 			nfglDrawBuffer(nf_params);
 			break;
 		case NFOSMESA_GLDRAWBUFFERS:
-			D(funcname = "glDrawBuffers");
 			if (GL_ISAVAILABLE(glDrawBuffers))
 			nfglDrawBuffers(nf_params);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSARB:
-			D(funcname = "glDrawBuffersARB");
 			if (GL_ISAVAILABLE(glDrawBuffersARB))
 			nfglDrawBuffersARB(nf_params);
 			break;
 		case NFOSMESA_GLDRAWBUFFERSATI:
-			D(funcname = "glDrawBuffersATI");
 			if (GL_ISAVAILABLE(glDrawBuffersATI))
 			nfglDrawBuffersATI(nf_params);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSADDRESSNV:
-			D(funcname = "glDrawCommandsAddressNV");
 			if (GL_ISAVAILABLE(glDrawCommandsAddressNV))
 			nfglDrawCommandsAddressNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSNV:
-			D(funcname = "glDrawCommandsNV");
 			if (GL_ISAVAILABLE(glDrawCommandsNV))
 			nfglDrawCommandsNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSSTATESADDRESSNV:
-			D(funcname = "glDrawCommandsStatesAddressNV");
 			if (GL_ISAVAILABLE(glDrawCommandsStatesAddressNV))
 			nfglDrawCommandsStatesAddressNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWCOMMANDSSTATESNV:
-			D(funcname = "glDrawCommandsStatesNV");
 			if (GL_ISAVAILABLE(glDrawCommandsStatesNV))
 			nfglDrawCommandsStatesNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTARRAYAPPLE:
-			D(funcname = "glDrawElementArrayAPPLE");
 			if (GL_ISAVAILABLE(glDrawElementArrayAPPLE))
 			nfglDrawElementArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTARRAYATI:
-			D(funcname = "glDrawElementArrayATI");
 			if (GL_ISAVAILABLE(glDrawElementArrayATI))
 			nfglDrawElementArrayATI(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTS:
-			D(funcname = "glDrawElements");
 			if (GL_ISAVAILABLE(glDrawElements))
 			nfglDrawElements(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSBASEVERTEX:
-			D(funcname = "glDrawElementsBaseVertex");
 			if (GL_ISAVAILABLE(glDrawElementsBaseVertex))
 			nfglDrawElementsBaseVertex(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINDIRECT:
-			D(funcname = "glDrawElementsIndirect");
 			if (GL_ISAVAILABLE(glDrawElementsIndirect))
 			nfglDrawElementsIndirect(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCED:
-			D(funcname = "glDrawElementsInstanced");
 			if (GL_ISAVAILABLE(glDrawElementsInstanced))
 			nfglDrawElementsInstanced(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDARB:
-			D(funcname = "glDrawElementsInstancedARB");
 			if (GL_ISAVAILABLE(glDrawElementsInstancedARB))
 			nfglDrawElementsInstancedARB(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEINSTANCE:
-			D(funcname = "glDrawElementsInstancedBaseInstance");
 			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseInstance))
 			nfglDrawElementsInstancedBaseInstance(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEVERTEX:
-			D(funcname = "glDrawElementsInstancedBaseVertex");
 			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseVertex))
 			nfglDrawElementsInstancedBaseVertex(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCE:
-			D(funcname = "glDrawElementsInstancedBaseVertexBaseInstance");
 			if (GL_ISAVAILABLE(glDrawElementsInstancedBaseVertexBaseInstance))
 			nfglDrawElementsInstancedBaseVertexBaseInstance(nf_params);
 			break;
 		case NFOSMESA_GLDRAWELEMENTSINSTANCEDEXT:
-			D(funcname = "glDrawElementsInstancedEXT");
 			if (GL_ISAVAILABLE(glDrawElementsInstancedEXT))
 			nfglDrawElementsInstancedEXT(nf_params);
 			break;
 		case NFOSMESA_GLDRAWMESHARRAYSSUN:
-			D(funcname = "glDrawMeshArraysSUN");
 			if (GL_ISAVAILABLE(glDrawMeshArraysSUN))
 			nfglDrawMeshArraysSUN(nf_params);
 			break;
 		case NFOSMESA_GLDRAWMESHTASKSINDIRECTNV:
-			D(funcname = "glDrawMeshTasksIndirectNV");
 			if (GL_ISAVAILABLE(glDrawMeshTasksIndirectNV))
 			nfglDrawMeshTasksIndirectNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWMESHTASKSNV:
-			D(funcname = "glDrawMeshTasksNV");
 			if (GL_ISAVAILABLE(glDrawMeshTasksNV))
 			nfglDrawMeshTasksNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWPIXELS:
-			D(funcname = "glDrawPixels");
 			if (GL_ISAVAILABLE(glDrawPixels))
 			nfglDrawPixels(nf_params);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTARRAYAPPLE:
-			D(funcname = "glDrawRangeElementArrayAPPLE");
 			if (GL_ISAVAILABLE(glDrawRangeElementArrayAPPLE))
 			nfglDrawRangeElementArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTARRAYATI:
-			D(funcname = "glDrawRangeElementArrayATI");
 			if (GL_ISAVAILABLE(glDrawRangeElementArrayATI))
 			nfglDrawRangeElementArrayATI(nf_params);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTS:
-			D(funcname = "glDrawRangeElements");
 			if (GL_ISAVAILABLE(glDrawRangeElements))
 			nfglDrawRangeElements(nf_params);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSBASEVERTEX:
-			D(funcname = "glDrawRangeElementsBaseVertex");
 			if (GL_ISAVAILABLE(glDrawRangeElementsBaseVertex))
 			nfglDrawRangeElementsBaseVertex(nf_params);
 			break;
 		case NFOSMESA_GLDRAWRANGEELEMENTSEXT:
-			D(funcname = "glDrawRangeElementsEXT");
 			if (GL_ISAVAILABLE(glDrawRangeElementsEXT))
 			nfglDrawRangeElementsEXT(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTEXTURENV:
-			D(funcname = "glDrawTextureNV");
 			if (GL_ISAVAILABLE(glDrawTextureNV))
 			nfglDrawTextureNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACK:
-			D(funcname = "glDrawTransformFeedback");
 			if (GL_ISAVAILABLE(glDrawTransformFeedback))
 			nfglDrawTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKINSTANCED:
-			D(funcname = "glDrawTransformFeedbackInstanced");
 			if (GL_ISAVAILABLE(glDrawTransformFeedbackInstanced))
 			nfglDrawTransformFeedbackInstanced(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKNV:
-			D(funcname = "glDrawTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glDrawTransformFeedbackNV))
 			nfglDrawTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKSTREAM:
-			D(funcname = "glDrawTransformFeedbackStream");
 			if (GL_ISAVAILABLE(glDrawTransformFeedbackStream))
 			nfglDrawTransformFeedbackStream(nf_params);
 			break;
 		case NFOSMESA_GLDRAWTRANSFORMFEEDBACKSTREAMINSTANCED:
-			D(funcname = "glDrawTransformFeedbackStreamInstanced");
 			if (GL_ISAVAILABLE(glDrawTransformFeedbackStreamInstanced))
 			nfglDrawTransformFeedbackStreamInstanced(nf_params);
 			break;
 		case NFOSMESA_GLDRAWVKIMAGENV:
-			D(funcname = "glDrawVkImageNV");
 			if (GL_ISAVAILABLE(glDrawVkImageNV))
 			nfglDrawVkImageNV(nf_params);
 			break;
 		case NFOSMESA_GLEGLIMAGETARGETTEXSTORAGEEXT:
-			D(funcname = "glEGLImageTargetTexStorageEXT");
 			if (GL_ISAVAILABLE(glEGLImageTargetTexStorageEXT))
 			nfglEGLImageTargetTexStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLEGLIMAGETARGETTEXTURESTORAGEEXT:
-			D(funcname = "glEGLImageTargetTextureStorageEXT");
 			if (GL_ISAVAILABLE(glEGLImageTargetTextureStorageEXT))
 			nfglEGLImageTargetTextureStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAG:
-			D(funcname = "glEdgeFlag");
 			if (GL_ISAVAILABLE(glEdgeFlag))
 			nfglEdgeFlag(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAGFORMATNV:
-			D(funcname = "glEdgeFlagFormatNV");
 			if (GL_ISAVAILABLE(glEdgeFlagFormatNV))
 			nfglEdgeFlagFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTER:
-			D(funcname = "glEdgeFlagPointer");
 			if (GL_ISAVAILABLE(glEdgeFlagPointer))
 			nfglEdgeFlagPointer(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTEREXT:
-			D(funcname = "glEdgeFlagPointerEXT");
 			if (GL_ISAVAILABLE(glEdgeFlagPointerEXT))
 			nfglEdgeFlagPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAGPOINTERLISTIBM:
-			D(funcname = "glEdgeFlagPointerListIBM");
 			if (GL_ISAVAILABLE(glEdgeFlagPointerListIBM))
 			nfglEdgeFlagPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAGV:
-			D(funcname = "glEdgeFlagv");
 			if (GL_ISAVAILABLE(glEdgeFlagv))
 			nfglEdgeFlagv(nf_params);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERAPPLE:
-			D(funcname = "glElementPointerAPPLE");
 			if (GL_ISAVAILABLE(glElementPointerAPPLE))
 			nfglElementPointerAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLELEMENTPOINTERATI:
-			D(funcname = "glElementPointerATI");
 			if (GL_ISAVAILABLE(glElementPointerATI))
 			nfglElementPointerATI(nf_params);
 			break;
 		case NFOSMESA_GLENABLE:
-			D(funcname = "glEnable");
 			if (GL_ISAVAILABLE(glEnable))
 			nfglEnable(nf_params);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATE:
-			D(funcname = "glEnableClientState");
 			if (GL_ISAVAILABLE(glEnableClientState))
 			nfglEnableClientState(nf_params);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATEINDEXEDEXT:
-			D(funcname = "glEnableClientStateIndexedEXT");
 			if (GL_ISAVAILABLE(glEnableClientStateIndexedEXT))
 			nfglEnableClientStateIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLECLIENTSTATEIEXT:
-			D(funcname = "glEnableClientStateiEXT");
 			if (GL_ISAVAILABLE(glEnableClientStateiEXT))
 			nfglEnableClientStateiEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLEINDEXEDEXT:
-			D(funcname = "glEnableIndexedEXT");
 			if (GL_ISAVAILABLE(glEnableIndexedEXT))
 			nfglEnableIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLETRACEMESA:
-			D(funcname = "glEnableTraceMESA");
 			if (GL_ISAVAILABLE(glEnableTraceMESA))
 			nfglEnableTraceMESA(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVARIANTCLIENTSTATEEXT:
-			D(funcname = "glEnableVariantClientStateEXT");
 			if (GL_ISAVAILABLE(glEnableVariantClientStateEXT))
 			nfglEnableVariantClientStateEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYATTRIB:
-			D(funcname = "glEnableVertexArrayAttrib");
 			if (GL_ISAVAILABLE(glEnableVertexArrayAttrib))
 			nfglEnableVertexArrayAttrib(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYATTRIBEXT:
-			D(funcname = "glEnableVertexArrayAttribEXT");
 			if (GL_ISAVAILABLE(glEnableVertexArrayAttribEXT))
 			nfglEnableVertexArrayAttribEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXARRAYEXT:
-			D(funcname = "glEnableVertexArrayEXT");
 			if (GL_ISAVAILABLE(glEnableVertexArrayEXT))
 			nfglEnableVertexArrayEXT(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBAPPLE:
-			D(funcname = "glEnableVertexAttribAPPLE");
 			if (GL_ISAVAILABLE(glEnableVertexAttribAPPLE))
 			nfglEnableVertexAttribAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBARRAY:
-			D(funcname = "glEnableVertexAttribArray");
 			if (GL_ISAVAILABLE(glEnableVertexAttribArray))
 			nfglEnableVertexAttribArray(nf_params);
 			break;
 		case NFOSMESA_GLENABLEVERTEXATTRIBARRAYARB:
-			D(funcname = "glEnableVertexAttribArrayARB");
 			if (GL_ISAVAILABLE(glEnableVertexAttribArrayARB))
 			nfglEnableVertexAttribArrayARB(nf_params);
 			break;
 		case NFOSMESA_GLENABLEI:
-			D(funcname = "glEnablei");
 			if (GL_ISAVAILABLE(glEnablei))
 			nfglEnablei(nf_params);
 			break;
 		case NFOSMESA_GLEND:
-			D(funcname = "glEnd");
 			if (GL_ISAVAILABLE(glEnd))
 			nfglEnd(nf_params);
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDER:
-			D(funcname = "glEndConditionalRender");
 			if (GL_ISAVAILABLE(glEndConditionalRender))
 			nfglEndConditionalRender(nf_params);
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDERNV:
-			D(funcname = "glEndConditionalRenderNV");
 			if (GL_ISAVAILABLE(glEndConditionalRenderNV))
 			nfglEndConditionalRenderNV(nf_params);
 			break;
 		case NFOSMESA_GLENDCONDITIONALRENDERNVX:
-			D(funcname = "glEndConditionalRenderNVX");
 			if (GL_ISAVAILABLE(glEndConditionalRenderNVX))
 			nfglEndConditionalRenderNVX(nf_params);
 			break;
 		case NFOSMESA_GLENDFRAGMENTSHADERATI:
-			D(funcname = "glEndFragmentShaderATI");
 			if (GL_ISAVAILABLE(glEndFragmentShaderATI))
 			nfglEndFragmentShaderATI(nf_params);
 			break;
 		case NFOSMESA_GLENDLIST:
-			D(funcname = "glEndList");
 			if (GL_ISAVAILABLE(glEndList))
 			nfglEndList(nf_params);
 			break;
 		case NFOSMESA_GLENDOCCLUSIONQUERYNV:
-			D(funcname = "glEndOcclusionQueryNV");
 			if (GL_ISAVAILABLE(glEndOcclusionQueryNV))
 			nfglEndOcclusionQueryNV(nf_params);
 			break;
 		case NFOSMESA_GLENDPERFMONITORAMD:
-			D(funcname = "glEndPerfMonitorAMD");
 			if (GL_ISAVAILABLE(glEndPerfMonitorAMD))
 			nfglEndPerfMonitorAMD(nf_params);
 			break;
 		case NFOSMESA_GLENDPERFQUERYINTEL:
-			D(funcname = "glEndPerfQueryINTEL");
 			if (GL_ISAVAILABLE(glEndPerfQueryINTEL))
 			nfglEndPerfQueryINTEL(nf_params);
 			break;
 		case NFOSMESA_GLENDQUERY:
-			D(funcname = "glEndQuery");
 			if (GL_ISAVAILABLE(glEndQuery))
 			nfglEndQuery(nf_params);
 			break;
 		case NFOSMESA_GLENDQUERYARB:
-			D(funcname = "glEndQueryARB");
 			if (GL_ISAVAILABLE(glEndQueryARB))
 			nfglEndQueryARB(nf_params);
 			break;
 		case NFOSMESA_GLENDQUERYINDEXED:
-			D(funcname = "glEndQueryIndexed");
 			if (GL_ISAVAILABLE(glEndQueryIndexed))
 			nfglEndQueryIndexed(nf_params);
 			break;
 		case NFOSMESA_GLENDTRACEMESA:
-			D(funcname = "glEndTraceMESA");
 			if (GL_ISAVAILABLE(glEndTraceMESA))
 			nfglEndTraceMESA(nf_params);
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACK:
-			D(funcname = "glEndTransformFeedback");
 			if (GL_ISAVAILABLE(glEndTransformFeedback))
 			nfglEndTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACKEXT:
-			D(funcname = "glEndTransformFeedbackEXT");
 			if (GL_ISAVAILABLE(glEndTransformFeedbackEXT))
 			nfglEndTransformFeedbackEXT(nf_params);
 			break;
 		case NFOSMESA_GLENDTRANSFORMFEEDBACKNV:
-			D(funcname = "glEndTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glEndTransformFeedbackNV))
 			nfglEndTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLENDVERTEXSHADEREXT:
-			D(funcname = "glEndVertexShaderEXT");
 			if (GL_ISAVAILABLE(glEndVertexShaderEXT))
 			nfglEndVertexShaderEXT(nf_params);
 			break;
 		case NFOSMESA_GLENDVIDEOCAPTURENV:
-			D(funcname = "glEndVideoCaptureNV");
 			if (GL_ISAVAILABLE(glEndVideoCaptureNV))
 			nfglEndVideoCaptureNV(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1D:
-			D(funcname = "glEvalCoord1d");
 			if (GL_ISAVAILABLE(glEvalCoord1d))
 			nfglEvalCoord1d(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1DV:
-			D(funcname = "glEvalCoord1dv");
 			if (GL_ISAVAILABLE(glEvalCoord1dv))
 			nfglEvalCoord1dv(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1F:
-			D(funcname = "glEvalCoord1f");
 			if (GL_ISAVAILABLE(glEvalCoord1f))
 			nfglEvalCoord1f(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1FV:
-			D(funcname = "glEvalCoord1fv");
 			if (GL_ISAVAILABLE(glEvalCoord1fv))
 			nfglEvalCoord1fv(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1XOES:
-			D(funcname = "glEvalCoord1xOES");
 			if (GL_ISAVAILABLE(glEvalCoord1xOES))
 			nfglEvalCoord1xOES(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD1XVOES:
-			D(funcname = "glEvalCoord1xvOES");
 			if (GL_ISAVAILABLE(glEvalCoord1xvOES))
 			nfglEvalCoord1xvOES(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2D:
-			D(funcname = "glEvalCoord2d");
 			if (GL_ISAVAILABLE(glEvalCoord2d))
 			nfglEvalCoord2d(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2DV:
-			D(funcname = "glEvalCoord2dv");
 			if (GL_ISAVAILABLE(glEvalCoord2dv))
 			nfglEvalCoord2dv(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2F:
-			D(funcname = "glEvalCoord2f");
 			if (GL_ISAVAILABLE(glEvalCoord2f))
 			nfglEvalCoord2f(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2FV:
-			D(funcname = "glEvalCoord2fv");
 			if (GL_ISAVAILABLE(glEvalCoord2fv))
 			nfglEvalCoord2fv(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2XOES:
-			D(funcname = "glEvalCoord2xOES");
 			if (GL_ISAVAILABLE(glEvalCoord2xOES))
 			nfglEvalCoord2xOES(nf_params);
 			break;
 		case NFOSMESA_GLEVALCOORD2XVOES:
-			D(funcname = "glEvalCoord2xvOES");
 			if (GL_ISAVAILABLE(glEvalCoord2xvOES))
 			nfglEvalCoord2xvOES(nf_params);
 			break;
 		case NFOSMESA_GLEVALMAPSNV:
-			D(funcname = "glEvalMapsNV");
 			if (GL_ISAVAILABLE(glEvalMapsNV))
 			nfglEvalMapsNV(nf_params);
 			break;
 		case NFOSMESA_GLEVALMESH1:
-			D(funcname = "glEvalMesh1");
 			if (GL_ISAVAILABLE(glEvalMesh1))
 			nfglEvalMesh1(nf_params);
 			break;
 		case NFOSMESA_GLEVALMESH2:
-			D(funcname = "glEvalMesh2");
 			if (GL_ISAVAILABLE(glEvalMesh2))
 			nfglEvalMesh2(nf_params);
 			break;
 		case NFOSMESA_GLEVALPOINT1:
-			D(funcname = "glEvalPoint1");
 			if (GL_ISAVAILABLE(glEvalPoint1))
 			nfglEvalPoint1(nf_params);
 			break;
 		case NFOSMESA_GLEVALPOINT2:
-			D(funcname = "glEvalPoint2");
 			if (GL_ISAVAILABLE(glEvalPoint2))
 			nfglEvalPoint2(nf_params);
 			break;
 		case NFOSMESA_GLEVALUATEDEPTHVALUESARB:
-			D(funcname = "glEvaluateDepthValuesARB");
 			if (GL_ISAVAILABLE(glEvaluateDepthValuesARB))
 			nfglEvaluateDepthValuesARB(nf_params);
 			break;
 		case NFOSMESA_GLEXECUTEPROGRAMNV:
-			D(funcname = "glExecuteProgramNV");
 			if (GL_ISAVAILABLE(glExecuteProgramNV))
 			nfglExecuteProgramNV(nf_params);
 			break;
 		case NFOSMESA_GLEXTRACTCOMPONENTEXT:
-			D(funcname = "glExtractComponentEXT");
 			if (GL_ISAVAILABLE(glExtractComponentEXT))
 			nfglExtractComponentEXT(nf_params);
 			break;
 		case NFOSMESA_GLFEEDBACKBUFFER:
-			D(funcname = "glFeedbackBuffer");
 			if (GL_ISAVAILABLE(glFeedbackBuffer))
 			nfglFeedbackBuffer(nf_params);
 			break;
 		case NFOSMESA_GLFEEDBACKBUFFERXOES:
-			D(funcname = "glFeedbackBufferxOES");
 			if (GL_ISAVAILABLE(glFeedbackBufferxOES))
 			nfglFeedbackBufferxOES(nf_params);
 			break;
 		case NFOSMESA_GLFENCESYNC:
-			D(funcname = "glFenceSync");
 			if (GL_ISAVAILABLE(glFenceSync))
-			ret = (uint32)(uintptr_t)nfglFenceSync(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglFenceSync(nf_params);
 			break;
 		case NFOSMESA_GLFINALCOMBINERINPUTNV:
-			D(funcname = "glFinalCombinerInputNV");
 			if (GL_ISAVAILABLE(glFinalCombinerInputNV))
 			nfglFinalCombinerInputNV(nf_params);
 			break;
 		case NFOSMESA_GLFINISH:
-			D(funcname = "glFinish");
 			if (GL_ISAVAILABLE(glFinish))
 			nfglFinish(nf_params);
 			break;
 		case NFOSMESA_GLFINISHASYNCSGIX:
-			D(funcname = "glFinishAsyncSGIX");
 			if (GL_ISAVAILABLE(glFinishAsyncSGIX))
 			ret = nfglFinishAsyncSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFINISHFENCEAPPLE:
-			D(funcname = "glFinishFenceAPPLE");
 			if (GL_ISAVAILABLE(glFinishFenceAPPLE))
 			nfglFinishFenceAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFINISHFENCENV:
-			D(funcname = "glFinishFenceNV");
 			if (GL_ISAVAILABLE(glFinishFenceNV))
 			nfglFinishFenceNV(nf_params);
 			break;
 		case NFOSMESA_GLFINISHOBJECTAPPLE:
-			D(funcname = "glFinishObjectAPPLE");
 			if (GL_ISAVAILABLE(glFinishObjectAPPLE))
 			nfglFinishObjectAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFINISHRENDERAPPLE:
-			D(funcname = "glFinishRenderAPPLE");
 			if (GL_ISAVAILABLE(glFinishRenderAPPLE))
 			nfglFinishRenderAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFINISHTEXTURESUNX:
-			D(funcname = "glFinishTextureSUNX");
 			if (GL_ISAVAILABLE(glFinishTextureSUNX))
 			nfglFinishTextureSUNX(nf_params);
 			break;
 		case NFOSMESA_GLFLUSH:
-			D(funcname = "glFlush");
 			if (GL_ISAVAILABLE(glFlush))
 			nfglFlush(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDBUFFERRANGE:
-			D(funcname = "glFlushMappedBufferRange");
 			if (GL_ISAVAILABLE(glFlushMappedBufferRange))
 			nfglFlushMappedBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDBUFFERRANGEAPPLE:
-			D(funcname = "glFlushMappedBufferRangeAPPLE");
 			if (GL_ISAVAILABLE(glFlushMappedBufferRangeAPPLE))
 			nfglFlushMappedBufferRangeAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDNAMEDBUFFERRANGE:
-			D(funcname = "glFlushMappedNamedBufferRange");
 			if (GL_ISAVAILABLE(glFlushMappedNamedBufferRange))
 			nfglFlushMappedNamedBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHMAPPEDNAMEDBUFFERRANGEEXT:
-			D(funcname = "glFlushMappedNamedBufferRangeEXT");
 			if (GL_ISAVAILABLE(glFlushMappedNamedBufferRangeEXT))
 			nfglFlushMappedNamedBufferRangeEXT(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHPIXELDATARANGENV:
-			D(funcname = "glFlushPixelDataRangeNV");
 			if (GL_ISAVAILABLE(glFlushPixelDataRangeNV))
 			nfglFlushPixelDataRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHRASTERSGIX:
-			D(funcname = "glFlushRasterSGIX");
 			if (GL_ISAVAILABLE(glFlushRasterSGIX))
 			nfglFlushRasterSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHRENDERAPPLE:
-			D(funcname = "glFlushRenderAPPLE");
 			if (GL_ISAVAILABLE(glFlushRenderAPPLE))
 			nfglFlushRenderAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHSTATICDATAIBM:
-			D(funcname = "glFlushStaticDataIBM");
 			if (GL_ISAVAILABLE(glFlushStaticDataIBM))
 			nfglFlushStaticDataIBM(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGEAPPLE:
-			D(funcname = "glFlushVertexArrayRangeAPPLE");
 			if (GL_ISAVAILABLE(glFlushVertexArrayRangeAPPLE))
 			nfglFlushVertexArrayRangeAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLFLUSHVERTEXARRAYRANGENV:
-			D(funcname = "glFlushVertexArrayRangeNV");
 			if (GL_ISAVAILABLE(glFlushVertexArrayRangeNV))
 			nfglFlushVertexArrayRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDFORMATNV:
-			D(funcname = "glFogCoordFormatNV");
 			if (GL_ISAVAILABLE(glFogCoordFormatNV))
 			nfglFogCoordFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTER:
-			D(funcname = "glFogCoordPointer");
 			if (GL_ISAVAILABLE(glFogCoordPointer))
 			nfglFogCoordPointer(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTEREXT:
-			D(funcname = "glFogCoordPointerEXT");
 			if (GL_ISAVAILABLE(glFogCoordPointerEXT))
 			nfglFogCoordPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDPOINTERLISTIBM:
-			D(funcname = "glFogCoordPointerListIBM");
 			if (GL_ISAVAILABLE(glFogCoordPointerListIBM))
 			nfglFogCoordPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDD:
-			D(funcname = "glFogCoordd");
 			if (GL_ISAVAILABLE(glFogCoordd))
 			nfglFogCoordd(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDDEXT:
-			D(funcname = "glFogCoorddEXT");
 			if (GL_ISAVAILABLE(glFogCoorddEXT))
 			nfglFogCoorddEXT(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDDV:
-			D(funcname = "glFogCoorddv");
 			if (GL_ISAVAILABLE(glFogCoorddv))
 			nfglFogCoorddv(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDDVEXT:
-			D(funcname = "glFogCoorddvEXT");
 			if (GL_ISAVAILABLE(glFogCoorddvEXT))
 			nfglFogCoorddvEXT(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDF:
-			D(funcname = "glFogCoordf");
 			if (GL_ISAVAILABLE(glFogCoordf))
 			nfglFogCoordf(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDFEXT:
-			D(funcname = "glFogCoordfEXT");
 			if (GL_ISAVAILABLE(glFogCoordfEXT))
 			nfglFogCoordfEXT(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDFV:
-			D(funcname = "glFogCoordfv");
 			if (GL_ISAVAILABLE(glFogCoordfv))
 			nfglFogCoordfv(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDFVEXT:
-			D(funcname = "glFogCoordfvEXT");
 			if (GL_ISAVAILABLE(glFogCoordfvEXT))
 			nfglFogCoordfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDHNV:
-			D(funcname = "glFogCoordhNV");
 			if (GL_ISAVAILABLE(glFogCoordhNV))
 			nfglFogCoordhNV(nf_params);
 			break;
 		case NFOSMESA_GLFOGCOORDHVNV:
-			D(funcname = "glFogCoordhvNV");
 			if (GL_ISAVAILABLE(glFogCoordhvNV))
 			nfglFogCoordhvNV(nf_params);
 			break;
 		case NFOSMESA_GLFOGFUNCSGIS:
-			D(funcname = "glFogFuncSGIS");
 			if (GL_ISAVAILABLE(glFogFuncSGIS))
 			nfglFogFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLFOGF:
-			D(funcname = "glFogf");
 			if (GL_ISAVAILABLE(glFogf))
 			nfglFogf(nf_params);
 			break;
 		case NFOSMESA_GLFOGFV:
-			D(funcname = "glFogfv");
 			if (GL_ISAVAILABLE(glFogfv))
 			nfglFogfv(nf_params);
 			break;
 		case NFOSMESA_GLFOGI:
-			D(funcname = "glFogi");
 			if (GL_ISAVAILABLE(glFogi))
 			nfglFogi(nf_params);
 			break;
 		case NFOSMESA_GLFOGIV:
-			D(funcname = "glFogiv");
 			if (GL_ISAVAILABLE(glFogiv))
 			nfglFogiv(nf_params);
 			break;
 		case NFOSMESA_GLFOGXOES:
-			D(funcname = "glFogxOES");
 			if (GL_ISAVAILABLE(glFogxOES))
 			nfglFogxOES(nf_params);
 			break;
 		case NFOSMESA_GLFOGXVOES:
-			D(funcname = "glFogxvOES");
 			if (GL_ISAVAILABLE(glFogxvOES))
 			nfglFogxvOES(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTCOLORMATERIALSGIX:
-			D(funcname = "glFragmentColorMaterialSGIX");
 			if (GL_ISAVAILABLE(glFragmentColorMaterialSGIX))
 			nfglFragmentColorMaterialSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTCOVERAGECOLORNV:
-			D(funcname = "glFragmentCoverageColorNV");
 			if (GL_ISAVAILABLE(glFragmentCoverageColorNV))
 			nfglFragmentCoverageColorNV(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELFSGIX:
-			D(funcname = "glFragmentLightModelfSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightModelfSGIX))
 			nfglFragmentLightModelfSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELFVSGIX:
-			D(funcname = "glFragmentLightModelfvSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightModelfvSGIX))
 			nfglFragmentLightModelfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELISGIX:
-			D(funcname = "glFragmentLightModeliSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightModeliSGIX))
 			nfglFragmentLightModeliSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTMODELIVSGIX:
-			D(funcname = "glFragmentLightModelivSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightModelivSGIX))
 			nfglFragmentLightModelivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTFSGIX:
-			D(funcname = "glFragmentLightfSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightfSGIX))
 			nfglFragmentLightfSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTFVSGIX:
-			D(funcname = "glFragmentLightfvSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightfvSGIX))
 			nfglFragmentLightfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTISGIX:
-			D(funcname = "glFragmentLightiSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightiSGIX))
 			nfglFragmentLightiSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTLIGHTIVSGIX:
-			D(funcname = "glFragmentLightivSGIX");
 			if (GL_ISAVAILABLE(glFragmentLightivSGIX))
 			nfglFragmentLightivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALFSGIX:
-			D(funcname = "glFragmentMaterialfSGIX");
 			if (GL_ISAVAILABLE(glFragmentMaterialfSGIX))
 			nfglFragmentMaterialfSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALFVSGIX:
-			D(funcname = "glFragmentMaterialfvSGIX");
 			if (GL_ISAVAILABLE(glFragmentMaterialfvSGIX))
 			nfglFragmentMaterialfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALISGIX:
-			D(funcname = "glFragmentMaterialiSGIX");
 			if (GL_ISAVAILABLE(glFragmentMaterialiSGIX))
 			nfglFragmentMaterialiSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAGMENTMATERIALIVSGIX:
-			D(funcname = "glFragmentMaterialivSGIX");
 			if (GL_ISAVAILABLE(glFragmentMaterialivSGIX))
 			nfglFragmentMaterialivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAMETERMINATORGREMEDY:
-			D(funcname = "glFrameTerminatorGREMEDY");
 			if (GL_ISAVAILABLE(glFrameTerminatorGREMEDY))
 			nfglFrameTerminatorGREMEDY(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEZOOMSGIX:
-			D(funcname = "glFrameZoomSGIX");
 			if (GL_ISAVAILABLE(glFrameZoomSGIX))
 			nfglFrameZoomSGIX(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERDRAWBUFFEREXT:
-			D(funcname = "glFramebufferDrawBufferEXT");
 			if (GL_ISAVAILABLE(glFramebufferDrawBufferEXT))
 			nfglFramebufferDrawBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERDRAWBUFFERSEXT:
-			D(funcname = "glFramebufferDrawBuffersEXT");
 			if (GL_ISAVAILABLE(glFramebufferDrawBuffersEXT))
 			nfglFramebufferDrawBuffersEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERFETCHBARRIEREXT:
-			D(funcname = "glFramebufferFetchBarrierEXT");
 			if (GL_ISAVAILABLE(glFramebufferFetchBarrierEXT))
 			nfglFramebufferFetchBarrierEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERPARAMETERI:
-			D(funcname = "glFramebufferParameteri");
 			if (GL_ISAVAILABLE(glFramebufferParameteri))
 			nfglFramebufferParameteri(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERREADBUFFEREXT:
-			D(funcname = "glFramebufferReadBufferEXT");
 			if (GL_ISAVAILABLE(glFramebufferReadBufferEXT))
 			nfglFramebufferReadBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERRENDERBUFFER:
-			D(funcname = "glFramebufferRenderbuffer");
 			if (GL_ISAVAILABLE(glFramebufferRenderbuffer))
 			nfglFramebufferRenderbuffer(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERRENDERBUFFEREXT:
-			D(funcname = "glFramebufferRenderbufferEXT");
 			if (GL_ISAVAILABLE(glFramebufferRenderbufferEXT))
 			nfglFramebufferRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVARB:
-			D(funcname = "glFramebufferSampleLocationsfvARB");
 			if (GL_ISAVAILABLE(glFramebufferSampleLocationsfvARB))
 			nfglFramebufferSampleLocationsfvARB(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERSAMPLELOCATIONSFVNV:
-			D(funcname = "glFramebufferSampleLocationsfvNV");
 			if (GL_ISAVAILABLE(glFramebufferSampleLocationsfvNV))
 			nfglFramebufferSampleLocationsfvNV(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERSAMPLEPOSITIONSFVAMD:
-			D(funcname = "glFramebufferSamplePositionsfvAMD");
 			if (GL_ISAVAILABLE(glFramebufferSamplePositionsfvAMD))
 			nfglFramebufferSamplePositionsfvAMD(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE:
-			D(funcname = "glFramebufferTexture");
 			if (GL_ISAVAILABLE(glFramebufferTexture))
 			nfglFramebufferTexture(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE1D:
-			D(funcname = "glFramebufferTexture1D");
 			if (GL_ISAVAILABLE(glFramebufferTexture1D))
 			nfglFramebufferTexture1D(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE1DEXT:
-			D(funcname = "glFramebufferTexture1DEXT");
 			if (GL_ISAVAILABLE(glFramebufferTexture1DEXT))
 			nfglFramebufferTexture1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE2D:
-			D(funcname = "glFramebufferTexture2D");
 			if (GL_ISAVAILABLE(glFramebufferTexture2D))
 			nfglFramebufferTexture2D(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE2DEXT:
-			D(funcname = "glFramebufferTexture2DEXT");
 			if (GL_ISAVAILABLE(glFramebufferTexture2DEXT))
 			nfglFramebufferTexture2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE3D:
-			D(funcname = "glFramebufferTexture3D");
 			if (GL_ISAVAILABLE(glFramebufferTexture3D))
 			nfglFramebufferTexture3D(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURE3DEXT:
-			D(funcname = "glFramebufferTexture3DEXT");
 			if (GL_ISAVAILABLE(glFramebufferTexture3DEXT))
 			nfglFramebufferTexture3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREARB:
-			D(funcname = "glFramebufferTextureARB");
 			if (GL_ISAVAILABLE(glFramebufferTextureARB))
 			nfglFramebufferTextureARB(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREEXT:
-			D(funcname = "glFramebufferTextureEXT");
 			if (GL_ISAVAILABLE(glFramebufferTextureEXT))
 			nfglFramebufferTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREFACEARB:
-			D(funcname = "glFramebufferTextureFaceARB");
 			if (GL_ISAVAILABLE(glFramebufferTextureFaceARB))
 			nfglFramebufferTextureFaceARB(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREFACEEXT:
-			D(funcname = "glFramebufferTextureFaceEXT");
 			if (GL_ISAVAILABLE(glFramebufferTextureFaceEXT))
 			nfglFramebufferTextureFaceEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYER:
-			D(funcname = "glFramebufferTextureLayer");
 			if (GL_ISAVAILABLE(glFramebufferTextureLayer))
 			nfglFramebufferTextureLayer(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYERARB:
-			D(funcname = "glFramebufferTextureLayerARB");
 			if (GL_ISAVAILABLE(glFramebufferTextureLayerARB))
 			nfglFramebufferTextureLayerARB(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTURELAYEREXT:
-			D(funcname = "glFramebufferTextureLayerEXT");
 			if (GL_ISAVAILABLE(glFramebufferTextureLayerEXT))
 			nfglFramebufferTextureLayerEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERTEXTUREMULTIVIEWOVR:
-			D(funcname = "glFramebufferTextureMultiviewOVR");
 			if (GL_ISAVAILABLE(glFramebufferTextureMultiviewOVR))
 			nfglFramebufferTextureMultiviewOVR(nf_params);
 			break;
 		case NFOSMESA_GLFREEOBJECTBUFFERATI:
-			D(funcname = "glFreeObjectBufferATI");
 			if (GL_ISAVAILABLE(glFreeObjectBufferATI))
 			nfglFreeObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLFRONTFACE:
-			D(funcname = "glFrontFace");
 			if (GL_ISAVAILABLE(glFrontFace))
 			nfglFrontFace(nf_params);
 			break;
 		case NFOSMESA_GLFRUSTUM:
-			D(funcname = "glFrustum");
 			if (GL_ISAVAILABLE(glFrustum))
 			nfglFrustum(nf_params);
 			break;
 		case NFOSMESA_GLFRUSTUMFOES:
-			D(funcname = "glFrustumfOES");
 			if (GL_ISAVAILABLE(glFrustumfOES))
 			nfglFrustumfOES(nf_params);
 			break;
 		case NFOSMESA_GLFRUSTUMXOES:
-			D(funcname = "glFrustumxOES");
 			if (GL_ISAVAILABLE(glFrustumxOES))
 			nfglFrustumxOES(nf_params);
 			break;
 		case NFOSMESA_GLGENASYNCMARKERSSGIX:
-			D(funcname = "glGenAsyncMarkersSGIX");
 			if (GL_ISAVAILABLE(glGenAsyncMarkersSGIX))
 			ret = nfglGenAsyncMarkersSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGENBUFFERS:
-			D(funcname = "glGenBuffers");
 			if (GL_ISAVAILABLE(glGenBuffers))
 			nfglGenBuffers(nf_params);
 			break;
 		case NFOSMESA_GLGENBUFFERSARB:
-			D(funcname = "glGenBuffersARB");
 			if (GL_ISAVAILABLE(glGenBuffersARB))
 			nfglGenBuffersARB(nf_params);
 			break;
 		case NFOSMESA_GLGENFENCESAPPLE:
-			D(funcname = "glGenFencesAPPLE");
 			if (GL_ISAVAILABLE(glGenFencesAPPLE))
 			nfglGenFencesAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLGENFENCESNV:
-			D(funcname = "glGenFencesNV");
 			if (GL_ISAVAILABLE(glGenFencesNV))
 			nfglGenFencesNV(nf_params);
 			break;
 		case NFOSMESA_GLGENFRAGMENTSHADERSATI:
-			D(funcname = "glGenFragmentShadersATI");
 			if (GL_ISAVAILABLE(glGenFragmentShadersATI))
 			ret = nfglGenFragmentShadersATI(nf_params);
 			break;
 		case NFOSMESA_GLGENFRAMEBUFFERS:
-			D(funcname = "glGenFramebuffers");
 			if (GL_ISAVAILABLE(glGenFramebuffers))
 			nfglGenFramebuffers(nf_params);
 			break;
 		case NFOSMESA_GLGENFRAMEBUFFERSEXT:
-			D(funcname = "glGenFramebuffersEXT");
 			if (GL_ISAVAILABLE(glGenFramebuffersEXT))
 			nfglGenFramebuffersEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENLISTS:
-			D(funcname = "glGenLists");
 			if (GL_ISAVAILABLE(glGenLists))
 			ret = nfglGenLists(nf_params);
 			break;
 		case NFOSMESA_GLGENNAMESAMD:
-			D(funcname = "glGenNamesAMD");
 			if (GL_ISAVAILABLE(glGenNamesAMD))
 			nfglGenNamesAMD(nf_params);
 			break;
 		case NFOSMESA_GLGENOCCLUSIONQUERIESNV:
-			D(funcname = "glGenOcclusionQueriesNV");
 			if (GL_ISAVAILABLE(glGenOcclusionQueriesNV))
 			nfglGenOcclusionQueriesNV(nf_params);
 			break;
 		case NFOSMESA_GLGENPATHSNV:
-			D(funcname = "glGenPathsNV");
 			if (GL_ISAVAILABLE(glGenPathsNV))
 			ret = nfglGenPathsNV(nf_params);
 			break;
 		case NFOSMESA_GLGENPERFMONITORSAMD:
-			D(funcname = "glGenPerfMonitorsAMD");
 			if (GL_ISAVAILABLE(glGenPerfMonitorsAMD))
 			nfglGenPerfMonitorsAMD(nf_params);
 			break;
 		case NFOSMESA_GLGENPROGRAMPIPELINES:
-			D(funcname = "glGenProgramPipelines");
 			if (GL_ISAVAILABLE(glGenProgramPipelines))
 			nfglGenProgramPipelines(nf_params);
 			break;
 		case NFOSMESA_GLGENPROGRAMSARB:
-			D(funcname = "glGenProgramsARB");
 			if (GL_ISAVAILABLE(glGenProgramsARB))
 			nfglGenProgramsARB(nf_params);
 			break;
 		case NFOSMESA_GLGENPROGRAMSNV:
-			D(funcname = "glGenProgramsNV");
 			if (GL_ISAVAILABLE(glGenProgramsNV))
 			nfglGenProgramsNV(nf_params);
 			break;
 		case NFOSMESA_GLGENQUERIES:
-			D(funcname = "glGenQueries");
 			if (GL_ISAVAILABLE(glGenQueries))
 			nfglGenQueries(nf_params);
 			break;
 		case NFOSMESA_GLGENQUERIESARB:
-			D(funcname = "glGenQueriesARB");
 			if (GL_ISAVAILABLE(glGenQueriesARB))
 			nfglGenQueriesARB(nf_params);
 			break;
 		case NFOSMESA_GLGENQUERYRESOURCETAGNV:
-			D(funcname = "glGenQueryResourceTagNV");
 			if (GL_ISAVAILABLE(glGenQueryResourceTagNV))
 			nfglGenQueryResourceTagNV(nf_params);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERS:
-			D(funcname = "glGenRenderbuffers");
 			if (GL_ISAVAILABLE(glGenRenderbuffers))
 			nfglGenRenderbuffers(nf_params);
 			break;
 		case NFOSMESA_GLGENRENDERBUFFERSEXT:
-			D(funcname = "glGenRenderbuffersEXT");
 			if (GL_ISAVAILABLE(glGenRenderbuffersEXT))
 			nfglGenRenderbuffersEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENSAMPLERS:
-			D(funcname = "glGenSamplers");
 			if (GL_ISAVAILABLE(glGenSamplers))
 			nfglGenSamplers(nf_params);
 			break;
 		case NFOSMESA_GLGENSEMAPHORESEXT:
-			D(funcname = "glGenSemaphoresEXT");
 			if (GL_ISAVAILABLE(glGenSemaphoresEXT))
 			nfglGenSemaphoresEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENSYMBOLSEXT:
-			D(funcname = "glGenSymbolsEXT");
 			if (GL_ISAVAILABLE(glGenSymbolsEXT))
 			ret = nfglGenSymbolsEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENTEXTURES:
-			D(funcname = "glGenTextures");
 			if (GL_ISAVAILABLE(glGenTextures))
 			nfglGenTextures(nf_params);
 			break;
 		case NFOSMESA_GLGENTEXTURESEXT:
-			D(funcname = "glGenTexturesEXT");
 			if (GL_ISAVAILABLE(glGenTexturesEXT))
 			nfglGenTexturesEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKS:
-			D(funcname = "glGenTransformFeedbacks");
 			if (GL_ISAVAILABLE(glGenTransformFeedbacks))
 			nfglGenTransformFeedbacks(nf_params);
 			break;
 		case NFOSMESA_GLGENTRANSFORMFEEDBACKSNV:
-			D(funcname = "glGenTransformFeedbacksNV");
 			if (GL_ISAVAILABLE(glGenTransformFeedbacksNV))
 			nfglGenTransformFeedbacksNV(nf_params);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYS:
-			D(funcname = "glGenVertexArrays");
 			if (GL_ISAVAILABLE(glGenVertexArrays))
 			nfglGenVertexArrays(nf_params);
 			break;
 		case NFOSMESA_GLGENVERTEXARRAYSAPPLE:
-			D(funcname = "glGenVertexArraysAPPLE");
 			if (GL_ISAVAILABLE(glGenVertexArraysAPPLE))
 			nfglGenVertexArraysAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLGENVERTEXSHADERSEXT:
-			D(funcname = "glGenVertexShadersEXT");
 			if (GL_ISAVAILABLE(glGenVertexShadersEXT))
 			ret = nfglGenVertexShadersEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENERATEMIPMAP:
-			D(funcname = "glGenerateMipmap");
 			if (GL_ISAVAILABLE(glGenerateMipmap))
 			nfglGenerateMipmap(nf_params);
 			break;
 		case NFOSMESA_GLGENERATEMIPMAPEXT:
-			D(funcname = "glGenerateMipmapEXT");
 			if (GL_ISAVAILABLE(glGenerateMipmapEXT))
 			nfglGenerateMipmapEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENERATEMULTITEXMIPMAPEXT:
-			D(funcname = "glGenerateMultiTexMipmapEXT");
 			if (GL_ISAVAILABLE(glGenerateMultiTexMipmapEXT))
 			nfglGenerateMultiTexMipmapEXT(nf_params);
 			break;
 		case NFOSMESA_GLGENERATETEXTUREMIPMAP:
-			D(funcname = "glGenerateTextureMipmap");
 			if (GL_ISAVAILABLE(glGenerateTextureMipmap))
 			nfglGenerateTextureMipmap(nf_params);
 			break;
 		case NFOSMESA_GLGENERATETEXTUREMIPMAPEXT:
-			D(funcname = "glGenerateTextureMipmapEXT");
 			if (GL_ISAVAILABLE(glGenerateTextureMipmapEXT))
 			nfglGenerateTextureMipmapEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEATOMICCOUNTERBUFFERIV:
-			D(funcname = "glGetActiveAtomicCounterBufferiv");
 			if (GL_ISAVAILABLE(glGetActiveAtomicCounterBufferiv))
 			nfglGetActiveAtomicCounterBufferiv(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIB:
-			D(funcname = "glGetActiveAttrib");
 			if (GL_ISAVAILABLE(glGetActiveAttrib))
 			nfglGetActiveAttrib(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEATTRIBARB:
-			D(funcname = "glGetActiveAttribARB");
 			if (GL_ISAVAILABLE(glGetActiveAttribARB))
 			nfglGetActiveAttribARB(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINENAME:
-			D(funcname = "glGetActiveSubroutineName");
 			if (GL_ISAVAILABLE(glGetActiveSubroutineName))
 			nfglGetActiveSubroutineName(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMNAME:
-			D(funcname = "glGetActiveSubroutineUniformName");
 			if (GL_ISAVAILABLE(glGetActiveSubroutineUniformName))
 			nfglGetActiveSubroutineUniformName(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVESUBROUTINEUNIFORMIV:
-			D(funcname = "glGetActiveSubroutineUniformiv");
 			if (GL_ISAVAILABLE(glGetActiveSubroutineUniformiv))
 			nfglGetActiveSubroutineUniformiv(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORM:
-			D(funcname = "glGetActiveUniform");
 			if (GL_ISAVAILABLE(glGetActiveUniform))
 			nfglGetActiveUniform(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMARB:
-			D(funcname = "glGetActiveUniformARB");
 			if (GL_ISAVAILABLE(glGetActiveUniformARB))
 			nfglGetActiveUniformARB(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKINDEX:
-			D(funcname = "glGetActiveUniformBlockIndex");
 			if (GL_ISAVAILABLE(glGetActiveUniformBlockIndex))
 			ret = nfglGetActiveUniformBlockIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKNAME:
-			D(funcname = "glGetActiveUniformBlockName");
 			if (GL_ISAVAILABLE(glGetActiveUniformBlockName))
 			nfglGetActiveUniformBlockName(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMBLOCKIV:
-			D(funcname = "glGetActiveUniformBlockiv");
 			if (GL_ISAVAILABLE(glGetActiveUniformBlockiv))
 			nfglGetActiveUniformBlockiv(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMNAME:
-			D(funcname = "glGetActiveUniformName");
 			if (GL_ISAVAILABLE(glGetActiveUniformName))
 			nfglGetActiveUniformName(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEUNIFORMSIV:
-			D(funcname = "glGetActiveUniformsiv");
 			if (GL_ISAVAILABLE(glGetActiveUniformsiv))
 			nfglGetActiveUniformsiv(nf_params);
 			break;
 		case NFOSMESA_GLGETACTIVEVARYINGNV:
-			D(funcname = "glGetActiveVaryingNV");
 			if (GL_ISAVAILABLE(glGetActiveVaryingNV))
 			nfglGetActiveVaryingNV(nf_params);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTFVATI:
-			D(funcname = "glGetArrayObjectfvATI");
 			if (GL_ISAVAILABLE(glGetArrayObjectfvATI))
 			nfglGetArrayObjectfvATI(nf_params);
 			break;
 		case NFOSMESA_GLGETARRAYOBJECTIVATI:
-			D(funcname = "glGetArrayObjectivATI");
 			if (GL_ISAVAILABLE(glGetArrayObjectivATI))
 			nfglGetArrayObjectivATI(nf_params);
 			break;
 		case NFOSMESA_GLGETATTACHEDOBJECTSARB:
-			D(funcname = "glGetAttachedObjectsARB");
 			if (GL_ISAVAILABLE(glGetAttachedObjectsARB))
 			nfglGetAttachedObjectsARB(nf_params);
 			break;
 		case NFOSMESA_GLGETATTACHEDSHADERS:
-			D(funcname = "glGetAttachedShaders");
 			if (GL_ISAVAILABLE(glGetAttachedShaders))
 			nfglGetAttachedShaders(nf_params);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATION:
-			D(funcname = "glGetAttribLocation");
 			if (GL_ISAVAILABLE(glGetAttribLocation))
 			ret = nfglGetAttribLocation(nf_params);
 			break;
 		case NFOSMESA_GLGETATTRIBLOCATIONARB:
-			D(funcname = "glGetAttribLocationARB");
 			if (GL_ISAVAILABLE(glGetAttribLocationARB))
 			ret = nfglGetAttribLocationARB(nf_params);
 			break;
 		case NFOSMESA_GLGETBOOLEANINDEXEDVEXT:
-			D(funcname = "glGetBooleanIndexedvEXT");
 			if (GL_ISAVAILABLE(glGetBooleanIndexedvEXT))
 			nfglGetBooleanIndexedvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETBOOLEANI_V:
-			D(funcname = "glGetBooleani_v");
 			if (GL_ISAVAILABLE(glGetBooleani_v))
 			nfglGetBooleani_v(nf_params);
 			break;
 		case NFOSMESA_GLGETBOOLEANV:
-			D(funcname = "glGetBooleanv");
 			if (GL_ISAVAILABLE(glGetBooleanv))
 			nfglGetBooleanv(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERI64V:
-			D(funcname = "glGetBufferParameteri64v");
 			if (GL_ISAVAILABLE(glGetBufferParameteri64v))
 			nfglGetBufferParameteri64v(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIV:
-			D(funcname = "glGetBufferParameteriv");
 			if (GL_ISAVAILABLE(glGetBufferParameteriv))
 			nfglGetBufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERIVARB:
-			D(funcname = "glGetBufferParameterivARB");
 			if (GL_ISAVAILABLE(glGetBufferParameterivARB))
 			nfglGetBufferParameterivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPARAMETERUI64VNV:
-			D(funcname = "glGetBufferParameterui64vNV");
 			if (GL_ISAVAILABLE(glGetBufferParameterui64vNV))
 			nfglGetBufferParameterui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERV:
-			D(funcname = "glGetBufferPointerv");
 			if (GL_ISAVAILABLE(glGetBufferPointerv))
 			nfglGetBufferPointerv(nf_params);
 			break;
 		case NFOSMESA_GLGETBUFFERPOINTERVARB:
-			D(funcname = "glGetBufferPointervARB");
 			if (GL_ISAVAILABLE(glGetBufferPointervARB))
 			nfglGetBufferPointervARB(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLGETBUFFERSUBDATA:
-			D(funcname = "glGetBufferSubData");
 			if (GL_ISAVAILABLE(glGetBufferSubData))
 			nfglGetBufferSubData(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLGETBUFFERSUBDATAARB:
-			D(funcname = "glGetBufferSubDataARB");
 			if (GL_ISAVAILABLE(glGetBufferSubDataARB))
 			nfglGetBufferSubDataARB(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLGETCLIPPLANE:
-			D(funcname = "glGetClipPlane");
 			if (GL_ISAVAILABLE(glGetClipPlane))
 			nfglGetClipPlane(nf_params);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEFOES:
-			D(funcname = "glGetClipPlanefOES");
 			if (GL_ISAVAILABLE(glGetClipPlanefOES))
 			nfglGetClipPlanefOES(nf_params);
 			break;
 		case NFOSMESA_GLGETCLIPPLANEXOES:
-			D(funcname = "glGetClipPlanexOES");
 			if (GL_ISAVAILABLE(glGetClipPlanexOES))
 			nfglGetClipPlanexOES(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLE:
-			D(funcname = "glGetColorTable");
 			if (GL_ISAVAILABLE(glGetColorTable))
 			nfglGetColorTable(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEEXT:
-			D(funcname = "glGetColorTableEXT");
 			if (GL_ISAVAILABLE(glGetColorTableEXT))
 			nfglGetColorTableEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFV:
-			D(funcname = "glGetColorTableParameterfv");
 			if (GL_ISAVAILABLE(glGetColorTableParameterfv))
 			nfglGetColorTableParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVEXT:
-			D(funcname = "glGetColorTableParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetColorTableParameterfvEXT))
 			nfglGetColorTableParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERFVSGI:
-			D(funcname = "glGetColorTableParameterfvSGI");
 			if (GL_ISAVAILABLE(glGetColorTableParameterfvSGI))
 			nfglGetColorTableParameterfvSGI(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIV:
-			D(funcname = "glGetColorTableParameteriv");
 			if (GL_ISAVAILABLE(glGetColorTableParameteriv))
 			nfglGetColorTableParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVEXT:
-			D(funcname = "glGetColorTableParameterivEXT");
 			if (GL_ISAVAILABLE(glGetColorTableParameterivEXT))
 			nfglGetColorTableParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLEPARAMETERIVSGI:
-			D(funcname = "glGetColorTableParameterivSGI");
 			if (GL_ISAVAILABLE(glGetColorTableParameterivSGI))
 			nfglGetColorTableParameterivSGI(nf_params);
 			break;
 		case NFOSMESA_GLGETCOLORTABLESGI:
-			D(funcname = "glGetColorTableSGI");
 			if (GL_ISAVAILABLE(glGetColorTableSGI))
 			nfglGetColorTableSGI(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERFVNV:
-			D(funcname = "glGetCombinerInputParameterfvNV");
 			if (GL_ISAVAILABLE(glGetCombinerInputParameterfvNV))
 			nfglGetCombinerInputParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMBINERINPUTPARAMETERIVNV:
-			D(funcname = "glGetCombinerInputParameterivNV");
 			if (GL_ISAVAILABLE(glGetCombinerInputParameterivNV))
 			nfglGetCombinerInputParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERFVNV:
-			D(funcname = "glGetCombinerOutputParameterfvNV");
 			if (GL_ISAVAILABLE(glGetCombinerOutputParameterfvNV))
 			nfglGetCombinerOutputParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMBINEROUTPUTPARAMETERIVNV:
-			D(funcname = "glGetCombinerOutputParameterivNV");
 			if (GL_ISAVAILABLE(glGetCombinerOutputParameterivNV))
 			nfglGetCombinerOutputParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMBINERSTAGEPARAMETERFVNV:
-			D(funcname = "glGetCombinerStageParameterfvNV");
 			if (GL_ISAVAILABLE(glGetCombinerStageParameterfvNV))
 			nfglGetCombinerStageParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMMANDHEADERNV:
-			D(funcname = "glGetCommandHeaderNV");
 			if (GL_ISAVAILABLE(glGetCommandHeaderNV))
 			ret = nfglGetCommandHeaderNV(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDMULTITEXIMAGEEXT:
-			D(funcname = "glGetCompressedMultiTexImageEXT");
 			if (GL_ISAVAILABLE(glGetCompressedMultiTexImageEXT))
 			nfglGetCompressedMultiTexImageEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGE:
-			D(funcname = "glGetCompressedTexImage");
 			if (GL_ISAVAILABLE(glGetCompressedTexImage))
 			nfglGetCompressedTexImage(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXIMAGEARB:
-			D(funcname = "glGetCompressedTexImageARB");
 			if (GL_ISAVAILABLE(glGetCompressedTexImageARB))
 			nfglGetCompressedTexImageARB(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTUREIMAGE:
-			D(funcname = "glGetCompressedTextureImage");
 			if (GL_ISAVAILABLE(glGetCompressedTextureImage))
 			nfglGetCompressedTextureImage(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTUREIMAGEEXT:
-			D(funcname = "glGetCompressedTextureImageEXT");
 			if (GL_ISAVAILABLE(glGetCompressedTextureImageEXT))
 			nfglGetCompressedTextureImageEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCOMPRESSEDTEXTURESUBIMAGE:
-			D(funcname = "glGetCompressedTextureSubImage");
 			if (GL_ISAVAILABLE(glGetCompressedTextureSubImage))
 			nfglGetCompressedTextureSubImage(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTER:
-			D(funcname = "glGetConvolutionFilter");
 			if (GL_ISAVAILABLE(glGetConvolutionFilter))
 			nfglGetConvolutionFilter(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONFILTEREXT:
-			D(funcname = "glGetConvolutionFilterEXT");
 			if (GL_ISAVAILABLE(glGetConvolutionFilterEXT))
 			nfglGetConvolutionFilterEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFV:
-			D(funcname = "glGetConvolutionParameterfv");
 			if (GL_ISAVAILABLE(glGetConvolutionParameterfv))
 			nfglGetConvolutionParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERFVEXT:
-			D(funcname = "glGetConvolutionParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetConvolutionParameterfvEXT))
 			nfglGetConvolutionParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIV:
-			D(funcname = "glGetConvolutionParameteriv");
 			if (GL_ISAVAILABLE(glGetConvolutionParameteriv))
 			nfglGetConvolutionParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERIVEXT:
-			D(funcname = "glGetConvolutionParameterivEXT");
 			if (GL_ISAVAILABLE(glGetConvolutionParameterivEXT))
 			nfglGetConvolutionParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETCONVOLUTIONPARAMETERXVOES:
-			D(funcname = "glGetConvolutionParameterxvOES");
 			if (GL_ISAVAILABLE(glGetConvolutionParameterxvOES))
 			nfglGetConvolutionParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETCOVERAGEMODULATIONTABLENV:
-			D(funcname = "glGetCoverageModulationTableNV");
 			if (GL_ISAVAILABLE(glGetCoverageModulationTableNV))
 			nfglGetCoverageModulationTableNV(nf_params);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGLENGTHMESA:
-			D(funcname = "glGetDebugLogLengthMESA");
 			if (GL_ISAVAILABLE(glGetDebugLogLengthMESA))
 			ret = nfglGetDebugLogLengthMESA(nf_params);
 			break;
 		case NFOSMESA_GLGETDEBUGLOGMESA:
-			D(funcname = "glGetDebugLogMESA");
 			if (GL_ISAVAILABLE(glGetDebugLogMESA))
 			nfglGetDebugLogMESA(nf_params);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOG:
-			D(funcname = "glGetDebugMessageLog");
 			if (GL_ISAVAILABLE(glGetDebugMessageLog))
 			ret = nfglGetDebugMessageLog(nf_params);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGAMD:
-			D(funcname = "glGetDebugMessageLogAMD");
 			if (GL_ISAVAILABLE(glGetDebugMessageLogAMD))
 			ret = nfglGetDebugMessageLogAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETDEBUGMESSAGELOGARB:
-			D(funcname = "glGetDebugMessageLogARB");
 			if (GL_ISAVAILABLE(glGetDebugMessageLogARB))
 			ret = nfglGetDebugMessageLogARB(nf_params);
 			break;
 		case NFOSMESA_GLGETDETAILTEXFUNCSGIS:
-			D(funcname = "glGetDetailTexFuncSGIS");
 			if (GL_ISAVAILABLE(glGetDetailTexFuncSGIS))
 			nfglGetDetailTexFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETDOUBLEINDEXEDVEXT:
-			D(funcname = "glGetDoubleIndexedvEXT");
 			if (GL_ISAVAILABLE(glGetDoubleIndexedvEXT))
 			nfglGetDoubleIndexedvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_V:
-			D(funcname = "glGetDoublei_v");
 			if (GL_ISAVAILABLE(glGetDoublei_v))
 			nfglGetDoublei_v(nf_params);
 			break;
 		case NFOSMESA_GLGETDOUBLEI_VEXT:
-			D(funcname = "glGetDoublei_vEXT");
 			if (GL_ISAVAILABLE(glGetDoublei_vEXT))
 			nfglGetDoublei_vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETDOUBLEV:
-			D(funcname = "glGetDoublev");
 			if (GL_ISAVAILABLE(glGetDoublev))
 			nfglGetDoublev(nf_params);
 			break;
 		case NFOSMESA_GLGETERROR:
-			D(funcname = "glGetError");
 			if (GL_ISAVAILABLE(glGetError))
 			ret = nfglGetError(nf_params);
 			break;
 		case NFOSMESA_GLGETFENCEIVNV:
-			D(funcname = "glGetFenceivNV");
 			if (GL_ISAVAILABLE(glGetFenceivNV))
 			nfglGetFenceivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERFVNV:
-			D(funcname = "glGetFinalCombinerInputParameterfvNV");
 			if (GL_ISAVAILABLE(glGetFinalCombinerInputParameterfvNV))
 			nfglGetFinalCombinerInputParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETFINALCOMBINERINPUTPARAMETERIVNV:
-			D(funcname = "glGetFinalCombinerInputParameterivNV");
 			if (GL_ISAVAILABLE(glGetFinalCombinerInputParameterivNV))
 			nfglGetFinalCombinerInputParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETFIRSTPERFQUERYIDINTEL:
-			D(funcname = "glGetFirstPerfQueryIdINTEL");
 			if (GL_ISAVAILABLE(glGetFirstPerfQueryIdINTEL))
 			nfglGetFirstPerfQueryIdINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETFIXEDVOES:
-			D(funcname = "glGetFixedvOES");
 			if (GL_ISAVAILABLE(glGetFixedvOES))
 			nfglGetFixedvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETFLOATINDEXEDVEXT:
-			D(funcname = "glGetFloatIndexedvEXT");
 			if (GL_ISAVAILABLE(glGetFloatIndexedvEXT))
 			nfglGetFloatIndexedvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETFLOATI_V:
-			D(funcname = "glGetFloati_v");
 			if (GL_ISAVAILABLE(glGetFloati_v))
 			nfglGetFloati_v(nf_params);
 			break;
 		case NFOSMESA_GLGETFLOATI_VEXT:
-			D(funcname = "glGetFloati_vEXT");
 			if (GL_ISAVAILABLE(glGetFloati_vEXT))
 			nfglGetFloati_vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETFLOATV:
-			D(funcname = "glGetFloatv");
 			if (GL_ISAVAILABLE(glGetFloatv))
 			nfglGetFloatv(nf_params);
 			break;
 		case NFOSMESA_GLGETFOGFUNCSGIS:
-			D(funcname = "glGetFogFuncSGIS");
 			if (GL_ISAVAILABLE(glGetFogFuncSGIS))
 			nfglGetFogFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGDATAINDEX:
-			D(funcname = "glGetFragDataIndex");
 			if (GL_ISAVAILABLE(glGetFragDataIndex))
 			ret = nfglGetFragDataIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATION:
-			D(funcname = "glGetFragDataLocation");
 			if (GL_ISAVAILABLE(glGetFragDataLocation))
 			ret = nfglGetFragDataLocation(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGDATALOCATIONEXT:
-			D(funcname = "glGetFragDataLocationEXT");
 			if (GL_ISAVAILABLE(glGetFragDataLocationEXT))
 			ret = nfglGetFragDataLocationEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTFVSGIX:
-			D(funcname = "glGetFragmentLightfvSGIX");
 			if (GL_ISAVAILABLE(glGetFragmentLightfvSGIX))
 			nfglGetFragmentLightfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGMENTLIGHTIVSGIX:
-			D(funcname = "glGetFragmentLightivSGIX");
 			if (GL_ISAVAILABLE(glGetFragmentLightivSGIX))
 			nfglGetFragmentLightivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALFVSGIX:
-			D(funcname = "glGetFragmentMaterialfvSGIX");
 			if (GL_ISAVAILABLE(glGetFragmentMaterialfvSGIX))
 			nfglGetFragmentMaterialfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAGMENTMATERIALIVSGIX:
-			D(funcname = "glGetFragmentMaterialivSGIX");
 			if (GL_ISAVAILABLE(glGetFragmentMaterialivSGIX))
 			nfglGetFragmentMaterialivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIV:
-			D(funcname = "glGetFramebufferAttachmentParameteriv");
 			if (GL_ISAVAILABLE(glGetFramebufferAttachmentParameteriv))
 			nfglGetFramebufferAttachmentParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
-			D(funcname = "glGetFramebufferAttachmentParameterivEXT");
 			if (GL_ISAVAILABLE(glGetFramebufferAttachmentParameterivEXT))
 			nfglGetFramebufferAttachmentParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERFVAMD:
-			D(funcname = "glGetFramebufferParameterfvAMD");
 			if (GL_ISAVAILABLE(glGetFramebufferParameterfvAMD))
 			nfglGetFramebufferParameterfvAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIV:
-			D(funcname = "glGetFramebufferParameteriv");
 			if (GL_ISAVAILABLE(glGetFramebufferParameteriv))
 			nfglGetFramebufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETFRAMEBUFFERPARAMETERIVEXT:
-			D(funcname = "glGetFramebufferParameterivEXT");
 			if (GL_ISAVAILABLE(glGetFramebufferParameterivEXT))
 			nfglGetFramebufferParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETGRAPHICSRESETSTATUS:
-			D(funcname = "glGetGraphicsResetStatus");
 			if (GL_ISAVAILABLE(glGetGraphicsResetStatus))
 			ret = nfglGetGraphicsResetStatus(nf_params);
 			break;
 		case NFOSMESA_GLGETGRAPHICSRESETSTATUSARB:
-			D(funcname = "glGetGraphicsResetStatusARB");
 			if (GL_ISAVAILABLE(glGetGraphicsResetStatusARB))
 			ret = nfglGetGraphicsResetStatusARB(nf_params);
 			break;
 		case NFOSMESA_GLGETHANDLEARB:
-			D(funcname = "glGetHandleARB");
 			if (GL_ISAVAILABLE(glGetHandleARB))
-			ret = (uint32)(uintptr_t)nfglGetHandleARB(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglGetHandleARB(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAM:
-			D(funcname = "glGetHistogram");
 			if (GL_ISAVAILABLE(glGetHistogram))
 			nfglGetHistogram(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMEXT:
-			D(funcname = "glGetHistogramEXT");
 			if (GL_ISAVAILABLE(glGetHistogramEXT))
 			nfglGetHistogramEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFV:
-			D(funcname = "glGetHistogramParameterfv");
 			if (GL_ISAVAILABLE(glGetHistogramParameterfv))
 			nfglGetHistogramParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERFVEXT:
-			D(funcname = "glGetHistogramParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetHistogramParameterfvEXT))
 			nfglGetHistogramParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIV:
-			D(funcname = "glGetHistogramParameteriv");
 			if (GL_ISAVAILABLE(glGetHistogramParameteriv))
 			nfglGetHistogramParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERIVEXT:
-			D(funcname = "glGetHistogramParameterivEXT");
 			if (GL_ISAVAILABLE(glGetHistogramParameterivEXT))
 			nfglGetHistogramParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETHISTOGRAMPARAMETERXVOES:
-			D(funcname = "glGetHistogramParameterxvOES");
 			if (GL_ISAVAILABLE(glGetHistogramParameterxvOES))
 			nfglGetHistogramParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETIMAGEHANDLEARB:
-			D(funcname = "glGetImageHandleARB");
 			if (GL_ISAVAILABLE(glGetImageHandleARB))
 			ret = nfglGetImageHandleARB(nf_params);
 			break;
 		case NFOSMESA_GLGETIMAGEHANDLENV:
-			D(funcname = "glGetImageHandleNV");
 			if (GL_ISAVAILABLE(glGetImageHandleNV))
 			ret = nfglGetImageHandleNV(nf_params);
 			break;
 		case NFOSMESA_GLGETIMAGETRANSFORMPARAMETERFVHP:
-			D(funcname = "glGetImageTransformParameterfvHP");
 			if (GL_ISAVAILABLE(glGetImageTransformParameterfvHP))
 			nfglGetImageTransformParameterfvHP(nf_params);
 			break;
 		case NFOSMESA_GLGETIMAGETRANSFORMPARAMETERIVHP:
-			D(funcname = "glGetImageTransformParameterivHP");
 			if (GL_ISAVAILABLE(glGetImageTransformParameterivHP))
 			nfglGetImageTransformParameterivHP(nf_params);
 			break;
 		case NFOSMESA_GLGETINFOLOGARB:
-			D(funcname = "glGetInfoLogARB");
 			if (GL_ISAVAILABLE(glGetInfoLogARB))
 			nfglGetInfoLogARB(nf_params);
 			break;
 		case NFOSMESA_GLGETINSTRUMENTSSGIX:
-			D(funcname = "glGetInstrumentsSGIX");
 			if (GL_ISAVAILABLE(glGetInstrumentsSGIX))
 			ret = nfglGetInstrumentsSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGER64I_V:
-			D(funcname = "glGetInteger64i_v");
 			if (GL_ISAVAILABLE(glGetInteger64i_v))
 			nfglGetInteger64i_v(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGER64V:
-			D(funcname = "glGetInteger64v");
 			if (GL_ISAVAILABLE(glGetInteger64v))
 			nfglGetInteger64v(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGERINDEXEDVEXT:
-			D(funcname = "glGetIntegerIndexedvEXT");
 			if (GL_ISAVAILABLE(glGetIntegerIndexedvEXT))
 			nfglGetIntegerIndexedvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGERI_V:
-			D(funcname = "glGetIntegeri_v");
 			if (GL_ISAVAILABLE(glGetIntegeri_v))
 			nfglGetIntegeri_v(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64I_VNV:
-			D(funcname = "glGetIntegerui64i_vNV");
 			if (GL_ISAVAILABLE(glGetIntegerui64i_vNV))
 			nfglGetIntegerui64i_vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGERUI64VNV:
-			D(funcname = "glGetIntegerui64vNV");
 			if (GL_ISAVAILABLE(glGetIntegerui64vNV))
 			nfglGetIntegerui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETINTEGERV:
-			D(funcname = "glGetIntegerv");
 			if (GL_ISAVAILABLE(glGetIntegerv))
 			nfglGetIntegerv(nf_params);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATSAMPLEIVNV:
-			D(funcname = "glGetInternalformatSampleivNV");
 			if (GL_ISAVAILABLE(glGetInternalformatSampleivNV))
 			nfglGetInternalformatSampleivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATI64V:
-			D(funcname = "glGetInternalformati64v");
 			if (GL_ISAVAILABLE(glGetInternalformati64v))
 			nfglGetInternalformati64v(nf_params);
 			break;
 		case NFOSMESA_GLGETINTERNALFORMATIV:
-			D(funcname = "glGetInternalformativ");
 			if (GL_ISAVAILABLE(glGetInternalformativ))
 			nfglGetInternalformativ(nf_params);
 			break;
 		case NFOSMESA_GLGETINVARIANTBOOLEANVEXT:
-			D(funcname = "glGetInvariantBooleanvEXT");
 			if (GL_ISAVAILABLE(glGetInvariantBooleanvEXT))
 			nfglGetInvariantBooleanvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETINVARIANTFLOATVEXT:
-			D(funcname = "glGetInvariantFloatvEXT");
 			if (GL_ISAVAILABLE(glGetInvariantFloatvEXT))
 			nfglGetInvariantFloatvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETINVARIANTINTEGERVEXT:
-			D(funcname = "glGetInvariantIntegervEXT");
 			if (GL_ISAVAILABLE(glGetInvariantIntegervEXT))
 			nfglGetInvariantIntegervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETLIGHTFV:
-			D(funcname = "glGetLightfv");
 			if (GL_ISAVAILABLE(glGetLightfv))
 			nfglGetLightfv(nf_params);
 			break;
 		case NFOSMESA_GLGETLIGHTIV:
-			D(funcname = "glGetLightiv");
 			if (GL_ISAVAILABLE(glGetLightiv))
 			nfglGetLightiv(nf_params);
 			break;
 		case NFOSMESA_GLGETLIGHTXOES:
-			D(funcname = "glGetLightxOES");
 			if (GL_ISAVAILABLE(glGetLightxOES))
 			nfglGetLightxOES(nf_params);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERFVSGIX:
-			D(funcname = "glGetListParameterfvSGIX");
 			if (GL_ISAVAILABLE(glGetListParameterfvSGIX))
 			nfglGetListParameterfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETLISTPARAMETERIVSGIX:
-			D(funcname = "glGetListParameterivSGIX");
 			if (GL_ISAVAILABLE(glGetListParameterivSGIX))
 			nfglGetListParameterivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTBOOLEANVEXT:
-			D(funcname = "glGetLocalConstantBooleanvEXT");
 			if (GL_ISAVAILABLE(glGetLocalConstantBooleanvEXT))
 			nfglGetLocalConstantBooleanvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTFLOATVEXT:
-			D(funcname = "glGetLocalConstantFloatvEXT");
 			if (GL_ISAVAILABLE(glGetLocalConstantFloatvEXT))
 			nfglGetLocalConstantFloatvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETLOCALCONSTANTINTEGERVEXT:
-			D(funcname = "glGetLocalConstantIntegervEXT");
 			if (GL_ISAVAILABLE(glGetLocalConstantIntegervEXT))
 			nfglGetLocalConstantIntegervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERFVNV:
-			D(funcname = "glGetMapAttribParameterfvNV");
 			if (GL_ISAVAILABLE(glGetMapAttribParameterfvNV))
 			nfglGetMapAttribParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPATTRIBPARAMETERIVNV:
-			D(funcname = "glGetMapAttribParameterivNV");
 			if (GL_ISAVAILABLE(glGetMapAttribParameterivNV))
 			nfglGetMapAttribParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPCONTROLPOINTSNV:
-			D(funcname = "glGetMapControlPointsNV");
 			if (GL_ISAVAILABLE(glGetMapControlPointsNV))
 			nfglGetMapControlPointsNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERFVNV:
-			D(funcname = "glGetMapParameterfvNV");
 			if (GL_ISAVAILABLE(glGetMapParameterfvNV))
 			nfglGetMapParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPPARAMETERIVNV:
-			D(funcname = "glGetMapParameterivNV");
 			if (GL_ISAVAILABLE(glGetMapParameterivNV))
 			nfglGetMapParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPDV:
-			D(funcname = "glGetMapdv");
 			if (GL_ISAVAILABLE(glGetMapdv))
 			nfglGetMapdv(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPFV:
-			D(funcname = "glGetMapfv");
 			if (GL_ISAVAILABLE(glGetMapfv))
 			nfglGetMapfv(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPIV:
-			D(funcname = "glGetMapiv");
 			if (GL_ISAVAILABLE(glGetMapiv))
 			nfglGetMapiv(nf_params);
 			break;
 		case NFOSMESA_GLGETMAPXVOES:
-			D(funcname = "glGetMapxvOES");
 			if (GL_ISAVAILABLE(glGetMapxvOES))
 			nfglGetMapxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETMATERIALFV:
-			D(funcname = "glGetMaterialfv");
 			if (GL_ISAVAILABLE(glGetMaterialfv))
 			nfglGetMaterialfv(nf_params);
 			break;
 		case NFOSMESA_GLGETMATERIALIV:
-			D(funcname = "glGetMaterialiv");
 			if (GL_ISAVAILABLE(glGetMaterialiv))
 			nfglGetMaterialiv(nf_params);
 			break;
 		case NFOSMESA_GLGETMATERIALXOES:
-			D(funcname = "glGetMaterialxOES");
 			if (GL_ISAVAILABLE(glGetMaterialxOES))
 			nfglGetMaterialxOES(nf_params);
 			break;
 		case NFOSMESA_GLGETMEMORYOBJECTDETACHEDRESOURCESUIVNV:
-			D(funcname = "glGetMemoryObjectDetachedResourcesuivNV");
 			if (GL_ISAVAILABLE(glGetMemoryObjectDetachedResourcesuivNV))
 			nfglGetMemoryObjectDetachedResourcesuivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETMEMORYOBJECTPARAMETERIVEXT:
-			D(funcname = "glGetMemoryObjectParameterivEXT");
 			if (GL_ISAVAILABLE(glGetMemoryObjectParameterivEXT))
 			nfglGetMemoryObjectParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAX:
-			D(funcname = "glGetMinmax");
 			if (GL_ISAVAILABLE(glGetMinmax))
 			nfglGetMinmax(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAXEXT:
-			D(funcname = "glGetMinmaxEXT");
 			if (GL_ISAVAILABLE(glGetMinmaxEXT))
 			nfglGetMinmaxEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFV:
-			D(funcname = "glGetMinmaxParameterfv");
 			if (GL_ISAVAILABLE(glGetMinmaxParameterfv))
 			nfglGetMinmaxParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERFVEXT:
-			D(funcname = "glGetMinmaxParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetMinmaxParameterfvEXT))
 			nfglGetMinmaxParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIV:
-			D(funcname = "glGetMinmaxParameteriv");
 			if (GL_ISAVAILABLE(glGetMinmaxParameteriv))
 			nfglGetMinmaxParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETMINMAXPARAMETERIVEXT:
-			D(funcname = "glGetMinmaxParameterivEXT");
 			if (GL_ISAVAILABLE(glGetMinmaxParameterivEXT))
 			nfglGetMinmaxParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVFVEXT:
-			D(funcname = "glGetMultiTexEnvfvEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexEnvfvEXT))
 			nfglGetMultiTexEnvfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXENVIVEXT:
-			D(funcname = "glGetMultiTexEnvivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexEnvivEXT))
 			nfglGetMultiTexEnvivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENDVEXT:
-			D(funcname = "glGetMultiTexGendvEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexGendvEXT))
 			nfglGetMultiTexGendvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENFVEXT:
-			D(funcname = "glGetMultiTexGenfvEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexGenfvEXT))
 			nfglGetMultiTexGenfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXGENIVEXT:
-			D(funcname = "glGetMultiTexGenivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexGenivEXT))
 			nfglGetMultiTexGenivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXIMAGEEXT:
-			D(funcname = "glGetMultiTexImageEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexImageEXT))
 			nfglGetMultiTexImageEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERFVEXT:
-			D(funcname = "glGetMultiTexLevelParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexLevelParameterfvEXT))
 			nfglGetMultiTexLevelParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXLEVELPARAMETERIVEXT:
-			D(funcname = "glGetMultiTexLevelParameterivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexLevelParameterivEXT))
 			nfglGetMultiTexLevelParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIIVEXT:
-			D(funcname = "glGetMultiTexParameterIivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexParameterIivEXT))
 			nfglGetMultiTexParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIUIVEXT:
-			D(funcname = "glGetMultiTexParameterIuivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexParameterIuivEXT))
 			nfglGetMultiTexParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERFVEXT:
-			D(funcname = "glGetMultiTexParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexParameterfvEXT))
 			nfglGetMultiTexParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTITEXPARAMETERIVEXT:
-			D(funcname = "glGetMultiTexParameterivEXT");
 			if (GL_ISAVAILABLE(glGetMultiTexParameterivEXT))
 			nfglGetMultiTexParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFV:
-			D(funcname = "glGetMultisamplefv");
 			if (GL_ISAVAILABLE(glGetMultisamplefv))
 			nfglGetMultisamplefv(nf_params);
 			break;
 		case NFOSMESA_GLGETMULTISAMPLEFVNV:
-			D(funcname = "glGetMultisamplefvNV");
 			if (GL_ISAVAILABLE(glGetMultisamplefvNV))
 			nfglGetMultisamplefvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERI64V:
-			D(funcname = "glGetNamedBufferParameteri64v");
 			if (GL_ISAVAILABLE(glGetNamedBufferParameteri64v))
 			nfglGetNamedBufferParameteri64v(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERIV:
-			D(funcname = "glGetNamedBufferParameteriv");
 			if (GL_ISAVAILABLE(glGetNamedBufferParameteriv))
 			nfglGetNamedBufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERIVEXT:
-			D(funcname = "glGetNamedBufferParameterivEXT");
 			if (GL_ISAVAILABLE(glGetNamedBufferParameterivEXT))
 			nfglGetNamedBufferParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPARAMETERUI64VNV:
-			D(funcname = "glGetNamedBufferParameterui64vNV");
 			if (GL_ISAVAILABLE(glGetNamedBufferParameterui64vNV))
 			nfglGetNamedBufferParameterui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPOINTERV:
-			D(funcname = "glGetNamedBufferPointerv");
 			if (GL_ISAVAILABLE(glGetNamedBufferPointerv))
 			nfglGetNamedBufferPointerv(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDBUFFERPOINTERVEXT:
-			D(funcname = "glGetNamedBufferPointervEXT");
 			if (GL_ISAVAILABLE(glGetNamedBufferPointervEXT))
 			nfglGetNamedBufferPointervEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATA:
-			D(funcname = "glGetNamedBufferSubData");
 			if (GL_ISAVAILABLE(glGetNamedBufferSubData))
 			nfglGetNamedBufferSubData(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLGETNAMEDBUFFERSUBDATAEXT:
-			D(funcname = "glGetNamedBufferSubDataEXT");
 			if (GL_ISAVAILABLE(glGetNamedBufferSubDataEXT))
 			nfglGetNamedBufferSubDataEXT(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIV:
-			D(funcname = "glGetNamedFramebufferAttachmentParameteriv");
 			if (GL_ISAVAILABLE(glGetNamedFramebufferAttachmentParameteriv))
 			nfglGetNamedFramebufferAttachmentParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERATTACHMENTPARAMETERIVEXT:
-			D(funcname = "glGetNamedFramebufferAttachmentParameterivEXT");
 			if (GL_ISAVAILABLE(glGetNamedFramebufferAttachmentParameterivEXT))
 			nfglGetNamedFramebufferAttachmentParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERFVAMD:
-			D(funcname = "glGetNamedFramebufferParameterfvAMD");
 			if (GL_ISAVAILABLE(glGetNamedFramebufferParameterfvAMD))
 			nfglGetNamedFramebufferParameterfvAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIV:
-			D(funcname = "glGetNamedFramebufferParameteriv");
 			if (GL_ISAVAILABLE(glGetNamedFramebufferParameteriv))
 			nfglGetNamedFramebufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDFRAMEBUFFERPARAMETERIVEXT:
-			D(funcname = "glGetNamedFramebufferParameterivEXT");
 			if (GL_ISAVAILABLE(glGetNamedFramebufferParameterivEXT))
 			nfglGetNamedFramebufferParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIIVEXT:
-			D(funcname = "glGetNamedProgramLocalParameterIivEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterIivEXT))
 			nfglGetNamedProgramLocalParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERIUIVEXT:
-			D(funcname = "glGetNamedProgramLocalParameterIuivEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterIuivEXT))
 			nfglGetNamedProgramLocalParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERDVEXT:
-			D(funcname = "glGetNamedProgramLocalParameterdvEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterdvEXT))
 			nfglGetNamedProgramLocalParameterdvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMLOCALPARAMETERFVEXT:
-			D(funcname = "glGetNamedProgramLocalParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramLocalParameterfvEXT))
 			nfglGetNamedProgramLocalParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMSTRINGEXT:
-			D(funcname = "glGetNamedProgramStringEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramStringEXT))
 			nfglGetNamedProgramStringEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDPROGRAMIVEXT:
-			D(funcname = "glGetNamedProgramivEXT");
 			if (GL_ISAVAILABLE(glGetNamedProgramivEXT))
 			nfglGetNamedProgramivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDRENDERBUFFERPARAMETERIV:
-			D(funcname = "glGetNamedRenderbufferParameteriv");
 			if (GL_ISAVAILABLE(glGetNamedRenderbufferParameteriv))
 			nfglGetNamedRenderbufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDRENDERBUFFERPARAMETERIVEXT:
-			D(funcname = "glGetNamedRenderbufferParameterivEXT");
 			if (GL_ISAVAILABLE(glGetNamedRenderbufferParameterivEXT))
 			nfglGetNamedRenderbufferParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGARB:
-			D(funcname = "glGetNamedStringARB");
 			if (GL_ISAVAILABLE(glGetNamedStringARB))
 			nfglGetNamedStringARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNAMEDSTRINGIVARB:
-			D(funcname = "glGetNamedStringivARB");
 			if (GL_ISAVAILABLE(glGetNamedStringivARB))
 			nfglGetNamedStringivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNEXTPERFQUERYIDINTEL:
-			D(funcname = "glGetNextPerfQueryIdINTEL");
 			if (GL_ISAVAILABLE(glGetNextPerfQueryIdINTEL))
 			nfglGetNextPerfQueryIdINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERFVATI:
-			D(funcname = "glGetObjectBufferfvATI");
 			if (GL_ISAVAILABLE(glGetObjectBufferfvATI))
 			nfglGetObjectBufferfvATI(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTBUFFERIVATI:
-			D(funcname = "glGetObjectBufferivATI");
 			if (GL_ISAVAILABLE(glGetObjectBufferivATI))
 			nfglGetObjectBufferivATI(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTLABEL:
-			D(funcname = "glGetObjectLabel");
 			if (GL_ISAVAILABLE(glGetObjectLabel))
 			nfglGetObjectLabel(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTLABELEXT:
-			D(funcname = "glGetObjectLabelEXT");
 			if (GL_ISAVAILABLE(glGetObjectLabelEXT))
 			nfglGetObjectLabelEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERFVARB:
-			D(funcname = "glGetObjectParameterfvARB");
 			if (GL_ISAVAILABLE(glGetObjectParameterfvARB))
 			nfglGetObjectParameterfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVAPPLE:
-			D(funcname = "glGetObjectParameterivAPPLE");
 			if (GL_ISAVAILABLE(glGetObjectParameterivAPPLE))
 			nfglGetObjectParameterivAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTPARAMETERIVARB:
-			D(funcname = "glGetObjectParameterivARB");
 			if (GL_ISAVAILABLE(glGetObjectParameterivARB))
 			nfglGetObjectParameterivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETOBJECTPTRLABEL:
-			D(funcname = "glGetObjectPtrLabel");
 			if (GL_ISAVAILABLE(glGetObjectPtrLabel))
 			nfglGetObjectPtrLabel(nf_params);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYIVNV:
-			D(funcname = "glGetOcclusionQueryivNV");
 			if (GL_ISAVAILABLE(glGetOcclusionQueryivNV))
 			nfglGetOcclusionQueryivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETOCCLUSIONQUERYUIVNV:
-			D(funcname = "glGetOcclusionQueryuivNV");
 			if (GL_ISAVAILABLE(glGetOcclusionQueryuivNV))
 			nfglGetOcclusionQueryuivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENFVNV:
-			D(funcname = "glGetPathColorGenfvNV");
 			if (GL_ISAVAILABLE(glGetPathColorGenfvNV))
 			nfglGetPathColorGenfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHCOLORGENIVNV:
-			D(funcname = "glGetPathColorGenivNV");
 			if (GL_ISAVAILABLE(glGetPathColorGenivNV))
 			nfglGetPathColorGenivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHCOMMANDSNV:
-			D(funcname = "glGetPathCommandsNV");
 			if (GL_ISAVAILABLE(glGetPathCommandsNV))
 			nfglGetPathCommandsNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHCOORDSNV:
-			D(funcname = "glGetPathCoordsNV");
 			if (GL_ISAVAILABLE(glGetPathCoordsNV))
 			nfglGetPathCoordsNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHDASHARRAYNV:
-			D(funcname = "glGetPathDashArrayNV");
 			if (GL_ISAVAILABLE(glGetPathDashArrayNV))
 			nfglGetPathDashArrayNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHLENGTHNV:
-			D(funcname = "glGetPathLengthNV");
 			if (GL_ISAVAILABLE(glGetPathLengthNV))
 			ret = nfglGetPathLengthNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHMETRICRANGENV:
-			D(funcname = "glGetPathMetricRangeNV");
 			if (GL_ISAVAILABLE(glGetPathMetricRangeNV))
 			nfglGetPathMetricRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHMETRICSNV:
-			D(funcname = "glGetPathMetricsNV");
 			if (GL_ISAVAILABLE(glGetPathMetricsNV))
 			nfglGetPathMetricsNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERFVNV:
-			D(funcname = "glGetPathParameterfvNV");
 			if (GL_ISAVAILABLE(glGetPathParameterfvNV))
 			nfglGetPathParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHPARAMETERIVNV:
-			D(funcname = "glGetPathParameterivNV");
 			if (GL_ISAVAILABLE(glGetPathParameterivNV))
 			nfglGetPathParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHSPACINGNV:
-			D(funcname = "glGetPathSpacingNV");
 			if (GL_ISAVAILABLE(glGetPathSpacingNV))
 			nfglGetPathSpacingNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENFVNV:
-			D(funcname = "glGetPathTexGenfvNV");
 			if (GL_ISAVAILABLE(glGetPathTexGenfvNV))
 			nfglGetPathTexGenfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPATHTEXGENIVNV:
-			D(funcname = "glGetPathTexGenivNV");
 			if (GL_ISAVAILABLE(glGetPathTexGenivNV))
 			nfglGetPathTexGenivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFCOUNTERINFOINTEL:
-			D(funcname = "glGetPerfCounterInfoINTEL");
 			if (GL_ISAVAILABLE(glGetPerfCounterInfoINTEL))
 			nfglGetPerfCounterInfoINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERDATAAMD:
-			D(funcname = "glGetPerfMonitorCounterDataAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorCounterDataAMD))
 			nfglGetPerfMonitorCounterDataAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERINFOAMD:
-			D(funcname = "glGetPerfMonitorCounterInfoAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorCounterInfoAMD))
 			nfglGetPerfMonitorCounterInfoAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSTRINGAMD:
-			D(funcname = "glGetPerfMonitorCounterStringAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorCounterStringAMD))
 			nfglGetPerfMonitorCounterStringAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORCOUNTERSAMD:
-			D(funcname = "glGetPerfMonitorCountersAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorCountersAMD))
 			nfglGetPerfMonitorCountersAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSTRINGAMD:
-			D(funcname = "glGetPerfMonitorGroupStringAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorGroupStringAMD))
 			nfglGetPerfMonitorGroupStringAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFMONITORGROUPSAMD:
-			D(funcname = "glGetPerfMonitorGroupsAMD");
 			if (GL_ISAVAILABLE(glGetPerfMonitorGroupsAMD))
 			nfglGetPerfMonitorGroupsAMD(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFQUERYDATAINTEL:
-			D(funcname = "glGetPerfQueryDataINTEL");
 			if (GL_ISAVAILABLE(glGetPerfQueryDataINTEL))
 			nfglGetPerfQueryDataINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFQUERYIDBYNAMEINTEL:
-			D(funcname = "glGetPerfQueryIdByNameINTEL");
 			if (GL_ISAVAILABLE(glGetPerfQueryIdByNameINTEL))
 			nfglGetPerfQueryIdByNameINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETPERFQUERYINFOINTEL:
-			D(funcname = "glGetPerfQueryInfoINTEL");
 			if (GL_ISAVAILABLE(glGetPerfQueryInfoINTEL))
 			nfglGetPerfQueryInfoINTEL(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELMAPFV:
-			D(funcname = "glGetPixelMapfv");
 			if (GL_ISAVAILABLE(glGetPixelMapfv))
 			nfglGetPixelMapfv(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUIV:
-			D(funcname = "glGetPixelMapuiv");
 			if (GL_ISAVAILABLE(glGetPixelMapuiv))
 			nfglGetPixelMapuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELMAPUSV:
-			D(funcname = "glGetPixelMapusv");
 			if (GL_ISAVAILABLE(glGetPixelMapusv))
 			nfglGetPixelMapusv(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELMAPXV:
-			D(funcname = "glGetPixelMapxv");
 			if (GL_ISAVAILABLE(glGetPixelMapxv))
 			nfglGetPixelMapxv(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERFVSGIS:
-			D(funcname = "glGetPixelTexGenParameterfvSGIS");
 			if (GL_ISAVAILABLE(glGetPixelTexGenParameterfvSGIS))
 			nfglGetPixelTexGenParameterfvSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELTEXGENPARAMETERIVSGIS:
-			D(funcname = "glGetPixelTexGenParameterivSGIS");
 			if (GL_ISAVAILABLE(glGetPixelTexGenParameterivSGIS))
 			nfglGetPixelTexGenParameterivSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERFVEXT:
-			D(funcname = "glGetPixelTransformParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetPixelTransformParameterfvEXT))
 			nfglGetPixelTransformParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETPIXELTRANSFORMPARAMETERIVEXT:
-			D(funcname = "glGetPixelTransformParameterivEXT");
 			if (GL_ISAVAILABLE(glGetPixelTransformParameterivEXT))
 			nfglGetPixelTransformParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETPOINTERINDEXEDVEXT:
-			D(funcname = "glGetPointerIndexedvEXT");
 			if (GL_ISAVAILABLE(glGetPointerIndexedvEXT))
 			nfglGetPointerIndexedvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETPOINTERI_VEXT:
-			D(funcname = "glGetPointeri_vEXT");
 			if (GL_ISAVAILABLE(glGetPointeri_vEXT))
 			nfglGetPointeri_vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETPOINTERV:
-			D(funcname = "glGetPointerv");
 			if (GL_ISAVAILABLE(glGetPointerv))
 			nfglGetPointerv(nf_params);
 			break;
 		case NFOSMESA_GLGETPOINTERVEXT:
-			D(funcname = "glGetPointervEXT");
 			if (GL_ISAVAILABLE(glGetPointervEXT))
 			nfglGetPointervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETPOLYGONSTIPPLE:
-			D(funcname = "glGetPolygonStipple");
 			if (GL_ISAVAILABLE(glGetPolygonStipple))
 			nfglGetPolygonStipple(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMBINARY:
-			D(funcname = "glGetProgramBinary");
 			if (GL_ISAVAILABLE(glGetProgramBinary))
 			nfglGetProgramBinary(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIIVNV:
-			D(funcname = "glGetProgramEnvParameterIivNV");
 			if (GL_ISAVAILABLE(glGetProgramEnvParameterIivNV))
 			nfglGetProgramEnvParameterIivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERIUIVNV:
-			D(funcname = "glGetProgramEnvParameterIuivNV");
 			if (GL_ISAVAILABLE(glGetProgramEnvParameterIuivNV))
 			nfglGetProgramEnvParameterIuivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERDVARB:
-			D(funcname = "glGetProgramEnvParameterdvARB");
 			if (GL_ISAVAILABLE(glGetProgramEnvParameterdvARB))
 			nfglGetProgramEnvParameterdvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMENVPARAMETERFVARB:
-			D(funcname = "glGetProgramEnvParameterfvARB");
 			if (GL_ISAVAILABLE(glGetProgramEnvParameterfvARB))
 			nfglGetProgramEnvParameterfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMINFOLOG:
-			D(funcname = "glGetProgramInfoLog");
 			if (GL_ISAVAILABLE(glGetProgramInfoLog))
 			nfglGetProgramInfoLog(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMINTERFACEIV:
-			D(funcname = "glGetProgramInterfaceiv");
 			if (GL_ISAVAILABLE(glGetProgramInterfaceiv))
 			nfglGetProgramInterfaceiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIIVNV:
-			D(funcname = "glGetProgramLocalParameterIivNV");
 			if (GL_ISAVAILABLE(glGetProgramLocalParameterIivNV))
 			nfglGetProgramLocalParameterIivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERIUIVNV:
-			D(funcname = "glGetProgramLocalParameterIuivNV");
 			if (GL_ISAVAILABLE(glGetProgramLocalParameterIuivNV))
 			nfglGetProgramLocalParameterIuivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERDVARB:
-			D(funcname = "glGetProgramLocalParameterdvARB");
 			if (GL_ISAVAILABLE(glGetProgramLocalParameterdvARB))
 			nfglGetProgramLocalParameterdvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMLOCALPARAMETERFVARB:
-			D(funcname = "glGetProgramLocalParameterfvARB");
 			if (GL_ISAVAILABLE(glGetProgramLocalParameterfvARB))
 			nfglGetProgramLocalParameterfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERDVNV:
-			D(funcname = "glGetProgramNamedParameterdvNV");
 			if (GL_ISAVAILABLE(glGetProgramNamedParameterdvNV))
 			nfglGetProgramNamedParameterdvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMNAMEDPARAMETERFVNV:
-			D(funcname = "glGetProgramNamedParameterfvNV");
 			if (GL_ISAVAILABLE(glGetProgramNamedParameterfvNV))
 			nfglGetProgramNamedParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERDVNV:
-			D(funcname = "glGetProgramParameterdvNV");
 			if (GL_ISAVAILABLE(glGetProgramParameterdvNV))
 			nfglGetProgramParameterdvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMPARAMETERFVNV:
-			D(funcname = "glGetProgramParameterfvNV");
 			if (GL_ISAVAILABLE(glGetProgramParameterfvNV))
 			nfglGetProgramParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEINFOLOG:
-			D(funcname = "glGetProgramPipelineInfoLog");
 			if (GL_ISAVAILABLE(glGetProgramPipelineInfoLog))
 			nfglGetProgramPipelineInfoLog(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMPIPELINEIV:
-			D(funcname = "glGetProgramPipelineiv");
 			if (GL_ISAVAILABLE(glGetProgramPipelineiv))
 			nfglGetProgramPipelineiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMREGISTERFVMESA:
-			D(funcname = "glGetProgramRegisterfvMESA");
 			if (GL_ISAVAILABLE(glGetProgramRegisterfvMESA))
 			nfglGetProgramRegisterfvMESA(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEINDEX:
-			D(funcname = "glGetProgramResourceIndex");
 			if (GL_ISAVAILABLE(glGetProgramResourceIndex))
 			ret = nfglGetProgramResourceIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATION:
-			D(funcname = "glGetProgramResourceLocation");
 			if (GL_ISAVAILABLE(glGetProgramResourceLocation))
 			ret = nfglGetProgramResourceLocation(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCELOCATIONINDEX:
-			D(funcname = "glGetProgramResourceLocationIndex");
 			if (GL_ISAVAILABLE(glGetProgramResourceLocationIndex))
 			ret = nfglGetProgramResourceLocationIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCENAME:
-			D(funcname = "glGetProgramResourceName");
 			if (GL_ISAVAILABLE(glGetProgramResourceName))
 			nfglGetProgramResourceName(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEFVNV:
-			D(funcname = "glGetProgramResourcefvNV");
 			if (GL_ISAVAILABLE(glGetProgramResourcefvNV))
 			nfglGetProgramResourcefvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMRESOURCEIV:
-			D(funcname = "glGetProgramResourceiv");
 			if (GL_ISAVAILABLE(glGetProgramResourceiv))
 			nfglGetProgramResourceiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTAGEIV:
-			D(funcname = "glGetProgramStageiv");
 			if (GL_ISAVAILABLE(glGetProgramStageiv))
 			nfglGetProgramStageiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGARB:
-			D(funcname = "glGetProgramStringARB");
 			if (GL_ISAVAILABLE(glGetProgramStringARB))
 			nfglGetProgramStringARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMSTRINGNV:
-			D(funcname = "glGetProgramStringNV");
 			if (GL_ISAVAILABLE(glGetProgramStringNV))
 			nfglGetProgramStringNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMSUBROUTINEPARAMETERUIVNV:
-			D(funcname = "glGetProgramSubroutineParameteruivNV");
 			if (GL_ISAVAILABLE(glGetProgramSubroutineParameteruivNV))
 			nfglGetProgramSubroutineParameteruivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMIV:
-			D(funcname = "glGetProgramiv");
 			if (GL_ISAVAILABLE(glGetProgramiv))
 			nfglGetProgramiv(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVARB:
-			D(funcname = "glGetProgramivARB");
 			if (GL_ISAVAILABLE(glGetProgramivARB))
 			nfglGetProgramivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETPROGRAMIVNV:
-			D(funcname = "glGetProgramivNV");
 			if (GL_ISAVAILABLE(glGetProgramivNV))
 			nfglGetProgramivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTI64V:
-			D(funcname = "glGetQueryBufferObjecti64v");
 			if (GL_ISAVAILABLE(glGetQueryBufferObjecti64v))
 			nfglGetQueryBufferObjecti64v(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTIV:
-			D(funcname = "glGetQueryBufferObjectiv");
 			if (GL_ISAVAILABLE(glGetQueryBufferObjectiv))
 			nfglGetQueryBufferObjectiv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTUI64V:
-			D(funcname = "glGetQueryBufferObjectui64v");
 			if (GL_ISAVAILABLE(glGetQueryBufferObjectui64v))
 			nfglGetQueryBufferObjectui64v(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYBUFFEROBJECTUIV:
-			D(funcname = "glGetQueryBufferObjectuiv");
 			if (GL_ISAVAILABLE(glGetQueryBufferObjectuiv))
 			nfglGetQueryBufferObjectuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYINDEXEDIV:
-			D(funcname = "glGetQueryIndexediv");
 			if (GL_ISAVAILABLE(glGetQueryIndexediv))
 			nfglGetQueryIndexediv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64V:
-			D(funcname = "glGetQueryObjecti64v");
 			if (GL_ISAVAILABLE(glGetQueryObjecti64v))
 			nfglGetQueryObjecti64v(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTI64VEXT:
-			D(funcname = "glGetQueryObjecti64vEXT");
 			if (GL_ISAVAILABLE(glGetQueryObjecti64vEXT))
 			nfglGetQueryObjecti64vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIV:
-			D(funcname = "glGetQueryObjectiv");
 			if (GL_ISAVAILABLE(glGetQueryObjectiv))
 			nfglGetQueryObjectiv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTIVARB:
-			D(funcname = "glGetQueryObjectivARB");
 			if (GL_ISAVAILABLE(glGetQueryObjectivARB))
 			nfglGetQueryObjectivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64V:
-			D(funcname = "glGetQueryObjectui64v");
 			if (GL_ISAVAILABLE(glGetQueryObjectui64v))
 			nfglGetQueryObjectui64v(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUI64VEXT:
-			D(funcname = "glGetQueryObjectui64vEXT");
 			if (GL_ISAVAILABLE(glGetQueryObjectui64vEXT))
 			nfglGetQueryObjectui64vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIV:
-			D(funcname = "glGetQueryObjectuiv");
 			if (GL_ISAVAILABLE(glGetQueryObjectuiv))
 			nfglGetQueryObjectuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYOBJECTUIVARB:
-			D(funcname = "glGetQueryObjectuivARB");
 			if (GL_ISAVAILABLE(glGetQueryObjectuivARB))
 			nfglGetQueryObjectuivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYIV:
-			D(funcname = "glGetQueryiv");
 			if (GL_ISAVAILABLE(glGetQueryiv))
 			nfglGetQueryiv(nf_params);
 			break;
 		case NFOSMESA_GLGETQUERYIVARB:
-			D(funcname = "glGetQueryivARB");
 			if (GL_ISAVAILABLE(glGetQueryivARB))
 			nfglGetQueryivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIV:
-			D(funcname = "glGetRenderbufferParameteriv");
 			if (GL_ISAVAILABLE(glGetRenderbufferParameteriv))
 			nfglGetRenderbufferParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETRENDERBUFFERPARAMETERIVEXT:
-			D(funcname = "glGetRenderbufferParameterivEXT");
 			if (GL_ISAVAILABLE(glGetRenderbufferParameterivEXT))
 			nfglGetRenderbufferParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIIV:
-			D(funcname = "glGetSamplerParameterIiv");
 			if (GL_ISAVAILABLE(glGetSamplerParameterIiv))
 			nfglGetSamplerParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIUIV:
-			D(funcname = "glGetSamplerParameterIuiv");
 			if (GL_ISAVAILABLE(glGetSamplerParameterIuiv))
 			nfglGetSamplerParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERFV:
-			D(funcname = "glGetSamplerParameterfv");
 			if (GL_ISAVAILABLE(glGetSamplerParameterfv))
 			nfglGetSamplerParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETSAMPLERPARAMETERIV:
-			D(funcname = "glGetSamplerParameteriv");
 			if (GL_ISAVAILABLE(glGetSamplerParameteriv))
 			nfglGetSamplerParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETSEMAPHOREPARAMETERUI64VEXT:
-			D(funcname = "glGetSemaphoreParameterui64vEXT");
 			if (GL_ISAVAILABLE(glGetSemaphoreParameterui64vEXT))
 			nfglGetSemaphoreParameterui64vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTER:
-			D(funcname = "glGetSeparableFilter");
 			if (GL_ISAVAILABLE(glGetSeparableFilter))
 			nfglGetSeparableFilter(nf_params);
 			break;
 		case NFOSMESA_GLGETSEPARABLEFILTEREXT:
-			D(funcname = "glGetSeparableFilterEXT");
 			if (GL_ISAVAILABLE(glGetSeparableFilterEXT))
 			nfglGetSeparableFilterEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADERINFOLOG:
-			D(funcname = "glGetShaderInfoLog");
 			if (GL_ISAVAILABLE(glGetShaderInfoLog))
 			nfglGetShaderInfoLog(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADERPRECISIONFORMAT:
-			D(funcname = "glGetShaderPrecisionFormat");
 			if (GL_ISAVAILABLE(glGetShaderPrecisionFormat))
 			nfglGetShaderPrecisionFormat(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCE:
-			D(funcname = "glGetShaderSource");
 			if (GL_ISAVAILABLE(glGetShaderSource))
 			nfglGetShaderSource(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADERSOURCEARB:
-			D(funcname = "glGetShaderSourceARB");
 			if (GL_ISAVAILABLE(glGetShaderSourceARB))
 			nfglGetShaderSourceARB(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADERIV:
-			D(funcname = "glGetShaderiv");
 			if (GL_ISAVAILABLE(glGetShaderiv))
 			nfglGetShaderiv(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADINGRATEIMAGEPALETTENV:
-			D(funcname = "glGetShadingRateImagePaletteNV");
 			if (GL_ISAVAILABLE(glGetShadingRateImagePaletteNV))
 			nfglGetShadingRateImagePaletteNV(nf_params);
 			break;
 		case NFOSMESA_GLGETSHADINGRATESAMPLELOCATIONIVNV:
-			D(funcname = "glGetShadingRateSampleLocationivNV");
 			if (GL_ISAVAILABLE(glGetShadingRateSampleLocationivNV))
 			nfglGetShadingRateSampleLocationivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETSHARPENTEXFUNCSGIS:
-			D(funcname = "glGetSharpenTexFuncSGIS");
 			if (GL_ISAVAILABLE(glGetSharpenTexFuncSGIS))
 			nfglGetSharpenTexFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETSTAGEINDEXNV:
-			D(funcname = "glGetStageIndexNV");
 			if (GL_ISAVAILABLE(glGetStageIndexNV))
 			ret = nfglGetStageIndexNV(nf_params);
 			break;
 #if 0
 		case NFOSMESA_GLGETSTRING:
-			D(funcname = "glGetString");
 			if (GL_ISAVAILABLE(glGetString))
-			ret = (uint32)(uintptr_t)nfglGetString(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglGetString(nf_params);
 			break;
 #endif
 #if 0
 		case NFOSMESA_GLGETSTRINGI:
-			D(funcname = "glGetStringi");
 			if (GL_ISAVAILABLE(glGetStringi))
-			ret = (uint32)(uintptr_t)nfglGetStringi(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglGetStringi(nf_params);
 			break;
 #endif
 		case NFOSMESA_GLGETSUBROUTINEINDEX:
-			D(funcname = "glGetSubroutineIndex");
 			if (GL_ISAVAILABLE(glGetSubroutineIndex))
 			ret = nfglGetSubroutineIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETSUBROUTINEUNIFORMLOCATION:
-			D(funcname = "glGetSubroutineUniformLocation");
 			if (GL_ISAVAILABLE(glGetSubroutineUniformLocation))
 			ret = nfglGetSubroutineUniformLocation(nf_params);
 			break;
 		case NFOSMESA_GLGETSYNCIV:
-			D(funcname = "glGetSynciv");
 			if (GL_ISAVAILABLE(glGetSynciv))
 			nfglGetSynciv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERFVATI:
-			D(funcname = "glGetTexBumpParameterfvATI");
 			if (GL_ISAVAILABLE(glGetTexBumpParameterfvATI))
 			nfglGetTexBumpParameterfvATI(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXBUMPPARAMETERIVATI:
-			D(funcname = "glGetTexBumpParameterivATI");
 			if (GL_ISAVAILABLE(glGetTexBumpParameterivATI))
 			nfglGetTexBumpParameterivATI(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXENVFV:
-			D(funcname = "glGetTexEnvfv");
 			if (GL_ISAVAILABLE(glGetTexEnvfv))
 			nfglGetTexEnvfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXENVIV:
-			D(funcname = "glGetTexEnviv");
 			if (GL_ISAVAILABLE(glGetTexEnviv))
 			nfglGetTexEnviv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXENVXVOES:
-			D(funcname = "glGetTexEnvxvOES");
 			if (GL_ISAVAILABLE(glGetTexEnvxvOES))
 			nfglGetTexEnvxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXFILTERFUNCSGIS:
-			D(funcname = "glGetTexFilterFuncSGIS");
 			if (GL_ISAVAILABLE(glGetTexFilterFuncSGIS))
 			nfglGetTexFilterFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXGENDV:
-			D(funcname = "glGetTexGendv");
 			if (GL_ISAVAILABLE(glGetTexGendv))
 			nfglGetTexGendv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXGENFV:
-			D(funcname = "glGetTexGenfv");
 			if (GL_ISAVAILABLE(glGetTexGenfv))
 			nfglGetTexGenfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXGENIV:
-			D(funcname = "glGetTexGeniv");
 			if (GL_ISAVAILABLE(glGetTexGeniv))
 			nfglGetTexGeniv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXGENXVOES:
-			D(funcname = "glGetTexGenxvOES");
 			if (GL_ISAVAILABLE(glGetTexGenxvOES))
 			nfglGetTexGenxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXIMAGE:
-			D(funcname = "glGetTexImage");
 			if (GL_ISAVAILABLE(glGetTexImage))
 			nfglGetTexImage(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERFV:
-			D(funcname = "glGetTexLevelParameterfv");
 			if (GL_ISAVAILABLE(glGetTexLevelParameterfv))
 			nfglGetTexLevelParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERIV:
-			D(funcname = "glGetTexLevelParameteriv");
 			if (GL_ISAVAILABLE(glGetTexLevelParameteriv))
 			nfglGetTexLevelParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXLEVELPARAMETERXVOES:
-			D(funcname = "glGetTexLevelParameterxvOES");
 			if (GL_ISAVAILABLE(glGetTexLevelParameterxvOES))
 			nfglGetTexLevelParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIV:
-			D(funcname = "glGetTexParameterIiv");
 			if (GL_ISAVAILABLE(glGetTexParameterIiv))
 			nfglGetTexParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIIVEXT:
-			D(funcname = "glGetTexParameterIivEXT");
 			if (GL_ISAVAILABLE(glGetTexParameterIivEXT))
 			nfglGetTexParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIV:
-			D(funcname = "glGetTexParameterIuiv");
 			if (GL_ISAVAILABLE(glGetTexParameterIuiv))
 			nfglGetTexParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIUIVEXT:
-			D(funcname = "glGetTexParameterIuivEXT");
 			if (GL_ISAVAILABLE(glGetTexParameterIuivEXT))
 			nfglGetTexParameterIuivEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLGETTEXPARAMETERPOINTERVAPPLE:
-			D(funcname = "glGetTexParameterPointervAPPLE");
 			if (GL_ISAVAILABLE(glGetTexParameterPointervAPPLE))
 			nfglGetTexParameterPointervAPPLE(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLGETTEXPARAMETERFV:
-			D(funcname = "glGetTexParameterfv");
 			if (GL_ISAVAILABLE(glGetTexParameterfv))
 			nfglGetTexParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERIV:
-			D(funcname = "glGetTexParameteriv");
 			if (GL_ISAVAILABLE(glGetTexParameteriv))
 			nfglGetTexParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXPARAMETERXVOES:
-			D(funcname = "glGetTexParameterxvOES");
 			if (GL_ISAVAILABLE(glGetTexParameterxvOES))
 			nfglGetTexParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREHANDLEARB:
-			D(funcname = "glGetTextureHandleARB");
 			if (GL_ISAVAILABLE(glGetTextureHandleARB))
 			ret = nfglGetTextureHandleARB(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREHANDLENV:
-			D(funcname = "glGetTextureHandleNV");
 			if (GL_ISAVAILABLE(glGetTextureHandleNV))
 			ret = nfglGetTextureHandleNV(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREIMAGE:
-			D(funcname = "glGetTextureImage");
 			if (GL_ISAVAILABLE(glGetTextureImage))
 			nfglGetTextureImage(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREIMAGEEXT:
-			D(funcname = "glGetTextureImageEXT");
 			if (GL_ISAVAILABLE(glGetTextureImageEXT))
 			nfglGetTextureImageEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERFV:
-			D(funcname = "glGetTextureLevelParameterfv");
 			if (GL_ISAVAILABLE(glGetTextureLevelParameterfv))
 			nfglGetTextureLevelParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERFVEXT:
-			D(funcname = "glGetTextureLevelParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetTextureLevelParameterfvEXT))
 			nfglGetTextureLevelParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERIV:
-			D(funcname = "glGetTextureLevelParameteriv");
 			if (GL_ISAVAILABLE(glGetTextureLevelParameteriv))
 			nfglGetTextureLevelParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURELEVELPARAMETERIVEXT:
-			D(funcname = "glGetTextureLevelParameterivEXT");
 			if (GL_ISAVAILABLE(glGetTextureLevelParameterivEXT))
 			nfglGetTextureLevelParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIIV:
-			D(funcname = "glGetTextureParameterIiv");
 			if (GL_ISAVAILABLE(glGetTextureParameterIiv))
 			nfglGetTextureParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIIVEXT:
-			D(funcname = "glGetTextureParameterIivEXT");
 			if (GL_ISAVAILABLE(glGetTextureParameterIivEXT))
 			nfglGetTextureParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIUIV:
-			D(funcname = "glGetTextureParameterIuiv");
 			if (GL_ISAVAILABLE(glGetTextureParameterIuiv))
 			nfglGetTextureParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIUIVEXT:
-			D(funcname = "glGetTextureParameterIuivEXT");
 			if (GL_ISAVAILABLE(glGetTextureParameterIuivEXT))
 			nfglGetTextureParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERFV:
-			D(funcname = "glGetTextureParameterfv");
 			if (GL_ISAVAILABLE(glGetTextureParameterfv))
 			nfglGetTextureParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERFVEXT:
-			D(funcname = "glGetTextureParameterfvEXT");
 			if (GL_ISAVAILABLE(glGetTextureParameterfvEXT))
 			nfglGetTextureParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIV:
-			D(funcname = "glGetTextureParameteriv");
 			if (GL_ISAVAILABLE(glGetTextureParameteriv))
 			nfglGetTextureParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTUREPARAMETERIVEXT:
-			D(funcname = "glGetTextureParameterivEXT");
 			if (GL_ISAVAILABLE(glGetTextureParameterivEXT))
 			nfglGetTextureParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURESAMPLERHANDLEARB:
-			D(funcname = "glGetTextureSamplerHandleARB");
 			if (GL_ISAVAILABLE(glGetTextureSamplerHandleARB))
 			ret = nfglGetTextureSamplerHandleARB(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURESAMPLERHANDLENV:
-			D(funcname = "glGetTextureSamplerHandleNV");
 			if (GL_ISAVAILABLE(glGetTextureSamplerHandleNV))
 			ret = nfglGetTextureSamplerHandleNV(nf_params);
 			break;
 		case NFOSMESA_GLGETTEXTURESUBIMAGE:
-			D(funcname = "glGetTextureSubImage");
 			if (GL_ISAVAILABLE(glGetTextureSubImage))
 			nfglGetTextureSubImage(nf_params);
 			break;
 		case NFOSMESA_GLGETTRACKMATRIXIVNV:
-			D(funcname = "glGetTrackMatrixivNV");
 			if (GL_ISAVAILABLE(glGetTrackMatrixivNV))
 			nfglGetTrackMatrixivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYING:
-			D(funcname = "glGetTransformFeedbackVarying");
 			if (GL_ISAVAILABLE(glGetTransformFeedbackVarying))
 			nfglGetTransformFeedbackVarying(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGEXT:
-			D(funcname = "glGetTransformFeedbackVaryingEXT");
 			if (GL_ISAVAILABLE(glGetTransformFeedbackVaryingEXT))
 			nfglGetTransformFeedbackVaryingEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKVARYINGNV:
-			D(funcname = "glGetTransformFeedbackVaryingNV");
 			if (GL_ISAVAILABLE(glGetTransformFeedbackVaryingNV))
 			nfglGetTransformFeedbackVaryingNV(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKI64_V:
-			D(funcname = "glGetTransformFeedbacki64_v");
 			if (GL_ISAVAILABLE(glGetTransformFeedbacki64_v))
 			nfglGetTransformFeedbacki64_v(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKI_V:
-			D(funcname = "glGetTransformFeedbacki_v");
 			if (GL_ISAVAILABLE(glGetTransformFeedbacki_v))
 			nfglGetTransformFeedbacki_v(nf_params);
 			break;
 		case NFOSMESA_GLGETTRANSFORMFEEDBACKIV:
-			D(funcname = "glGetTransformFeedbackiv");
 			if (GL_ISAVAILABLE(glGetTransformFeedbackiv))
 			nfglGetTransformFeedbackiv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMBLOCKINDEX:
-			D(funcname = "glGetUniformBlockIndex");
 			if (GL_ISAVAILABLE(glGetUniformBlockIndex))
 			ret = nfglGetUniformBlockIndex(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMBUFFERSIZEEXT:
-			D(funcname = "glGetUniformBufferSizeEXT");
 			if (GL_ISAVAILABLE(glGetUniformBufferSizeEXT))
 			ret = nfglGetUniformBufferSizeEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMINDICES:
-			D(funcname = "glGetUniformIndices");
 			if (GL_ISAVAILABLE(glGetUniformIndices))
 			nfglGetUniformIndices(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATION:
-			D(funcname = "glGetUniformLocation");
 			if (GL_ISAVAILABLE(glGetUniformLocation))
 			ret = nfglGetUniformLocation(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMLOCATIONARB:
-			D(funcname = "glGetUniformLocationARB");
 			if (GL_ISAVAILABLE(glGetUniformLocationARB))
 			ret = nfglGetUniformLocationARB(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMOFFSETEXT:
-			D(funcname = "glGetUniformOffsetEXT");
 			if (GL_ISAVAILABLE(glGetUniformOffsetEXT))
 			ret = nfglGetUniformOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMSUBROUTINEUIV:
-			D(funcname = "glGetUniformSubroutineuiv");
 			if (GL_ISAVAILABLE(glGetUniformSubroutineuiv))
 			nfglGetUniformSubroutineuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMDV:
-			D(funcname = "glGetUniformdv");
 			if (GL_ISAVAILABLE(glGetUniformdv))
 			nfglGetUniformdv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMFV:
-			D(funcname = "glGetUniformfv");
 			if (GL_ISAVAILABLE(glGetUniformfv))
 			nfglGetUniformfv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMFVARB:
-			D(funcname = "glGetUniformfvARB");
 			if (GL_ISAVAILABLE(glGetUniformfvARB))
 			nfglGetUniformfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMI64VARB:
-			D(funcname = "glGetUniformi64vARB");
 			if (GL_ISAVAILABLE(glGetUniformi64vARB))
 			nfglGetUniformi64vARB(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMI64VNV:
-			D(funcname = "glGetUniformi64vNV");
 			if (GL_ISAVAILABLE(glGetUniformi64vNV))
 			nfglGetUniformi64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMIV:
-			D(funcname = "glGetUniformiv");
 			if (GL_ISAVAILABLE(glGetUniformiv))
 			nfglGetUniformiv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMIVARB:
-			D(funcname = "glGetUniformivARB");
 			if (GL_ISAVAILABLE(glGetUniformivARB))
 			nfglGetUniformivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMUI64VARB:
-			D(funcname = "glGetUniformui64vARB");
 			if (GL_ISAVAILABLE(glGetUniformui64vARB))
 			nfglGetUniformui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMUI64VNV:
-			D(funcname = "glGetUniformui64vNV");
 			if (GL_ISAVAILABLE(glGetUniformui64vNV))
 			nfglGetUniformui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIV:
-			D(funcname = "glGetUniformuiv");
 			if (GL_ISAVAILABLE(glGetUniformuiv))
 			nfglGetUniformuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETUNIFORMUIVEXT:
-			D(funcname = "glGetUniformuivEXT");
 			if (GL_ISAVAILABLE(glGetUniformuivEXT))
 			nfglGetUniformuivEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLGETUNSIGNEDBYTEI_VEXT:
-			D(funcname = "glGetUnsignedBytei_vEXT");
 			if (GL_ISAVAILABLE(glGetUnsignedBytei_vEXT))
 			nfglGetUnsignedBytei_vEXT(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLGETUNSIGNEDBYTEVEXT:
-			D(funcname = "glGetUnsignedBytevEXT");
 			if (GL_ISAVAILABLE(glGetUnsignedBytevEXT))
 			nfglGetUnsignedBytevEXT(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTFVATI:
-			D(funcname = "glGetVariantArrayObjectfvATI");
 			if (GL_ISAVAILABLE(glGetVariantArrayObjectfvATI))
 			nfglGetVariantArrayObjectfvATI(nf_params);
 			break;
 		case NFOSMESA_GLGETVARIANTARRAYOBJECTIVATI:
-			D(funcname = "glGetVariantArrayObjectivATI");
 			if (GL_ISAVAILABLE(glGetVariantArrayObjectivATI))
 			nfglGetVariantArrayObjectivATI(nf_params);
 			break;
 		case NFOSMESA_GLGETVARIANTBOOLEANVEXT:
-			D(funcname = "glGetVariantBooleanvEXT");
 			if (GL_ISAVAILABLE(glGetVariantBooleanvEXT))
 			nfglGetVariantBooleanvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVARIANTFLOATVEXT:
-			D(funcname = "glGetVariantFloatvEXT");
 			if (GL_ISAVAILABLE(glGetVariantFloatvEXT))
 			nfglGetVariantFloatvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVARIANTINTEGERVEXT:
-			D(funcname = "glGetVariantIntegervEXT");
 			if (GL_ISAVAILABLE(glGetVariantIntegervEXT))
 			nfglGetVariantIntegervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVARIANTPOINTERVEXT:
-			D(funcname = "glGetVariantPointervEXT");
 			if (GL_ISAVAILABLE(glGetVariantPointervEXT))
 			nfglGetVariantPointervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVARYINGLOCATIONNV:
-			D(funcname = "glGetVaryingLocationNV");
 			if (GL_ISAVAILABLE(glGetVaryingLocationNV))
 			ret = nfglGetVaryingLocationNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINDEXED64IV:
-			D(funcname = "glGetVertexArrayIndexed64iv");
 			if (GL_ISAVAILABLE(glGetVertexArrayIndexed64iv))
 			nfglGetVertexArrayIndexed64iv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINDEXEDIV:
-			D(funcname = "glGetVertexArrayIndexediv");
 			if (GL_ISAVAILABLE(glGetVertexArrayIndexediv))
 			nfglGetVertexArrayIndexediv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERI_VEXT:
-			D(funcname = "glGetVertexArrayIntegeri_vEXT");
 			if (GL_ISAVAILABLE(glGetVertexArrayIntegeri_vEXT))
 			nfglGetVertexArrayIntegeri_vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYINTEGERVEXT:
-			D(funcname = "glGetVertexArrayIntegervEXT");
 			if (GL_ISAVAILABLE(glGetVertexArrayIntegervEXT))
 			nfglGetVertexArrayIntegervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERI_VEXT:
-			D(funcname = "glGetVertexArrayPointeri_vEXT");
 			if (GL_ISAVAILABLE(glGetVertexArrayPointeri_vEXT))
 			nfglGetVertexArrayPointeri_vEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYPOINTERVEXT:
-			D(funcname = "glGetVertexArrayPointervEXT");
 			if (GL_ISAVAILABLE(glGetVertexArrayPointervEXT))
 			nfglGetVertexArrayPointervEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXARRAYIV:
-			D(funcname = "glGetVertexArrayiv");
 			if (GL_ISAVAILABLE(glGetVertexArrayiv))
 			nfglGetVertexArrayiv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTFVATI:
-			D(funcname = "glGetVertexAttribArrayObjectfvATI");
 			if (GL_ISAVAILABLE(glGetVertexAttribArrayObjectfvATI))
 			nfglGetVertexAttribArrayObjectfvATI(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBARRAYOBJECTIVATI:
-			D(funcname = "glGetVertexAttribArrayObjectivATI");
 			if (GL_ISAVAILABLE(glGetVertexAttribArrayObjectivATI))
 			nfglGetVertexAttribArrayObjectivATI(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIV:
-			D(funcname = "glGetVertexAttribIiv");
 			if (GL_ISAVAILABLE(glGetVertexAttribIiv))
 			nfglGetVertexAttribIiv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIIVEXT:
-			D(funcname = "glGetVertexAttribIivEXT");
 			if (GL_ISAVAILABLE(glGetVertexAttribIivEXT))
 			nfglGetVertexAttribIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIV:
-			D(funcname = "glGetVertexAttribIuiv");
 			if (GL_ISAVAILABLE(glGetVertexAttribIuiv))
 			nfglGetVertexAttribIuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIUIVEXT:
-			D(funcname = "glGetVertexAttribIuivEXT");
 			if (GL_ISAVAILABLE(glGetVertexAttribIuivEXT))
 			nfglGetVertexAttribIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDV:
-			D(funcname = "glGetVertexAttribLdv");
 			if (GL_ISAVAILABLE(glGetVertexAttribLdv))
 			nfglGetVertexAttribLdv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLDVEXT:
-			D(funcname = "glGetVertexAttribLdvEXT");
 			if (GL_ISAVAILABLE(glGetVertexAttribLdvEXT))
 			nfglGetVertexAttribLdvEXT(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLI64VNV:
-			D(funcname = "glGetVertexAttribLi64vNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribLi64vNV))
 			nfglGetVertexAttribLi64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VARB:
-			D(funcname = "glGetVertexAttribLui64vARB");
 			if (GL_ISAVAILABLE(glGetVertexAttribLui64vARB))
 			nfglGetVertexAttribLui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBLUI64VNV:
-			D(funcname = "glGetVertexAttribLui64vNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribLui64vNV))
 			nfglGetVertexAttribLui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERV:
-			D(funcname = "glGetVertexAttribPointerv");
 			if (GL_ISAVAILABLE(glGetVertexAttribPointerv))
 			nfglGetVertexAttribPointerv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVARB:
-			D(funcname = "glGetVertexAttribPointervARB");
 			if (GL_ISAVAILABLE(glGetVertexAttribPointervARB))
 			nfglGetVertexAttribPointervARB(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBPOINTERVNV:
-			D(funcname = "glGetVertexAttribPointervNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribPointervNV))
 			nfglGetVertexAttribPointervNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDV:
-			D(funcname = "glGetVertexAttribdv");
 			if (GL_ISAVAILABLE(glGetVertexAttribdv))
 			nfglGetVertexAttribdv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVARB:
-			D(funcname = "glGetVertexAttribdvARB");
 			if (GL_ISAVAILABLE(glGetVertexAttribdvARB))
 			nfglGetVertexAttribdvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBDVNV:
-			D(funcname = "glGetVertexAttribdvNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribdvNV))
 			nfglGetVertexAttribdvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFV:
-			D(funcname = "glGetVertexAttribfv");
 			if (GL_ISAVAILABLE(glGetVertexAttribfv))
 			nfglGetVertexAttribfv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVARB:
-			D(funcname = "glGetVertexAttribfvARB");
 			if (GL_ISAVAILABLE(glGetVertexAttribfvARB))
 			nfglGetVertexAttribfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBFVNV:
-			D(funcname = "glGetVertexAttribfvNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribfvNV))
 			nfglGetVertexAttribfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIV:
-			D(funcname = "glGetVertexAttribiv");
 			if (GL_ISAVAILABLE(glGetVertexAttribiv))
 			nfglGetVertexAttribiv(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVARB:
-			D(funcname = "glGetVertexAttribivARB");
 			if (GL_ISAVAILABLE(glGetVertexAttribivARB))
 			nfglGetVertexAttribivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETVERTEXATTRIBIVNV:
-			D(funcname = "glGetVertexAttribivNV");
 			if (GL_ISAVAILABLE(glGetVertexAttribivNV))
 			nfglGetVertexAttribivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMDVNV:
-			D(funcname = "glGetVideoCaptureStreamdvNV");
 			if (GL_ISAVAILABLE(glGetVideoCaptureStreamdvNV))
 			nfglGetVideoCaptureStreamdvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMFVNV:
-			D(funcname = "glGetVideoCaptureStreamfvNV");
 			if (GL_ISAVAILABLE(glGetVideoCaptureStreamfvNV))
 			nfglGetVideoCaptureStreamfvNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTURESTREAMIVNV:
-			D(funcname = "glGetVideoCaptureStreamivNV");
 			if (GL_ISAVAILABLE(glGetVideoCaptureStreamivNV))
 			nfglGetVideoCaptureStreamivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOCAPTUREIVNV:
-			D(funcname = "glGetVideoCaptureivNV");
 			if (GL_ISAVAILABLE(glGetVideoCaptureivNV))
 			nfglGetVideoCaptureivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOI64VNV:
-			D(funcname = "glGetVideoi64vNV");
 			if (GL_ISAVAILABLE(glGetVideoi64vNV))
 			nfglGetVideoi64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOIVNV:
-			D(funcname = "glGetVideoivNV");
 			if (GL_ISAVAILABLE(glGetVideoivNV))
 			nfglGetVideoivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOUI64VNV:
-			D(funcname = "glGetVideoui64vNV");
 			if (GL_ISAVAILABLE(glGetVideoui64vNV))
 			nfglGetVideoui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLGETVIDEOUIVNV:
-			D(funcname = "glGetVideouivNV");
 			if (GL_ISAVAILABLE(glGetVideouivNV))
 			nfglGetVideouivNV(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLGETVKPROCADDRNV:
-			D(funcname = "glGetVkProcAddrNV");
 			if (GL_ISAVAILABLE(glGetVkProcAddrNV))
-			ret = (uint32)(uintptr_t)nfglGetVkProcAddrNV(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglGetVkProcAddrNV(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLGETNCOLORTABLE:
-			D(funcname = "glGetnColorTable");
 			if (GL_ISAVAILABLE(glGetnColorTable))
 			nfglGetnColorTable(nf_params);
 			break;
 		case NFOSMESA_GLGETNCOLORTABLEARB:
-			D(funcname = "glGetnColorTableARB");
 			if (GL_ISAVAILABLE(glGetnColorTableARB))
 			nfglGetnColorTableARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNCOMPRESSEDTEXIMAGE:
-			D(funcname = "glGetnCompressedTexImage");
 			if (GL_ISAVAILABLE(glGetnCompressedTexImage))
 			nfglGetnCompressedTexImage(nf_params);
 			break;
 		case NFOSMESA_GLGETNCOMPRESSEDTEXIMAGEARB:
-			D(funcname = "glGetnCompressedTexImageARB");
 			if (GL_ISAVAILABLE(glGetnCompressedTexImageARB))
 			nfglGetnCompressedTexImageARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNCONVOLUTIONFILTER:
-			D(funcname = "glGetnConvolutionFilter");
 			if (GL_ISAVAILABLE(glGetnConvolutionFilter))
 			nfglGetnConvolutionFilter(nf_params);
 			break;
 		case NFOSMESA_GLGETNCONVOLUTIONFILTERARB:
-			D(funcname = "glGetnConvolutionFilterARB");
 			if (GL_ISAVAILABLE(glGetnConvolutionFilterARB))
 			nfglGetnConvolutionFilterARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNHISTOGRAM:
-			D(funcname = "glGetnHistogram");
 			if (GL_ISAVAILABLE(glGetnHistogram))
 			nfglGetnHistogram(nf_params);
 			break;
 		case NFOSMESA_GLGETNHISTOGRAMARB:
-			D(funcname = "glGetnHistogramARB");
 			if (GL_ISAVAILABLE(glGetnHistogramARB))
 			nfglGetnHistogramARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPDV:
-			D(funcname = "glGetnMapdv");
 			if (GL_ISAVAILABLE(glGetnMapdv))
 			nfglGetnMapdv(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPDVARB:
-			D(funcname = "glGetnMapdvARB");
 			if (GL_ISAVAILABLE(glGetnMapdvARB))
 			nfglGetnMapdvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPFV:
-			D(funcname = "glGetnMapfv");
 			if (GL_ISAVAILABLE(glGetnMapfv))
 			nfglGetnMapfv(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPFVARB:
-			D(funcname = "glGetnMapfvARB");
 			if (GL_ISAVAILABLE(glGetnMapfvARB))
 			nfglGetnMapfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPIV:
-			D(funcname = "glGetnMapiv");
 			if (GL_ISAVAILABLE(glGetnMapiv))
 			nfglGetnMapiv(nf_params);
 			break;
 		case NFOSMESA_GLGETNMAPIVARB:
-			D(funcname = "glGetnMapivARB");
 			if (GL_ISAVAILABLE(glGetnMapivARB))
 			nfglGetnMapivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNMINMAX:
-			D(funcname = "glGetnMinmax");
 			if (GL_ISAVAILABLE(glGetnMinmax))
 			nfglGetnMinmax(nf_params);
 			break;
 		case NFOSMESA_GLGETNMINMAXARB:
-			D(funcname = "glGetnMinmaxARB");
 			if (GL_ISAVAILABLE(glGetnMinmaxARB))
 			nfglGetnMinmaxARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPFV:
-			D(funcname = "glGetnPixelMapfv");
 			if (GL_ISAVAILABLE(glGetnPixelMapfv))
 			nfglGetnPixelMapfv(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPFVARB:
-			D(funcname = "glGetnPixelMapfvARB");
 			if (GL_ISAVAILABLE(glGetnPixelMapfvARB))
 			nfglGetnPixelMapfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUIV:
-			D(funcname = "glGetnPixelMapuiv");
 			if (GL_ISAVAILABLE(glGetnPixelMapuiv))
 			nfglGetnPixelMapuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUIVARB:
-			D(funcname = "glGetnPixelMapuivARB");
 			if (GL_ISAVAILABLE(glGetnPixelMapuivARB))
 			nfglGetnPixelMapuivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUSV:
-			D(funcname = "glGetnPixelMapusv");
 			if (GL_ISAVAILABLE(glGetnPixelMapusv))
 			nfglGetnPixelMapusv(nf_params);
 			break;
 		case NFOSMESA_GLGETNPIXELMAPUSVARB:
-			D(funcname = "glGetnPixelMapusvARB");
 			if (GL_ISAVAILABLE(glGetnPixelMapusvARB))
 			nfglGetnPixelMapusvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNPOLYGONSTIPPLE:
-			D(funcname = "glGetnPolygonStipple");
 			if (GL_ISAVAILABLE(glGetnPolygonStipple))
 			nfglGetnPolygonStipple(nf_params);
 			break;
 		case NFOSMESA_GLGETNPOLYGONSTIPPLEARB:
-			D(funcname = "glGetnPolygonStippleARB");
 			if (GL_ISAVAILABLE(glGetnPolygonStippleARB))
 			nfglGetnPolygonStippleARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNSEPARABLEFILTER:
-			D(funcname = "glGetnSeparableFilter");
 			if (GL_ISAVAILABLE(glGetnSeparableFilter))
 			nfglGetnSeparableFilter(nf_params);
 			break;
 		case NFOSMESA_GLGETNSEPARABLEFILTERARB:
-			D(funcname = "glGetnSeparableFilterARB");
 			if (GL_ISAVAILABLE(glGetnSeparableFilterARB))
 			nfglGetnSeparableFilterARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNTEXIMAGE:
-			D(funcname = "glGetnTexImage");
 			if (GL_ISAVAILABLE(glGetnTexImage))
 			nfglGetnTexImage(nf_params);
 			break;
 		case NFOSMESA_GLGETNTEXIMAGEARB:
-			D(funcname = "glGetnTexImageARB");
 			if (GL_ISAVAILABLE(glGetnTexImageARB))
 			nfglGetnTexImageARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMDV:
-			D(funcname = "glGetnUniformdv");
 			if (GL_ISAVAILABLE(glGetnUniformdv))
 			nfglGetnUniformdv(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMDVARB:
-			D(funcname = "glGetnUniformdvARB");
 			if (GL_ISAVAILABLE(glGetnUniformdvARB))
 			nfglGetnUniformdvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMFV:
-			D(funcname = "glGetnUniformfv");
 			if (GL_ISAVAILABLE(glGetnUniformfv))
 			nfglGetnUniformfv(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMFVARB:
-			D(funcname = "glGetnUniformfvARB");
 			if (GL_ISAVAILABLE(glGetnUniformfvARB))
 			nfglGetnUniformfvARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMI64VARB:
-			D(funcname = "glGetnUniformi64vARB");
 			if (GL_ISAVAILABLE(glGetnUniformi64vARB))
 			nfglGetnUniformi64vARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMIV:
-			D(funcname = "glGetnUniformiv");
 			if (GL_ISAVAILABLE(glGetnUniformiv))
 			nfglGetnUniformiv(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMIVARB:
-			D(funcname = "glGetnUniformivARB");
 			if (GL_ISAVAILABLE(glGetnUniformivARB))
 			nfglGetnUniformivARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUI64VARB:
-			D(funcname = "glGetnUniformui64vARB");
 			if (GL_ISAVAILABLE(glGetnUniformui64vARB))
 			nfglGetnUniformui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIV:
-			D(funcname = "glGetnUniformuiv");
 			if (GL_ISAVAILABLE(glGetnUniformuiv))
 			nfglGetnUniformuiv(nf_params);
 			break;
 		case NFOSMESA_GLGETNUNIFORMUIVARB:
-			D(funcname = "glGetnUniformuivARB");
 			if (GL_ISAVAILABLE(glGetnUniformuivARB))
 			nfglGetnUniformuivARB(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORBSUN:
-			D(funcname = "glGlobalAlphaFactorbSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactorbSUN))
 			nfglGlobalAlphaFactorbSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORDSUN:
-			D(funcname = "glGlobalAlphaFactordSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactordSUN))
 			nfglGlobalAlphaFactordSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORFSUN:
-			D(funcname = "glGlobalAlphaFactorfSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactorfSUN))
 			nfglGlobalAlphaFactorfSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORISUN:
-			D(funcname = "glGlobalAlphaFactoriSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactoriSUN))
 			nfglGlobalAlphaFactoriSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORSSUN:
-			D(funcname = "glGlobalAlphaFactorsSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactorsSUN))
 			nfglGlobalAlphaFactorsSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUBSUN:
-			D(funcname = "glGlobalAlphaFactorubSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactorubSUN))
 			nfglGlobalAlphaFactorubSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUISUN:
-			D(funcname = "glGlobalAlphaFactoruiSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactoruiSUN))
 			nfglGlobalAlphaFactoruiSUN(nf_params);
 			break;
 		case NFOSMESA_GLGLOBALALPHAFACTORUSSUN:
-			D(funcname = "glGlobalAlphaFactorusSUN");
 			if (GL_ISAVAILABLE(glGlobalAlphaFactorusSUN))
 			nfglGlobalAlphaFactorusSUN(nf_params);
 			break;
 		case NFOSMESA_GLHINT:
-			D(funcname = "glHint");
 			if (GL_ISAVAILABLE(glHint))
 			nfglHint(nf_params);
 			break;
 		case NFOSMESA_GLHINTPGI:
-			D(funcname = "glHintPGI");
 			if (GL_ISAVAILABLE(glHintPGI))
 			nfglHintPGI(nf_params);
 			break;
 		case NFOSMESA_GLHISTOGRAM:
-			D(funcname = "glHistogram");
 			if (GL_ISAVAILABLE(glHistogram))
 			nfglHistogram(nf_params);
 			break;
 		case NFOSMESA_GLHISTOGRAMEXT:
-			D(funcname = "glHistogramEXT");
 			if (GL_ISAVAILABLE(glHistogramEXT))
 			nfglHistogramEXT(nf_params);
 			break;
 		case NFOSMESA_GLIGLOOINTERFACESGIX:
-			D(funcname = "glIglooInterfaceSGIX");
 			if (GL_ISAVAILABLE(glIglooInterfaceSGIX))
 			nfglIglooInterfaceSGIX(nf_params);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERFHP:
-			D(funcname = "glImageTransformParameterfHP");
 			if (GL_ISAVAILABLE(glImageTransformParameterfHP))
 			nfglImageTransformParameterfHP(nf_params);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERFVHP:
-			D(funcname = "glImageTransformParameterfvHP");
 			if (GL_ISAVAILABLE(glImageTransformParameterfvHP))
 			nfglImageTransformParameterfvHP(nf_params);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERIHP:
-			D(funcname = "glImageTransformParameteriHP");
 			if (GL_ISAVAILABLE(glImageTransformParameteriHP))
 			nfglImageTransformParameteriHP(nf_params);
 			break;
 		case NFOSMESA_GLIMAGETRANSFORMPARAMETERIVHP:
-			D(funcname = "glImageTransformParameterivHP");
 			if (GL_ISAVAILABLE(glImageTransformParameterivHP))
 			nfglImageTransformParameterivHP(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTMEMORYFDEXT:
-			D(funcname = "glImportMemoryFdEXT");
 			if (GL_ISAVAILABLE(glImportMemoryFdEXT))
 			nfglImportMemoryFdEXT(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTMEMORYWIN32HANDLEEXT:
-			D(funcname = "glImportMemoryWin32HandleEXT");
 			if (GL_ISAVAILABLE(glImportMemoryWin32HandleEXT))
 			nfglImportMemoryWin32HandleEXT(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTMEMORYWIN32NAMEEXT:
-			D(funcname = "glImportMemoryWin32NameEXT");
 			if (GL_ISAVAILABLE(glImportMemoryWin32NameEXT))
 			nfglImportMemoryWin32NameEXT(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTSEMAPHOREFDEXT:
-			D(funcname = "glImportSemaphoreFdEXT");
 			if (GL_ISAVAILABLE(glImportSemaphoreFdEXT))
 			nfglImportSemaphoreFdEXT(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTSEMAPHOREWIN32HANDLEEXT:
-			D(funcname = "glImportSemaphoreWin32HandleEXT");
 			if (GL_ISAVAILABLE(glImportSemaphoreWin32HandleEXT))
 			nfglImportSemaphoreWin32HandleEXT(nf_params);
 			break;
 		case NFOSMESA_GLIMPORTSEMAPHOREWIN32NAMEEXT:
-			D(funcname = "glImportSemaphoreWin32NameEXT");
 			if (GL_ISAVAILABLE(glImportSemaphoreWin32NameEXT))
 			nfglImportSemaphoreWin32NameEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLIMPORTSYNCEXT:
-			D(funcname = "glImportSyncEXT");
 			if (GL_ISAVAILABLE(glImportSyncEXT))
-			ret = (uint32)(uintptr_t)nfglImportSyncEXT(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglImportSyncEXT(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLINDEXFORMATNV:
-			D(funcname = "glIndexFormatNV");
 			if (GL_ISAVAILABLE(glIndexFormatNV))
 			nfglIndexFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLINDEXFUNCEXT:
-			D(funcname = "glIndexFuncEXT");
 			if (GL_ISAVAILABLE(glIndexFuncEXT))
 			nfglIndexFuncEXT(nf_params);
 			break;
 		case NFOSMESA_GLINDEXMASK:
-			D(funcname = "glIndexMask");
 			if (GL_ISAVAILABLE(glIndexMask))
 			nfglIndexMask(nf_params);
 			break;
 		case NFOSMESA_GLINDEXMATERIALEXT:
-			D(funcname = "glIndexMaterialEXT");
 			if (GL_ISAVAILABLE(glIndexMaterialEXT))
 			nfglIndexMaterialEXT(nf_params);
 			break;
 		case NFOSMESA_GLINDEXPOINTER:
-			D(funcname = "glIndexPointer");
 			if (GL_ISAVAILABLE(glIndexPointer))
 			nfglIndexPointer(nf_params);
 			break;
 		case NFOSMESA_GLINDEXPOINTEREXT:
-			D(funcname = "glIndexPointerEXT");
 			if (GL_ISAVAILABLE(glIndexPointerEXT))
 			nfglIndexPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLINDEXPOINTERLISTIBM:
-			D(funcname = "glIndexPointerListIBM");
 			if (GL_ISAVAILABLE(glIndexPointerListIBM))
 			nfglIndexPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLINDEXD:
-			D(funcname = "glIndexd");
 			if (GL_ISAVAILABLE(glIndexd))
 			nfglIndexd(nf_params);
 			break;
 		case NFOSMESA_GLINDEXDV:
-			D(funcname = "glIndexdv");
 			if (GL_ISAVAILABLE(glIndexdv))
 			nfglIndexdv(nf_params);
 			break;
 		case NFOSMESA_GLINDEXF:
-			D(funcname = "glIndexf");
 			if (GL_ISAVAILABLE(glIndexf))
 			nfglIndexf(nf_params);
 			break;
 		case NFOSMESA_GLINDEXFV:
-			D(funcname = "glIndexfv");
 			if (GL_ISAVAILABLE(glIndexfv))
 			nfglIndexfv(nf_params);
 			break;
 		case NFOSMESA_GLINDEXI:
-			D(funcname = "glIndexi");
 			if (GL_ISAVAILABLE(glIndexi))
 			nfglIndexi(nf_params);
 			break;
 		case NFOSMESA_GLINDEXIV:
-			D(funcname = "glIndexiv");
 			if (GL_ISAVAILABLE(glIndexiv))
 			nfglIndexiv(nf_params);
 			break;
 		case NFOSMESA_GLINDEXS:
-			D(funcname = "glIndexs");
 			if (GL_ISAVAILABLE(glIndexs))
 			nfglIndexs(nf_params);
 			break;
 		case NFOSMESA_GLINDEXSV:
-			D(funcname = "glIndexsv");
 			if (GL_ISAVAILABLE(glIndexsv))
 			nfglIndexsv(nf_params);
 			break;
 		case NFOSMESA_GLINDEXUB:
-			D(funcname = "glIndexub");
 			if (GL_ISAVAILABLE(glIndexub))
 			nfglIndexub(nf_params);
 			break;
 		case NFOSMESA_GLINDEXUBV:
-			D(funcname = "glIndexubv");
 			if (GL_ISAVAILABLE(glIndexubv))
 			nfglIndexubv(nf_params);
 			break;
 		case NFOSMESA_GLINDEXXOES:
-			D(funcname = "glIndexxOES");
 			if (GL_ISAVAILABLE(glIndexxOES))
 			nfglIndexxOES(nf_params);
 			break;
 		case NFOSMESA_GLINDEXXVOES:
-			D(funcname = "glIndexxvOES");
 			if (GL_ISAVAILABLE(glIndexxvOES))
 			nfglIndexxvOES(nf_params);
 			break;
 		case NFOSMESA_GLINITNAMES:
-			D(funcname = "glInitNames");
 			if (GL_ISAVAILABLE(glInitNames))
 			nfglInitNames(nf_params);
 			break;
 		case NFOSMESA_GLINSERTCOMPONENTEXT:
-			D(funcname = "glInsertComponentEXT");
 			if (GL_ISAVAILABLE(glInsertComponentEXT))
 			nfglInsertComponentEXT(nf_params);
 			break;
 		case NFOSMESA_GLINSERTEVENTMARKEREXT:
-			D(funcname = "glInsertEventMarkerEXT");
 			if (GL_ISAVAILABLE(glInsertEventMarkerEXT))
 			nfglInsertEventMarkerEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLINSTRUMENTSBUFFERSGIX:
-			D(funcname = "glInstrumentsBufferSGIX");
 			if (GL_ISAVAILABLE(glInstrumentsBufferSGIX))
 			nfglInstrumentsBufferSGIX(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLINTERLEAVEDARRAYS:
-			D(funcname = "glInterleavedArrays");
 			if (GL_ISAVAILABLE(glInterleavedArrays))
 			nfglInterleavedArrays(nf_params);
 			break;
 		case NFOSMESA_GLINTERPOLATEPATHSNV:
-			D(funcname = "glInterpolatePathsNV");
 			if (GL_ISAVAILABLE(glInterpolatePathsNV))
 			nfglInterpolatePathsNV(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATEBUFFERDATA:
-			D(funcname = "glInvalidateBufferData");
 			if (GL_ISAVAILABLE(glInvalidateBufferData))
 			nfglInvalidateBufferData(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATEBUFFERSUBDATA:
-			D(funcname = "glInvalidateBufferSubData");
 			if (GL_ISAVAILABLE(glInvalidateBufferSubData))
 			nfglInvalidateBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATEFRAMEBUFFER:
-			D(funcname = "glInvalidateFramebuffer");
 			if (GL_ISAVAILABLE(glInvalidateFramebuffer))
 			nfglInvalidateFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATENAMEDFRAMEBUFFERDATA:
-			D(funcname = "glInvalidateNamedFramebufferData");
 			if (GL_ISAVAILABLE(glInvalidateNamedFramebufferData))
 			nfglInvalidateNamedFramebufferData(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATENAMEDFRAMEBUFFERSUBDATA:
-			D(funcname = "glInvalidateNamedFramebufferSubData");
 			if (GL_ISAVAILABLE(glInvalidateNamedFramebufferSubData))
 			nfglInvalidateNamedFramebufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATESUBFRAMEBUFFER:
-			D(funcname = "glInvalidateSubFramebuffer");
 			if (GL_ISAVAILABLE(glInvalidateSubFramebuffer))
 			nfglInvalidateSubFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATETEXIMAGE:
-			D(funcname = "glInvalidateTexImage");
 			if (GL_ISAVAILABLE(glInvalidateTexImage))
 			nfglInvalidateTexImage(nf_params);
 			break;
 		case NFOSMESA_GLINVALIDATETEXSUBIMAGE:
-			D(funcname = "glInvalidateTexSubImage");
 			if (GL_ISAVAILABLE(glInvalidateTexSubImage))
 			nfglInvalidateTexSubImage(nf_params);
 			break;
 		case NFOSMESA_GLISASYNCMARKERSGIX:
-			D(funcname = "glIsAsyncMarkerSGIX");
 			if (GL_ISAVAILABLE(glIsAsyncMarkerSGIX))
 			ret = nfglIsAsyncMarkerSGIX(nf_params);
 			break;
 		case NFOSMESA_GLISBUFFER:
-			D(funcname = "glIsBuffer");
 			if (GL_ISAVAILABLE(glIsBuffer))
 			ret = nfglIsBuffer(nf_params);
 			break;
 		case NFOSMESA_GLISBUFFERARB:
-			D(funcname = "glIsBufferARB");
 			if (GL_ISAVAILABLE(glIsBufferARB))
 			ret = nfglIsBufferARB(nf_params);
 			break;
 		case NFOSMESA_GLISBUFFERRESIDENTNV:
-			D(funcname = "glIsBufferResidentNV");
 			if (GL_ISAVAILABLE(glIsBufferResidentNV))
 			ret = nfglIsBufferResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLISCOMMANDLISTNV:
-			D(funcname = "glIsCommandListNV");
 			if (GL_ISAVAILABLE(glIsCommandListNV))
 			ret = nfglIsCommandListNV(nf_params);
 			break;
 		case NFOSMESA_GLISENABLED:
-			D(funcname = "glIsEnabled");
 			if (GL_ISAVAILABLE(glIsEnabled))
 			ret = nfglIsEnabled(nf_params);
 			break;
 		case NFOSMESA_GLISENABLEDINDEXEDEXT:
-			D(funcname = "glIsEnabledIndexedEXT");
 			if (GL_ISAVAILABLE(glIsEnabledIndexedEXT))
 			ret = nfglIsEnabledIndexedEXT(nf_params);
 			break;
 		case NFOSMESA_GLISENABLEDI:
-			D(funcname = "glIsEnabledi");
 			if (GL_ISAVAILABLE(glIsEnabledi))
 			ret = nfglIsEnabledi(nf_params);
 			break;
 		case NFOSMESA_GLISFENCEAPPLE:
-			D(funcname = "glIsFenceAPPLE");
 			if (GL_ISAVAILABLE(glIsFenceAPPLE))
 			ret = nfglIsFenceAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLISFENCENV:
-			D(funcname = "glIsFenceNV");
 			if (GL_ISAVAILABLE(glIsFenceNV))
 			ret = nfglIsFenceNV(nf_params);
 			break;
 		case NFOSMESA_GLISFRAMEBUFFER:
-			D(funcname = "glIsFramebuffer");
 			if (GL_ISAVAILABLE(glIsFramebuffer))
 			ret = nfglIsFramebuffer(nf_params);
 			break;
 		case NFOSMESA_GLISFRAMEBUFFEREXT:
-			D(funcname = "glIsFramebufferEXT");
 			if (GL_ISAVAILABLE(glIsFramebufferEXT))
 			ret = nfglIsFramebufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLISIMAGEHANDLERESIDENTARB:
-			D(funcname = "glIsImageHandleResidentARB");
 			if (GL_ISAVAILABLE(glIsImageHandleResidentARB))
 			ret = nfglIsImageHandleResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLISIMAGEHANDLERESIDENTNV:
-			D(funcname = "glIsImageHandleResidentNV");
 			if (GL_ISAVAILABLE(glIsImageHandleResidentNV))
 			ret = nfglIsImageHandleResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLISLIST:
-			D(funcname = "glIsList");
 			if (GL_ISAVAILABLE(glIsList))
 			ret = nfglIsList(nf_params);
 			break;
 		case NFOSMESA_GLISMEMORYOBJECTEXT:
-			D(funcname = "glIsMemoryObjectEXT");
 			if (GL_ISAVAILABLE(glIsMemoryObjectEXT))
 			ret = nfglIsMemoryObjectEXT(nf_params);
 			break;
 		case NFOSMESA_GLISNAMEAMD:
-			D(funcname = "glIsNameAMD");
 			if (GL_ISAVAILABLE(glIsNameAMD))
 			ret = nfglIsNameAMD(nf_params);
 			break;
 		case NFOSMESA_GLISNAMEDBUFFERRESIDENTNV:
-			D(funcname = "glIsNamedBufferResidentNV");
 			if (GL_ISAVAILABLE(glIsNamedBufferResidentNV))
 			ret = nfglIsNamedBufferResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLISNAMEDSTRINGARB:
-			D(funcname = "glIsNamedStringARB");
 			if (GL_ISAVAILABLE(glIsNamedStringARB))
 			ret = nfglIsNamedStringARB(nf_params);
 			break;
 		case NFOSMESA_GLISOBJECTBUFFERATI:
-			D(funcname = "glIsObjectBufferATI");
 			if (GL_ISAVAILABLE(glIsObjectBufferATI))
 			ret = nfglIsObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLISOCCLUSIONQUERYNV:
-			D(funcname = "glIsOcclusionQueryNV");
 			if (GL_ISAVAILABLE(glIsOcclusionQueryNV))
 			ret = nfglIsOcclusionQueryNV(nf_params);
 			break;
 		case NFOSMESA_GLISPATHNV:
-			D(funcname = "glIsPathNV");
 			if (GL_ISAVAILABLE(glIsPathNV))
 			ret = nfglIsPathNV(nf_params);
 			break;
 		case NFOSMESA_GLISPOINTINFILLPATHNV:
-			D(funcname = "glIsPointInFillPathNV");
 			if (GL_ISAVAILABLE(glIsPointInFillPathNV))
 			ret = nfglIsPointInFillPathNV(nf_params);
 			break;
 		case NFOSMESA_GLISPOINTINSTROKEPATHNV:
-			D(funcname = "glIsPointInStrokePathNV");
 			if (GL_ISAVAILABLE(glIsPointInStrokePathNV))
 			ret = nfglIsPointInStrokePathNV(nf_params);
 			break;
 		case NFOSMESA_GLISPROGRAM:
-			D(funcname = "glIsProgram");
 			if (GL_ISAVAILABLE(glIsProgram))
 			ret = nfglIsProgram(nf_params);
 			break;
 		case NFOSMESA_GLISPROGRAMARB:
-			D(funcname = "glIsProgramARB");
 			if (GL_ISAVAILABLE(glIsProgramARB))
 			ret = nfglIsProgramARB(nf_params);
 			break;
 		case NFOSMESA_GLISPROGRAMNV:
-			D(funcname = "glIsProgramNV");
 			if (GL_ISAVAILABLE(glIsProgramNV))
 			ret = nfglIsProgramNV(nf_params);
 			break;
 		case NFOSMESA_GLISPROGRAMPIPELINE:
-			D(funcname = "glIsProgramPipeline");
 			if (GL_ISAVAILABLE(glIsProgramPipeline))
 			ret = nfglIsProgramPipeline(nf_params);
 			break;
 		case NFOSMESA_GLISQUERY:
-			D(funcname = "glIsQuery");
 			if (GL_ISAVAILABLE(glIsQuery))
 			ret = nfglIsQuery(nf_params);
 			break;
 		case NFOSMESA_GLISQUERYARB:
-			D(funcname = "glIsQueryARB");
 			if (GL_ISAVAILABLE(glIsQueryARB))
 			ret = nfglIsQueryARB(nf_params);
 			break;
 		case NFOSMESA_GLISRENDERBUFFER:
-			D(funcname = "glIsRenderbuffer");
 			if (GL_ISAVAILABLE(glIsRenderbuffer))
 			ret = nfglIsRenderbuffer(nf_params);
 			break;
 		case NFOSMESA_GLISRENDERBUFFEREXT:
-			D(funcname = "glIsRenderbufferEXT");
 			if (GL_ISAVAILABLE(glIsRenderbufferEXT))
 			ret = nfglIsRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLISSAMPLER:
-			D(funcname = "glIsSampler");
 			if (GL_ISAVAILABLE(glIsSampler))
 			ret = nfglIsSampler(nf_params);
 			break;
 		case NFOSMESA_GLISSEMAPHOREEXT:
-			D(funcname = "glIsSemaphoreEXT");
 			if (GL_ISAVAILABLE(glIsSemaphoreEXT))
 			ret = nfglIsSemaphoreEXT(nf_params);
 			break;
 		case NFOSMESA_GLISSHADER:
-			D(funcname = "glIsShader");
 			if (GL_ISAVAILABLE(glIsShader))
 			ret = nfglIsShader(nf_params);
 			break;
 		case NFOSMESA_GLISSTATENV:
-			D(funcname = "glIsStateNV");
 			if (GL_ISAVAILABLE(glIsStateNV))
 			ret = nfglIsStateNV(nf_params);
 			break;
 		case NFOSMESA_GLISSYNC:
-			D(funcname = "glIsSync");
 			if (GL_ISAVAILABLE(glIsSync))
 			ret = nfglIsSync(nf_params);
 			break;
 		case NFOSMESA_GLISTEXTURE:
-			D(funcname = "glIsTexture");
 			if (GL_ISAVAILABLE(glIsTexture))
 			ret = nfglIsTexture(nf_params);
 			break;
 		case NFOSMESA_GLISTEXTUREEXT:
-			D(funcname = "glIsTextureEXT");
 			if (GL_ISAVAILABLE(glIsTextureEXT))
 			ret = nfglIsTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLISTEXTUREHANDLERESIDENTARB:
-			D(funcname = "glIsTextureHandleResidentARB");
 			if (GL_ISAVAILABLE(glIsTextureHandleResidentARB))
 			ret = nfglIsTextureHandleResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLISTEXTUREHANDLERESIDENTNV:
-			D(funcname = "glIsTextureHandleResidentNV");
 			if (GL_ISAVAILABLE(glIsTextureHandleResidentNV))
 			ret = nfglIsTextureHandleResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLISTRANSFORMFEEDBACK:
-			D(funcname = "glIsTransformFeedback");
 			if (GL_ISAVAILABLE(glIsTransformFeedback))
 			ret = nfglIsTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLISTRANSFORMFEEDBACKNV:
-			D(funcname = "glIsTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glIsTransformFeedbackNV))
 			ret = nfglIsTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLISVARIANTENABLEDEXT:
-			D(funcname = "glIsVariantEnabledEXT");
 			if (GL_ISAVAILABLE(glIsVariantEnabledEXT))
 			ret = nfglIsVariantEnabledEXT(nf_params);
 			break;
 		case NFOSMESA_GLISVERTEXARRAY:
-			D(funcname = "glIsVertexArray");
 			if (GL_ISAVAILABLE(glIsVertexArray))
 			ret = nfglIsVertexArray(nf_params);
 			break;
 		case NFOSMESA_GLISVERTEXARRAYAPPLE:
-			D(funcname = "glIsVertexArrayAPPLE");
 			if (GL_ISAVAILABLE(glIsVertexArrayAPPLE))
 			ret = nfglIsVertexArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLISVERTEXATTRIBENABLEDAPPLE:
-			D(funcname = "glIsVertexAttribEnabledAPPLE");
 			if (GL_ISAVAILABLE(glIsVertexAttribEnabledAPPLE))
 			ret = nfglIsVertexAttribEnabledAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLLGPUCOPYIMAGESUBDATANVX:
-			D(funcname = "glLGPUCopyImageSubDataNVX");
 			if (GL_ISAVAILABLE(glLGPUCopyImageSubDataNVX))
 			nfglLGPUCopyImageSubDataNVX(nf_params);
 			break;
 		case NFOSMESA_GLLGPUINTERLOCKNVX:
-			D(funcname = "glLGPUInterlockNVX");
 			if (GL_ISAVAILABLE(glLGPUInterlockNVX))
 			nfglLGPUInterlockNVX(nf_params);
 			break;
 		case NFOSMESA_GLLGPUNAMEDBUFFERSUBDATANVX:
-			D(funcname = "glLGPUNamedBufferSubDataNVX");
 			if (GL_ISAVAILABLE(glLGPUNamedBufferSubDataNVX))
 			nfglLGPUNamedBufferSubDataNVX(nf_params);
 			break;
 		case NFOSMESA_GLLABELOBJECTEXT:
-			D(funcname = "glLabelObjectEXT");
 			if (GL_ISAVAILABLE(glLabelObjectEXT))
 			nfglLabelObjectEXT(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTENVISGIX:
-			D(funcname = "glLightEnviSGIX");
 			if (GL_ISAVAILABLE(glLightEnviSGIX))
 			nfglLightEnviSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELF:
-			D(funcname = "glLightModelf");
 			if (GL_ISAVAILABLE(glLightModelf))
 			nfglLightModelf(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELFV:
-			D(funcname = "glLightModelfv");
 			if (GL_ISAVAILABLE(glLightModelfv))
 			nfglLightModelfv(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELI:
-			D(funcname = "glLightModeli");
 			if (GL_ISAVAILABLE(glLightModeli))
 			nfglLightModeli(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELIV:
-			D(funcname = "glLightModeliv");
 			if (GL_ISAVAILABLE(glLightModeliv))
 			nfglLightModeliv(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELXOES:
-			D(funcname = "glLightModelxOES");
 			if (GL_ISAVAILABLE(glLightModelxOES))
 			nfglLightModelxOES(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTMODELXVOES:
-			D(funcname = "glLightModelxvOES");
 			if (GL_ISAVAILABLE(glLightModelxvOES))
 			nfglLightModelxvOES(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTF:
-			D(funcname = "glLightf");
 			if (GL_ISAVAILABLE(glLightf))
 			nfglLightf(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTFV:
-			D(funcname = "glLightfv");
 			if (GL_ISAVAILABLE(glLightfv))
 			nfglLightfv(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTI:
-			D(funcname = "glLighti");
 			if (GL_ISAVAILABLE(glLighti))
 			nfglLighti(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTIV:
-			D(funcname = "glLightiv");
 			if (GL_ISAVAILABLE(glLightiv))
 			nfglLightiv(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTXOES:
-			D(funcname = "glLightxOES");
 			if (GL_ISAVAILABLE(glLightxOES))
 			nfglLightxOES(nf_params);
 			break;
 		case NFOSMESA_GLLIGHTXVOES:
-			D(funcname = "glLightxvOES");
 			if (GL_ISAVAILABLE(glLightxvOES))
 			nfglLightxvOES(nf_params);
 			break;
 		case NFOSMESA_GLLINESTIPPLE:
-			D(funcname = "glLineStipple");
 			if (GL_ISAVAILABLE(glLineStipple))
 			nfglLineStipple(nf_params);
 			break;
 		case NFOSMESA_GLLINEWIDTH:
-			D(funcname = "glLineWidth");
 			if (GL_ISAVAILABLE(glLineWidth))
 			nfglLineWidth(nf_params);
 			break;
 		case NFOSMESA_GLLINEWIDTHXOES:
-			D(funcname = "glLineWidthxOES");
 			if (GL_ISAVAILABLE(glLineWidthxOES))
 			nfglLineWidthxOES(nf_params);
 			break;
 		case NFOSMESA_GLLINKPROGRAM:
-			D(funcname = "glLinkProgram");
 			if (GL_ISAVAILABLE(glLinkProgram))
 			nfglLinkProgram(nf_params);
 			break;
 		case NFOSMESA_GLLINKPROGRAMARB:
-			D(funcname = "glLinkProgramARB");
 			if (GL_ISAVAILABLE(glLinkProgramARB))
 			nfglLinkProgramARB(nf_params);
 			break;
 		case NFOSMESA_GLLISTBASE:
-			D(funcname = "glListBase");
 			if (GL_ISAVAILABLE(glListBase))
 			nfglListBase(nf_params);
 			break;
 		case NFOSMESA_GLLISTDRAWCOMMANDSSTATESCLIENTNV:
-			D(funcname = "glListDrawCommandsStatesClientNV");
 			if (GL_ISAVAILABLE(glListDrawCommandsStatesClientNV))
 			nfglListDrawCommandsStatesClientNV(nf_params);
 			break;
 		case NFOSMESA_GLLISTPARAMETERFSGIX:
-			D(funcname = "glListParameterfSGIX");
 			if (GL_ISAVAILABLE(glListParameterfSGIX))
 			nfglListParameterfSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLISTPARAMETERFVSGIX:
-			D(funcname = "glListParameterfvSGIX");
 			if (GL_ISAVAILABLE(glListParameterfvSGIX))
 			nfglListParameterfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLISTPARAMETERISGIX:
-			D(funcname = "glListParameteriSGIX");
 			if (GL_ISAVAILABLE(glListParameteriSGIX))
 			nfglListParameteriSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLISTPARAMETERIVSGIX:
-			D(funcname = "glListParameterivSGIX");
 			if (GL_ISAVAILABLE(glListParameterivSGIX))
 			nfglListParameterivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLOADIDENTITY:
-			D(funcname = "glLoadIdentity");
 			if (GL_ISAVAILABLE(glLoadIdentity))
 			nfglLoadIdentity(nf_params);
 			break;
 		case NFOSMESA_GLLOADIDENTITYDEFORMATIONMAPSGIX:
-			D(funcname = "glLoadIdentityDeformationMapSGIX");
 			if (GL_ISAVAILABLE(glLoadIdentityDeformationMapSGIX))
 			nfglLoadIdentityDeformationMapSGIX(nf_params);
 			break;
 		case NFOSMESA_GLLOADMATRIXD:
-			D(funcname = "glLoadMatrixd");
 			if (GL_ISAVAILABLE(glLoadMatrixd))
 			nfglLoadMatrixd(nf_params);
 			break;
 		case NFOSMESA_GLLOADMATRIXF:
-			D(funcname = "glLoadMatrixf");
 			if (GL_ISAVAILABLE(glLoadMatrixf))
 			nfglLoadMatrixf(nf_params);
 			break;
 		case NFOSMESA_GLLOADMATRIXXOES:
-			D(funcname = "glLoadMatrixxOES");
 			if (GL_ISAVAILABLE(glLoadMatrixxOES))
 			nfglLoadMatrixxOES(nf_params);
 			break;
 		case NFOSMESA_GLLOADNAME:
-			D(funcname = "glLoadName");
 			if (GL_ISAVAILABLE(glLoadName))
 			nfglLoadName(nf_params);
 			break;
 		case NFOSMESA_GLLOADPROGRAMNV:
-			D(funcname = "glLoadProgramNV");
 			if (GL_ISAVAILABLE(glLoadProgramNV))
 			nfglLoadProgramNV(nf_params);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXD:
-			D(funcname = "glLoadTransposeMatrixd");
 			if (GL_ISAVAILABLE(glLoadTransposeMatrixd))
 			nfglLoadTransposeMatrixd(nf_params);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXDARB:
-			D(funcname = "glLoadTransposeMatrixdARB");
 			if (GL_ISAVAILABLE(glLoadTransposeMatrixdARB))
 			nfglLoadTransposeMatrixdARB(nf_params);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXF:
-			D(funcname = "glLoadTransposeMatrixf");
 			if (GL_ISAVAILABLE(glLoadTransposeMatrixf))
 			nfglLoadTransposeMatrixf(nf_params);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXFARB:
-			D(funcname = "glLoadTransposeMatrixfARB");
 			if (GL_ISAVAILABLE(glLoadTransposeMatrixfARB))
 			nfglLoadTransposeMatrixfARB(nf_params);
 			break;
 		case NFOSMESA_GLLOADTRANSPOSEMATRIXXOES:
-			D(funcname = "glLoadTransposeMatrixxOES");
 			if (GL_ISAVAILABLE(glLoadTransposeMatrixxOES))
 			nfglLoadTransposeMatrixxOES(nf_params);
 			break;
 		case NFOSMESA_GLLOCKARRAYSEXT:
-			D(funcname = "glLockArraysEXT");
 			if (GL_ISAVAILABLE(glLockArraysEXT))
 			nfglLockArraysEXT(nf_params);
 			break;
 		case NFOSMESA_GLLOGICOP:
-			D(funcname = "glLogicOp");
 			if (GL_ISAVAILABLE(glLogicOp))
 			nfglLogicOp(nf_params);
 			break;
 		case NFOSMESA_GLMAKEBUFFERNONRESIDENTNV:
-			D(funcname = "glMakeBufferNonResidentNV");
 			if (GL_ISAVAILABLE(glMakeBufferNonResidentNV))
 			nfglMakeBufferNonResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKEBUFFERRESIDENTNV:
-			D(funcname = "glMakeBufferResidentNV");
 			if (GL_ISAVAILABLE(glMakeBufferResidentNV))
 			nfglMakeBufferResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLENONRESIDENTARB:
-			D(funcname = "glMakeImageHandleNonResidentARB");
 			if (GL_ISAVAILABLE(glMakeImageHandleNonResidentARB))
 			nfglMakeImageHandleNonResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLENONRESIDENTNV:
-			D(funcname = "glMakeImageHandleNonResidentNV");
 			if (GL_ISAVAILABLE(glMakeImageHandleNonResidentNV))
 			nfglMakeImageHandleNonResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLERESIDENTARB:
-			D(funcname = "glMakeImageHandleResidentARB");
 			if (GL_ISAVAILABLE(glMakeImageHandleResidentARB))
 			nfglMakeImageHandleResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLMAKEIMAGEHANDLERESIDENTNV:
-			D(funcname = "glMakeImageHandleResidentNV");
 			if (GL_ISAVAILABLE(glMakeImageHandleResidentNV))
 			nfglMakeImageHandleResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKENAMEDBUFFERNONRESIDENTNV:
-			D(funcname = "glMakeNamedBufferNonResidentNV");
 			if (GL_ISAVAILABLE(glMakeNamedBufferNonResidentNV))
 			nfglMakeNamedBufferNonResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKENAMEDBUFFERRESIDENTNV:
-			D(funcname = "glMakeNamedBufferResidentNV");
 			if (GL_ISAVAILABLE(glMakeNamedBufferResidentNV))
 			nfglMakeNamedBufferResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLENONRESIDENTARB:
-			D(funcname = "glMakeTextureHandleNonResidentARB");
 			if (GL_ISAVAILABLE(glMakeTextureHandleNonResidentARB))
 			nfglMakeTextureHandleNonResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLENONRESIDENTNV:
-			D(funcname = "glMakeTextureHandleNonResidentNV");
 			if (GL_ISAVAILABLE(glMakeTextureHandleNonResidentNV))
 			nfglMakeTextureHandleNonResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLERESIDENTARB:
-			D(funcname = "glMakeTextureHandleResidentARB");
 			if (GL_ISAVAILABLE(glMakeTextureHandleResidentARB))
 			nfglMakeTextureHandleResidentARB(nf_params);
 			break;
 		case NFOSMESA_GLMAKETEXTUREHANDLERESIDENTNV:
-			D(funcname = "glMakeTextureHandleResidentNV");
 			if (GL_ISAVAILABLE(glMakeTextureHandleResidentNV))
 			nfglMakeTextureHandleResidentNV(nf_params);
 			break;
 		case NFOSMESA_GLMAP1D:
-			D(funcname = "glMap1d");
 			if (GL_ISAVAILABLE(glMap1d))
 			nfglMap1d(nf_params);
 			break;
 		case NFOSMESA_GLMAP1F:
-			D(funcname = "glMap1f");
 			if (GL_ISAVAILABLE(glMap1f))
 			nfglMap1f(nf_params);
 			break;
 		case NFOSMESA_GLMAP1XOES:
-			D(funcname = "glMap1xOES");
 			if (GL_ISAVAILABLE(glMap1xOES))
 			nfglMap1xOES(nf_params);
 			break;
 		case NFOSMESA_GLMAP2D:
-			D(funcname = "glMap2d");
 			if (GL_ISAVAILABLE(glMap2d))
 			nfglMap2d(nf_params);
 			break;
 		case NFOSMESA_GLMAP2F:
-			D(funcname = "glMap2f");
 			if (GL_ISAVAILABLE(glMap2f))
 			nfglMap2f(nf_params);
 			break;
 		case NFOSMESA_GLMAP2XOES:
-			D(funcname = "glMap2xOES");
 			if (GL_ISAVAILABLE(glMap2xOES))
 			nfglMap2xOES(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLMAPBUFFER:
-			D(funcname = "glMapBuffer");
 			if (GL_ISAVAILABLE(glMapBuffer))
-			ret = (uint32)(uintptr_t)nfglMapBuffer(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapBuffer(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPBUFFERARB:
-			D(funcname = "glMapBufferARB");
 			if (GL_ISAVAILABLE(glMapBufferARB))
-			ret = (uint32)(uintptr_t)nfglMapBufferARB(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapBufferARB(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPBUFFERRANGE:
-			D(funcname = "glMapBufferRange");
 			if (GL_ISAVAILABLE(glMapBufferRange))
-			ret = (uint32)(uintptr_t)nfglMapBufferRange(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapBufferRange(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLMAPCONTROLPOINTSNV:
-			D(funcname = "glMapControlPointsNV");
 			if (GL_ISAVAILABLE(glMapControlPointsNV))
 			nfglMapControlPointsNV(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID1D:
-			D(funcname = "glMapGrid1d");
 			if (GL_ISAVAILABLE(glMapGrid1d))
 			nfglMapGrid1d(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID1F:
-			D(funcname = "glMapGrid1f");
 			if (GL_ISAVAILABLE(glMapGrid1f))
 			nfglMapGrid1f(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID1XOES:
-			D(funcname = "glMapGrid1xOES");
 			if (GL_ISAVAILABLE(glMapGrid1xOES))
 			nfglMapGrid1xOES(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID2D:
-			D(funcname = "glMapGrid2d");
 			if (GL_ISAVAILABLE(glMapGrid2d))
 			nfglMapGrid2d(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID2F:
-			D(funcname = "glMapGrid2f");
 			if (GL_ISAVAILABLE(glMapGrid2f))
 			nfglMapGrid2f(nf_params);
 			break;
 		case NFOSMESA_GLMAPGRID2XOES:
-			D(funcname = "glMapGrid2xOES");
 			if (GL_ISAVAILABLE(glMapGrid2xOES))
 			nfglMapGrid2xOES(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLMAPNAMEDBUFFER:
-			D(funcname = "glMapNamedBuffer");
 			if (GL_ISAVAILABLE(glMapNamedBuffer))
-			ret = (uint32)(uintptr_t)nfglMapNamedBuffer(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapNamedBuffer(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPNAMEDBUFFEREXT:
-			D(funcname = "glMapNamedBufferEXT");
 			if (GL_ISAVAILABLE(glMapNamedBufferEXT))
-			ret = (uint32)(uintptr_t)nfglMapNamedBufferEXT(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapNamedBufferEXT(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPNAMEDBUFFERRANGE:
-			D(funcname = "glMapNamedBufferRange");
 			if (GL_ISAVAILABLE(glMapNamedBufferRange))
-			ret = (uint32)(uintptr_t)nfglMapNamedBufferRange(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapNamedBufferRange(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPNAMEDBUFFERRANGEEXT:
-			D(funcname = "glMapNamedBufferRangeEXT");
 			if (GL_ISAVAILABLE(glMapNamedBufferRangeEXT))
-			ret = (uint32)(uintptr_t)nfglMapNamedBufferRangeEXT(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapNamedBufferRangeEXT(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLMAPOBJECTBUFFERATI:
-			D(funcname = "glMapObjectBufferATI");
 			if (GL_ISAVAILABLE(glMapObjectBufferATI))
-			ret = (uint32)(uintptr_t)nfglMapObjectBufferATI(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapObjectBufferATI(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLMAPPARAMETERFVNV:
-			D(funcname = "glMapParameterfvNV");
 			if (GL_ISAVAILABLE(glMapParameterfvNV))
 			nfglMapParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLMAPPARAMETERIVNV:
-			D(funcname = "glMapParameterivNV");
 			if (GL_ISAVAILABLE(glMapParameterivNV))
 			nfglMapParameterivNV(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLMAPTEXTURE2DINTEL:
-			D(funcname = "glMapTexture2DINTEL");
 			if (GL_ISAVAILABLE(glMapTexture2DINTEL))
-			ret = (uint32)(uintptr_t)nfglMapTexture2DINTEL(nf_params);
+			ret = (uint32_t)(uintptr_t)nfglMapTexture2DINTEL(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLMAPVERTEXATTRIB1DAPPLE:
-			D(funcname = "glMapVertexAttrib1dAPPLE");
 			if (GL_ISAVAILABLE(glMapVertexAttrib1dAPPLE))
 			nfglMapVertexAttrib1dAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB1FAPPLE:
-			D(funcname = "glMapVertexAttrib1fAPPLE");
 			if (GL_ISAVAILABLE(glMapVertexAttrib1fAPPLE))
 			nfglMapVertexAttrib1fAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2DAPPLE:
-			D(funcname = "glMapVertexAttrib2dAPPLE");
 			if (GL_ISAVAILABLE(glMapVertexAttrib2dAPPLE))
 			nfglMapVertexAttrib2dAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMAPVERTEXATTRIB2FAPPLE:
-			D(funcname = "glMapVertexAttrib2fAPPLE");
 			if (GL_ISAVAILABLE(glMapVertexAttrib2fAPPLE))
 			nfglMapVertexAttrib2fAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALF:
-			D(funcname = "glMaterialf");
 			if (GL_ISAVAILABLE(glMaterialf))
 			nfglMaterialf(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALFV:
-			D(funcname = "glMaterialfv");
 			if (GL_ISAVAILABLE(glMaterialfv))
 			nfglMaterialfv(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALI:
-			D(funcname = "glMateriali");
 			if (GL_ISAVAILABLE(glMateriali))
 			nfglMateriali(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALIV:
-			D(funcname = "glMaterialiv");
 			if (GL_ISAVAILABLE(glMaterialiv))
 			nfglMaterialiv(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALXOES:
-			D(funcname = "glMaterialxOES");
 			if (GL_ISAVAILABLE(glMaterialxOES))
 			nfglMaterialxOES(nf_params);
 			break;
 		case NFOSMESA_GLMATERIALXVOES:
-			D(funcname = "glMaterialxvOES");
 			if (GL_ISAVAILABLE(glMaterialxvOES))
 			nfglMaterialxvOES(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXFRUSTUMEXT:
-			D(funcname = "glMatrixFrustumEXT");
 			if (GL_ISAVAILABLE(glMatrixFrustumEXT))
 			nfglMatrixFrustumEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXINDEXPOINTERARB:
-			D(funcname = "glMatrixIndexPointerARB");
 			if (GL_ISAVAILABLE(glMatrixIndexPointerARB))
 			nfglMatrixIndexPointerARB(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUBVARB:
-			D(funcname = "glMatrixIndexubvARB");
 			if (GL_ISAVAILABLE(glMatrixIndexubvARB))
 			nfglMatrixIndexubvARB(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUIVARB:
-			D(funcname = "glMatrixIndexuivARB");
 			if (GL_ISAVAILABLE(glMatrixIndexuivARB))
 			nfglMatrixIndexuivARB(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXINDEXUSVARB:
-			D(funcname = "glMatrixIndexusvARB");
 			if (GL_ISAVAILABLE(glMatrixIndexusvARB))
 			nfglMatrixIndexusvARB(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOAD3X2FNV:
-			D(funcname = "glMatrixLoad3x2fNV");
 			if (GL_ISAVAILABLE(glMatrixLoad3x2fNV))
 			nfglMatrixLoad3x2fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOAD3X3FNV:
-			D(funcname = "glMatrixLoad3x3fNV");
 			if (GL_ISAVAILABLE(glMatrixLoad3x3fNV))
 			nfglMatrixLoad3x3fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADIDENTITYEXT:
-			D(funcname = "glMatrixLoadIdentityEXT");
 			if (GL_ISAVAILABLE(glMatrixLoadIdentityEXT))
 			nfglMatrixLoadIdentityEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSE3X3FNV:
-			D(funcname = "glMatrixLoadTranspose3x3fNV");
 			if (GL_ISAVAILABLE(glMatrixLoadTranspose3x3fNV))
 			nfglMatrixLoadTranspose3x3fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEDEXT:
-			D(funcname = "glMatrixLoadTransposedEXT");
 			if (GL_ISAVAILABLE(glMatrixLoadTransposedEXT))
 			nfglMatrixLoadTransposedEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADTRANSPOSEFEXT:
-			D(funcname = "glMatrixLoadTransposefEXT");
 			if (GL_ISAVAILABLE(glMatrixLoadTransposefEXT))
 			nfglMatrixLoadTransposefEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADDEXT:
-			D(funcname = "glMatrixLoaddEXT");
 			if (GL_ISAVAILABLE(glMatrixLoaddEXT))
 			nfglMatrixLoaddEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXLOADFEXT:
-			D(funcname = "glMatrixLoadfEXT");
 			if (GL_ISAVAILABLE(glMatrixLoadfEXT))
 			nfglMatrixLoadfEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMODE:
-			D(funcname = "glMatrixMode");
 			if (GL_ISAVAILABLE(glMatrixMode))
 			nfglMatrixMode(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULT3X2FNV:
-			D(funcname = "glMatrixMult3x2fNV");
 			if (GL_ISAVAILABLE(glMatrixMult3x2fNV))
 			nfglMatrixMult3x2fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULT3X3FNV:
-			D(funcname = "glMatrixMult3x3fNV");
 			if (GL_ISAVAILABLE(glMatrixMult3x3fNV))
 			nfglMatrixMult3x3fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSE3X3FNV:
-			D(funcname = "glMatrixMultTranspose3x3fNV");
 			if (GL_ISAVAILABLE(glMatrixMultTranspose3x3fNV))
 			nfglMatrixMultTranspose3x3fNV(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEDEXT:
-			D(funcname = "glMatrixMultTransposedEXT");
 			if (GL_ISAVAILABLE(glMatrixMultTransposedEXT))
 			nfglMatrixMultTransposedEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULTTRANSPOSEFEXT:
-			D(funcname = "glMatrixMultTransposefEXT");
 			if (GL_ISAVAILABLE(glMatrixMultTransposefEXT))
 			nfglMatrixMultTransposefEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULTDEXT:
-			D(funcname = "glMatrixMultdEXT");
 			if (GL_ISAVAILABLE(glMatrixMultdEXT))
 			nfglMatrixMultdEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXMULTFEXT:
-			D(funcname = "glMatrixMultfEXT");
 			if (GL_ISAVAILABLE(glMatrixMultfEXT))
 			nfglMatrixMultfEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXORTHOEXT:
-			D(funcname = "glMatrixOrthoEXT");
 			if (GL_ISAVAILABLE(glMatrixOrthoEXT))
 			nfglMatrixOrthoEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXPOPEXT:
-			D(funcname = "glMatrixPopEXT");
 			if (GL_ISAVAILABLE(glMatrixPopEXT))
 			nfglMatrixPopEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXPUSHEXT:
-			D(funcname = "glMatrixPushEXT");
 			if (GL_ISAVAILABLE(glMatrixPushEXT))
 			nfglMatrixPushEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXROTATEDEXT:
-			D(funcname = "glMatrixRotatedEXT");
 			if (GL_ISAVAILABLE(glMatrixRotatedEXT))
 			nfglMatrixRotatedEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXROTATEFEXT:
-			D(funcname = "glMatrixRotatefEXT");
 			if (GL_ISAVAILABLE(glMatrixRotatefEXT))
 			nfglMatrixRotatefEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXSCALEDEXT:
-			D(funcname = "glMatrixScaledEXT");
 			if (GL_ISAVAILABLE(glMatrixScaledEXT))
 			nfglMatrixScaledEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXSCALEFEXT:
-			D(funcname = "glMatrixScalefEXT");
 			if (GL_ISAVAILABLE(glMatrixScalefEXT))
 			nfglMatrixScalefEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXTRANSLATEDEXT:
-			D(funcname = "glMatrixTranslatedEXT");
 			if (GL_ISAVAILABLE(glMatrixTranslatedEXT))
 			nfglMatrixTranslatedEXT(nf_params);
 			break;
 		case NFOSMESA_GLMATRIXTRANSLATEFEXT:
-			D(funcname = "glMatrixTranslatefEXT");
 			if (GL_ISAVAILABLE(glMatrixTranslatefEXT))
 			nfglMatrixTranslatefEXT(nf_params);
 			break;
 		case NFOSMESA_GLMAXSHADERCOMPILERTHREADSARB:
-			D(funcname = "glMaxShaderCompilerThreadsARB");
 			if (GL_ISAVAILABLE(glMaxShaderCompilerThreadsARB))
 			nfglMaxShaderCompilerThreadsARB(nf_params);
 			break;
 		case NFOSMESA_GLMAXSHADERCOMPILERTHREADSKHR:
-			D(funcname = "glMaxShaderCompilerThreadsKHR");
 			if (GL_ISAVAILABLE(glMaxShaderCompilerThreadsKHR))
 			nfglMaxShaderCompilerThreadsKHR(nf_params);
 			break;
 		case NFOSMESA_GLMEMORYBARRIER:
-			D(funcname = "glMemoryBarrier");
 			if (GL_ISAVAILABLE(glMemoryBarrier))
 			nfglMemoryBarrier(nf_params);
 			break;
 		case NFOSMESA_GLMEMORYBARRIERBYREGION:
-			D(funcname = "glMemoryBarrierByRegion");
 			if (GL_ISAVAILABLE(glMemoryBarrierByRegion))
 			nfglMemoryBarrierByRegion(nf_params);
 			break;
 		case NFOSMESA_GLMEMORYBARRIEREXT:
-			D(funcname = "glMemoryBarrierEXT");
 			if (GL_ISAVAILABLE(glMemoryBarrierEXT))
 			nfglMemoryBarrierEXT(nf_params);
 			break;
 		case NFOSMESA_GLMEMORYOBJECTPARAMETERIVEXT:
-			D(funcname = "glMemoryObjectParameterivEXT");
 			if (GL_ISAVAILABLE(glMemoryObjectParameterivEXT))
 			nfglMemoryObjectParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMINSAMPLESHADING:
-			D(funcname = "glMinSampleShading");
 			if (GL_ISAVAILABLE(glMinSampleShading))
 			nfglMinSampleShading(nf_params);
 			break;
 		case NFOSMESA_GLMINSAMPLESHADINGARB:
-			D(funcname = "glMinSampleShadingARB");
 			if (GL_ISAVAILABLE(glMinSampleShadingARB))
 			nfglMinSampleShadingARB(nf_params);
 			break;
 		case NFOSMESA_GLMINMAX:
-			D(funcname = "glMinmax");
 			if (GL_ISAVAILABLE(glMinmax))
 			nfglMinmax(nf_params);
 			break;
 		case NFOSMESA_GLMINMAXEXT:
-			D(funcname = "glMinmaxEXT");
 			if (GL_ISAVAILABLE(glMinmaxEXT))
 			nfglMinmaxEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTMATRIXD:
-			D(funcname = "glMultMatrixd");
 			if (GL_ISAVAILABLE(glMultMatrixd))
 			nfglMultMatrixd(nf_params);
 			break;
 		case NFOSMESA_GLMULTMATRIXF:
-			D(funcname = "glMultMatrixf");
 			if (GL_ISAVAILABLE(glMultMatrixf))
 			nfglMultMatrixf(nf_params);
 			break;
 		case NFOSMESA_GLMULTMATRIXXOES:
-			D(funcname = "glMultMatrixxOES");
 			if (GL_ISAVAILABLE(glMultMatrixxOES))
 			nfglMultMatrixxOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXD:
-			D(funcname = "glMultTransposeMatrixd");
 			if (GL_ISAVAILABLE(glMultTransposeMatrixd))
 			nfglMultTransposeMatrixd(nf_params);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXDARB:
-			D(funcname = "glMultTransposeMatrixdARB");
 			if (GL_ISAVAILABLE(glMultTransposeMatrixdARB))
 			nfglMultTransposeMatrixdARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXF:
-			D(funcname = "glMultTransposeMatrixf");
 			if (GL_ISAVAILABLE(glMultTransposeMatrixf))
 			nfglMultTransposeMatrixf(nf_params);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXFARB:
-			D(funcname = "glMultTransposeMatrixfARB");
 			if (GL_ISAVAILABLE(glMultTransposeMatrixfARB))
 			nfglMultTransposeMatrixfARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTTRANSPOSEMATRIXXOES:
-			D(funcname = "glMultTransposeMatrixxOES");
 			if (GL_ISAVAILABLE(glMultTransposeMatrixxOES))
 			nfglMultTransposeMatrixxOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYS:
-			D(funcname = "glMultiDrawArrays");
 			if (GL_ISAVAILABLE(glMultiDrawArrays))
 			nfglMultiDrawArrays(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSEXT:
-			D(funcname = "glMultiDrawArraysEXT");
 			if (GL_ISAVAILABLE(glMultiDrawArraysEXT))
 			nfglMultiDrawArraysEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECT:
-			D(funcname = "glMultiDrawArraysIndirect");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirect))
 			nfglMultiDrawArraysIndirect(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTAMD:
-			D(funcname = "glMultiDrawArraysIndirectAMD");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectAMD))
 			nfglMultiDrawArraysIndirectAMD(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSCOUNTNV:
-			D(funcname = "glMultiDrawArraysIndirectBindlessCountNV");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectBindlessCountNV))
 			nfglMultiDrawArraysIndirectBindlessCountNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTBINDLESSNV:
-			D(funcname = "glMultiDrawArraysIndirectBindlessNV");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectBindlessNV))
 			nfglMultiDrawArraysIndirectBindlessNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNT:
-			D(funcname = "glMultiDrawArraysIndirectCount");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectCount))
 			nfglMultiDrawArraysIndirectCount(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWARRAYSINDIRECTCOUNTARB:
-			D(funcname = "glMultiDrawArraysIndirectCountARB");
 			if (GL_ISAVAILABLE(glMultiDrawArraysIndirectCountARB))
 			nfglMultiDrawArraysIndirectCountARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTARRAYAPPLE:
-			D(funcname = "glMultiDrawElementArrayAPPLE");
 			if (GL_ISAVAILABLE(glMultiDrawElementArrayAPPLE))
 			nfglMultiDrawElementArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTS:
-			D(funcname = "glMultiDrawElements");
 			if (GL_ISAVAILABLE(glMultiDrawElements))
 			nfglMultiDrawElements(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSBASEVERTEX:
-			D(funcname = "glMultiDrawElementsBaseVertex");
 			if (GL_ISAVAILABLE(glMultiDrawElementsBaseVertex))
 			nfglMultiDrawElementsBaseVertex(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSEXT:
-			D(funcname = "glMultiDrawElementsEXT");
 			if (GL_ISAVAILABLE(glMultiDrawElementsEXT))
 			nfglMultiDrawElementsEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECT:
-			D(funcname = "glMultiDrawElementsIndirect");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirect))
 			nfglMultiDrawElementsIndirect(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTAMD:
-			D(funcname = "glMultiDrawElementsIndirectAMD");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectAMD))
 			nfglMultiDrawElementsIndirectAMD(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTBINDLESSCOUNTNV:
-			D(funcname = "glMultiDrawElementsIndirectBindlessCountNV");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectBindlessCountNV))
 			nfglMultiDrawElementsIndirectBindlessCountNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTBINDLESSNV:
-			D(funcname = "glMultiDrawElementsIndirectBindlessNV");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectBindlessNV))
 			nfglMultiDrawElementsIndirectBindlessNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNT:
-			D(funcname = "glMultiDrawElementsIndirectCount");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCount))
 			nfglMultiDrawElementsIndirectCount(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB:
-			D(funcname = "glMultiDrawElementsIndirectCountARB");
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCountARB))
 			nfglMultiDrawElementsIndirectCountARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTCOUNTNV:
-			D(funcname = "glMultiDrawMeshTasksIndirectCountNV");
 			if (GL_ISAVAILABLE(glMultiDrawMeshTasksIndirectCountNV))
 			nfglMultiDrawMeshTasksIndirectCountNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTNV:
-			D(funcname = "glMultiDrawMeshTasksIndirectNV");
 			if (GL_ISAVAILABLE(glMultiDrawMeshTasksIndirectNV))
 			nfglMultiDrawMeshTasksIndirectNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTIDRAWRANGEELEMENTARRAYAPPLE:
-			D(funcname = "glMultiDrawRangeElementArrayAPPLE");
 			if (GL_ISAVAILABLE(glMultiDrawRangeElementArrayAPPLE))
 			nfglMultiDrawRangeElementArrayAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWARRAYSIBM:
-			D(funcname = "glMultiModeDrawArraysIBM");
 			if (GL_ISAVAILABLE(glMultiModeDrawArraysIBM))
 			nfglMultiModeDrawArraysIBM(nf_params);
 			break;
 		case NFOSMESA_GLMULTIMODEDRAWELEMENTSIBM:
-			D(funcname = "glMultiModeDrawElementsIBM");
 			if (GL_ISAVAILABLE(glMultiModeDrawElementsIBM))
 			nfglMultiModeDrawElementsIBM(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXBUFFEREXT:
-			D(funcname = "glMultiTexBufferEXT");
 			if (GL_ISAVAILABLE(glMultiTexBufferEXT))
 			nfglMultiTexBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1BOES:
-			D(funcname = "glMultiTexCoord1bOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord1bOES))
 			nfglMultiTexCoord1bOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1BVOES:
-			D(funcname = "glMultiTexCoord1bvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord1bvOES))
 			nfglMultiTexCoord1bvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1D:
-			D(funcname = "glMultiTexCoord1d");
 			if (GL_ISAVAILABLE(glMultiTexCoord1d))
 			nfglMultiTexCoord1d(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DARB:
-			D(funcname = "glMultiTexCoord1dARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1dARB))
 			nfglMultiTexCoord1dARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DV:
-			D(funcname = "glMultiTexCoord1dv");
 			if (GL_ISAVAILABLE(glMultiTexCoord1dv))
 			nfglMultiTexCoord1dv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1DVARB:
-			D(funcname = "glMultiTexCoord1dvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1dvARB))
 			nfglMultiTexCoord1dvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1F:
-			D(funcname = "glMultiTexCoord1f");
 			if (GL_ISAVAILABLE(glMultiTexCoord1f))
 			nfglMultiTexCoord1f(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FARB:
-			D(funcname = "glMultiTexCoord1fARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1fARB))
 			nfglMultiTexCoord1fARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FV:
-			D(funcname = "glMultiTexCoord1fv");
 			if (GL_ISAVAILABLE(glMultiTexCoord1fv))
 			nfglMultiTexCoord1fv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1FVARB:
-			D(funcname = "glMultiTexCoord1fvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1fvARB))
 			nfglMultiTexCoord1fvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1HNV:
-			D(funcname = "glMultiTexCoord1hNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord1hNV))
 			nfglMultiTexCoord1hNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1HVNV:
-			D(funcname = "glMultiTexCoord1hvNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord1hvNV))
 			nfglMultiTexCoord1hvNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1I:
-			D(funcname = "glMultiTexCoord1i");
 			if (GL_ISAVAILABLE(glMultiTexCoord1i))
 			nfglMultiTexCoord1i(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IARB:
-			D(funcname = "glMultiTexCoord1iARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1iARB))
 			nfglMultiTexCoord1iARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IV:
-			D(funcname = "glMultiTexCoord1iv");
 			if (GL_ISAVAILABLE(glMultiTexCoord1iv))
 			nfglMultiTexCoord1iv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1IVARB:
-			D(funcname = "glMultiTexCoord1ivARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1ivARB))
 			nfglMultiTexCoord1ivARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1S:
-			D(funcname = "glMultiTexCoord1s");
 			if (GL_ISAVAILABLE(glMultiTexCoord1s))
 			nfglMultiTexCoord1s(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SARB:
-			D(funcname = "glMultiTexCoord1sARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1sARB))
 			nfglMultiTexCoord1sARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SV:
-			D(funcname = "glMultiTexCoord1sv");
 			if (GL_ISAVAILABLE(glMultiTexCoord1sv))
 			nfglMultiTexCoord1sv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1SVARB:
-			D(funcname = "glMultiTexCoord1svARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord1svARB))
 			nfglMultiTexCoord1svARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1XOES:
-			D(funcname = "glMultiTexCoord1xOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord1xOES))
 			nfglMultiTexCoord1xOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD1XVOES:
-			D(funcname = "glMultiTexCoord1xvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord1xvOES))
 			nfglMultiTexCoord1xvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2BOES:
-			D(funcname = "glMultiTexCoord2bOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord2bOES))
 			nfglMultiTexCoord2bOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2BVOES:
-			D(funcname = "glMultiTexCoord2bvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord2bvOES))
 			nfglMultiTexCoord2bvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2D:
-			D(funcname = "glMultiTexCoord2d");
 			if (GL_ISAVAILABLE(glMultiTexCoord2d))
 			nfglMultiTexCoord2d(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DARB:
-			D(funcname = "glMultiTexCoord2dARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2dARB))
 			nfglMultiTexCoord2dARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DV:
-			D(funcname = "glMultiTexCoord2dv");
 			if (GL_ISAVAILABLE(glMultiTexCoord2dv))
 			nfglMultiTexCoord2dv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2DVARB:
-			D(funcname = "glMultiTexCoord2dvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2dvARB))
 			nfglMultiTexCoord2dvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2F:
-			D(funcname = "glMultiTexCoord2f");
 			if (GL_ISAVAILABLE(glMultiTexCoord2f))
 			nfglMultiTexCoord2f(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FARB:
-			D(funcname = "glMultiTexCoord2fARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2fARB))
 			nfglMultiTexCoord2fARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FV:
-			D(funcname = "glMultiTexCoord2fv");
 			if (GL_ISAVAILABLE(glMultiTexCoord2fv))
 			nfglMultiTexCoord2fv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2FVARB:
-			D(funcname = "glMultiTexCoord2fvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2fvARB))
 			nfglMultiTexCoord2fvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2HNV:
-			D(funcname = "glMultiTexCoord2hNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord2hNV))
 			nfglMultiTexCoord2hNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2HVNV:
-			D(funcname = "glMultiTexCoord2hvNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord2hvNV))
 			nfglMultiTexCoord2hvNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2I:
-			D(funcname = "glMultiTexCoord2i");
 			if (GL_ISAVAILABLE(glMultiTexCoord2i))
 			nfglMultiTexCoord2i(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IARB:
-			D(funcname = "glMultiTexCoord2iARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2iARB))
 			nfglMultiTexCoord2iARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IV:
-			D(funcname = "glMultiTexCoord2iv");
 			if (GL_ISAVAILABLE(glMultiTexCoord2iv))
 			nfglMultiTexCoord2iv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2IVARB:
-			D(funcname = "glMultiTexCoord2ivARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2ivARB))
 			nfglMultiTexCoord2ivARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2S:
-			D(funcname = "glMultiTexCoord2s");
 			if (GL_ISAVAILABLE(glMultiTexCoord2s))
 			nfglMultiTexCoord2s(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SARB:
-			D(funcname = "glMultiTexCoord2sARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2sARB))
 			nfglMultiTexCoord2sARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SV:
-			D(funcname = "glMultiTexCoord2sv");
 			if (GL_ISAVAILABLE(glMultiTexCoord2sv))
 			nfglMultiTexCoord2sv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2SVARB:
-			D(funcname = "glMultiTexCoord2svARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord2svARB))
 			nfglMultiTexCoord2svARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2XOES:
-			D(funcname = "glMultiTexCoord2xOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord2xOES))
 			nfglMultiTexCoord2xOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD2XVOES:
-			D(funcname = "glMultiTexCoord2xvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord2xvOES))
 			nfglMultiTexCoord2xvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3BOES:
-			D(funcname = "glMultiTexCoord3bOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord3bOES))
 			nfglMultiTexCoord3bOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3BVOES:
-			D(funcname = "glMultiTexCoord3bvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord3bvOES))
 			nfglMultiTexCoord3bvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3D:
-			D(funcname = "glMultiTexCoord3d");
 			if (GL_ISAVAILABLE(glMultiTexCoord3d))
 			nfglMultiTexCoord3d(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DARB:
-			D(funcname = "glMultiTexCoord3dARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3dARB))
 			nfglMultiTexCoord3dARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DV:
-			D(funcname = "glMultiTexCoord3dv");
 			if (GL_ISAVAILABLE(glMultiTexCoord3dv))
 			nfglMultiTexCoord3dv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3DVARB:
-			D(funcname = "glMultiTexCoord3dvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3dvARB))
 			nfglMultiTexCoord3dvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3F:
-			D(funcname = "glMultiTexCoord3f");
 			if (GL_ISAVAILABLE(glMultiTexCoord3f))
 			nfglMultiTexCoord3f(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FARB:
-			D(funcname = "glMultiTexCoord3fARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3fARB))
 			nfglMultiTexCoord3fARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FV:
-			D(funcname = "glMultiTexCoord3fv");
 			if (GL_ISAVAILABLE(glMultiTexCoord3fv))
 			nfglMultiTexCoord3fv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3FVARB:
-			D(funcname = "glMultiTexCoord3fvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3fvARB))
 			nfglMultiTexCoord3fvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3HNV:
-			D(funcname = "glMultiTexCoord3hNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord3hNV))
 			nfglMultiTexCoord3hNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3HVNV:
-			D(funcname = "glMultiTexCoord3hvNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord3hvNV))
 			nfglMultiTexCoord3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3I:
-			D(funcname = "glMultiTexCoord3i");
 			if (GL_ISAVAILABLE(glMultiTexCoord3i))
 			nfglMultiTexCoord3i(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IARB:
-			D(funcname = "glMultiTexCoord3iARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3iARB))
 			nfglMultiTexCoord3iARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IV:
-			D(funcname = "glMultiTexCoord3iv");
 			if (GL_ISAVAILABLE(glMultiTexCoord3iv))
 			nfglMultiTexCoord3iv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3IVARB:
-			D(funcname = "glMultiTexCoord3ivARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3ivARB))
 			nfglMultiTexCoord3ivARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3S:
-			D(funcname = "glMultiTexCoord3s");
 			if (GL_ISAVAILABLE(glMultiTexCoord3s))
 			nfglMultiTexCoord3s(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SARB:
-			D(funcname = "glMultiTexCoord3sARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3sARB))
 			nfglMultiTexCoord3sARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SV:
-			D(funcname = "glMultiTexCoord3sv");
 			if (GL_ISAVAILABLE(glMultiTexCoord3sv))
 			nfglMultiTexCoord3sv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3SVARB:
-			D(funcname = "glMultiTexCoord3svARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord3svARB))
 			nfglMultiTexCoord3svARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3XOES:
-			D(funcname = "glMultiTexCoord3xOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord3xOES))
 			nfglMultiTexCoord3xOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD3XVOES:
-			D(funcname = "glMultiTexCoord3xvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord3xvOES))
 			nfglMultiTexCoord3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4BOES:
-			D(funcname = "glMultiTexCoord4bOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord4bOES))
 			nfglMultiTexCoord4bOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4BVOES:
-			D(funcname = "glMultiTexCoord4bvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord4bvOES))
 			nfglMultiTexCoord4bvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4D:
-			D(funcname = "glMultiTexCoord4d");
 			if (GL_ISAVAILABLE(glMultiTexCoord4d))
 			nfglMultiTexCoord4d(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DARB:
-			D(funcname = "glMultiTexCoord4dARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4dARB))
 			nfglMultiTexCoord4dARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DV:
-			D(funcname = "glMultiTexCoord4dv");
 			if (GL_ISAVAILABLE(glMultiTexCoord4dv))
 			nfglMultiTexCoord4dv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4DVARB:
-			D(funcname = "glMultiTexCoord4dvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4dvARB))
 			nfglMultiTexCoord4dvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4F:
-			D(funcname = "glMultiTexCoord4f");
 			if (GL_ISAVAILABLE(glMultiTexCoord4f))
 			nfglMultiTexCoord4f(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FARB:
-			D(funcname = "glMultiTexCoord4fARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4fARB))
 			nfglMultiTexCoord4fARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FV:
-			D(funcname = "glMultiTexCoord4fv");
 			if (GL_ISAVAILABLE(glMultiTexCoord4fv))
 			nfglMultiTexCoord4fv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4FVARB:
-			D(funcname = "glMultiTexCoord4fvARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4fvARB))
 			nfglMultiTexCoord4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4HNV:
-			D(funcname = "glMultiTexCoord4hNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord4hNV))
 			nfglMultiTexCoord4hNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4HVNV:
-			D(funcname = "glMultiTexCoord4hvNV");
 			if (GL_ISAVAILABLE(glMultiTexCoord4hvNV))
 			nfglMultiTexCoord4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4I:
-			D(funcname = "glMultiTexCoord4i");
 			if (GL_ISAVAILABLE(glMultiTexCoord4i))
 			nfglMultiTexCoord4i(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IARB:
-			D(funcname = "glMultiTexCoord4iARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4iARB))
 			nfglMultiTexCoord4iARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IV:
-			D(funcname = "glMultiTexCoord4iv");
 			if (GL_ISAVAILABLE(glMultiTexCoord4iv))
 			nfglMultiTexCoord4iv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4IVARB:
-			D(funcname = "glMultiTexCoord4ivARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4ivARB))
 			nfglMultiTexCoord4ivARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4S:
-			D(funcname = "glMultiTexCoord4s");
 			if (GL_ISAVAILABLE(glMultiTexCoord4s))
 			nfglMultiTexCoord4s(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SARB:
-			D(funcname = "glMultiTexCoord4sARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4sARB))
 			nfglMultiTexCoord4sARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SV:
-			D(funcname = "glMultiTexCoord4sv");
 			if (GL_ISAVAILABLE(glMultiTexCoord4sv))
 			nfglMultiTexCoord4sv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4SVARB:
-			D(funcname = "glMultiTexCoord4svARB");
 			if (GL_ISAVAILABLE(glMultiTexCoord4svARB))
 			nfglMultiTexCoord4svARB(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4XOES:
-			D(funcname = "glMultiTexCoord4xOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord4xOES))
 			nfglMultiTexCoord4xOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORD4XVOES:
-			D(funcname = "glMultiTexCoord4xvOES");
 			if (GL_ISAVAILABLE(glMultiTexCoord4xvOES))
 			nfglMultiTexCoord4xvOES(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP1UI:
-			D(funcname = "glMultiTexCoordP1ui");
 			if (GL_ISAVAILABLE(glMultiTexCoordP1ui))
 			nfglMultiTexCoordP1ui(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP1UIV:
-			D(funcname = "glMultiTexCoordP1uiv");
 			if (GL_ISAVAILABLE(glMultiTexCoordP1uiv))
 			nfglMultiTexCoordP1uiv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP2UI:
-			D(funcname = "glMultiTexCoordP2ui");
 			if (GL_ISAVAILABLE(glMultiTexCoordP2ui))
 			nfglMultiTexCoordP2ui(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP2UIV:
-			D(funcname = "glMultiTexCoordP2uiv");
 			if (GL_ISAVAILABLE(glMultiTexCoordP2uiv))
 			nfglMultiTexCoordP2uiv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP3UI:
-			D(funcname = "glMultiTexCoordP3ui");
 			if (GL_ISAVAILABLE(glMultiTexCoordP3ui))
 			nfglMultiTexCoordP3ui(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP3UIV:
-			D(funcname = "glMultiTexCoordP3uiv");
 			if (GL_ISAVAILABLE(glMultiTexCoordP3uiv))
 			nfglMultiTexCoordP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP4UI:
-			D(funcname = "glMultiTexCoordP4ui");
 			if (GL_ISAVAILABLE(glMultiTexCoordP4ui))
 			nfglMultiTexCoordP4ui(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDP4UIV:
-			D(funcname = "glMultiTexCoordP4uiv");
 			if (GL_ISAVAILABLE(glMultiTexCoordP4uiv))
 			nfglMultiTexCoordP4uiv(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXCOORDPOINTEREXT:
-			D(funcname = "glMultiTexCoordPointerEXT");
 			if (GL_ISAVAILABLE(glMultiTexCoordPointerEXT))
 			nfglMultiTexCoordPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXENVFEXT:
-			D(funcname = "glMultiTexEnvfEXT");
 			if (GL_ISAVAILABLE(glMultiTexEnvfEXT))
 			nfglMultiTexEnvfEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXENVFVEXT:
-			D(funcname = "glMultiTexEnvfvEXT");
 			if (GL_ISAVAILABLE(glMultiTexEnvfvEXT))
 			nfglMultiTexEnvfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXENVIEXT:
-			D(funcname = "glMultiTexEnviEXT");
 			if (GL_ISAVAILABLE(glMultiTexEnviEXT))
 			nfglMultiTexEnviEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXENVIVEXT:
-			D(funcname = "glMultiTexEnvivEXT");
 			if (GL_ISAVAILABLE(glMultiTexEnvivEXT))
 			nfglMultiTexEnvivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENDEXT:
-			D(funcname = "glMultiTexGendEXT");
 			if (GL_ISAVAILABLE(glMultiTexGendEXT))
 			nfglMultiTexGendEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENDVEXT:
-			D(funcname = "glMultiTexGendvEXT");
 			if (GL_ISAVAILABLE(glMultiTexGendvEXT))
 			nfglMultiTexGendvEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENFEXT:
-			D(funcname = "glMultiTexGenfEXT");
 			if (GL_ISAVAILABLE(glMultiTexGenfEXT))
 			nfglMultiTexGenfEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENFVEXT:
-			D(funcname = "glMultiTexGenfvEXT");
 			if (GL_ISAVAILABLE(glMultiTexGenfvEXT))
 			nfglMultiTexGenfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENIEXT:
-			D(funcname = "glMultiTexGeniEXT");
 			if (GL_ISAVAILABLE(glMultiTexGeniEXT))
 			nfglMultiTexGeniEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXGENIVEXT:
-			D(funcname = "glMultiTexGenivEXT");
 			if (GL_ISAVAILABLE(glMultiTexGenivEXT))
 			nfglMultiTexGenivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE1DEXT:
-			D(funcname = "glMultiTexImage1DEXT");
 			if (GL_ISAVAILABLE(glMultiTexImage1DEXT))
 			nfglMultiTexImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE2DEXT:
-			D(funcname = "glMultiTexImage2DEXT");
 			if (GL_ISAVAILABLE(glMultiTexImage2DEXT))
 			nfglMultiTexImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXIMAGE3DEXT:
-			D(funcname = "glMultiTexImage3DEXT");
 			if (GL_ISAVAILABLE(glMultiTexImage3DEXT))
 			nfglMultiTexImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIIVEXT:
-			D(funcname = "glMultiTexParameterIivEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameterIivEXT))
 			nfglMultiTexParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIUIVEXT:
-			D(funcname = "glMultiTexParameterIuivEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameterIuivEXT))
 			nfglMultiTexParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERFEXT:
-			D(funcname = "glMultiTexParameterfEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameterfEXT))
 			nfglMultiTexParameterfEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERFVEXT:
-			D(funcname = "glMultiTexParameterfvEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameterfvEXT))
 			nfglMultiTexParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIEXT:
-			D(funcname = "glMultiTexParameteriEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameteriEXT))
 			nfglMultiTexParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXPARAMETERIVEXT:
-			D(funcname = "glMultiTexParameterivEXT");
 			if (GL_ISAVAILABLE(glMultiTexParameterivEXT))
 			nfglMultiTexParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXRENDERBUFFEREXT:
-			D(funcname = "glMultiTexRenderbufferEXT");
 			if (GL_ISAVAILABLE(glMultiTexRenderbufferEXT))
 			nfglMultiTexRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE1DEXT:
-			D(funcname = "glMultiTexSubImage1DEXT");
 			if (GL_ISAVAILABLE(glMultiTexSubImage1DEXT))
 			nfglMultiTexSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE2DEXT:
-			D(funcname = "glMultiTexSubImage2DEXT");
 			if (GL_ISAVAILABLE(glMultiTexSubImage2DEXT))
 			nfglMultiTexSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTITEXSUBIMAGE3DEXT:
-			D(funcname = "glMultiTexSubImage3DEXT");
 			if (GL_ISAVAILABLE(glMultiTexSubImage3DEXT))
 			nfglMultiTexSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTBARRIERNV:
-			D(funcname = "glMulticastBarrierNV");
 			if (GL_ISAVAILABLE(glMulticastBarrierNV))
 			nfglMulticastBarrierNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTBLITFRAMEBUFFERNV:
-			D(funcname = "glMulticastBlitFramebufferNV");
 			if (GL_ISAVAILABLE(glMulticastBlitFramebufferNV))
 			nfglMulticastBlitFramebufferNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTBUFFERSUBDATANV:
-			D(funcname = "glMulticastBufferSubDataNV");
 			if (GL_ISAVAILABLE(glMulticastBufferSubDataNV))
 			nfglMulticastBufferSubDataNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTCOPYBUFFERSUBDATANV:
-			D(funcname = "glMulticastCopyBufferSubDataNV");
 			if (GL_ISAVAILABLE(glMulticastCopyBufferSubDataNV))
 			nfglMulticastCopyBufferSubDataNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTCOPYIMAGESUBDATANV:
-			D(funcname = "glMulticastCopyImageSubDataNV");
 			if (GL_ISAVAILABLE(glMulticastCopyImageSubDataNV))
 			nfglMulticastCopyImageSubDataNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTFRAMEBUFFERSAMPLELOCATIONSFVNV:
-			D(funcname = "glMulticastFramebufferSampleLocationsfvNV");
 			if (GL_ISAVAILABLE(glMulticastFramebufferSampleLocationsfvNV))
 			nfglMulticastFramebufferSampleLocationsfvNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTGETQUERYOBJECTI64VNV:
-			D(funcname = "glMulticastGetQueryObjecti64vNV");
 			if (GL_ISAVAILABLE(glMulticastGetQueryObjecti64vNV))
 			nfglMulticastGetQueryObjecti64vNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTGETQUERYOBJECTIVNV:
-			D(funcname = "glMulticastGetQueryObjectivNV");
 			if (GL_ISAVAILABLE(glMulticastGetQueryObjectivNV))
 			nfglMulticastGetQueryObjectivNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTGETQUERYOBJECTUI64VNV:
-			D(funcname = "glMulticastGetQueryObjectui64vNV");
 			if (GL_ISAVAILABLE(glMulticastGetQueryObjectui64vNV))
 			nfglMulticastGetQueryObjectui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTGETQUERYOBJECTUIVNV:
-			D(funcname = "glMulticastGetQueryObjectuivNV");
 			if (GL_ISAVAILABLE(glMulticastGetQueryObjectuivNV))
 			nfglMulticastGetQueryObjectuivNV(nf_params);
 			break;
 		case NFOSMESA_GLMULTICASTWAITSYNCNV:
-			D(funcname = "glMulticastWaitSyncNV");
 			if (GL_ISAVAILABLE(glMulticastWaitSyncNV))
 			nfglMulticastWaitSyncNV(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERATTACHMEMORYNV:
-			D(funcname = "glNamedBufferAttachMemoryNV");
 			if (GL_ISAVAILABLE(glNamedBufferAttachMemoryNV))
 			nfglNamedBufferAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERDATA:
-			D(funcname = "glNamedBufferData");
 			if (GL_ISAVAILABLE(glNamedBufferData))
 			nfglNamedBufferData(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERDATAEXT:
-			D(funcname = "glNamedBufferDataEXT");
 			if (GL_ISAVAILABLE(glNamedBufferDataEXT))
 			nfglNamedBufferDataEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERPAGECOMMITMENTARB:
-			D(funcname = "glNamedBufferPageCommitmentARB");
 			if (GL_ISAVAILABLE(glNamedBufferPageCommitmentARB))
 			nfglNamedBufferPageCommitmentARB(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERPAGECOMMITMENTEXT:
-			D(funcname = "glNamedBufferPageCommitmentEXT");
 			if (GL_ISAVAILABLE(glNamedBufferPageCommitmentEXT))
 			nfglNamedBufferPageCommitmentEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGE:
-			D(funcname = "glNamedBufferStorage");
 			if (GL_ISAVAILABLE(glNamedBufferStorage))
 			nfglNamedBufferStorage(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGEEXT:
-			D(funcname = "glNamedBufferStorageEXT");
 			if (GL_ISAVAILABLE(glNamedBufferStorageEXT))
 			nfglNamedBufferStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGEEXTERNALEXT:
-			D(funcname = "glNamedBufferStorageExternalEXT");
 			if (GL_ISAVAILABLE(glNamedBufferStorageExternalEXT))
 			nfglNamedBufferStorageExternalEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSTORAGEMEMEXT:
-			D(funcname = "glNamedBufferStorageMemEXT");
 			if (GL_ISAVAILABLE(glNamedBufferStorageMemEXT))
 			nfglNamedBufferStorageMemEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATA:
-			D(funcname = "glNamedBufferSubData");
 			if (GL_ISAVAILABLE(glNamedBufferSubData))
 			nfglNamedBufferSubData(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDBUFFERSUBDATAEXT:
-			D(funcname = "glNamedBufferSubDataEXT");
 			if (GL_ISAVAILABLE(glNamedBufferSubDataEXT))
 			nfglNamedBufferSubDataEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDCOPYBUFFERSUBDATAEXT:
-			D(funcname = "glNamedCopyBufferSubDataEXT");
 			if (GL_ISAVAILABLE(glNamedCopyBufferSubDataEXT))
 			nfglNamedCopyBufferSubDataEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERDRAWBUFFER:
-			D(funcname = "glNamedFramebufferDrawBuffer");
 			if (GL_ISAVAILABLE(glNamedFramebufferDrawBuffer))
 			nfglNamedFramebufferDrawBuffer(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERDRAWBUFFERS:
-			D(funcname = "glNamedFramebufferDrawBuffers");
 			if (GL_ISAVAILABLE(glNamedFramebufferDrawBuffers))
 			nfglNamedFramebufferDrawBuffers(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERPARAMETERI:
-			D(funcname = "glNamedFramebufferParameteri");
 			if (GL_ISAVAILABLE(glNamedFramebufferParameteri))
 			nfglNamedFramebufferParameteri(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERPARAMETERIEXT:
-			D(funcname = "glNamedFramebufferParameteriEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferParameteriEXT))
 			nfglNamedFramebufferParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERREADBUFFER:
-			D(funcname = "glNamedFramebufferReadBuffer");
 			if (GL_ISAVAILABLE(glNamedFramebufferReadBuffer))
 			nfglNamedFramebufferReadBuffer(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERRENDERBUFFER:
-			D(funcname = "glNamedFramebufferRenderbuffer");
 			if (GL_ISAVAILABLE(glNamedFramebufferRenderbuffer))
 			nfglNamedFramebufferRenderbuffer(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERRENDERBUFFEREXT:
-			D(funcname = "glNamedFramebufferRenderbufferEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferRenderbufferEXT))
 			nfglNamedFramebufferRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVARB:
-			D(funcname = "glNamedFramebufferSampleLocationsfvARB");
 			if (GL_ISAVAILABLE(glNamedFramebufferSampleLocationsfvARB))
 			nfglNamedFramebufferSampleLocationsfvARB(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLELOCATIONSFVNV:
-			D(funcname = "glNamedFramebufferSampleLocationsfvNV");
 			if (GL_ISAVAILABLE(glNamedFramebufferSampleLocationsfvNV))
 			nfglNamedFramebufferSampleLocationsfvNV(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERSAMPLEPOSITIONSFVAMD:
-			D(funcname = "glNamedFramebufferSamplePositionsfvAMD");
 			if (GL_ISAVAILABLE(glNamedFramebufferSamplePositionsfvAMD))
 			nfglNamedFramebufferSamplePositionsfvAMD(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE:
-			D(funcname = "glNamedFramebufferTexture");
 			if (GL_ISAVAILABLE(glNamedFramebufferTexture))
 			nfglNamedFramebufferTexture(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE1DEXT:
-			D(funcname = "glNamedFramebufferTexture1DEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTexture1DEXT))
 			nfglNamedFramebufferTexture1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE2DEXT:
-			D(funcname = "glNamedFramebufferTexture2DEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTexture2DEXT))
 			nfglNamedFramebufferTexture2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURE3DEXT:
-			D(funcname = "glNamedFramebufferTexture3DEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTexture3DEXT))
 			nfglNamedFramebufferTexture3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTUREEXT:
-			D(funcname = "glNamedFramebufferTextureEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTextureEXT))
 			nfglNamedFramebufferTextureEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTUREFACEEXT:
-			D(funcname = "glNamedFramebufferTextureFaceEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTextureFaceEXT))
 			nfglNamedFramebufferTextureFaceEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURELAYER:
-			D(funcname = "glNamedFramebufferTextureLayer");
 			if (GL_ISAVAILABLE(glNamedFramebufferTextureLayer))
 			nfglNamedFramebufferTextureLayer(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDFRAMEBUFFERTEXTURELAYEREXT:
-			D(funcname = "glNamedFramebufferTextureLayerEXT");
 			if (GL_ISAVAILABLE(glNamedFramebufferTextureLayerEXT))
 			nfglNamedFramebufferTextureLayerEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4DEXT:
-			D(funcname = "glNamedProgramLocalParameter4dEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4dEXT))
 			nfglNamedProgramLocalParameter4dEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4DVEXT:
-			D(funcname = "glNamedProgramLocalParameter4dvEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4dvEXT))
 			nfglNamedProgramLocalParameter4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4FEXT:
-			D(funcname = "glNamedProgramLocalParameter4fEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4fEXT))
 			nfglNamedProgramLocalParameter4fEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETER4FVEXT:
-			D(funcname = "glNamedProgramLocalParameter4fvEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameter4fvEXT))
 			nfglNamedProgramLocalParameter4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4IEXT:
-			D(funcname = "glNamedProgramLocalParameterI4iEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4iEXT))
 			nfglNamedProgramLocalParameterI4iEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4IVEXT:
-			D(funcname = "glNamedProgramLocalParameterI4ivEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4ivEXT))
 			nfglNamedProgramLocalParameterI4ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4UIEXT:
-			D(funcname = "glNamedProgramLocalParameterI4uiEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4uiEXT))
 			nfglNamedProgramLocalParameterI4uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERI4UIVEXT:
-			D(funcname = "glNamedProgramLocalParameterI4uivEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameterI4uivEXT))
 			nfglNamedProgramLocalParameterI4uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERS4FVEXT:
-			D(funcname = "glNamedProgramLocalParameters4fvEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParameters4fvEXT))
 			nfglNamedProgramLocalParameters4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4IVEXT:
-			D(funcname = "glNamedProgramLocalParametersI4ivEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParametersI4ivEXT))
 			nfglNamedProgramLocalParametersI4ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMLOCALPARAMETERSI4UIVEXT:
-			D(funcname = "glNamedProgramLocalParametersI4uivEXT");
 			if (GL_ISAVAILABLE(glNamedProgramLocalParametersI4uivEXT))
 			nfglNamedProgramLocalParametersI4uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDPROGRAMSTRINGEXT:
-			D(funcname = "glNamedProgramStringEXT");
 			if (GL_ISAVAILABLE(glNamedProgramStringEXT))
 			nfglNamedProgramStringEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGE:
-			D(funcname = "glNamedRenderbufferStorage");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorage))
 			nfglNamedRenderbufferStorage(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEEXT:
-			D(funcname = "glNamedRenderbufferStorageEXT");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageEXT))
 			nfglNamedRenderbufferStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLE:
-			D(funcname = "glNamedRenderbufferStorageMultisample");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisample))
 			nfglNamedRenderbufferStorageMultisample(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD:
-			D(funcname = "glNamedRenderbufferStorageMultisampleAdvancedAMD");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleAdvancedAMD))
 			nfglNamedRenderbufferStorageMultisampleAdvancedAMD(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXT:
-			D(funcname = "glNamedRenderbufferStorageMultisampleCoverageEXT");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleCoverageEXT))
 			nfglNamedRenderbufferStorageMultisampleCoverageEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEEXT:
-			D(funcname = "glNamedRenderbufferStorageMultisampleEXT");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleEXT))
 			nfglNamedRenderbufferStorageMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDSTRINGARB:
-			D(funcname = "glNamedStringARB");
 			if (GL_ISAVAILABLE(glNamedStringARB))
 			nfglNamedStringARB(nf_params);
 			break;
 		case NFOSMESA_GLNEWLIST:
-			D(funcname = "glNewList");
 			if (GL_ISAVAILABLE(glNewList))
 			nfglNewList(nf_params);
 			break;
 		case NFOSMESA_GLNEWOBJECTBUFFERATI:
-			D(funcname = "glNewObjectBufferATI");
 			if (GL_ISAVAILABLE(glNewObjectBufferATI))
 			ret = nfglNewObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLNEWTRACEMESA:
-			D(funcname = "glNewTraceMESA");
 			if (GL_ISAVAILABLE(glNewTraceMESA))
 			nfglNewTraceMESA(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3B:
-			D(funcname = "glNormal3b");
 			if (GL_ISAVAILABLE(glNormal3b))
 			nfglNormal3b(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3BV:
-			D(funcname = "glNormal3bv");
 			if (GL_ISAVAILABLE(glNormal3bv))
 			nfglNormal3bv(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3D:
-			D(funcname = "glNormal3d");
 			if (GL_ISAVAILABLE(glNormal3d))
 			nfglNormal3d(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3DV:
-			D(funcname = "glNormal3dv");
 			if (GL_ISAVAILABLE(glNormal3dv))
 			nfglNormal3dv(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3F:
-			D(funcname = "glNormal3f");
 			if (GL_ISAVAILABLE(glNormal3f))
 			nfglNormal3f(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3FVERTEX3FSUN:
-			D(funcname = "glNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glNormal3fVertex3fSUN))
 			nfglNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glNormal3fVertex3fvSUN))
 			nfglNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3FV:
-			D(funcname = "glNormal3fv");
 			if (GL_ISAVAILABLE(glNormal3fv))
 			nfglNormal3fv(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3HNV:
-			D(funcname = "glNormal3hNV");
 			if (GL_ISAVAILABLE(glNormal3hNV))
 			nfglNormal3hNV(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3HVNV:
-			D(funcname = "glNormal3hvNV");
 			if (GL_ISAVAILABLE(glNormal3hvNV))
 			nfglNormal3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3I:
-			D(funcname = "glNormal3i");
 			if (GL_ISAVAILABLE(glNormal3i))
 			nfglNormal3i(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3IV:
-			D(funcname = "glNormal3iv");
 			if (GL_ISAVAILABLE(glNormal3iv))
 			nfglNormal3iv(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3S:
-			D(funcname = "glNormal3s");
 			if (GL_ISAVAILABLE(glNormal3s))
 			nfglNormal3s(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3SV:
-			D(funcname = "glNormal3sv");
 			if (GL_ISAVAILABLE(glNormal3sv))
 			nfglNormal3sv(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3XOES:
-			D(funcname = "glNormal3xOES");
 			if (GL_ISAVAILABLE(glNormal3xOES))
 			nfglNormal3xOES(nf_params);
 			break;
 		case NFOSMESA_GLNORMAL3XVOES:
-			D(funcname = "glNormal3xvOES");
 			if (GL_ISAVAILABLE(glNormal3xvOES))
 			nfglNormal3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLNORMALFORMATNV:
-			D(funcname = "glNormalFormatNV");
 			if (GL_ISAVAILABLE(glNormalFormatNV))
 			nfglNormalFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLNORMALP3UI:
-			D(funcname = "glNormalP3ui");
 			if (GL_ISAVAILABLE(glNormalP3ui))
 			nfglNormalP3ui(nf_params);
 			break;
 		case NFOSMESA_GLNORMALP3UIV:
-			D(funcname = "glNormalP3uiv");
 			if (GL_ISAVAILABLE(glNormalP3uiv))
 			nfglNormalP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLNORMALPOINTER:
-			D(funcname = "glNormalPointer");
 			if (GL_ISAVAILABLE(glNormalPointer))
 			nfglNormalPointer(nf_params);
 			break;
 		case NFOSMESA_GLNORMALPOINTEREXT:
-			D(funcname = "glNormalPointerEXT");
 			if (GL_ISAVAILABLE(glNormalPointerEXT))
 			nfglNormalPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLNORMALPOINTERLISTIBM:
-			D(funcname = "glNormalPointerListIBM");
 			if (GL_ISAVAILABLE(glNormalPointerListIBM))
 			nfglNormalPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLNORMALPOINTERVINTEL:
-			D(funcname = "glNormalPointervINTEL");
 			if (GL_ISAVAILABLE(glNormalPointervINTEL))
 			nfglNormalPointervINTEL(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3BATI:
-			D(funcname = "glNormalStream3bATI");
 			if (GL_ISAVAILABLE(glNormalStream3bATI))
 			nfglNormalStream3bATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3BVATI:
-			D(funcname = "glNormalStream3bvATI");
 			if (GL_ISAVAILABLE(glNormalStream3bvATI))
 			nfglNormalStream3bvATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3DATI:
-			D(funcname = "glNormalStream3dATI");
 			if (GL_ISAVAILABLE(glNormalStream3dATI))
 			nfglNormalStream3dATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3DVATI:
-			D(funcname = "glNormalStream3dvATI");
 			if (GL_ISAVAILABLE(glNormalStream3dvATI))
 			nfglNormalStream3dvATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3FATI:
-			D(funcname = "glNormalStream3fATI");
 			if (GL_ISAVAILABLE(glNormalStream3fATI))
 			nfglNormalStream3fATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3FVATI:
-			D(funcname = "glNormalStream3fvATI");
 			if (GL_ISAVAILABLE(glNormalStream3fvATI))
 			nfglNormalStream3fvATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3IATI:
-			D(funcname = "glNormalStream3iATI");
 			if (GL_ISAVAILABLE(glNormalStream3iATI))
 			nfglNormalStream3iATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3IVATI:
-			D(funcname = "glNormalStream3ivATI");
 			if (GL_ISAVAILABLE(glNormalStream3ivATI))
 			nfglNormalStream3ivATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3SATI:
-			D(funcname = "glNormalStream3sATI");
 			if (GL_ISAVAILABLE(glNormalStream3sATI))
 			nfglNormalStream3sATI(nf_params);
 			break;
 		case NFOSMESA_GLNORMALSTREAM3SVATI:
-			D(funcname = "glNormalStream3svATI");
 			if (GL_ISAVAILABLE(glNormalStream3svATI))
 			nfglNormalStream3svATI(nf_params);
 			break;
 		case NFOSMESA_GLOBJECTLABEL:
-			D(funcname = "glObjectLabel");
 			if (GL_ISAVAILABLE(glObjectLabel))
 			nfglObjectLabel(nf_params);
 			break;
 		case NFOSMESA_GLOBJECTPTRLABEL:
-			D(funcname = "glObjectPtrLabel");
 			if (GL_ISAVAILABLE(glObjectPtrLabel))
 			nfglObjectPtrLabel(nf_params);
 			break;
 		case NFOSMESA_GLOBJECTPURGEABLEAPPLE:
-			D(funcname = "glObjectPurgeableAPPLE");
 			if (GL_ISAVAILABLE(glObjectPurgeableAPPLE))
 			ret = nfglObjectPurgeableAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLOBJECTUNPURGEABLEAPPLE:
-			D(funcname = "glObjectUnpurgeableAPPLE");
 			if (GL_ISAVAILABLE(glObjectUnpurgeableAPPLE))
 			ret = nfglObjectUnpurgeableAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLORTHO:
-			D(funcname = "glOrtho");
 			if (GL_ISAVAILABLE(glOrtho))
 			nfglOrtho(nf_params);
 			break;
 		case NFOSMESA_GLORTHOFOES:
-			D(funcname = "glOrthofOES");
 			if (GL_ISAVAILABLE(glOrthofOES))
 			nfglOrthofOES(nf_params);
 			break;
 		case NFOSMESA_GLORTHOXOES:
-			D(funcname = "glOrthoxOES");
 			if (GL_ISAVAILABLE(glOrthoxOES))
 			nfglOrthoxOES(nf_params);
 			break;
 		case NFOSMESA_GLPNTRIANGLESFATI:
-			D(funcname = "glPNTrianglesfATI");
 			if (GL_ISAVAILABLE(glPNTrianglesfATI))
 			nfglPNTrianglesfATI(nf_params);
 			break;
 		case NFOSMESA_GLPNTRIANGLESIATI:
-			D(funcname = "glPNTrianglesiATI");
 			if (GL_ISAVAILABLE(glPNTrianglesiATI))
 			nfglPNTrianglesiATI(nf_params);
 			break;
 		case NFOSMESA_GLPASSTEXCOORDATI:
-			D(funcname = "glPassTexCoordATI");
 			if (GL_ISAVAILABLE(glPassTexCoordATI))
 			nfglPassTexCoordATI(nf_params);
 			break;
 		case NFOSMESA_GLPASSTHROUGH:
-			D(funcname = "glPassThrough");
 			if (GL_ISAVAILABLE(glPassThrough))
 			nfglPassThrough(nf_params);
 			break;
 		case NFOSMESA_GLPASSTHROUGHXOES:
-			D(funcname = "glPassThroughxOES");
 			if (GL_ISAVAILABLE(glPassThroughxOES))
 			nfglPassThroughxOES(nf_params);
 			break;
 		case NFOSMESA_GLPATCHPARAMETERFV:
-			D(funcname = "glPatchParameterfv");
 			if (GL_ISAVAILABLE(glPatchParameterfv))
 			nfglPatchParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLPATCHPARAMETERI:
-			D(funcname = "glPatchParameteri");
 			if (GL_ISAVAILABLE(glPatchParameteri))
 			nfglPatchParameteri(nf_params);
 			break;
 		case NFOSMESA_GLPATHCOLORGENNV:
-			D(funcname = "glPathColorGenNV");
 			if (GL_ISAVAILABLE(glPathColorGenNV))
 			nfglPathColorGenNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHCOMMANDSNV:
-			D(funcname = "glPathCommandsNV");
 			if (GL_ISAVAILABLE(glPathCommandsNV))
 			nfglPathCommandsNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHCOORDSNV:
-			D(funcname = "glPathCoordsNV");
 			if (GL_ISAVAILABLE(glPathCoordsNV))
 			nfglPathCoordsNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHCOVERDEPTHFUNCNV:
-			D(funcname = "glPathCoverDepthFuncNV");
 			if (GL_ISAVAILABLE(glPathCoverDepthFuncNV))
 			nfglPathCoverDepthFuncNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHDASHARRAYNV:
-			D(funcname = "glPathDashArrayNV");
 			if (GL_ISAVAILABLE(glPathDashArrayNV))
 			nfglPathDashArrayNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHFOGGENNV:
-			D(funcname = "glPathFogGenNV");
 			if (GL_ISAVAILABLE(glPathFogGenNV))
 			nfglPathFogGenNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHGLYPHINDEXARRAYNV:
-			D(funcname = "glPathGlyphIndexArrayNV");
 			if (GL_ISAVAILABLE(glPathGlyphIndexArrayNV))
 			ret = nfglPathGlyphIndexArrayNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHGLYPHINDEXRANGENV:
-			D(funcname = "glPathGlyphIndexRangeNV");
 			if (GL_ISAVAILABLE(glPathGlyphIndexRangeNV))
 			ret = nfglPathGlyphIndexRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHGLYPHRANGENV:
-			D(funcname = "glPathGlyphRangeNV");
 			if (GL_ISAVAILABLE(glPathGlyphRangeNV))
 			nfglPathGlyphRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHGLYPHSNV:
-			D(funcname = "glPathGlyphsNV");
 			if (GL_ISAVAILABLE(glPathGlyphsNV))
 			nfglPathGlyphsNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHMEMORYGLYPHINDEXARRAYNV:
-			D(funcname = "glPathMemoryGlyphIndexArrayNV");
 			if (GL_ISAVAILABLE(glPathMemoryGlyphIndexArrayNV))
 			ret = nfglPathMemoryGlyphIndexArrayNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHPARAMETERFNV:
-			D(funcname = "glPathParameterfNV");
 			if (GL_ISAVAILABLE(glPathParameterfNV))
 			nfglPathParameterfNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHPARAMETERFVNV:
-			D(funcname = "glPathParameterfvNV");
 			if (GL_ISAVAILABLE(glPathParameterfvNV))
 			nfglPathParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHPARAMETERINV:
-			D(funcname = "glPathParameteriNV");
 			if (GL_ISAVAILABLE(glPathParameteriNV))
 			nfglPathParameteriNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHPARAMETERIVNV:
-			D(funcname = "glPathParameterivNV");
 			if (GL_ISAVAILABLE(glPathParameterivNV))
 			nfglPathParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHSTENCILDEPTHOFFSETNV:
-			D(funcname = "glPathStencilDepthOffsetNV");
 			if (GL_ISAVAILABLE(glPathStencilDepthOffsetNV))
 			nfglPathStencilDepthOffsetNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHSTENCILFUNCNV:
-			D(funcname = "glPathStencilFuncNV");
 			if (GL_ISAVAILABLE(glPathStencilFuncNV))
 			nfglPathStencilFuncNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHSTRINGNV:
-			D(funcname = "glPathStringNV");
 			if (GL_ISAVAILABLE(glPathStringNV))
 			nfglPathStringNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHSUBCOMMANDSNV:
-			D(funcname = "glPathSubCommandsNV");
 			if (GL_ISAVAILABLE(glPathSubCommandsNV))
 			nfglPathSubCommandsNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHSUBCOORDSNV:
-			D(funcname = "glPathSubCoordsNV");
 			if (GL_ISAVAILABLE(glPathSubCoordsNV))
 			nfglPathSubCoordsNV(nf_params);
 			break;
 		case NFOSMESA_GLPATHTEXGENNV:
-			D(funcname = "glPathTexGenNV");
 			if (GL_ISAVAILABLE(glPathTexGenNV))
 			nfglPathTexGenNV(nf_params);
 			break;
 		case NFOSMESA_GLPAUSETRANSFORMFEEDBACK:
-			D(funcname = "glPauseTransformFeedback");
 			if (GL_ISAVAILABLE(glPauseTransformFeedback))
 			nfglPauseTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLPAUSETRANSFORMFEEDBACKNV:
-			D(funcname = "glPauseTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glPauseTransformFeedbackNV))
 			nfglPauseTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLPIXELDATARANGENV:
-			D(funcname = "glPixelDataRangeNV");
 			if (GL_ISAVAILABLE(glPixelDataRangeNV))
 			nfglPixelDataRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLPIXELMAPFV:
-			D(funcname = "glPixelMapfv");
 			if (GL_ISAVAILABLE(glPixelMapfv))
 			nfglPixelMapfv(nf_params);
 			break;
 		case NFOSMESA_GLPIXELMAPUIV:
-			D(funcname = "glPixelMapuiv");
 			if (GL_ISAVAILABLE(glPixelMapuiv))
 			nfglPixelMapuiv(nf_params);
 			break;
 		case NFOSMESA_GLPIXELMAPUSV:
-			D(funcname = "glPixelMapusv");
 			if (GL_ISAVAILABLE(glPixelMapusv))
 			nfglPixelMapusv(nf_params);
 			break;
 		case NFOSMESA_GLPIXELMAPX:
-			D(funcname = "glPixelMapx");
 			if (GL_ISAVAILABLE(glPixelMapx))
 			nfglPixelMapx(nf_params);
 			break;
 		case NFOSMESA_GLPIXELSTOREF:
-			D(funcname = "glPixelStoref");
 			if (GL_ISAVAILABLE(glPixelStoref))
 			nfglPixelStoref(nf_params);
 			break;
 		case NFOSMESA_GLPIXELSTOREI:
-			D(funcname = "glPixelStorei");
 			if (GL_ISAVAILABLE(glPixelStorei))
 			nfglPixelStorei(nf_params);
 			break;
 		case NFOSMESA_GLPIXELSTOREX:
-			D(funcname = "glPixelStorex");
 			if (GL_ISAVAILABLE(glPixelStorex))
 			nfglPixelStorex(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERFSGIS:
-			D(funcname = "glPixelTexGenParameterfSGIS");
 			if (GL_ISAVAILABLE(glPixelTexGenParameterfSGIS))
 			nfglPixelTexGenParameterfSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERFVSGIS:
-			D(funcname = "glPixelTexGenParameterfvSGIS");
 			if (GL_ISAVAILABLE(glPixelTexGenParameterfvSGIS))
 			nfglPixelTexGenParameterfvSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERISGIS:
-			D(funcname = "glPixelTexGenParameteriSGIS");
 			if (GL_ISAVAILABLE(glPixelTexGenParameteriSGIS))
 			nfglPixelTexGenParameteriSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTEXGENPARAMETERIVSGIS:
-			D(funcname = "glPixelTexGenParameterivSGIS");
 			if (GL_ISAVAILABLE(glPixelTexGenParameterivSGIS))
 			nfglPixelTexGenParameterivSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTEXGENSGIX:
-			D(funcname = "glPixelTexGenSGIX");
 			if (GL_ISAVAILABLE(glPixelTexGenSGIX))
 			nfglPixelTexGenSGIX(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERF:
-			D(funcname = "glPixelTransferf");
 			if (GL_ISAVAILABLE(glPixelTransferf))
 			nfglPixelTransferf(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERI:
-			D(funcname = "glPixelTransferi");
 			if (GL_ISAVAILABLE(glPixelTransferi))
 			nfglPixelTransferi(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFERXOES:
-			D(funcname = "glPixelTransferxOES");
 			if (GL_ISAVAILABLE(glPixelTransferxOES))
 			nfglPixelTransferxOES(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERFEXT:
-			D(funcname = "glPixelTransformParameterfEXT");
 			if (GL_ISAVAILABLE(glPixelTransformParameterfEXT))
 			nfglPixelTransformParameterfEXT(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERFVEXT:
-			D(funcname = "glPixelTransformParameterfvEXT");
 			if (GL_ISAVAILABLE(glPixelTransformParameterfvEXT))
 			nfglPixelTransformParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERIEXT:
-			D(funcname = "glPixelTransformParameteriEXT");
 			if (GL_ISAVAILABLE(glPixelTransformParameteriEXT))
 			nfglPixelTransformParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLPIXELTRANSFORMPARAMETERIVEXT:
-			D(funcname = "glPixelTransformParameterivEXT");
 			if (GL_ISAVAILABLE(glPixelTransformParameterivEXT))
 			nfglPixelTransformParameterivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPIXELZOOM:
-			D(funcname = "glPixelZoom");
 			if (GL_ISAVAILABLE(glPixelZoom))
 			nfglPixelZoom(nf_params);
 			break;
 		case NFOSMESA_GLPIXELZOOMXOES:
-			D(funcname = "glPixelZoomxOES");
 			if (GL_ISAVAILABLE(glPixelZoomxOES))
 			nfglPixelZoomxOES(nf_params);
 			break;
 		case NFOSMESA_GLPOINTALONGPATHNV:
-			D(funcname = "glPointAlongPathNV");
 			if (GL_ISAVAILABLE(glPointAlongPathNV))
 			ret = nfglPointAlongPathNV(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERF:
-			D(funcname = "glPointParameterf");
 			if (GL_ISAVAILABLE(glPointParameterf))
 			nfglPointParameterf(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFARB:
-			D(funcname = "glPointParameterfARB");
 			if (GL_ISAVAILABLE(glPointParameterfARB))
 			nfglPointParameterfARB(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFEXT:
-			D(funcname = "glPointParameterfEXT");
 			if (GL_ISAVAILABLE(glPointParameterfEXT))
 			nfglPointParameterfEXT(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFSGIS:
-			D(funcname = "glPointParameterfSGIS");
 			if (GL_ISAVAILABLE(glPointParameterfSGIS))
 			nfglPointParameterfSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFV:
-			D(funcname = "glPointParameterfv");
 			if (GL_ISAVAILABLE(glPointParameterfv))
 			nfglPointParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVARB:
-			D(funcname = "glPointParameterfvARB");
 			if (GL_ISAVAILABLE(glPointParameterfvARB))
 			nfglPointParameterfvARB(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVEXT:
-			D(funcname = "glPointParameterfvEXT");
 			if (GL_ISAVAILABLE(glPointParameterfvEXT))
 			nfglPointParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERFVSGIS:
-			D(funcname = "glPointParameterfvSGIS");
 			if (GL_ISAVAILABLE(glPointParameterfvSGIS))
 			nfglPointParameterfvSGIS(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERI:
-			D(funcname = "glPointParameteri");
 			if (GL_ISAVAILABLE(glPointParameteri))
 			nfglPointParameteri(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERINV:
-			D(funcname = "glPointParameteriNV");
 			if (GL_ISAVAILABLE(glPointParameteriNV))
 			nfglPointParameteriNV(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERIV:
-			D(funcname = "glPointParameteriv");
 			if (GL_ISAVAILABLE(glPointParameteriv))
 			nfglPointParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERIVNV:
-			D(funcname = "glPointParameterivNV");
 			if (GL_ISAVAILABLE(glPointParameterivNV))
 			nfglPointParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLPOINTPARAMETERXVOES:
-			D(funcname = "glPointParameterxvOES");
 			if (GL_ISAVAILABLE(glPointParameterxvOES))
 			nfglPointParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLPOINTSIZE:
-			D(funcname = "glPointSize");
 			if (GL_ISAVAILABLE(glPointSize))
 			nfglPointSize(nf_params);
 			break;
 		case NFOSMESA_GLPOINTSIZEPOINTERAPPLE:
-			D(funcname = "glPointSizePointerAPPLE");
 			if (GL_ISAVAILABLE(glPointSizePointerAPPLE))
 			nfglPointSizePointerAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLPOINTSIZEXOES:
-			D(funcname = "glPointSizexOES");
 			if (GL_ISAVAILABLE(glPointSizexOES))
 			nfglPointSizexOES(nf_params);
 			break;
 		case NFOSMESA_GLPOLLASYNCSGIX:
-			D(funcname = "glPollAsyncSGIX");
 			if (GL_ISAVAILABLE(glPollAsyncSGIX))
 			ret = nfglPollAsyncSGIX(nf_params);
 			break;
 		case NFOSMESA_GLPOLLINSTRUMENTSSGIX:
-			D(funcname = "glPollInstrumentsSGIX");
 			if (GL_ISAVAILABLE(glPollInstrumentsSGIX))
 			ret = nfglPollInstrumentsSGIX(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONMODE:
-			D(funcname = "glPolygonMode");
 			if (GL_ISAVAILABLE(glPolygonMode))
 			nfglPolygonMode(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSET:
-			D(funcname = "glPolygonOffset");
 			if (GL_ISAVAILABLE(glPolygonOffset))
 			nfglPolygonOffset(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETCLAMP:
-			D(funcname = "glPolygonOffsetClamp");
 			if (GL_ISAVAILABLE(glPolygonOffsetClamp))
 			nfglPolygonOffsetClamp(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETCLAMPEXT:
-			D(funcname = "glPolygonOffsetClampEXT");
 			if (GL_ISAVAILABLE(glPolygonOffsetClampEXT))
 			nfglPolygonOffsetClampEXT(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETEXT:
-			D(funcname = "glPolygonOffsetEXT");
 			if (GL_ISAVAILABLE(glPolygonOffsetEXT))
 			nfglPolygonOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONOFFSETXOES:
-			D(funcname = "glPolygonOffsetxOES");
 			if (GL_ISAVAILABLE(glPolygonOffsetxOES))
 			nfglPolygonOffsetxOES(nf_params);
 			break;
 		case NFOSMESA_GLPOLYGONSTIPPLE:
-			D(funcname = "glPolygonStipple");
 			if (GL_ISAVAILABLE(glPolygonStipple))
 			nfglPolygonStipple(nf_params);
 			break;
 		case NFOSMESA_GLPOPATTRIB:
-			D(funcname = "glPopAttrib");
 			if (GL_ISAVAILABLE(glPopAttrib))
 			nfglPopAttrib(nf_params);
 			break;
 		case NFOSMESA_GLPOPCLIENTATTRIB:
-			D(funcname = "glPopClientAttrib");
 			if (GL_ISAVAILABLE(glPopClientAttrib))
 			nfglPopClientAttrib(nf_params);
 			break;
 		case NFOSMESA_GLPOPDEBUGGROUP:
-			D(funcname = "glPopDebugGroup");
 			if (GL_ISAVAILABLE(glPopDebugGroup))
 			nfglPopDebugGroup(nf_params);
 			break;
 		case NFOSMESA_GLPOPGROUPMARKEREXT:
-			D(funcname = "glPopGroupMarkerEXT");
 			if (GL_ISAVAILABLE(glPopGroupMarkerEXT))
 			nfglPopGroupMarkerEXT(nf_params);
 			break;
 		case NFOSMESA_GLPOPMATRIX:
-			D(funcname = "glPopMatrix");
 			if (GL_ISAVAILABLE(glPopMatrix))
 			nfglPopMatrix(nf_params);
 			break;
 		case NFOSMESA_GLPOPNAME:
-			D(funcname = "glPopName");
 			if (GL_ISAVAILABLE(glPopName))
 			nfglPopName(nf_params);
 			break;
 		case NFOSMESA_GLPRESENTFRAMEDUALFILLNV:
-			D(funcname = "glPresentFrameDualFillNV");
 			if (GL_ISAVAILABLE(glPresentFrameDualFillNV))
 			nfglPresentFrameDualFillNV(nf_params);
 			break;
 		case NFOSMESA_GLPRESENTFRAMEKEYEDNV:
-			D(funcname = "glPresentFrameKeyedNV");
 			if (GL_ISAVAILABLE(glPresentFrameKeyedNV))
 			nfglPresentFrameKeyedNV(nf_params);
 			break;
 		case NFOSMESA_GLPRIMITIVEBOUNDINGBOXARB:
-			D(funcname = "glPrimitiveBoundingBoxARB");
 			if (GL_ISAVAILABLE(glPrimitiveBoundingBoxARB))
 			nfglPrimitiveBoundingBoxARB(nf_params);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTINDEX:
-			D(funcname = "glPrimitiveRestartIndex");
 			if (GL_ISAVAILABLE(glPrimitiveRestartIndex))
 			nfglPrimitiveRestartIndex(nf_params);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTINDEXNV:
-			D(funcname = "glPrimitiveRestartIndexNV");
 			if (GL_ISAVAILABLE(glPrimitiveRestartIndexNV))
 			nfglPrimitiveRestartIndexNV(nf_params);
 			break;
 		case NFOSMESA_GLPRIMITIVERESTARTNV:
-			D(funcname = "glPrimitiveRestartNV");
 			if (GL_ISAVAILABLE(glPrimitiveRestartNV))
 			nfglPrimitiveRestartNV(nf_params);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURES:
-			D(funcname = "glPrioritizeTextures");
 			if (GL_ISAVAILABLE(glPrioritizeTextures))
 			nfglPrioritizeTextures(nf_params);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESEXT:
-			D(funcname = "glPrioritizeTexturesEXT");
 			if (GL_ISAVAILABLE(glPrioritizeTexturesEXT))
 			nfglPrioritizeTexturesEXT(nf_params);
 			break;
 		case NFOSMESA_GLPRIORITIZETEXTURESXOES:
-			D(funcname = "glPrioritizeTexturesxOES");
 			if (GL_ISAVAILABLE(glPrioritizeTexturesxOES))
 			nfglPrioritizeTexturesxOES(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMBINARY:
-			D(funcname = "glProgramBinary");
 			if (GL_ISAVAILABLE(glProgramBinary))
 			nfglProgramBinary(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIIVNV:
-			D(funcname = "glProgramBufferParametersIivNV");
 			if (GL_ISAVAILABLE(glProgramBufferParametersIivNV))
 			nfglProgramBufferParametersIivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSIUIVNV:
-			D(funcname = "glProgramBufferParametersIuivNV");
 			if (GL_ISAVAILABLE(glProgramBufferParametersIuivNV))
 			nfglProgramBufferParametersIuivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMBUFFERPARAMETERSFVNV:
-			D(funcname = "glProgramBufferParametersfvNV");
 			if (GL_ISAVAILABLE(glProgramBufferParametersfvNV))
 			nfglProgramBufferParametersfvNV(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLPROGRAMCALLBACKMESA:
-			D(funcname = "glProgramCallbackMESA");
 			if (GL_ISAVAILABLE(glProgramCallbackMESA))
 			nfglProgramCallbackMESA(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLPROGRAMENVPARAMETER4DARB:
-			D(funcname = "glProgramEnvParameter4dARB");
 			if (GL_ISAVAILABLE(glProgramEnvParameter4dARB))
 			nfglProgramEnvParameter4dARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4DVARB:
-			D(funcname = "glProgramEnvParameter4dvARB");
 			if (GL_ISAVAILABLE(glProgramEnvParameter4dvARB))
 			nfglProgramEnvParameter4dvARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4FARB:
-			D(funcname = "glProgramEnvParameter4fARB");
 			if (GL_ISAVAILABLE(glProgramEnvParameter4fARB))
 			nfglProgramEnvParameter4fARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETER4FVARB:
-			D(funcname = "glProgramEnvParameter4fvARB");
 			if (GL_ISAVAILABLE(glProgramEnvParameter4fvARB))
 			nfglProgramEnvParameter4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4INV:
-			D(funcname = "glProgramEnvParameterI4iNV");
 			if (GL_ISAVAILABLE(glProgramEnvParameterI4iNV))
 			nfglProgramEnvParameterI4iNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4IVNV:
-			D(funcname = "glProgramEnvParameterI4ivNV");
 			if (GL_ISAVAILABLE(glProgramEnvParameterI4ivNV))
 			nfglProgramEnvParameterI4ivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4UINV:
-			D(funcname = "glProgramEnvParameterI4uiNV");
 			if (GL_ISAVAILABLE(glProgramEnvParameterI4uiNV))
 			nfglProgramEnvParameterI4uiNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERI4UIVNV:
-			D(funcname = "glProgramEnvParameterI4uivNV");
 			if (GL_ISAVAILABLE(glProgramEnvParameterI4uivNV))
 			nfglProgramEnvParameterI4uivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERS4FVEXT:
-			D(funcname = "glProgramEnvParameters4fvEXT");
 			if (GL_ISAVAILABLE(glProgramEnvParameters4fvEXT))
 			nfglProgramEnvParameters4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4IVNV:
-			D(funcname = "glProgramEnvParametersI4ivNV");
 			if (GL_ISAVAILABLE(glProgramEnvParametersI4ivNV))
 			nfglProgramEnvParametersI4ivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMENVPARAMETERSI4UIVNV:
-			D(funcname = "glProgramEnvParametersI4uivNV");
 			if (GL_ISAVAILABLE(glProgramEnvParametersI4uivNV))
 			nfglProgramEnvParametersI4uivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4DARB:
-			D(funcname = "glProgramLocalParameter4dARB");
 			if (GL_ISAVAILABLE(glProgramLocalParameter4dARB))
 			nfglProgramLocalParameter4dARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4DVARB:
-			D(funcname = "glProgramLocalParameter4dvARB");
 			if (GL_ISAVAILABLE(glProgramLocalParameter4dvARB))
 			nfglProgramLocalParameter4dvARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4FARB:
-			D(funcname = "glProgramLocalParameter4fARB");
 			if (GL_ISAVAILABLE(glProgramLocalParameter4fARB))
 			nfglProgramLocalParameter4fARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETER4FVARB:
-			D(funcname = "glProgramLocalParameter4fvARB");
 			if (GL_ISAVAILABLE(glProgramLocalParameter4fvARB))
 			nfglProgramLocalParameter4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4INV:
-			D(funcname = "glProgramLocalParameterI4iNV");
 			if (GL_ISAVAILABLE(glProgramLocalParameterI4iNV))
 			nfglProgramLocalParameterI4iNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4IVNV:
-			D(funcname = "glProgramLocalParameterI4ivNV");
 			if (GL_ISAVAILABLE(glProgramLocalParameterI4ivNV))
 			nfglProgramLocalParameterI4ivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4UINV:
-			D(funcname = "glProgramLocalParameterI4uiNV");
 			if (GL_ISAVAILABLE(glProgramLocalParameterI4uiNV))
 			nfglProgramLocalParameterI4uiNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERI4UIVNV:
-			D(funcname = "glProgramLocalParameterI4uivNV");
 			if (GL_ISAVAILABLE(glProgramLocalParameterI4uivNV))
 			nfglProgramLocalParameterI4uivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERS4FVEXT:
-			D(funcname = "glProgramLocalParameters4fvEXT");
 			if (GL_ISAVAILABLE(glProgramLocalParameters4fvEXT))
 			nfglProgramLocalParameters4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4IVNV:
-			D(funcname = "glProgramLocalParametersI4ivNV");
 			if (GL_ISAVAILABLE(glProgramLocalParametersI4ivNV))
 			nfglProgramLocalParametersI4ivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMLOCALPARAMETERSI4UIVNV:
-			D(funcname = "glProgramLocalParametersI4uivNV");
 			if (GL_ISAVAILABLE(glProgramLocalParametersI4uivNV))
 			nfglProgramLocalParametersI4uivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4DNV:
-			D(funcname = "glProgramNamedParameter4dNV");
 			if (GL_ISAVAILABLE(glProgramNamedParameter4dNV))
 			nfglProgramNamedParameter4dNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4DVNV:
-			D(funcname = "glProgramNamedParameter4dvNV");
 			if (GL_ISAVAILABLE(glProgramNamedParameter4dvNV))
 			nfglProgramNamedParameter4dvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4FNV:
-			D(funcname = "glProgramNamedParameter4fNV");
 			if (GL_ISAVAILABLE(glProgramNamedParameter4fNV))
 			nfglProgramNamedParameter4fNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMNAMEDPARAMETER4FVNV:
-			D(funcname = "glProgramNamedParameter4fvNV");
 			if (GL_ISAVAILABLE(glProgramNamedParameter4fvNV))
 			nfglProgramNamedParameter4fvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4DNV:
-			D(funcname = "glProgramParameter4dNV");
 			if (GL_ISAVAILABLE(glProgramParameter4dNV))
 			nfglProgramParameter4dNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4DVNV:
-			D(funcname = "glProgramParameter4dvNV");
 			if (GL_ISAVAILABLE(glProgramParameter4dvNV))
 			nfglProgramParameter4dvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4FNV:
-			D(funcname = "glProgramParameter4fNV");
 			if (GL_ISAVAILABLE(glProgramParameter4fNV))
 			nfglProgramParameter4fNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETER4FVNV:
-			D(funcname = "glProgramParameter4fvNV");
 			if (GL_ISAVAILABLE(glProgramParameter4fvNV))
 			nfglProgramParameter4fvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERI:
-			D(funcname = "glProgramParameteri");
 			if (GL_ISAVAILABLE(glProgramParameteri))
 			nfglProgramParameteri(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERIARB:
-			D(funcname = "glProgramParameteriARB");
 			if (GL_ISAVAILABLE(glProgramParameteriARB))
 			nfglProgramParameteriARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERIEXT:
-			D(funcname = "glProgramParameteriEXT");
 			if (GL_ISAVAILABLE(glProgramParameteriEXT))
 			nfglProgramParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERS4DVNV:
-			D(funcname = "glProgramParameters4dvNV");
 			if (GL_ISAVAILABLE(glProgramParameters4dvNV))
 			nfglProgramParameters4dvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPARAMETERS4FVNV:
-			D(funcname = "glProgramParameters4fvNV");
 			if (GL_ISAVAILABLE(glProgramParameters4fvNV))
 			nfglProgramParameters4fvNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMPATHFRAGMENTINPUTGENNV:
-			D(funcname = "glProgramPathFragmentInputGenNV");
 			if (GL_ISAVAILABLE(glProgramPathFragmentInputGenNV))
 			nfglProgramPathFragmentInputGenNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMSTRINGARB:
-			D(funcname = "glProgramStringARB");
 			if (GL_ISAVAILABLE(glProgramStringARB))
 			nfglProgramStringARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMSUBROUTINEPARAMETERSUIVNV:
-			D(funcname = "glProgramSubroutineParametersuivNV");
 			if (GL_ISAVAILABLE(glProgramSubroutineParametersuivNV))
 			nfglProgramSubroutineParametersuivNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1D:
-			D(funcname = "glProgramUniform1d");
 			if (GL_ISAVAILABLE(glProgramUniform1d))
 			nfglProgramUniform1d(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DEXT:
-			D(funcname = "glProgramUniform1dEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1dEXT))
 			nfglProgramUniform1dEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DV:
-			D(funcname = "glProgramUniform1dv");
 			if (GL_ISAVAILABLE(glProgramUniform1dv))
 			nfglProgramUniform1dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1DVEXT:
-			D(funcname = "glProgramUniform1dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1dvEXT))
 			nfglProgramUniform1dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1F:
-			D(funcname = "glProgramUniform1f");
 			if (GL_ISAVAILABLE(glProgramUniform1f))
 			nfglProgramUniform1f(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FEXT:
-			D(funcname = "glProgramUniform1fEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1fEXT))
 			nfglProgramUniform1fEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FV:
-			D(funcname = "glProgramUniform1fv");
 			if (GL_ISAVAILABLE(glProgramUniform1fv))
 			nfglProgramUniform1fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1FVEXT:
-			D(funcname = "glProgramUniform1fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1fvEXT))
 			nfglProgramUniform1fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I:
-			D(funcname = "glProgramUniform1i");
 			if (GL_ISAVAILABLE(glProgramUniform1i))
 			nfglProgramUniform1i(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64ARB:
-			D(funcname = "glProgramUniform1i64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform1i64ARB))
 			nfglProgramUniform1i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64NV:
-			D(funcname = "glProgramUniform1i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform1i64NV))
 			nfglProgramUniform1i64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64VARB:
-			D(funcname = "glProgramUniform1i64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform1i64vARB))
 			nfglProgramUniform1i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1I64VNV:
-			D(funcname = "glProgramUniform1i64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform1i64vNV))
 			nfglProgramUniform1i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IEXT:
-			D(funcname = "glProgramUniform1iEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1iEXT))
 			nfglProgramUniform1iEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IV:
-			D(funcname = "glProgramUniform1iv");
 			if (GL_ISAVAILABLE(glProgramUniform1iv))
 			nfglProgramUniform1iv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1IVEXT:
-			D(funcname = "glProgramUniform1ivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1ivEXT))
 			nfglProgramUniform1ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI:
-			D(funcname = "glProgramUniform1ui");
 			if (GL_ISAVAILABLE(glProgramUniform1ui))
 			nfglProgramUniform1ui(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64ARB:
-			D(funcname = "glProgramUniform1ui64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform1ui64ARB))
 			nfglProgramUniform1ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64NV:
-			D(funcname = "glProgramUniform1ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform1ui64NV))
 			nfglProgramUniform1ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64VARB:
-			D(funcname = "glProgramUniform1ui64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform1ui64vARB))
 			nfglProgramUniform1ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UI64VNV:
-			D(funcname = "glProgramUniform1ui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform1ui64vNV))
 			nfglProgramUniform1ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIEXT:
-			D(funcname = "glProgramUniform1uiEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1uiEXT))
 			nfglProgramUniform1uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIV:
-			D(funcname = "glProgramUniform1uiv");
 			if (GL_ISAVAILABLE(glProgramUniform1uiv))
 			nfglProgramUniform1uiv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM1UIVEXT:
-			D(funcname = "glProgramUniform1uivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform1uivEXT))
 			nfglProgramUniform1uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2D:
-			D(funcname = "glProgramUniform2d");
 			if (GL_ISAVAILABLE(glProgramUniform2d))
 			nfglProgramUniform2d(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DEXT:
-			D(funcname = "glProgramUniform2dEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2dEXT))
 			nfglProgramUniform2dEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DV:
-			D(funcname = "glProgramUniform2dv");
 			if (GL_ISAVAILABLE(glProgramUniform2dv))
 			nfglProgramUniform2dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2DVEXT:
-			D(funcname = "glProgramUniform2dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2dvEXT))
 			nfglProgramUniform2dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2F:
-			D(funcname = "glProgramUniform2f");
 			if (GL_ISAVAILABLE(glProgramUniform2f))
 			nfglProgramUniform2f(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FEXT:
-			D(funcname = "glProgramUniform2fEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2fEXT))
 			nfglProgramUniform2fEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FV:
-			D(funcname = "glProgramUniform2fv");
 			if (GL_ISAVAILABLE(glProgramUniform2fv))
 			nfglProgramUniform2fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2FVEXT:
-			D(funcname = "glProgramUniform2fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2fvEXT))
 			nfglProgramUniform2fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I:
-			D(funcname = "glProgramUniform2i");
 			if (GL_ISAVAILABLE(glProgramUniform2i))
 			nfglProgramUniform2i(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64ARB:
-			D(funcname = "glProgramUniform2i64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform2i64ARB))
 			nfglProgramUniform2i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64NV:
-			D(funcname = "glProgramUniform2i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform2i64NV))
 			nfglProgramUniform2i64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64VARB:
-			D(funcname = "glProgramUniform2i64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform2i64vARB))
 			nfglProgramUniform2i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2I64VNV:
-			D(funcname = "glProgramUniform2i64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform2i64vNV))
 			nfglProgramUniform2i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IEXT:
-			D(funcname = "glProgramUniform2iEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2iEXT))
 			nfglProgramUniform2iEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IV:
-			D(funcname = "glProgramUniform2iv");
 			if (GL_ISAVAILABLE(glProgramUniform2iv))
 			nfglProgramUniform2iv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2IVEXT:
-			D(funcname = "glProgramUniform2ivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2ivEXT))
 			nfglProgramUniform2ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI:
-			D(funcname = "glProgramUniform2ui");
 			if (GL_ISAVAILABLE(glProgramUniform2ui))
 			nfglProgramUniform2ui(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64ARB:
-			D(funcname = "glProgramUniform2ui64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform2ui64ARB))
 			nfglProgramUniform2ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64NV:
-			D(funcname = "glProgramUniform2ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform2ui64NV))
 			nfglProgramUniform2ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64VARB:
-			D(funcname = "glProgramUniform2ui64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform2ui64vARB))
 			nfglProgramUniform2ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UI64VNV:
-			D(funcname = "glProgramUniform2ui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform2ui64vNV))
 			nfglProgramUniform2ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIEXT:
-			D(funcname = "glProgramUniform2uiEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2uiEXT))
 			nfglProgramUniform2uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIV:
-			D(funcname = "glProgramUniform2uiv");
 			if (GL_ISAVAILABLE(glProgramUniform2uiv))
 			nfglProgramUniform2uiv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM2UIVEXT:
-			D(funcname = "glProgramUniform2uivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform2uivEXT))
 			nfglProgramUniform2uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3D:
-			D(funcname = "glProgramUniform3d");
 			if (GL_ISAVAILABLE(glProgramUniform3d))
 			nfglProgramUniform3d(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DEXT:
-			D(funcname = "glProgramUniform3dEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3dEXT))
 			nfglProgramUniform3dEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DV:
-			D(funcname = "glProgramUniform3dv");
 			if (GL_ISAVAILABLE(glProgramUniform3dv))
 			nfglProgramUniform3dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3DVEXT:
-			D(funcname = "glProgramUniform3dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3dvEXT))
 			nfglProgramUniform3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3F:
-			D(funcname = "glProgramUniform3f");
 			if (GL_ISAVAILABLE(glProgramUniform3f))
 			nfglProgramUniform3f(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FEXT:
-			D(funcname = "glProgramUniform3fEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3fEXT))
 			nfglProgramUniform3fEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FV:
-			D(funcname = "glProgramUniform3fv");
 			if (GL_ISAVAILABLE(glProgramUniform3fv))
 			nfglProgramUniform3fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3FVEXT:
-			D(funcname = "glProgramUniform3fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3fvEXT))
 			nfglProgramUniform3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I:
-			D(funcname = "glProgramUniform3i");
 			if (GL_ISAVAILABLE(glProgramUniform3i))
 			nfglProgramUniform3i(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64ARB:
-			D(funcname = "glProgramUniform3i64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform3i64ARB))
 			nfglProgramUniform3i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64NV:
-			D(funcname = "glProgramUniform3i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform3i64NV))
 			nfglProgramUniform3i64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64VARB:
-			D(funcname = "glProgramUniform3i64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform3i64vARB))
 			nfglProgramUniform3i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3I64VNV:
-			D(funcname = "glProgramUniform3i64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform3i64vNV))
 			nfglProgramUniform3i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IEXT:
-			D(funcname = "glProgramUniform3iEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3iEXT))
 			nfglProgramUniform3iEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IV:
-			D(funcname = "glProgramUniform3iv");
 			if (GL_ISAVAILABLE(glProgramUniform3iv))
 			nfglProgramUniform3iv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3IVEXT:
-			D(funcname = "glProgramUniform3ivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3ivEXT))
 			nfglProgramUniform3ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI:
-			D(funcname = "glProgramUniform3ui");
 			if (GL_ISAVAILABLE(glProgramUniform3ui))
 			nfglProgramUniform3ui(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64ARB:
-			D(funcname = "glProgramUniform3ui64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform3ui64ARB))
 			nfglProgramUniform3ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64NV:
-			D(funcname = "glProgramUniform3ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform3ui64NV))
 			nfglProgramUniform3ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64VARB:
-			D(funcname = "glProgramUniform3ui64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform3ui64vARB))
 			nfglProgramUniform3ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UI64VNV:
-			D(funcname = "glProgramUniform3ui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform3ui64vNV))
 			nfglProgramUniform3ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIEXT:
-			D(funcname = "glProgramUniform3uiEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3uiEXT))
 			nfglProgramUniform3uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIV:
-			D(funcname = "glProgramUniform3uiv");
 			if (GL_ISAVAILABLE(glProgramUniform3uiv))
 			nfglProgramUniform3uiv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM3UIVEXT:
-			D(funcname = "glProgramUniform3uivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform3uivEXT))
 			nfglProgramUniform3uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4D:
-			D(funcname = "glProgramUniform4d");
 			if (GL_ISAVAILABLE(glProgramUniform4d))
 			nfglProgramUniform4d(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DEXT:
-			D(funcname = "glProgramUniform4dEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4dEXT))
 			nfglProgramUniform4dEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DV:
-			D(funcname = "glProgramUniform4dv");
 			if (GL_ISAVAILABLE(glProgramUniform4dv))
 			nfglProgramUniform4dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4DVEXT:
-			D(funcname = "glProgramUniform4dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4dvEXT))
 			nfglProgramUniform4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4F:
-			D(funcname = "glProgramUniform4f");
 			if (GL_ISAVAILABLE(glProgramUniform4f))
 			nfglProgramUniform4f(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FEXT:
-			D(funcname = "glProgramUniform4fEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4fEXT))
 			nfglProgramUniform4fEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FV:
-			D(funcname = "glProgramUniform4fv");
 			if (GL_ISAVAILABLE(glProgramUniform4fv))
 			nfglProgramUniform4fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4FVEXT:
-			D(funcname = "glProgramUniform4fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4fvEXT))
 			nfglProgramUniform4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I:
-			D(funcname = "glProgramUniform4i");
 			if (GL_ISAVAILABLE(glProgramUniform4i))
 			nfglProgramUniform4i(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64ARB:
-			D(funcname = "glProgramUniform4i64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform4i64ARB))
 			nfglProgramUniform4i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64NV:
-			D(funcname = "glProgramUniform4i64NV");
 			if (GL_ISAVAILABLE(glProgramUniform4i64NV))
 			nfglProgramUniform4i64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64VARB:
-			D(funcname = "glProgramUniform4i64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform4i64vARB))
 			nfglProgramUniform4i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4I64VNV:
-			D(funcname = "glProgramUniform4i64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform4i64vNV))
 			nfglProgramUniform4i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IEXT:
-			D(funcname = "glProgramUniform4iEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4iEXT))
 			nfglProgramUniform4iEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IV:
-			D(funcname = "glProgramUniform4iv");
 			if (GL_ISAVAILABLE(glProgramUniform4iv))
 			nfglProgramUniform4iv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4IVEXT:
-			D(funcname = "glProgramUniform4ivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4ivEXT))
 			nfglProgramUniform4ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI:
-			D(funcname = "glProgramUniform4ui");
 			if (GL_ISAVAILABLE(glProgramUniform4ui))
 			nfglProgramUniform4ui(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64ARB:
-			D(funcname = "glProgramUniform4ui64ARB");
 			if (GL_ISAVAILABLE(glProgramUniform4ui64ARB))
 			nfglProgramUniform4ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64NV:
-			D(funcname = "glProgramUniform4ui64NV");
 			if (GL_ISAVAILABLE(glProgramUniform4ui64NV))
 			nfglProgramUniform4ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64VARB:
-			D(funcname = "glProgramUniform4ui64vARB");
 			if (GL_ISAVAILABLE(glProgramUniform4ui64vARB))
 			nfglProgramUniform4ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UI64VNV:
-			D(funcname = "glProgramUniform4ui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniform4ui64vNV))
 			nfglProgramUniform4ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIEXT:
-			D(funcname = "glProgramUniform4uiEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4uiEXT))
 			nfglProgramUniform4uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIV:
-			D(funcname = "glProgramUniform4uiv");
 			if (GL_ISAVAILABLE(glProgramUniform4uiv))
 			nfglProgramUniform4uiv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORM4UIVEXT:
-			D(funcname = "glProgramUniform4uivEXT");
 			if (GL_ISAVAILABLE(glProgramUniform4uivEXT))
 			nfglProgramUniform4uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64ARB:
-			D(funcname = "glProgramUniformHandleui64ARB");
 			if (GL_ISAVAILABLE(glProgramUniformHandleui64ARB))
 			nfglProgramUniformHandleui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64NV:
-			D(funcname = "glProgramUniformHandleui64NV");
 			if (GL_ISAVAILABLE(glProgramUniformHandleui64NV))
 			nfglProgramUniformHandleui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64VARB:
-			D(funcname = "glProgramUniformHandleui64vARB");
 			if (GL_ISAVAILABLE(glProgramUniformHandleui64vARB))
 			nfglProgramUniformHandleui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMHANDLEUI64VNV:
-			D(funcname = "glProgramUniformHandleui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniformHandleui64vNV))
 			nfglProgramUniformHandleui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DV:
-			D(funcname = "glProgramUniformMatrix2dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2dv))
 			nfglProgramUniformMatrix2dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2DVEXT:
-			D(funcname = "glProgramUniformMatrix2dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2dvEXT))
 			nfglProgramUniformMatrix2dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FV:
-			D(funcname = "glProgramUniformMatrix2fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2fv))
 			nfglProgramUniformMatrix2fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2FVEXT:
-			D(funcname = "glProgramUniformMatrix2fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2fvEXT))
 			nfglProgramUniformMatrix2fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DV:
-			D(funcname = "glProgramUniformMatrix2x3dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3dv))
 			nfglProgramUniformMatrix2x3dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3DVEXT:
-			D(funcname = "glProgramUniformMatrix2x3dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3dvEXT))
 			nfglProgramUniformMatrix2x3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FV:
-			D(funcname = "glProgramUniformMatrix2x3fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3fv))
 			nfglProgramUniformMatrix2x3fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X3FVEXT:
-			D(funcname = "glProgramUniformMatrix2x3fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x3fvEXT))
 			nfglProgramUniformMatrix2x3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DV:
-			D(funcname = "glProgramUniformMatrix2x4dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4dv))
 			nfglProgramUniformMatrix2x4dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4DVEXT:
-			D(funcname = "glProgramUniformMatrix2x4dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4dvEXT))
 			nfglProgramUniformMatrix2x4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FV:
-			D(funcname = "glProgramUniformMatrix2x4fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4fv))
 			nfglProgramUniformMatrix2x4fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX2X4FVEXT:
-			D(funcname = "glProgramUniformMatrix2x4fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix2x4fvEXT))
 			nfglProgramUniformMatrix2x4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DV:
-			D(funcname = "glProgramUniformMatrix3dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3dv))
 			nfglProgramUniformMatrix3dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3DVEXT:
-			D(funcname = "glProgramUniformMatrix3dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3dvEXT))
 			nfglProgramUniformMatrix3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FV:
-			D(funcname = "glProgramUniformMatrix3fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3fv))
 			nfglProgramUniformMatrix3fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3FVEXT:
-			D(funcname = "glProgramUniformMatrix3fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3fvEXT))
 			nfglProgramUniformMatrix3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DV:
-			D(funcname = "glProgramUniformMatrix3x2dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2dv))
 			nfglProgramUniformMatrix3x2dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2DVEXT:
-			D(funcname = "glProgramUniformMatrix3x2dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2dvEXT))
 			nfglProgramUniformMatrix3x2dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FV:
-			D(funcname = "glProgramUniformMatrix3x2fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2fv))
 			nfglProgramUniformMatrix3x2fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X2FVEXT:
-			D(funcname = "glProgramUniformMatrix3x2fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x2fvEXT))
 			nfglProgramUniformMatrix3x2fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DV:
-			D(funcname = "glProgramUniformMatrix3x4dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4dv))
 			nfglProgramUniformMatrix3x4dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4DVEXT:
-			D(funcname = "glProgramUniformMatrix3x4dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4dvEXT))
 			nfglProgramUniformMatrix3x4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FV:
-			D(funcname = "glProgramUniformMatrix3x4fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4fv))
 			nfglProgramUniformMatrix3x4fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX3X4FVEXT:
-			D(funcname = "glProgramUniformMatrix3x4fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix3x4fvEXT))
 			nfglProgramUniformMatrix3x4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DV:
-			D(funcname = "glProgramUniformMatrix4dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4dv))
 			nfglProgramUniformMatrix4dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4DVEXT:
-			D(funcname = "glProgramUniformMatrix4dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4dvEXT))
 			nfglProgramUniformMatrix4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FV:
-			D(funcname = "glProgramUniformMatrix4fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4fv))
 			nfglProgramUniformMatrix4fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4FVEXT:
-			D(funcname = "glProgramUniformMatrix4fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4fvEXT))
 			nfglProgramUniformMatrix4fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DV:
-			D(funcname = "glProgramUniformMatrix4x2dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2dv))
 			nfglProgramUniformMatrix4x2dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2DVEXT:
-			D(funcname = "glProgramUniformMatrix4x2dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2dvEXT))
 			nfglProgramUniformMatrix4x2dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FV:
-			D(funcname = "glProgramUniformMatrix4x2fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2fv))
 			nfglProgramUniformMatrix4x2fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X2FVEXT:
-			D(funcname = "glProgramUniformMatrix4x2fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x2fvEXT))
 			nfglProgramUniformMatrix4x2fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DV:
-			D(funcname = "glProgramUniformMatrix4x3dv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3dv))
 			nfglProgramUniformMatrix4x3dv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3DVEXT:
-			D(funcname = "glProgramUniformMatrix4x3dvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3dvEXT))
 			nfglProgramUniformMatrix4x3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FV:
-			D(funcname = "glProgramUniformMatrix4x3fv");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3fv))
 			nfglProgramUniformMatrix4x3fv(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMMATRIX4X3FVEXT:
-			D(funcname = "glProgramUniformMatrix4x3fvEXT");
 			if (GL_ISAVAILABLE(glProgramUniformMatrix4x3fvEXT))
 			nfglProgramUniformMatrix4x3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMUI64NV:
-			D(funcname = "glProgramUniformui64NV");
 			if (GL_ISAVAILABLE(glProgramUniformui64NV))
 			nfglProgramUniformui64NV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMUNIFORMUI64VNV:
-			D(funcname = "glProgramUniformui64vNV");
 			if (GL_ISAVAILABLE(glProgramUniformui64vNV))
 			nfglProgramUniformui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLPROGRAMVERTEXLIMITNV:
-			D(funcname = "glProgramVertexLimitNV");
 			if (GL_ISAVAILABLE(glProgramVertexLimitNV))
 			nfglProgramVertexLimitNV(nf_params);
 			break;
 		case NFOSMESA_GLPROVOKINGVERTEX:
-			D(funcname = "glProvokingVertex");
 			if (GL_ISAVAILABLE(glProvokingVertex))
 			nfglProvokingVertex(nf_params);
 			break;
 		case NFOSMESA_GLPROVOKINGVERTEXEXT:
-			D(funcname = "glProvokingVertexEXT");
 			if (GL_ISAVAILABLE(glProvokingVertexEXT))
 			nfglProvokingVertexEXT(nf_params);
 			break;
 		case NFOSMESA_GLPUSHATTRIB:
-			D(funcname = "glPushAttrib");
 			if (GL_ISAVAILABLE(glPushAttrib))
 			nfglPushAttrib(nf_params);
 			break;
 		case NFOSMESA_GLPUSHCLIENTATTRIB:
-			D(funcname = "glPushClientAttrib");
 			if (GL_ISAVAILABLE(glPushClientAttrib))
 			nfglPushClientAttrib(nf_params);
 			break;
 		case NFOSMESA_GLPUSHCLIENTATTRIBDEFAULTEXT:
-			D(funcname = "glPushClientAttribDefaultEXT");
 			if (GL_ISAVAILABLE(glPushClientAttribDefaultEXT))
 			nfglPushClientAttribDefaultEXT(nf_params);
 			break;
 		case NFOSMESA_GLPUSHDEBUGGROUP:
-			D(funcname = "glPushDebugGroup");
 			if (GL_ISAVAILABLE(glPushDebugGroup))
 			nfglPushDebugGroup(nf_params);
 			break;
 		case NFOSMESA_GLPUSHGROUPMARKEREXT:
-			D(funcname = "glPushGroupMarkerEXT");
 			if (GL_ISAVAILABLE(glPushGroupMarkerEXT))
 			nfglPushGroupMarkerEXT(nf_params);
 			break;
 		case NFOSMESA_GLPUSHMATRIX:
-			D(funcname = "glPushMatrix");
 			if (GL_ISAVAILABLE(glPushMatrix))
 			nfglPushMatrix(nf_params);
 			break;
 		case NFOSMESA_GLPUSHNAME:
-			D(funcname = "glPushName");
 			if (GL_ISAVAILABLE(glPushName))
 			nfglPushName(nf_params);
 			break;
 		case NFOSMESA_GLQUERYCOUNTER:
-			D(funcname = "glQueryCounter");
 			if (GL_ISAVAILABLE(glQueryCounter))
 			nfglQueryCounter(nf_params);
 			break;
 		case NFOSMESA_GLQUERYMATRIXXOES:
-			D(funcname = "glQueryMatrixxOES");
 			if (GL_ISAVAILABLE(glQueryMatrixxOES))
 			ret = nfglQueryMatrixxOES(nf_params);
 			break;
 		case NFOSMESA_GLQUERYOBJECTPARAMETERUIAMD:
-			D(funcname = "glQueryObjectParameteruiAMD");
 			if (GL_ISAVAILABLE(glQueryObjectParameteruiAMD))
 			nfglQueryObjectParameteruiAMD(nf_params);
 			break;
 		case NFOSMESA_GLQUERYRESOURCENV:
-			D(funcname = "glQueryResourceNV");
 			if (GL_ISAVAILABLE(glQueryResourceNV))
 			ret = nfglQueryResourceNV(nf_params);
 			break;
 		case NFOSMESA_GLQUERYRESOURCETAGNV:
-			D(funcname = "glQueryResourceTagNV");
 			if (GL_ISAVAILABLE(glQueryResourceTagNV))
 			nfglQueryResourceTagNV(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2D:
-			D(funcname = "glRasterPos2d");
 			if (GL_ISAVAILABLE(glRasterPos2d))
 			nfglRasterPos2d(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2DV:
-			D(funcname = "glRasterPos2dv");
 			if (GL_ISAVAILABLE(glRasterPos2dv))
 			nfglRasterPos2dv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2F:
-			D(funcname = "glRasterPos2f");
 			if (GL_ISAVAILABLE(glRasterPos2f))
 			nfglRasterPos2f(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2FV:
-			D(funcname = "glRasterPos2fv");
 			if (GL_ISAVAILABLE(glRasterPos2fv))
 			nfglRasterPos2fv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2I:
-			D(funcname = "glRasterPos2i");
 			if (GL_ISAVAILABLE(glRasterPos2i))
 			nfglRasterPos2i(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2IV:
-			D(funcname = "glRasterPos2iv");
 			if (GL_ISAVAILABLE(glRasterPos2iv))
 			nfglRasterPos2iv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2S:
-			D(funcname = "glRasterPos2s");
 			if (GL_ISAVAILABLE(glRasterPos2s))
 			nfglRasterPos2s(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2SV:
-			D(funcname = "glRasterPos2sv");
 			if (GL_ISAVAILABLE(glRasterPos2sv))
 			nfglRasterPos2sv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2XOES:
-			D(funcname = "glRasterPos2xOES");
 			if (GL_ISAVAILABLE(glRasterPos2xOES))
 			nfglRasterPos2xOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS2XVOES:
-			D(funcname = "glRasterPos2xvOES");
 			if (GL_ISAVAILABLE(glRasterPos2xvOES))
 			nfglRasterPos2xvOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3D:
-			D(funcname = "glRasterPos3d");
 			if (GL_ISAVAILABLE(glRasterPos3d))
 			nfglRasterPos3d(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3DV:
-			D(funcname = "glRasterPos3dv");
 			if (GL_ISAVAILABLE(glRasterPos3dv))
 			nfglRasterPos3dv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3F:
-			D(funcname = "glRasterPos3f");
 			if (GL_ISAVAILABLE(glRasterPos3f))
 			nfglRasterPos3f(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3FV:
-			D(funcname = "glRasterPos3fv");
 			if (GL_ISAVAILABLE(glRasterPos3fv))
 			nfglRasterPos3fv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3I:
-			D(funcname = "glRasterPos3i");
 			if (GL_ISAVAILABLE(glRasterPos3i))
 			nfglRasterPos3i(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3IV:
-			D(funcname = "glRasterPos3iv");
 			if (GL_ISAVAILABLE(glRasterPos3iv))
 			nfglRasterPos3iv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3S:
-			D(funcname = "glRasterPos3s");
 			if (GL_ISAVAILABLE(glRasterPos3s))
 			nfglRasterPos3s(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3SV:
-			D(funcname = "glRasterPos3sv");
 			if (GL_ISAVAILABLE(glRasterPos3sv))
 			nfglRasterPos3sv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3XOES:
-			D(funcname = "glRasterPos3xOES");
 			if (GL_ISAVAILABLE(glRasterPos3xOES))
 			nfglRasterPos3xOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS3XVOES:
-			D(funcname = "glRasterPos3xvOES");
 			if (GL_ISAVAILABLE(glRasterPos3xvOES))
 			nfglRasterPos3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4D:
-			D(funcname = "glRasterPos4d");
 			if (GL_ISAVAILABLE(glRasterPos4d))
 			nfglRasterPos4d(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4DV:
-			D(funcname = "glRasterPos4dv");
 			if (GL_ISAVAILABLE(glRasterPos4dv))
 			nfglRasterPos4dv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4F:
-			D(funcname = "glRasterPos4f");
 			if (GL_ISAVAILABLE(glRasterPos4f))
 			nfglRasterPos4f(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4FV:
-			D(funcname = "glRasterPos4fv");
 			if (GL_ISAVAILABLE(glRasterPos4fv))
 			nfglRasterPos4fv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4I:
-			D(funcname = "glRasterPos4i");
 			if (GL_ISAVAILABLE(glRasterPos4i))
 			nfglRasterPos4i(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4IV:
-			D(funcname = "glRasterPos4iv");
 			if (GL_ISAVAILABLE(glRasterPos4iv))
 			nfglRasterPos4iv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4S:
-			D(funcname = "glRasterPos4s");
 			if (GL_ISAVAILABLE(glRasterPos4s))
 			nfglRasterPos4s(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4SV:
-			D(funcname = "glRasterPos4sv");
 			if (GL_ISAVAILABLE(glRasterPos4sv))
 			nfglRasterPos4sv(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4XOES:
-			D(funcname = "glRasterPos4xOES");
 			if (GL_ISAVAILABLE(glRasterPos4xOES))
 			nfglRasterPos4xOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERPOS4XVOES:
-			D(funcname = "glRasterPos4xvOES");
 			if (GL_ISAVAILABLE(glRasterPos4xvOES))
 			nfglRasterPos4xvOES(nf_params);
 			break;
 		case NFOSMESA_GLRASTERSAMPLESEXT:
-			D(funcname = "glRasterSamplesEXT");
 			if (GL_ISAVAILABLE(glRasterSamplesEXT))
 			nfglRasterSamplesEXT(nf_params);
 			break;
 		case NFOSMESA_GLREADBUFFER:
-			D(funcname = "glReadBuffer");
 			if (GL_ISAVAILABLE(glReadBuffer))
 			nfglReadBuffer(nf_params);
 			break;
 		case NFOSMESA_GLREADINSTRUMENTSSGIX:
-			D(funcname = "glReadInstrumentsSGIX");
 			if (GL_ISAVAILABLE(glReadInstrumentsSGIX))
 			nfglReadInstrumentsSGIX(nf_params);
 			break;
 		case NFOSMESA_GLREADPIXELS:
-			D(funcname = "glReadPixels");
 			if (GL_ISAVAILABLE(glReadPixels))
 			nfglReadPixels(nf_params);
 			break;
 		case NFOSMESA_GLREADNPIXELS:
-			D(funcname = "glReadnPixels");
 			if (GL_ISAVAILABLE(glReadnPixels))
 			nfglReadnPixels(nf_params);
 			break;
 		case NFOSMESA_GLREADNPIXELSARB:
-			D(funcname = "glReadnPixelsARB");
 			if (GL_ISAVAILABLE(glReadnPixelsARB))
 			nfglReadnPixelsARB(nf_params);
 			break;
 		case NFOSMESA_GLRECTD:
-			D(funcname = "glRectd");
 			if (GL_ISAVAILABLE(glRectd))
 			nfglRectd(nf_params);
 			break;
 		case NFOSMESA_GLRECTDV:
-			D(funcname = "glRectdv");
 			if (GL_ISAVAILABLE(glRectdv))
 			nfglRectdv(nf_params);
 			break;
 		case NFOSMESA_GLRECTF:
-			D(funcname = "glRectf");
 			if (GL_ISAVAILABLE(glRectf))
 			nfglRectf(nf_params);
 			break;
 		case NFOSMESA_GLRECTFV:
-			D(funcname = "glRectfv");
 			if (GL_ISAVAILABLE(glRectfv))
 			nfglRectfv(nf_params);
 			break;
 		case NFOSMESA_GLRECTI:
-			D(funcname = "glRecti");
 			if (GL_ISAVAILABLE(glRecti))
 			nfglRecti(nf_params);
 			break;
 		case NFOSMESA_GLRECTIV:
-			D(funcname = "glRectiv");
 			if (GL_ISAVAILABLE(glRectiv))
 			nfglRectiv(nf_params);
 			break;
 		case NFOSMESA_GLRECTS:
-			D(funcname = "glRects");
 			if (GL_ISAVAILABLE(glRects))
 			nfglRects(nf_params);
 			break;
 		case NFOSMESA_GLRECTSV:
-			D(funcname = "glRectsv");
 			if (GL_ISAVAILABLE(glRectsv))
 			nfglRectsv(nf_params);
 			break;
 		case NFOSMESA_GLRECTXOES:
-			D(funcname = "glRectxOES");
 			if (GL_ISAVAILABLE(glRectxOES))
 			nfglRectxOES(nf_params);
 			break;
 		case NFOSMESA_GLRECTXVOES:
-			D(funcname = "glRectxvOES");
 			if (GL_ISAVAILABLE(glRectxvOES))
 			nfglRectxvOES(nf_params);
 			break;
 		case NFOSMESA_GLREFERENCEPLANESGIX:
-			D(funcname = "glReferencePlaneSGIX");
 			if (GL_ISAVAILABLE(glReferencePlaneSGIX))
 			nfglReferencePlaneSGIX(nf_params);
 			break;
 		case NFOSMESA_GLRELEASEKEYEDMUTEXWIN32EXT:
-			D(funcname = "glReleaseKeyedMutexWin32EXT");
 			if (GL_ISAVAILABLE(glReleaseKeyedMutexWin32EXT))
 			ret = nfglReleaseKeyedMutexWin32EXT(nf_params);
 			break;
 		case NFOSMESA_GLRELEASESHADERCOMPILER:
-			D(funcname = "glReleaseShaderCompiler");
 			if (GL_ISAVAILABLE(glReleaseShaderCompiler))
 			nfglReleaseShaderCompiler(nf_params);
 			break;
 		case NFOSMESA_GLRENDERGPUMASKNV:
-			D(funcname = "glRenderGpuMaskNV");
 			if (GL_ISAVAILABLE(glRenderGpuMaskNV))
 			nfglRenderGpuMaskNV(nf_params);
 			break;
 		case NFOSMESA_GLRENDERMODE:
-			D(funcname = "glRenderMode");
 			if (GL_ISAVAILABLE(glRenderMode))
 			ret = nfglRenderMode(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGE:
-			D(funcname = "glRenderbufferStorage");
 			if (GL_ISAVAILABLE(glRenderbufferStorage))
 			nfglRenderbufferStorage(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEEXT:
-			D(funcname = "glRenderbufferStorageEXT");
 			if (GL_ISAVAILABLE(glRenderbufferStorageEXT))
 			nfglRenderbufferStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLE:
-			D(funcname = "glRenderbufferStorageMultisample");
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisample))
 			nfglRenderbufferStorageMultisample(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD:
-			D(funcname = "glRenderbufferStorageMultisampleAdvancedAMD");
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleAdvancedAMD))
 			nfglRenderbufferStorageMultisampleAdvancedAMD(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENV:
-			D(funcname = "glRenderbufferStorageMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleCoverageNV))
 			nfglRenderbufferStorageMultisampleCoverageNV(nf_params);
 			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLEEXT:
-			D(funcname = "glRenderbufferStorageMultisampleEXT");
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleEXT))
 			nfglRenderbufferStorageMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEPOINTERSUN:
-			D(funcname = "glReplacementCodePointerSUN");
 			if (GL_ISAVAILABLE(glReplacementCodePointerSUN))
 			nfglReplacementCodePointerSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBSUN:
-			D(funcname = "glReplacementCodeubSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeubSUN))
 			nfglReplacementCodeubSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUBVSUN:
-			D(funcname = "glReplacementCodeubvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeubvSUN))
 			nfglReplacementCodeubvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiColor3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor3fVertex3fSUN))
 			nfglReplacementCodeuiColor3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR3FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiColor3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor3fVertex3fvSUN))
 			nfglReplacementCodeuiColor3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiColor4fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor4fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiColor4fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiColor4fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor4fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiColor4fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiColor4ubVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor4ubVertex3fSUN))
 			nfglReplacementCodeuiColor4ubVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUICOLOR4UBVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiColor4ubVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiColor4ubVertex3fvSUN))
 			nfglReplacementCodeuiColor4ubVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiNormal3fVertex3fSUN))
 			nfglReplacementCodeuiNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUINORMAL3FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUISUN:
-			D(funcname = "glReplacementCodeuiSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiSUN))
 			nfglReplacementCodeuiSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fVertex3fSUN))
 			nfglReplacementCodeuiTexCoord2fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUITEXCOORD2FVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiTexCoord2fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiTexCoord2fVertex3fvSUN))
 			nfglReplacementCodeuiTexCoord2fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FSUN:
-			D(funcname = "glReplacementCodeuiVertex3fSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiVertex3fSUN))
 			nfglReplacementCodeuiVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVERTEX3FVSUN:
-			D(funcname = "glReplacementCodeuiVertex3fvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuiVertex3fvSUN))
 			nfglReplacementCodeuiVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUIVSUN:
-			D(funcname = "glReplacementCodeuivSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeuivSUN))
 			nfglReplacementCodeuivSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSSUN:
-			D(funcname = "glReplacementCodeusSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeusSUN))
 			nfglReplacementCodeusSUN(nf_params);
 			break;
 		case NFOSMESA_GLREPLACEMENTCODEUSVSUN:
-			D(funcname = "glReplacementCodeusvSUN");
 			if (GL_ISAVAILABLE(glReplacementCodeusvSUN))
 			nfglReplacementCodeusvSUN(nf_params);
 			break;
 		case NFOSMESA_GLREQUESTRESIDENTPROGRAMSNV:
-			D(funcname = "glRequestResidentProgramsNV");
 			if (GL_ISAVAILABLE(glRequestResidentProgramsNV))
 			nfglRequestResidentProgramsNV(nf_params);
 			break;
 		case NFOSMESA_GLRESETHISTOGRAM:
-			D(funcname = "glResetHistogram");
 			if (GL_ISAVAILABLE(glResetHistogram))
 			nfglResetHistogram(nf_params);
 			break;
 		case NFOSMESA_GLRESETHISTOGRAMEXT:
-			D(funcname = "glResetHistogramEXT");
 			if (GL_ISAVAILABLE(glResetHistogramEXT))
 			nfglResetHistogramEXT(nf_params);
 			break;
 		case NFOSMESA_GLRESETMEMORYOBJECTPARAMETERNV:
-			D(funcname = "glResetMemoryObjectParameterNV");
 			if (GL_ISAVAILABLE(glResetMemoryObjectParameterNV))
 			nfglResetMemoryObjectParameterNV(nf_params);
 			break;
 		case NFOSMESA_GLRESETMINMAX:
-			D(funcname = "glResetMinmax");
 			if (GL_ISAVAILABLE(glResetMinmax))
 			nfglResetMinmax(nf_params);
 			break;
 		case NFOSMESA_GLRESETMINMAXEXT:
-			D(funcname = "glResetMinmaxEXT");
 			if (GL_ISAVAILABLE(glResetMinmaxEXT))
 			nfglResetMinmaxEXT(nf_params);
 			break;
 		case NFOSMESA_GLRESIZEBUFFERSMESA:
-			D(funcname = "glResizeBuffersMESA");
 			if (GL_ISAVAILABLE(glResizeBuffersMESA))
 			nfglResizeBuffersMESA(nf_params);
 			break;
 		case NFOSMESA_GLRESOLVEDEPTHVALUESNV:
-			D(funcname = "glResolveDepthValuesNV");
 			if (GL_ISAVAILABLE(glResolveDepthValuesNV))
 			nfglResolveDepthValuesNV(nf_params);
 			break;
 		case NFOSMESA_GLRESUMETRANSFORMFEEDBACK:
-			D(funcname = "glResumeTransformFeedback");
 			if (GL_ISAVAILABLE(glResumeTransformFeedback))
 			nfglResumeTransformFeedback(nf_params);
 			break;
 		case NFOSMESA_GLRESUMETRANSFORMFEEDBACKNV:
-			D(funcname = "glResumeTransformFeedbackNV");
 			if (GL_ISAVAILABLE(glResumeTransformFeedbackNV))
 			nfglResumeTransformFeedbackNV(nf_params);
 			break;
 		case NFOSMESA_GLROTATED:
-			D(funcname = "glRotated");
 			if (GL_ISAVAILABLE(glRotated))
 			nfglRotated(nf_params);
 			break;
 		case NFOSMESA_GLROTATEF:
-			D(funcname = "glRotatef");
 			if (GL_ISAVAILABLE(glRotatef))
 			nfglRotatef(nf_params);
 			break;
 		case NFOSMESA_GLROTATEXOES:
-			D(funcname = "glRotatexOES");
 			if (GL_ISAVAILABLE(glRotatexOES))
 			nfglRotatexOES(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGE:
-			D(funcname = "glSampleCoverage");
 			if (GL_ISAVAILABLE(glSampleCoverage))
 			nfglSampleCoverage(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGEARB:
-			D(funcname = "glSampleCoverageARB");
 			if (GL_ISAVAILABLE(glSampleCoverageARB))
 			nfglSampleCoverageARB(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLECOVERAGEOES:
-			D(funcname = "glSampleCoverageOES");
 			if (GL_ISAVAILABLE(glSampleCoverageOES))
 			nfglSampleCoverageOES(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEMAPATI:
-			D(funcname = "glSampleMapATI");
 			if (GL_ISAVAILABLE(glSampleMapATI))
 			nfglSampleMapATI(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEMASKEXT:
-			D(funcname = "glSampleMaskEXT");
 			if (GL_ISAVAILABLE(glSampleMaskEXT))
 			nfglSampleMaskEXT(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEMASKINDEXEDNV:
-			D(funcname = "glSampleMaskIndexedNV");
 			if (GL_ISAVAILABLE(glSampleMaskIndexedNV))
 			nfglSampleMaskIndexedNV(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEMASKSGIS:
-			D(funcname = "glSampleMaskSGIS");
 			if (GL_ISAVAILABLE(glSampleMaskSGIS))
 			nfglSampleMaskSGIS(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEMASKI:
-			D(funcname = "glSampleMaski");
 			if (GL_ISAVAILABLE(glSampleMaski))
 			nfglSampleMaski(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEPASS:
-			D(funcname = "glSamplePass");
 			if (GL_ISAVAILABLE(glSamplePass))
 			nfglSamplePass(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEPASSARB:
-			D(funcname = "glSamplePassARB");
 			if (GL_ISAVAILABLE(glSamplePassARB))
 			nfglSamplePassARB(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEPATTERNEXT:
-			D(funcname = "glSamplePatternEXT");
 			if (GL_ISAVAILABLE(glSamplePatternEXT))
 			nfglSamplePatternEXT(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLEPATTERNSGIS:
-			D(funcname = "glSamplePatternSGIS");
 			if (GL_ISAVAILABLE(glSamplePatternSGIS))
 			nfglSamplePatternSGIS(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIIV:
-			D(funcname = "glSamplerParameterIiv");
 			if (GL_ISAVAILABLE(glSamplerParameterIiv))
 			nfglSamplerParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIUIV:
-			D(funcname = "glSamplerParameterIuiv");
 			if (GL_ISAVAILABLE(glSamplerParameterIuiv))
 			nfglSamplerParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERF:
-			D(funcname = "glSamplerParameterf");
 			if (GL_ISAVAILABLE(glSamplerParameterf))
 			nfglSamplerParameterf(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERFV:
-			D(funcname = "glSamplerParameterfv");
 			if (GL_ISAVAILABLE(glSamplerParameterfv))
 			nfglSamplerParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERI:
-			D(funcname = "glSamplerParameteri");
 			if (GL_ISAVAILABLE(glSamplerParameteri))
 			nfglSamplerParameteri(nf_params);
 			break;
 		case NFOSMESA_GLSAMPLERPARAMETERIV:
-			D(funcname = "glSamplerParameteriv");
 			if (GL_ISAVAILABLE(glSamplerParameteriv))
 			nfglSamplerParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLSCALED:
-			D(funcname = "glScaled");
 			if (GL_ISAVAILABLE(glScaled))
 			nfglScaled(nf_params);
 			break;
 		case NFOSMESA_GLSCALEF:
-			D(funcname = "glScalef");
 			if (GL_ISAVAILABLE(glScalef))
 			nfglScalef(nf_params);
 			break;
 		case NFOSMESA_GLSCALEXOES:
-			D(funcname = "glScalexOES");
 			if (GL_ISAVAILABLE(glScalexOES))
 			nfglScalexOES(nf_params);
 			break;
 		case NFOSMESA_GLSCISSOR:
-			D(funcname = "glScissor");
 			if (GL_ISAVAILABLE(glScissor))
 			nfglScissor(nf_params);
 			break;
 		case NFOSMESA_GLSCISSORARRAYV:
-			D(funcname = "glScissorArrayv");
 			if (GL_ISAVAILABLE(glScissorArrayv))
 			nfglScissorArrayv(nf_params);
 			break;
 		case NFOSMESA_GLSCISSOREXCLUSIVEARRAYVNV:
-			D(funcname = "glScissorExclusiveArrayvNV");
 			if (GL_ISAVAILABLE(glScissorExclusiveArrayvNV))
 			nfglScissorExclusiveArrayvNV(nf_params);
 			break;
 		case NFOSMESA_GLSCISSOREXCLUSIVENV:
-			D(funcname = "glScissorExclusiveNV");
 			if (GL_ISAVAILABLE(glScissorExclusiveNV))
 			nfglScissorExclusiveNV(nf_params);
 			break;
 		case NFOSMESA_GLSCISSORINDEXED:
-			D(funcname = "glScissorIndexed");
 			if (GL_ISAVAILABLE(glScissorIndexed))
 			nfglScissorIndexed(nf_params);
 			break;
 		case NFOSMESA_GLSCISSORINDEXEDV:
-			D(funcname = "glScissorIndexedv");
 			if (GL_ISAVAILABLE(glScissorIndexedv))
 			nfglScissorIndexedv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3B:
-			D(funcname = "glSecondaryColor3b");
 			if (GL_ISAVAILABLE(glSecondaryColor3b))
 			nfglSecondaryColor3b(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BEXT:
-			D(funcname = "glSecondaryColor3bEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3bEXT))
 			nfglSecondaryColor3bEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BV:
-			D(funcname = "glSecondaryColor3bv");
 			if (GL_ISAVAILABLE(glSecondaryColor3bv))
 			nfglSecondaryColor3bv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3BVEXT:
-			D(funcname = "glSecondaryColor3bvEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3bvEXT))
 			nfglSecondaryColor3bvEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3D:
-			D(funcname = "glSecondaryColor3d");
 			if (GL_ISAVAILABLE(glSecondaryColor3d))
 			nfglSecondaryColor3d(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DEXT:
-			D(funcname = "glSecondaryColor3dEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3dEXT))
 			nfglSecondaryColor3dEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DV:
-			D(funcname = "glSecondaryColor3dv");
 			if (GL_ISAVAILABLE(glSecondaryColor3dv))
 			nfglSecondaryColor3dv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3DVEXT:
-			D(funcname = "glSecondaryColor3dvEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3dvEXT))
 			nfglSecondaryColor3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3F:
-			D(funcname = "glSecondaryColor3f");
 			if (GL_ISAVAILABLE(glSecondaryColor3f))
 			nfglSecondaryColor3f(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FEXT:
-			D(funcname = "glSecondaryColor3fEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3fEXT))
 			nfglSecondaryColor3fEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FV:
-			D(funcname = "glSecondaryColor3fv");
 			if (GL_ISAVAILABLE(glSecondaryColor3fv))
 			nfglSecondaryColor3fv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3FVEXT:
-			D(funcname = "glSecondaryColor3fvEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3fvEXT))
 			nfglSecondaryColor3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HNV:
-			D(funcname = "glSecondaryColor3hNV");
 			if (GL_ISAVAILABLE(glSecondaryColor3hNV))
 			nfglSecondaryColor3hNV(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3HVNV:
-			D(funcname = "glSecondaryColor3hvNV");
 			if (GL_ISAVAILABLE(glSecondaryColor3hvNV))
 			nfglSecondaryColor3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3I:
-			D(funcname = "glSecondaryColor3i");
 			if (GL_ISAVAILABLE(glSecondaryColor3i))
 			nfglSecondaryColor3i(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IEXT:
-			D(funcname = "glSecondaryColor3iEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3iEXT))
 			nfglSecondaryColor3iEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IV:
-			D(funcname = "glSecondaryColor3iv");
 			if (GL_ISAVAILABLE(glSecondaryColor3iv))
 			nfglSecondaryColor3iv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3IVEXT:
-			D(funcname = "glSecondaryColor3ivEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3ivEXT))
 			nfglSecondaryColor3ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3S:
-			D(funcname = "glSecondaryColor3s");
 			if (GL_ISAVAILABLE(glSecondaryColor3s))
 			nfglSecondaryColor3s(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SEXT:
-			D(funcname = "glSecondaryColor3sEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3sEXT))
 			nfglSecondaryColor3sEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SV:
-			D(funcname = "glSecondaryColor3sv");
 			if (GL_ISAVAILABLE(glSecondaryColor3sv))
 			nfglSecondaryColor3sv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3SVEXT:
-			D(funcname = "glSecondaryColor3svEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3svEXT))
 			nfglSecondaryColor3svEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UB:
-			D(funcname = "glSecondaryColor3ub");
 			if (GL_ISAVAILABLE(glSecondaryColor3ub))
 			nfglSecondaryColor3ub(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBEXT:
-			D(funcname = "glSecondaryColor3ubEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3ubEXT))
 			nfglSecondaryColor3ubEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBV:
-			D(funcname = "glSecondaryColor3ubv");
 			if (GL_ISAVAILABLE(glSecondaryColor3ubv))
 			nfglSecondaryColor3ubv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UBVEXT:
-			D(funcname = "glSecondaryColor3ubvEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3ubvEXT))
 			nfglSecondaryColor3ubvEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UI:
-			D(funcname = "glSecondaryColor3ui");
 			if (GL_ISAVAILABLE(glSecondaryColor3ui))
 			nfglSecondaryColor3ui(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIEXT:
-			D(funcname = "glSecondaryColor3uiEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3uiEXT))
 			nfglSecondaryColor3uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIV:
-			D(funcname = "glSecondaryColor3uiv");
 			if (GL_ISAVAILABLE(glSecondaryColor3uiv))
 			nfglSecondaryColor3uiv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3UIVEXT:
-			D(funcname = "glSecondaryColor3uivEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3uivEXT))
 			nfglSecondaryColor3uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3US:
-			D(funcname = "glSecondaryColor3us");
 			if (GL_ISAVAILABLE(glSecondaryColor3us))
 			nfglSecondaryColor3us(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USEXT:
-			D(funcname = "glSecondaryColor3usEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3usEXT))
 			nfglSecondaryColor3usEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USV:
-			D(funcname = "glSecondaryColor3usv");
 			if (GL_ISAVAILABLE(glSecondaryColor3usv))
 			nfglSecondaryColor3usv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLOR3USVEXT:
-			D(funcname = "glSecondaryColor3usvEXT");
 			if (GL_ISAVAILABLE(glSecondaryColor3usvEXT))
 			nfglSecondaryColor3usvEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORFORMATNV:
-			D(funcname = "glSecondaryColorFormatNV");
 			if (GL_ISAVAILABLE(glSecondaryColorFormatNV))
 			nfglSecondaryColorFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORP3UI:
-			D(funcname = "glSecondaryColorP3ui");
 			if (GL_ISAVAILABLE(glSecondaryColorP3ui))
 			nfglSecondaryColorP3ui(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORP3UIV:
-			D(funcname = "glSecondaryColorP3uiv");
 			if (GL_ISAVAILABLE(glSecondaryColorP3uiv))
 			nfglSecondaryColorP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTER:
-			D(funcname = "glSecondaryColorPointer");
 			if (GL_ISAVAILABLE(glSecondaryColorPointer))
 			nfglSecondaryColorPointer(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTEREXT:
-			D(funcname = "glSecondaryColorPointerEXT");
 			if (GL_ISAVAILABLE(glSecondaryColorPointerEXT))
 			nfglSecondaryColorPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLSECONDARYCOLORPOINTERLISTIBM:
-			D(funcname = "glSecondaryColorPointerListIBM");
 			if (GL_ISAVAILABLE(glSecondaryColorPointerListIBM))
 			nfglSecondaryColorPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLSELECTBUFFER:
-			D(funcname = "glSelectBuffer");
 			if (GL_ISAVAILABLE(glSelectBuffer))
 			nfglSelectBuffer(nf_params);
 			break;
 		case NFOSMESA_GLSELECTPERFMONITORCOUNTERSAMD:
-			D(funcname = "glSelectPerfMonitorCountersAMD");
 			if (GL_ISAVAILABLE(glSelectPerfMonitorCountersAMD))
 			nfglSelectPerfMonitorCountersAMD(nf_params);
 			break;
 		case NFOSMESA_GLSEMAPHOREPARAMETERUI64VEXT:
-			D(funcname = "glSemaphoreParameterui64vEXT");
 			if (GL_ISAVAILABLE(glSemaphoreParameterui64vEXT))
 			nfglSemaphoreParameterui64vEXT(nf_params);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2D:
-			D(funcname = "glSeparableFilter2D");
 			if (GL_ISAVAILABLE(glSeparableFilter2D))
 			nfglSeparableFilter2D(nf_params);
 			break;
 		case NFOSMESA_GLSEPARABLEFILTER2DEXT:
-			D(funcname = "glSeparableFilter2DEXT");
 			if (GL_ISAVAILABLE(glSeparableFilter2DEXT))
 			nfglSeparableFilter2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLSETFENCEAPPLE:
-			D(funcname = "glSetFenceAPPLE");
 			if (GL_ISAVAILABLE(glSetFenceAPPLE))
 			nfglSetFenceAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLSETFENCENV:
-			D(funcname = "glSetFenceNV");
 			if (GL_ISAVAILABLE(glSetFenceNV))
 			nfglSetFenceNV(nf_params);
 			break;
 		case NFOSMESA_GLSETFRAGMENTSHADERCONSTANTATI:
-			D(funcname = "glSetFragmentShaderConstantATI");
 			if (GL_ISAVAILABLE(glSetFragmentShaderConstantATI))
 			nfglSetFragmentShaderConstantATI(nf_params);
 			break;
 		case NFOSMESA_GLSETINVARIANTEXT:
-			D(funcname = "glSetInvariantEXT");
 			if (GL_ISAVAILABLE(glSetInvariantEXT))
 			nfglSetInvariantEXT(nf_params);
 			break;
 		case NFOSMESA_GLSETLOCALCONSTANTEXT:
-			D(funcname = "glSetLocalConstantEXT");
 			if (GL_ISAVAILABLE(glSetLocalConstantEXT))
 			nfglSetLocalConstantEXT(nf_params);
 			break;
 		case NFOSMESA_GLSETMULTISAMPLEFVAMD:
-			D(funcname = "glSetMultisamplefvAMD");
 			if (GL_ISAVAILABLE(glSetMultisamplefvAMD))
 			nfglSetMultisamplefvAMD(nf_params);
 			break;
 		case NFOSMESA_GLSHADEMODEL:
-			D(funcname = "glShadeModel");
 			if (GL_ISAVAILABLE(glShadeModel))
 			nfglShadeModel(nf_params);
 			break;
 		case NFOSMESA_GLSHADERBINARY:
-			D(funcname = "glShaderBinary");
 			if (GL_ISAVAILABLE(glShaderBinary))
 			nfglShaderBinary(nf_params);
 			break;
 		case NFOSMESA_GLSHADEROP1EXT:
-			D(funcname = "glShaderOp1EXT");
 			if (GL_ISAVAILABLE(glShaderOp1EXT))
 			nfglShaderOp1EXT(nf_params);
 			break;
 		case NFOSMESA_GLSHADEROP2EXT:
-			D(funcname = "glShaderOp2EXT");
 			if (GL_ISAVAILABLE(glShaderOp2EXT))
 			nfglShaderOp2EXT(nf_params);
 			break;
 		case NFOSMESA_GLSHADEROP3EXT:
-			D(funcname = "glShaderOp3EXT");
 			if (GL_ISAVAILABLE(glShaderOp3EXT))
 			nfglShaderOp3EXT(nf_params);
 			break;
 		case NFOSMESA_GLSHADERSOURCE:
-			D(funcname = "glShaderSource");
 			if (GL_ISAVAILABLE(glShaderSource))
 			nfglShaderSource(nf_params);
 			break;
 		case NFOSMESA_GLSHADERSOURCEARB:
-			D(funcname = "glShaderSourceARB");
 			if (GL_ISAVAILABLE(glShaderSourceARB))
 			nfglShaderSourceARB(nf_params);
 			break;
 		case NFOSMESA_GLSHADERSTORAGEBLOCKBINDING:
-			D(funcname = "glShaderStorageBlockBinding");
 			if (GL_ISAVAILABLE(glShaderStorageBlockBinding))
 			nfglShaderStorageBlockBinding(nf_params);
 			break;
 		case NFOSMESA_GLSHADINGRATEIMAGEBARRIERNV:
-			D(funcname = "glShadingRateImageBarrierNV");
 			if (GL_ISAVAILABLE(glShadingRateImageBarrierNV))
 			nfglShadingRateImageBarrierNV(nf_params);
 			break;
 		case NFOSMESA_GLSHADINGRATEIMAGEPALETTENV:
-			D(funcname = "glShadingRateImagePaletteNV");
 			if (GL_ISAVAILABLE(glShadingRateImagePaletteNV))
 			nfglShadingRateImagePaletteNV(nf_params);
 			break;
 		case NFOSMESA_GLSHADINGRATESAMPLEORDERCUSTOMNV:
-			D(funcname = "glShadingRateSampleOrderCustomNV");
 			if (GL_ISAVAILABLE(glShadingRateSampleOrderCustomNV))
 			nfglShadingRateSampleOrderCustomNV(nf_params);
 			break;
 		case NFOSMESA_GLSHADINGRATESAMPLEORDERNV:
-			D(funcname = "glShadingRateSampleOrderNV");
 			if (GL_ISAVAILABLE(glShadingRateSampleOrderNV))
 			nfglShadingRateSampleOrderNV(nf_params);
 			break;
 		case NFOSMESA_GLSHARPENTEXFUNCSGIS:
-			D(funcname = "glSharpenTexFuncSGIS");
 			if (GL_ISAVAILABLE(glSharpenTexFuncSGIS))
 			nfglSharpenTexFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLSIGNALSEMAPHOREEXT:
-			D(funcname = "glSignalSemaphoreEXT");
 			if (GL_ISAVAILABLE(glSignalSemaphoreEXT))
 			nfglSignalSemaphoreEXT(nf_params);
 			break;
 		case NFOSMESA_GLSIGNALVKFENCENV:
-			D(funcname = "glSignalVkFenceNV");
 			if (GL_ISAVAILABLE(glSignalVkFenceNV))
 			nfglSignalVkFenceNV(nf_params);
 			break;
 		case NFOSMESA_GLSIGNALVKSEMAPHORENV:
-			D(funcname = "glSignalVkSemaphoreNV");
 			if (GL_ISAVAILABLE(glSignalVkSemaphoreNV))
 			nfglSignalVkSemaphoreNV(nf_params);
 			break;
 		case NFOSMESA_GLSPECIALIZESHADER:
-			D(funcname = "glSpecializeShader");
 			if (GL_ISAVAILABLE(glSpecializeShader))
 			nfglSpecializeShader(nf_params);
 			break;
 		case NFOSMESA_GLSPECIALIZESHADERARB:
-			D(funcname = "glSpecializeShaderARB");
 			if (GL_ISAVAILABLE(glSpecializeShaderARB))
 			nfglSpecializeShaderARB(nf_params);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFSGIX:
-			D(funcname = "glSpriteParameterfSGIX");
 			if (GL_ISAVAILABLE(glSpriteParameterfSGIX))
 			nfglSpriteParameterfSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERFVSGIX:
-			D(funcname = "glSpriteParameterfvSGIX");
 			if (GL_ISAVAILABLE(glSpriteParameterfvSGIX))
 			nfglSpriteParameterfvSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERISGIX:
-			D(funcname = "glSpriteParameteriSGIX");
 			if (GL_ISAVAILABLE(glSpriteParameteriSGIX))
 			nfglSpriteParameteriSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSPRITEPARAMETERIVSGIX:
-			D(funcname = "glSpriteParameterivSGIX");
 			if (GL_ISAVAILABLE(glSpriteParameterivSGIX))
 			nfglSpriteParameterivSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSTARTINSTRUMENTSSGIX:
-			D(funcname = "glStartInstrumentsSGIX");
 			if (GL_ISAVAILABLE(glStartInstrumentsSGIX))
 			nfglStartInstrumentsSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSTATECAPTURENV:
-			D(funcname = "glStateCaptureNV");
 			if (GL_ISAVAILABLE(glStateCaptureNV))
 			nfglStateCaptureNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILCLEARTAGEXT:
-			D(funcname = "glStencilClearTagEXT");
 			if (GL_ISAVAILABLE(glStencilClearTagEXT))
 			nfglStencilClearTagEXT(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILFILLPATHINSTANCEDNV:
-			D(funcname = "glStencilFillPathInstancedNV");
 			if (GL_ISAVAILABLE(glStencilFillPathInstancedNV))
 			nfglStencilFillPathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILFILLPATHNV:
-			D(funcname = "glStencilFillPathNV");
 			if (GL_ISAVAILABLE(glStencilFillPathNV))
 			nfglStencilFillPathNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILFUNC:
-			D(funcname = "glStencilFunc");
 			if (GL_ISAVAILABLE(glStencilFunc))
 			nfglStencilFunc(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILFUNCSEPARATE:
-			D(funcname = "glStencilFuncSeparate");
 			if (GL_ISAVAILABLE(glStencilFuncSeparate))
 			nfglStencilFuncSeparate(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILFUNCSEPARATEATI:
-			D(funcname = "glStencilFuncSeparateATI");
 			if (GL_ISAVAILABLE(glStencilFuncSeparateATI))
 			nfglStencilFuncSeparateATI(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILMASK:
-			D(funcname = "glStencilMask");
 			if (GL_ISAVAILABLE(glStencilMask))
 			nfglStencilMask(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILMASKSEPARATE:
-			D(funcname = "glStencilMaskSeparate");
 			if (GL_ISAVAILABLE(glStencilMaskSeparate))
 			nfglStencilMaskSeparate(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILOP:
-			D(funcname = "glStencilOp");
 			if (GL_ISAVAILABLE(glStencilOp))
 			nfglStencilOp(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILOPSEPARATE:
-			D(funcname = "glStencilOpSeparate");
 			if (GL_ISAVAILABLE(glStencilOpSeparate))
 			nfglStencilOpSeparate(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILOPSEPARATEATI:
-			D(funcname = "glStencilOpSeparateATI");
 			if (GL_ISAVAILABLE(glStencilOpSeparateATI))
 			nfglStencilOpSeparateATI(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILOPVALUEAMD:
-			D(funcname = "glStencilOpValueAMD");
 			if (GL_ISAVAILABLE(glStencilOpValueAMD))
 			nfglStencilOpValueAMD(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILSTROKEPATHINSTANCEDNV:
-			D(funcname = "glStencilStrokePathInstancedNV");
 			if (GL_ISAVAILABLE(glStencilStrokePathInstancedNV))
 			nfglStencilStrokePathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILSTROKEPATHNV:
-			D(funcname = "glStencilStrokePathNV");
 			if (GL_ISAVAILABLE(glStencilStrokePathNV))
 			nfglStencilStrokePathNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERFILLPATHINSTANCEDNV:
-			D(funcname = "glStencilThenCoverFillPathInstancedNV");
 			if (GL_ISAVAILABLE(glStencilThenCoverFillPathInstancedNV))
 			nfglStencilThenCoverFillPathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERFILLPATHNV:
-			D(funcname = "glStencilThenCoverFillPathNV");
 			if (GL_ISAVAILABLE(glStencilThenCoverFillPathNV))
 			nfglStencilThenCoverFillPathNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERSTROKEPATHINSTANCEDNV:
-			D(funcname = "glStencilThenCoverStrokePathInstancedNV");
 			if (GL_ISAVAILABLE(glStencilThenCoverStrokePathInstancedNV))
 			nfglStencilThenCoverStrokePathInstancedNV(nf_params);
 			break;
 		case NFOSMESA_GLSTENCILTHENCOVERSTROKEPATHNV:
-			D(funcname = "glStencilThenCoverStrokePathNV");
 			if (GL_ISAVAILABLE(glStencilThenCoverStrokePathNV))
 			nfglStencilThenCoverStrokePathNV(nf_params);
 			break;
 		case NFOSMESA_GLSTOPINSTRUMENTSSGIX:
-			D(funcname = "glStopInstrumentsSGIX");
 			if (GL_ISAVAILABLE(glStopInstrumentsSGIX))
 			nfglStopInstrumentsSGIX(nf_params);
 			break;
 		case NFOSMESA_GLSTRINGMARKERGREMEDY:
-			D(funcname = "glStringMarkerGREMEDY");
 			if (GL_ISAVAILABLE(glStringMarkerGREMEDY))
 			nfglStringMarkerGREMEDY(nf_params);
 			break;
 		case NFOSMESA_GLSUBPIXELPRECISIONBIASNV:
-			D(funcname = "glSubpixelPrecisionBiasNV");
 			if (GL_ISAVAILABLE(glSubpixelPrecisionBiasNV))
 			nfglSubpixelPrecisionBiasNV(nf_params);
 			break;
 		case NFOSMESA_GLSWAPAPPLE:
-			D(funcname = "glSwapAPPLE");
 			if (GL_ISAVAILABLE(glSwapAPPLE))
 			nfglSwapAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLSWIZZLEEXT:
-			D(funcname = "glSwizzleEXT");
 			if (GL_ISAVAILABLE(glSwizzleEXT))
 			nfglSwizzleEXT(nf_params);
 			break;
 		case NFOSMESA_GLSYNCTEXTUREINTEL:
-			D(funcname = "glSyncTextureINTEL");
 			if (GL_ISAVAILABLE(glSyncTextureINTEL))
 			nfglSyncTextureINTEL(nf_params);
 			break;
 		case NFOSMESA_GLTAGSAMPLEBUFFERSGIX:
-			D(funcname = "glTagSampleBufferSGIX");
 			if (GL_ISAVAILABLE(glTagSampleBufferSGIX))
 			nfglTagSampleBufferSGIX(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3BEXT:
-			D(funcname = "glTangent3bEXT");
 			if (GL_ISAVAILABLE(glTangent3bEXT))
 			nfglTangent3bEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3BVEXT:
-			D(funcname = "glTangent3bvEXT");
 			if (GL_ISAVAILABLE(glTangent3bvEXT))
 			nfglTangent3bvEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3DEXT:
-			D(funcname = "glTangent3dEXT");
 			if (GL_ISAVAILABLE(glTangent3dEXT))
 			nfglTangent3dEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3DVEXT:
-			D(funcname = "glTangent3dvEXT");
 			if (GL_ISAVAILABLE(glTangent3dvEXT))
 			nfglTangent3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3FEXT:
-			D(funcname = "glTangent3fEXT");
 			if (GL_ISAVAILABLE(glTangent3fEXT))
 			nfglTangent3fEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3FVEXT:
-			D(funcname = "glTangent3fvEXT");
 			if (GL_ISAVAILABLE(glTangent3fvEXT))
 			nfglTangent3fvEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3IEXT:
-			D(funcname = "glTangent3iEXT");
 			if (GL_ISAVAILABLE(glTangent3iEXT))
 			nfglTangent3iEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3IVEXT:
-			D(funcname = "glTangent3ivEXT");
 			if (GL_ISAVAILABLE(glTangent3ivEXT))
 			nfglTangent3ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3SEXT:
-			D(funcname = "glTangent3sEXT");
 			if (GL_ISAVAILABLE(glTangent3sEXT))
 			nfglTangent3sEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENT3SVEXT:
-			D(funcname = "glTangent3svEXT");
 			if (GL_ISAVAILABLE(glTangent3svEXT))
 			nfglTangent3svEXT(nf_params);
 			break;
 		case NFOSMESA_GLTANGENTPOINTEREXT:
-			D(funcname = "glTangentPointerEXT");
 			if (GL_ISAVAILABLE(glTangentPointerEXT))
 			nfglTangentPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLTBUFFERMASK3DFX:
-			D(funcname = "glTbufferMask3DFX");
 			if (GL_ISAVAILABLE(glTbufferMask3DFX))
 			nfglTbufferMask3DFX(nf_params);
 			break;
 		case NFOSMESA_GLTESSELLATIONFACTORAMD:
-			D(funcname = "glTessellationFactorAMD");
 			if (GL_ISAVAILABLE(glTessellationFactorAMD))
 			nfglTessellationFactorAMD(nf_params);
 			break;
 		case NFOSMESA_GLTESSELLATIONMODEAMD:
-			D(funcname = "glTessellationModeAMD");
 			if (GL_ISAVAILABLE(glTessellationModeAMD))
 			nfglTessellationModeAMD(nf_params);
 			break;
 		case NFOSMESA_GLTESTFENCEAPPLE:
-			D(funcname = "glTestFenceAPPLE");
 			if (GL_ISAVAILABLE(glTestFenceAPPLE))
 			ret = nfglTestFenceAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLTESTFENCENV:
-			D(funcname = "glTestFenceNV");
 			if (GL_ISAVAILABLE(glTestFenceNV))
 			ret = nfglTestFenceNV(nf_params);
 			break;
 		case NFOSMESA_GLTESTOBJECTAPPLE:
-			D(funcname = "glTestObjectAPPLE");
 			if (GL_ISAVAILABLE(glTestObjectAPPLE))
 			ret = nfglTestObjectAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLTEXATTACHMEMORYNV:
-			D(funcname = "glTexAttachMemoryNV");
 			if (GL_ISAVAILABLE(glTexAttachMemoryNV))
 			nfglTexAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUFFER:
-			D(funcname = "glTexBuffer");
 			if (GL_ISAVAILABLE(glTexBuffer))
 			nfglTexBuffer(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUFFERARB:
-			D(funcname = "glTexBufferARB");
 			if (GL_ISAVAILABLE(glTexBufferARB))
 			nfglTexBufferARB(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUFFEREXT:
-			D(funcname = "glTexBufferEXT");
 			if (GL_ISAVAILABLE(glTexBufferEXT))
 			nfglTexBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUFFERRANGE:
-			D(funcname = "glTexBufferRange");
 			if (GL_ISAVAILABLE(glTexBufferRange))
 			nfglTexBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUMPPARAMETERFVATI:
-			D(funcname = "glTexBumpParameterfvATI");
 			if (GL_ISAVAILABLE(glTexBumpParameterfvATI))
 			nfglTexBumpParameterfvATI(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUMPPARAMETERIVATI:
-			D(funcname = "glTexBumpParameterivATI");
 			if (GL_ISAVAILABLE(glTexBumpParameterivATI))
 			nfglTexBumpParameterivATI(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1BOES:
-			D(funcname = "glTexCoord1bOES");
 			if (GL_ISAVAILABLE(glTexCoord1bOES))
 			nfglTexCoord1bOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1BVOES:
-			D(funcname = "glTexCoord1bvOES");
 			if (GL_ISAVAILABLE(glTexCoord1bvOES))
 			nfglTexCoord1bvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1D:
-			D(funcname = "glTexCoord1d");
 			if (GL_ISAVAILABLE(glTexCoord1d))
 			nfglTexCoord1d(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1DV:
-			D(funcname = "glTexCoord1dv");
 			if (GL_ISAVAILABLE(glTexCoord1dv))
 			nfglTexCoord1dv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1F:
-			D(funcname = "glTexCoord1f");
 			if (GL_ISAVAILABLE(glTexCoord1f))
 			nfglTexCoord1f(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1FV:
-			D(funcname = "glTexCoord1fv");
 			if (GL_ISAVAILABLE(glTexCoord1fv))
 			nfglTexCoord1fv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1HNV:
-			D(funcname = "glTexCoord1hNV");
 			if (GL_ISAVAILABLE(glTexCoord1hNV))
 			nfglTexCoord1hNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1HVNV:
-			D(funcname = "glTexCoord1hvNV");
 			if (GL_ISAVAILABLE(glTexCoord1hvNV))
 			nfglTexCoord1hvNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1I:
-			D(funcname = "glTexCoord1i");
 			if (GL_ISAVAILABLE(glTexCoord1i))
 			nfglTexCoord1i(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1IV:
-			D(funcname = "glTexCoord1iv");
 			if (GL_ISAVAILABLE(glTexCoord1iv))
 			nfglTexCoord1iv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1S:
-			D(funcname = "glTexCoord1s");
 			if (GL_ISAVAILABLE(glTexCoord1s))
 			nfglTexCoord1s(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1SV:
-			D(funcname = "glTexCoord1sv");
 			if (GL_ISAVAILABLE(glTexCoord1sv))
 			nfglTexCoord1sv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1XOES:
-			D(funcname = "glTexCoord1xOES");
 			if (GL_ISAVAILABLE(glTexCoord1xOES))
 			nfglTexCoord1xOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD1XVOES:
-			D(funcname = "glTexCoord1xvOES");
 			if (GL_ISAVAILABLE(glTexCoord1xvOES))
 			nfglTexCoord1xvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2BOES:
-			D(funcname = "glTexCoord2bOES");
 			if (GL_ISAVAILABLE(glTexCoord2bOES))
 			nfglTexCoord2bOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2BVOES:
-			D(funcname = "glTexCoord2bvOES");
 			if (GL_ISAVAILABLE(glTexCoord2bvOES))
 			nfglTexCoord2bvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2D:
-			D(funcname = "glTexCoord2d");
 			if (GL_ISAVAILABLE(glTexCoord2d))
 			nfglTexCoord2d(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2DV:
-			D(funcname = "glTexCoord2dv");
 			if (GL_ISAVAILABLE(glTexCoord2dv))
 			nfglTexCoord2dv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2F:
-			D(funcname = "glTexCoord2f");
 			if (GL_ISAVAILABLE(glTexCoord2f))
 			nfglTexCoord2f(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR3FVERTEX3FSUN:
-			D(funcname = "glTexCoord2fColor3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor3fVertex3fSUN))
 			nfglTexCoord2fColor3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR3FVERTEX3FVSUN:
-			D(funcname = "glTexCoord2fColor3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor3fVertex3fvSUN))
 			nfglTexCoord2fColor3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glTexCoord2fColor4fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor4fNormal3fVertex3fSUN))
 			nfglTexCoord2fColor4fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glTexCoord2fColor4fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor4fNormal3fVertex3fvSUN))
 			nfglTexCoord2fColor4fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FSUN:
-			D(funcname = "glTexCoord2fColor4ubVertex3fSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor4ubVertex3fSUN))
 			nfglTexCoord2fColor4ubVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FCOLOR4UBVERTEX3FVSUN:
-			D(funcname = "glTexCoord2fColor4ubVertex3fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fColor4ubVertex3fvSUN))
 			nfglTexCoord2fColor4ubVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FSUN:
-			D(funcname = "glTexCoord2fNormal3fVertex3fSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fNormal3fVertex3fSUN))
 			nfglTexCoord2fNormal3fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FNORMAL3FVERTEX3FVSUN:
-			D(funcname = "glTexCoord2fNormal3fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fNormal3fVertex3fvSUN))
 			nfglTexCoord2fNormal3fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FSUN:
-			D(funcname = "glTexCoord2fVertex3fSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fVertex3fSUN))
 			nfglTexCoord2fVertex3fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FVERTEX3FVSUN:
-			D(funcname = "glTexCoord2fVertex3fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord2fVertex3fvSUN))
 			nfglTexCoord2fVertex3fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2FV:
-			D(funcname = "glTexCoord2fv");
 			if (GL_ISAVAILABLE(glTexCoord2fv))
 			nfglTexCoord2fv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2HNV:
-			D(funcname = "glTexCoord2hNV");
 			if (GL_ISAVAILABLE(glTexCoord2hNV))
 			nfglTexCoord2hNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2HVNV:
-			D(funcname = "glTexCoord2hvNV");
 			if (GL_ISAVAILABLE(glTexCoord2hvNV))
 			nfglTexCoord2hvNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2I:
-			D(funcname = "glTexCoord2i");
 			if (GL_ISAVAILABLE(glTexCoord2i))
 			nfglTexCoord2i(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2IV:
-			D(funcname = "glTexCoord2iv");
 			if (GL_ISAVAILABLE(glTexCoord2iv))
 			nfglTexCoord2iv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2S:
-			D(funcname = "glTexCoord2s");
 			if (GL_ISAVAILABLE(glTexCoord2s))
 			nfglTexCoord2s(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2SV:
-			D(funcname = "glTexCoord2sv");
 			if (GL_ISAVAILABLE(glTexCoord2sv))
 			nfglTexCoord2sv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2XOES:
-			D(funcname = "glTexCoord2xOES");
 			if (GL_ISAVAILABLE(glTexCoord2xOES))
 			nfglTexCoord2xOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD2XVOES:
-			D(funcname = "glTexCoord2xvOES");
 			if (GL_ISAVAILABLE(glTexCoord2xvOES))
 			nfglTexCoord2xvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3BOES:
-			D(funcname = "glTexCoord3bOES");
 			if (GL_ISAVAILABLE(glTexCoord3bOES))
 			nfglTexCoord3bOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3BVOES:
-			D(funcname = "glTexCoord3bvOES");
 			if (GL_ISAVAILABLE(glTexCoord3bvOES))
 			nfglTexCoord3bvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3D:
-			D(funcname = "glTexCoord3d");
 			if (GL_ISAVAILABLE(glTexCoord3d))
 			nfglTexCoord3d(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3DV:
-			D(funcname = "glTexCoord3dv");
 			if (GL_ISAVAILABLE(glTexCoord3dv))
 			nfglTexCoord3dv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3F:
-			D(funcname = "glTexCoord3f");
 			if (GL_ISAVAILABLE(glTexCoord3f))
 			nfglTexCoord3f(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3FV:
-			D(funcname = "glTexCoord3fv");
 			if (GL_ISAVAILABLE(glTexCoord3fv))
 			nfglTexCoord3fv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3HNV:
-			D(funcname = "glTexCoord3hNV");
 			if (GL_ISAVAILABLE(glTexCoord3hNV))
 			nfglTexCoord3hNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3HVNV:
-			D(funcname = "glTexCoord3hvNV");
 			if (GL_ISAVAILABLE(glTexCoord3hvNV))
 			nfglTexCoord3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3I:
-			D(funcname = "glTexCoord3i");
 			if (GL_ISAVAILABLE(glTexCoord3i))
 			nfglTexCoord3i(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3IV:
-			D(funcname = "glTexCoord3iv");
 			if (GL_ISAVAILABLE(glTexCoord3iv))
 			nfglTexCoord3iv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3S:
-			D(funcname = "glTexCoord3s");
 			if (GL_ISAVAILABLE(glTexCoord3s))
 			nfglTexCoord3s(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3SV:
-			D(funcname = "glTexCoord3sv");
 			if (GL_ISAVAILABLE(glTexCoord3sv))
 			nfglTexCoord3sv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3XOES:
-			D(funcname = "glTexCoord3xOES");
 			if (GL_ISAVAILABLE(glTexCoord3xOES))
 			nfglTexCoord3xOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD3XVOES:
-			D(funcname = "glTexCoord3xvOES");
 			if (GL_ISAVAILABLE(glTexCoord3xvOES))
 			nfglTexCoord3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4BOES:
-			D(funcname = "glTexCoord4bOES");
 			if (GL_ISAVAILABLE(glTexCoord4bOES))
 			nfglTexCoord4bOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4BVOES:
-			D(funcname = "glTexCoord4bvOES");
 			if (GL_ISAVAILABLE(glTexCoord4bvOES))
 			nfglTexCoord4bvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4D:
-			D(funcname = "glTexCoord4d");
 			if (GL_ISAVAILABLE(glTexCoord4d))
 			nfglTexCoord4d(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4DV:
-			D(funcname = "glTexCoord4dv");
 			if (GL_ISAVAILABLE(glTexCoord4dv))
 			nfglTexCoord4dv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4F:
-			D(funcname = "glTexCoord4f");
 			if (GL_ISAVAILABLE(glTexCoord4f))
 			nfglTexCoord4f(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FSUN:
-			D(funcname = "glTexCoord4fColor4fNormal3fVertex4fSUN");
 			if (GL_ISAVAILABLE(glTexCoord4fColor4fNormal3fVertex4fSUN))
 			nfglTexCoord4fColor4fNormal3fVertex4fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4FCOLOR4FNORMAL3FVERTEX4FVSUN:
-			D(funcname = "glTexCoord4fColor4fNormal3fVertex4fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord4fColor4fNormal3fVertex4fvSUN))
 			nfglTexCoord4fColor4fNormal3fVertex4fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FSUN:
-			D(funcname = "glTexCoord4fVertex4fSUN");
 			if (GL_ISAVAILABLE(glTexCoord4fVertex4fSUN))
 			nfglTexCoord4fVertex4fSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4FVERTEX4FVSUN:
-			D(funcname = "glTexCoord4fVertex4fvSUN");
 			if (GL_ISAVAILABLE(glTexCoord4fVertex4fvSUN))
 			nfglTexCoord4fVertex4fvSUN(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4FV:
-			D(funcname = "glTexCoord4fv");
 			if (GL_ISAVAILABLE(glTexCoord4fv))
 			nfglTexCoord4fv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4HNV:
-			D(funcname = "glTexCoord4hNV");
 			if (GL_ISAVAILABLE(glTexCoord4hNV))
 			nfglTexCoord4hNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4HVNV:
-			D(funcname = "glTexCoord4hvNV");
 			if (GL_ISAVAILABLE(glTexCoord4hvNV))
 			nfglTexCoord4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4I:
-			D(funcname = "glTexCoord4i");
 			if (GL_ISAVAILABLE(glTexCoord4i))
 			nfglTexCoord4i(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4IV:
-			D(funcname = "glTexCoord4iv");
 			if (GL_ISAVAILABLE(glTexCoord4iv))
 			nfglTexCoord4iv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4S:
-			D(funcname = "glTexCoord4s");
 			if (GL_ISAVAILABLE(glTexCoord4s))
 			nfglTexCoord4s(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4SV:
-			D(funcname = "glTexCoord4sv");
 			if (GL_ISAVAILABLE(glTexCoord4sv))
 			nfglTexCoord4sv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4XOES:
-			D(funcname = "glTexCoord4xOES");
 			if (GL_ISAVAILABLE(glTexCoord4xOES))
 			nfglTexCoord4xOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORD4XVOES:
-			D(funcname = "glTexCoord4xvOES");
 			if (GL_ISAVAILABLE(glTexCoord4xvOES))
 			nfglTexCoord4xvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDFORMATNV:
-			D(funcname = "glTexCoordFormatNV");
 			if (GL_ISAVAILABLE(glTexCoordFormatNV))
 			nfglTexCoordFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP1UI:
-			D(funcname = "glTexCoordP1ui");
 			if (GL_ISAVAILABLE(glTexCoordP1ui))
 			nfglTexCoordP1ui(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP1UIV:
-			D(funcname = "glTexCoordP1uiv");
 			if (GL_ISAVAILABLE(glTexCoordP1uiv))
 			nfglTexCoordP1uiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP2UI:
-			D(funcname = "glTexCoordP2ui");
 			if (GL_ISAVAILABLE(glTexCoordP2ui))
 			nfglTexCoordP2ui(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP2UIV:
-			D(funcname = "glTexCoordP2uiv");
 			if (GL_ISAVAILABLE(glTexCoordP2uiv))
 			nfglTexCoordP2uiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP3UI:
-			D(funcname = "glTexCoordP3ui");
 			if (GL_ISAVAILABLE(glTexCoordP3ui))
 			nfglTexCoordP3ui(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP3UIV:
-			D(funcname = "glTexCoordP3uiv");
 			if (GL_ISAVAILABLE(glTexCoordP3uiv))
 			nfglTexCoordP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP4UI:
-			D(funcname = "glTexCoordP4ui");
 			if (GL_ISAVAILABLE(glTexCoordP4ui))
 			nfglTexCoordP4ui(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDP4UIV:
-			D(funcname = "glTexCoordP4uiv");
 			if (GL_ISAVAILABLE(glTexCoordP4uiv))
 			nfglTexCoordP4uiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTER:
-			D(funcname = "glTexCoordPointer");
 			if (GL_ISAVAILABLE(glTexCoordPointer))
 			nfglTexCoordPointer(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTEREXT:
-			D(funcname = "glTexCoordPointerEXT");
 			if (GL_ISAVAILABLE(glTexCoordPointerEXT))
 			nfglTexCoordPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERLISTIBM:
-			D(funcname = "glTexCoordPointerListIBM");
 			if (GL_ISAVAILABLE(glTexCoordPointerListIBM))
 			nfglTexCoordPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLTEXCOORDPOINTERVINTEL:
-			D(funcname = "glTexCoordPointervINTEL");
 			if (GL_ISAVAILABLE(glTexCoordPointervINTEL))
 			nfglTexCoordPointervINTEL(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVF:
-			D(funcname = "glTexEnvf");
 			if (GL_ISAVAILABLE(glTexEnvf))
 			nfglTexEnvf(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVFV:
-			D(funcname = "glTexEnvfv");
 			if (GL_ISAVAILABLE(glTexEnvfv))
 			nfglTexEnvfv(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVI:
-			D(funcname = "glTexEnvi");
 			if (GL_ISAVAILABLE(glTexEnvi))
 			nfglTexEnvi(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVIV:
-			D(funcname = "glTexEnviv");
 			if (GL_ISAVAILABLE(glTexEnviv))
 			nfglTexEnviv(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVXOES:
-			D(funcname = "glTexEnvxOES");
 			if (GL_ISAVAILABLE(glTexEnvxOES))
 			nfglTexEnvxOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXENVXVOES:
-			D(funcname = "glTexEnvxvOES");
 			if (GL_ISAVAILABLE(glTexEnvxvOES))
 			nfglTexEnvxvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXFILTERFUNCSGIS:
-			D(funcname = "glTexFilterFuncSGIS");
 			if (GL_ISAVAILABLE(glTexFilterFuncSGIS))
 			nfglTexFilterFuncSGIS(nf_params);
 			break;
 		case NFOSMESA_GLTEXGEND:
-			D(funcname = "glTexGend");
 			if (GL_ISAVAILABLE(glTexGend))
 			nfglTexGend(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENDV:
-			D(funcname = "glTexGendv");
 			if (GL_ISAVAILABLE(glTexGendv))
 			nfglTexGendv(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENF:
-			D(funcname = "glTexGenf");
 			if (GL_ISAVAILABLE(glTexGenf))
 			nfglTexGenf(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENFV:
-			D(funcname = "glTexGenfv");
 			if (GL_ISAVAILABLE(glTexGenfv))
 			nfglTexGenfv(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENI:
-			D(funcname = "glTexGeni");
 			if (GL_ISAVAILABLE(glTexGeni))
 			nfglTexGeni(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENIV:
-			D(funcname = "glTexGeniv");
 			if (GL_ISAVAILABLE(glTexGeniv))
 			nfglTexGeniv(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENXOES:
-			D(funcname = "glTexGenxOES");
 			if (GL_ISAVAILABLE(glTexGenxOES))
 			nfglTexGenxOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXGENXVOES:
-			D(funcname = "glTexGenxvOES");
 			if (GL_ISAVAILABLE(glTexGenxvOES))
 			nfglTexGenxvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE1D:
-			D(funcname = "glTexImage1D");
 			if (GL_ISAVAILABLE(glTexImage1D))
 			nfglTexImage1D(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE2D:
-			D(funcname = "glTexImage2D");
 			if (GL_ISAVAILABLE(glTexImage2D))
 			nfglTexImage2D(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE2DMULTISAMPLE:
-			D(funcname = "glTexImage2DMultisample");
 			if (GL_ISAVAILABLE(glTexImage2DMultisample))
 			nfglTexImage2DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE2DMULTISAMPLECOVERAGENV:
-			D(funcname = "glTexImage2DMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glTexImage2DMultisampleCoverageNV))
 			nfglTexImage2DMultisampleCoverageNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE3D:
-			D(funcname = "glTexImage3D");
 			if (GL_ISAVAILABLE(glTexImage3D))
 			nfglTexImage3D(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DEXT:
-			D(funcname = "glTexImage3DEXT");
 			if (GL_ISAVAILABLE(glTexImage3DEXT))
 			nfglTexImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DMULTISAMPLE:
-			D(funcname = "glTexImage3DMultisample");
 			if (GL_ISAVAILABLE(glTexImage3DMultisample))
 			nfglTexImage3DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE3DMULTISAMPLECOVERAGENV:
-			D(funcname = "glTexImage3DMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glTexImage3DMultisampleCoverageNV))
 			nfglTexImage3DMultisampleCoverageNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXIMAGE4DSGIS:
-			D(funcname = "glTexImage4DSGIS");
 			if (GL_ISAVAILABLE(glTexImage4DSGIS))
 			nfglTexImage4DSGIS(nf_params);
 			break;
 		case NFOSMESA_GLTEXPAGECOMMITMENTARB:
-			D(funcname = "glTexPageCommitmentARB");
 			if (GL_ISAVAILABLE(glTexPageCommitmentARB))
 			nfglTexPageCommitmentARB(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIV:
-			D(funcname = "glTexParameterIiv");
 			if (GL_ISAVAILABLE(glTexParameterIiv))
 			nfglTexParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIIVEXT:
-			D(funcname = "glTexParameterIivEXT");
 			if (GL_ISAVAILABLE(glTexParameterIivEXT))
 			nfglTexParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIV:
-			D(funcname = "glTexParameterIuiv");
 			if (GL_ISAVAILABLE(glTexParameterIuiv))
 			nfglTexParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIUIVEXT:
-			D(funcname = "glTexParameterIuivEXT");
 			if (GL_ISAVAILABLE(glTexParameterIuivEXT))
 			nfglTexParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERF:
-			D(funcname = "glTexParameterf");
 			if (GL_ISAVAILABLE(glTexParameterf))
 			nfglTexParameterf(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERFV:
-			D(funcname = "glTexParameterfv");
 			if (GL_ISAVAILABLE(glTexParameterfv))
 			nfglTexParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERI:
-			D(funcname = "glTexParameteri");
 			if (GL_ISAVAILABLE(glTexParameteri))
 			nfglTexParameteri(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERIV:
-			D(funcname = "glTexParameteriv");
 			if (GL_ISAVAILABLE(glTexParameteriv))
 			nfglTexParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERXOES:
-			D(funcname = "glTexParameterxOES");
 			if (GL_ISAVAILABLE(glTexParameterxOES))
 			nfglTexParameterxOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXPARAMETERXVOES:
-			D(funcname = "glTexParameterxvOES");
 			if (GL_ISAVAILABLE(glTexParameterxvOES))
 			nfglTexParameterxvOES(nf_params);
 			break;
 		case NFOSMESA_GLTEXRENDERBUFFERNV:
-			D(funcname = "glTexRenderbufferNV");
 			if (GL_ISAVAILABLE(glTexRenderbufferNV))
 			nfglTexRenderbufferNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXSCISSORFUNCINTEL:
-			D(funcname = "glTexScissorFuncINTEL");
 			if (GL_ISAVAILABLE(glTexScissorFuncINTEL))
 			nfglTexScissorFuncINTEL(nf_params);
 			break;
 		case NFOSMESA_GLTEXSCISSORINTEL:
-			D(funcname = "glTexScissorINTEL");
 			if (GL_ISAVAILABLE(glTexScissorINTEL))
 			nfglTexScissorINTEL(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGE1D:
-			D(funcname = "glTexStorage1D");
 			if (GL_ISAVAILABLE(glTexStorage1D))
 			nfglTexStorage1D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGE2D:
-			D(funcname = "glTexStorage2D");
 			if (GL_ISAVAILABLE(glTexStorage2D))
 			nfglTexStorage2D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGE2DMULTISAMPLE:
-			D(funcname = "glTexStorage2DMultisample");
 			if (GL_ISAVAILABLE(glTexStorage2DMultisample))
 			nfglTexStorage2DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGE3D:
-			D(funcname = "glTexStorage3D");
 			if (GL_ISAVAILABLE(glTexStorage3D))
 			nfglTexStorage3D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGE3DMULTISAMPLE:
-			D(funcname = "glTexStorage3DMultisample");
 			if (GL_ISAVAILABLE(glTexStorage3DMultisample))
 			nfglTexStorage3DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGEMEM1DEXT:
-			D(funcname = "glTexStorageMem1DEXT");
 			if (GL_ISAVAILABLE(glTexStorageMem1DEXT))
 			nfglTexStorageMem1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGEMEM2DEXT:
-			D(funcname = "glTexStorageMem2DEXT");
 			if (GL_ISAVAILABLE(glTexStorageMem2DEXT))
 			nfglTexStorageMem2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGEMEM2DMULTISAMPLEEXT:
-			D(funcname = "glTexStorageMem2DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTexStorageMem2DMultisampleEXT))
 			nfglTexStorageMem2DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGEMEM3DEXT:
-			D(funcname = "glTexStorageMem3DEXT");
 			if (GL_ISAVAILABLE(glTexStorageMem3DEXT))
 			nfglTexStorageMem3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGEMEM3DMULTISAMPLEEXT:
-			D(funcname = "glTexStorageMem3DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTexStorageMem3DMultisampleEXT))
 			nfglTexStorageMem3DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSTORAGESPARSEAMD:
-			D(funcname = "glTexStorageSparseAMD");
 			if (GL_ISAVAILABLE(glTexStorageSparseAMD))
 			nfglTexStorageSparseAMD(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE1D:
-			D(funcname = "glTexSubImage1D");
 			if (GL_ISAVAILABLE(glTexSubImage1D))
 			nfglTexSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE1DEXT:
-			D(funcname = "glTexSubImage1DEXT");
 			if (GL_ISAVAILABLE(glTexSubImage1DEXT))
 			nfglTexSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2D:
-			D(funcname = "glTexSubImage2D");
 			if (GL_ISAVAILABLE(glTexSubImage2D))
 			nfglTexSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE2DEXT:
-			D(funcname = "glTexSubImage2DEXT");
 			if (GL_ISAVAILABLE(glTexSubImage2DEXT))
 			nfglTexSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3D:
-			D(funcname = "glTexSubImage3D");
 			if (GL_ISAVAILABLE(glTexSubImage3D))
 			nfglTexSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE3DEXT:
-			D(funcname = "glTexSubImage3DEXT");
 			if (GL_ISAVAILABLE(glTexSubImage3DEXT))
 			nfglTexSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXSUBIMAGE4DSGIS:
-			D(funcname = "glTexSubImage4DSGIS");
 			if (GL_ISAVAILABLE(glTexSubImage4DSGIS))
 			nfglTexSubImage4DSGIS(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREATTACHMEMORYNV:
-			D(funcname = "glTextureAttachMemoryNV");
 			if (GL_ISAVAILABLE(glTextureAttachMemoryNV))
 			nfglTextureAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBARRIER:
-			D(funcname = "glTextureBarrier");
 			if (GL_ISAVAILABLE(glTextureBarrier))
 			nfglTextureBarrier(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBARRIERNV:
-			D(funcname = "glTextureBarrierNV");
 			if (GL_ISAVAILABLE(glTextureBarrierNV))
 			nfglTextureBarrierNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFER:
-			D(funcname = "glTextureBuffer");
 			if (GL_ISAVAILABLE(glTextureBuffer))
 			nfglTextureBuffer(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFEREXT:
-			D(funcname = "glTextureBufferEXT");
 			if (GL_ISAVAILABLE(glTextureBufferEXT))
 			nfglTextureBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFERRANGE:
-			D(funcname = "glTextureBufferRange");
 			if (GL_ISAVAILABLE(glTextureBufferRange))
 			nfglTextureBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBUFFERRANGEEXT:
-			D(funcname = "glTextureBufferRangeEXT");
 			if (GL_ISAVAILABLE(glTextureBufferRangeEXT))
 			nfglTextureBufferRangeEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURECOLORMASKSGIS:
-			D(funcname = "glTextureColorMaskSGIS");
 			if (GL_ISAVAILABLE(glTextureColorMaskSGIS))
 			nfglTextureColorMaskSGIS(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREFOGSGIX:
-			D(funcname = "glTextureFogSGIX");
 			if (GL_ISAVAILABLE(glTextureFogSGIX))
 			nfglTextureFogSGIX(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE1DEXT:
-			D(funcname = "glTextureImage1DEXT");
 			if (GL_ISAVAILABLE(glTextureImage1DEXT))
 			nfglTextureImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DEXT:
-			D(funcname = "glTextureImage2DEXT");
 			if (GL_ISAVAILABLE(glTextureImage2DEXT))
 			nfglTextureImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DMULTISAMPLECOVERAGENV:
-			D(funcname = "glTextureImage2DMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glTextureImage2DMultisampleCoverageNV))
 			nfglTextureImage2DMultisampleCoverageNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE2DMULTISAMPLENV:
-			D(funcname = "glTextureImage2DMultisampleNV");
 			if (GL_ISAVAILABLE(glTextureImage2DMultisampleNV))
 			nfglTextureImage2DMultisampleNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DEXT:
-			D(funcname = "glTextureImage3DEXT");
 			if (GL_ISAVAILABLE(glTextureImage3DEXT))
 			nfglTextureImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DMULTISAMPLECOVERAGENV:
-			D(funcname = "glTextureImage3DMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glTextureImage3DMultisampleCoverageNV))
 			nfglTextureImage3DMultisampleCoverageNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREIMAGE3DMULTISAMPLENV:
-			D(funcname = "glTextureImage3DMultisampleNV");
 			if (GL_ISAVAILABLE(glTextureImage3DMultisampleNV))
 			nfglTextureImage3DMultisampleNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURELIGHTEXT:
-			D(funcname = "glTextureLightEXT");
 			if (GL_ISAVAILABLE(glTextureLightEXT))
 			nfglTextureLightEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREMATERIALEXT:
-			D(funcname = "glTextureMaterialEXT");
 			if (GL_ISAVAILABLE(glTextureMaterialEXT))
 			nfglTextureMaterialEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURENORMALEXT:
-			D(funcname = "glTextureNormalEXT");
 			if (GL_ISAVAILABLE(glTextureNormalEXT))
 			nfglTextureNormalEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPAGECOMMITMENTEXT:
-			D(funcname = "glTexturePageCommitmentEXT");
 			if (GL_ISAVAILABLE(glTexturePageCommitmentEXT))
 			nfglTexturePageCommitmentEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIIV:
-			D(funcname = "glTextureParameterIiv");
 			if (GL_ISAVAILABLE(glTextureParameterIiv))
 			nfglTextureParameterIiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIIVEXT:
-			D(funcname = "glTextureParameterIivEXT");
 			if (GL_ISAVAILABLE(glTextureParameterIivEXT))
 			nfglTextureParameterIivEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIUIV:
-			D(funcname = "glTextureParameterIuiv");
 			if (GL_ISAVAILABLE(glTextureParameterIuiv))
 			nfglTextureParameterIuiv(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIUIVEXT:
-			D(funcname = "glTextureParameterIuivEXT");
 			if (GL_ISAVAILABLE(glTextureParameterIuivEXT))
 			nfglTextureParameterIuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERF:
-			D(funcname = "glTextureParameterf");
 			if (GL_ISAVAILABLE(glTextureParameterf))
 			nfglTextureParameterf(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFEXT:
-			D(funcname = "glTextureParameterfEXT");
 			if (GL_ISAVAILABLE(glTextureParameterfEXT))
 			nfglTextureParameterfEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFV:
-			D(funcname = "glTextureParameterfv");
 			if (GL_ISAVAILABLE(glTextureParameterfv))
 			nfglTextureParameterfv(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERFVEXT:
-			D(funcname = "glTextureParameterfvEXT");
 			if (GL_ISAVAILABLE(glTextureParameterfvEXT))
 			nfglTextureParameterfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERI:
-			D(funcname = "glTextureParameteri");
 			if (GL_ISAVAILABLE(glTextureParameteri))
 			nfglTextureParameteri(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIEXT:
-			D(funcname = "glTextureParameteriEXT");
 			if (GL_ISAVAILABLE(glTextureParameteriEXT))
 			nfglTextureParameteriEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIV:
-			D(funcname = "glTextureParameteriv");
 			if (GL_ISAVAILABLE(glTextureParameteriv))
 			nfglTextureParameteriv(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREPARAMETERIVEXT:
-			D(funcname = "glTextureParameterivEXT");
 			if (GL_ISAVAILABLE(glTextureParameterivEXT))
 			nfglTextureParameterivEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLTEXTURERANGEAPPLE:
-			D(funcname = "glTextureRangeAPPLE");
 			if (GL_ISAVAILABLE(glTextureRangeAPPLE))
 			nfglTextureRangeAPPLE(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLTEXTURERENDERBUFFEREXT:
-			D(funcname = "glTextureRenderbufferEXT");
 			if (GL_ISAVAILABLE(glTextureRenderbufferEXT))
 			nfglTextureRenderbufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE1D:
-			D(funcname = "glTextureStorage1D");
 			if (GL_ISAVAILABLE(glTextureStorage1D))
 			nfglTextureStorage1D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE1DEXT:
-			D(funcname = "glTextureStorage1DEXT");
 			if (GL_ISAVAILABLE(glTextureStorage1DEXT))
 			nfglTextureStorage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2D:
-			D(funcname = "glTextureStorage2D");
 			if (GL_ISAVAILABLE(glTextureStorage2D))
 			nfglTextureStorage2D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DEXT:
-			D(funcname = "glTextureStorage2DEXT");
 			if (GL_ISAVAILABLE(glTextureStorage2DEXT))
 			nfglTextureStorage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DMULTISAMPLE:
-			D(funcname = "glTextureStorage2DMultisample");
 			if (GL_ISAVAILABLE(glTextureStorage2DMultisample))
 			nfglTextureStorage2DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE2DMULTISAMPLEEXT:
-			D(funcname = "glTextureStorage2DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTextureStorage2DMultisampleEXT))
 			nfglTextureStorage2DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3D:
-			D(funcname = "glTextureStorage3D");
 			if (GL_ISAVAILABLE(glTextureStorage3D))
 			nfglTextureStorage3D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DEXT:
-			D(funcname = "glTextureStorage3DEXT");
 			if (GL_ISAVAILABLE(glTextureStorage3DEXT))
 			nfglTextureStorage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DMULTISAMPLE:
-			D(funcname = "glTextureStorage3DMultisample");
 			if (GL_ISAVAILABLE(glTextureStorage3DMultisample))
 			nfglTextureStorage3DMultisample(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGE3DMULTISAMPLEEXT:
-			D(funcname = "glTextureStorage3DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTextureStorage3DMultisampleEXT))
 			nfglTextureStorage3DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGEMEM1DEXT:
-			D(funcname = "glTextureStorageMem1DEXT");
 			if (GL_ISAVAILABLE(glTextureStorageMem1DEXT))
 			nfglTextureStorageMem1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGEMEM2DEXT:
-			D(funcname = "glTextureStorageMem2DEXT");
 			if (GL_ISAVAILABLE(glTextureStorageMem2DEXT))
 			nfglTextureStorageMem2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGEMEM2DMULTISAMPLEEXT:
-			D(funcname = "glTextureStorageMem2DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTextureStorageMem2DMultisampleEXT))
 			nfglTextureStorageMem2DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGEMEM3DEXT:
-			D(funcname = "glTextureStorageMem3DEXT");
 			if (GL_ISAVAILABLE(glTextureStorageMem3DEXT))
 			nfglTextureStorageMem3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGEMEM3DMULTISAMPLEEXT:
-			D(funcname = "glTextureStorageMem3DMultisampleEXT");
 			if (GL_ISAVAILABLE(glTextureStorageMem3DMultisampleEXT))
 			nfglTextureStorageMem3DMultisampleEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESTORAGESPARSEAMD:
-			D(funcname = "glTextureStorageSparseAMD");
 			if (GL_ISAVAILABLE(glTextureStorageSparseAMD))
 			nfglTextureStorageSparseAMD(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE1D:
-			D(funcname = "glTextureSubImage1D");
 			if (GL_ISAVAILABLE(glTextureSubImage1D))
 			nfglTextureSubImage1D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE1DEXT:
-			D(funcname = "glTextureSubImage1DEXT");
 			if (GL_ISAVAILABLE(glTextureSubImage1DEXT))
 			nfglTextureSubImage1DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE2D:
-			D(funcname = "glTextureSubImage2D");
 			if (GL_ISAVAILABLE(glTextureSubImage2D))
 			nfglTextureSubImage2D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE2DEXT:
-			D(funcname = "glTextureSubImage2DEXT");
 			if (GL_ISAVAILABLE(glTextureSubImage2DEXT))
 			nfglTextureSubImage2DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE3D:
-			D(funcname = "glTextureSubImage3D");
 			if (GL_ISAVAILABLE(glTextureSubImage3D))
 			nfglTextureSubImage3D(nf_params);
 			break;
 		case NFOSMESA_GLTEXTURESUBIMAGE3DEXT:
-			D(funcname = "glTextureSubImage3DEXT");
 			if (GL_ISAVAILABLE(glTextureSubImage3DEXT))
 			nfglTextureSubImage3DEXT(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREVIEW:
-			D(funcname = "glTextureView");
 			if (GL_ISAVAILABLE(glTextureView))
 			nfglTextureView(nf_params);
 			break;
 		case NFOSMESA_GLTRACEASSERTATTRIBMESA:
-			D(funcname = "glTraceAssertAttribMESA");
 			if (GL_ISAVAILABLE(glTraceAssertAttribMESA))
 			nfglTraceAssertAttribMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACECOMMENTMESA:
-			D(funcname = "glTraceCommentMESA");
 			if (GL_ISAVAILABLE(glTraceCommentMESA))
 			nfglTraceCommentMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACELISTMESA:
-			D(funcname = "glTraceListMESA");
 			if (GL_ISAVAILABLE(glTraceListMESA))
 			nfglTraceListMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACEPOINTERMESA:
-			D(funcname = "glTracePointerMESA");
 			if (GL_ISAVAILABLE(glTracePointerMESA))
 			nfglTracePointerMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACEPOINTERRANGEMESA:
-			D(funcname = "glTracePointerRangeMESA");
 			if (GL_ISAVAILABLE(glTracePointerRangeMESA))
 			nfglTracePointerRangeMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACETEXTUREMESA:
-			D(funcname = "glTraceTextureMESA");
 			if (GL_ISAVAILABLE(glTraceTextureMESA))
 			nfglTraceTextureMESA(nf_params);
 			break;
 		case NFOSMESA_GLTRACKMATRIXNV:
-			D(funcname = "glTrackMatrixNV");
 			if (GL_ISAVAILABLE(glTrackMatrixNV))
 			nfglTrackMatrixNV(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKATTRIBSNV:
-			D(funcname = "glTransformFeedbackAttribsNV");
 			if (GL_ISAVAILABLE(glTransformFeedbackAttribsNV))
 			nfglTransformFeedbackAttribsNV(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKBUFFERBASE:
-			D(funcname = "glTransformFeedbackBufferBase");
 			if (GL_ISAVAILABLE(glTransformFeedbackBufferBase))
 			nfglTransformFeedbackBufferBase(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKBUFFERRANGE:
-			D(funcname = "glTransformFeedbackBufferRange");
 			if (GL_ISAVAILABLE(glTransformFeedbackBufferRange))
 			nfglTransformFeedbackBufferRange(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKSTREAMATTRIBSNV:
-			D(funcname = "glTransformFeedbackStreamAttribsNV");
 			if (GL_ISAVAILABLE(glTransformFeedbackStreamAttribsNV))
 			nfglTransformFeedbackStreamAttribsNV(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGS:
-			D(funcname = "glTransformFeedbackVaryings");
 			if (GL_ISAVAILABLE(glTransformFeedbackVaryings))
 			nfglTransformFeedbackVaryings(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSEXT:
-			D(funcname = "glTransformFeedbackVaryingsEXT");
 			if (GL_ISAVAILABLE(glTransformFeedbackVaryingsEXT))
 			nfglTransformFeedbackVaryingsEXT(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMFEEDBACKVARYINGSNV:
-			D(funcname = "glTransformFeedbackVaryingsNV");
 			if (GL_ISAVAILABLE(glTransformFeedbackVaryingsNV))
 			nfglTransformFeedbackVaryingsNV(nf_params);
 			break;
 		case NFOSMESA_GLTRANSFORMPATHNV:
-			D(funcname = "glTransformPathNV");
 			if (GL_ISAVAILABLE(glTransformPathNV))
 			nfglTransformPathNV(nf_params);
 			break;
 		case NFOSMESA_GLTRANSLATED:
-			D(funcname = "glTranslated");
 			if (GL_ISAVAILABLE(glTranslated))
 			nfglTranslated(nf_params);
 			break;
 		case NFOSMESA_GLTRANSLATEF:
-			D(funcname = "glTranslatef");
 			if (GL_ISAVAILABLE(glTranslatef))
 			nfglTranslatef(nf_params);
 			break;
 		case NFOSMESA_GLTRANSLATEXOES:
-			D(funcname = "glTranslatexOES");
 			if (GL_ISAVAILABLE(glTranslatexOES))
 			nfglTranslatexOES(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1D:
-			D(funcname = "glUniform1d");
 			if (GL_ISAVAILABLE(glUniform1d))
 			nfglUniform1d(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1DV:
-			D(funcname = "glUniform1dv");
 			if (GL_ISAVAILABLE(glUniform1dv))
 			nfglUniform1dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1F:
-			D(funcname = "glUniform1f");
 			if (GL_ISAVAILABLE(glUniform1f))
 			nfglUniform1f(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1FARB:
-			D(funcname = "glUniform1fARB");
 			if (GL_ISAVAILABLE(glUniform1fARB))
 			nfglUniform1fARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1FV:
-			D(funcname = "glUniform1fv");
 			if (GL_ISAVAILABLE(glUniform1fv))
 			nfglUniform1fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1FVARB:
-			D(funcname = "glUniform1fvARB");
 			if (GL_ISAVAILABLE(glUniform1fvARB))
 			nfglUniform1fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1I:
-			D(funcname = "glUniform1i");
 			if (GL_ISAVAILABLE(glUniform1i))
 			nfglUniform1i(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1I64ARB:
-			D(funcname = "glUniform1i64ARB");
 			if (GL_ISAVAILABLE(glUniform1i64ARB))
 			nfglUniform1i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1I64NV:
-			D(funcname = "glUniform1i64NV");
 			if (GL_ISAVAILABLE(glUniform1i64NV))
 			nfglUniform1i64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1I64VARB:
-			D(funcname = "glUniform1i64vARB");
 			if (GL_ISAVAILABLE(glUniform1i64vARB))
 			nfglUniform1i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1I64VNV:
-			D(funcname = "glUniform1i64vNV");
 			if (GL_ISAVAILABLE(glUniform1i64vNV))
 			nfglUniform1i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1IARB:
-			D(funcname = "glUniform1iARB");
 			if (GL_ISAVAILABLE(glUniform1iARB))
 			nfglUniform1iARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1IV:
-			D(funcname = "glUniform1iv");
 			if (GL_ISAVAILABLE(glUniform1iv))
 			nfglUniform1iv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1IVARB:
-			D(funcname = "glUniform1ivARB");
 			if (GL_ISAVAILABLE(glUniform1ivARB))
 			nfglUniform1ivARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UI:
-			D(funcname = "glUniform1ui");
 			if (GL_ISAVAILABLE(glUniform1ui))
 			nfglUniform1ui(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64ARB:
-			D(funcname = "glUniform1ui64ARB");
 			if (GL_ISAVAILABLE(glUniform1ui64ARB))
 			nfglUniform1ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64NV:
-			D(funcname = "glUniform1ui64NV");
 			if (GL_ISAVAILABLE(glUniform1ui64NV))
 			nfglUniform1ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64VARB:
-			D(funcname = "glUniform1ui64vARB");
 			if (GL_ISAVAILABLE(glUniform1ui64vARB))
 			nfglUniform1ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UI64VNV:
-			D(funcname = "glUniform1ui64vNV");
 			if (GL_ISAVAILABLE(glUniform1ui64vNV))
 			nfglUniform1ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UIEXT:
-			D(funcname = "glUniform1uiEXT");
 			if (GL_ISAVAILABLE(glUniform1uiEXT))
 			nfglUniform1uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UIV:
-			D(funcname = "glUniform1uiv");
 			if (GL_ISAVAILABLE(glUniform1uiv))
 			nfglUniform1uiv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM1UIVEXT:
-			D(funcname = "glUniform1uivEXT");
 			if (GL_ISAVAILABLE(glUniform1uivEXT))
 			nfglUniform1uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2D:
-			D(funcname = "glUniform2d");
 			if (GL_ISAVAILABLE(glUniform2d))
 			nfglUniform2d(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2DV:
-			D(funcname = "glUniform2dv");
 			if (GL_ISAVAILABLE(glUniform2dv))
 			nfglUniform2dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2F:
-			D(funcname = "glUniform2f");
 			if (GL_ISAVAILABLE(glUniform2f))
 			nfglUniform2f(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2FARB:
-			D(funcname = "glUniform2fARB");
 			if (GL_ISAVAILABLE(glUniform2fARB))
 			nfglUniform2fARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2FV:
-			D(funcname = "glUniform2fv");
 			if (GL_ISAVAILABLE(glUniform2fv))
 			nfglUniform2fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2FVARB:
-			D(funcname = "glUniform2fvARB");
 			if (GL_ISAVAILABLE(glUniform2fvARB))
 			nfglUniform2fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2I:
-			D(funcname = "glUniform2i");
 			if (GL_ISAVAILABLE(glUniform2i))
 			nfglUniform2i(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2I64ARB:
-			D(funcname = "glUniform2i64ARB");
 			if (GL_ISAVAILABLE(glUniform2i64ARB))
 			nfglUniform2i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2I64NV:
-			D(funcname = "glUniform2i64NV");
 			if (GL_ISAVAILABLE(glUniform2i64NV))
 			nfglUniform2i64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2I64VARB:
-			D(funcname = "glUniform2i64vARB");
 			if (GL_ISAVAILABLE(glUniform2i64vARB))
 			nfglUniform2i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2I64VNV:
-			D(funcname = "glUniform2i64vNV");
 			if (GL_ISAVAILABLE(glUniform2i64vNV))
 			nfglUniform2i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2IARB:
-			D(funcname = "glUniform2iARB");
 			if (GL_ISAVAILABLE(glUniform2iARB))
 			nfglUniform2iARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2IV:
-			D(funcname = "glUniform2iv");
 			if (GL_ISAVAILABLE(glUniform2iv))
 			nfglUniform2iv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2IVARB:
-			D(funcname = "glUniform2ivARB");
 			if (GL_ISAVAILABLE(glUniform2ivARB))
 			nfglUniform2ivARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UI:
-			D(funcname = "glUniform2ui");
 			if (GL_ISAVAILABLE(glUniform2ui))
 			nfglUniform2ui(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64ARB:
-			D(funcname = "glUniform2ui64ARB");
 			if (GL_ISAVAILABLE(glUniform2ui64ARB))
 			nfglUniform2ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64NV:
-			D(funcname = "glUniform2ui64NV");
 			if (GL_ISAVAILABLE(glUniform2ui64NV))
 			nfglUniform2ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64VARB:
-			D(funcname = "glUniform2ui64vARB");
 			if (GL_ISAVAILABLE(glUniform2ui64vARB))
 			nfglUniform2ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UI64VNV:
-			D(funcname = "glUniform2ui64vNV");
 			if (GL_ISAVAILABLE(glUniform2ui64vNV))
 			nfglUniform2ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UIEXT:
-			D(funcname = "glUniform2uiEXT");
 			if (GL_ISAVAILABLE(glUniform2uiEXT))
 			nfglUniform2uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UIV:
-			D(funcname = "glUniform2uiv");
 			if (GL_ISAVAILABLE(glUniform2uiv))
 			nfglUniform2uiv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM2UIVEXT:
-			D(funcname = "glUniform2uivEXT");
 			if (GL_ISAVAILABLE(glUniform2uivEXT))
 			nfglUniform2uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3D:
-			D(funcname = "glUniform3d");
 			if (GL_ISAVAILABLE(glUniform3d))
 			nfglUniform3d(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3DV:
-			D(funcname = "glUniform3dv");
 			if (GL_ISAVAILABLE(glUniform3dv))
 			nfglUniform3dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3F:
-			D(funcname = "glUniform3f");
 			if (GL_ISAVAILABLE(glUniform3f))
 			nfglUniform3f(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3FARB:
-			D(funcname = "glUniform3fARB");
 			if (GL_ISAVAILABLE(glUniform3fARB))
 			nfglUniform3fARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3FV:
-			D(funcname = "glUniform3fv");
 			if (GL_ISAVAILABLE(glUniform3fv))
 			nfglUniform3fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3FVARB:
-			D(funcname = "glUniform3fvARB");
 			if (GL_ISAVAILABLE(glUniform3fvARB))
 			nfglUniform3fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3I:
-			D(funcname = "glUniform3i");
 			if (GL_ISAVAILABLE(glUniform3i))
 			nfglUniform3i(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3I64ARB:
-			D(funcname = "glUniform3i64ARB");
 			if (GL_ISAVAILABLE(glUniform3i64ARB))
 			nfglUniform3i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3I64NV:
-			D(funcname = "glUniform3i64NV");
 			if (GL_ISAVAILABLE(glUniform3i64NV))
 			nfglUniform3i64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3I64VARB:
-			D(funcname = "glUniform3i64vARB");
 			if (GL_ISAVAILABLE(glUniform3i64vARB))
 			nfglUniform3i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3I64VNV:
-			D(funcname = "glUniform3i64vNV");
 			if (GL_ISAVAILABLE(glUniform3i64vNV))
 			nfglUniform3i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3IARB:
-			D(funcname = "glUniform3iARB");
 			if (GL_ISAVAILABLE(glUniform3iARB))
 			nfglUniform3iARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3IV:
-			D(funcname = "glUniform3iv");
 			if (GL_ISAVAILABLE(glUniform3iv))
 			nfglUniform3iv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3IVARB:
-			D(funcname = "glUniform3ivARB");
 			if (GL_ISAVAILABLE(glUniform3ivARB))
 			nfglUniform3ivARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UI:
-			D(funcname = "glUniform3ui");
 			if (GL_ISAVAILABLE(glUniform3ui))
 			nfglUniform3ui(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64ARB:
-			D(funcname = "glUniform3ui64ARB");
 			if (GL_ISAVAILABLE(glUniform3ui64ARB))
 			nfglUniform3ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64NV:
-			D(funcname = "glUniform3ui64NV");
 			if (GL_ISAVAILABLE(glUniform3ui64NV))
 			nfglUniform3ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64VARB:
-			D(funcname = "glUniform3ui64vARB");
 			if (GL_ISAVAILABLE(glUniform3ui64vARB))
 			nfglUniform3ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UI64VNV:
-			D(funcname = "glUniform3ui64vNV");
 			if (GL_ISAVAILABLE(glUniform3ui64vNV))
 			nfglUniform3ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UIEXT:
-			D(funcname = "glUniform3uiEXT");
 			if (GL_ISAVAILABLE(glUniform3uiEXT))
 			nfglUniform3uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UIV:
-			D(funcname = "glUniform3uiv");
 			if (GL_ISAVAILABLE(glUniform3uiv))
 			nfglUniform3uiv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM3UIVEXT:
-			D(funcname = "glUniform3uivEXT");
 			if (GL_ISAVAILABLE(glUniform3uivEXT))
 			nfglUniform3uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4D:
-			D(funcname = "glUniform4d");
 			if (GL_ISAVAILABLE(glUniform4d))
 			nfglUniform4d(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4DV:
-			D(funcname = "glUniform4dv");
 			if (GL_ISAVAILABLE(glUniform4dv))
 			nfglUniform4dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4F:
-			D(funcname = "glUniform4f");
 			if (GL_ISAVAILABLE(glUniform4f))
 			nfglUniform4f(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4FARB:
-			D(funcname = "glUniform4fARB");
 			if (GL_ISAVAILABLE(glUniform4fARB))
 			nfglUniform4fARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4FV:
-			D(funcname = "glUniform4fv");
 			if (GL_ISAVAILABLE(glUniform4fv))
 			nfglUniform4fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4FVARB:
-			D(funcname = "glUniform4fvARB");
 			if (GL_ISAVAILABLE(glUniform4fvARB))
 			nfglUniform4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4I:
-			D(funcname = "glUniform4i");
 			if (GL_ISAVAILABLE(glUniform4i))
 			nfglUniform4i(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4I64ARB:
-			D(funcname = "glUniform4i64ARB");
 			if (GL_ISAVAILABLE(glUniform4i64ARB))
 			nfglUniform4i64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4I64NV:
-			D(funcname = "glUniform4i64NV");
 			if (GL_ISAVAILABLE(glUniform4i64NV))
 			nfglUniform4i64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4I64VARB:
-			D(funcname = "glUniform4i64vARB");
 			if (GL_ISAVAILABLE(glUniform4i64vARB))
 			nfglUniform4i64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4I64VNV:
-			D(funcname = "glUniform4i64vNV");
 			if (GL_ISAVAILABLE(glUniform4i64vNV))
 			nfglUniform4i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4IARB:
-			D(funcname = "glUniform4iARB");
 			if (GL_ISAVAILABLE(glUniform4iARB))
 			nfglUniform4iARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4IV:
-			D(funcname = "glUniform4iv");
 			if (GL_ISAVAILABLE(glUniform4iv))
 			nfglUniform4iv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4IVARB:
-			D(funcname = "glUniform4ivARB");
 			if (GL_ISAVAILABLE(glUniform4ivARB))
 			nfglUniform4ivARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UI:
-			D(funcname = "glUniform4ui");
 			if (GL_ISAVAILABLE(glUniform4ui))
 			nfglUniform4ui(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64ARB:
-			D(funcname = "glUniform4ui64ARB");
 			if (GL_ISAVAILABLE(glUniform4ui64ARB))
 			nfglUniform4ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64NV:
-			D(funcname = "glUniform4ui64NV");
 			if (GL_ISAVAILABLE(glUniform4ui64NV))
 			nfglUniform4ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64VARB:
-			D(funcname = "glUniform4ui64vARB");
 			if (GL_ISAVAILABLE(glUniform4ui64vARB))
 			nfglUniform4ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UI64VNV:
-			D(funcname = "glUniform4ui64vNV");
 			if (GL_ISAVAILABLE(glUniform4ui64vNV))
 			nfglUniform4ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UIEXT:
-			D(funcname = "glUniform4uiEXT");
 			if (GL_ISAVAILABLE(glUniform4uiEXT))
 			nfglUniform4uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UIV:
-			D(funcname = "glUniform4uiv");
 			if (GL_ISAVAILABLE(glUniform4uiv))
 			nfglUniform4uiv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORM4UIVEXT:
-			D(funcname = "glUniform4uivEXT");
 			if (GL_ISAVAILABLE(glUniform4uivEXT))
 			nfglUniform4uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMBLOCKBINDING:
-			D(funcname = "glUniformBlockBinding");
 			if (GL_ISAVAILABLE(glUniformBlockBinding))
 			nfglUniformBlockBinding(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMBUFFEREXT:
-			D(funcname = "glUniformBufferEXT");
 			if (GL_ISAVAILABLE(glUniformBufferEXT))
 			nfglUniformBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64ARB:
-			D(funcname = "glUniformHandleui64ARB");
 			if (GL_ISAVAILABLE(glUniformHandleui64ARB))
 			nfglUniformHandleui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64NV:
-			D(funcname = "glUniformHandleui64NV");
 			if (GL_ISAVAILABLE(glUniformHandleui64NV))
 			nfglUniformHandleui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64VARB:
-			D(funcname = "glUniformHandleui64vARB");
 			if (GL_ISAVAILABLE(glUniformHandleui64vARB))
 			nfglUniformHandleui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMHANDLEUI64VNV:
-			D(funcname = "glUniformHandleui64vNV");
 			if (GL_ISAVAILABLE(glUniformHandleui64vNV))
 			nfglUniformHandleui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2DV:
-			D(funcname = "glUniformMatrix2dv");
 			if (GL_ISAVAILABLE(glUniformMatrix2dv))
 			nfglUniformMatrix2dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FV:
-			D(funcname = "glUniformMatrix2fv");
 			if (GL_ISAVAILABLE(glUniformMatrix2fv))
 			nfglUniformMatrix2fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2FVARB:
-			D(funcname = "glUniformMatrix2fvARB");
 			if (GL_ISAVAILABLE(glUniformMatrix2fvARB))
 			nfglUniformMatrix2fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3DV:
-			D(funcname = "glUniformMatrix2x3dv");
 			if (GL_ISAVAILABLE(glUniformMatrix2x3dv))
 			nfglUniformMatrix2x3dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X3FV:
-			D(funcname = "glUniformMatrix2x3fv");
 			if (GL_ISAVAILABLE(glUniformMatrix2x3fv))
 			nfglUniformMatrix2x3fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4DV:
-			D(funcname = "glUniformMatrix2x4dv");
 			if (GL_ISAVAILABLE(glUniformMatrix2x4dv))
 			nfglUniformMatrix2x4dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX2X4FV:
-			D(funcname = "glUniformMatrix2x4fv");
 			if (GL_ISAVAILABLE(glUniformMatrix2x4fv))
 			nfglUniformMatrix2x4fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3DV:
-			D(funcname = "glUniformMatrix3dv");
 			if (GL_ISAVAILABLE(glUniformMatrix3dv))
 			nfglUniformMatrix3dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FV:
-			D(funcname = "glUniformMatrix3fv");
 			if (GL_ISAVAILABLE(glUniformMatrix3fv))
 			nfglUniformMatrix3fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3FVARB:
-			D(funcname = "glUniformMatrix3fvARB");
 			if (GL_ISAVAILABLE(glUniformMatrix3fvARB))
 			nfglUniformMatrix3fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2DV:
-			D(funcname = "glUniformMatrix3x2dv");
 			if (GL_ISAVAILABLE(glUniformMatrix3x2dv))
 			nfglUniformMatrix3x2dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X2FV:
-			D(funcname = "glUniformMatrix3x2fv");
 			if (GL_ISAVAILABLE(glUniformMatrix3x2fv))
 			nfglUniformMatrix3x2fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4DV:
-			D(funcname = "glUniformMatrix3x4dv");
 			if (GL_ISAVAILABLE(glUniformMatrix3x4dv))
 			nfglUniformMatrix3x4dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX3X4FV:
-			D(funcname = "glUniformMatrix3x4fv");
 			if (GL_ISAVAILABLE(glUniformMatrix3x4fv))
 			nfglUniformMatrix3x4fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4DV:
-			D(funcname = "glUniformMatrix4dv");
 			if (GL_ISAVAILABLE(glUniformMatrix4dv))
 			nfglUniformMatrix4dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FV:
-			D(funcname = "glUniformMatrix4fv");
 			if (GL_ISAVAILABLE(glUniformMatrix4fv))
 			nfglUniformMatrix4fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4FVARB:
-			D(funcname = "glUniformMatrix4fvARB");
 			if (GL_ISAVAILABLE(glUniformMatrix4fvARB))
 			nfglUniformMatrix4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2DV:
-			D(funcname = "glUniformMatrix4x2dv");
 			if (GL_ISAVAILABLE(glUniformMatrix4x2dv))
 			nfglUniformMatrix4x2dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X2FV:
-			D(funcname = "glUniformMatrix4x2fv");
 			if (GL_ISAVAILABLE(glUniformMatrix4x2fv))
 			nfglUniformMatrix4x2fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3DV:
-			D(funcname = "glUniformMatrix4x3dv");
 			if (GL_ISAVAILABLE(glUniformMatrix4x3dv))
 			nfglUniformMatrix4x3dv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMMATRIX4X3FV:
-			D(funcname = "glUniformMatrix4x3fv");
 			if (GL_ISAVAILABLE(glUniformMatrix4x3fv))
 			nfglUniformMatrix4x3fv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMSUBROUTINESUIV:
-			D(funcname = "glUniformSubroutinesuiv");
 			if (GL_ISAVAILABLE(glUniformSubroutinesuiv))
 			nfglUniformSubroutinesuiv(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMUI64NV:
-			D(funcname = "glUniformui64NV");
 			if (GL_ISAVAILABLE(glUniformui64NV))
 			nfglUniformui64NV(nf_params);
 			break;
 		case NFOSMESA_GLUNIFORMUI64VNV:
-			D(funcname = "glUniformui64vNV");
 			if (GL_ISAVAILABLE(glUniformui64vNV))
 			nfglUniformui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLUNLOCKARRAYSEXT:
-			D(funcname = "glUnlockArraysEXT");
 			if (GL_ISAVAILABLE(glUnlockArraysEXT))
 			nfglUnlockArraysEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPBUFFER:
-			D(funcname = "glUnmapBuffer");
 			if (GL_ISAVAILABLE(glUnmapBuffer))
 			ret = nfglUnmapBuffer(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPBUFFERARB:
-			D(funcname = "glUnmapBufferARB");
 			if (GL_ISAVAILABLE(glUnmapBufferARB))
 			ret = nfglUnmapBufferARB(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPNAMEDBUFFER:
-			D(funcname = "glUnmapNamedBuffer");
 			if (GL_ISAVAILABLE(glUnmapNamedBuffer))
 			ret = nfglUnmapNamedBuffer(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPNAMEDBUFFEREXT:
-			D(funcname = "glUnmapNamedBufferEXT");
 			if (GL_ISAVAILABLE(glUnmapNamedBufferEXT))
 			ret = nfglUnmapNamedBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPOBJECTBUFFERATI:
-			D(funcname = "glUnmapObjectBufferATI");
 			if (GL_ISAVAILABLE(glUnmapObjectBufferATI))
 			nfglUnmapObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLUNMAPTEXTURE2DINTEL:
-			D(funcname = "glUnmapTexture2DINTEL");
 			if (GL_ISAVAILABLE(glUnmapTexture2DINTEL))
 			nfglUnmapTexture2DINTEL(nf_params);
 			break;
 		case NFOSMESA_GLUPDATEOBJECTBUFFERATI:
-			D(funcname = "glUpdateObjectBufferATI");
 			if (GL_ISAVAILABLE(glUpdateObjectBufferATI))
 			nfglUpdateObjectBufferATI(nf_params);
 			break;
 		case NFOSMESA_GLUSEPROGRAM:
-			D(funcname = "glUseProgram");
 			if (GL_ISAVAILABLE(glUseProgram))
 			nfglUseProgram(nf_params);
 			break;
 		case NFOSMESA_GLUSEPROGRAMOBJECTARB:
-			D(funcname = "glUseProgramObjectARB");
 			if (GL_ISAVAILABLE(glUseProgramObjectARB))
 			nfglUseProgramObjectARB(nf_params);
 			break;
 		case NFOSMESA_GLUSEPROGRAMSTAGES:
-			D(funcname = "glUseProgramStages");
 			if (GL_ISAVAILABLE(glUseProgramStages))
 			nfglUseProgramStages(nf_params);
 			break;
 		case NFOSMESA_GLUSESHADERPROGRAMEXT:
-			D(funcname = "glUseShaderProgramEXT");
 			if (GL_ISAVAILABLE(glUseShaderProgramEXT))
 			nfglUseShaderProgramEXT(nf_params);
 			break;
-#if 0
 		case NFOSMESA_GLVDPAUFININV:
-			D(funcname = "glVDPAUFiniNV");
 			if (GL_ISAVAILABLE(glVDPAUFiniNV))
 			nfglVDPAUFiniNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUGETSURFACEIVNV:
-			D(funcname = "glVDPAUGetSurfaceivNV");
 			if (GL_ISAVAILABLE(glVDPAUGetSurfaceivNV))
 			nfglVDPAUGetSurfaceivNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUINITNV:
-			D(funcname = "glVDPAUInitNV");
 			if (GL_ISAVAILABLE(glVDPAUInitNV))
 			nfglVDPAUInitNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUISSURFACENV:
-			D(funcname = "glVDPAUIsSurfaceNV");
 			if (GL_ISAVAILABLE(glVDPAUIsSurfaceNV))
 			ret = nfglVDPAUIsSurfaceNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUMAPSURFACESNV:
-			D(funcname = "glVDPAUMapSurfacesNV");
 			if (GL_ISAVAILABLE(glVDPAUMapSurfacesNV))
 			nfglVDPAUMapSurfacesNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUREGISTEROUTPUTSURFACENV:
-			D(funcname = "glVDPAURegisterOutputSurfaceNV");
 			if (GL_ISAVAILABLE(glVDPAURegisterOutputSurfaceNV))
 			ret = nfglVDPAURegisterOutputSurfaceNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACENV:
-			D(funcname = "glVDPAURegisterVideoSurfaceNV");
 			if (GL_ISAVAILABLE(glVDPAURegisterVideoSurfaceNV))
 			ret = nfglVDPAURegisterVideoSurfaceNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENV:
-			D(funcname = "glVDPAURegisterVideoSurfaceWithPictureStructureNV");
 			if (GL_ISAVAILABLE(glVDPAURegisterVideoSurfaceWithPictureStructureNV))
 			ret = nfglVDPAURegisterVideoSurfaceWithPictureStructureNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUSURFACEACCESSNV:
-			D(funcname = "glVDPAUSurfaceAccessNV");
 			if (GL_ISAVAILABLE(glVDPAUSurfaceAccessNV))
 			nfglVDPAUSurfaceAccessNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUUNMAPSURFACESNV:
-			D(funcname = "glVDPAUUnmapSurfacesNV");
 			if (GL_ISAVAILABLE(glVDPAUUnmapSurfacesNV))
 			nfglVDPAUUnmapSurfacesNV(nf_params);
 			break;
-#endif
-#if 0
 		case NFOSMESA_GLVDPAUUNREGISTERSURFACENV:
-			D(funcname = "glVDPAUUnregisterSurfaceNV");
 			if (GL_ISAVAILABLE(glVDPAUUnregisterSurfaceNV))
 			nfglVDPAUUnregisterSurfaceNV(nf_params);
 			break;
-#endif
 		case NFOSMESA_GLVALIDATEPROGRAM:
-			D(funcname = "glValidateProgram");
 			if (GL_ISAVAILABLE(glValidateProgram))
 			nfglValidateProgram(nf_params);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMARB:
-			D(funcname = "glValidateProgramARB");
 			if (GL_ISAVAILABLE(glValidateProgramARB))
 			nfglValidateProgramARB(nf_params);
 			break;
 		case NFOSMESA_GLVALIDATEPROGRAMPIPELINE:
-			D(funcname = "glValidateProgramPipeline");
 			if (GL_ISAVAILABLE(glValidateProgramPipeline))
 			nfglValidateProgramPipeline(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTARRAYOBJECTATI:
-			D(funcname = "glVariantArrayObjectATI");
 			if (GL_ISAVAILABLE(glVariantArrayObjectATI))
 			nfglVariantArrayObjectATI(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTPOINTEREXT:
-			D(funcname = "glVariantPointerEXT");
 			if (GL_ISAVAILABLE(glVariantPointerEXT))
 			nfglVariantPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTBVEXT:
-			D(funcname = "glVariantbvEXT");
 			if (GL_ISAVAILABLE(glVariantbvEXT))
 			nfglVariantbvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTDVEXT:
-			D(funcname = "glVariantdvEXT");
 			if (GL_ISAVAILABLE(glVariantdvEXT))
 			nfglVariantdvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTFVEXT:
-			D(funcname = "glVariantfvEXT");
 			if (GL_ISAVAILABLE(glVariantfvEXT))
 			nfglVariantfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTIVEXT:
-			D(funcname = "glVariantivEXT");
 			if (GL_ISAVAILABLE(glVariantivEXT))
 			nfglVariantivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTSVEXT:
-			D(funcname = "glVariantsvEXT");
 			if (GL_ISAVAILABLE(glVariantsvEXT))
 			nfglVariantsvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTUBVEXT:
-			D(funcname = "glVariantubvEXT");
 			if (GL_ISAVAILABLE(glVariantubvEXT))
 			nfglVariantubvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTUIVEXT:
-			D(funcname = "glVariantuivEXT");
 			if (GL_ISAVAILABLE(glVariantuivEXT))
 			nfglVariantuivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVARIANTUSVEXT:
-			D(funcname = "glVariantusvEXT");
 			if (GL_ISAVAILABLE(glVariantusvEXT))
 			nfglVariantusvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2BOES:
-			D(funcname = "glVertex2bOES");
 			if (GL_ISAVAILABLE(glVertex2bOES))
 			nfglVertex2bOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2BVOES:
-			D(funcname = "glVertex2bvOES");
 			if (GL_ISAVAILABLE(glVertex2bvOES))
 			nfglVertex2bvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2D:
-			D(funcname = "glVertex2d");
 			if (GL_ISAVAILABLE(glVertex2d))
 			nfglVertex2d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2DV:
-			D(funcname = "glVertex2dv");
 			if (GL_ISAVAILABLE(glVertex2dv))
 			nfglVertex2dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2F:
-			D(funcname = "glVertex2f");
 			if (GL_ISAVAILABLE(glVertex2f))
 			nfglVertex2f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2FV:
-			D(funcname = "glVertex2fv");
 			if (GL_ISAVAILABLE(glVertex2fv))
 			nfglVertex2fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2HNV:
-			D(funcname = "glVertex2hNV");
 			if (GL_ISAVAILABLE(glVertex2hNV))
 			nfglVertex2hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2HVNV:
-			D(funcname = "glVertex2hvNV");
 			if (GL_ISAVAILABLE(glVertex2hvNV))
 			nfglVertex2hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2I:
-			D(funcname = "glVertex2i");
 			if (GL_ISAVAILABLE(glVertex2i))
 			nfglVertex2i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2IV:
-			D(funcname = "glVertex2iv");
 			if (GL_ISAVAILABLE(glVertex2iv))
 			nfglVertex2iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2S:
-			D(funcname = "glVertex2s");
 			if (GL_ISAVAILABLE(glVertex2s))
 			nfglVertex2s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2SV:
-			D(funcname = "glVertex2sv");
 			if (GL_ISAVAILABLE(glVertex2sv))
 			nfglVertex2sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2XOES:
-			D(funcname = "glVertex2xOES");
 			if (GL_ISAVAILABLE(glVertex2xOES))
 			nfglVertex2xOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX2XVOES:
-			D(funcname = "glVertex2xvOES");
 			if (GL_ISAVAILABLE(glVertex2xvOES))
 			nfglVertex2xvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3BOES:
-			D(funcname = "glVertex3bOES");
 			if (GL_ISAVAILABLE(glVertex3bOES))
 			nfglVertex3bOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3BVOES:
-			D(funcname = "glVertex3bvOES");
 			if (GL_ISAVAILABLE(glVertex3bvOES))
 			nfglVertex3bvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3D:
-			D(funcname = "glVertex3d");
 			if (GL_ISAVAILABLE(glVertex3d))
 			nfglVertex3d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3DV:
-			D(funcname = "glVertex3dv");
 			if (GL_ISAVAILABLE(glVertex3dv))
 			nfglVertex3dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3F:
-			D(funcname = "glVertex3f");
 			if (GL_ISAVAILABLE(glVertex3f))
 			nfglVertex3f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3FV:
-			D(funcname = "glVertex3fv");
 			if (GL_ISAVAILABLE(glVertex3fv))
 			nfglVertex3fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3HNV:
-			D(funcname = "glVertex3hNV");
 			if (GL_ISAVAILABLE(glVertex3hNV))
 			nfglVertex3hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3HVNV:
-			D(funcname = "glVertex3hvNV");
 			if (GL_ISAVAILABLE(glVertex3hvNV))
 			nfglVertex3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3I:
-			D(funcname = "glVertex3i");
 			if (GL_ISAVAILABLE(glVertex3i))
 			nfglVertex3i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3IV:
-			D(funcname = "glVertex3iv");
 			if (GL_ISAVAILABLE(glVertex3iv))
 			nfglVertex3iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3S:
-			D(funcname = "glVertex3s");
 			if (GL_ISAVAILABLE(glVertex3s))
 			nfglVertex3s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3SV:
-			D(funcname = "glVertex3sv");
 			if (GL_ISAVAILABLE(glVertex3sv))
 			nfglVertex3sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3XOES:
-			D(funcname = "glVertex3xOES");
 			if (GL_ISAVAILABLE(glVertex3xOES))
 			nfglVertex3xOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX3XVOES:
-			D(funcname = "glVertex3xvOES");
 			if (GL_ISAVAILABLE(glVertex3xvOES))
 			nfglVertex3xvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4BOES:
-			D(funcname = "glVertex4bOES");
 			if (GL_ISAVAILABLE(glVertex4bOES))
 			nfglVertex4bOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4BVOES:
-			D(funcname = "glVertex4bvOES");
 			if (GL_ISAVAILABLE(glVertex4bvOES))
 			nfglVertex4bvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4D:
-			D(funcname = "glVertex4d");
 			if (GL_ISAVAILABLE(glVertex4d))
 			nfglVertex4d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4DV:
-			D(funcname = "glVertex4dv");
 			if (GL_ISAVAILABLE(glVertex4dv))
 			nfglVertex4dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4F:
-			D(funcname = "glVertex4f");
 			if (GL_ISAVAILABLE(glVertex4f))
 			nfglVertex4f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4FV:
-			D(funcname = "glVertex4fv");
 			if (GL_ISAVAILABLE(glVertex4fv))
 			nfglVertex4fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4HNV:
-			D(funcname = "glVertex4hNV");
 			if (GL_ISAVAILABLE(glVertex4hNV))
 			nfglVertex4hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4HVNV:
-			D(funcname = "glVertex4hvNV");
 			if (GL_ISAVAILABLE(glVertex4hvNV))
 			nfglVertex4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4I:
-			D(funcname = "glVertex4i");
 			if (GL_ISAVAILABLE(glVertex4i))
 			nfglVertex4i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4IV:
-			D(funcname = "glVertex4iv");
 			if (GL_ISAVAILABLE(glVertex4iv))
 			nfglVertex4iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4S:
-			D(funcname = "glVertex4s");
 			if (GL_ISAVAILABLE(glVertex4s))
 			nfglVertex4s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4SV:
-			D(funcname = "glVertex4sv");
 			if (GL_ISAVAILABLE(glVertex4sv))
 			nfglVertex4sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4XOES:
-			D(funcname = "glVertex4xOES");
 			if (GL_ISAVAILABLE(glVertex4xOES))
 			nfglVertex4xOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEX4XVOES:
-			D(funcname = "glVertex4xvOES");
 			if (GL_ISAVAILABLE(glVertex4xvOES))
 			nfglVertex4xvOES(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBBINDING:
-			D(funcname = "glVertexArrayAttribBinding");
 			if (GL_ISAVAILABLE(glVertexArrayAttribBinding))
 			nfglVertexArrayAttribBinding(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBFORMAT:
-			D(funcname = "glVertexArrayAttribFormat");
 			if (GL_ISAVAILABLE(glVertexArrayAttribFormat))
 			nfglVertexArrayAttribFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBIFORMAT:
-			D(funcname = "glVertexArrayAttribIFormat");
 			if (GL_ISAVAILABLE(glVertexArrayAttribIFormat))
 			nfglVertexArrayAttribIFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYATTRIBLFORMAT:
-			D(funcname = "glVertexArrayAttribLFormat");
 			if (GL_ISAVAILABLE(glVertexArrayAttribLFormat))
 			nfglVertexArrayAttribLFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYBINDVERTEXBUFFEREXT:
-			D(funcname = "glVertexArrayBindVertexBufferEXT");
 			if (GL_ISAVAILABLE(glVertexArrayBindVertexBufferEXT))
 			nfglVertexArrayBindVertexBufferEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYBINDINGDIVISOR:
-			D(funcname = "glVertexArrayBindingDivisor");
 			if (GL_ISAVAILABLE(glVertexArrayBindingDivisor))
 			nfglVertexArrayBindingDivisor(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYCOLOROFFSETEXT:
-			D(funcname = "glVertexArrayColorOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayColorOffsetEXT))
 			nfglVertexArrayColorOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYEDGEFLAGOFFSETEXT:
-			D(funcname = "glVertexArrayEdgeFlagOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayEdgeFlagOffsetEXT))
 			nfglVertexArrayEdgeFlagOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYELEMENTBUFFER:
-			D(funcname = "glVertexArrayElementBuffer");
 			if (GL_ISAVAILABLE(glVertexArrayElementBuffer))
 			nfglVertexArrayElementBuffer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYFOGCOORDOFFSETEXT:
-			D(funcname = "glVertexArrayFogCoordOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayFogCoordOffsetEXT))
 			nfglVertexArrayFogCoordOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYINDEXOFFSETEXT:
-			D(funcname = "glVertexArrayIndexOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayIndexOffsetEXT))
 			nfglVertexArrayIndexOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYMULTITEXCOORDOFFSETEXT:
-			D(funcname = "glVertexArrayMultiTexCoordOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayMultiTexCoordOffsetEXT))
 			nfglVertexArrayMultiTexCoordOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYNORMALOFFSETEXT:
-			D(funcname = "glVertexArrayNormalOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayNormalOffsetEXT))
 			nfglVertexArrayNormalOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYPARAMETERIAPPLE:
-			D(funcname = "glVertexArrayParameteriAPPLE");
 			if (GL_ISAVAILABLE(glVertexArrayParameteriAPPLE))
 			nfglVertexArrayParameteriAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYRANGEAPPLE:
-			D(funcname = "glVertexArrayRangeAPPLE");
 			if (GL_ISAVAILABLE(glVertexArrayRangeAPPLE))
 			nfglVertexArrayRangeAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYRANGENV:
-			D(funcname = "glVertexArrayRangeNV");
 			if (GL_ISAVAILABLE(glVertexArrayRangeNV))
 			nfglVertexArrayRangeNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYSECONDARYCOLOROFFSETEXT:
-			D(funcname = "glVertexArraySecondaryColorOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArraySecondaryColorOffsetEXT))
 			nfglVertexArraySecondaryColorOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYTEXCOORDOFFSETEXT:
-			D(funcname = "glVertexArrayTexCoordOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayTexCoordOffsetEXT))
 			nfglVertexArrayTexCoordOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBBINDINGEXT:
-			D(funcname = "glVertexArrayVertexAttribBindingEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribBindingEXT))
 			nfglVertexArrayVertexAttribBindingEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBDIVISOREXT:
-			D(funcname = "glVertexArrayVertexAttribDivisorEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribDivisorEXT))
 			nfglVertexArrayVertexAttribDivisorEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBFORMATEXT:
-			D(funcname = "glVertexArrayVertexAttribFormatEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribFormatEXT))
 			nfglVertexArrayVertexAttribFormatEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBIFORMATEXT:
-			D(funcname = "glVertexArrayVertexAttribIFormatEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribIFormatEXT))
 			nfglVertexArrayVertexAttribIFormatEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBIOFFSETEXT:
-			D(funcname = "glVertexArrayVertexAttribIOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribIOffsetEXT))
 			nfglVertexArrayVertexAttribIOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBLFORMATEXT:
-			D(funcname = "glVertexArrayVertexAttribLFormatEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribLFormatEXT))
 			nfglVertexArrayVertexAttribLFormatEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBLOFFSETEXT:
-			D(funcname = "glVertexArrayVertexAttribLOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribLOffsetEXT))
 			nfglVertexArrayVertexAttribLOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXATTRIBOFFSETEXT:
-			D(funcname = "glVertexArrayVertexAttribOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexAttribOffsetEXT))
 			nfglVertexArrayVertexAttribOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBINDINGDIVISOREXT:
-			D(funcname = "glVertexArrayVertexBindingDivisorEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexBindingDivisorEXT))
 			nfglVertexArrayVertexBindingDivisorEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBUFFER:
-			D(funcname = "glVertexArrayVertexBuffer");
 			if (GL_ISAVAILABLE(glVertexArrayVertexBuffer))
 			nfglVertexArrayVertexBuffer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXBUFFERS:
-			D(funcname = "glVertexArrayVertexBuffers");
 			if (GL_ISAVAILABLE(glVertexArrayVertexBuffers))
 			nfglVertexArrayVertexBuffers(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXARRAYVERTEXOFFSETEXT:
-			D(funcname = "glVertexArrayVertexOffsetEXT");
 			if (GL_ISAVAILABLE(glVertexArrayVertexOffsetEXT))
 			nfglVertexArrayVertexOffsetEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1D:
-			D(funcname = "glVertexAttrib1d");
 			if (GL_ISAVAILABLE(glVertexAttrib1d))
 			nfglVertexAttrib1d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DARB:
-			D(funcname = "glVertexAttrib1dARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1dARB))
 			nfglVertexAttrib1dARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DNV:
-			D(funcname = "glVertexAttrib1dNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1dNV))
 			nfglVertexAttrib1dNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DV:
-			D(funcname = "glVertexAttrib1dv");
 			if (GL_ISAVAILABLE(glVertexAttrib1dv))
 			nfglVertexAttrib1dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVARB:
-			D(funcname = "glVertexAttrib1dvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1dvARB))
 			nfglVertexAttrib1dvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1DVNV:
-			D(funcname = "glVertexAttrib1dvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1dvNV))
 			nfglVertexAttrib1dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1F:
-			D(funcname = "glVertexAttrib1f");
 			if (GL_ISAVAILABLE(glVertexAttrib1f))
 			nfglVertexAttrib1f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FARB:
-			D(funcname = "glVertexAttrib1fARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1fARB))
 			nfglVertexAttrib1fARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FNV:
-			D(funcname = "glVertexAttrib1fNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1fNV))
 			nfglVertexAttrib1fNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FV:
-			D(funcname = "glVertexAttrib1fv");
 			if (GL_ISAVAILABLE(glVertexAttrib1fv))
 			nfglVertexAttrib1fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVARB:
-			D(funcname = "glVertexAttrib1fvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1fvARB))
 			nfglVertexAttrib1fvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1FVNV:
-			D(funcname = "glVertexAttrib1fvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1fvNV))
 			nfglVertexAttrib1fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1HNV:
-			D(funcname = "glVertexAttrib1hNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1hNV))
 			nfglVertexAttrib1hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1HVNV:
-			D(funcname = "glVertexAttrib1hvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1hvNV))
 			nfglVertexAttrib1hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1S:
-			D(funcname = "glVertexAttrib1s");
 			if (GL_ISAVAILABLE(glVertexAttrib1s))
 			nfglVertexAttrib1s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SARB:
-			D(funcname = "glVertexAttrib1sARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1sARB))
 			nfglVertexAttrib1sARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SNV:
-			D(funcname = "glVertexAttrib1sNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1sNV))
 			nfglVertexAttrib1sNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SV:
-			D(funcname = "glVertexAttrib1sv");
 			if (GL_ISAVAILABLE(glVertexAttrib1sv))
 			nfglVertexAttrib1sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVARB:
-			D(funcname = "glVertexAttrib1svARB");
 			if (GL_ISAVAILABLE(glVertexAttrib1svARB))
 			nfglVertexAttrib1svARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB1SVNV:
-			D(funcname = "glVertexAttrib1svNV");
 			if (GL_ISAVAILABLE(glVertexAttrib1svNV))
 			nfglVertexAttrib1svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2D:
-			D(funcname = "glVertexAttrib2d");
 			if (GL_ISAVAILABLE(glVertexAttrib2d))
 			nfglVertexAttrib2d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DARB:
-			D(funcname = "glVertexAttrib2dARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2dARB))
 			nfglVertexAttrib2dARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DNV:
-			D(funcname = "glVertexAttrib2dNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2dNV))
 			nfglVertexAttrib2dNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DV:
-			D(funcname = "glVertexAttrib2dv");
 			if (GL_ISAVAILABLE(glVertexAttrib2dv))
 			nfglVertexAttrib2dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVARB:
-			D(funcname = "glVertexAttrib2dvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2dvARB))
 			nfglVertexAttrib2dvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2DVNV:
-			D(funcname = "glVertexAttrib2dvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2dvNV))
 			nfglVertexAttrib2dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2F:
-			D(funcname = "glVertexAttrib2f");
 			if (GL_ISAVAILABLE(glVertexAttrib2f))
 			nfglVertexAttrib2f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FARB:
-			D(funcname = "glVertexAttrib2fARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2fARB))
 			nfglVertexAttrib2fARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FNV:
-			D(funcname = "glVertexAttrib2fNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2fNV))
 			nfglVertexAttrib2fNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FV:
-			D(funcname = "glVertexAttrib2fv");
 			if (GL_ISAVAILABLE(glVertexAttrib2fv))
 			nfglVertexAttrib2fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVARB:
-			D(funcname = "glVertexAttrib2fvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2fvARB))
 			nfglVertexAttrib2fvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2FVNV:
-			D(funcname = "glVertexAttrib2fvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2fvNV))
 			nfglVertexAttrib2fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2HNV:
-			D(funcname = "glVertexAttrib2hNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2hNV))
 			nfglVertexAttrib2hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2HVNV:
-			D(funcname = "glVertexAttrib2hvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2hvNV))
 			nfglVertexAttrib2hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2S:
-			D(funcname = "glVertexAttrib2s");
 			if (GL_ISAVAILABLE(glVertexAttrib2s))
 			nfglVertexAttrib2s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SARB:
-			D(funcname = "glVertexAttrib2sARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2sARB))
 			nfglVertexAttrib2sARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SNV:
-			D(funcname = "glVertexAttrib2sNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2sNV))
 			nfglVertexAttrib2sNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SV:
-			D(funcname = "glVertexAttrib2sv");
 			if (GL_ISAVAILABLE(glVertexAttrib2sv))
 			nfglVertexAttrib2sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVARB:
-			D(funcname = "glVertexAttrib2svARB");
 			if (GL_ISAVAILABLE(glVertexAttrib2svARB))
 			nfglVertexAttrib2svARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB2SVNV:
-			D(funcname = "glVertexAttrib2svNV");
 			if (GL_ISAVAILABLE(glVertexAttrib2svNV))
 			nfglVertexAttrib2svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3D:
-			D(funcname = "glVertexAttrib3d");
 			if (GL_ISAVAILABLE(glVertexAttrib3d))
 			nfglVertexAttrib3d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DARB:
-			D(funcname = "glVertexAttrib3dARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3dARB))
 			nfglVertexAttrib3dARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DNV:
-			D(funcname = "glVertexAttrib3dNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3dNV))
 			nfglVertexAttrib3dNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DV:
-			D(funcname = "glVertexAttrib3dv");
 			if (GL_ISAVAILABLE(glVertexAttrib3dv))
 			nfglVertexAttrib3dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVARB:
-			D(funcname = "glVertexAttrib3dvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3dvARB))
 			nfglVertexAttrib3dvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3DVNV:
-			D(funcname = "glVertexAttrib3dvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3dvNV))
 			nfglVertexAttrib3dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3F:
-			D(funcname = "glVertexAttrib3f");
 			if (GL_ISAVAILABLE(glVertexAttrib3f))
 			nfglVertexAttrib3f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FARB:
-			D(funcname = "glVertexAttrib3fARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3fARB))
 			nfglVertexAttrib3fARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FNV:
-			D(funcname = "glVertexAttrib3fNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3fNV))
 			nfglVertexAttrib3fNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FV:
-			D(funcname = "glVertexAttrib3fv");
 			if (GL_ISAVAILABLE(glVertexAttrib3fv))
 			nfglVertexAttrib3fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVARB:
-			D(funcname = "glVertexAttrib3fvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3fvARB))
 			nfglVertexAttrib3fvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3FVNV:
-			D(funcname = "glVertexAttrib3fvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3fvNV))
 			nfglVertexAttrib3fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3HNV:
-			D(funcname = "glVertexAttrib3hNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3hNV))
 			nfglVertexAttrib3hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3HVNV:
-			D(funcname = "glVertexAttrib3hvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3hvNV))
 			nfglVertexAttrib3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3S:
-			D(funcname = "glVertexAttrib3s");
 			if (GL_ISAVAILABLE(glVertexAttrib3s))
 			nfglVertexAttrib3s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SARB:
-			D(funcname = "glVertexAttrib3sARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3sARB))
 			nfglVertexAttrib3sARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SNV:
-			D(funcname = "glVertexAttrib3sNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3sNV))
 			nfglVertexAttrib3sNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SV:
-			D(funcname = "glVertexAttrib3sv");
 			if (GL_ISAVAILABLE(glVertexAttrib3sv))
 			nfglVertexAttrib3sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVARB:
-			D(funcname = "glVertexAttrib3svARB");
 			if (GL_ISAVAILABLE(glVertexAttrib3svARB))
 			nfglVertexAttrib3svARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB3SVNV:
-			D(funcname = "glVertexAttrib3svNV");
 			if (GL_ISAVAILABLE(glVertexAttrib3svNV))
 			nfglVertexAttrib3svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBV:
-			D(funcname = "glVertexAttrib4Nbv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nbv))
 			nfglVertexAttrib4Nbv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NBVARB:
-			D(funcname = "glVertexAttrib4NbvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NbvARB))
 			nfglVertexAttrib4NbvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIV:
-			D(funcname = "glVertexAttrib4Niv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Niv))
 			nfglVertexAttrib4Niv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NIVARB:
-			D(funcname = "glVertexAttrib4NivARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NivARB))
 			nfglVertexAttrib4NivARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSV:
-			D(funcname = "glVertexAttrib4Nsv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nsv))
 			nfglVertexAttrib4Nsv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NSVARB:
-			D(funcname = "glVertexAttrib4NsvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NsvARB))
 			nfglVertexAttrib4NsvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUB:
-			D(funcname = "glVertexAttrib4Nub");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nub))
 			nfglVertexAttrib4Nub(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBARB:
-			D(funcname = "glVertexAttrib4NubARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NubARB))
 			nfglVertexAttrib4NubARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBV:
-			D(funcname = "glVertexAttrib4Nubv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nubv))
 			nfglVertexAttrib4Nubv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUBVARB:
-			D(funcname = "glVertexAttrib4NubvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NubvARB))
 			nfglVertexAttrib4NubvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIV:
-			D(funcname = "glVertexAttrib4Nuiv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nuiv))
 			nfglVertexAttrib4Nuiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUIVARB:
-			D(funcname = "glVertexAttrib4NuivARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NuivARB))
 			nfglVertexAttrib4NuivARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSV:
-			D(funcname = "glVertexAttrib4Nusv");
 			if (GL_ISAVAILABLE(glVertexAttrib4Nusv))
 			nfglVertexAttrib4Nusv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4NUSVARB:
-			D(funcname = "glVertexAttrib4NusvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4NusvARB))
 			nfglVertexAttrib4NusvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BV:
-			D(funcname = "glVertexAttrib4bv");
 			if (GL_ISAVAILABLE(glVertexAttrib4bv))
 			nfglVertexAttrib4bv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4BVARB:
-			D(funcname = "glVertexAttrib4bvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4bvARB))
 			nfglVertexAttrib4bvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4D:
-			D(funcname = "glVertexAttrib4d");
 			if (GL_ISAVAILABLE(glVertexAttrib4d))
 			nfglVertexAttrib4d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DARB:
-			D(funcname = "glVertexAttrib4dARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4dARB))
 			nfglVertexAttrib4dARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DNV:
-			D(funcname = "glVertexAttrib4dNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4dNV))
 			nfglVertexAttrib4dNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DV:
-			D(funcname = "glVertexAttrib4dv");
 			if (GL_ISAVAILABLE(glVertexAttrib4dv))
 			nfglVertexAttrib4dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVARB:
-			D(funcname = "glVertexAttrib4dvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4dvARB))
 			nfglVertexAttrib4dvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4DVNV:
-			D(funcname = "glVertexAttrib4dvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4dvNV))
 			nfglVertexAttrib4dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4F:
-			D(funcname = "glVertexAttrib4f");
 			if (GL_ISAVAILABLE(glVertexAttrib4f))
 			nfglVertexAttrib4f(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FARB:
-			D(funcname = "glVertexAttrib4fARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4fARB))
 			nfglVertexAttrib4fARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FNV:
-			D(funcname = "glVertexAttrib4fNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4fNV))
 			nfglVertexAttrib4fNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FV:
-			D(funcname = "glVertexAttrib4fv");
 			if (GL_ISAVAILABLE(glVertexAttrib4fv))
 			nfglVertexAttrib4fv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVARB:
-			D(funcname = "glVertexAttrib4fvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4fvARB))
 			nfglVertexAttrib4fvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4FVNV:
-			D(funcname = "glVertexAttrib4fvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4fvNV))
 			nfglVertexAttrib4fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4HNV:
-			D(funcname = "glVertexAttrib4hNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4hNV))
 			nfglVertexAttrib4hNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4HVNV:
-			D(funcname = "glVertexAttrib4hvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4hvNV))
 			nfglVertexAttrib4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IV:
-			D(funcname = "glVertexAttrib4iv");
 			if (GL_ISAVAILABLE(glVertexAttrib4iv))
 			nfglVertexAttrib4iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4IVARB:
-			D(funcname = "glVertexAttrib4ivARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4ivARB))
 			nfglVertexAttrib4ivARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4S:
-			D(funcname = "glVertexAttrib4s");
 			if (GL_ISAVAILABLE(glVertexAttrib4s))
 			nfglVertexAttrib4s(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SARB:
-			D(funcname = "glVertexAttrib4sARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4sARB))
 			nfglVertexAttrib4sARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SNV:
-			D(funcname = "glVertexAttrib4sNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4sNV))
 			nfglVertexAttrib4sNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SV:
-			D(funcname = "glVertexAttrib4sv");
 			if (GL_ISAVAILABLE(glVertexAttrib4sv))
 			nfglVertexAttrib4sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVARB:
-			D(funcname = "glVertexAttrib4svARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4svARB))
 			nfglVertexAttrib4svARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4SVNV:
-			D(funcname = "glVertexAttrib4svNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4svNV))
 			nfglVertexAttrib4svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBNV:
-			D(funcname = "glVertexAttrib4ubNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4ubNV))
 			nfglVertexAttrib4ubNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBV:
-			D(funcname = "glVertexAttrib4ubv");
 			if (GL_ISAVAILABLE(glVertexAttrib4ubv))
 			nfglVertexAttrib4ubv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVARB:
-			D(funcname = "glVertexAttrib4ubvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4ubvARB))
 			nfglVertexAttrib4ubvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UBVNV:
-			D(funcname = "glVertexAttrib4ubvNV");
 			if (GL_ISAVAILABLE(glVertexAttrib4ubvNV))
 			nfglVertexAttrib4ubvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIV:
-			D(funcname = "glVertexAttrib4uiv");
 			if (GL_ISAVAILABLE(glVertexAttrib4uiv))
 			nfglVertexAttrib4uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4UIVARB:
-			D(funcname = "glVertexAttrib4uivARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4uivARB))
 			nfglVertexAttrib4uivARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USV:
-			D(funcname = "glVertexAttrib4usv");
 			if (GL_ISAVAILABLE(glVertexAttrib4usv))
 			nfglVertexAttrib4usv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIB4USVARB:
-			D(funcname = "glVertexAttrib4usvARB");
 			if (GL_ISAVAILABLE(glVertexAttrib4usvARB))
 			nfglVertexAttrib4usvARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBARRAYOBJECTATI:
-			D(funcname = "glVertexAttribArrayObjectATI");
 			if (GL_ISAVAILABLE(glVertexAttribArrayObjectATI))
 			nfglVertexAttribArrayObjectATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBBINDING:
-			D(funcname = "glVertexAttribBinding");
 			if (GL_ISAVAILABLE(glVertexAttribBinding))
 			nfglVertexAttribBinding(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBDIVISOR:
-			D(funcname = "glVertexAttribDivisor");
 			if (GL_ISAVAILABLE(glVertexAttribDivisor))
 			nfglVertexAttribDivisor(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBDIVISORARB:
-			D(funcname = "glVertexAttribDivisorARB");
 			if (GL_ISAVAILABLE(glVertexAttribDivisorARB))
 			nfglVertexAttribDivisorARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBFORMAT:
-			D(funcname = "glVertexAttribFormat");
 			if (GL_ISAVAILABLE(glVertexAttribFormat))
 			nfglVertexAttribFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBFORMATNV:
-			D(funcname = "glVertexAttribFormatNV");
 			if (GL_ISAVAILABLE(glVertexAttribFormatNV))
 			nfglVertexAttribFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1I:
-			D(funcname = "glVertexAttribI1i");
 			if (GL_ISAVAILABLE(glVertexAttribI1i))
 			nfglVertexAttribI1i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IEXT:
-			D(funcname = "glVertexAttribI1iEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI1iEXT))
 			nfglVertexAttribI1iEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IV:
-			D(funcname = "glVertexAttribI1iv");
 			if (GL_ISAVAILABLE(glVertexAttribI1iv))
 			nfglVertexAttribI1iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1IVEXT:
-			D(funcname = "glVertexAttribI1ivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI1ivEXT))
 			nfglVertexAttribI1ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UI:
-			D(funcname = "glVertexAttribI1ui");
 			if (GL_ISAVAILABLE(glVertexAttribI1ui))
 			nfglVertexAttribI1ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIEXT:
-			D(funcname = "glVertexAttribI1uiEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI1uiEXT))
 			nfglVertexAttribI1uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIV:
-			D(funcname = "glVertexAttribI1uiv");
 			if (GL_ISAVAILABLE(glVertexAttribI1uiv))
 			nfglVertexAttribI1uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI1UIVEXT:
-			D(funcname = "glVertexAttribI1uivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI1uivEXT))
 			nfglVertexAttribI1uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2I:
-			D(funcname = "glVertexAttribI2i");
 			if (GL_ISAVAILABLE(glVertexAttribI2i))
 			nfglVertexAttribI2i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IEXT:
-			D(funcname = "glVertexAttribI2iEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI2iEXT))
 			nfglVertexAttribI2iEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IV:
-			D(funcname = "glVertexAttribI2iv");
 			if (GL_ISAVAILABLE(glVertexAttribI2iv))
 			nfglVertexAttribI2iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2IVEXT:
-			D(funcname = "glVertexAttribI2ivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI2ivEXT))
 			nfglVertexAttribI2ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UI:
-			D(funcname = "glVertexAttribI2ui");
 			if (GL_ISAVAILABLE(glVertexAttribI2ui))
 			nfglVertexAttribI2ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIEXT:
-			D(funcname = "glVertexAttribI2uiEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI2uiEXT))
 			nfglVertexAttribI2uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIV:
-			D(funcname = "glVertexAttribI2uiv");
 			if (GL_ISAVAILABLE(glVertexAttribI2uiv))
 			nfglVertexAttribI2uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI2UIVEXT:
-			D(funcname = "glVertexAttribI2uivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI2uivEXT))
 			nfglVertexAttribI2uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3I:
-			D(funcname = "glVertexAttribI3i");
 			if (GL_ISAVAILABLE(glVertexAttribI3i))
 			nfglVertexAttribI3i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IEXT:
-			D(funcname = "glVertexAttribI3iEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI3iEXT))
 			nfglVertexAttribI3iEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IV:
-			D(funcname = "glVertexAttribI3iv");
 			if (GL_ISAVAILABLE(glVertexAttribI3iv))
 			nfglVertexAttribI3iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3IVEXT:
-			D(funcname = "glVertexAttribI3ivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI3ivEXT))
 			nfglVertexAttribI3ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UI:
-			D(funcname = "glVertexAttribI3ui");
 			if (GL_ISAVAILABLE(glVertexAttribI3ui))
 			nfglVertexAttribI3ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIEXT:
-			D(funcname = "glVertexAttribI3uiEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI3uiEXT))
 			nfglVertexAttribI3uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIV:
-			D(funcname = "glVertexAttribI3uiv");
 			if (GL_ISAVAILABLE(glVertexAttribI3uiv))
 			nfglVertexAttribI3uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI3UIVEXT:
-			D(funcname = "glVertexAttribI3uivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI3uivEXT))
 			nfglVertexAttribI3uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BV:
-			D(funcname = "glVertexAttribI4bv");
 			if (GL_ISAVAILABLE(glVertexAttribI4bv))
 			nfglVertexAttribI4bv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4BVEXT:
-			D(funcname = "glVertexAttribI4bvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4bvEXT))
 			nfglVertexAttribI4bvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4I:
-			D(funcname = "glVertexAttribI4i");
 			if (GL_ISAVAILABLE(glVertexAttribI4i))
 			nfglVertexAttribI4i(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IEXT:
-			D(funcname = "glVertexAttribI4iEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4iEXT))
 			nfglVertexAttribI4iEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IV:
-			D(funcname = "glVertexAttribI4iv");
 			if (GL_ISAVAILABLE(glVertexAttribI4iv))
 			nfglVertexAttribI4iv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4IVEXT:
-			D(funcname = "glVertexAttribI4ivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4ivEXT))
 			nfglVertexAttribI4ivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SV:
-			D(funcname = "glVertexAttribI4sv");
 			if (GL_ISAVAILABLE(glVertexAttribI4sv))
 			nfglVertexAttribI4sv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4SVEXT:
-			D(funcname = "glVertexAttribI4svEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4svEXT))
 			nfglVertexAttribI4svEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBV:
-			D(funcname = "glVertexAttribI4ubv");
 			if (GL_ISAVAILABLE(glVertexAttribI4ubv))
 			nfglVertexAttribI4ubv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UBVEXT:
-			D(funcname = "glVertexAttribI4ubvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4ubvEXT))
 			nfglVertexAttribI4ubvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UI:
-			D(funcname = "glVertexAttribI4ui");
 			if (GL_ISAVAILABLE(glVertexAttribI4ui))
 			nfglVertexAttribI4ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIEXT:
-			D(funcname = "glVertexAttribI4uiEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4uiEXT))
 			nfglVertexAttribI4uiEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIV:
-			D(funcname = "glVertexAttribI4uiv");
 			if (GL_ISAVAILABLE(glVertexAttribI4uiv))
 			nfglVertexAttribI4uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4UIVEXT:
-			D(funcname = "glVertexAttribI4uivEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4uivEXT))
 			nfglVertexAttribI4uivEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USV:
-			D(funcname = "glVertexAttribI4usv");
 			if (GL_ISAVAILABLE(glVertexAttribI4usv))
 			nfglVertexAttribI4usv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBI4USVEXT:
-			D(funcname = "glVertexAttribI4usvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribI4usvEXT))
 			nfglVertexAttribI4usvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIFORMAT:
-			D(funcname = "glVertexAttribIFormat");
 			if (GL_ISAVAILABLE(glVertexAttribIFormat))
 			nfglVertexAttribIFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIFORMATNV:
-			D(funcname = "glVertexAttribIFormatNV");
 			if (GL_ISAVAILABLE(glVertexAttribIFormatNV))
 			nfglVertexAttribIFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIPOINTER:
-			D(funcname = "glVertexAttribIPointer");
 			if (GL_ISAVAILABLE(glVertexAttribIPointer))
 			nfglVertexAttribIPointer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBIPOINTEREXT:
-			D(funcname = "glVertexAttribIPointerEXT");
 			if (GL_ISAVAILABLE(glVertexAttribIPointerEXT))
 			nfglVertexAttribIPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1D:
-			D(funcname = "glVertexAttribL1d");
 			if (GL_ISAVAILABLE(glVertexAttribL1d))
 			nfglVertexAttribL1d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DEXT:
-			D(funcname = "glVertexAttribL1dEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL1dEXT))
 			nfglVertexAttribL1dEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DV:
-			D(funcname = "glVertexAttribL1dv");
 			if (GL_ISAVAILABLE(glVertexAttribL1dv))
 			nfglVertexAttribL1dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1DVEXT:
-			D(funcname = "glVertexAttribL1dvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL1dvEXT))
 			nfglVertexAttribL1dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1I64NV:
-			D(funcname = "glVertexAttribL1i64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL1i64NV))
 			nfglVertexAttribL1i64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1I64VNV:
-			D(funcname = "glVertexAttribL1i64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL1i64vNV))
 			nfglVertexAttribL1i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64ARB:
-			D(funcname = "glVertexAttribL1ui64ARB");
 			if (GL_ISAVAILABLE(glVertexAttribL1ui64ARB))
 			nfglVertexAttribL1ui64ARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64NV:
-			D(funcname = "glVertexAttribL1ui64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL1ui64NV))
 			nfglVertexAttribL1ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VARB:
-			D(funcname = "glVertexAttribL1ui64vARB");
 			if (GL_ISAVAILABLE(glVertexAttribL1ui64vARB))
 			nfglVertexAttribL1ui64vARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL1UI64VNV:
-			D(funcname = "glVertexAttribL1ui64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL1ui64vNV))
 			nfglVertexAttribL1ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2D:
-			D(funcname = "glVertexAttribL2d");
 			if (GL_ISAVAILABLE(glVertexAttribL2d))
 			nfglVertexAttribL2d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DEXT:
-			D(funcname = "glVertexAttribL2dEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL2dEXT))
 			nfglVertexAttribL2dEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DV:
-			D(funcname = "glVertexAttribL2dv");
 			if (GL_ISAVAILABLE(glVertexAttribL2dv))
 			nfglVertexAttribL2dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2DVEXT:
-			D(funcname = "glVertexAttribL2dvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL2dvEXT))
 			nfglVertexAttribL2dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2I64NV:
-			D(funcname = "glVertexAttribL2i64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL2i64NV))
 			nfglVertexAttribL2i64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2I64VNV:
-			D(funcname = "glVertexAttribL2i64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL2i64vNV))
 			nfglVertexAttribL2i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2UI64NV:
-			D(funcname = "glVertexAttribL2ui64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL2ui64NV))
 			nfglVertexAttribL2ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL2UI64VNV:
-			D(funcname = "glVertexAttribL2ui64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL2ui64vNV))
 			nfglVertexAttribL2ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3D:
-			D(funcname = "glVertexAttribL3d");
 			if (GL_ISAVAILABLE(glVertexAttribL3d))
 			nfglVertexAttribL3d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DEXT:
-			D(funcname = "glVertexAttribL3dEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL3dEXT))
 			nfglVertexAttribL3dEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DV:
-			D(funcname = "glVertexAttribL3dv");
 			if (GL_ISAVAILABLE(glVertexAttribL3dv))
 			nfglVertexAttribL3dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3DVEXT:
-			D(funcname = "glVertexAttribL3dvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL3dvEXT))
 			nfglVertexAttribL3dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3I64NV:
-			D(funcname = "glVertexAttribL3i64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL3i64NV))
 			nfglVertexAttribL3i64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3I64VNV:
-			D(funcname = "glVertexAttribL3i64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL3i64vNV))
 			nfglVertexAttribL3i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3UI64NV:
-			D(funcname = "glVertexAttribL3ui64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL3ui64NV))
 			nfglVertexAttribL3ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL3UI64VNV:
-			D(funcname = "glVertexAttribL3ui64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL3ui64vNV))
 			nfglVertexAttribL3ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4D:
-			D(funcname = "glVertexAttribL4d");
 			if (GL_ISAVAILABLE(glVertexAttribL4d))
 			nfglVertexAttribL4d(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DEXT:
-			D(funcname = "glVertexAttribL4dEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL4dEXT))
 			nfglVertexAttribL4dEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DV:
-			D(funcname = "glVertexAttribL4dv");
 			if (GL_ISAVAILABLE(glVertexAttribL4dv))
 			nfglVertexAttribL4dv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4DVEXT:
-			D(funcname = "glVertexAttribL4dvEXT");
 			if (GL_ISAVAILABLE(glVertexAttribL4dvEXT))
 			nfglVertexAttribL4dvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4I64NV:
-			D(funcname = "glVertexAttribL4i64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL4i64NV))
 			nfglVertexAttribL4i64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4I64VNV:
-			D(funcname = "glVertexAttribL4i64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL4i64vNV))
 			nfglVertexAttribL4i64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4UI64NV:
-			D(funcname = "glVertexAttribL4ui64NV");
 			if (GL_ISAVAILABLE(glVertexAttribL4ui64NV))
 			nfglVertexAttribL4ui64NV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBL4UI64VNV:
-			D(funcname = "glVertexAttribL4ui64vNV");
 			if (GL_ISAVAILABLE(glVertexAttribL4ui64vNV))
 			nfglVertexAttribL4ui64vNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLFORMAT:
-			D(funcname = "glVertexAttribLFormat");
 			if (GL_ISAVAILABLE(glVertexAttribLFormat))
 			nfglVertexAttribLFormat(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLFORMATNV:
-			D(funcname = "glVertexAttribLFormatNV");
 			if (GL_ISAVAILABLE(glVertexAttribLFormatNV))
 			nfglVertexAttribLFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLPOINTER:
-			D(funcname = "glVertexAttribLPointer");
 			if (GL_ISAVAILABLE(glVertexAttribLPointer))
 			nfglVertexAttribLPointer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBLPOINTEREXT:
-			D(funcname = "glVertexAttribLPointerEXT");
 			if (GL_ISAVAILABLE(glVertexAttribLPointerEXT))
 			nfglVertexAttribLPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP1UI:
-			D(funcname = "glVertexAttribP1ui");
 			if (GL_ISAVAILABLE(glVertexAttribP1ui))
 			nfglVertexAttribP1ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP1UIV:
-			D(funcname = "glVertexAttribP1uiv");
 			if (GL_ISAVAILABLE(glVertexAttribP1uiv))
 			nfglVertexAttribP1uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP2UI:
-			D(funcname = "glVertexAttribP2ui");
 			if (GL_ISAVAILABLE(glVertexAttribP2ui))
 			nfglVertexAttribP2ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP2UIV:
-			D(funcname = "glVertexAttribP2uiv");
 			if (GL_ISAVAILABLE(glVertexAttribP2uiv))
 			nfglVertexAttribP2uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP3UI:
-			D(funcname = "glVertexAttribP3ui");
 			if (GL_ISAVAILABLE(glVertexAttribP3ui))
 			nfglVertexAttribP3ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP3UIV:
-			D(funcname = "glVertexAttribP3uiv");
 			if (GL_ISAVAILABLE(glVertexAttribP3uiv))
 			nfglVertexAttribP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP4UI:
-			D(funcname = "glVertexAttribP4ui");
 			if (GL_ISAVAILABLE(glVertexAttribP4ui))
 			nfglVertexAttribP4ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBP4UIV:
-			D(funcname = "glVertexAttribP4uiv");
 			if (GL_ISAVAILABLE(glVertexAttribP4uiv))
 			nfglVertexAttribP4uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPARAMETERIAMD:
-			D(funcname = "glVertexAttribParameteriAMD");
 			if (GL_ISAVAILABLE(glVertexAttribParameteriAMD))
 			nfglVertexAttribParameteriAMD(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTER:
-			D(funcname = "glVertexAttribPointer");
 			if (GL_ISAVAILABLE(glVertexAttribPointer))
 			nfglVertexAttribPointer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERARB:
-			D(funcname = "glVertexAttribPointerARB");
 			if (GL_ISAVAILABLE(glVertexAttribPointerARB))
 			nfglVertexAttribPointerARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBPOINTERNV:
-			D(funcname = "glVertexAttribPointerNV");
 			if (GL_ISAVAILABLE(glVertexAttribPointerNV))
 			nfglVertexAttribPointerNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1DVNV:
-			D(funcname = "glVertexAttribs1dvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs1dvNV))
 			nfglVertexAttribs1dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1FVNV:
-			D(funcname = "glVertexAttribs1fvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs1fvNV))
 			nfglVertexAttribs1fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1HVNV:
-			D(funcname = "glVertexAttribs1hvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs1hvNV))
 			nfglVertexAttribs1hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS1SVNV:
-			D(funcname = "glVertexAttribs1svNV");
 			if (GL_ISAVAILABLE(glVertexAttribs1svNV))
 			nfglVertexAttribs1svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2DVNV:
-			D(funcname = "glVertexAttribs2dvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs2dvNV))
 			nfglVertexAttribs2dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2FVNV:
-			D(funcname = "glVertexAttribs2fvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs2fvNV))
 			nfglVertexAttribs2fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2HVNV:
-			D(funcname = "glVertexAttribs2hvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs2hvNV))
 			nfglVertexAttribs2hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS2SVNV:
-			D(funcname = "glVertexAttribs2svNV");
 			if (GL_ISAVAILABLE(glVertexAttribs2svNV))
 			nfglVertexAttribs2svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3DVNV:
-			D(funcname = "glVertexAttribs3dvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs3dvNV))
 			nfglVertexAttribs3dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3FVNV:
-			D(funcname = "glVertexAttribs3fvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs3fvNV))
 			nfglVertexAttribs3fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3HVNV:
-			D(funcname = "glVertexAttribs3hvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs3hvNV))
 			nfglVertexAttribs3hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS3SVNV:
-			D(funcname = "glVertexAttribs3svNV");
 			if (GL_ISAVAILABLE(glVertexAttribs3svNV))
 			nfglVertexAttribs3svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4DVNV:
-			D(funcname = "glVertexAttribs4dvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs4dvNV))
 			nfglVertexAttribs4dvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4FVNV:
-			D(funcname = "glVertexAttribs4fvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs4fvNV))
 			nfglVertexAttribs4fvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4HVNV:
-			D(funcname = "glVertexAttribs4hvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs4hvNV))
 			nfglVertexAttribs4hvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4SVNV:
-			D(funcname = "glVertexAttribs4svNV");
 			if (GL_ISAVAILABLE(glVertexAttribs4svNV))
 			nfglVertexAttribs4svNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXATTRIBS4UBVNV:
-			D(funcname = "glVertexAttribs4ubvNV");
 			if (GL_ISAVAILABLE(glVertexAttribs4ubvNV))
 			nfglVertexAttribs4ubvNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXBINDINGDIVISOR:
-			D(funcname = "glVertexBindingDivisor");
 			if (GL_ISAVAILABLE(glVertexBindingDivisor))
 			nfglVertexBindingDivisor(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXBLENDARB:
-			D(funcname = "glVertexBlendARB");
 			if (GL_ISAVAILABLE(glVertexBlendARB))
 			nfglVertexBlendARB(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXBLENDENVFATI:
-			D(funcname = "glVertexBlendEnvfATI");
 			if (GL_ISAVAILABLE(glVertexBlendEnvfATI))
 			nfglVertexBlendEnvfATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXBLENDENVIATI:
-			D(funcname = "glVertexBlendEnviATI");
 			if (GL_ISAVAILABLE(glVertexBlendEnviATI))
 			nfglVertexBlendEnviATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXFORMATNV:
-			D(funcname = "glVertexFormatNV");
 			if (GL_ISAVAILABLE(glVertexFormatNV))
 			nfglVertexFormatNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP2UI:
-			D(funcname = "glVertexP2ui");
 			if (GL_ISAVAILABLE(glVertexP2ui))
 			nfglVertexP2ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP2UIV:
-			D(funcname = "glVertexP2uiv");
 			if (GL_ISAVAILABLE(glVertexP2uiv))
 			nfglVertexP2uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP3UI:
-			D(funcname = "glVertexP3ui");
 			if (GL_ISAVAILABLE(glVertexP3ui))
 			nfglVertexP3ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP3UIV:
-			D(funcname = "glVertexP3uiv");
 			if (GL_ISAVAILABLE(glVertexP3uiv))
 			nfglVertexP3uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP4UI:
-			D(funcname = "glVertexP4ui");
 			if (GL_ISAVAILABLE(glVertexP4ui))
 			nfglVertexP4ui(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXP4UIV:
-			D(funcname = "glVertexP4uiv");
 			if (GL_ISAVAILABLE(glVertexP4uiv))
 			nfglVertexP4uiv(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXPOINTSIZEFAPPLE:
-			D(funcname = "glVertexPointSizefAPPLE");
 			if (GL_ISAVAILABLE(glVertexPointSizefAPPLE))
 			nfglVertexPointSizefAPPLE(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXPOINTER:
-			D(funcname = "glVertexPointer");
 			if (GL_ISAVAILABLE(glVertexPointer))
 			nfglVertexPointer(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXPOINTEREXT:
-			D(funcname = "glVertexPointerEXT");
 			if (GL_ISAVAILABLE(glVertexPointerEXT))
 			nfglVertexPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERLISTIBM:
-			D(funcname = "glVertexPointerListIBM");
 			if (GL_ISAVAILABLE(glVertexPointerListIBM))
 			nfglVertexPointerListIBM(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXPOINTERVINTEL:
-			D(funcname = "glVertexPointervINTEL");
 			if (GL_ISAVAILABLE(glVertexPointervINTEL))
 			nfglVertexPointervINTEL(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1DATI:
-			D(funcname = "glVertexStream1dATI");
 			if (GL_ISAVAILABLE(glVertexStream1dATI))
 			nfglVertexStream1dATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1DVATI:
-			D(funcname = "glVertexStream1dvATI");
 			if (GL_ISAVAILABLE(glVertexStream1dvATI))
 			nfglVertexStream1dvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1FATI:
-			D(funcname = "glVertexStream1fATI");
 			if (GL_ISAVAILABLE(glVertexStream1fATI))
 			nfglVertexStream1fATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1FVATI:
-			D(funcname = "glVertexStream1fvATI");
 			if (GL_ISAVAILABLE(glVertexStream1fvATI))
 			nfglVertexStream1fvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1IATI:
-			D(funcname = "glVertexStream1iATI");
 			if (GL_ISAVAILABLE(glVertexStream1iATI))
 			nfglVertexStream1iATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1IVATI:
-			D(funcname = "glVertexStream1ivATI");
 			if (GL_ISAVAILABLE(glVertexStream1ivATI))
 			nfglVertexStream1ivATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1SATI:
-			D(funcname = "glVertexStream1sATI");
 			if (GL_ISAVAILABLE(glVertexStream1sATI))
 			nfglVertexStream1sATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM1SVATI:
-			D(funcname = "glVertexStream1svATI");
 			if (GL_ISAVAILABLE(glVertexStream1svATI))
 			nfglVertexStream1svATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2DATI:
-			D(funcname = "glVertexStream2dATI");
 			if (GL_ISAVAILABLE(glVertexStream2dATI))
 			nfglVertexStream2dATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2DVATI:
-			D(funcname = "glVertexStream2dvATI");
 			if (GL_ISAVAILABLE(glVertexStream2dvATI))
 			nfglVertexStream2dvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2FATI:
-			D(funcname = "glVertexStream2fATI");
 			if (GL_ISAVAILABLE(glVertexStream2fATI))
 			nfglVertexStream2fATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2FVATI:
-			D(funcname = "glVertexStream2fvATI");
 			if (GL_ISAVAILABLE(glVertexStream2fvATI))
 			nfglVertexStream2fvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2IATI:
-			D(funcname = "glVertexStream2iATI");
 			if (GL_ISAVAILABLE(glVertexStream2iATI))
 			nfglVertexStream2iATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2IVATI:
-			D(funcname = "glVertexStream2ivATI");
 			if (GL_ISAVAILABLE(glVertexStream2ivATI))
 			nfglVertexStream2ivATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2SATI:
-			D(funcname = "glVertexStream2sATI");
 			if (GL_ISAVAILABLE(glVertexStream2sATI))
 			nfglVertexStream2sATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM2SVATI:
-			D(funcname = "glVertexStream2svATI");
 			if (GL_ISAVAILABLE(glVertexStream2svATI))
 			nfglVertexStream2svATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3DATI:
-			D(funcname = "glVertexStream3dATI");
 			if (GL_ISAVAILABLE(glVertexStream3dATI))
 			nfglVertexStream3dATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3DVATI:
-			D(funcname = "glVertexStream3dvATI");
 			if (GL_ISAVAILABLE(glVertexStream3dvATI))
 			nfglVertexStream3dvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3FATI:
-			D(funcname = "glVertexStream3fATI");
 			if (GL_ISAVAILABLE(glVertexStream3fATI))
 			nfglVertexStream3fATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3FVATI:
-			D(funcname = "glVertexStream3fvATI");
 			if (GL_ISAVAILABLE(glVertexStream3fvATI))
 			nfglVertexStream3fvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3IATI:
-			D(funcname = "glVertexStream3iATI");
 			if (GL_ISAVAILABLE(glVertexStream3iATI))
 			nfglVertexStream3iATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3IVATI:
-			D(funcname = "glVertexStream3ivATI");
 			if (GL_ISAVAILABLE(glVertexStream3ivATI))
 			nfglVertexStream3ivATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3SATI:
-			D(funcname = "glVertexStream3sATI");
 			if (GL_ISAVAILABLE(glVertexStream3sATI))
 			nfglVertexStream3sATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM3SVATI:
-			D(funcname = "glVertexStream3svATI");
 			if (GL_ISAVAILABLE(glVertexStream3svATI))
 			nfglVertexStream3svATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4DATI:
-			D(funcname = "glVertexStream4dATI");
 			if (GL_ISAVAILABLE(glVertexStream4dATI))
 			nfglVertexStream4dATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4DVATI:
-			D(funcname = "glVertexStream4dvATI");
 			if (GL_ISAVAILABLE(glVertexStream4dvATI))
 			nfglVertexStream4dvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4FATI:
-			D(funcname = "glVertexStream4fATI");
 			if (GL_ISAVAILABLE(glVertexStream4fATI))
 			nfglVertexStream4fATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4FVATI:
-			D(funcname = "glVertexStream4fvATI");
 			if (GL_ISAVAILABLE(glVertexStream4fvATI))
 			nfglVertexStream4fvATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4IATI:
-			D(funcname = "glVertexStream4iATI");
 			if (GL_ISAVAILABLE(glVertexStream4iATI))
 			nfglVertexStream4iATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4IVATI:
-			D(funcname = "glVertexStream4ivATI");
 			if (GL_ISAVAILABLE(glVertexStream4ivATI))
 			nfglVertexStream4ivATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4SATI:
-			D(funcname = "glVertexStream4sATI");
 			if (GL_ISAVAILABLE(glVertexStream4sATI))
 			nfglVertexStream4sATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXSTREAM4SVATI:
-			D(funcname = "glVertexStream4svATI");
 			if (GL_ISAVAILABLE(glVertexStream4svATI))
 			nfglVertexStream4svATI(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTPOINTEREXT:
-			D(funcname = "glVertexWeightPointerEXT");
 			if (GL_ISAVAILABLE(glVertexWeightPointerEXT))
 			nfglVertexWeightPointerEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFEXT:
-			D(funcname = "glVertexWeightfEXT");
 			if (GL_ISAVAILABLE(glVertexWeightfEXT))
 			nfglVertexWeightfEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTFVEXT:
-			D(funcname = "glVertexWeightfvEXT");
 			if (GL_ISAVAILABLE(glVertexWeightfvEXT))
 			nfglVertexWeightfvEXT(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHNV:
-			D(funcname = "glVertexWeighthNV");
 			if (GL_ISAVAILABLE(glVertexWeighthNV))
 			nfglVertexWeighthNV(nf_params);
 			break;
 		case NFOSMESA_GLVERTEXWEIGHTHVNV:
-			D(funcname = "glVertexWeighthvNV");
 			if (GL_ISAVAILABLE(glVertexWeighthvNV))
 			nfglVertexWeighthvNV(nf_params);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURENV:
-			D(funcname = "glVideoCaptureNV");
 			if (GL_ISAVAILABLE(glVideoCaptureNV))
 			ret = nfglVideoCaptureNV(nf_params);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERDVNV:
-			D(funcname = "glVideoCaptureStreamParameterdvNV");
 			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterdvNV))
 			nfglVideoCaptureStreamParameterdvNV(nf_params);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERFVNV:
-			D(funcname = "glVideoCaptureStreamParameterfvNV");
 			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterfvNV))
 			nfglVideoCaptureStreamParameterfvNV(nf_params);
 			break;
 		case NFOSMESA_GLVIDEOCAPTURESTREAMPARAMETERIVNV:
-			D(funcname = "glVideoCaptureStreamParameterivNV");
 			if (GL_ISAVAILABLE(glVideoCaptureStreamParameterivNV))
 			nfglVideoCaptureStreamParameterivNV(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORT:
-			D(funcname = "glViewport");
 			if (GL_ISAVAILABLE(glViewport))
 			nfglViewport(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORTARRAYV:
-			D(funcname = "glViewportArrayv");
 			if (GL_ISAVAILABLE(glViewportArrayv))
 			nfglViewportArrayv(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORTINDEXEDF:
-			D(funcname = "glViewportIndexedf");
 			if (GL_ISAVAILABLE(glViewportIndexedf))
 			nfglViewportIndexedf(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORTINDEXEDFV:
-			D(funcname = "glViewportIndexedfv");
 			if (GL_ISAVAILABLE(glViewportIndexedfv))
 			nfglViewportIndexedfv(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORTPOSITIONWSCALENV:
-			D(funcname = "glViewportPositionWScaleNV");
 			if (GL_ISAVAILABLE(glViewportPositionWScaleNV))
 			nfglViewportPositionWScaleNV(nf_params);
 			break;
 		case NFOSMESA_GLVIEWPORTSWIZZLENV:
-			D(funcname = "glViewportSwizzleNV");
 			if (GL_ISAVAILABLE(glViewportSwizzleNV))
 			nfglViewportSwizzleNV(nf_params);
 			break;
 		case NFOSMESA_GLWAITSEMAPHOREEXT:
-			D(funcname = "glWaitSemaphoreEXT");
 			if (GL_ISAVAILABLE(glWaitSemaphoreEXT))
 			nfglWaitSemaphoreEXT(nf_params);
 			break;
 		case NFOSMESA_GLWAITSYNC:
-			D(funcname = "glWaitSync");
 			if (GL_ISAVAILABLE(glWaitSync))
 			nfglWaitSync(nf_params);
 			break;
 		case NFOSMESA_GLWAITVKSEMAPHORENV:
-			D(funcname = "glWaitVkSemaphoreNV");
 			if (GL_ISAVAILABLE(glWaitVkSemaphoreNV))
 			nfglWaitVkSemaphoreNV(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTPATHSNV:
-			D(funcname = "glWeightPathsNV");
 			if (GL_ISAVAILABLE(glWeightPathsNV))
 			nfglWeightPathsNV(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTPOINTERARB:
-			D(funcname = "glWeightPointerARB");
 			if (GL_ISAVAILABLE(glWeightPointerARB))
 			nfglWeightPointerARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTBVARB:
-			D(funcname = "glWeightbvARB");
 			if (GL_ISAVAILABLE(glWeightbvARB))
 			nfglWeightbvARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTDVARB:
-			D(funcname = "glWeightdvARB");
 			if (GL_ISAVAILABLE(glWeightdvARB))
 			nfglWeightdvARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTFVARB:
-			D(funcname = "glWeightfvARB");
 			if (GL_ISAVAILABLE(glWeightfvARB))
 			nfglWeightfvARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTIVARB:
-			D(funcname = "glWeightivARB");
 			if (GL_ISAVAILABLE(glWeightivARB))
 			nfglWeightivARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTSVARB:
-			D(funcname = "glWeightsvARB");
 			if (GL_ISAVAILABLE(glWeightsvARB))
 			nfglWeightsvARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTUBVARB:
-			D(funcname = "glWeightubvARB");
 			if (GL_ISAVAILABLE(glWeightubvARB))
 			nfglWeightubvARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTUIVARB:
-			D(funcname = "glWeightuivARB");
 			if (GL_ISAVAILABLE(glWeightuivARB))
 			nfglWeightuivARB(nf_params);
 			break;
 		case NFOSMESA_GLWEIGHTUSVARB:
-			D(funcname = "glWeightusvARB");
 			if (GL_ISAVAILABLE(glWeightusvARB))
 			nfglWeightusvARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2D:
-			D(funcname = "glWindowPos2d");
 			if (GL_ISAVAILABLE(glWindowPos2d))
 			nfglWindowPos2d(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DARB:
-			D(funcname = "glWindowPos2dARB");
 			if (GL_ISAVAILABLE(glWindowPos2dARB))
 			nfglWindowPos2dARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DMESA:
-			D(funcname = "glWindowPos2dMESA");
 			if (GL_ISAVAILABLE(glWindowPos2dMESA))
 			nfglWindowPos2dMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DV:
-			D(funcname = "glWindowPos2dv");
 			if (GL_ISAVAILABLE(glWindowPos2dv))
 			nfglWindowPos2dv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVARB:
-			D(funcname = "glWindowPos2dvARB");
 			if (GL_ISAVAILABLE(glWindowPos2dvARB))
 			nfglWindowPos2dvARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2DVMESA:
-			D(funcname = "glWindowPos2dvMESA");
 			if (GL_ISAVAILABLE(glWindowPos2dvMESA))
 			nfglWindowPos2dvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2F:
-			D(funcname = "glWindowPos2f");
 			if (GL_ISAVAILABLE(glWindowPos2f))
 			nfglWindowPos2f(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FARB:
-			D(funcname = "glWindowPos2fARB");
 			if (GL_ISAVAILABLE(glWindowPos2fARB))
 			nfglWindowPos2fARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FMESA:
-			D(funcname = "glWindowPos2fMESA");
 			if (GL_ISAVAILABLE(glWindowPos2fMESA))
 			nfglWindowPos2fMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FV:
-			D(funcname = "glWindowPos2fv");
 			if (GL_ISAVAILABLE(glWindowPos2fv))
 			nfglWindowPos2fv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVARB:
-			D(funcname = "glWindowPos2fvARB");
 			if (GL_ISAVAILABLE(glWindowPos2fvARB))
 			nfglWindowPos2fvARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2FVMESA:
-			D(funcname = "glWindowPos2fvMESA");
 			if (GL_ISAVAILABLE(glWindowPos2fvMESA))
 			nfglWindowPos2fvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2I:
-			D(funcname = "glWindowPos2i");
 			if (GL_ISAVAILABLE(glWindowPos2i))
 			nfglWindowPos2i(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IARB:
-			D(funcname = "glWindowPos2iARB");
 			if (GL_ISAVAILABLE(glWindowPos2iARB))
 			nfglWindowPos2iARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IMESA:
-			D(funcname = "glWindowPos2iMESA");
 			if (GL_ISAVAILABLE(glWindowPos2iMESA))
 			nfglWindowPos2iMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IV:
-			D(funcname = "glWindowPos2iv");
 			if (GL_ISAVAILABLE(glWindowPos2iv))
 			nfglWindowPos2iv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVARB:
-			D(funcname = "glWindowPos2ivARB");
 			if (GL_ISAVAILABLE(glWindowPos2ivARB))
 			nfglWindowPos2ivARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2IVMESA:
-			D(funcname = "glWindowPos2ivMESA");
 			if (GL_ISAVAILABLE(glWindowPos2ivMESA))
 			nfglWindowPos2ivMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2S:
-			D(funcname = "glWindowPos2s");
 			if (GL_ISAVAILABLE(glWindowPos2s))
 			nfglWindowPos2s(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SARB:
-			D(funcname = "glWindowPos2sARB");
 			if (GL_ISAVAILABLE(glWindowPos2sARB))
 			nfglWindowPos2sARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SMESA:
-			D(funcname = "glWindowPos2sMESA");
 			if (GL_ISAVAILABLE(glWindowPos2sMESA))
 			nfglWindowPos2sMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SV:
-			D(funcname = "glWindowPos2sv");
 			if (GL_ISAVAILABLE(glWindowPos2sv))
 			nfglWindowPos2sv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVARB:
-			D(funcname = "glWindowPos2svARB");
 			if (GL_ISAVAILABLE(glWindowPos2svARB))
 			nfglWindowPos2svARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS2SVMESA:
-			D(funcname = "glWindowPos2svMESA");
 			if (GL_ISAVAILABLE(glWindowPos2svMESA))
 			nfglWindowPos2svMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3D:
-			D(funcname = "glWindowPos3d");
 			if (GL_ISAVAILABLE(glWindowPos3d))
 			nfglWindowPos3d(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DARB:
-			D(funcname = "glWindowPos3dARB");
 			if (GL_ISAVAILABLE(glWindowPos3dARB))
 			nfglWindowPos3dARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DMESA:
-			D(funcname = "glWindowPos3dMESA");
 			if (GL_ISAVAILABLE(glWindowPos3dMESA))
 			nfglWindowPos3dMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DV:
-			D(funcname = "glWindowPos3dv");
 			if (GL_ISAVAILABLE(glWindowPos3dv))
 			nfglWindowPos3dv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVARB:
-			D(funcname = "glWindowPos3dvARB");
 			if (GL_ISAVAILABLE(glWindowPos3dvARB))
 			nfglWindowPos3dvARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3DVMESA:
-			D(funcname = "glWindowPos3dvMESA");
 			if (GL_ISAVAILABLE(glWindowPos3dvMESA))
 			nfglWindowPos3dvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3F:
-			D(funcname = "glWindowPos3f");
 			if (GL_ISAVAILABLE(glWindowPos3f))
 			nfglWindowPos3f(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FARB:
-			D(funcname = "glWindowPos3fARB");
 			if (GL_ISAVAILABLE(glWindowPos3fARB))
 			nfglWindowPos3fARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FMESA:
-			D(funcname = "glWindowPos3fMESA");
 			if (GL_ISAVAILABLE(glWindowPos3fMESA))
 			nfglWindowPos3fMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FV:
-			D(funcname = "glWindowPos3fv");
 			if (GL_ISAVAILABLE(glWindowPos3fv))
 			nfglWindowPos3fv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVARB:
-			D(funcname = "glWindowPos3fvARB");
 			if (GL_ISAVAILABLE(glWindowPos3fvARB))
 			nfglWindowPos3fvARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3FVMESA:
-			D(funcname = "glWindowPos3fvMESA");
 			if (GL_ISAVAILABLE(glWindowPos3fvMESA))
 			nfglWindowPos3fvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3I:
-			D(funcname = "glWindowPos3i");
 			if (GL_ISAVAILABLE(glWindowPos3i))
 			nfglWindowPos3i(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IARB:
-			D(funcname = "glWindowPos3iARB");
 			if (GL_ISAVAILABLE(glWindowPos3iARB))
 			nfglWindowPos3iARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IMESA:
-			D(funcname = "glWindowPos3iMESA");
 			if (GL_ISAVAILABLE(glWindowPos3iMESA))
 			nfglWindowPos3iMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IV:
-			D(funcname = "glWindowPos3iv");
 			if (GL_ISAVAILABLE(glWindowPos3iv))
 			nfglWindowPos3iv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVARB:
-			D(funcname = "glWindowPos3ivARB");
 			if (GL_ISAVAILABLE(glWindowPos3ivARB))
 			nfglWindowPos3ivARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3IVMESA:
-			D(funcname = "glWindowPos3ivMESA");
 			if (GL_ISAVAILABLE(glWindowPos3ivMESA))
 			nfglWindowPos3ivMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3S:
-			D(funcname = "glWindowPos3s");
 			if (GL_ISAVAILABLE(glWindowPos3s))
 			nfglWindowPos3s(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SARB:
-			D(funcname = "glWindowPos3sARB");
 			if (GL_ISAVAILABLE(glWindowPos3sARB))
 			nfglWindowPos3sARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SMESA:
-			D(funcname = "glWindowPos3sMESA");
 			if (GL_ISAVAILABLE(glWindowPos3sMESA))
 			nfglWindowPos3sMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SV:
-			D(funcname = "glWindowPos3sv");
 			if (GL_ISAVAILABLE(glWindowPos3sv))
 			nfglWindowPos3sv(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVARB:
-			D(funcname = "glWindowPos3svARB");
 			if (GL_ISAVAILABLE(glWindowPos3svARB))
 			nfglWindowPos3svARB(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS3SVMESA:
-			D(funcname = "glWindowPos3svMESA");
 			if (GL_ISAVAILABLE(glWindowPos3svMESA))
 			nfglWindowPos3svMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4DMESA:
-			D(funcname = "glWindowPos4dMESA");
 			if (GL_ISAVAILABLE(glWindowPos4dMESA))
 			nfglWindowPos4dMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4DVMESA:
-			D(funcname = "glWindowPos4dvMESA");
 			if (GL_ISAVAILABLE(glWindowPos4dvMESA))
 			nfglWindowPos4dvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4FMESA:
-			D(funcname = "glWindowPos4fMESA");
 			if (GL_ISAVAILABLE(glWindowPos4fMESA))
 			nfglWindowPos4fMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4FVMESA:
-			D(funcname = "glWindowPos4fvMESA");
 			if (GL_ISAVAILABLE(glWindowPos4fvMESA))
 			nfglWindowPos4fvMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4IMESA:
-			D(funcname = "glWindowPos4iMESA");
 			if (GL_ISAVAILABLE(glWindowPos4iMESA))
 			nfglWindowPos4iMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4IVMESA:
-			D(funcname = "glWindowPos4ivMESA");
 			if (GL_ISAVAILABLE(glWindowPos4ivMESA))
 			nfglWindowPos4ivMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4SMESA:
-			D(funcname = "glWindowPos4sMESA");
 			if (GL_ISAVAILABLE(glWindowPos4sMESA))
 			nfglWindowPos4sMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWPOS4SVMESA:
-			D(funcname = "glWindowPos4svMESA");
 			if (GL_ISAVAILABLE(glWindowPos4svMESA))
 			nfglWindowPos4svMESA(nf_params);
 			break;
 		case NFOSMESA_GLWINDOWRECTANGLESEXT:
-			D(funcname = "glWindowRectanglesEXT");
 			if (GL_ISAVAILABLE(glWindowRectanglesEXT))
 			nfglWindowRectanglesEXT(nf_params);
 			break;
 		case NFOSMESA_GLWRITEMASKEXT:
-			D(funcname = "glWriteMaskEXT");
 			if (GL_ISAVAILABLE(glWriteMaskEXT))
 			nfglWriteMaskEXT(nf_params);
 			break;
 		case NFOSMESA_GLULOOKAT:
-			D(funcname = "gluLookAt");
 			nfgluLookAt(nf_params);
 			break;
 
