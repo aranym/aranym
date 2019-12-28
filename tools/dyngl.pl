@@ -36,8 +36,8 @@
 #            This is not done automatically, because the numbers must not change for old functions.
 #          - If new types are used in the prototypes, add them to atari/nfosmesa/gltypes.h
 #
-#     The current version (API Version 3) was generated from <GL/gl.h> on Linux,
-#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, Date 2018-01-14
+#     The current version (API Version 4) was generated from <GL/gl.h> on Linux,
+#     glext.h from Khronos group (http://www.opengl.org/registry/api/GL/glext.h, Date 2019-06-11
 #     and osmesa.h from Mesa 11.2.
 #
 # -macros:
@@ -177,6 +177,8 @@ my %blacklist = (
 	'glVDPAUSurfaceAccessNV' => 1,
 	'glVDPAUMapSurfacesNV' => 1,
 	'glVDPAUUnmapSurfacesNV' => 1,
+	# GL_NV_vdpau_interop
+	'glVDPAURegisterVideoSurfaceWithPictureStructureNV' => 1,
 	# GL_NV_draw_vulkan_image
 	'glGetVkProcAddrNV' => 1,
 	# from GL_EXT_memory_object; could not figure out yet
@@ -196,6 +198,7 @@ my %pointer_types = (
 	'GLprogramcallbackMESA' => 1,
 	'GLeglClientBufferEXT' => 1,
 	'GLVULKANPROCNV' => 1,
+	'GLeglImageOES' => 1,
 );
 
 #
@@ -291,6 +294,7 @@ my %printf_formats = (
 	'GLeglClientBufferEXT' => '" PRI_PTR "',
 	'GLVULKANPROCNV' => '" PRI_PTR "',
 	'OSMesaContext' => '%u',  # type is a pointer, but we return a handle instead
+	'GLeglImageOES' => '" PRI_PTR "',
 );
 
 
@@ -621,6 +625,22 @@ my %paramlens = (
 
 	# GL_EXT_window_rectangles
 	'glWindowRectanglesEXT' => [ { 'name' => 'box', 'inout' => 'in', 'len' => '4 * count' } ],
+
+	# GL_NV_shading_rate_image
+	'glGetShadingRateImagePaletteNV' => [ { 'name' => 'rate', 'inout' => 'out', 'len' => '1' } ],
+	'glGetShadingRateSampleLocationivNV' => [ { 'name' => 'location', 'inout' => 'out', 'len' => '3' } ],
+	'glShadingRateImagePaletteNV' => [ { 'name' => 'rates', 'inout' => 'in', 'len' => 'count' } ],
+	'glShadingRateSampleOrderCustomNV' => [ { 'name' => 'locations', 'inout' => 'in', 'len' => '3 * samples' } ],
+
+	# GL_NV_memory_attachment
+	'glGetMemoryObjectDetachedResourcesuivNV' => [ { 'name' => 'params', 'inout' => 'out', 'len' => 'count' } ],
+
+	# GL_NV_scissor_exclusive
+	'glScissorExclusiveArrayvNV' => [ { 'name' => 'v', 'inout' => 'in', 'len' => 'count * 4' } ],
+
+	# GL_EXT_EGL_image_storage
+	'glEGLImageTargetTexStorageEXT' => [ { 'name' => 'attrib_list', 'inout' => 'in', 'len' => '1' } ],
+	'glEGLImageTargetTextureStorageEXT' => [ { 'name' => 'attrib_list', 'inout' => 'in', 'len' => '1' } ],
 );
 
 
@@ -2987,6 +3007,47 @@ my %macros = (
 	# GL_NV_conservative_raster_pre_snap_triangles
 	'glConservativeRasterParameteriNV' => 0,
 	
+	# GL_NV_shading_rate_image
+	'glBindShadingRateImageNV' => 0,
+	'glGetShadingRateImagePaletteNV' => 2,
+	'glGetShadingRateSampleLocationivNV' => 2,
+	'glShadingRateImageBarrierNV' => 0,
+	'glShadingRateImagePaletteNV' => 2,
+	'glShadingRateSampleOrderCustomNV' => 2,
+	'glShadingRateSampleOrderNV' => 0,
+
+	# GL_NV_memory_attachment
+	'glGetMemoryObjectDetachedResourcesuivNV' => 2,
+	'glResetMemoryObjectParameterNV' => 0,
+	'glTexAttachMemoryNV' => 0,
+	'glBufferAttachMemoryNV' => 0,
+	'glTextureAttachMemoryNV' => 0,
+	'glNamedBufferAttachMemoryNV' => 0,
+
+	# GL_NV_mesh_shader
+	'glDrawMeshTasksNV' => 0,
+	'glDrawMeshTasksIndirectNV' => 0,
+	'glMultiDrawMeshTasksIndirectCountNV' => 0,
+	'glMultiDrawMeshTasksIndirectNV' => 0,
+
+	# GL_EXT_EGL_image_storage
+	'glEGLImageTargetTexStorageEXT' => 2,
+	'glEGLImageTargetTextureStorageEXT' => 2,
+
+	# GL_EXT_shader_framebuffer_fetch
+	'glFramebufferFetchBarrierEXT' => 0,
+
+	# GL_AMD_framebuffer_multisample_advanced
+	'glNamedRenderbufferStorageMultisampleAdvancedAMD' => 0,
+	'glRenderbufferStorageMultisampleAdvancedAMD' => 0,
+
+	# GL_NV_scissor_exclusive
+	'glScissorExclusiveArrayvNV' => 2,
+	'glScissorExclusiveNV' => 0,
+
+	# GL_NV_vdpau_interop2
+	'glVDPAURegisterVideoSurfaceWithPictureStructureNV' => 0,
+
 	# Version 1.1
 	'glAccum' => 0,
 	'glAlphaFunc' => 0,

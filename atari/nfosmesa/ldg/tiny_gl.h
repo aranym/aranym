@@ -1084,6 +1084,10 @@ typedef void *GLeglClientBufferEXT;
 #define GL_NV_draw_vulkan_image 1
 typedef void (APIENTRY *GLVULKANPROCNV)(void);
 #endif
+#ifndef GL_OES_EGL_image
+#define GL_OES_EGL_image 1
+typedef void *GLeglImageOES;
+#endif
 
 
 /*
@@ -1256,8 +1260,8 @@ struct _gl_tiny {
 	void APIENTRY (*ColorPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
 	void APIENTRY (*CullFace)(GLenum mode);
 	void APIENTRY (*DeleteTextures)(GLsizei n, const GLuint *textures);
-	void APIENTRY (*DisableClientState)(GLenum array);
-	void APIENTRY (*EnableClientState)(GLenum array);
+	void APIENTRY (*DisableClientState)(GLenum cap);
+	void APIENTRY (*EnableClientState)(GLenum cap);
 	void APIENTRY (*EndList)(void);
 	void APIENTRY (*EdgeFlag)(GLboolean32 flag);
 	void APIENTRY (*Flush)(void);
@@ -1280,7 +1284,7 @@ struct _gl_tiny {
 	void APIENTRY (*NewList)(GLuint list, GLenum mode);
 	void APIENTRY (*Normal3f)(GLfloat nx, GLfloat ny, GLfloat nz);
 	void APIENTRY (*Normal3fv)(const GLfloat *v);
-	void APIENTRY (*NormalPointer)(GLenum type, GLsizei stride, const GLvoid *pointer);
+	void APIENTRY (*NormalPointer)(GLenum type, GLsizei stride, const GLvoid *ptr);
 	void APIENTRY (*PixelStorei)(GLenum pname, GLint param);
 	void APIENTRY (*PolygonMode)(GLenum face, GLenum mode);
 	void APIENTRY (*PolygonOffset)(GLfloat factor, GLfloat units);
@@ -1293,11 +1297,11 @@ struct _gl_tiny {
 	void APIENTRY (*TexCoord2f)(GLfloat s, GLfloat t);
 	void APIENTRY (*TexCoord4f)(GLfloat s, GLfloat t, GLfloat r, GLfloat q);
 	void APIENTRY (*TexCoord2fv)(const GLfloat *v);
-	void APIENTRY (*TexCoordPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
-	void APIENTRY (*TexImage2D)(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
+	void APIENTRY (*TexCoordPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
+	void APIENTRY (*TexImage2D)(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels);
 	void APIENTRY (*Vertex4f)(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 	void APIENTRY (*Vertex3fv)(const GLfloat *v);
-	void APIENTRY (*VertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer);
+	void APIENTRY (*VertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
 	void APIENTRY (*Viewport)(GLint x, GLint y, GLsizei width, GLsizei height);
 	void APIENTRY (*swapbuffer)(void *buffer);
 	GLsizei APIENTRY (*max_width)(void);

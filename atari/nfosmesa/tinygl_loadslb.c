@@ -287,16 +287,16 @@ static void APIENTRY exec_glDeleteTextures(GLsizei n, const GLuint *textures)
 	(*exec)(gl_slb, 34 /* NFOSMESA_GLDELETETEXTURES */, SLB_NARGS(2), gl_pub, &n);
 }
 
-static void APIENTRY exec_glDisableClientState(GLenum array)
+static void APIENTRY exec_glDisableClientState(GLenum cap)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(*exec)(gl_slb, 35 /* NFOSMESA_GLDISABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
+	(*exec)(gl_slb, 35 /* NFOSMESA_GLDISABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
-static void APIENTRY exec_glEnableClientState(GLenum array)
+static void APIENTRY exec_glEnableClientState(GLenum cap)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(*exec)(gl_slb, 36 /* NFOSMESA_GLENABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
+	(*exec)(gl_slb, 36 /* NFOSMESA_GLENABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
 static void APIENTRY exec_glEndList(void)
@@ -449,11 +449,11 @@ static void APIENTRY exec_glNormal3fv(const GLfloat *v)
 	(*exec)(gl_slb, 58 /* NFOSMESA_GLNORMAL3FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
-static void APIENTRY exec_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 59 /* NFOSMESA_GLNORMALPOINTER */, SLB_NARGS(2), gl_pub, &type);
 }
 
@@ -539,20 +539,20 @@ static void APIENTRY exec_glTexCoord2fv(const GLfloat *v)
 	(*exec)(gl_slb, 71 /* NFOSMESA_GLTEXCOORD2FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
-static void APIENTRY exec_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)type;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 72 /* NFOSMESA_GLTEXCOORDPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
-static void APIENTRY exec_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
+static void APIENTRY exec_glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)level;
-	(void)internalformat;
+	(void)internalFormat;
 	(void)width;
 	(void)height;
 	(void)border;
@@ -577,12 +577,12 @@ static void APIENTRY exec_glVertex3fv(const GLfloat *v)
 	(*exec)(gl_slb, 75 /* NFOSMESA_GLVERTEX3FV */, SLB_NARGS(2), gl_pub, &v);
 }
 
-static void APIENTRY exec_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)type;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 76 /* NFOSMESA_GLVERTEXPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 

@@ -1034,6 +1034,10 @@ typedef void *GLeglClientBufferEXT;
 #define GL_NV_draw_vulkan_image 1
 typedef void (APIENTRY *GLVULKANPROCNV)(void);
 #endif
+#ifndef GL_OES_EGL_image
+#define GL_OES_EGL_image 1
+typedef void *GLeglImageOES;
+#endif
 
 
 /*

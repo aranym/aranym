@@ -388,6 +388,11 @@
 			if (GL_ISAVAILABLE(glBindSamplers))
 			nfglBindSamplers(nf_params);
 			break;
+		case NFOSMESA_GLBINDSHADINGRATEIMAGENV:
+			D(funcname = "glBindShadingRateImageNV");
+			if (GL_ISAVAILABLE(glBindShadingRateImageNV))
+			nfglBindShadingRateImageNV(nf_params);
+			break;
 		case NFOSMESA_GLBINDTEXGENPARAMETEREXT:
 			D(funcname = "glBindTexGenParameterEXT");
 			if (GL_ISAVAILABLE(glBindTexGenParameterEXT))
@@ -682,6 +687,11 @@
 			D(funcname = "glBufferAddressRangeNV");
 			if (GL_ISAVAILABLE(glBufferAddressRangeNV))
 			nfglBufferAddressRangeNV(nf_params);
+			break;
+		case NFOSMESA_GLBUFFERATTACHMEMORYNV:
+			D(funcname = "glBufferAttachMemoryNV");
+			if (GL_ISAVAILABLE(glBufferAttachMemoryNV))
+			nfglBufferAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLBUFFERDATA:
 			D(funcname = "glBufferData");
@@ -2511,6 +2521,16 @@
 			if (GL_ISAVAILABLE(glDrawMeshArraysSUN))
 			nfglDrawMeshArraysSUN(nf_params);
 			break;
+		case NFOSMESA_GLDRAWMESHTASKSINDIRECTNV:
+			D(funcname = "glDrawMeshTasksIndirectNV");
+			if (GL_ISAVAILABLE(glDrawMeshTasksIndirectNV))
+			nfglDrawMeshTasksIndirectNV(nf_params);
+			break;
+		case NFOSMESA_GLDRAWMESHTASKSNV:
+			D(funcname = "glDrawMeshTasksNV");
+			if (GL_ISAVAILABLE(glDrawMeshTasksNV))
+			nfglDrawMeshTasksNV(nf_params);
+			break;
 		case NFOSMESA_GLDRAWPIXELS:
 			D(funcname = "glDrawPixels");
 			if (GL_ISAVAILABLE(glDrawPixels))
@@ -2575,6 +2595,16 @@
 			D(funcname = "glDrawVkImageNV");
 			if (GL_ISAVAILABLE(glDrawVkImageNV))
 			nfglDrawVkImageNV(nf_params);
+			break;
+		case NFOSMESA_GLEGLIMAGETARGETTEXSTORAGEEXT:
+			D(funcname = "glEGLImageTargetTexStorageEXT");
+			if (GL_ISAVAILABLE(glEGLImageTargetTexStorageEXT))
+			nfglEGLImageTargetTexStorageEXT(nf_params);
+			break;
+		case NFOSMESA_GLEGLIMAGETARGETTEXTURESTORAGEEXT:
+			D(funcname = "glEGLImageTargetTextureStorageEXT");
+			if (GL_ISAVAILABLE(glEGLImageTargetTextureStorageEXT))
+			nfglEGLImageTargetTextureStorageEXT(nf_params);
 			break;
 		case NFOSMESA_GLEDGEFLAG:
 			D(funcname = "glEdgeFlag");
@@ -3180,6 +3210,11 @@
 			D(funcname = "glFramebufferDrawBuffersEXT");
 			if (GL_ISAVAILABLE(glFramebufferDrawBuffersEXT))
 			nfglFramebufferDrawBuffersEXT(nf_params);
+			break;
+		case NFOSMESA_GLFRAMEBUFFERFETCHBARRIEREXT:
+			D(funcname = "glFramebufferFetchBarrierEXT");
+			if (GL_ISAVAILABLE(glFramebufferFetchBarrierEXT))
+			nfglFramebufferFetchBarrierEXT(nf_params);
 			break;
 		case NFOSMESA_GLFRAMEBUFFERPARAMETERI:
 			D(funcname = "glFramebufferParameteri");
@@ -4225,6 +4260,11 @@
 			if (GL_ISAVAILABLE(glGetMaterialxOES))
 			nfglGetMaterialxOES(nf_params);
 			break;
+		case NFOSMESA_GLGETMEMORYOBJECTDETACHEDRESOURCESUIVNV:
+			D(funcname = "glGetMemoryObjectDetachedResourcesuivNV");
+			if (GL_ISAVAILABLE(glGetMemoryObjectDetachedResourcesuivNV))
+			nfglGetMemoryObjectDetachedResourcesuivNV(nf_params);
+			break;
 		case NFOSMESA_GLGETMEMORYOBJECTPARAMETERIVEXT:
 			D(funcname = "glGetMemoryObjectParameterivEXT");
 			if (GL_ISAVAILABLE(glGetMemoryObjectParameterivEXT))
@@ -4983,6 +5023,16 @@
 			D(funcname = "glGetShaderiv");
 			if (GL_ISAVAILABLE(glGetShaderiv))
 			nfglGetShaderiv(nf_params);
+			break;
+		case NFOSMESA_GLGETSHADINGRATEIMAGEPALETTENV:
+			D(funcname = "glGetShadingRateImagePaletteNV");
+			if (GL_ISAVAILABLE(glGetShadingRateImagePaletteNV))
+			nfglGetShadingRateImagePaletteNV(nf_params);
+			break;
+		case NFOSMESA_GLGETSHADINGRATESAMPLELOCATIONIVNV:
+			D(funcname = "glGetShadingRateSampleLocationivNV");
+			if (GL_ISAVAILABLE(glGetShadingRateSampleLocationivNV))
+			nfglGetShadingRateSampleLocationivNV(nf_params);
 			break;
 		case NFOSMESA_GLGETSHARPENTEXFUNCSGIS:
 			D(funcname = "glGetSharpenTexFuncSGIS");
@@ -7103,6 +7153,16 @@
 			if (GL_ISAVAILABLE(glMultiDrawElementsIndirectCountARB))
 			nfglMultiDrawElementsIndirectCountARB(nf_params);
 			break;
+		case NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTCOUNTNV:
+			D(funcname = "glMultiDrawMeshTasksIndirectCountNV");
+			if (GL_ISAVAILABLE(glMultiDrawMeshTasksIndirectCountNV))
+			nfglMultiDrawMeshTasksIndirectCountNV(nf_params);
+			break;
+		case NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTNV:
+			D(funcname = "glMultiDrawMeshTasksIndirectNV");
+			if (GL_ISAVAILABLE(glMultiDrawMeshTasksIndirectNV))
+			nfglMultiDrawMeshTasksIndirectNV(nf_params);
+			break;
 		case NFOSMESA_GLMULTIDRAWRANGEELEMENTARRAYAPPLE:
 			D(funcname = "glMultiDrawRangeElementArrayAPPLE");
 			if (GL_ISAVAILABLE(glMultiDrawRangeElementArrayAPPLE))
@@ -7778,6 +7838,11 @@
 			if (GL_ISAVAILABLE(glMulticastWaitSyncNV))
 			nfglMulticastWaitSyncNV(nf_params);
 			break;
+		case NFOSMESA_GLNAMEDBUFFERATTACHMEMORYNV:
+			D(funcname = "glNamedBufferAttachMemoryNV");
+			if (GL_ISAVAILABLE(glNamedBufferAttachMemoryNV))
+			nfglNamedBufferAttachMemoryNV(nf_params);
+			break;
 		case NFOSMESA_GLNAMEDBUFFERDATA:
 			D(funcname = "glNamedBufferData");
 			if (GL_ISAVAILABLE(glNamedBufferData))
@@ -7997,6 +8062,11 @@
 			D(funcname = "glNamedRenderbufferStorageMultisample");
 			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisample))
 			nfglNamedRenderbufferStorageMultisample(nf_params);
+			break;
+		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD:
+			D(funcname = "glNamedRenderbufferStorageMultisampleAdvancedAMD");
+			if (GL_ISAVAILABLE(glNamedRenderbufferStorageMultisampleAdvancedAMD))
+			nfglNamedRenderbufferStorageMultisampleAdvancedAMD(nf_params);
 			break;
 		case NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXT:
 			D(funcname = "glNamedRenderbufferStorageMultisampleCoverageEXT");
@@ -9945,6 +10015,11 @@
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisample))
 			nfglRenderbufferStorageMultisample(nf_params);
 			break;
+		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD:
+			D(funcname = "glRenderbufferStorageMultisampleAdvancedAMD");
+			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleAdvancedAMD))
+			nfglRenderbufferStorageMultisampleAdvancedAMD(nf_params);
+			break;
 		case NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLECOVERAGENV:
 			D(funcname = "glRenderbufferStorageMultisampleCoverageNV");
 			if (GL_ISAVAILABLE(glRenderbufferStorageMultisampleCoverageNV))
@@ -10084,6 +10159,11 @@
 			D(funcname = "glResetHistogramEXT");
 			if (GL_ISAVAILABLE(glResetHistogramEXT))
 			nfglResetHistogramEXT(nf_params);
+			break;
+		case NFOSMESA_GLRESETMEMORYOBJECTPARAMETERNV:
+			D(funcname = "glResetMemoryObjectParameterNV");
+			if (GL_ISAVAILABLE(glResetMemoryObjectParameterNV))
+			nfglResetMemoryObjectParameterNV(nf_params);
 			break;
 		case NFOSMESA_GLRESETMINMAX:
 			D(funcname = "glResetMinmax");
@@ -10244,6 +10324,16 @@
 			D(funcname = "glScissorArrayv");
 			if (GL_ISAVAILABLE(glScissorArrayv))
 			nfglScissorArrayv(nf_params);
+			break;
+		case NFOSMESA_GLSCISSOREXCLUSIVEARRAYVNV:
+			D(funcname = "glScissorExclusiveArrayvNV");
+			if (GL_ISAVAILABLE(glScissorExclusiveArrayvNV))
+			nfglScissorExclusiveArrayvNV(nf_params);
+			break;
+		case NFOSMESA_GLSCISSOREXCLUSIVENV:
+			D(funcname = "glScissorExclusiveNV");
+			if (GL_ISAVAILABLE(glScissorExclusiveNV))
+			nfglScissorExclusiveNV(nf_params);
 			break;
 		case NFOSMESA_GLSCISSORINDEXED:
 			D(funcname = "glScissorIndexed");
@@ -10550,6 +10640,26 @@
 			if (GL_ISAVAILABLE(glShaderStorageBlockBinding))
 			nfglShaderStorageBlockBinding(nf_params);
 			break;
+		case NFOSMESA_GLSHADINGRATEIMAGEBARRIERNV:
+			D(funcname = "glShadingRateImageBarrierNV");
+			if (GL_ISAVAILABLE(glShadingRateImageBarrierNV))
+			nfglShadingRateImageBarrierNV(nf_params);
+			break;
+		case NFOSMESA_GLSHADINGRATEIMAGEPALETTENV:
+			D(funcname = "glShadingRateImagePaletteNV");
+			if (GL_ISAVAILABLE(glShadingRateImagePaletteNV))
+			nfglShadingRateImagePaletteNV(nf_params);
+			break;
+		case NFOSMESA_GLSHADINGRATESAMPLEORDERCUSTOMNV:
+			D(funcname = "glShadingRateSampleOrderCustomNV");
+			if (GL_ISAVAILABLE(glShadingRateSampleOrderCustomNV))
+			nfglShadingRateSampleOrderCustomNV(nf_params);
+			break;
+		case NFOSMESA_GLSHADINGRATESAMPLEORDERNV:
+			D(funcname = "glShadingRateSampleOrderNV");
+			if (GL_ISAVAILABLE(glShadingRateSampleOrderNV))
+			nfglShadingRateSampleOrderNV(nf_params);
+			break;
 		case NFOSMESA_GLSHARPENTEXFUNCSGIS:
 			D(funcname = "glSharpenTexFuncSGIS");
 			if (GL_ISAVAILABLE(glSharpenTexFuncSGIS))
@@ -10819,6 +10929,11 @@
 			D(funcname = "glTestObjectAPPLE");
 			if (GL_ISAVAILABLE(glTestObjectAPPLE))
 			ret = nfglTestObjectAPPLE(nf_params);
+			break;
+		case NFOSMESA_GLTEXATTACHMEMORYNV:
+			D(funcname = "glTexAttachMemoryNV");
+			if (GL_ISAVAILABLE(glTexAttachMemoryNV))
+			nfglTexAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXBUFFER:
 			D(funcname = "glTexBuffer");
@@ -11544,6 +11659,11 @@
 			D(funcname = "glTexSubImage4DSGIS");
 			if (GL_ISAVAILABLE(glTexSubImage4DSGIS))
 			nfglTexSubImage4DSGIS(nf_params);
+			break;
+		case NFOSMESA_GLTEXTUREATTACHMEMORYNV:
+			D(funcname = "glTextureAttachMemoryNV");
+			if (GL_ISAVAILABLE(glTextureAttachMemoryNV))
+			nfglTextureAttachMemoryNV(nf_params);
 			break;
 		case NFOSMESA_GLTEXTUREBARRIER:
 			D(funcname = "glTextureBarrier");
@@ -12614,6 +12734,13 @@
 			D(funcname = "glVDPAURegisterVideoSurfaceNV");
 			if (GL_ISAVAILABLE(glVDPAURegisterVideoSurfaceNV))
 			ret = nfglVDPAURegisterVideoSurfaceNV(nf_params);
+			break;
+#endif
+#if 0
+		case NFOSMESA_GLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENV:
+			D(funcname = "glVDPAURegisterVideoSurfaceWithPictureStructureNV");
+			if (GL_ISAVAILABLE(glVDPAURegisterVideoSurfaceWithPictureStructureNV))
+			ret = nfglVDPAURegisterVideoSurfaceWithPictureStructureNV(nf_params);
 			break;
 #endif
 #if 0
@@ -14852,4 +14979,4 @@
 			nfgluLookAt(nf_params);
 			break;
 
-/* Functions generated: 2954 GL + 1 GLU */
+/* Functions generated: 2979 GL + 1 GLU */

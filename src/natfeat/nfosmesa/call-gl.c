@@ -762,6 +762,13 @@ void OSMesaDriver::nfglBindSamplers(const uint32_t *nf_params)
 FN_GLBINDSAMPLERS(first, count, samplers);
 }
 
+void OSMesaDriver::nfglBindShadingRateImageNV(const uint32_t *nf_params)
+{
+	GLuint texture = getStackedParameter(0);
+	D(bug("nfosmesa: glBindShadingRateImageNV(%u)", texture));
+	fn.glBindShadingRateImageNV(texture);
+}
+
 GLuint OSMesaDriver::nfglBindTexGenParameterEXT(const uint32_t *nf_params)
 {
 	GLenum unit = getStackedParameter(0);
@@ -1365,6 +1372,15 @@ void OSMesaDriver::nfglBufferAddressRangeNV(const uint32_t *nf_params)
 	GLsizeiptr length = getStackedParameter(4);
 	D(bug("nfosmesa: glBufferAddressRangeNV(%s, %u, %" PRIu64 ", %" PRI_IPTR ")", gl_enum_name(pname), index, address, length));
 	fn.glBufferAddressRangeNV(pname, index, address, length);
+}
+
+void OSMesaDriver::nfglBufferAttachMemoryNV(const uint32_t *nf_params)
+{
+	GLenum target = getStackedParameter(0);
+	GLuint memory = getStackedParameter(1);
+	GLuint64 offset = getStackedParameter64(2);
+	D(bug("nfosmesa: glBufferAttachMemoryNV(%s, %u, %" PRIu64 ")", gl_enum_name(target), memory, offset));
+	fn.glBufferAttachMemoryNV(target, memory, offset);
 }
 
 void OSMesaDriver::nfglBufferData(const uint32_t *nf_params)
@@ -5489,10 +5505,10 @@ void OSMesaDriver::nfglDepthMask(const uint32_t *nf_params)
 
 void OSMesaDriver::nfglDepthRange(const uint32_t *nf_params)
 {
-	GLclampd zNear = getStackedDouble(0);
-	GLclampd zFar = getStackedDouble(2);
-	D(bug("nfosmesa: glDepthRange(%f, %f)", zNear, zFar));
-	fn.glDepthRange(zNear, zFar);
+	GLclampd near_val = getStackedDouble(0);
+	GLclampd far_val = getStackedDouble(2);
+	D(bug("nfosmesa: glDepthRange(%f, %f)", near_val, far_val));
+	fn.glDepthRange(near_val, far_val);
 }
 
 void OSMesaDriver::nfglDepthRangeArrayv(const uint32_t *nf_params)
@@ -5596,9 +5612,9 @@ FN_GLDISABLE(cap);
 
 void OSMesaDriver::nfglDisableClientState(const uint32_t *nf_params)
 {
-	GLenum array = getStackedParameter(0);
-	D(bug("nfosmesa: glDisableClientState(%s)", gl_enum_name(array)));
-FN_GLDISABLECLIENTSTATE(array);
+	GLenum cap = getStackedParameter(0);
+	D(bug("nfosmesa: glDisableClientState(%s)", gl_enum_name(cap)));
+FN_GLDISABLECLIENTSTATE(cap);
 }
 
 void OSMesaDriver::nfglDisableClientStateIndexedEXT(const uint32_t *nf_params)
@@ -6115,6 +6131,21 @@ void OSMesaDriver::nfglDrawMeshArraysSUN(const uint32_t *nf_params)
 	fn.glDrawMeshArraysSUN(mode, first, count, width);
 }
 
+void OSMesaDriver::nfglDrawMeshTasksIndirectNV(const uint32_t *nf_params)
+{
+	GLintptr indirect = getStackedParameter(0);
+	D(bug("nfosmesa: glDrawMeshTasksIndirectNV(%" PRI_IPTR ")", indirect));
+	fn.glDrawMeshTasksIndirectNV(indirect);
+}
+
+void OSMesaDriver::nfglDrawMeshTasksNV(const uint32_t *nf_params)
+{
+	GLuint first = getStackedParameter(0);
+	GLuint count = getStackedParameter(1);
+	D(bug("nfosmesa: glDrawMeshTasksNV(%u, %u)", first, count));
+	fn.glDrawMeshTasksNV(first, count);
+}
+
 void OSMesaDriver::nfglDrawPixels(const uint32_t *nf_params)
 {
 	GLsizei width = getStackedParameter(0);
@@ -6282,6 +6313,58 @@ void OSMesaDriver::nfglDrawVkImageNV(const uint32_t *nf_params)
 	fn.glDrawVkImageNV(vkImage, sampler, x0, y0, x1, y1, z, s0, t0, s1, t1);
 }
 
+void OSMesaDriver::nfglEGLImageTargetTexStorageEXT(const uint32_t *nf_params)
+{
+	GLenum target = getStackedParameter(0);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	GLeglImageOES
+#endif
+		image = getStackedPointer(1, GLeglImageOES );
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLint *
+#endif
+		attrib_list = getStackedPointer(2, const GLint *);
+	D(bug("nfosmesa: glEGLImageTargetTexStorageEXT(%s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), AtariOffset(image), AtariOffset(attrib_list)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __attrib_list_size = 1;
+	GLint __attrib_list_tmp[__attrib_list_size];
+	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp);
+	fn.glEGLImageTargetTexStorageEXT(target, image, __attrib_list_ptmp);
+#else
+	fn.glEGLImageTargetTexStorageEXT(target, image, HostAddr(attrib_list, const GLint *));
+#endif
+}
+
+void OSMesaDriver::nfglEGLImageTargetTextureStorageEXT(const uint32_t *nf_params)
+{
+	GLuint texture = getStackedParameter(0);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	GLeglImageOES
+#endif
+		image = getStackedPointer(1, GLeglImageOES );
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLint *
+#endif
+		attrib_list = getStackedPointer(2, const GLint *);
+	D(bug("nfosmesa: glEGLImageTargetTextureStorageEXT(%u, " PRI_PTR ", " PRI_PTR ")", texture, AtariOffset(image), AtariOffset(attrib_list)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __attrib_list_size = 1;
+	GLint __attrib_list_tmp[__attrib_list_size];
+	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp);
+	fn.glEGLImageTargetTextureStorageEXT(texture, image, __attrib_list_ptmp);
+#else
+	fn.glEGLImageTargetTextureStorageEXT(texture, image, HostAddr(attrib_list, const GLint *));
+#endif
+}
+
 void OSMesaDriver::nfglEdgeFlag(const uint32_t *nf_params)
 {
 	GLboolean32 flag = getStackedParameter(0);
@@ -6304,9 +6387,9 @@ void OSMesaDriver::nfglEdgeFlagPointer(const uint32_t *nf_params)
 #else
 	const GLvoid *
 #endif
-		pointer = getStackedPointer(1, const GLvoid *);
-	D(bug("nfosmesa: glEdgeFlagPointer(%d, " PRI_PTR ")", stride, AtariOffset(pointer)));
-FN_GLEDGEFLAGPOINTER(stride, pointer);
+		ptr = getStackedPointer(1, const GLvoid *);
+	D(bug("nfosmesa: glEdgeFlagPointer(%d, " PRI_PTR ")", stride, AtariOffset(ptr)));
+FN_GLEDGEFLAGPOINTER(stride, ptr);
 }
 
 void OSMesaDriver::nfglEdgeFlagPointerEXT(const uint32_t *nf_params)
@@ -6384,9 +6467,9 @@ FN_GLENABLE(cap);
 
 void OSMesaDriver::nfglEnableClientState(const uint32_t *nf_params)
 {
-	GLenum array = getStackedParameter(0);
-	D(bug("nfosmesa: glEnableClientState(%s)", gl_enum_name(array)));
-FN_GLENABLECLIENTSTATE(array);
+	GLenum cap = getStackedParameter(0);
+	D(bug("nfosmesa: glEnableClientState(%s)", gl_enum_name(cap)));
+FN_GLENABLECLIENTSTATE(cap);
 }
 
 void OSMesaDriver::nfglEnableClientStateIndexedEXT(const uint32_t *nf_params)
@@ -7398,6 +7481,13 @@ void OSMesaDriver::nfglFramebufferDrawBuffersEXT(const uint32_t *nf_params)
 FN_GLFRAMEBUFFERDRAWBUFFERSEXT(framebuffer, n, bufs);
 }
 
+void OSMesaDriver::nfglFramebufferFetchBarrierEXT(const uint32_t *nf_params)
+{
+	UNUSED(nf_params);
+	D(bug("nfosmesa: glFramebufferFetchBarrierEXT()"));
+	fn.glFramebufferFetchBarrierEXT();
+}
+
 void OSMesaDriver::nfglFramebufferParameteri(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -7679,10 +7769,10 @@ void OSMesaDriver::nfglFrustum(const uint32_t *nf_params)
 	GLdouble right = getStackedDouble(2);
 	GLdouble bottom = getStackedDouble(4);
 	GLdouble top = getStackedDouble(6);
-	GLdouble zNear = getStackedDouble(8);
-	GLdouble zFar = getStackedDouble(10);
-	D(bug("nfosmesa: glFrustum(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, zNear, zFar));
-	fn.glFrustum(left, right, bottom, top, zNear, zFar);
+	GLdouble near_val = getStackedDouble(8);
+	GLdouble far_val = getStackedDouble(10);
+	D(bug("nfosmesa: glFrustum(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, near_val, far_val));
+	fn.glFrustum(left, right, bottom, top, near_val, far_val);
 }
 
 void OSMesaDriver::nfglFrustumfOES(const uint32_t *nf_params)
@@ -10545,6 +10635,29 @@ void OSMesaDriver::nfglGetMaterialxOES(const uint32_t *nf_params)
 	fn.glGetMaterialxOES(face, pname, param);
 }
 
+void OSMesaDriver::nfglGetMemoryObjectDetachedResourcesuivNV(const uint32_t *nf_params)
+{
+	GLuint memory = getStackedParameter(0);
+	GLenum pname = getStackedParameter(1);
+	GLint first = getStackedParameter(2);
+	GLsizei count = getStackedParameter(3);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	GLuint *
+#endif
+		params = getStackedPointer(4, GLuint *);
+	D(bug("nfosmesa: glGetMemoryObjectDetachedResourcesuivNV(%u, %s, %d, %d, " PRI_PTR ")", memory, gl_enum_name(pname), first, count, AtariOffset(params)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __params_size = MAX(count, 0);
+	GLuint __params_tmp[__params_size];
+	fn.glGetMemoryObjectDetachedResourcesuivNV(memory, pname, first, count, __params_tmp);
+	Host2AtariIntArray(__params_size, __params_tmp, params);
+#else
+	fn.glGetMemoryObjectDetachedResourcesuivNV(memory, pname, first, count, HostAddr(params, GLuint *));
+#endif
+}
+
 void OSMesaDriver::nfglGetMemoryObjectParameterivEXT(const uint32_t *nf_params)
 {
 	GLuint memoryObject = getStackedParameter(0);
@@ -12012,9 +12125,9 @@ void OSMesaDriver::nfglGetPointerv(const uint32_t *nf_params)
 #if NFOSMESA_POINTER_AS_MEMARG
 	memptr
 #else
-	GLvoid* *
+	GLvoid * *
 #endif
-		params = getStackedPointer(1, GLvoid* *);
+		params = getStackedPointer(1, GLvoid * *);
 	D(bug("nfosmesa: glGetPointerv(%s, " PRI_PTR ")", gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETPOINTERV(pname, params);
 }
@@ -13018,6 +13131,49 @@ void OSMesaDriver::nfglGetShaderiv(const uint32_t *nf_params)
 		params = getStackedPointer(2, GLint *);
 	D(bug("nfosmesa: glGetShaderiv(%u, %s, " PRI_PTR ")", shader, gl_enum_name(pname), AtariOffset(params)));
 FN_GLGETSHADERIV(shader, pname, params);
+}
+
+void OSMesaDriver::nfglGetShadingRateImagePaletteNV(const uint32_t *nf_params)
+{
+	GLuint viewport = getStackedParameter(0);
+	GLuint entry = getStackedParameter(1);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	GLenum *
+#endif
+		rate = getStackedPointer(2, GLenum *);
+	D(bug("nfosmesa: glGetShadingRateImagePaletteNV(%u, %u, " PRI_PTR ")", viewport, entry, AtariOffset(rate)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __rate_size = 1;
+	GLenum __rate_tmp[__rate_size] = { 0 };
+	fn.glGetShadingRateImagePaletteNV(viewport, entry, __rate_tmp);
+	Host2AtariIntArray(__rate_size, __rate_tmp, rate);
+#else
+	fn.glGetShadingRateImagePaletteNV(viewport, entry, HostAddr(rate, GLenum *));
+#endif
+}
+
+void OSMesaDriver::nfglGetShadingRateSampleLocationivNV(const uint32_t *nf_params)
+{
+	GLenum rate = getStackedParameter(0);
+	GLuint samples = getStackedParameter(1);
+	GLuint index = getStackedParameter(2);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	GLint *
+#endif
+		location = getStackedPointer(3, GLint *);
+	D(bug("nfosmesa: glGetShadingRateSampleLocationivNV(%s, %u, %u, " PRI_PTR ")", gl_enum_name(rate), samples, index, AtariOffset(location)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __location_size = MAX(3, 0);
+	GLint __location_tmp[__location_size];
+	fn.glGetShadingRateSampleLocationivNV(rate, samples, index, __location_tmp);
+	Host2AtariIntArray(__location_size, __location_tmp, location);
+#else
+	fn.glGetShadingRateSampleLocationivNV(rate, samples, index, HostAddr(location, GLint *));
+#endif
 }
 
 void OSMesaDriver::nfglGetSharpenTexFuncSGIS(const uint32_t *nf_params)
@@ -15674,9 +15830,9 @@ void OSMesaDriver::nfglIndexPointer(const uint32_t *nf_params)
 #else
 	const GLvoid *
 #endif
-		pointer = getStackedPointer(2, const GLvoid *);
-	D(bug("nfosmesa: glIndexPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
-FN_GLINDEXPOINTER(type, stride, pointer);
+		ptr = getStackedPointer(2, const GLvoid *);
+	D(bug("nfosmesa: glIndexPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(ptr)));
+FN_GLINDEXPOINTER(type, stride, ptr);
 }
 
 void OSMesaDriver::nfglIndexPointerEXT(const uint32_t *nf_params)
@@ -18319,6 +18475,25 @@ void OSMesaDriver::nfglMultiDrawElementsIndirectCountARB(const uint32_t *nf_para
 FN_GLMULTIDRAWELEMENTSINDIRECTCOUNTARB(mode, type, indirect, drawcount, maxdrawcount, stride);
 }
 
+void OSMesaDriver::nfglMultiDrawMeshTasksIndirectCountNV(const uint32_t *nf_params)
+{
+	GLintptr indirect = getStackedParameter(0);
+	GLintptr drawcount = getStackedParameter(1);
+	GLsizei maxdrawcount = getStackedParameter(2);
+	GLsizei stride = getStackedParameter(3);
+	D(bug("nfosmesa: glMultiDrawMeshTasksIndirectCountNV(%" PRI_IPTR ", %" PRI_IPTR ", %d, %d)", indirect, drawcount, maxdrawcount, stride));
+	fn.glMultiDrawMeshTasksIndirectCountNV(indirect, drawcount, maxdrawcount, stride);
+}
+
+void OSMesaDriver::nfglMultiDrawMeshTasksIndirectNV(const uint32_t *nf_params)
+{
+	GLintptr indirect = getStackedParameter(0);
+	GLsizei drawcount = getStackedParameter(1);
+	GLsizei stride = getStackedParameter(2);
+	D(bug("nfosmesa: glMultiDrawMeshTasksIndirectNV(%" PRI_IPTR ", %d, %d)", indirect, drawcount, stride));
+	fn.glMultiDrawMeshTasksIndirectNV(indirect, drawcount, stride);
+}
+
 void OSMesaDriver::nfglMultiDrawRangeElementArrayAPPLE(const uint32_t *nf_params)
 {
 	GLenum mode = getStackedParameter(0);
@@ -20157,6 +20332,15 @@ void OSMesaDriver::nfglMulticastWaitSyncNV(const uint32_t *nf_params)
 	fn.glMulticastWaitSyncNV(signalGpu, waitGpuMask);
 }
 
+void OSMesaDriver::nfglNamedBufferAttachMemoryNV(const uint32_t *nf_params)
+{
+	GLuint buffer = getStackedParameter(0);
+	GLuint memory = getStackedParameter(1);
+	GLuint64 offset = getStackedParameter64(2);
+	D(bug("nfosmesa: glNamedBufferAttachMemoryNV(%u, %u, %" PRIu64 ")", buffer, memory, offset));
+	fn.glNamedBufferAttachMemoryNV(buffer, memory, offset);
+}
+
 void OSMesaDriver::nfglNamedBufferData(const uint32_t *nf_params)
 {
 	GLuint buffer = getStackedParameter(0);
@@ -20725,6 +20909,18 @@ void OSMesaDriver::nfglNamedRenderbufferStorageMultisample(const uint32_t *nf_pa
 	fn.glNamedRenderbufferStorageMultisample(renderbuffer, samples, internalformat, width, height);
 }
 
+void OSMesaDriver::nfglNamedRenderbufferStorageMultisampleAdvancedAMD(const uint32_t *nf_params)
+{
+	GLuint renderbuffer = getStackedParameter(0);
+	GLsizei samples = getStackedParameter(1);
+	GLsizei storageSamples = getStackedParameter(2);
+	GLenum internalformat = getStackedParameter(3);
+	GLsizei width = getStackedParameter(4);
+	GLsizei height = getStackedParameter(5);
+	D(bug("nfosmesa: glNamedRenderbufferStorageMultisampleAdvancedAMD(%u, %d, %d, %s, %d, %d)", renderbuffer, samples, storageSamples, gl_enum_name(internalformat), width, height));
+	fn.glNamedRenderbufferStorageMultisampleAdvancedAMD(renderbuffer, samples, storageSamples, internalformat, width, height);
+}
+
 void OSMesaDriver::nfglNamedRenderbufferStorageMultisampleCoverageEXT(const uint32_t *nf_params)
 {
 	GLuint renderbuffer = getStackedParameter(0);
@@ -21019,9 +21215,9 @@ void OSMesaDriver::nfglNormalPointer(const uint32_t *nf_params)
 #else
 	const GLvoid *
 #endif
-		pointer = getStackedPointer(2, const GLvoid *);
-	D(bug("nfosmesa: glNormalPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(pointer)));
-FN_GLNORMALPOINTER(type, stride, pointer);
+		ptr = getStackedPointer(2, const GLvoid *);
+	D(bug("nfosmesa: glNormalPointer(%s, %d, " PRI_PTR ")", gl_enum_name(type), stride, AtariOffset(ptr)));
+FN_GLNORMALPOINTER(type, stride, ptr);
 }
 
 void OSMesaDriver::nfglNormalPointerEXT(const uint32_t *nf_params)
@@ -21242,10 +21438,10 @@ void OSMesaDriver::nfglOrtho(const uint32_t *nf_params)
 	GLdouble right = getStackedDouble(2);
 	GLdouble bottom = getStackedDouble(4);
 	GLdouble top = getStackedDouble(6);
-	GLdouble zNear = getStackedDouble(8);
-	GLdouble zFar = getStackedDouble(10);
-	D(bug("nfosmesa: glOrtho(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, zNear, zFar));
-	fn.glOrtho(left, right, bottom, top, zNear, zFar);
+	GLdouble near_val = getStackedDouble(8);
+	GLdouble far_val = getStackedDouble(10);
+	D(bug("nfosmesa: glOrtho(%f, %f, %f, %f, %f, %f)", left, right, bottom, top, near_val, far_val));
+	fn.glOrtho(left, right, bottom, top, near_val, far_val);
 }
 
 void OSMesaDriver::nfglOrthofOES(const uint32_t *nf_params)
@@ -25725,6 +25921,18 @@ void OSMesaDriver::nfglRenderbufferStorageMultisample(const uint32_t *nf_params)
 	fn.glRenderbufferStorageMultisample(target, samples, internalformat, width, height);
 }
 
+void OSMesaDriver::nfglRenderbufferStorageMultisampleAdvancedAMD(const uint32_t *nf_params)
+{
+	GLenum target = getStackedParameter(0);
+	GLsizei samples = getStackedParameter(1);
+	GLsizei storageSamples = getStackedParameter(2);
+	GLenum internalformat = getStackedParameter(3);
+	GLsizei width = getStackedParameter(4);
+	GLsizei height = getStackedParameter(5);
+	D(bug("nfosmesa: glRenderbufferStorageMultisampleAdvancedAMD(%s, %d, %d, %s, %d, %d)", gl_enum_name(target), samples, storageSamples, gl_enum_name(internalformat), width, height));
+	fn.glRenderbufferStorageMultisampleAdvancedAMD(target, samples, storageSamples, internalformat, width, height);
+}
+
 void OSMesaDriver::nfglRenderbufferStorageMultisampleCoverageNV(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -26169,6 +26377,14 @@ void OSMesaDriver::nfglResetHistogramEXT(const uint32_t *nf_params)
 	fn.glResetHistogramEXT(target);
 }
 
+void OSMesaDriver::nfglResetMemoryObjectParameterNV(const uint32_t *nf_params)
+{
+	GLuint memory = getStackedParameter(0);
+	GLenum pname = getStackedParameter(1);
+	D(bug("nfosmesa: glResetMemoryObjectParameterNV(%u, %s)", memory, gl_enum_name(pname)));
+	fn.glResetMemoryObjectParameterNV(memory, pname);
+}
+
 void OSMesaDriver::nfglResetMinmax(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -26457,6 +26673,37 @@ void OSMesaDriver::nfglScissorArrayv(const uint32_t *nf_params)
 		v = getStackedPointer(2, const GLint *);
 	D(bug("nfosmesa: glScissorArrayv(%u, %d, " PRI_PTR ")", first, count, AtariOffset(v)));
 FN_GLSCISSORARRAYV(first, count, v);
+}
+
+void OSMesaDriver::nfglScissorExclusiveArrayvNV(const uint32_t *nf_params)
+{
+	GLuint first = getStackedParameter(0);
+	GLsizei count = getStackedParameter(1);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLint *
+#endif
+		v = getStackedPointer(2, const GLint *);
+	D(bug("nfosmesa: glScissorExclusiveArrayvNV(%u, %d, " PRI_PTR ")", first, count, AtariOffset(v)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __v_size = MAX(count * 4, 0);
+	GLint __v_tmp[__v_size];
+	GLint *__v_ptmp = Atari2HostIntArray(__v_size, v, __v_tmp);
+	fn.glScissorExclusiveArrayvNV(first, count, __v_ptmp);
+#else
+	fn.glScissorExclusiveArrayvNV(first, count, HostAddr(v, const GLint *));
+#endif
+}
+
+void OSMesaDriver::nfglScissorExclusiveNV(const uint32_t *nf_params)
+{
+	GLint x = getStackedParameter(0);
+	GLint y = getStackedParameter(1);
+	GLsizei width = getStackedParameter(2);
+	GLsizei height = getStackedParameter(3);
+	D(bug("nfosmesa: glScissorExclusiveNV(%d, %d, %d, %d)", x, y, width, height));
+	fn.glScissorExclusiveNV(x, y, width, height);
 }
 
 void OSMesaDriver::nfglScissorIndexed(const uint32_t *nf_params)
@@ -27191,6 +27438,63 @@ void OSMesaDriver::nfglShaderStorageBlockBinding(const uint32_t *nf_params)
 	fn.glShaderStorageBlockBinding(program, storageBlockIndex, storageBlockBinding);
 }
 
+void OSMesaDriver::nfglShadingRateImageBarrierNV(const uint32_t *nf_params)
+{
+	GLboolean32 synchronize = getStackedParameter(0);
+	D(bug("nfosmesa: glShadingRateImageBarrierNV(%d)", synchronize));
+	fn.glShadingRateImageBarrierNV(synchronize);
+}
+
+void OSMesaDriver::nfglShadingRateImagePaletteNV(const uint32_t *nf_params)
+{
+	GLuint viewport = getStackedParameter(0);
+	GLuint first = getStackedParameter(1);
+	GLsizei count = getStackedParameter(2);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLenum *
+#endif
+		rates = getStackedPointer(3, const GLenum *);
+	D(bug("nfosmesa: glShadingRateImagePaletteNV(%u, %u, %d, " PRI_PTR ")", viewport, first, count, AtariOffset(rates)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __rates_size = MAX(count, 0);
+	GLenum __rates_tmp[__rates_size];
+	GLenum *__rates_ptmp = Atari2HostIntArray(__rates_size, rates, __rates_tmp);
+	fn.glShadingRateImagePaletteNV(viewport, first, count, __rates_ptmp);
+#else
+	fn.glShadingRateImagePaletteNV(viewport, first, count, HostAddr(rates, const GLenum *));
+#endif
+}
+
+void OSMesaDriver::nfglShadingRateSampleOrderCustomNV(const uint32_t *nf_params)
+{
+	GLenum rate = getStackedParameter(0);
+	GLuint samples = getStackedParameter(1);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLint *
+#endif
+		locations = getStackedPointer(2, const GLint *);
+	D(bug("nfosmesa: glShadingRateSampleOrderCustomNV(%s, %u, " PRI_PTR ")", gl_enum_name(rate), samples, AtariOffset(locations)));
+#if NFOSMESA_NEED_INT_CONV
+	GLint const __locations_size = MAX(3 * samples, 0);
+	GLint __locations_tmp[__locations_size];
+	GLint *__locations_ptmp = Atari2HostIntArray(__locations_size, locations, __locations_tmp);
+	fn.glShadingRateSampleOrderCustomNV(rate, samples, __locations_ptmp);
+#else
+	fn.glShadingRateSampleOrderCustomNV(rate, samples, HostAddr(locations, const GLint *));
+#endif
+}
+
+void OSMesaDriver::nfglShadingRateSampleOrderNV(const uint32_t *nf_params)
+{
+	GLenum order = getStackedParameter(0);
+	D(bug("nfosmesa: glShadingRateSampleOrderNV(%s)", gl_enum_name(order)));
+	fn.glShadingRateSampleOrderNV(order);
+}
+
 void OSMesaDriver::nfglSharpenTexFuncSGIS(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
@@ -27843,6 +28147,15 @@ GLboolean OSMesaDriver::nfglTestObjectAPPLE(const uint32_t *nf_params)
 	D(bug("nfosmesa: glTestObjectAPPLE(%s, %u)", gl_enum_name(object), name));
 	GLboolean __ret = fn.glTestObjectAPPLE(object, name);
 	return __ret;
+}
+
+void OSMesaDriver::nfglTexAttachMemoryNV(const uint32_t *nf_params)
+{
+	GLenum target = getStackedParameter(0);
+	GLuint memory = getStackedParameter(1);
+	GLuint64 offset = getStackedParameter64(2);
+	D(bug("nfosmesa: glTexAttachMemoryNV(%s, %u, %" PRIu64 ")", gl_enum_name(target), memory, offset));
+	fn.glTexAttachMemoryNV(target, memory, offset);
 }
 
 void OSMesaDriver::nfglTexBuffer(const uint32_t *nf_params)
@@ -28861,9 +29174,9 @@ void OSMesaDriver::nfglTexCoordPointer(const uint32_t *nf_params)
 #else
 	const GLvoid *
 #endif
-		pointer = getStackedPointer(3, const GLvoid *);
-	D(bug("nfosmesa: glTexCoordPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
-FN_GLTEXCOORDPOINTER(size, type, stride, pointer);
+		ptr = getStackedPointer(3, const GLvoid *);
+	D(bug("nfosmesa: glTexCoordPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(ptr)));
+FN_GLTEXCOORDPOINTER(size, type, stride, ptr);
 }
 
 void OSMesaDriver::nfglTexCoordPointerEXT(const uint32_t *nf_params)
@@ -29092,7 +29405,7 @@ void OSMesaDriver::nfglTexImage1D(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
 	GLint level = getStackedParameter(1);
-	GLint internalformat = getStackedParameter(2);
+	GLint internalFormat = getStackedParameter(2);
 	GLsizei width = getStackedParameter(3);
 	GLint border = getStackedParameter(4);
 	GLenum format = getStackedParameter(5);
@@ -29103,15 +29416,15 @@ void OSMesaDriver::nfglTexImage1D(const uint32_t *nf_params)
 	const GLvoid *
 #endif
 		pixels = getStackedPointer(7, const GLvoid *);
-	D(bug("nfosmesa: glTexImage1D(%s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalformat, width, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
-FN_GLTEXIMAGE1D(target, level, internalformat, width, border, format, type, pixels);
+	D(bug("nfosmesa: glTexImage1D(%s, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalFormat, width, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
+FN_GLTEXIMAGE1D(target, level, internalFormat, width, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTexImage2D(const uint32_t *nf_params)
 {
 	GLenum target = getStackedParameter(0);
 	GLint level = getStackedParameter(1);
-	GLint internalformat = getStackedParameter(2);
+	GLint internalFormat = getStackedParameter(2);
 	GLsizei width = getStackedParameter(3);
 	GLsizei height = getStackedParameter(4);
 	GLint border = getStackedParameter(5);
@@ -29123,8 +29436,8 @@ void OSMesaDriver::nfglTexImage2D(const uint32_t *nf_params)
 	const GLvoid *
 #endif
 		pixels = getStackedPointer(8, const GLvoid *);
-	D(bug("nfosmesa: glTexImage2D(%s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalformat, width, height, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
-FN_GLTEXIMAGE2D(target, level, internalformat, width, height, border, format, type, pixels);
+	D(bug("nfosmesa: glTexImage2D(%s, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, internalFormat, width, height, border, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
+FN_GLTEXIMAGE2D(target, level, internalFormat, width, height, border, format, type, pixels);
 }
 
 void OSMesaDriver::nfglTexImage2DMultisample(const uint32_t *nf_params)
@@ -29690,6 +30003,15 @@ void OSMesaDriver::nfglTexSubImage4DSGIS(const uint32_t *nf_params)
 		pixels = getStackedPointer(12, const void *);
 	D(bug("nfosmesa: glTexSubImage4DSGIS(%s, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s, %s, " PRI_PTR ")", gl_enum_name(target), level, xoffset, yoffset, zoffset, woffset, width, height, depth, size4d, gl_enum_name(format), gl_enum_name(type), AtariOffset(pixels)));
 FN_GLTEXSUBIMAGE4DSGIS(target, level, xoffset, yoffset, zoffset, woffset, width, height, depth, size4d, format, type, pixels);
+}
+
+void OSMesaDriver::nfglTextureAttachMemoryNV(const uint32_t *nf_params)
+{
+	GLuint texture = getStackedParameter(0);
+	GLuint memory = getStackedParameter(1);
+	GLuint64 offset = getStackedParameter64(2);
+	D(bug("nfosmesa: glTextureAttachMemoryNV(%u, %u, %" PRIu64 ")", texture, memory, offset));
+	fn.glTextureAttachMemoryNV(texture, memory, offset);
 }
 
 void OSMesaDriver::nfglTextureBarrier(const uint32_t *nf_params)
@@ -32533,6 +32855,30 @@ GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceNV(const uint32_t *n
 		textureNames = getStackedPointer(3, const GLuint *);
 	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceNV(" PRI_PTR ", %s, %d, " PRI_PTR ")", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames)));
 FN_GLVDPAUREGISTERVIDEOSURFACENV(vdpSurface, target, numTextureNames, textureNames);
+}
+#endif
+
+#if 0
+GLvdpauSurfaceNV OSMesaDriver::nfglVDPAURegisterVideoSurfaceWithPictureStructureNV(const uint32_t *nf_params)
+{
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const void *
+#endif
+		vdpSurface = getStackedPointer(0, const void *);
+	GLenum target = getStackedParameter(1);
+	GLsizei numTextureNames = getStackedParameter(2);
+#if NFOSMESA_POINTER_AS_MEMARG
+	memptr
+#else
+	const GLuint *
+#endif
+		textureNames = getStackedPointer(3, const GLuint *);
+	GLboolean32 isFrameStructure = getStackedParameter(4);
+	D(bug("nfosmesa: glVDPAURegisterVideoSurfaceWithPictureStructureNV(" PRI_PTR ", %s, %d, " PRI_PTR ", %d)", AtariOffset(vdpSurface), gl_enum_name(target), numTextureNames, AtariOffset(textureNames), isFrameStructure));
+	GLvdpauSurfaceNV __ret = fn.glVDPAURegisterVideoSurfaceWithPictureStructureNV(vdpSurface, target, numTextureNames, textureNames, isFrameStructure);
+	return __ret;
 }
 #endif
 
@@ -36264,9 +36610,9 @@ void OSMesaDriver::nfglVertexPointer(const uint32_t *nf_params)
 #else
 	const GLvoid *
 #endif
-		pointer = getStackedPointer(3, const GLvoid *);
-	D(bug("nfosmesa: glVertexPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(pointer)));
-FN_GLVERTEXPOINTER(size, type, stride, pointer);
+		ptr = getStackedPointer(3, const GLvoid *);
+	D(bug("nfosmesa: glVertexPointer(%d, %s, %d, " PRI_PTR ")", size, gl_enum_name(type), stride, AtariOffset(ptr)));
+FN_GLVERTEXPOINTER(size, type, stride, ptr);
 }
 
 void OSMesaDriver::nfglVertexPointerEXT(const uint32_t *nf_params)
@@ -37686,5 +38032,5 @@ void OSMesaDriver::nfgluLookAt(const uint32_t *nf_params)
 #endif
 
 
-/* Functions generated: 2954 GL + 1 GLU */
-/* Automatically generated: 130 */
+/* Functions generated: 2979 GL + 1 GLU */
+/* Automatically generated: 138 */

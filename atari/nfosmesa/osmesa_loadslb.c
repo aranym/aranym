@@ -307,16 +307,16 @@ static GLboolean APIENTRY exec_glIsEnabled(GLenum cap)
 	return (GLboolean)(*exec)(gl_slb, 39 /* NFOSMESA_GLISENABLED */, SLB_NARGS(2), gl_pub, &cap);
 }
 
-static void APIENTRY exec_glEnableClientState(GLenum array)
+static void APIENTRY exec_glEnableClientState(GLenum cap)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(*exec)(gl_slb, 40 /* NFOSMESA_GLENABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
+	(*exec)(gl_slb, 40 /* NFOSMESA_GLENABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
-static void APIENTRY exec_glDisableClientState(GLenum array)
+static void APIENTRY exec_glDisableClientState(GLenum cap)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(*exec)(gl_slb, 41 /* NFOSMESA_GLDISABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &array);
+	(*exec)(gl_slb, 41 /* NFOSMESA_GLDISABLECLIENTSTATE */, SLB_NARGS(2), gl_pub, &cap);
 }
 
 static void APIENTRY exec_glGetBooleanv(GLenum pname, GLboolean *params)
@@ -420,11 +420,11 @@ static void APIENTRY exec_glDepthMask(GLboolean32 flag)
 	(*exec)(gl_slb, 57 /* NFOSMESA_GLDEPTHMASK */, SLB_NARGS(2), gl_pub, &flag);
 }
 
-static void APIENTRY exec_glDepthRange(GLclampd zNear, GLclampd zFar)
+static void APIENTRY exec_glDepthRange(GLclampd near_val, GLclampd far_val)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(void)zFar;
-	(*exec)(gl_slb, 58 /* NFOSMESA_GLDEPTHRANGE */, SLB_NARGS(2), gl_pub, &zNear);
+	(void)far_val;
+	(*exec)(gl_slb, 58 /* NFOSMESA_GLDEPTHRANGE */, SLB_NARGS(2), gl_pub, &near_val);
 }
 
 static void APIENTRY exec_glClearAccum(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
@@ -449,25 +449,25 @@ static void APIENTRY exec_glMatrixMode(GLenum mode)
 	(*exec)(gl_slb, 61 /* NFOSMESA_GLMATRIXMODE */, SLB_NARGS(2), gl_pub, &mode);
 }
 
-static void APIENTRY exec_glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
+static void APIENTRY exec_glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)right;
 	(void)bottom;
 	(void)top;
-	(void)zNear;
-	(void)zFar;
+	(void)near_val;
+	(void)far_val;
 	(*exec)(gl_slb, 62 /* NFOSMESA_GLORTHO */, SLB_NARGS(2), gl_pub, &left);
 }
 
-static void APIENTRY exec_glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar)
+static void APIENTRY exec_glFrustum(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val, GLdouble far_val)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)right;
 	(void)bottom;
 	(void)top;
-	(void)zNear;
-	(void)zFar;
+	(void)near_val;
+	(void)far_val;
 	(*exec)(gl_slb, 63 /* NFOSMESA_GLFRUSTUM */, SLB_NARGS(2), gl_pub, &left);
 }
 
@@ -1614,20 +1614,20 @@ static void APIENTRY exec_glRectsv(const GLshort *v1, const GLshort *v2)
 	(*exec)(gl_slb, 227 /* NFOSMESA_GLRECTSV */, SLB_NARGS(2), gl_pub, &v1);
 }
 
-static void APIENTRY exec_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glVertexPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)type;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 228 /* NFOSMESA_GLVERTEXPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
-static void APIENTRY exec_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glNormalPointer(GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 229 /* NFOSMESA_GLNORMALPOINTER */, SLB_NARGS(2), gl_pub, &type);
 }
 
@@ -1640,31 +1640,31 @@ static void APIENTRY exec_glColorPointer(GLint size, GLenum type, GLsizei stride
 	(*exec)(gl_slb, 230 /* NFOSMESA_GLCOLORPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
-static void APIENTRY exec_glIndexPointer(GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glIndexPointer(GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 231 /* NFOSMESA_GLINDEXPOINTER */, SLB_NARGS(2), gl_pub, &type);
 }
 
-static void APIENTRY exec_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)type;
 	(void)stride;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 232 /* NFOSMESA_GLTEXCOORDPOINTER */, SLB_NARGS(2), gl_pub, &size);
 }
 
-static void APIENTRY exec_glEdgeFlagPointer(GLsizei stride, const GLvoid *pointer)
+static void APIENTRY exec_glEdgeFlagPointer(GLsizei stride, const GLvoid *ptr)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
-	(void)pointer;
+	(void)ptr;
 	(*exec)(gl_slb, 233 /* NFOSMESA_GLEDGEFLAGPOINTER */, SLB_NARGS(2), gl_pub, &stride);
 }
 
-static void APIENTRY exec_glGetPointerv(GLenum pname, GLvoid* *params)
+static void APIENTRY exec_glGetPointerv(GLenum pname, GLvoid * *params)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)params;
@@ -2177,11 +2177,11 @@ static void APIENTRY exec_glGetTexLevelParameteriv(GLenum target, GLint level, G
 	(*exec)(gl_slb, 298 /* NFOSMESA_GLGETTEXLEVELPARAMETERIV */, SLB_NARGS(2), gl_pub, &target);
 }
 
-static void APIENTRY exec_glTexImage1D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
+static void APIENTRY exec_glTexImage1D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)level;
-	(void)internalformat;
+	(void)internalFormat;
 	(void)width;
 	(void)border;
 	(void)format;
@@ -2190,11 +2190,11 @@ static void APIENTRY exec_glTexImage1D(GLenum target, GLint level, GLint interna
 	(*exec)(gl_slb, 299 /* NFOSMESA_GLTEXIMAGE1D */, SLB_NARGS(2), gl_pub, &target);
 }
 
-static void APIENTRY exec_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
+static void APIENTRY exec_glTexImage2D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid *pixels)
 {
 	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
 	(void)level;
-	(void)internalformat;
+	(void)internalFormat;
 	(void)width;
 	(void)height;
 	(void)border;
@@ -24726,6 +24726,208 @@ static void APIENTRY exec_glConservativeRasterParameteriNV(GLenum pname, GLint p
 	(*exec)(gl_slb, 3034 /* NFOSMESA_GLCONSERVATIVERASTERPARAMETERINV */, SLB_NARGS(2), gl_pub, &pname);
 }
 
+static void APIENTRY exec_glBindShadingRateImageNV(GLuint texture)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3035 /* NFOSMESA_GLBINDSHADINGRATEIMAGENV */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glGetShadingRateImagePaletteNV(GLuint viewport, GLuint entry, GLenum *rate)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)entry;
+	(void)rate;
+	(*exec)(gl_slb, 3036 /* NFOSMESA_GLGETSHADINGRATEIMAGEPALETTENV */, SLB_NARGS(2), gl_pub, &viewport);
+}
+
+static void APIENTRY exec_glGetShadingRateSampleLocationivNV(GLenum rate, GLuint samples, GLuint index, GLint *location)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)index;
+	(void)location;
+	(*exec)(gl_slb, 3037 /* NFOSMESA_GLGETSHADINGRATESAMPLELOCATIONIVNV */, SLB_NARGS(2), gl_pub, &rate);
+}
+
+static void APIENTRY exec_glShadingRateImageBarrierNV(GLboolean32 synchronize)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3038 /* NFOSMESA_GLSHADINGRATEIMAGEBARRIERNV */, SLB_NARGS(2), gl_pub, &synchronize);
+}
+
+static void APIENTRY exec_glShadingRateImagePaletteNV(GLuint viewport, GLuint first, GLsizei count, const GLenum *rates)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)first;
+	(void)count;
+	(void)rates;
+	(*exec)(gl_slb, 3039 /* NFOSMESA_GLSHADINGRATEIMAGEPALETTENV */, SLB_NARGS(2), gl_pub, &viewport);
+}
+
+static void APIENTRY exec_glShadingRateSampleOrderCustomNV(GLenum rate, GLuint samples, const GLint *locations)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)locations;
+	(*exec)(gl_slb, 3040 /* NFOSMESA_GLSHADINGRATESAMPLEORDERCUSTOMNV */, SLB_NARGS(2), gl_pub, &rate);
+}
+
+static void APIENTRY exec_glShadingRateSampleOrderNV(GLenum order)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3041 /* NFOSMESA_GLSHADINGRATESAMPLEORDERNV */, SLB_NARGS(2), gl_pub, &order);
+}
+
+static void APIENTRY exec_glGetMemoryObjectDetachedResourcesuivNV(GLuint memory, GLenum pname, GLint first, GLsizei count, GLuint *params)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(void)first;
+	(void)count;
+	(void)params;
+	(*exec)(gl_slb, 3042 /* NFOSMESA_GLGETMEMORYOBJECTDETACHEDRESOURCESUIVNV */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glResetMemoryObjectParameterNV(GLuint memory, GLenum pname)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)pname;
+	(*exec)(gl_slb, 3043 /* NFOSMESA_GLRESETMEMORYOBJECTPARAMETERNV */, SLB_NARGS(2), gl_pub, &memory);
+}
+
+static void APIENTRY exec_glTexAttachMemoryNV(GLenum target, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 3044 /* NFOSMESA_GLTEXATTACHMEMORYNV */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glBufferAttachMemoryNV(GLenum target, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 3045 /* NFOSMESA_GLBUFFERATTACHMEMORYNV */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glTextureAttachMemoryNV(GLuint texture, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 3046 /* NFOSMESA_GLTEXTUREATTACHMEMORYNV */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glNamedBufferAttachMemoryNV(GLuint buffer, GLuint memory, GLuint64 offset)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)memory;
+	(void)offset;
+	(*exec)(gl_slb, 3047 /* NFOSMESA_GLNAMEDBUFFERATTACHMEMORYNV */, SLB_NARGS(2), gl_pub, &buffer);
+}
+
+static void APIENTRY exec_glDrawMeshTasksNV(GLuint first, GLuint count)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(*exec)(gl_slb, 3048 /* NFOSMESA_GLDRAWMESHTASKSNV */, SLB_NARGS(2), gl_pub, &first);
+}
+
+static void APIENTRY exec_glDrawMeshTasksIndirectNV(GLintptr indirect)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3049 /* NFOSMESA_GLDRAWMESHTASKSINDIRECTNV */, SLB_NARGS(2), gl_pub, &indirect);
+}
+
+static void APIENTRY exec_glMultiDrawMeshTasksIndirectCountNV(GLintptr indirect, GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)drawcount;
+	(void)maxdrawcount;
+	(void)stride;
+	(*exec)(gl_slb, 3050 /* NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTCOUNTNV */, SLB_NARGS(2), gl_pub, &indirect);
+}
+
+static void APIENTRY exec_glMultiDrawMeshTasksIndirectNV(GLintptr indirect, GLsizei drawcount, GLsizei stride)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)drawcount;
+	(void)stride;
+	(*exec)(gl_slb, 3051 /* NFOSMESA_GLMULTIDRAWMESHTASKSINDIRECTNV */, SLB_NARGS(2), gl_pub, &indirect);
+}
+
+static void APIENTRY exec_glEGLImageTargetTexStorageEXT(GLenum target, GLeglImageOES image, const GLint *attrib_list)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)image;
+	(void)attrib_list;
+	(*exec)(gl_slb, 3052 /* NFOSMESA_GLEGLIMAGETARGETTEXSTORAGEEXT */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glEGLImageTargetTextureStorageEXT(GLuint texture, GLeglImageOES image, const GLint *attrib_list)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)image;
+	(void)attrib_list;
+	(*exec)(gl_slb, 3053 /* NFOSMESA_GLEGLIMAGETARGETTEXTURESTORAGEEXT */, SLB_NARGS(2), gl_pub, &texture);
+}
+
+static void APIENTRY exec_glFramebufferFetchBarrierEXT(void)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(*exec)(gl_slb, 3054 /* NFOSMESA_GLFRAMEBUFFERFETCHBARRIEREXT */, SLB_NARGS(2), gl_pub, NULL);
+}
+
+static void APIENTRY exec_glNamedRenderbufferStorageMultisampleAdvancedAMD(GLuint renderbuffer, GLsizei samples, GLsizei storageSamples, GLenum internalformat, GLsizei width, GLsizei height)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)storageSamples;
+	(void)internalformat;
+	(void)width;
+	(void)height;
+	(*exec)(gl_slb, 3055 /* NFOSMESA_GLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD */, SLB_NARGS(2), gl_pub, &renderbuffer);
+}
+
+static void APIENTRY exec_glRenderbufferStorageMultisampleAdvancedAMD(GLenum target, GLsizei samples, GLsizei storageSamples, GLenum internalformat, GLsizei width, GLsizei height)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)samples;
+	(void)storageSamples;
+	(void)internalformat;
+	(void)width;
+	(void)height;
+	(*exec)(gl_slb, 3056 /* NFOSMESA_GLRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMD */, SLB_NARGS(2), gl_pub, &target);
+}
+
+static void APIENTRY exec_glScissorExclusiveArrayvNV(GLuint first, GLsizei count, const GLint *v)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)count;
+	(void)v;
+	(*exec)(gl_slb, 3057 /* NFOSMESA_GLSCISSOREXCLUSIVEARRAYVNV */, SLB_NARGS(2), gl_pub, &first);
+}
+
+static void APIENTRY exec_glScissorExclusiveNV(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)y;
+	(void)width;
+	(void)height;
+	(*exec)(gl_slb, 3058 /* NFOSMESA_GLSCISSOREXCLUSIVENV */, SLB_NARGS(2), gl_pub, &x);
+}
+
+static GLvdpauSurfaceNV APIENTRY exec_glVDPAURegisterVideoSurfaceWithPictureStructureNV(const void *vdpSurface, GLenum target, GLsizei numTextureNames, const GLuint *textureNames, GLboolean32 isFrameStructure)
+{
+	long  __CDECL (*exec)(SLB_HANDLE, long, long, void *, void *) = (long  __CDECL (*)(SLB_HANDLE, long, long, void *, void *))gl_exec;
+	(void)target;
+	(void)numTextureNames;
+	(void)textureNames;
+	(void)isFrameStructure;
+	return (GLvdpauSurfaceNV)(*exec)(gl_slb, 3059 /* NFOSMESA_GLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENV */, SLB_NARGS(2), gl_pub, &vdpSurface);
+}
+
 
 
 static APIENTRY OSMESAproc real_OSMesaGetProcAddress(const char *funcname)
@@ -27719,7 +27921,32 @@ static void slb_init_osmesa(void)
 	glp->ViewportPositionWScaleNV = exec_glViewportPositionWScaleNV;
 	glp->ConservativeRasterParameterfNV = exec_glConservativeRasterParameterfNV;
 	glp->ConservativeRasterParameteriNV = exec_glConservativeRasterParameteriNV;
-	gl.__numfuncs = 3034;
+	glp->BindShadingRateImageNV = exec_glBindShadingRateImageNV;
+	glp->GetShadingRateImagePaletteNV = exec_glGetShadingRateImagePaletteNV;
+	glp->GetShadingRateSampleLocationivNV = exec_glGetShadingRateSampleLocationivNV;
+	glp->ShadingRateImageBarrierNV = exec_glShadingRateImageBarrierNV;
+	glp->ShadingRateImagePaletteNV = exec_glShadingRateImagePaletteNV;
+	glp->ShadingRateSampleOrderCustomNV = exec_glShadingRateSampleOrderCustomNV;
+	glp->ShadingRateSampleOrderNV = exec_glShadingRateSampleOrderNV;
+	glp->GetMemoryObjectDetachedResourcesuivNV = exec_glGetMemoryObjectDetachedResourcesuivNV;
+	glp->ResetMemoryObjectParameterNV = exec_glResetMemoryObjectParameterNV;
+	glp->TexAttachMemoryNV = exec_glTexAttachMemoryNV;
+	glp->BufferAttachMemoryNV = exec_glBufferAttachMemoryNV;
+	glp->TextureAttachMemoryNV = exec_glTextureAttachMemoryNV;
+	glp->NamedBufferAttachMemoryNV = exec_glNamedBufferAttachMemoryNV;
+	glp->DrawMeshTasksNV = exec_glDrawMeshTasksNV;
+	glp->DrawMeshTasksIndirectNV = exec_glDrawMeshTasksIndirectNV;
+	glp->MultiDrawMeshTasksIndirectCountNV = exec_glMultiDrawMeshTasksIndirectCountNV;
+	glp->MultiDrawMeshTasksIndirectNV = exec_glMultiDrawMeshTasksIndirectNV;
+	glp->EGLImageTargetTexStorageEXT = exec_glEGLImageTargetTexStorageEXT;
+	glp->EGLImageTargetTextureStorageEXT = exec_glEGLImageTargetTextureStorageEXT;
+	glp->FramebufferFetchBarrierEXT = exec_glFramebufferFetchBarrierEXT;
+	glp->NamedRenderbufferStorageMultisampleAdvancedAMD = exec_glNamedRenderbufferStorageMultisampleAdvancedAMD;
+	glp->RenderbufferStorageMultisampleAdvancedAMD = exec_glRenderbufferStorageMultisampleAdvancedAMD;
+	glp->ScissorExclusiveArrayvNV = exec_glScissorExclusiveArrayvNV;
+	glp->ScissorExclusiveNV = exec_glScissorExclusiveNV;
+	glp->VDPAURegisterVideoSurfaceWithPictureStructureNV = exec_glVDPAURegisterVideoSurfaceWithPictureStructureNV;
+	gl.__numfuncs = 3059;
 	gl.__old_OSMesaGetProcAddress = gl.OSMesaGetProcAddress;
 	gl.OSMesaGetProcAddress = real_OSMesaGetProcAddress;
 }
@@ -27989,6 +28216,8 @@ int main(void)
 	printf("glBindSampler                 : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBindSamplers");
 	printf("glBindSamplers                : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glBindShadingRateImageNV");
+	printf("glBindShadingRateImageNV      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBindTexGenParameterEXT");
 	printf("glBindTexGenParameterEXT      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBindTexture");
@@ -28107,6 +28336,8 @@ int main(void)
 	printf("glBlitNamedFramebuffer        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferAddressRangeNV");
 	printf("glBufferAddressRangeNV        : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glBufferAttachMemoryNV");
+	printf("glBufferAttachMemoryNV        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferData");
 	printf("glBufferData                  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glBufferDataARB");
@@ -28835,6 +29066,10 @@ int main(void)
 	printf("glDrawElementsInstancedEXT    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDrawMeshArraysSUN");
 	printf("glDrawMeshArraysSUN           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDrawMeshTasksIndirectNV");
+	printf("glDrawMeshTasksIndirectNV     : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glDrawMeshTasksNV");
+	printf("glDrawMeshTasksNV             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDrawPixels");
 	printf("glDrawPixels                  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDrawRangeElementArrayAPPLE");
@@ -28861,6 +29096,10 @@ int main(void)
 	printf("glDrawTransformFeedbackStreamInstanced: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glDrawVkImageNV");
 	printf("glDrawVkImageNV               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glEGLImageTargetTexStorageEXT");
+	printf("glEGLImageTargetTexStorageEXT : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glEGLImageTargetTextureStorageEXT");
+	printf("glEGLImageTargetTextureStorageEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glEdgeFlag");
 	printf("glEdgeFlag                    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glEdgeFlagFormatNV");
@@ -29103,6 +29342,8 @@ int main(void)
 	printf("glFramebufferDrawBufferEXT    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferDrawBuffersEXT");
 	printf("glFramebufferDrawBuffersEXT   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glFramebufferFetchBarrierEXT");
+	printf("glFramebufferFetchBarrierEXT  : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferParameteri");
 	printf("glFramebufferParameteri       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glFramebufferReadBufferEXT");
@@ -29521,6 +29762,8 @@ int main(void)
 	printf("glGetMaterialiv               : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMaterialxOES");
 	printf("glGetMaterialxOES             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetMemoryObjectDetachedResourcesuivNV");
+	printf("glGetMemoryObjectDetachedResourcesuivNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMemoryObjectParameterivEXT");
 	printf("glGetMemoryObjectParameterivEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetMinmax");
@@ -29823,6 +30066,10 @@ int main(void)
 	printf("glGetShaderSourceARB          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetShaderiv");
 	printf("glGetShaderiv                 : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetShadingRateImagePaletteNV");
+	printf("glGetShadingRateImagePaletteNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glGetShadingRateSampleLocationivNV");
+	printf("glGetShadingRateSampleLocationivNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetSharpenTexFuncSGIS");
 	printf("glGetSharpenTexFuncSGIS       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glGetStageIndexNV");
@@ -30657,6 +30904,10 @@ int main(void)
 	printf("glMultiDrawElementsIndirectCount: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawElementsIndirectCountARB");
 	printf("glMultiDrawElementsIndirectCountARB: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMultiDrawMeshTasksIndirectCountNV");
+	printf("glMultiDrawMeshTasksIndirectCountNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glMultiDrawMeshTasksIndirectNV");
+	printf("glMultiDrawMeshTasksIndirectNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiDrawRangeElementArrayAPPLE");
 	printf("glMultiDrawRangeElementArrayAPPLE: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMultiModeDrawArraysIBM");
@@ -30927,6 +31178,8 @@ int main(void)
 	printf("glMulticastGetQueryObjectuivNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glMulticastWaitSyncNV");
 	printf("glMulticastWaitSyncNV         : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedBufferAttachMemoryNV");
+	printf("glNamedBufferAttachMemoryNV   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferData");
 	printf("glNamedBufferData             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedBufferDataEXT");
@@ -31015,6 +31268,8 @@ int main(void)
 	printf("glNamedRenderbufferStorageEXT : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedRenderbufferStorageMultisample");
 	printf("glNamedRenderbufferStorageMultisample: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glNamedRenderbufferStorageMultisampleAdvancedAMD");
+	printf("glNamedRenderbufferStorageMultisampleAdvancedAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedRenderbufferStorageMultisampleCoverageEXT");
 	printf("glNamedRenderbufferStorageMultisampleCoverageEXT: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glNamedRenderbufferStorageMultisampleEXT");
@@ -31795,6 +32050,8 @@ int main(void)
 	printf("glRenderbufferStorageEXT      : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRenderbufferStorageMultisample");
 	printf("glRenderbufferStorageMultisample: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glRenderbufferStorageMultisampleAdvancedAMD");
+	printf("glRenderbufferStorageMultisampleAdvancedAMD: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRenderbufferStorageMultisampleCoverageNV");
 	printf("glRenderbufferStorageMultisampleCoverageNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glRenderbufferStorageMultisampleEXT");
@@ -31851,6 +32108,8 @@ int main(void)
 	printf("glResetHistogram              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glResetHistogramEXT");
 	printf("glResetHistogramEXT           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glResetMemoryObjectParameterNV");
+	printf("glResetMemoryObjectParameterNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glResetMinmax");
 	printf("glResetMinmax                 : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glResetMinmaxEXT");
@@ -31915,6 +32174,10 @@ int main(void)
 	printf("glScissor                     : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glScissorArrayv");
 	printf("glScissorArrayv               : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glScissorExclusiveArrayvNV");
+	printf("glScissorExclusiveArrayvNV    : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glScissorExclusiveNV");
+	printf("glScissorExclusiveNV          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glScissorIndexed");
 	printf("glScissorIndexed              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glScissorIndexedv");
@@ -32037,6 +32300,14 @@ int main(void)
 	printf("glShaderSourceARB             : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glShaderStorageBlockBinding");
 	printf("glShaderStorageBlockBinding   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glShadingRateImageBarrierNV");
+	printf("glShadingRateImageBarrierNV   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glShadingRateImagePaletteNV");
+	printf("glShadingRateImagePaletteNV   : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glShadingRateSampleOrderCustomNV");
+	printf("glShadingRateSampleOrderCustomNV: %p\n", p);
+	p = gl.OSMesaGetProcAddress("glShadingRateSampleOrderNV");
+	printf("glShadingRateSampleOrderNV    : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSharpenTexFuncSGIS");
 	printf("glSharpenTexFuncSGIS          : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glSignalSemaphoreEXT");
@@ -32145,6 +32416,8 @@ int main(void)
 	printf("glTestFenceNV                 : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTestObjectAPPLE");
 	printf("glTestObjectAPPLE             : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTexAttachMemoryNV");
+	printf("glTexAttachMemoryNV           : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexBuffer");
 	printf("glTexBuffer                   : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexBufferARB");
@@ -32435,6 +32708,8 @@ int main(void)
 	printf("glTexSubImage3DEXT            : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTexSubImage4DSGIS");
 	printf("glTexSubImage4DSGIS           : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glTextureAttachMemoryNV");
+	printf("glTextureAttachMemoryNV       : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTextureBarrier");
 	printf("glTextureBarrier              : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glTextureBarrierNV");
@@ -32857,6 +33132,8 @@ int main(void)
 	printf("glVDPAURegisterOutputSurfaceNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glVDPAURegisterVideoSurfaceNV");
 	printf("glVDPAURegisterVideoSurfaceNV : %p\n", p);
+	p = gl.OSMesaGetProcAddress("glVDPAURegisterVideoSurfaceWithPictureStructureNV");
+	printf("glVDPAURegisterVideoSurfaceWithPictureStructureNV: %p\n", p);
 	p = gl.OSMesaGetProcAddress("glVDPAUSurfaceAccessNV");
 	printf("glVDPAUSurfaceAccessNV        : %p\n", p);
 	p = gl.OSMesaGetProcAddress("glVDPAUUnmapSurfacesNV");

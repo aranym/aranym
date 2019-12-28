@@ -1,3 +1,7 @@
+2019/12/28
+nfosmesa: add some new functions
+
+
 2019/12/27
 nfosmesa: move decoding of arguments to member functions,
 to reduce the size of the big switch
