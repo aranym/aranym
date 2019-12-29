@@ -18,44 +18,10 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#define __STDC_FORMAT_MACROS
-
-#include "sysdeps.h"
+#include "nfosmesa_impl.h"
 
 #ifdef NFOSMESA_SUPPORT
 
-#include "SDL_compat.h"
-#include <SDL_loadso.h>
-#include <SDL_endian.h>
-#include <math.h>
-
-#include "cpu_emulation.h"
-#include "parameters.h"
-#include "nfosmesa.h"
-#include "../../atari/nfosmesa/nfosmesa_nfapi.h"
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
-#ifndef PRId64
-#  define PRId64 "lld"
-#endif
-#ifndef PRIu64
-#  define PRIu64 "llu"
-#endif
-#if defined(__APPLE__)
-   /* MacOSX declares GLintptr and GLsizeiptr as "long" */
-#  define PRI_IPTR "lu"
-#elif SIZEOF_VOID_P >= 8
-#  define PRI_IPTR PRIu64
-#else
-#  define PRI_IPTR "u"
-#endif
-#define PRI_PTR "0x%08x"
-
-#include "osmesa_context.h"
-
-#define DEBUG 0
-#include "debug.h"
 #include "verify.h"
 
 /*--- Assumptions ---*/
@@ -144,31 +110,6 @@ void OSMesaDriver::reset()
 	open_succeeded = false;
 	SDL_glctx = 0;
 }
-
-/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
-#define Host2AtariAddr(a) ((memptr)((uintptr_t)(a) - MEMBaseDiff))
-
-/* Read parameter on m68k stack */
-
-#define getStackedParameter(n) nf_params[n]
-#define getStackedParameter64(n) (((GLuint64)getStackedParameter(n) << 32) | (GLuint64)getStackedParameter((n) + 1))
-#define getStackedFloat(n) Atari2HostFloat(getStackedParameter(n))
-#define getStackedDouble(n) Atari2HostDouble(getStackedParameter(n), getStackedParameter((n) + 1))
-
-#if NFOSMESA_POINTER_AS_MEMARG
-#define getStackedPointer(n, t) getStackedParameter(n)
-#define HostAddr(addr, t) (t)((addr) ? Atari2HostAddr(addr) : NULL)
-#define AtariAddr(addr, t) addr
-#define AtariOffset(addr) addr
-#define NFHost2AtariAddr(addr) (void *)(uintptr_t)(addr)
-#else
-#define getStackedPointer(n, t) (t)(nf_params[n] ? Atari2HostAddr(getStackedParameter(n)) : NULL)
-#define HostAddr(addr, t) (t)(addr)
-#define AtariAddr(addr, t) (t)(addr)
-	/* undo the effects of Atari2HostAddr for pointer arguments when they specify a buffer offset */
-#define NFHost2AtariAddr(addr) ((void *)((uintptr_t)(addr) - MEMBaseDiff))
-#define AtariOffset(addr) ((unsigned int)((uintptr_t)(addr) - MEMBaseDiff))
-#endif
 
 #include "nfosmesa/paramcount-gl.c"
 
@@ -610,19 +551,6 @@ void OSMesaDriver::CloseGLLibrary(void)
 #include "../../atari/nfosmesa/glfuncs.h"
 }
 
-
-void OSMesaDriver::InitPointersGL(void *handle)
-{
-	D(bug("nfosmesa: InitPointersGL()"));
-
-#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) \
-	fn.gl ## name = (type (APIENTRY *) proto) SDL_LoadFunction(handle, "gl" #name); \
-	if (fn.gl ## name == 0 && get_procaddress) \
-		fn.gl ## name = (type (APIENTRY *) proto) get_procaddress("gl" #name);
-#define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret)
-#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret)
-#include "../../atari/nfosmesa/glfuncs.h"
-}
 
 void OSMesaDriver::InitPointersOSMesa(void *handle)
 {
@@ -2398,8 +2326,5 @@ void OSMesaDriver::gl_get_pointer(GLenum target, GLuint index, void **data)
 	// not sure about this
 	*pdata = (memptr)(uintptr_t)NFHost2AtariAddr(fbo->atari_pointer);
 }
-
-#include "nfosmesa_macros.h"
-#include "nfosmesa/call-gl.c"
 
 #endif /* NFOSMESA_SUPPORT */

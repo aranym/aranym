@@ -459,7 +459,8 @@ if NFOSMESA_SUPPORT
 aranym_SOURCES += \
 	natfeat/nfosmesa.cpp natfeat/nfosmesa.h \
 	natfeat/osmesa_context.cpp natfeat/osmesa_context.h \
-	natfeat/nfosmesa_macros.h
+	natfeat/nfosmesa_macros.h natfeat/nfosmesa_impl.h \
+	natfeat/nfosmesa_calls.cpp natfeat/nfosmesa_init.cpp
 endif
 
 if NFJPEG_SUPPORT
@@ -539,6 +540,13 @@ endif
 if FULLMMU
 	cd "$(DESTDIR)$(bindir)" && mv aranym$(EXEEXT) aranym-mmu$(EXEEXT)
 endif
+
+
+# compile this separately without debug information,
+# since g++ needs ridicoulus long to generate them,
+# and sometimes even aborts with out-of-memory
+natfeat/nfosmesa_init.o: natfeat/nfosmesa_init.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -g0 -c -o $@ $<
 
 
 $(APP_BUNDLE): $(APP)
