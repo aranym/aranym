@@ -602,10 +602,6 @@ my %paramlens = (
 
 	# GL_NV_scissor_exclusive
 	'glScissorExclusiveArrayvNV' => [ { 'name' => 'v', 'inout' => 'in', 'len' => 'count * 4' } ],
-
-	# GL_EXT_EGL_image_storage
-	'glEGLImageTargetTexStorageEXT' => [ { 'name' => 'attrib_list', 'inout' => 'in', 'len' => '1' } ],
-	'glEGLImageTargetTextureStorageEXT' => [ { 'name' => 'attrib_list', 'inout' => 'in', 'len' => '1' } ],
 );
 
 
@@ -2996,8 +2992,8 @@ my %macros = (
 	'glMultiDrawMeshTasksIndirectNV' => 0,
 
 	# GL_EXT_EGL_image_storage
-	'glEGLImageTargetTexStorageEXT' => 2,
-	'glEGLImageTargetTextureStorageEXT' => 2,
+	'glEGLImageTargetTexStorageEXT' => 1,
+	'glEGLImageTargetTextureStorageEXT' => 1,
 
 	# GL_EXT_shader_framebuffer_fetch
 	'glFramebufferFetchBarrierEXT' => 0,
@@ -4148,8 +4144,6 @@ my %macros = (
 	'glMapTexture2DINTEL' => 1,
 	'glImportSyncEXT' => 1,
 	'glProgramCallbackMESA' => 1,
-	'glTextureRangeAPPLE' => 1,
-	'glGetTexParameterPointervAPPLE' => 1,
 	'glInstrumentsBufferSGIX' => 1,
 	# GL_NV_vdpau_interop
 	'glVDPAUInitNV' => 1,

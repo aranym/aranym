@@ -1,4 +1,8 @@
 2019/12/28
+nfosmesa: fix a few macros when compiled with FULLMMU
+
+
+2019/12/28
 nfosmesa: split implementation file to reduce compilation times
 
 Especially, compile the InitPointersGL() function separately

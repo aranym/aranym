@@ -6320,14 +6320,7 @@ void OSMesaDriver::nfglEGLImageTargetTexStorageEXT(const uint32_t *nf_params)
 #endif
 		attrib_list = getStackedPointer(2, const GLint *);
 	D(bug("nfosmesa: glEGLImageTargetTexStorageEXT(%s, " PRI_PTR ", " PRI_PTR ")", gl_enum_name(target), AtariOffset(image), AtariOffset(attrib_list)));
-#if NFOSMESA_NEED_INT_CONV
-	GLint const __attrib_list_size = 1;
-	GLint __attrib_list_tmp[__attrib_list_size];
-	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp);
-	fn.glEGLImageTargetTexStorageEXT(target, image, __attrib_list_ptmp);
-#else
-	fn.glEGLImageTargetTexStorageEXT(target, image, HostAddr(attrib_list, const GLint *));
-#endif
+FN_GLEGLIMAGETARGETTEXSTORAGEEXT(target, image, attrib_list);
 }
 
 void OSMesaDriver::nfglEGLImageTargetTextureStorageEXT(const uint32_t *nf_params)
@@ -6346,14 +6339,7 @@ void OSMesaDriver::nfglEGLImageTargetTextureStorageEXT(const uint32_t *nf_params
 #endif
 		attrib_list = getStackedPointer(2, const GLint *);
 	D(bug("nfosmesa: glEGLImageTargetTextureStorageEXT(%u, " PRI_PTR ", " PRI_PTR ")", texture, AtariOffset(image), AtariOffset(attrib_list)));
-#if NFOSMESA_NEED_INT_CONV
-	GLint const __attrib_list_size = 1;
-	GLint __attrib_list_tmp[__attrib_list_size];
-	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp);
-	fn.glEGLImageTargetTextureStorageEXT(texture, image, __attrib_list_ptmp);
-#else
-	fn.glEGLImageTargetTextureStorageEXT(texture, image, HostAddr(attrib_list, const GLint *));
-#endif
+FN_GLEGLIMAGETARGETTEXTURESTORAGEEXT(texture, image, attrib_list);
 }
 
 void OSMesaDriver::nfglEdgeFlag(const uint32_t *nf_params)
@@ -37953,4 +37939,4 @@ void OSMesaDriver::nfgluLookAt(const uint32_t *nf_params)
 
 
 /* Functions generated: 2979 GL + 1 GLU */
-/* Automatically generated: 138 */
+/* Automatically generated: 136 */

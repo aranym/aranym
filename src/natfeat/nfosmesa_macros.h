@@ -9025,9 +9025,9 @@ data store.
  */
 /* NYI */
 #define FN_GLTEXTURERANGEAPPLE(target, length, pointer) \
-	fn.glTextureRangeAPPLE(target, length, pointer)
+	fn.glTextureRangeAPPLE(target, length, HostAddr(pointer, void *))
 #define FN_GLGETTEXPARAMETERPOINTERVAPPLE(target, pname, params) \
-	fn.glGetTexParameterPointervAPPLE(target, pname, params)
+	fn.glGetTexParameterPointervAPPLE(target, pname, HostAddr(params, void **))
 	
 /* -------------------------------------------------------------------------- */
 
@@ -11263,6 +11263,33 @@ data store.
 #else
 #define FN_GLNAMEDBUFFERSTORAGEEXTERNALEXT(buffer, offset, size, clientBuffer, flags) \
 	fn.glNamedBufferStorageExternalEXT(buffer, offset, size, AtariAddr(clientBuffer, void *), flags)
+#endif
+
+/* -------------------------------------------------------------------------- */
+
+/*
+ * GL_EXT_EGL_image_storage
+ */
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLEGLIMAGETARGETTEXSTORAGEEXT(target, image, attrib_list) \
+	GLint const __attrib_list_size = 1; \
+	GLint __attrib_list_tmp[__attrib_list_size]; \
+	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp); \
+	fn.glEGLImageTargetTexStorageEXT(target, HostAddr(image, GLeglImageOES), __attrib_list_ptmp)
+#else
+#define FN_GLEGLIMAGETARGETTEXSTORAGEEXT(target, image, attrib_list) \
+	fn.glEGLImageTargetTexStorageEXT(target, HostAddr(image, GLeglImageOES), HostAddr(attrib_list, const GLint *))
+#endif
+
+#if NFOSMESA_NEED_INT_CONV
+#define FN_GLEGLIMAGETARGETTEXTURESTORAGEEXT(texture, image, attrib_list) \
+	GLint const __attrib_list_size = 1; \
+	GLint __attrib_list_tmp[__attrib_list_size]; \
+	GLint *__attrib_list_ptmp = Atari2HostIntArray(__attrib_list_size, attrib_list, __attrib_list_tmp); \
+	fn.glEGLImageTargetTextureStorageEXT(texture, HostAddr(image, GLeglImageOES), __attrib_list_ptmp)
+#else
+#define FN_GLEGLIMAGETARGETTEXTURESTORAGEEXT(texture, image, attrib_list) \
+	fn.glEGLImageTargetTextureStorageEXT(texture, HostAddr(image, GLeglImageOES), HostAddr(attrib_list, const GLint *))
 #endif
 
 /* -------------------------------------------------------------------------- */
@@ -15665,7 +15692,7 @@ data store.
 	Atari2HostMemPtrArray(drawcount, indices, tmpind); \
 	Atari2HostIntArray(drawcount, basevertex, tmpbase); \
 	for (GLsizei i = 0; i < drawcount; i++) { \
-		fn.glDrawElementsBaseVertex(mode, tmpcount[i], type, tmpind[i], tmpbase[i]); \
+		fn.glDrawElementsBaseVertex(mode, tmpcount[i], type, HostAddr(tmpind[i], void *), tmpbase[i]); \
 	}
 	
 #define FN_GLDRAWELEMENTSINSTANCEDBASEVERTEX(mode, count, type, indices, instancecount, basevertex) \

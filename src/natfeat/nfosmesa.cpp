@@ -1668,24 +1668,24 @@ void OSMesaDriver::nfglInterleavedArraysHelper(GLenum format, GLsizei stride, nf
 	fn.glDisableClientState(GL_INDEX_ARRAY);
 	if(enable_normal) {
 		fn.glEnableClientState(GL_NORMAL_ARRAY);
-		fn.glNormalPointer(GL_FLOAT, stride, normal_ptr);
+		fn.glNormalPointer(GL_FLOAT, stride, HostAddr(normal_ptr, void *));
 	} else {
 		fn.glDisableClientState(GL_NORMAL_ARRAY);
 	}
 	if(enable_color) {
 		fn.glEnableClientState(GL_COLOR_ARRAY);
-		fn.glColorPointer(color_size, color_type, stride, color_ptr);
+		fn.glColorPointer(color_size, color_type, stride, HostAddr(color_ptr, void *));
 	} else {
 		fn.glDisableClientState(GL_COLOR_ARRAY);
 	}
 	if(enable_texcoord) {
 		fn.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		fn.glTexCoordPointer(texcoord_size, GL_FLOAT, stride, texcoord_ptr);
+		fn.glTexCoordPointer(texcoord_size, GL_FLOAT, stride, HostAddr(texcoord_ptr, void *));
 	} else {
 		fn.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	fn.glEnableClientState(GL_VERTEX_ARRAY);
-	fn.glVertexPointer(vertex_size, GL_FLOAT, stride, vertex_ptr);
+	fn.glVertexPointer(vertex_size, GL_FLOAT, stride, HostAddr(vertex_ptr, void *));
 }
 
 /*---
