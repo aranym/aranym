@@ -47,7 +47,7 @@
 
 /*--- Functions ---*/
 
-void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLenum type, GLint width, GLint height)
+void *APIENTRY internal_OSMesaCreateLDG(gl_private *priv, GLenum format, GLenum type, GLint width, GLint height)
 {
 	size_t buffer_size;
 	void *buffer = NULL;
@@ -55,6 +55,9 @@ void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLen
 	OSMesaContext oldmesa_ctx;
 	unsigned int ctx;
 	
+	TRACE(("OSMesaCreateLDG(priv=0x%x, format=0x%x, type=0x%x, width=%d, height=%d)\n", (unsigned int)priv, format, type, width, height));
+	if (priv == NULL)
+		return NULL;
 	switch (format)
 	{
 	case VDI_ARGB:
@@ -69,7 +72,7 @@ void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLen
 		break;
 	}
 
-	oldmesa_ctx = internal_OSMesaCreateContext(private, osmesa_format, NULL);
+	oldmesa_ctx = internal_OSMesaCreateContext(priv, osmesa_format, NULL);
 	if (!oldmesa_ctx)
 		return NULL;
 
@@ -83,63 +86,68 @@ void *APIENTRY internal_OSMesaCreateLDG(gl_private *private, GLenum format, GLen
 		buffer_size = pitch * height;
 	}
 	
-	buffer = private->pub.m_alloc(buffer_size);
+	buffer = priv->pub.m_alloc(buffer_size);
 	
 	if (buffer == NULL)
 	{
-		internal_OSMesaDestroyContext(private, oldmesa_ctx);
+		internal_OSMesaDestroyContext(priv, oldmesa_ctx);
 		return NULL;
 	}
 
-	if (!internal_OSMesaMakeCurrent(private, oldmesa_ctx, buffer, type, width, height))
+	if (!internal_OSMesaMakeCurrent(priv, oldmesa_ctx, buffer, type, width, height))
 	{
-		private->pub.m_free(buffer);
-		internal_OSMesaDestroyContext(private, oldmesa_ctx);
+		if (priv->pub.m_free)
+			priv->pub.m_free(buffer);
+		internal_OSMesaDestroyContext(priv, oldmesa_ctx);
 #ifdef TGL_ENABLE_CHECKS
-		gl_fatal_error(private, GL_OUT_OF_MEMORY, 13, "out of memory");
+		gl_fatal_error(priv, GL_OUT_OF_MEMORY, 13, "out of memory");
 #endif
 		return NULL;
 	}
 
 	/* OSMesa draws upside down */
-	internal_OSMesaPixelStore(private, OSMESA_Y_UP, 0);
+	internal_OSMesaPixelStore(priv, OSMESA_Y_UP, 0);
 
 	memset(buffer, 0, buffer_size);
 	ctx = CTX_TO_IDX(oldmesa_ctx);
-	private->contexts[ctx].oldmesa_buffer = buffer;
+	priv->contexts[ctx].oldmesa_buffer = buffer;
 	return buffer;
 }
 
 
-void APIENTRY internal_OSMesaDestroyLDG(gl_private *private)
+void APIENTRY internal_OSMesaDestroyLDG(gl_private *priv)
 {
-	unsigned int ctx = CTX_TO_IDX(private->cur_context);
-	if (private->contexts[ctx].oldmesa_buffer)
+	unsigned int ctx = CTX_TO_IDX(priv->cur_context);
+	TRACE(("OSMesaDestroyLDG(priv=0x%x)\n", (unsigned int)priv));
+	if (priv->contexts[ctx].oldmesa_buffer)
 	{
-		private->pub.m_free(private->contexts[ctx].oldmesa_buffer);
-		private->contexts[ctx].oldmesa_buffer = NULL;
+		if (priv->pub.m_free)
+			priv->pub.m_free(priv->contexts[ctx].oldmesa_buffer);
+		priv->contexts[ctx].oldmesa_buffer = NULL;
 	}
-	if (private->cur_context)
+	if (priv->cur_context)
 	{
-		internal_OSMesaDestroyContext(private, private->cur_context);
-		private->cur_context = NULL;
+		internal_OSMesaDestroyContext(priv, priv->cur_context);
+		priv->cur_context = NULL;
 	}
 }
 
 
-GLsizei APIENTRY internal_max_width(gl_private *private)
+GLsizei APIENTRY internal_max_width(gl_private *priv)
 {
 	GLint value = 0;
 	
-	internal_OSMesaGetIntegerv(private, OSMESA_MAX_WIDTH, &value);
+	TRACE(("max_width()\n"));
+	internal_OSMesaGetIntegerv(priv, OSMESA_MAX_WIDTH, &value);
 	return value;
 }
 
 
-GLsizei APIENTRY internal_max_height(gl_private *private)
+GLsizei APIENTRY internal_max_height(gl_private *priv)
 {
 	GLint value = 0;
 	
-	internal_OSMesaGetIntegerv(private, OSMESA_MAX_HEIGHT, &value);
+	TRACE(("max_height()\n"));
+	internal_OSMesaGetIntegerv(priv, OSMESA_MAX_HEIGHT, &value);
 	return value;
 }

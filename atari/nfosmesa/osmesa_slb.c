@@ -25,15 +25,15 @@ typedef long __CDECL (*SLB_LFUNC)(BASEPAGE *pd, long fn, long nargs, ...);
 #define NOTHING
 #define AND ,
 #define NO_PROC
-#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
-#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) static void __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param, GLuint64 *retval);
-#define LENGL_PROC(type, glx, name, export, upper, proto, args, first, ret) static const GLubyte *__CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *priv, void *first_param);
+#define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) static void __CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *priv, void *first_param, GLuint64 *retval);
+#define LENGL_PROC(type, glx, name, export, upper, proto, args, first, ret) static const GLubyte *__CDECL slb_ ## gl ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *priv, void *first_param);
 #define PUTGL_PROC(type, glx, name, export, upper, proto, args, first, ret) NO_PROC
-#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## OSMesa ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
-#define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *private, void *first_param);
+#define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## OSMesa ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *priv, void *first_param);
+#define TINYGL_PROC(type, gl, name, export, upper, proto, args, first, ret) static type __CDECL slb_ ## name(BASEPAGE *__basepage, long __fn, long __nwords, gl_private *priv, void *first_param);
 #include "glfuncs-bynum.h"
 
-static long __CDECL slb_libinit(BASEPAGE *base, long fn, long nwords, gl_private *private);
+static long __CDECL slb_libinit(BASEPAGE *base, long fn, long nwords, gl_private *priv);
 
 /* The file header of a shared library */
 struct slb_head
@@ -101,10 +101,10 @@ static char const slh_name[] = "osmesa.slb";
 
 #define unused __attribute__((__unused__))
 
-static long __CDECL slb_libinit(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private)
+static long __CDECL slb_libinit(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv)
 {
-	internal_glInit(private);
-	return sizeof(*private);
+	internal_glInit(priv);
+	return sizeof(*priv);
 }
 
 
@@ -126,24 +126,24 @@ static char const *const slh_names[] = {
 /* generate the wrapper functions */
 #define voidf /**/
 #define GL_PROC(type, gl, name, export, upper, proto, args, first, ret) \
-static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
+static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param) \
 { \
-	ret (*HostCall_p)(NFOSMESA_GL ## upper, private->cur_context, first_param); \
+	ret (*HostCall_p)(NFOSMESA_GL ## upper, priv->cur_context, first_param); \
 }
 #define GL_PROC64(type, gl, name, export, upper, proto, args, first, ret) \
-static void __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param, GLuint64 *retval) \
+static void __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param, GLuint64 *retval) \
 { \
-	(*HostCall64_p)(NFOSMESA_GL ## upper, private->cur_context, first_param, retval); \
+	(*HostCall64_p)(NFOSMESA_GL ## upper, priv->cur_context, first_param, retval); \
 }
 #define GLU_PROC(type, gl, name, export, upper, proto, args, first, ret) \
-static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
+static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param) \
 { \
-	ret (*HostCall_p)(NFOSMESA_GLU ## upper, private->cur_context, first_param); \
+	ret (*HostCall_p)(NFOSMESA_GLU ## upper, priv->cur_context, first_param); \
 }
 #define OSMESA_PROC(type, gl, name, export, upper, proto, args, first, ret) \
-static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param) \
+static type __CDECL slb_ ## gl ## name(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param) \
 { \
-	ret (*HostCall_p)(NFOSMESA_OSMESA ## upper, private->cur_context, first_param); \
+	ret (*HostCall_p)(NFOSMESA_OSMESA ## upper, priv->cur_context, first_param); \
 }
 #define NO_OSMESAGETCURRENTCONTEXT
 #define NO_OSMESADESTROYCONTEXT
@@ -161,111 +161,111 @@ static void __CDECL slb_nop(void)
 
 /* some functions do need special work */
 
-static const GLubyte *__CDECL slb_glGetString(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static const GLubyte *__CDECL slb_glGetString(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	GLenum *args = (GLenum *)first_param;
-	return internal_glGetString(private, args[0]);
+	return internal_glGetString(priv, args[0]);
 }
 
 
-static const GLubyte *__CDECL slb_glGetStringi(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static const GLubyte *__CDECL slb_glGetStringi(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	GLenum *args = (GLenum *)first_param;
-	return internal_glGetStringi(private, args[0], args[1]);
+	return internal_glGetStringi(priv, args[0], args[1]);
 }
 
 
-static OSMesaContext __CDECL slb_OSMesaGetCurrentContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
+static OSMesaContext __CDECL slb_OSMesaGetCurrentContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param unused)
 {
-	return internal_OSMesaGetCurrentContext(private);
+	return internal_OSMesaGetCurrentContext(priv);
 }
 
-static void __CDECL slb_OSMesaDestroyContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_OSMesaDestroyContext(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	OSMesaContext ctx = *((OSMesaContext *)first_param);
-	return internal_OSMesaDestroyContext(private, ctx);
+	return internal_OSMesaDestroyContext(priv, ctx);
 }
 
 
-static GLboolean __CDECL slb_OSMesaMakeCurrent(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static GLboolean __CDECL slb_OSMesaMakeCurrent(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
-	GLboolean ret = (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT, private->cur_context, first_param);
+	GLboolean ret = (GLboolean)(*HostCall_p)(NFOSMESA_OSMESAMAKECURRENT, priv->cur_context, first_param);
 	if (ret)
 	{
 		OSMesaContext ctx = *((OSMesaContext *)first_param);
-		private->cur_context = ctx;
+		priv->cur_context = ctx;
 	}
 	return ret;
 }
 
 
-static OSMESAproc __CDECL slb_OSMesaGetProcAddress(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static OSMESAproc __CDECL slb_OSMesaGetProcAddress(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	const char *funcname = *((const char *const *)first_param);
-	return internal_OSMesaGetProcAddress(private, funcname);
+	return internal_OSMesaGetProcAddress(priv, funcname);
 }
 
 
 
 /* entry points of TinyGL functions */
-static void *__CDECL slb_OSMesaCreateLDG(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void *__CDECL slb_OSMesaCreateLDG(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	GLenum *args = (GLenum *)first_param;
-	return internal_OSMesaCreateLDG(private, args[0], args[1], args[2], args[3]);
+	return internal_OSMesaCreateLDG(priv, args[0], args[1], args[2], args[3]);
 }
 
 
-static void __CDECL slb_OSMesaDestroyLDG(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
+static void __CDECL slb_OSMesaDestroyLDG(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param unused)
 {
-	internal_OSMesaDestroyLDG(private);
+	internal_OSMesaDestroyLDG(priv);
 }
 
 
-static GLsizei __CDECL slb_max_width(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
+static GLsizei __CDECL slb_max_width(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param unused)
 {
-	return internal_max_width(private);
+	return internal_max_width(priv);
 }
 
 
-static GLsizei __CDECL slb_max_height(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param unused)
+static GLsizei __CDECL slb_max_height(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param unused)
 {
-	return internal_max_height(private);
+	return internal_max_height(priv);
 }
 
 
-static void __CDECL slb_gluLookAtf(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_gluLookAtf(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
-	(*HostCall_p)(NFOSMESA_GLULOOKATF, private->cur_context, first_param);
+	(*HostCall_p)(NFOSMESA_GLULOOKATF, priv->cur_context, first_param);
 }
 
 
-static void __CDECL slb_glFrustumf(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_glFrustumf(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
-	(*HostCall_p)(NFOSMESA_GLFRUSTUMF, private->cur_context, first_param);
+	(*HostCall_p)(NFOSMESA_GLFRUSTUMF, priv->cur_context, first_param);
 }
 
 
-static void __CDECL slb_glOrthof(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_glOrthof(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
-	(*HostCall_p)(NFOSMESA_GLORTHOF, private->cur_context, first_param);
+	(*HostCall_p)(NFOSMESA_GLORTHOF, priv->cur_context, first_param);
 }
 
 
-static void __CDECL slb_exception_error(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_exception_error(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	void CALLBACK (*exception)(GLenum param) = *((void CALLBACK (**)(GLenum))first_param);
-	internal_tinyglexception_error(private, exception);
+	internal_tinyglexception_error(priv, exception);
 }
 
 
-static void __CDECL slb_swapbuffer(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private, void *first_param)
+static void __CDECL slb_swapbuffer(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv, void *first_param)
 {
 	void *buf = *((void **)first_param);
-	internal_tinyglswapbuffer(private, buf);
+	internal_tinyglswapbuffer(priv, buf);
 }
 
 
-static void __CDECL slb_information(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *private unused, void *first_param unused)
+static void __CDECL slb_information(BASEPAGE *__bp unused, long __fn unused, long __nwords unused, gl_private *priv unused, void *first_param unused)
 {
 	tinyglinformation();
 }

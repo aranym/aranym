@@ -1,4 +1,9 @@
 2019/12/30
+nfosmesa: workaround for kronos/eureka which do not always call
+glInit() to initialize the library
+
+
+2019/12/30
 nfosmesa: cosmetic fix for LDG libraries
 
 The "AND" macro was once used to generate the prototypes for the calls,

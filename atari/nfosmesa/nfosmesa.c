@@ -46,8 +46,8 @@ gl_private *private;
 static long GLAPIENTRY ldg_libinit(gl_private *priv)
 {
 	private = priv;
-	internal_glInit(private);
-	return sizeof(*private);
+	internal_glInit(priv);
+	return sizeof(*priv);
 }
 
 static PROC const LibFunc[]={ 

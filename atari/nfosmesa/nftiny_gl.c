@@ -32,7 +32,6 @@
 #include "lib-oldmesa.h"
 #include "lib-misc.h"
 #include "nfosmesa_nfapi.h"
-#include "../natfeat/nf_ops.h"
 
 
 #define WITH_PROTOTYPE_STRINGS 1
@@ -269,8 +268,8 @@ static void GLAPIENTRY check_glDisable(GLenum cap)
 static long GLAPIENTRY ldg_libinit(gl_private *priv)
 {
 	private = priv;
-	internal_glInit(private);
-	return sizeof(*private);
+	internal_glInit(priv);
+	return sizeof(*priv);
 }
 
 

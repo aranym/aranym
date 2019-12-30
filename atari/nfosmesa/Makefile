@@ -6,13 +6,13 @@ include ../CONFIGVARS
 # We create a coldfire binary, though.
 # (of course a v4e binary makes only sense when Aranym is emulating a FireBEE ;)
 #
-CFLAGS  = -O2 -fomit-frame-pointer -Wall -I. -DTGL_ENABLE_CHECKS
+CFLAGS  = -O2 -fomit-frame-pointer -Wall -Werror -I. -DTGL_ENABLE_CHECKS
 ASFLAGS =
 LDFLAGS = -lldg -lgem
 
 NOSTARTUP=yes
 
-OBJECTS = nfosmesa.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-gl.o natfeat.o natfeat_asm.o
+OBJECTS = nfosmesa.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-gl.o natfeat.o natfeat_asm.o lib-malloc.o
 
 ifeq ($(NOSTARTUP),yes)
 OBJECTS += crtinit.o libc.o
@@ -99,7 +99,7 @@ natfeat_asm_v4e.o: ../natfeat/natfeat_asm.S
 	$(AM_V_CC)$(CC) $(ASFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
 
-TINY_OBJECTS = nftiny_gl.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-tinygl.o natfeat.o natfeat_asm.o 
+TINY_OBJECTS = nftiny_gl.o lib-osmesa.o lib-oldmesa.o lib-misc.o lib-ldg.o lib-tinygl.o natfeat.o natfeat_asm.o lib-malloc.o
 
 ifeq ($(NOSTARTUP),yes)
 TINY_OBJECTS += crtinit.o libc.o
@@ -124,6 +124,9 @@ crtinit_68k.o: crtinit.c
 libc_68k.o: libc.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
 
+lib-malloc_68k.o: lib-malloc.c
+	$(AM_V_CC)$(CC) $(CFLAGS) $(M68K_FLAGS) -c -o $@ $<
+
 
 
 v4e/tiny_gl.ldg:	$(CRT0) $(TINY_MV4E_OBJECTS)
@@ -140,6 +143,9 @@ crtinit_v4e.o: crtinit.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
 libc_v4e.o: libc.c
+	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
+
+lib-malloc_v4e.o: lib-malloc.c
 	$(AM_V_CC)$(CC) $(CFLAGS) $(MV4E_FLAGS) -c -o $@ $<
 
 

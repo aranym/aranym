@@ -32691,7 +32691,7 @@ void OSMesaDriver::nfglVDPAUGetSurfaceivNV(const uint32_t *nf_params)
 	GLint *
 #endif
 		values = getStackedPointer(4, GLint *);
-	D(bug("nfosmesa: glVDPAUGetSurfaceivNV(" PRI_IPTR ", %s, %d, " PRI_PTR ", " PRI_PTR ")", surface, gl_enum_name(pname), bufSize, AtariOffset(length), AtariOffset(values)));
+	D(bug("nfosmesa: glVDPAUGetSurfaceivNV(%" PRI_IPTR ", %s, %d, " PRI_PTR ", " PRI_PTR ")", surface, gl_enum_name(pname), bufSize, AtariOffset(length), AtariOffset(values)));
 FN_GLVDPAUGETSURFACEIVNV(surface, pname, bufSize, length, values);
 }
 
@@ -32716,7 +32716,7 @@ FN_GLVDPAUINITNV(vdpDevice, getProcAddress);
 GLboolean OSMesaDriver::nfglVDPAUIsSurfaceNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
-	D(bug("nfosmesa: glVDPAUIsSurfaceNV(" PRI_IPTR ")", surface));
+	D(bug("nfosmesa: glVDPAUIsSurfaceNV(%" PRI_IPTR ")", surface));
 FN_GLVDPAUISSURFACENV(surface);
 }
 
@@ -32798,7 +32798,7 @@ void OSMesaDriver::nfglVDPAUSurfaceAccessNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
 	GLenum access = getStackedParameter(1);
-	D(bug("nfosmesa: glVDPAUSurfaceAccessNV(" PRI_IPTR ", %s)", surface, gl_enum_name(access)));
+	D(bug("nfosmesa: glVDPAUSurfaceAccessNV(%" PRI_IPTR ", %s)", surface, gl_enum_name(access)));
 FN_GLVDPAUSURFACEACCESSNV(surface, access);
 }
 
@@ -32818,7 +32818,7 @@ FN_GLVDPAUUNMAPSURFACESNV(numSurface, surfaces);
 void OSMesaDriver::nfglVDPAUUnregisterSurfaceNV(const uint32_t *nf_params)
 {
 	GLvdpauSurfaceNV surface = getStackedParameter(0);
-	D(bug("nfosmesa: glVDPAUUnregisterSurfaceNV(" PRI_IPTR ")", surface));
+	D(bug("nfosmesa: glVDPAUUnregisterSurfaceNV(%" PRI_IPTR ")", surface));
 FN_GLVDPAUUNREGISTERSURFACENV(surface);
 }
 

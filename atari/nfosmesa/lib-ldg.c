@@ -35,6 +35,23 @@ extern gl_private *private;
 
 /*--- Functions ---*/
 
+static gl_private *create_gl_private(gl_private *priv)
+{
+	if (priv == NULL)
+	{
+		priv = malloc(sizeof(*priv));
+		if (priv == NULL)
+			return NULL;
+		memset(priv, 0, sizeof(*priv));
+		internal_glInit(priv);
+	}
+	if (priv->pub.m_alloc == 0)
+		priv->pub.m_alloc = malloc;
+	if (priv->pub.m_free == 0)
+		priv->pub.m_free = free;
+	return priv;
+}
+
 
 const GLubyte* APIENTRY glGetString( GLenum name )
 {
@@ -50,12 +67,14 @@ const GLubyte* APIENTRY glGetStringi( GLenum name, GLuint index )
 
 OSMesaContext APIENTRY OSMesaCreateContext(GLenum format, OSMesaContext sharelist)
 {
+	private = create_gl_private(private);
 	return internal_OSMesaCreateContext(private, format, sharelist);
 }
 
 
 OSMesaContext APIENTRY OSMesaCreateContextAttribs(const GLint *attribList, OSMesaContext sharelist)
 {
+	private = create_gl_private(private);
 	return internal_OSMesaCreateContextAttribs(private, attribList, sharelist);
 }
 
@@ -68,6 +87,7 @@ void APIENTRY OSMesaDestroyContext(OSMesaContext ctx)
 
 OSMesaContext APIENTRY OSMesaCreateContextExt(GLenum format, GLint depthBits, GLint stencilBits, GLint accumBits, OSMesaContext sharelist)
 {
+	private = create_gl_private(private);
 	return internal_OSMesaCreateContextExt(private, format, depthBits, stencilBits, accumBits, sharelist);
 }
 
@@ -128,6 +148,7 @@ void APIENTRY OSMesaPostprocess(OSMesaContext osmesa, const char *filter, GLuint
 
 void *APIENTRY OSMesaCreateLDG(GLenum format, GLenum type, GLint width, GLint height)
 {
+	private = create_gl_private(private);
 	return internal_OSMesaCreateLDG(private, format, type, width, height);
 }
 
@@ -158,5 +179,6 @@ void APIENTRY tinyglswapbuffer(void *buf)
 
 void APIENTRY tinyglexception_error(void CALLBACK (*exception)(GLenum param))
 {
+	private = create_gl_private(private);
 	internal_tinyglexception_error(private, exception);
 }
