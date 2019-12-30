@@ -429,7 +429,7 @@ AC_CHECK_FUNCS(vm_allocate vm_deallocate vm_protect sbrk)
 AC_CHECK_FUNCS(strchr memcpy bcopy)
 AC_CHECK_FUNCS(usleep gettimeofday)
 AC_CHECK_FUNCS(fseeko fsync futimes futimens link readlink symlink lstat truncate pathconf)
-AC_CHECK_FUNCS(canonicalize_file_name realpath)
+AC_CHECK_FUNCS(canonicalize_file_name realpath pipe fork)
 
 AC_CACHE_CHECK([whether sigsetjmp is supported],
   ac_cv_have_sigsetjmp, [
@@ -2210,6 +2210,10 @@ if test "x$WANT_PARALLELPARPORT" = "xyes" ; then
 	fi
 fi
 AM_CONDITIONAL([ENABLE_PARALLELPARPORT], test "$WANT_PARALLELPARPORT" = yes)
+
+if test "$ac_cv_func_pipe" = "yes" -a "$ac_cv_func_fork" = "yes"; then
+	AC_DEFINE([ENABLE_PARALLELPIPE], 1, [Define if you want to use pipes for parallel port output])
+fi
 
 dnl Linux /dev/sequencer MIDI support
 

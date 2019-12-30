@@ -22,6 +22,9 @@
  */
 
 #include "sysdeps.h"
+
+#ifdef ENABLE_PARALLELPIPE
+
 #include "cpu_emulation.h"
 #include "parameters.h"
 #include "parallel.h"
@@ -315,3 +318,5 @@ void ParallelPipe::setStrobe(bool high)
 	UNUSED(high);
 	D(bug("parallel_pipe: setStrobe"));
 }
+
+#endif /* ENABLE_PARALLELPIPE */

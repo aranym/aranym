@@ -53,9 +53,12 @@ YAMAHA::YAMAHA(memptr addr, uint32 size) : BASE_IO(addr, size) {
 		parallel = new ParallelParport;
 	else
 #endif
+#ifdef ENABLE_PARALLELPIPE
 	if (strcmp("pipe", bx_options.parallel.type)==0)
 		parallel = new ParallelPipe;
-	else if (strcmp("file", bx_options.parallel.type)==0)
+	else
+#endif
+	if (strcmp("file", bx_options.parallel.type)==0)
 		parallel = new ParallelFile;
 	else {
 		bug("unsupported parallel port type %s", bx_options.parallel.type);
