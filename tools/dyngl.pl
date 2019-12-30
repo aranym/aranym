@@ -4999,8 +4999,8 @@ EOF
 			$prototype = "NOTHING";
 			$prototype_mem = "NOTHING";
 		} else {
-			$prototype = "AND " . $prototype;
-			$prototype_mem = "AND " . $prototype_mem;
+			# $prototype = "AND " . $prototype;
+			# $prototype_mem = "AND " . $prototype_mem;
 		}
 
 		my $skip_for_tiny = ! defined($tinygl{$gl . $function_name});
@@ -5150,7 +5150,7 @@ EOF
 			{
 				$prototype = "NOTHING";
 			} else {
-				$prototype = "AND " . $prototype;
+				# $prototype = "AND " . $prototype;
 			}
 	
 			if ($complete_name eq 'glGetString')
@@ -5643,7 +5643,7 @@ sub gen_tinyldglink() {
 		{
 			$prototype = "NOTHING";
 		} else {
-			$prototype = "AND " . $prototype;
+			# $prototype = "AND " . $prototype;
 		}
 		$complete_name = $gl . $function_name;
 		# remove trailing 'f' from export name

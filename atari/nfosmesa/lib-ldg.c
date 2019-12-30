@@ -29,7 +29,7 @@
 #include "lib-oldmesa.h"
 #include "lib-misc.h"
 
-extern gl_private *private;;
+extern gl_private *private;
 
 /*--- Defines ---*/
 

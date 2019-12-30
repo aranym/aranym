@@ -38,7 +38,7 @@ typedef struct {
 } gl_context;
 
 typedef struct {
-	struct gl_public pub;				/* must be fisrt element of structure */
+	struct gl_public pub;				/* must be first element of structure */
 	OSMesaContext cur_context;
 	void CALLBACK (*gl_exception)(GLenum param);
 	gl_context contexts[MAX_OSMESA_CONTEXTS];
