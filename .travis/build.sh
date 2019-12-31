@@ -20,6 +20,7 @@ icondir=$datadir/icons/hicolor
 if test "$suse_version" -ge 1200; then
 	with_nfosmesa=--enable-nfosmesa
 fi
+with_nfosmesa=--enable-nfosmesa
 common_opts="--prefix=$prefix --enable-addressing=direct --enable-usbhost --disable-sdl2 $with_nfosmesa"
 
 
