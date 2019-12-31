@@ -152,13 +152,17 @@ static inline void set_long_eflags(int i, CONTEXT_ATYPE CONTEXT_NAME) {
 	else CONTEXT_AEFLAGS &= ~0x40;
 }
 
-static
-#if DEBUG
 __attribute_noinline__
+__attribute__((__noreturn__))
+static void unknown_instruction(const uint8 *ainstr) {
+#ifdef HAVE_DISASM_X86
+	char buf[256];
+
+	x86_disasm(ainstr, buf, 1);
+	bug("%s", buf);
 #else
-inline
+	UNUSED(ainstr);
 #endif
-void unknown_instruction() {
 #ifdef USE_JIT
 	compiler_status();
 # ifdef JIT_DEBUG
@@ -529,7 +533,7 @@ static const int x86_reg_map[] = {
 			default:
 				instruction = INSTR_UNKNOWN;
 				panicbug("MOVSX - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-				unknown_instruction();
+				unknown_instruction(ainstr);
 				break;
 			}
 			break;
@@ -712,7 +716,7 @@ static const int x86_reg_map[] = {
 			default:
 				instruction = INSTR_UNKNOWN;
 				panicbug("ADD m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-				unknown_instruction();
+				unknown_instruction(ainstr);
 				break;
 			}
 			len += 2 + get_instr_size_add(addr_instr + 1);
@@ -753,7 +757,7 @@ static const int x86_reg_map[] = {
 			default:
 				instruction = INSTR_UNKNOWN;
 				panicbug("ADD m32, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-				unknown_instruction();
+				unknown_instruction(ainstr);
 				break;
 			}
 			len += 2 + get_instr_size_add(addr_instr + 1);
@@ -801,7 +805,7 @@ static const int x86_reg_map[] = {
 			default:
 				instruction = INSTR_UNKNOWN;
 				panicbug("ADD m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-				unknown_instruction();
+				unknown_instruction(ainstr);
 				break;
 			}
 			len += 2 + get_instr_size_add(addr_instr + 1);
@@ -915,14 +919,14 @@ static const int x86_reg_map[] = {
 			default:
 				instruction = INSTR_UNKNOWN;
 				panicbug("TEST m8, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-				unknown_instruction();
+				unknown_instruction(ainstr);
 				break;
 			}
 			break;
 		default:
 			instruction = INSTR_UNKNOWN;
 			panicbug("unsupported instruction: i[0-6]=%02x %02x %02x %02x %02x %02x %02x", addr_instr[0], addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-			unknown_instruction();
+			unknown_instruction(ainstr);
 			break;
 	}
 
@@ -1008,7 +1012,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("MOV r64, m32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1022,7 +1026,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("OR r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1045,7 +1049,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("AND r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1068,7 +1072,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("XOR r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1126,7 +1130,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("ADD r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1149,7 +1153,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("SUB r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1172,7 +1176,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("CMP r64, m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1237,7 +1241,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("MOV m32, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1257,7 +1261,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ADD m64, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1286,7 +1290,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("SUB m64, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1315,7 +1319,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWget_q */
 					panicbug("CMP m64, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1341,7 +1345,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("XOR m64, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1370,7 +1374,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("OR m64, r64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1428,7 +1432,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ADD m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1449,7 +1453,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("OR m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1470,7 +1474,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("AND m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1491,7 +1495,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("SUB m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1512,7 +1516,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("XOR m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1533,7 +1537,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("CMP m64, imm32 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1552,7 +1556,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ADDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1573,7 +1577,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ORL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1594,7 +1598,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ANDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1615,7 +1619,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("SUBL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1636,7 +1640,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("ANDL m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1657,7 +1661,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("CMP m64, imm8 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 4)
@@ -1689,7 +1693,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("NOT m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
@@ -1710,7 +1714,7 @@ static const int x86_reg_map[] = {
 				{
 					/* TODO: needs HWput_q */
 					panicbug("NEG m64 - unsupported mode: i[1-6]=%02x %02x %02x %02x %02x %02x", addr_instr[1], addr_instr[2], addr_instr[3], addr_instr[4], addr_instr[5], addr_instr[6]);
-					unknown_instruction();
+					unknown_instruction(ainstr);
 				} else
 #endif
 				if (size == 1)
