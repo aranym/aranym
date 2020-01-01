@@ -626,7 +626,7 @@ OffscreenContext *OSMesaDriver::TryCreateContext(void)
 	} else
 	{
 #if defined(SDL_VIDEO_DRIVER_COCOA)
-		if (ctx == NULL && SDL_IsVideoDriver("cocoa")))
+		if (ctx == NULL && SDL_IsVideoDriver("cocoa"))
 			ctx = new QuartzOpenglContext(libgl_handle);
 #endif
 #if defined(SDL_VIDEO_DRIVER_QUARTZ)
