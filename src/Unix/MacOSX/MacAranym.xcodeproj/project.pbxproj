@@ -468,6 +468,14 @@
 		8CB53CCD203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		8CB53CCE203F24F80005E5AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
 		8CB53CCF203F24F80005E5AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
+		8CF5F79C23BC539700B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
+		8CF5F79D23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
+		8CF5F79E23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
+		8CF5F79F23BC53A000B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
+		8CF5F7A023BC53AD00B83889 /* nfosmesa_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */; };
+		8CF5F7A123BC53AE00B83889 /* nfosmesa_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */; };
+		8CF5F7A223BC53AE00B83889 /* nfosmesa_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */; };
+		8CF5F7A323BC53AF00B83889 /* nfosmesa_init.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		B426E0F119D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
 		B426E0F219D88567003EEB83 /* disasm-builtin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */; };
@@ -1289,6 +1297,10 @@
 		8CB53C9E203F0D780005E5AD /* MacAranym MMU SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym MMU SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB53CBC203F1EAD0005E5AD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = "<group>"; };
+		8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_calls.cpp; sourceTree = "<group>"; };
+		8CF5F79723BC52D100B83889 /* nfosmesa_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfosmesa_impl.h; sourceTree = "<group>"; };
+		8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_init.cpp; sourceTree = "<group>"; };
+		8CF5F79923BC52D100B83889 /* nfosmesa_macros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfosmesa_macros.h; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* MacAranym.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacAranym.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B426E0EF19D88567003EEB83 /* disasm-builtin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-builtin.cpp"; path = "../../disasm/disasm-builtin.cpp"; sourceTree = "<group>"; };
 		B426E0F019D88567003EEB83 /* disasm-glue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "disasm-glue.cpp"; path = "../../disasm/disasm-glue.cpp"; sourceTree = "<group>"; };
@@ -1699,6 +1711,10 @@
 		17798D630A652B51009733EB /* natfeat */ = {
 			isa = PBXGroup;
 			children = (
+				8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */,
+				8CF5F79723BC52D100B83889 /* nfosmesa_impl.h */,
+				8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */,
+				8CF5F79923BC52D100B83889 /* nfosmesa_macros.h */,
 				8C211F8D22DB8F0A00C0E7F4 /* nf_config.cpp */,
 				CBD0F4991B5CFDE50081A555 /* osmesa_context.h */,
 				CBD0F4941B5CFDD60081A555 /* osmesa_context.cpp */,
@@ -2539,6 +2555,7 @@
 				1778A4761555A8A70005B336 /* bootos.cpp in Sources */,
 				1778A4771555A8A70005B336 /* bootos_emutos.cpp in Sources */,
 				1778A4781555A8A70005B336 /* bootos_linux.cpp in Sources */,
+				8CF5F79F23BC53A000B83889 /* nfosmesa_calls.cpp in Sources */,
 				1778A4791555A8A70005B336 /* bootos_tos.cpp in Sources */,
 				8C21E59F22BF470200033271 /* parallel_pipe.cpp in Sources */,
 				1778A47A1555A8A70005B336 /* cdrom.cpp in Sources */,
@@ -2627,6 +2644,7 @@
 				1778A4C71555A8A70005B336 /* dsp_disasm.c in Sources */,
 				1778A4C81555A8A70005B336 /* audio_conv.cpp in Sources */,
 				1778A4C91555A8A70005B336 /* joypads.cpp in Sources */,
+				8CF5F7A323BC53AF00B83889 /* nfosmesa_init.cpp in Sources */,
 				1778A4CA1555A8A70005B336 /* clipbrd_darwin.M in Sources */,
 				1778A4CB1555A8A70005B336 /* scc.cpp in Sources */,
 				1778A4CC1555A8A70005B336 /* serial.cpp in Sources */,
@@ -2672,6 +2690,7 @@
 				17BCD7FD0B20F6BF00432CE1 /* bootos.cpp in Sources */,
 				17BCD7FE0B20F6BF00432CE1 /* bootos_emutos.cpp in Sources */,
 				17BCD7FF0B20F6BF00432CE1 /* bootos_linux.cpp in Sources */,
+				8CF5F79E23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */,
 				17BCD8000B20F6BF00432CE1 /* bootos_tos.cpp in Sources */,
 				8C21E59D22BF46FE00033271 /* parallel_pipe.cpp in Sources */,
 				17BCD8010B20F6BF00432CE1 /* cdrom.cpp in Sources */,
@@ -2760,6 +2779,7 @@
 				17EC07E90ECB762900100ED7 /* dsp_disasm.c in Sources */,
 				17EC08D40ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D80ECB82B700100ED7 /* joypads.cpp in Sources */,
+				8CF5F7A023BC53AD00B83889 /* nfosmesa_init.cpp in Sources */,
 				17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 				1732BC83124540FF00272489 /* scc.cpp in Sources */,
 				1732BC8A1245412B00272489 /* serial.cpp in Sources */,
@@ -2887,11 +2907,13 @@
 				B44B01BA0D07447F0017F23B /* hostscreen_opengl.cpp in Sources */,
 				B44B01C50D0744D30017F23B /* dlgKeypress.cpp in Sources */,
 				B471E7C30D2A88750021DFA7 /* adler32.c in Sources */,
+				8CF5F7A223BC53AE00B83889 /* nfosmesa_init.cpp in Sources */,
 				B475E5A70D4FA41500C8607E /* dlgPartition.cpp in Sources */,
 				17EC07E30ECB762900100ED7 /* dsp_core.c in Sources */,
 				17EC07E40ECB762900100ED7 /* dsp_cpu.c in Sources */,
 				17EC08D30ECB829E00100ED7 /* audio_conv.cpp in Sources */,
 				17EC08D70ECB82B200100ED7 /* joypads.cpp in Sources */,
+				8CF5F79C23BC539700B83889 /* nfosmesa_calls.cpp in Sources */,
 				17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */,
 				1732BC82124540FF00272489 /* scc.cpp in Sources */,
 				1732BC881245412B00272489 /* serial.cpp in Sources */,
@@ -2918,6 +2940,7 @@
 				173598C413F1EFE400F84DB3 /* cpuemu.cpp in Sources */,
 				173598C513F1F01D00F84DB3 /* cpudefs.cpp in Sources */,
 				8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */,
+				8CF5F79D23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */,
 				173598C613F1F02500F84DB3 /* cpustbl.cpp in Sources */,
 				173598F613F1F65100F84DB3 /* compemu.cpp in Sources */,
 				173598F713F1F65100F84DB3 /* compstbl.cpp in Sources */,
@@ -2960,6 +2983,7 @@
 				B439AC540C5B2FD00046EFC9 /* identify.cpp in Sources */,
 				B439AC550C5B2FD00046EFC9 /* ikbd.cpp in Sources */,
 				B439AC560C5B2FD00046EFC9 /* input.cpp in Sources */,
+				8CF5F7A123BC53AE00B83889 /* nfosmesa_init.cpp in Sources */,
 				B439AC570C5B2FD00046EFC9 /* md5.cpp in Sources */,
 				B439AC580C5B2FD00046EFC9 /* mfp.cpp in Sources */,
 				B439AC590C5B2FD00046EFC9 /* midi.cpp in Sources */,
@@ -3199,7 +3223,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-nfosmesa";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
@@ -3375,7 +3399,7 @@
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
 				CONFIGURE_OPTIONS = "$(CONFIGURE_OPTIONS_BASE) $(CONFIGURE_OPTIONS_TARGET)";
-				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-full-debug --enable-fullhistory";
+				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-full-debug --enable-fullhistory --enable-nfosmesa";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
 				CPU_TYPE_i386 = CPU_i386;
