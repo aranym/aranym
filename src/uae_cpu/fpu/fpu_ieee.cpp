@@ -2347,17 +2347,26 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		case 0x38:		/* FCMP */
 			fpu_debug(("FCMP %.04f\n",(double)src));
 			set_fpsr(0);
-			if (isinf(FPU registers[reg]))
+			if (isnan(src) || isnan(FPU registers[reg]))
+			{
+				make_nan(src, false);
+				make_fpsr(src);
+			} else if (isinf(FPU registers[reg]))
 			{
 				if (isinf(src) && isneg(FPU registers[reg]) == isneg (src))
+				{
 					make_fpsr(0);
-				else
+				} else
+				{
 					make_fpsr(FPU registers[reg]);
-			}
-			else if (isinf(src))
+				}
+			} else if (isinf(src))
+			{
 				make_fpsr(-src);
-			else
+			} else
+			{
 				make_fpsr(FPU registers[reg] - src);
+			}
 			break;
 		case 0x3a:		/* FTST */
 			fpu_debug(("FTST %.04f\n",(double)src));

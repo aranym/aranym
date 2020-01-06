@@ -1,3 +1,7 @@
+2020/01/06
+Fix FCMP when one of the inputs is NaN
+
+
 2019/12/30
 nfosmesa: workaround for kronos/eureka which do not always call
 glInit() to initialize the library
