@@ -282,6 +282,8 @@ STATIC_INLINE int get_fp_value(uae_u32 opcode, uae_u16 extra)
 		mov_w_mr(((uintptr) temp_fp) + 8, S2);
 		add_l_ri(ad, 4);
 		readlong(ad, S2, S3);
+		// always set the explicit integer bit.
+		or_l_ri(S2, 0x80000000);
 		mov_l_mr((uintptr) (temp_fp) + 4, S2);
 		add_l_ri(ad, 4);
 		readlong(ad, S2, S3);

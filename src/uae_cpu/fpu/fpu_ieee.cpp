@@ -508,7 +508,14 @@ PRIVATE inline void FFPU extract_double(fpu_register const & src,
 		fpu_double value;
 		uae_u32    parts[2];
 	} dest;
+#if defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE)
+	fpu_register_parts p = { src };
+	// always set the explicit integer bit.
+	p.parts[1] |= 0x80000000;
+	dest.value = (fpu_double)p.val;
+#else
 	dest.value = (fpu_double)src;
+#endif
 #ifdef WORDS_BIGENDIAN
 	*wrd1 = dest.parts[0];
 	*wrd2 = dest.parts[1];
@@ -975,37 +982,40 @@ PRIVATE inline int FFPU put_fp_value (uae_u32 opcode, uae_u16 extra, fpu_registe
 	case 1:
 		put_long (ad, extract_single(value));
 		break;
-	case 2: {
-		uae_u32 wrd1, wrd2, wrd3;
-		extract_extended(value, &wrd1, &wrd2, &wrd3);
-		put_long (ad, wrd1);
-		ad += 4;
-		put_long (ad, wrd2);
-		ad += 4;
-		put_long (ad, wrd3);
+	case 2:
+		{
+			uae_u32 wrd1, wrd2, wrd3;
+			extract_extended(value, &wrd1, &wrd2, &wrd3);
+			put_long (ad, wrd1);
+			ad += 4;
+			put_long (ad, wrd2);
+			ad += 4;
+			put_long (ad, wrd3);
+		}
 		break;
-	}
-	case 3: {
-		uae_u32 wrd1, wrd2, wrd3;
-		extract_packed(value, &wrd1, &wrd2, &wrd3);
-		put_long (ad, wrd1);
-		ad += 4;
-		put_long (ad, wrd2);
-		ad += 4;
-		put_long (ad, wrd3);
+	case 3:
+		{
+			uae_u32 wrd1, wrd2, wrd3;
+			extract_packed(value, &wrd1, &wrd2, &wrd3);
+			put_long (ad, wrd1);
+			ad += 4;
+			put_long (ad, wrd2);
+			ad += 4;
+			put_long (ad, wrd3);
+		}
 		break;
-	}
 	case 4:
 		put_word(ad, (uae_s16) toint(value));
 		break;
-	case 5: {
-		uae_u32 wrd1, wrd2;
-		extract_double(value, &wrd1, &wrd2);
-		put_long (ad, wrd1);
-		ad += 4;
-		put_long (ad, wrd2);
+	case 5:
+		{
+			uae_u32 wrd1, wrd2;
+			extract_double(value, &wrd1, &wrd2);
+			put_long (ad, wrd1);
+			ad += 4;
+			put_long (ad, wrd2);
+		}
 		break;
-	}
 	case 6:
 		put_byte(ad, (uae_s8) toint(value));
 		break;
