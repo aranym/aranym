@@ -1893,6 +1893,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				return;
 			}
 
+			// FIXME: the quotient byte must be computed
 			dont_care_fflags();
 			src = get_fp_value(opcode, extra);
 			if (src < 0)

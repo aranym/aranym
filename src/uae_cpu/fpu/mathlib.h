@@ -1169,6 +1169,14 @@ DEFINE_ROUND_FUNC(zero, CW_RC_ZERO)
 DEFINE_ROUND_FUNC(nearest, CW_RC_NEAR)
 #endif
 
+#undef fp_round_to_even
+#ifdef HAVE_RINTL
+#define fp_round_to_even rintl
+#else
+#define fp_round_to_even fp_do_round_to_even
+DEFINE_ROUND_FUNC(even, CW_RC_NEAR)
+#endif
+
 #undef fp_ceil
 #define fp_ceil fp_do_round_to_plus_infinity
 

@@ -1493,7 +1493,7 @@ for fpe in $FPE_CORE_TEST_ORDER; do
       AC_CHECK_FUNCS(logl log10l expl powl exp2l pow2l exp10l pow10l fabsl sqrtl log1pl expm1l exp2 pow2 pow10)
       AC_CHECK_FUNCS(sinl cosl tanl sinhl coshl tanhl)
       AC_CHECK_FUNCS(asinl acosl atanl asinhl acoshl atanhl)
-      AC_CHECK_FUNCS(floorl ceill truncl roundl)
+      AC_CHECK_FUNCS(floorl ceill truncl roundl rintl)
       case $CPU_TYPE in
         alpha)
           dnl Maybe -mieee-with-inexact

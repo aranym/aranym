@@ -1,4 +1,8 @@
 2020/01/08
+Use round-to-even for FREM instruction
+
+
+2020/01/08
 Set excplicit integer bit when converting long double to double
 
 

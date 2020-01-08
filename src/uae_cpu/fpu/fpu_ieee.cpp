@@ -2219,7 +2219,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			fpu_debug(("FREM %.04f\n",(double)src));
 			// FPU registers[reg] = FPU registers[reg] - (double) ((int) (FPU registers[reg] / src + 0.5)) * src;
 			{
-				fpu_register quot = fp_round_to_nearest(FPU registers[reg] / src);
+				fpu_register quot = fp_round_to_even(FPU registers[reg] / src);
 				uae_u32 sign = get_quotient_sign(FPU registers[reg],src);
 				FPU registers[reg] = FPU registers[reg] - quot * src;
 				make_fpsr(FPU registers[reg]);
