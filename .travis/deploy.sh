@@ -58,6 +58,7 @@ function snap_create {
 		;;
 		aarch)
 			snap_cpu=arm64
+			sed -i '65,90d' snap/snapcraft.yaml # no jit in aarch64
 		;;
 		*)
 			echo "Wrong arch in deploy for snap"
@@ -66,7 +67,6 @@ function snap_create {
 	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
 	echo "snap_cpu=$snap_cpu" >> env.list
 	echo "SNAP_NAME=$SNAP_NAME" >> env.list
-	sed -i '65,90d' snap/snapcraft.yaml # no jit in aarch64
 	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
 	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
