@@ -64,6 +64,7 @@ apps:
     - system-observe
   aranym-jit:
     command: aranym-jit
+    aliases: [aranym-jit]
     plugs:
     - desktop
     - desktop-legacy
@@ -90,6 +91,7 @@ apps:
     - system-observe
   aranym-mmu:
     command: aranym-mmu
+    aliases: [aranym-mmu]
     plugs:
     - desktop
     - desktop-legacy
@@ -116,6 +118,7 @@ apps:
     - system-observe
   aratapif:
     command: aratapif
+    aliases: [aratapif]
     plugs:
     - desktop
     - desktop-legacy
