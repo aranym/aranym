@@ -144,13 +144,13 @@ typedef struct virtual_usbdev {
 	int usb_lowlevel_stop(void)
 
 	int submit_int_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
-				int len, int interval)
+			   long len, int interval)
 
 	int submit_control_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
-							int len, struct devrequest *setup)
+			       long len, struct devrequest *setup)
  
 	int submit_bulk_msg(struct usb_device *dev, unsigned long pipe, void *buffer,
-							int len)
+			    long len, long flags, unsigned long timeout)
 */
 
 /*--- Class ---*/
@@ -170,7 +170,7 @@ private:
 	int32 usb_lowlevel_stop(void);
 	int32 submit_control_msg(uint32 pipe, memptr buffer, int32 len, memptr devrequest);
 	int32 submit_int_msg(uint32 pipe, memptr buffer, int32 len, int32 interval);
-	int32 submit_bulk_msg(uint32 pipe, memptr buffer, int32 len);
+	int32 submit_bulk_msg(uint32 pipe, memptr buffer, int32 len, int32 flags, uint32 timeout);
 
 public:
 	USBHost();

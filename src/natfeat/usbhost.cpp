@@ -805,8 +805,9 @@ int32 USBHost::submit_int_msg(uint32 /* pipe */, memptr /* buffer */,
 }
 
 
-int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len)
+int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len, int32 flags, uint32 timeout)
 {
+	UNUSED(flags);
 	D(bug("\nUSBHost: submit_bulk_msg()"));
 
 	uint8 *tempbuff;
@@ -838,7 +839,7 @@ int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len)
 		}
 	}
 
-	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred, 1000);
+	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred, timeout);
 	D(bug("USBHost: return: %d len: %d transferred: %d", r, len, transferred));
 
 	return r;
@@ -902,7 +903,7 @@ int32 USBHost::dispatch(uint32 fncode)
 			break;
 
 		case USBHOST_SUBMIT_BULK_MSG:
-			ret = submit_bulk_msg(getParameter(0), getParameter(1), getParameter(2));
+			ret = submit_bulk_msg(getParameter(0), getParameter(1), getParameter(2), getParameter(3), getParameter(4));
 			break;
 		default:
 			D(bug("USBHost: unimplemented function #%d", fncode));
