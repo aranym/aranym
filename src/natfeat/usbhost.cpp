@@ -291,6 +291,7 @@ int usbhost_release_device(int virtdev_index)
 		if (r < 0) {
 			D(bug("USBHost: Releasing interface %d failed", if_index));
 		}
+		libusb_attach_kernel_driver(devh[dev_index], if_index);
 	}
 	virtual_device[virtdev_index].connected = false;
 	port_number = virtual_device[virtdev_index].port_number;
@@ -927,33 +928,7 @@ USBHost::USBHost()
 
 USBHost::~USBHost()
 {
-	int i = USB_MAX_DEVICE - 1;
-	unsigned int port_number = 0;
-
 	if (init_flag) {
-		while (i >= 0) {
-			if (devh[i] != NULL) {
-			D(bug("USBHost: Trying to close device %d", i));
-
-			while (port_number < NUMBER_OF_PORTS) {
-				if (roothub.port[port_number].libusb_dev_idx == i) {
-					if (libusb_release_interface(devh[i], roothub.port[port_number].interface) < 0) {
-						D(bug("USBHost: unable to release device interface"));
-					}
-					if (libusb_attach_kernel_driver(devh[i], roothub.port[port_number].interface) < 0) {
-						D(bug("USBHost: unable to reattach kernel driver to interface"));
-					}
-					break;
-				}
-				port_number++;
-			}
-			libusb_close(devh[i]);
-			devh[i] = NULL;
-			D(bug("USBHost: %d device closed", i));
-			}
-			i--;
-		}
-
 		usbhost_free_usb_devices();
 		libusb_exit(NULL);
 	}
