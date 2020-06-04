@@ -1202,4 +1202,8 @@ DEFINE_ROUND_FUNC(even, CW_RC_NEAR)
 #define fp_round_to_nearest(x) ((int)((x) + 0.5))
 #endif
 
+#ifndef fp_round_to_even
+#define fp_round_to_even fp_round_to_nearest
+#endif
+
 #endif /* FPU_MATHLIB_H */
