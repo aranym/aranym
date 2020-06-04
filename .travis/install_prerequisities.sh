@@ -75,13 +75,12 @@ osx)
 	
 	# we must install the macports version of the dependencies,
 	# because the brew packages are not universal
-	mkdir src/Unix/MacOSX/external
-	for i in gmp/gmp-6.1.2_1+universal.darwin_16.i386-x86_64.tbz2 \
-		mpfr/mpfr-4.0.2_0+universal.darwin_12.i386-x86_64.tbz2 \
-		jpeg/jpeg-9c_0+universal.darwin_16.i386-x86_64.tbz2; do
+	mkdir -p src/Unix/MacOSX/external
+	for i in gmp/gmp-6.1.2_3+universal.darwin_16.i386-x86_64.tbz2 \
+		mpfr/mpfr-4.0.2_1.darwin_15.x86_64.tbz2 \
+		jpeg/jpeg-9d_0+universal.darwin_16.i386-x86_64.tbz2; do
 		f=`basename $i`
-		curl --get https://packages.macports.org/$i --output $f
-		tar -C src/Unix/MacOSX/external --include="./opt/local" --strip-components=3 -xf $f
+		curl --get https://tho-otto.de/download/macports/$f --output - | bzip2 -dc | tar -C src/Unix/MacOSX/external --strip-components=3 -xf -
 	done
 	# replace symlinks; with XCode 11, only the symlinks will be copied
 	# to the application folder and can't be signed locally
