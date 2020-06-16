@@ -51,6 +51,21 @@ int ARADATA::getAtariMouseY()
 	return mouse_y;
 }
 
+void ARADATA::setAtariMousePosition(int x, int y)
+{
+	mouse_x = x;
+	mouse_y = y;
+	if (abase != 0)
+	{
+		int width = ReadHWMemInt16(abase - 0x0c);
+		int height = ReadHWMemInt16(abase - 0x04);
+		if (x >= 0 && x < width)
+			WriteHWMemInt16(abase - 0x25a, x);
+		if (y >= 0 && y < height)
+			WriteHWMemInt16(abase - 0x258, y);
+	}
+}
+
 void ARADATA::reset()
 {
 	mouseDriver = false;

@@ -216,10 +216,6 @@ void InputInit()
 		grabMouse(SDL_TRUE);
 		// hide mouse unconditionally
 		hideMouse(SDL_TRUE);
-		if (! bx_options.video.fullscreen)
-		{
-			host->video->WarpMouse(0, 0);
-		}
 	}
 
 #if defined (OS_darwin) && !SDL_VERSION_ATLEAST(2, 0, 0)

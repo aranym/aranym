@@ -1,3 +1,7 @@
+2020/06/15
+Work around an "invisible border" on windows when initially grabbing the mouse
+
+
 2020/01/08
 Use round-to-even for FREM instruction
 

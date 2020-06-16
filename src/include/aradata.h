@@ -40,7 +40,7 @@ public:
 	bool isAtariMouseDriver()	{ return abase != 0 || mouseDriver; }
 	int getAtariMouseX();
 	int getAtariMouseY();
-	void setAtariMousePosition(int x, int y) { mouse_x = x; mouse_y = y; }
+	void setAtariMousePosition(int x, int y);
 	void setAbase(memptr new_abase);
 };
 #endif /* _ARADATA */

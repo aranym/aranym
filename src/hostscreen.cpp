@@ -553,6 +553,26 @@ void HostScreen::setVideoMode(int width, int height, int bpp)
 	resizeDirty(screen->w, screen->h);
 
 	forceRefreshScreen();
+
+	/*
+	 * on some systems (like windows), initially syncing the
+	 * the mouse position still seems to be needed
+	 */
+	if (bx_options.startup.grabMouseAllowed) {
+		RememberAtariMouseCursorPosition();
+
+		int xpos, ypos;
+		SDL_GetMouseState(&xpos, &ypos);
+		if (atari_mouse_xpos >= 0 && atari_mouse_ypos >= 0) {
+			int delta_x = xpos - atari_mouse_xpos;
+			int delta_y = ypos - atari_mouse_ypos;
+			if (delta_x || delta_y)
+			{
+				D(bug("setAtariMousePosition: %d,%d atari %d,%d delta %d,%d", xpos, ypos, atari_mouse_xpos, atari_mouse_ypos, delta_x, delta_y));
+				getARADATA()->setAtariMousePosition(xpos, ypos);
+			}
+		}
+	}
 }
 
 void HostScreen::resizeWindow(int new_width, int new_height)
@@ -941,11 +961,10 @@ void HostScreen::RestoreAtariMouseCursorPosition()
 	SDL_GetMouseState(&xpos, &ypos);
 	if (atari_mouse_xpos >= 0 && atari_mouse_ypos >= 0) {
 		D(bug("Restoring mouse cursor pointer to [%d, %d]", xpos, ypos));
-//		getARADATA()->setAtariMousePosition(xpos, ypos);
 		int delta_x = xpos - atari_mouse_xpos;
 		int delta_y = ypos - atari_mouse_ypos;
 		if (delta_x || delta_y) {
-			D(bug("RestoreAtariMouse: %d,%d atari %d,%d delta %d,%d\n", xpos, ypos, atari_mouse_xpos, atari_mouse_ypos, delta_x, delta_y));
+			D(bug("RestoreAtariMouse: %d,%d atari %d,%d delta %d,%d", xpos, ypos, atari_mouse_xpos, atari_mouse_ypos, delta_x, delta_y));
 			getIKBD()->SendMouseMotion(delta_x, delta_y, 0, true);
 		}
 	}
