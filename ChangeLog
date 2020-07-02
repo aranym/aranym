@@ -1,3 +1,7 @@
+2020/07/02
+Add commandline option --setup as alias for --gui
+
+
 2020/06/15
 Work around an "invisible border" on windows when initially grabbing the mouse
 

@@ -127,6 +127,7 @@ static struct option const long_options[] =
   {"save", no_argument, 0, 's'},
 #ifdef SDL_GUI
   {"gui", no_argument, 0, 'G'},
+  {"setup", no_argument, 0, 'G'},
 #endif
   {"swap-ide", no_argument, 0, 'S'},
   {"emutos", no_argument, 0, 'e'},
@@ -1640,7 +1641,7 @@ Options:\n\
       --option section:key:value  set configuration value\n\
 ");
 #ifdef SDL_GUI
-  printf("  -G, --gui                       open GUI at startup\n");
+  printf("  -G, --setup                     open GUI/setup at startup\n");
 #endif
 #if HOSTFS_SUPPORT
   printf("  -d, --disk CHAR:PATH[:]         HostFS mapping, e.g. d:/atari/d_drive\n");
