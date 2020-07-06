@@ -52,14 +52,14 @@ int32 HostExec::dispatch(uint32 fncode)
 			return TOS_EPERM;
 		for (uint32 i = 0; i < length; ++i)
 		{
-			uint8 ch = ReadNFInt8(pPathStr++);
+			unsigned char ch = ReadNFInt8(pPathStr++);
 			if (ch == 0 || ch == 0x0a)
 			{
 				exec(str);
 				str.clear();
 			} else
 			{
-				str += getc(ch);
+				str += getch(ch);
 			}
 		}
 
@@ -82,7 +82,7 @@ void HostExec::reset()
 }
 
 
-std::string HostExec::getc(uint8 c) const
+std::string HostExec::getch(unsigned char c) const
 {
 	std::string ret;
 

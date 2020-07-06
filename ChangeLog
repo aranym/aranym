@@ -1,3 +1,7 @@
+2020/07/06
+Rename HostExec::getc to getch to avoid problems with macro definitions
+
+
 2020/07/02
 Add commandline option --setup as alias for --gui
 

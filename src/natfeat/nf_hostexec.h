@@ -16,7 +16,7 @@ public:
 private:
 	std::string str;
 
-	std::string getc(uint8 c) const;
+	std::string getch(unsigned char c) const;
 	void exec(const std::string& path) const;
 	int execv(int argc, memptr argv) const;
 	int doexecv(char *const argv[]) const;
