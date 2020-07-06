@@ -1,4 +1,8 @@
 2020/07/06
+Workaround for Haiku which lacks declaration of exp10l()
+
+
+2020/07/06
 Rename HostExec::getc to getch to avoid problems with macro definitions
 
 

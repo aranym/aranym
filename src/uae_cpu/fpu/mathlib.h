@@ -648,6 +648,17 @@ PRIVATE inline uae_u32 FFPU get_quotient_sign(fpu_register const & ra, fpu_regis
 /* --- Math functions                                                     --- */
 /* -------------------------------------------------------------------------- */
 
+#ifdef __HAIKU__
+#ifdef __cplusplus
+extern "C" {
+#endif
+/* Haiku seems to lack some declarations, even if the functions are there */
+extern long double exp10l(long double);
+#ifdef __cplusplus
+}
+#endif
+#endif
+
 #if defined(FPU_USE_ISO_C99) && (defined(USE_LONG_DOUBLE) || defined(USE_QUAD_DOUBLE))
 # ifdef HAVE_LOGL
 #  define fp_log	logl
