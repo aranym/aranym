@@ -84,10 +84,6 @@ matrix:
     - if: type = pull_request
       env: 
         - deploy=true
-        - arch=aarch
-    - if: type = pull_request
-      env: 
-        - deploy=true
         - arch=armhf
     - if: type = pull_request
       env: 
@@ -100,14 +96,6 @@ matrix:
     - if: type = pull_request
       env: 
         - arch=armhf
-        - typec=nor
-    - if: type = pull_request
-      env: 
-        - arch=aarch
-        - typec=mmu
-    - if: type = pull_request
-      env: 
-        - arch=aarch
         - typec=nor
 
 before_install:
