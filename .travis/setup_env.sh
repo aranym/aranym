@@ -17,19 +17,16 @@ fi
 if echo "" | gcc -dM  -E - | grep -q "__arm.*__"; then
 	CPU_TYPE=arm
 fi
-if ( echo $is | grep -q deploy ); then
-	CPU_TYPE=$arch
-fi
-if ( echo $arch_build | grep -q i386 ); then
-	CPU_TYPE=i386
-fi
-if ( echo $arch_build | grep -q aarch ); then
-	CPU_TYPE=aarch
-fi
-if ( echo $arch_build | grep -q armhf ); then
-	CPU_TYPE=armhf
-fi
+case "$arch" in
+	amd64)
+		CPU_TYPE=x86_64
+	;;
+	*)
+		CPU_TYPE=$arch
+	;;
+esac
 export CPU_TYPE
+echo "Type is $CPU_TYPE"
 
 case "$TRAVIS_OS_NAME" in
 linux)
@@ -75,20 +72,6 @@ linux)
 		archive_tag=-`uname -s 2>/dev/null`-`uname -r 2>/dev/null`
 		;;
 	esac
-	if ( echo $is | grep -q deploy ); then
-		if ( echo $arch | grep -q armhf ); then
-			VENDOR=Raspbian
-			archive_tag=-stretch-${CPU_TYPE}
-		elif ( echo $arch | grep -q aarch ); then
-			VENDOR=Ubuntu
-	 		archive_tag=-xenial-${CPU_TYPE}
-		fi
-	fi
-	# should not be needed
-	# if ( echo $arch_build | grep -q i386 ); then
-	# 	VENDOR=Ubuntu
-	# 	archive_tag=-xenial-${CPU_TYPE}
-	# fi
 	;;
 
 osx)
@@ -106,7 +89,7 @@ export archive_tag
 VERSION=`sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0-9]*\).*$/\1./p
 s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
 s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n'`
-echo VERSION
+echo $VERSION
 export VERSION
 
 tag_set() {
@@ -133,3 +116,10 @@ case $CPU_TYPE in
 	i[3456]86 | x86_64 | arm*) build_jit=true ;;
 	*) build_jit=false ;;
 esac
+if ( echo $TRAVIS_OS_NAME | grep -q linux ); then
+	if [ -z "$typec" ]; then
+		export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
+	else
+		export ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-${typec}.tar.xz"
+	fi
+fi

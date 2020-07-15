@@ -1,166 +1,114 @@
+language: c
+os: linux
+dist: xenial
+services: docker
+branches:
+  only:
+    - master
+
+addons:
+  snaps:
+    - name: snapcraft
+      channel: stable
+      confinement: classic
+
+compiler:
+  - gcc
+
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
+arch: amd64
+
 matrix:
   include:
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      services: docker
-      env:
-        - arch_build=amd64
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      services: docker
-      env: 
-        - emu=true
-        - arch_build=i386
+    - env:
+        - arch=amd64
+    - env: 
+        - arch=i386
       before_install:
-        - . ./.travis/emu/install_prerequisities.sh
+        - . ./.travis/emu.sh
       script:
-        - sudo sg sbuild -c "bash .travis/emu/i386_chroot.sh"
+        - echo "skipped" # skip tag
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: echo "skipped" # skip tag
     - os: osx
       osx_image: xcode8.3
       language: objective-c
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      env: 
-        - emu=true
-        - arch_build=armhf
-        - typec=1
+    - env: 
+        - arch=armhf
+        - typec=jit
       before_install:
-        - . ./.travis/emu/install_prerequisities.sh
-      before_script:
-        - echo "skipped" # skip tag
+        - . ./.travis/emu.sh
       script:
-        - sudo ./.travis/emu/armhf_chroot.sh
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: echo "skipped" # skip for now then move it from chroot
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      env: 
-        - emu=true
-        - arch_build=armhf
-        - typec=2
+        - echo "skipped" # skip tag
+    - env: 
+        - arch=armhf
+        - typec=mmu
       before_install:
-        - . ./.travis/emu/install_prerequisities.sh
-      before_script:
-        - echo "skipped" # skip tag
+        - . ./.travis/emu.sh
       script:
-        - sudo ./.travis/emu/armhf_chroot.sh
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: echo "skipped" # skip for now then move it from chroot
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      env: 
-        - emu=true
-        - arch_build=armhf
-        - typec=3
+        - echo "skipped" # skip tag
+    - env: 
+        - arch=armhf
+        - typec=nor
       before_install:
-        - . ./.travis/emu/install_prerequisities.sh
-      before_script:
-        - echo "skipped" # skip tag
+        - . ./.travis/emu.sh
       script:
-        - sudo ./.travis/emu/armhf_chroot.sh
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: echo "skipped" # skip for now then move it from chroot
- # enable when aarch64 will support jit
-    # - os: linux
-    #   language: c
-    #   dist: xenial
-    #   sudo: required
-    #   env: 
-    #     - emu=true
-    #     - arch_build=aarch
-    #     - typec=1
-    #   before_install:
-    #     - . ./.travis/emu/install_prerequisities.sh
-    #   before_script:
-    #     - echo "skipped" # skip tag
-    #   script:
-    #     - sudo ./.travis/emu/aarch_chroot.sh
-    #   deploy:
-    #     skip_cleanup: true
-    #     provider: script
-    #     script: echo "skipped" # skip for now then move it from chroot
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      env: 
-        - emu=true
-        - arch_build=aarch
-        - typec=2
-      before_install:
-        - . ./.travis/emu/install_prerequisities.sh
-      before_script:
-        - echo "skipped" # skip tag
-      script:
-        - sudo sg sbuild -c "bash .travis/emu/aarch_chroot.sh"
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: echo "skipped" # skip for now then move it from chroot
-    - os: linux
-      language: c
-      dist: xenial
-      sudo: required
-      env: 
-        - emu=true
-        - arch_build=aarch
-        - typec=3
-      before_install:
-        - . ./.travis/emu/install_prerequisities.sh
-      before_script:
-        - echo "skipped" # skip tag
-      script:
-        - sudo sg sbuild -c "bash .travis/emu/aarch_chroot.sh"
-      deploy:
-        skip_cleanup: true
-        provider: script
-        script: echo "skipped" # skip for now then move it from chroot
+        - echo "skipped" # skip script tag
+    - env: 
+        - arch=aarch
+      arch: arm64
     - stage: deploy
-      os: linux
-      dist: xenial
       env: 
-        - is=deploy
+        - deploy=true
         - arch=armhf
       before_install:
         - .travis/install_ssh_id.sh
         - unset SSH_ID
-        - . ./.travis/emu/install_prerequisities.sh
+        - . ./.travis/emu.sh
       script:
         - echo "skipped" # skip script tag
-      services: docker
-    - stage: deploy
-      os: linux
-      dist: xenial
-      env: 
-        - is=deploy
-        - arch=aarch
-      before_install:
-        - .travis/install_ssh_id.sh
-        - unset SSH_ID
-        - . ./.travis/emu/install_prerequisities.sh
-      script:
-        - echo "skipped" # skip script tag
-      services: docker
+      deploy:
+        skip_cleanup: true
+        provider: script
+        script: echo "skipped" # skip tag
   allow_failures:
     - os: osx
       osx_image: xcode11.1
       language: objective-c
+  exclude:
+    - if: type = pull_request
+      env: 
+        - deploy=true
+        - arch=aarch
+    - if: type = pull_request
+      env: 
+        - deploy=true
+        - arch=armhf
+    - if: type = pull_request
+      env: 
+        - arch=armhf
+        - typec=jit
+    - if: type = pull_request
+      env: 
+        - arch=armhf
+        - typec=mmu
+    - if: type = pull_request
+      env: 
+        - arch=armhf
+        - typec=nor
+    - if: type = pull_request
+      env: 
+        - arch=aarch
+        - typec=mmu
+    - if: type = pull_request
+      env: 
+        - arch=aarch
+        - typec=nor
 
 before_install:
   - .travis/install_ssh_id.sh
@@ -172,17 +120,6 @@ before_script:
 
 script:
   - . ./.travis/build.sh
-        
-branches:
-  only:
-    - master
-
-compiler:
-  - gcc
-
-env:
-  global:
-    - MAKEFLAGS="-j 2"
 
 deploy:
   skip_cleanup: true

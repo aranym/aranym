@@ -63,8 +63,9 @@ linux)
 		(
 		cd "${BUILDROOT}"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
+		echo "making ${OUT}/${ARCHIVE}"
 		)
-		if ! ( echo $arch_build | grep -q i386 ); then
+		if ! ( echo $arch | grep -q i386 ); then # only on amd64
 			(
 			export top_srcdir=`pwd`
 			cd appimage
@@ -72,19 +73,19 @@ linux)
 			)
 		fi
 	else
+		# in arm emu we build one bin per job
 		case "$typec" in
-			1) # jit
+			jit) # jit
 				if $build_jit; then
 					mkdir jit
 					cd jit
-					../configure $common_opts --enable-jit-compiler|| exit 1
+					../configure $common_opts --enable-jit-compiler || exit 1
 					make depend
 					make || exit 1
 					cd ..
 					mkdir -p "$BUILDROOT${bindir}"
 					install -s -m 755 jit/src/aranym "$BUILDROOT${bindir}/aranym-jit"
 					tag_set
-					ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-jit.tar.xz"
 					(
 					cd "${BUILDROOT}"
 					tar cvfJ "${OUT}/${ARCHIVE}" .
@@ -93,7 +94,7 @@ linux)
 					echo "Jit cannot be build."
 				fi
 			;;
-			2) # mmu
+			mmu) # mmu
 				mkdir mmu
 				cd mmu
 				../configure $common_opts --enable-lilo --enable-fullmmu || exit 1
@@ -103,13 +104,12 @@ linux)
 				mkdir -p "$BUILDROOT${bindir}"
 				install -s -m 755 mmu/src/aranym "$BUILDROOT${bindir}/aranym-mmu"
 				tag_set
-				ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-mmu.tar.xz"
 				(
 				cd "${BUILDROOT}"
 				tar cvfJ "${OUT}/${ARCHIVE}" .
 				)
 			;;
-			3) # normal build
+			nor) # normal build
 				./configure $common_opts || exit 1
 				make depend
 				make || exit 1
@@ -119,7 +119,6 @@ linux)
 				sudo chgrp root "$BUILDROOT${bindir}/aratapif"
 				sudo chmod 4755 "$BUILDROOT${bindir}/aratapif"
 				tag_set
-				ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-nor.tar.xz"
 				(
 				cd "${BUILDROOT}"
 				tar cvfJ "${OUT}/${ARCHIVE}" .
