@@ -1,5 +1,5 @@
 name: aranym
-base: core18
+base: core
 version: 1.0.2
 summary: Atari Running on Any Machine
 description: >
@@ -20,16 +20,15 @@ parts:
     plugin: dump
     source: bined.tar.xz
     stage-packages:
-      - libosmesa6-dev
-      - libgl1-mesa-dev
-      - libglu1-mesa-dev
-      - libsdl1.2-dev
-      - libsdl-image1.2-dev
-      - libusb-dev
-      - libusb-1.0-0-dev
-      - libslang2
-      - pulseaudio
-      - util-linux
+      - freeglut3
+      - libgmp10
+      - libmpfr4
+      - libsdl-image1.2
+      - libsdl1.2debian
+      - libusb-1.0-0
+      - libx11-6
+      - zlib1g
+      - libglu1-mesa
 
 layout:
   /usr/share/aranym/wm_icon.bmp:

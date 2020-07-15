@@ -1,6 +1,18 @@
 #!/bin/bash
 
 echo rvm_autoupdate_flag=0 >> ~/.rvmrc
+if [ "$deploy" = true ]; then
+sudo apt-get update
+sudo apt-get install -y -qq \
+	curl \
+	wget \
+	git \
+	zsync \
+	xz-utils \
+	libjson-perl \
+	libwww-perl \
+	lsb-release
+fi
 
 case "$TRAVIS_OS_NAME" in
 linux)
@@ -18,22 +30,23 @@ linux)
 		zsync \
 		xz-utils \
 		libjson-perl \
-		libwww-perl
-	if test "$emu" = true; then
-		sudo apt-get install -y \
-			git \
-			autoconf \
-			automake \
-			build-essential \
-			gcc-4.8 \
-			g++-4.8 \
-			libx11-dev
+		libwww-perl \
+		git \
+		autoconf \
+		automake \
+		build-essential \
+		gcc-4.8 \
+		g++-4.8 \
+		libx11-dev \
+		lsb-release
+
 		rm /usr/bin/gcc
 		rm /usr/bin/g++
 		ln -s /usr/bin/gcc-4.8 /usr/bin/gcc
 		ln -s /usr/bin/g++-4.8 /usr/bin/g++
 		gcc -v
-	fi
+		export CC=/usr/bin/gcc-4.8
+		export CXX=/usr/bin/g++-4.8
 	;;
 
 osx)
@@ -109,4 +122,3 @@ osx)
 	exit 1
 	;;
 esac
-

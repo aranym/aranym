@@ -18,10 +18,15 @@ then
 	echo "error: SNAP_TOKEN is undefined" >&2
 	exit 1
 fi
-if ( echo $arch_build | grep -q i386 ); then 
-	ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
+if [ -z "$ARCHIVE" ]
+then
+	if [ -z "$typec" ]; then
+		export ARCHIVE="${PROJECT_LOWER}-${ATAG}.tar.xz"
+	else
+		export ARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-${typec}.tar.xz"
+	fi
 fi
-export SRCDIR="${PWD}"
+export SRCDIR="${TRAVIS_BUILD_DIR}"
 # variables
 RELEASE_DATE=`date -u +%Y-%m-%dT%H:%M:%S`
 BINTRAY_HOST=https://api.bintray.com
@@ -29,7 +34,7 @@ BINTRAY_USER="${BINTRAY_USER:-aranym}"
 BINTRAY_REPO_OWNER="${BINTRAY_REPO_OWNER:-$BINTRAY_USER}" # owner and user not always the same
 BINTRAY_REPO_NAME="${BINTRAY_REPO_NAME:-aranym-files}"
 BINTRAY_REPO="${BINTRAY_REPO_OWNER}/${BINTRAY_REPO_NAME}"
-SNAP_NAME="${SNAP_NAME:-aranym}"
+SNAP_STORE_NAME="${SNAP_STORE_NAME:-aranym}"
 
 function bined {
 	cd ${SRCDIR}
@@ -41,11 +46,20 @@ function bined {
 	cd bined
 	tar xf ${ARCHIVE}
 	rm ${ARCHIVE}
+	sudo chmod -Rf 777 .
 	tar cvfJ "../bined.tar.xz" .
 	cd ${SRCDIR}
 }
 
-function snap_create {
+function snap_install {
+	if ( echo $arch | grep -q i386 ); then
+		mv /bin/uname_orig /bin/uname
+	fi
+	apt install -y \
+      	curl \
+      	jq \
+      	squashfs-tools\
+		snapd
 	case "$CPU_TYPE" in
 		x86_64)
 			snap_cpu=amd64
@@ -58,29 +72,94 @@ function snap_create {
 		;;
 		aarch)
 			snap_cpu=arm64
-			sed -i '65,91d' snap/snapcraft.yaml # no jit in aarch64
 		;;
 		*)
 			echo "Wrong arch in deploy for snap"
 		;;
 	esac
-	echo "SNAP_TOKEN=$SNAP_TOKEN" > env.list
-	echo "snap_cpu=$snap_cpu" >> env.list
-	echo "SNAP_NAME=$SNAP_NAME" >> env.list
-	sed -i "0,/aranym/ s/aranym/${SNAP_NAME}/" snap/snapcraft.yaml
+	export SNAP_ARCH="$snap_cpu"
+	export PATH="/snap/bin:$PATH"
+	export SNAP="/snap/snapcraft/current"
+	export SNAP_NAME="snapcraft"
+	export SNAP_VERSION="$(awk '/^version:/{print $2}' $SNAP/meta/snap.yaml)"
+	# Grab the core snap (for backwards compatibility) from the stable channel and
+	# unpack it in the proper place.
+	curl -L $(curl -H 'X-Ubuntu-Series: 16' -H "X-Ubuntu-Architecture: ${SNAP_ARCH}" 'https://api.snapcraft.io/api/v1/snaps/details/core' | jq '.download_url' -r) --output core.snap
+	mkdir -p /snap/core
+	unsquashfs -d /snap/core/current core.snap
+	# Grab the core18 snap (which snapcraft uses as a base) from the stable channel
+	# and unpack it in the proper place
+	curl -L $(curl -H 'X-Ubuntu-Series: 16' -H "X-Ubuntu-Architecture: ${SNAP_ARCH}" 'https://api.snapcraft.io/api/v1/snaps/details/core18' | jq '.download_url' -r) --output core18.snap
+	mkdir -p /snap/core18
+	unsquashfs -d /snap/core18/current core18.snap
+	# Grab the snapcraft snap from the edge channel and unpack it in the proper
+	# place.
+	curl -L $(curl -H 'X-Ubuntu-Series: 16' -H "X-Ubuntu-Architecture: ${SNAP_ARCH}" 'https://api.snapcraft.io/api/v1/snaps/details/snapcraft?channel=stable' | jq '.download_url' -r) --output snapcraft.snap
+	mkdir -p /snap/snapcraft
+	unsquashfs -d /snap/snapcraft/current snapcraft.snap
+	# Create a snapcraft runner
+	mkdir -p /snap/bin
+	echo "#!/bin/sh" > /snap/bin/snapcraft
+	snap_version="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" && echo "export SNAP_VERSION=\"$snap_version\"" >> /snap/bin/snapcraft
+	echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft
+	chmod +x /snap/bin/snapcraft
+}
+
+function snap_build {
+	cd ${SRCDIR}
+	case "$CPU_TYPE" in
+		x86_64)
+			snap_cpu=amd64
+		;;
+		i386)
+			snap_cpu=i386
+		;;
+		armhf)
+			snap_cpu=armhf
+		;;
+		aarch)
+			snap_cpu=arm64
+			sed -i '64,90d' snap/snapcraft.yaml # no jit in aarch64
+		;;
+		*)
+			echo "Wrong arch in deploy for snap"
+		;;
+	esac
+	sed -i "0,/aranym/ s/aranym/${SNAP_STORE_NAME}/" snap/snapcraft.yaml
 	sed -i "0,/version:/ s/.*version.*/version: $VERSION/" snap/snapcraft.yaml
-	docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
-      -c 'apt update -qq && echo "$SNAP_TOKEN" | snapcraft login --with -  && snapcraft version && snapcraft --target-arch=$snap_cpu && snapcraft push --release=edge *.snap'
+	snapcraft --destructive-mode --target-arch=$snap_cpu
+}
+
+function snap_push {
+	cd ${SRCDIR}
+	case "$CPU_TYPE" in
+		x86_64)
+			snap_cpu=amd64
+		;;
+		i386)
+			snap_cpu=i386
+		;;
+		armhf)
+			snap_cpu=armhf
+		;;
+		aarch)
+			snap_cpu=arm64
+		;;
+		*)
+			echo "Wrong arch in deploy for snap"
+		;;
+	esac
+	echo "$SNAP_TOKEN" | snapcraft login --with -
+	snapcraft push --release=edge "${SNAP_STORE_NAME}_${VERSION}_${snap_cpu}.snap"
 	if $isrelease; then
 		echo "Stable release on Snap"
-		docker run --rm --env-file env.list -v "$PWD":/build -w /build sagu/docker-snapcraft:latest bash \
-      -c 'apt update -qq && echo $SNAP_TOKEN | snapcraft login --with -  && snapcraft version && export revision=$(snapcraft status $SNAP_NAME --arch $snap_cpu | grep "edge" | awk '\''{print $NF}'\'') && snapcraft release $SNAP_NAME $revision stable'
+		export revision=$(snapcraft status $SNAP_STORE_NAME --arch $snap_cpu | grep "edge" | awk '{print $NF}')
+		snapcraft release $SNAP_STORE_NAME $revision stable
 	fi
-	rm env.list
 }
 
 function normal_deploy {
-	SRCDIR="${PWD}"
+	#SRCDIR="${PWD}"
 	OUT="${SRCDIR}/.travis/out"
 
 	if [ "${TRAVIS_PULL_REQUEST}" != "false" ];
@@ -96,7 +175,7 @@ function normal_deploy {
 	BINTRAY_VERSION=$TRAVIS_COMMIT
 
 	echo "Deploying $ARCHIVE to ${BINTRAY_HOST}/${BINTRAY_REPO}"
-	echo "See result at ${BINTRAY_HOST}/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
+	echo "See result at https://bintray.com/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
 
 	# See https://bintray.com/docs/api for a description of the REST API
 	# in their terminology:
@@ -131,7 +210,7 @@ function normal_deploy {
 	echo ""
 
 	# purge old snapshots
-	if test "$TRAVIS_OS_NAME" = linux; then
+	if ( echo $arch | grep -q amd64 ); then
 		perl "$SRCDIR/.travis/purge-snapshots.pl"
 	fi
 
@@ -148,7 +227,7 @@ function normal_deploy {
 		
 	#upload file(s):
 		# we only need to upload the src archive once
-		if test "$TRAVIS_OS_NAME" = linux; then
+		if ( echo $arch | grep -q amd64 ); then
 			for ext in gz bz2 xz lz; do
 				SRCARCHIVE="${PROJECT_LOWER}-${VERSION}.tar.${ext}"
 				if test -f "${SRCARCHIVE}"; then
@@ -211,7 +290,7 @@ function cache_deploy {
 	echo ""
 }
 
-function uncache_deploy {
+function get_cache {
 	SRCDIR="${PWD}"
 	OUT="${SRCDIR}/.travis/out"
 	TMP="${SRCDIR}/.travis/tmp"
@@ -221,11 +300,6 @@ function uncache_deploy {
 		cd "${TMP}"
 		# firstly merge builds
 		for build_type in jit mmu nor; do
-			if ( echo $arch | grep -q aarch ); then
-				if ( echo $build_type | grep -q jit ); then
-					continue
-				fi
-			fi
 			echo "get $build_type";
 			TARCHIVE="${PROJECT_LOWER}-${CPU_TYPE}-${TRAVIS_COMMIT}-${build_type}.tar.xz"
 			echo "url: https://dl.bintray.com/${BINTRAY_REPO}/temp/${TARCHIVE}"
@@ -243,73 +317,34 @@ function uncache_deploy {
 		sudo chmod 4755 "usr/bin/aratapif"
 		tar cvfJ "${OUT}/${ARCHIVE}" .
 	)
-
-	if [ "${TRAVIS_PULL_REQUEST}" != "false" ];
-		then
-			BINTRAY_DIR=pullrequests
-			BINTRAY_DESC="[${TRAVIS_REPO_SLUG}] Download: https://dl.bintray.com/${BINTRAY_REPO}/${BINTRAY_DIR}/${ARCHIVE}"
-		else
-			BINTRAY_DIR=snapshots
-			BINTRAY_DESC="[${PROJECT}] [${TRAVIS_BRANCH}] Commit: https://github.com/${GITHUB_USER}/${PROJECT}/commit/${TRAVIS_COMMIT}"
-	fi
-
-	# use the commit id as 'version' for bintray
-	BINTRAY_VERSION=$TRAVIS_COMMIT
-
-	echo "Deploying $ARCHIVE to ${BINTRAY_HOST}/${BINTRAY_REPO}"
-	echo "See result at ${BINTRAY_HOST}/${BINTRAY_REPO}/${BINTRAY_DIR}#files"
-
-	# See https://bintray.com/docs/api for a description of the REST API
-	# in their terminology:
-	# - :subject is the owner of the account (aranym in our case)
-	# - :repo is aranym-files
-	# - :package either snapshots, releases or pullrequests
-	# - for snapshot builds, the commit id is used as version number
-
-	CURL="curl --silent -u ${BINTRAY_USER}:${BINTRAY_API_KEY} -H Accept:application/json -w \n"
-
-	cd "$OUT"
-
-	#create version:
-	echo "creating version ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-	# do not fail if the version exists;
-	# it might have been created already by other CI scripts
-	$CURL --data '{"name":"'"${BINTRAY_VERSION}"'","released":"'"${RELEASE_DATE}"'","desc":"'"${BINTRAY_DESC}"'","published":true}' --header 'Content-Type: application/json' "${BINTRAY_HOST}/packages/${BINTRAY_REPO}/${BINTRAY_DIR}/versions"
-	echo ""
-
-	#upload file(s):
-	echo "upload ${BINTRAY_DIR}/${ARCHIVE}"
-	$CURL --upload "${ARCHIVE}" "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/${BINTRAY_DIR}/${ARCHIVE}?publish=1&override=1&explode=0"
-	echo ""
-
-	# publish the version
-	echo "publish ${BINTRAY_DIR}/${BINTRAY_VERSION}"
-	$CURL --data '' "${BINTRAY_HOST}/content/${BINTRAY_REPO}/${BINTRAY_DIR}/${BINTRAY_VERSION}/publish?publish_wait_for_secs=-1" || exit 1
-	echo ""
-
 }
 
+# build snap in emu
 # Check if it is deploy or build job
-if ! ( echo $is | grep -q deploy ); then # build job
+if ! [ "$deploy" = true ]; then # build job
 	case "$TRAVIS_OS_NAME" in
-		linux) # if linux use cache
-			if ! ( echo $arch_build | grep -q armhf ); then # Except if is not armhf linux
-				if ! ( echo $arch_build | grep -q aarch ); then
-					echo "------------ normal --------------------"
-					normal_deploy
-					if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-						bined
-						snap_create
-					fi
-				else
-					echo "------------ cache --------------------"
-					cache_deploy
-				fi
-
-			else # if armhf use cache
-				echo "------------ cache --------------------"
+		linux) # if linux
+		case "$arch" in
+			arm*)
+				echo "------------ cache ------------"
 				cache_deploy
-			fi
+			;;
+			i386)
+				echo "------------ normal ------------"
+				normal_deploy
+				bined
+				snap_install
+				snap_build
+				snap_push
+			;;
+			*)
+			echo "------------ normal ------------"
+				normal_deploy
+				bined
+				snap_build
+				snap_push
+			;;
+		esac
 		;;
 		osx) # directly push
 			normal_deploy
@@ -320,10 +355,11 @@ if ! ( echo $is | grep -q deploy ); then # build job
 		;;
 	esac
 else # deploy job
-	echo "------------ deploy --------------------"
-	uncache_deploy
-	if ! [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-		bined
-		snap_create
-	fi
+	echo "------------ deploy ------------"
+	get_cache
+	normal_deploy
+	bined
+	snap_install
+	snap_build
+	snap_push
 fi
