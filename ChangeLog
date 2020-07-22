@@ -1,3 +1,7 @@
+2020/07/22
+Use symbolic names for arguments to genamode() in gencomp.c
+
+
 2020/07/06
 Workaround for Haiku which lacks declaration of exp10l()
 
