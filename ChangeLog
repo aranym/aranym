@@ -1,4 +1,9 @@
 2020/07/22
+Fix a bug in compiling shift instruction; the source register could
+be masked by 63
+
+
+2020/07/22
 Use symbolic names for arguments to genamode() in gencomp.c
 
 
