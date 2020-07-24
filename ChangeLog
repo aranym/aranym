@@ -1,3 +1,9 @@
+2020/07/24
+Silence in audio_dma shold depend on format
+
+Fixes some glitches in Pupul (http://atari.daroou.fr/index.php?page=Pupul)
+
+
 2020/07/22
 Fix a bug in compiling shift instruction; the source register could
 be masked by 63
