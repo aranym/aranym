@@ -1,3 +1,7 @@
+2020/08/13
+Update for changed magic in EmuTOS extended ROM header
+
+
 2020/07/24
 Silence in audio_dma shold depend on format
 
