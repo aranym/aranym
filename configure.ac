@@ -1679,6 +1679,12 @@ dnl UAE CPU sources for all architectures.
 CPUSRCS="$CPUSRCS $JITSRCS"
 GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp cpufunctbl.cpp $GENJITSRCS"
 
+if [[ "x$GCC" = "xyes" ]]; then
+  WFLAGS="-Wextra -Wall -Wundef"
+else
+  WFLAGS=""
+fi
+
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$GCC" = "xyes" ]]; then
   if test "$ac_test_CFLAGS" != set; then
@@ -1690,13 +1696,8 @@ if [[ "x$GCC" = "xyes" ]]; then
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
   DBGSP="-g"
-  WFLAGS=""
-  if [[ "x$GCC" = "xyes" ]]; then
-    WFLAGS="$WFLAGS -W -Wall -Wundef"
-  fi
 else
   DBGSP=""
-  WFLAGS=""
 fi
 
 if [[ "x$WANT_FULLDEBUG" = "xyes" ]]; then
