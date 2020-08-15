@@ -1681,6 +1681,8 @@ GENCPUSRCS="$GENCPUSRCS cpudefs.cpp cpustbl.cpp cpufunctbl.cpp $GENJITSRCS"
 
 if [[ "x$GCC" = "xyes" ]]; then
   WFLAGS="-Wextra -Wall -Wundef"
+  # The following are for plain C only:
+  CFLAGS="$CFLAGS -Wmissing-prototypes -Wstrict-prototypes"
 else
   WFLAGS=""
 fi
