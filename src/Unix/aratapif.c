@@ -96,7 +96,7 @@ static int set_ip_using(const char *name, unsigned long c, const char *ip, const
     return 0;
 }
 
-int set_mtu(const char *name, int mtu_size)
+static int set_mtu(const char *name, int mtu_size)
 {
     struct ifreq ifr;
 
