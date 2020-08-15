@@ -38,9 +38,9 @@
 #ifdef DISASM_USE_BUILTIN /* rest of file */
 
 #include <setjmp.h>
+#include <stdio.h>
 #include "disasm-x86.h"
 #include "disasm-builtin.h"
-#include <stdio.h>
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>
