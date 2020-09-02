@@ -101,7 +101,7 @@ void EmutosBootOs::emutos_patch(bool cold) ARANYM_THROWS(AranymException)
 		if (headersize >= 20)
 		{
 			uint32_t version_offset = do_get_mem_long((uae_u32 *)(ROMBaseHost + osxh_header + 12));
-			const char *version_string = version_offset ? (const char *)ROMBaseHost + version_offset : "";
+			const char *version_string = ROMBaseHost[osxh_header + 11] != 0 && version_offset ? (const char *)ROMBaseHost + version_offset : "";
 
 			feature_flags = do_get_mem_long((uae_u32 *)(ROMBaseHost + osxh_header + 16));
 			if (ROMBaseHost[osxh_header + 11] != 0)
