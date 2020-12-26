@@ -25,9 +25,9 @@
 
 #ifdef DISASM_USE_BUILTIN				/* rest of file */
 
+#include <stdio.h>
 #include "disasm-arm.h"
 #include "disasm-builtin.h"
-#include <stdio.h>
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>

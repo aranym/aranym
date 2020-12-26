@@ -1,3 +1,27 @@
+2020/09/01
+For official EmuTOS versions, version_string will be same as number;
+no need to print it twice
+
+
+2020/08/13
+Update for changed magic in EmuTOS extended ROM header
+
+
+2020/07/24
+Silence in audio_dma shold depend on format
+
+Fixes some glitches in Pupul (http://atari.daroou.fr/index.php?page=Pupul)
+
+
+2020/07/22
+Fix a bug in compiling shift instruction; the source register could
+be masked by 63
+
+
+2020/07/22
+Use symbolic names for arguments to genamode() in gencomp.c
+
+
 2020/07/06
 Workaround for Haiku which lacks declaration of exp10l()
 

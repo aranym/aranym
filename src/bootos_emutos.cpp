@@ -30,16 +30,21 @@
 /*
  * new extended os header for EmuTOS,
  * available since 2019/10/31
+ * magic changed from 'OSEX' to 'OSXH' on 2020/07/21
  */
 typedef struct
 {
-	uint32_t magic;           /* magic value 'OSEX' */
+	uint32_t magic;           /* magic value 'OSXH' */
 	uint32_t size;            /* size of this structure */
 	uint32_t version;         /* version number, e.g. 0x00090c00 for 0.9.12 */
 	uint32_t version_offset;  /* offset to version string */
     uint32_t feature_flags;   /* feature flags */
-#define OSEX_LINEA 0x00000001
-} OSEX_HEADER;
+#define OSXH_LINEA 0x00000001
+    uint16_t machine_flags;   /* supported machines */
+    uint16_t processor_flags; /* supported processors */
+    uint8_t bootdelay;        /* cold-boot delay */
+    uint8_t __pad;
+} OSXH_HEADER;
 
 /*	EmuTOS ROM class */
 
@@ -53,7 +58,7 @@ EmutosBootOs::EmutosBootOs(void) ARANYM_THROWS(AranymException)
 void EmutosBootOs::emutos_patch(bool cold) ARANYM_THROWS(AranymException)
 {
 	int found;
-	int osex_header;
+	int osxh_header;
 	uint32_t feature_flags = 0;
 
 	if (strlen(bx_options.tos.emutos_path) == 0)
@@ -76,42 +81,56 @@ void EmutosBootOs::emutos_patch(bool cold) ARANYM_THROWS(AranymException)
 		bug("warning: %s does not seem to be EmuTOS image", bx_options.tos.emutos_path);
 	}
 
-	osex_header = -1;
+	osxh_header = -1;
 	for (int ptr = 0; ptr < 0x4000; ptr += 2)
 	{
 		if (ROMBaseHost[ptr +  0] == 'O' &&
 			ROMBaseHost[ptr +  1] == 'S' &&
-			ROMBaseHost[ptr +  2] == 'E' &&
-			ROMBaseHost[ptr +  3] == 'X')
+			ROMBaseHost[ptr +  2] == 'X' &&
+			ROMBaseHost[ptr +  3] == 'H')
 		{
-			osex_header = ptr;
+			osxh_header = ptr;
 			break;
 		}
 	}
 
-	if (osex_header >= 0)
+	if (osxh_header >= 0)
 	{
-		uint32_t headersize = do_get_mem_long((uae_u32 *)(ROMBaseHost + osex_header + 4));
-		D(bug("OSEX header (%u) found at 0x%08x", headersize, osex_header));
+		uint32_t headersize = do_get_mem_long((uae_u32 *)(ROMBaseHost + osxh_header + 4));
+		D(bug("OSXH header (%u) found at 0x%08x", headersize, osxh_header));
 		if (headersize >= 20)
 		{
-			uint32_t version_offset = do_get_mem_long((uae_u32 *)(ROMBaseHost + osex_header + 12));
-			feature_flags = do_get_mem_long((uae_u32 *)(ROMBaseHost + osex_header + 16));
-			infoprint("EmuTOS version %u.%u.%u.%u %s",
-				ROMBaseHost[osex_header + 8],
-				ROMBaseHost[osex_header + 9],
-				ROMBaseHost[osex_header + 10],
-				ROMBaseHost[osex_header + 11],
-				version_offset ? (const char *)ROMBaseHost + version_offset : "");
+			uint32_t version_offset = do_get_mem_long((uae_u32 *)(ROMBaseHost + osxh_header + 12));
+			const char *version_string = ROMBaseHost[osxh_header + 11] != 0 && version_offset ? (const char *)ROMBaseHost + version_offset : "";
+
+			feature_flags = do_get_mem_long((uae_u32 *)(ROMBaseHost + osxh_header + 16));
+			if (ROMBaseHost[osxh_header + 11] != 0)
+				infoprint("EmuTOS version %u.%u.%u.%u+ %s",
+					ROMBaseHost[osxh_header + 8],
+					ROMBaseHost[osxh_header + 9],
+					ROMBaseHost[osxh_header + 10],
+					ROMBaseHost[osxh_header + 11],
+					version_string);
+			else if (ROMBaseHost[osxh_header + 10] != 0)
+				infoprint("EmuTOS version %u.%u.%u %s",
+					ROMBaseHost[osxh_header + 8],
+					ROMBaseHost[osxh_header + 9],
+					ROMBaseHost[osxh_header + 10],
+					version_string);
+			else
+				infoprint("EmuTOS version %u.%u %s",
+					ROMBaseHost[osxh_header + 8],
+					ROMBaseHost[osxh_header + 9],
+					version_string);
 		}
 	}
 
-	if (feature_flags & OSEX_LINEA)
+	if (feature_flags & OSXH_LINEA)
 	{
-		D(bug("OSEX_LINEA found"));
+		D(bug("OSXH_LINEA found"));
 	} else
 	{
-		D(bug("No OSEX_LINEA found"));
+		D(bug("No OSXH_LINEA found"));
 
 		found = 0;
 		for (int ptr = 0; ptr < 0x10000; ptr += 2)

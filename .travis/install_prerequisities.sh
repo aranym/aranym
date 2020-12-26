@@ -122,4 +122,3 @@ osx)
 	exit 1
 	;;
 esac
-

@@ -169,6 +169,15 @@ void HostAudio::RemoveCallback(audio_callback_f callback)
 	SDL_UnlockAudio();
 }
 
+#ifndef AUDIO_S32LSB
+#define AUDIO_S32LSB    0x8020  /**< 32-bit integer samples */
+#define AUDIO_S32MSB    0x9020  /**< As above, but big-endian byte order */
+#endif
+#ifndef AUDIO_F32LSB
+#define AUDIO_F32LSB    0x8120  /**< 32-bit floating point samples */
+#define AUDIO_F32MSB    0x9120  /**< As above, but big-endian byte order */
+#endif
+
 /* used for debugging only */
 const char *HostAudio::FormatName(Uint16 format)
 {
@@ -180,6 +189,10 @@ const char *HostAudio::FormatName(Uint16 format)
 		case AUDIO_S16LSB: return "16bit/signed/le";
 		case AUDIO_U16MSB: return "16bit/unsigned/be";
 		case AUDIO_S16MSB: return "16bit/signed/be";
+		case AUDIO_S32LSB: return "32bit/signed/le";
+		case AUDIO_S32MSB: return "32bit/signed/be";
+		case AUDIO_F32LSB: return "32bit/float/le";
+		case AUDIO_F32MSB: return "32bit/float/be";
 	}
 	return "unknown";
 }

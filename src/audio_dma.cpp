@@ -77,6 +77,7 @@
 extern "C" {
 	static SDL_AudioStatus playing;
 	static AudioConv *audioConv;
+	static int audio_silence;
 
 	static uint32	start_replay, current_replay, end_replay;
 	
@@ -115,7 +116,7 @@ extern "C" {
 					playing = SDL_AUDIO_STOPPED;
 					D(bug("audiodma: playback stop"));
 					if (dest_len>0) {
-						memset(dest, 0x80, dest_len);
+						memset(dest, audio_silence, dest_len);
 					}
 					break;
 				}
@@ -499,6 +500,8 @@ void AUDIODMA::updateMode(void)
 	audioConv->setConversion(format, channels, freq, offset, skip,
 		host->audio.obtained.format, host->audio.obtained.channels,
 		host->audio.obtained.freq);
+
+	audio_silence = host->audio.obtained.format == AUDIO_U8 ? 0x80 : 0;
 
 	SDL_UnlockAudio();
 }

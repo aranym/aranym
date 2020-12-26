@@ -20,6 +20,7 @@
 */
 
 #include "SDL_compat.h"
+#include "adler32.h"
 
 #ifdef __cplusplus
 extern "C" {

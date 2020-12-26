@@ -29,13 +29,16 @@ extern "C" {
    called by all applications creating such a struct.  */
 void arm_disassemble_init(disassemble_info **info, void *stream, fprintf_ftype fprintf_func);
 void x86_disassemble_init(disassemble_info **info, void *stream, fprintf_ftype fprintf_func);
+void x86_disassemble_exit(disassemble_info **pinfo);
 
 /* Disassemble one instruction at the given target address. 
    Return number of octets processed.  */
 int arm_print_insn(bfd_vma, disassemble_info *);
 int x86_print_insn(bfd_vma, disassemble_info *);
 
+void arm_disassemble_set_target(disassemble_info *info, bfd_byte *buffer, size_t buffer_length, bfd_vma vma);
 void x86_disassemble_set_option(disassemble_info *info, const char *options);
+void x86_disassemble_print_options(FILE *stream);
 
 #ifdef __cplusplus
 }
