@@ -209,6 +209,16 @@ aranym_SOURCES += \
 	gui-sdl/dlgUsb.cpp gui-sdl/dlgUsb.h \
 	gui-sdl/dlgVideo.cpp gui-sdl/dlgVideo.h \
 	$(empty)
+
+#gui-sdl/aranym.fnt: gui-sdl/aranym10.txt
+#	fntconv -o $@ $<
+
+#gui-sdl/font.h: gui-sdl/aranym10.txt
+#	fntconv --aranym --varname font_bits -o $@ $<
+
+#gui-sdl/fontsmall.h: gui-sdl/aranym09.txt
+#	fntconv --aranym --varname fontsmall_bits -o $@ $<
+
 endif
 
 if NEED_GETOPT
