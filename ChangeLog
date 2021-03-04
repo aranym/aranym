@@ -1,3 +1,7 @@
+2021/03/04
+Workaround for FreeBSD, which is lacking the global timezone variable
+
+
 2020/09/01
 For official EmuTOS versions, version_string will be same as number;
 no need to print it twice
