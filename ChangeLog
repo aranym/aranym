@@ -1,4 +1,8 @@
 2021/03/04
+Workaround for math libraries that have neither exp10 nor pow10
+
+
+2021/03/04
 Workaround for FreeBSD, which is lacking the global timezone variable
 
 
