@@ -52,15 +52,12 @@ void BootOs::load(const char *filename) ARANYM_THROWS(AranymException)
 		throw AranymException("OS ROM image '%s' not found.", filename);
 	}
 
-	/* Both TOS 4.04 and EmuTOS must be 512 KB */
-	RealROMSize = 512<<10;	
-
-	size_t sizeRead = fread(ROMBaseHost, 1, RealROMSize, f);
+	RealROMSize = fread(ROMBaseHost, 1, ROMSize, f);
 	fclose(f);
 
-	if (sizeRead != (size_t)RealROMSize) {
+	/* TOS 4.04 must be 512 KB */
+	/* EmuTOS must be 512 or 1024 KB */
+	if ((RealROMSize != ROMSize || !boot_emutos) && RealROMSize != (ROMSize>>1)) {
 		throw AranymException("OS ROM image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
 	}
 }
-/* vim:ts=4:sw=4
- */

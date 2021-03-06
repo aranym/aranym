@@ -41,7 +41,6 @@ extern uint32 RAMSize;		// Size of RAM
 extern memptr ROMBase;		// ROM base (Atari address space)
 extern uint8 *ROMBaseHost;	// ROM base (host address space)
 extern uint32 ROMSize;		// Size of ROM
-extern uint32 RealROMSize;	// Real size of ROM
 extern memptr HWBase;		// HW base (Atari address space)
 extern uint8 *HWBaseHost;	// HW base (host address space)
 extern uint32 HWSize;		// Size of HW space
@@ -189,7 +188,3 @@ void report_double_bus_error(void);
 static inline uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
 
 #endif
-
-/*
-vim:ts=4:sw=4:
-*/

@@ -38,5 +38,3 @@ class TosBootOs : public BootOs
 };
 
 #endif /* BOOTOSTOS_H */
-/* vim:ts=4:sw=4
- */

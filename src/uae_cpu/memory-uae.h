@@ -74,7 +74,6 @@ extern void Exception (int, uaecptr);
 extern int in_exception_2;
 
 #define STRAM_END	0x0e00000UL	// should be replaced by global ROMBase as soon as ROMBase will be a constant
-#define ROM_END		0x0e80000UL	// should be replaced by ROMBase + RealROMSize if we are going to work with larger TOS ROMs than 512 kilobytes
 #define FastRAM_BEGIN	0x1000000UL	// should be replaced by global FastRAMBase as soon as FastRAMBase will be a constant
 #ifdef FixedSizeFastRAM
 #define FastRAM_SIZE	(FixedSizeFastRAM * 1024 * 1024)

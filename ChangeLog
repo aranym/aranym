@@ -1,3 +1,7 @@
+2021/03/06
+Add support for 1MB EmuTOS images
+
+
 2021/03/04
 Workaround for math libraries that have neither exp10 nor pow10
 

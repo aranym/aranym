@@ -46,8 +46,6 @@ memptr ROMBase = 0x00e00000;	// ROM base (Atari address space)
 uint8 *ROMBaseHost;	// ROM base (host address space)
 uint32 ROMSize = 0x00100000;	// Size of ROM
 
-uint32 RealROMSize;	// Real size of ROM
-
 memptr HWBase = 0x00f00000;	// HW base (Atari address space)
 uint8 *HWBaseHost;	// HW base (host address space)
 uint32 HWSize = 0x00100000;    // Size of HW space

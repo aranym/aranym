@@ -33,10 +33,11 @@ class BootOs
 		virtual ~BootOs() {};
 		virtual void reset(bool cold);
 		virtual const char *type() = 0;
+
+	protected:
+		uint32_t RealROMSize;	// Real size of ROM
 };
 
 extern BootOs *bootOs;
 
 #endif /* BOOTOS_H */
-/* vim:ts=4:sw=4
- */
