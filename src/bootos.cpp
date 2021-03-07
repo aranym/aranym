@@ -57,7 +57,7 @@ void BootOs::load(const char *filename) ARANYM_THROWS(AranymException)
 
 	/* TOS 4.04 must be 512 KB */
 	/* EmuTOS must be 512 or 1024 KB */
-	if ((RealROMSize != ROMSize || !boot_emutos) && RealROMSize != (ROMSize>>1)) {
+	if (RealROMSize != ROMSize && RealROMSize != (ROMSize>>1)) {
 		throw AranymException("OS ROM image '%s' reading error.\nMake sure the file is readable and its size is 524288 bytes (512 kB).", filename);
 	}
 }
