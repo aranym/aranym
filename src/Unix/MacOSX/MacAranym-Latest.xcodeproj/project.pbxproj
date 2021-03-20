@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -16,12 +16,9 @@
 				17AAB2A80B20A8150016FB8D /* Script: Create Diskimage */,
 			);
 			dependencies = (
-				17D10CA80C401D940083E7F2 /* PBXTargetDependency */,
-				17B1145F151E696B00E4EB0F /* PBXTargetDependency */,
-				17D10CAA0C401D940083E7F2 /* PBXTargetDependency */,
-				8CB53CB3203F110B0005E5AD /* PBXTargetDependency */,
-				8CB53CB5203F11100005E5AD /* PBXTargetDependency */,
-				8CB53CB7203F11160005E5AD /* PBXTargetDependency */,
+				170D33D1260671B700F5313F /* PBXTargetDependency */,
+				170D33D3260671B700F5313F /* PBXTargetDependency */,
+				170D33D5260671B700F5313F /* PBXTargetDependency */,
 			);
 			name = Packaging;
 			productName = "Build Release Package";
@@ -455,9 +452,6 @@
 		8C5BB722205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8C5BB724205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
-		8CB53CB9203F14300005E5AD /* MacAranym SDL2.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8CB53C74203F0D530005E5AD /* MacAranym SDL2.app */; };
-		8CB53CBA203F143C0005E5AD /* MacAranym JIT SDL2.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8CB53C89203F0D670005E5AD /* MacAranym JIT SDL2.app */; };
-		8CB53CBB203F14480005E5AD /* MacAranym MMU SDL2.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8CB53C9E203F0D780005E5AD /* MacAranym MMU SDL2.app */; };
 		8CB53CBD203F1EAD0005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
 		8CB53CBF203F1EBB0005E5AD /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		8CB53CC0203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -657,6 +651,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		170D33D0260671B700F5313F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = MacAranym;
+		};
+		170D33D2260671B700F5313F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B439AC2F0C5B2FD00046EFC9;
+			remoteInfo = "MacAranym JIT";
+		};
+		170D33D4260671B700F5313F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
+			remoteInfo = "MacAranym MMU";
+		};
 		17473D3315AA0A5D00CAEA47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
@@ -684,48 +699,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
 			remoteInfo = bpf_helper;
-		};
-		17B1145E151E696B00E4EB0F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B439AC2F0C5B2FD00046EFC9;
-			remoteInfo = "MacAranym JIT IEEE";
-		};
-		17D10CA70C401D940083E7F2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D1107260486CEB800E47090;
-			remoteInfo = MacAranym;
-		};
-		17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 17BCD7880B20F64F00432CE1;
-			remoteInfo = "MacAranym MMU";
-		};
-		8CB53CB2203F110B0005E5AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8CB53C73203F0D530005E5AD;
-			remoteInfo = "MacAranym SDL2";
-		};
-		8CB53CB4203F11100005E5AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8CB53C88203F0D670005E5AD;
-			remoteInfo = "MacAranym JIT SDL2";
-		};
-		8CB53CB6203F11160005E5AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8CB53C9D203F0D780005E5AD;
-			remoteInfo = "MacAranym MMU SDL2";
 		};
 		8CB53CD0203F260F0005E5AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -944,9 +917,6 @@
 			dstPath = "aranym-xxx-macosx";
 			dstSubfolderSpec = 16;
 			files = (
-				8CB53CBB203F14480005E5AD /* MacAranym MMU SDL2.app in CopyFiles */,
-				8CB53CBA203F143C0005E5AD /* MacAranym JIT SDL2.app in CopyFiles */,
-				8CB53CB9203F14300005E5AD /* MacAranym SDL2.app in CopyFiles */,
 				1730EDFD160F9BDF002EC84E /* README_ethernet.rtf in CopyFiles */,
 				B4E213CE0C5BA74600138A7F /* MacAranym MMU.app in CopyFiles */,
 				B4E213CF0C5BA74600138A7F /* MacAranym.app in CopyFiles */,
@@ -1290,9 +1260,9 @@
 		8C5BB71F205DBD31000B8CFC /* nf_hostexec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nf_hostexec.h; sourceTree = "<group>"; };
 		8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_scsidrv.cpp; sourceTree = "<group>"; };
 		8C5BB725205DBE5B000B8CFC /* nf_scsidrv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nf_scsidrv.h; sourceTree = "<group>"; };
-		8CB53C74203F0D530005E5AD /* MacAranym SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8CB53C89203F0D670005E5AD /* MacAranym JIT SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym JIT SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8CB53C9E203F0D780005E5AD /* MacAranym MMU SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym MMU SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym JIT SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CB53C9E203F0D780005E5AD /* Unused MacAranym MMU SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym MMU SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB53CBC203F1EAD0005E5AD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = "<group>"; };
 		8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_calls.cpp; sourceTree = "<group>"; };
@@ -2010,9 +1980,9 @@
 				B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */,
 				1778A4E21555A8A70005B336 /* MacAranym MMU MPFR.app */,
 				17473D2515AA0A1100CAEA47 /* bpf_helper */,
-				8CB53C74203F0D530005E5AD /* MacAranym SDL2.app */,
-				8CB53C89203F0D670005E5AD /* MacAranym JIT SDL2.app */,
-				8CB53C9E203F0D780005E5AD /* MacAranym MMU SDL2.app */,
+				8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */,
+				8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */,
+				8CB53C9E203F0D780005E5AD /* Unused MacAranym MMU SDL2.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2162,9 +2132,9 @@
 			productReference = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8CB53C73203F0D530005E5AD /* MacAranym SDL2 */ = {
+		8CB53C73203F0D530005E5AD /* Unused MacAranym SDL2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "MacAranym SDL2" */;
+			buildConfigurationList = 8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym SDL2" */;
 			buildPhases = (
 				1778A4611555A8A70005B336 /* Script: Run configure */,
 				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
@@ -2182,15 +2152,15 @@
 				8CB53CD3203F26160005E5AD /* PBXTargetDependency */,
 				8CB53CD1203F260F0005E5AD /* PBXTargetDependency */,
 			);
-			name = "MacAranym SDL2";
+			name = "Unused MacAranym SDL2";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "MacAranym SDL2";
-			productReference = 8CB53C74203F0D530005E5AD /* MacAranym SDL2.app */;
+			productReference = 8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8CB53C88203F0D670005E5AD /* MacAranym JIT SDL2 */ = {
+		8CB53C88203F0D670005E5AD /* Unused MacAranym JIT SDL2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "MacAranym JIT SDL2" */;
+			buildConfigurationList = 8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym JIT SDL2" */;
 			buildPhases = (
 				1778A4611555A8A70005B336 /* Script: Run configure */,
 				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
@@ -2209,15 +2179,15 @@
 				8CB53CD7203F26270005E5AD /* PBXTargetDependency */,
 				8CB53CD5203F261F0005E5AD /* PBXTargetDependency */,
 			);
-			name = "MacAranym JIT SDL2";
+			name = "Unused MacAranym JIT SDL2";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "MacAranym JIT SDL2";
-			productReference = 8CB53C89203F0D670005E5AD /* MacAranym JIT SDL2.app */;
+			productReference = 8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8CB53C9D203F0D780005E5AD /* MacAranym MMU SDL2 */ = {
+		8CB53C9D203F0D780005E5AD /* Unused MacAranym MMU SDL2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8CB53CAC203F0D780005E5AD /* Build configuration list for PBXNativeTarget "MacAranym MMU SDL2" */;
+			buildConfigurationList = 8CB53CAC203F0D780005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym MMU SDL2" */;
 			buildPhases = (
 				1778A4611555A8A70005B336 /* Script: Run configure */,
 				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
@@ -2235,10 +2205,10 @@
 				8CB53CDB203F26380005E5AD /* PBXTargetDependency */,
 				8CB53CD9203F26320005E5AD /* PBXTargetDependency */,
 			);
-			name = "MacAranym MMU SDL2";
+			name = "Unused MacAranym MMU SDL2";
 			productInstallPath = "$(HOME)/Applications";
 			productName = "MacAranym MMU SDL2";
-			productReference = 8CB53C9E203F0D780005E5AD /* MacAranym MMU SDL2.app */;
+			productReference = 8CB53C9E203F0D780005E5AD /* Unused MacAranym MMU SDL2.app */;
 			productType = "com.apple.product-type.application";
 		};
 		8D1107260486CEB800E47090 /* MacAranym */ = {
@@ -2334,9 +2304,9 @@
 				1778A4601555A8A70005B336 /* MacAranym MMU+MPFR */,
 				17AAB2A90B20A8150016FB8D /* Packaging */,
 				CB4679531AFA78430090A72D /* ExternalScript */,
-				8CB53C73203F0D530005E5AD /* MacAranym SDL2 */,
-				8CB53C88203F0D670005E5AD /* MacAranym JIT SDL2 */,
-				8CB53C9D203F0D780005E5AD /* MacAranym MMU SDL2 */,
+				8CB53C73203F0D530005E5AD /* Unused MacAranym SDL2 */,
+				8CB53C88203F0D670005E5AD /* Unused MacAranym JIT SDL2 */,
+				8CB53C9D203F0D780005E5AD /* Unused MacAranym MMU SDL2 */,
 			);
 		};
 /* End PBXProject section */
@@ -2417,17 +2387,19 @@
 /* Begin PBXShellScriptBuildPhase section */
 		1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_FOLDER_PATH)/$(EXECUTABLE_NAME)",
 			);
 			name = "Script: Fixup dynamic library loading";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/set_rpath.sh\"\nexit $?";
+			shellScript = ". \"$PROJECT_DIR/scripts/set_rpath.sh\"\nexit $?\n";
 			showEnvVarsInLog = 0;
 		};
 		1778A4611555A8A70005B336 /* Script: Run configure */ = {
@@ -2448,7 +2420,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/configure.sh\"\nexit $?";
+			shellScript = ". \"$PROJECT_DIR/scripts/configure.sh\"\nexit $?\n";
 			showEnvVarsInLog = 0;
 		};
 		1778A4621555A8A70005B336 /* Script: Build CPU source files */ = {
@@ -2504,7 +2476,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/gen_diskimage.sh\"\nexit $?";
+			shellScript = ". \"$PROJECT_DIR/scripts/gen_diskimage.sh\"\nexit $?\n";
 			showEnvVarsInLog = 0;
 		};
 		B472BB871768FBBA00611354 /* Build Mach Support files */ = {
@@ -3084,6 +3056,21 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		170D33D1260671B700F5313F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D1107260486CEB800E47090 /* MacAranym */;
+			targetProxy = 170D33D0260671B700F5313F /* PBXContainerItemProxy */;
+		};
+		170D33D3260671B700F5313F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */;
+			targetProxy = 170D33D2260671B700F5313F /* PBXContainerItemProxy */;
+		};
+		170D33D5260671B700F5313F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
+			targetProxy = 170D33D4260671B700F5313F /* PBXContainerItemProxy */;
+		};
 		17473D3415AA0A5D00CAEA47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
@@ -3103,36 +3090,6 @@
 			isa = PBXTargetDependency;
 			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
 			targetProxy = 17473D3C15AA0FFA00CAEA47 /* PBXContainerItemProxy */;
-		};
-		17B1145F151E696B00E4EB0F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */;
-			targetProxy = 17B1145E151E696B00E4EB0F /* PBXContainerItemProxy */;
-		};
-		17D10CA80C401D940083E7F2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8D1107260486CEB800E47090 /* MacAranym */;
-			targetProxy = 17D10CA70C401D940083E7F2 /* PBXContainerItemProxy */;
-		};
-		17D10CAA0C401D940083E7F2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 17BCD7880B20F64F00432CE1 /* MacAranym MMU */;
-			targetProxy = 17D10CA90C401D940083E7F2 /* PBXContainerItemProxy */;
-		};
-		8CB53CB3203F110B0005E5AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8CB53C73203F0D530005E5AD /* MacAranym SDL2 */;
-			targetProxy = 8CB53CB2203F110B0005E5AD /* PBXContainerItemProxy */;
-		};
-		8CB53CB5203F11100005E5AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8CB53C88203F0D670005E5AD /* MacAranym JIT SDL2 */;
-			targetProxy = 8CB53CB4203F11100005E5AD /* PBXContainerItemProxy */;
-		};
-		8CB53CB7203F11160005E5AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8CB53C9D203F0D780005E5AD /* MacAranym MMU SDL2 */;
-			targetProxy = 8CB53CB6203F11160005E5AD /* PBXContainerItemProxy */;
 		};
 		8CB53CD1203F260F0005E5AD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3265,7 +3222,17 @@
 					"-ljpeg",
 				);
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(BUILD_DIR)",
+					"$(SOURCE_DIR)/darwin",
+					"$(PROJECT_TEMP_DIR)",
+					"$(SOURCE_DIR)/include",
+					"$(srcdir)",
+					"$(SOURCE_DIR)/natfeat",
+					"$(SOURCE_DIR)/uae_cpu",
+					"$(SOURCE_DIR)/gui-sdl",
+					"$(SOURCE_DIR)/Unix",
+				);
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Release;
@@ -3281,7 +3248,17 @@
 				LD_RUNPATH_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(BUILD_DIR)",
+					"$(SOURCE_DIR)/darwin",
+					"$(PROJECT_TEMP_DIR)",
+					"$(SOURCE_DIR)/include",
+					"$(srcdir)",
+					"$(SOURCE_DIR)/natfeat",
+					"$(SOURCE_DIR)/uae_cpu",
+					"$(SOURCE_DIR)/gui-sdl",
+					"$(SOURCE_DIR)/Unix",
+				);
 			};
 			name = Debug;
 		};
@@ -3296,7 +3273,17 @@
 				LD_RUNPATH_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(BUILD_DIR)",
+					"$(SOURCE_DIR)/darwin",
+					"$(PROJECT_TEMP_DIR)",
+					"$(SOURCE_DIR)/include",
+					"$(srcdir)",
+					"$(SOURCE_DIR)/natfeat",
+					"$(SOURCE_DIR)/uae_cpu",
+					"$(SOURCE_DIR)/gui-sdl",
+					"$(SOURCE_DIR)/Unix",
+				);
 			};
 			name = Release;
 		};
@@ -3459,7 +3446,17 @@
 					"-ljpeg",
 				);
 				SOURCE_DIR = "$(PROJECT_DIR)/../..";
-				USER_HEADER_SEARCH_PATHS = "$(BUILD_DIR) $(SOURCE_DIR)/darwin $(PROJECT_TEMP_DIR) $(SOURCE_DIR)/include $(srcdir) $(SOURCE_DIR)/natfeat $(SOURCE_DIR)/uae_cpu $(SOURCE_DIR)/gui-sdl $(SOURCE_DIR)/Unix";
+				USER_HEADER_SEARCH_PATHS = (
+					"$(BUILD_DIR)",
+					"$(SOURCE_DIR)/darwin",
+					"$(PROJECT_TEMP_DIR)",
+					"$(SOURCE_DIR)/include",
+					"$(srcdir)",
+					"$(SOURCE_DIR)/natfeat",
+					"$(SOURCE_DIR)/uae_cpu",
+					"$(SOURCE_DIR)/gui-sdl",
+					"$(SOURCE_DIR)/Unix",
+				);
 				VALID_ARCHS = "ppc i386 x86_64";
 			};
 			name = Debug;
@@ -3718,7 +3715,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "MacAranym SDL2" */ = {
+		8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym SDL2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8CB53C82203F0D540005E5AD /* Debug */,
@@ -3727,7 +3724,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "MacAranym JIT SDL2" */ = {
+		8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym JIT SDL2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8CB53C98203F0D680005E5AD /* Debug */,
@@ -3736,7 +3733,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8CB53CAC203F0D780005E5AD /* Build configuration list for PBXNativeTarget "MacAranym MMU SDL2" */ = {
+		8CB53CAC203F0D780005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym MMU SDL2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8CB53CAD203F0D780005E5AD /* Debug */,
