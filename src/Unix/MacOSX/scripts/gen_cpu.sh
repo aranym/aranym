@@ -3,21 +3,6 @@
 ########################## BUILD CPU EMULATION CORE ##########################
 
 mkdir -p "$DERIVED_FILES_DIR" && cd "$DERIVED_FILES_DIR" || exit 1
-MISSING_FILE_CNT=`ls cpuemu.cpp cpudefs.cpp cputbl.h cpustbl.cpp cpufunctbl.cpp 2>&1 1>/dev/null | wc -l`
-rsync -pogt --stats cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp cpufunctbl*.cpp config*.h "$BUILD_DIR" > rsync_output.txt 2>/dev/null
-RET=$?
-#cat rsync_output.txt
-TRANSFERRED=`cat rsync_output.txt | grep "transferred:" | awk '{print $5}'`
-echo "$TRANSFERRED files transferred. RSYNC return code=$RET $MISSING_FILE_CNT file(s) are missing."
-if [ "$RET" -eq 0 -a "$TRANSFERRED" -eq 0 -a "$MISSING_FILE_CNT" -eq 0 ]; then
-  echo "Sources up-to-date. Skipping generation of CPU emulation core"
-  exit 0
-fi
-
-
-# remove old files
-rm -f "$DERIVED_FILES_DIR"/cpu*.*
-
 
 case $TARGET_NAME in
 *JIT*)
@@ -72,8 +57,5 @@ EOF
 EOF
 
 fi
-
-cd "$DERIVED_FILES_DIR"
-rsync -pogt cpuemu*.cpp cpudefs.cpp cputbl.h cpustbl*.cpp cpufunctbl*.cpp $JIT_ADDITIONAL_FILES version_date.h "$BUILD_DIR" || exit 1
 
 exit 0

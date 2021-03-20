@@ -15,30 +15,29 @@ fi
 echo "Checking configure options: $CONFIGURE_OPTIONS"
 
 # collect current configuration (CONFIGURE_OPTIONS and COMPILE_DEFS_xyz)
-OPTIONS_FILE_CUR=$BUILD_DIR/configure_options
-echo "" > "$OPTIONS_FILE_CUR"
+OPTIONS_FILE_NEW=$DERIVED_FILES_DIR/configure_options_new
+echo "" > "$OPTIONS_FILE_NEW"
 for ARCH in $ARCHS ; do
   COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
-  echo "$COMPILE_DEFS" >> "$OPTIONS_FILE_CUR"
+  echo "$COMPILE_DEFS" >> "$OPTIONS_FILE_NEW"
 done
-echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE_CUR"
-echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE_CUR"
-FILE_CONTENT_CUR=`cat "$OPTIONS_FILE_CUR" 2>/dev/null`
+echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE_NEW"
+echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE_NEW"
+FILE_CONTENT_NEW=`cat "$OPTIONS_FILE_NEW" 2>/dev/null`
 
 # collect content of previous script execution
-OPTIONS_FILE_OLD=$DERIVED_FILES_DIR/configure_options
-FILE_CONTENT_OLD=`cat "$OPTIONS_FILE_OLD" 2>/dev/null`
+OPTIONS_FILE_CUR=$DERIVED_FILES_DIR/configure_options
+FILE_CONTENT_CUR=`cat "$OPTIONS_FILE_CUR" 2>/dev/null`
 
-if [ \( -f "$OPTIONS_FILE_OLD" \) -a \( "$FILE_CONTENT_OLD" == "$FILE_CONTENT_CUR" \) ]; then
+if [ \( -f "$OPTIONS_FILE_CUR" \) -a \( "$FILE_CONTENT_CUR" == "$FILE_CONTENT_NEW" \) ]; then
   echo "Configuration still up-to-date. Skipping reconfiguration."	
-  rsync -pogt "$DERIVED_FILES_DIR/"config*.h "$BUILD_DIR/" || ( rm "$OPTIONS_FILE" ; exit 1 )
   exit 0
 fi
 
 echo "Running configure script for the following architectures $ARCHS"
 
 # generate a fresh options file
-OPTIONS_FILE="$OPTIONS_FILE_OLD"
+OPTIONS_FILE="$OPTIONS_FILE_CUR"
 echo "" > "$OPTIONS_FILE"
 
 # Check if PROJECT_DIR variable is set (Xcode 2.x)
@@ -168,7 +167,5 @@ echo "$CONFIGURE_OPTIONS" >> "$OPTIONS_FILE"
 # Remember configure.ac timestamp
 echo `ls -lT "$SOURCE_DIR/../configure.ac"` >> "$OPTIONS_FILE"
 
-echo "Configuration generated:"
-cp config*.h "$BUILD_DIR/" || exit 1
-
+echo "Configuration generated"
 exit 0

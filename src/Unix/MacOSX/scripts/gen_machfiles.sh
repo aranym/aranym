@@ -2,8 +2,8 @@
 
 ########################## GENERATE MACH FILES FROM SYSTEM DEFS ##########################
 set -x
-if [[ $ARCHS =~ (^| )x86_64($| ) && ! -f $BUILD_DIR/mach_excServer.c ]]; then
-	pushd "$BUILD_DIR"
+if [[ $ARCHS =~ (^| )x86_64($| ) && ! -f $DERIVED_FILE_DIR/mach_excServer.c ]]; then
+	pushd "$DERIVED_FILE_DIR"
 
 	DEFS_FILE=/usr/include/mach/mach_exc.defs
 	if [[ ! -f $DEFS_FILE ]]; then
