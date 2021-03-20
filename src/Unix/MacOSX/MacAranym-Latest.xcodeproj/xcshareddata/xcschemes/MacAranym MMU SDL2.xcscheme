@@ -14,24 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "17AAB2A90B20A8150016FB8D"
-               BuildableName = "Packaging"
-               BlueprintName = "Packaging"
+               BlueprintIdentifier = "8CB53C9D203F0D780005E5AD"
+               BuildableName = "MacAranym MMU SDL2.app"
+               BlueprintName = "MacAranym MMU SDL2"
                ReferencedContainer = "container:MacAranym-Latest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Release"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -40,6 +40,16 @@
       debugDocumentVersioning = "NO"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "8CB53C9D203F0D780005E5AD"
+            BuildableName = "MacAranym MMU SDL2.app"
+            BlueprintName = "MacAranym MMU SDL2"
+            ReferencedContainer = "container:MacAranym-Latest.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -47,18 +57,19 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "17AAB2A90B20A8150016FB8D"
-            BuildableName = "Packaging"
-            BlueprintName = "Packaging"
+            BlueprintIdentifier = "8CB53C9D203F0D780005E5AD"
+            BuildableName = "MacAranym MMU SDL2.app"
+            BlueprintName = "MacAranym MMU SDL2"
             ReferencedContainer = "container:MacAranym-Latest.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Release">
+      buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
