@@ -1,3 +1,6 @@
+#ifndef __CPUEMU_CPP
+#define __CPUEMU_CPP
+
 #ifdef CPU_x86_64
 #include "cpuemu_x86_64.cpp"
 #endif
@@ -6,3 +9,4 @@
 #include "cpuemu_i386.cpp"
 #endif
 
+#endif

@@ -18,6 +18,8 @@ case $TARGET_NAME in
   ;;
 esac
 
+rm -f cpuemu.cpp cpufunctbl.cpp cpustbl_nf.cpp cpuemu_nf.cpp
+
 for ARCH in $ARCHS ; do
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
   echo ; echo "Building CPU emulation core for $ARCH"
