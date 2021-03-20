@@ -2309,13 +2309,15 @@
 					};
 				};
 			};
-			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym-Latest" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 				Base,
+				German,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* MacAranym */;
 			projectDirPath = "";
@@ -3217,7 +3219,7 @@
 		1706B5050ABCB72B006CB74B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_i386 = "CPU_i386 X86_ASSEMBLY $(COMPILE_DEFS_BASE) OPTIMIZED_FLAGS REGPARAM=\"__attribute__((regparm(3)))\" SAHF_SETO_PROFITABLE UNALIGNED_PROFITABLE";
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
@@ -3253,7 +3255,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				LIBRARY_SEARCH_PATHS = external/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_LDFLAGS = (
 					"-Lexternal/lib",
 					"-ljpeg",
@@ -3430,7 +3432,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
 				LIBRARY_SEARCH_PATHS = external/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-Lexternal/lib",
@@ -3458,7 +3460,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3480,7 +3481,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -3489,7 +3489,7 @@
 		8CB53C98203F0D680005E5AD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
@@ -3503,7 +3503,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"OTHER_LDFLAGS[arch=x86_64]" = (
 					"$(inherited)",
 					"-pagezero_size",
@@ -3518,7 +3517,7 @@
 		8CB53C99203F0D680005E5AD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
@@ -3532,7 +3531,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				"OTHER_LDFLAGS[arch=x86_64]" = (
 					"$(inherited)",
 					"-pagezero_size",
@@ -3560,7 +3558,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lz",
@@ -3586,7 +3583,6 @@
 					external/include,
 				);
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lz",
@@ -3599,7 +3595,7 @@
 		B439AC980C5B2FD00046EFC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
@@ -3618,7 +3614,7 @@
 		B439AC990C5B2FD00046EFC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
@@ -3739,7 +3735,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym" */ = {
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym-Latest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				17E8B5B60ABC88C600BBFD59 /* Debug */,
