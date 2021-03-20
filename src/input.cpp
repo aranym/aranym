@@ -84,7 +84,11 @@ SDL_Joystick *sdl_joysticks[4]={
 #define UNDEFINED_OFFSET	((unsigned int)-1)
 
 #ifdef OS_darwin
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+#define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
+#else
 #define KEYBOARD_TRANSLATION	KEYSYM_MACSCANCODE
+#endif
 #else
 #define KEYBOARD_TRANSLATION	KEYSYM_SCANCODE
 #endif
