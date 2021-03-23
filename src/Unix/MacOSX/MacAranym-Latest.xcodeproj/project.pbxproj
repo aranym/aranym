@@ -2351,7 +2351,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = ". \"$PROJECT_DIR/scripts/set_version.sh\"\nexit $?";
+			shellScript = ". \"$PROJECT_DIR/scripts/set_version.sh\"\nexit $?\n";
 			showEnvVarsInLog = 0;
 		};
 		17AAB2A80B20A8150016FB8D /* Script: Create Diskimage */ = {
@@ -3031,6 +3031,7 @@
 			buildSettings = {
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3039,6 +3040,7 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -3046,6 +3048,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_i386 = "CPU_i386 X86_ASSEMBLY $(COMPILE_DEFS_BASE) OPTIMIZED_FLAGS REGPARAM=\"__attribute__((regparm(3)))\" SAHF_SETO_PROFITABLE UNALIGNED_PROFITABLE";
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
@@ -3253,6 +3256,7 @@
 			buildSettings = {
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -3261,6 +3265,7 @@
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -3268,6 +3273,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_i386 = "CPU_i386 X86_ASSEMBLY $(COMPILE_DEFS_BASE) OPTIMIZED_FLAGS REGPARAM=\"__attribute__((regparm(3)))\" SAHF_SETO_PROFITABLE UNALIGNED_PROFITABLE";
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
