@@ -109,11 +109,11 @@ osx)
 	done
 	rm -f libgmpxx.dylib
 	for i in .4; do
-		test -f ln libgmpxx${i}.dylib && ln libgmpxx${i}.dylib libgmpxx.dylib
+		test -f libgmpxx${i}.dylib && ln libgmpxx${i}.dylib libgmpxx.dylib
 	done
 	rm -f libmpfr.dylib
-	for i in .4; do
-		test -f ln libmpfr${i}.dylib && ln libmpfr${i}.dylib libmpfr.dylib
+	for i in .4 .6; do
+		test -f libmpfr${i}.dylib && ln libmpfr${i}.dylib libmpfr.dylib
 	done
 	cd "$cwd"
 	;;
