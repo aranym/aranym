@@ -9,4 +9,8 @@
 #include "cpuemu_i386.cpp"
 #endif
 
+#ifdef CPU_arm
+#include "cpuemu_arm64.cpp"
+#endif
+
 #endif
