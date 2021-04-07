@@ -3050,6 +3050,7 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
+				COMPILE_DEFS_arm64 = "CPU_arm $(COMPILE_DEFS_BASE) ARM_ASSEMBLY ARMV6_ASSEMBLY";
 				COMPILE_DEFS_i386 = "CPU_i386 X86_ASSEMBLY $(COMPILE_DEFS_BASE) OPTIMIZED_FLAGS REGPARAM=\"__attribute__((regparm(3)))\" SAHF_SETO_PROFITABLE UNALIGNED_PROFITABLE";
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
@@ -3057,6 +3058,7 @@
 				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-nfosmesa";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
+				CPU_TYPE_arm64 = CPU_arm;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CPU_TYPE_x86_64 = CPU_x86_64;
@@ -3097,7 +3099,7 @@
 					"$(SOURCE_DIR)/gui-sdl",
 					"$(SOURCE_DIR)/Unix",
 				);
-				VALID_ARCHS = "ppc i386 x86_64";
+				VALID_ARCHS = "ppc i386 x86_64 arm64";
 			};
 			name = Release;
 		};
@@ -3275,6 +3277,7 @@
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
+				COMPILE_DEFS_arm64 = "CPU_arm $(COMPILE_DEFS_BASE) ARM_ASSEMBLY ARMV6_ASSEMBLY";
 				COMPILE_DEFS_i386 = "CPU_i386 X86_ASSEMBLY $(COMPILE_DEFS_BASE) OPTIMIZED_FLAGS REGPARAM=\"__attribute__((regparm(3)))\" SAHF_SETO_PROFITABLE UNALIGNED_PROFITABLE";
 				COMPILE_DEFS_ppc = "CPU_powerpc $(COMPILE_DEFS_BASE)";
 				COMPILE_DEFS_x86_64 = "CPU_x86_64 X86_64_ASSEMBLY OPTIMIZED_FLAGS UNALIGNED_PROFITABLE $(COMPILE_DEFS_BASE)";
@@ -3282,6 +3285,7 @@
 				CONFIGURE_OPTIONS_BASE = "--with-classicconfig --enable-ctrlkey=ctrl --enable-bpf-ethernet --enable-full-debug --enable-fullhistory --enable-nfosmesa";
 				CONFIGURE_OPTIONS_TARGET = "";
 				COPY_PHASE_STRIP = NO;
+				CPU_TYPE_arm64 = CPU_arm;
 				CPU_TYPE_i386 = CPU_i386;
 				CPU_TYPE_ppc = CPU_powerpc;
 				CPU_TYPE_x86_64 = CPU_x86_64;
@@ -3324,7 +3328,7 @@
 					"$(SOURCE_DIR)/gui-sdl",
 					"$(SOURCE_DIR)/Unix",
 				);
-				VALID_ARCHS = "ppc i386 x86_64";
+				VALID_ARCHS = "ppc i386 x86_64 arm64";
 			};
 			name = Debug;
 		};
@@ -3495,7 +3499,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = "i386 x86_64 arm64";
 			};
 			name = Debug;
 		};
@@ -3518,7 +3522,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64";
+				VALID_ARCHS = "i386 x86_64 arm64";
 			};
 			name = Release;
 		};
