@@ -9,4 +9,8 @@
 #include "cpufunctbl_i386.cpp"
 #endif
 
+#ifdef CPU_arm
+#include "cpufunctbl_arm64.cpp"
+#endif
+
 #endif
