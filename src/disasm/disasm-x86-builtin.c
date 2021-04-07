@@ -35,6 +35,7 @@
 #include "sysdeps.h"
 #include "disasm-glue.h"
 
+#ifdef HAVE_DISASM_X86 /* rest of file */
 #ifdef DISASM_USE_BUILTIN /* rest of file */
 
 #include <setjmp.h>
@@ -17912,3 +17913,4 @@ void x86_disassemble_exit(disassemble_info **pinfo)
 extern int i_dont_care_that_ISOC_doesnt_like_empty_sourcefiles;
 
 #endif /* DISASM_USE_BUILTIN */
+#endif /* HAVE_DISASM_X86 */
