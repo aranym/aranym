@@ -109,12 +109,17 @@ fi
 cd "$DERIVED_FILES_DIR"
 echo "" > "config_tmp.h"
 for ARCH in $ARCHS ; do
+  if [ "x$ARCH" = "xarm64" ]; then
+    HOSTARCH=arm
+  else
+    HOSTARCH=$ARCH
+  fi
   CPU_TYPE=$(eval echo $(echo \$CPU_TYPE_$ARCH))
   COMPILE_DEFS=$(eval echo $(echo \$COMPILE_DEFS_$ARCH))
   echo ; echo "Running configure for architecture $ARCH / $CPU_TYPE"
   echo "Current COMPILE_DEFS=$COMPILE_DEFS"
 
-  "$SOURCE_DIR/../configure" $CONFIGURE_OPTIONS --disable-dependency-tracking --disable-maintainer-mode --host=$ARCH-apple-$OSTYPE || exit 1
+  "$SOURCE_DIR/../configure" $CONFIGURE_OPTIONS --disable-dependency-tracking --disable-maintainer-mode --host=$HOSTARCH-apple-$OSTYPE || exit 1
 
   if [ "$ARCH" = "ppc" -a "$SDK_NAME" = "macosx10.3.9" ]; then
     # 10.3.9 compatibility:
