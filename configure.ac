@@ -1253,7 +1253,7 @@ for am in $ADDRESSING_TEST_ORDER; do
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
     fi
-    if test "$OS_TYPE" = "darwin" && ( $HAVE_I386 || $HAVE_X86_64 ); then
+    if test "$OS_TYPE" = "darwin" && ( $HAVE_I386 || $HAVE_X86_64 || $HAVE_ARM ); then
       ADDRESSING_MODE="fixed (0x51000000)"
       DEFINES="$DEFINES -DFIXED_ADDRESSING -DFMEMORY=0x51000000"
       break
@@ -1409,6 +1409,10 @@ elif test "$GCC" = yes && $HAVE_ARM; then
                 *-androideabi)
                         ASM_OPTIMIZATIONS="ARM/V6 architecture w optimized flags"
                         DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
+                        ;;
+                *darwin*)
+                        ASM_OPTIMIZATIONS="Apple Silicon $host_os"
+                        DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY"
                         ;;
                 *)
                         ASM_OPTIMIZATIONS="ARM/generic w optimized flags"
