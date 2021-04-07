@@ -3274,7 +3274,7 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_arm64 = "CPU_arm $(COMPILE_DEFS_BASE) ARM_ASSEMBLY ARMV6_ASSEMBLY";
@@ -3499,7 +3499,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64 arm64";
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Debug;
 		};
@@ -3522,7 +3522,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64 arm64";
+				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
 		};
