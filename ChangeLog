@@ -1,3 +1,16 @@
+2021/04/10
+Fixing audio crackles and crash due to SDL2 usage.
+
+
+2021/03/20
+Introducing MacAranym-Latest.xcodeproj targeting only recent macOS versions
+(>10.15 and 64 bit only) based on SDL2 only
+
+
+2021/03/20
+Fixing keyboard layout issues for macOS builds using SDL2 framework
+
+
 2021/03/06
 Add support for 1MB EmuTOS images
 
