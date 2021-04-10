@@ -34,14 +34,14 @@ extern "C" {
 	static void UpdateAudio(void *unused, Uint8 *stream, int len) {
 		UNUSED(unused);
 
+		/* SDL 2.0 will require the application to clear the buffer */
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		memset(stream, 0, len);
+#endif
 		if (!host) {
 			return;
 		}
 
-		/* SDL 1.3 will require the application to clear the buffer */
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-		memset(stream, 0, len);
-#endif
 
 		for (int i=0; i<MAX_AUDIO_CALLBACKS; i++) {
 			if (host->audio.callbacks[i]) {
