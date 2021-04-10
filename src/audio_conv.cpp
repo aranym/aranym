@@ -154,19 +154,16 @@ void AudioConv::doConversion(Uint8 *source, int *src_len, Uint8 *dest, int *dst_
 		neededBufSize = (neededBufSize * srcRate) / dstRate;
 	}
 
-	if (tmpBufLen<neededBufSize) {
-		tmpBuf = (Uint8 *) realloc(tmpBuf, neededBufSize);
-		tmpBufLen = neededBufSize;
-		D(bug("audioconv: realloc tmpbuf, len: %d", neededBufSize));
-	}
-
 	/* First convert according to freq rates in a temp buffer */
 	int dstConvertedLen = 0;
 
 	int tmpLen = (int) (*dst_len / cvt.len_ratio);
 	neededBufSize = tmpLen * cvt.len_mult;
-	if (neededBufSize>tmpBufLen) {
-		neededBufSize = tmpBufLen;
+
+	if (tmpBufLen<neededBufSize) {
+		tmpBuf = (Uint8 *) realloc(tmpBuf, neededBufSize);
+		tmpBufLen = neededBufSize;
+		D(bug("audioconv: realloc tmpbuf, len: %d", neededBufSize));
 	}
 
 	switch(cvt.src_format & 0xff) {
