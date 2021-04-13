@@ -76,7 +76,6 @@
 		17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1515AA07FD00CAEA47 /* ethernet_macosx.cpp */; };
 		17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1715AA07FD00CAEA47 /* fd_trans.c */; };
 		17473D2F15AA0A2700CAEA47 /* bpf_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 17473D1415AA07FD00CAEA47 /* bpf_helper.c */; };
-		17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -427,12 +426,6 @@
 		8C54C7E220B45A8B007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
 		8C54C7E320B45AAC007744DD /* disasm-x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7DB20B459A0007744DD /* disasm-x86.cpp */; };
 		8C54C7E420B45AAC007744DD /* disasm-x86-builtin.c in Sources */ = {isa = PBXBuildFile; fileRef = 8C54C7D920B4597B007744DD /* disasm-x86-builtin.c */; };
-		8C5BB711205DBC76000B8CFC /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
-		8C5BB712205DBC76000B8CFC /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
-		8C5BB713205DBC76000B8CFC /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
-		8C5BB714205DBC76000B8CFC /* logo.bmp in Resources */ = {isa = PBXBuildFile; fileRef = B449DA000D2A9212005F0CC6 /* logo.bmp */; };
-		8C5BB715205DBC76000B8CFC /* aranym.icns in Resources */ = {isa = PBXBuildFile; fileRef = 1736B0FD0C70ED5900C56FAF /* aranym.icns */; };
-		8C5BB716205DBC76000B8CFC /* aranym.nib in Resources */ = {isa = PBXBuildFile; fileRef = B428FAF50C7BA7100039CA66 /* aranym.nib */; };
 		8C5BB71B205DBCFD000B8CFC /* nf_hostexec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB71A205DBCFD000B8CFC /* nf_hostexec.cpp */; };
 		8C5BB71C205DBCFD000B8CFC /* nf_hostexec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB71A205DBCFD000B8CFC /* nf_hostexec.cpp */; };
 		8C5BB71D205DBCFD000B8CFC /* nf_hostexec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB71A205DBCFD000B8CFC /* nf_hostexec.cpp */; };
@@ -441,16 +434,6 @@
 		8C5BB722205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8C5BB724205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
-		8CB53CBD203F1EAD0005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		8CB53CC0203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8CB53CC1203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
-		8CB53CC2203F24F80005E5AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		8CB53CC3203F24F80005E5AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
-		8CB53CC5203F24F80005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		8CB53CC6203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		8CB53CC7203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
-		8CB53CC8203F24F80005E5AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
-		8CB53CC9203F24F80005E5AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
 		8CF5F79C23BC539700B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
 		8CF5F79D23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
 		8CF5F79E23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */; };
@@ -677,20 +660,6 @@
 			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
 			remoteInfo = bpf_helper;
 		};
-		8CB53CD0203F260F0005E5AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
-			remoteInfo = bpf_helper;
-		};
-		8CB53CD4203F261F0005E5AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 17473D2415AA0A1100CAEA47;
-			remoteInfo = bpf_helper;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -734,7 +703,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				17473D3715AA0A9600CAEA47 /* bpf_helper in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -811,16 +779,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				17486919260668C400AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */,
-			);
-			name = "Copy Frameworks into .app bundle";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B439AC950C5B2FD00046EFCA /* Copy Frameworks into .app bundle */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
 			);
 			name = "Copy Frameworks into .app bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1165,8 +1123,6 @@
 		8C5BB71F205DBD31000B8CFC /* nf_hostexec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nf_hostexec.h; sourceTree = "<group>"; };
 		8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nf_scsidrv.cpp; sourceTree = "<group>"; };
 		8C5BB725205DBE5B000B8CFC /* nf_scsidrv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nf_scsidrv.h; sourceTree = "<group>"; };
-		8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym JIT SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB53CBC203F1EAD0005E5AD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_calls.cpp; sourceTree = "<group>"; };
 		8CF5F79723BC52D100B83889 /* nfosmesa_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfosmesa_impl.h; sourceTree = "<group>"; };
@@ -1259,30 +1215,6 @@
 				17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */,
 				17BCD7DF0B20F64F00432CE1 /* OpenGL.framework in Frameworks */,
 				B4640D4D0C7C2E0F0000572B /* Security.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8CB53C71203F0D530005E5AD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8CB53CBD203F1EAD0005E5AD /* SDL2.framework in Frameworks */,
-				8CB53CC0203F24F80005E5AD /* Cocoa.framework in Frameworks */,
-				8CB53CC1203F24F80005E5AD /* IOKit.framework in Frameworks */,
-				8CB53CC2203F24F80005E5AD /* OpenGL.framework in Frameworks */,
-				8CB53CC3203F24F80005E5AD /* Security.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8CB53C86203F0D670005E5AD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8CB53CC5203F24F80005E5AD /* SDL2.framework in Frameworks */,
-				8CB53CC6203F24F80005E5AD /* Cocoa.framework in Frameworks */,
-				8CB53CC7203F24F80005E5AD /* IOKit.framework in Frameworks */,
-				8CB53CC8203F24F80005E5AD /* OpenGL.framework in Frameworks */,
-				8CB53CC9203F24F80005E5AD /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1833,8 +1765,6 @@
 				B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */,
 				1778A4E21555A8A70005B336 /* MacAranym MMU MPFR.app */,
 				17473D2515AA0A1100CAEA47 /* bpf_helper */,
-				8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */,
-				8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1963,57 +1893,6 @@
 			productReference = 17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8CB53C73203F0D530005E5AD /* Unused MacAranym SDL2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym SDL2" */;
-			buildPhases = (
-				1778A4611555A8A70005B336 /* Script: Run configure */,
-				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
-				8D11072C0486CEB800E47090 /* Sources */,
-				8CB53C71203F0D530005E5AD /* Frameworks */,
-				8CB53C72203F0D530005E5AD /* Resources */,
-				B439AC950C5B2FD00046EFCA /* Copy Frameworks into .app bundle */,
-				17473D3515AA0A7500CAEA47 /* Copy Executables */,
-				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
-				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8CB53CD1203F260F0005E5AD /* PBXTargetDependency */,
-			);
-			name = "Unused MacAranym SDL2";
-			productInstallPath = "$(HOME)/Applications";
-			productName = "MacAranym SDL2";
-			productReference = 8CB53C74203F0D530005E5AD /* Unused MacAranym SDL2.app */;
-			productType = "com.apple.product-type.application";
-		};
-		8CB53C88203F0D670005E5AD /* Unused MacAranym JIT SDL2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym JIT SDL2" */;
-			buildPhases = (
-				1778A4611555A8A70005B336 /* Script: Run configure */,
-				1778A4621555A8A70005B336 /* Script: Build CPU source files */,
-				B472BB871768FBBA00611354 /* Build Mach Support files */,
-				B439AC320C5B2FD00046EFC9 /* Sources */,
-				8CB53C86203F0D670005E5AD /* Frameworks */,
-				8CB53C87203F0D670005E5AD /* Resources */,
-				B439AC950C5B2FD00046EFCA /* Copy Frameworks into .app bundle */,
-				17473D3515AA0A7500CAEA47 /* Copy Executables */,
-				1705391C1555DAEF006A6DDE /* Script: Fixup dynamic library loading */,
-				1778A4DD1555A8A70005B336 /* Script: Set correct ARAnyM version */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8CB53CD5203F261F0005E5AD /* PBXTargetDependency */,
-			);
-			name = "Unused MacAranym JIT SDL2";
-			productInstallPath = "$(HOME)/Applications";
-			productName = "MacAranym JIT SDL2";
-			productReference = 8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */;
-			productType = "com.apple.product-type.application";
-		};
 		8D1107260486CEB800E47090 /* MacAranym */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "MacAranym" */;
@@ -2072,14 +1951,6 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0920;
-				TargetAttributes = {
-					8CB53C73203F0D530005E5AD = {
-						CreatedOnToolsVersion = 9.2;
-					};
-					8CB53C88203F0D670005E5AD = {
-						CreatedOnToolsVersion = 9.2;
-					};
-				};
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym-Latest" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -2101,8 +1972,6 @@
 				B439AC2F0C5B2FD00046EFC9 /* MacAranym JIT */,
 				1778A4601555A8A70005B336 /* MacAranym MMU+MPFR */,
 				17AAB2A90B20A8150016FB8D /* Packaging */,
-				8CB53C73203F0D530005E5AD /* Unused MacAranym SDL2 */,
-				8CB53C88203F0D670005E5AD /* Unused MacAranym JIT SDL2 */,
 			);
 		};
 /* End PBXProject section */
@@ -2125,26 +1994,6 @@
 				B449DA030D2A9234005F0CC6 /* logo.bmp in Resources */,
 				1736B10C0C70ED5900C56FAF /* aranym.icns in Resources */,
 				B428FAF80C7BA7100039CA66 /* aranym.nib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8CB53C72203F0D530005E5AD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8C5BB711205DBC76000B8CFC /* logo.bmp in Resources */,
-				8C5BB712205DBC76000B8CFC /* aranym.icns in Resources */,
-				8C5BB713205DBC76000B8CFC /* aranym.nib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8CB53C87203F0D670005E5AD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8C5BB714205DBC76000B8CFC /* logo.bmp in Resources */,
-				8C5BB715205DBC76000B8CFC /* aranym.icns in Resources */,
-				8C5BB716205DBC76000B8CFC /* aranym.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2178,7 +2027,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_FOLDER_PATH)/$(EXECUTABLE_NAME)",
 			);
 			name = "Script: Fixup dynamic library loading";
 			outputPaths = (
@@ -2198,9 +2046,6 @@
 			);
 			name = "Script: Run configure";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Makefile",
-				"$(DERIVED_FILE_DIR)/config.h",
-				"$(DERIVED_FILE_DIR)/configure_options",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2214,17 +2059,9 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SOURCE_DIR)/uae_cpu/build68k.c",
-				"$(SOURCE_DIR)/uae_cpu/table68k",
-				"$(DERIVED_FILE_DIR)/config.h",
 			);
 			name = "Script: Build CPU source files";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/cputbl.h",
-				"$(DERIVED_FILE_DIR)/cpustbl.cpp",
-				"$(DERIVED_FILE_DIR)/cpuemu.cpp",
-				"$(DERIVED_FILE_DIR)/cpufunctbl.cpp",
-				"$(DERIVED_FILE_DIR)/cpudefs.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2237,11 +2074,9 @@
 			files = (
 			);
 			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set correct ARAnyM version";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/aranym_version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -2881,16 +2716,6 @@
 			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
 			targetProxy = 17473D3C15AA0FFA00CAEA47 /* PBXContainerItemProxy */;
 		};
-		8CB53CD1203F260F0005E5AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
-			targetProxy = 8CB53CD0203F260F0005E5AD /* PBXContainerItemProxy */;
-		};
-		8CB53CD5203F261F0005E5AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 17473D2415AA0A1100CAEA47 /* bpf_helper */;
-			targetProxy = 8CB53CD4203F261F0005E5AD /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -3219,96 +3044,6 @@
 			};
 			name = Debug;
 		};
-		8CB53C82203F0D540005E5AD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					SDL2.framework/Headers,
-					MesaGL/include,
-					/Library/Frameworks/SDL2.framework/Headers,
-					/usr/X11R6/include,
-					external/include,
-				);
-				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		8CB53C83203F0D540005E5AD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
-				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					SDL2.framework/Headers,
-					MesaGL/include,
-					/Library/Frameworks/SDL2.framework/Headers,
-					/usr/X11R6/include,
-					external/include,
-				);
-				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		8CB53C98203F0D680005E5AD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
-				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					SDL2.framework/Headers,
-					MesaGL/include,
-					/Library/Frameworks/SDL2.framework/Headers,
-					/usr/X11R6/include,
-					external/include,
-				);
-				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(inherited)",
-					"-pagezero_size",
-					0x2000,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64";
-			};
-			name = Debug;
-		};
-		8CB53C99203F0D680005E5AD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
-				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
-				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
-				HEADER_SEARCH_PATHS = (
-					SDL2.framework/Headers,
-					MesaGL/include,
-					/Library/Frameworks/SDL2.framework/Headers,
-					/usr/X11R6/include,
-					external/include,
-				);
-				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"$(inherited)",
-					"-pagezero_size",
-					0x2000,
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				VALID_ARCHS = "i386 x86_64";
-			};
-			name = Release;
-		};
 		B439AC980C5B2FD00046EFC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3390,24 +3125,6 @@
 			buildConfigurations = (
 				17BCD7E60B20F64F00432CE1 /* Debug */,
 				17BCD7E70B20F64F00432CE1 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8CB53C84203F0D540005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym SDL2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8CB53C82203F0D540005E5AD /* Debug */,
-				8CB53C83203F0D540005E5AD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8CB53C97203F0D680005E5AD /* Build configuration list for PBXNativeTarget "Unused MacAranym JIT SDL2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8CB53C98203F0D680005E5AD /* Debug */,
-				8CB53C99203F0D680005E5AD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
