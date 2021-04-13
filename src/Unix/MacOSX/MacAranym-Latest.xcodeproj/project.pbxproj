@@ -27,7 +27,6 @@
 
 /* Begin PBXBuildFile section */
 		002F3A0009D0884600EBEB89 /* SDL2.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		002F3A0009D0884600EBEB8A /* SDL2_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		170539151555D457006A6DDE /* libgmp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; };
 		170539161555D457006A6DDE /* libmpfr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 170539141555D457006A6DDE /* libmpfr.dylib */; };
 		1705391A1555D5DC006A6DDE /* libgmp.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539131555D457006A6DDE /* libgmp.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -83,13 +82,9 @@
 		17473D3F15AA104900CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17473D4115AA107800CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		17473D4415AA112F00CAEA47 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		17486914260668B500AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17486915260668B500AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		17486916260668BD00AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17486917260668BD00AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		17486918260668C400AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		17486919260668C400AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1748691A260668CA00AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1748691B260668CA00AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		175822820A6554CE00EEE78F /* parameters_MacOSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E420A652B51009733EB /* parameters_MacOSX.cpp */; };
 		1758228C0A6555CC00EEE78F /* main_unix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798E7C0A652B52009733EB /* main_unix.cpp */; };
@@ -100,13 +95,9 @@
 		17590BC40CA458440089CF9F /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
 		17590BC50CA458470089CF9F /* nfjpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D850A652B51009733EB /* nfjpeg.cpp */; };
 		17648A1A154F377A005C21BC /* fpu_uae.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DD00A652B51009733EB /* fpu_uae.cpp */; };
-		176E9D5E26066AFB00DB1CC9 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		176E9D5F26066AFB00DB1CC9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		176E9D6026066B0800DB1CC9 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		176E9D6126066B0800DB1CC9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		176E9D6226066B0D00DB1CC9 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		176E9D6326066B0D00DB1CC9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		176E9D6426066B1100DB1CC9 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		176E9D6526066B1100DB1CC9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
 		1778A4681555A8A70005B336 /* ethernet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798D6F0A652B51009733EB /* ethernet.cpp */; };
 		1778A4691555A8A70005B336 /* ethernet_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4A9E9C10C5B33AC00C156C3 /* ethernet_darwin.cpp */; };
@@ -456,18 +447,15 @@
 		8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8C5BB724205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C5BB720205DBE44000B8CFC /* nf_scsidrv.cpp */; };
 		8CB53CBD203F1EAD0005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
-		8CB53CBF203F1EBB0005E5AD /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		8CB53CC0203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8CB53CC1203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		8CB53CC2203F24F80005E5AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
 		8CB53CC3203F24F80005E5AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
-		8CB53CC4203F24F80005E5AD /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		8CB53CC5203F24F80005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
 		8CB53CC6203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8CB53CC7203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
 		8CB53CC8203F24F80005E5AD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
 		8CB53CC9203F24F80005E5AD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4640D4B0C7C2E0F0000572B /* Security.framework */; };
-		8CB53CCA203F24F80005E5AD /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */; };
 		8CB53CCB203F24F80005E5AD /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB53CBC203F1EAD0005E5AD /* SDL2.framework */; };
 		8CB53CCC203F24F80005E5AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		8CB53CCD203F24F80005E5AD /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
@@ -729,7 +717,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17486914260668B500AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */,
 				17486915260668B500AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
@@ -800,7 +787,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1748691A260668CA00AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */,
 				1748691B260668CA00AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
@@ -812,7 +798,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17486916260668BD00AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */,
 				17486917260668BD00AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
@@ -843,7 +828,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				17486918260668C400AFC839 /* SDL2_image.framework in Copy Frameworks into .app bundle */,
 				17486919260668C400AFC839 /* SDL2.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
@@ -855,7 +839,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				002F3A0009D0884600EBEB8A /* SDL2_image.framework in Copy Frameworks into .app bundle */,
 				002F3A0009D0884600EBEB89 /* SDL2.framework in Copy Frameworks into .app bundle */,
 			);
 			name = "Copy Frameworks into .app bundle";
@@ -1205,7 +1188,6 @@
 		8CB53C89203F0D670005E5AD /* Unused MacAranym JIT SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym JIT SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB53C9E203F0D780005E5AD /* Unused MacAranym MMU SDL2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Unused MacAranym MMU SDL2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CB53CBC203F1EAD0005E5AD /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
-		8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = "<group>"; };
 		8CF5F79623BC52D100B83889 /* nfosmesa_calls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_calls.cpp; sourceTree = "<group>"; };
 		8CF5F79723BC52D100B83889 /* nfosmesa_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfosmesa_impl.h; sourceTree = "<group>"; };
 		8CF5F79823BC52D100B83889 /* nfosmesa_init.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nfosmesa_init.cpp; sourceTree = "<group>"; };
@@ -1278,7 +1260,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				176E9D6426066B1100DB1CC9 /* SDL2_image.framework in Frameworks */,
 				176E9D6526066B1100DB1CC9 /* SDL2.framework in Frameworks */,
 				1778A4D21555A8A70005B336 /* Cocoa.framework in Frameworks */,
 				1778A4D31555A8A70005B336 /* IOKit.framework in Frameworks */,
@@ -1293,7 +1274,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				176E9D6026066B0800DB1CC9 /* SDL2_image.framework in Frameworks */,
 				176E9D6126066B0800DB1CC9 /* SDL2.framework in Frameworks */,
 				17BCD7DD0B20F64F00432CE1 /* Cocoa.framework in Frameworks */,
 				17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */,
@@ -1306,7 +1286,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CB53CBF203F1EBB0005E5AD /* SDL2_image.framework in Frameworks */,
 				8CB53CBD203F1EAD0005E5AD /* SDL2.framework in Frameworks */,
 				8CB53CC0203F24F80005E5AD /* Cocoa.framework in Frameworks */,
 				8CB53CC1203F24F80005E5AD /* IOKit.framework in Frameworks */,
@@ -1319,7 +1298,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CB53CC4203F24F80005E5AD /* SDL2_image.framework in Frameworks */,
 				8CB53CC5203F24F80005E5AD /* SDL2.framework in Frameworks */,
 				8CB53CC6203F24F80005E5AD /* Cocoa.framework in Frameworks */,
 				8CB53CC7203F24F80005E5AD /* IOKit.framework in Frameworks */,
@@ -1332,7 +1310,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CB53CCA203F24F80005E5AD /* SDL2_image.framework in Frameworks */,
 				8CB53CCB203F24F80005E5AD /* SDL2.framework in Frameworks */,
 				8CB53CCC203F24F80005E5AD /* Cocoa.framework in Frameworks */,
 				8CB53CCD203F24F80005E5AD /* IOKit.framework in Frameworks */,
@@ -1345,7 +1322,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				176E9D5E26066AFB00DB1CC9 /* SDL2_image.framework in Frameworks */,
 				176E9D5F26066AFB00DB1CC9 /* SDL2.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				177990520A6538B5009733EB /* IOKit.framework in Frameworks */,
@@ -1358,7 +1334,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				176E9D6226066B0D00DB1CC9 /* SDL2_image.framework in Frameworks */,
 				176E9D6326066B0D00DB1CC9 /* SDL2.framework in Frameworks */,
 				B439AC8F0C5B2FD00046EFC9 /* Cocoa.framework in Frameworks */,
 				B439AC900C5B2FD00046EFC9 /* IOKit.framework in Frameworks */,
@@ -1428,13 +1403,6 @@
 				1765B6EF0C91C0BB00DD682B /* tun.kext */,
 			);
 			name = TunTap;
-			sourceTree = "<group>";
-		};
-		176E9D5D26066AFB00DB1CC9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		17798CD20A652B3B009733EB /* Aranym Sources */ = {
@@ -1916,7 +1884,6 @@
 				B449DA000D2A9212005F0CC6 /* logo.bmp */,
 				1743987C0B320B480011038E /* README_Xcode.rtf */,
 				17E78DBF15AA3E0B006C560E /* README_ethernet.rtf */,
-				176E9D5D26066AFB00DB1CC9 /* Frameworks */,
 			);
 			name = MacAranym;
 			sourceTree = "<group>";
@@ -1925,7 +1892,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks & Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				8CB53CBE203F1EBA0005E5AD /* SDL2_image.framework */,
 				8CB53CBC203F1EAD0005E5AD /* SDL2.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				17E05B5715599D4A00201A9C /* MPFR */,
@@ -3077,7 +3043,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					external/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
@@ -3305,7 +3270,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					external/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks/";
@@ -3340,10 +3304,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
@@ -3361,10 +3323,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
@@ -3383,10 +3343,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
@@ -3411,10 +3369,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
@@ -3438,10 +3394,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
@@ -3463,10 +3417,8 @@
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				HEADER_SEARCH_PATHS = (
 					SDL2.framework/Headers,
-					SDL2_image.framework/Headers,
 					MesaGL/include,
 					/Library/Frameworks/SDL2.framework/Headers,
-					/Library/Frameworks/SDL2_image.framework/Headers,
 					/usr/X11R6/include,
 					external/include,
 				);
