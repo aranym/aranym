@@ -9,6 +9,8 @@ else
     echo "DEVELOPER_SDK_DIR is $DEVELOPER_SDK_DIR"
 fi
 
+# Ensure DERIVED_FILES_DIR exists to avoid initial error messages
+mkdir -p "$DERIVED_FILES_DIR"
 
 #################### CONFIGURE SYSTEM ################
 # Check if configure script has to be run
