@@ -214,6 +214,11 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %x of size %d",
 			which, ethX, name_ptr, name_maxlen));
 
+	if (ethX < 0 || ethX >= MAX_ETH)
+	{
+		panicbug("Ethernet: handler for %d not found", ethX);
+		return 0;
+	}
 	if (! ValidAddr(name_ptr, true, name_maxlen))
 		BUS_ERROR(name_ptr);
 
