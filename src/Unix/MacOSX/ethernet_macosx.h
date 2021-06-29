@@ -30,7 +30,6 @@
 #include "ethernet.h"
 
 class BPFEthernetHandler : public ETHERNETDriver::Handler {
-	bool debug;
 	int fd;
 	int buf_len;
 	struct bpf_hdr* bpf_buf;

@@ -1067,6 +1067,7 @@ static void presave_arafs()
 // struct Config_Tag ethernet_conf[]={
 #define ETH_CONFIG(Eth)	struct Config_Tag Eth ## _conf[] = {	\
 	{ "Type", String_Tag, &Eth->type, sizeof(Eth->type), 0}, \
+	{ "IntLevel", Int_Tag, &Eth->intLevel, 0, 0}, \
 	{ "Tunnel", String_Tag, &Eth->tunnel, sizeof(Eth->tunnel), 0}, \
 	{ "HostIP", String_Tag, &Eth->ip_host, sizeof(Eth->ip_host), 0}, \
 	{ "AtariIP", String_Tag, &Eth->ip_atari, sizeof(Eth->ip_atari), 0}, \
@@ -1089,6 +1090,7 @@ ETH_CONFIG(eth3);
 static void preset_ethernet()
 {
 	// ETH[0] with some default values
+	ETH(0, intLevel) = 3;
 	safe_strncpy(ETH(0, type), XIF_TYPE, sizeof(ETH(0, type)));
 	safe_strncpy(ETH(0, tunnel), XIF_TUNNEL, sizeof(ETH(0, tunnel)));
 	safe_strncpy(ETH(0, ip_host), XIF_HOST_IP, sizeof(ETH(0, ip_host)));
@@ -1109,6 +1111,8 @@ static void preset_ethernet()
 
 static void postload_ethernet()
 {
+	if (ETH(0, intLevel) != 3 && ETH(0, intLevel) != 4 && ETH(0, intLevel) != 5)
+		ETH(0, intLevel) = 3;
 }
 
 static void presave_ethernet()

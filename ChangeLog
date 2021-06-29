@@ -1,3 +1,7 @@
+2021/05/17
+Enhance ethernet debugging and move it to common code
+
+
 2021/04/10
 Fixing audio crackles and crash due to SDL2 usage.
 

@@ -26,6 +26,7 @@
 
 #include "nf_base.h"
 #include "parameters.h"		// defines MAX_ETH
+#include <pthread.h>
 
 #define MAX_PACKET_SIZE	9000
 
@@ -37,26 +38,32 @@ public:
 		int ethX;
 		ssize_t packet_length;
 		uint8 packet[MAX_PACKET_SIZE+2];
-		SDL_Thread *handlingThread;	// Packet reception thread
-		SDL_sem *intAck;			// Interrupt acknowledge semaphore
+		pthread_t handlingThread;	// Packet reception thread
+		pthread_cond_t intAck;			// Interrupt acknowledge semaphore
+		pthread_mutex_t intLock;
+		bool debug;
 
 		Handler(int eth_idx) {
 			ethX = eth_idx;
 			packet_length = 0;
-			handlingThread = NULL;
-			intAck = NULL;
+			handlingThread = 0;
+			pthread_cond_init(&intAck, NULL);
+			pthread_mutex_init(&intLock, NULL);
+			debug = false;
 		}
-
+		virtual ~Handler() {
+			pthread_mutex_destroy(&intLock);
+			pthread_cond_destroy(&intAck);
+		}
 		virtual bool open() = 0;
 		virtual void close() = 0;
 		virtual int recv(uint8 *, int) = 0;
 		virtual int send(const uint8 *, int) = 0;
-		virtual ~Handler() { }
 	};
 
 private:
 	Handler *handlers[MAX_ETH];
-	Handler *getHandler(int ethX);
+	Handler *getHandler(int ethX, bool msg);
 	static int pending_interrupts;
 
 	int32 readPacketLength(int ethX);
@@ -68,12 +75,13 @@ private:
 
 	// emulators handling the TAP device
 	bool startThread(int ethX);
-	void stopThread(int ethX);
-	static int receiveFunc(void *arg);
+	void stopThread(Handler *handler);
+	static void *receiveFunc(void *arg);
 
 protected:
 	typedef enum {HOST_IP, ATARI_IP, NETMASK} GET_PAR;
 	int get_params(GET_PAR which);
+	static void dump_ether_packet(const uint8_t *buf, int len);
 
 public:
 	ETHERNETDriver();
@@ -84,8 +92,4 @@ public:
 	int32 dispatch(uint32 fncode);
 };
 
-#endif // _ETHERNET_H
-
-/*
-vim:ts=4:sw=4:
-*/
+#endif /* _ETHERNET_H */

@@ -151,6 +151,7 @@ typedef struct {
 
 // Ethernet options
 typedef struct {
+  int intLevel;
   char type[32];
   char tunnel[16];
   char ip_host[16];

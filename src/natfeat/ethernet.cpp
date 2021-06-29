@@ -55,15 +55,6 @@
 #endif
 
 
-// Ethernet runs at interrupt level 3 by default but can be reconfigured
-#if 1
-# define INTLEVEL	3
-# define TRIGGER_INTERRUPT	TriggerInt3()
-#else
-# define INTLEVEL	5
-# define TRIGGER_INTERRUPT	TriggerInt5()
-#endif
-
 /*
  * Configuration zone ends
  **************************/
@@ -83,14 +74,14 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 		case XIF_INTLEVEL:	// what interrupt level is used?
 			D(bug("Ethernet: getINTlevel"));
-			ret = INTLEVEL;
+			ret = bx_options.ethernet[0].intLevel;
 			break;
 
 		case XIF_GET_MAC:	// what is the MAC address?
 			/* store MAC address to provided buffer */
 			{
 				int ethX = getParameter(0);
-				Handler *handler = getHandler(ethX);
+				Handler *handler = getHandler(ethX, false);
 				if (handler == NULL) {
 					ret = 0; // return FALSE if ethX not defined
 					break;
@@ -98,7 +89,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 
 				memptr buf_ptr = getParameter(1);	// destination buffer
 				uint32 buf_size = getParameter(2);	// buffer size
-				D(bug("Ethernet: getMAC(%d, %x, %d)", ethX, buf_ptr, (int)buf_size));
+				D(bug("ETH%d: getMAC(%x, %d)", ethX, buf_ptr, (int)buf_size));
 
 				// default MAC Address is just made up
 				uint8 mac_addr[6] = {'\0','A','E','T','H', uint8('0'+ethX) };
@@ -118,7 +109,7 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 					}
 				}
 				if (!format_OK) {
-					panicbug("MAC Address of [ETH%d] in incorrect format", ethX);
+					panicbug("ETH%d: MAC Address of in incorrect format", ethX);
 
 				}
 				Host2Atari_memcpy(buf_ptr, mac_addr, MIN(buf_size, sizeof(mac_addr)));
@@ -149,25 +140,24 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 						default: panicbug("Ethernet: wrong XIF_IRQ(%d)", dev_bit); break;
 					}
 
-					Handler *handler = getHandler(ethX);
+					Handler *handler = getHandler(ethX, true);
 					if (handler == NULL) {
-						panicbug("Ethernet: handler for %d not found", ethX);
 						return 0;
 					}
-					D(bug("Ethernet: ETH%d IRQ acknowledged", ethX));
+					D(bug("ETH%d: IRQ acknowledged", ethX));
 					// Acknowledge interrupt to reception thread
-					SDL_SemPost(handler->intAck);
+					pthread_cond_signal(&handler->intAck);
 					ret = 0;
 				}
 			}
 			break;
 
 		case XIF_START:
-			if (startThread( getParameter(0) /* ethX */) == false)
+			if (startThread(getParameter(0) /* ethX */) == false)
 				ret = TOS_EUNDEV;
 			break;
 		case XIF_STOP:
-			stopThread( getParameter(0) /* ethX */);
+			stopThread(getHandler(getParameter(0) /* ethX */, false));
 			break;
 		case XIF_READLENGTH:
 			ret = readPacketLength( getParameter(0) /* ethX */);
@@ -184,19 +174,16 @@ int32 ETHERNETDriver::dispatch(uint32 fncode)
 			break;
 
 		case XIF_GET_IPHOST:
-			D(bug("XIF_GET_IPHOST"));
 			ret = get_params(HOST_IP);
 			break;
 		case XIF_GET_IPATARI:
-			D(bug("XIF_GET_IPATARI"));
 			ret = get_params(ATARI_IP);
 			break;
 		case XIF_GET_NETMASK:
-			D(bug("XIF_GET_NETMASK"));
 			ret = get_params(NETMASK);
 			break;
 		default:
-			D(bug("XIF: unsupported function %d", fncode));
+			D(bug("Ethernet: unsupported function %d", fncode));
 			ret = TOS_ENOSYS;
 			break;
 	}
@@ -211,8 +198,8 @@ int ETHERNETDriver::get_params(GET_PAR which)
 	uint32 name_maxlen = getParameter(2);
 	const char *text = NULL;
 
-	D(bug("Ethernet: getPAR(%d) for eth%d to buffer at %x of size %d",
-			which, ethX, name_ptr, name_maxlen));
+	D(bug("ETH%d: getPAR(%d) to buffer at %x of size %d",
+			ethX, which, name_ptr, name_maxlen));
 
 	if (ethX < 0 || ethX >= MAX_ETH)
 	{
@@ -236,11 +223,9 @@ int ETHERNETDriver::get_params(GET_PAR which)
 
 int32 ETHERNETDriver::readPacketLength(int ethX)
 {
-	Handler *handler = getHandler(ethX);
-	if (handler == NULL) {
-		panicbug("Ethernet: handler for %d not found", ethX);
+	Handler *handler = getHandler(ethX, true);
+	if (handler == NULL)
 		return 0;
-	}
 	return handler->packet_length;
 }
 
@@ -250,40 +235,160 @@ int32 ETHERNETDriver::readPacketLength(int ethX)
 
 void ETHERNETDriver::readPacket(int ethX, memptr buffer, uint32 len)
 {
-	Handler *handler = getHandler(ethX);
-	if (handler == NULL) {
-		panicbug("Ethernet: handler for %d not found", ethX);
+	Handler *handler = getHandler(ethX, true);
+	if (handler == NULL)
 		return;
-	}
-	D(bug("Ethernet: ReadPacket dest %08x, len %x", buffer, len));
+	D(bug("ETH%d: ReadPacket dest %08x, len %x", ethX, buffer, len));
 	Host2Atari_memcpy(buffer, handler->packet, MIN(len, MAX_PACKET_SIZE));
 	if (len > MAX_PACKET_SIZE) {
-		panicbug("ETHERNETDriver::readPacket() - length %d > %d", len, MAX_PACKET_SIZE);
+		panicbug("ETH%d: readPacket() - length %d > %d", ethX, len, MAX_PACKET_SIZE);
 	}
+}
+
+
+/*
+ *  Debug output
+ */
+void ETHERNETDriver::dump_ether_packet(const uint8_t *buf, int len)
+{
+	int i;
+	int type = 0;
+	const char *proto;
+
+	/* ethernet header */	
+	if (len >= 14)
+	{
+		/* dest mac */
+		fprintf(stderr, "eth: dst %02x:%02x:%02x:%02x:%02x:%02x ",
+			buf[0], buf[1], buf[2], buf[3], buf[4], buf[5]);
+		/* source mac */
+		fprintf(stderr, "src %02x:%02x:%02x:%02x:%02x:%02x ",
+			buf[6], buf[7], buf[8], buf[9], buf[10], buf[11]);
+		/* ether type */
+		type = (buf[12] << 8) | buf[13];
+		fprintf(stderr, "type %04x  ", type);
+		len -= 14;
+		buf += 14;
+	}
+
+	/* IP header */
+	if (len >= 20 && type == 0x800 && (buf[0] & 0xf0) == 0x40) /* IPv4 */
+	{
+		fprintf(stderr, "ip: ");
+		/* version/hd_len/tos */
+		fprintf(stderr, "hl %02x tos %02x ", buf[0], buf[1]);
+		/* length */
+		fprintf(stderr, "length %5d ", (buf[2] << 8) | buf[3]);
+		/* ident */
+		fprintf(stderr, "ident %5d ", (buf[4] << 8) | buf[5]);
+		/* fragment */
+		fprintf(stderr, "frag %04x ", (buf[6] << 8) | buf[7]);
+		/* ttl/protocol */
+		switch (buf[9])
+		{
+			case 1: proto = "ICMP"; break;
+			case 2: proto = "IGMP"; break;
+			case 3: proto = "GGP"; break;
+			case 4: proto = "IPinIP"; break;
+			case 5: proto = "ST"; break;
+			case 6: proto = "TCP"; break;
+			case 7: proto = "CBT"; break;
+			case 8: proto = "EGP"; break;
+			case 9: proto = "IGP"; break;
+			case 10: proto = "BBN"; break;
+			case 11: proto = "NVP"; break;
+			case 12: proto = "PUP"; break;
+			case 13: proto = "ARGUS"; break;
+			case 14: proto = "EMCON"; break;
+			case 15: proto = "XNET"; break;
+			case 16: proto = "CHAOS"; break;
+			case 17: proto = "UDP"; break;
+			case 18: proto = "MUX"; break;
+			case 21: proto = "PRM"; break;
+			case 31: proto = "DCCP"; break;
+			case 40: proto = "IL"; break;
+			case 41: proto = "IPv6"; break;
+			case 42: proto = "SDRP"; break;
+			case 43: proto = "IPv6-Route"; break;
+			case 44: proto = "IPv6-Frag"; break;
+			case 56: proto = "TLSP"; break;
+			case 92: proto = "MTP"; break;
+			case 97: proto = "ETHERIP"; break;
+			case 98: proto = "ENCAP"; break;
+			case 121: proto = "SMP"; break;
+			case 122: proto = "SM"; break;
+			default: proto = "unknown"; break;
+		}
+		fprintf(stderr, "ttl %02x proto %02x(%s) ", buf[8], buf[9], proto);
+		/* header checksum */
+		fprintf(stderr, "csum %04x ", (buf[10] << 8) | buf[11]);
+		/* source ip */
+		fprintf(stderr, "src %d.%d.%d.%d ", buf[12], buf[13], buf[14], buf[15]);
+		/* dest ip */
+		fprintf(stderr, "dst %d.%d.%d.%d  ", buf[16], buf[17], buf[18], buf[19]);
+		len -= 20;
+		buf += 20;
+	} else if (len >= 28 && (type == 0x0806 || type == 0x8035)) /* ARP/RARP */
+	{
+		if (type == 0x0806)
+			fprintf(stderr, "arp: ");
+		else
+			fprintf(stderr, "rarp: ");
+		/* hardware space */
+		fprintf(stderr, "hws %04x ", (buf[0] << 8) | buf[1]);
+		/* protocol space */
+		fprintf(stderr, "prs %04x ", (buf[2] << 8) | buf[3]);
+		/* hardware_len/protcol_len */
+		fprintf(stderr, "hwl %02x prl %02x ", buf[4], buf[5]);
+		/* opcode */
+		fprintf(stderr, "opcode %04x ", (buf[6] << 8) | buf[7]);
+		/* source mac */
+		fprintf(stderr, "src %02x:%02x:%02x:%02x:%02x:%02x ",
+			buf[8], buf[9], buf[10], buf[11], buf[12], buf[13]);
+		/* source ip */
+		fprintf(stderr, "%d.%d.%d.%d ", buf[14], buf[15], buf[16], buf[17]);
+		/* dest mac */
+		fprintf(stderr, "dst %02x:%02x:%02x:%02x:%02x:%02x ",
+			buf[18], buf[19], buf[20], buf[21], buf[22], buf[23]);
+		/* dest ip */
+		fprintf(stderr, "%d.%d.%d.%d ", buf[24], buf[25], buf[26], buf[27]);
+		len -= 28;
+		buf += 28;
+	}
+
+	fprintf(stderr, " data:");
+	/* payload data */
+	for (i = 0; i < len; i++)
+		fprintf(stderr, " %02x", buf[i]);
+	fprintf(stderr, "\n");
+	fflush(stderr);
 }
 
 
 /*
  *  ETHERNETDriver writePacket routine
  */
-
 void ETHERNETDriver::sendPacket(int ethX, memptr buffer, uint32 len)
 {
-	Handler *handler = getHandler(ethX);
-	if (handler == NULL) {
-		panicbug("Ethernet: handler for %d not found", ethX);
+	Handler *handler = getHandler(ethX, true);
+	if (handler == NULL)
 		return;
-	}
 	uint8 packetToWrite[MAX_PACKET_SIZE+2];
 
-	D(bug("Ethernet: SendPacket src %08x, len %x", buffer, len));
+	D(bug("ETH%d: SendPacket src %08x, len %x", ethX, buffer, len));
 
 	len = MIN(len, MAX_PACKET_SIZE);
 	Atari2Host_memcpy( packetToWrite, buffer, len );
 
+	if (handler->debug)
+	{
+		fprintf(stderr, "ETH%d: send %4d:", ethX, len);
+		dump_ether_packet(packetToWrite, len);
+	}
+
 	// Transmit packet
 	if (handler->send(packetToWrite, len) < 0) {
-		D(bug("WARNING: Couldn't transmit packet"));
+		D(bug("ETH%d: WARNING: Couldn't transmit packet", ethX));
 	}
 }
 
@@ -320,7 +425,7 @@ void ETHERNETDriver::exit()
 		// Stop reception thread
 		Handler *handler = handlers[i];
 		if ( handler ) {
-			stopThread(i);
+			stopThread(handler);
 			handler->close();
 			delete handler;
 			handlers[i]= NULL;
@@ -337,12 +442,12 @@ void ETHERNETDriver::reset()
 		// Stop reception thread
 		Handler *handler = handlers[i];
 		if ( handler ) {
-			stopThread(i);
+			stopThread(handler);
 		}
 	}
 }
 
-ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX)
+ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX, bool msg)
 {
 	if (ethX >= 0 && ethX < MAX_ETH) {
 		Handler *h = handlers[ethX];
@@ -351,6 +456,9 @@ ETHERNETDriver::Handler *ETHERNETDriver::getHandler(int ethX)
 			return h;
 		}
 	}
+
+	if (msg)
+		panicbug("Ethernet: handler for %d not found", ethX);
 
 	return NULL;
 }
@@ -372,22 +480,19 @@ ETHERNETDriver::~ETHERNETDriver()
  */
 bool ETHERNETDriver::startThread(int ethX)
 {
-	Handler *handler = getHandler(ethX);
-	if (handler == NULL) {
-		panicbug("Ethernet: handler for %d not found", ethX);
+    pthread_attr_t attr;
+
+	Handler *handler = getHandler(ethX, true);
+	if (handler == NULL)
 		return false;
-	}
-	if (handler->handlingThread == NULL) {
-		D(bug("Ethernet: Start thread"));
+	if (handler->handlingThread == 0) {
+		D(bug("ETH%d: Start thread", handler->ethX));
 
-		if ((handler->intAck = SDL_CreateSemaphore(0)) == NULL) {
-			D(bug("WARNING: Cannot init semaphore"));
-			return false;
-		}
-
-		handler->handlingThread = SDL_CreateNamedThread( receiveFunc, "Ethernet", handler );
-		if (handler->handlingThread == NULL) {
-			D(bug("WARNING: Cannot start ETHERNETDriver thread"));
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+		if (pthread_create(&handler->handlingThread, &attr, receiveFunc, handler) < 0)
+		{
+			D(bug("ETH%d: WARNING: Cannot start ETHERNETDriver thread", ethX));
 			return false;
 		}
 	}
@@ -398,22 +503,16 @@ bool ETHERNETDriver::startThread(int ethX)
 /*
  *  Stop packet reception thread
  */
-void ETHERNETDriver::stopThread(int ethX)
+void ETHERNETDriver::stopThread(Handler *handler)
 {
-	Handler *handler = getHandler(ethX);
-	if (handler == NULL) {
-		panicbug("Ethernet: handler for %d not found", ethX);
+	if (handler == NULL)
 		return;
-	}
 	if (handler->handlingThread) {
-		D(bug("Ethernet: Stop thread"));
+		D(bug("ETH%d: Stop thread", handler->ethX));
 
-#ifdef FIXME
-		// pthread_cancel(handlingThread); // FIXME: set the cancel flag.
-		SDL_WaitThread(handler->handlingThread, NULL);
-		SDL_DestroySemaphore(handler->intAck);
-#endif
-		handler->handlingThread = NULL;
+		pthread_cancel(handler->handlingThread);
+		pthread_join(handler->handlingThread, NULL);
+		handler->handlingThread = 0;
 	}
 }
 
@@ -421,7 +520,7 @@ void ETHERNETDriver::stopThread(int ethX)
 /*
  *  Packet reception thread
  */
-int ETHERNETDriver::receiveFunc(void *arg)
+void *ETHERNETDriver::receiveFunc(void *arg)
 {
 	Handler *handler = (Handler*)arg;
 
@@ -432,16 +531,42 @@ int ETHERNETDriver::receiveFunc(void *arg)
 		handler->packet_length = handler->recv(handler->packet, MAX_PACKET_SIZE);
 
 		// Trigger ETHERNETDriver interrupt (call the m68k side)
-		D(bug(" packet received (len %d), triggering ETHERNETDriver interrupt", (int)handler->packet_length));
+		D(bug("ETH%d: packet received (len %d), triggering ETHERNETDriver interrupt", handler->ethX, (int)handler->packet_length));
+		if (handler->debug)
+		{
+			fprintf(stderr, "ETH%d: recv %4d:", handler->ethX, (int)handler->packet_length);
+			dump_ether_packet(handler->packet, handler->packet_length);
+		}
 
+		/*
+		 * The atari driver does not like to see negative values here
+		 */
+		if (handler->packet_length < 0)
+			handler->packet_length = 0;
+		
+		/* but needs to be triggered, anyway */
+		pthread_mutex_lock(&handler->intLock);
 		pending_interrupts |= (1 << handler->ethX);
-		TRIGGER_INTERRUPT;
-
+		// Ethernet runs at interrupt level 3 by default but can be reconfigured
+		switch (bx_options.ethernet[0].intLevel)
+		{
+		default:
+		case 3:
+			TriggerInt3();
+			break;
+		case 4:
+			TriggerVBL();
+			break;
+		case 5:
+			TriggerInt5();
+			break;
+		}
 		// Wait for interrupt acknowledge (m68k network driver read interrupt to finish)
-		D(bug(" waiting for int acknowledge with pending irq mask %02x", pending_interrupts));
-		SDL_SemWait(handler->intAck);
+		D(bug("ETH%d: waiting for int acknowledge with pending irq mask %02x", handler->ethX, pending_interrupts));
+		pthread_cond_wait(&handler->intAck, &handler->intLock);
 		pending_interrupts &= ~(1 << handler->ethX);
-		D(bug(" int acknowledged, pending irq mask now %02x", pending_interrupts));
+		pthread_mutex_unlock(&handler->intLock);
+		D(bug("ETH%d: int acknowledged, pending irq mask now %02x", handler->ethX, pending_interrupts));
 	}
 
 	return 0;

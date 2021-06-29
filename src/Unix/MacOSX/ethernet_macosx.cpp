@@ -198,19 +198,19 @@ bool BPFEthernetHandler::open()
 		return false;
 	}
 
-	debug = (strstr(type, "debug") != NULL);
+	debug = strstr(type, "debug") != NULL;
 	if (debug || DEBUG)
 	{
-		D(bug("BPF(%d): debug mode=%d", ethX, debug));
+		D(bug("ETH%d: debug mode=%d", ethX, debug));
 	}
 
 	if (debug)
 	{
-		D(bug("BPF(%d): open() type=%s", ethX, type));
+		D(bug("ETH%d: open() type=%s", ethX, type));
 	}
 	if (strstr(type, "bridge") == NULL )
 	{
-		panicbug("BPF(%d): unsupported type '%s'", ethX, type);
+		panicbug("ETH%d: unsupported type '%s'", ethX, type);
 		return false;
 	}
 
@@ -233,13 +233,13 @@ bool BPFEthernetHandler::open()
 	addFilename(exe_path, ETH_HELPER, sizeof(exe_path));
 	if (debug)
 	{
-		D(bug("BPF(%d): starting helper from <%s>", ethX, exe_path));
+		D(bug("ETH%d: starting helper from <%s>", ethX, exe_path));
 	}
 
 	pid_t pid = fork();
 	if (pid < 0)
 	{
-		panicbug("BPF(%d): ERROR: fork() failed. Ethernet disabled!", ethX);
+		panicbug("ETH%d: ERROR: fork() failed. Ethernet disabled!", ethX);
 		::close(sockfd);
 		return false;
 	}
@@ -247,7 +247,7 @@ bool BPFEthernetHandler::open()
 	{
 		if (debug)
 		{
-			D(bug("BPF(%d): "ETH_HELPER" child running", ethX));
+			D(bug("ETH%d: "ETH_HELPER" child running", ethX));
 		}
 		int result = execl(exe_path, exe_path, NULL);
 		_exit(result);
@@ -255,18 +255,18 @@ bool BPFEthernetHandler::open()
 
 	if (debug)
 	{
-		D(bug("BPF(%d): waiting for "ETH_HELPER" (PID %d) to send file descriptor", ethX, pid));
+		D(bug("ETH%d: waiting for "ETH_HELPER" (PID %d) to send file descriptor", ethX, pid));
 	}
 	fd = fd_receive(sockfd, pid);
 	::close(sockfd);
 	if (fd < 0)
 	{
-		panicbug("BPF(%d): failed receiving file descriptor from "ETH_HELPER".", ethX);
+		panicbug("ETH%d: failed receiving file descriptor from "ETH_HELPER".", ethX);
 		return false;
 	}
 	if (debug)
 	{
-		D(bug("BPF(%d): got file descriptor %d", ethX, fd));
+		D(bug("ETH%d: got file descriptor %d", ethX, fd));
 	}
 
 
@@ -279,11 +279,11 @@ bool BPFEthernetHandler::open()
 	safe_strncpy(ifr.ifr_name, dev_name, IFNAMSIZ);
 	if (debug)
 	{
-		D(bug("BPF(%d): connecting with device %s", ethX, dev_name));
+		D(bug("ETH%d: connecting with device %s", ethX, dev_name));
 	}
 	if(ioctl(fd, BIOCSETIF, &ifr) > 0)
 	{
-		panicbug("BPF(%d): Failed associating to %s: %s", ethX, dev_name, strerror(errno));
+		panicbug("ETH%d: Failed associating to %s: %s", ethX, dev_name, strerror(errno));
 		close();
 		return false;
 	}
@@ -292,11 +292,11 @@ bool BPFEthernetHandler::open()
 	int immediate = 1;
 	if (debug)
 	{
-		D(bug("BPF(%d): enabling immediate mode", ethX));
+		D(bug("ETH%d: enabling immediate mode", ethX));
 	}
 	if(ioctl(fd, BIOCIMMEDIATE, &immediate) == -1)
 	{
-		panicbug("BPF(%d): Unable to set immediate mode: %s", ethX, strerror(errno));
+		panicbug("ETH%d: Unable to set immediate mode: %s", ethX, strerror(errno));
 		close();
 		return false;
 	}
@@ -304,25 +304,25 @@ bool BPFEthernetHandler::open()
 	// request buffer length
 	if(ioctl(fd, BIOCGBLEN, &buf_len) == -1)
 	{
-		panicbug("BPF(%d): Unable to get buffer length: %s", ethX, strerror(errno));
+		panicbug("ETH%d: Unable to get buffer length: %s", ethX, strerror(errno));
 		close();
 		return false;
 	}
 	if (debug)
 	{
-		D(bug("BPF(%d): buf_len=%d", ethX, buf_len));
+		D(bug("ETH%d: buf_len=%d", ethX, buf_len));
 	}
 	bpf_buf = (struct bpf_hdr*) malloc(buf_len);
 
 	// activate promiscuous mode
 	if (debug)
 	{
-		D(bug("BPF(%d): enabling promiscuous mode", ethX));
+		D(bug("ETH%d: enabling promiscuous mode", ethX));
 	}
 	int promiscuous = 1;
 	if(ioctl(fd, BIOCPROMISC, &promiscuous) == -1)
 	{
-		panicbug("BPF(%d): Unable to set promiscuous mode: %s", ethX, strerror(errno));
+		panicbug("ETH%d: Unable to set promiscuous mode: %s", ethX, strerror(errno));
 #if 0
 		close();
 		return false;
@@ -332,12 +332,12 @@ bool BPFEthernetHandler::open()
 	// activate "header complete" mode
 	if (debug)
 	{
-		D(bug("BPF(%d): enabling header complete mode", ethX));
+		D(bug("ETH%d: enabling header complete mode", ethX));
 	}
 	int complete = 1;
 	if(ioctl(fd, BIOCGHDRCMPLT, &complete) == -1)
 	{
-		panicbug("BPF(%d): Unable to set header complete mode: %s", ethX, strerror(errno));
+		panicbug("ETH%d: Unable to set header complete mode: %s", ethX, strerror(errno));
 		close();
 		return false;
 	}
@@ -345,12 +345,12 @@ bool BPFEthernetHandler::open()
 	// disable "see sent" mode
 	if (debug)
 	{
-		D(bug("BPF(%d): disabling see sent mode", ethX));
+		D(bug("ETH%d: disabling see sent mode", ethX));
 	}
 	int seesent = 1;
 	if(ioctl(fd, BIOCSSEESENT, &seesent) == -1)
 	{
-		panicbug("BPF(%d): Unable to disable see sent mode: %s", ethX, strerror(errno));
+		panicbug("ETH%d: Unable to disable see sent mode: %s", ethX, strerror(errno));
 		close();
 		return false;
 	}
@@ -376,7 +376,7 @@ bool BPFEthernetHandler::open()
 			}
 		}
 		if (!format_OK) {
-			panicbug("BPF(%d): Invalid MAC address: %s", ethX, mac_text);
+			panicbug("ETH%d: Invalid MAC address: %s", ethX, mac_text);
 			close();
 			return false;
 		}
@@ -384,7 +384,7 @@ bool BPFEthernetHandler::open()
 		// convert and validate specified IP address
 		uint8 ip_addr[4];
 		if (!inet_pton(AF_INET, bx_options.ethernet[ethX].ip_atari, ip_addr)) {
-			panicbug("BPF(%d): Invalid IP address specified: %s", ethX, bx_options.ethernet[ethX].ip_atari);
+			panicbug("ETH%d: Invalid IP address specified: %s", ethX, bx_options.ethernet[ethX].ip_atari);
 			close();
 			return false;
 		}
@@ -392,7 +392,7 @@ bool BPFEthernetHandler::open()
 		// modify filter program to use specified IP address
 		if (debug)
 		{
-			D(bug("BPF(%d): setting filter program for MAC address %s", ethX, mac_text));
+			D(bug("ETH%d: setting filter program for MAC address %s", ethX, mac_text));
 		}
 
 		// Select filter program according to chosen options
@@ -421,19 +421,19 @@ bool BPFEthernetHandler::open()
 		// Enable filter program
 		if(ioctl(fd, BIOCSETF, filter) == -1)
 		{
-			panicbug("BPF(%d): Unable to load filter program: %s", ethX, strerror(errno));
+			panicbug("ETH%d: Unable to load filter program: %s", ethX, strerror(errno));
 			close();
 			return false;
 		}
 		if (debug)
 		{
-			D(bug("BPF(%d): filter program load", ethX));
+			D(bug("ETH%d: filter program load", ethX));
 		}
 	}
 	else {
 		if (debug)
 		{
-			D(bug("BPF(%d): filter program skipped", ethX));
+			D(bug("ETH%d: filter program skipped", ethX));
 		}
 	}
 
@@ -448,7 +448,7 @@ void BPFEthernetHandler::close()
 {
 	if (debug)
 	{
-		D(bug("BPF(%d): close", ethX));
+		D(bug("ETH%d: close", ethX));
 	}
 
 	reset_read_pos();
@@ -461,15 +461,13 @@ void BPFEthernetHandler::close()
 
 	free(bpf_buf);
 	bpf_buf = NULL;
-
-	debug = false;
 }
 
 int BPFEthernetHandler::recv(uint8 *buf, int len)
 {
 	if (debug)
 	{
-		D(bug("BPF(%d): recv(len=%d)", ethX, len));
+		D(bug("ETH%d: recv(len=%d)", ethX, len));
 	}
 
 	// No more cached packet in memory?
@@ -492,7 +490,7 @@ int BPFEthernetHandler::recv(uint8 *buf, int len)
 			// Read from BPF device
 			read_len = read(fd, bpf_buf, buf_len);
 			if (debug) {
-				D(bug("BPF(%d): %d bytes read => %d data bytes", ethX, read_len, bpf_buf->bh_datalen));
+				D(bug("ETH%d: %d bytes read => %d data bytes", ethX, read_len, bpf_buf->bh_datalen));
 			}
 			if (read_len > 0)
 			{
@@ -501,7 +499,7 @@ int BPFEthernetHandler::recv(uint8 *buf, int len)
 				if (BPF_WORDALIGN(bpf_buf->bh_hdrlen + bpf_buf->bh_caplen) < read_len) {
 					if (debug)
 					{
-						D(bug("BPF(%d): More than one packet received by BPF\n"
+						D(bug("ETH%d: More than one packet received by BPF\n"
 							"   read_len = %d\n"
 							"   bh_hdrlen=%d\n"
 							"   bh_datalen=%d\n"
@@ -514,7 +512,7 @@ int BPFEthernetHandler::recv(uint8 *buf, int len)
 	}
 	else {
 		if (debug) {
-			D(bug("BPF(%d): using cached %d data bytes from previous read", ethX, read_len));
+			D(bug("ETH%d: using cached %d data bytes from previous read", ethX, read_len));
 		}
 	}
 
@@ -529,7 +527,7 @@ int BPFEthernetHandler::recv(uint8 *buf, int len)
 		// Copy valid frame data
 		if (frame_len <= len) {
 			if (debug) {
-				D(bug("BPF(%d): frame length %d bytes", ethX, frame_len));
+				D(bug("ETH%d: frame length %d bytes", ethX, frame_len));
 				dump_bpf_buf("recv", bpf_packet);
 			}
 			memcpy(buf, frame_start, frame_len);
@@ -562,13 +560,13 @@ int BPFEthernetHandler::send(const uint8 *buf, int len)
 {
 	if (debug)
 	{
-		D(bug("BPF(%d): send(len=%d)", ethX, len));
+		D(bug("ETH%d: send(len=%d)", ethX, len));
 	}
 	int res = -1;
 	if (len > 0)
 	{
 		if (debug) {
-			D(bug("BPF(%d): send(len=%d)", ethX, len));
+			D(bug("ETH%d: send(len=%d)", ethX, len));
 			dump_frame("send", (struct ethernet_frame*) buf);
 		}
 		res = write(fd, buf, len);
@@ -576,7 +574,7 @@ int BPFEthernetHandler::send(const uint8 *buf, int len)
 		{
 			if (debug)
 			{
-				D(bug("BPF(%d): WARNING: Couldn't transmit packet", ethX));
+				D(bug("ETH%d: WARNING: Couldn't transmit packet", ethX));
 			}
 		}
 	}
@@ -585,7 +583,6 @@ int BPFEthernetHandler::send(const uint8 *buf, int len)
 
 BPFEthernetHandler::BPFEthernetHandler(int eth_idx) :
 	Handler(eth_idx),
-	debug(false),
 	fd(-1),
 	buf_len(0),
 	bpf_buf(NULL),

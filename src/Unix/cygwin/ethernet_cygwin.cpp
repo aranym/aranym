@@ -329,8 +329,8 @@ bool WinTapEthernetHandler::open()
 {
 	char *type = bx_options.ethernet[ethX].type;
 	char device_path[256];
-	char device_guid[0x100];
-	char name_buffer[0x100];
+	char device_guid[256];
+	char name_buffer[256];
 
 	close();
 
@@ -338,16 +338,17 @@ bool WinTapEthernetHandler::open()
 	{
 		return false;
 	}
+	debug = strstr(type, "debug") != NULL;
 
 	if ( strlen(bx_options.ethernet[ethX].tunnel) == 0) {
-		D(bug("WinTap(%d): tunnel name undefined", ethX));
+		D(bug("ETH%d: tunnel name undefined", ethX));
 		return false;
 	}
 
 	safe_strncpy(name_buffer, bx_options.ethernet[ethX].tunnel, sizeof(name_buffer));
 
  	if ( get_device_guid(device_guid, sizeof(device_guid), name_buffer, sizeof(name_buffer)) < 0 ) {
-		panicbug("WinTap: ERROR: Could not find Windows tap device: %s", winerror(GetLastError()));
+		panicbug("ETH%d: ERROR: Could not find Windows tap device: %s", ethX, winerror(GetLastError()));
 		return false;
 	}
 
@@ -362,7 +363,7 @@ bool WinTapEthernetHandler::open()
 	device_handle = CreateFile(device_path, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_SYSTEM | FILE_FLAG_OVERLAPPED, 0);
 
 	if (device_handle == INVALID_HANDLE_VALUE) {
-		panicbug("WinTap: ERROR: Could not open (%s) Windows tap device: %s", device_path, winerror(GetLastError()));
+		panicbug("ETH%d: ERROR: Could not open (%s) Windows tap device: %s", ethX, device_path, winerror(GetLastError()));
 		return false;
 	}
 	device = strdup(device_path);
@@ -374,7 +375,7 @@ bool WinTapEthernetHandler::open()
 	write_overlapped.OffsetHigh = 0; 
 	write_overlapped.hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-	D(bug("WinTap: tap device open %s [handle=%p]", device_path, (void*)device_handle));
+	D(bug("ETH%d: tap device open %s [handle=%p]", ethX, device_path, (void*)device_handle));
 	return true;
 }
 
@@ -393,7 +394,7 @@ int WinTapEthernetHandler::recv(uint8 *buf, int len)
 {
 	DWORD lenin;
 
-	D(bug("WinTap: Read packet from %s", device));
+	D(bug("ETH%d: Read packet from %s", ethX, device));
 
 	BOOL result = ReadFile(device_handle, buf, len, &lenin, &read_overlapped);
 	if (!result) { 
@@ -406,13 +407,13 @@ int WinTapEthernetHandler::recv(uint8 *buf, int len)
 			if ( result ) break;
 			/* fallthrough */
 		default:
-			D(bug("WinTap: Error while reading from %s: %s", device, winerror(GetLastError())));
+			D(bug("ETH%d: Error while reading from %s: %s", ethX, device, winerror(GetLastError())));
 			return -1;
 		}
 	}
 
 	device_total_in += lenin;
-	D(bug("WinTap: Read packet done (len %d)", (int)lenin));
+	D(bug("ETH%d: Read packet done (len %d)", ethX, (int)lenin));
 	return lenin;
 }
 
@@ -420,7 +421,7 @@ int WinTapEthernetHandler::send(const uint8 *buf, int len)
 {
 	DWORD lenout;
 
-	D(bug("WinTap: Writing packet of %d bytes to %s", len, device));
+	D(bug("ETH%d: Writing packet of %d bytes to %s", ethX, len, device));
 
 	BOOL result = WriteFile (device_handle, buf, len, &lenout, &write_overlapped);
 	if (!result) { 
@@ -431,12 +432,12 @@ int WinTapEthernetHandler::send(const uint8 *buf, int len)
 			WaitForSingleObject(write_overlapped.hEvent, INFINITE);
 			break;
 		default:
-			D(bug("WinTap: Error while writing to %s: %s", device, winerror(GetLastError())));
+			D(bug("ETH%d: Error while writing to %s: %s", ethX, device, winerror(GetLastError())));
 			return -1;
 		} 
 	}
 
 	device_total_out += lenout;
-	D(bug("WinTap: Writing packet done"));
+	D(bug("ETH%d: Writing packet done", ethX));
 	return lenout;
 }

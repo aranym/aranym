@@ -162,10 +162,11 @@ bool TunTapEthernetHandler::open() {
 		if (ethX == MAX_ETH - 1) closeAuthorizationContext();
 		return false;	
 	}
+	debug = strstr(type, "debug") != NULL;
 
 	// if 'bridge' mode then we are done
-	if ( strstr(bx_options.ethernet[ethX].type, "bridge") != NULL ) {
-		panicbug("TunTap(%d): Bridge mode currently not supported '%s'", ethX, devName);
+	if ( strstr(type, "bridge") != NULL ) {
+		panicbug("ETH%d: Bridge mode currently not supported '%s'", ethX, devName);
 		if (ethX == MAX_ETH - 1) closeAuthorizationContext();
 		return false;	
 	}
@@ -181,14 +182,14 @@ bool TunTapEthernetHandler::open() {
 	
 	fd = tapOpen( devName );
 	if (fd < 0) {
-		panicbug("TunTap(%d): NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
+		panicbug("ETH%d: NO_NET_DRIVER_WARN '%s': %s", ethX, devName, strerror(errno));
 		if (ethX == MAX_ETH - 1) closeAuthorizationContext();
 		return false;
 	}
 	int auth = openAuthorizationContext();
 	if (auth) {
 		close();
-		panicbug("TunTap(%d): Authorization failed'%s'", ethX, devName);
+		panicbug("ETH%d: Authorization failed'%s'", ethX, devName);
 		return false;	
 	}
 	
@@ -207,7 +208,7 @@ bool TunTapEthernetHandler::open() {
 
 		int result = executeScriptAsRoot( (char *)TAP_INIT, args );
 		if (result != 0) {
-			panicbug("TunTap(%d): ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, result);
+			panicbug("ETH%d: ERROR: "TAP_INIT" failed (code %d). Ethernet disabled!", ethX, result);
 		}
 		else {
 			failed = false;
