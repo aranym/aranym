@@ -97,19 +97,20 @@ extern "C" {
 template <class nativeType>
 class NativeTypeMapper
 {
-	std::map<uint32,nativeType> a2n;
-	std::map<nativeType,uint32> n2a;
+	std::map<uint32_t, nativeType> a2n;
+	std::map<nativeType, uint32_t> n2a;
 
   public:
-	void putNative( nativeType value ) {
+	uint32_t putNative( nativeType value ) {
 		// test if present
-		if ( n2a.find( value ) != n2a.end() )
-			return;
+		typename std::map<nativeType, uint32_t>::iterator it = n2a.find( value );
+		if ( it != n2a.end() )
+			return it->second;
 
 		// cast to the number (not a pointer) type
 		// of the same size as the void*. Then cut the lowest
 		// 32bits as the default hash value
-		uint32 aValue = (uintptr)value & 0xffffffffUL;
+		uint32_t aValue = (uintptr)value & 0xffffffffUL;
 
 #if DEBUG_FORCE_NON32BIT
 		// easier NativeTypeMapper functionality debugging
@@ -118,7 +119,7 @@ class NativeTypeMapper
 		// make the aValue unique (test if present and increase if positive)
 		while ( a2n.find( aValue ) != a2n.end() ) {
 #if DEBUG_FORCE_NON32BIT
-			fprintf(stderr,"NTM: Conflicting mapping %x [%d]\n", aValue, a2n.size());
+			fprintf(stderr, "NTM: Conflicting mapping %x [%d]\n", aValue, a2n.size());
 #endif
 			aValue+=7;
 		}
@@ -129,10 +130,11 @@ class NativeTypeMapper
 		// put the values into maps (both direction search possible)
 		a2n.insert( std::make_pair( aValue, value ) );
 		n2a.insert( std::make_pair( value, aValue ) );
+		return aValue;
 	}
 
 	void removeNative( nativeType value ) {
-		typename std::map<nativeType,uint32>::iterator it = n2a.find( value );
+		typename std::map<nativeType,uint32_t>::iterator it = n2a.find( value );
 
 		// remove if present
 		if ( it != n2a.end() ) {
@@ -143,11 +145,11 @@ class NativeTypeMapper
 		}
 	}
 
-	nativeType getNative( uint32 from ) {
+	nativeType getNative( uint32_t from ) {
 		return a2n.find( from )->second;
 	}
 
-	uint32 get32bit( nativeType from ) {
+	uint32_t get32bit( nativeType from ) {
 		return n2a.find( from )->second;
 	}
 };
@@ -160,7 +162,7 @@ class NativeTypeMapper
 # define MAPNEWVOIDP(x)   memptrMapper.putNative(x)
 # define MAPDELVOIDP(x)   memptrMapper.removeNative(x)
 # define MAP32TOVOIDP(x)  memptrMapper.getNative(x)
-# define MAPVOIDPTO32(x)  ((memptr)memptrMapper.get32bit(x))
+# define MAPVOIDPTO32(x)  memptrMapper.get32bit(x)
 
   extern NativeTypeMapper<void*> memptrMapper;
 

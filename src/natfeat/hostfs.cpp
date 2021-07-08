@@ -632,7 +632,7 @@ void HostFs::flushXFSC( XfsCookie *fc, memptr filep )
 	WriteInt32( filep	 , fc->xfs );
 	WriteInt16( filep + 4, fc->dev );
 	WriteInt16( filep + 6, fc->aux );
-	WriteInt32( filep + 8, (uint32)MAPVOIDPTO32( fc->index ) );
+	WriteInt32( filep + 8, MAPVOIDPTO32( fc->index ) );
 }
 
 void HostFs::fetchXFSF( ExtFile *extFile, memptr filep )
@@ -835,7 +835,7 @@ int HostFs::flagsMint2Host(uint16 flags)
 		res |= O_TRUNC;
 	if (flags & 0x800)
 		res |= O_EXCL;
-	if (flags & 0x1000)
+	if (flags & 0x008)
 		res |= O_APPEND;
 	if (flags & 0x100)
 		res |= O_NONBLOCK;
@@ -865,7 +865,7 @@ int16 HostFs::flagsHost2Mint(int flags)
 	if (flags & O_EXCL)
 		res |= 0x800;
 	if (flags & O_APPEND)
-		res |= 0x1000;
+		res |= 0x008;
 	if (flags & O_NONBLOCK)
 		res |= 0x100;
 	if (flags & O_NOCTTY)
@@ -1583,7 +1583,7 @@ int32 HostFs::xfs_symlink( XfsCookie *dir, memptr fromname, memptr toname )
 			{
 				// undo a possible _unx2dos() conversion from MiNTlib
 				if (toupper(ftoName[0]) == 'U' && ftoName[1] == ':')
-					strcpy(ftoName, ftoname + 2);
+					memmove(ftoName, ftoName + 2, strlen(ftoName + 2) + 1);
 			}
 		} else
 		{

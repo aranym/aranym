@@ -1,3 +1,7 @@
+2021/07/05
+O_APPEND uses 0x08 in the kernel, not 0x1000
+
+
 2021/05/17
 Enhance ethernet debugging and move it to common code
 
