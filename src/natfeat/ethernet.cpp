@@ -511,7 +511,9 @@ void ETHERNETDriver::stopThread(Handler *handler)
 		D(bug("ETH%d: Stop thread", handler->ethX));
 
 		pthread_cancel(handler->handlingThread);
+#ifndef __APPLE__ /* seems to hang :( */
 		pthread_join(handler->handlingThread, NULL);
+#endif
 		handler->handlingThread = 0;
 	}
 }
