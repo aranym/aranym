@@ -1792,6 +1792,8 @@ else
 		sdl_version="$sdl2_version"
 	fi
 fi
+SDL_LIBS="$SDL_LIBS -lpthread"
+
 AM_CONDITIONAL([ENABLE_SDL2], test "$enable_sdl2" = yes)
 #
 # SDL2 on macOS needs 10.6 or above

@@ -148,7 +148,6 @@ esac
 # and will cause trouble when compiling in 32-bit mode
 # on 64-bit machines
 SDL2_LIBS=`echo $SDL2_LIBS | sed -e 's,-L/usr/lib[[2346]]* ,,'`
-SDL2_LIBS="$SDL2_LIBS -lpthread"
 
   if test "$no_sdl2" != yes ; then
       if test "x$enable_sdltest" = "xyes" ; then
