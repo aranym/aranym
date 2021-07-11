@@ -2182,7 +2182,7 @@ int32 HostFs::xfs_chmod( XfsCookie *fc, uint16 mode )
     D(bug( "HOSTFS: fs_chmod (NOT TESTED)\n"
 		   "  CANNOT WORK CORRECTLY UNTIL uid AND gid AT MiNT ARE SAME LIKE AT UNIX!)\n" ));
 
-    if ( chmod( fpathName, mode ) )
+    if ( chmod( fpathName, modeMint2Host(mode) ) )
 		return errnoHost2Mint( errno, TOS_EACCDN );
 
 	return TOS_E_OK;
