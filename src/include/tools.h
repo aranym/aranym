@@ -24,8 +24,9 @@
 #define _TOOLS_H
 
 #include "sysdeps.h"
+#include <stdint.h>
 
-# include <map>
+#include <map>
 
 
 // minimun and maximum macros

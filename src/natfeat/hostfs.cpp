@@ -1322,7 +1322,8 @@ int32 HostFs::xfs_creat( XfsCookie *dir, memptr name, uint16 mode, int16 flags, 
 		return errnoHost2Mint(errno,TOS_EFILNF);
 	close( fd );
 
-	XfsFsFile *newFsFile = new XfsFsFile();	MAPNEWVOIDP( newFsFile );
+	XfsFsFile *newFsFile = new XfsFsFile();
+	MAPNEWVOIDP( newFsFile );
 	newFsFile->name = strdup( fname );
 	newFsFile->refCount = 1;
 	newFsFile->childCount = 0;
@@ -2206,7 +2207,8 @@ int32 HostFs::xfs_root( uint16 dev, XfsCookie *fc )
 	fc->xfs = fc->drv->fsDrv;
 	fc->dev = dev;
 	fc->aux = 0;
-	fc->index = new XfsFsFile(); MAPNEWVOIDP( fc->index );
+	fc->index = new XfsFsFile();
+	MAPNEWVOIDP( fc->index );
 
 	fc->index->parent = NULL;
 	fc->index->name = fc->drv->hostRoot;
