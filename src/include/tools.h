@@ -172,7 +172,7 @@ class NativeTypeMapper
 # define MAPNEWVOIDP(x)
 # define MAPDELVOIDP(x)
 # define MAP32TOVOIDP(x)  x
-# define MAPVOIDPTO32(x)  x
+# define MAPVOIDPTO32(x)  ((uint32_t)(x))
 
 #endif
 
