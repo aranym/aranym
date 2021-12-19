@@ -654,6 +654,7 @@ struct Config_Tag global_conf[]={
 	{ "EpsEnabled", Bool_Tag, &bx_options.cpu.eps_enabled, 0, 0},
 	{ "EpsMax", Int_Tag, &bx_options.cpu.eps_max, 0, 0},
 	{ "SnapshotDir", Path_Tag, bx_options.snapshot_dir, sizeof(bx_options.snapshot_dir), 0},
+	{ "SnapshotOlderFormat", Bool_Tag, &bx_options.snapshot_oldformat, 0, 0},
 	{ NULL , Error_Tag, NULL, 0, 0 }
 };
 
@@ -675,6 +676,7 @@ static void preset_global()
 	bx_options.cpu.eps_enabled = false;
 	bx_options.cpu.eps_max = 20;
 	strcpy(bx_options.snapshot_dir, "snapshots");
+	bx_options.snapshot_oldformat = true;
 }
 
 static void postload_global()

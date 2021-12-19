@@ -323,6 +323,7 @@ typedef struct {
   bx_hotkeys_t		hotkeys;
   bool			newHardDriveSupport;
   char			snapshot_dir[512];
+  bool			snapshot_oldformat;
 } bx_options_t;
 
 extern bx_options_t bx_options;
