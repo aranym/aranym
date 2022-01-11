@@ -1950,7 +1950,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1320;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "MacAranym-Latest" */;
 			compatibilityVersion = "Xcode 3.1";
@@ -2743,6 +2743,7 @@
 		1706B5030ABCB72B006CB74B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
 				DEVELOPMENT_TEAM = "";
@@ -2761,7 +2762,26 @@
 		1706B5050ABCB72B006CB74B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_arm64 = "CPU_arm $(COMPILE_DEFS_BASE) ARM_ASSEMBLY ARMV6_ASSEMBLY";
@@ -2787,6 +2807,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -2819,6 +2840,7 @@
 		17473D2D15AA0A1100CAEA47 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Frameworks",
@@ -2844,6 +2866,7 @@
 		17473D2E15AA0A1100CAEA47 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(USER_LIBRARY_DIR)/Frameworks",
@@ -2869,6 +2892,7 @@
 		1778A4DF1555A8A70005B336 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_MPFR";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=mpfr --enable-fullmmu --enable-lilo";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2892,6 +2916,7 @@
 		1778A4E01555A8A70005B336 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_MPFR";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=mpfr --enable-fullmmu --enable-lilo";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2915,6 +2940,7 @@
 		17AAB2AB0B20A8330016FB8D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				PRODUCT_NAME = Packaging;
 			};
 			name = Debug;
@@ -2922,6 +2948,7 @@
 		17AAB2AC0B20A8330016FB8D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				PRODUCT_NAME = Packaging;
 			};
 			name = Release;
@@ -2929,6 +2956,7 @@
 		17BCD7E60B20F64F00432CE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --enable-fullmmu --enable-lilo";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2949,6 +2977,7 @@
 		17BCD7E70B20F64F00432CE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --enable-fullmmu --enable-lilo";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2969,6 +2998,7 @@
 		17E8B5B50ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) DIRECT_ADDRESSING FPU_UAE";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=uae --disable-fullmmu";
 				DEVELOPMENT_TEAM = "";
@@ -2987,7 +3017,26 @@
 		17E8B5B60ABC88C600BBFD59 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMPILE_DEFS_BASE = "HAVE_CONFIG_H OS_darwin _GNU_SOURCE ENABLE_EXCLUSIVE_SPCFLAGS";
 				COMPILE_DEFS_arm64 = "CPU_arm $(COMPILE_DEFS_BASE) ARM_ASSEMBLY ARMV6_ASSEMBLY";
@@ -3014,6 +3063,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3048,6 +3098,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3071,6 +3122,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMPILE_DEFS_BASE = "$(inherited) FPU_IEEE FIXED_ADDRESSING FMEMORY=0x51000000 USE_JIT=1 USE_JIT_FPU=1";
 				CONFIGURE_OPTIONS_TARGET = "--enable-fpe=ieee --enable-jit-compiler --enable-jit-fpu";
 				FRAMEWORK_SEARCH_PATHS = (
