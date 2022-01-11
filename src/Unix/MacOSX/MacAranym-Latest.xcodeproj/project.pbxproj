@@ -399,6 +399,8 @@
 		17F10C641066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C651066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
 		17F10C661066C16500BDE380 /* clipbrd_darwin.M in Sources */ = {isa = PBXBuildFile; fileRef = 17F10C631066C16500BDE380 /* clipbrd_darwin.M */; };
+		17F433E2278DF99500ECB399 /* bpf_helper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 17473D2515AA0A1100CAEA47 /* bpf_helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		17F433E3278DF9A900ECB399 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3424B2BE1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3424B2BF1F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3424B2C01F52C91100E0EFC3 /* libjpeg.dylib in Copy Executables */ = {isa = PBXBuildFile; fileRef = 170539181555D457006A6DDE /* libjpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -703,6 +705,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				17F433E3278DF9A900ECB399 /* libjpeg.dylib in Copy Executables */,
+				17F433E2278DF99500ECB399 /* bpf_helper in Copy Executables */,
 			);
 			name = "Copy Executables";
 			runOnlyForDeploymentPostprocessing = 0;
