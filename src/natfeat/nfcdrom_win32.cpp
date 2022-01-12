@@ -779,7 +779,7 @@ int32 CdromDriverWin32::cd_ioctl(memptr device, uint16 opcode, memptr buffer)
 		{
 			PREVENT_MEDIA_REMOVAL allow;
 			
-			allow.PreventMediaRemoval = ATARI_CDROMPREVENTREMOVAL ? TRUE : FALSE;
+			allow.PreventMediaRemoval = (opcode == ATARI_CDROMPREVENTREMOVAL);
 			errorcode = cd_winioctl(drive, IOCTL_STORAGE_EJECTION_CONTROL, &allow, sizeof(allow));
 		}
 		break;
