@@ -323,8 +323,10 @@ void HostScreen::writeSnapshot(SDL_Surface *surf)
 	sprintf(filename, "snap%03d.bmp", snapCounter++ );
 	safe_strncpy(path, bx_options.snapshot_dir, sizeof(path));
 	addFilename(path, filename, sizeof(path));
+#ifdef SDL_HINT_BMP_SAVE_LEGACY_FORMAT
 	SDL_SetHint(SDL_HINT_BMP_SAVE_LEGACY_FORMAT,
 				bx_options.snapshot_oldformat ? "true" : "false");
+#endif
 	if (SDL_SaveBMP(surf, path) < 0)
 	{
 #ifdef __CYGWIN__
