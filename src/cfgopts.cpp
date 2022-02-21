@@ -142,6 +142,8 @@ char * ConfigOptions::trim(char *buffer)
 
 char * ConfigOptions::strip_comment(char *line)
 {
+#define WHI1	' '
+#define WHI2	'\t'
 #define	REM1	'#'
 #define REM2	';'
 	int	i, j;
@@ -151,7 +153,7 @@ char * ConfigOptions::strip_comment(char *line)
 
 	j = strlen(line);
 	for (i = 0; i < j; i++)
-		if (line[i] == REM1 || line[i] == REM2) {
+		if ((line[i] == REM1 || line[i] == REM2) && (i == 0 || line[i-1] == WHI1 || line[i-1] == WHI2))  {
 			line[i] = '\0';
 			break;
 		}
