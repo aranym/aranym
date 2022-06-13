@@ -796,7 +796,7 @@ data store.
 	if (index > 15) { glSetError(GL_INVALID_VALUE); return; } \
 	if (ustride < 0 || vstride < 0) { glSetError(GL_INVALID_VALUE); return; } \
 	tmp = (char *)malloc(count * ustride_host); \
-	if (tmp == NULL) glSetError(GL_OUT_OF_MEMORY); return; \
+	if (tmp == NULL) { glSetError(GL_OUT_OF_MEMORY); return; } \
 	start = (nfcmemptr) points; \
 	for (i = 0; i < uorder; i++) { \
 		for (j = 0; j < vorder; j++) { \
@@ -854,7 +854,7 @@ data store.
 	if (index > 15) { glSetError(GL_INVALID_VALUE); return; } \
 	if (ustride < 0 || vstride < 0) { glSetError(GL_INVALID_VALUE); return; } \
 	tmp = (char *)malloc(count * ustride_host); \
-	if (tmp == NULL) glSetError(GL_OUT_OF_MEMORY); return; \
+	if (tmp == NULL) { glSetError(GL_OUT_OF_MEMORY); return; } \
 	fn.glGetMapControlPointsNV(target, index, type, ustride_host, vstride_host, GL_TRUE, tmp); \
 	start = (nfmemptr)points; \
 	for (i = 0; i < uorder; i++) { \
