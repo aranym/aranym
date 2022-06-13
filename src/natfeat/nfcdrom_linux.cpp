@@ -29,6 +29,7 @@
 #include "nfcdrom_linux.h"
 
 #include <linux/cdrom.h>
+#include <cstddef.h>
 #include <errno.h>
 #include "toserror.h"
 
