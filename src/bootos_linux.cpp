@@ -336,7 +336,7 @@ void *LinuxBootOs::loadFile(const char *filename, unsigned long *length)
 #endif
 
 	if (strlen(filename)==0) {
-		D(bug("lilo: empty finename"));
+		D(bug("lilo: empty filename"));
 		return NULL;
 	}
 
