@@ -141,6 +141,8 @@ AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Ex
 
 AC_ARG_ENABLE(lilo,            [AC_HELP_STRING([--enable-lilo], [enable Linux-m68k loader (default=no)])], WANT_LILO="$enableval", WANT_LILO="no")
 
+AC_ARG_ENABLE(netbsd,          [AC_HELP_STRING([--enable-netbsd], [enable NetBSD-m68k loader (default=no)])], WANT_NETBSD="$enableval", WANT_NETBSD="no")
+
 AC_ARG_ENABLE(rtctimer,        [AC_HELP_STRING([--enable-rtctimer], [enable Linux /dev/rtc as source timer (default=yes)])], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
 
 AC_ARG_ENABLE(parallelx86,     [AC_HELP_STRING([--enable-parallelx86], [enable Linux X86 hw access for parallel port (default=no)])], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
@@ -1940,7 +1942,7 @@ AM_CONDITIONAL([ENABLE_OPENGL], test "$WANT_OPENGL" = yes)
 
 
 dnl Check for zlib
-if [[ "x$WANT_LILO" = "xyes" ]]; then
+if [[ "$WANT_LILO" = "yes" -o "$WANT_NETBSD" = "yes" ]]; then
 	have_zlib=no
 	# Search using pkg-config
 	if test "x$PKG_CONFIG" != "x"; then
@@ -1988,6 +1990,14 @@ if [[ "x$WANT_LILO" = "xyes" ]]; then
 		AC_DEFINE([ENABLE_LILO], 1, [Define if lilo enabled])
 	else
 		AC_MSG_ERROR([Linux kernel requires functional MMU emulation])
+	fi
+fi
+
+if [[ "x$WANT_NETBSD" = "xyes" ]]; then
+	if [[ "x$WANT_MMU" = "xyes" ]]; then
+		AC_DEFINE([ENABLE_NETBSD], 1, [Define if netbsd enabled])
+	else
+		AC_MSG_ERROR([NetBSD kernel requires functional MMU emulation])
 	fi
 fi
 
@@ -2353,6 +2363,7 @@ echo "Support for ethernet ................... : $HAVE_ETHERNET"
 echo "GUI .................................... : $WANT_SDLGUI"
 echo "OpenGL ................................. : $WANT_OPENGL"
 echo "Linux-m68k loader ...................... : $WANT_LILO"
+echo "NetBSD-m68k loader ..................... : $WANT_NETBSD"
 echo "Zlib ................................... : $have_zlib"
 echo "libusb-1.0.............................. : $WITH_USBHOST"
 echo "NatFeat CD-ROM driver .................. : $NFCDROM_DRIVER"

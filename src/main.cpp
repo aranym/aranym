@@ -36,6 +36,7 @@
 #include "bootos_tos.h"
 #include "bootos_emutos.h"
 #include "bootos_linux.h"
+#include "bootos_netbsd.h"
 #include "aranym_exception.h"
 #include "disasm-glue.h"
 
@@ -305,6 +306,14 @@ bool InitOS(void)
 			return true;
 		} catch (AranymException &e) {
 			/* Could not init Linux/m68k */
+			panicbug("%s", e.getErrorMessage());
+		}
+	} else if (boot_netbsd) {
+		try {
+			bootOs = new NetbsdBootOs();
+			return true;
+		} catch (AranymException &e) {
+			/* Could not init NetBSD/m68k */
 			panicbug("%s", e.getErrorMessage());
 		}
 	}

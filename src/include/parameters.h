@@ -168,6 +168,12 @@ typedef struct {
 	bool load_to_fastram;	/* load kernel to Fast RAM */
 } bx_lilo_options_t;
 
+// NetBSD options
+typedef struct {
+	char kernel[512];	/* /path/to/netbsd[.gz] */
+	char args[512];		/* command line arguments for kernel loader */
+} bx_netbsd_options_t;
+
 // Midi options
 typedef struct {
 	char type[32];		/* MIDI output type */
@@ -302,6 +308,7 @@ typedef struct {
   bx_opengl_options_t	opengl;
   bx_ethernet_options_t ethernet[MAX_ETH];
   bx_lilo_options_t		lilo;
+  bx_netbsd_options_t	netbsd;
   bx_midi_options_t		midi;
   bx_ikbd_options_t		ikbd;
   bx_nfcdrom_options_t	nfcdroms[ CD_MAX_DRIVES ];
@@ -339,6 +346,7 @@ extern uintptr fixed_memory_offset;	// Virtual address of atari memory
 extern char *program_name;
 extern bool boot_emutos;
 extern bool boot_lilo;
+extern bool boot_netbsd;
 extern bool halt_on_reboot;
 
 extern bool decode_switches(int, char **);

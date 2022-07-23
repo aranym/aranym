@@ -76,6 +76,7 @@ aranym_SOURCES = \
 	bootos_tos.cpp \
 	bootos_emutos.cpp \
 	bootos_linux.cpp \
+	bootos_netbsd.cpp \
 	cdrom.cpp \
 	cfgopts.cpp \
 	dirty_rects.cpp \

@@ -101,6 +101,7 @@
 enum {
 	OPT_PROBE_FIXED = 256,
 	OPT_FIXEDMEM_OFFSET,
+	OPT_NETBSD,
 	OPT_SET_OPTION
 };
 
@@ -135,6 +136,9 @@ static struct option const long_options[] =
 #ifdef ENABLE_LILO
   {"lilo", no_argument, 0, 'l'},
 #endif
+#ifdef ENABLE_NETBSD
+  {"netbsd", no_argument, 0, OPT_NETBSD},
+#endif
   {"display", required_argument, 0, 'P'},
 #if FIXED_ADDRESSING
   {"probe-fixed", no_argument, 0, OPT_PROBE_FIXED },
@@ -156,6 +160,7 @@ char *program_name;		// set by main()
 
 bool boot_emutos = false;
 bool boot_lilo = false;
+bool boot_netbsd = false;
 bool halt_on_reboot = false;
 bool ide_swap = false;
 uint32 FastRAMSize;
@@ -1149,6 +1154,29 @@ static void presave_lilo()
 }
 
 /*************************************************************************/
+#define NETBSD(x) bx_options.netbsd.x
+
+struct Config_Tag netbsd_conf[]={
+	{ "Kernel", Path_Tag, &NETBSD(kernel), sizeof(NETBSD(kernel)), 0},
+	{ "Args", String_Tag, &NETBSD(args), sizeof(NETBSD(args)), 0},
+	{ NULL , Error_Tag, NULL, 0, 0 }
+};
+
+static void preset_netbsd()
+{
+  safe_strncpy(NETBSD(kernel), "netbsd.gz", sizeof(NETBSD(kernel)));
+  safe_strncpy(NETBSD(args), "-b", sizeof(NETBSD(args)));
+}
+
+static void postload_netbsd()
+{
+}
+
+static void presave_netbsd()
+{
+}
+
+/*************************************************************************/
 #define MIDI(x) bx_options.midi.x
 
 struct Config_Tag midi_conf[]={
@@ -1571,6 +1599,7 @@ struct Config_Tag cmdline_conf[]={
 	{ "IdeSwap", Bool_Tag, &ide_swap, 0, 0 },
 	{ "BootEmutos", Bool_Tag, &boot_emutos, 0, 0 },
 	{ "BootLilo", Bool_Tag, &boot_lilo, 0, 0 },
+	{ "BootNetBSD", Bool_Tag, &boot_netbsd, 0, 0 },
 	{ "HaltOnReboot", Bool_Tag, &halt_on_reboot, 0, 0 },
 	{ "ConfigFile", Path_Tag, config_file, sizeof(config_file), 0 },
 #ifdef SDL_GUI
@@ -1607,6 +1636,7 @@ static struct Config_Section const all_sections[] = {
 	{ "[ETH2]",       eth2_conf,     true,  0, 0, 0 },
 	{ "[ETH3]",       eth3_conf,     true,  0, 0, 0 },
 	{ "[LILO]",       lilo_conf,     false, preset_lilo, postload_lilo, presave_lilo },
+	{ "[NETBSD]",     netbsd_conf,   false, preset_netbsd, postload_netbsd, presave_netbsd },
 	{ "[MIDI]",       midi_conf,     false, preset_midi, postload_midi, presave_midi },
 	{ "[CDROMS]",     nfcdroms_conf, false, preset_nfcdroms, postload_nfcdroms, presave_nfcdroms },
 	{ "[AUTOZOOM]",   autozoom_conf, false, preset_autozoom, postload_autozoom, presave_autozoom },
@@ -1654,6 +1684,11 @@ Options:\n\
 #endif
 #ifdef ENABLE_LILO
   printf("  -l, --lilo                      boot a linux kernel\n");
+#endif
+#ifdef ENABLE_NETBSD
+  printf("      --netbsd                    boot a NetBSD kernel\n");
+#endif
+#if defined(ENABLE_LILO) || defined(ENABLE_NETBSD)
   printf("  -H, --halt                      linux kernel halts on reboot\n");
 #endif
 #ifndef FixedSizeFastRAM
@@ -1769,6 +1804,8 @@ static int process_cmdline(int argc, char **argv)
 							 "e"  /* boot emutos */
 #ifdef ENABLE_LILO
 							 "l"  /* boot lilo */
+#endif
+#if defined(ENABLE_LILO) || defined(ENABLE_NETBD)
 							 "H"  /* halt on reboot */
 #endif
 #ifdef DEBUGGER
@@ -1827,7 +1864,15 @@ static int process_cmdline(int argc, char **argv)
 			case 'l':
 				boot_lilo = true;
 				break;
+#endif
 
+#ifdef ENABLE_NETBSD
+			case OPT_NETBSD:
+				boot_netbsd = true;
+				break;
+#endif
+
+#if defined(ENABLE_LILO) || defined(ENABLE_NETBSD)
 			case 'H':
 				halt_on_reboot = true;
 				break;
