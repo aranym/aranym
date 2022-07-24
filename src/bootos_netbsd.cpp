@@ -354,10 +354,10 @@ int NetbsdBootOs::checkKernel(void)
 	{
 		if (debug_flag)
 		{
-			bug("netbsd: kernel_phdrs[%d].p_vaddr=0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_vaddr));
-			bug("netbsd: kernel_phdrs[%d].p_offset=0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_offset));
-			bug("netbsd: kernel_phdrs[%d].p_filesz=0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_filesz));
-			bug("netbsd: kernel_phdrs[%d].p_memsz=0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_memsz));
+			bug("netbsd: kernel_phdrs[%d].p_vaddr  = 0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_vaddr));
+			bug("netbsd: kernel_phdrs[%d].p_offset = 0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_offset));
+			bug("netbsd: kernel_phdrs[%d].p_filesz = 0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_filesz));
+			bug("netbsd: kernel_phdrs[%d].p_memsz  = 0x%08x", i, SDL_SwapBE32(kernel_phdrs[i].p_memsz));
 		}
 		
 		if (min_addr > SDL_SwapBE32(kernel_phdrs[i].p_vaddr))
@@ -489,7 +489,7 @@ int NetbsdBootOs::checkKernel(void)
 	bi.ttmem_size = stmem_only ? 0 : FastRAMSize;
 	bi.ttmem_start = FastRAMBase;
 	bi.bootflags = ATARI_68040 | ATARI_FALCON;
-	bi.esym_loc = symsize ? symstart : 0;
+	bi.esym_loc = symsize ? kernel_size : 0;
 
 	if (debug_flag)
 	{
@@ -505,12 +505,12 @@ int NetbsdBootOs::checkKernel(void)
 	}
 
 	/*--- Init SP & PC ---*/
-	uint32 *tmp = (uint32 *)RAMBaseHost;
+	uint32_t *tmp = (uint32_t *)RAMBaseHost;
 	tmp[0] = SDL_SwapBE32(kernel_offset + KERNEL_START);	/* SP */
 	tmp[1] = SDL_SwapBE32(0x00e00000);		/* PC = ROMBase */
 
 	/* fill in the jmp address at start of ROM, to the kernel entry point */
-	tmp = (uint32 *)ROMBaseHost;
+	tmp = (uint32_t *)ROMBaseHost;
 	tmp[1] = SDL_SwapBE32(bi.kp + bi.entry);
 	
 	/*
@@ -541,7 +541,7 @@ int NetbsdBootOs::checkKernel(void)
 	regs.regs[13] = 0;
 	regs.regs[14] = 0;
 
-	/* beware: make sure those register values remain until Start680x0() is called */
+	/* beware: make sure those register values remain valid until Start680x0() is called */
 	
 	D(bug("netbsd: ok"));
 
