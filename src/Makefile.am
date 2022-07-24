@@ -184,8 +184,8 @@ libaranym_a_SOURCES = \
 	uae_cpu/cpuemu7.cpp \
 	uae_cpu/cpuemu8.cpp \
 	$(empty)
-libaranym_a_CFLAGS = $(CFLAGS_NOWARN)
-libaranym_a_CXXFLAGS = $(CFLAGS_NOWARN)
+libaranym_a_CFLAGS = $(CFLAGS_NOWARN) $(CFLAGS_NOREDZONE)
+libaranym_a_CXXFLAGS = $(CFLAGS_NOWARN) $(CFLAGS_NOREDZONE)
 
 aranym_LDADD = libaranym.a
 

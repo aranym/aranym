@@ -278,7 +278,7 @@ static void KillRTCTimer(void)
 #endif
 
 /*
- * my_callback_function() is called every 10 miliseconds (~ 100 Hz)
+ * my_callback_function() is called every 10 milliseconds (~ 100 Hz)
  */
 Uint32 my_callback_function(Uint32 /*interval*/, void * /*param*/)
 {

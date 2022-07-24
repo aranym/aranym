@@ -1365,6 +1365,7 @@ elif test "$GCC" = yes && $HAVE_X86_64; then
 	  CXXFLAGS="$SAVED_CXXFLAGS"
 	  if [[ "x$ac_cv_gcc_no_red_zone" = "xyes" ]]; then
 	     AC_DEFINE([HAVE_CFLAG_NO_REDZONE], 1)
+             CFLAGS_NOREDZONE=-mno-red-zone
 	  fi
   fi
 elif test "$GCC" = yes && $HAVE_SPARC; then
@@ -1428,6 +1429,7 @@ elif test "$GCC" = yes && $HAVE_ARM; then
     CAN_JIT=yes
   fi
 fi
+AC_SUBST([CFLAGS_NOREDZONE])
 
 dnl Check for JIT Version 2
 if [[ "x$WANT_JIT2" = "xyes" ]]; then
