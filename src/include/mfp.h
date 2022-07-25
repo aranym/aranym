@@ -37,6 +37,8 @@ protected:
 	bool isRunning();
 
 public:
+	int counter;
+
 	MFP_Timer(int);
 	void reset();
 	void setControl(uint8);
@@ -49,22 +51,22 @@ public:
 
 class MFP_TimerA:public MFP_Timer {
 public:
-	MFP_TimerA() : MFP_Timer(0) {};
+	MFP_TimerA() : MFP_Timer(0) {}
 };
 
 class MFP_TimerB:public MFP_Timer {
 public:
-	MFP_TimerB() : MFP_Timer(1) {};
+	MFP_TimerB() : MFP_Timer(1) {}
 };
 
 class MFP_TimerC:public MFP_Timer {
 public:
-	MFP_TimerC() : MFP_Timer(2) {};
+	MFP_TimerC() : MFP_Timer(2) {}
 };
 
 class MFP_TimerD:public MFP_Timer {
 public:
-	MFP_TimerD() : MFP_Timer(3) {};
+	MFP_TimerD() : MFP_Timer(3) {}
 };
 
 class USART {
@@ -93,7 +95,6 @@ private:
 	MFP_TimerC C;
 	MFP_TimerD D;
 	// USART usart;
-	int timerCounter;
 	int vr;
 
 public:
@@ -105,6 +106,7 @@ public:
 	void setGPIPbit(int mask, int value);
 	int doInterrupt(void);
 	int timerC_ms_ticks();
+	int timerA_ms_ticks();
 
 private:
 	void set_active_edge(uint8 value);

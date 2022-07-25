@@ -1,3 +1,8 @@
+2022/07/25
+Implement Timer-A emulation (delay-mode only).
+Needed by NetBSD.
+
+
 2022/07/23
 Add experimental loader for netbsd kernel
 

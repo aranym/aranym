@@ -79,6 +79,7 @@ int FPUType;
 
 // Timer stuff
 static uint32 lastTicks = 0;
+static uint32 lastATicks = 0;
 
 #ifdef RTC_TIMER
 static SDL_Thread *RTCthread = NULL;
@@ -86,16 +87,6 @@ static volatile bool using_rtc_timer = false;
 static volatile bool quit_rtc_loop = false;
 #endif
 SDL_TimerID my_timer_id = (SDL_TimerID)0;
-
-#if DEBUG
-static int early_interrupts = 0;
-static int multiple_interrupts = 0;
-static int multiple_interrupts2 = 0;
-static int multiple_interrupts3 = 0;
-static int multiple_interrupts4 = 0;
-static int max_mult_interrupts = 0;
-static int total_interrupts = 0;
-#endif
 
 #ifdef SDL_GUI
 bool isGuiAvailable;
@@ -147,62 +138,79 @@ void do_vbl_irq()
  */
 void invoke200HzInterrupt()
 {
-	int ms_ticks = getMFP()->timerC_ms_ticks();
+	int ms_ticks;
+	int count;
+	int milliseconds;
+
+	ms_ticks = getMFP()->timerC_ms_ticks();
+
+	/*
+	 * not quite right, but linux needs this to boot
+	 */
+	if (ms_ticks == 0)
+		ms_ticks = 5;
 
 	/* syncing to 200 Hz */
-	uint32 newTicks = (uint32) host->clock->getClock();
+	uint32 newTicks = host->clock->getClock();
 
 	// correct lastTicks at start-up
-	if (lastTicks == 0) { lastTicks = newTicks - ms_ticks; }
+	if (lastTicks == 0) { lastTicks = lastATicks = newTicks - ms_ticks; }
 
-	int count = (newTicks - lastTicks) / ms_ticks;
-	if (count == 0) {
-#if DEBUG
-		early_interrupts++;
-#endif
-		return;
-	}
-
-#if DEBUG
-	total_interrupts++;
-	if (count > 1) {
-		multiple_interrupts++;
-		if (count == 2) multiple_interrupts2++;
-		if (count == 3) multiple_interrupts3++;
-		if (count == 4) multiple_interrupts4++;
-		if (count > max_mult_interrupts) {
-			max_mult_interrupts = count;
-			D(bug("Max multiple interrupts increased to %d", count));
-		}
-	}
-#endif
-
+	count = (newTicks - lastTicks) / ms_ticks;
+	if (count != 0)
+	{
 #ifdef RTC_TIMER
-	if (using_rtc_timer) {
-		// do not generate multiple interrupts, let it synchronize over time
-		count = 1;
-	}
+		if (using_rtc_timer) {
+			// do not generate multiple interrupts, let it synchronize over time
+			count = 1;
+		}
 #endif
 
-	int milliseconds = (count * ms_ticks);
-	lastTicks += milliseconds;
-
+		milliseconds = count * ms_ticks;
+		lastTicks += milliseconds;
 
 #ifdef DEBUGGER
-	if (!debugging || irqindebug)
+		if (!debugging || irqindebug)
 #endif
-	{
-		getMFP()->IRQ(5, count);
-		getSCC()->IRQ();	/* jc: after or before getMFP does not change anything */
-	}
+		{
+			getMFP()->IRQ(5, count);
+			getSCC()->IRQ();	/* jc: after or before getMFP does not change anything */
+		}
 
 #define VBL_MS	20
-	static int VBL_counter = 0;
-	VBL_counter += milliseconds;
-	if (VBL_counter >= VBL_MS) {
-		VBL_counter -= VBL_MS;
-		do_vbl_irq();
+		static int VBL_counter = 0;
+		VBL_counter += milliseconds;
+		if (VBL_counter >= VBL_MS) {
+			VBL_counter -= VBL_MS;
+			do_vbl_irq();
+		}
 	}
+
+	ms_ticks = getMFP()->timerA_ms_ticks();
+	if (ms_ticks != 0)
+	{
+		count = (newTicks - lastATicks) / ms_ticks;
+		if (count != 0)
+		{
+#ifdef RTC_TIMER
+			if (using_rtc_timer) {
+				// do not generate multiple interrupts, let it synchronize over time
+				count = 1;
+			}
+#endif
+
+			milliseconds = count * ms_ticks;
+			lastATicks += milliseconds;
+
+#ifdef DEBUGGER
+			if (!debugging || irqindebug)
+#endif
+			{
+				getMFP()->IRQ(13, count);
+			}
+		}
+	}
+
 	{
 		Parallel *parallel = getYAMAHA()->parallel;
 		if (parallel)
@@ -512,8 +520,6 @@ void ExitAll(void)
 		SDL_Delay(100);	// give it a time to safely finish the timer thread
 	}
 
-	D(bug("200 Hz IRQ statistics: max multiple irqs %d, total multiple irq ratio %02.2lf%%, 2xirq ration %02.2lf%%, 3xirq ratio %02.2lf%%, 4xirq ration %02.2lf%%, early irq ratio %02.2lf%%", max_mult_interrupts, multiple_interrupts*100.0 / total_interrupts, multiple_interrupts2*100.0 / total_interrupts, multiple_interrupts3*100.0 / total_interrupts, multiple_interrupts4*100.0 / total_interrupts, early_interrupts * 100.0 / total_interrupts));
-
 #ifdef SDL_GUI
 	close_GUI();
 	SDLGui_UnInit();
@@ -538,6 +544,7 @@ void ExitAll(void)
 void RestartAll(bool cold)
 {
 	lastTicks = 0;
+	lastATicks = 0;
 
 	// memory init should be added here?
 
@@ -564,7 +571,3 @@ void RestartAll(bool cold)
 
 	host->video->bootDone();
 }
-
-/*
-vim:ts=4:sw=4:
-*/
