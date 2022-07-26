@@ -2811,26 +2811,26 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 
 int32 HostFs::xfs_dupcookie( XfsCookie *newCook, XfsCookie *oldCook )
 {
-    XfsFsFile *fs = new XfsFsFile();
+	XfsFsFile *fs = new XfsFsFile();
 
-    if ( ( fs->parent = oldCook->index->parent ) != NULL ) {
-        if ( (fs->name = strdup(oldCook->index->name)) == NULL ) {
-            D(bug( "HOSTFS: fs_dupcookie: strdup() failed!" ));
-            delete fs;
-            return TOS_ENSMEM;
-        }
-        fs->parent->childCount++;
-    } else
-        fs->name = oldCook->drv->hostRoot;
+	if ( ( fs->parent = oldCook->index->parent ) != NULL ) {
+		if ( (fs->name = strdup(oldCook->index->name)) == NULL ) {
+			D(bug( "HOSTFS: fs_dupcookie: strdup() failed!" ));
+			delete fs;
+			return TOS_ENSMEM;
+		}
+		fs->parent->childCount++;
+	} else
+		fs->name = oldCook->drv->hostRoot;
 
 	MAPNEWVOIDP( fs );
-    fs->refCount = 1;
-    fs->childCount = 0; /* don't heritate childs! */
+	fs->refCount = 1;
+	fs->childCount = 0; /* don't heritate childs! */
 
-    *newCook = *oldCook;
-    newCook->index = fs;
+	*newCook = *oldCook;
+	newCook->index = fs;
 
-    return TOS_E_OK;
+	return TOS_E_OK;
 }
 
 
