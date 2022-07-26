@@ -130,7 +130,7 @@ bool is_tap_win32_dev(const char *guid)
 	while (true)
 	{
 		char enum_name[256];
-		char unit_string[256];
+		char unit_string[256 + sizeof(ADAPTER_KEY) + 3];
 		HKEY unit_key;
 		char component_id_string[] = "ComponentId";
 		char component_id[256];
@@ -239,7 +239,7 @@ int get_device_guid(
 	while (!stop)
 	{
 		char enum_name[256];
-		char connection_string[256];
+		char connection_string[256 + sizeof(NETWORK_CONNECTIONS_KEY) + 20];
 		HKEY connection_key;
 		char name_data[256];
 		DWORD name_type;
@@ -328,7 +328,7 @@ int get_device_guid(
 bool WinTapEthernetHandler::open()
 {
 	char *type = bx_options.ethernet[ethX].type;
-	char device_path[256];
+	char device_path[256 + sizeof(USERMODEDEVICEDIR) + sizeof(TAPSUFFIX) + 1];
 	char device_guid[256];
 	char name_buffer[256];
 
