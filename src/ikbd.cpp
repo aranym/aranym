@@ -111,7 +111,7 @@ uint8 IKBD::ReadData()
 	if (inread != inwrite) {
 
 		rxdr = inbuffer[inread++];
-		D(bug("ikbd: ReadData()=0x%02x at position %d",rxdr, inread-1));
+		D(bug("ikbd: %08x: ReadData()=0x%02x at position %d", m68k_getpc(), rxdr, inread-1));
 
 		inread &= (inbufferlen-1);
 
@@ -145,7 +145,7 @@ void IKBD::WriteData(uint8 value)
 		return;
 
 	outbuffer[outwrite++] = txdr = value;
-	D(bug("ikbd: WriteData(0x%02x)",txdr));
+	D(bug("ikbd: %08x: WriteData(0x%02x)", m68k_getpc(), txdr));
 
 #if 0
 	printf("ikbd: ");
@@ -563,10 +563,6 @@ void IKBD::send(uint8 value)
 
 void IKBD::ThrowInterrupt(void)
 {
-	/* Check MFP IER */
-	if ((getMFP()->handleRead(0xfffa09) & 0x40)==0)
-		return;
-
 	/* Check ACIA interrupt on reception */
 	if ((cr & (1<<ACIA_CR_REC_INTER))==0)
 		return;
@@ -574,9 +570,11 @@ void IKBD::ThrowInterrupt(void)
 	/* set Interrupt Request */
 	sr |= (1<<ACIA_SR_INTERRUPT);
 
+	/* Check MFP IER */
+	if ((getMFP()->handleRead(0xfffa09) & 0x40)==0)
+		return;
+
 	/* signal ACIA interrupt */
 	getMFP()->setGPIPbit(0x10, 0x10);	/* Force GPIP value transition so MFP layer generates interrupt */
 	getMFP()->setGPIPbit(0x10, 0);
 }
-
-// don't remove this modeline with intended formatting for vim:ts=4:sw=4:
