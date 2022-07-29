@@ -31,7 +31,7 @@ enum {
 	DISKDMA_A0,		/* for floppy: bits A0,A1 are WD1772 register */
 	DISKDMA_A1,
 	DISKDMA_CS,		/* Select, 0=floppy, 1=acsi/scsi */
-	DISKDMA_BIT4,
+	DISKDMA_SCREG,  /* access sector count register */
 	DISKDMA_BIT5,
 	DISKDMA_DMA,	/* DMA enabled, 0=on, 1=off */
 	DISKDMA_DRQ,	/* Run command, 0=off, 1=on */

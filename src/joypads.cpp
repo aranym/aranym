@@ -132,6 +132,11 @@ uae_u8 JOYPADS::handleRead(uaecptr addr)
 	uae_u8 value = 0xff;
 
 	switch (addr-getHWoffset()) {
+		case 0x00:
+			/* hack for NetBSD: it expects the dip-switches
+			   of a TT here, which have the same address.
+			 */
+			return 0xbf; /* Assume HD floppy */
 		case 0x01:
 			for (i=0; i<8; i++) {
 				if (multiplexer0[i][0] == mask) {
@@ -234,8 +239,3 @@ void JOYPADS::sendJoystickButton(int numjoy, int which, int pressed)
 
 	D(bug("joypad[%d]=0x%08x", numjoy, host_state[numjoy]));
 }
-
-
-/*
-vim:ts=4:sw=4:
-*/
