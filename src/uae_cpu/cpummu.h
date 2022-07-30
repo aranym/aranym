@@ -52,8 +52,8 @@ extern void mmu_dump_tables(void);
 #define MMU_UDT_MASK	3
 #define MMU_PDT_MASK	3
 
-#define MMU_DES_WP			4
-#define MMU_DES_USED		8
+#define MMU_DES_WP			(1 << 2)
+#define MMU_DES_USED		(1 << 3)
 
 /* page descriptors only */
 #define MMU_DES_MODIFIED	16
