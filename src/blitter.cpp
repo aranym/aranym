@@ -114,8 +114,8 @@ void BLITTER::SM_UW(memptr addr, UW value) {
 #define HOP_OPS(_fn_name,_op,_do_source_shift,_get_source_data,_shifted_hopd_data, _do_halftone_inc) \
 static void _fn_name ( BLITTER& b ) \
 {												\
-	register unsigned int skew       = (unsigned int) b.skewreg & 15;		\
-	register unsigned int source_buffer=0;				\
+	unsigned int skew       = b.skewreg & 15;		\
+	unsigned int source_buffer=0;				\
 	if (b.hop & 1) {										\
 		if (b.line_num & 0x20) 		 					\
 			b.halftone_curroffset = b.skewreg & 15;			\
@@ -127,7 +127,7 @@ static void _fn_name ( BLITTER& b ) \
 			b.halftone_direction = -1;					\
 	}													\
 	do 								\
-	{	register UW x,dst_data,opd_data;			\
+	{	UW x,dst_data,opd_data;			\
 		if (b.FXSR) 						\
 		{ 	_do_source_shift; 				\
 			_get_source_data;				\
