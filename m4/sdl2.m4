@@ -14,11 +14,11 @@ AC_DEFUN([AM_PATH_SDL2],
 [dnl 
 dnl Get the cflags and libraries from the sdl2-config script
 dnl
-AC_ARG_WITH(sdl2-prefix,[AC_HELP_STRING([--with-sdl2-prefix=PFX], [Prefix where SDL2 is installed (optional)])],
+AC_ARG_WITH(sdl2-prefix,[AS_HELP_STRING([--with-sdl2-prefix=PFX], [Prefix where SDL2 is installed (optional)])],
             sdl2_prefix="$withval", sdl2_prefix="")
-AC_ARG_WITH(sdl2-exec-prefix,[AC_HELP_STRING([--with-sdl2-exec-prefix=PFX], [Exec prefix where SDL2 is installed (optional)])],
+AC_ARG_WITH(sdl2-exec-prefix,[AS_HELP_STRING([--with-sdl2-exec-prefix=PFX], [Exec prefix where SDL2 is installed (optional)])],
             sdl2_exec_prefix="$withval", sdl2_exec_prefix="")
-AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compile and run a test SDL program])],
+AC_ARG_ENABLE(sdltest, [AS_HELP_STRING([--disable-sdltest], [Do not try to compile and run a test SDL program])],
 		    , enable_sdltest=yes)
 
   min_sdl2_version=ifelse([$1], ,2.0.0,$1)
@@ -42,6 +42,12 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
     sdl2_pc=no
   fi
 
+case $host in
+  *-*-cygwin*)
+  sdl2_pc=no
+  ;;
+esac
+
   if test "x$sdl2_pc" = xyes ; then
     no_sdl2=""
     SDL2_CONFIG="$PKG_CONFIG sdl2"
@@ -60,12 +66,19 @@ AC_ARG_ENABLE(sdltest, [AC_HELP_STRING([--disable-sdltest], [Do not try to compi
     # But only if the user did not override it.
     #
     case $host in
-      *-*-cygwin*)
+      i686-*-cygwin*)
       MINGW_ROOT=$prefix/i686-w64-mingw32/sys-root/mingw
       if test -d "$MINGW_ROOT"; then
          if test "$sdl2_prefix" = "" ; then
             sdl2_prefix="$MINGW_ROOT"
-            sdl2_exec_prefix="$MINGW_ROOT/bin"
+         fi
+      fi
+      ;;
+      x86_64-*-cygwin*)
+      MINGW_ROOT=$prefix/x86_64-w64-mingw32/sys-root/mingw
+      if test -d "$MINGW_ROOT"; then
+         if test "$sdl2_prefix" = "" ; then
+            sdl2_prefix="$MINGW_ROOT"
          fi
       fi
       ;;
@@ -173,7 +186,7 @@ dnl Now check if the installed SDL is sufficiently new. (Also sanity
 dnl checks the results of sdl2-config to some extent
 dnl
       rm -f conf.sdltest
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -230,7 +243,7 @@ int main (int argc, char *argv[])
     }
 }
 
-],, no_sdl2=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])],, no_sdl2=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
         CFLAGS="$ac_save_CFLAGS"
         CXXFLAGS="$ac_save_CXXFLAGS"
         LIBS="$ac_save_LIBS"
@@ -260,7 +273,7 @@ int main (int argc, char *argv[])
           CFLAGS="$CFLAGS $SDL2_CFLAGS"
           CXXFLAGS="$CXXFLAGS $SDL2_CFLAGS"
           LIBS="$LIBS $SDL2_LIBS"
-          AC_TRY_LINK([
+          AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include "SDL.h"
 
@@ -268,7 +281,7 @@ int main(int argc, char *argv[])
 { return 0; }
 #undef  main
 #define main K_and_R_C_main
-],      [ return 0; ],
+]],     [[ return 0; ]])],
         [ echo "*** The test program compiled, but did not run. This usually means"
           echo "*** that the run-time linker is not finding SDL or finding the wrong"
           echo "*** version of SDL. If it is not finding SDL, you'll need to set your"

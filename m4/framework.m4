@@ -6,8 +6,8 @@ AC_DEFUN([ARANYM_CHECK_FRAMEWORK], [
     ac_Framework, [
     saved_LIBS="$LIBS"
     LIBS="$LIBS -framework $1"
-    AC_TRY_LINK(
-      [$2], [],
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+      $2]], [])],
       [AS_VAR_SET(ac_Framework, yes); $1_LIBS=" -framework $1"], [AS_VAR_SET(ac_Framework, no)]
     )
     LIBS="$saved_LIBS"

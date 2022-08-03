@@ -16,7 +16,7 @@ dnl
 
 AC_DEFUN([gcc_AC_EXAMINE_OBJECT],
 [AC_LANG_SAVE
-AC_LANG_C
+AC_LANG([C])
 dnl Next bit cribbed from AC_TRY_COMPILE.
 cat > conftest.$ac_ext <<EOF
 [#line __oline__ "configure"

@@ -7,9 +7,9 @@ m4_define(ARANYM_VERSION, m4_esyscmd([sed -n -e 's/#define.*VER_MAJOR.*\([0-9][0
 s/#define.*VER_MINOR.*\([0-9][0.9]*\).*$/\1./p
 s/#define.*VER_MICRO.*\([0-9][0-9]*\).*$/\1/p' src/include/version.h | tr -d '\n']))
 
-AC_INIT(aranym, ARANYM_VERSION, [aranym@googlegroups.com],,[https://github.com/aranym/aranym])
-AC_PREREQ(2.52)
-AC_CONFIG_HEADER(config.h)
+AC_INIT([aranym],[ARANYM_VERSION],[aranym@googlegroups.com],[],[https://github.com/aranym/aranym])
+AC_PREREQ([2.59])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([.])
 AC_CONFIG_SRCDIR([src/hostscreen.cpp])
@@ -49,12 +49,12 @@ AH_TOP([
 ])
 
 dnl Options.
-AC_ARG_ENABLE(nat-debug,     [AC_HELP_STRING([--enable-nat-debug], [enable native debugger support (default=yes)])], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
+AC_ARG_ENABLE(nat-debug,     [AS_HELP_STRING([--enable-nat-debug],[enable native debugger support (default=yes)])], [WANT_NATDEBUG=$enableval], [WANT_NATDEBUG=yes])
 
-AC_ARG_ENABLE(full-debug,    [AC_HELP_STRING([--enable-full-debug], [enable full debug outputs (default=no)])], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
+AC_ARG_ENABLE(full-debug,    [AS_HELP_STRING([--enable-full-debug],[enable full debug outputs (default=no)])], [WANT_FULLDEBUG=$enableval], [WANT_FULLDEBUG=no])
 
 AC_ARG_ENABLE(debug,
-[AC_HELP_STRING([--enable-debug=which], [specify wether to use internal debugger (default=no)])],
+[AS_HELP_STRING([--enable-debug=which],[specify wether to use internal debugger (default=no)])],
 [ case "$enableval" in
     default | yes | uae | ndebug)  USE_DEBUGGER=yes;;
          no)  USE_DEBUGGER="no";;
@@ -64,14 +64,14 @@ AC_ARG_ENABLE(debug,
 [USE_DEBUGGER=no
 ])
 
-AC_ARG_ENABLE(fullhistory,     [AC_HELP_STRING([--enable-fullhistory], [enable full history for debugger (default=no)])], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
+AC_ARG_ENABLE(fullhistory,     [AS_HELP_STRING([--enable-fullhistory],[enable full history for debugger (default=no)])], [WANT_HISTORY=$enableval], [WANT_HISTORY=no])
 
-AC_ARG_ENABLE(flightrecorder,  [AC_HELP_STRING([--enable-flightrecorder], [enable CPU flight recorder (default=no)])], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
+AC_ARG_ENABLE(flightrecorder,  [AS_HELP_STRING([--enable-flightrecorder],[enable CPU flight recorder (default=no)])], [WANT_FLIGHTRECORDER=$enableval], [WANT_FLIGHTRECORDER=no])
 
-AC_ARG_ENABLE(fullmmu,         [AC_HELP_STRING([--enable-fullmmu], [enable full 68040 MMU (default=no)])], [WANT_MMU=$enableval], [WANT_MMU=no])
+AC_ARG_ENABLE(fullmmu,         [AS_HELP_STRING([--enable-fullmmu],[enable full 68040 MMU (default=no)])], [WANT_MMU=$enableval], [WANT_MMU=no])
 
 AC_ARG_ENABLE(atc,
-[AC_HELP_STRING([--enable-atc=ATC], [select type of ATC for MMU (default=full)])],
+[AS_HELP_STRING([--enable-atc=ATC],[select type of ATC for MMU (default=full)])],
 [ case "$enableval" in
         full)  ATC_TYPE="full";;
        small)  ATC_type="small";;
@@ -80,26 +80,26 @@ AC_ARG_ENABLE(atc,
   esac
 ], [ATC_TYPE=full])
 
-AC_ARG_ENABLE(realstop,        [AC_HELP_STRING([--enable-realstop], [enable real STOP instruction (default=yes)])], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
+AC_ARG_ENABLE(realstop,        [AS_HELP_STRING([--enable-realstop],[enable real STOP instruction (default=yes)])], [WANT_REALSTOP=$enableval], [WANT_REALSTOP=yes])
 
-AC_ARG_ENABLE(dsp,             [AC_HELP_STRING([--enable-dsp], [enable DSP 56001 (default=yes)])], [WANT_DSP=$enableval], [WANT_DSP=yes])
+AC_ARG_ENABLE(dsp,             [AS_HELP_STRING([--enable-dsp],[enable DSP 56001 (default=yes)])], [WANT_DSP=$enableval], [WANT_DSP=yes])
 
-AC_ARG_ENABLE(dsp-disasm,      [AC_HELP_STRING([--enable-dsp-disasm], [enable DSP 56001 disassembler (default=no)])], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
+AC_ARG_ENABLE(dsp-disasm,      [AS_HELP_STRING([--enable-dsp-disasm],[enable DSP 56001 disassembler (default=no)])], [WANT_DSP_DISASM=$enableval], [WANT_DSP_DISASM=no])
 
-AC_ARG_ENABLE(protect2k,       [AC_HELP_STRING([--enable-protect2k], [enable first 2kB of RAM Super protection (default=yes)])], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=yes])
+AC_ARG_ENABLE(protect2k,       [AS_HELP_STRING([--enable-protect2k],[enable first 2kB of RAM Super protection (default=yes)])], [WANT_PROTECT2K=$enableval], [WANT_PROTECT2K=yes])
 
-AC_ARG_ENABLE(fixedfastram,    [AC_HELP_STRING([--enable-fixedfastram=X], [use fixed size FastRAM of X MB (default=no)])], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
+AC_ARG_ENABLE(fixedfastram,    [AS_HELP_STRING([--enable-fixedfastram=X],[use fixed size FastRAM of X MB (default=no)])], [WANT_FIXEDFASTRAM=$enableval], [WANT_FIXEDFASTRAM=no])
 
-AC_ARG_ENABLE(fixedvideoram,   [AC_HELP_STRING([--enable-fixedvideoram], [use fixed start of VideoRAM (default=no)])], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
+AC_ARG_ENABLE(fixedvideoram,   [AS_HELP_STRING([--enable-fixedvideoram],[use fixed start of VideoRAM (default=no)])], [WANT_FIXEDVIDEORAM=$enableval], [WANT_FIXEDVIDEORAM=no])
 
-AC_ARG_ENABLE(blitmemmove,     [AC_HELP_STRING([--enable-blitmemmove], [enable Blitter memmove rout (default=no)])], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
+AC_ARG_ENABLE(blitmemmove,     [AS_HELP_STRING([--enable-blitmemmove],[enable Blitter memmove rout (default=no)])], [WANT_BLITMEMMOVE=$enableval], [WANT_BLITMEMMOVE=no])
 
-AC_ARG_ENABLE(blitsdlblit,     [AC_HELP_STRING([--enable-blitsdlblit], [enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)])], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
+AC_ARG_ENABLE(blitsdlblit,     [AS_HELP_STRING([--enable-blitsdlblit],[enable SDL blitting routine EXPERIMENTAL UNSUPPORTED BUGGY (default=no)])], [WANT_BLITSDLBLIT=$enableval], [WANT_BLITSDLBLIT=no])
 
-AC_ARG_ENABLE(hostfs,          [AC_HELP_STRING([--enable-hostfs], [enable hostfs support (default=yes)])], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
+AC_ARG_ENABLE(hostfs,          [AS_HELP_STRING([--enable-hostfs],[enable hostfs support (default=yes)])], [WANT_HOSTFS=$enableval], [WANT_HOSTFS=yes])
 
 AC_ARG_ENABLE(ctrlkey,
-[AC_HELP_STRING([--enable-ctrlkey=WHICH], [specify which key to use for control key emulation (default=both)])],
+[AS_HELP_STRING([--enable-ctrlkey=WHICH],[specify which key to use for control key emulation (default=both)])],
 [ case "$enableval" in
     dnl default is both
     ctrl)	    CONTROL_KEY="ctrl";;
@@ -111,49 +111,49 @@ AC_ARG_ENABLE(ctrlkey,
 [ CONTROL_KEY="both"
 ])
 
-AC_ARG_ENABLE(gui,             [AC_HELP_STRING([--enable-gui], [enable GUI (default=yes)])], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
+AC_ARG_ENABLE(gui,             [AS_HELP_STRING([--enable-gui],[enable GUI (default=yes)])], [WANT_SDLGUI=$enableval], [WANT_SDLGUI=yes])
 
-AC_ARG_ENABLE(opengl,          [AC_HELP_STRING([--enable-opengl], [enable OpenGL (default=yes)])], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
+AC_ARG_ENABLE(opengl,          [AS_HELP_STRING([--enable-opengl],[enable OpenGL (default=yes)])], [WANT_OPENGL=$enableval], [WANT_OPENGL=yes])
 
-AC_ARG_WITH(mesa-headers,      [AC_HELP_STRING([--with-mesa-headers], [Path to Mesa header files])], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
+AC_ARG_WITH(mesa-headers,      [AS_HELP_STRING([--with-mesa-headers],[Path to Mesa header files])], [WITH_MESAINC=$withval], [WITH_MESAINC=no])
 
-AC_ARG_ENABLE(nfpci,           [AC_HELP_STRING([--enable-nfpci], [enable NatFeat PCI (default=no)])], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
+AC_ARG_ENABLE(nfpci,           [AS_HELP_STRING([--enable-nfpci],[enable NatFeat PCI (default=no)])], [WANT_NFPCI=$enableval], [WANT_NFPCI=no])
 
-AC_ARG_ENABLE(usbhost,         [AC_HELP_STRING([--enable-usbhost], [enable NatFeat USB (default=no)])], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
+AC_ARG_ENABLE(usbhost,         [AS_HELP_STRING([--enable-usbhost],[enable NatFeat USB (default=no)])], [WANT_USBHOST=$enableval], [WANT_USBHOST=no])
 
-AC_ARG_ENABLE(nfosmesa,        [AC_HELP_STRING([--enable-nfosmesa], [enable NatFeat OSMesa (default=no)])], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
+AC_ARG_ENABLE(nfosmesa,        [AS_HELP_STRING([--enable-nfosmesa],[enable NatFeat OSMesa (default=no)])], [WANT_NFOSMESA=$enableval], [WANT_NFOSMESA=no])
 
-AC_ARG_ENABLE(nfjpeg,          [AC_HELP_STRING([--enable-nfjpeg], [enable NatFeat JPEG (default=yes)])], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
+AC_ARG_ENABLE(nfjpeg,          [AS_HELP_STRING([--enable-nfjpeg],[enable NatFeat JPEG (default=yes)])], [WANT_NFJPEG=$enableval], [WANT_NFJPEG=yes])
 
-AC_ARG_ENABLE(nfclipbrd,       [AC_HELP_STRING([--enable-nfclipbrd], [enable NatFeat Clipboard (default=yes)])], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
+AC_ARG_ENABLE(nfclipbrd,       [AS_HELP_STRING([--enable-nfclipbrd],[enable NatFeat Clipboard (default=yes)])], [WANT_NFCLIPBRD=$enableval], [WANT_NFCLIPBRD=yes])
 
-AC_ARG_ENABLE(nfvdi,           [AC_HELP_STRING([--enable-nfvdi], [enable NatFeat VDI (default=yes)])], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
+AC_ARG_ENABLE(nfvdi,           [AS_HELP_STRING([--enable-nfvdi],[enable NatFeat VDI (default=yes)])], [WANT_NFVDI=$enableval], [WANT_NFVDI=yes])
 
-AC_ARG_ENABLE(nfscsi,          [AC_HELP_STRING([--enable-nfscsi], [enable NatFeat SCSI (default=yes)])], [WANT_NFSCSI=$enableval], [WANT_NFSCSI=yes])
+AC_ARG_ENABLE(nfscsi,          [AS_HELP_STRING([--enable-nfscsi],[enable NatFeat SCSI (default=yes)])], [WANT_NFSCSI=$enableval], [WANT_NFSCSI=yes])
 
-AC_ARG_ENABLE(nfexec,          [AC_HELP_STRING([--enable-nfexec], [enable NatFeat host file execution (default=yes)])], [WANT_NFEXEC=$enableval], [WANT_NFEXEC=yes])
+AC_ARG_ENABLE(nfexec,          [AS_HELP_STRING([--enable-nfexec],[enable NatFeat host file execution (default=yes)])], [WANT_NFEXEC=$enableval], [WANT_NFEXEC=yes])
 
-AC_ARG_ENABLE(nfconfig,        [AC_HELP_STRING([--enable-nfconfig], [enable NatFeat config support (default=yes)])], [WANT_NFCONFIG=$enableval], [WANT_NFCONFIG=yes])
+AC_ARG_ENABLE(nfconfig,        [AS_HELP_STRING([--enable-nfconfig],[enable NatFeat config support (default=yes)])], [WANT_NFCONFIG=$enableval], [WANT_NFCONFIG=yes])
 
-AC_ARG_ENABLE(ata-cdrom,       [AC_HELP_STRING([--enable-ata-cdrom], [enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
+AC_ARG_ENABLE(ata-cdrom,       [AS_HELP_STRING([--enable-ata-cdrom],[enable ATA CD-ROM emulation (default=yes)])], [WANT_CDROM=$enableval], [WANT_CDROM=yes])
 
-AC_ARG_ENABLE(epslimiter,      [AC_HELP_STRING([--enable-epslimiter], [enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
+AC_ARG_ENABLE(epslimiter,      [AS_HELP_STRING([--enable-epslimiter],[enable Exception per second limiter (default=no)])], [WANT_EPSLIMITER=$enableval], [WANT_EPSLIMITER=no])
 
-AC_ARG_ENABLE(lilo,            [AC_HELP_STRING([--enable-lilo], [enable Linux-m68k loader (default=no)])], WANT_LILO="$enableval", WANT_LILO="no")
+AC_ARG_ENABLE(lilo,            [AS_HELP_STRING([--enable-lilo],[enable Linux-m68k loader (default=no)])], WANT_LILO="$enableval", WANT_LILO="no")
 
-AC_ARG_ENABLE(netbsd,          [AC_HELP_STRING([--enable-netbsd], [enable NetBSD-m68k loader (default=no)])], WANT_NETBSD="$enableval", WANT_NETBSD="no")
+AC_ARG_ENABLE(netbsd,          [AS_HELP_STRING([--enable-netbsd],[enable NetBSD-m68k loader (default=no)])], WANT_NETBSD="$enableval", WANT_NETBSD="no")
 
-AC_ARG_ENABLE(rtctimer,        [AC_HELP_STRING([--enable-rtctimer], [enable Linux /dev/rtc as source timer (default=yes)])], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
+AC_ARG_ENABLE(rtctimer,        [AS_HELP_STRING([--enable-rtctimer],[enable Linux /dev/rtc as source timer (default=yes)])], WANT_RTCTIMER="$enableval", WANT_RTCTIMER="yes")
 
-AC_ARG_ENABLE(parallelx86,     [AC_HELP_STRING([--enable-parallelx86], [enable Linux X86 hw access for parallel port (default=no)])], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
+AC_ARG_ENABLE(parallelx86,     [AS_HELP_STRING([--enable-parallelx86],[enable Linux X86 hw access for parallel port (default=no)])], [WANT_PARALLELX86=$enableval], [WANT_PARALLELX86=no])
 
-AC_ARG_ENABLE(parport,         [AC_HELP_STRING([--enable-parport], [enable Linux /dev/parport access for parallel port (default=yes)])], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
+AC_ARG_ENABLE(parport,         [AS_HELP_STRING([--enable-parport],[enable Linux /dev/parport access for parallel port (default=yes)])], [WANT_PARALLELPARPORT=$enableval], [WANT_PARALLELPARPORT=yes])
 
-AC_ARG_ENABLE(serialport,      [AC_HELP_STRING([--enable-serialport], [enable Unix /dev/ttySn serial port support (default=yes)])], [WANT_UNIXSERIALPORT=$enableval], [WANT_UNIXSERIALPORT=yes])
+AC_ARG_ENABLE(serialport,      [AS_HELP_STRING([--enable-serialport],[enable Unix /dev/ttySn serial port support (default=yes)])], [WANT_UNIXSERIALPORT=$enableval], [WANT_UNIXSERIALPORT=yes])
 
-AC_ARG_WITH(fink,              [AC_HELP_STRING([--with-fink], [Use Fink suite to build Aranym on MacOSX (default=no)])], [WITH_FINK=$withval], [WITH_FINK=no])
+AC_ARG_WITH(fink,              [AS_HELP_STRING([--with-fink],[Use Fink suite to build Aranym on MacOSX (default=no)])], [WITH_FINK=$withval], [WITH_FINK=no])
 
-AC_ARG_WITH(classicconfig,     [AC_HELP_STRING([--with-classicconfig], [Use Classic config names on MacOSX (default=no)])], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
+AC_ARG_WITH(classicconfig,     [AS_HELP_STRING([--with-classicconfig],[Use Classic config names on MacOSX (default=no)])], [WITH_CLASSIC_CONFIG=$withval], [WITH_CLASSIC_CONFIG=no])
 
 dnl FPU emulation core.
 if [[ "x$WANT_MMU" = "xyes" ]]; then
@@ -162,7 +162,7 @@ else
     SUGGESTED_AUTO_FPE_CORE_TEST_ORDER="ieee uae"
 fi
 AC_ARG_ENABLE(fpe,
-[AC_HELP_STRING([--enable-fpe=FPE], [specify which fpu emulator to use (default=auto)])],
+[AS_HELP_STRING([--enable-fpe=FPE],[specify which fpu emulator to use (default=auto)])],
 [ case "$enableval" in
     dnl default is always ieee, if architecture has this fp format
     auto)	FPE_CORE_TEST_ORDER=$SUGGESTED_AUTO_FPE_CORE_TEST_ORDER;;
@@ -178,7 +178,7 @@ AC_ARG_ENABLE(fpe,
 
 dnl Addressing modes.
 AC_ARG_ENABLE(addressing,
-[AC_HELP_STRING([--enable-addressing=AM], [specify the addressing mode to use (default=fastest)])],
+[AS_HELP_STRING([--enable-addressing=AM],[specify the addressing mode to use (default=fastest)])],
 [ case "$enableval" in
     direct)	ADDRESSING_TEST_ORDER="direct";;
     normal)	ADDRESSING_TEST_ORDER="normal";;
@@ -190,7 +190,7 @@ AC_ARG_ENABLE(addressing,
 ])
 
 AC_ARG_ENABLE(addr-check,
-[AC_HELP_STRING([--enable-addr-check=AM], [specify the memory check to use (default=page)])],
+[AS_HELP_STRING([--enable-addr-check=AM],[specify the memory check to use (default=page)])],
 [ case "$enableval" in
     no)		MEMORY_CHECK="no";;
     full)	MEMORY_CHECK="full";;
@@ -205,22 +205,22 @@ AC_ARG_ENABLE(addr-check,
 ])
 
 dnl Experimental hacks around spcflags handling.
-AC_ARG_ENABLE(spcflags-excl, [AC_HELP_STRING([--enable-spcflags-excl], [enable exclusive spcflags handling (default=no)])], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
+AC_ARG_ENABLE(spcflags-excl, [AS_HELP_STRING([--enable-spcflags-excl],[enable exclusive spcflags handling (default=no)])], [WANT_SPCFLAGS_EXCL=$enableval], [WANT_SPCFLAGS_EXCL=no])
 
 dnl JIT compiler options.
-AC_ARG_ENABLE(jit-compiler, [AC_HELP_STRING([--enable-jit-compiler], [enable JIT compiler (default=no)])], [WANT_JIT=$enableval], [WANT_JIT=no])
-AC_ARG_ENABLE(jit2, [AC_HELP_STRING([--enable-jit2], [enable JIT (v2) compiler (experimental/ARM only) (default=no)])], [WANT_JIT2=$enableval], [WANT_JIT2=no])
+AC_ARG_ENABLE(jit-compiler, [AS_HELP_STRING([--enable-jit-compiler],[enable JIT compiler (default=no)])], [WANT_JIT=$enableval], [WANT_JIT=no])
+AC_ARG_ENABLE(jit2, [AS_HELP_STRING([--enable-jit2],[enable JIT (v2) compiler (experimental/ARM only) (default=no)])], [WANT_JIT2=$enableval], [WANT_JIT2=no])
 
 AC_ARG_ENABLE(jit-fpu,
-[AC_HELP_STRING([--enable-jit-fpu], [enable JIT compiler for FPU instructions (default=no)])], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
+[AS_HELP_STRING([--enable-jit-fpu],[enable JIT compiler for FPU instructions (default=no)])], [WANT_JIT_FPU=$enableval], [WANT_JIT_FPU=no])
 
-AC_ARG_ENABLE(jit-debug,       [AC_HELP_STRING([--enable-jit-debug], [activate native code disassemblers (default=no)])], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
+AC_ARG_ENABLE(jit-debug,       [AS_HELP_STRING([--enable-jit-debug],[activate native code disassemblers (default=no)])], [WANT_JIT_DEBUG=$enableval], [WANT_JIT_DEBUG=no])
 
-AC_ARG_ENABLE(ethernet,        [AC_HELP_STRING([--enable-ethernet], [enable ethernet card emulation (default=yes)])], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
+AC_ARG_ENABLE(ethernet,        [AS_HELP_STRING([--enable-ethernet],[enable ethernet card emulation (default=yes)])], [WANT_ETHERNET=$enableval], [WANT_ETHERNET=yes])
 
-AC_ARG_ENABLE(bpf-ethernet,    [AC_HELP_STRING([--enable-bpf-ethernet], [enable ethernet card emulation using BPF (default=no)])], [WANT_BFP_ETHERNET=$enableval], [WANT_BFP_ETHERNET=no])
+AC_ARG_ENABLE(bpf-ethernet,    [AS_HELP_STRING([--enable-bpf-ethernet],[enable ethernet card emulation using BPF (default=no)])], [WANT_BFP_ETHERNET=$enableval], [WANT_BFP_ETHERNET=no])
 
-AC_ARG_ENABLE(cxx-exceptions,  [AC_HELP_STRING([--enable-cxx-exceptions], [enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)])], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
+AC_ARG_ENABLE(cxx-exceptions,  [AS_HELP_STRING([--enable-cxx-exceptions],[enable the use of C++ try/catch instead of setjmp/longjmp (default=yes)])], [WANT_CXX_EXCEPTIONS=$enableval], [WANT_CXX_EXCEPTIONS=yes])
 
 dnl Host OS type (host is build if not cross-compiling).
 ANDROID_OS=no
@@ -380,7 +380,6 @@ PKG_PROG_PKG_CONFIG
 m4_ifndef([PKG_CHECK_MODULES], [AC_DEFUN([PKG_CHECK_MODULES], [true])])
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/mman.h mach/mach.h sys/ioctl.h)
 AC_CHECK_HEADERS(getopt.h)
@@ -412,8 +411,8 @@ AC_TYPE_OFF_T
 AC_CHECK_TYPE(loff_t, off_t)
 AC_TYPE_SIZE_T
 AC_CHECK_TYPE(ssize_t, size_t)
-AC_TYPE_SIGNAL
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([time.h sys/time.h])
+
 AC_STRUCT_TM
 AC_SYS_LARGEFILE
 gl_TM_GMTOFF
@@ -436,16 +435,15 @@ AC_CHECK_FUNCS(canonicalize_file_name realpath pipe fork)
 
 AC_CACHE_CHECK([whether sigsetjmp is supported],
   ac_cv_have_sigsetjmp, [
-  AC_TRY_LINK([
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
     #include <signal.h>
     #include <setjmp.h>
-  ], [
+  ]], [[
     sigjmp_buf b;
     sigsetjmp(b, 1);
     siglongjmp(b, 1);
-  ],
-  ac_cv_have_sigsetjmp=yes, ac_cv_have_sigsetjmp=no
-  )
+  ]])],[ac_cv_have_sigsetjmp=yes],[ac_cv_have_sigsetjmp=no
+  ])
 ])
 if test "$ac_cv_have_sigsetjmp" = "yes"; then
   AC_DEFINE([HAVE_SIGSETJMP], 1)
@@ -534,7 +532,7 @@ esac
 dnl Check that the host supports TUN/TAP devices
 AC_CACHE_CHECK([whether TUN/TAP is supported],
   ac_cv_tun_tap_support, [
-  AC_TRY_COMPILE([
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #if defined(HAVE_LINUX_IF_H) && defined(HAVE_LINUX_IF_TUN_H)
     #ifdef HAVE_SYS_SOCKET_H
     #include <sys/socket.h>
@@ -546,27 +544,25 @@ AC_CACHE_CHECK([whether TUN/TAP is supported],
     #include <net/if.h>
     #include <net/if_tun.h>
     #endif
-  ], [
+  ]], [[
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-  ],
-  ac_cv_tun_tap_support=yes, ac_cv_tun_tap_support=no
-  )
+  ]])],[ac_cv_tun_tap_support=yes],[ac_cv_tun_tap_support=no
+  ])
 ])
 
 dnl Check that the host supports BPF devices
 AC_CACHE_CHECK([whether BPF is supported],
   ac_cv_bpf_support, [
-  AC_TRY_COMPILE([
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #if defined(HAVE_NET_BPF_H)
     #include <net/bpf.h>
     #endif
-  ], [
+  ]], [[
     struct bpf_program filter;
-  ],
-  ac_cv_bpf_support=yes, ac_cv_bpf_support=no
-  )
+  ]])],[ac_cv_bpf_support=yes],[ac_cv_bpf_support=no
+  ])
 ])
 
   
@@ -590,29 +586,23 @@ if [[ "x$have_mach_vm" = "xyes" ]]; then
 AC_CACHE_CHECK([whether vm_protect works],
   ac_cv_vm_protect_works, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
+  AC_LANG([C++])
   ac_cv_vm_protect_works=yes
   dnl First the tests that should segfault
   for test_def in NONE_READ NONE_WRITE READ_WRITE; do
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
 	  $OSdarwinReq
       #include "$srcdir/src/Unix/vm_alloc.cpp"
-    ], ac_cv_vm_protect_works=no, rm -f core,
-    dnl When cross-compiling, do not assume anything
-    ac_cv_vm_protect_works="guessing no"
-    )
+    ]])],[ac_cv_vm_protect_works=no],[rm -f core],[dnl When cross-compiling])
   done
-  AC_TRY_RUN([
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
     $OSdarwinReq
     #include "$srcdir/src/Unix/vm_alloc.cpp"
-  ], , ac_cv_vm_protect_works=no,
-  dnl When cross-compiling, do not assume anything
-  ac_cv_vm_protect_works="guessing no"
-  )
+  ]])],[],[ac_cv_vm_protect_works=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -648,16 +638,13 @@ dnl Check if we have a working anonymous mmap()
 AC_CACHE_CHECK([whether mmap supports MAP_ANON],
   ac_cv_mmap_anon, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
+  AC_LANG([C++])
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #define HAVE_MMAP_ANON
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
     #include "$srcdir/src/Unix/vm_alloc.cpp"
-  ], ac_cv_mmap_anon=yes, ac_cv_mmap_anon=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_mmap_anon="guessing no"
-  )
+  ]])],[ac_cv_mmap_anon=yes],[ac_cv_mmap_anon=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -667,16 +654,13 @@ AC_TRANSLATE_DEFINE(HAVE_MMAP_ANON, $ac_cv_mmap_anon,
 AC_CACHE_CHECK([whether mmap supports MAP_ANONYMOUS],
   ac_cv_mmap_anonymous, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
+  AC_LANG([C++])
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #define HAVE_MMAP_ANONYMOUS
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_MMAP_ANON
     #include "$srcdir/src/Unix/vm_alloc.cpp"
-  ], ac_cv_mmap_anonymous=yes, ac_cv_mmap_anonymous=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_mmap_anonymous="guessing no"
-  )
+  ]])],[ac_cv_mmap_anonymous=yes],[ac_cv_mmap_anonymous=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -686,27 +670,21 @@ AC_TRANSLATE_DEFINE(HAVE_MMAP_ANONYMOUS, $ac_cv_mmap_anonymous,
 AC_CACHE_CHECK([whether mprotect works],
   ac_cv_mprotect_works, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
+  AC_LANG([C++])
   ac_cv_mprotect_works=yes
   dnl First the tests that should segfault
   for test_def in NONE_READ NONE_WRITE READ_WRITE; do
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #define CONFIGURE_TEST_VM_MAP
       #define TEST_VM_PROT_$test_def
       #include "$srcdir/src/Unix/vm_alloc.cpp"
-    ], ac_cv_mprotect_works=no, rm -f core,
-    dnl When cross-compiling, do not assume anything
-    ac_cv_mprotect_works="guessing no"
-    )
+    ]])],[ac_cv_mprotect_works=no],[rm -f core],[dnl When cross-compiling])
   done
-  AC_TRY_RUN([
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #define CONFIGURE_TEST_VM_MAP
     #define TEST_VM_PROT_RDWR_WRITE
     #include "$srcdir/src/Unix/vm_alloc.cpp"
-  ], , ac_cv_mprotect_works=no,
-  dnl When cross-compiling, do not assume anything
-  ac_cv_mprotect_works="guessing no"
-  )
+  ]])],[],[ac_cv_mprotect_works=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -735,8 +713,8 @@ dnl Check signal handlers need to be reinstalled
 AC_CACHE_CHECK([whether signal handlers need to be reinstalled],
   ac_cv_signal_need_reinstall, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
+  AC_LANG([C++])
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #include <stdlib.h>
     #ifdef HAVE_UNISTD_H
     #include <unistd.h>
@@ -748,10 +726,7 @@ AC_CACHE_CHECK([whether signal handlers need to be reinstalled],
       signal(SIGUSR1, sigusr1_handler); raise(SIGUSR1); raise(SIGUSR1);
       exit(handled_signal == 2);
     }
-  ], ac_cv_signal_need_reinstall=yes, ac_cv_signal_need_reinstall=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_signal_need_reinstall="guessing yes"
-  )
+  ]])],[ac_cv_signal_need_reinstall=yes],[ac_cv_signal_need_reinstall=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -762,8 +737,8 @@ dnl Check if sigaction handlers need to be reinstalled
 AC_CACHE_CHECK([whether sigaction handlers need to be reinstalled],
   ac_cv_sigaction_need_reinstall, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_RUN([
+  AC_LANG([C++])
+  AC_RUN_IFELSE([AC_LANG_SOURCE([[
     #include <stdlib.h>
     #ifdef HAVE_UNISTD_H
     #include <unistd.h>
@@ -782,10 +757,7 @@ AC_CACHE_CHECK([whether sigaction handlers need to be reinstalled],
       mysignal(SIGUSR1, sigusr1_handler); raise(SIGUSR1); raise(SIGUSR1);
       exit(handled_signal == 2);
     }
-  ], ac_cv_sigaction_need_reinstall=yes, ac_cv_sigaction_need_reinstall=no,
-  dnl When cross-compiling, do not assume anything.
-  ac_cv_sigaction_need_reinstall="guessing yes"
-  )
+  ]])],[ac_cv_sigaction_need_reinstall=yes],[ac_cv_sigaction_need_reinstall=no],[dnl When cross-compiling])
   AC_LANG_RESTORE
   ]
 )
@@ -796,18 +768,16 @@ dnl Check if we have vasprintf (_GNU_SOURCE)
 AC_CACHE_CHECK([for vasprintf],
   ac_cv_have_vasprintf, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
+  AC_LANG([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #define _GNU_SOURCE
     #include <stdarg.h>
     #include <stdio.h>
-  ], [
+  ]], [[
     va_list a;
     vasprintf(NULL, NULL, a);
-  ],
-  [ac_cv_have_vasprintf=yes],
-  [ac_cv_have_vasprintf=no]
-  )
+  ]])],[ac_cv_have_vasprintf=yes],[ac_cv_have_vasprintf=no
+  ])
   AC_LANG_RESTORE
   ]
 )
@@ -820,17 +790,15 @@ fi
 AC_CACHE_CHECK([for sighandler_t],
   ac_cv_have_sighandler_t, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
+  AC_LANG([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #define _GNU_SOURCE
     #include <signal.h>
     #include <stdio.h>
-  ], [
+  ]], [[
     signal(0, (sighandler_t)NULL);
-  ],
-  [ac_cv_have_sighandler_t=yes],
-  [ac_cv_have_sighandler_t=no]
-  )
+  ]])],[ac_cv_have_sighandler_t=yes],[ac_cv_have_sighandler_t=no
+  ])
   AC_LANG_RESTORE
   ]
 )
@@ -841,17 +809,15 @@ dnl Check if we have getopt_long
 AC_CACHE_CHECK([for getopt_long],
   ac_cv_have_getopt_long, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
+  AC_LANG([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #define _GNU_SOURCE
     #include <unistd.h>
     #include <getopt.h>
-  ], [
+  ]], [[
     getopt_long(0, NULL, NULL, NULL, NULL);
-  ],
-  [ac_cv_have_getopt_long=yes],
-  [ac_cv_have_getopt_long=no]
-  )
+  ]])],[ac_cv_have_getopt_long=yes],[ac_cv_have_getopt_long=no
+  ])
   AC_LANG_RESTORE
   ]
 )
@@ -864,17 +830,15 @@ dnl Check if we have __builtin_bswap16/32
 AC_CACHE_CHECK([for __builtin_bswap16],
   ac_cv_have___builtin_bswap16, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
+  AC_LANG([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #include <stdarg.h>
     #include <stdio.h>
     unsigned short v;
-  ], [
+  ]], [[
     v = __builtin_bswap16(v);
-  ],
-  [ac_cv_have___builtin_bswap16=yes],
-  [ac_cv_have___builtin_bswap16=no]
-  )
+  ]])],[ac_cv_have___builtin_bswap16=yes],[ac_cv_have___builtin_bswap16=no
+  ])
   AC_LANG_RESTORE
   ]
 )
@@ -883,17 +847,15 @@ AC_TRANSLATE_DEFINE(HAVE___BUILTIN_BSWAP16, $ac_cv_have___builtin_bswap16,
 AC_CACHE_CHECK([for __builtin_bswap32],
   ac_cv_have___builtin_bswap32, [
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
-  AC_TRY_COMPILE([
+  AC_LANG([C++])
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     #include <stdarg.h>
     #include <stdio.h>
     unsigned int v;
-  ], [
+  ]], [[
     v = __builtin_bswap32(v);
-  ],
-  [ac_cv_have___builtin_bswap32=yes],
-  [ac_cv_have___builtin_bswap32=no]
-  )
+  ]])],[ac_cv_have___builtin_bswap32=yes],[ac_cv_have___builtin_bswap32=no
+  ])
   AC_LANG_RESTORE
   ]
 )
@@ -1316,8 +1278,8 @@ if [[ "x$GCC" = "xyes" -a "x$FPE_CORE" = "xx86" ]]; then
   CXXFLAGS="$CXXFLAGS -fno-merge-constants"
   AC_CACHE_CHECK([whether GCC supports constants merging], ac_cv_gcc_constants_merging, [
     AC_LANG_SAVE
-    AC_LANG_CPLUSPLUS
-    AC_TRY_COMPILE([],[],[ac_cv_gcc_constants_merging=yes],[ac_cv_gcc_constants_merging=no])
+    AC_LANG([C++])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[ac_cv_gcc_constants_merging=yes],[ac_cv_gcc_constants_merging=no])
     AC_LANG_RESTORE
   ])
   if [[ "x$ac_cv_gcc_constants_merging" != "xyes" ]]; then
@@ -1358,8 +1320,8 @@ elif test "$GCC" = yes && $HAVE_X86_64; then
 	CXXFLAGS="$CXXFLAGS -mno-red-zone"
 	  AC_CACHE_CHECK([whether GCC supports -mno-red-zone], ac_cv_gcc_no_red_zone, [
 	    AC_LANG_SAVE
-	    AC_LANG_CPLUSPLUS
-	    AC_TRY_COMPILE([],[],[ac_cv_gcc_no_red_zone=yes],[ac_cv_gcc_no_red_zone=no])
+	    AC_LANG([C++])
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[ac_cv_gcc_no_red_zone=yes],[ac_cv_gcc_no_red_zone=no])
 	    AC_LANG_RESTORE
 	  ])
 	  CXXFLAGS="$SAVED_CXXFLAGS"
@@ -1582,11 +1544,11 @@ AH_TEMPLATE([DISASM_USE_OPCODES],[Define if using the opcodes library for disass
 AH_TEMPLATE([DISASM_USE_BUILTIN],[Define if using the builtin disassembler])
 
 AC_ARG_WITH(opcodes,
-[AC_HELP_STRING(--with-opcodes=DIR, [specify the directory where the opcodes library is located])],
+[AS_HELP_STRING([--with-opcodes=DIR],[specify the directory where the opcodes library is located])],
 with_opcodes=$withval, with_opcodes=)
 
 AC_ARG_ENABLE(disasm,
-[AC_HELP_STRING(--enable-disasm=builtin|opcodes, [Specify which library to use for disassembly @<:@none@:>@])],
+[AS_HELP_STRING([--enable-disasm=builtin|opcodes],[Specify which library to use for disassembly @<:@none@:>@])],
 enable_disasm=$enableval,
 enable_disasm=no; enable_disasm_defaulted=yes)
 case "$enable_disasm" in
@@ -1732,8 +1694,8 @@ fi
 dnl Check for SDL and/or SDL2
 m4_define(use_sdl2_default, yes)
 m4_case(use_sdl2_default, yes,
-[AC_ARG_ENABLE(sdl2,    [AC_HELP_STRING([--disable-sdl2], [disable use of SDL2 even if available (default=no)])], , [enable_sdl2=auto])],
-[AC_ARG_ENABLE(sdl2,    [AC_HELP_STRING([--enable-sdl2], [use SDL2 if available (default=no)])], , [enable_sdl2=no])])
+[AC_ARG_ENABLE(sdl2,    [AS_HELP_STRING([--disable-sdl2],[disable use of SDL2 even if available (default=no)])], , [enable_sdl2=auto])],
+[AC_ARG_ENABLE(sdl2,    [AS_HELP_STRING([--enable-sdl2],[use SDL2 if available (default=no)])], , [enable_sdl2=no])])
 
 SDL_CFLAGS=
 SDL_LIBS=
@@ -1927,9 +1889,9 @@ if test "x$WANT_OPENGL" = "xyes"; then
 	if test "$have_opengl" = no; then
 		CFLAGS="$CFLAGS $SDL_CFLAGS"
 		LIBS="$LIBS $SDL_LIBS $GL_LIBS"
-		AC_TRY_COMPILE([
+		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 			 #include "SDL_opengl.h"
-			],[],[have_opengl="yes"])
+			]], [[]])],[have_opengl="yes"],[])
 	fi
 	AC_MSG_RESULT($have_opengl)
 	CFLAGS="$tmp_cflags"
