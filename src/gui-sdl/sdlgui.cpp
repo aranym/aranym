@@ -186,7 +186,7 @@ bool SDLGui_Init()
 	}
 	fontgfxsmall = SDLGui_LoadXBM(fontsmall_bits, FONTSMALLWIDTH, FONTSMALLHEIGHT, FORMSMALL_WIDTH);
 
-	gui_hsurf = host->video->createSurface(76*8+16,25*16+16,8);
+	gui_hsurf = host->video->createSurface(76*8+16,25*16+16,host->video->getBpp());
 	if (!gui_hsurf) {
 		panicbug("Could not create surface for GUI");
 		panicbug("ARAnyM GUI will not be available");
@@ -348,7 +348,7 @@ void SDLGui_UpdateRect(SDL_Rect *rect)
   if ((rect->w > 0) && (rect->h > 0))
   {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-    host->video->refreshScreenFromSurface(sdlscrn);
+    // host->video->refreshScreenFromSurface(sdlscrn);
 #else
     SDL_UpdateRects(sdlscrn, 1, rect);
 #endif
