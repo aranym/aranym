@@ -277,7 +277,7 @@ static const char *const bitfieldtable[] =
 
 static void ps(m68k_disasm_info *info, const char *str)
 {
-	register char c;
+	char c;
 
 	while ((c = *str++) != '\0')
 	{
@@ -486,7 +486,7 @@ static void oadi(m68k_disasm_info *info, int regnum)
 
 static int os(m68k_disasm_info *info, int opcode)
 {
-	register int size;
+	int size;
 
 	size = insize(opcode);
 	sputc('.');
@@ -501,7 +501,7 @@ static int os(m68k_disasm_info *info, int opcode)
 
 static int os2(m68k_disasm_info *info, int opcode)
 {
-	register int size;
+	int size;
 
 	size = (opcode >> 9) & 3;
 	sputc('.');
@@ -968,10 +968,10 @@ static void doextended(m68k_disasm_info *info, int opcode2, int srcr)
 
 static void doea(m68k_disasm_info *info, int opcode, int size)
 {
-	register int srcr;
-	register int opcode2;
+	int srcr;
+	int opcode2;
 	uae_s32 offset;
-	register uae_s32 adr;
+	uae_s32 adr;
 
 	srcr = srcreg(opcode);
 	switch (srcmod(opcode))
@@ -1071,7 +1071,7 @@ static void doea(m68k_disasm_info *info, int opcode, int size)
 
 static void reglist(m68k_disasm_info *info, int regmask)
 {
-	register int regnum;
+	int regnum;
 	int liststart;
 	int lastreg;
 	int status;
@@ -1113,8 +1113,8 @@ static void reglist(m68k_disasm_info *info, int regmask)
 
 static int revbits(int mask, int n)
 {
-	register int i;
-	register int newmask;
+	int i;
+	int newmask;
 
 	for (newmask = 0, i = n; i > 0; i--)
 	{
@@ -1390,7 +1390,7 @@ static void group0(m68k_disasm_info *info, int opcode)
 
 static void group11(m68k_disasm_info *info, int opcode)
 {
-	register int size;
+	int size;
 
 	if ((opcode & 0x0100) != 0 && insize(opcode) != 3)
 	{
@@ -1441,7 +1441,7 @@ static void group11(m68k_disasm_info *info, int opcode)
 
 static void group1(m68k_disasm_info *info, int opcode)
 {
-	register int size = 0;
+	int size = 0;
 
 	ps(info, "move");
 	if (dstmod(opcode) == 1)
@@ -1475,7 +1475,7 @@ static void group1(m68k_disasm_info *info, int opcode)
 
 static void group14(m68k_disasm_info *info, int opcode)
 {
-	register short size;
+	short size;
 	unsigned int opcode2;
 	unsigned int bf;
 	
@@ -2069,7 +2069,7 @@ static enum fpu_size print_fpsize(m68k_disasm_info *info, int mask)
 static void print_freglist(m68k_disasm_info *info, int regmask, int mode, bool cntl)
 {
 	const char *const * regs;
-	register int regnum;
+	int regnum;
 	int liststart;
 	int lastreg;
 	int status;
@@ -3011,8 +3011,8 @@ static void pspreg(m68k_disasm_info *info, int mask)
 
 static void group4(m68k_disasm_info *info, int opcode)
 {
-	register int mask;
-	register int size;
+	int mask;
+	int size;
 
 	if (opcode & 0x0100)
 	{
@@ -3540,7 +3540,7 @@ static void group4(m68k_disasm_info *info, int opcode)
 
 static void group5(m68k_disasm_info *info, int opcode)
 {
-	register uae_s32 adr;
+	uae_s32 adr;
 	
 	if (insize(opcode) == 3)
 	{
@@ -3603,9 +3603,9 @@ static void group5(m68k_disasm_info *info, int opcode)
 
 static void group6(m68k_disasm_info *info, int opcode)
 {
-	register uae_s32 adr;
-	register int cond;
-	register signed char dist;
+	uae_s32 adr;
+	int cond;
+	signed char dist;
 
 	/* 0110 cccc dddddddd */
 	switch (cond = (opcode >> 8) & 0x000f)
@@ -3686,7 +3686,7 @@ static void group7(m68k_disasm_info *info, int opcode)
 
 static void g812(m68k_disasm_info *info, int opcode, const char *andor, const char *muldiv, const char *as)
 {
-	register int size;
+	int size;
 
 	info->num_oper = 2;
 	if (dstmod(opcode) == 3)
@@ -3772,7 +3772,7 @@ static void group8(m68k_disasm_info *info, int opcode)
 
 static void group12(m68k_disasm_info *info, int opcode)
 {
-	register int d5;
+	int d5;
 
 	if ((d5 = (opcode >> 3) & 0x003f) == 0x0028)
 	{
@@ -3813,7 +3813,7 @@ static void group12(m68k_disasm_info *info, int opcode)
 
 static void g913(m68k_disasm_info *info, int opcode, const char *addsub)
 {
-	register int size;
+	int size;
 
 	ps(info, addsub);
 	if ((opcode & 0x0100) != 0 && insize(opcode) != 3 && ((opcode >> 4) & 3) == 0)
@@ -4125,8 +4125,8 @@ static void (*const grphdlrs[])(m68k_disasm_info *, int) = {
 
 int m68k_disasm_builtin(m68k_disasm_info *info)
 {
-    register int opcode;
-    register void (*hdlr)(m68k_disasm_info *info, int opcode);
+    int opcode;
+    void (*hdlr)(m68k_disasm_info *info, int opcode);
     unsigned int insn_size;
 	struct priv_data *priv;
 	
