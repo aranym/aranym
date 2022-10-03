@@ -2097,6 +2097,7 @@
 		};
 		17AAB2A80B20A8150016FB8D /* Script: Create Diskimage */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 12;
 			files = (
 			);
