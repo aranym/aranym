@@ -276,6 +276,10 @@
 		17AAB12C0B206BF20016FB8D /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AAB1190B206BF20016FB8D /* OpenGL.framework */; };
 		17AAB1320B206C0E0016FB8D /* nfvdi_opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17798DA40A652B51009733EB /* nfvdi_opengl.cpp */; };
 		17B1146E151E6A4500E4EB0F /* MacAranym JIT.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = B439AC9B0C5B2FD00046EFC9 /* MacAranym JIT.app */; };
+		17BAC50D28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */; };
+		17BAC50E28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */; };
+		17BAC50F28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */; };
+		17BAC51028EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */; };
 		17BCD7DC0B20F64F00432CE1 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 002F39F909D0881F00EBEB88 /* SDL.framework */; };
 		17BCD7DD0B20F64F00432CE1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		17BCD7DE0B20F64F00432CE1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 177990510A6538B5009733EB /* IOKit.framework */; };
@@ -1188,6 +1192,7 @@
 		17B2B51A0C41781B00595D44 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
 		17B2B78C0C41785800595D44 /* libGL.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGL.1.dylib; path = MesaGL/lib/libGL.1.dylib; sourceTree = "<group>"; };
 		17B2B78D0C41785800595D44 /* libOSMesa.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOSMesa.7.dylib; path = MesaGL/lib/libOSMesa.7.dylib; sourceTree = "<group>"; };
+		17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bootos_netbsd.cpp; path = ../../bootos_netbsd.cpp; sourceTree = "<group>"; };
 		17BCD7E90B20F65000432CE1 /* MacAranym MMU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacAranym MMU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		17BCD8B00B21004100432CE1 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = AUTHORS; path = ../../../AUTHORS; sourceTree = SOURCE_ROOT; };
 		17BCD8B10B21004100432CE1 /* BUGS */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text; name = BUGS; path = ../../../BUGS; sourceTree = SOURCE_ROOT; };
@@ -1470,6 +1475,7 @@
 				17798CDB0A652B50009733EB /* bootos_emutos.cpp */,
 				17798CDC0A652B50009733EB /* bootos_linux.cpp */,
 				17798CDD0A652B50009733EB /* bootos_tos.cpp */,
+				17BAC50C28EAD1C20031CE01 /* bootos_netbsd.cpp */,
 				17798CDE0A652B50009733EB /* bootos.cpp */,
 				17798CDF0A652B50009733EB /* cdrom.cpp */,
 				17798CE00A652B50009733EB /* cfgopts.cpp */,
@@ -2501,6 +2507,7 @@
 				1778A49F1555A8A70005B336 /* nfvdi.cpp in Sources */,
 				1778A4A01555A8A70005B336 /* nfvdi_soft.cpp in Sources */,
 				1778A4A11555A8A70005B336 /* nfcdrom.cpp in Sources */,
+				17BAC51028EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */,
 				1778A4A21555A8A70005B336 /* hostfs.cpp in Sources */,
 				1778A4A31555A8A70005B336 /* aranym_glue.cpp in Sources */,
 				1778A4A41555A8A70005B336 /* memory.cpp in Sources */,
@@ -2636,6 +2643,7 @@
 				17BCD8260B20F6BF00432CE1 /* nfvdi.cpp in Sources */,
 				17BCD8270B20F6BF00432CE1 /* nfvdi_soft.cpp in Sources */,
 				17BCD8280B20F6BF00432CE1 /* nfcdrom.cpp in Sources */,
+				17BAC50E28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */,
 				17BCD8290B20F6BF00432CE1 /* hostfs.cpp in Sources */,
 				17BCD82A0B20F6BF00432CE1 /* aranym_glue.cpp in Sources */,
 				17BCD82B0B20F6BF00432CE1 /* memory.cpp in Sources */,
@@ -2821,6 +2829,7 @@
 				1732BC881245412B00272489 /* serial.cpp in Sources */,
 				8C211F8F22DB8F8D00C0E7F4 /* nf_config.cpp in Sources */,
 				1732BC891245412B00272489 /* serial_port.cpp in Sources */,
+				17BAC50D28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */,
 				1717E85B151680B900D416FA /* dlgUsb.cpp in Sources */,
 				17473D1A15AA07FD00CAEA47 /* ethernet_macosx.cpp in Sources */,
 				17473D1B15AA07FD00CAEA47 /* fd_trans.c in Sources */,
@@ -2839,6 +2848,7 @@
 				8C54C7E120B45A8B007744DD /* disasm-x86.cpp in Sources */,
 				8C54C7E220B45A8B007744DD /* disasm-x86-builtin.c in Sources */,
 				8C5BB723205DBE45000B8CFC /* nf_scsidrv.cpp in Sources */,
+				17BAC50F28EAD1C20031CE01 /* bootos_netbsd.cpp in Sources */,
 				8CF5F79D23BC539A00B83889 /* nfosmesa_calls.cpp in Sources */,
 				B4A1F1440D2AB709004220C2 /* debug.cpp in Sources */,
 				B4A9EBEE0C5B374A00C156C3 /* ethernet.cpp in Sources */,
