@@ -17,4 +17,5 @@ VERSION=`echo "-$VERSION" | sed 's/ //g;s/-//g'`
 DMGNAME=$TARGET_BUILD_DIR/aranym-$VERSION-macosx-`echo $ARCHS | tr " " "_"`.dmg
 echo "Building disk image $DMGNAME..."
 hdiutil create "$DMGNAME" -ov -volname "MacAranym $VERSION" -srcfolder . -format UDZO
+codesign -s "$CODE_SIGN_IDENTITY" --timestamp -i org.aranym.MacAranym.diskimage "$DMGNAME"
 open -R $DMGNAME
