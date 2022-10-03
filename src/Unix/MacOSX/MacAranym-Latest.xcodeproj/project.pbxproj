@@ -2769,7 +2769,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym.aranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -2866,6 +2866,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				LD_RUNPATH_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.bpf-helper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
 					"$(BUILD_DIR)",
@@ -2892,6 +2893,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = OS_darwin;
 				LD_RUNPATH_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.bpf-helper";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
 					"$(BUILD_DIR)",
@@ -2926,7 +2928,7 @@
 					"-lmpfr",
 					"-lgmp",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-mpfr";
 				PRODUCT_NAME = "MacAranym MMU MPFR";
 			};
 			name = Debug;
@@ -2950,7 +2952,7 @@
 					"-lmpfr",
 					"-lgmp",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-mpfr";
 				PRODUCT_NAME = "MacAranym MMU MPFR";
 			};
 			name = Release;
@@ -2987,7 +2989,7 @@
 					"$(inherited)",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-mmu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -3008,7 +3010,7 @@
 					"$(inherited)",
 					"-lz",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-mmu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -3025,7 +3027,7 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "$(COMPILE_DEFS_$(arch))";
 				INFOPLIST_FILE = "../../gui-osx/Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym.aranym;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -3131,7 +3133,7 @@
 					"-pagezero_size",
 					0x2000,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-jit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "i386 x86_64";
 			};
@@ -3155,7 +3157,7 @@
 					"-pagezero_size",
 					0x2000,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.aranym.MacAranym;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.aranym.MacAranym.aranym-jit";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALID_ARCHS = "i386 x86_64";
 			};
