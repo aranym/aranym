@@ -1,63 +1,64 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1561
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;\f2\fnil\fcharset0 LucidaGrande;
-}
+{\rtf1\ansi\ansicpg1252\cocoartf2639
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Monaco;
+\f3\fnil\fcharset0 LucidaGrande;}
 {\colortbl;\red255\green255\blue255;\red35\green110\blue37;}
 {\*\expandedcolortbl;;\csgenericrgb\c13725\c43137\c14510;}
-{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
-\vieww18280\viewh15180\viewkind0
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid101\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\paperw12240\paperh15840\vieww18280\viewh15180\viewkind0
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
 \f0\b\fs28 \cf0 New Xcode project for building universal binaries\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b0\fs24 \cf0 \
+\f1\b0\fs24 \cf0 \
 Finally I'm committing the Xcode 2.4.1 project I'm using to build Universal binaries of MacAranym. Currently it's not tested if it's working with version before 2.4.1.\
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b \cf0 What's the difference?
-\b0 \
+\f0\b \cf0 What's the difference?
+\f1\b0 \
 What's the difference between this project and the two other projects targeted for Mac OS X?\
 \
 \pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\pardirnatural\partightenfactor0
 
-\f1\fs20 \cf0 \CocoaLigature0 src/MacOSX/MacAranym.pbproj
-\f2\fs24 \CocoaLigature1 \
+\f2\fs20 \cf0 \CocoaLigature0 src/MacOSX/MacAranym.pbproj
+\f3\fs24 \CocoaLigature1 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\f0 \cf0  is an old Project Builder/Xcode 1.5 project which is hard to maintain, because such an old version of Xcode only runs on Mac OS 10.3.x. Even though this project has been used by Fran\'e7ois LeCoat to build several releases of MacAranym, its existence in CVS has been neglected for a long time and it has hardly been updated. Therefore new Mac OS X developers willing to build MacAranym as a first challenge had to update the project/fix many errors message coming from the build scripts and the outdated project file.\
+\f1 \cf0  is an old Project Builder/Xcode 1.5 project which is hard to maintain, because such an old version of Xcode only runs on Mac OS 10.3.x. Even though this project has been used by Fran\'e7ois LeCoat to build several releases of MacAranym, its existence in CVS has been neglected for a long time and it has hardly been updated. Therefore new Mac OS X developers willing to build MacAranym as a first challenge had to update the project/fix many errors message coming from the build scripts and the outdated project file.\
 Lately I have fixed the biggest issues, but several others are still existing: the build scripts are rather awkward, e.g. every time the project is built, the configure-script is executed and all sources are recompiled. Further it was not possible to modify the build scripts to produce Universal Binaries while maintaining compatibility to Xcode 1.5.\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\f2 \cf0 \
+\f3 \cf0 \
 \pard\tx480\tx960\tx1440\tx1920\tx2400\tx2880\tx3360\tx3840\tx4320\tx4800\tx5280\tx5760\tx6240\tx6720\tx7200\tx7680\tx8160\tx8640\tx9120\tx9600\tx10080\tx10560\tx11040\tx11520\tx12000\tx12480\tx12960\tx13440\tx13920\tx14400\tx14880\tx15360\tx15840\tx16320\tx16800\tx17280\tx17760\tx18240\tx18720\tx19200\tx19680\tx20160\tx20640\tx21120\tx21600\tx22080\tx22560\tx23040\tx23520\tx24000\tx24480\tx24960\tx25440\tx25920\tx26400\tx26880\tx27360\tx27840\tx28320\tx28800\tx29280\tx29760\tx30240\tx30720\tx31200\tx31680\tx32160\tx32640\tx33120\tx33600\tx34080\tx34560\tx35040\tx35520\tx36000\tx36480\tx36960\tx37440\tx37920\tx38400\tx38880\tx39360\tx39840\tx40320\tx40800\tx41280\tx41760\tx42240\tx42720\tx43200\tx43680\tx44160\tx44640\tx45120\tx45600\tx46080\tx46560\tx47040\tx47520\tx48000\pardirnatural\partightenfactor0
 
-\f1\fs20 \cf0 \CocoaLigature0 src/Unix/darwin\cf2 /*
-\f2\fs24 \cf0 \CocoaLigature1 \
+\f2\fs20 \cf0 \CocoaLigature0 src/Unix/darwin\cf2 /*
+\f3\fs24 \cf0 \CocoaLigature1 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\f0 \cf0  is a simple Makefile based project and can be used from the command line and included as external target into Xcode. The biggest advantage of this type of project is that it's not necessary to synchronize it with the Linux/cygwin developments as it's using the same build system and scripts. But it's default behavior is not what you would expect from any of the latest MacAranym releases: it's placing the configuration files into the 
-\f1\fs20 \CocoaLigature0 ~/Library/Preferences
-\f0\fs24 \CocoaLigature1  folder and names the files 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.config
-\f0\fs24 \CocoaLigature1 , 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.nvram
-\f0\fs24 \CocoaLigature1  and 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.keymap
-\f0\fs24 \CocoaLigature1 . Further it's reading data files (like ROM) from the 
-\f1\fs20 \CocoaLigature0 ~/Library/Application Support/Aranym
-\f0\fs24 \CocoaLigature1  folder. One would say this is great as it follows Apple guide lines, but it's a real pain as there is no complete configuration GUI, so you still have to edit the config file from time to time. And in this case it's a tedious to search for this 
-\f1\fs20 \CocoaLigature0 org.atari.aranym.config
-\f0\fs24 \CocoaLigature1  configuration file in the Preferences folder.
-\f2 \
+\f1 \cf0  is a simple Makefile based project and can be used from the command line and included as external target into Xcode. The biggest advantage of this type of project is that it's not necessary to synchronize it with the Linux/cygwin developments as it's using the same build system and scripts. But it's default behavior is not what you would expect from any of the latest MacAranym releases: it's placing the configuration files into the 
+\f2\fs20 \CocoaLigature0 ~/Library/Preferences
+\f1\fs24 \CocoaLigature1  folder and names the files 
+\f2\fs20 \CocoaLigature0 org.atari.aranym.config
+\f1\fs24 \CocoaLigature1 , 
+\f2\fs20 \CocoaLigature0 org.atari.aranym.nvram
+\f1\fs24 \CocoaLigature1  and 
+\f2\fs20 \CocoaLigature0 org.atari.aranym.keymap
+\f1\fs24 \CocoaLigature1 . Further it's reading data files (like ROM) from the 
+\f2\fs20 \CocoaLigature0 ~/Library/Application Support/Aranym
+\f1\fs24 \CocoaLigature1  folder. One would say this is great as it follows Apple guide lines, but it's a real pain as there is no complete configuration GUI, so you still have to edit the config file from time to time. And in this case it's a tedious to search for this 
+\f2\fs20 \CocoaLigature0 org.atari.aranym.config
+\f1\fs24 \CocoaLigature1  configuration file in the Preferences folder.
+\f3 \
 
-\f0 \
+\f1 \
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b \cf0 What's new?
-\b0 \
+\f0\b \cf0 What's new?
+\f1\b0 \
 As I still prefer IDEs, I've decided to create a new project for Xcode 2.x which allows creation of Universal Binaries and which is more convenient for developing purposes. It's advantages are:\
 \pard\tx285\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li280\fi-280\partightenfactor0
 \cf0 -	Only three targets: MacAranym, MacAranym MMU and Packaging.\
@@ -68,121 +69,175 @@ As I still prefer IDEs, I've decided to create a new project for Xcode 2.x which
 \cf0 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b \cf0 \
+\f0\b \cf0 \
 Let's build\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b0 \cf0 As you've probably already discovered, the new MacAranym project file is located at 
-\f1\fs20 \CocoaLigature0 src/Unix/MacOSX/MacAranym.xcodeproj
-\f0\fs24 \CocoaLigature1 .\
+\f1\b0 \cf0 As you've probably already discovered, the new MacAranym project file is located at 
+\f2\fs20 \CocoaLigature0 src/Unix/MacOSX/MacAranym.xcodeproj
+\f1\fs24 \CocoaLigature1 .\
 Hopefully you've already installed Xcode. If not, you can download the latest version free of charge (but only after registration) from Apples Developer Page at {\field{\*\fldinst{HYPERLINK "https://developer.apple.com/download/"}}{\fldrslt https://developer.apple.com/download/}}.\
 As you read this file I'm supposing you've already downloaded the ARAnyM source code from CVS or as a tarball.\
 \
 Then you're missing additional dependencies:\
 \pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\partightenfactor0
-\ls1\ilvl0\cf0 {\listtext	\uc0\u8226 	}SDL library can be found at {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org"}}{\fldrslt https://www.libsdl.org}} and the version 1.2 can be downloaded here {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/download-1.2.php"}}{\fldrslt https://www.libsdl.org/download-1.2.php}}, and version 2.x here  {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/download-1.2.php"}}{\fldrslt https://www.libsdl.org/download-2.0.php}}.\uc0\u8232 Copy the 
-\f1\fs20 \CocoaLigature0 SDL.framework
-\f0\fs24 \CocoaLigature1  and  
-\f1\fs20 \CocoaLigature0 SDL2.framework 
-\f0\fs24 \CocoaLigature1 folders into the project folder (src/Unix/MacOSX/) .\
-{\listtext	\uc0\u8226 	}SDL_image 1.2 is a SDL project ({\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/}}) and the version 1.2 can be downloaded here: {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/SDL_image/release-1.2.html"}}{\fldrslt https://www.libsdl.org/projects/SDL_image/release-1.2.html}}\uc0\u8232 Copy the 
-\f1\fs20 \CocoaLigature0 SDL_image.framework
-\f0\fs24 \CocoaLigature1  and 
-\f1\fs20 \CocoaLigature0 SDL2_image.framework 
-\f0\fs24 \CocoaLigature1 folders into the project folder beside the SDL.framework.\
-{\listtext	\uc0\u8226 	}At least since Xcode 6 you need to install "automake" and "autoconf\'93, as it is not delivered as part of the tool suite. \uc0\u8232 The easiest way is to use MacPorts ({\field{\*\fldinst{HYPERLINK "https://www.macports.org"}}{\fldrslt https://www.macports.org}}) or Homebrew ({\field{\*\fldinst{HYPERLINK "https://brew.sh"}}{\fldrslt https://brew.sh}}). After installing one of them you can use for MacPorts the command \'84sudo port install automake autoconf" or for Homebrew \'84brew install automake\'93 (MacPorts is preferred, since the binaries provided by Homebrew are not universal, and you may not be able to link the i386 version).\
-{\listtext	\uc0\u8226 	}Similarly, you need to install a jpeg library. For MacPorts use the command \'84sudo port install jpeg +universal" or for Homebrew \'84brew install jpeg\'93.\
-{\listtext	\uc0\u8226 	}Further X11 is not included anymore as of OS X 10.6, but sadly SDL still has some references to X11 includes. This is why you have to install XQuartz ({\field{\*\fldinst{HYPERLINK "https://www.xquartz.org"}}{\fldrslt https://www.xquartz.org}}) to be able to compile on the latest systems.\
+\ls1\ilvl0\cf0 {\listtext	\uc0\u8226 	}SDL library version 1.2.15 and also the latest SDL2 releases can be downloaded here {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/release/"}}{\fldrslt https://www.libsdl.org/release/}}.\uc0\u8232 Copy the 
+\f2\fs20 \CocoaLigature0 SDL.framework
+\f1\fs24 \CocoaLigature1  and  
+\f2\fs20 \CocoaLigature0 SDL2.framework 
+\f1\fs24 \CocoaLigature1 folders into the project folder (src/Unix/MacOSX/) .\
+{\listtext	\uc0\u8226 	}SDL_image is a SDL project ({\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/old/SDL_image/"}}{\fldrslt https://www.libsdl.org/projects/old/SDL_image/}}). The old version 1.2 can be found here: {\field{\*\fldinst{HYPERLINK "https://www.libsdl.org/projects/old/SDL_image/release-1.2.html"}}{\fldrslt https://www.libsdl.org/projects/old/SDL_image/release-1.2.html}} and the version 2.x can be downloaded here: {\field{\*\fldinst{HYPERLINK "https://github.com/libsdl-org/SDL_image"}}{\fldrslt https://github.com/libsdl-org/SDL_image}}\uc0\u8232 Copy the 
+\f2\fs20 \CocoaLigature0 SDL_image.framework
+\f1\fs24 \CocoaLigature1  and 
+\f2\fs20 \CocoaLigature0 SDL2_image.framework 
+\f1\fs24 \CocoaLigature1 folders into the project folder beside the SDL.framework.\
+{\listtext	\uc0\u8226 	}Since Xcode 6 you need to install "automake" and "autoconf\'93 as it is not delivered as part of the tool suite.\uc0\u8232 The easiest way is to use MacPorts ({\field{\*\fldinst{HYPERLINK "https://www.macports.org"}}{\fldrslt https://www.macports.org}}) or Homebrew ({\field{\*\fldinst{HYPERLINK "https://brew.sh"}}{\fldrslt https://brew.sh}}). After installing one of them you can the command \'84
+\f2\fs20 sudo port install automake autoconf
+\f1\fs24 " (use for MacPorts) or \'84
+\f2\fs20 brew install automake
+\f1\fs24 \'93 (for Homebrew).\
+{\listtext	\uc0\u8226 	}Similarly, you need to install a jpeg library. For MacPorts use the command \'84
+\f2\fs20 sudo port install jpeg +universal
+\f1\fs24 " or for Homebrew \'84
+\f2\fs20 brew install jpeg
+\f1\fs24 \'93.\
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 \cf0 \
-That's it you can start up Xcode with 
-\f1\fs20 \CocoaLigature0 MacAranym.xcodeproj
-\f0\fs24 \CocoaLigature1  and select a target (e.g. MacAranym, MacAranym or a full package) and a build style (Debug for native architecture with all symbols for debugging or Release for universal binaries).\
+That's it you can start up Xcode, open 
+\f2\fs20 \CocoaLigature0 MacAranym.xcodeproj
+\f1\fs24 \CocoaLigature1  and select a build scheme (e.g. \'84MacAranym\'93, \'84MacAranym MMU\'93 or \'84Packaging\'93) and build & run it.\
 \
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b \cf0 Enabling
-\b0  
-\b native OSMesa software OpenGL rendering (NFOSMESA)
-\b0 \
+\f0\b \cf0 Enabling
+\f1\b0  
+\f0\b native OSMesa software OpenGL rendering (NFOSMESA)
+\f1\b0 \
 \pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 \cf0 This feature enables a substantial OpenGL acceleration for Atari applications using the 
-\f1\fs20 osmesa.ldg
-\f0\fs24  or 
-\f1\fs20 tiny.ldg
-\f0\fs24 . as OpenGL framework.\
+\f2\fs20 osmesa.ldg
+\f1\fs24  or 
+\f2\fs20 tiny.ldg
+\f1\fs24  as OpenGL framework.\
 \pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
-\cf0 	1.	Download Mesa GL from its website {\field{\*\fldinst{HYPERLINK "http://mesa3d.org/"}}{\fldrslt http://mesa3d.org}}.\
+\cf0 	1.	Download Mesa GL from its website {\field{\*\fldinst{HYPERLINK "https://mesa3d.org/"}}{\fldrslt https://mesa3d.org}}.\
 	2.	Compile it using the command 
-\f1\fs20 make darwin-fat-all
-\f0\fs24 .\
+\f2\fs20 make darwin-fat-all
+\f1\fs24 .\
 	3.	Add its 
-\f1\fs20 include
-\f0\fs24  path to Xcodes "Header Search Paths", add 
-\f1\fs20 --enable-nfosmesa
-\f0\fs24  to the CONFIGURE_OPTIONS build variable and (re-)build MacAranym.\
+\f2\fs20 include
+\f1\fs24  path to Xcodes "Header Search Paths", add 
+\f2\fs20 --enable-nfosmesa
+\f1\fs24  to the CONFIGURE_OPTIONS build variable and (re-)build MacAranym.\
 	4. Copy the 
-\f1\fs20 libGL.1.dylib
-\f0\fs24  and 
-\f1\fs20 libOSMesa.6.dylib
-\f0\fs24  from Mesa GL 
-\f1\fs20 lib
-\f0\fs24  directory into 
-\f1\fs20 MacAranym.app/Contents/MacOS/
-\f0\fs24 .\
+\f2\fs20 libGL.1.dylib
+\f1\fs24  and 
+\f2\fs20 libOSMesa.6.dylib
+\f1\fs24  from Mesa GL 
+\f2\fs20 lib
+\f1\fs24  directory into 
+\f2\fs20 MacAranym.app/Contents/MacOS/
+\f1\fs24 .\
 	5. Modify your configuration file as below:\
 
-\f1\fs20 			[NFOSMESA]\
+\f2\fs20 			[NFOSMESA]\
 			ChannelSize = 0\
 			LibGL = libGL.1.dylib\
 			LibOSMesa = libOSMesa.6.dylib
-\f2\fs24 \
+\f3\fs24 \
 
-\f0 	6.	Install 
-\f1\fs20 osmesa.ldg
-\f0\fs24  and 
-\f1\fs20 nfosmesa.xdd
-\f0\fs24  in your Aranym Atari environment/applications replacing the old dynamic libraries.\
+\f1 	6.	Install 
+\f2\fs20 osmesa.ldg
+\f1\fs24  and 
+\f2\fs20 nfosmesa.xdd
+\f1\fs24  in your Aranym Atari environment/applications replacing the old dynamic libraries.\
 	7.	Enjoy accelerated Atari OpenGL rendering.
-\f2 \
+\f3 \
 
-\f0 \
+\f1 \
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
-\b \cf0 Enabling
-\b0  
-\b MPFR FPU emulation
-\b0 \
+\f0\b \cf0 Enabling
+\f1\b0  
+\f0\b MPFR FPU emulation
+\f1\b0 \
 \pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 \cf0 This feature enables the use of the more accurate (but less performant) MPFR library for the FPU emulation.\
 \pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
 \cf0 	1.	Install MPFR using MacPorts ({\field{\*\fldinst{HYPERLINK "http://www.macports.org"}}{\fldrslt http://www.macports.org}}): (this will also install necessary dependencies)\
 
-\f1\fs20 			sudo port install mpfr +universal\
+\f2\fs20 			sudo port install mpfr +universal\
 
-\f0\fs24 	2.	Edit the MacAranym target: removing the 
-\f1\fs20 fpu_uae.cpp
-\f0\fs24  file and adding the 
-\f1\fs20 fpu_mpfr.cpp
-\f0\fs24  to the "Compile Sources" phase\
+\f1\fs24 	2.	Edit the MacAranym target: removing the 
+\f2\fs20 fpu_uae.cpp
+\f1\fs24  file and adding the 
+\f2\fs20 fpu_mpfr.cpp
+\f1\fs24  to the "Compile Sources" phase\
 	3.	Edit the targets "Build Settings":\
 			-Modify the CONFIGURE_OPTIONS_TARGET setting 
-\f1\fs20 --enable-fpe="mpfr"
-\f0\fs24 \
+\f2\fs20 --enable-fpe="mpfr"
+\f1\fs24 \
 			-Modify the COMPILE_DEFS setting, replacing FPU_UAE by FPU_MPFR\
 			-Add path "
-\f1\fs20 /opt/local/lib
-\f0\fs24 " to the "Library Search Paths" setting\
+\f2\fs20 /opt/local/lib
+\f1\fs24 " to the "Library Search Paths" setting\
 			-Add path "
-\f1\fs20 /opt/local/include
-\f0\fs24 " to the "Header Search Paths" setting\
+\f2\fs20 /opt/local/include
+\f1\fs24 " to the "Header Search Paths" setting\
 			-Add path "
-\f1\fs20 -L/opt/local/lib -lmpfr -lgmp
-\f0\fs24 " to the "Other Linker Flags" setting\
+\f2\fs20 -L/opt/local/lib -lmpfr -lgmp
+\f1\fs24 " to the "Other Linker Flags" setting\
+\
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
+
+\f0\b \cf0 Creating a notarized build for sharing/publishing/releasing\
+\pard\tx566\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
+
+\f1\b0 \cf0 To create a build which is accepted by macOS Gatekeeper, the MacAranym* applications and the disk image should be notarized by Apple.\
+Without notarization (depending on security settings) the user can either not launch the app at all (because it comes from an "unidentified developer") or he has to launch the app using the context menu "Open".\
+There will still be an initial warning for the user when the app launches for the first time as it was downloaded from the internet, but the goal of notarizing an app is, that the user can have "some confidence" that the app does not contain any known malware.\
+\
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
+\cf0 To create a notarized build:\
+\pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\sl288\slmult1\partightenfactor0
+\ls2\ilvl0\cf0 {\listtext	1.	}You need an active Apple developer account with a \'84Developer ID Application\'93 certificate.\
+{\listtext	2.	}Open the \'84MacAranym-Latest.xcodeproj\'93, click the \'84MacAranym-Latest\'93 project icon in the project navigator and select the project and the \'84Build Settings\'93 tab.\uc0\u8232 Select \'84All\'93 (to view all possible build settings) and then filter for \'84signing\'93 to restrict the view on the relevant ones.\u8232 Then set
+\f0\b  
+\f1\b0 the \'84
+\f0\b Development Team
+\f1\b0 \'93 setting to 
+\f0\b your developer account
+\f1\b0  and set the
+\f0\b  
+\f1\b0 \'84
+\f0\b Code Signing Identity
+\f1\b0 \'93
+\f0\b  
+\f1\b0 to \'84
+\f0\b Developer ID Application
+\f1\b0 \'93.\
+{\listtext	3.	}Choose the \'84Packaging\'93 scheme from the scheme selector and press CMD+B to build the package.\uc0\u8232 After successfully building the project, the generated DMG disk image is automatically shown in the Finder.\
+{\listtext	4.	}To notarize your application you have to start the terminal and change to the corresponding directory and start the 
+\f2\fs20 notarytool
+\f1\fs24 :\uc0\u8232 
+\f2\fs20 cd ~/Library/Developer/Xcode/DerivedData/MacAranym-Latest-*/Build/Products/Release\uc0\u8232 xcrun notarytool submit aranym-1.1.0-macosx-arm64_x86_64.dmg --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM --wait\u8232 
+\f1\fs24 \uc0\u8232 This will first ask for your Apple ID password to connect to AppStore Connect (=a specific password you have to create), then upload the disk image and start processing it.\u8232 After successful completion, you should see \'84Processing complete\'93 with \'84status: Accepted\'93\
+{\listtext	5.	}Finally the notarization \'84ticket\'93 has to be attached to the disk image using the following command:\uc0\u8232 
+\f2\fs20 xcrun stapler staple aranym-1.1.0-macosx-arm64_x86_64.dmg
+\f1\fs24 \
+\pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
+\cf0 \
+The so notarized disk image can then be upload or shared with other users. \
+And it can be verified using the command:\
+		
+\f2\fs20 spctl -a -t open -vvv --context context:primary-signature
+\f1\fs24  
+\f2\fs20 aranym-1.1.0-macosx-arm64_x86_64.dmg
+\f1\fs24 \
 \
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
-\cf0 2017/07/03\
+\cf0 2022/10/05\
 }
