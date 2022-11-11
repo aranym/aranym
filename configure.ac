@@ -1365,9 +1365,7 @@ elif test "$GCC" = yes && $HAVE_ARM; then
 	   ;;
 	armv7*|armv8*|armv9*)
            ASM_OPTIMIZATIONS="ARM/V7+ architecture w optimized flags"
-	   DEFINES="$DEFINES -DARMV6_ASSEMBLY -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
-           CFLAGS="$CFLAGS -marm"
-           CXXFLAGS="$CXXFLAGS -marm"
+	   DEFINES="$DEFINES -DARM_ASSEMBLY -DOPTIMIZED_FLAGS"
 	   ;;
 	*)
 	   dnl Hack until we find a better way
