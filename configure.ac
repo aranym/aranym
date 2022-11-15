@@ -1881,6 +1881,11 @@ if test "x$WANT_OPENGL" = "xyes"; then
 			have_opengl=yes
 			;;
 	esac
+	# the link test against SDL2 framework below fails because it does not use the SDL2 framework prefix
+	# so we will simply assume that OpenGL is available
+	if test "$have_framework_SDL2" = yes ; then
+		have_opengl=yes
+	fi
 	AC_MSG_CHECKING(for OpenGL support)
 	tmp_cflags="$CFLAGS"
 	tmp_libs="$LIBS"
