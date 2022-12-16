@@ -701,7 +701,9 @@ int m68k_move2c (int regno, uae_u32 *regp)
 		 * assume that some different OS was loaded by some loader like loadbsd;
 		 * have to reset some things
 		 */
+#if 0 /* disabled again because it breaks FreeMint+MMU? */
 	    NFReset();
+#endif
 	    break;
 	 default:
 	    op_illg (0x4E7B);
