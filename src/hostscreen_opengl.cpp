@@ -166,6 +166,8 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 			if (window)
 			{
 				SDL_GetWindowDisplayMode(window, &mode);
+				auto context = SDL_GL_CreateContext(window);
+				SDL_GL_MakeCurrent(window, context);
 			}
 		}
 		if (window==NULL) {
