@@ -64,7 +64,7 @@ extern "C" {
 #elif defined(OS_solaris)
 extern "C" {
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "stat_.h"
 #include <sys/ioctl.h>
 #include <sys/cdio.h>
 #define BX_CD_FRAMESIZE CDROM_BLK_2048
@@ -217,7 +217,7 @@ typedef struct _CDROM_TOC_SESSION_DATA {
 
 #else // all others (Irix, Tru64)
 #include <sys/types.h>
-#include <sys/stat.h>
+#include "stat_.h"
 #include <sys/ioctl.h>
 #define BX_CD_FRAMESIZE 2048
 #define CD_FRAMESIZE 2048 

@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <termios.h>
 #ifdef __CYGWIN__
 #include <sys/socket.h> /* for FIONREAD */

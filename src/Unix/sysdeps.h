@@ -72,13 +72,7 @@
 # include <unistd.h>
 #endif
 
-#ifdef HAVE_SYS_STAT_H
-# include <sys/stat.h>
-#endif
-
-#ifdef HAVE_STAT_H
-# include <stat.h>
-#endif
+#include "stat_.h"
 
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>

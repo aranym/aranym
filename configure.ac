@@ -32,11 +32,25 @@ dnl Silent rules
 # to make
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
+AC_MSG_CHECKING(whether we are using glibc)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
+#ifndef __GLIBC__
+no
+#endif]],[[]])], result=yes, result=no)
+AC_MSG_RESULT([$result])
+
+if test $result = yes; then
+AC_DEFINE([HAVE_GLIBC], 1, [Define if using glibc])
+dnl append that also to confdefs.h
+echo "#include \"${srcdir}/src/include/linux/libcwrap.h\"" >> confdefs.h
+fi
+
 AH_TOP([
 #ifndef __ARANYM_CONFIG_H__
 #define __ARANYM_CONFIG_H__
 
-#if defined(__linux__) && !defined(__ANDROID__)
+#undef HAVE_GLIBC
+#ifdef HAVE_GLIBC
 #include "linux/libcwrap.h"
 #endif
 

@@ -19,7 +19,7 @@ char *win32_widechar_to_utf8(const wchar_t *wname);
 #if defined _WIN32
 
 #include <fcntl.h>
-#include <sys/stat.h>
+#include "stat_.h"
 #include <unistd.h>
 
 #ifdef __cplusplus

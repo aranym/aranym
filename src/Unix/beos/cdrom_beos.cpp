@@ -1,7 +1,10 @@
 #include <SupportDefs.h>
 #include <Drivers.h>
 
-#include <sys/stat.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+#include "stat_.h"
 #include <unistd.h>
 
 #include "cdrom_beos.h"
