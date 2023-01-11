@@ -176,9 +176,39 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		window_id = SDL_GetWindowID(window);
 		SDL_SetWindowSize(window, width, height);
 	}
-		
-	/* SDL2FIXME: find appropriate renderer for bpp */
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	if (renderer == NULL) {
+		int numRenderDrivers = SDL_GetNumRenderDrivers();
+		D(bug("Found %d render drivers:", numRenderDrivers));
+
+		// Choose first OpenGL renderer available
+		int openglRenderDriverIndex = -1;
+		SDL_RendererInfo info;
+		for (i=0; i<numRenderDrivers; i++) {
+			if (SDL_GetRenderDriverInfo(i, &info) < 0) {
+				panicbug("Unable to query render driver info for %d: %s", i, SDL_GetError());
+				QuitEmulator();
+				return;
+			}
+			D(bug("%d: %s", i, info.name));
+			if (openglRenderDriverIndex == -1 && strncmp(info.name, "opengl", 6) == 0) {
+				openglRenderDriverIndex = i;
+			}
+		}
+
+		if (openglRenderDriverIndex == -1) {
+			bug("Unable to find 'opengl' renderer. Defaulting to other accelerated renderer.");
+		}
+		if ((renderer = SDL_CreateRenderer(window, openglRenderDriverIndex, SDL_RENDERER_ACCELERATED)) == NULL) {
+			panicbug("There is no accelerated SDL renderer available. Please disable OpenGL in the configuration: %s", SDL_GetError());
+			panicbug("Can not set OpenGL video mode: using software rendering mode");
+			bx_options.opengl.enabled = false;
+			HostScreen::setVideoMode(width, height, bpp);
+			return;
+		}
+		SDL_GetRendererInfo(renderer, &info);
+		infoprint("Using SDL renderer %s", info.name);
+	}
 
 	/* Now setup video mode */
 	for (i=0;i<4;i++) {
@@ -194,9 +224,6 @@ void HostScreenOpenGL::setVideoMode(int width, int height, int bpp)
 		HostScreen::setVideoMode(width, height, bpp);
 		return;
 	}
-
-	/* SDL2FIXME: find appropriate renderer for bpp */
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	texture = SDL_CreateTextureFromSurface(renderer, screen);
 
