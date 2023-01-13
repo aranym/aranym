@@ -1,11 +1,12 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2639
+{\rtf1\ansi\ansicpg1252\cocoartf2707
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Monaco;
 \f3\fnil\fcharset0 LucidaGrande;}
 {\colortbl;\red255\green255\blue255;\red35\green110\blue37;}
 {\*\expandedcolortbl;;\csgenericrgb\c13725\c43137\c14510;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
-{\list\listtemplateid2\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid101\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid101\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat3\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid201\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid3}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
 \paperw12240\paperh15840\vieww18280\viewh15180\viewkind0
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
 
@@ -203,29 +204,19 @@ There will still be an initial warning for the user when the app launches for th
 \cf0 To create a notarized build:\
 \pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\sl288\slmult1\partightenfactor0
 \ls2\ilvl0\cf0 {\listtext	1.	}You need an active Apple developer account with a \'84Developer ID Application\'93 certificate.\
-{\listtext	2.	}Open the \'84MacAranym-Latest.xcodeproj\'93, click the \'84MacAranym-Latest\'93 project icon in the project navigator and select the project and the \'84Build Settings\'93 tab.\uc0\u8232 Select \'84All\'93 (to view all possible build settings) and then filter for \'84signing\'93 to restrict the view on the relevant ones.\u8232 Then set
-\f0\b  
-\f1\b0 the \'84
-\f0\b Development Team
-\f1\b0 \'93 setting to 
-\f0\b your developer account
-\f1\b0  and set the
-\f0\b  
-\f1\b0 \'84
-\f0\b Code Signing Identity
-\f1\b0 \'93
-\f0\b  
-\f1\b0 to \'84
-\f0\b Developer ID Application
-\f1\b0 \'93.\
-{\listtext	3.	}Choose the \'84Packaging\'93 scheme from the scheme selector and press CMD+B to build the package.\uc0\u8232 After successfully building the project, the generated DMG disk image is automatically shown in the Finder.\
-{\listtext	4.	}To notarize your application you have to start the terminal and change to the corresponding directory and start the 
+{\listtext	2.	}Run the following command in the current directory to build signed binaries (replacing the 
+\f2\fs20 YOUR_TEAM_ID
+\f1\fs24  with your Apple Team ID!):\uc0\u8232 
+\f2\fs20 cd src/Unix/MacOSX\uc0\u8232 xcodebuild -project MacAranym-Latest.xcodeproj -target Packaging -configuration Release \\\u8232   CODE_SIGN_IDENTITY="Developer ID Application" \\\u8232   CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \\\u8232   DEVELOPMENT_TEAM=YOUR_TEAM_ID\
+\pard\tx220\tx720\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li720\fi-720\sl288\slmult1\partightenfactor0
+\ls3\ilvl0
+\f1\fs24 \cf0 {\listtext	3.	}To notarize your application we have to switch to the build directory and start the 
 \f2\fs20 notarytool
 \f1\fs24 :\uc0\u8232 
-\f2\fs20 cd ~/Library/Developer/Xcode/DerivedData/MacAranym-Latest-*/Build/Products/Release\uc0\u8232 xcrun notarytool submit aranym-1.1.0-macosx-arm64_x86_64.dmg --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM --wait\u8232 
-\f1\fs24 \uc0\u8232 This will first ask for your Apple ID password to connect to AppStore Connect (=a specific password you have to create), then upload the disk image and start processing it.\u8232 After successful completion, you should see \'84Processing complete\'93 with \'84status: Accepted\'93\
-{\listtext	5.	}Finally the notarization \'84ticket\'93 has to be attached to the disk image using the following command:\uc0\u8232 
-\f2\fs20 xcrun stapler staple aranym-1.1.0-macosx-arm64_x86_64.dmg
+\f2\fs20 cd build/Release\uc0\u8232 xcrun notarytool submit aranym-*.dmg --apple-id YOUR_APPLE_ID --team-id YOUR_TEAM_ID --wait\u8232 
+\f1\fs24 \uc0\u8232 This will first ask for your Apple ID password to connect to AppStore Connect (=a specific password you have to create before), then upload the disk image and start processing it.\u8232 After successful completion, you should see \'84Processing complete\'93 with \'84status: Accepted\'93\
+{\listtext	4.	}Finally the notarization \'84ticket\'93 has to be attached to the disk image using the following command:\uc0\u8232 
+\f2\fs20 xcrun stapler staple aranym-*.dmg
 \f1\fs24 \
 \pard\tx280\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\li560\fi-560\partightenfactor0
 \cf0 \
@@ -234,10 +225,10 @@ And it can be verified using the command:\
 		
 \f2\fs20 spctl -a -t open -vvv --context context:primary-signature
 \f1\fs24  
-\f2\fs20 aranym-1.1.0-macosx-arm64_x86_64.dmg
+\f2\fs20 aranym-*.dmg
 \f1\fs24 \
 \
 \
 \pard\tx565\tx1133\tx1700\tx2266\tx2832\tx3401\tx3967\tx4535\tx5102\tx5669\tx6235\tx6802\partightenfactor0
-\cf0 2022/10/05\
+\cf0 2023/01/13\
 }
