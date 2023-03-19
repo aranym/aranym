@@ -1714,7 +1714,7 @@ SDL_CFLAGS=
 SDL_LIBS=
 no_sdl=yes
 no_sdl2=yes
-if test "$OS_TYPE" == darwin -a "$WITH_FINK" = no; then
+if test "$OS_TYPE" = darwin -a "$WITH_FINK" = no; then
 	ARANYM_CHECK_FRAMEWORK(SDL, [])
 	if test "$have_framework_SDL" = yes ; then
 		ARANYM_CHECK_FRAMEWORK_LOCATION(SDL)
@@ -1781,7 +1781,7 @@ SDL_LIBS="$SDL_LIBS -lpthread"
 AM_CONDITIONAL([ENABLE_SDL2], test "$enable_sdl2" = yes)
 #
 # SDL2 on macOS needs 10.6 or above
-if test "$enable_sdl2" = yes -a "$OS_TYPE" == darwin; then
+if test "$enable_sdl2" = yes -a "$OS_TYPE" = darwin; then
 	export MACOSX_DEPLOYMENT_TARGET=10.6
 fi
 
