@@ -558,6 +558,7 @@ AC_CACHE_CHECK([whether TUN/TAP is supported],
     #include <net/if.h>
     #include <net/if_tun.h>
     #endif
+    #include <string.h>
   ]], [[
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
