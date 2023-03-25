@@ -20,7 +20,6 @@ configure
 depcomp
 missing
 compile
-ar-lib
 test-driver
 stamp-*
 version_date.h

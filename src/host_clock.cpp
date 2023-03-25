@@ -33,9 +33,9 @@ HostClock::HostClock(void)
 
 /*--- Protected stuff ---*/
 
-uint32_t HostClock::getCurTime(void)
+float HostClock::getCurTime(void)
 {
-	return SDL_GetTicks();
+	return ((float) SDL_GetTicks());
 }
 
 /*--- Public stuff ---*/
@@ -45,7 +45,7 @@ void HostClock::reset(void)
 	startTime = getCurTime();
 }
 
-uint32_t HostClock::getClock(void)
+float HostClock::getClock(void)
 {
-	return getCurTime() - startTime;
+	return (getCurTime() - startTime);
 }

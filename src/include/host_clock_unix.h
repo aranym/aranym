@@ -28,7 +28,7 @@
 class HostClockUnix: public HostClock
 {
 	private:
-		uint32_t	getCurTime(void);
+		float	getCurTime(void);
 };
 
 #endif /* HOSTCLOCKUNIX_H */

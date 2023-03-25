@@ -42,12 +42,11 @@ void MFP_Timer::reset()
 {
 	control = start_data = current_data = 0;
 	state = false;
-	counter = 0;
 }
 
 bool MFP_Timer::isRunning()
 {
-	return control > 0 && control <= 7;
+	return ((control & 0x0f) > 0);
 }
 
 void MFP_Timer::setControl(uint8 value)
@@ -60,7 +59,7 @@ void MFP_Timer::setControl(uint8 value)
 
 uint8 MFP_Timer::getControl()
 {
-	return control | (state << 4);
+	return control | (state << 5);
 }
 
 void MFP_Timer::setData(uint8 value)
@@ -84,20 +83,9 @@ uint8 MFP_Timer::getData()
 {
 	// D(bug("get MFP Timer%c data = %d", name, current_data));
 
-	if (isRunning())
-	{
-		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
-		if (current_data == 0)
-		{
-			if (start_data == 0)
-				current_data = 255;
-			else
-				current_data = start_data - 1;
-		} else
-		{
-			current_data--;
-		}
-	}
+	if (isRunning() && current_data > 2)
+		current_data--;		// hack to overcome microseconds delays in TOS (e.g. at $E02570)
+
 	return current_data;
 }
 
@@ -106,7 +94,6 @@ int MFP_Timer::compute_timer_freq()
 #define MFP_FREQ	2457600UL
 	int freq;
 	switch(control) {
-		case 0: freq = 0; break;
 		case 1: freq = MFP_FREQ /  4; break;
 		case 2: freq = MFP_FREQ / 10; break;
 		case 3: freq = MFP_FREQ / 16; break;
@@ -147,6 +134,7 @@ void MFP::reset()
 	irq_pending = 0;
 	irq_inservice = 0;
 	irq_mask = 0;
+	timerCounter = 0;
 
 	A.reset();
 	B.reset();
@@ -156,13 +144,11 @@ void MFP::reset()
 
 uint8 MFP::handleRead(memptr addr)
 {
-	uint8 value;
-	uint8 control;
-
 	addr -= getHWoffset();
 	if (addr > getHWsize())
 		return 0;	// unhandled
 
+	uint8 value;
 	switch(addr) {
 		case 0x01:	{
 						Parallel *parallel = getYAMAHA()->parallel;
@@ -182,7 +168,7 @@ uint8 MFP::handleRead(memptr addr)
 		case 0x09:	value = irq_enable;
 					break;
 
-		case 0x0b:	value = irq_pending >> 8;
+		case 0x0b:	value = 0x20; //(irq_pending >> 8) | (tA->getControl() & 0x10);	// finish
 					break;
 
 		case 0x0d:	// D(bug("Read: TimerC IRQ %s pending", (irq_pending & 0x20) ? "" : "NOT"));
@@ -212,23 +198,13 @@ uint8 MFP::handleRead(memptr addr)
 		case 0x1b:	value = B.getControl();
 					break;
 
-		case 0x1d:	value = ((C.getControl() & 7) << 4) | (D.getControl() & 7);
+		case 0x1d:	value = (C.getControl() << 4) | D.getControl();
 					break;
 
 		case 0x1f:	value = A.getData();
 					break;
 
 		case 0x21:	value = B.getData();
-		            /*
-		             * in event count mode, Timer-B is connected to HBL (not emulated yet)
-		             * In delay mode, it is used by NetBSD for short delays.
-		             * We don't emulate exact timings, but need to make sure
-		             * that the delay loop doesn't hang.
-		             */
-		            control = A.getControl() & 15;
-		            if (control > 0 && control <= 7)
-		            {
-		            }
 					break;
 
 		case 0x23:	value = C.getData();
@@ -241,7 +217,7 @@ uint8 MFP::handleRead(memptr addr)
 					break;
 
 		default: value = 0;
-	}
+	};
 	D(bug("Reading MFP data from %04lx = %d ($%02x) at %06x", addr, value, value, showPC()));
 	return value;
 }
@@ -497,168 +473,125 @@ void MFP::IRQ(int int_level, int count)
 {
 	int i = 1 << int_level;
 
-	switch (int_level)
-	{
-	case 5:
-		C.resetCounter(); // special hack for TimerC
-		break;
-	case 13:
-		A.resetCounter(); // special hack for TimerA
-		break;
-	}
+	if (int_level == 5) C.resetCounter(); // special hack for TimerC
 
-	/* interrupt enabled ? */
-	if( (irq_enable & i) == 0) {
-		// panicbug("interrupt %d not enabled", int_level);
-		return;
-	}
+        /* interrupt enabled ? */
+        if( (irq_enable & i) == 0) {
+				// panicbug("interrupt %d not enabled", int_level);
+                return;
+		}
 
-	switch (int_level)
-	{
-	case 5:
-		C.counter += count; // special hack for TimerC
-		break;
-	case 13:
-		A.counter += count; // special hack for TimerA
-		break;
-	}
+	if (int_level == 5) timerCounter += count; // special hack for TimerC
 
-	/* same interrupt already pending */
-	if( (irq_pending & i) ) {
-		D(bug("same interrupt %d already pending", int_level));
-		return;
-	}
-
-	/* ok, we will request an interrupt to the mfp */
+        /* same interrupt already pending */
+        if( (irq_pending & i) ) {
+				D(bug("same interrupt %d already pending", int_level));
+                return;
+		}
+        
+        
+        /* ok, we will request an interrupt to the mfp */
 #if 0
-	if(int_level) {
-		panicbug( "mfp ask interrupt %d\n", int_level);
-	}
+        if(int_level) {
+          panicbug( "mfp ask interrupt %d\n", int_level);
+        }
 #endif
-	irq_pending |= i;
-	/* interrupt masked ? */
-	if( ! (irq_mask & i) ) {
-		/* irq_pending set but no irq : stop here */
-		D(bug("irq_pending set but no irq"));
-		return;
-	}
-			/* highest priority ? */
-	if(irq_inservice > i) {
-			/* no, do nothing (the mfp will check when the current
-			  interrupt resumes, i.e. when irq_inservice is being cleared). */
-			D(bug("irq_inservice has higher priority"));
-			return;
-	}
-	/* say we want to interrupt the cpu */
-	TriggerMFP(true);
-	/* when UAE CPU finds this flag set, according to the current IPL,
-	  the function MFP::doInterrupt() will be called. This function
-	  will then decide what to do, and will treat the request that
-	  has the highest priority at that time.
-    */
+        irq_pending |= i;
+        /* interrupt masked ? */
+        if( ! (irq_mask & i) ) {
+                /* irq_pending set but no irq : stop here */
+               D(bug("irq_pending set but no irq"));
+          return;
+        }
+                /* highest priority ? */
+        if(irq_inservice > i) {
+                /* no, do nothing (the mfp will check when the current
+                  interrupt resumes, i.e. when irq_inservice is being cleared). */
+				D(bug("irq_inservice has higher priority"));
+                return;
+        }
+        /* say we want to interrupt the cpu */  
+        TriggerMFP(true);
+        /* when UAE CPU finds this flag set, according to the current IPL,
+          the function MFP::doInterrupt() will be called. This function 
+          will then decide what to do, and will treat the request that 
+          has the highest priority at that time. 
+        */
 }
 
 // return : vector number, or zero if no interrupt
 int MFP::doInterrupt()
 {
-	int j, vector;
-	unsigned i;
-
-	/* what's happening here ? */
+        int j, vector;
+        unsigned i;
+        
+        /* what's happening here ? */
 #if 0
-	panicbug( "starting mfp_do_interrupt\n");
-	panicbug( "ier %04x, ipr %04x, isr %04x, imr %04x\n",
-		   irq_enable, irq_pending, irq_inservice, irq_mask);
+        panicbug( "starting mfp_do_interrupt\n");
+        panicbug( "ier %04x, ipr %04x, isr %04x, imr %04x\n",
+               irq_enable, irq_pending, irq_inservice, irq_mask);
 #endif
 
-	/* any pending interrupts? */
-	for(j = 15, i = 0x8000; i; j--, i>>=1) {
-		if(irq_pending & i & irq_mask)
-			break;
-	}
-	if(i == 0) {
-		/* this shouldn't happen :-) */
-		panicbug( "mfp_do_interrupt called with no pending interrupt\n");
-		TriggerMFP(false);
-		return 0;
-	}
-	if(irq_inservice >= i) {
-		/* Still busy. We shouldn't come here. */
-
-		/*	Running MagiC this happens all the time.
-			The panicbug log makes the whole console output unusable.
-			Thus it is commented out.
-
-		panicbug( "mfp_do_interrupt called when "
-				"another higher priority interrupt is running\n");
-		*/
-
-		TriggerMFP(false);
-		return 0;
-	}
-
-	/* ok, do the interrupt, i.e. "pass the vector". */
-	vector = (vr & MFP_VR_VECTOR) + j;
+        /* any pending interrupts? */
+        for(j = 15, i = 0x8000; i; j--, i>>=1) {
+                if(irq_pending & i & irq_mask)
+                        break;
+        }
+        if(i == 0) {
+          /* this shouldn't happen :-) */
+                panicbug( "mfp_do_interrupt called with no pending interrupt\n");
+                TriggerMFP(false);
+                return 0;
+        }
+        if(irq_inservice >= i) {
+                /* Still busy. We shouldn't come here. */
+				
+				/*	Running MagiC this happens all the time. 
+					The panicbug log makes the whole console output unusable.
+					Thus it is commented out.
+                
+				panicbug( "mfp_do_interrupt called when "
+                        "another higher priority interrupt is running\n");
+				*/
+			
+                TriggerMFP(false);
+                return 0;
+        }
+        
+        /* ok, do the interrupt, i.e. "pass the vector". */
+        vector = (vr & MFP_VR_VECTOR) + j;
 	
-	switch (j)
-	{
-	case 5: // special hack for TimerC
-		if (--C.counter <= 0)
-		{
-			irq_pending &= ~i;
-			TriggerMFP(false);
-		}
-		break;
-	case 13:	// special hack for TimerC
-		if (--A.counter <= 0)
-		{
-			irq_pending &= ~i;
-			TriggerMFP(false);
-		}
-		break;
-	default:
-		irq_pending &= ~i;
-		TriggerMFP(false);
-		break;
+	if (j != 5 || --timerCounter <= 0) {	// special hack for TimerC
+        irq_pending &= ~i;
+        TriggerMFP(false);
 	}
 
-	if(vr & MFP_VR_SEI) {
-		/* software mode of interrupt : irq_inservice will remain set until
-		   explicitely cleared by writing on it */
-		irq_inservice |= i;
-	} else {
-		/* automatic mode of interrupt : irq_inservice automatically cleared
-		   when the interrupt starts (which is now). In this case,
-		   we must keep the flag raised if another unmasked
-		   interrupt remains pending, since irq_inservice will not tell us
-		   to re-raise the flag.
-		*/
-		if((irq_pending & irq_mask)) {
-			/* if other unmasked interrupt pending, keep the flag */
-			TriggerMFP(true);
-		}
-	}
+        if(vr & MFP_VR_SEI) {
+                /* software mode of interrupt : irq_inservice will remain set until
+                   explicitely cleared by writing on it */
+                irq_inservice |= i;
+        } else {
+                /* automatic mode of interrupt : irq_inservice automatically cleared
+                   when the interrupt starts (which is now). In this case,
+                   we must keep the flag raised if another unmasked 
+                   interrupt remains pending, since irq_inservice will not tell us 
+                   to re-raise the flag.
+                */
+                if((irq_pending & irq_mask)) {
+                  /* if other unmasked interrupt pending, keep the flag */
+                  TriggerMFP(true);
+                }
+        }
 
 #if 0
-	panicbug( "MFP::doInterrupt : vector %d\n", vector);
+        panicbug( "MFP::doInterrupt : vector %d\n", vector);
 #endif
-	return vector;
+        return vector;
 }
 
 int MFP::timerC_ms_ticks()
 {
 	int freq = C.compute_timer_freq();
 
-	if (freq == 0)
-		return 0;
-	return 1000 / freq;
-}
-
-int MFP::timerA_ms_ticks()
-{
-	int freq = A.compute_timer_freq();
-
-	if (freq == 0)
-		return 0;
 	return 1000 / freq;
 }

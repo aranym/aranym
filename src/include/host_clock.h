@@ -21,22 +21,20 @@
 #ifndef HOSTCLOCK_H
 #define HOSTCLOCK_H
 
-#include <stdint.h>
-
 /*--- HostClock Class ---*/
 
 class HostClock {
 	protected:
-		uint32_t startTime;
+		float	startTime;
 
-		virtual	uint32_t getCurTime(void);	/* Override this for your system */
+		virtual	float getCurTime(void);	/* Override this for your system */
 
 	public:
 		HostClock(void);
 		virtual ~HostClock() {}
 
 		void reset(void);
-		uint32_t getClock(void);	/* integer part are milli seconds */
+		float getClock(void);	/* integer part are milli seconds */
 };
 
 #endif /* HOSTCLOCK_H */
