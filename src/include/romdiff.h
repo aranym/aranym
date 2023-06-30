@@ -2,13 +2,11 @@
 #ifndef _romdiff_h
 #define _romdiff_h
 
-typedef struct {
-	unsigned int start;
-	unsigned int value;
-	int len;
-	const unsigned char *patch;
-} ROMdiff;
+struct ROMdiff {
+	int offset;
+	int newvalue;
+};
 
-extern ROMdiff const tosdiff[];
+extern ROMdiff tosdiff[];
 
 #endif	/* !_romdiff_h */

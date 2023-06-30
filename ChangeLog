@@ -1,3 +1,7 @@
+2023/06/01
+Revert "Reorganize tos patches for 4.04" as breaks booting from big HD images using TOS 4.
+
+
 2022/07/23
 Add experimental loader for netbsd kernel
 
