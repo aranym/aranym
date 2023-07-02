@@ -82,13 +82,13 @@ static unsigned char const romdiff_9[12] = {
 static unsigned char const romdiff_10[4] = {
 	0x4e, 0x71, 0x4e, 0x71							/* movec     d0,cacr            nops */
 };
-/* 001F24: ide timeout */
-static unsigned char const romdiff_11[6] = {
-	0x4e, 0x71, 0x4e, 0x71, 0x4e, 0x71
-};
 /* 00398c */
-static unsigned char const romdiff_12[6] = {
+static unsigned char const romdiff_11[6] = {
 	0x4e, 0xf9, 0x00, 0xe7, 0xb0, 0xf4				/* move.w    #$2700,sr          jmp       $00E7B0F4 */
+};
+/* 003996 */
+static unsigned char const romdiff_12[4] = {                                    /* ???                          nops */
+	0x4e, 0x71, 0x4e, 0x71
 };
 /* 0039a0 */
 static unsigned char const romdiff_13[24] = {
@@ -313,40 +313,45 @@ static unsigned char const romdiff_32[420] = {
 	0x73, 0x01,										/* dc.w 0x7301 (nf_call) */
 	0x4e, 0x75										/* rts */
 };
+/* 07fffe */
+static unsigned char const romdiff_33[2] = {
+	0x44, 0x50								/* CRC checksum ? */
+};
 
 ROMdiff const tosdiff[] = {
-	{ 0x00005a, 0x203c0000,  10, romdiff_0 },
-	{ 0x00006a, 0xf0394000,  24, romdiff_1 },
-	{ 0x0003c4, 0x7200347c,  58, romdiff_2 },
-	{ 0x00063e, 0x4e7b0002,   4, romdiff_3 },
-	{ 0x0006ac, 0x64000098,   2, romdiff_4 },
-	{ 0x000756, 0x203c0000,  10, romdiff_5 },
-	{ 0x000860, 0x4e7a0002,  14, romdiff_6 },
-	{ 0x000974, 0x2078047a,   4, romdiff_7 },
-	{ 0x0014e6, 0xf0394c00,  32, romdiff_8 },
-	{ 0x0018d0, 0x4e7a1002,  12, romdiff_9 },
-	{ 0x001952, 0x4e7b0002,   4, romdiff_10 },
-	{ 0x001f24, 0xb0b804ba,   6, romdiff_11 },
-	{ 0x00398c, 0x46fc2700,   6, romdiff_12 },
-	{ 0x0039a0, 0xf0394000,  24, romdiff_13 },
-	{ 0x00990c, 0x4e7a2002,  12, romdiff_14 },
-	{ 0x011bd6, 0x4e7b0002,   4, romdiff_15 },
-	{ 0x011c5e, 0x4e7b7002,   4, romdiff_16 },
-	{ 0x011d5a, 0x4e7b0002,   4, romdiff_17 },
-	{ 0x0125c0, 0x4e7b5002,   4, romdiff_18 },
-	{ 0x012936, 0x4e7b6002,   4, romdiff_19 },
-	{ 0x012982, 0x4e7b6002,   4, romdiff_20 },
-	{ 0x0129e6, 0x4e7b6002,   4, romdiff_21 },
-	{ 0x012bfe, 0x4e7b5002,   4, romdiff_22 },
-	{ 0x012c7e, 0x4e7b5002,   4, romdiff_23 },
-	{ 0x012cf6, 0x4e7b2002,   4, romdiff_24 },
-	{ 0x012d74, 0x4e7b0002,   4, romdiff_25 },
-	{ 0x012ddc, 0x4e7b0002,   4, romdiff_26 },
-	{ 0x012e9e, 0x4e7b0002,   4, romdiff_27 },
-	{ 0x017b54, 0x4e7b0002,   4, romdiff_28 },
-	{ 0x017bec, 0x4e7b0002,   4, romdiff_29 },
-	{ 0x0250d8, 0x4e7b7002,   4, romdiff_30 },
-	{ 0x044510, 0x4e7b7002,   4, romdiff_31 },
-	{ 0x07b000, 0xffffffff, 420, romdiff_32 },
-	{ 0, 0, 0, 0 }
+	{ 0x00005a, 10, romdiff_0 },
+	{ 0x00006a, 24, romdiff_1 },
+	{ 0x0003c4, 58, romdiff_2 },
+	{ 0x00063e,  4, romdiff_3 },
+	{ 0x0006ac,  2, romdiff_4 },
+	{ 0x000756, 10, romdiff_5 },
+	{ 0x000860, 14, romdiff_6 },
+	{ 0x000974,  4, romdiff_7 },
+	{ 0x0014e6, 32, romdiff_8 },
+	{ 0x0018d0, 12, romdiff_9 },
+	{ 0x001952,  4, romdiff_10 },
+	{ 0x00398c,  6, romdiff_11 },
+	{ 0x003996,  4, romdiff_12 },
+	{ 0x0039a0, 24, romdiff_13 },
+	{ 0x00990c, 12, romdiff_14 },
+	{ 0x011bd6,  4, romdiff_15 },
+	{ 0x011c5e,  4, romdiff_16 },
+	{ 0x011d5a,  4, romdiff_17 },
+	{ 0x0125c0,  4, romdiff_18 },
+	{ 0x012936,  4, romdiff_19 },
+	{ 0x012982,  4, romdiff_20 },
+	{ 0x0129e6,  4, romdiff_21 },
+	{ 0x012bfe,  4, romdiff_22 },
+	{ 0x012c7e,  4, romdiff_23 },
+	{ 0x012cf6,  4, romdiff_24 },
+	{ 0x012d74,  4, romdiff_25 },
+	{ 0x012ddc,  4, romdiff_26 },
+	{ 0x012e9e,  4, romdiff_27 },
+	{ 0x017b54,  4, romdiff_28 },
+	{ 0x017bec,  4, romdiff_29 },
+	{ 0x0250d8,  4, romdiff_30 },
+	{ 0x044510,  4, romdiff_31 },
+	{ 0x07b000,420, romdiff_32 },
+	{ 0x07fffe,  2, romdiff_33 },
+	{ 0, 0, 0 }
 };

@@ -4,7 +4,6 @@
 
 typedef struct {
 	unsigned int start;
-	unsigned int value;
 	int len;
 	const unsigned char *patch;
 } ROMdiff;
