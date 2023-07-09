@@ -954,7 +954,7 @@ void HostFs::transformFileName( char* dest, const char* source )
 
 		// hash value hex string as the unique shortenning
 		char hashString[10];
-		sprintf( hashString, "%08x", hashValue );
+		snprintf(hashString, 10, "%08x", hashValue );
 		hashString[5] = '~';
 		char *hashStr = &hashString[5];
 

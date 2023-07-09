@@ -717,24 +717,24 @@ static void oi(m68k_disasm_info *info, int size, bool immed)
 		info->memory_vma += 4;
 		break;
 	case FPU_SIZE_SINGLE:
-		sprintf(str, "%.17e", make_single(GETUL(info->memory_vma)));
+		snprintf(str, 100, "%.17e", make_single(GETUL(info->memory_vma)));
 		ps(info, str);
 		info->memory_vma += 4;
 		break;
 	case FPU_SIZE_EXTENDED:
 #ifdef NO_LONGDOUBLE_PRINTF
-		sprintf(str, "%.17e", (double) make_extended(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17e", (double) make_extended(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #else
-		sprintf(str, "%.17Le", make_extended(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17Le", make_extended(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #endif
 		ps(info, str);
 		info->memory_vma += 12;
 		break;
 	case FPU_SIZE_PACKED:
 #ifdef NO_LONGDOUBLE_PRINTF
-		sprintf(str, "%.17e", (double) make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17e", (double) make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #else
-		sprintf(str, "%.17Le", make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17Le", make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #endif
 		ps(info, str);
 		info->memory_vma += 12;
@@ -744,7 +744,7 @@ static void oi(m68k_disasm_info *info, int size, bool immed)
 		info->memory_vma += 2;
 		break;
 	case FPU_SIZE_DOUBLE:
-		sprintf(str, "%.17e", make_double(GETUL(info->memory_vma), GETUL(info->memory_vma + 4)));
+		snprintf(str, 100, "%.17e", make_double(GETUL(info->memory_vma), GETUL(info->memory_vma + 4)));
 		ps(info, str);
 		info->memory_vma += 8;
 		break;
@@ -754,9 +754,9 @@ static void oi(m68k_disasm_info *info, int size, bool immed)
 		break;
 	case FPU_SIZE_PACKED_VARIABLE:
 #ifdef NO_LONGDOUBLE_PRINTF
-		sprintf(str, "%.17e", (double) make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17e", (double) make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #else
-		sprintf(str, "%.17Le", make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
+		snprintf(str, 100, "%.17Le", make_packed(GETUL(info->memory_vma), GETUL(info->memory_vma + 4), GETUL(info->memory_vma + 8)));
 #endif
 		ps(info, str);
 		info->memory_vma += 12;
