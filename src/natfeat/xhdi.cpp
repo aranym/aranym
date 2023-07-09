@@ -114,7 +114,7 @@ void XHDIDriver::copy_atadevice_settings(const bx_atadevice_options_t *src, disk
 void XHDIDriver::copy_scsidevice_settings(int index, const bx_scsidevice_options_t *src, disk_t *dest)
 {
 	safe_strncpy(dest->path, src->path, sizeof(dest->path));
-	sprintf(dest->name, "PARTITION%d", index);
+	snprintf(dest->name, 41, "PARTITION%d", index);
 	dest->present = src->present;
 	dest->readonly = src->readonly;
 	dest->byteswap = src->byteswap;

@@ -108,7 +108,7 @@ static void UpdateDiskParameters(int disk)
 	int sizeMB = ((size / 1024) + 512) / 1024;
 
 	// output
-	sprintf(part_size[disk], "%6d", sizeMB);
+	snprintf(part_size[disk], 7, "%6d", sizeMB);
 }
 
 void DlgPartition::init_create_disk_image(int disk)
@@ -117,7 +117,7 @@ void DlgPartition::init_create_disk_image(int disk)
 	cdi_disk = disk;
 	sizeMB = atoi(part_size[disk]);
 	char text[250];
-	sprintf(text, "Create partition image '%s' with size %ld MB?", cdi_path, sizeMB);
+	snprintf(text, 250, "Create partition image '%s' with size %ld MB?", cdi_path, sizeMB);
 	dlgAlert = (DlgAlert *) DlgAlertOpen(text, ALERT_OKCANCEL);
 	SDLGui_Open(dlgAlert);
 	state = STATE_CDI0;

@@ -320,7 +320,7 @@ void HostScreen::writeSnapshot(SDL_Surface *surf)
 
 	if (snapCounter == 0)
 		snapCounter = get_screenshot_counter();
-	sprintf(filename, "snap%03d.bmp", snapCounter++ );
+	snprintf(filename, 15, "snap%03d.bmp", snapCounter++ );
 	safe_strncpy(path, bx_options.snapshot_dir, sizeof(path));
 	addFilename(path, filename, sizeof(path));
 #ifdef SDL_HINT_BMP_SAVE_LEGACY_FORMAT

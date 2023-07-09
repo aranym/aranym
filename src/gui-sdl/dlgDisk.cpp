@@ -172,10 +172,10 @@ static void UpdateDiskParameters(int disk, bool updateCHS)
 	}
 
 	// output
-	sprintf(disk == 0 ? ide0_size : ide1_size, "%6d", sizeMB);
-	sprintf(disk == 0 ? ide0_cyl : ide1_cyl, "%5d", cyl);
-	sprintf(disk == 0 ? ide0_head : ide1_head, "%2d", head);
-	sprintf(disk == 0 ? ide0_spt : ide1_spt, "%3d", spt);
+	snprintf(disk == 0 ? ide0_size : ide1_size, 7, "%6d", sizeMB);
+	snprintf(disk == 0 ? ide0_cyl : ide1_cyl, 6, "%5d", cyl);
+	snprintf(disk == 0 ? ide0_head : ide1_head, 3, "%2d", head);
+	snprintf(disk == 0 ? ide0_spt : ide1_spt, 4, "%3d", spt);
 }
 
 /* produce the image file */
@@ -225,7 +225,7 @@ void DlgDisk::init_create_disk_image(int disk)
 		sizeMB = BAR130G;
 	}
 	char text[250];
-	sprintf(text, "Create disk image '%s' with size %ld MB?", cdi_path, sizeMB);
+	snprintf(text, 250, "Create disk image '%s' with size %ld MB?", cdi_path, sizeMB);
 	dlgAlert = (DlgAlert *) DlgAlertOpen(text, ALERT_OKCANCEL);
 	SDLGui_Open(dlgAlert);
 	state = STATE_CDI0;

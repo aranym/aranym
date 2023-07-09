@@ -206,7 +206,7 @@ bool File_QueryOverwrite(char *pszFileName)
   /* Try and find if file exists */
   if (File_Exists(pszFileName)) {
     /* File does exist, are we OK to overwrite? */
-    sprintf(szString,"File '%s' exists, overwrite?",pszFileName);
+    snprintf(szString, MAX_FILENAME_LENGTH, "File '%s' exists, overwrite?",pszFileName);
 /* FIXME: */
 //    if (MessageBox(hWnd,szString,PROG_NAME,MB_YESNO | MB_DEFBUTTON2 | MB_ICONSTOP)==IDNO)
 //      return(false);

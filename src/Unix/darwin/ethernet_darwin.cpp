@@ -269,10 +269,10 @@ int TunTapEthernetHandler::tapOpenOld(char *dev)
     }
 
     for(i=0; i < 255; i++) {
-		sprintf(tapname, "/dev/tap%d", i);
+		snprintf(tapname, 21, "/dev/tap%d", i);
 		/* Open device */
 		if( (fd=::open(tapname, O_RDWR)) > 0 ) {
-			sprintf(dev, "tap%d",i);
+			snprintf(dev, 7, "tap%d",i);
 			D(bug("TunTap(%d): tapOpenOld %s", ethX, dev));
 			return fd;
 		}
