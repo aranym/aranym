@@ -117,8 +117,8 @@ DlgVideo::DlgVideo(SGOBJ *dlg)
 	else {
 		videodlg[RES_CUSTOM].state |= SG_SELECTED;
 	}
-	snprintf(video_width, 5, "%4d", autozoom->width);
-	snprintf(video_height, 5, "%4d", autozoom->height);
+	snprintf(video_width, sizeof(video_width), "%4d", autozoom->width);
+	snprintf(video_height, sizeof(video_height), "%4d", autozoom->height);
 }
 
 DlgVideo::~DlgVideo()

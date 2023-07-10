@@ -419,77 +419,77 @@ char *ConfigOptions::get_config_value(const struct Config_Tag *ptr, bool type)
 		if (type)
 			strcpy(value, "byte");
 		else
-			snprintf(value, 40, "%d", *((char *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%d", *((char *)(ptr->buf)));
 		break;
 
 	case Word_Tag:
 		if (type)
 			strcpy(value, "word");
 		else
-			snprintf(value, 40, "%d", *((short *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%d", *((short *)(ptr->buf)));
 		break;
 
 	case Int_Tag:
 		if (type)
 			strcpy(value, "int");
 		else
-			snprintf(value, 40, "%d", *((int *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%d", *((int *)(ptr->buf)));
 		break;
 
 	case Long_Tag:
 		if (type)
 			strcpy(value, "long");
 		else
-			snprintf(value, 40, "%ld", *((long *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%ld", *((long *)(ptr->buf)));
 		break;
 
 	case OctWord_Tag:
 		if (type)
 			strcpy(value, "octword");
 		else
-			snprintf(value, 40, "%o", *((short *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%o", *((short *)(ptr->buf)));
 		break;
 
 	case OctLong_Tag:
 		if (type)
 			strcpy(value, "octlong");
 		else
-			snprintf(value, 40, "%lo", *((long *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%lo", *((long *)(ptr->buf)));
 		break;
 
 	case HexWord_Tag:
 		if (type)
 			strcpy(value, "hexword");
 		else
-			snprintf(value, 40, "%x", *((short *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%x", *((short *)(ptr->buf)));
 		break;
 
 	case HexLong_Tag:
 		if (type)
 			strcpy(value, "hexlong");
 		else
-			snprintf(value, 40, "%lx", *((long *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%lx", *((long *)(ptr->buf)));
 		break;
 
 	case Float_Tag:
 		if (type)
 			strcpy(value, "float");
 		else
-			snprintf(value, 40, "%g", *((float *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%g", *((float *)(ptr->buf)));
 		break;
 
 	case Double_Tag:
 		if (type)
 			strcpy(value, "double");
 		else
-			snprintf(value, 40, "%g", *((double *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%g", *((double *)(ptr->buf)));
 		break;
 
 	case Char_Tag:
 		if (type)
 			strcpy(value, "char");
 		else
-			snprintf(value, 40, "%c", *((char *)(ptr->buf)));
+			snprintf(value, sizeof(value), "%c", *((char *)(ptr->buf)));
 		break;
 
 	case Path_Tag:

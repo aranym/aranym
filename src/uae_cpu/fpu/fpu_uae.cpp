@@ -821,7 +821,7 @@ PRIVATE inline void FFPU extract_packed(fpu_register const & src, uae_u32 * wrd1
 	char *cp;
 	char str[100];
 
-	snprintf(str, 100, "%.16e", src)
+	snprintf(str, sizeof(str), "%.16e", src);
 
 	fpu_debug(("extract_packed(%.04f,%s)\n",(double)src,str));
 
