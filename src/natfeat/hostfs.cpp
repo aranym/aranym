@@ -600,13 +600,15 @@ int32 HostFs::dispatch(uint32 fncode)
 
 		case DEV_SELECT:
 			D(bug("%s", "fs_dev_select"));
-			D(bug("fs_dev_select - TODO: NOT IMPLEMENTED!"));
-			ret = TOS_E_OK;
+			/* return code is number of bytes ready to be read/written */
+			/* we're always ready to read/write */
+			ret = 1;
 			break;
 
 		case DEV_UNSELECT:
 			D(bug("%s", "fs_dev_unselect"));
-			D(bug("fs_dev_unselect - TODO: NOT IMPLEMENTED!"));
+			/* nothing do be done here */
+			/* driver function is declared void; return code does not matter */
 			ret = TOS_E_OK;
 			break;
 
