@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #ifndef O_BINARY
 #  ifdef _O_BINARY
@@ -337,19 +338,23 @@ static int strip(const char *name)
 	unsigned char buf[13 * SIZEOF_LONG];
 	unsigned long magic1, magic2;
 	long bytes_to_delete;
+	struct stat s;
+	mode_t origmode = 0755;
 
 	if ((fd = open(name, O_RDONLY | O_BINARY, 0755)) < 0)
 	{
 		perror(name);
 		return 1;
 	}
+	if (fstat(fd, &s) == 0)
+		origmode = s.st_mode & 0777;
 	if ((tfd = open(tmpname, O_RDWR | O_BINARY | O_TRUNC | O_CREAT, 0755)) < 0)
 	{
 		perror(tmpname);
 		close(fd);
 		return 1;
 	}
-	
+
 	/*
 	 * read g_jump_entry and first 8 longs of exec header
 	 */
@@ -591,29 +596,35 @@ static int strip(const char *name)
 
 	close(tfd);
 	close(fd);
-	if (rename(tmpname, name) == 0)
-		return 0;						/* try to rename it */
-	if ((fd = open(name, O_WRONLY | O_BINARY | O_TRUNC | O_CREAT, 0755)) < 0)
+	/* try to rename it */
+	if (rename(tmpname, name) != 0)
 	{
-		perror(name);
-		return 1;
-	}
-	if ((tfd = open(tmpname, O_RDONLY | O_BINARY, 0755)) < 0)
-	{
-		perror(tmpname);
-		close(fd);
-		return 1;
-	}
+		/* have to do it the hard way, copy it */
+		if ((fd = open(name, O_WRONLY | O_BINARY | O_TRUNC | O_CREAT, 0755)) < 0)
+		{
+			perror(name);
+			return 1;
+		}
+		if ((tfd = open(tmpname, O_RDONLY | O_BINARY, 0755)) < 0)
+		{
+			perror(tmpname);
+			close(fd);
+			return 1;
+		}
 
-	count = SIZEOF_AEXEC + ahead.a_text + ahead.a_data + rbytes;
-	if (copy(tfd, fd, count) != count)
-	{
+		count = SIZEOF_AEXEC + ahead.a_text + ahead.a_data + rbytes;
+		if (copy(tfd, fd, count) != count)
+		{
+			close(tfd);
+			close(fd);
+			return 1;
+		}
 		close(tfd);
 		close(fd);
-		return 1;
 	}
-	close(tfd);
-	close(fd);
+
+	if (chmod(name, origmode) != 0)
+		fprintf(stderr, "%s: cannot set original mode: %s\n", name, strerror(errno));
 	return 0;
 }
 
