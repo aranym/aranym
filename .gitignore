@@ -21,6 +21,7 @@ depcomp
 missing
 compile
 test-driver
+ar-lib
 stamp-*
 version_date.h
 src/uae_cpu/cpudefs.cpp
