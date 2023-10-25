@@ -2496,7 +2496,7 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			break;
 
 		case MINT_FUTIME:
-			// Mintlib calls the dcntl(FUTIME_ETC, filename) first (below),
+			// Mintlib calls the dcntl(FUTIME_UTC, filename) first (below),
 			// but other libs might not know.
 		{
 			char fpathName[MAXPATHNAMELEN];
@@ -2517,8 +2517,13 @@ int32 HostFs::xfs_fscntl ( XfsCookie *dir, memptr name, int16 cmd, int32 arg)
 			{
 				t_set.actime  = ReadInt32( arg );
 				t_set.modtime = ReadInt32( arg + 4 );
+#if 0 /* the kernel has already converted the dos-style timestamp; see https://github.com/freemint/freemint/blob/01d046089918c3126129926acf36cbe09271c1db/sys/dosdir.c#L1669 */
 				t_set.actime = datetime2utc(t_set.actime) - gmtoff(t_set.actime);
 				t_set.modtime = datetime2utc(t_set.modtime) - gmtoff(t_set.modtime);
+#else
+				t_set.actime = t_set.actime - mint_fake_gmtoff(t_set.actime);
+				t_set.modtime = t_set.modtime - mint_fake_gmtoff(t_set.modtime);
+#endif
 			} else
 			{
 				t_set.actime = t_set.modtime = time(NULL);
@@ -2623,8 +2628,13 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				{
 					ts[0].tv_sec = ReadInt32(buff);
 					ts[1].tv_sec = ReadInt32(buff + 4);
+#if 0 /* the kernel has already converted the dos-style timestamp; see https://github.com/freemint/freemint/blob/01d046089918c3126129926acf36cbe09271c1db/sys/dosfile.c#L599 */
 					ts[0].tv_sec = datetime2utc(ts[0].tv_sec) - gmtoff(ts[0].tv_sec);
 					ts[1].tv_sec = datetime2utc(ts[1].tv_sec) - gmtoff(ts[1].tv_sec);
+#else
+					ts[0].tv_sec = ts[0].tv_sec - mint_fake_gmtoff(ts[0].tv_sec);
+					ts[1].tv_sec = ts[1].tv_sec - mint_fake_gmtoff(ts[1].tv_sec);
+#endif
 				} else
 				{
 					ts[0].tv_sec = ts[1].tv_sec = time(NULL);
@@ -2661,8 +2671,10 @@ int32 HostFs::xfs_dev_ioctl ( ExtFile *fp, int16 mode, memptr buff)
 				{
 					ts[0].tv_sec = ReadInt32(buff);
 					ts[1].tv_sec = ReadInt32(buff + 4);
+#if 0
 					ts[0].tv_sec -= mint_fake_gmtoff(ts[0].tv_sec);
 					ts[1].tv_sec -= mint_fake_gmtoff(ts[1].tv_sec);
+#endif
 				} else
 				{
 					ts[0].tv_sec = ts[1].tv_sec = time(NULL);
