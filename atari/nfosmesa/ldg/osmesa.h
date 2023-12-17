@@ -25,7 +25,6 @@
 extern "C" {
 #endif
 
-
 /*
  * load & initialize NFOSmesa
  */
@@ -4274,6 +4273,10 @@ struct _gl_osmesa {
 };
 
 extern struct _gl_osmesa gl;
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #ifndef NFOSMESA_NO_MANGLE

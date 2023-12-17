@@ -26,12 +26,12 @@ extern "C" {
 #endif
 
 /*
- * load & initialize NFOsmesa
+ * load & initialize NFOSmesa
  */
 struct gl_public *slb_load_osmesa(const char *path);
 
 /*
- * unload NFOsmesa
+ * unload NFOSmesa
  */
 void slb_unload_osmesa(struct gl_public *pub);
 
@@ -10281,7 +10281,6 @@ extern struct _gl_osmesa gl;
 #define glScissorExclusiveNV (gl.ScissorExclusiveNV)
 #undef glVDPAURegisterVideoSurfaceWithPictureStructureNV
 #define glVDPAURegisterVideoSurfaceWithPictureStructureNV (gl.VDPAURegisterVideoSurfaceWithPictureStructureNV)
-
 #endif
 
 

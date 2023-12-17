@@ -5306,7 +5306,6 @@ sub gen_ldgheader() {
 extern "C" {
 #endif
 
-
 /*
  * load & initialize NFOSmesa
  */
@@ -5387,6 +5386,10 @@ EOF
 };
 
 extern struct _gl_osmesa gl;
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #ifndef NFOSMESA_NO_MANGLE
@@ -6245,12 +6248,12 @@ extern "C" {
 #endif
 
 /*
- * load & initialize NFOsmesa
+ * load & initialize NFOSmesa
  */
 struct gl_public *slb_load_osmesa(const char *path);
 
 /*
- * unload NFOsmesa
+ * unload NFOSmesa
  */
 void slb_unload_osmesa(struct gl_public *pub);
 
@@ -6345,7 +6348,6 @@ EOF
 # emit trailer
 #
 	print << "EOF";
-
 #endif
 
 $ldg_trailer
