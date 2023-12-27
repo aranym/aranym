@@ -601,7 +601,8 @@ int32 USBHost::aranym_submit_rh_msg(uint32 pipe, memptr buffer, int32 transfer_l
 					break;
 
 				case RH_PORT_RESET:
-					port_status[wIndex - 1] |= RH_PS_PRS;
+					/* Fake port reset */
+					port_status[wIndex - 1] |= (RH_PS_PPS | RH_PS_PES);
 					len = 0;
 					break;
 
