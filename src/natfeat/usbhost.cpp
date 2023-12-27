@@ -192,6 +192,7 @@ int number_ports_used;
 int reset_flag;
 roothub_t roothub;
 uint32 port_status[NUMBER_OF_PORTS];
+unsigned int dev_uncfg; /* index of the unconfigured device */
 
 static libusb_device **devs;
 static libusb_device *dev;
@@ -367,7 +368,10 @@ claim:	r = libusb_claim_interface(devh[dev_index], if_index);
 		virtual_device[virtdev_index].port_number = i;
 		break;
 	}
-
+	/* We need to save the index of this device because until it is
+	 * configured the USB stack will reference it as device index 0
+	 */
+	dev_uncfg = dev_index;
 	fill_port_status(virtual_device[virtdev_index].port_number, virtual_device[virtdev_index].connected);
 
 	return r;
@@ -780,11 +784,18 @@ int32 USBHost::submit_control_msg(uint32 pipe, memptr buffer,
 		r = -1;
 	}
 	else {
-		for (i = 0; i < NUMBER_OF_PORTS; i++) {
-			if (roothub.port[i].atari_dev_idx == devnum) {
-				dev_idx = roothub.port[i].libusb_dev_idx;
-				D(bug("USBHost: dev_idx %d ", dev_idx));
-				break;
+		/* From the ATARI side unconfigured devices have special index 0,
+		 * we need to translate it to the index given to the device by the host
+		 */
+		if (devnum == 0)
+			dev_idx = dev_uncfg;
+		else {
+			for (i = 0; i < NUMBER_OF_PORTS; i++) {
+				if (roothub.port[i].atari_dev_idx == devnum) {
+					dev_idx = roothub.port[i].libusb_dev_idx;
+					D(bug("USBHost: dev_idx %d ", dev_idx));
+					break;
+				}
 			}
 		}
 		r = libusb_control_transfer(devh[dev_idx], bmRType, bReq, wValue, wIndex, tempbuff, wLength, 0);
