@@ -855,6 +855,9 @@ int32 USBHost::submit_bulk_msg(uint32 pipe, memptr buffer, int32 len, int32 flag
 	r = libusb_bulk_transfer(devh[dev_idx], endpoint, tempbuff, len, &transferred, timeout < 1000 ? 1000 : timeout);
 	D(bug("USBHost: return: %d len: %d transferred: %d", r, len, transferred));
 
+	if (r == 0 || r == LIBUSB_ERROR_TIMEOUT)
+		r = transferred;
+
 	return r;
 }
 
