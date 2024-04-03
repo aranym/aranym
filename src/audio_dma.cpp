@@ -81,10 +81,22 @@ extern "C" {
 
 	static uint32	start_replay, current_replay, end_replay;
 	
+	static void trigger_interrupt(void)
+	{
+		/* Generate MFP interrupt if needed */
+		if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
+			getMFP()->IRQ(13, 1);
+			D(bug("audiodma: MFP Timer A interrupt triggered"));
+		} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
+			getMFP()->IRQ(15, 1);
+			D(bug("audiodma: MFP I7 interrupt triggered"));
+		}
+	}
+
 	static void audio_callback(void * /*userdata*/, uint8 * stream, int len)
 	{
 		Uint8 *dest;
-		int dest_len, trigger_interrupt = 0;
+		int dest_len;
 
 		if ((playing!=SDL_AUDIO_PLAYING) || (start_replay==0) || (end_replay==0))
 			return;
@@ -106,6 +118,7 @@ extern "C" {
 				continue;
 				
 			if (getAUDIODMA()->control & CTRL_PLAYBACK_ENABLE) {
+				trigger_interrupt();
 				if (getAUDIODMA()->control & CTRL_PLAYBACK_REPEAT) {
 					start_replay = current_replay = getAUDIODMA()->start;
 					end_replay = getAUDIODMA()->end;			
@@ -120,26 +133,6 @@ extern "C" {
 					}
 					break;
 				}
-			}
-
-			/* Need to trigger MFP interrupt ? */
-			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
-				trigger_interrupt = 1;
-				D(bug("audiodma: MFP Timer A interrupt to trigger"));
-			} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
-				trigger_interrupt = 1;
-				D(bug("audiodma: MFP I7 interrupt to trigger"));
-			}
-		}
-
-		if (trigger_interrupt) {
-			/* Generate MFP interrupt if needed */
-			if (getAUDIODMA()->control & CTRL_TIMERA_PLAYBACK_END) {
-				getMFP()->IRQ(13, 1);
-				D(bug("audiodma: MFP Timer A interrupt triggered"));
-			} else if (getAUDIODMA()->control & CTRL_MFPI7_PLAYBACK_END) {
-				getMFP()->IRQ(15, 1);
-				D(bug("audiodma: MFP I7 interrupt triggered"));
 			}
 		}
 	}
@@ -201,34 +194,79 @@ uae_u8 AUDIODMA::handleRead(uaecptr addr)
 			value = control & 0xff;
 			break;
 		case 0x03:
-			value = (start>>16) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = (start>>16) & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x05:
-			value = (start>>8) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = (start>>8) & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x07:
-			value = start & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = start & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x09:
-			updateCurrent();
-			value = (current>>16) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+			{
+				updateCurrent();
+				value = (current>>16) & 0xff;
+			} else
+			{
+				value = 0;
+			}
 			break;
 		case 0x0b:
-			updateCurrent();
-			value = (current>>8) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+			{
+				updateCurrent();
+				value = (current>>8) & 0xff;
+			} else
+			{
+				value = 0;
+			}
 			break;
 		case 0x0d:
-			updateCurrent();
-			value = current & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+			{
+				updateCurrent();
+				value = current & 0xff;
+			} else
+			{
+				value = 0;
+			}
 			break;
 		case 0x0f:
-			value = (end>>16) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = (end>>16) & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x11:
-			value = (end>>8) & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = (end>>8) & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x13:
-			value = end & 0xff;
+			/* recording not supported yet */
+			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT)
+				value = end & 0xff;
+			else
+				value = 0;
 			break;
 		case 0x20:
 			value = (mode>>8) & 0xff;
@@ -283,36 +321,42 @@ void AUDIODMA::handleWrite(uaecptr addr, uae_u8 value)
 			updateControl();
 			break;
 		case 0x03:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				start &= 0x0000ffff;
 				start |= value<<16;
 			}
 			break;
 		case 0x05:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				start &= 0x00ff00ff;
 				start |= value<<8;
 			}
 			break;
 		case 0x07:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				start &= 0x00ffff00;
 				start |= value;
 			}
 			break;
 		case 0x0f:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				end &= 0x0000ffff;
 				end |= value<<16;
 			}
 			break;
 		case 0x11:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				end &= 0x00ff00ff;
 				end |= value<<8;
 			}
 			break;
 		case 0x13:
+			/* recording not supported yet */
 			if ((control & CTRL_RECORD_SELECT)==CTRL_PLAYBACK_SELECT) {
 				end &= 0x00ffff00;
 				end |= value;
@@ -487,11 +531,11 @@ void AUDIODMA::updateMode(void)
 	skip = ((mode>>MODE_PLAY_TRACK) & MODE_PLAY_TRACK_MASK)+1;
 	skip *= ((format & 0xff)>>3)*channels;
 
-	prediv = getCROSSBAR()->getIntPrediv();
+	prediv = getCROSSBAR()->getClockPrediv();
 	if (prediv == 0) {
 		freq = freqs[(mode>>MODE_FREQ) & MODE_FREQ_MASK];
 	} else {
-		freq = getCROSSBAR()->getIntFreq() / (256 * (prediv+1));
+		freq = getCROSSBAR()->getClockFreq() / (256 * (prediv+1));
 	}
 
 	D(bug("audiodma: mode: format %s, %d channels, offset %d, skip %d, %d freq",

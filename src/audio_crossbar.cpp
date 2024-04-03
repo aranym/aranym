@@ -34,6 +34,7 @@
 #define	CLK_25M		25175040
 #define CLK_32M		32000000
 #define CLK_44K		22579200
+#define CLK_48K		24576000
 
 #define CLOCK_MASK		3
 #define CLOCK_25175K	0
@@ -212,6 +213,7 @@ void CROSSBAR::handleWrite(uaecptr addr, uae_u8 value)
 			break;
 		case 0x04:
 			extfreqdiv = value & FREQ_PREDIV_MASK;
+			getAUDIODMA()->updateMode();
 			break;
 		case 0x05:
 			intfreqdiv = value & FREQ_PREDIV_MASK;
@@ -237,6 +239,7 @@ void CROSSBAR::handleWrite(uaecptr addr, uae_u8 value)
 			break;
 		case 0x13:
 			gpio_data = value & GPIO_DATA_MASK;
+			getAUDIODMA()->updateMode();
 			break;
 	}
 
@@ -343,19 +346,28 @@ void CROSSBAR::handleWrite(uaecptr addr, uae_u8 value)
 #endif
 }
 
-int CROSSBAR::getIntFreq(void)
+int CROSSBAR::getClockFreq(void)
 {
 	switch((output>>OUTPUT_DMA_CLOCK) & CLOCK_MASK) {
-		case 0:
+		case CLOCK_25175K:
 			return CLK_25M;	/* Falcon clock generator */
-		case 2:
+		case CLOCK_32000K:
 			return CLK_32M;
 	}
 
-	return CLK_44K;	/* 44.1 KHz clock generator */
+	if (gpio_data & 1)
+		return CLK_48K;	/* external; assume 48 KHz clock generator */
+	else
+		return CLK_44K;	/* external; assume 44.1 KHz clock generator */
 }
 
-int CROSSBAR::getIntPrediv(void)
+int CROSSBAR::getClockPrediv(void)
 {
-	return intfreqdiv;
+	switch((output>>OUTPUT_DMA_CLOCK) & CLOCK_MASK) {
+	case CLOCK_25175K:
+	case CLOCK_32000K:
+		return intfreqdiv;
+	default:
+		return extfreqdiv;
+	}
 }

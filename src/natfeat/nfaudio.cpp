@@ -120,7 +120,7 @@ void AUDIODriver::reset()
 
 int32 AUDIODriver::dispatch(uint32 fncode)
 {
-	int32 ret = 1;
+	int32 ret;
 
 	switch (fncode) {
 		// NEEDED functions
@@ -149,6 +149,7 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 		case 2:					// CloseAudio
 			D(bug("Audio: CloseAudio"));
 			playing = SDL_AUDIO_STOPPED;
+			ret = 1;
 			break;
 
 		case 3:					// PauseAudio
@@ -158,6 +159,7 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 			} else {
 				playing = SDL_AUDIO_PAUSED;
 			}
+			ret = 1;
 			break;
 
 		case 4:					// AudioStatus
@@ -168,6 +170,7 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 		case 5:					// AudioVolume
 			AudioParameters.volume = (uint16)getParameter(0);
 			D(bug("Audio: AudioVolume: %d", AudioParameters.volume));
+			ret = AudioParameters.volume;
 			break;
 
 		case 6:					// LockAudio         
@@ -199,13 +202,12 @@ int32 AUDIODriver::dispatch(uint32 fncode)
 			D(bug("Audio: GetAudioLen: %d", AudioParameters.len));
 			ret = AudioParameters.len;
 			break;
+
 		// not implemented functions
 		default:
 			D(bug("Audio: Unknown %d", fncode));
+			ret = -32;
+			break;
 	}
 	return ret;
 }
-
-/*
-vim:ts=4:sw=4:
-*/

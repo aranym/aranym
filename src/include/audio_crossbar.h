@@ -41,8 +41,8 @@ class CROSSBAR : public BASE_IO {
 		virtual uae_u8 handleRead(uaecptr addr);
 		virtual void handleWrite(uaecptr addr, uae_u8 value);
 
-		int getIntFreq(void);
-		int getIntPrediv(void);
+		int getClockFreq(void);
+		int getClockPrediv(void);
 };
 
 #endif /* CROSSBAR_H */

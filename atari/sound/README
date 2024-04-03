@@ -16,15 +16,15 @@ started or the number one).
 - Emulation on the selection of tracks (1 to 4).
 - FDI external clock selection compatible. 
 - Extended functions added like the GSXB/MilanBlaster drivers,
-for example it's possible to choice the true frequency. The bit 5
+for example it's possible to select the true frequency. The bit 5
 of the _SND cookie is set. 24/32 bits and mixer are not supported, 
-and only Mororola format is supported.
+and only Motorola format is supported.
 
 With the CPX, you can change the audio source. 
 
-Special Futures:
+Special Features:
 ----------------
-- This driver can runs on Hades ! The output is the YAMAHA or the 
+- This driver can run on Hades ! The output is the YAMAHA or the 
 MV16/PSOUND card. In this case audio input functions are removed.
 The Timer A of the MFP2 is used.
 - This driver can run on Aranym ! The driver use SDL calls inside 
@@ -35,10 +35,10 @@ Install:
 Under MagiCMac, just copy ZMAGXSND.PRG in the AUTO folder and restart 
 MagiCMac, you can select the input audio source with the CPX.
 Under Hades, if you want the MV16 (on the Ropocop), PSOUND (// port),  
-or the YAMAHA (internal) output, you need to select to select the 
+or the YAMAHA (internal) output, you need to select the
 audio output with the CPX.
 Under Aranym, just copy ZMAGXSND.PRG in the AUTO folder. You need 
-Aranym 0.1.7 or more.
+Aranym 0.1.7 or newer.
 
 Copying:
 --------
