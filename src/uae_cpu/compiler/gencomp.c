@@ -377,6 +377,12 @@ static void gen_set_fault_pc(void)
 }
 
 
+static void gen_sync_real_pc(void)
+{
+	comprintf("\tgen_sync_real_pc(start_pc+((char *)comp_pc_p-(char *)start_pc_p)+m68k_pc_offset);\n");
+}
+
+
 static void make_sr(void)
 {
 	start_brace();
@@ -1891,9 +1897,9 @@ gen_opcode (unsigned int opcode)
 #endif
 	comprintf("\tint newad=scratchie++;\n"
 		  "\treadlong(SP_REG,newad,scratchie);\n"
-		  "\tmov_l_mr((uintptr)&regs.pc,newad);\n"
+		  "\tmov_l_mr(uae_p32(&regs.pc),newad);\n"
 		  "\tget_n_addr_jmp(newad,PC_P,scratchie);\n"
-		  "\tmov_l_mr((uintptr)&regs.pc_oldp,PC_P);\n"
+		  "\tmov_l_mr(uae_p32(&regs.pc_oldp),PC_P);\n"
 		  "\tm68k_pc_offset=0;\n"
 		  "\tlea_l_brr(SP_REG,SP_REG,4);\n");
 	gen_update_next_handler();
@@ -3212,6 +3218,7 @@ generate_one_opcode (int rp, int noflags)
 	comprintf("\tuae_u32 dodgy=0;\n");
     }
     comprintf("\tuae_u32 m68k_pc_offset_thisinst=m68k_pc_offset;\n");
+    gen_sync_real_pc();
     comprintf("\tm68k_pc_offset+=2;\n");
 
     aborted=gen_opcode (opcode);
@@ -3236,11 +3243,11 @@ generate_one_opcode (int rp, int noflags)
 
 	name = lookuptab[i].name;
 	if (aborted) {
-	    fprintf (stblfile, "{ NULL, %u, %s }, /* %s */\n", opcode, flags, name);
+	    fprintf (stblfile, "{ NULL, 0x%04x, %s }, /* %s */\n", opcode, flags, name);
 	    com_discard();
 	} else {
 		const char *tbl = noflags ? "nf" : "ff";
-		fprintf (stblfile, "{ op_%x_%d_comp_%s, %u, %s }, /* %s */\n", opcode, postfix, tbl, opcode, flags, name);
+		fprintf (stblfile, "{ op_%x_%d_comp_%s, 0x%04x, %s }, /* %s */\n", opcode, postfix, tbl, opcode, flags, name);
 		fprintf (headerfile, "extern compop_func op_%x_%d_comp_%s;\n", opcode, postfix, tbl);
 		printf ("/* %s */\n", outopcode (name, opcode));
 		printf (RETTYPE " REGPARAM2 op_%x_%d_comp_%s(uae_u32 opcode) /* %s */\n{\n", opcode, postfix, tbl, name);

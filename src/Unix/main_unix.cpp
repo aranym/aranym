@@ -120,7 +120,7 @@ extern "C" void gettimeofday(struct timeval *p, void *tz /*IGNORED*/)
 void real_segmentationfault(void)
 {
 	grabMouse(SDL_FALSE);
-	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", (unsigned)showPC());
+	panicbug("Gotcha! Illegal memory access. Atari PC = $%x", showPC());
 #ifdef FULL_HISTORY
 	ndebug::showHistory(20, false);
 	m68k_dumpstate (stderr, NULL);

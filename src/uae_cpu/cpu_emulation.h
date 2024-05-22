@@ -184,7 +184,10 @@ extern void dump_flight_recorder(void);
 void check_eps_limit(uaecptr);
 void report_double_bus_error(void);
 
-// This function will be removed
-static inline uaecptr showPC(void) { return m68k_getpc(); }	// for debugging only
+// for debugging only
+static inline uaecptr showPC(void)
+{
+	return regs.real_pc ? regs.real_pc : m68k_getpc();
+}
 
 #endif

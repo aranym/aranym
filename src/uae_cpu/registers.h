@@ -68,6 +68,7 @@ extern struct regstruct
     uae_u32 fault_pc;
     uae_u8 *pc_p;
     uae_u8 *pc_oldp;
+    uae_u32 real_pc;
 
     uae_u32 vbr,sfc,dfc;
 

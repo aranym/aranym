@@ -137,6 +137,7 @@ typedef struct {
   bool jitfpu;
   bool jitinline;
   bool jitdebug;
+  bool jit_update_pc;
   uint32 jitcachesize;
   uint32 jitlazyflush;
   char jitblacklist[512];

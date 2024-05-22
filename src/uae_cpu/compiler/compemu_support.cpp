@@ -5017,6 +5017,8 @@ static void compile_block(cpu_history* pc_hist, int blocklen)
 						flush(1);
 						was_comp=0;
 					}
+					gen_sync_real_pc((memptr)((uintptr)pc_hist[i].location - MEMBaseDiff));
+
 					compemu_raw_mov_l_ri(REG_PAR1,(uae_u32)opcode);
 #if USE_NORMAL_CALLING_CONVENTION
 					raw_push_l_r(REG_PAR1);
@@ -5357,6 +5359,7 @@ void exec_nostats(void)
 #else
 void execute_normal(void)
 {
+	regs.real_pc = 0;
 	if (!check_for_cache_miss()) {
 		cpu_history pc_hist[MAXRUN];
 		int blocklen = 0;
@@ -5439,5 +5442,11 @@ setjmpagain:
 	}
 }
 #endif
+
+void gen_sync_real_pc(uae_u32 realpc)
+{
+	if (bx_options.jit.jit_update_pc)
+		raw_mov_l_mi((uintptr)&regs.real_pc, realpc);
+}
 
 #endif /* JIT */

@@ -433,6 +433,7 @@ void compemu_make_sr(int sr, int tmp);
 void compemu_enter_super(int sr);
 void compemu_exc_make_frame(int format, int sr, int currpc, int nr, int tmp);
 void compemu_bkpt(void);
+void gen_sync_real_pc(uae_u32 realpc);
 extern bool disasm_this_inst;
 
 #define comp_get_ibyte(o) do_get_mem_byte((uae_u8 *)(comp_pc_p + (o) + 1))

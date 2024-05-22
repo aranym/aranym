@@ -17856,6 +17856,36 @@ static void generic_print_address(bfd_vma addr, disassemble_info *info)
 		(*info->fprintf_func) (info->stream, " (regs.usp)");
 	else if (addr == (uintptr_t)&regs.isp)
 		(*info->fprintf_func) (info->stream, " (regs.isp)");
+	else if (addr == (uintptr_t)&regs.regs[0])
+		(*info->fprintf_func) (info->stream, " (regs.d0)");
+	else if (addr == (uintptr_t)&regs.regs[1])
+		(*info->fprintf_func) (info->stream, " (regs.d1)");
+	else if (addr == (uintptr_t)&regs.regs[2])
+		(*info->fprintf_func) (info->stream, " (regs.d2)");
+	else if (addr == (uintptr_t)&regs.regs[3])
+		(*info->fprintf_func) (info->stream, " (regs.d3)");
+	else if (addr == (uintptr_t)&regs.regs[4])
+		(*info->fprintf_func) (info->stream, " (regs.d4)");
+	else if (addr == (uintptr_t)&regs.regs[5])
+		(*info->fprintf_func) (info->stream, " (regs.d5)");
+	else if (addr == (uintptr_t)&regs.regs[6])
+		(*info->fprintf_func) (info->stream, " (regs.d6)");
+	else if (addr == (uintptr_t)&regs.regs[7])
+		(*info->fprintf_func) (info->stream, " (regs.d7)");
+	else if (addr == (uintptr_t)&regs.regs[8])
+		(*info->fprintf_func) (info->stream, " (regs.a0)");
+	else if (addr == (uintptr_t)&regs.regs[9])
+		(*info->fprintf_func) (info->stream, " (regs.a1)");
+	else if (addr == (uintptr_t)&regs.regs[10])
+		(*info->fprintf_func) (info->stream, " (regs.a2)");
+	else if (addr == (uintptr_t)&regs.regs[11])
+		(*info->fprintf_func) (info->stream, " (regs.a3)");
+	else if (addr == (uintptr_t)&regs.regs[12])
+		(*info->fprintf_func) (info->stream, " (regs.a4)");
+	else if (addr == (uintptr_t)&regs.regs[13])
+		(*info->fprintf_func) (info->stream, " (regs.a5)");
+	else if (addr == (uintptr_t)&regs.regs[14])
+		(*info->fprintf_func) (info->stream, " (regs.a6)");
 	else if (addr == (uintptr_t)&regs.regs[15])
 		(*info->fprintf_func) (info->stream, " (regs.sp)");
 }
