@@ -939,16 +939,8 @@ static void send_wheelup(bool clicked)
 		return;
 #endif
 	if (bx_options.ikbd.wheel_eiffel) {
-		if (clicked) {
-			getIKBD()->SendKey(0xF6);
-			getIKBD()->SendKey(0x05);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
+		if (clicked)
 			getIKBD()->SendKey(0x59);
-		}
 	}
 	else {
 		int releaseKeyMask = (clicked ? 0x00 : 0x80);
@@ -964,16 +956,8 @@ static void send_wheeldown(bool clicked)
 		return;
 #endif
 	if (bx_options.ikbd.wheel_eiffel) {
-		if (clicked) {
-			getIKBD()->SendKey(0xF6);
-			getIKBD()->SendKey(0x05);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
+		if (clicked)
 			getIKBD()->SendKey(0x5A);
-		}
 	}
 	else {
 		int releaseKeyMask = (clicked ? 0x00 : 0x80);
