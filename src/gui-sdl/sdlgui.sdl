@@ -1,7 +1,7 @@
 /*
  * GEM resource SDL output of sdlgui
  *
- * created by ORCS 2.16
+ * created by ORCS 2.18
  */
 
 #ifndef _
@@ -310,41 +310,43 @@ enum KEYBOARDDLG {
 	box_wheel = 3,
 	ARROWKEYS = 4,
 	EIFFEL = 5,
-	text_wheel = 6,
-	box_middle = 7,
-	MIDDLE_IGNORE = 8,
-	MIDDLE_FULLSCREEN = 9,
-	MIDDLE_UNGRAB = 10,
-	MIDDLE_SCREENSHOT = 11,
-	MIDDLE_SETUP = 12,
-	MIDDLE_EIFFEL = 13,
-	text_middle = 14,
-	box_altgr = 15,
-	ATARI_ALT = 16,
-	MILAN_ALTGR = 17,
-	text_altgr = 18
+	EIFFEL_SINGLE = 6,
+	text_wheel = 7,
+	box_middle = 8,
+	MIDDLE_IGNORE = 9,
+	MIDDLE_FULLSCREEN = 10,
+	MIDDLE_UNGRAB = 11,
+	MIDDLE_SCREENSHOT = 12,
+	MIDDLE_SETUP = 13,
+	MIDDLE_EIFFEL = 14,
+	text_middle = 15,
+	box_altgr = 16,
+	ATARI_ALT = 17,
+	MILAN_ALTGR = 18,
+	text_altgr = 19
 };
 
 static SGOBJ keyboarddlg[] = {
-	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 42, 18, NULL, 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 6, 16, 8, 1, N_("Apply"), 0 },
-	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28, 16, 8, 1, N_("Cancel"), 0 },
-	{ SGBOX, 0, 0, 2, 2, 38, 2, NULL, 0 },
+	{ SGBOX, SG_BACKGROUND, 0, 0, 0, 43, 19, NULL, 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT|SG_DEFAULT, 0, 6, 17, 8, 1, N_("Apply"), 0 },
+	{ SGBUTTON, SG_SELECTABLE|SG_EXIT, 0, 28, 17, 8, 1, N_("Cancel"), 0 },
+	{ SGBOX, 0, 0, 2, 2, 38, 3, NULL, 0 },
 	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 3, 13, 1, N_("Arrow keys"), 0 },
 	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 3, 19, 1, N_("Eiffel scancodes"), 0 },
-	{ SGTEXT, 0, 0, 3, 1, 18, 1, N_(" Host mouse wheel "), 0 },
-	{ SGBOX, 0, 0, 2, 6, 38, 5, NULL, 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 7, 12, 1, N_("Ignore"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 7, 20, 1, N_("Toggle Fullscreen"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 3, 8, 16, 1, N_("Ungrab mouse"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 8, 18, 1, N_("Take Screenshot"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 3, 9, 14, 1, N_("Enter Setup"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 9, 16, 1, N_("Eiffel button"), 0 },
-	{ SGTEXT, 0, 0, 2, 5, 21, 1, N_(" Middle mouse button "), 0 },
-	{ SGBOX, 0, 0, 2, 13, 38, 2, NULL, 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 14, 12, 1, N_("Atari Alt"), 0 },
-	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 14, 14, 1, N_("Milan AltGr"), 0 },
-	{ SGTEXT, 0, 0, 3, 12, 16, 1, N_(" Host AltGr key "), 0 },
+	{ SGCHECKBOX, SG_SELECTABLE, 0, 19, 4, 19, 1, N_("Single bytes"), 0 },
+	{ SGTEXT, 0, 0, 2, 1, 18, 1, N_(" Host mouse wheel "), 0 },
+	{ SGBOX, 0, 0, 2, 7, 38, 5, NULL, 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 8, 12, 1, N_("Ignore"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 8, 20, 1, N_("Toggle Fullscreen"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 3, 9, 16, 1, N_("Ungrab mouse"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 9, 18, 1, N_("Take Screenshot"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 3, 10, 14, 1, N_("Enter Setup"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 10, 16, 1, N_("Eiffel button"), 0 },
+	{ SGTEXT, 0, 0, 2, 6, 21, 1, N_(" Middle mouse button "), 0 },
+	{ SGBOX, 0, 0, 2, 14, 38, 2, NULL, 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, SG_SELECTED, 3, 15, 12, 1, N_("Atari Alt"), 0 },
+	{ SGRADIOBUT, SG_SELECTABLE|SG_RADIO, 0, 19, 15, 14, 1, N_("Milan AltGr"), 0 },
+	{ SGTEXT, 0, 0, 3, 13, 16, 1, N_(" Host AltGr key "), 0 },
 	{ -1, 0, 0, 0, 0, 0, 0, NULL, 0 }
 };
 #endif

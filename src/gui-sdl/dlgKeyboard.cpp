@@ -35,6 +35,7 @@ DlgKeyboard::DlgKeyboard(SGOBJ *dlg)
 {
 	keyboarddlg[EIFFEL].state = bx_options.ikbd.wheel_eiffel ? SG_SELECTED : 0;
 	keyboarddlg[ARROWKEYS].state = bx_options.ikbd.wheel_eiffel ? 0 : SG_SELECTED;
+	keyboarddlg[EIFFEL_SINGLE].state = bx_options.ikbd.eiffel_single_bytes ? SG_SELECTED : 0;
 	keyboarddlg[MILAN_ALTGR].state = bx_options.ikbd.altgr ? SG_SELECTED : 0;
 	keyboarddlg[ATARI_ALT].state = bx_options.ikbd.altgr ? 0 : SG_SELECTED;
 	keyboarddlg[MIDDLE_IGNORE].state = bx_options.ikbd.mbutton == MB_ignore ? SG_SELECTED : 0;
@@ -68,6 +69,7 @@ int DlgKeyboard::processDialog(void)
 void DlgKeyboard::confirm(void)
 {
 	bx_options.ikbd.wheel_eiffel = (keyboarddlg[EIFFEL].state & SG_SELECTED) != 0;
+	bx_options.ikbd.eiffel_single_bytes = (keyboarddlg[EIFFEL_SINGLE].state & SG_SELECTED) != 0;
 	bx_options.ikbd.altgr = (keyboarddlg[MILAN_ALTGR].state & SG_SELECTED) != 0;
 	if (keyboarddlg[MIDDLE_IGNORE].state & SG_SELECTED)
 		bx_options.ikbd.mbutton = MB_ignore;

@@ -940,14 +940,20 @@ static void send_wheelup(bool clicked)
 #endif
 	if (bx_options.ikbd.wheel_eiffel) {
 		if (clicked) {
-			getIKBD()->SendKey(0xF6);
-			getIKBD()->SendKey(0x05);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x59);
+			if (bx_options.ikbd.eiffel_single_bytes)
+			{
+				getIKBD()->SendKey(0x59);
+			} else
+			{
+				getIKBD()->SendKey(0xF6);
+				getIKBD()->SendKey(0x05);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x59);
+			}
 		}
 	}
 	else {
@@ -965,14 +971,20 @@ static void send_wheeldown(bool clicked)
 #endif
 	if (bx_options.ikbd.wheel_eiffel) {
 		if (clicked) {
-			getIKBD()->SendKey(0xF6);
-			getIKBD()->SendKey(0x05);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x00);
-			getIKBD()->SendKey(0x5A);
+			if (bx_options.ikbd.eiffel_single_bytes)
+			{
+				getIKBD()->SendKey(0x5A);
+			} else
+			{
+				getIKBD()->SendKey(0xF6);
+				getIKBD()->SendKey(0x05);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x00);
+				getIKBD()->SendKey(0x5A);
+			}
 		}
 	}
 	else {
