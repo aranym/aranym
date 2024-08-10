@@ -503,6 +503,15 @@ if ENABLE_SERIALUNIX
 aranym_SOURCES += serial_port.cpp
 endif
 
+if SDL_STATIC
+if ENABLE_SDL2
+$(SDL_STATIC_LIB)::
+	$(MAKE) -C $(top_builddir)/SDL2
+else
+$(SDL_STATIC_LIB)::
+	$(MAKE) -C $(top_builddir)/SDL1
+endif
+endif
 
 aranym_rc_i386.o: $(srcdir)/Unix/cygwin/aranym.rc
 	$(WINDRES) -o $@ --output-format coff --target pe-i386 $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $< 
@@ -517,7 +526,7 @@ aratapif_SOURCES = Unix/aratapif.c
 # previously, the executables where built in the top level
 # directory, and some external build scripts (e.g. rpm) excpect
 # them there. Remove this copy once the scripts have been updated
-aranym$(EXEEXT): $(aranym_OBJECTS) $(aranym_DEPENDENCIES) $(EXTRA_aranym_DEPENDENCIES) 
+aranym$(EXEEXT): $(aranym_OBJECTS) $(SDL_STATIC_LIB) $(aranym_DEPENDENCIES) $(EXTRA_aranym_DEPENDENCIES)
 	@rm -f $@
 	$(AM_V_CXXLD)$(CXXLINK) $(aranym_OBJECTS) $(aranym_LDADD) $(LIBS)
 if OS_TYPE_beos
@@ -631,4 +640,3 @@ cdromtest: $(srcdir)/cdromtest.cpp $(srcdir)/natfeat/nfcdrom.cpp $(srcdir)/natfe
 	$(AM_V_CC)$(CXX) $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS) $(WFLAGS) $(CFLAGS) $(ARCHFLAGS) -o $@ $(srcdir)/cdromtest.cpp $(LIBS)
 
 CLEANFILES = cdromtest$(EXEEXT) m68kdisasm$(EXEEXT)
-
