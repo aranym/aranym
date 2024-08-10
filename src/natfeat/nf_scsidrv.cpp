@@ -56,6 +56,13 @@
 // The transfer length may depend on the device, 65536 should always be safe
 #define BUS_TRANSFER_LEN 65536
 
+/*
+ *  SCSI Architecture Model (SAM) Status codes. Taken from SAM-3 draft
+ *  T10/1561-D Revision 4 Draft dated 7th November 2002.
+ */
+#define SAM_STAT_GOOD            0x00
+#define SAM_STAT_CHECK_CONDITION 0x02
+
 
 enum SCSIDRV_OPERATIONS {
 	SCSI_INTERFACE_VERSION = 0,
@@ -266,7 +273,7 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cm
 					  sense_buffer[2], sense_buffer[12]));
 		}
 			
-		return 2;
+		return SAM_STAT_CHECK_CONDITION;
 	}
 
 	int status;
@@ -289,7 +296,7 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cm
 			sense_buffer[12] = 0x28;
 		}
 	
-		status = 2;
+		status = SAM_STAT_CHECK_CONDITION;
 	}
 	else
 	{
