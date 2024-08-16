@@ -32,6 +32,12 @@ dnl Silent rules
 # to make
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
+AC_ARG_ENABLE(old-glibc,     [AS_HELP_STRING([--enable-old-glibc],[enable support for old glibc (default=no)])], [enable_old_glibc=$enableval], [enable_old_glibc=no])
+
+if test $enable_old_glibc = yes; then
+AC_DEFINE([ENABLE_OLD_GLIBC], 1, [Define to support old glibc version glibc])
+fi
+
 AC_MSG_CHECKING(whether we are using glibc)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
 #ifndef __GLIBC__
@@ -39,7 +45,7 @@ no
 #endif]],[[]])], result=yes, result=no)
 AC_MSG_RESULT([$result])
 
-if test $result = yes; then
+if test $result = yes -a $enable_old_glibc = yes; then
 AC_DEFINE([HAVE_GLIBC], 1, [Define if using glibc])
 dnl append that also to confdefs.h
 echo "#include \"${srcdir}/src/include/linux/libcwrap.h\"" >> confdefs.h
@@ -50,7 +56,8 @@ AH_TOP([
 #define __ARANYM_CONFIG_H__
 
 #undef HAVE_GLIBC
-#ifdef HAVE_GLIBC
+#undef ENABLE_OLD_GLIBC
+#if defined(HAVE_GLIBC) && defined(ENABLE_OLD_GLIBC)
 #include "linux/libcwrap.h"
 #endif
 
