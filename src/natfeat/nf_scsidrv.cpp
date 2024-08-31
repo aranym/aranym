@@ -322,6 +322,10 @@ int32 SCSIDriver::inout(Uint32 handle, Uint32 dir, unsigned char *cmd, Uint32 cm
 		io_hdr.timeout = timeout;
 	
 		status = ioctl(handle_meta_data[handle].fd, SG_IO, &io_hdr) < 0 ? -1 : io_hdr.status;
+		if (!status && sense_buffer && (sense_buffer[2] & 0x0f))
+		{
+			status = sense_buffer[2] & 0x0f;
+		}
 	}
 
 	if (status > 0 && sense_buffer)
