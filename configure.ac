@@ -254,9 +254,14 @@ case "$host_os" in
   openbsd*)	OS_TYPE=openbsd
 		CFLAGS="$CFLAGS -I/usr/local/include"
 		LIBS="$LIBS -L/usr/local/lib"
+		NEED_GNU_SED=yes
 		;;
-  netbsd*)	OS_TYPE=netbsd;;
-  freebsd*|kfreebsd*-gnu)	OS_TYPE=freebsd;;
+  netbsd*)	OS_TYPE=netbsd
+    NEED_GNU_SED=yes
+    ;;
+  freebsd*|kfreebsd*-gnu)	OS_TYPE=freebsd
+    NEED_GNU_SED=yes
+    ;;
   solaris*)	OS_TYPE=solaris;;
   darwin*)	OS_TYPE=darwin;;
   cygwin*)	OS_TYPE=cygwin;;
@@ -1681,11 +1686,16 @@ fi
 
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$GCC" = "xyes" ]]; then
+  if test "$NEED_GNU_SED" = "yes" ; then
+    SED=gsed
+  else
+    SED=sed
+  fi
   if test "$ac_test_CFLAGS" != set; then
-    CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
+    CFLAGS=`echo $CFLAGS | ${SED} -e 's/-g\b//g'`
   fi
   if test "$ac_test_CXXFLAGS" != set; then
-    CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
+    CXXFLAGS=`echo $CXXFLAGS | ${SED} -e 's/-g\b//g'`
   fi
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
