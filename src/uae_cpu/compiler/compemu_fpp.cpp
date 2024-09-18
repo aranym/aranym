@@ -110,6 +110,34 @@ static void fpuop_illg(uae_u32 opcode, uae_u32 /* extra */)
 
 uae_s32 temp_fp[4];  /* To convert between FP/integer */
 
+/* 128 words, indexed through the low byte of the 68k fpu control word */
+static uae_u16 x86_fpucw[]={
+#define CW_DEF CW_X | 0x7f
+#define CW_DEF8(x) CW_DEF | x, CW_DEF | x, CW_DEF | x, CW_DEF | x, CW_DEF | x, CW_DEF | x, CW_DEF | x, CW_DEF | x,
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_NEAR)  /* 0x137f, p0r0 extended, round-to-nearest */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_ZERO)  /* 0x1f7f, p0r1 extended, round-to-zero */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_DOWN)  /* 0x177f, p0r2 extended, round-to-minus-inf */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_UP)    /* 0x1b7f, p0r3 extended, round-to-plus-inf */
+
+    CW_DEF8(CW_PC_SINGLE | CW_RC_NEAR)    /* 0x107f, p1r0 single, round-to-nearest */
+    CW_DEF8(CW_PC_SINGLE | CW_RC_ZERO)    /* 0x1c7f, p1r1 single, round-to-zero */
+    CW_DEF8(CW_PC_SINGLE | CW_RC_DOWN)    /* 0x147f, p1r2 single, round-to-minus-inf */
+    CW_DEF8(CW_PC_SINGLE | CW_RC_UP)      /* 0x187f, p1r3 single, round-to-plus-inf  */
+
+    CW_DEF8(CW_PC_DOUBLE | CW_RC_NEAR)    /* 0x127f, p2r0 double, round-to-nearest */
+    CW_DEF8(CW_PC_DOUBLE | CW_RC_ZERO)    /* 0x1e7f, p2r1 double, round-to-zero */
+    CW_DEF8(CW_PC_DOUBLE | CW_RC_DOWN)    /* 0x167f, p2r2 double, round-to-minus-inf */
+    CW_DEF8(CW_PC_DOUBLE | CW_RC_UP)      /* 0x1a7f, p2r3 double, round-to-plus-inf */
+
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_NEAR)  /* 0x137f, p3r0 undefined, round-to-nearest */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_ZERO)  /* 0x1f7f, p3r1 undefined, round-to-zero */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_DOWN)  /* 0x177f, p3r2 undefined, round-to-minus-inf */
+    CW_DEF8(CW_PC_EXTENDED | CW_RC_UP)    /* 0x1b7f, p3r3 undefined, round-to-plus-inf */
+#undef CW_DEF
+#undef CW_DEF8
+};
+
+
 /* return register number, or -1 for failure */
 STATIC_INLINE int get_fp_value(uae_u32 opcode, uae_u16 extra)
 {
@@ -353,17 +381,35 @@ STATIC_INLINE int put_fp_value(int val, uae_u32 opcode, uae_u16 extra)
 		switch (size)
 		{
 		case 6: /* byte */
+			/* Switch to correct rounding mode */
+			mov_l_rm(S1, (uintptr) & FPU fpcr);
+			and_l_ri(S1, 0x000000f0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			fmovi_mr((uintptr) temp_fp, val);
+			mov_l_ri(S1, 0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			delay;
 			mov_b_rm(reg, (uintptr) temp_fp);
 			return 0;
 		case 4: /* word */
+			/* Switch to correct rounding mode */
+			mov_l_rm(S1, (uintptr) & FPU fpcr);
+			and_l_ri(S1, 0x000000f0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			fmovi_mr((uintptr) temp_fp, val);
+			mov_l_ri(S1, 0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			delay;
 			mov_w_rm(reg, (uintptr) temp_fp);
 			return 0;
 		case 0: /* long */
+			/* Switch to correct rounding mode */
+			mov_l_rm(S1, (uintptr) & FPU fpcr);
+			and_l_ri(S1, 0x000000f0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			fmovi_mr((uintptr) temp_fp, val);
+			mov_l_ri(S1, 0);
+			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 			delay;
 			mov_l_rm(reg, (uintptr) temp_fp);
 			return 0;
@@ -477,7 +523,13 @@ STATIC_INLINE int put_fp_value(int val, uae_u32 opcode, uae_u16 extra)
 	switch (size)
 	{
 	case 0: /* long */
+		/* Switch to correct rounding mode */
+		mov_l_rm(S2, (uintptr) & FPU fpcr);
+		and_l_ri(S2, 0x000000f0);
+		fldcw_m_indexed(S2, (uintptr) x86_fpucw);
 		fmovi_mr((uintptr) temp_fp, val);
+		mov_l_ri(S2, 0);
+		fldcw_m_indexed(S2, (uintptr) x86_fpucw);
 		delay;
 		mov_l_rm(S2, (uintptr) temp_fp);
 		writelong_clobber(ad, S2, S3);
@@ -503,6 +555,10 @@ STATIC_INLINE int put_fp_value(int val, uae_u32 opcode, uae_u16 extra)
 	case 3: /* packed decimal static */
 		return -1;						/* Packed */
 	case 4: /* word */
+		/* Switch to correct rounding mode */
+		mov_l_rm(S2, (uintptr) & FPU fpcr);
+		and_l_ri(S2, 0x000000f0);
+		fldcw_m_indexed(S2, (uintptr) x86_fpucw);
 		fmovi_mr((uintptr) temp_fp, val);
 		delay;
 		mov_l_rm(S2, (uintptr) temp_fp);
@@ -518,7 +574,13 @@ STATIC_INLINE int put_fp_value(int val, uae_u32 opcode, uae_u16 extra)
 		writelong_clobber(ad, S2, S3);
 		break;
 	case 6: /* byte */
+		/* Switch to correct rounding mode */
+		mov_l_rm(S2, (uintptr) & FPU fpcr);
+		and_l_ri(S2, 0x000000f0);
+		fldcw_m_indexed(S2, (uintptr) x86_fpucw);
 		fmovi_mr((uintptr) temp_fp, val);
+		mov_l_ri(S2, 0);
+		fldcw_m_indexed(S2, (uintptr) x86_fpucw);
 		delay;
 		mov_l_rm(S2, (uintptr) temp_fp);
 		writebyte(ad, S2, S3);
@@ -1063,33 +1125,6 @@ static const fpu_register power10[]		= {
 #endif
 };
 
-/* 128 words, indexed through the low byte of the 68k fpu control word */
-#if 0
-/* unused*/
-static uae_u16 x86_fpucw[]={
-    0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, /* p0r0 */
-    0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, /* p0r1 */
-    0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, /* p0r2 */
-    0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, /* p0r3 */
-
-    0x107f, 0x107f, 0x107f, 0x107f, 0x107f, 0x107f, 0x107f, 0x107f, /* p1r0 */
-    0x1c7f, 0x1c7f, 0x1c7f, 0x1c7f, 0x1c7f, 0x1c7f, 0x1c7f, 0x1c7f, /* p1r1 */
-    0x147f, 0x147f, 0x147f, 0x147f, 0x147f, 0x147f, 0x147f, 0x147f, /* p1r2 */
-    0x187f, 0x187f, 0x187f, 0x187f, 0x187f, 0x187f, 0x187f, 0x187f, /* p1r3 */
-
-    0x127f, 0x127f, 0x127f, 0x127f, 0x127f, 0x127f, 0x127f, 0x127f, /* p2r0 */
-    0x1e7f, 0x1e7f, 0x1e7f, 0x1e7f, 0x1e7f, 0x1e7f, 0x1e7f, 0x1e7f, /* p2r1 */
-    0x167f, 0x167f, 0x167f, 0x167f, 0x167f, 0x167f, 0x167f, 0x167f, /* p2r2 */
-    0x1a7f, 0x1a7f, 0x1a7f, 0x1a7f, 0x1a7f, 0x1a7f, 0x1a7f, 0x1a7f, /* p2r3 */
-
-    0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, 0x137f, /* p3r0 */
-    0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, 0x1f7f, /* p3r1 */
-    0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, 0x177f, /* p3r2 */
-    0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f, 0x1b7f  /* p3r3 */
-};
-#endif
-
-
 void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 {
 	int reg;
@@ -1312,8 +1347,8 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				if (extra & 0x1000)
 				{
 #if HANDLE_FPCR
-					mov_l_rm(opcode & 15, (uintptr) & fpu.fpcr.rounding_mode);
-					or_l_rm(opcode & 15, (uintptr) & fpu.fpcr.rounding_precision);
+					mov_l_rm(opcode & 15, (uintptr) & FPU fpcr.rounding_mode);
+					or_l_rm(opcode & 15, (uintptr) & FPU fpcr.rounding_precision);
 #else
 					FAIL(1);
 					return;
@@ -1327,7 +1362,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				if (extra & 0x0400)
 				{
 					/* FPIAR: fixme; we cannot correctly return the address from compiled code */
-					mov_l_rm(opcode & 15, (uintptr) & fpu.instruction_address);
+					mov_l_rm(opcode & 15, (uintptr) & FPU instruction_address);
 					return;
 				}
 			} else
@@ -1350,8 +1385,8 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 					mov_l_rr(S2, opcode & 15);
 					and_l_ri(S1, FPCR_ROUNDING_PRECISION);
 					and_l_ri(S2, FPCR_ROUNDING_MODE);
-					mov_l_mr((uintptr) & fpu.fpcr.rounding_precision, S1);
-					mov_l_mr((uintptr) & fpu.fpcr.rounding_mode, S2);
+					mov_l_mr((uintptr) & FPU fpcr.rounding_precision, S1);
+					mov_l_mr((uintptr) & FPU fpcr.rounding_mode, S2);
 #else
 					FAIL(1);
 					return;
@@ -1360,7 +1395,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				if (extra & 0x0400)
 				{
 					/* FPIAR: does that make sense at all? */
-					mov_l_mr((uintptr) & fpu.instruction_address, opcode & 15);
+					mov_l_mr((uintptr) & FPU instruction_address, opcode & 15);
 				}
 				return;
 			}
@@ -1388,8 +1423,8 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 					mov_l_ri(S2, val);
 					and_l_ri(S1, FPCR_ROUNDING_PRECISION);
 					and_l_ri(S2, FPCR_ROUNDING_MODE);
-					mov_l_mr((uintptr) & fpu.fpcr.rounding_precision, S1);
-					mov_l_mr((uintptr) & fpu.fpcr.rounding_mode, S2);
+					mov_l_mr((uintptr) & FPU fpcr.rounding_precision, S1);
+					mov_l_mr((uintptr) & FPU fpcr.rounding_mode, S2);
 #else
 					FAIL(1);
 					return;
@@ -1399,7 +1434,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 				{
 					uae_u32 val = comp_get_ilong((m68k_pc_offset += 4) - 4);
 
-					mov_l_mi((uintptr) & fpu.instruction_address, val);
+					mov_l_mi((uintptr) & FPU instruction_address, val);
 				}
 				return;
 			}
@@ -1561,7 +1596,7 @@ void comp_fpp_opp(uae_u32 opcode, uae_u16 extra)
 			frndint_rr(reg, src);
 
 			/* restore control word */
-			mov_l_rm(S1, (uintptr) & regs.fpcr);
+			mov_l_rm(S1, (uintptr) & FPU fpcr);
 			and_l_ri(S1, 0x000000f0);
 			fldcw_m_indexed(S1, (uintptr) x86_fpucw);
 
