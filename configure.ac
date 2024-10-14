@@ -1682,10 +1682,10 @@ fi
 dnl Remove the "-g" option if set for GCC.
 if [[ "x$GCC" = "xyes" ]]; then
   if test "$ac_test_CFLAGS" != set; then
-    CFLAGS=`echo $CFLAGS | sed -e 's/-g\b//g'`
+    CFLAGS=`echo $CFLAGS | sed 's/-g$//g' | sed 's/-g //g'`
   fi
   if test "$ac_test_CXXFLAGS" != set; then
-    CXXFLAGS=`echo $CXXFLAGS | sed -e 's/-g\b//g'`
+    CXXFLAGS=`echo $CXXFLAGS | sed 's/-g$//g' | sed 's/-g //g'`
   fi
 fi
 if [[ "x$WANT_NATDEBUG" = "xyes" ]]; then
