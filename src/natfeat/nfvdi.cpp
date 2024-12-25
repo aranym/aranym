@@ -790,13 +790,13 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
 	uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
 	uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
-	uint32 destAddress = ReadInt32(dest);
+	uint32 destAddress = ReadInt32(dest + MFDB_ADDRESS);
 
 	switch(destPlanes) {
 		case 16:
@@ -1057,12 +1057,12 @@ int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
-	memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
+	memptr data   = ReadInt32(src + MFDB_ADDRESS) + sy * pitch;			// MFDB *src->address host OS address
 
 	// the destPlanes is always the same?
 	planes = ReadInt16(dest + MFDB_NPLANES);		// MFDB *dest->bitplanes
 	uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
-	memptr destAddress = (memptr)ReadInt32(dest);
+	memptr destAddress = (memptr)ReadInt32(dest + MFDB_ADDRESS);
 
 	D(bug("fVDI: blitArea M->M"));
 

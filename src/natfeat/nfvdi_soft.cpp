@@ -391,9 +391,9 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32( src ),ReadInt32( dest )));
+	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
 	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x100 ) {
 		if ( ReadInt16( src + MFDB_NPLANES ) != 8 ) {
@@ -655,7 +655,7 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 		/* Linux does not wrap on words */
 		pitch >>= 1;
 	}
-	memptr data   = ReadInt32(src) + sy * pitch;			// MFDB *src->address host OS address
+	memptr data   = ReadInt32(src + MFDB_ADDRESS) + sy * pitch;			// MFDB *src->address host OS address
 
 	uint32 srcData;
 	uint32 destData;
@@ -795,7 +795,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	uint32 planes = ReadInt16(dest + MFDB_NPLANES);			// MFDB *dest->bitplanes
 	uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
-	memptr destAddress = ReadInt32(dest);
+	memptr destAddress = ReadInt32(dest + MFDB_ADDRESS);
 
 	uint32 srcData;
 	uint32 destData;
