@@ -97,6 +97,8 @@ class IKBD: public ACIA {
 		void SendJoystickButton(int numjoy, int pressed);
 };
 
+extern IKBD *ikbd;
+
 #endif /* _IKBD_H */
 
 // don't remove this modeline with intended formatting for vim:ts=4:sw=4:

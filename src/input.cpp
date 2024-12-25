@@ -43,6 +43,7 @@
 
 #include "SDL_compat.h"
 #include "clipbrd.h"
+#include "rtc.h"
 
 /* Joysticks */
 
@@ -735,6 +736,198 @@ HOTKEY check_hotkey(int state, SDL_Keycode sym)
 	return HOTKEY_none;
 }
 
+
+/*
+ * special mapping to map typical pc-layout to
+ * what atari keyboard tables expects.
+ * Only works if host keyboard layout matches
+ * TOS language
+ */
+static bool process_special_german(int scanAtari, int state, bool pressed)
+{
+	static int keytorelease;
+
+	switch (scanAtari)
+	{
+	case 0x08: /* left curly brace */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a); /* shift */
+				getIKBD()->SendKey(0x27); /* send oe */
+
+				getIKBD()->SendKey(0x27 | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+			}
+			return true;
+		}
+		break;
+	case 0x09: /* left bracket */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+				getIKBD()->SendKey(0x27); /* send oe */
+
+				getIKBD()->SendKey(0x27 | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+			}
+			return true;
+		}
+		break;
+	case 0x0a: /* right bracket */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+				getIKBD()->SendKey(0x28); /* send ae */
+
+				getIKBD()->SendKey(0x28 | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+			}
+			return true;
+		}
+		break;
+	case 0x0b: /* right curly brace */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a); /* shift */
+				getIKBD()->SendKey(0x28); /* send ae */
+
+				getIKBD()->SendKey(0x28 | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+			}
+			return true;
+		}
+		break;
+	case 0x10: /* at */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* shift */
+				getIKBD()->SendKey(0x1a); /* send ue */
+
+				getIKBD()->SendKey(0x1a | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+			}
+			return true;
+		}
+		break;
+	case 0x0c: /* backslash */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a); /* shift */
+				getIKBD()->SendKey(0x1a); /* send ue */
+
+				getIKBD()->SendKey(0x1a | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+			}
+			return true;
+		}
+		break;
+	case 0x60: /* vertical bar */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a); /* shift */
+				getIKBD()->SendKey(0x2b); /* send tilde */
+
+				getIKBD()->SendKey(0x2b | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+			}
+			return true;
+		}
+		break;
+	case 0x1b: /* tilde */
+		if (state & KMOD_RALT)
+		{
+			if (pressed)
+			{
+				getIKBD()->SendKey(0x38); /* alt */
+				getIKBD()->SendKey(0x2a | 0x80); /* release shift */
+				getIKBD()->SendKey(0x2b); /* send tilde */
+
+				getIKBD()->SendKey(0x2b | 0x80);
+				getIKBD()->SendKey(0x38 | 0x80); /* release alt */
+			}
+			return true;
+		}
+		break;
+	case 0x2b: /* hash/apostrophe */
+		if (pressed)
+		{
+			if (state & (KMOD_LSHIFT | KMOD_RSHIFT))
+			{
+				if (state & KMOD_LSHIFT)
+					getIKBD()->SendKey(0x2a | 0x80);
+				if (state & KMOD_RSHIFT)
+					getIKBD()->SendKey(0x36 | 0x80);
+				getIKBD()->SendKey(0x0d);
+				getIKBD()->SendKey(0x0d | 0x80);
+			} else
+			{
+				getIKBD()->SendKey(0x29);
+				getIKBD()->SendKey(0x29 | 0x80);
+			}
+		} else
+		{
+			if (keytorelease)
+			{
+				getIKBD()->SendKey(keytorelease | 0x80);
+				keytorelease = 0;
+			}
+		}
+		return true;
+	case 0x29: /* circumflex */
+		if (pressed)
+		{
+			getIKBD()->SendKey(0x2a); /* shift */
+			getIKBD()->SendKey(0x29);
+
+			getIKBD()->SendKey(0x29 | 0x80);
+			getIKBD()->SendKey(0x2a | 0x80);
+		}
+		return true;
+	}
+	return false;
+}
+
+
+static bool process_national_key(int scanAtari, int state, bool pressed)
+{
+	if (!rtc)
+		return false;
+	switch (rtc->getNvramKeyboard())
+	{
+	case COUNTRY_DE:
+		return process_special_german(scanAtari, state, pressed);
+	default:
+		break;
+	}
+	return false;
+}
+
+
 static void process_keyboard_event(const SDL_Event &event)
 {
 	SDL_Keysym keysym = event.key.keysym;
@@ -920,9 +1113,12 @@ static void process_keyboard_event(const SDL_Event &event)
 		int scanAtari = keysymToAtari(&keysym);
 		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, pressed ? scanAtari : scanAtari|0x80, pressed ? scanAtari : scanAtari|0x80, SDL_GetKeyName(sym), sym));
 		if (scanAtari > 0) {
-			if (!pressed)
-				scanAtari |= 0x80;
-			getIKBD()->SendKey(scanAtari);
+			if (!process_national_key(scanAtari, state, pressed))
+			{
+				if (!pressed)
+					scanAtari |= 0x80;
+				getIKBD()->SendKey(scanAtari);
+			}
 		}
 	}
 }

@@ -50,7 +50,7 @@ void HWReset(void);
 
 ARADATA *getARADATA(void);
 MFP *getMFP(void);
-IKBD *getIKBD(void);
+inline IKBD *getIKBD(void) { return ikbd; }
 MIDI *getMIDI(void);
 YAMAHA *getYAMAHA(void);
 VIDEL *getVIDEL(void);

@@ -286,7 +286,3 @@ void RTC::setChecksum()
 	nvram[CKS_LOC] = ~sum;
 	nvram[CKS_LOC+1] = sum;
 }
-
-/*
-vim:ts=4:sw=4:
-*/

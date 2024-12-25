@@ -130,7 +130,6 @@ BASE_IO *getModule(memptr addr)
 
 ARADATA* getARADATA(){ return aradata; /* (ARADATA*)arhw[ARADATA];*/ }
 MFP* getMFP()		{ return mfp; }
-IKBD* getIKBD()		{ return ikbd; }
 MIDI* getMIDI()		{ return midi; }
 YAMAHA* getYAMAHA()	{ return yamaha; }
 VIDEL* getVIDEL()	{ return videl; }

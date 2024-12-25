@@ -109,8 +109,6 @@ private:
 	struct tm getFrozenTime(void);
 };
 
-#endif // _RTC_H
+extern RTC *rtc;
 
-/*
-vim:ts=4:sw=4:
-*/
+#endif /* _RTC_H */
