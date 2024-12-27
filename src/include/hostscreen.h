@@ -131,8 +131,8 @@ class HostScreen: public DirtyRects
 	void EnableOpenGLVdi(void);
 	void DisableOpenGLVdi(void);
 
-	int getWidth(void);
-	int getHeight(void);
+	int getWidth(void) { return screen->w; }
+	int getHeight(void) { return screen->h; }
 	virtual int getBpp(void);
 
 	/**

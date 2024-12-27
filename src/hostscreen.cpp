@@ -247,16 +247,6 @@ void  HostScreen::SetCaption(const char *caption)
 #endif
 }
 
-int HostScreen::getWidth(void)
-{
-	return screen->w;
-}
-
-int HostScreen::getHeight(void)
-{
-	return screen->h;
-}
-
 int HostScreen::getBpp(void)
 {
 	return screen->format->BitsPerPixel;

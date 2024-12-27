@@ -82,21 +82,6 @@ SDL_Surface *HostSurface::createSdlSurface(int width, int height,
 
 /*--- Public functions ---*/
 
-SDL_Surface *HostSurface::getSdlSurface(void)
-{
-	return surface;
-}
-
-int HostSurface::getWidth(void)
-{
-	return clip_w;
-}
-
-int HostSurface::getHeight(void)
-{
-	return clip_h;
-}
-
 int HostSurface::getBpp(void)
 {
 	return (surface ? surface->format->BitsPerPixel : 0);

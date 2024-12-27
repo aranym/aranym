@@ -58,10 +58,10 @@ class HostSurface: public DirtyRects
 
 		virtual ~HostSurface();
 
-		SDL_Surface *getSdlSurface(void);
+		SDL_Surface *getSdlSurface(void) { return surface; }
 
-		int getWidth(void);
-		int getHeight(void);
+		int getWidth(void) { return clip_w; }
+		int getHeight(void) { return clip_h; }
 		int getBpp(void);
 
 		virtual void update(void);
