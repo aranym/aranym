@@ -368,11 +368,6 @@ uint32 VdiDriver::applyBlitLogOperation(int logicalOperation,
 	return destinationData;
 }
 
-HostSurface *VdiDriver::getSurface(void)
-{
-	return surface;
-}
-
 void VdiDriver::setResolution(int32 width, int32 height, int32 depth)
 {
 	if (bx_options.autozoom.fixedsize) {
@@ -526,10 +521,6 @@ bool VdiDriver::AllocPoints(int n)
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
- *
  * Since an MFDB is passed, the source is not necessarily the screen.
  **/
 
@@ -549,6 +540,11 @@ int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 		ReadInt16(src + MFDB_WDWIDTH) * 2 * planes * y;
 
 	switch (planes) {
+		case 1:
+			color = ReadInt8(row_address + (x >> 3));
+			color >>= (7 - (x & 7));
+			color &= 1;
+			break;
 		case 8:
 			color = ReadInt8(row_address + x);
 			break;
@@ -583,11 +579,7 @@ int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  *   - single pixel
  *   - table based multi pixel (special mode 0 (low word of 'y'))
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
- *
- * As usual, only the first one is necessary, and a return with d0 = -1
+ * As usual, only the first one is necessary, and a return with d0 <= 0
  * signifies that a special mode should be broken down to the basic one.
  *
  * Since an MFDB is passed, the destination is not necessarily the screen.
@@ -596,19 +588,30 @@ int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 int32 VdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y,
 	uint32 color)
 {
-	if (vwk & 1)
-		return 0;
-
 	if (!dst) {
 		D(bug("VdiDriver::putPixel(): destination is NULL"));
-		return color;
+		return 1;
 	}
+
+	if (vwk & 1)
+		return 0;
 
 	uint16 planes = ReadInt16(dst + MFDB_NPLANES);
 	uint32 row_address = ReadInt32(dst + MFDB_ADDRESS) +
 		ReadInt16(dst + MFDB_WDWIDTH) * 2 * planes * y;
 
 	switch (planes) {
+		case 1:
+			{
+			uint8 byte;
+			row_address += (x >> 3);
+			byte = ReadInt8(row_address);
+			x = 7 - (x & 7);
+			byte &= ~(1 << x);
+			byte |= (color & 1) << x;
+			WriteInt8(row_address, byte);
+			}
+			break;
 		case 8:
 			WriteInt8(row_address + x, color);
 			break;
@@ -749,11 +752,6 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
- *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
  * A return with 0 gives a fallback (normally pixel by pixel drawing by
@@ -781,22 +779,22 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		return 1;
 	}
 
-	if (getBpp() == 8) {
+	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
+	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
+
+	uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
+	uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
+	uint32 destAddress = ReadInt32(dest + MFDB_ADDRESS);
+
+	if (destPlanes == 8) {
 		fgColor &= 0xff;
 		bgColor &= 0xff;
 	}
-
-	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
-	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
-
-	uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
-	uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
-	uint32 destAddress = ReadInt32(dest + MFDB_ADDRESS);
 
 	switch(destPlanes) {
 		case 16:
@@ -811,18 +809,18 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
 					switch(logOp) {
-					case 1:
+					case MD_REPLACE:
 						WriteInt16(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
 						break;
-					case 2:
+					case MD_TRANS:
 						if ((theWord >> (15 - (i & 0xf))) & 1)
 							WriteInt16(destAddress + offset, fgColor);
 						break;
-					case 3:
+					case MD_XOR:
 						if ((theWord >> (15 - (i & 0xf))) & 1)
 							WriteInt16(destAddress + offset, ~ReadInt16(destAddress + offset));
 						break;
-					case 4:
+					case MD_ERASE:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
 							WriteInt16(destAddress + offset, bgColor);
 						break;
@@ -843,18 +841,18 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
 					switch(logOp) {
-					case 1:
+					case MD_REPLACE:
 						put_dtriplet(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
 						break;
-					case 2:
+					case MD_TRANS:
 						if ((theWord >> (15 - (i & 0xf))) & 1)
 							put_dtriplet(destAddress + offset, fgColor);
 						break;
-					case 3:
+					case MD_XOR:
 						if ((theWord >> (15-(i&0xf))) & 1)
 							put_dtriplet(destAddress + offset, ~get_dtriplet(destAddress + offset));
 						break;
-					case 4:
+					case MD_ERASE:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
 							put_dtriplet(destAddress + offset, bgColor);
 						break;
@@ -875,18 +873,18 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 					D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
 					switch(logOp) {
-					case 1:
+					case MD_REPLACE:
 						WriteInt32(destAddress + offset, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
 						break;
-					case 2:
+					case MD_TRANS:
 						if ((theWord >> (15-(i&0xf))) & 1)
 							WriteInt32(destAddress + offset, fgColor);
 						break;
-					case 3:
+					case MD_XOR:
 						if ((theWord >> (15 - (i & 0xf))) & 1)
 							WriteInt32(destAddress + offset, ~ReadInt32(destAddress + offset));
 						break;
-					case 4:
+					case MD_ERASE:
 						if (!((theWord >> (15 - (i & 0xf))) & 1))
 							WriteInt32(destAddress + offset, bgColor);
 						break;
@@ -928,18 +926,18 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 						D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
 						switch(logOp) {
-							case 1:
+							case MD_REPLACE:
 								color[i&0xf] = ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor;
 								break;
-							case 2:
+							case MD_TRANS:
 								if ((theWord >> (15-(i&0xf))) & 1)
 									color[i&0xf] = fgColor;
 								break;
-							case 3:
+							case MD_XOR:
 								if ((theWord >> (15 - (i & 0xf))) & 1)
 									color[i&0xf] = ~color[i&0xf];
 								break;
-							case 4:
+							case MD_ERASE:
 								if (!((theWord >> (15 - (i & 0xf))) & 1))
 									color[i&0xf] = bgColor;
 								break;
@@ -988,18 +986,309 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, uint32 interior_style)
 {
-	DUNUSED(vwk);
-	DUNUSED(x_);
-	DUNUSED(y_);
-	DUNUSED(w);
-	DUNUSED(h);
-	DUNUSED(pattern_addr);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(logOp);
 	DUNUSED(interior_style);
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
 
-	return -1;
+	if (!dest) {
+		D(bug("VdiDriver::fillArea(): destination is NULL"));
+		return 1;
+	}
+
+	uint16 pattern[16];
+	for(int i = 0; i < 16; ++i)
+		pattern[i] = ReadInt16(pattern_addr + i * 2);
+
+	memptr table = 0;
+
+	int x = x_;
+	int y = y_;
+
+	if (vwk & 1) {
+		if ((y_ & 0xffff) != 0)
+			return -1;		// Don't know about this kind of table operation
+		table = (memptr)x_;
+		h = (y_ >> 16) & 0xffff;
+		vwk -= 1;
+	}
+
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
+	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
+	      fgColor, bgColor));
+
+	/* Perform rectangle fill. */
+	if (!table) {
+		hsFillArea(wk + WK_SCREEN_MFDB, x, y, w, h, pattern, fgColor, bgColor, logOp);
+	} else {
+		for(h = h - 1; h >= 0; h--) {
+			y = (int16)ReadInt16(table); table+=2;
+			x = (int16)ReadInt16(table); table+=2;
+			w = (int16)ReadInt16(table) - x + 1; table+=2;
+			hsFillArea(wk + WK_SCREEN_MFDB, x, y, w, 1, pattern, fgColor, bgColor, logOp);
+		}
+	}
+
+	return 1;
+}
+
+#define putBpp24Pixel( address, color ) \
+{ \
+        ((address))[0] = ((color) >> 16) & 0xff; \
+        ((address))[1] = ((color) >> 8) & 0xff; \
+        ((address))[2] = (color) & 0xff; \
+}
+
+#define getBpp24Pixel( address ) \
+    ( ((uint32)(address)[0] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[2] )
+
+void VdiDriver::hsFillArea(memptr mfdb, uint32 x, uint32 y, uint32 w, uint32 h,
+                             uint16* areaPattern, uint32 fgColor, uint32 bgColor,
+                             uint32 logOp)
+{
+	int planes;
+	int pitch;
+	int16 i;
+	int16 dx=w;
+	int16 dy=h;
+	uint8_t *pixels = Atari2HostAddr(ReadInt32(mfdb + MFDB_ADDRESS));
+
+	/* More variable setup */
+	planes = ReadInt16(mfdb + MFDB_NPLANES);
+	if (planes == 15)
+		planes = 16;
+	pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes;
+
+	// STanda // FIXME here the pattern should be checked out of the loops for performance
+			  // but for now it is good enough (if there is no pattern -> another switch?)
+
+	/* Draw */
+	switch(planes) {
+		case 8:
+			{
+			uint8 *pixel, *pixellast;
+
+			pixel = pixels + x + pitch * y;
+			pixellast = pixel + pitch * dy;
+			pitch -= dx;
+			switch (logOp) {
+				case MD_REPLACE:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							*pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+							pixel += 1;
+						}
+					}
+					break;
+				case MD_TRANS:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel = fgColor;
+							pixel += 1;
+						}
+					}
+					break;
+				case MD_XOR:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel = ~(*(uint8*)pixel);
+							pixel += 1;
+						}
+					}
+					break;
+				case MD_ERASE:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								*pixel = fgColor;
+							pixel += 1;
+						}
+					}
+					break;
+			}
+			}
+			break;
+		case 15:
+		case 16:
+			{
+			uint16_t *pixel16, *pixellast;
+
+			pitch >>= 1;
+			pixel16 = (uint16_t *)pixels + x + pitch * y;
+			pixellast = pixel16 + pitch * dy;
+			pitch -= dx;
+			fgColor = SDL_SwapBE16(fgColor);
+			bgColor = SDL_SwapBE16(bgColor);
+			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pitch));
+
+			switch (logOp) {
+				case MD_REPLACE:
+					for (; pixel16<pixellast; pixel16 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							*pixel16 = ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor;
+							pixel16 += 1;
+						}
+					}
+					break;
+				case MD_TRANS:
+					for (; pixel16<pixellast; pixel16 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel16 = fgColor;
+							pixel16 += 1;
+						}
+					}
+					break;
+				case MD_XOR:
+					for (; pixel16<pixellast; pixel16 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel16 = ~(*pixel16);
+							pixel16 += 1;
+						}
+					}
+					break;
+				case MD_ERASE:
+					for (; pixel16<pixellast; pixel16 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								*pixel16 = fgColor;
+							pixel16 += 1;
+						}
+					}
+					break;
+			}
+			}
+			break;
+		case 24:
+			{
+			uint8 *pixel, *pixellast;
+
+			pixel = pixels + 3 * x + pitch * y;
+			pixellast = pixel + pitch * dy;
+			pitch -= 3 * dx;
+			switch (logOp) {
+				case MD_REPLACE:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
+							pixel += 3;
+						}
+					}
+					break;
+				case MD_TRANS:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								putBpp24Pixel( pixel, fgColor );
+							pixel += 3;
+						}
+					}
+					break;
+				case MD_XOR:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+							pixel += 3;
+						}
+					}
+					break;
+				case MD_ERASE:
+					for (; pixel<pixellast; pixel += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								putBpp24Pixel( pixel, fgColor );
+							pixel += 3;
+						}
+					}
+					break;
+			}
+			}
+			break;
+		case 32:
+			{
+			uint32 *pixel32, *pixellast;
+
+			pitch >>= 2;
+			pixel32 = (uint32_t *)pixels + x + pitch * y;
+			pixellast = pixel32 + pitch * dy;
+			fgColor = SDL_SwapBE32(fgColor);
+			bgColor = SDL_SwapBE32(bgColor);
+			pitch -= dx;
+			switch (logOp) {
+				case MD_REPLACE:
+					for (; pixel32<pixellast; pixel32 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							*pixel32 = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+							pixel32 += 1;
+						}
+					}
+					break;
+				case MD_TRANS:
+					for (; pixel32<pixellast; pixel32 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel32 = fgColor;
+							pixel32 += 1;
+						}
+					}
+					break;
+				case MD_XOR:
+					for (; pixel32<pixellast; pixel32 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+								*pixel32 = ~(*pixel32);
+							pixel32 += 1;
+						}
+					}
+					break;
+				case MD_ERASE:
+					for (; pixel32<pixellast; pixel32 += pitch) {
+						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+
+						for (i=0; i<dx; i++) {
+							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+								*pixel32 = fgColor;
+							pixel32 += 1;
+						}
+					}
+					break;
+			}
+			}
+			break;
+	}  // switch
 }
 
 /**
@@ -1017,11 +1306,6 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
- *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
  * A return with 0 gives a fallback (normally pixel by pixel drawing by the
@@ -1037,11 +1321,19 @@ int32 VdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 		if (dest) {
 			ret=blitArea_M2M(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
 		} else {
-			ret=blitArea_M2S(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+			/* can only blit to screen if MFDB has screen format */
+			if (ReadInt16(src + MFDB_NPLANES) != surface->getBpp())
+				ret = 1;
+			else
+				ret=blitArea_M2S(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
 		}
 	} else {
 		if (dest) {
-			ret=blitArea_S2M(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
+			/* can only blit to memory if MFDB has screen format */
+			if (ReadInt16(dest + MFDB_NPLANES) != surface->getBpp())
+				ret = 1;
+			else
+				ret=blitArea_S2M(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
 		} else {
 			ret=blitArea_S2S(vwk, src, sx, sy, dest, dx, dy, w, h, logOp);
 		}
@@ -1100,10 +1392,25 @@ int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 					WriteInt32(destAddress + offset, destData);
 				}
 			break;
-		default:
-			if (planes < 16) {
-				D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToCunky conversion"));
+		case 8:
+			if ( ((uint32)ReadInt16( src + MFDB_STAND ) & 0x100)) {
+				// chunky
+				D(bug("fVDI: blitArea M->S: chunky8bit"));
+				for(int32 j = 0; j < h; j++) {
+					for(int32 i = sx; i < sx + w; i++) {
+						uint32 offset = (dx + i - sx) + (dy + j) * destPitch;
+						srcData = ReadInt8(data + j * pitch + i);
+						destData = ReadInt8(destAddress + offset);
+						destData = applyBlitLogOperation(logOp, destData, srcData);
+						WriteInt8(destAddress + offset, destData);
+					}
+				}
+				return 1;
 			}
+			/* fall through */
+		default:
+			D(bug("fVDI: blitArea M->M: NOT TESTED bitplaneToChunky conversion"));
+			break;
 	}
 
 	return 1;
@@ -1208,6 +1515,14 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+
+	if (!dest) {
+		D(bug("VdiDriver::fillPoly(): destination is NULL"));
+		return 1;
+	}
+
 	DUNUSED(interior_style);
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
@@ -1222,13 +1537,13 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 
 	int cliparray[4];
 	int* cliprect = 0;
-	if (clip) {	// Clipping is not off
+	if (clip) {     // Clipping is not off
 		cliprect = cliparray;
 		cliprect[0] = (int16)ReadInt32(clip);
 		cliprect[1] = (int16)ReadInt32(clip + 4);
 		cliprect[2] = (int16)ReadInt32(clip + 8);
 		cliprect[3] = (int16)ReadInt32(clip + 12);
-		D2(bug("fVDI: %s %d,%d:%d,%d", "clipLineTO", cliprect[0], cliprect[1],
+		D2(bug("fVDI: %s %d,%d:%d,%d", "clipFillTO", cliprect[0], cliprect[1],
 		       cliprect[2], cliprect[3]));
 	}
 
@@ -1277,12 +1592,9 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			maxy = cliprect[3];
 	}
 
-	int minx = 1000000;
-	int maxx = -1000000;
-
 	for(int16 y = miny; y <= maxy; ++y) {
 		int ints = 0;
-		int16 x1 = 0;	// Make the compiler happy with some initializations
+		int16 x1 = 0;   // Make the compiler happy with some initializations
 		int16 y1 = 0;
 		int16 x2 = 0;
 		int16 y2 = 0;
@@ -1302,7 +1614,7 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			if (EnoughCrossings(ints + 1) || AllocCrossings(ints + 1))
 				crossing = alloc_crossing;
 			else
-				break;		// At least something will get drawn
+				break;          // At least something will get drawn
 
 			if (indices) {
 				x1 = x2;
@@ -1315,7 +1627,7 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 					if (--move_n >= 0)
 						movepnt = (index[move_n] + 4) / 2;
 					else
-						movepnt = -1;		// Never again equal to n
+						movepnt = -1;           // Never again equal to n
 					continue;
 				}
 			}
@@ -1348,19 +1660,15 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		x1 = cliprect[0];
 		x2 = cliprect[2];
 		for(int i = 0; i < ints - 1; i += 2) {
-			y1 = crossing[i];	// Really x-values, but...
+			y1 = crossing[i];       // Really x-values, but...
 			y2 = crossing[i + 1];
 			if (y1 < x1)
 				y1 = x1;
 			if (y2 > x2)
 				y2 = x2;
 			if (y1 <= y2) {
-				fillArea(y1, y, y2 - y1 + 1, 1, pattern,
+				hsFillArea(wk + WK_SCREEN_MFDB, y1, y, y2 - y1 + 1, 1, pattern,
 				         fgColor, bgColor, logOp);
-				if (y1 < minx)
-					minx = y1;
-				if (y2 > maxx)
-					maxx = y2;
 			}
 		}
 	}

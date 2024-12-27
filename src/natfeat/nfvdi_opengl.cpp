@@ -109,10 +109,6 @@ int32 OpenGLVdiDriver::closeWorkstation(void)
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
- *
  * Since an MFDB is passed, the source is not necessarily the screen.
  **/
 
@@ -151,10 +147,6 @@ int32 OpenGLVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  * This function has two modes:
  *   - single pixel
  *   - table based multi pixel (special mode 0 (low word of 'y'))
- *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
  *
  * As usual, only the first one is necessary, and a return with d0 = -1
  * signifies that a special mode should be broken down to the basic one.
@@ -365,11 +357,6 @@ int OpenGLVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
- *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
  * A return with 0 gives a fallback (normally pixel by pixel drawing by
@@ -429,7 +416,7 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	gl.Scissor(dx, host->video->getHeight() - (dy + h), w, h);
 	gl.Enable(GL_SCISSOR_TEST);
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff,0xff,0xff);
 	} else {
@@ -525,7 +512,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 		}
 
 		gl.Enable(GL_COLOR_LOGIC_OP);
-		if (logOp == 3) {
+		if (logOp == MD_XOR) {
 			gl.LogicOp(GL_XOR);
 			gl.Color3ub(0xff,0xff,0xff);
 		} else {
@@ -561,7 +548,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 			}
 
 			gl.Enable(GL_COLOR_LOGIC_OP);
-			if (logOp == 3) {
+			if (logOp == MD_XOR) {
 				gl.LogicOp(GL_XOR);
 				gl.Color3ub(0xff,0xff,0xff);
 			} else {
@@ -585,7 +572,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 	return 1;
 }
 
-void OpenGLVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+void OpenGLVdiDriver::hsFillArea(uint32 x, uint32 y, uint32 w, uint32 h,
                                uint16* pattern, uint32 fgColor, uint32 bgColor,
                                uint32 logOp)
 {
@@ -599,7 +586,7 @@ void OpenGLVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
 	}
 
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff,0xff,0xff);
 	} else {
@@ -633,11 +620,6 @@ void OpenGLVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
  *  d7  logic operation
  *
  * Only one mode here.
- *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
  *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
@@ -879,7 +861,7 @@ int OpenGLVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2,
 	}
 
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff,0xff,0xff);
 	} else {
@@ -938,7 +920,7 @@ int OpenGLVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
 	}
 
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff,0xff,0xff);
 	} else {
@@ -1177,7 +1159,7 @@ int32 OpenGLVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	}
 
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff,0xff,0xff);
 	} else {
@@ -1268,7 +1250,7 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 	}
 
 	gl.Enable(GL_COLOR_LOGIC_OP);
-	if (logOp == 3) {
+	if (logOp == MD_XOR) {
 		gl.LogicOp(GL_XOR);
 		gl.Color3ub(0xff, 0xff, 0xff);
 	} else {

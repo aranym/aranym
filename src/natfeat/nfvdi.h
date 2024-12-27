@@ -40,6 +40,12 @@
 #define MFDB_STAND                 10
 #define MFDB_NPLANES               12
 
+// fVDI structure offsets
+#define VWK_REAL_ADDRESS            0
+#define WK_SCREEN_TYPE              4
+#define WK_SCREEN_MFDB             24
+#define WK_SCREEN_ADDR             (WK_SCREEN_MFDB + MFDB_ADDRESS)
+
 /* gsx modes */
 
 #define MD_REPLACE      1
@@ -116,7 +122,7 @@ public:
 	VdiDriver();
 	virtual ~VdiDriver();
 
-	HostSurface *getSurface(void);
+	HostSurface *getSurface(void) { return surface; }
 
 protected:
 	HostSurface *surface;
@@ -165,9 +171,9 @@ protected:
 	virtual int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 		uint32 logOp, uint32 interior_style);
-	virtual	void fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
+	void hsFillArea(memptr mfdb, uint32 x, uint32 y, uint32 w, uint32 h,
 	                      uint16* pattern, uint32 fgColor, uint32 bgColor,
-	                      uint32 logOp) = 0;
+	                      uint32 logOp);
 	virtual int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 		uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 		uint32 logOp, memptr clip);

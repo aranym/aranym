@@ -85,10 +85,6 @@ int32 SoftVdiDriver::closeWorkstation(void)
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
- *
  * Since an MFDB is passed, the source is not necessarily the screen.
  **/
 
@@ -114,10 +110,6 @@ int32 SoftVdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
  * This function has two modes:
  *   - single pixel
  *   - table based multi pixel (special mode 0 (low word of 'y'))
- *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB.
  *
  * As usual, only the first one is necessary, and a return with d0 = -1
  * signifies that a special mode should be broken down to the basic one.
@@ -340,11 +332,6 @@ int SoftVdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
  *
  * Only one mode here.
  *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
- *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
  * A return with 0 gives a fallback (normally pixel by pixel drawing by
@@ -538,7 +525,12 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, uint32 interior_style)
 {
-	DUNUSED(interior_style);
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+	uint16 screen_type = ReadInt16(wk + WK_SCREEN_TYPE); /* wk->screen.type */
+
+	if (dest != 0 || screen_type == 0)
+		return VdiDriver::fillArea(vwk, x_, y_, w, h, pattern_addr, fgColor, bgColor, logOp, interior_style);
 
 	if (!surface) {
 		return 1;
@@ -558,7 +550,7 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	int x = x_;
 	int y = y_;
 
-	if ((long)vwk & 1) {
+	if (vwk & 1) {
 		if ((y_ & 0xffff) != 0)
 			return -1;		// Don't know about this kind of table operation
 		table = (memptr)x_;
@@ -570,43 +562,19 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, bgColor));
 
-	int minx = 1000000;
-	int miny = 1000000;
-	int maxx = -1000000;
-	int maxy = -1000000;
-
 	/* Perform rectangle fill. */
 	if (!table) {
 		hsFillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
-		minx = x;
-		miny = y;
-		maxx = x + w - 1;
-		maxy = y + h - 1;
 	} else {
 		for(h = h - 1; h >= 0; h--) {
 			y = (int16)ReadInt16(table); table+=2;
 			x = (int16)ReadInt16(table); table+=2;
 			w = (int16)ReadInt16(table) - x + 1; table+=2;
 			hsFillArea(x, y, w, 1, pattern, fgColor, bgColor, logOp);
-			if (x < minx)
-				minx = x;
-			if (y < miny)
-				miny = y;
-			if (x + w - 1 > maxx)
-				maxx = x + w - 1;
-			if (y > maxy)
-				maxy = y;
 		}
 	}
 
 	return 1;
-}
-
-void SoftVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
-                             uint16* pattern, uint32 fgColor, uint32 bgColor,
-                             uint32 logOp)
-{
-	hsFillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
 }
 
 /**
@@ -623,11 +591,6 @@ void SoftVdiDriver::fillArea(uint32 x, uint32 y, uint32 w, uint32 h,
  *  d7  logic operation
  *
  * Only one mode here.
- *
- * Note that a1 does not point to the VDI struct, but to a place in memory
- * where the VDI struct pointer can be found. Four bytes beyond that address
- * is a pointer to the destination MFDB, and then comes a VDI struct
- * pointer again (the same) and a pointer to the source MFDB.
  *
  * Since MFDBs are passed, the screen is not necessarily involved.
  *
@@ -735,9 +698,10 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 			}
 			break;
 
-		default: // bitplane modes...
+		default:
 			if (planes < 16) {
 				if ( ((uint32)ReadInt16( src + MFDB_STAND ) & 0x100) && planes == 8) {
+					// chunky
 					D(bug("fVDI: blitArea M->S: chunky8bit"));
 					for(int32 j = 0; j < h; j++) {
 						for(int32 i = sx; i < sx + w; i++) {
@@ -748,6 +712,7 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 						}
 					}
 				} else {
+					// bitplane modes...
 					uint8 color[16];
 
 					D(bug("fVDI: blitArea M->S: bitplaneToChunky conversion"));
@@ -1114,6 +1079,13 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	uint32 y2_, uint32 pattern, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, memptr clip)
 {
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+	uint16 screen_type = ReadInt16(wk + WK_SCREEN_TYPE); /* wk->screen.type */
+
+	if (dest != 0 || screen_type == 0)
+		return VdiDriver::drawLine(vwk, x1_, y1_, x2_, y2_, pattern, fgColor, bgColor, logOp, clip);
+
 	if (!surface) {
 		return 1;
 	}
@@ -1248,12 +1220,14 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	memptr index_addr, int moves, memptr pattern_addr, uint32 fgColor,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
-#if 0
-	return VdiDriver::fillPoly(vwk, points_addr, n, index_addr, moves,
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+	uint16 screen_type = ReadInt16(wk + WK_SCREEN_TYPE); /* wk->screen.type */
+
+	if (dest != 0 || screen_type == 0)
+		return VdiDriver::fillPoly(vwk, points_addr, n, index_addr, moves,
 	                           pattern_addr, fgColor, bgColor, logOp,
 	                           interior_style, clip);
-#else
-	DUNUSED(interior_style);
 
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
@@ -1326,9 +1300,6 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		if (maxy > cliprect[3])
 			maxy = cliprect[3];
 	}
-
-	int minx = 1000000;
-	int maxx = -1000000;
 
 	for(int16 y = miny; y <= maxy; ++y) {
 		int ints = 0;
@@ -1407,16 +1378,11 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			if (y1 <= y2) {
 				hsFillArea(y1, y, y2 - y1 + 1, 1, pattern,
 				                    fgColor, bgColor, logOp);
-				if (y1 < minx)
-					minx = y1;
-				if (y2 > maxx)
-					maxx = y2;
 			}
 		}
 	}
 
 	return 1;
-#endif
 }
 
 int32 SoftVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
@@ -1592,12 +1558,6 @@ void SoftVdiDriver::hsPutPixel( int x, int y, uint32 color )
 	} /* switch */
 }
 
-void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
-	uint16 *pattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
-{
-	hsGfxBoxColorPattern( x, y, w, h, pattern, fgColor, bgColor, logOp );
-}
-
 /**
  * Derived from the SDL_gfxPrimitives::boxColor().
  * The colors are in the destination surface format here.
@@ -1605,11 +1565,12 @@ void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
  *
  * @author STanda
  **/
-void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
+void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
 	uint16 *areaPattern, uint32 fgColor, uint32 bgColor, uint16 logOp )
 {
 	uint8 *pixel, *pixellast;
-	int16 pixx, pixy;
+	int BytesPerPixel;
+	int pitch;
 	int16 i;
 	int y0 = y;
 	int16 dx=w;
@@ -1624,10 +1585,10 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 	}
 
 	/* More variable setup */
-	pixx = sdl_surf->format->BytesPerPixel;
-	pixy = sdl_surf->pitch;
-	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int32)x + pixy * (int32)y;
-	pixellast = pixel + pixy*dy;
+	BytesPerPixel = sdl_surf->format->BytesPerPixel;
+	pitch = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + BytesPerPixel * (int32)x + pitch * (int32)y;
+	pixellast = pixel + pitch*dy;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
 			  // but for now it is good enough (if there is no pattern -> another switch?)
@@ -1635,48 +1596,48 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 	/* Draw */
 	switch(surface->getBpp()) {
 		case 8:
-			pixy -= (pixx*dx);
+			pitch -= (BytesPerPixel*dx);
 			switch (logOp) {
 				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
-							*(uint8*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += pixx;
+							*pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint8*)pixel = fgColor;
-							pixel += pixx;
+								*pixel = fgColor;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint8*)pixel = ~(*(uint8*)pixel);
-							pixel += pixx;
-						};
+								*pixel = ~(*(uint8*)pixel);
+							pixel += BytesPerPixel;
+						}
 					}
 					break;
 				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint8*)pixel = fgColor;
-							pixel += pixx;
+								*pixel = fgColor;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
@@ -1684,146 +1645,146 @@ void SoftVdiDriver::hsGfxBoxColorPattern( int x, int y, int w, int h,
 			break;
 		case 15:
 		case 16:
-			pixy -= (pixx*dx);
-			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pixy));
+			pitch -= (BytesPerPixel*dx);
+			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pitch));
 
 			switch (logOp) {
 				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = fgColor;
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint16*)pixel = ~(*(uint16*)pixel);
-							pixel += pixx;
-						};
+							pixel += BytesPerPixel;
+						}
 					}
 					break;
 				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
 								*(uint16*)pixel = fgColor;
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 			}
 			break;
 		case 24:
-			pixy -= (pixx*dx);
+			pitch -= (BytesPerPixel*dx);
 			switch (logOp) {
 				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								putBpp24Pixel( pixel, fgColor );
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
-							pixel += pixx;
-						};
+							pixel += BytesPerPixel;
+						}
 					}
 					break;
 				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
 								putBpp24Pixel( pixel, fgColor );
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 			}
 			break;
 		default: /* case 4*/
-			pixy -= (pixx*dx);
+			pitch -= (BytesPerPixel*dx);
 			switch (logOp) {
 				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint32*)pixel = fgColor;
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
 				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
 								*(uint32*)pixel = ~(*(uint32*)pixel);
-							pixel += pixx;
-						};
+							pixel += BytesPerPixel;
+						}
 					}
 					break;
 				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy) {
+					for (; pixel<pixellast; pixel += pitch) {
 						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
 						for (i=0; i<dx; i++) {
 							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
 								*(uint32*)pixel = fgColor;
-							pixel += pixx;
+							pixel += BytesPerPixel;
 						}
 					}
 					break;
