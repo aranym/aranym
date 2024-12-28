@@ -171,7 +171,7 @@ protected:
 	virtual int32 fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		int32 h, memptr pattern_address, uint32 fgColor, uint32 bgColor,
 		uint32 logOp, uint32 interior_style);
-	void hsFillArea(memptr mfdb, uint32 x, uint32 y, uint32 w, uint32 h,
+	void hsFillArea(uint32 x, uint32 y, uint32 w, uint32 h,
 	                      uint16* pattern, uint32 fgColor, uint32 bgColor,
 	                      uint32 logOp);
 	virtual int32 drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
@@ -235,6 +235,17 @@ protected:
 		return false;
 	}
 
+	struct {
+		memptr dest;
+		int width;
+		int height;
+		int planes;
+		int pitch;
+		int standard;
+		uint8_t *pixels;
+	} mem_mfdb;
+	void set_mfdb(memptr mfdb);
+
 private:
 	SDL_Cursor *cursor;
 
@@ -244,20 +255,20 @@ private:
 	int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
-	int drawSingleLine(memptr mfdb, int x1, int y1, int x2, int y2, uint16 pattern,
+	int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 		uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
-	int drawTableLine(memptr mfdb, memptr table, int length, uint16 pattern,
+	int drawTableLine(memptr table, int length, uint16 pattern,
 		uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
-	int drawMoveLine(memptr mfdb, memptr table, int length, memptr index, int moves,
+	int drawMoveLine(memptr table, int length, memptr index, int moves,
 		uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
-	void hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
+	void hsDrawLine(int x1, int y1, int x2, int y2,
 		uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[]);
-	void gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 pattern,
+	void gfxHLineColor(int x1, int x2, int y, uint16 pattern,
 		uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
-	void gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
+	void gfxVLineColor(int x, int y1, int y2,
 		uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
-	void hsPutPixel(memptr mfdb, int x, int y, uint32 color);
-	uint32 hsGetPixel(memptr mfdb, int x, int y);
+	void hsPutPixel(int x, int y, uint32 color);
+	uint32 hsGetPixel(int x, int y);
 
 	int index_count;
 	int crossing_count;

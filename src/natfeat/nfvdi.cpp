@@ -558,12 +558,13 @@ int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 	DUNUSED(vwk);
 	uint32 color = 0;
 
-	if (!src)
+	set_mfdb(src);
+	if (!src || !mem_mfdb.dest)
 	{
 		D(bug("VdiDriver::getPixel(): source is NULL"));
 		return color;
 	}
-	return hsGetPixel(src, x, y);
+	return hsGetPixel(x, y);
 }
 
 /**
@@ -589,7 +590,8 @@ int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 
 int32 VdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 color)
 {
-	if (!dst)
+	set_mfdb(dst);
+	if (!dst || !mem_mfdb.dest)
 	{
 		D(bug("VdiDriver::putPixel(): destination is NULL"));
 		return 1;
@@ -598,7 +600,7 @@ int32 VdiDriver::putPixel(memptr vwk, memptr dst, int32 x, int32 y, uint32 color
 	if (vwk & 1)
 		return 0;
 
-	hsPutPixel(dst, x, y, color);
+	hsPutPixel(x, y, color);
 	return 1;
 }
 
@@ -766,18 +768,16 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	uint16 pitch = ReadInt16(src + MFDB_WDWIDTH) * 2; // the byte width (always monochrom);
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
-	uint32 destPlanes  = (uint32)ReadInt16( dest + MFDB_NPLANES );
-	if (destPlanes == 15)
-		destPlanes = 16;
-	uint32 destPitch   = ReadInt16(dest + MFDB_WDWIDTH) * destPlanes << 1; // MFDB *dest->pitch
-	uint32 destAddress = ReadInt32(dest + MFDB_ADDRESS);
+	set_mfdb(dest);
+	uint32 destPitch   = mem_mfdb.pitch; // MFDB *dest->pitch
+	uint32 destAddress = mem_mfdb.dest;
 
 	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
+	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", destAdress, destPitch, mem_mfdb.planes));
 
-	switch(destPlanes)
+	switch(mem_mfdb.planes)
 	{
 	case 16:
 		for(uint16 j = 0; j < h; j++)
@@ -894,28 +894,28 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			{
 				D2(fprintf(stderr, "fVDI: bmp:"));
 
-				uint32 address = destAddress + ((((dx >> 4) * destPlanes) << 1) + (dy + j) * destPitch);
-				HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+				uint32 address = destAddress + ((((dx >> 4) * mem_mfdb.planes) << 1) + (dy + j) * destPitch);
+				HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), mem_mfdb.planes, color);
 
 				uint16 theWord = ReadInt16(data + j * pitch + ((sx >> 3) & 0xfffe));
 				for(uint16 i = sx; i < sx + w; i++)
 				{
 					if (i % 16 == 0)
 					{
-						uint32 wordIndex = ((dx + i - sx) >> 4) * destPlanes;
+						uint32 wordIndex = ((dx + i - sx) >> 4) * mem_mfdb.planes;
 
 						// convert the 16pixels (VDI->TOS colors - within the chunkyToBitplane
 						// function) into the bitplane and write it to the destination
 						//
 						// note: we can't do the conversion directly
 						//       because it needs the little->bigendian conversion
-						HostScreen::chunkyToBitplane(color, destPlanes, bitplanePixels);
-						for(uint32 d = 0; d < destPlanes; d++)
+						HostScreen::chunkyToBitplane(color, mem_mfdb.planes, bitplanePixels);
+						for(int d = 0; d < mem_mfdb.planes; d++)
 							WriteInt16(address + (d<<1), bitplanePixels[d]);
 
 						// convert next 16pixels to chunky
 						address = destAddress + ((wordIndex << 1) + (dy + j) * destPitch);
-						HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), destPlanes, color);
+						HostScreen::bitplaneToChunky((uint16*)Atari2HostAddr(address), mem_mfdb.planes, color);
 						theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 					}
 
@@ -939,8 +939,8 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 						break;
 					}
 				}
-				HostScreen::chunkyToBitplane(color, destPlanes, bitplanePixels);
-				for(uint32 d = 0; d < destPlanes; d++)
+				HostScreen::chunkyToBitplane(color, mem_mfdb.planes, bitplanePixels);
+				for(int32 d = 0; d < mem_mfdb.planes; d++)
 					WriteInt16(address + (d<<1), bitplanePixels[d]);
 
 				D2(bug("")); //newline
@@ -984,9 +984,9 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 {
 	DUNUSED(interior_style);
 	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
-	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
 
-	if (!dest)
+	set_mfdb(wk + WK_SCREEN_MFDB);
+	if (!mem_mfdb.dest)
 	{
 		D(bug("VdiDriver::fillArea(): destination is NULL"));
 		return 1;
@@ -1017,7 +1017,7 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	/* Perform rectangle fill. */
 	if (!table)
 	{
-		hsFillArea(wk + WK_SCREEN_MFDB, x, y, w, h, pattern, fgColor, bgColor, logOp);
+		hsFillArea(x, y, w, h, pattern, fgColor, bgColor, logOp);
 	} else
 	{
 		for(h = h - 1; h >= 0; h--)
@@ -1025,7 +1025,7 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			y = (int16)ReadInt16(table); table+=2;
 			x = (int16)ReadInt16(table); table+=2;
 			w = (int16)ReadInt16(table) - x + 1; table+=2;
-			hsFillArea(wk + WK_SCREEN_MFDB, x, y, w, 1, pattern, fgColor, bgColor, logOp);
+			hsFillArea(x, y, w, 1, pattern, fgColor, bgColor, logOp);
 		}
 	}
 
@@ -1042,28 +1042,25 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 #define getBpp24Pixel( address ) \
     ( ((uint32)(address)[0] << 16) | ((uint32)(address)[1] << 8) | (uint32)(address)[2] )
 
-void VdiDriver::hsFillArea(memptr mfdb, uint32 x, uint32 y, uint32 w, uint32 h,
+void VdiDriver::hsFillArea(uint32 x, uint32 y, uint32 w, uint32 h,
                              uint16* areaPattern, uint32 fgColor, uint32 bgColor,
                              uint32 logOp)
 {
-	int planes;
 	int pitch;
 	int16 i;
 	int16 dx=w;
 	int16 dy=h;
-	uint8_t *pixels = Atari2HostAddr(ReadInt32(mfdb + MFDB_ADDRESS));
+	uint8_t *pixels;
 
 	/* More variable setup */
-	planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes;
+	pitch = mem_mfdb.pitch;
+	pixels = mem_mfdb.pixels;
 
 	// STanda // FIXME here the pattern should be checked out of the loops for performance
 			  // but for now it is good enough (if there is no pattern -> another switch?)
 
 	/* Draw */
-	switch(planes)
+	switch(mem_mfdb.planes)
 	{
 	case 8:
 		{
@@ -1392,13 +1389,15 @@ int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	DUNUSED(vwk);
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
+	if (planes == 15)
+		planes = 16;
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
 	memptr data   = ReadInt32(src + MFDB_ADDRESS) + sy * pitch;			// MFDB *src->address host OS address
 
 	// the destPlanes is always the same?
-	planes = ReadInt16(dest + MFDB_NPLANES);		// MFDB *dest->bitplanes
-	uint32 destPitch = ReadInt16(dest + MFDB_WDWIDTH) * planes * 2;	// MFDB *dest->pitch
-	memptr destAddress = (memptr)ReadInt32(dest + MFDB_ADDRESS);
+	set_mfdb(dest);
+	uint32 destPitch = mem_mfdb.pitch;	// MFDB *dest->pitch
+	memptr destAddress = mem_mfdb.dest;
 
 	D(bug("fVDI: blitArea M->M"));
 
@@ -1467,6 +1466,21 @@ int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	return 1;
 }
 
+
+void VdiDriver::set_mfdb(memptr mfdb)
+{
+	mem_mfdb.dest = ReadInt32(mfdb + MFDB_ADDRESS);
+	mem_mfdb.planes = ReadInt16(mfdb + MFDB_NPLANES);
+	if (mem_mfdb.planes == 15)
+		mem_mfdb.planes = 16;
+	mem_mfdb.width = ReadInt16(mfdb + MFDB_WIDTH);
+	mem_mfdb.height = ReadInt16(mfdb + MFDB_HEIGHT);
+	mem_mfdb.pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * mem_mfdb.planes;
+	mem_mfdb.pixels = Atari2HostAddr(mem_mfdb.dest);
+	mem_mfdb.standard = ReadInt16(mfdb + MFDB_STAND);
+}
+
+
 /**
  * Draw a coloured line between two points
  *
@@ -1501,9 +1515,9 @@ int32 VdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	uint32 logOp, memptr clip)
 {
 	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
-	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+	set_mfdb(wk + WK_SCREEN_MFDB);
 
-	if (!dest)
+	if (!mem_mfdb.dest)
 	{
 		D(bug("VdiDriver::drawLine(): destination is NULL"));
 		return 1;
@@ -1557,7 +1571,7 @@ int32 VdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 	{
 		if (moves)
 		{
-			drawMoveLine(wk + WK_SCREEN_MFDB, table, length, index, moves, pattern, fgColor, bgColor,
+			drawMoveLine(table, length, index, moves, pattern, fgColor, bgColor,
 			             logOp, cliparray);
 		} else
 		{
@@ -1566,18 +1580,18 @@ int32 VdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			case 0:
 				break;
 			case 1:
-				drawSingleLine(wk + WK_SCREEN_MFDB, x1, y1, x2, y2, pattern, fgColor, bgColor,
+				drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 				               logOp, cliparray);
 				break;
 			default:
-				drawTableLine(wk + WK_SCREEN_MFDB, table, length, pattern, fgColor, bgColor,
+				drawTableLine(table, length, pattern, fgColor, bgColor,
 				              logOp, cliparray);
  				break;
 			}
  		}
 	} else
 	{
-		drawSingleLine(wk + WK_SCREEN_MFDB, x1, y1, x2, y2, pattern, fgColor, bgColor,
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 		               logOp, cliparray);
 	}
 
@@ -1611,21 +1625,21 @@ bool VdiDriver::clipLine(int x1, int y1, int x2, int y2, int cliprect[])
 
 
 // Don't forget rotation of pattern!
-int VdiDriver::drawSingleLine(memptr mfdb, int x1, int y1, int x2, int y2, uint16 pattern,
+int VdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
                                uint32 fgColor, uint32 bgColor, int logOp,
                                int cliprect[])
 {
 	if (clipLine(x1, y1, x2, y2, cliprect))	// Do not draw the line when it is completely out
 	{
 		D(bug("fVDI: %s %d,%d:%d,%d (%lx,%lx)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
-		hsDrawLine(mfdb, x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, cliprect);
+		hsDrawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, cliprect);
 	}
 	return 1;
 }
 
 
 // Don't forget rotation of pattern!
-int VdiDriver::drawTableLine(memptr mfdb, memptr table, int length, uint16 pattern,
+int VdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
                               uint32 fgColor, uint32 bgColor, int logOp,
                               int cliprect[])
 {
@@ -1636,7 +1650,7 @@ int VdiDriver::drawTableLine(memptr mfdb, memptr table, int length, uint16 patte
 		int x2 = (int16)ReadInt16(table); table+=2;
 		int y2 = (int16)ReadInt16(table); table+=2;
 
-		drawSingleLine(mfdb, x1, y1, x2, y2, pattern, fgColor, bgColor,
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 		               logOp, cliprect);
 		x1 = x2;
 		y1 = y2;
@@ -1647,7 +1661,7 @@ int VdiDriver::drawTableLine(memptr mfdb, memptr table, int length, uint16 patte
 
 
 // Don't forget rotation of pattern!
-int VdiDriver::drawMoveLine(memptr mfdb, memptr table, int length, memptr index, int moves, uint16 pattern,
+int VdiDriver::drawMoveLine(memptr table, int length, memptr index, int moves, uint16 pattern,
                              uint32 fgColor, uint32 bgColor, int logOp,
                              int cliprect[])
 {
@@ -1678,7 +1692,7 @@ int VdiDriver::drawMoveLine(memptr mfdb, memptr table, int length, memptr index,
 			continue;
 		}
 
-		drawSingleLine(mfdb, x1, y1, x2, y2, pattern, fgColor, bgColor,
+		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
 		               logOp, cliprect);
 
 		x1 = x2;
@@ -1902,14 +1916,11 @@ int VdiDriver::drawMoveLine(memptr mfdb, memptr table, int length, memptr index,
 		break; \
 	}
 
-void VdiDriver::hsPutPixel(memptr mfdb, int x, int y, uint32 color)
+void VdiDriver::hsPutPixel(int x, int y, uint32 color)
 {
-	int planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	memptr row_address = ReadInt32(mfdb + MFDB_ADDRESS) + ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes * y;
+	memptr row_address = mem_mfdb.dest + mem_mfdb.pitch * y;
 
-	switch (planes)
+	switch (mem_mfdb.planes)
 	{
 	case 1:
 		{
@@ -1943,18 +1954,14 @@ void VdiDriver::hsPutPixel(memptr mfdb, int x, int y, uint32 color)
 	}
 }
 
-uint32 VdiDriver::hsGetPixel(memptr mfdb, int x, int y)
+uint32 VdiDriver::hsGetPixel(int x, int y)
 {
 	memptr row_address;
 	uint32 color = 0;
-	int planes;
 
-	planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	row_address = ReadInt32(mfdb + MFDB_ADDRESS) + ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes * y;
+	row_address = mem_mfdb.dest + mem_mfdb.pitch * y;
 
-	switch (planes)
+	switch (mem_mfdb.planes)
 	{
 	case 1:
 		row_address += (x >> 3);
@@ -1985,10 +1992,9 @@ uint32 VdiDriver::hsGetPixel(memptr mfdb, int x, int y)
 	return color;
 }
 
-void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
+void VdiDriver::hsDrawLine(int x1, int y1, int x2, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[])
 {
-	int planes;
 	uint8_t *pixel;
 	int pitch;
 	int16 x, y;
@@ -2002,10 +2008,10 @@ void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
 	{
 		if (y1 < y2)
 		{
-			gfxVLineColor(mfdb, x1, y1, y2, pattern, fgColor, bgColor, logOp, cliprect);
+			gfxVLineColor(x1, y1, y2, pattern, fgColor, bgColor, logOp, cliprect);
 		} else if (y1 > y2)
 		{
-			gfxVLineColor(mfdb, x1, y2, y1, pattern, fgColor, bgColor, logOp, cliprect);
+			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp, cliprect);
 		} else
 		{
 			if (!clipped(x1, y1, cliprect))
@@ -2013,19 +2019,19 @@ void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
 				switch (logOp)
 				{
 				case MD_REPLACE:
-					hsPutPixel(mfdb, x1, y1, pattern ? fgColor : bgColor );
+					hsPutPixel(x1, y1, pattern ? fgColor : bgColor );
 					break;
 				case MD_TRANS:
 					if ( pattern )
-						hsPutPixel(mfdb, x1, y1, fgColor );
+						hsPutPixel(x1, y1, fgColor );
 					break;
 				case MD_XOR:
 					if ( pattern )
-						hsPutPixel(mfdb, x1, y1, ~hsGetPixel(mfdb, x1, y1));
+						hsPutPixel(x1, y1, ~hsGetPixel(x1, y1));
 					break;
 				case MD_ERASE:
 					if ( ! pattern )
-						hsPutPixel(mfdb, x1, y1, fgColor);
+						hsPutPixel(x1, y1, fgColor);
 					break;
 				}
 			}
@@ -2036,10 +2042,10 @@ void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
 	{
 		if (x1 < x2)
 		{
-			gfxHLineColor(mfdb, x1, x2, y1, pattern, fgColor, bgColor, logOp, cliprect);
+			gfxHLineColor(x1, x2, y1, pattern, fgColor, bgColor, logOp, cliprect);
 		} else if (x1 > x2)
 		{
-			gfxHLineColor(mfdb, x2, x1, y1, pattern, fgColor, bgColor, logOp, cliprect);
+			gfxHLineColor(x2, x1, y1, pattern, fgColor, bgColor, logOp, cliprect);
 		} else
 		{
 			/* x1 == x2; already catched above */
@@ -2070,18 +2076,14 @@ void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
 	ppos = 0;
 
 	/* More variable setup */
-	planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes;
-	pixel = Atari2HostAddr(ReadInt32(mfdb + MFDB_ADDRESS));
-	pixel += pitch * y1;
+	pitch = mem_mfdb.pitch;
+	pixel = mem_mfdb.pixels + mem_mfdb.pitch * y1;
 
 	/* Draw */
 	x = x1;
 	y = y1;
 	x1 = (dx + dy) / 2;
-	switch (planes)
+	switch (mem_mfdb.planes)
 	{
 	case 8:
 		pixel += x;
@@ -2169,15 +2171,13 @@ void VdiDriver::hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
 
 
 
-void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 pattern,
+void VdiDriver::gfxHLineColor(int x1, int x2, int y, uint16 pattern,
 	uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] )
 {
-	int planes;
 	uint8 *pixel;
-	uint8 *pixels;
 	uint8 *pixellast;
 	int pitch;
-	int16 w;
+	int w;
 	uint8 ppos;
 
 	/* Calculate width */
@@ -2185,7 +2185,7 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 	if (y < cliprect[1]) return;
 	if (x2 > cliprect[2]) x2 = cliprect[2];
 	if (y > cliprect[3]) return;
-	w=x2-x1+1;
+	w = x2 - x1 + 1;
 
 	/* Sanity check on width */
 	if (w<=0)
@@ -2197,21 +2197,17 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 	}
 	
 	/* More variable setup */
-	pixels = Atari2HostAddr(ReadInt32(mfdb + MFDB_ADDRESS));
-	planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes;
-	pixels += pitch * (int)y;
+	pitch = mem_mfdb.pitch;
+	pixel = mem_mfdb.pixels + pitch * y;
 	ppos = 0;
 
 	D2(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
-	switch(planes)
+	switch(mem_mfdb.planes)
 	{
 	case 8:
-		pixel = pixels + x1;
+		pixel += x1;
 		pixellast = pixel + w;
 		switch (logOp)
 		{
@@ -2242,7 +2238,7 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 		break;
 	case 15:
 	case 16:
-		pixel = pixels + 2 * x1;
+		pixel += 2 * x1;
 		pixellast = pixel + 2 * w;
 		fgColor = SDL_SwapBE16(fgColor);
 		bgColor = SDL_SwapBE16(bgColor);
@@ -2274,7 +2270,7 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 		}
 		break;
 	case 24:
-		pixel = pixels + 3 * x1;
+		pixel += 3 * x1;
 		pixellast = pixel + 3 * w;
 		switch (logOp)
 		{
@@ -2304,7 +2300,7 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 		}
 		break;
 	case 32:
-		pixel = pixels + 4 * x1;
+		pixel += 4 * x1;
 		pixellast = pixel + 4 * w;
 		fgColor = SDL_SwapBE32(fgColor);
 		bgColor = SDL_SwapBE32(bgColor);
@@ -2339,15 +2335,13 @@ void VdiDriver::gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 p
 }
 
 
-void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
+void VdiDriver::gfxVLineColor(int x, int y1, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] )
 {
-	int planes;
 	uint8 *pixel;
-	uint8 *pixels;
 	uint8 *pixellast;
 	int pitch;
-	int16 h;
+	int h;
 	uint8 ppos;
 
 	/* Calculate height */
@@ -2355,10 +2349,10 @@ void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
 	if (y1 < cliprect[1]) y1 = cliprect[1];
 	if (x > cliprect[2]) return;
 	if (y2 > cliprect[3]) y2 = cliprect[3];
-	h=y2-y1+1;
+	h = y2 - y1 + 1;
 
 	/* Sanity check on height */
-	if (h<=0)
+	if (h <=0 )
 		return;
 
 	if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS))
@@ -2369,19 +2363,15 @@ void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
 	D2(bug("VLn %3d,%3d,%3d", x, y1, y2));
 
 	/* More variable setup */
-	pixels = Atari2HostAddr(ReadInt32(mfdb + MFDB_ADDRESS));
-	planes = ReadInt16(mfdb + MFDB_NPLANES);
-	if (planes == 15)
-		planes = 16;
-	pitch = ReadInt16(mfdb + MFDB_WDWIDTH) * 2 * planes;
-	pixels += pitch * (int)y1;
+	pitch = mem_mfdb.pitch;
+	pixel = mem_mfdb.pixels + pitch * y1;
 	ppos = 0;
 
 	/* Draw */
-	switch(surface->getBpp())
+	switch(mem_mfdb.planes)
 	{
 	case 8:
-		pixel = pixels + x;
+		pixel += x;
 		pixellast = pixel + pitch * h;
 		switch (logOp)
 		{
@@ -2412,7 +2402,7 @@ void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
 		break;
 	case 15:
 	case 16:
-		pixel = pixels + 2 * x;
+		pixel += 2 * x;
 		pixellast = pixel + pitch * h;
 		fgColor = SDL_SwapBE16(fgColor);
 		bgColor = SDL_SwapBE16(bgColor);
@@ -2444,7 +2434,7 @@ void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
 		}
 		break;
 	case 24:
-		pixel = pixels + 3 * x;
+		pixel += 3 * x;
 		pixellast = pixel + pitch * h;
 		switch (logOp)
 		{
@@ -2474,7 +2464,7 @@ void VdiDriver::gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
 		}
 		break;
 	case 32:
-		pixel = pixels + 4 * x;
+		pixel += 4 * x;
 		pixellast = pixel + pitch * h;
 		fgColor = SDL_SwapBE32(fgColor);
 		bgColor = SDL_SwapBE32(bgColor);
@@ -2514,9 +2504,9 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	uint32 bgColor, uint32 logOp, uint32 interior_style, memptr clip)
 {
 	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
-	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
 
-	if (!dest)
+	set_mfdb(wk + WK_SCREEN_MFDB);
+	if (!mem_mfdb.dest)
 	{
 		D(bug("VdiDriver::fillPoly(): destination is NULL"));
 		return 1;
@@ -2691,7 +2681,7 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 				y2 = x2;
 			if (y1 <= y2)
 			{
-				hsFillArea(wk + WK_SCREEN_MFDB, y1, y, y2 - y1 + 1, 1, pattern,
+				hsFillArea(y1, y, y2 - y1 + 1, 1, pattern,
 				         fgColor, bgColor, logOp);
 			}
 		}
