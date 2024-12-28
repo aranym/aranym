@@ -79,16 +79,12 @@ class SoftVdiDriver : public VdiDriver
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
 
 	private:
-		bool clipLine(int x1, int y1, int x2, int y2, int cliprect[]);
 		int drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
-			uint32 fgColor, uint32 bgColor, int logOp, 
-			int cliprect[], int minmax[]);
+			uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
 		int drawTableLine(memptr table, int length, uint16 pattern,
-			uint32 fgColor, uint32 bgColor, int logOp, int cliprect[],
-			int minmax[]);
+			uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
 		int drawMoveLine(memptr table, int length, memptr index, int moves,
-			uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp,
-			int cliprect[], int minmax[]);
+			uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
 
 		/* Functions from hostscreen */
 		uint32 hsGetPixel( int x, int y );
@@ -103,14 +99,7 @@ class SoftVdiDriver : public VdiDriver
 			uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
 		void gfxVLineColor( int16 x, int16 y1, int16 y2,
 			uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
-		inline bool clipped(int x, int y, int cliprect[])
-		{
-			if (x < cliprect[0] || x > cliprect[2])
-				return true;
-			if (y < cliprect[1] || y > cliprect[3])
-				return true;
-			return false;
-		}
+
 		/* SDL 1.2.10 to 1.2.13 has a bug when blitting inside same surface */
 		int sdl_buggy_blitsurface;
 };

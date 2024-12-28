@@ -140,6 +140,7 @@ class HostScreen: public DirtyRects
 	 **/
 	static void bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 		uint8 colorValues[16], int horiz_shift = 0);
+	static void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8]);
 
 	void doScreenshot(void);
 

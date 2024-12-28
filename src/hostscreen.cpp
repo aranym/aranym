@@ -1295,6 +1295,24 @@ void HostScreen::destroySurface(HostSurface *hsurf)
 	delete hsurf;
 }
 
+void HostScreen::chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp,
+	uint16 bitplaneWords[8])
+{
+	DUNUSED(bpp);
+	for (int l=0; l<16; l++) {
+		uint8 data = sdlPixelData[l]; // note: this is about 2000 dryhstones speedup (the local variable)
+
+		bitplaneWords[0] <<= 1; bitplaneWords[0] |= (data >> 0) & 1;
+		bitplaneWords[1] <<= 1; bitplaneWords[1] |= (data >> 1) & 1;
+		bitplaneWords[2] <<= 1; bitplaneWords[2] |= (data >> 2) & 1;
+		bitplaneWords[3] <<= 1; bitplaneWords[3] |= (data >> 3) & 1;
+		bitplaneWords[4] <<= 1; bitplaneWords[4] |= (data >> 4) & 1;
+		bitplaneWords[5] <<= 1; bitplaneWords[5] |= (data >> 5) & 1;
+		bitplaneWords[6] <<= 1; bitplaneWords[6] |= (data >> 6) & 1;
+		bitplaneWords[7] <<= 1; bitplaneWords[7] |= (data >> 7) & 1;
+	}
+}
+
 /**
  * Performs conversion from the TOS's bitplane word order (big endian) data
  * into the native chunky color index.
@@ -1442,7 +1460,3 @@ void HostScreen::bitplaneToChunky( uint16 *atariBitplaneData, uint16 bpp,
 	colorValues[14] = d;
 #endif
 }
-
-/*
-vim:ts=4:sw=4:
-*/

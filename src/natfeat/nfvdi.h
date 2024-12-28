@@ -192,16 +192,15 @@ protected:
 
 	/* Blit memory to screen */
 	virtual int32 blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
-			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp) = 0;
 	/* Blit screen to screen */
 	virtual int32 blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
-			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp) = 0;
 	/* Blit screen to memory */
 	virtual int32 blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
-			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp) = 0;
 
 	/* Inlinable functions */
-	void chunkyToBitplane(uint8 *sdlPixelData, uint16 bpp, uint16 bitplaneWords[8]);
 	uint32 applyBlitLogOperation(int logicalOperation, uint32 destinationData, uint32 sourceData);
 
 	// fillPoly helpers
@@ -225,6 +224,17 @@ protected:
 		int16* vector;
 	};
 
+	static bool clipLine(int x1, int y1, int x2, int y2, int cliprect[]);
+
+	static inline bool clipped(int x, int y, int cliprect[])
+	{
+		if (x < cliprect[0] || x > cliprect[2])
+			return true;
+		if (y < cliprect[1] || y > cliprect[3])
+			return true;
+		return false;
+	}
+
 private:
 	SDL_Cursor *cursor;
 
@@ -233,6 +243,21 @@ private:
 	/* Blit memory to memory */
 	int32 blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 			memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp);
+
+	int drawSingleLine(memptr mfdb, int x1, int y1, int x2, int y2, uint16 pattern,
+		uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
+	int drawTableLine(memptr mfdb, memptr table, int length, uint16 pattern,
+		uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
+	int drawMoveLine(memptr mfdb, memptr table, int length, memptr index, int moves,
+		uint16 pattern, uint32 fgColor, uint32 bgColor, int logOp, int cliprect[]);
+	void hsDrawLine(memptr mfdb, int x1, int y1, int x2, int y2,
+		uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[]);
+	void gfxHLineColor(memptr mfdb, int16 x1, int16 x2, int16 y, uint16 pattern,
+		uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
+	void gfxVLineColor(memptr mfdb, int16 x, int16 y1, int16 y2,
+		uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] );
+	void hsPutPixel(memptr mfdb, int x, int y, uint32 color);
+	uint32 hsGetPixel(memptr mfdb, int x, int y);
 
 	int index_count;
 	int crossing_count;

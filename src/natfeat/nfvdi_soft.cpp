@@ -388,7 +388,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			return 0;
 		}
 
-		/* 8bit greyscale aplha expand */
+		/* 8bit greyscale alpha expand */
 		if ( surface->getBpp() != 32 ) {
 			bug("fVDI: Only 4byte SDL_Surface color depths supported so far.");
 			return 0;
@@ -430,22 +430,23 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 			for(uint16 j = 0; j < h; j++) {
 				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
-				switch(logOp) {
-					case MD_TRANS:
-						for(uint16 i = sx; i < sx + w; i++) {
-							*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
-						}
-						break;
-					case MD_XOR:
-						for(uint16 i = sx; i < sx + w; i++) {
-							*dst++ = (~hsGetPixel(dx + i - sx, dy + j) & ~0xff000000UL) | (ReadInt8(data + j * pitch + i) << 24);
-						}
-						break;
-					case MD_ERASE:
-						for(uint16 i = sx; i < sx + w; i++) {
-							*dst++ = bgColor | ((0xff - ReadInt8(data + j * pitch + i)) << 24);
-						}
-						break;
+				switch(logOp)
+				{
+				case MD_TRANS:
+					for(uint16 i = sx; i < sx + w; i++) {
+						*dst++ = fgColor | (ReadInt8(data + j * pitch + i) << 24);
+					}
+					break;
+				case MD_XOR:
+					for(uint16 i = sx; i < sx + w; i++) {
+						*dst++ = (~hsGetPixel(dx + i - sx, dy + j) & ~0xff000000UL) | (ReadInt8(data + j * pitch + i) << 24);
+					}
+					break;
+				case MD_ERASE:
+					for(uint16 i = sx; i < sx + w; i++) {
+						*dst++ = bgColor | ((0xff - ReadInt8(data + j * pitch + i)) << 24);
+					}
+					break;
 				}
 			}
 		}
@@ -470,22 +471,23 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 				theWord = ReadInt16(data + j * pitch + ((i >> 3) & 0xfffe));
 
 			D2(fprintf(stderr, "%s", ((theWord >> (15 - (i & 0xf))) & 1) ? "1" : " "));
-			switch(logOp) {
-				case MD_REPLACE:
-					hsPutPixel(dx + i - sx, dy + j, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					if ((theWord >> (15 - (i & 0xf))) & 1)
-						hsPutPixel(dx + i - sx, dy + j, fgColor);
-					break;
-				case MD_XOR:
-					if ((theWord >> (15 - (i & 0xf))) & 1)
-						hsPutPixel(dx + i - sx, dy + j, ~hsGetPixel(dx + i - sx, dy + j));
-					break;
-				case MD_ERASE:
-					if (!((theWord >> (15 - (i & 0xf))) & 1))
-						hsPutPixel(dx + i - sx, dy + j, bgColor);
-					break;
+			switch(logOp)
+			{
+			case MD_REPLACE:
+				hsPutPixel(dx + i - sx, dy + j, ((theWord >> (15 - (i & 0xf))) & 1) ? fgColor : bgColor);
+				break;
+			case MD_TRANS:
+				if ((theWord >> (15 - (i & 0xf))) & 1)
+					hsPutPixel(dx + i - sx, dy + j, fgColor);
+				break;
+			case MD_XOR:
+				if ((theWord >> (15 - (i & 0xf))) & 1)
+					hsPutPixel(dx + i - sx, dy + j, ~hsGetPixel(dx + i - sx, dy + j));
+				break;
+			case MD_ERASE:
+				if (!((theWord >> (15 - (i & 0xf))) & 1))
+					hsPutPixel(dx + i - sx, dy + j, bgColor);
+				break;
 			}
 		}
 		D2(bug("")); //newline
@@ -613,6 +615,8 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	}
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
+	if (planes == 15)
+		planes = 16;
 	uint32 pitch  = ReadInt16(src + MFDB_WDWIDTH) * planes * 2;	// MFDB *src->pitch
 	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x1000 ) {
 		/* Linux does not wrap on words */
@@ -698,45 +702,46 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 			}
 			break;
 
-		default:
-			if (planes < 16) {
-				if ( ((uint32)ReadInt16( src + MFDB_STAND ) & 0x100) && planes == 8) {
-					// chunky
-					D(bug("fVDI: blitArea M->S: chunky8bit"));
-					for(int32 j = 0; j < h; j++) {
-						for(int32 i = sx; i < sx + w; i++) {
-							srcData = ReadInt8(data + j * pitch + i);
-							destData = hsGetPixel(dx + i - sx, dy + j);
-							destData = applyBlitLogOperation(logOp, destData, srcData);
-							hsPutPixel(dx + i - sx, dy + j, destData);
-						}
+		case 8:
+			if ( ((uint32)ReadInt16( src + MFDB_STAND ) & 0x100)) {
+				// chunky
+				D(bug("fVDI: blitArea M->S: chunky8bit"));
+				for(int32 j = 0; j < h; j++) {
+					for(int32 i = sx; i < sx + w; i++) {
+						srcData = ReadInt8(data + j * pitch + i);
+						destData = hsGetPixel(dx + i - sx, dy + j);
+						destData = applyBlitLogOperation(logOp, destData, srcData);
+						hsPutPixel(dx + i - sx, dy + j, destData);
 					}
-				} else {
-					// bitplane modes...
-					uint8 color[16];
+				}
+			} else
+			{
+		case 1:
+				// bitplane modes...
+				uint8 color[16];
 
-					D(bug("fVDI: blitArea M->S: bitplaneToChunky conversion"));
-					uint16 *dataHost = (uint16*)Atari2HostAddr(data);
-					// FIXME: Hack! Should use the get_X() methods above
+				D(bug("fVDI: blitArea M->S: bitplaneToChunky conversion"));
+				uint16 *dataHost = (uint16*)Atari2HostAddr(data);
+				// FIXME: Hack! Should use the get_X() methods above
 
-					for(int32 j = 0; j < h; j++) {
-						uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
-						HostScreen::bitplaneToChunky(&dataHost[wordIndex], planes, color);
+				for(int32 j = 0; j < h; j++) {
+					uint32 wordIndex = (j * pitch >> 1) + (sx >> 4) * planes;
+					HostScreen::bitplaneToChunky(&dataHost[wordIndex], planes, color);
 
-						for(int32 i = sx; i < sx + w; i++) {
-							uint8 bitNo = i & 0xf;
-							if (bitNo == 0) {
-								uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
-								HostScreen::bitplaneToChunky(&dataHost[wordIndex], planes, color);
-							}
-
-							destData = hsGetPixel(dx + i - sx, dy + j);
-							destData = applyBlitLogOperation(logOp, destData, color[bitNo]);
-							hsPutPixel(dx + i - sx, dy + j, destData);
+					for(int32 i = sx; i < sx + w; i++) {
+						uint8 bitNo = i & 0xf;
+						if (bitNo == 0) {
+							uint32 wordIndex = (j * pitch >> 1) + (i >> 4) * planes;
+							HostScreen::bitplaneToChunky(&dataHost[wordIndex], planes, color);
 						}
+
+						destData = hsGetPixel(dx + i - sx, dy + j);
+						destData = applyBlitLogOperation(logOp, destData, color[bitNo]);
+						hsPutPixel(dx + i - sx, dy + j, destData);
 					}
 				}
 			}
+			break;
 	}
 
 	surface->setDirtyRect(dx,dy,w,h);
@@ -837,7 +842,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 
 				for(int32 j = 0; j < h; j++) {
 					uint32 pixelPosition = j * pitch + (sx & ~0xf); // div 16
-					chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
+					HostScreen::chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
 					for(uint32 d = 0; d < planes; d++)
 						WriteInt16(destAddress + (((dx >> 4) * planes) + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
 
@@ -846,7 +851,7 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 						if (bitNo == 0) {
 							uint32 wordIndex = ((dx + i - sx) >> 4) * planes;
 							uint32 pixelPosition = j * pitch + (i & ~0xf); // div 16
-							chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
+							HostScreen::chunkyToBitplane(dataHost + pixelPosition, planes, bitplanePixels);
 							for(uint32 d = 0; d < planes; d++)
 								WriteInt16(destAddress + (wordIndex + d) * 2 + (dy + j) * destPitch, bitplanePixels[d]);
 						}
@@ -876,6 +881,7 @@ int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 		uint32 srcData;
 		uint32 destData;
 
+		/* TODO: optimize ALL_WHITE/ALL_BLACK/D_ONLY */
 		for(int32 j = 0; j < h; j++)
 			for(int32 i = 0; i < w; i++) {
 				srcData = hsGetPixel(i + sx, sy + j);
@@ -953,62 +959,14 @@ static inline int clipEncode (int x, int y, int left, int top, int right, int bo
 #endif
 
 
-bool SoftVdiDriver::clipLine(int x1, int y1, int x2, int y2, int cliprect[])
-{
-	// Get clipping boundary
-	int left, top, right, bottom;
-	int swaptmp;
-	
-	left   = cliprect[0];
-	top    = cliprect[1];
-	right  = cliprect[2];
-	bottom = cliprect[3];
-	if (right < left) { swaptmp = right; right = left; left = swaptmp; }
-	if (bottom < top) { swaptmp = bottom; bottom = top; top = swaptmp; }
-	cliprect[0] = left;
-	cliprect[1] = top;
-	cliprect[2] = right;
-	cliprect[3] = bottom;
-	if (x2 < x1) { swaptmp = x1; x1 = x2; x2 = swaptmp; }
-	if (y2 < y1) { swaptmp = y1; y1 = y2; y2 = swaptmp; }
-	if (x2 < left || x1 > right)
-		return false;	
-	if (y2 < top || y1 > bottom)
-		return false;
-	return true;
-}
-
-
 // Don't forget rotation of pattern!
 int SoftVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
                                uint32 fgColor, uint32 bgColor, int logOp,
-                               int cliprect[], int minmax[])
+                               int cliprect[])
 {
 	if (clipLine(x1, y1, x2, y2, cliprect)) {	// Do not draw the line when it is completely out
 		D(bug("fVDI: %s %d,%d:%d,%d (%lx,%lx)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
 		hsDrawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, cliprect);
-		if (x1 < x2) {
-			if (x1 < minmax[0])
-				minmax[0] = x1;
-			if (x2 > minmax[2])
-				minmax[2] = x2;
-		} else {
-			if (x2 < minmax[0])
-				minmax[0] = x2;
-			if (x1 > minmax[2])
-				minmax[2] = x1;
-		}
-		if (y1 < y2) {
-			if (y1 < minmax[1])
-				minmax[1] = y1;
-			if (y2 > minmax[3])
-				minmax[3] = y2;
-		} else {
-			if (y2 < minmax[1])
-				minmax[1] = y2;
-			if (y1 > minmax[3])
-				minmax[3] = y1;
-		}
 	}
 	return 1;
 }
@@ -1017,7 +975,7 @@ int SoftVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern
 // Don't forget rotation of pattern!
 int SoftVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
                               uint32 fgColor, uint32 bgColor, int logOp,
-                              int cliprect[], int minmax[])
+                              int cliprect[])
 {
 	int x1 = (int16)ReadInt16(table); table+=2;
 	int y1 = (int16)ReadInt16(table); table+=2;
@@ -1026,7 +984,7 @@ int SoftVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
 		int y2 = (int16)ReadInt16(table); table+=2;
 
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
-		               logOp, cliprect, minmax);
+		               logOp, cliprect);
 		x1 = x2;
 		y1 = y2;
 	}
@@ -1038,7 +996,7 @@ int SoftVdiDriver::drawTableLine(memptr table, int length, uint16 pattern,
 // Don't forget rotation of pattern!
 int SoftVdiDriver::drawMoveLine(memptr table, int length, memptr index, int moves, uint16 pattern,
                              uint32 fgColor, uint32 bgColor, int logOp,
-                             int cliprect[], int minmax[])
+                             int cliprect[])
 {
 	int x1 = (int16)ReadInt16(table); table+=2;
 	int y1 = (int16)ReadInt16(table); table+=2;
@@ -1066,7 +1024,7 @@ int SoftVdiDriver::drawMoveLine(memptr table, int length, memptr index, int move
 		}
 
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
-		               logOp, cliprect, minmax);
+		               logOp, cliprect);
 
 		x1 = x2;
 		y1 = y2;
@@ -1090,11 +1048,6 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 		return 1;
 	}
 
-	if (surface->getBpp() == 8) {
-		fgColor &= 0xff;
-		bgColor &= 0xff;
-	}
-
 	memptr table = 0;
 	memptr index = 0;
 	int length = 0;
@@ -1114,7 +1067,6 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 			index = (memptr)y2_;
 			moves = x2_ & 0xffff;
 		}
-		vwk -= 1;
 		x1 = (int16)ReadInt16(table);
 		y1 = (int16)ReadInt16(table + 2);
 		x2 = (int16)ReadInt16(table + 4);
@@ -1137,81 +1089,27 @@ int32 SoftVdiDriver::drawLine(memptr vwk, uint32 x1_, uint32 y1_, uint32 x2_,
 		cliparray[3] = surface->getHeight() - 1;
 	}
 
-	int minmax[4] = {1000000, 1000000, -1000000, -1000000};
-
-#ifdef TEST_STRAIGHT	// Not yet working
-	int eq_coord = (x1 == x2) + 2 * (y1 == y2);
-#endif
-
 	if (table) {
 		if (moves)
 			drawMoveLine(table, length, index, moves, pattern, fgColor, bgColor,
-			             logOp, cliparray, minmax);
+			             logOp, cliparray);
 		else {
-#ifdef TEST_STRAIGHT	// Not yet working
-			if (eq_coord && ((pattern & 0xffff) == 0xffff) && (logOp < MD_XOR)) {
-				table += 8;
-				for(--length; length > 0; length--) {
-					if (eq_coord & 1) {
-						if (y1 < y2)
-							vertical(x1, y1, 1, y2 - y1 + 1);
-						else
-							vertical(x2, y2, 1, y1 - y2 + 1);
-					} else if (eq_coord & 2) {
-						if (x1 < x2)
-							horizontal(x1, y1, x2 - x1 + 1, 1);
-						else
-							horizontal(x2, y2, x1 - x2 + 1, 1);
-					} else {
-						length++;
-						table -= 8;
-						break;
-					}
-					x1 = x2;
-					y1 = y2;
-					x2 = (int16)ReadInt16(table); table+=2;
-					y2 = (int16)ReadInt16(table); table+=2;
-					eq_coord = (x1 == x2) + 2 * (y1 == y2);
-				}
-			}
-#endif
 			switch (length) {
 			case 0:
 				break;
 			case 1:
 				drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
-				               logOp, cliparray, minmax);
+				               logOp, cliparray);
 				break;
 			default:
 				drawTableLine(table, length, pattern, fgColor, bgColor,
-				              logOp, cliparray, minmax);
+				              logOp, cliparray);
  				break;
 			}
  		}
-#ifdef TEST_STRAIGHT	// Not yet working
-	} else if (eq_coord && ((pattern & 0xffff) == 0xffff)) {
-		if (eq_coord & 1) {
-			if (y1 < y2)
-				vertical(x1, y1, 1, y2 - y1 + 1);
-			else
-				vertical(x2, y2, 1, y1 - y2 + 1);
-		} else {
-			if (x1 < x2)
-				horizontal(x1, y1, x2 - x1 + 1, 1);
-			else
-				horizontal(x2, y2, x1 - x2 + 1, 1);
-		}
-#endif
 	} else
 		drawSingleLine(x1, y1, x2, y2, pattern, fgColor, bgColor,
-		               logOp, cliparray, minmax);
-
-	if (minmax[0] != 1000000) {
-		D(bug("fVDI: %s %d,%d:%d,%d", "drawLineUp",
-		       minmax[0], minmax[1], minmax[2], minmax[3]));
-	} else {
-		D2(bug("fVDI: drawLineUp nothing to redraw"));
-	}
+		               logOp, cliparray);
 
 	return 1;
 }
@@ -1561,7 +1459,7 @@ void SoftVdiDriver::hsPutPixel( int x, int y, uint32 color )
 /**
  * Derived from the SDL_gfxPrimitives::boxColor().
  * The colors are in the destination surface format here.
- * The trivial cases optimalization removed.
+ * The trivial cases optimization removed.
  *
  * @author STanda
  **/
@@ -1594,202 +1492,203 @@ void SoftVdiDriver::hsFillArea( int x, int y, int w, int h,
 			  // but for now it is good enough (if there is no pattern -> another switch?)
 
 	/* Draw */
-	switch(surface->getBpp()) {
-		case 8:
-			pitch -= (BytesPerPixel*dx);
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+	switch(surface->getBpp())
+	{
+	case 8:
+		pitch -= (BytesPerPixel*dx);
+		switch (logOp) {
+			case MD_REPLACE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							*pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						*pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_TRANS:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_XOR:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*pixel = ~(*(uint8*)pixel);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*pixel = ~(*(uint8*)pixel);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_ERASE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+							*pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-			}
-			break;
-		case 15:
-		case 16:
-			pitch -= (BytesPerPixel*dx);
-			//				D2(bug("bix pix: %d, %x, %d", y, pixel, pitch));
+				}
+				break;
+		}
+		break;
+	case 15:
+	case 16:
+		pitch -= (BytesPerPixel*dx);
+		//				D2(bug("bix pix: %d, %x, %d", y, pixel, pitch));
 
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+		switch (logOp) {
+			case MD_REPLACE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						*(uint16*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_TRANS:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint16*)pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*(uint16*)pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_XOR:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint16*)pixel = ~(*(uint16*)pixel);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*(uint16*)pixel = ~(*(uint16*)pixel);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_ERASE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint16*)pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+							*(uint16*)pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-			}
-			break;
-		case 24:
-			pitch -= (BytesPerPixel*dx);
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+		}
+		break;
+	case 24:
+		pitch -= (BytesPerPixel*dx);
+		switch (logOp) {
+			case MD_REPLACE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor) );
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_TRANS:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, fgColor );
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, fgColor );
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_XOR:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_ERASE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								putBpp24Pixel( pixel, fgColor );
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+							putBpp24Pixel( pixel, fgColor );
+						pixel += BytesPerPixel;
 					}
-					break;
-			}
-			break;
-		default: /* case 4*/
-			pitch -= (BytesPerPixel*dx);
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+		}
+		break;
+	case 32:
+		pitch -= (BytesPerPixel*dx);
+		switch (logOp) {
+			case MD_REPLACE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						*(uint32*)pixel = (( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_TRANS:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint32*)pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*(uint32*)pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_XOR:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
-								*(uint32*)pixel = ~(*(uint32*)pixel);
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) != 0 )
+							*(uint32*)pixel = ~(*(uint32*)pixel);
+						pixel += BytesPerPixel;
 					}
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pitch) {
-						uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
+				}
+				break;
+			case MD_ERASE:
+				for (; pixel<pixellast; pixel += pitch) {
+					uint16 pattern = areaPattern ? areaPattern[ y++ & 0xf ] : 0xffff;
 
-						for (i=0; i<dx; i++) {
-							if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
-								*(uint32*)pixel = fgColor;
-							pixel += BytesPerPixel;
-						}
+					for (i=0; i<dx; i++) {
+						if ( ( pattern & ( 1 << ( (x+i) & 0xf ) )) == 0 )
+							*(uint32*)pixel = fgColor;
+						pixel += BytesPerPixel;
 					}
-					break;
-			}
-			break;
+				}
+				break;
+		}
+		break;
 	}  // switch
 
 	surface->setDirtyRect(x,y0,w,h);
@@ -1852,15 +1751,15 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 /* by Pete Shinners, pete@shinners.org						 */
 /* Originally from pygame, http://pygame.seul.org			 */
 
-#define lineloop(putfg, putbg) \
+#define lineloop(putfg, putbg, BytesPerPixel) \
 	switch (vec) \
 	{ \
 	case 0: \
 		/* drawing from bottom left to top right */ \
 		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			for (;;) { \
-				 \
+			for (;;) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					putfg; \
@@ -1869,24 +1768,26 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					++x, pixel += pixx; \
+					++x, pixel += BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					--y, pixel -= pixy; \
+					--y, pixel -= pitch; \
 					x1 += dx; \
 				} \
 			} \
-		} else { \
-			for (;; ppos++) { \
-				 \
+		} else \
+		{ \
+			for (;; ppos++) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
 					{ \
 						putfg; \
-					} else { \
+					} else \
+					{ \
 						putbg; \
 					} \
 				} \
@@ -1894,12 +1795,12 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					++x, pixel += pixx; \
+					++x, pixel += BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					--y, pixel -= pixy; \
+					--y, pixel -= pitch; \
 					x1 += dx; \
 				} \
 			} \
@@ -1909,8 +1810,8 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 		/* drawing from bottom right to top left */ \
 		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			for (;;) { \
-				 \
+			for (;;) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					putfg; \
@@ -1919,24 +1820,26 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					--x, pixel -= pixx; \
+					--x, pixel -= BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					--y, pixel -= pixy; \
+					--y, pixel -= pitch; \
 					x1 += dx; \
 				} \
 			} \
-		} else { \
-			for (;; ppos++) { \
-				 \
+		} else \
+		{ \
+			for (;; ppos++) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
 					{ \
 						putfg; \
-					} else { \
+					} else \
+					{ \
 						putbg; \
 					} \
 				} \
@@ -1944,12 +1847,12 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					--x, pixel -= pixx; \
+					--x, pixel -= BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					--y, pixel -= pixy; \
+					--y, pixel -= pitch; \
 					x1 += dx; \
 				} \
 			} \
@@ -1959,8 +1862,8 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 		/* drawing from top left to bottom right */ \
 		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			for (;;) { \
-				 \
+			for (;;) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					putfg; \
@@ -1969,24 +1872,26 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					++x, pixel += pixx; \
+					++x, pixel += BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					++y, pixel += pixy; \
+					++y, pixel += pitch; \
 					x1 += dx; \
 				} \
 			} \
-		} else { \
-			for (;; ppos++) { \
-				 \
+		} else \
+		{ \
+			for (;; ppos++) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
 					{ \
 						putfg; \
-					} else { \
+					} else \
+					{ \
 						putbg; \
 					} \
 				} \
@@ -1994,12 +1899,12 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					++x, pixel += pixx; \
+					++x, pixel += BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					++y, pixel += pixy; \
+					++y, pixel += pitch; \
 					x1 += dx; \
 				} \
 			} \
@@ -2009,8 +1914,8 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 		/* drawing from top right to bottom left */ \
 		if (pattern == 0xffff && (logOp == MD_REPLACE || logOp == MD_TRANS)) \
 		{ \
-			for (;;) { \
-				 \
+			for (;;) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					putfg; \
@@ -2019,24 +1924,26 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					--x, pixel -= pixx; \
+					--x, pixel -= BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					++y, pixel += pixy; \
+					++y, pixel += pitch; \
 					x1 += dx; \
 				} \
 			} \
-		} else { \
-			for (;; ppos++) { \
-				 \
+		} else \
+		{ \
+			for (;; ppos++) \
+			{ \
 				if (!clipped(x, y, cliprect)) \
 				{ \
 					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) \
 					{ \
 						putfg; \
-					} else { \
+					} else \
+					{ \
 						putbg; \
 					} \
 				} \
@@ -2044,12 +1951,12 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 					break; \
 				if (x1 >= 0) \
 				{ \
-					--x, pixel -= pixx; \
+					--x, pixel -= BytesPerPixel; \
 					x1 += dy; \
 				} \
 				if (x1 < 0) \
 				{ \
-					++y, pixel += pixy; \
+					++y, pixel += pitch; \
 					x1 += dx; \
 				} \
 			} \
@@ -2060,7 +1967,7 @@ void SoftVdiDriver::hsBlitArea( int sx, int sy, int dx, int dy, int w, int h )
 void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[])
 {
-	int16 pixx, pixy;
+	int pitch;
 	int16 x, y;
 	int16 dx, dy;
 	uint8 *pixel;
@@ -2069,42 +1976,51 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 	int vec;
 	
 	/* Test for special cases of straight lines or single point */
-	if (x1 == x2) {
-		if (y1 < y2) {
+	if (x1 == x2)
+	{
+		if (y1 < y2)
+		{
 			gfxVLineColor(x1, y1, y2, pattern, fgColor, bgColor, logOp, cliprect);
-		} else if (y1 > y2) {
+		} else if (y1 > y2)
+		{
 			gfxVLineColor(x1, y2, y1, pattern, fgColor, bgColor, logOp, cliprect);
-		} else {
+		} else
+		{
 			if (!clipped(x1, y1, cliprect))
 			{
-			switch (logOp) {
+				switch (logOp)
+				{
 				case MD_REPLACE:
-					hsPutPixel( x1, y1, pattern ? fgColor : bgColor );
+					hsPutPixel(x1, y1, pattern ? fgColor : bgColor);
 					break;
 				case MD_TRANS:
 					if ( pattern )
-						hsPutPixel( x1, y1, fgColor );
+						hsPutPixel(x1, y1, fgColor);
 					break;
 				case MD_XOR:
 					if ( pattern )
-						hsPutPixel( x1, y1, ~ hsGetPixel( x1, y1 ) );
+						hsPutPixel(x1, y1, ~ hsGetPixel( x1, y1 ) );
 					break;
 				case MD_ERASE:
 					if ( ! pattern )
-						hsPutPixel( x1, y1, fgColor );
+						hsPutPixel(x1, y1, fgColor);
 					break;
-			}
-			surface->setDirtyRect(x1,y1,1,1);
+				}
+				surface->setDirtyRect(x1,y1,1,1);
 			}
 		}
 		return;
 	}
-	if (y1 == y2) {
-		if (x1 < x2) {
+	if (y1 == y2)
+	{
+		if (x1 < x2)
+		{
 			gfxHLineColor(x1, x2, y1, pattern, fgColor, bgColor, logOp, cliprect);
-		} else if (x1 > x2) {
+		} else if (x1 > x2)
+		{
 			gfxHLineColor(x2, x1, y1, pattern, fgColor, bgColor, logOp, cliprect);
-		} else {
+		} else
+		{
 			/* x1 == x2; already catched above */
 		}
 		return;
@@ -2137,84 +2053,95 @@ void SoftVdiDriver::hsDrawLine( int x1, int y1, int x2, int y2,
 	diff++;
 	ppos = 0;
 	surface->setDirtyLine(x1, y1, x2, y2);
-	
-	/* More variable setup */
-	pixx = sdl_surf->format->BytesPerPixel;
-	pixy = sdl_surf->pitch;
-	pixel = ((uint8*)sdl_surf->pixels) + pixx * x1 + pixy * y1;
 
-	//	D2(bug("ln pix pixx, pixy: %d,%d : %d,%d : %x, %d", sx, sy, dx, dy, pixx, pixy));
+	/* More variable setup */
+	pitch = sdl_surf->pitch;
+	pixel = (uint8*)sdl_surf->pixels;
+	pixel += pitch * y1;
 
 	/* Draw */
 	x = x1;
 	y = y1;
 	x1 = (dx + dy) / 2;
-	switch(surface->getBpp()) {
-		case 8:
-			switch (logOp) {
-				case MD_REPLACE:
-					lineloop(*(uint8*)pixel = fgColor, *(uint8*)pixel = bgColor);
-					break;
-				case MD_TRANS:
-					lineloop(*(uint8*)pixel = fgColor, );
-					break;
-				case MD_XOR:
-					lineloop(*(uint8*)pixel = ~(*(uint8*)pixel), );
-					break;
-				case MD_ERASE:
-					lineloop(, *(uint8*)pixel = fgColor);
-					break;
-			}
+	switch (surface->getBpp())
+	{
+	case 8:
+		pixel += x;
+
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			lineloop(*pixel = fgColor, *pixel = bgColor, 1);
 			break;
-		case 15:
-		case 16:
-			switch (logOp) {
-				case MD_REPLACE:
-					lineloop(*(uint16*)pixel = fgColor, *(uint16*)pixel = bgColor);
-					break;
-				case MD_TRANS:
-					lineloop(*(uint16*)pixel = fgColor, );
-					break;
-				case MD_XOR:
-					lineloop(*(uint16*)pixel = ~(*(uint16*)pixel), );
-					break;
-				case MD_ERASE:
-					lineloop(, *(uint16*)pixel = fgColor);
-					break;
-			}
+		case MD_TRANS:
+			lineloop(*pixel = fgColor, , 1);
 			break;
-		case 24:
-			switch (logOp) {
-				case MD_REPLACE:
-					lineloop(putBpp24Pixel(pixel, fgColor), putBpp24Pixel(pixel, bgColor));
-					break;
-				case MD_TRANS:
-					lineloop(putBpp24Pixel(pixel, fgColor), );
-					break;
-				case MD_XOR:
-					lineloop(putBpp24Pixel(pixel, getBpp24Pixel( pixel )), );
-					break;
-				case MD_ERASE:
-					lineloop(, putBpp24Pixel(pixel, fgColor));
-					break;
-			}
+		case MD_XOR:
+			lineloop(*pixel = ~(*pixel), , 1);
 			break;
-		default: /* case 4 */
-			switch (logOp) {
-				case MD_REPLACE:
-					lineloop(*(uint32*)pixel = fgColor, *(uint32*)pixel = bgColor);
-					break;
-				case MD_TRANS:
-					lineloop(*(uint32*)pixel = fgColor, );
-					break;
-				case MD_XOR:
-					lineloop(*(uint32*)pixel = ~(*(uint32*)pixel), );
-					break;
-				case MD_ERASE:
-					lineloop(, *(uint32*)pixel = fgColor);
-					break;
-			}
+		case MD_ERASE:
+			lineloop(, *pixel = fgColor, 1);
 			break;
+		}
+		break;
+	case 15:
+	case 16:
+		pixel += 2 * x;
+
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			lineloop(*(uint16*)pixel = fgColor, *(uint16*)pixel = bgColor, 2);
+			break;
+		case MD_TRANS:
+			lineloop(*(uint16*)pixel = fgColor, , 2);
+			break;
+		case MD_XOR:
+			lineloop(*(uint16*)pixel = ~(*(uint16*)pixel), , 2);
+			break;
+		case MD_ERASE:
+			lineloop(, *(uint16*)pixel = fgColor, 2);
+			break;
+		}
+		break;
+	case 24:
+		pixel += 3 * x;
+
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			lineloop(putBpp24Pixel(pixel, fgColor), putBpp24Pixel(pixel, bgColor), 3);
+			break;
+		case MD_TRANS:
+			lineloop(putBpp24Pixel(pixel, fgColor), , 3);
+			break;
+		case MD_XOR:
+			lineloop(putBpp24Pixel(pixel, getBpp24Pixel( pixel )), , 3);
+			break;
+		case MD_ERASE:
+			lineloop(, putBpp24Pixel(pixel, fgColor), 3);
+			break;
+		}
+		break;
+	case 32:
+		pixel += 4 * x;
+
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			lineloop(*(uint32*)pixel = fgColor, *(uint32*)pixel = bgColor, 4);
+			break;
+		case MD_TRANS:
+			lineloop(*(uint32*)pixel = fgColor, , 4);
+			break;
+		case MD_XOR:
+			lineloop(*(uint32*)pixel = ~(*(uint32*)pixel), , 4);
+			break;
+		case MD_ERASE:
+			lineloop(, *(uint32*)pixel = fgColor, 4);
+			break;
+		}
+		break;
 	}
 }
 
@@ -2222,7 +2149,8 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 	uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] )
 {
 	uint8 *pixel,*pixellast;
-	int pixx, pixy;
+	int BytesPerPixel;
+	int pitch;
 	int16 w;
 	uint8 ppos;
 
@@ -2256,129 +2184,134 @@ void SoftVdiDriver::gfxHLineColor ( int16 x1, int16 x2, int16 y, uint16 pattern,
 	}
 	
 	/* More variable setup */
-	pixx = sdl_surf->format->BytesPerPixel;
-	pixy = sdl_surf->pitch;
-	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int)x1 + pixy * (int)y;
+	BytesPerPixel = sdl_surf->format->BytesPerPixel;
+	pitch = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + BytesPerPixel * (int)x1 + pitch * (int)y;
 	ppos = 0;
 
 	D2(bug("HLn %3d,%3d,%3d", x1, x2, y));
 
 	/* Draw */
-	switch(surface->getBpp()) {
-		case 8:
-			pixellast = pixel + w;
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint8*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint8*)pixel = ~(*(uint8*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint8*)pixel = fgColor;
-					break;
-			}
+	switch(surface->getBpp())
+	{
+	case 8:
+		pixellast = pixel + w;
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 			break;
-		case 15:
-		case 16:
-			pixellast = pixel + w + w;
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint16*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint16*)pixel = ~(*(uint16*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint16*)pixel = fgColor;
-					break;
-			}
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint8*)pixel = fgColor;
 			break;
-		case 24:
-			pixellast = pixel + w + w + w;
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, fgColor );
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								putBpp24Pixel( pixel, fgColor );
-					break;
-			}
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint8*)pixel = ~(*(uint8*)pixel);
 			break;
-		default: /* case 4*/
-			w = w + w;
-			pixellast = pixel + w + w;
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint32*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint32*)pixel = ~(*(uint32*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixx, ppos++)
-						if (!clipped(x1 + ppos, y, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint32*)pixel = fgColor;
-					break;
-			}
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint8*)pixel = fgColor;
 			break;
+		}
+		break;
+	case 15:
+	case 16:
+		pixellast = pixel + w + w;
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint16*)pixel = fgColor;
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint16*)pixel = ~(*(uint16*)pixel);
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint16*)pixel = fgColor;
+			break;
+		}
+		break;
+	case 24:
+		pixellast = pixel + w + w + w;
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						putBpp24Pixel( pixel, fgColor );
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						putBpp24Pixel( pixel, fgColor );
+			break;
+		}
+		break;
+	case 32:
+		w = w + w;
+		pixellast = pixel + w + w;
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint32*)pixel = fgColor;
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint32*)pixel = ~(*(uint32*)pixel);
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += BytesPerPixel, ppos++)
+				if (!clipped(x1 + ppos, y, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint32*)pixel = fgColor;
+			break;
+		}
+		break;
 	}
 
 	surface->setDirtyLine(x1, y, x2, y);
@@ -2388,7 +2321,8 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	uint16 pattern, uint32 fgColor, uint32 bgColor, uint16 logOp, int cliprect[] )
 {
 	uint8 *pixel, *pixellast;
-	int pixx, pixy;
+	int BytesPerPixel;
+	int pitch;
 	int16 h;
 	uint8 ppos;
 
@@ -2426,122 +2360,127 @@ void SoftVdiDriver::gfxVLineColor( int16 x, int16 y1, int16 y2,
 	D2(bug("VLn %3d,%3d,%3d", x, y1, y2));
 
 	/* More variable setup */
-	pixx = sdl_surf->format->BytesPerPixel;
-	pixy = sdl_surf->pitch;
-	pixel = ((uint8*)sdl_surf->pixels) + pixx * (int)x + pixy * (int)y1;
-	pixellast = pixel + pixy*h;
+	BytesPerPixel = sdl_surf->format->BytesPerPixel;
+	pitch = sdl_surf->pitch;
+	pixel = ((uint8*)sdl_surf->pixels) + BytesPerPixel * (int)x + pitch * (int)y1;
+	pixellast = pixel + pitch*h;
 
 	/* Draw */
-	switch(surface->getBpp()) {
-		case 8:
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							*(uint8*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint8*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint8*)pixel = ~(*(uint8*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint8*)pixel = fgColor;
-					break;
-			}
+	switch(surface->getBpp())
+	{
+	case 8:
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					*pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
 			break;
-		case 15:
-		case 16:
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint16*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint16*)pixel = ~(*(uint16*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint16*)pixel = fgColor;
-					break;
-			}
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*pixel = fgColor;
 			break;
-		case 24:
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, fgColor );
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								putBpp24Pixel( pixel, fgColor );
-					break;
-			}
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*pixel = ~(*pixel);
 			break;
-		default: /* case 4*/
-			switch (logOp) {
-				case MD_REPLACE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
-					break;
-				case MD_TRANS:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint32*)pixel = fgColor;
-					break;
-				case MD_XOR:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
-								*(uint32*)pixel = ~(*(uint32*)pixel);
-					break;
-				case MD_ERASE:
-					for (; pixel<pixellast; pixel += pixy, ppos++)
-						if (!clipped(x, y1 + ppos, cliprect))
-							if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
-								*(uint32*)pixel = fgColor;
-					break;
-			}
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint8*)pixel = fgColor;
 			break;
+		}
+		break;
+	case 15:
+	case 16:
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					*(uint16*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint16*)pixel = fgColor;
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint16*)pixel = ~(*(uint16*)pixel);
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint16*)pixel = fgColor;
+			break;
+		}
+		break;
+	case 24:
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					putBpp24Pixel( pixel, (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor ) );
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						putBpp24Pixel( pixel, fgColor );
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						putBpp24Pixel( pixel, ~ getBpp24Pixel( pixel ) );
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						putBpp24Pixel( pixel, fgColor );
+			break;
+		}
+		break;
+	case 32:
+		switch (logOp)
+		{
+		case MD_REPLACE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					*(uint32*)pixel = (( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 ) ? fgColor : bgColor);
+			break;
+		case MD_TRANS:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint32*)pixel = fgColor;
+			break;
+		case MD_XOR:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) != 0 )
+						*(uint32*)pixel = ~(*(uint32*)pixel);
+			break;
+		case MD_ERASE:
+			for (; pixel<pixellast; pixel += pitch, ppos++)
+				if (!clipped(x, y1 + ppos, cliprect))
+					if ( ( pattern & ( 1 << ( (ppos) & 0xf ) )) == 0 )
+						*(uint32*)pixel = fgColor;
+			break;
+		}
+		break;
 	}
 
 	surface->setDirtyLine(x, y1, x, y2);
