@@ -1007,7 +1007,6 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			return -1;		// Don't know about this kind of table operation
 		table = (memptr)x_;
 		h = (y_ >> 16) & 0xffff;
-		vwk -= 1;
 	}
 
 	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",

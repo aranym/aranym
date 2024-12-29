@@ -557,7 +557,6 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 			return -1;		// Don't know about this kind of table operation
 		table = (memptr)x_;
 		h = (y_ >> 16) & 0xffff;
-		vwk -= 1;
 	}
 
 	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
@@ -1130,6 +1129,10 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
+	if (!surface) {
+		return 1;
+	}
+
 	// Allocate arrays for data
 	if (!AllocPoints(n) || !AllocIndices(moves) || !AllocCrossings(200))
 		return -1;
@@ -1139,15 +1142,19 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		pattern[i] = ReadInt16(pattern_addr + i * 2);
 
 	int cliparray[4];
-	int* cliprect = 0;
 	if (clip) {     // Clipping is not off
-		cliprect = cliparray;
-		cliprect[0] = (int16)ReadInt32(clip);
-		cliprect[1] = (int16)ReadInt32(clip + 4);
-		cliprect[2] = (int16)ReadInt32(clip + 8);
-		cliprect[3] = (int16)ReadInt32(clip + 12);
-		D2(bug("fVDI: %s %d,%d:%d,%d", "clipFillTO", cliprect[0], cliprect[1],
-		       cliprect[2], cliprect[3]));
+		cliparray[0] = (int16)ReadInt32(clip);
+		cliparray[1] = (int16)ReadInt32(clip + 4);
+		cliparray[2] = (int16)ReadInt32(clip + 8);
+		cliparray[3] = (int16)ReadInt32(clip + 12);
+		D2(bug("fVDI: %s %d,%d:%d,%d", "clipFillTO", cliparray[0], cliparray[1],
+		       cliparray[2], cliparray[3]));
+	} else
+	{
+		cliparray[0] = 0;
+		cliparray[1] = 0;
+		cliparray[2] = surface->getWidth() - 1;
+		cliparray[3] = surface->getHeight() - 1;
 	}
 
 	Points p(alloc_point);
@@ -1165,10 +1172,6 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 
 	if (!n)
 		return 1;
-
-	if (!surface) {
-		return 1;
-	}
 
 	if (!indices) {
 		if ((p[0][0] == p[n - 1][0]) && (p[0][1] == p[n - 1][1]))
@@ -1192,14 +1195,12 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			maxy = y;
 		}
 	}
-	if (cliprect) {
-		if (miny < cliprect[1])
-			miny = cliprect[1];
-		if (maxy > cliprect[3])
-			maxy = cliprect[3];
-	}
+	if (miny < cliparray[1])
+		miny = cliparray[1];
+	if (maxy > cliparray[3])
+		maxy = cliparray[3];
 
-	for(int16 y = miny; y <= maxy; ++y) {
+	for(int y = miny; y <= maxy; ++y) {
 		int ints = 0;
 		int16 x1 = 0;   // Make the compiler happy with some initializations
 		int16 y1 = 0;
@@ -1264,8 +1265,8 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 			}
 		}
 
-		x1 = cliprect[0];
-		x2 = cliprect[2];
+		x1 = cliparray[0];
+		x2 = cliparray[2];
 		for(int i = 0; i < ints - 1; i += 2) {
 			y1 = crossing[i];       // Really x-values, but...
 			y2 = crossing[i + 1];
