@@ -352,7 +352,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 	uint32 fgColor, uint32 bgColor)
 {
-	if (dest) {
+	if (dest && ReadInt32(dest + MFDB_ADDRESS) != 0) {
 		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
 	}
 
@@ -377,10 +377,10 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 
 	memptr data  = ReadInt32(src + MFDB_ADDRESS) + sy * pitch; // MFDB *src->address;
 
-	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
-	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
-	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
+	D(bug("fVDI: expandArea %x %d,%d:%d,%d:%d,%d (%x, %x)", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
+	D2(bug("fVDI: expandArea - MFDB addresses %x,%x : %x,%x", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
+	D2(bug("fVDI: expandArea - src: data address, MFDB wdwidth << 1, bitplanes %x, %d, %d", data, pitch, ReadInt16( src + MFDB_NPLANES )));
+	D2(bug("fVDI: expandArea - dst: data address, MFDB wdwidth << 1, bitplanes %x, %d, %d", ReadInt32(dest + MFDB_ADDRESS), ReadInt16(dest + MFDB_WDWIDTH) * (ReadInt16(dest + MFDB_NPLANES) >> 2), ReadInt16(dest + MFDB_NPLANES)));
 
 	if ( (uint32)ReadInt16( src + MFDB_STAND ) & 0x100 ) {
 		if ( ReadInt16( src + MFDB_NPLANES ) != 8 ) {
@@ -426,7 +426,7 @@ int32 SoftVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 			/* blit the whole thing to the screen */
 			asurf = blocksurf;
 		} else {
-			D(bug("fVDI: expandArea 8bit: logOp=%d %lx %lx", logOp, fgColor, bgColor));
+			D(bug("fVDI: expandArea 8bit: logOp=%d %x %x", logOp, fgColor, bgColor));
 
 			for(uint16 j = 0; j < h; j++) {
 				uint32 *dst = (uint32 *)asurf->pixels + j * asurf->pitch/4;
@@ -559,7 +559,7 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		h = (y_ >> 16) & 0xffff;
 	}
 
-	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%x : bgc:%x)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, bgColor));
 
@@ -602,8 +602,8 @@ int32 SoftVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
-	DUNUSED(dest);
+	UNUSED(vwk);
+	UNUSED(dest);
 
 	if (!surface) {
 		return 1;
@@ -750,9 +750,9 @@ int32 SoftVdiDriver::blitArea_M2S(memptr vwk, memptr src, int32 sx, int32 sy,
 int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
-	DUNUSED(src);
-	DUNUSED(dest);
+	UNUSED(vwk);
+	UNUSED(src);
+	UNUSED(dest);
 
 	if (!surface) {
 		return 1;
@@ -865,9 +865,9 @@ int32 SoftVdiDriver::blitArea_S2M(memptr vwk, memptr src, int32 sx, int32 sy,
 int32 SoftVdiDriver::blitArea_S2S(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
-	DUNUSED(src);
-	DUNUSED(dest);
+	UNUSED(vwk);
+	UNUSED(src);
+	UNUSED(dest);
 
 	if (!surface) {
 		return 1;
@@ -964,7 +964,7 @@ int SoftVdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern
                                int cliprect[])
 {
 	if (clipLine(x1, y1, x2, y2, cliprect)) {	// Do not draw the line when it is completely out
-		D(bug("fVDI: %s %d,%d:%d,%d (%lx,%lx)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
+		D(bug("fVDI: %s %d,%d:%d,%d (%x,%x)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
 		hsDrawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, cliprect);
 	}
 	return 1;
@@ -1284,23 +1284,25 @@ int32 SoftVdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	return 1;
 }
 
+/*
+ * FIXME: design of this interface is broken.
+ * If we ever want to implement this,
+ * we also need some info about current font settings.
+ * Returning 0 here has the effect of the fVDI
+ * kernel doing all the hard work, then calling expandArea
+ * for every glyph.
+ */
 int32 SoftVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 			      int32 dst_x, int32 dst_y, memptr font,
 			      uint32 w, uint32 h, uint32 fgColor, uint32 bgColor,
 			      uint32 logOp, memptr clip)
 {
-	DUNUSED(vwk);
-	DUNUSED(text);
-	DUNUSED(length);
-	DUNUSED(dst_x);
-	DUNUSED(dst_y);
-	DUNUSED(font);
-	DUNUSED(w);
-	DUNUSED(h);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(logOp);
-	DUNUSED(clip);
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	memptr dest = ReadInt32(wk + WK_SCREEN_ADDR); /* wk->screen.mfdb.address */
+	uint16 screen_type = ReadInt16(wk + WK_SCREEN_TYPE); /* wk->screen.type */
+
+	if (dest != 0 && screen_type == 0)
+		return VdiDriver::drawText(vwk, text, length, dst_x, dst_y, font, w, h, fgColor, bgColor, logOp, clip);
 
 	return 0;
 }

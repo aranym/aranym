@@ -555,7 +555,7 @@ bool VdiDriver::AllocPoints(int n)
 
 int32 VdiDriver::getPixel(memptr vwk, memptr src, int32 x, int32 y)
 {
-	DUNUSED(vwk);
+	UNUSED(vwk);
 	uint32 color = 0;
 
 	set_mfdb(src);
@@ -664,12 +664,12 @@ int32 VdiDriver::drawMouse(memptr wk, int32 x, int32 y, uint32 mode,
 	uint32 data, uint32 hot_x, uint32 hot_y, uint32 fgColor, uint32 bgColor,
 	uint32 mouse_type)
 {
-	DUNUSED(wk);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(mouse_type);
+	UNUSED(wk);
+	UNUSED(fgColor);
+	UNUSED(bgColor);
+	UNUSED(mouse_type);
 
-	D(bug("VdiDriver::drawMouse(): x,y = [%ld,%ld] mode=%ld", x, y, mode));
+	D(bug("VdiDriver::drawMouse(): x,y = [%d,%d] mode=%d", x, y, mode));
 
 	switch (mode)
 	{
@@ -746,7 +746,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp,
 	uint32 fgColor, uint32 bgColor)
 {
-	DUNUSED(vwk);
+	UNUSED(vwk);
 
 	if (!dest)
 	{
@@ -772,7 +772,7 @@ int32 VdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 	uint32 destPitch   = mem_mfdb.pitch; // MFDB *dest->pitch
 	uint32 destAddress = mem_mfdb.dest;
 
-	D(bug("fVDI: %s %x %d,%d:%d,%d:%d,%d (%lx, %lx)", "expandArea", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
+	D(bug("fVDI: expandArea %x %d,%d:%d,%d:%d,%d (%x, %x)", logOp, sx, sy, dx, dy, w, h, fgColor, bgColor ));
 	D2(bug("fVDI: %s %x,%x : %x,%x", "expandArea - MFDB addresses", src, dest, ReadInt32(src + MFDB_ADDRESS),ReadInt32(dest + MFDB_ADDRESS)));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - src: data address, MFDB wdwidth << 1, bitplanes", data, pitch, ReadInt16( src + MFDB_NPLANES )));
 	D2(bug("fVDI: %s %x, %d, %d", "expandArea - dst: data address, MFDB wdwidth << 1, bitplanes", destAdress, destPitch, mem_mfdb.planes));
@@ -982,7 +982,7 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 	int32 h, memptr pattern_addr, uint32 fgColor, uint32 bgColor,
 	uint32 logOp, uint32 interior_style)
 {
-	DUNUSED(interior_style);
+	UNUSED(interior_style);
 	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
 
 	set_mfdb(wk + WK_SCREEN_MFDB);
@@ -1009,7 +1009,7 @@ int32 VdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_, int32 w,
 		h = (y_ >> 16) & 0xffff;
 	}
 
-	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
+	D(bug("fVDI: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%x : bgc:%x)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, bgColor));
 
@@ -1385,7 +1385,7 @@ int32 VdiDriver::blitArea(memptr vwk, memptr src, int32 sx, int32 sy,
 int32 VdiDriver::blitArea_M2M(memptr vwk, memptr src, int32 sx, int32 sy,
 	memptr dest, int32 dx, int32 dy, int32 w, int32 h, uint32 logOp)
 {
-	DUNUSED(vwk);
+	UNUSED(vwk);
 
 	uint32 planes = ReadInt16(src + MFDB_NPLANES);			// MFDB *src->bitplanes
 	if (planes == 15)
@@ -1630,7 +1630,7 @@ int VdiDriver::drawSingleLine(int x1, int y1, int x2, int y2, uint16 pattern,
 {
 	if (clipLine(x1, y1, x2, y2, cliprect))	// Do not draw the line when it is completely out
 	{
-		D(bug("fVDI: %s %d,%d:%d,%d (%lx,%lx)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
+		D(bug("fVDI: %s %d,%d:%d,%d (%x,%x)", "drawSingleLine", x1, y1, x2, y2, fgColor, bgColor));
 		hsDrawLine(x1, y1, x2, y2, pattern, fgColor, bgColor, logOp, cliprect);
 	}
 	return 1;
@@ -2511,7 +2511,7 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 		return 1;
 	}
 
-	DUNUSED(interior_style);
+	UNUSED(interior_style);
 	if (vwk & 1)
 		return -1;      // Don't know about any special fills
 
@@ -2689,44 +2689,52 @@ int32 VdiDriver::fillPoly(memptr vwk, memptr points_addr, int n,
 	return 1;
 }
 
+/*
+ * FIXME: design of this interface is broken.
+ * If we ever want to implement this,
+ * we also need some info about current font settings.
+ * Returning 0 here has the effect of the fVDI
+ * kernel doing all the hard work, then calling expandArea
+ * for every glyph.
+ */
 int32 VdiDriver::drawText(memptr vwk, memptr text, uint32 length, int32 dst_x, int32 dst_y,
 			  memptr font, uint32 w, uint32 h, uint32 fgColor, uint32 bgColor,
 			  uint32 logOp, memptr clip)
 {
-	DUNUSED(vwk);
-	DUNUSED(text);
-	DUNUSED(length);
-	DUNUSED(dst_x);
-	DUNUSED(dst_y);
-	DUNUSED(font);
-	DUNUSED(w);
-	DUNUSED(h);
-	DUNUSED(fgColor);
-	DUNUSED(bgColor);
-	DUNUSED(logOp);
-	DUNUSED(clip);
+	UNUSED(vwk);
+	UNUSED(text);
+	UNUSED(length);
+	UNUSED(dst_x);
+	UNUSED(dst_y);
+	UNUSED(font);
+	UNUSED(w);
+	UNUSED(h);
+	UNUSED(fgColor);
+	UNUSED(bgColor);
+	UNUSED(logOp);
+	UNUSED(clip);
 
-	return -1;
+	return 0;
 }
 
 void VdiDriver::getHwColor(uint16 index, uint32 red, uint32 green,
 	uint32 blue, memptr hw_value)
 {
-	DUNUSED(index);
-	DUNUSED(red);
-	DUNUSED(green);
-	DUNUSED(blue);
-	DUNUSED(hw_value);
+	UNUSED(index);
+	UNUSED(red);
+	UNUSED(green);
+	UNUSED(blue);
+	UNUSED(hw_value);
 }
 
 void VdiDriver::setColor(memptr vwk, uint32 paletteIndex, uint32 red,
 	uint32 green, uint32 blue)
 {
-	DUNUSED(vwk);
-	DUNUSED(paletteIndex);
-	DUNUSED(red);
-	DUNUSED(green);
-	DUNUSED(blue);
+	UNUSED(vwk);
+	UNUSED(paletteIndex);
+	UNUSED(red);
+	UNUSED(green);
+	UNUSED(blue);
 }
 
 int32 VdiDriver::getFbAddr(void)

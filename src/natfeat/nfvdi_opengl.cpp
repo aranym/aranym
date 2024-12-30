@@ -379,9 +379,14 @@ int32 OpenGLVdiDriver::expandArea(memptr vwk, memptr src, int32 sx, int32 sy,
 {
 	Uint8 *bitmap, *s, *d;
 	int width, srcpitch, dstpitch, y;
+	memptr wk = ReadInt32((vwk & -2) + VWK_REAL_ADDRESS); /* vwk->real_address */
+	uint16 screen_type = ReadInt16(wk + WK_SCREEN_TYPE); /* wk->screen.type */
 
 	if (dest)
-		return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
+	{
+		if (screen_type == 0)
+			return VdiDriver::expandArea(vwk, src, sx, sy, dest, dx, dy, w, h, logOp, fgColor, bgColor);
+	}
 
 	/* Allocate temp space for monochrome bitmap */
 	width = (w + 8 + 31) & ~31;
@@ -485,7 +490,7 @@ int32 OpenGLVdiDriver::fillArea(memptr vwk, uint32 x_, uint32 y_,
 		vwk -= 1;
 	}
 
-	D(bug("glvdi: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%lx : bgc:%lx)", "fillArea",
+	D(bug("glvdi: %s %d %d,%d:%d,%d : %d,%d p:%x, (fgc:%x : bgc:%x)", "fillArea",
 	      logOp, x, y, w, h, x + w - 1, x + h - 1, *pattern,
 	      fgColor, bgColor));
 
@@ -1185,7 +1190,7 @@ int32 OpenGLVdiDriver::drawText(memptr vwk, memptr text, uint32 length,
 				uint32 ch_w, uint32 ch_h, uint32 fgColor, uint32 bgColor,
 				uint32 logOp, memptr clip)
 {
-	DUNUSED(vwk);
+	UNUSED(vwk);
 	int32 cx1, cy1, cx2, cy2;
 	cx1 = ReadInt32(clip);
 	cy1 = ReadInt32(clip + 4);
