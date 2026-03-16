@@ -197,6 +197,126 @@ static SDL_Cursor *init_empty_cursor()
 	return SDL_CreateCursor(data, mask, 16, 16, 0, 0);
 }
 
+static bool hasKeymap = false;
+static int scancodeSDL2Atari[SDL_NUM_SCANCODES];
+
+static bool init_keymap() {
+	char keymap_filename[512];
+	getConfFilename(ARANYMKEYMAP, keymap_filename, sizeof(keymap_filename));
+
+	memset(scancodeSDL2Atari, 0, sizeof(scancodeSDL2Atari));
+
+	struct stat buf;
+	if (stat(keymap_filename, &buf) == -1) {
+		infoprint("Config file '%s' not found.", keymap_filename);
+		return false;
+	}
+
+	FILE *in = fopen(keymap_filename, "rw");
+	if (!in) {
+		bug("Unable to open file '%s': %s", keymap_filename, strerror(errno));
+		return false;
+	}
+
+	char line[1024];
+	int numMappings = 0;
+	while (!feof(in)) {
+		if (!fgets(line, sizeof(line), in)) {
+			break;
+		}
+
+		char *start = NULL;
+		char *ptr = line;
+		int len = 0;
+		while(*ptr) {
+			if (!start) {
+				// find start of data: skip leading whitespaces
+				if (*ptr == ' ' || *ptr == '\t') {
+					ptr++;
+				} else {
+					start = ptr;
+				}
+			} else {
+				// reached end of relevant data
+				if (*ptr == ';' || *ptr == '#' || *ptr == '\r' || *ptr == '\n') {
+					// trim trailing whitespaces
+					do {
+						*ptr = 0;
+						if (ptr > start && (ptr[-1] == ' ' || ptr[-1] == '\t')) {
+							--ptr;
+						}
+					} while(*ptr);
+
+					len = ptr-start;
+				} else {
+					ptr++;
+				}
+			}
+		}
+
+		D(bug("Extracted line: <%s> with length %d\n", start, len));
+		if (len == 0) {
+			continue;
+		}
+
+		// identify string start of SDL and Atari key string
+		char *sdl_key_str = start, *atari_key_str = NULL;
+
+		// skip to comma (terminating current string at whitespaces)
+		ptr = start;
+		do {
+			if (*ptr == ' ' || *ptr == '\t') {
+				*ptr = 0;
+			}
+			ptr++;
+		} while(*ptr && *ptr != ',');
+		if (*ptr == ',') {
+			*ptr = 0;
+		}
+		// skip whitespaces after comma
+		do {
+			ptr++;
+		} while(*ptr && (*ptr == ' ' || *ptr == '\t'));
+
+		atari_key_str = ptr;
+
+
+		// Now convert the strings to scan codes
+		int sdl_scancode = 0, atari_scancode = 0;
+
+		// read hex or decimal value
+		if (sdl_key_str[0] == '0' && sdl_key_str[1] == 'x') {
+			sscanf(sdl_key_str+2, "%x", &sdl_scancode);
+		} else if (sdl_key_str[0] >= '0' && sdl_key_str[0] <= '9') {
+			sscanf(sdl_key_str, "%d", &sdl_scancode);
+		} else {
+			// Try to parse scan code from SDL scancode name
+			sdl_scancode = SDL_GetScancodeFromName(sdl_key_str);
+			if (sdl_scancode == SDL_SCANCODE_UNKNOWN) {
+				bug("Error processing textual scancode '%s': %s", sdl_key_str, SDL_GetError());
+			}
+		}
+
+		// read hex or decimal value
+		if (atari_key_str[0] == '0' && atari_key_str[1] == 'x') {
+			sscanf(atari_key_str+2, "%x", &atari_scancode);
+		} else {
+			sscanf(atari_key_str, "%d", &atari_scancode);
+		}
+
+		// Process a valid mapping
+		bug("  keymap SDL %d (%s) to Atari %d (%s)", sdl_scancode, sdl_key_str, atari_scancode, atari_key_str);
+		if (sdl_scancode > 0 && atari_scancode > 0 && sdl_scancode < SDL_NUM_SCANCODES) {
+			scancodeSDL2Atari[sdl_scancode] = atari_scancode;
+			numMappings++;
+		}
+	}
+
+	printf("Read %d scancode mappings from '%s'\n", numMappings, keymap_filename);
+
+	return numMappings > 0;
+}
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 static int SDLCALL event_filter(void * /* userdata */, SDL_Event *event)
@@ -248,6 +368,7 @@ void InputReset()
 	// FIXME: add? InputInit();
 	// FIXME: how??? capslockState (detect)
 	host->video->CapslockState((SDL_GetModState() & KMOD_CAPS) != 0);
+	hasKeymap = init_keymap();
 }
 
 void InputExit()
@@ -468,6 +589,14 @@ static int keysymToAtari(SDL_Keysym *keysym)
 {
 	unsigned int scancode = 0;
 
+	if (hasKeymap) {
+		scancode = scancodeSDL2Atari[(unsigned int) keysym->scancode];
+		if (scancode > 0) {
+			bug("Custom scancode mapping applied");
+			return scancode;
+		}
+	}
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	switch( (unsigned int) keysym->scancode)
 	{
@@ -514,6 +643,7 @@ static int keysymToAtari(SDL_Keysym *keysym)
 		case SDL_SCANCODE_GRAVE: scancode = 0x29; break;
 		case SDL_SCANCODE_LSHIFT: scancode = 0x2a; break;
 		case SDL_SCANCODE_BACKSLASH: scancode = 0x2b; break;
+		case SDL_SCANCODE_NONUSHASH: scancode = 0x2b; break;
 		case SDL_SCANCODE_Z: scancode = 0x2c; break;
 		case SDL_SCANCODE_X: scancode = 0x2d; break;
 		case SDL_SCANCODE_C: scancode = 0x2e; break;
@@ -525,7 +655,7 @@ static int keysymToAtari(SDL_Keysym *keysym)
 		case SDL_SCANCODE_PERIOD: scancode = 0x34; break;
 		case SDL_SCANCODE_SLASH: scancode = 0x35; break;
 		case SDL_SCANCODE_RSHIFT: scancode = 0x36; break;
-		case SDL_SCANCODE_PRINTSCREEN: scancode = 0x37; break;
+		//case SDL_SCANCODE_PRINTSCREEN: scancode = 0x37; break;  // Not used on Atari, why map it?
 		case SDL_SCANCODE_LALT: scancode = 0x38; break;
 		case SDL_SCANCODE_SPACE: scancode = 0x39; break;
 		case SDL_SCANCODE_CAPSLOCK: scancode = 0x3a; break;
@@ -540,19 +670,45 @@ static int keysymToAtari(SDL_Keysym *keysym)
 		case SDL_SCANCODE_F9: scancode = 0x43; break;
 		case SDL_SCANCODE_F10: scancode = 0x44; break;
 
+		case SDL_SCANCODE_HOME: scancode = 0x47; break;
+		case SDL_SCANCODE_UP: scancode = 0x48; break;
+		case SDL_SCANCODE_PAGEUP: scancode = 0x49; break;
+		case SDL_SCANCODE_KP_MINUS: scancode = 0x4a; break;
+		case SDL_SCANCODE_LEFT: scancode = 0x4b; break;
+		case SDL_SCANCODE_RALT: scancode = 0x4c; break;
+		case SDL_SCANCODE_RIGHT: scancode = 0x4d; break;
+		case SDL_SCANCODE_KP_PLUS: scancode = 0x4e; break;
+		case SDL_SCANCODE_END: scancode = 0x4f; break;	/* Milan's scancode for End */
+		case SDL_SCANCODE_DOWN: scancode = 0x50; break;
+		case SDL_SCANCODE_PAGEDOWN: scancode = 0x51; break;
+		case SDL_SCANCODE_INSERT: scancode = 0x52; break;
+		case SDL_SCANCODE_DELETE: scancode = 0x53; break;
+
 		case SDL_SCANCODE_NONUSBACKSLASH: scancode = 0x60; break;
-		case SDL_SCANCODE_KP_LEFTPAREN: scancode = 0x63; break;
+		case SDL_SCANCODE_UNDO: scancode = 0x61; break;
+		case SDL_SCANCODE_HELP: scancode = 0x62; break;
+		case SDL_SCANCODE_KP_LEFTPAREN:  scancode = 0x63; break;
 		case SDL_SCANCODE_KP_RIGHTPAREN: scancode = 0x64; break;
-		
-		case SDL_SCANCODE_SCROLLLOCK: scancode = 0x00; break;
-		case SDL_SCANCODE_PAUSE: scancode = 0x00; break;
+		case SDL_SCANCODE_KP_DIVIDE:   scancode = 0x65; break;
+		case SDL_SCANCODE_KP_MULTIPLY: scancode = 0x66; break;
+		case SDL_SCANCODE_KP_7: scancode = 0x67; break;
+		case SDL_SCANCODE_KP_8: scancode = 0x68; break;
+		case SDL_SCANCODE_KP_9: scancode = 0x69; break;
+		case SDL_SCANCODE_KP_4: scancode = 0x6A; break;
+		case SDL_SCANCODE_KP_5: scancode = 0x6B; break;
+		case SDL_SCANCODE_KP_6: scancode = 0x6C; break;
+		case SDL_SCANCODE_KP_1: scancode = 0x6D; break;
+		case SDL_SCANCODE_KP_2: scancode = 0x6E; break;
+		case SDL_SCANCODE_KP_3: scancode = 0x6F; break;
+		case SDL_SCANCODE_KP_0: scancode = 0x70; break;
+		case SDL_SCANCODE_KP_PERIOD: scancode = 0x71; break;
+		case SDL_SCANCODE_KP_ENTER:   scancode = 0x72; break;
 	}
 	if (scancode != 0)
 	{
-		keysym->scancode = SDL_Scancode(scancode);
 		return scancode;
 	}
-#endif
+#else
 	switch ((unsigned int) keysym->sym)
 	{
 		/* Numeric Pad */
@@ -588,7 +744,7 @@ static int keysymToAtari(SDL_Keysym *keysym)
 		case SDLK_DELETE: scancode = 0x53; break;	/* Delete */
 
 		case SDLK_NUMLOCKCLEAR: scancode = 0x63; break;
-		
+
 		case SDLK_BACKQUOTE:
 		case SDLK_LESS: scancode = 0x60; break;	/* a '<>' key next to short left Shift */
 
@@ -598,7 +754,6 @@ static int keysymToAtari(SDL_Keysym *keysym)
 		case SDLK_RALT: scancode = RALT_ATARI_SCANCODE; break;
 	}
 
-#if !SDL_VERSION_ATLEAST(2, 0, 0)
 	static unsigned int offset = UNDEFINED_OFFSET;
 	if (scancode == 0)
 	{
@@ -625,9 +780,9 @@ static int keysymToAtari(SDL_Keysym *keysym)
 #endif
 
 	if (scancode == 0 && keysym->scancode != 0)
-		bug("keycode: %d (0x%x), scancode %d (0x%x), keysym '%s' is not mapped",
+		bug("keycode: %d (0x%x), scancode %d (0x%x '%s'), keysym '%s' is not mapped",
 			keysym->sym, keysym->sym,
-			keysym->scancode, keysym->scancode,
+			keysym->scancode, keysym->scancode, SDL_GetScancodeName(keysym->scancode),
 			SDL_GetKeyName(keysym->sym));
 	keysym->scancode = SDL_Scancode(scancode);
 	return scancode;
@@ -1080,38 +1235,40 @@ static void process_keyboard_event(const SDL_Event &event)
 	}
 
 	// map special keys to Atari range of scancodes
-	if (sym == SDLK_PAGEUP) {
-		if (pressed) {
-			if (! shifted)
-				getIKBD()->SendKey(0x2a);	// press and hold LShift
-			getIKBD()->SendKey(0x48);	// press keyUp
-		}
-		else {
-			getIKBD()->SendKey(0xc8);	// release keyUp
-			if (! shifted)
-				getIKBD()->SendKey(0xaa);	// release LShift
-		}
-		send2Atari = false;
-	}
-	else if (sym == SDLK_PAGEDOWN) {
-		if (pressed) {
-			if (! shifted)
-				getIKBD()->SendKey(0x2a);	// press and hold LShift
-			getIKBD()->SendKey(0x50);	// press keyDown
-		}
-		else {
-			getIKBD()->SendKey(0xd0);	// release keyDown
-			if (! shifted)
-				getIKBD()->SendKey(0xaa);	// release LShift
-		}
-		send2Atari = false;
-	}
+//	if (sym == SDLK_PAGEUP) {
+//		if (pressed) {
+//			if (! shifted)
+//				getIKBD()->SendKey(0x2a);	// press and hold LShift
+//			getIKBD()->SendKey(0x48);	// press keyUp
+//		}
+//		else {
+//			getIKBD()->SendKey(0xc8);	// release keyUp
+//			if (! shifted)
+//				getIKBD()->SendKey(0xaa);	// release LShift
+//		}
+//		send2Atari = false;
+//	}
+//	else if (sym == SDLK_PAGEDOWN) {
+//		if (pressed) {
+//			if (! shifted)
+//				getIKBD()->SendKey(0x2a);	// press and hold LShift
+//			getIKBD()->SendKey(0x50);	// press keyDown
+//		}
+//		else {
+//			getIKBD()->SendKey(0xd0);	// release keyDown
+//			if (! shifted)
+//				getIKBD()->SendKey(0xaa);	// release LShift
+//		}
+//		send2Atari = false;
+//	}
 
 
 	// send all pressed keys to IKBD
 	if (send2Atari) {
 		int scanAtari = keysymToAtari(&keysym);
-		D(bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, pressed ? scanAtari : scanAtari|0x80, pressed ? scanAtari : scanAtari|0x80, SDL_GetKeyName(sym), sym));
+		if (pressed) {
+			bug("Host scancode = %d ($%02x), Atari scancode = %d ($%02x), keycode = '%s' ($%02x)", keysym.scancode, keysym.scancode, pressed ? scanAtari : scanAtari|0x80, pressed ? scanAtari : scanAtari|0x80, SDL_GetKeyName(sym), sym);
+		}
 		if (scanAtari > 0) {
 			if (!process_national_key(scanAtari, state, pressed))
 			{
